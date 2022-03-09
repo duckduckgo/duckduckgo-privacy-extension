@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1642335495631,
+    "version": 1645459859348,
     "features": {
         "ampLinks": {
             "exceptions": [],
@@ -254,6 +254,28 @@
             "state": "enabled",
             "settings": {
                 "allowlistedTrackers": {
+                    "amazon-adsystem.com": {
+                        "rules": [
+                            {
+                                "rule": "c.amazon-adsystem.com/aax2/apstag.js",
+                                "domains": [
+                                    "seattletimes.com"
+                                ],
+                                "reason": "adwall"
+                            }
+                        ]
+                    },
+                    "cloudflare.com": {
+                        "rules": [
+                            {
+                                "rule": "cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.8.6/fingerprint2.min.js",
+                                "domains": [
+                                    "winnipegfreepress.com"
+                                ],
+                                "reason": "content not loading"
+                            }
+                        ]
+                    },
                     "doubleclick.net": {
                         "rules": [
                             {
@@ -284,6 +306,24 @@
                             }
                         ]
                     },
+                    "evidon.com": {
+                        "rules": [
+                            {
+                                "rule": "c.evidon.com/geo/country.js",
+                                "domains": [
+                                    "crunchyroll.com"
+                                ],
+                                "reason": "video not loading"
+                            },
+                            {
+                                "rule": "evidon.com/sitenotice/",
+                                "domains": [
+                                    "crunchyroll.com"
+                                ],
+                                "reason": "video not loading"
+                            }
+                        ]
+                    },
                     "googlesyndication.com": {
                         "rules": [
                             {
@@ -292,6 +332,54 @@
                                     "youmath.it"
                                 ],
                                 "reason": "adwall"
+                            },
+                            {
+                                "rule": "tpc.googlesyndication.com/pagead/js/loader21.html",
+                                "domains": [
+                                    "rumble.com"
+                                ],
+                                "reason": "adwall (video blocked)"
+                            }
+                        ]
+                    },
+                    "googletagmanager.com": {
+                        "rules": [
+                            {
+                                "rule": "googletagmanager.com/gtm.js",
+                                "domains": [
+                                    "rbcroyalbank.com"
+                                ],
+                                "reason": "page not loading"
+                            }
+                        ]
+                    },
+                    "shopeemobile.com": {
+                        "rules": [
+                            {
+                                "rule": "deo.shopeemobile.com/shopee/shopee-pcmall-live-sg//assets/2581.e008c4d7fc4804de8ba6.js",
+                                "domains": [
+                                    "shopee.co.id",
+                                    "shopee.co.th",
+                                    "shopee.com.br",
+                                    "shopee.com.my",
+                                    "shopee.ph",
+                                    "shopee.sg",
+                                    "shopee.tw",
+                                    "shopee.vn"
+                                ],
+                                "reason": "content not loading"
+                            }
+                        ]
+                    },
+                    "theplatform.com": {
+                        "rules": [
+                            {
+                                "rule": "pdk.theplatform.com/5.9.6/pdk/tpPdk.js",
+                                "domains": [
+                                    "bravotv.com",
+                                    "oxygen.com"
+                                ],
+                                "reason": "video not loading"
                             }
                         ]
                     },
@@ -304,6 +392,13 @@
                                     "upworthy.com"
                                 ],
                                 "reason": "content not rendering"
+                            },
+                            {
+                                "rule": "platform.twitter.com/widgets/tweet_button",
+                                "domains": [
+                                    "winnipegfreepress.com"
+                                ],
+                                "reason": "missing tweet button"
                             }
                         ]
                     }
@@ -318,7 +413,12 @@
                     "maxAge": 86400
                 }
             },
-            "exceptions": [],
+            "exceptions": [
+                {
+                    "domain": "nespresso.com",
+                    "reason": "login issues"
+                }
+            ],
             "state": "enabled"
         },
         "trackingCookies3p": {
