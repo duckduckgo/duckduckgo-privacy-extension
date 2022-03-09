@@ -59,39 +59,29 @@ const ATB = (() => {
             })
         },
 
-        redirectURL: (request) => {
-            if (request.url.search(regExpAboutPage) !== -1) {
-                if (request.url.indexOf('atb=') !== -1) {
-                    return
-                }
-
-                const atbSetting = settings.getSetting('atb')
-
-                if (!atbSetting) {
-                    return
-                }
-
-                // handle anchor tags for pages like about#newsletter
-                const urlParts = request.url.split('#')
-                let newURL = request.url
-                let anchor = ''
-
-                // if we have an anchor tag
-                if (urlParts.length === 2) {
-                    newURL = urlParts[0]
-                    anchor = '#' + urlParts[1]
-                }
-
-                if (request.url.indexOf('?') !== -1) {
-                    newURL += '&'
-                } else {
-                    newURL += '?'
-                }
-
-                newURL += 'atb=' + atbSetting + anchor
-
-                return { redirectUrl: newURL }
+        /**
+        * Accept the URL of a main_frame request in progress. If atb parameters
+        * should be added by redirection, mutate the URL to add the parameters
+        * and return true. Otherwise, return false.
+        * @param {URL} url
+        *   The request URL.
+        *   Note: This is mutated to add parameters where necessary.
+        * @returns {boolean}
+        *   True if parameters were added and the request should be redirected,
+        *   false otherwise.
+        */
+        addParametersMainFrameRequestUrl (url) {
+            if (url.searchParams.has('atb')) {
+                return false
             }
+
+            const atbSetting = settings.getSetting('atb')
+            if (!atbSetting || !regExpAboutPage.test(url.href)) {
+                return false
+            }
+
+            url.searchParams.append('atb', atbSetting)
+            return true
         },
 
         setInitialVersions: (numTries) => {
