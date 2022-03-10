@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1645459859348,
+    "version": 1646217547127,
     "features": {
         "ampLinks": {
             "exceptions": [],
@@ -32,6 +32,14 @@
                 {
                     "domain": "spiegel.de",
                     "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "www.derstandard.de",
+                    "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "www.derstandard.at",
+                    "reason": "Opt-out not possible"
                 }
             ],
             "settings": {
@@ -59,6 +67,10 @@
         "contentBlocking": {
             "state": "enabled",
             "exceptions": [
+                {
+                    "domain": "bild.de",
+                    "reason": "Navigation broken"
+                },
                 {
                     "domain": "pureflix.com",
                     "reason": "Videos not playing"
@@ -146,6 +158,10 @@
                 {
                     "domain": "virginmedia.com",
                     "reason": "Chat widget blocked"
+                },
+                {
+                    "domain": "welt.de",
+                    "reason": "Video not playing correctly"
                 }
             ]
         },
@@ -292,6 +308,13 @@
                                     "wunderground.com"
                                 ],
                                 "reason": "videos not loading"
+                            },
+                            {
+                                "rule": "www3.doubleclick.net",
+                                "domains": [
+                                    "thingiverse.com"
+                                ],
+                                "reason": "adwall"
                             }
                         ]
                     },
@@ -350,6 +373,18 @@
                                     "rbcroyalbank.com"
                                 ],
                                 "reason": "page not loading"
+                            }
+                        ]
+                    },
+                    "klarnaservices.com": {
+                        "rules": [
+                            {
+                                "rule": "na-library.klarnaservices.com/lib.js",
+                                "domains": [
+                                    "brooksrunning.com",
+                                    "joann.com"
+                                ],
+                                "reason": "site not loading"
                             }
                         ]
                     },
