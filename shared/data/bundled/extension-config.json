@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1646217547127,
+    "version": 1647270421571,
     "features": {
         "ampLinks": {
             "exceptions": [],
@@ -185,6 +185,10 @@
         "fingerprintingCanvas": {
             "exceptions": [
                 {
+                    "domain": "spirit.com",
+                    "reason": "Broken login"
+                },
+                {
                     "domain": "walgreens.com",
                     "reason": "Broken login"
                 },
@@ -270,6 +274,24 @@
             "state": "enabled",
             "settings": {
                 "allowlistedTrackers": {
+                    "adthrive.com": {
+                        "rules": [
+                            {
+                                "rule": "ads.adthrive.com/builds/core/",
+                                "domains": [
+                                    "mediaite.com"
+                                ],
+                                "reason": "video not loading"
+                            },
+                            {
+                                "rule": "ads.adthrive.com/sites/",
+                                "domains": [
+                                    "mediaite.com"
+                                ],
+                                "reason": "video not loading"
+                            }
+                        ]
+                    },
                     "amazon-adsystem.com": {
                         "rules": [
                             {
@@ -297,6 +319,7 @@
                             {
                                 "rule": "securepubads.g.doubleclick.net/tag/js/gpt.js",
                                 "domains": [
+                                    "mediaite.com",
                                     "wunderground.com",
                                     "youmath.it"
                                 ],
@@ -368,6 +391,13 @@
                     "googletagmanager.com": {
                         "rules": [
                             {
+                                "rule": "googletagmanager.com/gtag/js",
+                                "domains": [
+                                    "ikea.com"
+                                ],
+                                "reason": "content not loading"
+                            },
+                            {
                                 "rule": "googletagmanager.com/gtm.js",
                                 "domains": [
                                     "rbcroyalbank.com"
@@ -385,6 +415,17 @@
                                     "joann.com"
                                 ],
                                 "reason": "site not loading"
+                            }
+                        ]
+                    },
+                    "opta.net": {
+                        "rules": [
+                            {
+                                "rule": "secure.widget.cloud.opta.net/v3/v3.opta-widgets.js",
+                                "domains": [
+                                    "abc.net.au"
+                                ],
+                                "reason": "widget blocked"
                             }
                         ]
                     },
@@ -415,6 +456,13 @@
                                     "oxygen.com"
                                 ],
                                 "reason": "video not loading"
+                            },
+                            {
+                                "rule": "pdk.theplatform.com/pdk6/current/pdk/player.js",
+                                "domains": [
+                                    "eonline.com"
+                                ],
+                                "reason": "video not loading"
                             }
                         ]
                     },
@@ -434,6 +482,17 @@
                                     "winnipegfreepress.com"
                                 ],
                                 "reason": "missing tweet button"
+                            }
+                        ]
+                    },
+                    "yandex.ru": {
+                        "rules": [
+                            {
+                                "rule": "yandex.ru",
+                                "domains": [
+                                    "tvrain.ru"
+                                ],
+                                "reason": "adwall"
                             }
                         ]
                     }
@@ -595,7 +654,7 @@
                     "hmb_medium"
                 ]
             },
-            "state": "disabled"
+            "state": "enabled"
         },
         "userAgentRotation": {
             "settings": {
@@ -654,10 +713,6 @@
         },
         {
             "domain": "www.x-kom.pl",
-            "reason": "site breakage"
-        },
-        {
-            "domain": "www.merriam-webster.com",
             "reason": "site breakage"
         },
         {
