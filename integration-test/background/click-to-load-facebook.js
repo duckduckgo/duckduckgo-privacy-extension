@@ -1,7 +1,10 @@
 const { getDomain } = require('tldts')
+
 const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
+const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
+const { setupAPISchemaTest } = require('../helpers/apiSchema')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
 const facebookDomains = new Set(['facebook.com', 'facebook.net', 'fbcdn.net'])
@@ -50,9 +53,15 @@ describe('Test Facebook Click To Load', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
         await backgroundWait.forAllConfiguration(bgPage)
+
+        // Overwrite the parts of the configuration needed for our tests.
+        await loadTestConfig(bgPage, 'click-to-load-facebook.json')
     })
 
     afterAll(async () => {
+        // Restore the original configuration.
+        await unloadTestConfig(bgPage)
+
         try {
             await teardown()
         } catch (e) {}
@@ -76,7 +85,7 @@ describe('Test Facebook Click To Load', () => {
 
             expect(facebookSDKRedirect.checked).toBeTrue()
             expect(facebookSDKRedirect.alwaysRedirected).toBeTrue()
-            expect(requestCount).toBeGreaterThan(5)
+            expect(requestCount).toBeGreaterThan(3)
             expect(blockCount).toEqual(requestCount)
             expect(allowCount).toEqual(0)
         }
@@ -103,7 +112,7 @@ describe('Test Facebook Click To Load', () => {
 
             expect(facebookSDKRedirect.checked).toBeTrue()
             expect(facebookSDKRedirect.alwaysRedirected).toBeFalse()
-            expect(requestCount).toBeGreaterThan(5)
+            expect(requestCount).toBeGreaterThan(3)
             expect(blockCount).toEqual(0)
             expect(allowCount).toEqual(requestCount)
         }
@@ -121,10 +130,46 @@ describe('Test Facebook Click To Load', () => {
             // FIXME - It seems that requests to the SDK are not reliably
             //         redirected after the page is reloaded.
             // expect(facebookSDKRedirect.alwaysRedirected).toBeTrue()
-            expect(requestCount).toBeGreaterThan(5)
+            expect(requestCount).toBeGreaterThan(3)
             expect(blockCount).toEqual(requestCount)
             expect(allowCount).toEqual(0)
         }
+
+        page.close()
+    })
+})
+
+describe('Facebook SDK schema', () => {
+    beforeAll(async () => {
+        ({ browser, bgPage, teardown } = await harness.setup({ loadExtension: false }))
+    })
+
+    afterAll(async () => {
+        try {
+            await teardown()
+        } catch (e) {}
+    })
+
+    it('CTL: Facebook SDK schema hasn\'t changed', async () => {
+        const page = await browser.newPage()
+        await page.goto(testSite, { waitUntil: 'networkidle2' })
+
+        // Note: If these tests fail, update the
+        //       /integration-test/data/api_schemas/facebook-sdk.json file
+        //       to match
+        //       /integration-test/artifacts/api_schemas/facebook-sdk.json
+        //       and make any corresponding changes required to the surrogate
+        //       scripts /shared/data/web_accessible_resources/facebook-sdk.js
+        //       and /shared/js/content-scripts/fb-surrogate-xray.js.
+        //       If no changes to the surrogate scripts are required, please
+        //       explain why to the reviewer!
+        //
+        //  See also https://developers.facebook.com/docs/graph-api/changelog
+
+        const { actualSchema, expectedSchema } = await setupAPISchemaTest(
+            page, 'facebook-sdk.json', ['FB']
+        )
+        expect(actualSchema).toEqual(expectedSchema)
 
         page.close()
     })

@@ -7,11 +7,13 @@ module.exports = function (category) {
     // remove params and fragments from url to avoid including sensitive data
     const siteUrl = this.tab.url.split('?')[0].split('#')[0]
     const trackerObjects = this.tab.trackersBlocked
+    const urlParametersRemoved = this.tab.urlParametersRemoved ? 'true' : 'false'
     const brokenSiteParams = [
         { category: category },
         { siteUrl: encodeURIComponent(siteUrl) },
         { upgradedHttps: upgradedHttps.toString() },
-        { tds: this.tds }
+        { tds: this.tds },
+        { urlParametersRemoved }
     ]
 
     for (const tracker in trackerObjects) {

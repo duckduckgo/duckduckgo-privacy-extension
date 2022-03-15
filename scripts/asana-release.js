@@ -129,7 +129,7 @@ const run = async () => {
             testingSubtask.gid,
             {
                 name: 'Extension Testing',
-                include: ['parent', 'subtasks']
+                include: ['notes', 'parent', 'subtasks']
             }
         )
         await asana.tasks.updateTask(

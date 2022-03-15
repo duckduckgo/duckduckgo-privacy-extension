@@ -54,7 +54,7 @@ describe('atb.canShowPostInstall()', () => {
     })
 })
 
-describe('atb.redirectURL()', () => {
+describe('atb.addParametersMainFrameRequestUrl()', () => {
     const tests = [
         { url: 'http://duckduckgo.com/?q=something', rewrite: true },
         { url: 'https://duckduckgo.com/?q=something', rewrite: true },
@@ -83,12 +83,13 @@ describe('atb.redirectURL()', () => {
 
     tests.forEach((test) => {
         it(`should${test.rewrite ? '' : ' not'} rewrite url: ${test.url}`, () => {
-            const result = atb.redirectURL({ url: test.url })
+            const url = new URL(test.url)
+            const result = atb.addParametersMainFrameRequestUrl(url)
 
             if (test.rewrite) {
-                expect(result.redirectUrl).toBeTruthy()
+                expect(result).toBeTrue()
             } else {
-                expect(result).toBeFalsy()
+                expect(result).toBeFalse()
             }
         })
     })
@@ -100,7 +101,10 @@ describe('atb.redirectURL()', () => {
 
     correctUrlTests.forEach((test) => {
         it(`should rewrite ${test.url} correctly`, () => {
-            expect(atb.redirectURL({ url: test.url }).redirectUrl).toEqual(test.expected)
+            const url = new URL(test.url)
+            const result = atb.addParametersMainFrameRequestUrl(url)
+            expect(result).toBeTrue()
+            expect(url.href).toEqual(test.expected)
         })
     })
 })

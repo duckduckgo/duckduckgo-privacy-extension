@@ -2,78 +2,9 @@ const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
 const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
+const { setupAPISchemaTest } = require('../helpers/apiSchema')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/youtube-click-to-load/'
-const testConfig = {
-    'dbg.tds.tds.trackers.youtube\\.com': {
-        owner: {
-            name: 'Google LLC',
-            displayName: 'YouTube',
-            privacyPolicy: 'https://policies.google.com/privacy?hl=en',
-            url: 'http://google.com'
-        },
-        default: 'ignore'
-    },
-    'dbg.tds.tds.trackers.youtube-nocookie\\.com': {
-        owner: {
-            name: 'Google LLC',
-            displayName: 'YouTube',
-            privacyPolicy: 'https://policies.google.com/privacy?hl=en',
-            url: 'http://google.com'
-        },
-        default: 'ignore'
-    },
-    'dbg.tds.ClickToLoadConfig.Google LLC': {
-        domains: [
-            'youtube.com',
-            'youtube-nocookie.com'
-        ],
-        excludedSubdomains: [],
-        excludedDomains: [{
-            domain: 'duckduckgo.com',
-            reason: 'Existing privacy protections for YouTube videos'
-        }],
-        elementData: {
-            'YouTube embedded video': {
-                selectors: [
-                    'iframe[src*=\'://youtube.com/embed\']',
-                    'iframe[src*=\'://youtube-nocookie.com/embed\']',
-                    'iframe[src*=\'://www.youtube.com/embed\']',
-                    'iframe[src*=\'://www.youtube-nocookie.com/embed\']'
-                ],
-                replaceSettings: {
-                    type: 'youtube-video',
-                    buttonText: 'Unblock Video',
-                    infoTitle: 'DuckDuckGo blocked this YouTube Video',
-                    infoText: 'We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity.',
-                    simpleInfoText: 'We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity.'
-                },
-                clickAction: {
-                    type: 'youtube-video'
-                }
-            },
-            'YouTube embedded subscription button': {
-                selectors: [
-                    'iframe[src*=\'://youtube.com/subscribe_embed\']',
-                    'iframe[src*=\'://youtube-nocookie.com/subscribe_embed\']',
-                    'iframe[src*=\'://www.youtube.com/subscribe_embed\']',
-                    'iframe[src*=\'://www.youtube-nocookie.com/subscribe_embed\']'
-                ],
-                replaceSettings: {
-                    type: 'blank'
-                }
-            }
-        },
-        informationalModal: {},
-        surrogates: [
-            {
-                rule: '(www.)?youtube(-nocookie)?.com/iframe_api',
-                surrogate: 'youtube-iframe-api.js'
-            }
-        ]
-    }
-}
-
 const youTubeStandardDomains = new Set(['youtu.be', 'youtube.com', 'www.youtube.com'])
 const youTubeNocookieDomains = new Set(['youtube-nocookie.com', 'www.youtube-nocookie.com'])
 
@@ -129,12 +60,12 @@ describe('Test YouTube Click To Load', () => {
         await backgroundWait.forAllConfiguration(bgPage)
 
         // Overwrite the parts of the configuration needed for our tests.
-        await loadTestConfig(bgPage, testConfig)
+        await loadTestConfig(bgPage, 'click-to-load-youtube.json')
     })
 
     afterAll(async () => {
         // Restore the original configuration.
-        await unloadTestConfig(bgPage, testConfig)
+        await unloadTestConfig(bgPage)
 
         try {
             await teardown()
@@ -289,6 +220,40 @@ describe('Test YouTube Click To Load', () => {
             await page.click('#spherical-video-flip')
             await waitForExpectedRoll('0.0000')
         }
+
+        page.close()
+    })
+})
+
+describe('YouTube Iframe Player API schema', () => {
+    beforeAll(async () => {
+        ({ browser, bgPage, teardown } =
+         await harness.setup({ loadExtension: false }))
+    })
+
+    afterAll(async () => {
+        try {
+            await teardown()
+        } catch (e) {}
+    })
+
+    it('CTL: Iframe Player API schema hasn\'t changed', async () => {
+        const page = await browser.newPage()
+        await page.goto(testSite, { waitUntil: 'networkidle2' })
+
+        // Note: If this test fails, update
+        //       /integration-test/data/api_schemas/youtube-iframe-api.json file
+        //       to match
+        //       /integration-test/artifacts/api_schemas/youtube-iframe-api.json
+        //       and make any corresponding changes required to the surrogate
+        //       script /shared/data/web_accessible_resources/youtube-iframe-api.js
+        //       If no changes to the surrogate script are required, please
+        //       explain why to the reviewer!
+
+        const { actualSchema, expectedSchema } = await setupAPISchemaTest(
+            page, 'youtube-iframe-api.json', ['YT', 'YTConfig']
+        )
+        expect(actualSchema).toEqual(expectedSchema)
 
         page.close()
     })

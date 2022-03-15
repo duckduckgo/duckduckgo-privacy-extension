@@ -19,6 +19,11 @@ grunt-dev:
 tosdr:
 	grunt execute:tosdr --browser=$(browser) --type=$(type)
 
+setup-artifacts-dir:
+	rm -rf integration-test/artifacts
+	mkdir -p integration-test/artifacts/screenshots
+	mkdir -p integration-test/artifacts/api_schemas
+
 setup-build-dir:
 	mkdir -p build/$(browser)
 	rm -rf build/$(browser)/$(type)

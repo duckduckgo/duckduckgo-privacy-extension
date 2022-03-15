@@ -287,6 +287,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
     // TODO clean up message passing
     const legacyMessageTypes = [
         'addUserData',
+        'getUserData',
         'getAddresses',
         'refreshAlias'
     ]
@@ -489,15 +490,6 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
  * on start up
  */
 const onStartup = async () => {
-    const savedTabs = await browser.tabs.query({ currentWindow: true, status: 'complete' })
-    for (let i = 0; i < savedTabs.length; i++) {
-        const tab = savedTabs[i]
-
-        if (tab.url) {
-            tabManager.create(tab)
-        }
-    }
-
     await settings.ready()
     experiment.setActiveExperiment()
 
@@ -520,6 +512,15 @@ const onStartup = async () => {
     if (userData && userData.token) {
         if (!userData.nextAlias) await fetchAlias()
         showContextMenuAction()
+    }
+
+    const savedTabs = await browser.tabs.query({ currentWindow: true, status: 'complete' })
+    for (let i = 0; i < savedTabs.length; i++) {
+        const tab = savedTabs[i]
+
+        if (tab.url) {
+            tabManager.create(tab)
+        }
     }
 }
 
