@@ -15,6 +15,7 @@ const {
     stripTrackingParameters,
     trackingParametersStrippingEnabled
 } = require('./url-parameters.es6')
+const ampProtection = require('./amp-protection.es6')
 
 const debugRequest = false
 
@@ -72,7 +73,14 @@ function handleRequest (requestData) {
             thisTab = newTab
         }
 
-        const mainFrameRequestURL = new URL(requestData.url)
+        let mainFrameRequestURL = new URL(requestData.url)
+
+        // AMP protection
+        const canonUrl = ampProtection.extractAMPURL(thisTab.site, mainFrameRequestURL.href)
+        if (canonUrl) {
+            thisTab.ampUrl = mainFrameRequestURL.href
+            mainFrameRequestURL = new URL(canonUrl)
+        }
 
         // Tracking parameter stripping.
 
@@ -102,7 +110,7 @@ function handleRequest (requestData) {
         // add atb params only to main_frame
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL)
 
-        if (thisTab.urlParametersRemoved || atbParametersAdded) {
+        if (thisTab.urlParametersRemoved || thisTab.ampUrl || atbParametersAdded) {
             return { redirectUrl: mainFrameRequestURL.href }
         }
     } else {
