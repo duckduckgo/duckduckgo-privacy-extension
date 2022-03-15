@@ -63,7 +63,7 @@
         "karma-source-map-support": "1.4.0",
         "load-grunt-tasks": "5.1.0",
         "node-fetch": "^3.2.3",
-        "puppeteer": "13.4.1",
+        "puppeteer": "13.5.1",
         "request": "^2.88.2",
         "sass": "^1.49.9",
         "standard": "16.0.4",
@@ -87,7 +87,7 @@
         "punycode": "2.1.1",
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
-        "tldts": "^5.7.67",
+        "tldts": "^5.7.69",
         "underscore": "1.13.2",
         "web-ext": "^6.7.0"
     },
