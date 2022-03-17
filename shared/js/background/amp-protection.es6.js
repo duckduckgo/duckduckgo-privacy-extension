@@ -10,10 +10,10 @@ const featureName = 'ampLinks'
 
 /**
  * Ensure the config has the ampLinks feature and its settings
- * 
+ *
  * @returns {boolean} - true if the config is loaded
  */
-function ensureConfig() {
+function ensureConfig () {
     if (regexPatterns && keywords) {
         return true
     }
@@ -35,24 +35,24 @@ function ensureConfig() {
 
 /**
  * This method checks if the given url is a Google hosted AMP url and resturns the canonical url if it is.
- * 
+ *
  * @param {Site} site - the initiating site
  * @param {string} url - the url being loaded
- * @returns 
+ * @returns canonical url if found, null otherwise
  */
-function extractAMPURL(site, url) {
+function extractAMPURL (site, url) {
     if (!ensureConfig()) {
         return null
     }
 
     if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
-        return false
+        return null
     }
 
     for (const regexPattern of regexPatterns) {
         const match = url.match(regexPattern)
         if (match && match.length > 1) {
-            let newSite = new Site(match[1].startsWith('http') ? match[1] : `http://${match[1]}`)
+            const newSite = new Site(match[1].startsWith('http') ? match[1] : `http://${match[1]}`)
 
             if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
                 return null
@@ -67,11 +67,11 @@ function extractAMPURL(site, url) {
 
 /**
  * This method checks if the given url is a 1st party AMP url
- * 
+ *
  * @param {string} url - the url being loaded
- * @returns 
+ * @returns true is the url is suspected to be a 1st party AMP url
  */
-function isAMPURL(url) {
+function isAMPURL (url) {
     if (!ensureConfig()) {
         return false
     }
@@ -82,18 +82,18 @@ function isAMPURL(url) {
 /**
  * This async method will fetch the DOM content of a suspected 1st party AMP URL and will
  * return the canonical URL if one is found.
- * 
+ *
  * @param {Site} site - the initiating site
- * @param {string} url - the url being loaded 
- * @returns 
+ * @param {string} url - the url being loaded
+ * @returns cancalon url if found, null otherwise
  */
-async function fetchAMPURL(site, url) {
+async function fetchAMPURL (site, url) {
     if (!ensureConfig()) {
         return null
     }
 
     if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
-        return false
+        return null
     }
 
     lastAmpUrl = url
@@ -101,7 +101,7 @@ async function fetchAMPURL(site, url) {
     const data = await fetch(url)
     const text = await data.text()
     const doc = new DOMParser().parseFromString(text, 'text/html')
-    const errorNode = doc.querySelector('parsererror');
+    const errorNode = doc.querySelector('parsererror')
     if (errorNode) {
         // DOMNParser failed to parse the document
         return null
@@ -110,7 +110,7 @@ async function fetchAMPURL(site, url) {
     const canonicalLinks = doc.querySelectorAll('[rel="canonical"]')
 
     if (canonicalLinks.length > 0) {
-        let newSite = new Site(canonicalLinks[0].href)
+        const newSite = new Site(canonicalLinks[0].href)
 
         if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
             return null
@@ -122,16 +122,16 @@ async function fetchAMPURL(site, url) {
     return null
 }
 
-function getLastAmpUrl() {
+function getLastAmpUrl () {
     return lastAmpUrl
 }
 
-function resetLastAmpUrl() {
+function resetLastAmpUrl () {
     lastAmpUrl = null
 }
 
 tdsStorage.onUpdate('config', () => {
-    linkFormats = null
+    regexPatterns = null
     keywords = null
 })
 
