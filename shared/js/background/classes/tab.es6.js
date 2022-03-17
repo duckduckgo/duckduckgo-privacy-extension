@@ -44,6 +44,7 @@ class Tab {
         this.mainFrameUpgraded = false
         this.urlParametersRemoved = false
         this.urlParametersRemovedUrl = null
+        this.ampUrl = null
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(this.url)

@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill'
 const tldts = require('tldts')
 
 const utils = require('./utils.es6')
@@ -80,6 +81,18 @@ function handleRequest (requestData) {
         if (canonUrl) {
             thisTab.ampUrl = mainFrameRequestURL.href
             mainFrameRequestURL = new URL(canonUrl)
+        } else if (!thisTab.ampUrl && (!ampProtection.getLastAmpUrl() || ampProtection.getLastAmpUrl() !== mainFrameRequestURL.href) 
+                        && ampProtection.isAMPURL(mainFrameRequestURL.href)) {
+            thisTab.ampUrl = mainFrameRequestURL.href
+            ampProtection.fetchAMPURL(thisTab.site, mainFrameRequestURL.href)
+                .then(canonUrl => {
+                    const newUrl = canonUrl ? canonUrl : mainFrameRequestURL.href
+                    browser.tabs.update(thisTab.id, { url: newUrl })
+                })
+                return { redirectUrl: 'about:blank' }
+        } else {
+            ampProtection.resetLastAmpUrl()
+            thisTab.ampUrl = null
         }
 
         // Tracking parameter stripping.

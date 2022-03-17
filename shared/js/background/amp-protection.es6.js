@@ -4,6 +4,8 @@ const tdsStorage = require('./storage/tds.es6')
 let regexPatterns = null
 let keywords = null
 
+let lastAmpUrl = null
+
 const featureName = 'ampLinks'
 
 /**
@@ -94,6 +96,8 @@ async function fetchAMPURL(site, url) {
         return false
     }
 
+    lastAmpUrl = url
+
     const data = await fetch(url)
     const text = await data.text()
     const doc = new DOMParser().parseFromString(text, 'text/html')
@@ -118,8 +122,23 @@ async function fetchAMPURL(site, url) {
     return null
 }
 
+function getLastAmpUrl() {
+    return lastAmpUrl
+}
+
+function resetLastAmpUrl() {
+    lastAmpUrl = null
+}
+
+tdsStorage.onUpdate('config', () => {
+    linkFormats = null
+    keywords = null
+})
+
 module.exports = {
     isAMPURL,
     extractAMPURL,
-    fetchAMPURL
+    fetchAMPURL,
+    getLastAmpUrl,
+    resetLastAmpUrl
 }
