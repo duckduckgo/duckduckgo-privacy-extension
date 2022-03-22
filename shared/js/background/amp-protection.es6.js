@@ -52,7 +52,7 @@ function extractAMPURL (site, url) {
     for (const regexPattern of regexPatterns) {
         const match = url.match(regexPattern)
         if (match && match.length > 1) {
-            const newSite = new Site(match[1].startsWith('http') ? match[1] : `http://${match[1]}`)
+            const newSite = new Site(match[1].startsWith('http') ? match[1] : `https://${match[1]}`)
 
             if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
                 return null
@@ -73,6 +73,11 @@ function extractAMPURL (site, url) {
  */
 function isAMPURL (url) {
     if (!ensureConfig()) {
+        return false
+    }
+
+    const site = new Site(url)
+    if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
         return false
     }
 
