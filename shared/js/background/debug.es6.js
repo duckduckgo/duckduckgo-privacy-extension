@@ -4,6 +4,7 @@
  */
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
+const ampProtection = require('./amp-protection.es6')
 const load = require('./load.es6')
 const atb = require('./atb.es6')
 const https = require('./https.es6')
@@ -13,6 +14,7 @@ const messageHandlers = require('./message-handlers')
 window.dbg = {
     settings,
     tabManager,
+    ampProtection,
     atb,
     https,
     tds
