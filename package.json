@@ -1,0 +1,17 @@
+{
+    "name": "ddg2dnr",
+    "version": "0.1.0",
+    "description": "Scripts to generate declarativeNetRequest rulesets for the DuckDuckGo Privacy Essentials extension",
+    "license": "Apache-2.0",
+    "repository": "duckduckgo/duckduckgo-privacy-extension",
+    "devDependencies": {
+        "eslint": "7.32.0",
+        "eslint-config-standard": "16.0.3",
+        "mocha": "9.2.2"
+    },
+    "scripts": {
+        "lint": "eslint . --ext .js",
+        "smarter-encryption": "node cli.js smarter-encryption",
+        "test": "mocha"
+    }
+}
