@@ -45,6 +45,7 @@ class Tab {
         this.urlParametersRemoved = false
         this.urlParametersRemovedUrl = null
         this.ampUrl = null
+        this.cleanAmpUrl = null
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.site = new Site(this.url)
@@ -169,6 +170,25 @@ class Tab {
         })
 
         return hasAccess
+    }
+
+    /**
+     * This method sets ampUrl. In cases where ampUrl is already set with an AMP url and the new url is
+     * contained in the current ampUrl, we don't want to set ampUrl to the new url. This is because in some cases
+     * simple amp urls (e.g. google.com/amp) will contain another amp url as the extacted url.
+     * 
+     * @param {string} url - the url to set ampUrl to
+     */
+    setAmpUrl (url) {
+        if (this.ampUrl) {
+            const ampUrl = new URL(this.ampUrl)
+            const newUrl = new URL(url)
+            if (ampUrl.hostname.includes('google') && ampUrl.pathname.includes(newUrl.hostname)) {
+                return
+            }
+        }
+
+        this.ampUrl = url
     }
 }
 

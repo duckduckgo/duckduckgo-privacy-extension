@@ -79,18 +79,26 @@ function handleRequest (requestData) {
         // AMP protection
         const canonUrl = ampProtection.extractAMPURL(thisTab.site, mainFrameRequestURL.href)
         if (canonUrl) {
-            thisTab.ampUrl = mainFrameRequestURL.href
+            thisTab.setAmpUrl(mainFrameRequestURL.href)
+            thisTab.cleanAmpUrl = canonUrl
             mainFrameRequestURL = new URL(canonUrl)
-        } else if (!thisTab.ampUrl && (!ampProtection.getLastAmpUrl() || ampProtection.getLastAmpUrl() !== mainFrameRequestURL.href) &&
-                        ampProtection.isAMPURL(mainFrameRequestURL.href)) {
+        } else if (ampProtection.tabNeedsDeepExtraction(thisTab, mainFrameRequestURL)) {
+            thisTab.setAmpUrl(mainFrameRequestURL.href)
             ampProtection.fetchAMPURL(thisTab.site, mainFrameRequestURL.href)
                 .then(canonUrl => {
                     const newUrl = canonUrl || mainFrameRequestURL.href
+                    let currentTab = tabManager.get({ tabId: thisTab.id })
+                    if (currentTab) {
+                        // Set clean url to the canonical url or the original url if no canonical url is found
+                        currentTab.cleanAmpUrl = canonUrl || mainFrameRequestURL.href
+                    }
+
                     browser.tabs.update(thisTab.id, { url: newUrl })
-                    let oldTab = tabManager.get(requestData)
-                    oldTab.ampUrl = ampProtection.getLastAmpUrl()
                 })
             return { redirectUrl: 'about:blank' }
+        } else if (thisTab.cleanAmpUrl && mainFrameRequestURL.host !== new URL(thisTab.cleanAmpUrl).host) {
+            thisTab.ampUrl = null
+            thisTab.cleanAmpUrl = null
         }
 
         // Tracking parameter stripping.

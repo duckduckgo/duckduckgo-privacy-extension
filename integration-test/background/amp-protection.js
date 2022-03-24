@@ -31,7 +31,7 @@ function getAmpUrl(bgPage) {
     })
 }
 
-fdescribe('Test AMP URL tracking protection', () => {
+describe('Test AMP URL tracking protection', () => {
     let browser
     let bgPage
     let teardown
@@ -78,14 +78,19 @@ fdescribe('Test AMP URL tracking protection', () => {
             }, li))
         }
 
-        const exceptions = ['www.brookings.edu', 'www.wpxi.com']
+        const exceptions = [
+            'www.brookings.edu', // page takes too long to load in tests
+            'www.wpxi.com', // parameters are re-computed when loaded
+            'amp.dev', // url changed
+            'www.vox.com' // url changed
+        ]
 
-        // brookings.edu takes too long to load, so we skip it.
+        // remove exceptions from test cases
         testCases = testCases.filter(({ expectedUrl }) => !exceptions.includes(new URL(expectedUrl).hostname) )
 
         // Perform the tests.
         for (const { initialUrl, expectedUrl, description } of testCases) {
-            // Test the tracking parameters were stripped.
+            // Load the amp url
             await page.goto(initialUrl, { waitUntil: 'networkidle0' })
 
             if (page.url() === 'about:blank') {
@@ -99,8 +104,8 @@ fdescribe('Test AMP URL tracking protection', () => {
                 .withContext(description + ' (ampUrl)')
                 .toEqual(initialUrl)
 
-            // Reload the page, to check that `urlParametersRemoved` was cleared.
-            await page.reload({ waitUntil: 'networkidle0' })
+            // Navigate back to the test page and check that the `ampUrl` is null.
+            await page.goto('https://example.com', { waitUntil: 'networkidle0' })
             expect(await getAmpUrl(bgPage)).toEqual(null)
         }
     })
