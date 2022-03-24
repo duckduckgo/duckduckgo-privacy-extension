@@ -84,6 +84,11 @@ function handleRequest (requestData) {
             mainFrameRequestURL = new URL(canonUrl)
         } else if (ampProtection.tabNeedsDeepExtraction(thisTab, mainFrameRequestURL)) {
             thisTab.setAmpUrl(mainFrameRequestURL.href)
+
+            if (utils.getBrowserName() === 'moz') {
+                return ampProtection.fetchAMPURLMoz(tabManager, thisTab, mainFrameRequestURL.href)
+            }
+
             ampProtection.fetchAMPURL(thisTab.site, mainFrameRequestURL.href)
                 .then(canonUrl => {
                     const newUrl = canonUrl || mainFrameRequestURL.href
@@ -100,6 +105,10 @@ function handleRequest (requestData) {
             thisTab.ampUrl = null
             thisTab.cleanAmpUrl = null
         }
+
+        const ampRedirected = thisTab.ampUrl && 
+                              thisTab.cleanAmpUrl && thisTab.cleanAmpUrl !== thisTab.ampUrl && 
+                              requestData.url === thisTab.ampUrl
 
         // Tracking parameter stripping.
 
@@ -129,7 +138,7 @@ function handleRequest (requestData) {
         // add atb params only to main_frame
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL)
 
-        if (thisTab.urlParametersRemoved || thisTab.ampUrl || atbParametersAdded) {
+        if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded) {
             return { redirectUrl: mainFrameRequestURL.href }
         }
     } else {

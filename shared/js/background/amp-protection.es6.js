@@ -64,7 +64,7 @@ function extractAMPURL (site, url) {
 }
 
 function tabNeedsDeepExtraction (thisTab, mainFrameRequestURL) {
-    if (thisTab.ampUrl || thisTab.ampUrl === mainFrameRequestURL.href) {
+    if (thisTab.ampUrl && thisTab.ampUrl === mainFrameRequestURL.href) {
         return false
     }
 
@@ -131,6 +131,29 @@ async function fetchAMPURL (site, url) {
     return null
 }
 
+/**
+ * This method is the same as fetchAMPURL but will return a promise that will resolve to the canonical URL if one is found.
+ * This should only be used on Firefox
+ * 
+ * @param {object} tabManager - current tab manager instance
+ * @param {object} thisTab - current tab
+ * @param {string} url - url being loaded
+ * @returns 
+ */
+async function fetchAMPURLMoz (tabManager, thisTab, url) {
+    const canonUrl = await fetchAMPURL(thisTab.site, url)
+
+    const currentTab = tabManager.get({ tabId: thisTab.id })
+    if (currentTab) {
+        // Set clean url to the canonical url or the original url if no canonical url is found
+        currentTab.cleanAmpUrl = canonUrl || mainFrameRequestURL.href
+    }
+
+    if (canonUrl) {
+        return { redirectUrl: canonUrl }
+    }
+}
+
 tdsStorage.onUpdate('config', () => {
     regexPatterns = null
     keywords = null
@@ -140,5 +163,6 @@ module.exports = {
     isAMPURL,
     extractAMPURL,
     fetchAMPURL,
-    tabNeedsDeepExtraction
+    tabNeedsDeepExtraction,
+    fetchAMPURLMoz
 }
