@@ -13,7 +13,7 @@ const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/amp/'
  *   The value of `ampUrl` for the currently active tab, or null
  *   if AMP protections haven't fired
  */
-function getAmpUrl(bgPage) {
+function getAmpUrl (bgPage) {
     return bgPage.evaluate(async () => {
         const [{ id: tabId }] = await new Promise(resolve => {
             chrome.tabs.query(
@@ -70,7 +70,7 @@ describe('Test AMP URL tracking protection', () => {
         for (const li of await page.$$('li')) {
             testCases.push(await page.evaluate(li => {
                 const { innerText: description, href: initialUrl } = li.querySelector('a')
-                let { innerText: expectedUrlStr } = li.querySelector('.expected')
+                const { innerText: expectedUrlStr } = li.querySelector('.expected')
 
                 const expectedUrl = new URL(expectedUrlStr.split(' ')[1]).href
 
@@ -86,7 +86,7 @@ describe('Test AMP URL tracking protection', () => {
         ]
 
         // remove exceptions from test cases
-        testCases = testCases.filter(({ expectedUrl }) => !exceptions.includes(new URL(expectedUrl).hostname) )
+        testCases = testCases.filter(({ expectedUrl }) => !exceptions.includes(new URL(expectedUrl).hostname))
 
         // Perform the tests.
         for (const { initialUrl, expectedUrl, description } of testCases) {

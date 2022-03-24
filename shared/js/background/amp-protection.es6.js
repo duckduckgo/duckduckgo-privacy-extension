@@ -78,7 +78,6 @@ function tabNeedsDeepExtraction (thisTab, mainFrameRequestURL) {
  * @returns true is the url is suspected to be a 1st party AMP url
  */
 function isAMPURL (url) {
-
     if (!ensureConfig()) {
         return false
     }

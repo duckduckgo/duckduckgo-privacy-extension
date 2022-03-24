@@ -87,7 +87,7 @@ function handleRequest (requestData) {
             ampProtection.fetchAMPURL(thisTab.site, mainFrameRequestURL.href)
                 .then(canonUrl => {
                     const newUrl = canonUrl || mainFrameRequestURL.href
-                    let currentTab = tabManager.get({ tabId: thisTab.id })
+                    const currentTab = tabManager.get({ tabId: thisTab.id })
                     if (currentTab) {
                         // Set clean url to the canonical url or the original url if no canonical url is found
                         currentTab.cleanAmpUrl = canonUrl || mainFrameRequestURL.href
