@@ -106,8 +106,8 @@ function handleRequest (requestData) {
             thisTab.cleanAmpUrl = null
         }
 
-        const ampRedirected = thisTab.ampUrl && 
-                              thisTab.cleanAmpUrl && thisTab.cleanAmpUrl !== thisTab.ampUrl && 
+        const ampRedirected = thisTab.ampUrl &&
+                              thisTab.cleanAmpUrl && thisTab.cleanAmpUrl !== thisTab.ampUrl &&
                               requestData.url === thisTab.ampUrl
 
         // Tracking parameter stripping.

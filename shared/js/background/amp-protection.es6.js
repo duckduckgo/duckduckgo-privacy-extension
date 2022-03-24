@@ -134,11 +134,11 @@ async function fetchAMPURL (site, url) {
 /**
  * This method is the same as fetchAMPURL but will return a promise that will resolve to the canonical URL if one is found.
  * This should only be used on Firefox
- * 
+ *
  * @param {object} tabManager - current tab manager instance
  * @param {object} thisTab - current tab
  * @param {string} url - url being loaded
- * @returns 
+ * @returns promise that resolves to the canonical URL if one is found
  */
 async function fetchAMPURLMoz (tabManager, thisTab, url) {
     const canonUrl = await fetchAMPURL(thisTab.site, url)
@@ -146,7 +146,7 @@ async function fetchAMPURLMoz (tabManager, thisTab, url) {
     const currentTab = tabManager.get({ tabId: thisTab.id })
     if (currentTab) {
         // Set clean url to the canonical url or the original url if no canonical url is found
-        currentTab.cleanAmpUrl = canonUrl || mainFrameRequestURL.href
+        currentTab.cleanAmpUrl = canonUrl || url
     }
 
     if (canonUrl) {
