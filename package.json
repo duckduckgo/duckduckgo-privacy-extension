@@ -87,7 +87,7 @@
         "punycode": "2.1.1",
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
-        "tldts": "^5.7.69",
+        "tldts": "^5.7.73",
         "underscore": "1.13.2",
         "web-ext": "^6.7.0"
     },
