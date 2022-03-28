@@ -82,7 +82,7 @@ function handleRequest (requestData) {
             thisTab.setAmpUrl(mainFrameRequestURL.href)
             thisTab.cleanAmpUrl = canonUrl
             mainFrameRequestURL = new URL(canonUrl)
-        } else if (ampProtection.tabNeedsDeepExtraction(thisTab, mainFrameRequestURL)) {
+        } else if (ampProtection.tabNeedsDeepExtraction(requestData, thisTab, mainFrameRequestURL)) {
             thisTab.setAmpUrl(mainFrameRequestURL.href)
 
             if (utils.getBrowserName() === 'moz') {
@@ -92,13 +92,15 @@ function handleRequest (requestData) {
             ampProtection.fetchAMPURL(thisTab.site, mainFrameRequestURL.href)
                 .then(canonUrl => {
                     const newUrl = canonUrl || mainFrameRequestURL.href
-                    const currentTab = tabManager.get({ tabId: thisTab.id })
+                    const currentTab = thisTab ? tabManager.get({ tabId: thisTab.id }) : null
                     if (currentTab) {
                         // Set clean url to the canonical url or the original url if no canonical url is found
                         currentTab.cleanAmpUrl = canonUrl || mainFrameRequestURL.href
                     }
 
-                    browser.tabs.update(thisTab.id, { url: newUrl })
+                    if (thisTab) {
+                        browser.tabs.update(thisTab.id, { url: newUrl })
+                    }
                 })
             return { redirectUrl: 'about:blank' }
         } else if (thisTab.cleanAmpUrl && mainFrameRequestURL.host !== new URL(thisTab.cleanAmpUrl).host) {

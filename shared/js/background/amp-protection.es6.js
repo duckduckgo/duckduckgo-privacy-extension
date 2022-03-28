@@ -63,7 +63,11 @@ function extractAMPURL (site, url) {
     return null
 }
 
-function tabNeedsDeepExtraction (thisTab, mainFrameRequestURL) {
+function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
+    if (requestIsExtension(requestData)) {
+        return false
+    }
+
     if (thisTab.ampUrl && thisTab.ampUrl === mainFrameRequestURL.href) {
         return false
     }
@@ -103,12 +107,28 @@ async function fetchAMPURL (site, url) {
         return null
     }
 
-    if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
+    if (site.specialDomainName || !site.isFeatureEnabled(featureName) || site.url === 'about:blank') {
         return null
     }
 
-    const data = await fetch(url)
+    let data = null
+
+    try {
+        data = await fetch(url)
+    } catch (e) {
+        console.error(e)
+        return null
+    }
+
+    if (!data) {
+        return null
+    }
+
     const text = await data.text()
+    if (!text) {
+        return null
+    }
+
     const doc = new DOMParser().parseFromString(text, 'text/html')
     const errorNode = doc.querySelector('parsererror')
     if (errorNode) {
@@ -152,6 +172,17 @@ async function fetchAMPURLMoz (tabManager, thisTab, url) {
     if (canonUrl) {
         return { redirectUrl: canonUrl }
     }
+}
+
+/**
+ * Check if the given request was initiated by the extension. On Chrome extension initiated requests
+ * will cause a crash if we try to use fetch on their thread.
+ *
+ * @param {object} request - request object
+ * @returns true if the request was initiated by an extension
+ */
+function requestIsExtension (request) {
+    return request.initiator && request.initiator.startsWith('chrome-extension://')
 }
 
 tdsStorage.onUpdate('config', () => {
