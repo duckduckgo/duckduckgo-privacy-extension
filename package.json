@@ -31,7 +31,7 @@
     },
     "devDependencies": {
         "@babel/cli": "^7.17.6",
-        "@babel/core": "^7.17.7",
+        "@babel/core": "^7.17.8",
         "@babel/node": "^7.16.8",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.16.11",
@@ -89,7 +89,7 @@
         "seedrandom": "^3.0.5",
         "tldts": "^5.7.69",
         "underscore": "1.13.2",
-        "web-ext": "^6.7.0"
+        "web-ext": "^6.8.0"
     },
     "babel": {
         "presets": [
