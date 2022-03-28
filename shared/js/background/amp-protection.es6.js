@@ -63,6 +63,14 @@ function extractAMPURL (site, url) {
     return null
 }
 
+/**
+ * Check if the given request is a suspected 1st party AMP URL. If it is, then we will attempt to fetch the canonical URL
+ *
+ * @param {object} requestData - request data
+ * @param {object} thisTab - current tab
+ * @param {object} mainFrameRequestURL - main frame request url
+ * @returns true if the request is a suspected 1st party AMP url
+ */
 function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
     if (requestIsExtension(requestData)) {
         return false
