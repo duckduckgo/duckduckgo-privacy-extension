@@ -1,8 +1,7 @@
 const Site = require('./classes/site.es6')
 const tdsStorage = require('./storage/tds.es6')
 
-let regexPatterns = null
-let keywords = null
+let ampSettings = null
 
 const featureName = 'ampLinks'
 
@@ -12,7 +11,7 @@ const featureName = 'ampLinks'
  * @returns {boolean} - true if the config is loaded
  */
 function ensureConfig () {
-    if (regexPatterns && keywords) {
+    if (ampSettings) {
         return true
     }
 
@@ -25,8 +24,7 @@ function ensureConfig () {
         return false
     }
 
-    regexPatterns = tdsStorage.config.features.ampLinks.settings.linkFormats
-    keywords = tdsStorage.config.features.ampLinks.settings.keywords
+    ampSettings = tdsStorage.config.features.ampLinks.settings
 
     return true
 }
@@ -47,7 +45,7 @@ function extractAMPURL (site, url) {
         return null
     }
 
-    for (const regexPattern of regexPatterns) {
+    for (const regexPattern of ampSettings.linkFormats) {
         const match = url.match(regexPattern)
         if (match && match.length > 1) {
             const newSite = new Site(match[1].startsWith('http') ? match[1] : `https://${match[1]}`)
@@ -99,7 +97,7 @@ function isAMPURL (url) {
         return false
     }
 
-    return keywords.some(keyword => url.includes(keyword))
+    return ampSettings.keywords.some(keyword => url.includes(keyword))
 }
 
 /**
@@ -120,9 +118,11 @@ async function fetchAMPURL (site, url) {
     }
 
     let data = null
+    const timeoutController = new AbortController()
+    setTimeout(() => timeoutController.abort(), 5000)
 
     try {
-        data = await fetch(url)
+        data = await fetch(url, { signal: timeoutController.signal })
     } catch (e) {
         console.error(e)
         return null
@@ -194,8 +194,7 @@ function requestIsExtension (request) {
 }
 
 tdsStorage.onUpdate('config', () => {
-    regexPatterns = null
-    keywords = null
+    ampSettings = null
 })
 
 module.exports = {

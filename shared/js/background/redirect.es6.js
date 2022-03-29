@@ -38,6 +38,40 @@ function buildResponse (url, requestData, tab, isMainFrame) {
     }
 }
 
+function updateTabCleanAmpUrl (currentTab, canonicalUrl, url) {
+    if (currentTab) {
+        currentTab.cleanAmpUrl = canonicalUrl || url
+    }
+}
+
+async function handleAmpAsyncRedirect (thisTab, url) {
+    const canonicalUrl = await ampProtection.fetchAMPURL(thisTab.site, url)
+    const currentTab = tabManager.get({ tabId: thisTab.id })
+    updateTabCleanAmpUrl(currentTab, canonicalUrl, url)
+    if (canonicalUrl) {
+        return { redirectUrl: canonicalUrl }
+    }
+}
+
+async function handleAmpDelayedUpdate (thisTab, url) {
+    const canonicalUrl = await ampProtection.fetchAMPURL(thisTab.site, url)
+    const currentTab = tabManager.get({ tabId: thisTab.id })
+    const newUrl = canonicalUrl || url
+    updateTabCleanAmpUrl(currentTab, canonicalUrl, url)
+
+    browser.tabs.update(thisTab.id, { url: newUrl })
+}
+
+function handleAmpRedirect (thisTab, url) {
+    if (!thisTab) { return }
+    if (utils.getBrowserName() === 'moz') {
+        return handleAmpAsyncRedirect(thisTab, url)
+    }
+
+    handleAmpDelayedUpdate(thisTab, url)
+    return { redirectUrl: 'about:blank' }
+}
+
 /**
  * Where most of the extension work happens.
  *
@@ -80,29 +114,11 @@ function handleRequest (requestData) {
         const canonUrl = ampProtection.extractAMPURL(thisTab.site, mainFrameRequestURL.href)
         if (canonUrl) {
             thisTab.setAmpUrl(mainFrameRequestURL.href)
-            thisTab.cleanAmpUrl = canonUrl
+            updateTabCleanAmpUrl(thisTab, canonUrl, mainFrameRequestURL.href)
             mainFrameRequestURL = new URL(canonUrl)
         } else if (ampProtection.tabNeedsDeepExtraction(requestData, thisTab, mainFrameRequestURL)) {
             thisTab.setAmpUrl(mainFrameRequestURL.href)
-
-            if (utils.getBrowserName() === 'moz') {
-                return ampProtection.fetchAMPURLMoz(tabManager, thisTab, mainFrameRequestURL.href)
-            }
-
-            ampProtection.fetchAMPURL(thisTab.site, mainFrameRequestURL.href)
-                .then(canonUrl => {
-                    const newUrl = canonUrl || mainFrameRequestURL.href
-                    const currentTab = thisTab ? tabManager.get({ tabId: thisTab.id }) : null
-                    if (currentTab) {
-                        // Set clean url to the canonical url or the original url if no canonical url is found
-                        currentTab.cleanAmpUrl = canonUrl || mainFrameRequestURL.href
-                    }
-
-                    if (thisTab) {
-                        browser.tabs.update(thisTab.id, { url: newUrl })
-                    }
-                })
-            return { redirectUrl: 'about:blank' }
+            return handleAmpRedirect(thisTab, mainFrameRequestURL.href)
         } else if (thisTab.cleanAmpUrl && mainFrameRequestURL.host !== new URL(thisTab.cleanAmpUrl).host) {
             thisTab.ampUrl = null
             thisTab.cleanAmpUrl = null
