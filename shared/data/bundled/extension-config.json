@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1647369493516,
+    "version": 1648659788789,
     "features": {
         "ampLinks": {
             "exceptions": [],
@@ -25,7 +25,7 @@
                     "?amp"
                 ]
             },
-            "state": "enabled"
+            "state": "disabled"
         },
         "autoconsent": {
             "exceptions": [
@@ -40,6 +40,14 @@
                 {
                     "domain": "www.derstandard.at",
                     "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "kohler.com",
+                    "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "zeitraum-moebel.de",
+                    "reason": "broken autoconsent rule"
                 }
             ],
             "settings": {
@@ -218,14 +226,31 @@
                     "reason": "site breakage"
                 },
                 {
+                    "domain": "realestate.com.au",
+                    "reason": "Site not loading"
+                },
+                {
                     "domain": "stadia.google.com",
+                    "reason": "site breakage"
+                },
+                {
+                    "domain": "hyatt.com",
                     "reason": "site breakage"
                 }
             ],
             "state": "enabled"
         },
         "fingerprintingScreenSize": {
-            "exceptions": [],
+            "exceptions": [
+                {
+                    "domain": "hyatt.com",
+                    "reason": "Site not loading"
+                },
+                {
+                    "domain": "realestate.com.au",
+                    "reason": "Site not loading"
+                }
+            ],
             "state": "enabled"
         },
         "fingerprintingTemporaryStorage": {
@@ -300,6 +325,17 @@
                                     "seattletimes.com"
                                 ],
                                 "reason": "adwall"
+                            }
+                        ]
+                    },
+                    "chipotle.com": {
+                        "rules": [
+                            {
+                                "rule": "services.chipotle.com/new_cmg_utils1.js",
+                                "domains": [
+                                    "chipotle.com"
+                                ],
+                                "reason": "login issues"
                             }
                         ]
                     },
@@ -406,6 +442,35 @@
                             }
                         ]
                     },
+                    "iesnare.com": {
+                        "rules": [
+                            {
+                                "rule": "mpsnare.iesnare.com/snare.js",
+                                "domains": [
+                                    "rei.com"
+                                ],
+                                "reason": "adwall"
+                            }
+                        ]
+                    },
+                    "instagram.com": {
+                        "rules": [
+                            {
+                                "rule": "platform.instagram.com/en_US/embeds.js",
+                                "domains": [
+                                    "livejournal.com"
+                                ],
+                                "reason": "embeds"
+                            },
+                            {
+                                "rule": "www.instagram.com/embed.js",
+                                "domains": [
+                                    "livejournal.com"
+                                ],
+                                "reason": "embeds"
+                            }
+                        ]
+                    },
                     "klarnaservices.com": {
                         "rules": [
                             {
@@ -423,7 +488,8 @@
                             {
                                 "rule": "secure.widget.cloud.opta.net/v3/v3.opta-widgets.js",
                                 "domains": [
-                                    "abc.net.au"
+                                    "abc.net.au",
+                                    "emol.com"
                                 ],
                                 "reason": "widget blocked"
                             }
@@ -709,18 +775,6 @@
     "unprotectedTemporary": [
         {
             "domain": "usbank.com",
-            "reason": "site breakage"
-        },
-        {
-            "domain": "www.x-kom.pl",
-            "reason": "site breakage"
-        },
-        {
-            "domain": "tiaa.org",
-            "reason": "site breakage"
-        },
-        {
-            "domain": "fidelity.com",
             "reason": "site breakage"
         }
     ]

@@ -31,7 +31,7 @@ function getAmpUrl (bgPage) {
     })
 }
 
-fdescribe('Test AMP URL tracking protection', () => {
+describe('Test AMP URL tracking protection', () => {
     let browser
     let bgPage
     let teardown
@@ -39,7 +39,7 @@ fdescribe('Test AMP URL tracking protection', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
         await backgroundWait.forAllConfiguration(bgPage)
-        await bgPage.waitForTimeout(5000) // wait for amp protection to load
+        await bgPage.waitForTimeout(10000) // wait for amp protection to load
 
         // Overwrite the parts of the configuration needed for our tests.
         await loadTestConfig(bgPage, 'amp-protections.json')
