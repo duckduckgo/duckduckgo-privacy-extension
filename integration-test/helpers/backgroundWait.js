@@ -20,7 +20,6 @@ async function forAllConfiguration (bgPage) {
         window.dbg?.https &&
         window.dbg?.tds?.ClickToLoadConfig &&
         window.dbg?.tds?.config?.features?.clickToPlay?.state &&
-        window.dbg?.tds?.config?.features?.ampLinks?.settings &&
         window.dbg?.tds?.tds?.domains &&
         window.dbg?.tds?.tds?.entities &&
         window.dbg?.tds?.tds?.trackers &&
