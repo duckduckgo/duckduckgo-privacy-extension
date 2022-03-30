@@ -89,7 +89,7 @@
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
         "tldts": "^5.7.73",
-        "tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.0.0",
+        "tracker-surrogates": "github:duckduckgo/tracker-surrogates#9.8.2021",
         "underscore": "1.13.2",
         "web-ext": "^6.8.0"
     },
