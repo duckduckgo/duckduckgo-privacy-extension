@@ -1,5 +1,6 @@
 const Site = require('./classes/site.es6')
 const tdsStorage = require('./storage/tds.es6')
+const utils = require('./utils.es6')
 
 let ampSettings = null
 
@@ -70,6 +71,11 @@ function extractAMPURL (site, url) {
  * @returns true if the request is a suspected 1st party AMP url
  */
 function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
+    if (utils.getBrowserName() !== 'moz') {
+        // deep extraction is only supported on Firefox
+        return false
+    }
+
     if (requestIsExtension(requestData)) {
         return false
     }

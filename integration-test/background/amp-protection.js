@@ -31,7 +31,7 @@ function getAmpUrl (bgPage) {
     })
 }
 
-describe('Test AMP URL tracking protection', () => {
+fdescribe('Test AMP URL tracking protection', () => {
     let browser
     let bgPage
     let teardown
@@ -63,7 +63,7 @@ describe('Test AMP URL tracking protection', () => {
         }
 
         // Check that the `ampUrl` breakage flag isn't set.
-        expect(await getAmpUrl(bgPage)).toEqual(testSite)
+        expect(await getAmpUrl(bgPage)).toEqual(null)
 
         // Scrape the list of test cases.
         let testCases = []
@@ -86,7 +86,11 @@ describe('Test AMP URL tracking protection', () => {
         ]
 
         // remove exceptions from test cases
-        testCases = testCases.filter(({ expectedUrl }) => !exceptions.includes(new URL(expectedUrl).hostname))
+        testCases = testCases.filter(({ initialUrl, expectedUrl }) => {
+            const expected = new URL(expectedUrl)
+            const initial = new URL(initialUrl)
+            return !exceptions.includes(expected.hostname) && initial.hostname.includes('google')
+        })
 
         // Perform the tests.
         for (const { initialUrl, expectedUrl, description } of testCases) {
