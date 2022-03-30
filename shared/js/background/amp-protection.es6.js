@@ -144,7 +144,6 @@ async function fetchAMPURL (site, url) {
     }
 
     const doc = new DOMParser().parseFromString(text, 'text/html')
-    const errorNode = doc.querySelector('parsererror')
 
     const firstCanonicalLink = doc.querySelector('[rel="canonical"]')
 
