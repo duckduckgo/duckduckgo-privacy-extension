@@ -72,7 +72,7 @@
         "yargs": "^17.3.1"
     },
     "dependencies": {
-        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#4.1.0",
+        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#4.1.1",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#1.1.2",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "1.1.0",
