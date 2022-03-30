@@ -1,5 +1,5 @@
 const harness = require('../helpers/harness')
-const wait = require('../helpers/wait')
+const backgroundWait = require('../helpers/backgroundWait')
 
 let browser, bgPage, teardown
 
@@ -7,8 +7,8 @@ describe('onboarding', () => {
     beforeEach(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
 
-        await wait.forSetting(bgPage, 'showWelcomeBanner')
-        await wait.forSetting(bgPage, 'showCounterMessaging')
+        await backgroundWait.forSetting(bgPage, 'showWelcomeBanner')
+        await backgroundWait.forSetting(bgPage, 'showCounterMessaging')
     })
 
     afterEach(async () => {
@@ -105,7 +105,7 @@ describe('onboarding', () => {
             window.postMessage({ type: 'rescheduleCounterMessagingRequest' }, window.location.origin)
         })
 
-        await wait.forSetting(bgPage, 'rescheduleCounterMessagingOnStart')
+        await backgroundWait.forSetting(bgPage, 'rescheduleCounterMessagingOnStart')
         const rescheduleCounterMessagingOnStart = await bgPage.evaluate(() => {
             return window.dbg.settings.getSetting('rescheduleCounterMessagingOnStart')
         })

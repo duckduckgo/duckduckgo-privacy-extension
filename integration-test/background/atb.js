@@ -1,6 +1,6 @@
 /* global dbg:false */
 const harness = require('../helpers/harness')
-const wait = require('../helpers/wait')
+const backgroundWait = require('../helpers/backgroundWait')
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
 
 let browser
@@ -28,7 +28,7 @@ describe('install workflow', () => {
             while (!postInstallOpened) {
                 const urls = await Promise.all(browser.targets().map(target => target.url()))
                 postInstallOpened = urls.some(url => url.includes('duckduckgo.com/app?post=1'))
-                await wait.ms(100)
+                await bgPage.waitForTimeout(100)
             }
 
             expect(postInstallOpened).toBeTruthy()
@@ -47,7 +47,7 @@ describe('install workflow', () => {
              * Instead we load up the extension, wait for the ATB process to finish up,
              * then reset everything and simulate a fresh install by calling atb.updateATBValues()
              */
-            await wait.forSetting(bgPage, 'extiSent')
+            await backgroundWait.forSetting(bgPage, 'extiSent')
 
             await bgPage.evaluate(() => {
                 dbg.settings.removeSetting('atb')
@@ -68,7 +68,7 @@ describe('install workflow', () => {
         it('should get its ATB param from atb.js when there\'s no install success page', async () => {
             // try get ATB params
             await bgPage.evaluate(() => dbg.atb.updateATBValues())
-            await wait.forSetting(bgPage, 'extiSent')
+            await backgroundWait.forSetting(bgPage, 'extiSent')
 
             const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
             const setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
@@ -105,7 +105,7 @@ describe('install workflow', () => {
 
             // try get ATB params again
             await bgPage.evaluate(() => dbg.atb.updateATBValues())
-            await wait.forSetting(bgPage, 'extiSent')
+            await backgroundWait.forSetting(bgPage, 'extiSent')
 
             const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
             const setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
@@ -129,6 +129,30 @@ describe('install workflow', () => {
             expect(numExtiCalled).toEqual(1)
         })
     })
+
+    describe('atb storage', () => {
+        beforeEach(async () => {
+            ({ browser, bgPage, requests, teardown } = await harness.setup())
+            await backgroundWait.forSetting(bgPage, 'extiSent')
+        })
+
+        afterEach(async () => {
+            try {
+                await teardown()
+            } catch (e) {}
+        })
+
+        it('should retreive stored ATB value on reload', async () => {
+            // set an ATB value from the past
+            const pastATBValue = 'v123-1'
+            await bgPage.evaluate((pastATBValue) => dbg.settings.updateSetting('atb', pastATBValue), pastATBValue)
+            // reload background
+            await bgPage.evaluate(() => window.location.reload())
+            await backgroundWait.forSetting(bgPage, 'extiSent')
+            const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+            expect(atb).toEqual(pastATBValue)
+        })
+    })
 })
 
 describe('search workflow', () => {
@@ -141,7 +165,7 @@ describe('search workflow', () => {
 
         // wait until normal exti workflow is done so we don't confuse atb.js requests
         // when the actual tests run
-        await wait.forSetting(bgPage, 'extiSent')
+        await backgroundWait.forSetting(bgPage, 'extiSent')
 
         // grab current atb data
         let data = await fetch('https://duckduckgo.com/atb.js')
@@ -169,7 +193,7 @@ describe('search workflow', () => {
         try {
             await searchPage.goto('https://duckduckgo.com/?q=test')
             // Extra wait for page load
-            await wait.ms(1000)
+            await bgPage.waitForTimeout(1000)
         } catch (e) {
             // goto may time out, but continue test anyway in case of partial load.
         }
@@ -187,7 +211,7 @@ describe('search workflow', () => {
         try {
             await searchPage.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle0' })
             // Extra wait for page load
-            await wait.ms(1000)
+            await bgPage.waitForTimeout(1000)
         } catch (e) {
             // goto may time out, but continue test anyway in case of partial load.
         }
@@ -207,7 +231,7 @@ describe('search workflow', () => {
         try {
             await searchPage.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle0' })
             // Extra wait for page load
-            await wait.ms(1000)
+            await bgPage.waitForTimeout(1000)
         } catch (e) {
             // goto may time out, but continue test anyway in case of partial load.
         }

@@ -12,6 +12,11 @@ globalThis.browser = {
     },
     runtime: {
         sendMessage: () => {},
-        getManifest: () => ({ version: '1234.56' })
+        getManifest: () => ({ version: '1234.56' }),
+        setUninstallURL: () => {},
+        getURL: path => path
+    },
+    tabs: {
+        sendMessage: () => {}
     }
 }

@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1643197961938,
+    "version": 1646217547127,
     "features": {
         "ampLinks": {
             "exceptions": [],
@@ -32,6 +32,14 @@
                 {
                     "domain": "spiegel.de",
                     "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "www.derstandard.de",
+                    "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "www.derstandard.at",
+                    "reason": "Opt-out not possible"
                 }
             ],
             "settings": {
@@ -59,6 +67,10 @@
         "contentBlocking": {
             "state": "enabled",
             "exceptions": [
+                {
+                    "domain": "bild.de",
+                    "reason": "Navigation broken"
+                },
                 {
                     "domain": "pureflix.com",
                     "reason": "Videos not playing"
@@ -146,6 +158,10 @@
                 {
                     "domain": "virginmedia.com",
                     "reason": "Chat widget blocked"
+                },
+                {
+                    "domain": "welt.de",
+                    "reason": "Video not playing correctly"
                 }
             ]
         },
@@ -254,6 +270,28 @@
             "state": "enabled",
             "settings": {
                 "allowlistedTrackers": {
+                    "amazon-adsystem.com": {
+                        "rules": [
+                            {
+                                "rule": "c.amazon-adsystem.com/aax2/apstag.js",
+                                "domains": [
+                                    "seattletimes.com"
+                                ],
+                                "reason": "adwall"
+                            }
+                        ]
+                    },
+                    "cloudflare.com": {
+                        "rules": [
+                            {
+                                "rule": "cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.8.6/fingerprint2.min.js",
+                                "domains": [
+                                    "winnipegfreepress.com"
+                                ],
+                                "reason": "content not loading"
+                            }
+                        ]
+                    },
                     "doubleclick.net": {
                         "rules": [
                             {
@@ -270,6 +308,13 @@
                                     "wunderground.com"
                                 ],
                                 "reason": "videos not loading"
+                            },
+                            {
+                                "rule": "www3.doubleclick.net",
+                                "domains": [
+                                    "thingiverse.com"
+                                ],
+                                "reason": "adwall"
                             }
                         ]
                     },
@@ -310,6 +355,66 @@
                                     "youmath.it"
                                 ],
                                 "reason": "adwall"
+                            },
+                            {
+                                "rule": "tpc.googlesyndication.com/pagead/js/loader21.html",
+                                "domains": [
+                                    "rumble.com"
+                                ],
+                                "reason": "adwall (video blocked)"
+                            }
+                        ]
+                    },
+                    "googletagmanager.com": {
+                        "rules": [
+                            {
+                                "rule": "googletagmanager.com/gtm.js",
+                                "domains": [
+                                    "rbcroyalbank.com"
+                                ],
+                                "reason": "page not loading"
+                            }
+                        ]
+                    },
+                    "klarnaservices.com": {
+                        "rules": [
+                            {
+                                "rule": "na-library.klarnaservices.com/lib.js",
+                                "domains": [
+                                    "brooksrunning.com",
+                                    "joann.com"
+                                ],
+                                "reason": "site not loading"
+                            }
+                        ]
+                    },
+                    "shopeemobile.com": {
+                        "rules": [
+                            {
+                                "rule": "deo.shopeemobile.com/shopee/shopee-pcmall-live-sg//assets/2581.e008c4d7fc4804de8ba6.js",
+                                "domains": [
+                                    "shopee.co.id",
+                                    "shopee.co.th",
+                                    "shopee.com.br",
+                                    "shopee.com.my",
+                                    "shopee.ph",
+                                    "shopee.sg",
+                                    "shopee.tw",
+                                    "shopee.vn"
+                                ],
+                                "reason": "content not loading"
+                            }
+                        ]
+                    },
+                    "theplatform.com": {
+                        "rules": [
+                            {
+                                "rule": "pdk.theplatform.com/5.9.6/pdk/tpPdk.js",
+                                "domains": [
+                                    "bravotv.com",
+                                    "oxygen.com"
+                                ],
+                                "reason": "video not loading"
                             }
                         ]
                     },
@@ -322,6 +427,13 @@
                                     "upworthy.com"
                                 ],
                                 "reason": "content not rendering"
+                            },
+                            {
+                                "rule": "platform.twitter.com/widgets/tweet_button",
+                                "domains": [
+                                    "winnipegfreepress.com"
+                                ],
+                                "reason": "missing tweet button"
                             }
                         ]
                     }
@@ -336,7 +448,12 @@
                     "maxAge": 86400
                 }
             },
-            "exceptions": [],
+            "exceptions": [
+                {
+                    "domain": "nespresso.com",
+                    "reason": "login issues"
+                }
+            ],
             "state": "enabled"
         },
         "trackingCookies3p": {

@@ -38,8 +38,8 @@ jobs:
 
       - name: Prepare release branch
         run: |
-          git checkout -b release-${{ github.event.inputs.version }}
-          git fetch origin release-${{ github.event.inputs.version }}
+          git checkout -B release-${{ github.event.inputs.version }}
+          git fetch origin release-${{ github.event.inputs.version }} || true
           git push --set-upstream origin release-${{ github.event.inputs.version }} -f
 
       - name: Commit config and version updates

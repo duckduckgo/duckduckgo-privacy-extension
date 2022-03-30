@@ -12,6 +12,19 @@ const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
 
+let dev = false
+
+// Exported functions are used as message handlers for messages with a
+// matching type. That is except for functions with the '_' prefix.
+
+export function _setDevMode () {
+    dev = true
+}
+
+export function getDevMode () {
+    return dev
+}
+
 export function resetTrackersData () {
     return Companies.resetData()
 }
@@ -179,10 +192,28 @@ export function getTopBlocked (options) {
     return Companies.getTopBlocked(options)
 }
 
+const isExpectedSender = (sender) => (
+    // Check the origin. Shouldn't be necessary, but better safe than sorry
+    sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com\/email/)
+)
+
+// Get user data to be used by the email web app settings page. This includes
+// username, last alias, and a token for generating additional aliases.
+export async function getUserData (_, sender) {
+    if (!isExpectedSender(sender)) return
+
+    await settings.ready()
+    const userData = settings.getSetting('userData')
+    if (userData) {
+        return userData
+    } else {
+        return { error: 'Something seems wrong with the user data' }
+    }
+}
+
 export async function addUserData (userData, sender) {
     const { userName, token } = userData
-    // Check the origin. Shouldn't be necessary, but better safe than sorry
-    if (!sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com\/email/)) return
+    if (!isExpectedSender(sender)) return
 
     const sendDdgUserReady = async () => {
         const tabs = await browser.tabs.query({})

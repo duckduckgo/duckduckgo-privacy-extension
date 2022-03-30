@@ -1,3 +1,4 @@
+/* global cloneInto */
 (function clickToLoad () {
     function sendMessage (messageType, options = {}) {
         return new Promise((resolve, reject) => {
@@ -10,6 +11,19 @@
             })
         })
     }
+
+    function createCustomEvent (eventName, eventDetail) {
+        // By default, Firefox protects the event detail Object from the page,
+        // leading to "Permission denied to access property" errors.
+        // See https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts
+        if (typeof cloneInto === 'function') {
+            eventDetail = cloneInto(eventDetail, window)
+        }
+
+        return new CustomEvent(eventName, eventDetail)
+    }
+
+    const devMode = sendMessage('getDevMode')
     let appID
     const loadingImages = {
         darkMode: '',
@@ -362,7 +376,7 @@
 
         dispatchEvent (eventTarget, eventName) {
             eventTarget.dispatchEvent(
-                new CustomEvent(
+                createCustomEvent(
                     eventName, {
                         detail: {
                             entity: this.entity,
@@ -478,6 +492,49 @@
         }
 
         /*
+         * Tweaks an embedded YouTube video element ready for when it's
+         * reloaded.
+         *
+         * @param {Element} videoElement
+         * @returns {Function?} onError
+         *   Function to be called if the video fails to load.
+         */
+        async adjustYouTubeVideoElement (videoElement) {
+            let onError = null
+
+            if (!videoElement.src) {
+                return onError
+            }
+            const url = new URL(videoElement.src)
+            const { hostname: originalHostname } = url
+
+            // Upgrade video to YouTube's "privacy enhanced" mode, but fall back
+            // to standard mode if the video fails to load.
+            // Note:
+            //  1. Changing the iframe's host like this won't cause a CSP
+            //     violation on Chrome, see https://crbug.com/1271196.
+            //  2. The onError event doesn't fire for blocked iframes on Chrome.
+            if (originalHostname !== 'www.youtube-nocookie.com') {
+                url.hostname = 'www.youtube-nocookie.com'
+                onError = (event) => {
+                    url.hostname = originalHostname
+                    videoElement.src = url.href
+                    event.stopImmediatePropagation()
+                }
+            }
+
+            // Ensure the video doesn't auto-play.
+            const allowString = videoElement.getAttribute('allow') || ''
+            const allowed = new Set(allowString.split(';').map(s => s.trim()))
+            allowed.delete('autoplay')
+            url.searchParams.delete('autoplay')
+            videoElement.setAttribute('allow', Array.from(allowed).join('; '))
+
+            videoElement.src = url.href
+            return onError
+        }
+
+        /*
          * Fades out the given element. Returns a promise that resolves when the fade is complete.
          * @param {Element} element - the element to fade in or out
          * @param {int} interval - frequency of opacity updates (ms)
@@ -508,7 +565,7 @@
 
         clickFunction (originalElement, replacementElement) {
             let clicked = false
-            const handleClick = function handleClick (e) {
+            const handleClick = async function handleClick (e) {
                 // Ensure that the click is created by a user event & prevent double clicks from adding more animations
                 if (e.isTrusted && !clicked) {
                     clicked = true
@@ -555,11 +612,33 @@
                     }
 
                     fbContainer.appendChild(fadeIn)
-                    // default case is this.clickAction.type === 'originalElement'
-                    let fbElement = originalElement
 
-                    if (this.clickAction.type === 'iFrame') {
+                    let fbElement
+                    let onError = null
+                    switch (this.clickAction.type) {
+                    case 'iFrame':
                         fbElement = this.createFBIFrame()
+                        break
+                    case 'youtube-video':
+                        onError = await this.adjustYouTubeVideoElement(originalElement)
+                        fbElement = originalElement
+                        break
+                    default:
+                        fbElement = originalElement
+                        break
+                    }
+
+                    // If hidden, restore the tracking element's styles to make
+                    // it visible again.
+                    if (this.originalElementStyle) {
+                        for (const [key, [value, priority]] of
+                            Object.entries(this.originalElementStyle)) {
+                            if (value) {
+                                fbElement.style.setProperty(key, value, priority)
+                            } else {
+                                fbElement.style.removeProperty(key)
+                            }
+                        }
                     }
 
                     /*
@@ -574,11 +653,17 @@
                         this.fadeOutElement(replacementElement)
                             .then(v => {
                                 fbContainer.replaceWith(fbElement)
+                                this.dispatchEvent(fbElement, 'ddg-ctp-placeholder-clicked')
                                 this.fadeInElement(fadeIn).then(v => {
                                     fbElement.focus() // focus on new element for screen readers
                                 })
                             })
                     }, { once: true })
+                    // Note: This event only fires on Firefox, on Chrome the frame's
+                    //       load event will always fire.
+                    if (onError) {
+                        fbElement.addEventListener('error', onError, { once: true })
+                    }
                 }
             }.bind(this)
             // If this is a login button, show modal if needed
@@ -591,7 +676,7 @@
         }
     }
 
-    function init (extensionResponseData) {
+    async function init (extensionResponseData) {
         for (const entity of Object.keys(extensionResponseData)) {
             entities.push(entity)
             const { informationalModal, simpleVersion } = extensionResponseData[entity]
@@ -612,12 +697,40 @@
 
             entityData[entity] = currentEntityData
         }
-        replaceClickToLoadElements(extensionResponseData)
+        await replaceClickToLoadElements(extensionResponseData)
+
+        window.addEventListener('ddg-ctp-replace-element', ({ target }) => {
+            replaceClickToLoadElements(extensionResponseData, target)
+        }, { capture: true })
+
+        window.dispatchEvent(createCustomEvent('ddg-ctp-ready'))
     }
 
-    function replaceTrackingElement (widget, trackingElement, placeholderElement) {
+    function replaceTrackingElement (widget, trackingElement, placeholderElement, hideTrackingElement = false) {
         widget.dispatchEvent(trackingElement, 'ddg-ctp-tracking-element')
-        trackingElement.replaceWith(placeholderElement)
+
+        // Usually the tracking element can simply be replaced with the
+        // placeholder, but in some situations that isn't possible and the
+        // tracking element must be hidden instead.
+        if (hideTrackingElement) {
+            // Take care to note existing styles so that they can be restored.
+            widget.originalElementStyle = { }
+            for (const key of ['display', 'visibility']) {
+                widget.originalElementStyle[key] = [
+                    trackingElement.style.getPropertyValue(key),
+                    trackingElement.style.getPropertyPriority(key)
+                ]
+            }
+
+            // Hide the tracking element and add the placeholder next to it in
+            // the DOM.
+            trackingElement.style.setProperty('display', 'none', 'important')
+            trackingElement.style.setProperty('visibility', 'hidden', 'important')
+            trackingElement.parentElement.insertBefore(placeholderElement, trackingElement)
+        } else {
+            trackingElement.replaceWith(placeholderElement)
+        }
+
         widget.dispatchEvent(placeholderElement, 'ddg-ctp-placeholder-element')
     }
 
@@ -646,36 +759,74 @@
             replaceTrackingElement(widget, trackingElement, container)
         }
 
-        if (widget.replaceSettings.type === 'dialog') {
+        const youTubeVideo = widget.replaceSettings.type === 'youtube-video'
+        if (widget.replaceSettings.type === 'dialog' || youTubeVideo) {
             const icon = await sendMessage('getImage', widget.replaceSettings.icon)
             const button = makeButton(widget.replaceSettings.buttonText, widget.getMode())
             const textButton = makeTextButton(widget.replaceSettings.buttonText, widget.getMode())
-            const { contentBlock, shadowRoot } = createContentBlock(
+            const { contentBlock, shadowRoot } = await createContentBlock(
                 widget, button, textButton, icon
             )
             button.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
             textButton.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
 
-            replaceTrackingElement(widget, trackingElement, contentBlock)
+            replaceTrackingElement(
+                widget, trackingElement, contentBlock, /* hideTrackingElement= */youTubeVideo
+            )
 
-            // Show an unblock link if parent element forces small height
-            // which may hide video.
-            if ((!!contentBlock.offsetHeight && contentBlock.offsetHeight <= 200) ||
-                (!!contentBlock.parentNode && contentBlock.parentNode.offsetHeight <= 200)) {
+            if (youTubeVideo) {
+                // Size the placeholder element to match the original video
+                // element.
+                // Note: If the website later resizes the video element, the
+                //       placeholder will not resize to match.
+                const {
+                    width: videoWidth,
+                    height: videoHeight
+                } = window.getComputedStyle(trackingElement)
+                contentBlock.style.width = videoWidth
+                contentBlock.style.height = videoHeight
+            }
+
+            // Show the extra unblock link in the header if the placeholder or
+            // its parent is too short for the normal unblock button to be visible.
+            // Note: This does not take into account the placeholder's vertical
+            //       position in the parent element.
+            const { height: placeholderHeight } = window.getComputedStyle(contentBlock)
+            const { height: parentHeight } = window.getComputedStyle(contentBlock.parentElement)
+            if (parseInt(placeholderHeight, 10) <= 200 || parseInt(parentHeight, 10) <= 200) {
                 const textButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
-                textButton.style.cssText += 'display: block'
+                textButton.style.display = 'block'
             }
         }
     }
 
-    function replaceClickToLoadElements (config) {
+    /**
+     * Replace the blocked CTP elements on the page with placeholders.
+     * @param {Object} config
+     *   The parsed Click to Play configuration.
+     * @param {Element} [targetElement]
+     *   If specified, only this element will be replaced (assuming it matches
+     *   one of the expected CSS selectors). If omitted, all matching elements
+     *   in the document will be replaced instead.
+     */
+    async function replaceClickToLoadElements (config, targetElement) {
         for (const entity of Object.keys(config)) {
             for (const widgetData of Object.values(config[entity].elementData)) {
-                const trackingElements = document.querySelectorAll(widgetData.selectors.join())
-                for (const trackingElement of trackingElements) {
-                    const widget = new DuckWidget(widgetData, trackingElement, entity)
-                    createPlaceholderElementAndReplace(widget, trackingElement)
+                const selector = widgetData.selectors.join()
+
+                let trackingElements = []
+                if (targetElement) {
+                    if (targetElement.matches(selector)) {
+                        trackingElements.push(targetElement)
+                    }
+                } else {
+                    trackingElements = Array.from(document.querySelectorAll(selector))
                 }
+
+                await Promise.all(trackingElements.map(trackingElement => {
+                    const widget = new DuckWidget(widgetData, trackingElement, entity)
+                    return createPlaceholderElementAndReplace(widget, trackingElement)
+                }))
             }
         }
     }
@@ -742,7 +893,7 @@
     function runLogin (entity) {
         enableSocialTracker(entity, true)
         window.dispatchEvent(
-            new CustomEvent('ddg-ctp-run-login', {
+            createCustomEvent('ddg-ctp-run-login', {
                 detail: {
                     entity
                 }
@@ -969,7 +1120,7 @@
     }
 
     // Create the content block to replace other divs/iframes with
-    function createContentBlock (widget, button, textButton, img) {
+    async function createContentBlock (widget, button, textButton, img) {
         const contentBlock = document.createElement('div')
         contentBlock.style.cssText = styles.wrapperDiv
 
@@ -983,7 +1134,8 @@
         // Put everyting else inside the shadowRoot of the wrapper element to
         // reduce the chances of the website's stylesheets messing up the
         // placeholder's appearance.
-        const shadowRoot = contentBlock.attachShadow({ mode: 'closed' })
+        const shadowRootMode = (await devMode) ? 'open' : 'closed'
+        const shadowRoot = contentBlock.attachShadow({ mode: shadowRootMode })
 
         // Style element includes our font & overwrites page styles
         const styleElement = document.createElement('style')

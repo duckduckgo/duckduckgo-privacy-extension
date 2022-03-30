@@ -17,6 +17,7 @@ class TDSStorage {
         this.ClickToLoadConfig = {}
         this.config = { features: {} }
         this.isInstalling = false
+        this.onUpdatedListeners = new Map()
 
         this.removeLegacyLists()
     }
@@ -88,6 +89,17 @@ class TDSStorage {
                 if (resultData) {
                     // store tds in memory so we can access it later if needed
                     this[listCopy.name] = resultData
+
+                    // Notify any listeners that this list has updated.
+                    const listeners = this.onUpdatedListeners.get(listCopy.name)
+                    if (listeners) {
+                        window.setTimeout(() => {
+                            for (const listener of listeners) {
+                                listener(listCopy.name)
+                            }
+                        }, 0)
+                    }
+
                     return { name: listCopy.name, data: resultData }
                 } else {
                     throw new Error('TDS: process list xhr failed')
@@ -206,6 +218,15 @@ class TDSStorage {
         this.dbc.tdsStorage.delete('ReferrerExcludeList')
         this.dbc.tdsStorage.delete('brokenSiteList')
         this.dbc.tdsStorage.delete('protections')
+    }
+
+    onUpdate (name, listener) {
+        let listeners = this.onUpdatedListeners.get(name)
+        if (!listeners) {
+            listeners = []
+            this.onUpdatedListeners.set(name, listeners)
+        }
+        listeners.push(listener)
     }
 }
 module.exports = new TDSStorage()

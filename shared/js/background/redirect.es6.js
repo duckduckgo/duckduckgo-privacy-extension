@@ -11,6 +11,10 @@ const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
 const trackerAllowlist = require('./allowlisted-trackers.es6')
+const {
+    stripTrackingParameters,
+    trackingParametersStrippingEnabled
+} = require('./url-parameters.es6')
 
 const debugRequest = false
 
@@ -68,9 +72,39 @@ function handleRequest (requestData) {
             thisTab = newTab
         }
 
+        const mainFrameRequestURL = new URL(requestData.url)
+
+        // Tracking parameter stripping.
+
+        thisTab.urlParametersRemoved = (
+            // Tracking parameters were stripped previously, this is the request
+            // event that fired after the redirection to strip the parameters.
+            thisTab.urlParametersRemovedUrl &&
+            thisTab.urlParametersRemovedUrl === requestData.url
+        ) || (
+            // Strip tracking parameters if 1. there are any and 2. the feature
+            // is enabled for both the request URL and the initiator URL.
+            trackingParametersStrippingEnabled(
+                thisTab.site, requestData.initiatorUrl
+            ) && stripTrackingParameters(mainFrameRequestURL)
+        )
+
+        // To strip tracking parameters, the request is redirected and this event
+        // listener fires again for the redirected request. Take note of the URL
+        // before redirecting the request, so that  the `urlParametersRemoved`
+        // breakage flag persists after the redirection.
+        if (thisTab.urlParametersRemoved && !thisTab.urlParametersRemovedUrl) {
+            thisTab.urlParametersRemovedUrl = mainFrameRequestURL.href
+        } else {
+            thisTab.urlParametersRemovedUrl = null
+        }
+
         // add atb params only to main_frame
-        const ddgAtbRewrite = ATB.redirectURL(requestData)
-        if (ddgAtbRewrite) return ddgAtbRewrite
+        const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL)
+
+        if (thisTab.urlParametersRemoved || atbParametersAdded) {
+            return { redirectUrl: mainFrameRequestURL.href }
+        }
     } else {
         /**
          * Check that we have a valid tab
@@ -163,10 +197,10 @@ function handleRequest (requestData) {
             // just default to true.
             const sameDomain = isSameDomainRequest(thisTab, requestData)
 
-            // only count trackers on pages with 200 response. Trackers on these sites are still
+            // Trackers on these sites are still
             // blocked below but not counted on the popup. We can also run into a case where
             // we block a tracker faster then we can update the tab so we check sameDomain.
-            if (thisTab.statusCode === 200 && sameDomain) {
+            if (sameDomain) {
                 // record all tracker urls on a site even if we don't block them
                 thisTab.site.addTracker(tracker)
 
@@ -179,10 +213,8 @@ function handleRequest (requestData) {
             browserWrapper.notifyPopup({ updateTabData: true })
             // Block the request if the site is not allowlisted
             if (blockingEnabled && tracker.action.match(/block|redirect/)) {
-                if (thisTab.statusCode === 200) {
-                    Companies.add(tracker.tracker.owner)
-                    if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
-                }
+                Companies.add(tracker.tracker.owner)
+                if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
 
                 // for debugging specific requests. see test/tests/debugSite.js
                 if (debugRequest && debugRequest.length) {
@@ -227,7 +259,7 @@ function handleRequest (requestData) {
         }
 
         // If we didn't block this script and it's a tracker, notify the content script.
-        if (requestData.type === 'script' && tracker) {
+        if (requestData.type === 'script' && tracker && !tracker.firstParty) {
             utils.sendTabMessage(requestData.tabId, {
                 type: 'update',
                 trackerDefinition: true,

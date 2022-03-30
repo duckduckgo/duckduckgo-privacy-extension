@@ -14,15 +14,19 @@ const DATA_DIR_PREFIX = 'ddg-temp-'
 const setup = async (ops) => {
     ops = ops || {}
 
+    const loadExtension = ops.loadExtension !== false
     const tmpDirPrefix = path.join(os.tmpdir(), DATA_DIR_PREFIX)
     const dataDir = fs.mkdtempSync(tmpDirPrefix)
     const puppeteerOps = {
         args: [
-            '--disable-extensions-except=build/chrome/dev',
-            '--load-extension=build/chrome/dev',
             `--user-data-dir=${dataDir}`
         ],
         headless: false
+    }
+
+    if (loadExtension) {
+        puppeteerOps.args.push('--disable-extensions-except=build/chrome/dev')
+        puppeteerOps.args.push('--load-extension=build/chrome/dev')
     }
 
     // github actions
@@ -44,30 +48,32 @@ const setup = async (ops) => {
     }
 
     const browser = await puppeteer.launch(puppeteerOps)
-    // for some reason we need to init a blank page
-    // before the extension is initialized
-    await browser.newPage()
-    const targets = await browser.targets()
+
     let bgPage
-
-    // grab a handle on the background page for the extension
-    // we can't use the long ID as it could possibly change
-    for (const t of targets) {
-        const title = t._targetInfo.title
-
-        if (title === 'DuckDuckGo Privacy Essentials') {
-            bgPage = await t.page()
-            break
-        }
-    }
-
-    if (!bgPage) {
-        throw new Error('couldn\'t get background page')
-    }
-
     const requests = []
 
-    bgPage.on('request', (req) => { requests.push(req.url()) })
+    if (loadExtension) {
+        // grab a handle on the background page for the extension
+        // we can't use the long ID as it could possibly change
+        for (const t of await browser.targets()) {
+            // for some reason we need to init a blank page
+            // before the extension is initialized
+            await browser.newPage()
+
+            const title = t._targetInfo.title
+
+            if (title === 'DuckDuckGo Privacy Essentials') {
+                bgPage = await t.page()
+                break
+            }
+        }
+
+        if (!bgPage) {
+            throw new Error('couldn\'t get background page')
+        }
+
+        bgPage.on('request', (req) => { requests.push(req.url()) })
+    }
 
     async function teardown () {
         if (process.env.KEEP_OPEN) {
