@@ -73,7 +73,8 @@
         "tabs",
         "storage",
         "<all_urls>",
-        "alarms"
+        "alarms",
+        "privacy"
     ],
     "web_accessible_resources": [
         "/web_accessible_resources/*",

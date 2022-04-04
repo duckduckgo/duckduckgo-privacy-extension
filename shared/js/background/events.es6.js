@@ -435,6 +435,27 @@ browser.webNavigation.onCommitted.addListener(details => {
 })
 
 /**
+ * BROWSER PRIVACY SETTINGS
+ */
+async function setBrowserSetting (settingName, settingValue) {
+    const details = await settingName.get({})
+    if (details.levelOfControl === 'controllable_by_this_extension') {
+        const result = await settingName.set({ value: settingValue })
+        if (result) {
+            console.log('Set browser privacy setting successfully!')
+        } else {
+            console.log('Browser privacy setting not set!')
+        }
+    }
+}
+
+if (browserName === 'moz') {
+    setBrowserSetting(browser.privacy.websites.cookieConfig, { behavior: 'reject_trackers_and_partition_foreign' })
+} else {
+    setBrowserSetting(chrome.privacy.websites.thirdPartyCookiesAllowed, false)
+}
+
+/**
  * ALARMS
  */
 
