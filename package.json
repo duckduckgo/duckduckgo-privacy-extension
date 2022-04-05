@@ -88,7 +88,7 @@
         "punycode": "2.1.1",
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
-        "tldts": "^5.7.73",
+        "tldts": "^5.7.74",
         "tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.0.0",
         "underscore": "1.13.2",
         "web-ext": "^6.8.0"
