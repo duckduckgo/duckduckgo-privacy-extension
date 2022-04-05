@@ -80,6 +80,22 @@ Run the dev build task for your browser from the 'Build' section above. The gene
 
 After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you.
 
+### Locally testing changes to modules
+
+The extension imports several DDG-owned modules (see [package.json](https://github.com/duckduckgo/duckduckgo-privacy-extension/blob/7a5616b5c54155a99f79c672e007785f76a8d3ee/package.json#L75-L78)). If you need to locally test changes to these modules follow these steps.
+
+1. Set the extension to resolve the module locally:
+  1. In the local directory of the module (e.g., `content-scope-scripts`) run
+     `npm link`.
+  2. In the extension directory run `npm link @duckduckgo/<module_name>`
+  3. Verify that the link succeeded. You should see a symlink for the module in
+     question when you run `ls -al node_modules/@duckduckgo/` from the
+     extension directory.
+2. Manually run the module's build step (e.g., `npm run build`)
+3. Manually run the extension's build command (e.g. `make dev browser=firefox
+   type=dev`). Running `npm run dev-firefox` will overwrite the symlink back to
+   the remote module.
+
 ### Testing
 - Unit tests: `npm test`
 - Integration Tests
