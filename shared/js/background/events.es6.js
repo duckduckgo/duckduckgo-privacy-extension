@@ -36,6 +36,22 @@ function getHash () {
     return sha1(getFloat().toString())
 }
 
+function disablePrivacySandbox () {
+    if (browserName !== 'chrome') { return }
+
+    chrome.privacy.websites.privacySandboxEnabled.get({}, details => {
+        if (details.levelOfControl === 'controllable_by_this_extension') {
+            chrome.privacy.websites.privacySandboxEnabled.set({ value: false }, () => {
+                if (browser.runtime.lastError) {
+                    console.log('Error disabling privacy sandbox.', browser.runtime.lastError)
+                }
+            })
+        } else {
+            console.log('Error disabling privacy sandbox:', details.levelOfControl)
+        }
+    })
+}
+
 async function onInstalled (details) {
     tdsStorage.initOnInstall()
 
@@ -53,6 +69,8 @@ async function onInstalled (details) {
     } else if (details.reason.match(/update/) && browserName === 'chrome') {
         experiment.setActiveExperiment()
     }
+
+    disablePrivacySandbox()
 
     // Inject the email content script on all tabs upon installation (not needed on Firefox)
     if (browserName !== 'moz') {
