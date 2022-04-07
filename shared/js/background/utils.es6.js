@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+import { getExtensionVersion } from './wrapper.es6'
 import tdsStorage from './storage/tds.es6'
 import settings from './settings.es6'
 import load from './load.es6'
@@ -318,6 +319,24 @@ export function isSameTopLevelDomain (url1, url2) {
     return firstDomain === secondDomain
 }
 
+export function parseVersionString (versionString) {
+    const [major = 0, minor = 0, patch = 0] = versionString.split('.').map(Number)
+    return {
+        major,
+        minor,
+        patch
+    }
+}
+
+export function satisfiesMinVersion (minVersionString, extensionVersionString) {
+    const { major: minMajor, minor: minMinor, patch: minPatch } = parseVersionString(minVersionString)
+    const { major, minor, patch } = parseVersionString(extensionVersionString)
+
+    return (major > minMajor ||
+            (major >= minMajor && minor > minMinor) ||
+            (major >= minMajor && minor >= minMinor && patch >= minPatch))
+}
+
 /**
  * Checks the config to see if a feature is enabled. You can optionally pass a second "customState"
  * parameter to check if the state is equeal to other states (i.e. state === 'beta').
@@ -330,6 +349,14 @@ function isFeatureEnabled (featureName) {
     const feature = tdsStorage.config.features[featureName]
     if (!feature) {
         return false
+    }
+
+    // If we have a supplied min version for the feature ensure the extension meets it
+    if ('minSupportedVersion' in feature) {
+        const extensionVersionString = getExtensionVersion()
+        if (!satisfiesMinVersion(feature.minSupportedVersion, extensionVersionString)) {
+            return false
+        }
     }
 
     return feature.state === 'enabled'

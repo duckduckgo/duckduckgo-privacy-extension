@@ -54,7 +54,7 @@ Run `git submodule update --remote` to fetch latest version of all git submodule
 
 ### Updating or testing config
 
-Modify shared/data/constants.js the config to point to http://localhost:8080/generated/extension-config.json
+Modify shared/data/constants.js the config to point to http://localhost:8080/generated/v2/extension-config.json
 
 Serve the config locally and also bundle it into the extension.
 
