@@ -56,6 +56,8 @@ module.exports = function (grunt) {
         baseFileMap.background['<%= dirs.public.js %>/background.js'].unshift('<%= dirs.src.js %>/background/debug.es6.js')
     }
 
+    const ddgContentScope = 'node_modules/@duckduckgo/content-scope-scripts/'
+
     /* watch any base files and browser specific files */
     const watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
@@ -64,7 +66,7 @@ module.exports = function (grunt) {
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
         autofillContentScript: ['<%= ddgAutofill %>/*.js'],
         autofillCSS: ['<%= ddgAutofill %>/*.css'],
-        contentScope: ['shared/content-scope-scripts/**/*.js'],
+        contentScope: [`${ddgContentScope}/src/**/*.js`, `${ddgContentScope}/inject/**/*.js`],
         data: ['<%= dirs.data %>/*.js']
     }
 
@@ -89,6 +91,14 @@ module.exports = function (grunt) {
                 level: 'debug'
             }
         })
+    }
+
+    let contentScopeInstall = 'echo "Skipping content-scope-scripts install";'
+    let contentScopeBuild = ''
+    // If we're watching the content scope files, regenerate them
+    if (grunt.option('watch')) {
+        contentScopeInstall = `cd ${ddgContentScope} && npm install --legacy-peer-deps`
+        contentScopeBuild = `cd ${ddgContentScope} && npm run build && cd - && `
     }
 
     const ddgAutofill = 'node_modules/@duckduckgo/autofill/dist'
@@ -173,7 +183,8 @@ module.exports = function (grunt) {
         // used by watch to copy shared/js to build dir
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
-            copyContentScope: `cp node_modules/@duckduckgo/content-scope-scripts/build/${browser}/inject.js build/${browser}/${buildType}/public/js/inject.js`,
+            installContentScope: contentScopeInstall,
+            copyContentScope: `${contentScopeBuild} cp ${ddgContentScope}/build/${browser}/inject.js build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
@@ -234,7 +245,17 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyAutofillCSS', 'exec:copyAutofillHostCSS'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', [
+        'sass',
+        'browserify:ui',
+        'browserify:background',
+        'browserify:backgroundTest',
+        'exec:installContentScope',
+        'exec:copyContentScope',
+        'exec:copyAutofillJs',
+        'exec:copyAutofillCSS',
+        'exec:copyAutofillHostCSS'
+    ])
 
     const devTasks = ['build']
     if (grunt.option('watch')) {

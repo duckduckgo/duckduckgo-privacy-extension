@@ -88,8 +88,8 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
     1. In the local directory of the module (e.g., `content-scope-scripts`) run `npm link`.
     2. In the extension directory run `npm link @duckduckgo/<module_name>`
     3. Verify that the link succeeded. You should see a symlink for the module in question when you run `ls -al node_modules/@duckduckgo/` from the extension directory.
-2. Manually run the module's build step (e.g., `npm run build`)
-3. Manually run the extension's build command (e.g. `make dev browser=firefox type=dev`). Running `npm run dev-firefox` will overwrite the symlink back to the remote module.
+2. Manually run the module's build step (e.g., `npm run build`) - (If you're running a watch command like dev-chrome or dev-firefox you can skip this step).
+3. Manually run the extension's build command (e.g. `npm run dev-firefox`)
 
 ### Testing
 - Unit tests: `npm test`
