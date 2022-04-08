@@ -2,7 +2,6 @@ module.exports = function (grunt) {
     const sass = require('sass')
     const fileMapTransform = require('./scripts/browserifyFileMapTransform')
     require('load-grunt-tasks')(grunt)
-    grunt.loadNpmTasks('grunt-execute')
     grunt.loadNpmTasks('grunt-karma')
 
     const browser = grunt.option('browser')
@@ -169,9 +168,6 @@ module.exports = function (grunt) {
         },
 
         execute: {
-            tosdr: {
-                src: []// 'scripts/tosdr.js']
-            }
         },
 
         // used by watch to copy shared/js to build dir
