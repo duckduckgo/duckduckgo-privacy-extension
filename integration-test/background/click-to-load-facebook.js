@@ -5,6 +5,7 @@ const { logPageRequests } = require('../helpers/requests')
 const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
 const { setupAPISchemaTest } = require('../helpers/apiSchema')
+const { screenshotMatches } = require('../helpers/screenshot')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
 const facebookDomains = new Set(['facebook.com', 'facebook.net', 'fbcdn.net'])
@@ -136,6 +137,60 @@ describe('Test Facebook Click To Load', () => {
         }
 
         page.close()
+    })
+
+    it('CTL: Facebook Click to Load interfaces', async () => {
+        const page = await browser.newPage()
+        await page.goto(testSite, { waitUntil: 'networkidle0' })
+
+        const scrollToFirstPlaceholder = () =>
+            page.evaluateHandle(() => {
+                for (const div of document.querySelectorAll('div')) {
+                    const placeholder = div.shadowRoot?.querySelector('.DuckDuckGoSocialContainer')
+                    if (placeholder) {
+                        placeholder.scrollIntoView()
+                        return
+                    }
+                }
+            })
+
+        const closeLoginPrompt = async () => {
+            const [button] = await page.$x('//button[contains(., \'Go back\')]')
+            await button.click()
+        }
+
+        expect(await screenshotMatches(page, 'click-to-load-facebook-initial.png')).toBeTrue()
+
+        // Login UI is displayed.
+        await page.click('#DuckDuckGoPrivacyEssentialsHoverable > button')
+        await page.waitForNetworkIdle({ idleTime: 1000 })
+        expect(await screenshotMatches(page, 'click-to-load-facebook-login-prompt.png')).toBeTrue()
+
+        // Login UI is removed.
+        await closeLoginPrompt()
+        await page.waitForNetworkIdle({ idleTime: 1000 })
+        expect(await screenshotMatches(page, 'click-to-load-facebook-login-prompt-cleared.png')).toBeTrue()
+
+        // Placeholder UI at full-width.
+        await scrollToFirstPlaceholder()
+        expect(await screenshotMatches(page, 'click-to-load-facebook-placeholder.png')).toBeTrue()
+
+        // Shrink the viewport and reload...
+        {
+            const { width, height } = page.viewport()
+            await page.setViewport({ width: Math.round(width / 2), height })
+            await page.reload({ waitUntil: 'networkidle0' })
+        }
+
+        // Login UI at narrow width.
+        await page.click('#DuckDuckGoPrivacyEssentialsHoverable > button')
+        await page.waitForNetworkIdle({ idleTime: 1000 })
+        expect(await screenshotMatches(page, 'click-to-load-facebook-narrow-login-prompt.png')).toBeTrue()
+
+        // Placeholder UI at narrow width.
+        await closeLoginPrompt()
+        await scrollToFirstPlaceholder()
+        expect(await screenshotMatches(page, 'click-to-load-facebook-narrow-placeholder.png')).toBeTrue()
     })
 })
 
