@@ -125,7 +125,7 @@ async function fetchAMPURL (site, url) {
 
     let data = null
     const timeoutController = new AbortController()
-    setTimeout(() => timeoutController.abort(), 5000)
+    setTimeout(() => timeoutController.abort(), 1500)
 
     try {
         data = await fetch(url, { signal: timeoutController.signal })
