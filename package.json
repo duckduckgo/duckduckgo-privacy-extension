@@ -31,7 +31,7 @@
     },
     "devDependencies": {
         "@babel/cli": "^7.17.6",
-        "@babel/core": "^7.17.8",
+        "@babel/core": "^7.17.9",
         "@babel/node": "^7.16.8",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.16.11",
@@ -63,7 +63,7 @@
         "load-grunt-tasks": "5.1.0",
         "node-fetch": "^3.2.3",
         "puppeteer": "13.5.2",
-        "sass": "^1.49.11",
+        "sass": "^1.50.0",
         "standard": "16.0.4",
         "timekeeper": "^2.1.1",
         "webextension-polyfill": "^0.8.0",
