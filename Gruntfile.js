@@ -2,7 +2,6 @@ module.exports = function (grunt) {
     const sass = require('sass')
     const fileMapTransform = require('./scripts/browserifyFileMapTransform')
     require('load-grunt-tasks')(grunt)
-    grunt.loadNpmTasks('grunt-execute')
     grunt.loadNpmTasks('grunt-karma')
 
     const browser = grunt.option('browser')
@@ -57,6 +56,8 @@ module.exports = function (grunt) {
         baseFileMap.background['<%= dirs.public.js %>/background.js'].unshift('<%= dirs.src.js %>/background/debug.es6.js')
     }
 
+    const ddgContentScope = 'node_modules/@duckduckgo/content-scope-scripts/'
+
     /* watch any base files and browser specific files */
     const watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
@@ -65,7 +66,7 @@ module.exports = function (grunt) {
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
         autofillContentScript: ['<%= ddgAutofill %>/*.js'],
         autofillCSS: ['<%= ddgAutofill %>/*.css'],
-        contentScope: ['shared/content-scope-scripts/**/*.js'],
+        contentScope: [`${ddgContentScope}/src/**/*.js`, `${ddgContentScope}/inject/**/*.js`],
         data: ['<%= dirs.data %>/*.js']
     }
 
@@ -92,10 +93,12 @@ module.exports = function (grunt) {
         })
     }
 
+    let contentScopeInstall = 'echo "Skipping content-scope-scripts install";'
     let contentScopeBuild = ''
     // If we're watching the content scope files, regenerate them
     if (grunt.option('watch')) {
-        contentScopeBuild = '&& npm run build'
+        contentScopeInstall = `cd ${ddgContentScope} && npm install --legacy-peer-deps`
+        contentScopeBuild = `cd ${ddgContentScope} && npm run build && cd - && `
     }
 
     const ddgAutofill = 'node_modules/@duckduckgo/autofill/dist'
@@ -175,15 +178,13 @@ module.exports = function (grunt) {
         },
 
         execute: {
-            tosdr: {
-                src: []// 'scripts/tosdr.js']
-            }
         },
 
         // used by watch to copy shared/js to build dir
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
-            copyContentScope: `cd shared/content-scope-scripts/ ${contentScopeBuild} && cp build/${browser}/inject.js ../../build/${browser}/${buildType}/public/js/inject.js`,
+            installContentScope: contentScopeInstall,
+            copyContentScope: `${contentScopeBuild} cp ${ddgContentScope}/build/${browser}/inject.js build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
@@ -244,7 +245,17 @@ module.exports = function (grunt) {
         }
     })
 
-    grunt.registerTask('build', 'Build project(s)css, templates, js', ['sass', 'browserify:ui', 'browserify:background', 'browserify:backgroundTest', 'exec:copyContentScope', 'exec:copyAutofillJs', 'exec:copyAutofillCSS', 'exec:copyAutofillHostCSS'])
+    grunt.registerTask('build', 'Build project(s)css, templates, js', [
+        'sass',
+        'browserify:ui',
+        'browserify:background',
+        'browserify:backgroundTest',
+        'exec:installContentScope',
+        'exec:copyContentScope',
+        'exec:copyAutofillJs',
+        'exec:copyAutofillCSS',
+        'exec:copyAutofillHostCSS'
+    ])
 
     const devTasks = ['build']
     if (grunt.option('watch')) {

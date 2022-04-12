@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1648659788789,
+    "version": 1648653910994,
     "features": {
         "ampLinks": {
             "exceptions": [],
@@ -44,10 +44,6 @@
                 {
                     "domain": "kohler.com",
                     "reason": "Opt-out not possible"
-                },
-                {
-                    "domain": "zeitraum-moebel.de",
-                    "reason": "broken autoconsent rule"
                 }
             ],
             "settings": {

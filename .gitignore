@@ -13,5 +13,6 @@ build/firefox
 build/chrome
 build/test
 test/background.js
-shared/content-scope-scripts/
 integration-test/artifacts/
+shared/tracker-surrogates/
+shared/content-scope-scripts/

@@ -1,6 +1,6 @@
 ITEMS   := shared/html shared/data shared/img
 
-release: npm setup-build-dir grunt tosdr moveout fonts web-resources
+release: npm setup-build-dir grunt moveout fonts web-resources
 
 dev: setup-build-dir moveout fonts web-resources grunt-dev
 
@@ -15,9 +15,6 @@ grunt-dev:
 	cp -r shared/img build/$(browser)/dev/test/html
 	cp -r shared/data build/$(browser)/dev/test/html
 	grunt dev --browser=$(browser) --type=$(type) --watch=$(watch)
-
-tosdr:
-	grunt execute:tosdr --browser=$(browser) --type=$(type)
 
 setup-artifacts-dir:
 	rm -rf integration-test/artifacts
