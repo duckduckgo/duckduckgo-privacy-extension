@@ -76,6 +76,10 @@ function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
         return false
     }
 
+    if (!ensureConfig() || !ampSettings.deepExtractionEnabled) {
+        return false
+    }
+
     if (requestIsExtension(requestData)) {
         return false
     }
@@ -125,7 +129,7 @@ async function fetchAMPURL (site, url) {
 
     let data = null
     const timeoutController = new AbortController()
-    setTimeout(() => timeoutController.abort(), 1500)
+    setTimeout(() => timeoutController.abort(), ampSettings.deepExtractionTimeout || 1500)
 
     try {
         data = await fetch(url, { signal: timeoutController.signal })
