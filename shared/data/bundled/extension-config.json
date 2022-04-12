@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1646217547127,
+    "version": 1648653910994,
     "features": {
         "ampLinks": {
             "exceptions": [],
@@ -39,6 +39,10 @@
                 },
                 {
                     "domain": "www.derstandard.at",
+                    "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "kohler.com",
                     "reason": "Opt-out not possible"
                 }
             ],
@@ -185,6 +189,10 @@
         "fingerprintingCanvas": {
             "exceptions": [
                 {
+                    "domain": "spirit.com",
+                    "reason": "Broken login"
+                },
+                {
                     "domain": "walgreens.com",
                     "reason": "Broken login"
                 },
@@ -214,14 +222,31 @@
                     "reason": "site breakage"
                 },
                 {
+                    "domain": "realestate.com.au",
+                    "reason": "Site not loading"
+                },
+                {
                     "domain": "stadia.google.com",
+                    "reason": "site breakage"
+                },
+                {
+                    "domain": "hyatt.com",
                     "reason": "site breakage"
                 }
             ],
             "state": "enabled"
         },
         "fingerprintingScreenSize": {
-            "exceptions": [],
+            "exceptions": [
+                {
+                    "domain": "hyatt.com",
+                    "reason": "Site not loading"
+                },
+                {
+                    "domain": "realestate.com.au",
+                    "reason": "Site not loading"
+                }
+            ],
             "state": "enabled"
         },
         "fingerprintingTemporaryStorage": {
@@ -270,6 +295,24 @@
             "state": "enabled",
             "settings": {
                 "allowlistedTrackers": {
+                    "adthrive.com": {
+                        "rules": [
+                            {
+                                "rule": "ads.adthrive.com/builds/core/",
+                                "domains": [
+                                    "mediaite.com"
+                                ],
+                                "reason": "video not loading"
+                            },
+                            {
+                                "rule": "ads.adthrive.com/sites/",
+                                "domains": [
+                                    "mediaite.com"
+                                ],
+                                "reason": "video not loading"
+                            }
+                        ]
+                    },
                     "amazon-adsystem.com": {
                         "rules": [
                             {
@@ -278,6 +321,17 @@
                                     "seattletimes.com"
                                 ],
                                 "reason": "adwall"
+                            }
+                        ]
+                    },
+                    "chipotle.com": {
+                        "rules": [
+                            {
+                                "rule": "services.chipotle.com/new_cmg_utils1.js",
+                                "domains": [
+                                    "chipotle.com"
+                                ],
+                                "reason": "login issues"
                             }
                         ]
                     },
@@ -297,6 +351,7 @@
                             {
                                 "rule": "securepubads.g.doubleclick.net/tag/js/gpt.js",
                                 "domains": [
+                                    "mediaite.com",
                                     "wunderground.com",
                                     "youmath.it"
                                 ],
@@ -368,11 +423,47 @@
                     "googletagmanager.com": {
                         "rules": [
                             {
+                                "rule": "googletagmanager.com/gtag/js",
+                                "domains": [
+                                    "ikea.com"
+                                ],
+                                "reason": "content not loading"
+                            },
+                            {
                                 "rule": "googletagmanager.com/gtm.js",
                                 "domains": [
                                     "rbcroyalbank.com"
                                 ],
                                 "reason": "page not loading"
+                            }
+                        ]
+                    },
+                    "iesnare.com": {
+                        "rules": [
+                            {
+                                "rule": "mpsnare.iesnare.com/snare.js",
+                                "domains": [
+                                    "rei.com"
+                                ],
+                                "reason": "adwall"
+                            }
+                        ]
+                    },
+                    "instagram.com": {
+                        "rules": [
+                            {
+                                "rule": "platform.instagram.com/en_US/embeds.js",
+                                "domains": [
+                                    "livejournal.com"
+                                ],
+                                "reason": "embeds"
+                            },
+                            {
+                                "rule": "www.instagram.com/embed.js",
+                                "domains": [
+                                    "livejournal.com"
+                                ],
+                                "reason": "embeds"
                             }
                         ]
                     },
@@ -385,6 +476,18 @@
                                     "joann.com"
                                 ],
                                 "reason": "site not loading"
+                            }
+                        ]
+                    },
+                    "opta.net": {
+                        "rules": [
+                            {
+                                "rule": "secure.widget.cloud.opta.net/v3/v3.opta-widgets.js",
+                                "domains": [
+                                    "abc.net.au",
+                                    "emol.com"
+                                ],
+                                "reason": "widget blocked"
                             }
                         ]
                     },
@@ -415,6 +518,13 @@
                                     "oxygen.com"
                                 ],
                                 "reason": "video not loading"
+                            },
+                            {
+                                "rule": "pdk.theplatform.com/pdk6/current/pdk/player.js",
+                                "domains": [
+                                    "eonline.com"
+                                ],
+                                "reason": "video not loading"
                             }
                         ]
                     },
@@ -434,6 +544,17 @@
                                     "winnipegfreepress.com"
                                 ],
                                 "reason": "missing tweet button"
+                            }
+                        ]
+                    },
+                    "yandex.ru": {
+                        "rules": [
+                            {
+                                "rule": "yandex.ru",
+                                "domains": [
+                                    "tvrain.ru"
+                                ],
+                                "reason": "adwall"
                             }
                         ]
                     }
@@ -595,7 +716,7 @@
                     "hmb_medium"
                 ]
             },
-            "state": "disabled"
+            "state": "enabled"
         },
         "userAgentRotation": {
             "settings": {
@@ -650,22 +771,6 @@
     "unprotectedTemporary": [
         {
             "domain": "usbank.com",
-            "reason": "site breakage"
-        },
-        {
-            "domain": "www.x-kom.pl",
-            "reason": "site breakage"
-        },
-        {
-            "domain": "www.merriam-webster.com",
-            "reason": "site breakage"
-        },
-        {
-            "domain": "tiaa.org",
-            "reason": "site breakage"
-        },
-        {
-            "domain": "fidelity.com",
             "reason": "site breakage"
         }
     ]
