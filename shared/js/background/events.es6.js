@@ -187,7 +187,7 @@ if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
     extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
 }
 // we determine if browsingTopics is enabled by testing for availability of its JS API
-const isTopicsEnabled = ('browsingTopics' in document) && utils.isFeatureEnabled('browsingTopics')
+const isTopicsEnabled = ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
 browser.webRequest.onHeadersReceived.addListener(
     request => {
         if (request.type === 'main_frame') {
