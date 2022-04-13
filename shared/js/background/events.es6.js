@@ -299,6 +299,8 @@ browser.runtime.onMessage.addListener((req, sender) => {
     const legacyMessageTypes = [
         'addUserData',
         'getUserData',
+        'removeUserData',
+        'getEmailProtectionCapabilities',
         'getAddresses',
         'refreshAlias'
     ]

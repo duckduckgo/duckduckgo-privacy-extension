@@ -197,6 +197,16 @@ const isExpectedSender = (sender) => (
     sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com\/email/)
 )
 
+export function getEmailProtectionCapabilities (_, sender) {
+    if (!isExpectedSender(sender)) return
+
+    return {
+        addUserData: true,
+        getUserData: true,
+        removeUserData: true
+    }
+}
+
 // Get user data to be used by the email web app settings page. This includes
 // username, last alias, and a token for generating additional aliases.
 export async function getUserData (_, sender) {
@@ -246,6 +256,11 @@ export async function addUserData (userData, sender) {
     } else {
         return { error: 'Something seems wrong with the user data' }
     }
+}
+
+export async function removeUserData (_, sender) {
+    if (!isExpectedSender(sender)) return
+    await logout()
 }
 
 export async function logout () {
