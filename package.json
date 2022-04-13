@@ -71,7 +71,7 @@
     },
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#4.1.2",
-        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#5c011637edf6ee7e2dd77668e06cdc641bc37bda",
+        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#625e0ca8cf378f649ce84929e76d1ebbc73da014",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "1.1.0",
         "bel": "6.0.0",
