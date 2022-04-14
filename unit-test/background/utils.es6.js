@@ -144,3 +144,43 @@ describe('utils.isSameTopLevelDomain()', () => {
         })
     })
 })
+
+describe('utils.parseVersionString', () => {
+    const cases = [
+        ['12', { major: 12, minor: 0, patch: 0 }],
+        ['12.1', { major: 12, minor: 1, patch: 0 }],
+        ['12.1.1', { major: 12, minor: 1, patch: 1 }],
+        ['100002.1.1', { major: 100002, minor: 1, patch: 1 }],
+        ['broken.string.parse', { major: NaN, minor: NaN, patch: NaN }]
+    ]
+    for (const testCase of cases) {
+        const [versionString, expectedOutcome] = testCase
+        it(`returns ${JSON.stringify(expectedOutcome)} for ${versionString}`, () => {
+            expect(utils.parseVersionString(versionString)).toEqual(expectedOutcome)
+        })
+    }
+})
+
+describe('utils.satisfiesMinVersion', () => {
+    // Min version, Extension version, outcome
+    const cases = [
+        ['12', '12', true],
+        ['12', '13', true],
+        ['12.1', '12.1', true],
+        ['12.1.1', '12.1.1', true],
+        ['12.1.1', '12.1.2', true],
+        ['12.1.1', '12.2.0', true],
+        ['13.12.12', '12.12.12', false],
+        ['12.13.12', '12.12.12', false],
+        ['12.12.13', '12.12.12', false],
+        ['102.12.12', '102.12.11', false],
+        ['102.12.12', '102.12.12', true],
+        ['102.12.12', '102.12.13', true]
+    ]
+    for (const testCase of cases) {
+        const [versionString, extensionVersionString, expectedOutcome] = testCase
+        it(`returns ${JSON.stringify(expectedOutcome)} for ${versionString} compared to ${extensionVersionString}`, () => {
+            expect(utils.satisfiesMinVersion(versionString, extensionVersionString)).toEqual(expectedOutcome)
+        })
+    }
+})
