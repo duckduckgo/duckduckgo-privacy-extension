@@ -32,6 +32,14 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         site.enabledFeatures = site.enabledFeatures.filter(feature => aboutBlankEnabled.includes(feature))
     }
 
+    const featureSettings = {}
+    for (const feature of site.enabledFeatures) {
+        const settings = utils.getFeatureSettings(feature)
+        if (Object.keys(settings).length) {
+            featureSettings[feature] = settings
+        }
+    }
+
     // Extra contextual data required for 1p and 3p cookie protection - only send if at least one is enabled here
     if (tab.site.isFeatureEnabled('trackingCookies3p') || tab.site.isFeatureEnabled('trackingCookies1p')) {
         // determine the register domain of the sending tab
@@ -50,6 +58,7 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         cookie.shouldBlock = !utils.isCookieExcluded(documentUrl)
     }
     return {
+        featureSettings,
         debug: devtools.isActive(tabId),
         cookie,
         globalPrivacyControlValue: settings.getSetting('GPC'),
