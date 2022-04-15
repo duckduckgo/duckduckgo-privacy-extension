@@ -8,12 +8,14 @@ module.exports = function (category) {
     const siteUrl = this.tab.url.split('?')[0].split('#')[0]
     const trackerObjects = this.tab.trackersBlocked
     const urlParametersRemoved = this.tab.urlParametersRemoved ? 'true' : 'false'
+    const ampUrl = this.tab.ampUrl || null
     const brokenSiteParams = [
         { category: category },
         { siteUrl: encodeURIComponent(siteUrl) },
         { upgradedHttps: upgradedHttps.toString() },
         { tds: this.tds },
-        { urlParametersRemoved }
+        { urlParametersRemoved },
+        { ampUrl }
     ]
 
     for (const tracker in trackerObjects) {

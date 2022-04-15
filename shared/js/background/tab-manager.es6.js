@@ -17,6 +17,13 @@ class TabManager {
     create (tabData) {
         const normalizedData = browserWrapper.normalizeTabData(tabData)
         const newTab = new Tab(normalizedData)
+
+        const oldTab = this.tabContainer[newTab.id]
+        if (oldTab) {
+            newTab.ampUrl = oldTab.ampUrl
+            newTab.cleanAmpUrl = oldTab.cleanAmpUrl
+        }
+
         this.tabContainer[newTab.id] = newTab
         return newTab
     };

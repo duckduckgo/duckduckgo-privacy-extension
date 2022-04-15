@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill'
 const tldts = require('tldts')
 
 const utils = require('./utils.es6')
@@ -15,6 +16,7 @@ const {
     stripTrackingParameters,
     trackingParametersStrippingEnabled
 } = require('./url-parameters.es6')
+const ampProtection = require('./amp-protection.es6')
 
 const debugRequest = false
 
@@ -34,6 +36,40 @@ function buildResponse (url, requestData, tab, isMainFrame) {
     } else if (isMainFrame) {
         tab.upgradedHttps = false
     }
+}
+
+function updateTabCleanAmpUrl (currentTab, canonicalUrl, url) {
+    if (currentTab) {
+        currentTab.cleanAmpUrl = canonicalUrl || url
+    }
+}
+
+async function handleAmpAsyncRedirect (thisTab, url) {
+    const canonicalUrl = await ampProtection.fetchAMPURL(thisTab.site, url)
+    const currentTab = tabManager.get({ tabId: thisTab.id })
+    updateTabCleanAmpUrl(currentTab, canonicalUrl, url)
+    if (canonicalUrl) {
+        return { redirectUrl: canonicalUrl }
+    }
+}
+
+async function handleAmpDelayedUpdate (thisTab, url) {
+    const canonicalUrl = await ampProtection.fetchAMPURL(thisTab.site, url)
+    const currentTab = tabManager.get({ tabId: thisTab.id })
+    const newUrl = canonicalUrl || url
+    updateTabCleanAmpUrl(currentTab, canonicalUrl, url)
+
+    browser.tabs.update(thisTab.id, { url: newUrl })
+}
+
+function handleAmpRedirect (thisTab, url) {
+    if (!thisTab) { return }
+    if (utils.getBrowserName() === 'moz') {
+        return handleAmpAsyncRedirect(thisTab, url)
+    }
+
+    handleAmpDelayedUpdate(thisTab, url)
+    return { redirectUrl: 'about:blank' }
 }
 
 /**
@@ -72,7 +108,25 @@ function handleRequest (requestData) {
             thisTab = newTab
         }
 
-        const mainFrameRequestURL = new URL(requestData.url)
+        let mainFrameRequestURL = new URL(requestData.url)
+
+        // AMP protection
+        const canonUrl = ampProtection.extractAMPURL(thisTab.site, mainFrameRequestURL.href)
+        if (canonUrl) {
+            thisTab.setAmpUrl(mainFrameRequestURL.href)
+            updateTabCleanAmpUrl(thisTab, canonUrl, mainFrameRequestURL.href)
+            mainFrameRequestURL = new URL(canonUrl)
+        } else if (ampProtection.tabNeedsDeepExtraction(requestData, thisTab, mainFrameRequestURL)) {
+            thisTab.setAmpUrl(mainFrameRequestURL.href)
+            return handleAmpRedirect(thisTab, mainFrameRequestURL.href)
+        } else if (thisTab.cleanAmpUrl && mainFrameRequestURL.host !== new URL(thisTab.cleanAmpUrl).host) {
+            thisTab.ampUrl = null
+            thisTab.cleanAmpUrl = null
+        }
+
+        const ampRedirected = thisTab.ampUrl &&
+                              thisTab.cleanAmpUrl && thisTab.cleanAmpUrl !== thisTab.ampUrl &&
+                              requestData.url === thisTab.ampUrl
 
         // Tracking parameter stripping.
 
@@ -102,7 +156,7 @@ function handleRequest (requestData) {
         // add atb params only to main_frame
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL)
 
-        if (thisTab.urlParametersRemoved || atbParametersAdded) {
+        if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded) {
             return { redirectUrl: mainFrameRequestURL.href }
         }
     } else {
