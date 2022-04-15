@@ -18,7 +18,7 @@ The extension provides users with an improved private browsing experience whilst
 - [Announces to a website they must not track or sell on your data](https://globalprivacycontrol.org/)
 - Trims referrer header data
 - Reduced fingerprintability of various browser features
-- Removes FLoC from Chromium based browsers
+- Removes browsingTopics from Chromium based browsers
 - Cookies
   - Reduces expiry of first party cookies set by third-party tracking scripts
   - Blocks third party cookies from known trackers

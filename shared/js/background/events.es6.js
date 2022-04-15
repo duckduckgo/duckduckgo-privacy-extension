@@ -186,8 +186,8 @@ const extraInfoSpec = ['blocking', 'responseHeaders']
 if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
     extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
 }
-// we determine if FLoC is enabled by testing for availability of its JS API
-const isFlocEnabled = ('interestCohort' in document)
+// we determine if browsingTopics is enabled by testing for availability of its JS API
+const isTopicsEnabled = ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
 browser.webRequest.onHeadersReceived.addListener(
     request => {
         if (request.type === 'main_frame') {
@@ -201,8 +201,10 @@ browser.webRequest.onHeadersReceived.addListener(
 
         const responseHeaders = request.responseHeaders
 
-        if (isFlocEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
+        if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
             // there can be multiple permissions-policy headers, so we are good always appending one
+            // According to Google's docs a site can opt out of browsing topics the same way as opting out of FLoC
+            // https://privacysandbox.com/proposals/topics (See FAQ)
             responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
         }
 
