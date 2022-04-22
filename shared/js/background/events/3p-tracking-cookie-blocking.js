@@ -13,9 +13,9 @@ function dropTracking3pCookiesFromResponse (request) {
     let responseHeaders = request.responseHeaders
 
     if (tab && tab.site.isFeatureEnabled('trackingCookies3p') && request.type !== 'main_frame') {
-        if (!trackerutils.isTracker(request.url)) {
-            return { responseHeaders }
-        }
+        // if (!trackerutils.isTracker(request.url)) {
+        //     return { responseHeaders }
+        // }
 
         // Strip 3rd party response header
         if (!request.responseHeaders) return { responseHeaders }
@@ -53,9 +53,9 @@ function dropTracking3pCookiesFromRequest (request) {
     let requestHeaders = request.requestHeaders
 
     if (tab && tab.site.isFeatureEnabled('trackingCookies3p') && request.type !== 'main_frame') {
-        if (!trackerutils.isTracker(request.url)) {
-            return { requestHeaders }
-        }
+        // if (!trackerutils.isTracker(request.url)) {
+        //    return { requestHeaders }
+        // }
 
         // Strip 3rd party response header
         if (!requestHeaders) return { requestHeaders }
