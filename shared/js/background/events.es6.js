@@ -8,7 +8,6 @@ import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
-const trackerutils = require('./tracker-utils')
 const experiment = require('./experiments.es6')
 const settings = require('./settings.es6')
 const constants = require('../../data/constants')
@@ -377,43 +376,6 @@ browser.webRequest.onBeforeSendHeaders.addListener(
 )
 
 browser.webRequest.onBeforeSendHeaders.addListener(dropTracking3pCookiesFromRequest, { urls: ['<all_urls>'] }, extraInfoSpecSendHeaders)
-
-/**
- * Click to Load
- */
-
-/*
- * On FireFox, redirecting to a JS surrogate in some cases causes a CORS error. Determine if that is the case here.
- * If so, and we have an alternate XRAY surrogate implementation, inject it.
- */
-browser.webRequest.onBeforeRedirect.addListener(
-    details => {
-        const tab = tabManager.get({ tabId: details.tabId })
-        if (tab && tab.site.isFeatureEnabled('clickToPlay') && details.responseHeaders) {
-            // Detect cors error
-            const headers = details.responseHeaders
-            const corsHeaders = [
-                'Access-Control-Allow-Origin'
-            ]
-            const corsFound = headers.filter(v => corsHeaders.includes(v.name)).length
-
-            if (corsFound && details.redirectUrl) {
-                const xray = trackerutils.getXraySurrogate(details.redirectUrl)
-                if (xray && utils.getBrowserName() === 'moz') {
-                    console.log('Normal surrogate load failed, loading XRAY version')
-                    browser.tabs.executeScript(details.tabId, {
-                        file: `public/js/content-scripts/${xray}`,
-                        matchAboutBlank: true,
-                        frameId: details.frameId,
-                        runAt: 'document_start'
-                    })
-                }
-            }
-        }
-    },
-    { urls: ['<all_urls>'] },
-    ['responseHeaders']
-)
 
 // Inject our content script to overwite FB elements
 browser.webNavigation.onCommitted.addListener(details => {
