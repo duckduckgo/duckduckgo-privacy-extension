@@ -386,7 +386,7 @@ browser.webNavigation.onCommitted.addListener(details => {
         return
     }
 
-    if (tab && tab.site.isFeatureEnabled('clickToPlay')) {
+    if (utils.getClickToPlaySupport(tab)) {
         browser.tabs.executeScript(details.tabId, {
             file: 'public/js/content-scripts/click-to-load.js',
             matchAboutBlank: true,

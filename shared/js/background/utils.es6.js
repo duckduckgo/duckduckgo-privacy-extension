@@ -123,6 +123,13 @@ export function getUpgradeToSecureSupport () {
     return canUpgrade
 }
 
+export function getClickToPlaySupport (tab) {
+    if (getBrowserName() === 'moz' && browserInfo && browserInfo.version <= 88) {
+        return false
+    }
+    return (tab && tab.site.isFeatureEnabled('clickToPlay'))
+}
+
 // Chrome errors with 'beacon', but supports 'ping'
 // Firefox only blocks 'beacon' (even though it should support 'ping')
 export function getBeaconName () {
