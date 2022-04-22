@@ -16,13 +16,11 @@
         "surrogates": [
             {
                 "rule": "facebook\\.net\\/[a-z_A-Z]+\\/sdk.js",
-                "surrogate": "fb-sdk.js",
-                "xray": "fb-surrogate-xray.js"
+                "surrogate": "fb-sdk.js"
             },
             {
                 "rule": "facebook\\.net\\/[a-z_A-Z]+\\/all.js",
-                "surrogate": "fb-sdk.js",
-                "xray": "fb-surrogate-xray.js"
+                "surrogate": "fb-sdk.js"
             }
         ],
         "elementData": {
