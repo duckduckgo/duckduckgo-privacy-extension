@@ -79,9 +79,11 @@ const run = async () => {
         notes.replace('[[release_url]]', `<a href="${releaseUrl}">${releaseUrl}</a>`)
             .replace('[[notes]]', releaseNotes)
 
-    console.info('Updating task and moving to Release section...')
+    console.info('Updating task html')
 
     await asana.tasks.updateTask(new_task.gid, { html_notes: updatedNotes })
+
+    console.info('Moving task to Release section...')
 
     await asana.tasks.addProjectForTask(new_task.gid, {
         project: projectGid,
