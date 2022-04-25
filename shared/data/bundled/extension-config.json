@@ -1,9 +1,14 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1650184974476,
+    "version": 1650896638710,
     "features": {
         "ampLinks": {
-            "exceptions": [],
+            "exceptions": [
+                {
+                    "domain": "freecodecamp.org",
+                    "reason": "sign-up issues"
+                }
+            ],
             "settings": {
                 "deepExtractionEnabled": true,
                 "deepExtractionTimeout": 1500,
@@ -523,16 +528,10 @@
                             {
                                 "rule": "mpsnare.iesnare.com/snare.js",
                                 "domains": [
-                                    "rei.com"
-                                ],
-                                "reason": "adwall"
-                            },
-                            {
-                                "rule": "mpsnare.iesnare.com/snare.js",
-                                "domains": [
+                                    "rei.com",
                                     "ups.com"
                                 ],
-                                "reason": "resetting password blocked by tracker"
+                                "reason": "adwall, login issues"
                             }
                         ]
                     },
