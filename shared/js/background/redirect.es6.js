@@ -184,7 +184,7 @@ function handleRequest (requestData) {
          * Click to Load Blocking
          * If it isn't in the tracker list, check the clickToLoad block list
          */
-        if (thisTab.site.isFeatureEnabled('clickToPlay')) {
+        if (utils.getClickToPlaySupport(thisTab)) {
             const socialTracker = trackerutils.getSocialTracker(requestData.url)
             if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
                 if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party

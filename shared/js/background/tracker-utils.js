@@ -95,21 +95,6 @@ export function getSocialTracker (url) {
     }
 }
 
-// Determine if a given URL is surrogate redirect.
-export function getXraySurrogate (url) {
-    const u = new URL(url)
-    for (const [, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
-        if (data.surrogates) {
-            for (const surrogate of data.surrogates) {
-                if (u.pathname === `/web_accessible_resources/${surrogate.surrogate}`) {
-                    return surrogate.xray
-                }
-            }
-        }
-    }
-    return undefined
-}
-
 // Ensure we allow logged in sites to access facebook
 const logins = []
 export function allowSocialLogin (url) {
