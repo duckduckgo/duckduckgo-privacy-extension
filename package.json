@@ -62,7 +62,7 @@
         "load-grunt-tasks": "5.1.0",
         "node-fetch": "^3.2.3",
         "puppeteer": "13.6.0",
-        "sass": "^1.50.0",
+        "sass": "^1.50.1",
         "standard": "16.0.4",
         "timekeeper": "^2.1.1",
         "webextension-polyfill": "^0.9.0",
