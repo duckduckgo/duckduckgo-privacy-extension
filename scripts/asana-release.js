@@ -57,12 +57,7 @@ const getAssigneeGids = (releaseTasks) =>
 const run = async () => {
     setupAsana()
 
-    console.info('Asana on. Duplicating template task...')
-
-    const { new_task } = await duplicateTemplateTask(templateTaskGid)
-
-    const { html_notes: notes } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' })
-
+    console.info('Getting list of release tasks')
     // get list of tasks in release section
     const { data: releaseTasks } = await asana.tasks.getTasksForSection(
         releaseSectionGid,
@@ -71,6 +66,16 @@ const run = async () => {
             opt_fields: 'gid,assignee,name'
         }
     )
+    if (!releaseTasks || releaseTasks.length === 0) {
+        console.error('No tasks found to release!')
+        return
+    }
+
+    console.info('Asana on. Duplicating template task...')
+
+    const { new_task } = await duplicateTemplateTask(templateTaskGid)
+
+    const { html_notes: notes } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' })
 
     // create html list with <a>task</a> - @assignee
     const releaseNotes = `<ul>${getTaskList(releaseTasks)}</ul>`
