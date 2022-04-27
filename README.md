@@ -24,6 +24,12 @@ Generate a Smarter Encryption ruleset:
 npm run smarter-encryption ../list-of-domains.txt ../smarter-encryption-ruleset.json
 ```
 
+Generate a Tracker Blocking ruleset:
+
+```bash
+npm run tracker-blocking ../tds.json ../tracker-blocking-ruleset.json [../tracker-domain-by-rule-id.txt]
+```
+
 ## Development
 
 Lint the code:
