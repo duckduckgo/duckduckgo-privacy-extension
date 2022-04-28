@@ -13,6 +13,7 @@
         "lint": "eslint . --ext .js",
         "smarter-encryption": "node cli.js smarter-encryption",
         "test": "mocha",
-        "tracker-blocking": "node cli.js tracker-blocking"
+        "tracker-blocking": "node cli.js tracker-blocking",
+        "tracker-blocking-allowlist": "node cli.js tracker-blocking-allowlist"
     }
 }

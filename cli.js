@@ -3,6 +3,8 @@ const process = require('process')
 
 const { generateSmarterEncryptionRuleset } = require('./lib/smarterEncryption')
 const { generateTrackerBlockingRuleset } = require('./lib/trackerBlocking')
+const { generateTrackerBlockingAllowlistRuleset } =
+      require('./lib/trackerBlockingAllowlist')
 
 const [command, ...args] = process.argv.slice(2)
 
@@ -67,6 +69,41 @@ async function main () {
                 fs.writeFileSync(
                     mappingFilePath,
                     trackerDomainByRuleId.join('\n')
+                )
+            }
+        }
+        break
+    case 'tracker-blocking-allowlist':
+        if (args.length < 2 || args.length > 3) {
+            console.error(
+                'Usage: npm run tracker-blocking-allowlist',
+                './extension-config-input.json ./ruleset-output.json ',
+                '[./domain-and-reason-by-rule-id-output.json]'
+            )
+        } else {
+            const [
+                extensionConfigFilePath, rulesetFilePath, mappingFilePath
+            ] = args
+
+            const { ruleset, trackerDomainAndReasonByRuleId } =
+                  await generateTrackerBlockingAllowlistRuleset(
+                      JSON.parse(
+                          fs.readFileSync(
+                              extensionConfigFilePath, { encoding: 'utf8' }
+                          )
+                      ),
+                      isRegexSupported
+                  )
+
+            fs.writeFileSync(
+                rulesetFilePath,
+                JSON.stringify(ruleset, null, '\t')
+            )
+
+            if (mappingFilePath) {
+                fs.writeFileSync(
+                    mappingFilePath,
+                    JSON.stringify(trackerDomainAndReasonByRuleId, null, '\t')
                 )
             }
         }

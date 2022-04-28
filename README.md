@@ -30,6 +30,14 @@ Generate a Tracker Blocking ruleset:
 npm run tracker-blocking ../tds.json ../tracker-blocking-ruleset.json [../tracker-domain-by-rule-id.txt]
 ```
 
+Generate a Tracker Blocking Allowlist ruleset:
+
+```bash
+npm run tracker-blocking-allowlist ../extension-config.json ../tracker-blocking-allowlist-ruleset.json \
+        [../tracker-domain-and-reason-by-rule-id.json]
+```
+
+
 ## Development
 
 Lint the code:
