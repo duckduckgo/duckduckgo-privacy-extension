@@ -7,32 +7,20 @@ const {
     generateTrackerBlockingAllowlistRuleset
 } = require('../lib/trackerBlockingAllowlist')
 
-async function isRegexSupportedTrue ({ regex, isCaseSensitive }) {
-    return { isSupported: true }
-}
-
 describe('generateTrackerBlockingAllowlistRuleset', () => {
     it('should reject invalid extension configuration', () => {
         assert.rejects(() =>
-            generateTrackerBlockingAllowlistRuleset(null, () => { })
+            generateTrackerBlockingAllowlistRuleset(null)
         )
         assert.rejects(() =>
-            generateTrackerBlockingAllowlistRuleset({}, () => { })
+            generateTrackerBlockingAllowlistRuleset({})
         )
         assert.rejects(() =>
             generateTrackerBlockingAllowlistRuleset({
                 features: {
                     trackerAllowlist: null
                 }
-            }, () => { })
-        )
-
-        assert.rejects(() =>
-            generateTrackerBlockingAllowlistRuleset({
-                features: {
-                    trackerAllowlist: {}
-                }
-            }, 1)
+            })
         )
     })
 
@@ -57,18 +45,12 @@ describe('generateTrackerBlockingAllowlistRuleset', () => {
         }
 
         assert.doesNotReject(() =>
-            generateTrackerBlockingAllowlistRuleset(
-                extensionConfig, isRegexSupportedTrue
-            )
-        )
+            generateTrackerBlockingAllowlistRuleset(extensionConfig))
 
         rules.push(rules[0])
 
         assert.rejects(() =>
-            generateTrackerBlockingAllowlistRuleset(
-                extensionConfig, isRegexSupportedTrue
-            )
-        )
+            generateTrackerBlockingAllowlistRuleset(extensionConfig))
     })
 
     it('should return no rules if trackerAllowlist feature is disabled or ' +
@@ -176,7 +158,7 @@ describe('generateTrackerBlockingAllowlistRuleset', () => {
 
         assert.deepEqual(
             await generateTrackerBlockingAllowlistRuleset(
-                extensionConfig, isRegexSupportedTrue, 23
+                extensionConfig, 23
             ),
             {
                 ruleset: [

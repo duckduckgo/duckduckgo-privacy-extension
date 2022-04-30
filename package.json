@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "description": "Scripts to generate declarativeNetRequest rulesets for the DuckDuckGo Privacy Essentials extension",
     "license": "Apache-2.0",
-    "repository": "duckduckgo/duckduckgo-privacy-extension",
+    "repository": "duckduckgo/ddg2dnr",
     "devDependencies": {
         "eslint": "7.32.0",
         "eslint-config-standard": "16.0.3",

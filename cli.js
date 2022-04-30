@@ -8,7 +8,7 @@ const { generateTrackerBlockingAllowlistRuleset } =
 
 const [command, ...args] = process.argv.slice(2)
 
-// FIXME - This an extremely rough placeholder and is not accurate. It should
+// FIXME - This is an extremely rough placeholder and is not accurate. It should
 //         behave the same as chrome.declarativeNetRequest.isRegexSupported.
 // See:
 //  - https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-isRegexSupported
@@ -91,8 +91,7 @@ async function main () {
                           fs.readFileSync(
                               extensionConfigFilePath, { encoding: 'utf8' }
                           )
-                      ),
-                      isRegexSupported
+                      )
                   )
 
             fs.writeFileSync(

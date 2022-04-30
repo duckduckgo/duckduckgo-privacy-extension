@@ -25,8 +25,8 @@ describe('rule priorities', () => {
         assert.ok(TRACKER_BLOCKING_ALLOWLIST_BASELINE_PRIORITY >
                   TRACKER_BLOCKING_CEILING_PRIORITY)
 
-        // Smarter Encryption prioritiy.
-        // Note: It's important that the Smarter Encryption rule prioirty is
+        // Smarter Encryption priority.
+        // Note: It's important that the Smarter Encryption rule priority is
         //       higher than the priority for Tracker Blocking etc rules.
         //       After a request is redirected to use HTTPS, the redirected
         //       request will still match against other block/allow rules. But

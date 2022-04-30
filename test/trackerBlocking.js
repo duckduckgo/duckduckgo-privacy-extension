@@ -339,11 +339,12 @@ describe('generateTrackerBlockingRuleset', () => {
         const blockList = emptyBlockList()
         // Entity has one domain, so 'thirdParty' domainType can be used.
         addDomain(blockList, 'a.invalid', 'Entity A', 'block')
-        // Entity has two domains, so excludedInitiatorDomains must be listed.
+        // Entity has two domains, so excludedInitiatorDomains must be used.
         addDomain(blockList, 'b.invalid', 'Entity B', 'block')
-        // But no need to exclude initiator domains for default allow actions.
+        // No need to exclude initiator domains for default allow actions.
         addDomain(blockList, 'allowed.b.invalid', 'Entity B', 'ignore')
-        // Entity has multiple domains, so excludedInitiatorDomains.
+        // Entity has multiple domains, so excludedInitiatorDomains must be
+        // used.
         addDomain(blockList, 'c.invalid', 'Entity C', 'block')
         addDomain(blockList, 'foo-c.invalid', 'Entity C')
         addDomain(blockList, 'bar-c.invalid', 'Entity C')
@@ -405,7 +406,7 @@ describe('generateTrackerBlockingRuleset', () => {
                 return [rule.condition.urlFilter, rule.priority]
             },
             expectedRuleset: [
-                // Priorities are in decending order, to ensure that the first
+                // Priorities are in descending order, to ensure that the first
                 // rule for a tracker entry matches first. That is why the
                 // generated declarativeNetRequest rules are in reverse order.
                 ['5', BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT],
@@ -413,7 +414,7 @@ describe('generateTrackerBlockingRuleset', () => {
                     (TRACKER_RULE_PRIORITY_INCREMENT * 2)],
                 ['3', BASELINE_PRIORITY +
                     (TRACKER_RULE_PRIORITY_INCREMENT * 3)],
-                // Allowing exception for rule has same priority, since
+                // Allowing exception for the rule has the same priority, since
                 // declarativeNetRequest rules with 'allow' actions take
                 // priority over rules with 'block' action of same priority.
                 ['3', BASELINE_PRIORITY +
@@ -515,8 +516,8 @@ describe('generateTrackerBlockingRuleset', () => {
     it('should ignore cname entries for subdomains of tracking ' +
        'domains', async () => {
         const blockList = emptyBlockList()
-        // Do not correspond to declarativeNetRequest rules since they are
-        // default action ignore.
+        // Do not require declarativeNetRequest rules since they are default
+        // action ignore.
         addDomain(blockList, 'first.invalid', 'First entity', 'ignore')
         addDomain(blockList, 'second.invalid', 'Second entity', 'ignore')
 
@@ -774,8 +775,8 @@ describe('generateTrackerBlockingRuleset', () => {
                     }
                 },
                 // Removed as rule is redundant. Default action is block, so
-                // having following with a more specfic block rule doesn't
-                // change anything.
+                // following with a more specific block rule doesn't achieve
+                // anything.
                 // {
                 //     id: 2,
                 //     priority: BASELINE_PRIORITY +
@@ -821,9 +822,9 @@ describe('generateTrackerBlockingRuleset', () => {
                 },
                 {
                     id: 4,
-                    // Note: Rule priority is not increment for rule exceptions
-                    //       since 'allow' rules take priority over 'block'
-                    //       rules of the same priority.
+                    // Note: Rule priority is not incremented for rule
+                    //       exceptions since 'allow' rules trump 'block' rules
+                    //       of the same priority.
                     priority: BASELINE_PRIORITY +
                               (TRACKER_RULE_PRIORITY_INCREMENT * 2),
                     action: {
@@ -1060,7 +1061,7 @@ describe('generateTrackerBlockingRuleset', () => {
 
     it('should combine rules where possible', async () => {
         const blockList = emptyBlockList()
-        // The rules requires for these tracker entries are the same except for
+        // The rules required for these tracker entries are the same except for
         // the request domains conditions. So they can be combined by combining
         // the request domains conditions.
         addDomain(blockList, 'a.invalid', 'A entity', 'block', [
