@@ -7,7 +7,8 @@
     "devDependencies": {
         "eslint": "7.32.0",
         "eslint-config-standard": "16.0.3",
-        "mocha": "9.2.2"
+        "mocha": "9.2.2",
+        "puppeteer": "13.7.0"
     },
     "scripts": {
         "lint": "eslint . --ext .js",
@@ -15,5 +16,8 @@
         "test": "mocha",
         "tracker-blocking": "node cli.js tracker-blocking",
         "tracker-blocking-allowlist": "node cli.js tracker-blocking-allowlist"
+    },
+    "mocha": {
+        "require": "test/utils/hooks.js"
     }
 }
