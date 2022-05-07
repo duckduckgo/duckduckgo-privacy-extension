@@ -1,21 +1,14 @@
 const fs = require('fs')
 const process = require('process')
 
+const { PuppeteerInterface } = require('./puppeteerInterface')
+
 const { generateSmarterEncryptionRuleset } = require('./lib/smarterEncryption')
 const { generateTrackerBlockingRuleset } = require('./lib/trackerBlocking')
 const { generateTrackerBlockingAllowlistRuleset } =
       require('./lib/trackerBlockingAllowlist')
 
 const [command, ...args] = process.argv.slice(2)
-
-// FIXME - This is an extremely rough placeholder and is not accurate. It should
-//         behave the same as chrome.declarativeNetRequest.isRegexSupported.
-// See:
-//  - https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-isRegexSupported
-//  - https://source.chromium.org/chromium/chromium/src/+/main:components/url_pattern_index/url_pattern_index.cc;l=566-619
-async function isRegexSupported ({ regex, isCaseSensitive }) {
-    return { isSupported: regex.length < 120 }
-}
 
 async function main () {
     switch (command) {
@@ -52,6 +45,9 @@ async function main () {
         } else {
             const [tdsFilePath, rulesetFilePath, mappingFilePath] = args
 
+            const browser = new PuppeteerInterface()
+            const isRegexSupported = browser.isRegexSupported.bind(browser)
+
             const { ruleset, trackerDomainByRuleId } =
                   await generateTrackerBlockingRuleset(
                       JSON.parse(
@@ -59,6 +55,8 @@ async function main () {
                       ),
                       isRegexSupported
                   )
+
+            browser.closeBrowser()
 
             fs.writeFileSync(
                 rulesetFilePath,
