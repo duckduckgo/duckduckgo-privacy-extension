@@ -89,7 +89,7 @@ describe('Test YouTube Click To Load', () => {
 
             expect(youTubeIframeApi.checked).toBeTrue()
             expect(youTubeIframeApi.alwaysRedirected).toBeTrue()
-            expect(youTubeStandard.total).toBeGreaterThan(5)
+            expect(youTubeStandard.total).toBeGreaterThanOrEqual(2)
             expect(youTubeStandard.blocked).toEqual(youTubeStandard.total)
             expect(youTubeStandard.allowed).toEqual(0)
             expect(youTubeNocookie.blocked).toEqual(youTubeNocookie.total)
@@ -127,7 +127,7 @@ describe('Test YouTube Click To Load', () => {
 
             expect(youTubeIframeApi.checked).toBeTrue()
             expect(youTubeIframeApi.alwaysRedirected).toBeTrue()
-            expect(youTubeStandard.total).toBeGreaterThan(5)
+            expect(youTubeStandard.total).toBeGreaterThanOrEqual(2)
             expect(youTubeStandard.blocked).toEqual(youTubeStandard.total)
             expect(youTubeStandard.allowed).toEqual(0)
             expect(youTubeNocookie.blocked).toEqual(youTubeNocookie.total)
