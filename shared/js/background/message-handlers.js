@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
@@ -192,10 +193,15 @@ export function getTopBlocked (options) {
     return Companies.getTopBlocked(options)
 }
 
-const isExpectedSender = (sender) => (
-    // Check the origin. Shouldn't be necessary, but better safe than sorry
-    sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com\/email/)
-)
+function isExpectedSender (sender) {
+    try {
+        const domain = getDomain(sender.url)
+        const { pathname } = new URL(sender.url)
+        return domain === 'duckduckgo.com' && pathname.startsWith('/email')
+    } catch {
+        return false
+    }
+}
 
 export function getEmailProtectionCapabilities (_, sender) {
     if (!isExpectedSender(sender)) return
