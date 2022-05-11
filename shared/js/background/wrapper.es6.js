@@ -205,3 +205,52 @@ export async function insertCSS (options) {
 
     return await browser.scripting.insertCSS(options)
 }
+
+// Session storage
+const sessionStorageSupported = typeof browser.storage.session !== 'undefined'
+const sessionStorageFallback = sessionStorageSupported ? null : new Map()
+
+/**
+ * Save some data to memory, which persists until the session ends (e.g. until
+ * the browser is closed).
+ * Note: There is a quota for how much data can be stored in memory. At the time
+ *       of writing that was about 1 megabyte. Attempting to write more data
+ *       than this will result in an error. For large values, please use
+ *       `syncToStorage` (browser.storage.local) instead.
+ *       See https://developer.chrome.com/docs/extensions/reference/storage/#property-session-session-QUOTA_BYTES
+ * @param {string} key
+ *   The storage key to write to.
+ * @param {*} value
+ *   The value to write.
+ */
+export async function setToSessionStorage (key, data) {
+    if (typeof key !== 'string') {
+        throw new Error('Invalid storage key, string expected.')
+    }
+
+    if (sessionStorageSupported) {
+        return await browser.storage.session.set({ [key]: data })
+    }
+
+    sessionStorageFallback.set(key, data)
+}
+
+/**
+ * Retrieve a value from memory.
+ * @param {string} key
+ *   The storage key to retrieve.
+ * @return {*}
+ *   The retrieved value.
+ */
+export async function getFromSessionStorage (key) {
+    if (typeof key !== 'string') {
+        throw new Error('Invalid storage key, string expected.')
+    }
+
+    if (sessionStorageSupported) {
+        const result = await browser.storage.session.get([key])
+        return result[key]
+    }
+
+    return sessionStorageFallback.get(key)
+}
