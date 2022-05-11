@@ -41,7 +41,7 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     }
 
     // Extra contextual data required for 1p and 3p cookie protection - only send if at least one is enabled here
-    if (tab.site.isFeatureEnabled('trackingCookies3p') || tab.site.isFeatureEnabled('trackingCookies1p')) {
+    if (tab.site.isFeatureEnabled('trackingCookies3p') || tab.site.isFeatureEnabled('nonTracking3pCookies') || tab.site.isFeatureEnabled('trackingCookies1p')) {
         // determine the register domain of the sending tab
         const parsed = tldts.parse(tab.url)
         cookie.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain

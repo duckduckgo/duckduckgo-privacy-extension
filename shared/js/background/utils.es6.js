@@ -255,13 +255,13 @@ export function isSafeListed (url) {
     return false
 }
 
-export function isCookieExcluded (url) {
+export function isCookieExcluded (url, feature) {
     const domain = (new URL(url)).host
     return isDomainCookieExcluded(domain)
 }
 
-function isDomainCookieExcluded (domain) {
-    const cookieSettings = getFeatureSettings('trackingCookies3p')
+function isDomainCookieExcluded (domain, feature) {
+    const cookieSettings = getFeatureSettings(feature || 'trackingCookies3p')
     if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
         return false
     }
@@ -273,7 +273,7 @@ function isDomainCookieExcluded (domain) {
     const comps = domain.split('.')
     if (comps.length > 2) {
         comps.shift()
-        return isDomainCookieExcluded(comps.join('.'))
+        return isDomainCookieExcluded(comps.join('.'), feature)
     }
 
     return false
@@ -362,6 +362,13 @@ export function isFeatureEnabled (featureName) {
     if ('minSupportedVersion' in feature) {
         const extensionVersionString = getExtensionVersion()
         if (!satisfiesMinVersion(feature.minSupportedVersion, extensionVersionString)) {
+            return false
+        }
+    }
+
+    // If we have a supplied excluded browsers list, ensure the browser is not in it
+    if (feature.settings && 'excludedBrowsers' in feature.settings) {
+        if (feature.settings.excludedBrowsers.includes(getBrowserName())) {
             return false
         }
     }

@@ -12,12 +12,16 @@ function dropTracking3pCookiesFromResponse (request) {
     const tab = tabManager.get({ tabId: request.tabId })
     let responseHeaders = request.responseHeaders
 
-    if (tab && tab.site.isFeatureEnabled('trackingCookies3p') && request.type !== 'main_frame') {
-        if (!trackerutils.isTracker(request.url)) {
+    if (tab && request.type !== 'main_frame') {
+        const requestIsTracker = trackerutils.isTracker(request.url)
+        if (requestIsTracker && !tab.site.isFeatureEnabled('trackingCookies3p')) {
+            return { responseHeaders }
+        }
+        if (!requestIsTracker && !tab.site.isFeatureEnabled('nonTracking3pCookies')) {
             return { responseHeaders }
         }
 
-        // Strip 3rd party response header
+        // Strip 3rd party cookie response header
         if (!request.responseHeaders) return { responseHeaders }
         if (!tab) {
             const initiator = request.initiator || request.documentUrl
@@ -27,7 +31,9 @@ function dropTracking3pCookiesFromResponse (request) {
         } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
             return { responseHeaders }
         }
-        if (!utils.isCookieExcluded(request.url)) {
+
+        const cookieFeature = requestIsTracker ? 'trackingCookies3p' : 'nonTracking3pCookies'
+        if (!utils.isCookieExcluded(request.url, cookieFeature)) {
             responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
@@ -52,9 +58,13 @@ function dropTracking3pCookiesFromRequest (request) {
     const tab = tabManager.get({ tabId: request.tabId })
     let requestHeaders = request.requestHeaders
 
-    if (tab && tab.site.isFeatureEnabled('trackingCookies3p') && request.type !== 'main_frame') {
-        if (!trackerutils.isTracker(request.url)) {
-            return { requestHeaders }
+    if (tab && request.type !== 'main_frame') {
+        const requestIsTracker = trackerutils.isTracker(request.url)
+        if (requestIsTracker && !tab.site.isFeatureEnabled('trackingCookies3p')) {
+            return { responseHeaders }
+        }
+        if (!requestIsTracker && !tab.site.isFeatureEnabled('nonTracking3pCookies')) {
+            return { responseHeaders }
         }
 
         // Strip 3rd party response header
@@ -67,7 +77,8 @@ function dropTracking3pCookiesFromRequest (request) {
         } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
             return { requestHeaders }
         }
-        if (!utils.isCookieExcluded(request.url)) {
+        const cookieFeature = requestIsTracker ? 'trackingCookies3p' : 'nonTracking3pCookies'
+        if (!utils.isCookieExcluded(request.url, cookieFeature)) {
             requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
