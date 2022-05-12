@@ -372,6 +372,19 @@
             },
             "writable": "true"
         },
+        "CheckboxPlugin": {
+            "configurable": "true",
+            "enumerable": "true",
+            "value": {
+                "confirm": {
+                    "configurable": "true",
+                    "enumerable": "true",
+                    "value": "function(0)",
+                    "writable": "true"
+                }
+            },
+            "writable": "true"
+        },
         "Event": {
             "configurable": "true",
             "enumerable": "true",
