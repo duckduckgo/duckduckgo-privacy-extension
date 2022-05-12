@@ -1,3 +1,14 @@
+const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string.es6')
+const browserInfo = parseUserAgentString()
+function getBrowserName () {
+    if (!browserInfo || !browserInfo.browser) return
+
+    let browser = browserInfo.browser.toLowerCase()
+    if (browser === 'firefox') browser = 'moz'
+
+    return browser
+}
+
 module.exports = {
     displayCategories: ['Analytics', 'Advertising', 'Social Network'],
     requestListenerTypes: ['main_frame', 'sub_frame', 'stylesheet', 'script', 'image', 'object', 'xmlhttprequest', 'websocket', 'other'], // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/ResourceType
@@ -102,7 +113,7 @@ module.exports = {
         },
         {
             name: 'config',
-            url: 'https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension-config.json',
+            url: `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${getBrowserName() ? `-${getBrowserName()}` : ''}-config.json`,
             format: 'json',
             source: 'external'
         }
