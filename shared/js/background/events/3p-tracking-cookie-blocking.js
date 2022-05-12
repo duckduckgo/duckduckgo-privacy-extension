@@ -61,10 +61,10 @@ function dropTracking3pCookiesFromRequest (request) {
     if (tab && request.type !== 'main_frame') {
         const requestIsTracker = trackerutils.isTracker(request.url)
         if (requestIsTracker && !tab.site.isFeatureEnabled('trackingCookies3p')) {
-            return { responseHeaders }
+            return { requestHeaders }
         }
         if (!requestIsTracker && !tab.site.isFeatureEnabled('nonTracking3pCookies')) {
-            return { responseHeaders }
+            return { requestHeaders }
         }
 
         // Strip 3rd party response header

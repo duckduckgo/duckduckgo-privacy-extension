@@ -8,6 +8,7 @@ function getBrowserName () {
 
     return browser
 }
+const browserName = getBrowserName()
 
 module.exports = {
     displayCategories: ['Analytics', 'Advertising', 'Social Network'],
@@ -113,7 +114,7 @@ module.exports = {
         },
         {
             name: 'config',
-            url: `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${getBrowserName() ? `-${getBrowserName()}` : ''}-config.json`,
+            url: `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName ? `-${browserName}` : ''}-config.json`,
             format: 'json',
             source: 'external'
         }
