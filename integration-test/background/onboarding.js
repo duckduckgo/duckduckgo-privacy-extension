@@ -20,8 +20,8 @@ describe('onboarding', () => {
     it('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async () => {
         const params = await bgPage.evaluate(() => {
             return {
-                showWelcomeBanner: window.dbg.settings.getSetting('showWelcomeBanner'),
-                showCounterMessaging: window.dbg.settings.getSetting('showCounterMessaging')
+                showWelcomeBanner: self.dbg.settings.getSetting('showWelcomeBanner'),
+                showCounterMessaging: self.dbg.settings.getSetting('showCounterMessaging')
             }
         })
 
@@ -43,8 +43,8 @@ describe('onboarding', () => {
 
         const nextParams = await bgPage.evaluate(() => {
             return {
-                showWelcomeBanner: window.dbg.settings.getSetting('showWelcomeBanner'),
-                showCounterMessaging: window.dbg.settings.getSetting('showCounterMessaging')
+                showWelcomeBanner: self.dbg.settings.getSetting('showWelcomeBanner'),
+                showCounterMessaging: self.dbg.settings.getSetting('showCounterMessaging')
             }
         })
 
@@ -107,7 +107,7 @@ describe('onboarding', () => {
 
         await backgroundWait.forSetting(bgPage, 'rescheduleCounterMessagingOnStart')
         const rescheduleCounterMessagingOnStart = await bgPage.evaluate(() => {
-            return window.dbg.settings.getSetting('rescheduleCounterMessagingOnStart')
+            return self.dbg.settings.getSetting('rescheduleCounterMessagingOnStart')
         })
         expect(rescheduleCounterMessagingOnStart).toBe(true)
 
