@@ -25,8 +25,12 @@ const setup = async (ops) => {
     }
 
     if (loadExtension) {
-        puppeteerOps.args.push('--disable-extensions-except=build/chrome/dev')
-        puppeteerOps.args.push('--load-extension=build/chrome/dev')
+        let extensionPath = 'build/chrome/dev'
+        if (process.env.npm_lifecycle_event === 'test-int-mv3') {
+            extensionPath = extensionPath.replace('chrome', 'chrome-mv3')
+        }
+        puppeteerOps.args.push('--disable-extensions-except=' + extensionPath)
+        puppeteerOps.args.push('--load-extension=' + extensionPath)
     }
 
     // github actions
@@ -57,10 +61,15 @@ const setup = async (ops) => {
         try {
             const backgroundPageTarget =
                   await browser.waitForTarget(
-                      target => target.type() === 'background_page',
+                      target => (
+                          target.type() === 'background_page' ||
+                          target.type() === 'service_worker'
+                      ),
                       { timeout: 2000 }
                   )
-            bgPage = await backgroundPageTarget.page()
+            bgPage = backgroundPageTarget.type() === 'background_page'
+                ? await backgroundPageTarget.page()
+                : await backgroundPageTarget.worker()
         } catch (e) {
             throw new Error('Couldn\'t find background page.')
         }
