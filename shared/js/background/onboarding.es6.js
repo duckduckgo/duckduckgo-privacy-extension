@@ -9,12 +9,6 @@
 *    - Assess if the extension has been deactivated by Chrome
 *    - Reschedule the onboarding for the next restart
 */
-function createOnboardingCodeInjectedAtDocumentEnd (params) {
-    // TODO: upgrade to `chrome.scripting.executeScript` when we upgrade to manifest v3
-    // as it allows to inject a function with _arguments_. Here we simulate that in a hacky way
-    return `(${onDocumentEnd.toString()})(${JSON.stringify(params)})`
-}
-
 function onDocumentEnd ({
     isAddressBarQuery,
     showWelcomeBanner,
@@ -109,12 +103,6 @@ function onDocumentEnd ({
     }
 }
 
-function createOnboardingCodeInjectedAtDocumentStart (params) {
-    // TODO: upgrade to `chrome.scripting.executeScript` when we upgrade to manifest v3
-    // as it allows to inject a function with _arguments_. Here we simulate that in a hacky way
-    return `(${onDocumentStart.toString()})(${JSON.stringify(params)})`
-}
-
 function onDocumentStart ({ duckDuckGoSerpHostname }) {
     const hadFocusOnStart = document.hasFocus()
 
@@ -127,6 +115,6 @@ function onDocumentStart ({ duckDuckGoSerpHostname }) {
 }
 
 module.exports = {
-    createOnboardingCodeInjectedAtDocumentEnd,
-    createOnboardingCodeInjectedAtDocumentStart
+    onDocumentEnd,
+    onDocumentStart
 }

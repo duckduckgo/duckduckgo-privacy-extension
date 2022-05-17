@@ -63,7 +63,10 @@ async function onInstalled (details) {
             if (tab.url.startsWith('chrome://')) {
                 continue
             }
-            browser.tabs.executeScript(tab.id, { file: 'public/js/content-scripts/autofill.js' })
+            await browserWrapper.executeScript({
+                target: { tabId: tab.id },
+                files: ['public/js/content-scripts/autofill.js']
+            })
         }
     }
 }
@@ -98,24 +101,28 @@ browser.webNavigation.onCommitted.addListener(async details => {
 
         if (onBeforeNavigateTimeStamp < details.timeStamp) {
             if (browserName === 'chrome') {
-                browser.tabs.executeScript(details.tabId, {
-                    code: onboarding.createOnboardingCodeInjectedAtDocumentStart({
+                browserWrapper.executeScript({
+                    target: { tabId: details.tabId },
+                    func: onboarding.onDocumentStart,
+                    args: [{
                         duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
-                    }),
-                    runAt: 'document_start'
+                    }],
+                    injectImmediately: true
                 })
             }
 
-            browser.tabs.executeScript(details.tabId, {
-                code: onboarding.createOnboardingCodeInjectedAtDocumentEnd({
+            browserWrapper.executeScript({
+                target: { tabId: details.tabId },
+                func: onboarding.onDocumentEnd,
+                args: [{
                     isAddressBarQuery,
                     showWelcomeBanner,
                     showCounterMessaging,
                     browserName,
                     duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
                     extensionId: browserWrapper.getExtensionId()
-                }),
-                runAt: 'document_end'
+                }],
+                injectImmediately: false
             })
         }
     }
@@ -404,11 +411,13 @@ browser.webNavigation.onCommitted.addListener(details => {
     }
 
     if (utils.getClickToPlaySupport(tab)) {
-        browser.tabs.executeScript(details.tabId, {
-            file: 'public/js/content-scripts/click-to-load.js',
-            matchAboutBlank: true,
-            frameId: details.frameId,
-            runAt: 'document_start'
+        browserWrapper.executeScript({
+            target: {
+                tabId: details.tabId,
+                frameIds: [details.frameId]
+            },
+            files: ['public/js/content-scripts/click-to-load.js'],
+            injectImmediately: true
         })
     }
 })
