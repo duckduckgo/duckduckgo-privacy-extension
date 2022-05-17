@@ -52,6 +52,10 @@ Run `git submodule update --remote` to fetch latest version of all git submodule
  2. Load the extension in Chrome from the `build/chrome/dev` directory
 [Getting Started: Building a Chrome Extension - Google Chrome](https://developer.chrome.com/extensions/getstarted#unpacked)
 
+- Chrome MV3 (Work in progress, not working yet.)
+ 1. Run `npm run dev-chrome-mv3`
+ 2. Load the extension in Chrome from the `build/chrome-mv3/dev` directory
+
 ### Updating or testing config
 
 Modify shared/data/constants.js the config to point to http://localhost:8080/generated/v2/extension-config.json

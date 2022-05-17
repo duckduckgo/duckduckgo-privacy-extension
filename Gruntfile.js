@@ -7,6 +7,11 @@ module.exports = function (grunt) {
     const browser = grunt.option('browser')
     const buildType = grunt.option('type')
 
+    // While transitioning from Chrome MV2 to MV3, there are two Chrome build
+    // targets, but many files are shared between the build targets. Once the
+    // transition is complete, this variable should be removed.
+    const browserSimilar = browser === 'chrome-mv3' ? 'chrome' : browser
+
     if (!(browser && buildType)) {
         console.error('Missing browser or  build type: --browser=<browser-name> --type=<dev,release>')
         process.exit(1)
@@ -184,12 +189,12 @@ module.exports = function (grunt) {
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             installContentScope: contentScopeInstall,
-            copyContentScope: `${contentScopeBuild} cp ${ddgContentScope}/build/${browser}/inject.js build/${browser}/${buildType}/public/js/inject.js`,
+            copyContentScope: `${contentScopeBuild} cp ${ddgContentScope}/build/${browserSimilar}/inject.js build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyAutofillCSS: `cp -r ${ddgAutofill}/autofill.css build/${browser}/${buildType}/public/css/`,
-            copyAutofillHostCSS: `cp -r ${ddgAutofill}/autofill-host-styles_${browser}.css build/${browser}/${buildType}/public/css/autofill-host-styles.css`
+            copyAutofillHostCSS: `cp -r ${ddgAutofill}/autofill-host-styles_${browserSimilar}.css build/${browser}/${buildType}/public/css/autofill-host-styles.css`
         },
 
         watch: {
