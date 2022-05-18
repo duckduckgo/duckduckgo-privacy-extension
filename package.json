@@ -43,7 +43,7 @@
         "eslint-config-standard": "^16.0.3",
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-node": "^11.1.0",
-        "glob": "^8.0.1",
+        "glob": "^8.0.3",
         "grunt": "1.5.2",
         "grunt-browserify": "6.0.0",
         "grunt-contrib-concat": "2.1.0",
