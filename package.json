@@ -30,7 +30,7 @@
     },
     "devDependencies": {
         "@babel/cli": "^7.17.10",
-        "@babel/core": "^7.17.10",
+        "@babel/core": "^7.17.12",
         "@babel/node": "^7.17.10",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.17.10",
@@ -44,7 +44,7 @@
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-node": "^11.1.0",
         "glob": "^8.0.3",
-        "grunt": "1.5.2",
+        "grunt": "1.5.3",
         "grunt-browserify": "6.0.0",
         "grunt-contrib-concat": "2.1.0",
         "grunt-contrib-watch": "1.1.0",
@@ -65,7 +65,7 @@
         "standard": "17.0.0",
         "timekeeper": "^2.1.1",
         "webextension-polyfill": "^0.9.0",
-        "yargs": "^17.4.1"
+        "yargs": "^17.5.1"
     },
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#4.4.0",
