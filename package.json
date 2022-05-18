@@ -30,7 +30,7 @@
     },
     "devDependencies": {
         "@babel/cli": "^7.17.10",
-        "@babel/core": "^7.17.10",
+        "@babel/core": "^7.17.12",
         "@babel/node": "^7.17.10",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.17.10",
@@ -44,7 +44,7 @@
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-node": "^11.1.0",
         "glob": "^8.0.3",
-        "grunt": "1.5.2",
+        "grunt": "1.5.3",
         "grunt-browserify": "6.0.0",
         "grunt-contrib-concat": "2.1.0",
         "grunt-contrib-watch": "1.1.0",
@@ -84,7 +84,7 @@
         "punycode": "2.1.1",
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
-        "tldts": "^5.7.78",
+        "tldts": "^5.7.79",
         "tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.0.0",
         "underscore": "1.13.3",
         "web-ext": "^6.8.0"
