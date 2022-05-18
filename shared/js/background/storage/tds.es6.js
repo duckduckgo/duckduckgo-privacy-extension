@@ -141,7 +141,7 @@ class TDSStorage {
     }
 
     getDataXHR (list, etag, source) {
-        return load.loadExtensionFile({ url: list.url, etag: etag, returnType: list.format, source, timeout: 60000 })
+        return load.loadExtensionFile({ url: list.url, fallbackUrl: list.fallbackUrl, etag: etag, returnType: list.format, source, timeout: 60000 })
     }
 
     getDataFromLocalDB (name) {

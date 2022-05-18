@@ -366,13 +366,6 @@ export function isFeatureEnabled (featureName) {
         }
     }
 
-    // If we have a supplied excluded browsers list, ensure the browser is not in it
-    if (feature.settings && 'excludedBrowsers' in feature.settings) {
-        if (feature.settings.excludedBrowsers.includes(getBrowserName())) {
-            return false
-        }
-    }
-
     return feature.state === 'enabled'
 }
 

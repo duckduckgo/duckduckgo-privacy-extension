@@ -14,6 +14,30 @@ function url (url) {
     return loadExtensionFile({ url: url, source: 'external' })
 }
 
+async function fetchData(url, fallbackUrl, headers) {
+    let response = null
+    response = await fetch(url, { method: 'GET', headers })
+    if (fallbackUrl && response.status !== 200 && response.status !== 304) {
+        response = await fetch(fallbackUrl, { method: 'GET', headers })
+    }
+
+    return response
+}
+
+function addTestParameters(url) {
+    let newUrl = url
+
+    if (newUrl.indexOf('?') > -1) {
+        newUrl += '&'
+    } else {
+        newUrl += '?'
+    }
+
+    newUrl += 'test=1'
+
+    return newUrl
+}
+
 /*
  * Params:
  *  - url: request URL
@@ -23,16 +47,14 @@ function url (url) {
 function loadExtensionFile (params) {
     const headers = new Headers()
     let url = params.url
+    let fallbackUrl = params.fallbackUrl
 
     if (params.source === 'external') {
         if (dev) {
-            if (url.indexOf('?') > -1) {
-                url += '&'
-            } else {
-                url += '?'
+            url = addTestParameters(url)
+            if (fallbackUrl) {
+                fallbackUrl = addTestParameters(fallbackUrl)
             }
-
-            url += 'test=1'
         }
 
         if (params.etag) {
@@ -46,10 +68,8 @@ function loadExtensionFile (params) {
     const timeoutPromise = new Promise((resolve, reject) => { rej = reject })
     const fetchTimeout = setTimeout(rej, params.timeout || 30000)
 
-    const fetchResult = fetch(url, {
-        method: 'GET',
-        headers
-    }).then(async response => {
+    const fetchResult = fetchData(url, fallbackUrl, headers)
+    .then(async response => {
         clearTimeout(fetchTimeout)
 
         const status = response.status
@@ -71,13 +91,13 @@ function loadExtensionFile (params) {
                 data
             }
         } else if (status === 304) {
-            console.log(`${url} returned 304, resource not changed`)
+            console.log(`${response.url} returned 304, resource not changed`)
             return {
                 status,
                 etag
             }
         } else {
-            throw new Error(`${url} returned ${response.status}`)
+            throw new Error(`${response.url} returned ${response.status}`)
         }
     })
 
