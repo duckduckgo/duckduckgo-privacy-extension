@@ -21,23 +21,17 @@ function dropTracking3pCookiesFromResponse (request) {
             return { responseHeaders }
         }
 
-        // Strip 3rd party cookie response header
-        if (!request.responseHeaders) return { responseHeaders }
-        if (!tab) {
-            const initiator = request.initiator || request.documentUrl
-            if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
-                return { responseHeaders }
-            }
-        } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
+        if (trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
             return { responseHeaders }
         }
 
+        // Strip 3rd party cookie response header
         const cookieFeature = requestIsTracker ? 'trackingCookies3p' : 'nonTracking3pCookies'
         if (!utils.isCookieExcluded(request.url, cookieFeature)) {
             responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
-                kind: 'set-cookie',
+                kind: `set-cookie-${cookieFeature}`,
                 url: request.url,
                 siteUrl: tab?.site?.url,
                 requestId: request.requestId,
@@ -67,22 +61,17 @@ function dropTracking3pCookiesFromRequest (request) {
             return { requestHeaders }
         }
 
-        // Strip 3rd party response header
-        if (!requestHeaders) return { requestHeaders }
-        if (!tab) {
-            const initiator = request.initiator || request.documentUrl
-            if (!initiator || trackerutils.isFirstPartyByEntity(initiator, request.url)) {
-                return { requestHeaders }
-            }
-        } else if (tab && trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
+        if (trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
             return { requestHeaders }
         }
+
+        // Strip 3rd party response header
         const cookieFeature = requestIsTracker ? 'trackingCookies3p' : 'nonTracking3pCookies'
         if (!utils.isCookieExcluded(request.url, cookieFeature)) {
             requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
-                kind: 'cookie',
+                kind: `cookie-${cookieFeature}`,
                 url: request.url,
                 siteUrl: tab?.site?.url,
                 requestId: request.requestId,
