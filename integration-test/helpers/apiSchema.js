@@ -1,6 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 
+const puppeteer = require('puppeteer')
+
 /**
  * Returns the schema of a given JavaScript Object in the given Page. Schema is
  * similar to the output of Object.getOwnPropertyDescriptors.
@@ -100,7 +102,15 @@ async function setupAPISchemaTest (page, schemaFilename, targetObjectNames) {
 
     const actualSchema = Object.create(null)
     for (const objectName of targetObjectNames) {
-        actualSchema[objectName] = await getObjectSchema(page, objectName)
+        try {
+            actualSchema[objectName] = await getObjectSchema(page, objectName)
+        } catch (e) {
+            if (e instanceof puppeteer.errors.TimeoutError) {
+                pending('Timed out setting up API schema test.')
+            } else {
+                throw e
+            }
+        }
     }
 
     // Write the actual schema to a file as a test artifact.
