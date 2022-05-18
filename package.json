@@ -44,7 +44,7 @@
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-node": "^11.1.0",
         "glob": "^8.0.3",
-        "grunt": "1.5.2",
+        "grunt": "1.5.3",
         "grunt-browserify": "6.0.0",
         "grunt-contrib-concat": "2.1.0",
         "grunt-contrib-watch": "1.1.0",
