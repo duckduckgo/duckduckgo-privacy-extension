@@ -21,7 +21,7 @@ const setup = async (ops) => {
         args: [
             `--user-data-dir=${dataDir}`
         ],
-        headless: false
+        headless: 'chrome'
     }
 
     if (loadExtension) {
@@ -53,23 +53,16 @@ const setup = async (ops) => {
     const requests = []
 
     if (loadExtension) {
-        // grab a handle on the background page for the extension
-        // we can't use the long ID as it could possibly change
-        for (const t of await browser.targets()) {
-            // for some reason we need to init a blank page
-            // before the extension is initialized
-            await browser.newPage()
-
-            const title = t._targetInfo.title
-
-            if (title === 'DuckDuckGo Privacy Essentials') {
-                bgPage = await t.page()
-                break
-            }
-        }
-
-        if (!bgPage) {
-            throw new Error('couldn\'t get background page')
+        // Grab a handle on the background page for the extension.
+        try {
+            const backgroundPageTarget =
+                  await browser.waitForTarget(
+                      target => target.type() === 'background_page',
+                      { timeout: 2000 }
+                  )
+            bgPage = await backgroundPageTarget.page()
+        } catch (e) {
+            throw new Error('Couldn\'t find background page.')
         }
 
         bgPage.on('request', (req) => { requests.push(req.url()) })

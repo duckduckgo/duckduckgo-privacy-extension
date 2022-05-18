@@ -46,6 +46,13 @@ moveout: $(ITEMS)
 	@echo '** Making build directory: $(type) **'
 	cp -r $(ITEMS) build/$(browser)/$(type)
 	cp -r shared/js/content-scripts build/$(browser)/$(type)/public/js/
+# While transitioning from Chrome MV2 to Chrome MV3, copy the Chrome MV2
+# files first. That way they don't have to be duplicated in the
+# repository. Once the transition is complete, this clause should be
+# removed.
+ifeq ('$(browser)','chrome-mv3')
+	cp -r browsers/chrome/* build/$(browser)/$(type)/
+endif
 	cp -r browsers/$(browser)/* build/$(browser)/$(type)/
 
 beta-firefox: release beta-firefox-zip

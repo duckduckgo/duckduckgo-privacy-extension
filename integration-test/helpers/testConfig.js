@@ -83,7 +83,11 @@ async function loadTestConfig (bgPage, testConfigFilename) {
  */
 async function unloadTestConfig (bgPage) {
     await bgPage.evaluate(parsePathString => {
-        const { configBackup } = window || {}
+        const { configBackup } = window
+        if (!configBackup) {
+            return
+        }
+
         // eslint-disable-next-line no-eval
         eval(parsePathString)
 

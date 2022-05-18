@@ -54,8 +54,9 @@ jobs:
       run: |
         sudo apt-get install xvfb
         npm run install-ci
-    - run: npm run test-int-x
+    - run: npm run test-int
     - name: Store test artifacts
+      if: always()
       uses: actions/upload-artifact@v2
       with:
         name: integration-test-artifacts

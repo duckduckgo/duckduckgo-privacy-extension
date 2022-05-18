@@ -37,7 +37,6 @@ Run `git submodule update --remote` to fetch latest version of all git submodule
 - [Node.js](https://nodejs.org) installation
 - [grunt-cli](https://gruntjs.com/getting-started)
 - grunt-cli can be installed by running `npm install -g grunt-cli`
-- Tests use [Selenium Webdriver](http://seleniumhq.github.io/selenium/docs/api/javascript/index.html).
 
 ### Building the extension
 - `npm install`, `git submodule update --init --recursive` both have to be run before building the extension for the first time 
@@ -51,6 +50,10 @@ Run `git submodule update --remote` to fetch latest version of all git submodule
  1. Run `npm run dev-chrome`
  2. Load the extension in Chrome from the `build/chrome/dev` directory
 [Getting Started: Building a Chrome Extension - Google Chrome](https://developer.chrome.com/extensions/getstarted#unpacked)
+
+- Chrome MV3 (Work in progress, not working yet.)
+ 1. Run `npm run dev-chrome-mv3`
+ 2. Load the extension in Chrome from the `build/chrome-mv3/dev` directory
 
 ### Updating or testing config
 
@@ -93,23 +96,5 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 
 ### Testing
 - Unit tests: `npm test`
-- Integration Tests
-  - Local, requires Chrome: `npm run test-int`
+- Integration tests: `npm run test-int`
     - You can filter to one test with: `KEEP_OPEN=1 npm run test-int -- -f integration-test/background/test-fp-fingerprint.js`
-  - Headless, requires xvfb: `npm run test-ci`
-
-### Selenium Testing (ratings.js)
-
-**Setup**
-
-1. For remote linux machine, first setup xvfb: `source selenium-test/setup.sh`
-2. `npm install`, `git submodule update --init --recursive`
-3. `grunt`
-
-**Testing Single Site** `./selenium-test/ratings.js -u https://website.com`
-
-**Testing Top 500** `./selenium-test/ratings.js -n 2` (where n = [1 - 500])
-
-**Testing Multiple Sites** `./selenium-test/ratings.js -f urls.txt` (file should have 1 url on each line)
-
-**Using XVFB** To test on a remote server with XVBF installed, add `-x` flag: `./selenium-test/ratings.js -x -u https://website.com`
