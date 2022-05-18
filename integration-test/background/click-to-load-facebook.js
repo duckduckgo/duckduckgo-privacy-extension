@@ -4,6 +4,7 @@ const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
 const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 const { setupAPISchemaTest } = require('../helpers/apiSchema')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
@@ -76,8 +77,7 @@ describe('Test Facebook Click To Load', () => {
         // Initially there should be a bunch of requests. The SDK should
         // be redirected to our surrogate but otherwise Facebook requests should
         // be blocked.
-        await page.goto(testSite, { waitUntil: 'networkidle0' })
-        await page.waitForNetworkIdle({ idleTime: 1000 })
+        await pageWait.forGoto(page, testSite)
         {
             const {
                 requestCount, blockCount, allowCount, facebookSDKRedirect
@@ -102,9 +102,17 @@ describe('Test Facebook Click To Load', () => {
         })
         for (let i = 0; i < buttonCount; i++) {
             const button = await page.evaluateHandle(i => window.buttons[i], i)
-            await button.click()
+            try {
+                await button.click()
+            } catch (e) { }
         }
-        await page.waitForNetworkIdle({ idleTime: 1000 })
+
+        // Wait for the embedded content to finish loading, but give up after
+        // 15 seconds. That avoids the tests failing if the network is slow.
+        try {
+            await page.waitForNetworkIdle({ idleTime: 1000, timeout: 15000 })
+        } catch (e) { }
+
         {
             const {
                 requestCount, blockCount, allowCount, facebookSDKRedirect
@@ -119,8 +127,7 @@ describe('Test Facebook Click To Load', () => {
 
         // When the page is reloaded, requests should be blocked again.
         clearRequests()
-        await page.reload({ waitUntil: 'networkidle0' })
-        await page.waitForNetworkIdle({ idleTime: 1000 })
+        await pageWait.forReload(page)
         {
             const {
                 requestCount, blockCount, allowCount, facebookSDKRedirect
@@ -135,7 +142,7 @@ describe('Test Facebook Click To Load', () => {
             expect(allowCount).toEqual(0)
         }
 
-        page.close()
+        await page.close()
     })
 })
 
@@ -152,7 +159,7 @@ describe('Facebook SDK schema', () => {
 
     it('CTL: Facebook SDK schema hasn\'t changed', async () => {
         const page = await browser.newPage()
-        await page.goto(testSite, { waitUntil: 'networkidle2' })
+        await pageWait.forGoto(page, testSite)
 
         // Note: If these tests fail, update the
         //       /integration-test/data/api_schemas/facebook-sdk.json file
@@ -170,6 +177,6 @@ describe('Facebook SDK schema', () => {
         )
         expect(actualSchema).toEqual(expectedSchema)
 
-        page.close()
+        await page.close()
     })
 })
