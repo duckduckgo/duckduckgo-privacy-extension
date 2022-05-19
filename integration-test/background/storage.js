@@ -1,5 +1,5 @@
 const harness = require('../helpers/harness')
-const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
+const { loadTestConfig } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
 
 const testPageDomain = 'privacy-test-pages.glitch.me'

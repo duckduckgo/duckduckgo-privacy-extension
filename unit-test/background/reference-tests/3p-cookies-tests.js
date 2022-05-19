@@ -21,7 +21,7 @@ const trackingConfigReference = require('../../data/reference-tests/block-third-
 const trackingBlocklistReference = require('../../data/reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
 const trackingTestSets = require('../../data/reference-tests/block-third-party-tracking-cookies/tests.json')
 
-function runTestSuite(suiteType, testSet, jsCookieProtection, configReference, blocklistReference) {
+function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, blocklistReference) {
     describe(`Third party ${suiteType} cookies blocking tests / ${testSet.name} /`, () => {
         beforeAll(() => {
             spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)

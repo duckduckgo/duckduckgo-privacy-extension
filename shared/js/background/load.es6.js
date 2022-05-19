@@ -14,7 +14,7 @@ function url (url) {
     return loadExtensionFile({ url: url, source: 'external' })
 }
 
-async function fetchData(url, fallbackUrl, headers) {
+async function fetchData (url, fallbackUrl, headers) {
     let response = null
     response = await fetch(url, { method: 'GET', headers })
     if (fallbackUrl && response.status !== 200 && response.status !== 304) {
@@ -24,7 +24,7 @@ async function fetchData(url, fallbackUrl, headers) {
     return response
 }
 
-function addTestParameters(url) {
+function addTestParameters (url) {
     let newUrl = url
 
     if (newUrl.indexOf('?') > -1) {
@@ -69,37 +69,37 @@ function loadExtensionFile (params) {
     const fetchTimeout = setTimeout(rej, params.timeout || 30000)
 
     const fetchResult = fetchData(url, fallbackUrl, headers)
-    .then(async response => {
-        clearTimeout(fetchTimeout)
+        .then(async response => {
+            clearTimeout(fetchTimeout)
 
-        const status = response.status
-        const etag = response.headers.get('etag')
-        let data
+            const status = response.status
+            const etag = response.headers.get('etag')
+            let data
 
-        if (status === 200) {
-            if (params.returnType === 'json') {
-                data = await response.json()
-            } else if (params.returnType === 'arraybuffer') {
-                data = await response.arrayBuffer()
+            if (status === 200) {
+                if (params.returnType === 'json') {
+                    data = await response.json()
+                } else if (params.returnType === 'arraybuffer') {
+                    data = await response.arrayBuffer()
+                } else {
+                    data = await response.text()
+                }
+
+                return {
+                    status,
+                    etag,
+                    data
+                }
+            } else if (status === 304) {
+                console.log(`${response.url} returned 304, resource not changed`)
+                return {
+                    status,
+                    etag
+                }
             } else {
-                data = await response.text()
+                throw new Error(`${response.url} returned ${response.status}`)
             }
-
-            return {
-                status,
-                etag,
-                data
-            }
-        } else if (status === 304) {
-            console.log(`${response.url} returned 304, resource not changed`)
-            return {
-                status,
-                etag
-            }
-        } else {
-            throw new Error(`${response.url} returned ${response.status}`)
-        }
-    })
+        })
 
     return Promise.race([timeoutPromise, fetchResult])
 }

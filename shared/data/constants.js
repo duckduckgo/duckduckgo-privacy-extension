@@ -115,7 +115,7 @@ module.exports = {
         {
             name: 'config',
             url: `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName ? `-${browserName}` : ''}-config.json`,
-            fallbackUrl: `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension-config.json`,
+            fallbackUrl: 'https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension-config.json',
             format: 'json',
             source: 'external'
         }
