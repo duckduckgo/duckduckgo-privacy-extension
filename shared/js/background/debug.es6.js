@@ -10,7 +10,7 @@ const https = require('./https.es6')
 const tds = require('./storage/tds.es6')
 const messageHandlers = require('./message-handlers')
 
-window.dbg = {
+self.dbg = {
     settings,
     tabManager,
     atb,
