@@ -42,9 +42,6 @@
             "css": [
                 "public/css/noatb.css"
             ],
-            "js": [
-                "public/js/inject.js"
-            ],
             "run_at": "document_start"
         },
         {
