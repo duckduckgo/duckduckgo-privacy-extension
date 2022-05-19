@@ -12,5 +12,15 @@
         "settings": {
             "excludedCookieDomains": [ ]
         }
+    },
+    "window.dbg.tds.config.features.trackingCookies1p": {
+        "settings": {
+            "firstPartyTrackerCookiePolicy": {
+                "threshold": 86400,
+                "maxAge": 86400
+            }
+        },
+        "exceptions": [ ],
+        "state": "enabled"
     }
 }
