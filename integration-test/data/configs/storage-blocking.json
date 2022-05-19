@@ -1,0 +1,16 @@
+{
+    "window.dbg.tds.config.features.trackingCookies3p": {
+        "state": "enabled",
+        "exceptions": [ ],
+        "settings": {
+            "excludedCookieDomains": [ ]
+        }
+    },
+    "window.dbg.tds.config.features.nonTracking3pCookies": {
+        "state": "enabled",
+        "exceptions": [ ],
+        "settings": {
+            "excludedCookieDomains": [ ]
+        }
+    }
+}

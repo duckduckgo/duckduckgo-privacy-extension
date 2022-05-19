@@ -1,4 +1,6 @@
 const harness = require('../helpers/harness')
+const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
+const backgroundWait = require('../helpers/backgroundWait')
 
 const testPageDomain = 'privacy-test-pages.glitch.me'
 const thirdPartyDomain = 'good.third-party.site'
@@ -15,7 +17,11 @@ async function setup () {
         },
         { polling: 100, timeout: 10000 }
     )
-    return { browser, page, teardown }
+
+    await backgroundWait.forAllConfiguration(bgPage)
+    loadTestConfig(bgPage, 'storage-blocking.json')
+
+    return { browser, page, teardown, bgPage }
 }
 
 async function waitForAllResults (page) {
@@ -24,7 +30,7 @@ async function waitForAllResults (page) {
     }
 }
 
-describe('Storage blocking Tests', () => {
+fdescribe('Storage blocking Tests', () => {
     describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
         let cookies = []
 
@@ -51,10 +57,9 @@ describe('Storage blocking Tests', () => {
             expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
         })
 
-        it('does not block 3rd party HTTP cookies not on block list', () => {
+        it('blocks 3rd party HTTP cookies not on block list', () => {
             const headerCookie = cookies.find(({ name, domain }) => name === 'headerdata' && domain === thirdPartyDomain)
-            expect(headerCookie).toBeTruthy()
-            expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
+            expect(headerCookie).toBeUndefined()
         })
 
         it('blocks 3rd party HTTP cookies for trackers', () => {
@@ -68,15 +73,14 @@ describe('Storage blocking Tests', () => {
             expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000)
         })
 
-        it('does not block 3rd party JS cookies not on block list', () => {
+        it('blocks 3rd party JS cookies not on block list', () => {
             const jsCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === thirdPartyDomain)
-            expect(jsCookie).toBeTruthy()
-            expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000)
+            expect(jsCookie).toBeUndefined()
         })
 
         it('blocks 3rd party JS cookies from trackers', () => {
-            const headerCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === thirdPartyTracker)
-            expect(headerCookie).toBeUndefined()
+            const jsCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === thirdPartyTracker)
+            expect(jsCookie).toBeUndefined()
         })
 
         it('does not block 1st party JS cookies set by non-trackers', () => {
