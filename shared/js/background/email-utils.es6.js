@@ -51,6 +51,15 @@ browser.contextMenus.create({
     title: 'Use Duck Address',
     contexts: ['editable'],
     visible: false
+}, () => {
+    // It's fine if this context menu already exists, suppress that error.
+    // Note: Since webextension-polyfill does not wrap the contextMenus.create
+    //       API, the old callback + runtime.lastError approach must be used.
+    const { lastError } = browser.runtime
+    if (lastError &&
+        !lastError.message.startsWith('Cannot create item with duplicate id')) {
+        throw lastError
+    }
 })
 browser.contextMenus.onClicked.addListener((info, tab) => {
     const userData = getSetting('userData')
