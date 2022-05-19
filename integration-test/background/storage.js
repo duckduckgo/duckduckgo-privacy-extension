@@ -30,7 +30,7 @@ async function waitForAllResults (page) {
     }
 }
 
-fdescribe('Storage blocking Tests', () => {
+describe('Storage blocking Tests', () => {
     describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
         let cookies = []
 

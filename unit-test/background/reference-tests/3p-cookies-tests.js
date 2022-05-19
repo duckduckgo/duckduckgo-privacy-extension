@@ -9,22 +9,20 @@ const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('../../../shared/js/background/events/3p-tracking-cookie-blocking')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 
-const jsCookieProtection = require('../../../shared/content-scope-scripts/src/features/tracking-cookies-3p')
-
-const configReference = require('../../data/reference-tests/block-third-party-tracking-cookies/config_reference.json')
-const blocklistReference = require('../../data/reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
-const testSets = require('../../data/reference-tests/block-third-party-tracking-cookies/tests.json')
-
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 const orgGlobalThis = globalThis
 
-for (const setName of Object.keys(testSets)) {
-    const testSet = testSets[setName]
+const trackingJsCookieProtection = require('../../../shared/content-scope-scripts/src/features/tracking-cookies-3p')
 
-    describe(`Third party tracking cookies blocking tests / ${testSet.name} /`, () => {
+const trackingConfigReference = require('../../data/reference-tests/block-third-party-tracking-cookies/config_reference.json')
+const trackingBlocklistReference = require('../../data/reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
+const trackingTestSets = require('../../data/reference-tests/block-third-party-tracking-cookies/tests.json')
+
+function runTestSuite(suiteType, testSet, jsCookieProtection, configReference, blocklistReference) {
+    describe(`Third party ${suiteType} cookies blocking tests / ${testSet.name} /`, () => {
         beforeAll(() => {
             spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
@@ -113,4 +111,22 @@ for (const setName of Object.keys(testSets)) {
             }
         })
     })
+}
+
+for (const setName of Object.keys(trackingTestSets)) {
+    const testSet = trackingTestSets[setName]
+
+    runTestSuite('tracking', testSet, trackingJsCookieProtection, trackingConfigReference, trackingBlocklistReference)
+}
+
+const nonTrackingJsCookieProtection = require('../../../shared/content-scope-scripts/src/features/non-tracking-3p-cookies')
+
+const nonTrackingConfigReference = require('../../data/reference-tests/block-non-tracking-third-party-cookies/config_reference.json')
+const nonTrackingBlocklistReference = require('../../data/reference-tests/block-non-tracking-third-party-cookies/tracker_radar_reference.json')
+const nonTrackingTestSets = require('../../data/reference-tests/block-non-tracking-third-party-cookies/tests.json')
+
+for (const setName of Object.keys(nonTrackingTestSets)) {
+    const testSet = nonTrackingTestSets[setName]
+
+    runTestSuite('non-tracking', testSet, nonTrackingJsCookieProtection, nonTrackingConfigReference, nonTrackingBlocklistReference)
 }

@@ -257,7 +257,7 @@ export function isSafeListed (url) {
 
 export function isCookieExcluded (url, feature) {
     const domain = (new URL(url)).host
-    return isDomainCookieExcluded(domain)
+    return isDomainCookieExcluded(domain, feature)
 }
 
 function isDomainCookieExcluded (domain, feature) {

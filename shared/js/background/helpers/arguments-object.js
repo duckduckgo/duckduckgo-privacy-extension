@@ -55,7 +55,9 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
             cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
         }
 
-        cookie.shouldBlock = !utils.isCookieExcluded(documentUrl)
+        cookie.shouldBlockTrackerCookie = !utils.isCookieExcluded(documentUrl, 'trackingCookies3p')
+        cookie.shouldBlockNonTrackerCookie = !utils.isCookieExcluded(documentUrl, 'nonTracking3pCookies')
+        cookie.shouldBlock = cookie.shouldBlockTrackerCookie || cookie.shouldBlockNonTrackerCookie // needed for 1p cookie protection
     }
     return {
         featureSettings,
