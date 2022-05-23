@@ -33,7 +33,7 @@
         "@babel/core": "^7.17.12",
         "@babel/node": "^7.17.10",
         "@babel/polyfill": "^7.10.4",
-        "@babel/preset-env": "^7.17.12",
+        "@babel/preset-env": "^7.18.0",
         "@fingerprintjs/fingerprintjs": "^3.3.3",
         "asana": "github:Asana/node-asana",
         "babelify": "10.0.0",
