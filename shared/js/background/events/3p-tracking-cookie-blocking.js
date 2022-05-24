@@ -3,8 +3,7 @@ const trackerutils = require('../tracker-utils')
 const utils = require('../utils.es6')
 const devtools = require('../devtools.es6')
 
-function shouldBlockHeaders (request, tab) {
-    const requestIsTracker = trackerutils.isTracker(request.url)
+function shouldBlockHeaders (request, tab, requestIsTracker) {
     if (requestIsTracker && !tab.site.isFeatureEnabled('trackingCookies3p')) {
         return false
     }
@@ -29,7 +28,8 @@ function dropTracking3pCookiesFromResponse (request) {
     let responseHeaders = request.responseHeaders
 
     if (tab && request.type !== 'main_frame') {
-        if (!shouldBlockHeaders(request, tab)) {
+        const requestIsTracker = trackerutils.isTracker(request.url)
+        if (!shouldBlockHeaders(request, tab, requestIsTracker)) {
             return { responseHeaders }
         }
 
@@ -61,7 +61,8 @@ function dropTracking3pCookiesFromRequest (request) {
     let requestHeaders = request.requestHeaders
 
     if (tab && request.type !== 'main_frame') {
-        if (!shouldBlockHeaders(request, tab)) {
+        const requestIsTracker = trackerutils.isTracker(request.url)
+        if (!shouldBlockHeaders(request, tab, requestIsTracker)) {
             return { requestHeaders }
         }
 
