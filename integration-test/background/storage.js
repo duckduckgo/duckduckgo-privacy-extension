@@ -19,7 +19,7 @@ async function setup () {
     )
 
     await backgroundWait.forAllConfiguration(bgPage)
-    loadTestConfig(bgPage, 'storage-blocking.json')
+    await loadTestConfig(bgPage, 'storage-blocking.json')
 
     return { browser, page, teardown, bgPage }
 }
