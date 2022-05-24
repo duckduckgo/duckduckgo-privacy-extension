@@ -1,14 +1,11 @@
 const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string.es6')
 const browserInfo = parseUserAgentString()
-function getBrowserName () {
-    if (!browserInfo || !browserInfo.browser) return
 
-    let browser = browserInfo.browser.toLowerCase()
-    if (browser === 'firefox') browser = 'moz'
+function getConfigFileName () {
+    const browserName = browserInfo.browser.toLowerCase()
 
-    return browser
+    return `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension-${browserName}-config.json`
 }
-const browserName = getBrowserName()
 
 module.exports = {
     displayCategories: ['Analytics', 'Advertising', 'Social Network'],
@@ -114,7 +111,7 @@ module.exports = {
         },
         {
             name: 'config',
-            url: `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName ? `-${browserName}` : ''}-config.json`,
+            url: getConfigFileName(),
             fallbackUrl: 'https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension-config.json',
             format: 'json',
             source: 'external'
