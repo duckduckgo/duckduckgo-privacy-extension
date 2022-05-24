@@ -3,6 +3,22 @@ const trackerutils = require('../tracker-utils')
 const utils = require('../utils.es6')
 const devtools = require('../devtools.es6')
 
+function shouldBlockHeaders (request, tab) {
+    const requestIsTracker = trackerutils.isTracker(request.url)
+    if (requestIsTracker && !tab.site.isFeatureEnabled('trackingCookies3p')) {
+        return false
+    }
+    if (!requestIsTracker && !tab.site.isFeatureEnabled('nonTracking3pCookies')) {
+        return false
+    }
+
+    if (trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
+        return false
+    }
+
+    return true
+}
+
 /**
  * @param {{tabId: number, url: string, initiator: url, type: string, responseHeaders: Array<{name: string, value:string}>}} request
  *
@@ -13,15 +29,7 @@ function dropTracking3pCookiesFromResponse (request) {
     let responseHeaders = request.responseHeaders
 
     if (tab && request.type !== 'main_frame') {
-        const requestIsTracker = trackerutils.isTracker(request.url)
-        if (requestIsTracker && !tab.site.isFeatureEnabled('trackingCookies3p')) {
-            return { responseHeaders }
-        }
-        if (!requestIsTracker && !tab.site.isFeatureEnabled('nonTracking3pCookies')) {
-            return { responseHeaders }
-        }
-
-        if (trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
+        if (!shouldBlockHeaders(request, tab)) {
             return { responseHeaders }
         }
 
@@ -53,15 +61,7 @@ function dropTracking3pCookiesFromRequest (request) {
     let requestHeaders = request.requestHeaders
 
     if (tab && request.type !== 'main_frame') {
-        const requestIsTracker = trackerutils.isTracker(request.url)
-        if (requestIsTracker && !tab.site.isFeatureEnabled('trackingCookies3p')) {
-            return { requestHeaders }
-        }
-        if (!requestIsTracker && !tab.site.isFeatureEnabled('nonTracking3pCookies')) {
-            return { requestHeaders }
-        }
-
-        if (trackerutils.isFirstPartyByEntity(request.url, tab.url)) {
+        if (!shouldBlockHeaders(request, tab)) {
             return { requestHeaders }
         }
 
