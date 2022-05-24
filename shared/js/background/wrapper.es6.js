@@ -17,6 +17,11 @@ export async function setBadgeIcon (badgeData) {
     return await browser.action.setIcon(badgeData)
 }
 
+export function getManifestVersion () {
+    const manifest = browser.runtime.getManifest()
+    return manifest.manifest_version
+}
+
 export function syncToStorage (data) {
     browser.storage.local.set(data)
 }
