@@ -257,6 +257,12 @@
                             "value": "function(0)",
                             "writable": "true"
                         },
+                        "hidePluginCallback": {
+                            "configurable": "true",
+                            "enumerable": "true",
+                            "value": "function(0)",
+                            "writable": "true"
+                        },
                         "hidePluginElement": {
                             "configurable": "true",
                             "enumerable": "true",
@@ -309,12 +315,6 @@
                     },
                     "writable": "true"
                 },
-                "getHash": {
-                    "configurable": "true",
-                    "enumerable": "true",
-                    "value": "function(0)",
-                    "writable": "true"
-                },
                 "getPageInfo": {
                     "configurable": "true",
                     "enumerable": "true",
@@ -334,12 +334,6 @@
                     "writable": "true"
                 },
                 "setDoneLoading": {
-                    "configurable": "true",
-                    "enumerable": "true",
-                    "value": "function(0)",
-                    "writable": "true"
-                },
-                "setHash": {
                     "configurable": "true",
                     "enumerable": "true",
                     "value": "function(0)",

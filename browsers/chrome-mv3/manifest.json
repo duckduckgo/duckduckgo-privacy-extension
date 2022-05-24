@@ -9,6 +9,7 @@
         "128": "img/icon_128.png"
     },
     "manifest_version": 3,
+    "minimum_chrome_version": "101.0",
     "action": {
         "default_icon": "img/icon_48.png",
         "default_popup": "html/popup.html"
@@ -41,9 +42,6 @@
             "all_frames": true,
             "css": [
                 "public/css/noatb.css"
-            ],
-            "js": [
-                "public/js/inject.js"
             ],
             "run_at": "document_start"
         },

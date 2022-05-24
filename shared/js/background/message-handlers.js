@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
@@ -192,10 +193,25 @@ export function getTopBlocked (options) {
     return Companies.getTopBlocked(options)
 }
 
-const isExpectedSender = (sender) => (
-    // Check the origin. Shouldn't be necessary, but better safe than sorry
-    sender.url.match(/^https:\/\/(([a-z0-9-_]+?)\.)?duckduckgo\.com\/email/)
-)
+function isExpectedSender (sender) {
+    try {
+        const domain = getDomain(sender.url)
+        const { pathname } = new URL(sender.url)
+        return domain === 'duckduckgo.com' && pathname.startsWith('/email')
+    } catch {
+        return false
+    }
+}
+
+export function getEmailProtectionCapabilities (_, sender) {
+    if (!isExpectedSender(sender)) return
+
+    return {
+        addUserData: true,
+        getUserData: true,
+        removeUserData: true
+    }
+}
 
 // Get user data to be used by the email web app settings page. This includes
 // username, last alias, and a token for generating additional aliases.
@@ -246,6 +262,11 @@ export async function addUserData (userData, sender) {
     } else {
         return { error: 'Something seems wrong with the user data' }
     }
+}
+
+export async function removeUserData (_, sender) {
+    if (!isExpectedSender(sender)) return
+    await logout()
 }
 
 export async function logout () {

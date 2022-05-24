@@ -23,6 +23,8 @@ const getArgumentsObject = require('./helpers/arguments-object')
 
 const sha1 = require('../shared-utils/sha1')
 
+const manifestVersion = browserWrapper.getManifestVersion()
+
 /**
  * Produce a random float, same output as Math.random()
  * @returns {float}
@@ -172,48 +174,56 @@ const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
 
 // Shallow copy of request types
 // And add beacon type based on browser, so we can block it
-browser.webRequest.onBeforeRequest.addListener(
-    redirect.handleRequest,
-    {
-        urls: ['<all_urls>'],
-        types: requestListenerTypes
-    },
-    ['blocking']
-)
-
-const extraInfoSpec = ['blocking', 'responseHeaders']
-if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
-    extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
+if (manifestVersion === 2) {
+    browser.webRequest.onBeforeRequest.addListener(
+        redirect.handleRequest,
+        {
+            urls: ['<all_urls>'],
+            types: requestListenerTypes
+        },
+        ['blocking']
+    )
 }
-// we determine if browsingTopics is enabled by testing for availability of its JS API
-const isTopicsEnabled = ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
-browser.webRequest.onHeadersReceived.addListener(
-    request => {
-        if (request.type === 'main_frame') {
-            tabManager.updateTabUrl(request)
-        }
 
-        if (ATB.shouldUpdateSetAtb(request)) {
-            // returns a promise
-            return ATB.updateSetAtb()
-        }
+if (manifestVersion === 2) {
+    const extraInfoSpec = ['blocking', 'responseHeaders']
+    if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
+        extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
+    }
 
-        const responseHeaders = request.responseHeaders
+    // We determine if browsingTopics is enabled by testing for availability of its
+    // JS API.
+    // Note: This approach will not work with MV3 since the background
+    //       ServiceWorker does not have access to a `document` Object.
+    const isTopicsEnabled = ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
+    browser.webRequest.onHeadersReceived.addListener(
+        request => {
+            if (request.type === 'main_frame') {
+                tabManager.updateTabUrl(request)
+            }
 
-        if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
-            // there can be multiple permissions-policy headers, so we are good always appending one
-            // According to Google's docs a site can opt out of browsing topics the same way as opting out of FLoC
-            // https://privacysandbox.com/proposals/topics (See FAQ)
-            responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
-        }
+            if (ATB.shouldUpdateSetAtb(request)) {
+                // returns a promise
+                return ATB.updateSetAtb()
+            }
 
-        return { responseHeaders }
-    },
-    { urls: ['<all_urls>'] },
-    extraInfoSpec
-)
+            const responseHeaders = request.responseHeaders
 
-browser.webRequest.onHeadersReceived.addListener(dropTracking3pCookiesFromResponse, { urls: ['<all_urls>'] }, extraInfoSpec)
+            if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
+                // there can be multiple permissions-policy headers, so we are good always appending one
+                // According to Google's docs a site can opt out of browsing topics the same way as opting out of FLoC
+                // https://privacysandbox.com/proposals/topics (See FAQ)
+                responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
+            }
+
+            return { responseHeaders }
+        },
+        { urls: ['<all_urls>'] },
+        extraInfoSpec
+    )
+
+    browser.webRequest.onHeadersReceived.addListener(dropTracking3pCookiesFromResponse, { urls: ['<all_urls>'] }, extraInfoSpec)
+}
 
 /**
  * Web Navigation
@@ -289,6 +299,8 @@ browser.runtime.onMessage.addListener((req, sender) => {
     const legacyMessageTypes = [
         'addUserData',
         'getUserData',
+        'removeUserData',
+        'getEmailProtectionCapabilities',
         'getAddresses',
         'refreshAlias'
     ]
@@ -339,45 +351,49 @@ let sessionKey = getHash()
 /*
  * Referrer Trimming
  */
-const referrerListenerOptions = ['blocking', 'requestHeaders']
-if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
-    referrerListenerOptions.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
-}
+if (manifestVersion === 2) {
+    const referrerListenerOptions = ['blocking', 'requestHeaders']
+    if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+        referrerListenerOptions.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+    }
 
-browser.webRequest.onBeforeSendHeaders.addListener(
-    limitReferrerData,
-    { urls: ['<all_urls>'] },
-    referrerListenerOptions
-)
+    browser.webRequest.onBeforeSendHeaders.addListener(
+        limitReferrerData,
+        { urls: ['<all_urls>'] },
+        referrerListenerOptions
+    )
+}
 
 /**
  * Global Privacy Control
  */
 const GPC = require('./GPC.es6')
 
-const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
-if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
-    extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+if (manifestVersion === 2) {
+    const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
+    if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+        extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+    }
+    // Attach GPC header to all requests if enabled.
+    browser.webRequest.onBeforeSendHeaders.addListener(
+        request => {
+            const tab = tabManager.get({ tabId: request.tabId })
+            const GPCHeader = GPC.getHeader()
+            const GPCEnabled = tab && tab.site.isFeatureEnabled('gpc')
+
+            const requestHeaders = request.requestHeaders
+            if (GPCHeader && GPCEnabled) {
+                requestHeaders.push(GPCHeader)
+            }
+
+            return { requestHeaders }
+        },
+        { urls: ['<all_urls>'] },
+        extraInfoSpecSendHeaders
+    )
+
+    browser.webRequest.onBeforeSendHeaders.addListener(dropTracking3pCookiesFromRequest, { urls: ['<all_urls>'] }, extraInfoSpecSendHeaders)
 }
-// Attach GPC header to all requests if enabled.
-browser.webRequest.onBeforeSendHeaders.addListener(
-    request => {
-        const tab = tabManager.get({ tabId: request.tabId })
-        const GPCHeader = GPC.getHeader()
-        const GPCEnabled = tab && tab.site.isFeatureEnabled('gpc')
-
-        const requestHeaders = request.requestHeaders
-        if (GPCHeader && GPCEnabled) {
-            requestHeaders.push(GPCHeader)
-        }
-
-        return { requestHeaders }
-    },
-    { urls: ['<all_urls>'] },
-    extraInfoSpecSendHeaders
-)
-
-browser.webRequest.onBeforeSendHeaders.addListener(dropTracking3pCookiesFromRequest, { urls: ['<all_urls>'] }, extraInfoSpecSendHeaders)
 
 // Inject our content script to overwite FB elements
 browser.webNavigation.onCommitted.addListener(details => {

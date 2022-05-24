@@ -15,15 +15,15 @@
  *      }
  */
 const gradeIconLocations = {
-    A: 'img/toolbar-rating-a.svg',
-    'B+': 'img/toolbar-rating-b-plus.svg',
-    B: 'img/toolbar-rating-b.svg',
-    'C+': 'img/toolbar-rating-c-plus.svg',
-    C: 'img/toolbar-rating-c.svg',
-    D: 'img/toolbar-rating-d.svg',
+    A: '/img/toolbar-rating-a_48.png',
+    'B+': '/img/toolbar-rating-b-plus_48.png',
+    B: '/img/toolbar-rating-b_48.png',
+    'C+': '/img/toolbar-rating-c-plus_48.png',
+    C: '/img/toolbar-rating-c_48.png',
+    D: '/img/toolbar-rating-d_48.png',
     // we don't currently show the D- grade
-    'D-': 'img/toolbar-rating-d.svg',
-    F: 'img/toolbar-rating-f.svg'
+    'D-': '/img/toolbar-rating-d_48.png',
+    F: '/img/toolbar-rating-f_48.png'
 }
 
 const Site = require('./site.es6')
@@ -63,7 +63,7 @@ class Tab {
 
     resetBadgeIcon () {
         // set the new tab icon to the dax logo
-        browserWrapper.setBadgeIcon({ path: 'img/icon_48.png', tabId: this.id })
+        browserWrapper.setBadgeIcon({ path: '/img/icon_48.png', tabId: this.id })
     }
 
     updateBadgeIcon (target) {
