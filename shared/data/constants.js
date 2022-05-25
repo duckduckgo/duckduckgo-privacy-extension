@@ -2,7 +2,7 @@ const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string
 const browserInfo = parseUserAgentString()
 
 function getConfigFileName () {
-    let browserName = browserInfo.browser.toLowerCase()
+    let browserName = browserInfo?.browser?.toLowerCase() || ''
 
     // clamp to known browsers
     if (!['chrome', 'firefox', 'brave', 'edge'].includes(browserName)) {
