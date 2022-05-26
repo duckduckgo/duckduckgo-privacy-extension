@@ -73,9 +73,10 @@ describe('Storage blocking Tests', () => {
             expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000)
         })
 
-        it('blocks 3rd party JS cookies not on block list', () => {
+        it('does not block 3rd party JS cookies not on block list', () => {
             const jsCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === thirdPartyDomain)
-            expect(jsCookie).toBeUndefined()
+            expect(jsCookie).toBeTruthy()
+            expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000)
         })
 
         it('blocks 3rd party JS cookies from trackers', () => {
