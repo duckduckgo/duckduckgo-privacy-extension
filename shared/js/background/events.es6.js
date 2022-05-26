@@ -302,8 +302,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
         'removeUserData',
         'getEmailProtectionCapabilities',
         'getAddresses',
-        'refreshAlias',
-        'debuggerMessage'
+        'refreshAlias'
     ]
     for (const legacyMessageType of legacyMessageTypes) {
         if (legacyMessageType in req) {
