@@ -101,12 +101,13 @@ const actionHandlers = {
         }
     },
     jscookie: (m) => {
-        const { documentUrl, action, reason, value, scriptOrigins } = m.message
+        const { documentUrl, action, reason, value, stack, scriptOrigins } = m.message
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
         cells[2].textContent = `JS🍪 ${action} (${reason})`
         cells[3].textContent = scriptOrigins.join(',')
+        appendCallStack(cells[3], stack)
         cells[4].textContent = value.split(';')[0]
         row.classList.add('jscookie')
         table.appendChild(row)
@@ -120,19 +121,28 @@ const actionHandlers = {
         const argsOut = JSON.parse(args).join(', ')
         cells[3].setAttribute('colspan', 2)
         cells[4].remove()
-        const lines = stack.split('\n')
-        lines.shift()
 
         cells[3].textContent = `${kind}(${argsOut})`
+        appendCallStack(cells[3], stack)
+
+        row.classList.add('canvas')
+        table.appendChild(row)
+    }
+}
+
+function appendCallStack (cell, stack) {
+    if (stack) {
+        // Shift off the first two of the stack as will be us.
+        const lines = stack.split('\n')
+        lines.shift()
+        lines.shift()
+
         const details = document.createElement('details')
         const summary = document.createElement('summary')
         summary.textContent = 'Call stack'
         details.appendChild(summary)
         details.appendChild(document.createTextNode(lines.join('\n')))
-        cells[3].appendChild(details)
-
-        row.classList.add('canvas')
-        table.appendChild(row)
+        cell.appendChild(details)
     }
 }
 
