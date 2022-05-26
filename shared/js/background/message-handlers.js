@@ -12,6 +12,7 @@ const brokenSiteReport = require('./broken-site-report')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
+const startup = require('./startup.es6')
 
 let dev = false
 
@@ -74,9 +75,12 @@ export function getTopBlockedByPages (options) {
 export async function initClickToLoad (unused, sender) {
     await settings.ready()
     const tab = tabManager.get({ tabId: sender.tab.id })
+
+    await tdsStorage.ready('ClickToLoadConfig')
     const config = { ...tdsStorage.ClickToLoadConfig }
 
     // Remove first-party entries.
+    await startup.ready()
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
     if (websiteOwner) {

@@ -16,12 +16,13 @@
 
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
-const events = require('./events.es6')
+require('./events.es6')
 const settings = require('./settings.es6')
+const { onStartup } = require('./startup.es6')
 
 settings.ready().then(() => {
     // clearing last search on browser startup
     settings.updateSetting('last_search', '')
 
-    events.onStartup()
+    onStartup()
 })

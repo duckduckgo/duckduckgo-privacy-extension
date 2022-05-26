@@ -6,18 +6,36 @@ const browserWrapper = require('./../wrapper.es6')
 const extensionConfig = require('./../../../data/bundled/extension-config.json')
 const etags = require('../../../data/etags.json')
 
+const configNames = constants.tdsLists.map(({ name }) => name)
+
 class TDSStorage {
     constructor () {
         this.dbc = new Dexie('tdsStorage')
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
         })
+
         this.tds = { entities: {}, trackers: {}, domains: {}, cnames: {} }
         this.surrogates = ''
         this.ClickToLoadConfig = {}
         this.config = { features: {} }
+
         this.isInstalling = false
-        this.onUpdatedListeners = new Map()
+
+        this._onUpdatedListeners = new Map()
+
+        this._onReadyResolvers = new Map()
+        this._onReadyPromises = new Map()
+        for (const configName of configNames) {
+            this._onReadyPromises.set(
+                configName,
+                new Promise(
+                    resolve => {
+                        this._onReadyResolvers.set(configName, resolve)
+                    }
+                )
+            )
+        }
 
         this.removeLegacyLists()
     }
@@ -38,6 +56,25 @@ class TDSStorage {
             this.config = extensionConfig
             await this.storeInLocalDB('config', extensionConfig)
         }
+    }
+
+    _internalOnListUpdate (configName) {
+        self.setTimeout(() => {
+            // Ensure the onReady promise for this configuration is resolved.
+            const resolve = this._onReadyResolvers.get(configName)
+            if (resolve) {
+                resolve()
+                this._onReadyResolvers.delete(configName)
+            }
+
+            // Notify any listeners that this list has updated.
+            const listeners = this._onUpdatedListeners.get(configName)
+            if (listeners) {
+                for (const listener of listeners.slice()) {
+                    listener(configName)
+                }
+            }
+        }, 0)
     }
 
     getLists () {
@@ -90,15 +127,7 @@ class TDSStorage {
                     // store tds in memory so we can access it later if needed
                     this[listCopy.name] = resultData
 
-                    // Notify any listeners that this list has updated.
-                    const listeners = this.onUpdatedListeners.get(listCopy.name)
-                    if (listeners) {
-                        window.setTimeout(() => {
-                            for (const listener of listeners) {
-                                listener(listCopy.name)
-                            }
-                        }, 0)
-                    }
+                    this._internalOnListUpdate(listCopy.name)
 
                     return { name: listCopy.name, data: resultData }
                 } else {
@@ -108,8 +137,11 @@ class TDSStorage {
         }).catch(e => {
             return this.fallbackToDB(listCopy.name).then(backupFromDB => {
                 if (backupFromDB) {
-                    // store tds in memory so we can access it later if needed
+                    // Restore the previously fetched configuration from memory.
                     this[listCopy.name] = backupFromDB
+
+                    this._internalOnListUpdate(listCopy.name)
+
                     return { name: listCopy.name, data: backupFromDB }
                 } else {
                     // reset etag to force us to get fresh server data in case of an error
@@ -221,12 +253,24 @@ class TDSStorage {
     }
 
     onUpdate (name, listener) {
-        let listeners = this.onUpdatedListeners.get(name)
+        let listeners = this._onUpdatedListeners.get(name)
         if (!listeners) {
             listeners = []
-            this.onUpdatedListeners.set(name, listeners)
+            this._onUpdatedListeners.set(name, listeners)
         }
         listeners.push(listener)
+    }
+
+    ready (configName) {
+        if (!configName) {
+            return Promise.all(this._onReadyPromises.values())
+        }
+
+        const readyPromise = this._onReadyPromises.get(configName)
+        if (!readyPromise) {
+            throw new Error(`Unknown configuration: ${configName}`)
+        }
+        return readyPromise
     }
 }
 module.exports = new TDSStorage()

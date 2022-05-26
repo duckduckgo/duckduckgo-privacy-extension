@@ -78,37 +78,24 @@ async function forSetting (bgPage, key) {
     }
 }
 
-// Note: This is likely incomplete. Please add further checks as they come up!
 async function forAllConfiguration (bgPage) {
     try {
-        await forFunction(bgPage, () =>
-            // Expected configuration Objects/properties exist.
-            window.dbg?.https &&
-            window.dbg?.tds?.ClickToLoadConfig &&
-            window.dbg?.tds?.config?.features?.clickToPlay?.state &&
-            window.dbg?.tds?.tds?.domains &&
-            window.dbg?.tds?.tds?.entities &&
-            window.dbg?.tds?.tds?.trackers &&
+        await forFunction(bgPage, async () => {
+            if (!self.dbg?.https?.isReady ||
+                !self.dbg?.settings?.ready ||
+                !self.dbg?.startup?.ready ||
+                !self.dbg?.tds?.ready) {
+                return false
+            }
 
-            // Expected configuration state.
-            window.dbg.tds.isInstalling === false &&
-            window.dbg.https.isReady === true &&
-            Object.keys(window.dbg.tds.ClickToLoadConfig).length > 0 &&
-            Object.keys(window.dbg.tds.tds.domains).length > 0 &&
-            Object.keys(window.dbg.tds.tds.entities).length > 0)
+            await Promise.all([
+                self.dbg.settings.ready(),
+                self.dbg.startup.ready(),
+                self.dbg.tds.ready()
+            ])
 
-        await Promise.all([
-            forFunction(bgPage, () => {
-                const firstEntity = Object.keys(window.dbg.tds.tds.entities)[0]
-                const { domains } = window.dbg.tds.tds.entities[firstEntity]
-                return firstEntity &&
-                    domains && domains.length > 0 &&
-                    window.dbg.tds.tds.domains[domains[0]] === firstEntity
-            }),
-
-            // Ensures that `settings.ready()` has resolved.
-            forSetting(bgPage, 'atb')
-        ])
+            return true
+        })
     } catch (e) {
         throw new Error('Failed to load extension configuration.')
     }
