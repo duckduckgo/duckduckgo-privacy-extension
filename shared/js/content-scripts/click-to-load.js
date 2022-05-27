@@ -843,9 +843,6 @@
     }
 
     sendMessage('initClickToLoad').then(response => {
-        if (!response) {
-            return
-        }
         if (document.readyState === 'complete') {
             init(response)
         } else {

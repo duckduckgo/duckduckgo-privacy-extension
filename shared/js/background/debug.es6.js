@@ -9,9 +9,11 @@ const atb = require('./atb.es6')
 const https = require('./https.es6')
 const tds = require('./storage/tds.es6')
 const messageHandlers = require('./message-handlers')
+const startup = require('./startup.es6')
 
 self.dbg = {
     settings,
+    startup,
     tabManager,
     atb,
     https,

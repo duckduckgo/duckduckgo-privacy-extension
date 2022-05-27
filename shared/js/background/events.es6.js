@@ -287,8 +287,7 @@ browser.omnibox.onInputEntered.addListener(async function (text) {
  */
 const {
     REFETCH_ALIAS_ALARM,
-    fetchAlias,
-    showContextMenuAction
+    fetchAlias
 } = require('./email-utils.es6')
 
 // handle any messages that come from content/UI scripts
@@ -466,44 +465,6 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
     }
 })
 
-/**
- * on start up
- */
-const onStartup = async () => {
-    await settings.ready()
-    experiment.setActiveExperiment()
-
-    try {
-        const httpsLists = await httpsStorage.getLists()
-        https.setLists(httpsLists)
-
-        const tdsLists = await tdsStorage.getLists()
-        trackers.setLists(tdsLists)
-    } catch (e) {
-        console.log(e)
-    }
-
-    https.sendHttpsUpgradeTotals()
-
-    Companies.buildFromStorage()
-
-    // fetch alias if needed
-    const userData = settings.getSetting('userData')
-    if (userData && userData.token) {
-        if (!userData.nextAlias) await fetchAlias()
-        showContextMenuAction()
-    }
-
-    const savedTabs = await browser.tabs.query({ currentWindow: true, status: 'complete' })
-    for (let i = 0; i < savedTabs.length; i++) {
-        const tab = savedTabs[i]
-
-        if (tab.url) {
-            tabManager.create(tab)
-        }
-    }
-}
-
 // Count https upgrade failures to allow bad data to be removed from lists
 browser.webRequest.onErrorOccurred.addListener(e => {
     if (!(e.type === 'main_frame')) return
@@ -530,7 +491,3 @@ if (browserName === 'moz') {
     cspProtection.init()
 }
 devtools.init()
-
-module.exports = {
-    onStartup: onStartup
-}
