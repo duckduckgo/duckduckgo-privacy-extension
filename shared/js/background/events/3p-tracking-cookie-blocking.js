@@ -9,10 +9,10 @@ function shouldBlockHeaders (request, tab, requestIsTracker) {
     }
 
     const cookieSettings = utils.getFeatureSettings('cookie')
-    if (requestIsTracker && !cookieSettings.trackerCookie === 'enabled') {
+    if (requestIsTracker && cookieSettings.trackerCookie !== 'enabled') {
         return false
     }
-    if (!requestIsTracker && !cookieSettings.nonTrackerCookie === 'enabled') {
+    if (!requestIsTracker && cookieSettings.nonTrackerCookie !== 'enabled') {
         return false
     }
 
