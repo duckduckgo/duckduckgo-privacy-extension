@@ -43,7 +43,7 @@ function dropTracking3pCookiesFromResponse (request) {
             responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
-                kind: `set-cookie-${cookieFeature}`,
+                kind: `set-cookie-${requestIsTracker ? 'tracker' : 'non-tracker'}`,
                 url: request.url,
                 siteUrl: tab?.site?.url,
                 requestId: request.requestId,
@@ -75,7 +75,7 @@ function dropTracking3pCookiesFromRequest (request) {
             requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
-                kind: `cookie-${cookieFeature}`,
+                kind: `cookie-${requestIsTracker ? 'tracker' : 'non-tracker'}`,
                 url: request.url,
                 siteUrl: tab?.site?.url,
                 requestId: request.requestId,
