@@ -273,7 +273,7 @@ function isDomainCookieExcluded (domain) {
     const comps = domain.split('.')
     if (comps.length > 2) {
         comps.shift()
-        return isDomainCookieExcluded(comps.join('.'), feature)
+        return isDomainCookieExcluded(comps.join('.'))
     }
 
     return false

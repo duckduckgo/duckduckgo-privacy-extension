@@ -22,5 +22,18 @@
         },
         "exceptions": [ ],
         "state": "enabled"
+    },
+    "window.dbg.tds.config.features.cookie": {
+        "settings": {
+            "firstPartyTrackerCookiePolicy": {
+                "threshold": 86400,
+                "maxAge": 86400
+            },
+            "excludedCookieDomains": [ ],
+            "trackerCookie": "enabled",
+            "nonTrackerCookie": "enabled"
+        },
+        "exceptions": [ ],
+        "state": "enabled"
     }
 }

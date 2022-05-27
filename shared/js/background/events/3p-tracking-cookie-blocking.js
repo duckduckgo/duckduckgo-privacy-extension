@@ -71,8 +71,7 @@ function dropTracking3pCookiesFromRequest (request) {
         }
 
         // Strip 3rd party response header
-        const cookieFeature = requestIsTracker ? 'trackingCookies3p' : 'nonTracking3pCookies'
-        if (!utils.isCookieExcluded(request.url, cookieFeature)) {
+        if (!utils.isCookieExcluded(request.url)) {
             requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
