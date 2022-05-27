@@ -261,7 +261,7 @@ export function isCookieExcluded (url) {
 }
 
 function isDomainCookieExcluded (domain) {
-    const cookieSettings = getFeatureSettings('trackingCookies3p')
+    const cookieSettings = getFeatureSettings('cookie')
     if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
         return false
     }

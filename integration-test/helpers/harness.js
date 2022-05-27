@@ -71,7 +71,7 @@ const setup = async (ops) => {
                 ? await backgroundPageTarget.page()
                 : await backgroundPageTarget.worker()
         } catch (e) {
-            throw new Error('Couldn\'t find background page.')
+            throw new Error(`Couldn't find background page. ${e}`)
         }
 
         bgPage.on('request', (req) => { requests.push(req.url()) })
