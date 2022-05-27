@@ -9,8 +9,6 @@ const tabManager = require('../../../shared/js/background/tab-manager.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 
-const jsCookieProtection = require('../../../shared/content-scope-scripts/src/features/tracking-cookies-1p')
-
 const configReference = require('../../data/reference-tests/expire-first-party-tracking-cookies/config_reference.json')
 const blocklistReference = require('../../data/reference-tests/expire-first-party-tracking-cookies/tracker_radar_reference.json')
 const testSets = require('../../data/reference-tests/expire-first-party-tracking-cookies/tests.json')
@@ -66,6 +64,11 @@ for (const setName of Object.keys(testSets)) {
 
                 // eslint-disable-next-line no-global-assign
                 globalThis = jsdomWindow
+
+                const utils = require('../../../shared/content-scope-scripts/src/utils')
+                utils.setGlobal(jsdomWindow)
+
+                const jsCookieProtection = require('../../../shared/content-scope-scripts/src/features/cookie')
 
                 jsCookieProtection.load({})
                 jsCookieProtection.init(args)

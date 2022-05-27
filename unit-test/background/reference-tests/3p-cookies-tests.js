@@ -11,7 +11,7 @@ const getArgumentsObject = require('../../../shared/js/background/helpers/argume
 
 const jsdom = require('jsdom')
 
-const trackingJsCookieProtection = require('../../../shared/content-scope-scripts/src/features/tracking-cookies-3p')
+const trackingJsCookieProtection = require('../../../shared/content-scope-scripts/src/features/cookie')
 
 const trackingConfigReference = require('../../data/reference-tests/block-third-party-tracking-cookies/config_reference.json')
 const trackingBlocklistReference = require('../../data/reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
@@ -104,6 +104,7 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                     // eslint-disable-next-line no-global-assign
                     globalThis = jsdomWindow
 
+                    jsCookieProtection.load()
                     jsCookieProtection.init(args)
 
                     jsdomWindow.document.cookie = test.setDocumentCookie

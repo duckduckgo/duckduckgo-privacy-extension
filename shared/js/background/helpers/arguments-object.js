@@ -14,18 +14,8 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     // Clone site so we don't retain any site changes
     const site = Object.assign({}, tab.site || {})
     const referrer = tab?.referrer || ''
+    let cookie = {}
 
-    const firstPartyCookiePolicy = utils.getFeatureSettings('trackingCookies1p').firstPartyTrackerCookiePolicy || {
-        threshold: 864000, // 10 days
-        maxAge: 864000 // 10 days
-    }
-    const cookie = {
-        isThirdParty: false,
-        shouldBlock: false,
-        tabRegisteredDomain: null,
-        isTrackerFrame: false,
-        policy: firstPartyCookiePolicy
-    }
     // Special case for iframes that are blank we check if it's also enabled
     if (sender.url === 'about:blank') {
         const aboutBlankEnabled = utils.getEnabledFeaturesAboutBlank(tab.url)
@@ -40,17 +30,28 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         }
     }
 
-    // Extra contextual data required for 1p and 3p cookie protection - only send if at least one is enabled here
-    if (tab.site.isFeatureEnabled('trackingCookies3p') || tab.site.isFeatureEnabled('trackingCookies1p')) {
+    // Extra contextual data required for cookie protection only send if is enabled here
+    if (tab.site.isFeatureEnabled('cookie')) {
+        cookie = {
+            isThirdParty: false,
+            shouldBlock: false,
+            tabRegisteredDomain: null,
+            isTracker: false,
+            isFrame: false
+        }
+
         // determine the register domain of the sending tab
         const parsed = tldts.parse(tab.url)
         cookie.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
 
+        if (sender.frameId !== 0) {
+            cookie.isFrame = true
+        }
+
         if (trackerutils.hasTrackerListLoaded()) {
             if (documentUrl &&
-                trackerutils.isTracker(documentUrl) &&
-                sender.frameId !== 0) {
-                cookie.isTrackerFrame = true
+                trackerutils.isTracker(documentUrl)) {
+                cookie.isTracker = true
             }
             cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
         }
