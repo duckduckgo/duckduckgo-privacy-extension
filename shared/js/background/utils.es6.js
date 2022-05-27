@@ -255,13 +255,13 @@ export function isSafeListed (url) {
     return false
 }
 
-export function isCookieExcluded (url, feature) {
+export function isCookieExcluded (url) {
     const domain = (new URL(url)).host
-    return isDomainCookieExcluded(domain, feature)
+    return isDomainCookieExcluded(domain)
 }
 
-function isDomainCookieExcluded (domain, feature) {
-    const cookieSettings = getFeatureSettings(feature || 'trackingCookies3p')
+function isDomainCookieExcluded (domain) {
+    const cookieSettings = getFeatureSettings('cookie')
     if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
         return false
     }

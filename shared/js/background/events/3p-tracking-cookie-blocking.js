@@ -4,10 +4,15 @@ const utils = require('../utils.es6')
 const devtools = require('../devtools.es6')
 
 function shouldBlockHeaders (request, tab, requestIsTracker) {
-    if (requestIsTracker && !tab.site.isFeatureEnabled('trackingCookies3p')) {
+    if (!tab.site.isFeatureEnabled('cookie')) {
         return false
     }
-    if (!requestIsTracker && !tab.site.isFeatureEnabled('nonTracking3pCookies')) {
+
+    const cookieSettings = utils.getFeatureSettings('cookie')
+    if (requestIsTracker && !cookieSettings.trackerCookie === 'enabled') {
+        return false
+    }
+    if (!requestIsTracker && !cookieSettings.nonTrackerCookie === 'enabled') {
         return false
     }
 
@@ -34,8 +39,7 @@ function dropTracking3pCookiesFromResponse (request) {
         }
 
         // Strip 3rd party cookie response header
-        const cookieFeature = requestIsTracker ? 'trackingCookies3p' : 'nonTracking3pCookies'
-        if (!utils.isCookieExcluded(request.url, cookieFeature)) {
+        if (!utils.isCookieExcluded(request.url)) {
             responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
