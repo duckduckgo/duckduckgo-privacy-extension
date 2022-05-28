@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1653655742631,
+    "version": 1653680846662,
     "features": {
         "ampLinks": {
             "exceptions": [
@@ -145,6 +145,12 @@
             ]
         },
         "cookie": {
+            "exceptions": [
+                {
+                    "domain": "nespresso.com",
+                    "reason": "login issues"
+                }
+            ],
             "state": "enabled",
             "settings": {
                 "trackerCookie": "enabled",
@@ -239,13 +245,7 @@
                     "threshold": 86400,
                     "maxAge": 86400
                 }
-            },
-            "exceptions": [
-                {
-                    "domain": "nespresso.com",
-                    "reason": "login issues"
-                }
-            ]
+            }
         },
         "customUserAgent": {
             "settings": {
