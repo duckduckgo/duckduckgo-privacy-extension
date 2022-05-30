@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1653487115722,
+    "version": 1653680846662,
     "features": {
         "ampLinks": {
             "exceptions": [
@@ -143,6 +143,134 @@
                     "reason": "Video not playing correctly"
                 }
             ]
+        },
+        "cookie": {
+            "exceptions": [
+                {
+                    "domain": "nespresso.com",
+                    "reason": "login issues"
+                }
+            ],
+            "state": "enabled",
+            "settings": {
+                "trackerCookie": "enabled",
+                "nonTrackerCookie": "enabled",
+                "excludedCookieDomains": [
+                    {
+                        "domain": "hangouts.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "docs.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "accounts.google.com",
+                        "reason": "SSO which needs cookies for auth"
+                    },
+                    {
+                        "domain": "googleapis.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "login.live.com",
+                        "reason": "SSO which needs cookies for auth"
+                    },
+                    {
+                        "domain": "apis.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "pay.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "payments.amazon.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "payments.amazon.de",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "atlassian.net",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "atlassian.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "paypal.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "paypal.com",
+                        "reason": "site breakage"
+                    },
+                    {
+                        "domain": "salesforce.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "salesforceliveagent.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "force.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "disqus.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "spotify.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "hangouts.google.com",
+                        "reason": "site breakage"
+                    },
+                    {
+                        "domain": "docs.google.com",
+                        "reason": "site breakage"
+                    },
+                    {
+                        "domain": "btsport-utils-prod.akamaized.net",
+                        "reason": "broken videos"
+                    }
+                ],
+                "firstPartyTrackerCookiePolicy": {
+                    "threshold": 86400,
+                    "maxAge": 86400
+                }
+            }
+        },
+        "customUserAgent": {
+            "settings": {
+                "omitApplicationSites": [
+                    {
+                        "domain": "cvs.com",
+                        "reason": "Site reports browser not supported"
+                    },
+                    {
+                        "domain": "sovietgames.su",
+                        "reason": "Wordpress plugin reports our browser as a bot"
+                    },
+                    {
+                        "domain": "accounts.google.com",
+                        "reason": "Site reports browser not supported"
+                    },
+                    {
+                        "domain": "facebook.com",
+                        "reason": "Site reports browser not supported"
+                    }
+                ],
+                "omitVersionSites": []
+            },
+            "exceptions": [],
+            "state": "disabled"
         },
         "fingerprintingAudio": {
             "state": "disabled",
