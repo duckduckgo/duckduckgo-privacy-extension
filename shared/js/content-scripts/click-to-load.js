@@ -1,6 +1,6 @@
 /* global cloneInto */
 (function clickToLoad () {
-    function sendMessage (messageType, options = {}) {
+    function sendMessage (messageType, options) {
         return new Promise((resolve, reject) => {
             chrome.runtime.sendMessage({ messageType, options }, response => {
                 if (chrome.runtime.lastError) {
