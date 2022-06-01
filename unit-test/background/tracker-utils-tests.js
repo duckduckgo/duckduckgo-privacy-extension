@@ -649,7 +649,10 @@ describe('trackerutils.isFirstPartyByEntity()', () => {
     })
 
     const firstPartyTests = [
-        { a: 'http://google-analytics.com', b: 'http://google.com', expected: true },
+        { a: 'http://google-analytics.com', b: 'http://google.com', expected: true }, // tracker, tracker
+        { a: 'http://ridepenguin.com', b: 'http://google.com', expected: true }, // non tracker, tracker
+        { a: 'http://google-analytics.com', b: 'http://ridepenguin.com', expected: true }, // tracker, non tracker
+        { a: 'http://cloudrobotics.com', b: 'http://ridepenguin.com', expected: true }, // non tracker, non tracker
         { a: 'http://disqus.com', b: 'http://google.com', expected: false },
         { a: 'https://google-analytics.com/script-exception', b: 'https://example.com', expected: false }
     ]
