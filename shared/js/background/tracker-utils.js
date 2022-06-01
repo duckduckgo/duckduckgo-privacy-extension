@@ -155,8 +155,12 @@ export function truncateReferrer (referrer, target) {
  * @returns {boolean}
  */
 export function isFirstPartyByEntity (trackerUrl, siteUrl) {
-    // const cnameResolution = trackers.resolveCname(trackerUrl)
-    // trackerUrl = cnameResolution.finalURL
+    const cnameResolution = trackers.resolveCname(trackerUrl)
+    
+    const tracker = trackers.findTracker({ urlToCheckSplit: utils.extractHostFromURL(cnameResolution.finalURL).split('.') })
+    if (tracker) {
+        trackerUrl = cnameResolution.finalURL
+    }
 
     if (utils.isSameTopLevelDomain(trackerUrl, siteUrl)) {
         return true
