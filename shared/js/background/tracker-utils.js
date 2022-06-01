@@ -156,7 +156,7 @@ export function truncateReferrer (referrer, target) {
  */
 export function isFirstPartyByEntity (trackerUrl, siteUrl) {
     const cnameResolution = trackers.resolveCname(trackerUrl)
-    
+
     const tracker = trackers.findTracker({ urlToCheckSplit: utils.extractHostFromURL(cnameResolution.finalURL).split('.') })
     if (tracker) {
         trackerUrl = cnameResolution.finalURL
