@@ -158,10 +158,8 @@ export function isFirstPartyByEntity (trackerUrl, siteUrl) {
     const cnameResolution = trackers.resolveCname(trackerUrl)
     trackerUrl = cnameResolution.finalURL
 
-    const tracker = trackers.findTracker({ urlToCheckSplit: utils.extractHostFromURL(trackerUrl).split('.') })
-    if (!tracker) {
-        // Fallback to domain check if no tracker is found
-        return utils.isSameTopLevelDomain(trackerUrl, siteUrl)
+    if (utils.isSameTopLevelDomain(trackerUrl, siteUrl)) {
+        return true
     }
 
     const trackerOwner = trackers.findTrackerOwner(tldts.parse(trackerUrl).domain)
