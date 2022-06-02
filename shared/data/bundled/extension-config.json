@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1654084264098,
+    "version": 1654176100799,
     "features": {
         "ampLinks": {
             "exceptions": [
@@ -153,6 +153,22 @@
                 {
                     "domain": "teams.microsoft.com",
                     "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/242"
+                },
+                {
+                    "domain": "start.me",
+                    "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/245"
+                },
+                {
+                    "domain": "target.com",
+                    "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/247"
+                },
+                {
+                    "domain": "wellsfargo.com",
+                    "reason": "broken login: https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/1220"
+                },
+                {
+                    "domain": "connect.secure.wellsfargo.com",
+                    "reason": "broken login: https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/1220"
                 }
             ],
             "state": "enabled",
@@ -243,6 +259,14 @@
                     {
                         "domain": "btsport-utils-prod.akamaized.net",
                         "reason": "broken videos"
+                    },
+                    {
+                        "domain": "app.glean.com",
+                        "reason": "Broken login: https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/1220"
+                    },
+                    {
+                        "domain": "connect.secure.wellsfargo.com",
+                        "reason": "Broken login: https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/1220"
                     }
                 ],
                 "firstPartyTrackerCookiePolicy": {
