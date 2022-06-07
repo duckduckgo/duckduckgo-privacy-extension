@@ -1,5 +1,5 @@
 {
-    "window.dbg.tds.tds.trackers.youtube\\.com": {
+    "globalThis.dbg.tds.tds.trackers.youtube\\.com": {
         "owner": {
             "name": "Google LLC",
             "displayName": "YouTube",
@@ -8,7 +8,7 @@
         },
         "default": "ignore"
     },
-    "window.dbg.tds.tds.trackers.youtube-nocookie\\.com": {
+    "globalThis.dbg.tds.tds.trackers.youtube-nocookie\\.com": {
         "owner": {
             "name": "Google LLC",
             "displayName": "YouTube",
@@ -17,7 +17,7 @@
         },
         "default": "ignore"
     },
-    "window.dbg.tds.ClickToLoadConfig.Google LLC": {
+    "globalThis.dbg.tds.ClickToLoadConfig.Google LLC": {
         "domains": [
             "youtube.com",
             "youtube-nocookie.com"

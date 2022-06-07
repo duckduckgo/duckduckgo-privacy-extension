@@ -344,7 +344,7 @@ const sites = [
     {
         name: 'BlazeTV newsletter',
         url: 'https://www.theblaze.com/',
-        actions: [{ action: 'evaluate', arg: () => window.scrollBy(0, window.innerHeight) }],
+        actions: [{ action: 'evaluate', arg: () => globalThis.scrollBy(0, globalThis.innerHeight) }],
         autofillExpected: 1
     },
     {

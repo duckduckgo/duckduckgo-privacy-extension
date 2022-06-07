@@ -1,4 +1,3 @@
-/* global dbg:false */
 const harness = require('../helpers/harness')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
@@ -10,6 +9,7 @@ const tests = [
     { url: 'reddit.com', siteGrade: ['D', 'D-', 'C'], enhancedGrade: 'B' },
     { url: 'facebook.com', siteGrade: ['D', 'C+'], enhancedGrade: 'C+' },
     // FIXME - This case is flaking.
+    //         Enhanced grade is something B and sometimes C.
     // { url: 'twitter.com', siteGrade: 'C', enhancedGrade: 'B' },
     { url: 'en.wikipedia.org', siteGrade: 'B+', enhancedGrade: 'B+' }
 ]
@@ -22,7 +22,7 @@ let teardown
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000
 
 const getGradeByUrl = (url) => {
-    const tabsById = dbg.tabManager.tabContainer
+    const tabsById = globalThis.dbg.tabManager.tabContainer
     let tab
 
     Object.keys(tabsById).some((id) => {

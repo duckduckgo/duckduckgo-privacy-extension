@@ -1,5 +1,5 @@
 {
-    "window.dbg.tds.config.features.trackingParameters": {
+    "globalThis.dbg.tds.config.features.trackingParameters": {
         "state": "enabled",
         "exceptions": [ ],
         "settings": {

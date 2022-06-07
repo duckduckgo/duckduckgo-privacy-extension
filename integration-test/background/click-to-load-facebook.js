@@ -94,14 +94,16 @@ describe('Test Facebook Click To Load', () => {
         // loaded and the content should be unblocked.
         clearRequests()
         const buttonCount = await page.evaluate(() => {
-            window.buttons =
+            globalThis.buttons =
                 Array.from(document.querySelectorAll('body > div'))
                     .map(div => div.shadowRoot && div.shadowRoot.querySelector('button'))
                     .filter(button => button)
-            return window.buttons.length
+            return globalThis.buttons.length
         })
         for (let i = 0; i < buttonCount; i++) {
-            const button = await page.evaluateHandle(i => window.buttons[i], i)
+            const button = await page.evaluateHandle(
+                i => globalThis.buttons[i], i
+            )
             try {
                 await button.click()
             } catch (e) { }

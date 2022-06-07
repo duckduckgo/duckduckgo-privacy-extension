@@ -65,7 +65,7 @@ function forFunction (bgPage, func, ...args) {
 async function forSetting (bgPage, key) {
     try {
         return await forFunction(
-            bgPage, key => self.dbg?.settings?.getSetting(key), key
+            bgPage, key => globalThis.dbg?.settings?.getSetting(key), key
         )
     } catch (e) {
         if (e instanceof puppeteer.errors.TimeoutError) {
@@ -81,17 +81,17 @@ async function forSetting (bgPage, key) {
 async function forAllConfiguration (bgPage) {
     try {
         await forFunction(bgPage, async () => {
-            if (!self.dbg?.https?.isReady ||
-                !self.dbg?.settings?.ready ||
-                !self.dbg?.startup?.ready ||
-                !self.dbg?.tds?.ready) {
+            if (!globalThis.dbg?.https?.isReady ||
+                !globalThis.dbg?.settings?.ready ||
+                !globalThis.dbg?.startup?.ready ||
+                !globalThis.dbg?.tds?.ready) {
                 return false
             }
 
             await Promise.all([
-                self.dbg.settings.ready(),
-                self.dbg.startup.ready(),
-                self.dbg.tds.ready()
+                globalThis.dbg.settings.ready(),
+                globalThis.dbg.startup.ready(),
+                globalThis.dbg.tds.ready()
             ])
 
             return true

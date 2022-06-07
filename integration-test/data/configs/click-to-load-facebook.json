@@ -1,5 +1,5 @@
 {
-    "window.dbg.tds.ClickToLoadConfig.Facebook": {
+    "globalThis.dbg.tds.ClickToLoadConfig.Facebook": {
         "domains": [
             "facebook.com",
             "facebook.net"
