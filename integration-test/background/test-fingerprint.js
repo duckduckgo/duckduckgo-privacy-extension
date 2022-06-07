@@ -2,8 +2,9 @@
  *  Tests for fingerprint defenses. Ensure that fingerprinting is actually being blocked.
  */
 
-/* global dbg:false */
 const harness = require('../helpers/harness')
+const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 
 let browser
 let bgPage
@@ -34,12 +35,7 @@ function testFPValues (values) {
 describe('Fingerprint Defense Tests', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
-
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 60000 }
-        )
+        await backgroundWait.forAllConfiguration(bgPage)
     })
     afterAll(async () => {
         await teardown()
@@ -51,13 +47,7 @@ describe('Fingerprint Defense Tests', () => {
             const ua = await browser.userAgent()
             await page.setUserAgent(ua.replace(/Headless /, ''))
 
-            try {
-                await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
-            } catch (e) {
-                // timed out waiting for page to load, let's try running the test anyway
-            }
-            // give it another second just to be sure
-            await page.waitForTimeout(1000)
+            await pageWait.forGoto(page, `http://${test.url}`)
             const values = await page.evaluate(() => {
                 return {
                     availTop: screen.availTop,
@@ -80,12 +70,7 @@ describe('Fingerprint Defense Tests', () => {
 describe('First Party Fingerprint Randomization', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
-
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 6000 }
-        )
+        await backgroundWait.forAllConfiguration(bgPage)
     })
     afterAll(async () => {
         await teardown()
@@ -94,14 +79,7 @@ describe('First Party Fingerprint Randomization', () => {
     async function runTest (test) {
         const page = await browser.newPage()
 
-        try {
-            await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
-        } catch (e) {
-            // timed out waiting for page to load, let's try running the test anyway
-        }
-
-        // give it another second just to be sure
-        await page.waitForTimeout(1000)
+        await pageWait.forGoto(page, `http://${test.url}`)
 
         await page.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' })
 
@@ -152,12 +130,7 @@ describe('First Party Fingerprint Randomization', () => {
 describe('Verify injected script is not visible to the page', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
-
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 6000 }
-        )
+        await backgroundWait.forAllConfiguration(bgPage)
     })
     afterAll(async () => {
         await teardown()
@@ -167,14 +140,7 @@ describe('Verify injected script is not visible to the page', () => {
         it('Fingerprints should not match across first parties', async () => {
             const page = await browser.newPage()
 
-            try {
-                await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
-            } catch (e) {
-                // timed out waiting for page to load, let's try running the test anyway
-            }
-
-            // give it another second just to be sure
-            await page.waitForTimeout(1000)
+            await pageWait.forGoto(page, `http://${test.url}`)
 
             const sjclVal = await page.evaluate(() => {
                 if ('sjcl' in window) {

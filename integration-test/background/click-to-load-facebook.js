@@ -109,9 +109,7 @@ describe('Test Facebook Click To Load', () => {
 
         // Wait for the embedded content to finish loading, but give up after
         // 15 seconds. That avoids the tests failing if the network is slow.
-        try {
-            await page.waitForNetworkIdle({ idleTime: 1000, timeout: 15000 })
-        } catch (e) { }
+        await pageWait.forNetworkIdle(page)
 
         {
             const {

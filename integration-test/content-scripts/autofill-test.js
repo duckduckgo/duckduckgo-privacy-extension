@@ -2,8 +2,9 @@
  *  Test autofill
  */
 
-/* global dbg:false */
 const harness = require('../helpers/harness')
+const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 const _sites = require('./input-detection-site-list')
 
 // Add sites to the focusedSites to only execute those
@@ -16,15 +17,11 @@ let teardown
 describe('Autofill input detection Tests', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
+        await backgroundWait.forAllConfiguration(bgPage)
 
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 60000 }
-        )
         // Sign in in the extension
         const page = await browser.newPage()
-        await page.goto('https://duckduckgo.com', { waitUntil: 'networkidle0' })
+        await pageWait.forGoto(page, 'https://duckduckgo.com')
         await page.evaluate(() =>
             window.postMessage({ addUserData: { userName: '', token: '' } }, window.origin)
         )
@@ -41,18 +38,14 @@ describe('Autofill input detection Tests', () => {
             const ua = await browser.userAgent()
             await page.setUserAgent(ua.replace(/Headless /, '') + ' test')
 
-            try {
-                await page.goto(`${url}`, { waitUntil: 'networkidle0' })
-            } catch (e) {
-                // timed out waiting for page to load, let's try running the test anyway
-            }
+            await pageWait.forGoto(page, `${url}`)
 
             if (actions) {
                 for (const action of actions) {
                     await page[action.action](action.arg)
                         .catch(e => !action.optional && fail(`Action ${action.action} failed on ${name}: ${e.message}.`))
                     // Wait a bit to give it time to execute. If you need more, add an explicit waitFor action
-                    await page.waitForTimeout(750)
+                    await backgroundWait.forTimeout(bgPage, 750)
                 }
             }
 

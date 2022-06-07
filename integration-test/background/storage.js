@@ -1,6 +1,7 @@
 const harness = require('../helpers/harness')
 const { loadTestConfig } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 
 const testPageDomain = 'privacy-test-pages.glitch.me'
 const thirdPartyDomain = 'good.third-party.site'
@@ -9,14 +10,6 @@ const thirdPartyTracker = 'broken.third-party.site'
 async function setup () {
     const { browser, bgPage, teardown } = await harness.setup()
     const page = await browser.newPage()
-
-    await bgPage.waitForFunction(
-        () => {
-            console.log('waiting for tds...')
-            return window.dbg && window.dbg.tds && window.dbg.tds.tds
-        },
-        { polling: 100, timeout: 10000 }
-    )
 
     await backgroundWait.forAllConfiguration(bgPage)
     await loadTestConfig(bgPage, 'storage-blocking.json')
@@ -39,9 +32,9 @@ describe('Storage blocking Tests', () => {
             try {
                 // Load the test pages home first to give some time for the extension background to start
                 // and register the content-script-message handler
-                await page.goto(`https://${testPageDomain}/`, { waitUntil: 'networkidle0' })
+                await pageWait.forGoto(page, `https://${testPageDomain}/`)
                 await page.bringToFront()
-                await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle2' })
+                await pageWait.forGoto(page, `https://${testPageDomain}/privacy-protections/storage-blocking/?store`)
                 await waitForAllResults(page)
                 // collect all browser cookies
                 cookies = (await page._client.send('Network.getAllCookies')).cookies
@@ -104,7 +97,7 @@ describe('Storage blocking Tests', () => {
          */
         it('does not block iFrame tracker cookies from same entity', async () => {
             const { page, teardown } = await setup()
-            await page.goto(`https://${thirdPartyTracker}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle0' })
+            await pageWait.forGoto(page, `https://${thirdPartyTracker}/privacy-protections/storage-blocking/?store`)
             await page.bringToFront()
             await waitForAllResults(page)
             await page.click('#retrive')
