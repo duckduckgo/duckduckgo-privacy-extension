@@ -11,6 +11,7 @@ const UserDataModel = require('./../models/user-data.es6.js')
 const userDataTemplate = require('./../templates/user-data.es6.js')
 const BackgroundMessageModel = require('./../models/background-message.es6.js')
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
+const t = window.DDG.base.i18n.t
 
 function Options (ops) {
     Parent.call(this, ops)
@@ -33,6 +34,12 @@ Options.prototype = window.$.extend({},
                 .click(this._onFeedbackClick.bind(this))
             window.$('.js-report-site-link')
                 .click(this._onReportSiteClick.bind(this))
+
+            $('#options-sub-header')[0].innerHTML = t('options:optionsSubHeader.title')
+            $('#options-desc')[0].innerHTML = t('options:optionsDesc.title')
+            $('#learn-more')[0].innerHTML = t('options:learnMore.title')
+            $('#share-feedback')[0].innerHTML = t('options:shareFeedback.title')
+            $('#report-broken-site')[0].innerHTML = t('options:reportBrokenSite.title')
 
             this.views.options = new PrivacyOptionsView({
                 pageView: this,

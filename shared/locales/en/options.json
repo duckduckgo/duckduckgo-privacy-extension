@@ -1,0 +1,34 @@
+{
+    "smartling": {
+        "string_format" : "icu",
+        "translate_paths": [{
+            "path": "*/title",
+            "key": "{*}/title",
+            "instruction": "*/note"
+        }]
+    },
+    "optionsHeader": {
+        "title": "DuckDuckGo Options",
+        "note": "Header for options (settings) page"
+    },
+    "optionsSubHeader": {
+        "title": "Search and browse the web without being tracked.",
+        "note": "We allow the user to browser the web without being followed by trackers"
+    },
+    "optionsDesc": {
+        "title": "DuckDuckGo protects your privacy online with\nprivate search,\ntracker blocking,\nand site encryption.",
+        "note": "This describes how we protect the user from being tracked online"
+    },
+    "learnMore": {
+        "title": "Learn more",
+        "note": "Click here to learn more about how our services work"
+    },
+    "shareFeedback": {
+        "title": "Share feedback",
+        "note": "Click here to share your opinions about this product"
+    },
+    "reportBrokenSite": {
+        "title": "Report broken site",
+        "note": "Click here to report an issue with a specific site you are trying to use"
+    }
+}
