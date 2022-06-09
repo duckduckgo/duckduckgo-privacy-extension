@@ -19,10 +19,10 @@ async function onStartup () {
     experiment.setActiveExperiment()
 
     try {
-        const httpsLists = await httpsStorage.getLists()
+        const httpsLists = await httpsStorage.getLists(/* preferLocal= */true)
         https.setLists(httpsLists)
 
-        const tdsLists = await tdsStorage.getLists()
+        const tdsLists = await tdsStorage.getLists(/* preferLocal= */true)
         trackers.setLists(tdsLists)
     } catch (e) {
         console.log(e)
