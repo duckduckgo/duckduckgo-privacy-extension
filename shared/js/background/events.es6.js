@@ -177,16 +177,12 @@ const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const https = require('./https.es6')
 
-const requestListenerTypes = utils.getUpdatedRequestListenerTypes()
-
-// Shallow copy of request types
 // And add beacon type based on browser, so we can block it
 if (manifestVersion === 2) {
     browser.webRequest.onBeforeRequest.addListener(
         redirect.handleRequest,
         {
-            urls: ['<all_urls>'],
-            types: requestListenerTypes
+            urls: ['<all_urls>']
         },
         ['blocking']
     )
