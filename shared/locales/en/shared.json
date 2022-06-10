@@ -7,8 +7,24 @@
             "instruction": "*/note"
         }]
     },
-    "trackers": {
-        "title": "Trackers ** PLACEHOLDER FIXME",
-        "note": "Trackers are a pieces of code on a website that monitors users as they navigate the web"
+    "options": {
+        "title": "Options",
+        "note": "Header for view where user can configure various options"
+    },
+    "learnMore": {
+        "title": "Learn more",
+        "note": "Click here to learn more about how our services work"
+    },
+    "enable": {
+        "title": "Enable",
+        "note": "Button prompt to turn something on, i.e. click on this to enable"
+    },
+    "disable": {
+        "title": "Disable",
+        "note": "Button prompt to turn something off, i.e. click on this to disable"
+    },
+    "add": {
+        "title": "Add",
+        "note": "To add something to a list"
     }
 }

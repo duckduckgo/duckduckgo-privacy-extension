@@ -37,7 +37,7 @@ Options.prototype = window.$.extend({},
 
             $('#options-sub-header')[0].innerHTML = t('options:optionsSubHeader.title')
             $('#options-desc')[0].innerHTML = t('options:optionsDesc.title')
-            $('#learn-more')[0].innerHTML = t('options:learnMore.title')
+            $('#learn-more')[0].innerHTML = t('shared:learnMore.title')
             $('#share-feedback')[0].innerHTML = t('options:shareFeedback.title')
             $('#report-broken-site')[0].innerHTML = t('options:reportBrokenSite.title')
 
