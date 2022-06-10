@@ -48,7 +48,17 @@ class Tab {
         this.cleanAmpUrl = null
         this.requestId = tabData.requestId
         this.status = tabData.status
-        this.site = new Site(this.url)
+
+        // Consider the site URL to be the request initiator for requests fired
+        // inside opaque 'tabs' (e.g. via ServiceWorkers). Otherwise, consider
+        // the site URL to be the request URL.
+        const requestInitiator = tabData.initiator || tabData.originUrl
+        if (this.id === -1 && requestInitiator) {
+            this.site = new Site(requestInitiator)
+        } else {
+            this.site = new Site(this.url)
+        }
+
         this.httpsRedirects = new HttpsRedirects()
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.stopwatch = {
@@ -56,7 +66,13 @@ class Tab {
             end: null,
             completeMs: null
         }
-        this.resetBadgeIcon()
+
+        // Set the default extension icon for the new tab, assuming it's really
+        // a tab (e.g. not a ServiceWorker).
+        if (this.id !== -1) {
+            this.resetBadgeIcon()
+        }
+
         this.webResourceAccess = []
         this.surrogates = {}
     };
