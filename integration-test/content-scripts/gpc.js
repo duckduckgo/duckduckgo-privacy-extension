@@ -2,8 +2,9 @@
  *  Tests for injecting GPC into the page, these tests load a example website server.
  */
 
-/* global dbg:false */
 const harness = require('../helpers/harness')
+const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 
 let browser
 let bgPage
@@ -49,11 +50,7 @@ describe('Ensure GPC is injected into frames', () => {
         server = setupServer({}, 8080)
         server2 = setupServer({}, 8081)
 
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 6000 }
-        )
+        await backgroundWait.forAllConfiguration(bgPage)
     })
     afterAll(async () => {
         await server.close()
@@ -65,7 +62,7 @@ describe('Ensure GPC is injected into frames', () => {
         it(`${iframeHost} frame should match the parent frame`, async () => {
             const page = await browser.newPage()
             // Load an page with an iframe from a different hostname
-            await page.goto(`http://127.0.0.1:8080/index.html?host=${iframeHost}`, { waitUntil: 'networkidle0' })
+            await pageWait.forGoto(page, `http://127.0.0.1:8080/index.html?host=${iframeHost}`)
             const gpc = await getGPCValueOfContext(page)
 
             const iframe = page.frames().find(iframe => iframe.url() === iframeHost + '/framed.html')
@@ -77,7 +74,7 @@ describe('Ensure GPC is injected into frames', () => {
 
         it(`${iframeHost} should work with about:blank injected frames`, async () => {
             const page = await browser.newPage()
-            await page.goto('http://127.0.0.1:8080/blank_framer.html', { waitUntil: 'networkidle0' })
+            await pageWait.forGoto(page, 'http://127.0.0.1:8080/blank_framer.html')
             const gpc = await getGPCValueOfContext(page)
 
             const iframe = page.frames().find(iframe => iframe.url() === 'about:blank')

@@ -1,6 +1,7 @@
 const harness = require('../helpers/harness')
 const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/query-parameters/'
 
@@ -56,7 +57,7 @@ describe('Test URL tracking parameters protection', () => {
     it('Strips tracking parameters correctly', async () => {
         // Load the test page.
         const page = await browser.newPage()
-        await page.goto(testSite, { waitUntil: 'networkidle0' })
+        await pageWait.forGoto(page, testSite)
 
         // Check that the `urlParametersRemoved` breakage flag isn't set.
         expect(await getUrlParametersRemoved(bgPage)).toEqual(false)
@@ -85,7 +86,7 @@ describe('Test URL tracking parameters protection', () => {
         // Perform the tests.
         for (const { initialUrl, expectedUrl, description } of testCases) {
             // Test the tracking parameters were stripped.
-            await page.goto(initialUrl, { waitUntil: 'networkidle0' })
+            await pageWait.forGoto(page, initialUrl)
             expect(page.url()).withContext(description).toEqual(expectedUrl)
 
             // Test the `urlParametersRemoved` breakage flag was set correctly.
@@ -95,7 +96,7 @@ describe('Test URL tracking parameters protection', () => {
                 .toEqual(expectedUrl.length < initialUrl.length)
 
             // Reload the page, to check that `urlParametersRemoved` was cleared.
-            await page.reload({ waitUntil: 'networkidle0' })
+            await pageWait.forReload(page)
             expect(await getUrlParametersRemoved(bgPage)).toEqual(false)
         }
     })

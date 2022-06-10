@@ -2,8 +2,9 @@
  *  Tests for https upgrading to prevent infinate loops
  */
 
-/* global dbg:false */
 const harness = require('../helpers/harness')
+const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 
 let browser
 let bgPage
@@ -12,12 +13,7 @@ let teardown
 describe('Loop protection', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
-
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 60000 }
-        )
+        await backgroundWait.forAllConfiguration(bgPage)
     })
     afterAll(async () => {
         await teardown()
@@ -27,11 +23,7 @@ describe('Loop protection', () => {
         const loopProtectionPage = 'https://good.third-party.site/privacy-protections/https-loop-protection/'
         const page = await browser.newPage()
 
-        try {
-            await page.goto(loopProtectionPage, { waitUntil: 'networkidle0' })
-        } catch (e) {
-            // timed out waiting for page to load, let's try running the test anyway
-        }
+        await pageWait.forGoto(page, loopProtectionPage)
         await page.click('#start')
         await page.waitForFunction(
             () => results.date !== null && results.results[0].value !== null,

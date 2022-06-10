@@ -1,6 +1,8 @@
 /* global dbg:false */
 const harness = require('../helpers/harness')
 const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
+
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
 
 let browser
@@ -28,7 +30,7 @@ describe('install workflow', () => {
             while (!postInstallOpened) {
                 const urls = await Promise.all(browser.targets().map(target => target.url()))
                 postInstallOpened = urls.some(url => url.includes('duckduckgo.com/app?post=1'))
-                await bgPage.waitForTimeout(100)
+                await backgroundWait.forTimeout(bgPage, 100)
             }
 
             expect(postInstallOpened).toBeTruthy()
@@ -97,11 +99,7 @@ describe('install workflow', () => {
         it('should get its ATB param from the success page when one is present', async () => {
             // open a success page and wait for it to have finished loading
             const successPage = await browser.newPage()
-            try {
-                await successPage.goto('https://duckduckgo.com/?natb=v123-4ab&cp=atbhc')
-            } catch (e) {
-                // goto may time out, but continue test anyway in case of partial load.
-            }
+            await pageWait.forGoto(successPage, 'https://duckduckgo.com/?natb=v123-4ab&cp=atbhc')
 
             // try get ATB params again
             await bgPage.evaluate(() => dbg.atb.updateATBValues())
@@ -190,13 +188,7 @@ describe('search workflow', () => {
 
         // run a search
         const searchPage = await browser.newPage()
-        try {
-            await searchPage.goto('https://duckduckgo.com/?q=test')
-            // Extra wait for page load
-            await bgPage.waitForTimeout(1000)
-        } catch (e) {
-            // goto may time out, but continue test anyway in case of partial load.
-        }
+        await pageWait.forGoto(searchPage, 'https://duckduckgo.com/?q=test')
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
@@ -208,13 +200,7 @@ describe('search workflow', () => {
         await bgPage.evaluate((lastWeeksAtb) => dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
         // run a search
         const searchPage = await browser.newPage()
-        try {
-            await searchPage.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle0' })
-            // Extra wait for page load
-            await bgPage.waitForTimeout(1000)
-        } catch (e) {
-            // goto may time out, but continue test anyway in case of partial load.
-        }
+        await pageWait.forGoto(searchPage, 'https://duckduckgo.com/?q=test')
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
@@ -228,13 +214,7 @@ describe('search workflow', () => {
 
         // run a search
         const searchPage = await browser.newPage()
-        try {
-            await searchPage.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle0' })
-            // Extra wait for page load
-            await bgPage.waitForTimeout(1000)
-        } catch (e) {
-            // goto may time out, but continue test anyway in case of partial load.
-        }
+        await pageWait.forGoto(searchPage, 'https://duckduckgo.com/?q=test')
 
         const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
         const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))

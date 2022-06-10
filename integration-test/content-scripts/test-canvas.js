@@ -2,8 +2,9 @@
  *  Tests for fingerprinting, these tests load a example website server.
  */
 
-/* global dbg:false */
 const harness = require('../helpers/harness')
+const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 const http = require('http')
 const fs = require('fs')
 const path = require('path')
@@ -15,12 +16,7 @@ let teardown
 describe('Canvas verification', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
-
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 6000 }
-        )
+        await backgroundWait.forAllConfiguration(bgPage)
     })
     afterAll(async () => {
         await teardown()
@@ -35,7 +31,7 @@ describe('Canvas verification', () => {
         const hostnameResults = {}
         for (const hostname of hostnames) {
             const page = await browser.newPage()
-            await page.goto(`https://${hostname}/features/canvas-draw.html`, { waitUntil: 'networkidle0' })
+            await pageWait.forGoto(page, `https://${hostname}/features/canvas-draw.html`)
             // Wait for injection; will be resolved with MV3 changes
             await page.waitForFunction(
                 () => navigator.globalPrivacyControl,
@@ -65,7 +61,7 @@ describe('Canvas verification', () => {
 
     it('Canvas should pass all verification tests', async () => {
         const page = await browser.newPage()
-        await page.goto('https://bad.third-party.site/privacy-protections/fingerprinting/canvas.html?run', { waitUntil: 'networkidle0' })
+        await pageWait.forGoto(page, 'https://bad.third-party.site/privacy-protections/fingerprinting/canvas.html?run')
         await page.waitForFunction(
             () => results && results.complete,
             { polling: 100, timeout: 6000 }
@@ -119,11 +115,7 @@ describe('First Party Fingerprint Randomization', () => {
         server = setupServer({}, 8080)
         server2 = setupServer({}, 8081)
 
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 6000 }
-        )
+        await backgroundWait.forAllConfiguration(bgPage)
     })
     afterAll(async () => {
         await server.close()
@@ -135,7 +127,7 @@ describe('First Party Fingerprint Randomization', () => {
         it(`Embedded same/cross-origin frames should match parent (frame: ${iframeHost})`, async () => {
             const page = await browser.newPage()
             // Load a page with an iframe from a different hostname
-            await page.goto(`http://127.0.0.1:8080/index.html?host=${iframeHost}`, { waitUntil: 'networkidle0' })
+            await pageWait.forGoto(page, `http://127.0.0.1:8080/index.html?host=${iframeHost}`)
             const fingerprint = await getFingerprintOfContext(page)
 
             const iframe = page.frames().find(iframe => iframe.url() === iframeHost + '/framed.html')

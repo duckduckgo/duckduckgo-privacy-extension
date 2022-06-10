@@ -105,7 +105,7 @@ describe('Test YouTube Click To Load', () => {
             '.shadowRoot.querySelector("button")'
         )
         await button.click()
-        await page.waitForNetworkIdle({ idleTime: 1000 })
+        await pageWait.forNetworkIdle(page)
         {
             const {
                 youTubeIframeApi, youTubeStandard, youTubeNocookie
@@ -142,7 +142,7 @@ describe('Test YouTube Click To Load', () => {
             '.shadowRoot.querySelector("#DuckDuckGoPrivacyEssentialsCTLElementTitleTextButton")'
         )
         await headerButton.click()
-        await page.waitForNetworkIdle({ idleTime: 1000 })
+        await pageWait.forNetworkIdle(page)
         {
             const {
                 youTubeIframeApi, youTubeStandard, youTubeNocookie
@@ -180,7 +180,7 @@ describe('Test YouTube Click To Load', () => {
             )
             await button.click()
             await waitForExpectedBorder('orange')
-            await page.waitForNetworkIdle({ idleTime: 1000 })
+            await pageWait.forNetworkIdle(page)
 
             await page.click('#play-existing-video')
             await waitForExpectedBorder('green')
@@ -212,7 +212,7 @@ describe('Test YouTube Click To Load', () => {
             await button.focus()
             await button.click()
             await waitForExpectedRoll('0.0000')
-            await page.waitForNetworkIdle({ idleTime: 1000 })
+            await pageWait.forNetworkIdle(page)
 
             // Play video and keep clicking roll button until it flips. The
             // video doesn't flip until its finished loading, so this way we

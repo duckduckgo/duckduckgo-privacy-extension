@@ -1,5 +1,7 @@
 /* global dbg:false */
 const harness = require('../helpers/harness')
+const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 
 const tests = [
     { url: 'duckduckgo.com', siteGrade: 'A', enhancedGrade: 'A' },
@@ -49,12 +51,7 @@ const checkGrade = (result, expected) => {
 describe('grade sanity checks', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
-
-        // wait for HTTPs to successfully load
-        await bgPage.waitForFunction(
-            () => window.dbg && dbg.https.isReady,
-            { polling: 100, timeout: 20000 }
-        )
+        await backgroundWait.forAllConfiguration(bgPage)
     })
     afterAll(async () => {
         try {
@@ -68,22 +65,13 @@ describe('grade sanity checks', () => {
             const ua = await browser.userAgent()
             await page.setUserAgent(ua.replace(/Headless /, ''))
 
-            try {
-                await page.goto(`http://${test.url}`, { waitUntil: 'networkidle0' })
-                // give it another second just to be sure
-                await page.waitForTimeout(1000)
-            } catch (e) {
-                // timed out waiting for page to load, let's try running the test anyway
-                console.log(`Timed out: ${e}`)
-            }
+            await pageWait.forGoto(page, `http://${test.url}`)
 
             const grades = await bgPage.evaluate(getGradeByUrl, test.url)
             checkGrade(grades.site.grade, test.siteGrade)
             checkGrade(grades.enhanced.grade, test.enhancedGrade)
 
-            try {
-                await page.close()
-            } catch (e) {}
+            await page.close()
         })
     })
 })

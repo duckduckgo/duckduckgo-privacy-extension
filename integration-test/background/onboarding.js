@@ -1,5 +1,6 @@
 const harness = require('../helpers/harness')
 const backgroundWait = require('../helpers/backgroundWait')
+const pageWait = require('../helpers/pageWait')
 
 let browser, bgPage, teardown
 
@@ -30,10 +31,7 @@ describe('onboarding', () => {
 
         const page = await browser.newPage()
 
-        await page.goto(
-            'https://duckduckgo.com/?q=hello',
-            { waitUntil: ['load', 'domcontentloaded', 'networkidle0'] }
-        )
+        await pageWait.forGoto(page, 'https://duckduckgo.com/?q=hello')
 
         const hasScriptHandle = await page.waitForFunction(() => {
             const scripts = document.querySelectorAll('script:not([src])')
@@ -57,10 +55,7 @@ describe('onboarding', () => {
     it('should allow the site to perform extension health checks (Chrome only)', async () => {
         const page = await browser.newPage()
 
-        await page.goto(
-            'https://duckduckgo.com/?q=hello',
-            { waitUntil: ['load', 'domcontentloaded', 'networkidle0'] }
-        )
+        await pageWait.forGoto(page, 'https://duckduckgo.com/?q=hello')
 
         // we wait that the onboarding content script is injected
         await page.waitForFunction(() => {
@@ -90,10 +85,7 @@ describe('onboarding', () => {
 
     it('should allow the site to reschedule the counter messaging (Chrome only)', async () => {
         const page = await browser.newPage()
-        await page.goto(
-            'https://duckduckgo.com/?q=hello',
-            { waitUntil: ['load', 'domcontentloaded', 'networkidle0'] }
-        )
+        await pageWait.forGoto(page, 'https://duckduckgo.com/?q=hello')
 
         // we wait that the onboarding content script is injected
         await page.waitForFunction(() => {
