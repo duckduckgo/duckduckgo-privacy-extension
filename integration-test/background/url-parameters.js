@@ -27,7 +27,7 @@ function getUrlParametersRemoved (bgPage) {
             return null
         }
 
-        const tab = window.dbg.tabManager.get({ tabId })
+        const tab = globalThis.dbg.tabManager.get({ tabId })
         return tab ? tab.urlParametersRemoved : null
     })
 }

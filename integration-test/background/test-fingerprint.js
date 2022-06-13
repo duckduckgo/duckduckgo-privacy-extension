@@ -52,8 +52,8 @@ describe('Fingerprint Defense Tests', () => {
                 return {
                     availTop: screen.availTop,
                     availLeft: screen.availLeft,
-                    wAvailTop: window.screen.availTop,
-                    wAvailLeft: window.screen.availLeft,
+                    wAvailTop: globalThis.screen.availTop,
+                    wAvailLeft: globalThis.screen.availLeft,
                     colorDepth: screen.colorDepth,
                     pixelDepth: screen.pixelDepth,
                     productSub: navigator.productSub,
@@ -143,7 +143,7 @@ describe('Verify injected script is not visible to the page', () => {
             await pageWait.forGoto(page, `http://${test.url}`)
 
             const sjclVal = await page.evaluate(() => {
-                if ('sjcl' in window) {
+                if ('sjcl' in globalThis) {
                     return 'visible'
                 } else {
                     return 'invisible'

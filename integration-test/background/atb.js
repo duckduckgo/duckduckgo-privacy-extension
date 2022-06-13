@@ -1,4 +1,3 @@
-/* global dbg:false */
 const harness = require('../helpers/harness')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
@@ -52,9 +51,9 @@ describe('install workflow', () => {
             await backgroundWait.forSetting(bgPage, 'extiSent')
 
             await bgPage.evaluate(() => {
-                dbg.settings.removeSetting('atb')
-                dbg.settings.removeSetting('set_atb')
-                dbg.settings.removeSetting('extiSent')
+                globalThis.dbg.settings.removeSetting('atb')
+                globalThis.dbg.settings.removeSetting('set_atb')
+                globalThis.dbg.settings.removeSetting('extiSent')
             })
 
             while (requests.length) {
@@ -69,12 +68,12 @@ describe('install workflow', () => {
 
         it('should get its ATB param from atb.js when there\'s no install success page', async () => {
             // try get ATB params
-            await bgPage.evaluate(() => dbg.atb.updateATBValues())
+            await bgPage.evaluate(() => globalThis.dbg.atb.updateATBValues())
             await backgroundWait.forSetting(bgPage, 'extiSent')
 
-            const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
-            const setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
-            const extiSent = await bgPage.evaluate(() => dbg.settings.getSetting('extiSent'))
+            const atb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
+            const setAtb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+            const extiSent = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('extiSent'))
 
             // check the extension's internal state is correct
             expect(atb).toMatch(/v\d+-[1-7]/)
@@ -102,12 +101,12 @@ describe('install workflow', () => {
             await pageWait.forGoto(successPage, 'https://duckduckgo.com/?natb=v123-4ab&cp=atbhc')
 
             // try get ATB params again
-            await bgPage.evaluate(() => dbg.atb.updateATBValues())
+            await bgPage.evaluate(() => globalThis.dbg.atb.updateATBValues())
             await backgroundWait.forSetting(bgPage, 'extiSent')
 
-            const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
-            const setAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
-            const extiSent = await bgPage.evaluate(() => dbg.settings.getSetting('extiSent'))
+            const atb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
+            const setAtb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+            const extiSent = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('extiSent'))
 
             // check the extension's internal state is correct
             expect(atb).toMatch(/v123-4ab/)
@@ -143,11 +142,12 @@ describe('install workflow', () => {
         it('should retreive stored ATB value on reload', async () => {
             // set an ATB value from the past
             const pastATBValue = 'v123-1'
-            await bgPage.evaluate((pastATBValue) => dbg.settings.updateSetting('atb', pastATBValue), pastATBValue)
-            // reload background
-            await bgPage.evaluate(() => window.location.reload())
+            await bgPage.evaluate((pastATBValue) => globalThis.dbg.settings.updateSetting('atb', pastATBValue), pastATBValue)
+            // Reload background
+            // FIXME - Will not work for MV3, switch to browser.runtime.reload()?
+            await bgPage.evaluate(() => globalThis.location.reload())
             await backgroundWait.forSetting(bgPage, 'extiSent')
-            const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+            const atb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
             expect(atb).toEqual(pastATBValue)
         })
     })
@@ -179,45 +179,45 @@ describe('search workflow', () => {
     })
     beforeEach(async () => {
         try {
-            await bgPage.evaluate((atb) => dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
+            await bgPage.evaluate((atb) => globalThis.dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
         } catch (e) {}
     })
     it('should not update set_atb if a repeat search is made on the same day', async () => {
         // set set_atb to today's version
-        await bgPage.evaluate((todaysAtb) => dbg.settings.updateSetting('set_atb', todaysAtb), todaysAtb)
+        await bgPage.evaluate((todaysAtb) => globalThis.dbg.settings.updateSetting('set_atb', todaysAtb), todaysAtb)
 
         // run a search
         const searchPage = await browser.newPage()
         await pageWait.forGoto(searchPage, 'https://duckduckgo.com/?q=test')
 
-        const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
-        const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+        const newSetAtb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+        const atb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
         expect(newSetAtb).toEqual(todaysAtb)
         expect(atb).toEqual(twoWeeksAgoAtb)
     })
     it('should update set_atb if a repeat search is made on a different day', async () => {
         // set set_atb to an older version
-        await bgPage.evaluate((lastWeeksAtb) => dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
+        await bgPage.evaluate((lastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
         // run a search
         const searchPage = await browser.newPage()
         await pageWait.forGoto(searchPage, 'https://duckduckgo.com/?q=test')
 
-        const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
-        const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+        const newSetAtb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+        const atb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
         expect(newSetAtb).toEqual(todaysAtb)
         expect(atb).toEqual(twoWeeksAgoAtb)
     })
     it('should update atb if the server passes back updateVersion', async () => {
         // set set_atb and atb to older versions
-        await bgPage.evaluate((lastWeeksAtb) => dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
-        await bgPage.evaluate(() => dbg.settings.updateSetting('atb', 'v123-6'))
+        await bgPage.evaluate((lastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
+        await bgPage.evaluate(() => globalThis.dbg.settings.updateSetting('atb', 'v123-6'))
 
         // run a search
         const searchPage = await browser.newPage()
         await pageWait.forGoto(searchPage, 'https://duckduckgo.com/?q=test')
 
-        const newSetAtb = await bgPage.evaluate(() => dbg.settings.getSetting('set_atb'))
-        const atb = await bgPage.evaluate(() => dbg.settings.getSetting('atb'))
+        const newSetAtb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+        const atb = await bgPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
         expect(newSetAtb).toEqual(todaysAtb)
         expect(atb).toEqual('v123-1')
     })

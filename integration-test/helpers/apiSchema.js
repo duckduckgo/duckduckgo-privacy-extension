@@ -18,7 +18,7 @@ const puppeteer = require('puppeteer')
  *   The Puppeteer page to inspect.
  * @param {string} targetObjectName
  *   The name of the Object to inspect. A string which when eval'd in the page
- *   returns the target Object. For example, "window.someApi".
+ *   returns the target Object. For example, "globalThis.someApi".
  * @returns {Object}
  *   The target Object's schema.
  */
@@ -88,7 +88,7 @@ async function getObjectSchema (page, targetObjectName) {
  *   Note: Should not include the path, that is hard-coded.
  * @param {string[]} targetObjectNames
  *   The names of Objects to inspect. Strings which when eval'd in the page
- *   return the target Objects. For example, "window.someApi".
+ *   return the target Objects. For example, "globalThis.someApi".
  * @returns {Object}
  *   The target Object's schema.
  */

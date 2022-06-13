@@ -1,19 +1,19 @@
 {
-    "window.dbg.tds.config.features.trackingCookies3p": {
+    "globalThis.dbg.tds.config.features.trackingCookies3p": {
         "state": "enabled",
         "exceptions": [ ],
         "settings": {
             "excludedCookieDomains": [ ]
         }
     },
-    "window.dbg.tds.config.features.nonTracking3pCookies": {
+    "globalThis.dbg.tds.config.features.nonTracking3pCookies": {
         "state": "enabled",
         "exceptions": [ ],
         "settings": {
             "excludedCookieDomains": [ ]
         }
     },
-    "window.dbg.tds.config.features.trackingCookies1p": {
+    "globalThis.dbg.tds.config.features.trackingCookies1p": {
         "settings": {
             "firstPartyTrackerCookiePolicy": {
                 "threshold": 86400,
@@ -23,7 +23,7 @@
         "exceptions": [ ],
         "state": "enabled"
     },
-    "window.dbg.tds.config.features.cookie": {
+    "globalThis.dbg.tds.config.features.cookie": {
         "settings": {
             "firstPartyTrackerCookiePolicy": {
                 "threshold": 86400,

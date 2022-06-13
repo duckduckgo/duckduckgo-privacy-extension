@@ -21,8 +21,8 @@ describe('onboarding', () => {
     it('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async () => {
         const params = await bgPage.evaluate(() => {
             return {
-                showWelcomeBanner: self.dbg.settings.getSetting('showWelcomeBanner'),
-                showCounterMessaging: self.dbg.settings.getSetting('showCounterMessaging')
+                showWelcomeBanner: globalThis.dbg.settings.getSetting('showWelcomeBanner'),
+                showCounterMessaging: globalThis.dbg.settings.getSetting('showCounterMessaging')
             }
         })
 
@@ -41,8 +41,8 @@ describe('onboarding', () => {
 
         const nextParams = await bgPage.evaluate(() => {
             return {
-                showWelcomeBanner: self.dbg.settings.getSetting('showWelcomeBanner'),
-                showCounterMessaging: self.dbg.settings.getSetting('showCounterMessaging')
+                showWelcomeBanner: globalThis.dbg.settings.getSetting('showWelcomeBanner'),
+                showCounterMessaging: globalThis.dbg.settings.getSetting('showCounterMessaging')
             }
         })
 
@@ -65,15 +65,15 @@ describe('onboarding', () => {
 
         const data = await page.evaluate(() => {
             return new Promise((resolve) => {
-                window.addEventListener('message', (e) => {
-                    if (e.origin === window.location.origin && e.data.type === 'healthCheckResponse') {
+                globalThis.addEventListener('message', (e) => {
+                    if (e.origin === globalThis.location.origin && e.data.type === 'healthCheckResponse') {
                         resolve({
                             type: e.data.type,
                             isAlive: e.data.isAlive
                         })
                     }
                 })
-                window.postMessage({ type: 'healthCheckRequest' }, window.location.origin)
+                globalThis.postMessage({ type: 'healthCheckRequest' }, globalThis.location.origin)
             })
         })
 
@@ -94,12 +94,12 @@ describe('onboarding', () => {
         }, { polling: 'mutation' })
 
         await page.evaluate(() => {
-            window.postMessage({ type: 'rescheduleCounterMessagingRequest' }, window.location.origin)
+            globalThis.postMessage({ type: 'rescheduleCounterMessagingRequest' }, globalThis.location.origin)
         })
 
         await backgroundWait.forSetting(bgPage, 'rescheduleCounterMessagingOnStart')
         const rescheduleCounterMessagingOnStart = await bgPage.evaluate(() => {
-            return self.dbg.settings.getSetting('rescheduleCounterMessagingOnStart')
+            return globalThis.dbg.settings.getSetting('rescheduleCounterMessagingOnStart')
         })
         expect(rescheduleCounterMessagingOnStart).toBe(true)
 

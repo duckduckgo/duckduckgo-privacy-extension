@@ -23,7 +23,7 @@ describe('Autofill input detection Tests', () => {
         const page = await browser.newPage()
         await pageWait.forGoto(page, 'https://duckduckgo.com')
         await page.evaluate(() =>
-            window.postMessage({ addUserData: { userName: '', token: '' } }, window.origin)
+            globalThis.postMessage({ addUserData: { userName: '', token: '' } }, globalThis.origin)
         )
         await page.close()
     })

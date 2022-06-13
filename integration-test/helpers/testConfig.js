@@ -49,12 +49,12 @@ function parsePath (path) {
  *   The file name of your JSON test configuration, in the
  *   /integration-test/data/configs/ directory.
  *    - the keys are a string containing the configuration's "path", for example
- *      "window.dbg.tds.tds.trackers.duckduckgo\\.com".
+ *      "globalThis.dbg.tds.tds.trackers.duckduckgo\\.com".
  *    - the values should be your test configuration to set for that path, for
  *      the above example an Object containing the tracker entry.
  *   Note:
  *    - Paths containing '.' can  be escaped with a backslash.
- *    - Make sure to include the 'window.' (or similar global Object) prefix.
+ *    - Make sure to include the 'globalThis.' (or similar global Object) prefix.
  *    - There's no need to escape whitespace in paths.
  */
 async function loadTestConfig (bgPage, testConfigFilename) {
@@ -64,13 +64,13 @@ async function loadTestConfig (bgPage, testConfigFilename) {
     const testConfig = JSON.parse(fs.readFileSync(filePath).toString())
 
     await bgPage.evaluate((testConfig, parsePathString) => {
-        window.configBackup = window.configBackup || {}
+        globalThis.configBackup = globalThis.configBackup || {}
         // eslint-disable-next-line no-eval
         eval(parsePathString)
 
         for (const path of Object.keys(testConfig)) {
             const [target, lastPathPart] = parsePath(path)
-            window.configBackup[path] = target[lastPathPart]
+            globalThis.configBackup[path] = target[lastPathPart]
             target[lastPathPart] = testConfig[path]
         }
     }, testConfig, parsePath.toString())
@@ -83,7 +83,7 @@ async function loadTestConfig (bgPage, testConfigFilename) {
  */
 async function unloadTestConfig (bgPage) {
     await bgPage.evaluate(parsePathString => {
-        const { configBackup } = window
+        const { configBackup } = globalThis
         if (!configBackup) {
             return
         }
