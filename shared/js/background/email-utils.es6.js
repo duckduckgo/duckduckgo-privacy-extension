@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill'
 const { getSetting, updateSetting } = require('./settings.es6')
+const browserWrapper = require('./wrapper.es6')
 const REFETCH_ALIAS_ALARM = 'refetchAlias'
 
 // Keep track of the number of attempted fetches. Stop trying after 5.
@@ -36,7 +37,7 @@ const fetchAlias = () => {
             console.log('Error fetching new alias', e)
             // Don't try fetching more than 5 times in a row
             if (attempts < 5) {
-                browser.alarms.create(REFETCH_ALIAS_ALARM, { delayInMinutes: 2 })
+                browserWrapper.createAlarm(REFETCH_ALIAS_ALARM, { delayInMinutes: 2 })
                 attempts++
             }
             // Return the error so we can handle it

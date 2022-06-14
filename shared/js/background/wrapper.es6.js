@@ -254,3 +254,20 @@ export async function getFromSessionStorage (key) {
 
     return sessionStorageFallback.get(key)
 }
+
+/**
+ * Create an alarm, taking care to check it doesn't exist first.
+ * See https://stackoverflow.com/questions/66391018/how-do-i-call-a-function-periodically-in-a-manifest-v3-chrome-extension/66391601#66391601
+ * @param {string} name
+ *   The alarm name.
+ * @param {Object} alarmInfo
+ *   Details that determine when the alarm should fire.
+ *   See https://developer.chrome.com/docs/extensions/reference/alarms/#type-AlarmCreateInfo
+ * @return {Promise}
+ */
+export async function createAlarm (name, alarmInfo) {
+    const existingAlarm = await browser.alarms.get(name)
+    if (!existingAlarm) {
+        return await browser.alarms.create(name, alarmInfo)
+    }
+}
