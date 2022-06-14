@@ -117,7 +117,7 @@
 
     if (!window.FB) {
         window.FB = {
-            api: function () {},
+            api: function (url, cb) { cb() },
             init: function (obj) {
                 if (obj) {
                     initData = obj
