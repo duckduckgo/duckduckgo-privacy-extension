@@ -4,7 +4,6 @@ import tdsStorage from './storage/tds.es6'
 import settings from './settings.es6'
 import load from './load.es6'
 import * as tldts from 'tldts'
-import constants from '../../data/constants'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 const browserInfo = parseUserAgentString()
 
@@ -128,31 +127,6 @@ export function getClickToPlaySupport (tab) {
         return false
     }
     return (tab && tab.site.isFeatureEnabled('clickToPlay'))
-}
-
-// Chrome errors with 'beacon', but supports 'ping'
-// Firefox only blocks 'beacon' (even though it should support 'ping')
-export function getBeaconName () {
-    const beaconNamesByBrowser = {
-        chrome: 'ping',
-        moz: 'beacon',
-        edg: 'ping',
-        brave: 'ping',
-        default: 'ping'
-    }
-    let name = getBrowserName()
-    if (!Object.keys(beaconNamesByBrowser).includes(name)) {
-        name = 'default'
-    }
-    return beaconNamesByBrowser[name]
-}
-
-// Return requestListenerTypes + beacon or ping
-export function getUpdatedRequestListenerTypes () {
-    const requestListenerTypes = constants.requestListenerTypes.slice()
-    requestListenerTypes.push(getBeaconName())
-
-    return requestListenerTypes
 }
 
 // return true if browser allows to handle request async

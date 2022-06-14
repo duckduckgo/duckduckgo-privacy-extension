@@ -16,7 +16,6 @@ function getConfigFileName () {
 
 module.exports = {
     displayCategories: ['Analytics', 'Advertising', 'Social Network'],
-    requestListenerTypes: ['main_frame', 'sub_frame', 'stylesheet', 'script', 'image', 'object', 'xmlhttprequest', 'websocket', 'other'], // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/ResourceType
     feedbackUrl: 'https://duckduckgo.com/feedback.js?type=extension-feedback',
     tosdrMessages: {
         A: 'Good',

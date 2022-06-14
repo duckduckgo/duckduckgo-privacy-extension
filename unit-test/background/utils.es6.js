@@ -112,14 +112,6 @@ describe('utils.extractHostFromURL()', () => {
     })
 })
 
-describe('utils.getUpgradeToSecureSupport()', () => {
-    it('should return ping in headless chrome', () => {
-        const result = utils.getBeaconName()
-        const chromeBeaconName = 'ping'
-        expect(result).toEqual(chromeBeaconName)
-    })
-})
-
 describe('utils.isSameTopLevelDomain()', () => {
     [
         ['example.com', 'example.com', true],
