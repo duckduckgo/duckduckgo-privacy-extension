@@ -432,17 +432,17 @@ const httpsService = require('./https-service.es6')
 const trackers = require('./trackers.es6')
 
 // recheck tracker and https lists every 12 hrs
-browser.alarms.create('updateHTTPSLists', { periodInMinutes: 12 * 60 })
+browserWrapper.createAlarm('updateHTTPSLists', { periodInMinutes: 12 * 60 })
 // tracker lists / content blocking lists are 30 minutes
-browser.alarms.create('updateLists', { periodInMinutes: 30 })
+browserWrapper.createAlarm('updateLists', { periodInMinutes: 30 })
 // update uninstall URL every 10 minutes
-browser.alarms.create('updateUninstallURL', { periodInMinutes: 10 })
+browserWrapper.createAlarm('updateUninstallURL', { periodInMinutes: 10 })
 // remove expired HTTPS service entries
-browser.alarms.create('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
+browserWrapper.createAlarm('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
 // Rotate the user agent spoofed
-browser.alarms.create('rotateUserAgent', { periodInMinutes: 24 * 60 })
+browserWrapper.createAlarm('rotateUserAgent', { periodInMinutes: 24 * 60 })
 // Rotate the sessionKey
-browser.alarms.create('rotateSessionKey', { periodInMinutes: 24 * 60 })
+browserWrapper.createAlarm('rotateSessionKey', { periodInMinutes: 24 * 60 })
 
 browser.alarms.onAlarm.addListener(async alarmEvent => {
     if (alarmEvent.name === 'updateHTTPSLists') {
