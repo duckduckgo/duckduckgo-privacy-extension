@@ -37,6 +37,9 @@ class TDSStorage {
             )
         }
 
+        // Update the lists every half an hour.
+        this.updatePeriodInMinutes = 30
+
         this.removeLegacyLists()
     }
 
@@ -113,6 +116,20 @@ class TDSStorage {
         const source = listCopy.source ? listCopy.source : 'external'
 
         return this.getDataXHR(listCopy, etag, source).then(response => {
+            // Set the lastUpdate time.
+            // Notes:
+            //  - Take the earliest time between server and local, that way if
+            //    the local time is set far in the future updates will still
+            //    happen.
+            //  - Date.parse() returns NaN for invalid (or missing) Date
+            //    headers, and Math.min() always considers NaN to be the
+            //    smallest value. So before calling Math.min(), replace
+            //    serverTime with localTime if serverTime is falsey (NaN).
+            const localTime = Date.now()
+            const serverTime = Date.parse(response.date)
+            const updateTime = Math.min(localTime, serverTime || localTime)
+            settings.updateSetting(`${listCopy.name}-lastUpdate`, updateTime)
+
             // for 200 response we update etags
             if (response && response.status === 200) {
                 const newEtag = response.etag || ''
@@ -144,8 +161,10 @@ class TDSStorage {
 
                     return { name: listCopy.name, data: backupFromDB }
                 } else {
-                    // reset etag to force us to get fresh server data in case of an error
+                    // Reset the etag and lastUpdate time to force us to get
+                    // fresh server data in case of an error.
                     settings.updateSetting(`${listCopy.name}-etag`, '')
+                    settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
                     throw new Error('TDS: data update failed')
                 }
             })

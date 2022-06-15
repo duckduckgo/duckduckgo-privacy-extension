@@ -54,6 +54,7 @@ function loadExtensionFile (params) {
 
         const status = response.status
         const etag = response.headers.get('etag')
+        const date = response.headers.get('Date')
         let data
 
         if (status === 200) {
@@ -67,6 +68,7 @@ function loadExtensionFile (params) {
 
             return {
                 status,
+                date,
                 etag,
                 data
             }
@@ -74,6 +76,7 @@ function loadExtensionFile (params) {
             console.log(`${url} returned 304, resource not changed`)
             return {
                 status,
+                date,
                 etag
             }
         } else {

@@ -9,6 +9,9 @@ class HTTPSStorage {
         this.dbc.version(1).stores({
             httpsStorage: 'name,type,data,checksum'
         })
+
+        // Update the lists every 12 hours.
+        this.updatePeriodInMinutes = 12 * 60
     }
 
     // Load https data defined in constants.httpsLists.
@@ -22,6 +25,20 @@ class HTTPSStorage {
             const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
 
             return this.getDataXHR(listCopy.url, etag).then(response => {
+                // Set the lastUpdate time.
+                // Notes:
+                //  - Take the earliest time between server and local, that way if
+                //    the local time is set far in the future updates will still
+                //    happen.
+                //  - Date.parse() returns NaN for invalid (or missing) Date
+                //    headers, and Math.min() always considers NaN to be the
+                //    smallest value. So before calling Math.min(), replace
+                //    serverTime with localTime if serverTime is falsey (NaN).
+                const localTime = Date.now()
+                const serverTime = Date.parse(response.date)
+                const updateTime = Math.min(localTime, serverTime || localTime)
+                settings.updateSetting(`${listCopy.name}-lastUpdate`, updateTime)
+
                 // for 200 response we update etags
                 if (response && response.status === 200) {
                     const newEtag = response.etag || ''
@@ -43,8 +60,10 @@ class HTTPSStorage {
                     if (backupFromDB) {
                         return backupFromDB
                     } else {
-                        // reset etag to force us to get fresh server data in case of an error
+                        // Reset etag and lastUpdate time to force us to get
+                        // fresh server data in case of an error.
                         settings.updateSetting(`${listCopy.name}-etag`, '')
+                        settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
                         throw new Error(`HTTPS: data update for ${listCopy.name} failed`)
                     }
                 })
