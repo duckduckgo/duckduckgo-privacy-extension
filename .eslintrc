@@ -6,6 +6,7 @@
     "env": {
         "webextensions": true,
         "browser": true,
-        "jasmine": true
+        "jasmine": true,
+        "jquery": true
     }
 }

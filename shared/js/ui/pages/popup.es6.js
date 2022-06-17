@@ -19,7 +19,6 @@ const BackgroundMessageModel = require('./../models/background-message.es6.js')
 const EmailAliasView = require('../views/email-alias.es6.js')
 const EmailAliasModel = require('../models/email-alias.es6.js')
 const EmailAliasTemplate = require('../templates/email-alias.es6.js')
-const t = window.DDG.base.i18n.t
 
 function Trackers (ops) {
     this.$parent = window.$('#popup-container')

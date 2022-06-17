@@ -141,5 +141,5 @@ module.exports = {
     platform: {
         name: 'extension'
     },
-    supportedLocales: [ "cimode", "en" ] // cimode is for testing
+    supportedLocales: ['cimode', 'en'] // cimode is for testing
 }
