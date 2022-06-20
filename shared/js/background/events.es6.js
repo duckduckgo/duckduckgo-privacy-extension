@@ -427,10 +427,12 @@ const httpsStorage = require('./storage/https.es6')
 const httpsService = require('./https-service.es6')
 const trackers = require('./trackers.es6')
 
-// recheck tracker and https lists every 12 hrs
-browserWrapper.createAlarm('updateHTTPSLists', { periodInMinutes: 12 * 60 })
-// tracker lists / content blocking lists are 30 minutes
-browserWrapper.createAlarm('updateLists', { periodInMinutes: 30 })
+browserWrapper.createAlarm('updateHTTPSLists', {
+    periodInMinutes: httpsStorage.updatePeriodInMinutes
+})
+browserWrapper.createAlarm('updateLists', {
+    periodInMinutes: tdsStorage.updatePeriodInMinutes
+})
 // update uninstall URL every 10 minutes
 browserWrapper.createAlarm('updateUninstallURL', { periodInMinutes: 10 })
 // remove expired HTTPS service entries
