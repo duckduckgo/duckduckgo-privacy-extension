@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1654084264098,
+    "version": 1655291983548,
     "features": {
         "ampLinks": {
             "exceptions": [
@@ -151,14 +151,19 @@
                     "reason": "login issues"
                 },
                 {
-                    "domain": "teams.microsoft.com",
-                    "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/242"
+                    "domain": "adidas.co.uk",
+                    "reason": "Login issues: https://github.com/duckduckgo/privacy-configuration/issues/257"
+                },
+                {
+                    "domain": "centralbank.com",
+                    "reason": "Bill pay issues: https://github.com/duckduckgo/privacy-configuration/issues/259"
                 }
             ],
             "state": "enabled",
+            "minSupportedVersion": "2022.6.1",
             "settings": {
                 "trackerCookie": "enabled",
-                "nonTrackerCookie": "enabled",
+                "nonTrackerCookie": "disabled",
                 "excludedCookieDomains": [
                     {
                         "domain": "hangouts.google.com",
@@ -243,6 +248,18 @@
                     {
                         "domain": "btsport-utils-prod.akamaized.net",
                         "reason": "broken videos"
+                    },
+                    {
+                        "domain": "api.target.com",
+                        "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/247"
+                    },
+                    {
+                        "domain": "api.bnc.ca",
+                        "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/256"
+                    },
+                    {
+                        "domain": "api2.bnc.ca",
+                        "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/256"
                     }
                 ],
                 "firstPartyTrackerCookiePolicy": {
@@ -300,6 +317,10 @@
             "exceptions": [
                 {
                     "domain": "adidas.com",
+                    "reason": "Broken add to cart"
+                },
+                {
+                    "domain": "hm.com",
                     "reason": "Broken add to cart"
                 },
                 {
@@ -647,6 +668,28 @@
                                     "crunchyroll.com"
                                 ],
                                 "reason": "video not loading"
+                            }
+                        ]
+                    },
+                    "fwmrm.net": {
+                        "rules": [
+                            {
+                                "rule": "2a7e9.v.fwmrm.net/ad/g/1",
+                                "domains": [
+                                    "channel4.com"
+                                ],
+                                "reason": "adwall"
+                            }
+                        ]
+                    },
+                    "gigya.com": {
+                        "rules": [
+                            {
+                                "rule": "gigya.com/js/gigya.services.plugins.base.min.js",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "login content not loading"
                             }
                         ]
                     },
