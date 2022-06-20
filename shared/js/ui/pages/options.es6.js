@@ -35,11 +35,11 @@ Options.prototype = window.$.extend({},
             window.$('.js-report-site-link')
                 .click(this._onReportSiteClick.bind(this))
 
-            $('#options-sub-header')[0].innerHTML = t('options:optionsSubHeader.title')
-            $('#options-desc')[0].innerHTML = t('options:optionsDesc.title')
-            $('#learn-more')[0].innerHTML = t('shared:learnMore.title')
-            $('#share-feedback')[0].innerHTML = t('options:shareFeedback.title')
-            $('#report-broken-site')[0].innerHTML = t('options:reportBrokenSite.title')
+            $('#options-sub-header').html(t('options:optionsSubHeader.title'))
+            $('#options-desc').html(t('options:optionsDesc.title'))
+            $('#learn-more').html(t('shared:learnMore.title'))
+            $('#share-feedback').html(t('options:shareFeedback.title'))
+            $('#report-broken-site').html(t('options:reportBrokenSite.title'))
 
             this.views.options = new PrivacyOptionsView({
                 pageView: this,
