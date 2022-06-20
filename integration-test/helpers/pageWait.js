@@ -36,7 +36,7 @@ async function forGoto (page, url) {
         if (e instanceof puppeteer.errors.TimeoutError) {
             pending('Timed out loading URL: ' + url)
         } else {
-            throw e
+            pending(`Failed to load URL: ${url} (${e.message}).`)
         }
     }
 }
@@ -49,7 +49,7 @@ async function forReload (page) {
         if (e instanceof puppeteer.errors.TimeoutError) {
             pending('Timed out reloading page: ' + page.url())
         } else {
-            throw e
+            pending(`Failed to reload page: ${page.url()} (${e.message}).`)
         }
     }
 }
