@@ -1,7 +1,8 @@
 import i18next from 'i18next'
 import ICU from 'i18next-icu'
+import config from '../../../data/constants.js'
 
-const supportedLocales = require('../../../data/constants.js').supportedLocales
+const supportedLocales = config.supportedLocales
 
 function buildLocalesList () {
     const resources = {}
