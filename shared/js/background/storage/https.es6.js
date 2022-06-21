@@ -15,14 +15,25 @@ class HTTPSStorage {
     }
 
     // Load https data defined in constants.httpsLists.
-    // We wait until all promises resolve to send datd to https.
+    // We wait until all promises resolve to send data to https.
     // This is all or nothing. We gather data for each of the lists
     // and validate. If any list fails validation then promise.all will
     // reject the whole update.
-    getLists () {
-        return Promise.all(constants.httpsLists.map(list => {
+    getLists (preferLocal = false) {
+        return Promise.all(constants.httpsLists.map(async list => {
             const listCopy = JSON.parse(JSON.stringify(list))
             const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
+
+            if (preferLocal) {
+                const lastUpdate = settings.getSetting(`${listCopy.name}-lastUpdate`) || 0
+                const millisecondsSinceUpdate = Date.now() - lastUpdate
+                if (millisecondsSinceUpdate < this.updatePeriodInMinutes * 60 * 1000) {
+                    const result = await this.getListFromLocalDB(listCopy)
+                    if (result) {
+                        return result
+                    }
+                }
+            }
 
             return this.getDataXHR(listCopy.url, etag).then(response => {
                 // Set the lastUpdate time.
@@ -55,18 +66,17 @@ class HTTPSStorage {
                         throw new Error(`HTTPS: process list xhr failed  ${listCopy.name}`)
                     }
                 })
-            }).catch(e => {
-                return this.fallbackToDB(listCopy).then(backupFromDB => {
-                    if (backupFromDB) {
-                        return backupFromDB
-                    } else {
-                        // Reset etag and lastUpdate time to force us to get
-                        // fresh server data in case of an error.
-                        settings.updateSetting(`${listCopy.name}-etag`, '')
-                        settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
-                        throw new Error(`HTTPS: data update for ${listCopy.name} failed`)
-                    }
-                })
+            }).catch(async e => {
+                const result = await this.getListFromLocalDB(listCopy)
+                if (result) {
+                    return result
+                }
+
+                // Reset etag and lastUpdate time to force us to get
+                // fresh server data in case of an error.
+                settings.updateSetting(`${listCopy.name}-etag`, '')
+                settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
+                throw new Error(`HTTPS: data update for ${listCopy.name} failed`)
             })
         }))
     }
@@ -86,28 +96,18 @@ class HTTPSStorage {
         }
     }
 
-    fallbackToDB (listDetails) {
-        return this.getDataFromLocalDB(listDetails.name).then(storedData => {
-            if (!storedData) return
-
-            return this.hasCorrectChecksum(storedData.data).then((isValid) => {
-                if (isValid) {
-                    if (storedData && storedData.data) {
-                        return Object.assign(listDetails, storedData.data)
-                    }
-                }
-            })
-        })
-    }
-
     getDataXHR (url, etag) {
         return load.loadExtensionFile({ url: url, etag: etag, returnType: 'json', source: 'external', timeout: 60000 })
     }
 
-    getDataFromLocalDB (name) {
-        console.log(`HTTPS: getting ${name} from db`)
-        return this.dbc.open()
-            .then(() => this.dbc.table('httpsStorage').get({ name: name }))
+    async getListFromLocalDB (listDetails) {
+        console.log('HTTPS: getting from db', listDetails.name)
+        await this.dbc.open()
+        const list = await this.dbc.table('httpsStorage').get({ name: listDetails.name })
+
+        if (list && list.data && await this.hasCorrectChecksum(list.data)) {
+            return Object.assign(listDetails, list.data)
+        }
     }
 
     storeInLocalDB (name, type, data) {

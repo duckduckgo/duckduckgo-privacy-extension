@@ -41,10 +41,10 @@ describe('Https storage bad xhr update', () => {
         spyOn(httpsStorage, 'storeInLocalDB').and.callFake((name, type, data) => {
             dbStub[name] = JSON.parse(JSON.stringify(data))
         })
-        spyOn(httpsStorage, 'getDataFromLocalDB').and.callFake((name) => {
-            const val = dbStub[name]
+        spyOn(httpsStorage, 'getListFromLocalDB').and.callFake(listDetails => {
+            const val = dbStub[listDetails.name]
             if (val) {
-                return Promise.resolve({ data: val })
+                return Promise.resolve(Object.assign(listDetails, val))
             } else {
                 return Promise.resolve(false)
             }

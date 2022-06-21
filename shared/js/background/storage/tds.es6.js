@@ -80,8 +80,25 @@ class TDSStorage {
         }, 0)
     }
 
-    getLists () {
-        return Promise.all(constants.tdsLists.map(list => this.getList(list)))
+    getLists (preferLocal = false) {
+        return Promise.all(constants.tdsLists.map(
+            async list => {
+                // Skip fetching the lists on extension startup if a new enough
+                // local copy exists.
+                if (preferLocal) {
+                    const lastUpdate = settings.getSetting(`${list.name}-lastUpdate`) || 0
+                    const millisecondsSinceUpdate = Date.now() - lastUpdate
+                    if (millisecondsSinceUpdate < this.updatePeriodInMinutes * 60 * 1000) {
+                        const localList = await this.getListFromLocalDB(list.name)
+                        if (localList) {
+                            return localList
+                        }
+                    }
+                }
+
+                return await this.getList(list)
+            }
+        ))
     }
 
     async getList (list) {
@@ -151,23 +168,17 @@ class TDSStorage {
                     throw new Error('TDS: process list xhr failed')
                 }
             })
-        }).catch(e => {
-            return this.fallbackToDB(listCopy.name).then(backupFromDB => {
-                if (backupFromDB) {
-                    // Restore the previously fetched configuration from memory.
-                    this[listCopy.name] = backupFromDB
+        }).catch(async e => {
+            const result = await this.getListFromLocalDB(listCopy.name)
+            if (result) {
+                return result
+            }
 
-                    this._internalOnListUpdate(listCopy.name)
-
-                    return { name: listCopy.name, data: backupFromDB }
-                } else {
-                    // Reset the etag and lastUpdate time to force us to get
-                    // fresh server data in case of an error.
-                    settings.updateSetting(`${listCopy.name}-etag`, '')
-                    settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
-                    throw new Error('TDS: data update failed')
-                }
-            })
+            // Reset the etag and lastUpdate time to force us to get
+            // fresh server data in case of an error.
+            settings.updateSetting(`${listCopy.name}-etag`, '')
+            settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
+            throw new Error('TDS: data update failed')
         })
     }
 
@@ -181,24 +192,20 @@ class TDSStorage {
         }
     }
 
-    fallbackToDB (name) {
-        return this.getDataFromLocalDB(name).then(storedData => {
-            if (!storedData) return
-
-            if (storedData && storedData.data) {
-                return storedData.data
-            }
-        })
-    }
-
     getDataXHR (list, etag, source) {
         return load.loadExtensionFile({ url: list.url, etag: etag, returnType: list.format, source, timeout: 60000 })
     }
 
-    getDataFromLocalDB (name) {
-        console.log('TDS: getting from db')
-        return this.dbc.open()
-            .then(() => this.dbc.table('tdsStorage').get({ name: name }))
+    async getListFromLocalDB (name) {
+        console.log('TDS: getting from db', name)
+        await this.dbc.open()
+        const list = await this.dbc.table('tdsStorage').get({ name: name })
+
+        if (list && list.data) {
+            this[name] = list.data
+            this._internalOnListUpdate(name)
+            return { name, data: list.data }
+        }
     }
 
     storeInLocalDB (name, data) {

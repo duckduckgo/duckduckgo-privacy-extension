@@ -23,10 +23,7 @@ const stub = (arg) => {
 
     spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
 
-    spyOn(tdsStorage, 'fallbackToDB')
-        .and.callFake(key => Promise.resolve(tdsData[key]))
-
-    spyOn(tdsStorage, 'getDataFromLocalDB')
+    spyOn(tdsStorage, 'getListFromLocalDB')
         .and.callFake(key => Promise.resolve(tdsData[key]))
 
     spyOn(tdsStorage, 'getDataXHR')
