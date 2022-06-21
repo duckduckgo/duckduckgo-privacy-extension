@@ -20,6 +20,7 @@ const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
 const getArgumentsObject = require('./helpers/arguments-object')
+const startup = require('./startup.es6')
 
 const sha1 = require('../shared-utils/sha1')
 
@@ -185,7 +186,6 @@ const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const https = require('./https.es6')
 
-// And add beacon type based on browser, so we can block it
 if (manifestVersion === 2) {
     browser.webRequest.onBeforeRequest.addListener(
         redirect.handleRequest,
@@ -233,7 +233,19 @@ if (manifestVersion === 2) {
         extraInfoSpec
     )
 
-    browser.webRequest.onHeadersReceived.addListener(dropTracking3pCookiesFromResponse, { urls: ['<all_urls>'] }, extraInfoSpec)
+    // Wait until the extension configuration has finished loading and then
+    // start dropping tracking cookies.
+    // Note: Event listeners must be registered in the top-level of the script
+    //       to be compatible with MV3. Registering the listener asynchronously
+    //       is only possible here as this is a MV2-only event listener!
+    // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
+    startup.ready().then(() => {
+        browser.webRequest.onHeadersReceived.addListener(
+            dropTracking3pCookiesFromResponse,
+            { urls: ['<all_urls>'] },
+            extraInfoSpec
+        )
+    })
 }
 
 /**
@@ -419,7 +431,19 @@ if (manifestVersion === 2) {
         extraInfoSpecSendHeaders
     )
 
-    browser.webRequest.onBeforeSendHeaders.addListener(dropTracking3pCookiesFromRequest, { urls: ['<all_urls>'] }, extraInfoSpecSendHeaders)
+    // Wait until the extension configuration has finished loading and then
+    // start dropping tracking cookies.
+    // Note: Event listeners must be registered in the top-level of the script
+    //       to be compatible with MV3. Registering the listener asynchronously
+    //       is only possible here as this is a MV2-only event listener!
+    // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
+    startup.ready().then(() => {
+        browser.webRequest.onBeforeSendHeaders.addListener(
+            dropTracking3pCookiesFromRequest,
+            { urls: ['<all_urls>'] },
+            extraInfoSpecSendHeaders
+        )
+    })
 }
 
 // Inject our content script to overwite FB elements
