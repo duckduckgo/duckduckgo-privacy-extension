@@ -65,7 +65,7 @@
     },
     "noUnprotectedSitesAdded": {
         "title": "No unprotected sites added",
-        "note": "Currently there are no websites on the list of websites that protections are disabled for"
+        "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
     },
     "unprotectedSites": {
         "title": "Unprotected Sites",
