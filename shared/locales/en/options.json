@@ -69,7 +69,7 @@
     },
     "unprotectedSites": {
         "title": "Unprotected Sites",
-        "note": "Header for the list of websites that the use had disabled protections for"
+        "note": "Header for the list of websites where our privacy protections are disabled"
     },
     "unprotectedSitesDesc": {
         "title": "These sites will not be enhanced by Privacy Protection.",
