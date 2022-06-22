@@ -21,8 +21,5 @@ const settings = require('./settings.es6')
 const { onStartup } = require('./startup.es6')
 
 settings.ready().then(() => {
-    // clearing last search on browser startup
-    settings.updateSetting('last_search', '')
-
     onStartup()
 })
