@@ -60,7 +60,7 @@
         "note": "When we don't automatically help populate email fields with a private address"
     },
     "autofillEnabled": {
-        "title": "Autofill enabled for",
+        "title": "Autofill enabled for <strong class=\"js-userdata-container\">{userName}</strong>",
         "note": "When we do help populate email addresses for (your email address here)"
     },
     "noUnprotectedSitesAdded": {

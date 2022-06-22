@@ -25,7 +25,7 @@ function getLocale (supportedLocales) {
 i18next
     .use(ICU)
     .init({
-        debug: true,
+        // debug: true,
         initImmediate: false,
         fallbackLng: 'en',
         lng: getLocale(supportedLocales),

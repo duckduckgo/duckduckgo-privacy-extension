@@ -1,4 +1,5 @@
 const bel = require('bel')
+const raw = require('bel/raw')
 const { formatAddress } = require('../../background/email-utils.es6')
 const t = window.DDG.base.i18n.t
 
@@ -19,7 +20,7 @@ function renderUserDataContent (model) {
             </div>`
         : bel`<div>
                 <p class="menu-paragraph">
-                    ${t('options:autofillEnabled.title')} <strong class="js-userdata-container">${formatAddress(model.userName)}</strong>
+                    ${raw(t('options:autofillEnabled.title', { userName: formatAddress(model.userName)}))}
                 </p>
                 <p class="options-info js-userdata-logout">
                     <a href="#">${t('shared:disable.title')}</a>
