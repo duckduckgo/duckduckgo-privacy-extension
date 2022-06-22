@@ -14,17 +14,9 @@ const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
 const startup = require('./startup.es6')
 
-let dev = false
-
-// Exported functions are used as message handlers for messages with a
-// matching type. That is except for functions with the '_' prefix.
-
-export function _setDevMode () {
-    dev = true
-}
-
-export function getDevMode () {
-    return dev
+export async function getDevMode () {
+    const dev = await browserWrapper.getFromSessionStorage('dev')
+    return dev || false
 }
 
 export function resetTrackersData () {

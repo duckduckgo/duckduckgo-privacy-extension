@@ -314,7 +314,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
         }
     }
 
-    if (req.messageType && req.messageType[0] !== '_' && req.messageType in messageHandlers) {
+    if (req.messageType && req.messageType in messageHandlers) {
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender))
     }
     if (req.messageType === 'registeredContentScript' || req.registeredTempAutofillContentScript) {
@@ -452,7 +452,7 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
             console.log(e)
         }
     } else if (alarmEvent.name === 'updateUninstallURL') {
-        browser.runtime.setUninstallURL(ATB.getSurveyURL())
+        browser.runtime.setUninstallURL(await ATB.getSurveyURL())
     } else if (alarmEvent.name === 'updateLists') {
         await settings.ready()
         https.sendHttpsUpgradeTotals()

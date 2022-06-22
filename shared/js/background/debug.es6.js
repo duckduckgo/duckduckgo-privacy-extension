@@ -4,12 +4,11 @@
  */
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
-const load = require('./load.es6')
 const atb = require('./atb.es6')
 const https = require('./https.es6')
 const tds = require('./storage/tds.es6')
-const messageHandlers = require('./message-handlers')
 const startup = require('./startup.es6')
+const browserWrapper = require('./wrapper.es6')
 
 self.dbg = {
     settings,
@@ -23,6 +22,4 @@ self.dbg = {
 // mark this as a dev build
 // when we request certain resources, this flag will prevent any
 // metrics from being thrown off
-load.setDevMode()
-atb.setDevMode()
-messageHandlers._setDevMode()
+browserWrapper.setToSessionStorage('dev', true)
