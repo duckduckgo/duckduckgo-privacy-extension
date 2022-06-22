@@ -37,7 +37,7 @@
     },
     "globalPrivacyControlDesc": {
         "title": "Your data shouldn't be for sale. At DuckDuckGo, we agree.\nActivate the \"Global Privacy Control\" (GPC) settings and we'll\nsignal to websites your preference to:",
-        "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties"
+        "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
     },
     "notSellYourPersonalData": {
         "title": "Not sell your personal data.",
