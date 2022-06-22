@@ -9,7 +9,7 @@
     },
     "options": {
         "title": "Options",
-        "note": "Header for view where user can configure various options"
+        "note": "Header for the interface where user can configure various options"
     },
     "learnMore": {
         "title": "Learn more",
