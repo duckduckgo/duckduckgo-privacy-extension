@@ -79,14 +79,18 @@ describe('Storage blocking Tests', () => {
         it('does not block 1st party JS cookies set by non-trackers', () => {
             const jsCookie = cookies.find(({ name, domain }) => name === 'tpsdata' && domain === testPageDomain)
             expect(jsCookie).toBeTruthy()
-            expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000 + 950400) // 11 days in the future
         })
 
-        it('reduces the expiry of 1st party JS cookies set by trackers to 8 days', () => {
-            const jsCookie = cookies.find(({ name, domain }) => name === 'tptdata' && domain === testPageDomain)
-            expect(jsCookie).toBeTruthy()
-            expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000)
-            expect(jsCookie.expires).toBeLessThan(Date.now() / 1000 + 864000) // 10 days in the future
+        it('reduces the expiry of all 1st party JS cookies to 7 days', () => {
+            const nowSeconds = Date.now() / 1000
+            const jsCookies = new Set(['jsdata', 'tptdata', 'tpsdata'])
+
+            for (const { expires, name } of cookies) {
+                if (!jsCookies.has(name)) continue
+
+                expect(expires - nowSeconds).toBeGreaterThan(0)
+                expect(expires - nowSeconds).toBeLessThan(604800)
+            }
         })
     })
 

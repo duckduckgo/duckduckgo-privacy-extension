@@ -9,9 +9,9 @@ const tabManager = require('../../../shared/js/background/tab-manager.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 
-const configReference = require('../../data/reference-tests/expire-first-party-tracking-cookies/config_reference.json')
-const blocklistReference = require('../../data/reference-tests/expire-first-party-tracking-cookies/tracker_radar_reference.json')
-const testSets = require('../../data/reference-tests/expire-first-party-tracking-cookies/tests.json')
+const configReference = require('../../data/reference-tests/expire-first-party-js-cookies/config_reference.json')
+const blocklistReference = require('../../data/reference-tests/expire-first-party-js-cookies/tracker_radar_reference.json')
+const testSets = require('../../data/reference-tests/expire-first-party-js-cookies/tests.json')
 
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom

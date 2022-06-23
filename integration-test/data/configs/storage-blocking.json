@@ -15,9 +15,9 @@
     },
     "globalThis.dbg.tds.config.features.trackingCookies1p": {
         "settings": {
-            "firstPartyTrackerCookiePolicy": {
-                "threshold": 86400,
-                "maxAge": 86400
+            "firstPartyCookiePolicy": {
+                "threshold": 604800,
+                "maxAge": 604800
             }
         },
         "exceptions": [ ],
@@ -25,9 +25,9 @@
     },
     "globalThis.dbg.tds.config.features.cookie": {
         "settings": {
-            "firstPartyTrackerCookiePolicy": {
-                "threshold": 86400,
-                "maxAge": 86400
+            "firstPartyCookiePolicy": {
+                "threshold": 604800,
+                "maxAge": 604800
             },
             "excludedCookieDomains": [ ],
             "trackerCookie": "enabled",
