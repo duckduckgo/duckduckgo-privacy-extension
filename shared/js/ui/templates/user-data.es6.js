@@ -20,7 +20,7 @@ function renderUserDataContent (model) {
             </div>`
         : bel`<div>
                 <p class="menu-paragraph">
-                    ${raw(t('options:autofillEnabled.title', { userName: formatAddress(model.userName)}))}
+                    ${raw(t('options:autofillEnabled.title', { userName: formatAddress(model.userName) }))}
                 </p>
                 <p class="options-info js-userdata-logout">
                     <a href="#">${t('shared:disable.title')}</a>

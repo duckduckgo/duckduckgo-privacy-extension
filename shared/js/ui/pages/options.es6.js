@@ -35,12 +35,12 @@ Options.prototype = window.$.extend({},
             window.$('.js-report-site-link')
                 .click(this._onReportSiteClick.bind(this))
 
-            const textContainers = document.querySelectorAll('[data-text]');
+            const textContainers = document.querySelectorAll('[data-text]')
             textContainers.forEach(el => {
-                const textID = el.getAttribute('data-text');
+                const textID = el.getAttribute('data-text')
                 const text = t(textID)
-                el.innerHTML = text;
-            });
+                el.innerHTML = text
+            })
 
             this.views.options = new PrivacyOptionsView({
                 pageView: this,
