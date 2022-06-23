@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1655291983548,
+    "version": 1655989238391,
     "features": {
         "ampLinks": {
             "exceptions": [
@@ -263,8 +263,13 @@
                     }
                 ],
                 "firstPartyTrackerCookiePolicy": {
+                    "readme": "This policy is deprecated. We are expanding this protection to all first party cookies set by scripts and using firstPartyCookiePolicy policy instead.",
                     "threshold": 86400,
                     "maxAge": 86400
+                },
+                "firstPartyCookiePolicy": {
+                    "threshold": 604800,
+                    "maxAge": 604800
                 }
             }
         },
@@ -278,6 +283,10 @@
                     {
                         "domain": "sovietgames.su",
                         "reason": "Wordpress plugin reports our browser as a bot"
+                    },
+                    {
+                        "domain": "thingiverse.com",
+                        "reason": "Site loads blank"
                     },
                     {
                         "domain": "accounts.google.com",
@@ -525,6 +534,17 @@
                             }
                         ]
                     },
+                    "aldi-digital.co.uk": {
+                        "rules": [
+                            {
+                                "rule": "assets.aldi-digital.co.uk/assets/050b4966c22c430e5c9308903ebb87e1/dist/scripts/main.js",
+                                "domains": [
+                                    "aldi.co.uk"
+                                ],
+                                "reason": "product images missing"
+                            }
+                        ]
+                    },
                     "alicdn.com": {
                         "rules": [
                             {
@@ -668,6 +688,17 @@
                                     "crunchyroll.com"
                                 ],
                                 "reason": "video not loading"
+                            }
+                        ]
+                    },
+                    "facebook.net": {
+                        "rules": [
+                            {
+                                "rule": "connect.facebook.net/en_US/sdk.js",
+                                "domains": [
+                                    "grubhub.com"
+                                ],
+                                "reason": "broken login"
                             }
                         ]
                     },
@@ -866,6 +897,17 @@
                                     "eonline.com"
                                 ],
                                 "reason": "video not loading"
+                            }
+                        ]
+                    },
+                    "tiqcdn.com": {
+                        "rules": [
+                            {
+                                "rule": "tags.tiqcdn.com/utag/agl/community/prod/utag.sync.js",
+                                "domains": [
+                                    "agl.com.au"
+                                ],
+                                "reason": "site loading delayed"
                             }
                         ]
                     },
