@@ -1,4 +1,5 @@
 const bel = require('bel')
+const t = window.DDG.base.i18n.t
 
 module.exports = function (list) {
     if (list.length > 0) {
@@ -9,5 +10,5 @@ module.exports = function (list) {
     <button class="remove pull-right js-allowlist-remove" data-item="${i++}">×</button>
 </li>`)}`
     }
-    return bel`<li>No unprotected sites added</li>`
+    return bel`<li>${t('options:noUnprotectedSitesAdded.title')}</li>`
 }

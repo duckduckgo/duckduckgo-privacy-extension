@@ -1,44 +1,38 @@
 const bel = require('bel')
+const raw = require('bel/raw')
 const toggleButton = require('./shared/toggle-button.es6.js')
+const t = window.DDG.base.i18n.t
 
 module.exports = function () {
     return bel`<section class="options-content__privacy divider-bottom">
-    <h2 class="menu-title">Options</h2>
+    <h2 class="menu-title">${t('shared:options.title')}</h2>
     <ul class="default-list">
         <li>
-            Show embedded Tweets
+            ${t('options:showEmbeddedTweets.title')}
             ${toggleButton(this.model.embeddedTweetsEnabled,
         'js-options-embedded-tweets-enabled',
         'embeddedTweetsEnabled')}
         </li>
         <li class="options-content__gpc-enabled">
-            <h2 class="menu-title">Global Privacy Control (GPC)</h2>
+            <h2 class="menu-title">${t('options:globalPrivacyControlAbbr.title')}</h2>
             <p class="menu-paragraph">
-                Your data shouldn't be for sale. At DuckDuckGo, we agree.
-                Activate the "Global Privacy Control" (GPC) settings and we'll
-                signal to websites your preference to:
+                ${t('options:globalPrivacyControlDesc.title')}
             </p>
             <ul>
                 <li>
-                    Not sell your personal data.
+                    ${t('options:notSellYourPersonalData.title')}
                 </li>
                 <li>
-                    Limit sharing of your personal data to other companies.
+                    ${t('options:limitSharingOfPersonalData.title')}
                 </li>
             </ul>
-            Global Privacy Control (GPC)
+            ${t('options:globalPrivacyControlAbbr.title')}
             ${toggleButton(this.model.GPC,
         'js-options-gpc-enabled',
         'GPC')}
             <p class="gpc-disclaimer">
-                <b>
-                    Since Global Privacy Control (GPC) is a new standard,
-                    most websites won't recognize it yet, but we're working hard
-                    to ensure it becomes accepted worldwide.
-                </b>
-                However, websites are only required to act on the signal to the
-                extent applicable laws compel them to do so.
-                <a href="https://duckduckgo.com/global-privacy-control-learn-more">Learn more</a>
+                ${raw(t('options:globalPrivacyControlDisclaimer.title'))}
+                <a href="https://duckduckgo.com/global-privacy-control-learn-more">${t('shared:learnMore.title')}</a>
             </p>
         </li>
     </ul>

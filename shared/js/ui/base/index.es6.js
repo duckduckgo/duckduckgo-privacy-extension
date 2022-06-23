@@ -2,6 +2,7 @@
 window.$ = window.jQuery = require('jquery')
 
 // base dependencies
+const i18next = require('./localize.es6.js')
 const mixins = require('./mixins/index.es6.js')
 const BaseModel = require('./model.es6.js')
 const BasePage = require('./page.es6.js')
@@ -14,5 +15,6 @@ window.DDG.base = {
     Model: BaseModel,
     Page: BasePage,
     utils: {},
-    View: BaseView
+    View: BaseView,
+    i18n: i18next
 }
