@@ -35,11 +35,12 @@ Options.prototype = window.$.extend({},
             window.$('.js-report-site-link')
                 .click(this._onReportSiteClick.bind(this))
 
-            $('#options-sub-header').html(t('options:optionsSubHeader.title'))
-            $('#options-desc').html(t('options:optionsDesc.title'))
-            $('#learn-more').html(t('shared:learnMore.title'))
-            $('#share-feedback').html(t('options:shareFeedback.title'))
-            $('#report-broken-site').html(t('options:reportBrokenSite.title'))
+            const textContainers = document.querySelectorAll('[data-text]');
+            textContainers.forEach(el => {
+                const textID = el.getAttribute('data-text');
+                const text = t(textID)
+                el.innerHTML = text;
+            });
 
             this.views.options = new PrivacyOptionsView({
                 pageView: this,
