@@ -1,15 +1,20 @@
 /** @module puppeteerInterface */
 
+const path = require('path')
 const puppeteer = require('puppeteer')
 
 class PuppeteerInterface {
     async setupBrowser () {
+        const testExtensionPath = path.join(
+            __dirname, 'test', 'data', 'chrome-extension'
+        )
+
         // Open the browser, installing the test extension.
         this.browser = await puppeteer.launch({
             headless: 'chrome',
             args: [
-                '--disable-extensions-except=test/data/chrome-extension/',
-                '--load-extension=test/data/chrome-extension/'
+                '--disable-extensions-except=' + testExtensionPath,
+                '--load-extension=' + testExtensionPath
             ]
         })
 
