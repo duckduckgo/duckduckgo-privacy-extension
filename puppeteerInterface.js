@@ -1,31 +1,11 @@
 /** @module puppeteerInterface */
 
-const fs = require('fs')
-const path = require('path')
-
 const puppeteer = require('puppeteer')
-const browserFetcher = puppeteer.createBrowserFetcher()
 
 class PuppeteerInterface {
     async setupBrowser () {
-        // Figure out the correct path for the recent snapshot build
-        // of Chromium that's installed.
-        // Note: Once chrome.declarativeNetRequest.testMatchOutcome is
-        //       available in release builds (likely around Chrome
-        //       M104), this code and the .npmrc file can be removed.
-        const revision = parseInt(
-            fs.readFileSync(
-                path.join(__dirname, '.npmrc'),
-                { encoding: 'utf8', flag: 'r' }
-            ).match(/[0-9]+/),
-            10
-        )
-        const { executablePath } =
-              await browserFetcher.revisionInfo(revision)
-
         // Open the browser, installing the test extension.
         this.browser = await puppeteer.launch({
-            executablePath,
             headless: 'chrome',
             args: [
                 '--disable-extensions-except=test/data/chrome-extension/',
