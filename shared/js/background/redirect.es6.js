@@ -83,6 +83,9 @@ function handleAmpRedirect (thisTab, url) {
 
 function handleRequest (requestData) {
     const tabId = requestData.tabId
+    // Skip requests to background tabs
+    if (tabId === -1) { return }
+
     let thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
