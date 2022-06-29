@@ -11,7 +11,7 @@ const resources = localeResources.reduce((mapping, { name, module }) => {
 }, {})
 
 function getBrowserLocale () {
-    let browserLocale = chrome.i18n ? chrome.i18n.getUILanguage() : navigator.language
+    const browserLocale = chrome.i18n ? chrome.i18n.getUILanguage() : navigator.language
     return browserLocale.split('-')[0] // drop country suffix
 }
 
