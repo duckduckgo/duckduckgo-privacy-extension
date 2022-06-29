@@ -17,3 +17,4 @@ test/background.js
 integration-test/artifacts/
 shared/tracker-surrogates/
 shared/content-scope-scripts/
+.vscode
