@@ -20,7 +20,7 @@ The extension provides users with an improved private browsing experience whilst
 - Reduced fingerprintability of various browser features
 - Removes browsingTopics from Chromium based browsers
 - Cookies
-  - Reduces expiry of first party cookies set by third-party tracking scripts
+  - Reduces expiry of first party cookies set by scripts
   - Blocks third party cookies from known trackers
 - Click to load for Facebook widgets
 
