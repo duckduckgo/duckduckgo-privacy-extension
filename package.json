@@ -85,6 +85,7 @@
         "normalize.scss": "0.1.0",
         "psl": "1.8.0",
         "punycode": "2.1.1",
+        "require-globify": "^1.4.1",
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
         "tldts": "^5.7.81",
