@@ -34,6 +34,7 @@ class HttpsRedirects {
                 count: 0
             }
 
+            // @ts-ignore
             clearTimeout(this.clearMainFrameTimeout)
             this.clearMainFrameTimeout = setTimeout(this.resetMainFrameRedirect, MAINFRAME_RESET_MS)
         } else {
@@ -113,6 +114,7 @@ class HttpsRedirects {
     }
 
     resetMainFrameRedirect () {
+        // @ts-ignore
         clearTimeout(this.clearMainFrameTimeout)
         this.mainFrameRedirect = null
     }

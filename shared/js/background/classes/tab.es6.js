@@ -72,8 +72,10 @@ class Tab {
         const grade = this.site.grade.get()
 
         if (this.site.isContentBlockingEnabled()) {
+            // @ts-ignore
             gradeIcon = gradeIconLocations[grade.enhanced.grade]
         } else {
+            // @ts-ignore
             gradeIcon = gradeIconLocations[grade.site.grade]
         }
 
@@ -123,14 +125,17 @@ class Tab {
     };
 
     endStopwatch () {
+        // @ts-ignore
         this.stopwatch.end = Date.now()
+        // @ts-ignore
         this.stopwatch.completeMs = (this.stopwatch.end - this.stopwatch.begin)
+        // @ts-ignore
         console.log(`tab.status: complete. site took ${this.stopwatch.completeMs / 1000} seconds to load.`)
     };
 
     /**
      * Adds an entry to the tab webResourceAccess list.
-     * @param {string} URL to the web accessible resource
+     * @param {string} resourceName URL to the web accessible resource
      * @returns {string} generated access key
      **/
     addWebResourceAccess (resourceName) {
@@ -144,8 +149,8 @@ class Tab {
      * Access to web accessible resources needs to have the correct key passed in the URL
      * and the requests needs to happen within 1 second since the generation of the key
      * in addWebResourceAccess
-     * @param {string} web accessible resource URL
-     * @returns {bool} is access to the resource allowed
+     * @param {string} resourceURL web accessible resource URL
+     * @returns {boolean} is access to the resource allowed
      **/
     hasWebResourceAccess (resourceURL) {
         // no record of web resource access for this tab

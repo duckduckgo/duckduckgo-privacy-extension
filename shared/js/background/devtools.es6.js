@@ -1,3 +1,4 @@
+// @ts-nocheck
 import browser from 'webextension-polyfill'
 const tldts = require('tldts')
 

@@ -44,6 +44,7 @@ function loadExtensionFile (params) {
 
     let rej
     const timeoutPromise = new Promise((resolve, reject) => { rej = reject })
+    // @ts-ignore
     const fetchTimeout = setTimeout(rej, params.timeout || 30000)
 
     const fetchResult = fetch(url, {

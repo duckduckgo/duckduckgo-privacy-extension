@@ -2,6 +2,7 @@
  * DuckDuckGo's ATB pipeline to facilitate various experiments.
  * Please see https://duck.co/help/privacy/atb for more information.
  */
+// @ts-ignore
 import browser from 'webextension-polyfill'
 
 const settings = require('./settings.es6')
@@ -46,6 +47,7 @@ const ATB = (() => {
             }
 
             const randomValue = Math.ceil(Math.random() * 1e7)
+            // @ts-ignore
             const url = `${ddgAtbURL}${randomValue}&browser=${parseUserAgentString().browser}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
 
             return load.JSONfromExternalFile(url).then((res) => {
@@ -89,6 +91,7 @@ const ATB = (() => {
             if (settings.getSetting('atb') || numTries > 5) return Promise.resolve()
 
             const randomValue = Math.ceil(Math.random() * 1e7)
+            // @ts-ignore
             const url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
@@ -109,6 +112,7 @@ const ATB = (() => {
 
             // build query string when atb param wasn't acquired from any URLs
             let paramString = params && params.has('atb') ? params.toString() : `atb=${atb}`
+            // @ts-ignore
             const browserName = parseUserAgentString().browser
             paramString += `&browser=${browserName}`
 
@@ -132,12 +136,14 @@ const ATB = (() => {
                 if (parsedParams.has(param)) {
                     validParams.append(
                         param === 'natb' ? 'atb' : param,
+                        // @ts-ignore
                         parsedParams.get(param)
                     )
                 }
             })
 
             // Only return params if URL contains valid atb value
+            // @ts-ignore
             if (validParams.has('atb') && ATB_FORMAT_RE.test(validParams.get('atb'))) {
                 return validParams
             }
@@ -204,7 +210,9 @@ const ATB = (() => {
             if (setAtb) url += `&set_atb=${setAtb}`
 
             const browserInfo = parseUserAgentString()
+            // @ts-ignore
             const browserName = browserInfo.browser
+            // @ts-ignore
             const browserVersion = browserInfo.version
             const extensionVersion = browserWrapper.getExtensionVersion()
             if (browserName) url += `&browser=${browserName}`

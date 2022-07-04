@@ -151,7 +151,7 @@ async function fetchAMPURL (site, url) {
 
     const firstCanonicalLink = doc.querySelector('[rel="canonical"]')
 
-    if (firstCanonicalLink) {
+    if (firstCanonicalLink && firstCanonicalLink instanceof HTMLLinkElement) {
         const newSite = new Site(firstCanonicalLink.href)
 
         if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {

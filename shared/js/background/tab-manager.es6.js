@@ -5,6 +5,7 @@ const browserWrapper = require('./wrapper.es6')
 
 class TabManager {
     constructor () {
+        /** @type {Record<number, Tab>} */
         this.tabContainer = {}
     };
 
@@ -32,8 +33,10 @@ class TabManager {
         delete this.tabContainer[id]
     };
 
-    /* Called using either a chrome tab object or by id
+    /**
+     * Called using either a chrome tab object or by id
      * get({tabId: ###});
+     * @returns {Tab}
      */
     get (tabData) {
         return this.tabContainer[tabData.tabId]

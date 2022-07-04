@@ -16,6 +16,7 @@ module.exports = (uaString) => {
         version = parsedUaParts[2]
 
         // Brave doesn't include any information in the UserAgent
+        // @ts-ignore
         if (globalThis.navigator.brave) {
             browser = 'Brave'
         }

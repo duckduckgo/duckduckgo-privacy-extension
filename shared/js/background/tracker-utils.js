@@ -48,6 +48,7 @@ export function shouldBlockSocialNetwork (entity, url) {
  * that include the exlcuded domain and network, for use in other exception list handling.
  */
 const socialExcludeCache = {
+    /** @type {{entity: string, domain: string}[]} */
     excludes: [],
     expireTime: 0,
     refreshTimeMS: 1000 * 60 * 30 // 30 minutes
