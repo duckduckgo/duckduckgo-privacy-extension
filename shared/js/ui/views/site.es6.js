@@ -9,6 +9,8 @@ const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.j
 const breakageFormTemplate = require('./../templates/breakage-form.es6.js')
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
+const { getCurrentTab } = require('../../background/message-handlers.js')
+import browser from 'webextension-polyfill'
 
 function Site (ops) {
     this.model = ops.model
@@ -82,6 +84,8 @@ Site.prototype = window.$.extend({},
                 'manage-allowlist',
                 'manage-allowlist-li',
                 'report-broken',
+                'devtools-panel',
+                'devtools-panel-li',
                 'privacy-practices',
                 'confirm-breakage-li',
                 'confirm-breakage',
@@ -100,6 +104,7 @@ Site.prototype = window.$.extend({},
                 [this.$confirmbreakageno, 'click', this._onConfirmNotBrokenClick],
                 [this.$gradescorecard, 'click', this._showGradeScorecard],
                 [this.$manageallowlist, 'click', this._onManageAllowlistClick],
+                [this.$devtoolspanel, 'click', this._onDevtoolsPanelButtonClick],
                 [this.$reportbroken, 'click', this._onReportBrokenSiteClick],
                 [this.store.subscribe, 'change:site', this.rerender]
             ])
@@ -131,6 +136,17 @@ Site.prototype = window.$.extend({},
             }
 
             this.openOptionsPage()
+        },
+
+        _onDevtoolsPanelButtonClick: function () {
+            if (this.model && this.model.disabled) {
+                return
+            }
+            getCurrentTab().then((tabToMonitor) => {
+                browser.tabs.create({
+                    url: chrome.runtime.getURL(`/html/devtools-panel.html?tabId=${tabToMonitor.id}`)
+                })
+            })
         },
 
         _onReportBrokenSiteClick: function (e) {
