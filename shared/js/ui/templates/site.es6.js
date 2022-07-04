@@ -57,6 +57,9 @@ module.exports = function () {
         <li class="js-site-manage-allowlist-li site-info__li--manage-allowlist padded ${this.model.displayBrokenUI ? 'is-hidden' : ''}">
             ${renderManageAllowlist(this.model)}
         </li>
+        <li class="js-site-devtools-panel-li site-info__li--devtools-panel padded">
+            ${renderDevtoolsPanelButton(this.model)}
+        </li>
         <li class="js-site-confirm-breakage-li site-info__li--confirm-breakage border--bottom padded is-hidden">
            <div class="js-site-confirm-breakage-message site-info__confirm-thanks is-transparent">
                 <span class="site-info__message">
@@ -117,6 +120,14 @@ module.exports = function () {
     <div class="separator"></div>
     <a href="javascript:void(0)" class="js-site-report-broken site-info__report-broken link-secondary bold">
         Report broken site
+    </a>
+</div>`
+    }
+
+    function renderDevtoolsPanelButton (model ) {
+        return bel`<div>
+    <a href="javascript:void(0)" class="js-site-devtools-panel site-info__devtools-panel link-secondary bold">
+        Devtools Panel
     </a>
 </div>`
     }
