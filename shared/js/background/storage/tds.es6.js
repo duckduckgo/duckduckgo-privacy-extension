@@ -10,6 +10,7 @@ const configNames = constants.tdsLists.map(({ name }) => name)
 
 class TDSStorage {
     constructor () {
+        // @ts-ignore
         this.dbc = new Dexie('tdsStorage')
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
@@ -103,7 +104,7 @@ class TDSStorage {
 
     async getList (list) {
         // If initOnInstall was called, await the updating from the local bundles before fetching
-        if (this.installing) {
+        if (this.isInstalling) {
             await this._installingPromise
         }
         const listCopy = JSON.parse(JSON.stringify(list))
@@ -122,7 +123,9 @@ class TDSStorage {
             listCopy.url = listCopy.channels[channel]
         }
 
+        // @ts-ignore
         if (experiment && experiment.listName === listCopy.name) {
+            // @ts-ignore
             listCopy.url = experiment.url
         }
 
@@ -168,6 +171,7 @@ class TDSStorage {
                     throw new Error('TDS: process list xhr failed')
                 }
             })
+        // @ts-ignore
         }).catch(async e => {
             const result = await this.getListFromLocalDB(listCopy.name)
             if (result) {
@@ -236,6 +240,7 @@ class TDSStorage {
 
         // check delta for last update
         if (lastTdsUpdate) {
+            // @ts-ignore
             const delta = now - new Date(lastTdsUpdate)
 
             if (delta > ONEDAY) {

@@ -30,7 +30,7 @@ class Site {
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
         this.allowlistOptIn = false
         this.denylisted = false
-        this.setListStatusFromGlobal(domain)
+        this.setListStatusFromGlobal()
 
         /**
          * Broken site reporting relies on the www. prefix being present as a.com matches *.a.com
@@ -105,14 +105,22 @@ class Site {
         return this.isProtectionEnabled() && this.enabledFeatures.includes(featureName)
     }
 
+    /**
+     * @param {*} t
+     */
     addTracker (t) {
+        // @ts-ignore
         if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {
+            // @ts-ignore
             this.trackerUrls.push(t.tracker.domain)
-            const entityPrevalence = tdsStorage.tds.entities[t.tracker.owner.name].prevalence
+            // @ts-ignore
+            const entityPrevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
 
             if (t.action.match(/block|redirect/)) {
+                // @ts-ignore
                 this.grade.addEntityBlocked(t.tracker.owner.name, entityPrevalence)
             } else {
+                // @ts-ignore
                 this.grade.addEntityNotBlocked(t.tracker.owner.name, entityPrevalence)
             }
         }

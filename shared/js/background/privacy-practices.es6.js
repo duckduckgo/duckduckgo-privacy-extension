@@ -1,3 +1,4 @@
+// @ts-nocheck
 const tldts = require('tldts')
 const tosdr = require('../../data/tosdr')
 const constants = require('../../data/constants')

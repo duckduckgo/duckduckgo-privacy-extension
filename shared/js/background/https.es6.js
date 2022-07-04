@@ -63,7 +63,7 @@ class HTTPS {
 
     /**
      * @param {string} url either domain (example.com) or a full URL (http://example.com/about)
-     * @returns {Boolean|Promise<Boolean>} returns true if host can be upgraded, false if it shouldn't be upgraded and a promise if we don't know yet and we are checking against a remote service
+     * @returns {null|boolean|Promise<boolean>} returns true if host can be upgraded, false if it shouldn't be upgraded and a promise if we don't know yet and we are checking against a remote service
      */
     canUpgradeUrl (url) {
         const parsedUrl = tldts.parse(url)
@@ -79,6 +79,7 @@ class HTTPS {
             return false
         }
 
+        // @ts-ignore
         if (host === 'localhost' || PRIVATE_TLDS.includes(parsedUrl.publicSuffix)) {
             console.warn('HTTPS: localhost or local TLD - host is not upgradable', host)
             return false

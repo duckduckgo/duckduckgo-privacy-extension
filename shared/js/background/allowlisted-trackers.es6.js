@@ -14,6 +14,9 @@ function isTrackerAllowlisted (site, request) {
     }
 
     const parsedRequest = tldts.parse(request)
+    if (!parsedRequest.domain) {
+        return false
+    }
     const allowListEntry = tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers[parsedRequest.domain]
 
     if (allowListEntry) {
@@ -30,7 +33,7 @@ function _matchesRule (site, request, allowListEntry) {
     // remove port from request urls
     const parsedRequest = new URL(request)
     if (parsedRequest.port) {
-        parsedRequest.port = parsedRequest.protocol === 'https:' ? 443 : 80
+        parsedRequest.port = parsedRequest.protocol === 'https:' ? '443' : '80'
         request = parsedRequest.href
     }
 

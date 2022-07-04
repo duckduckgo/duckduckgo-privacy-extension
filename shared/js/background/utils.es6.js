@@ -29,6 +29,7 @@ export function extractHostFromURL (url, shouldKeepWWW) {
 }
 
 // Removes information from a URL, such as path, user information, and optionally sub domains
+// @ts-ignore
 export function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
     if (!url) return undefined
     try {
@@ -59,6 +60,7 @@ export function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
 export function extractTopSubdomainFromHost (host) {
     if (typeof host !== 'string') return false
     const rgx = /\./g
+    // @ts-ignore
     if (host.match(rgx) && host.match(rgx).length > 1) {
         return host.split('.')[0]
     }
@@ -159,7 +161,7 @@ export function removeBroken (domain) {
 }
 
 export function getEnabledFeaturesAboutBlank (url) {
-    if (!tdsStorage.config.features) return
+    if (!tdsStorage.config.features) return []
     const enabledFeatures = []
     for (const feature in tdsStorage.config.features) {
         const featureSettings = getFeatureSettings(feature)
@@ -172,7 +174,7 @@ export function getEnabledFeaturesAboutBlank (url) {
 }
 
 export function getEnabledFeatures (url) {
-    if (!tdsStorage.config.features) return
+    if (!tdsStorage.config.features) return []
     const enabledFeatures = []
     for (const feature in tdsStorage.config.features) {
         if (isFeatureEnabled(feature) && brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) === -1) {
@@ -323,8 +325,7 @@ export function satisfiesMinVersion (minVersionString, extensionVersionString) {
  * parameter to check if the state is equeal to other states (i.e. state === 'beta').
  *
  * @param {String} featureName - the name of the feature
- * @param {String} customState - An optional custom state to check for
- * @returns {bool} - if feature is enabled
+ * @returns {boolean} - if feature is enabled
  */
 export function isFeatureEnabled (featureName) {
     const feature = tdsStorage.config.features[featureName]

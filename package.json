@@ -14,12 +14,13 @@
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "release": "grunt build",
-        "lint": "eslint '*.js' shared/js shared/data unit-test integration-test scripts",
+        "lint": "eslint '*.js' shared/js shared/data unit-test integration-test scripts && npm run tsc",
         "lint-fix": "npm run lint -- --fix",
         "test": "npm run copy-modules; grunt test --browser=chrome --type=dev",
         "test-debug": "grunt test --browser=chrome --type=dev --test-debug",
         "test-int": "make setup-artifacts-dir && make dev browser=chrome type=dev && jasmine --config=integration-test/config.json",
         "test-int-mv3": "make setup-artifacts-dir && make dev browser=chrome-mv3 type=dev && jasmine --config=integration-test/config-mv3.json",
+        "tsc": "tsc",
         "dev-firefox": "make dev browser=firefox type=dev watch=1",
         "open-dev-firefox": "web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.glitch.me/",
         "release-firefox": "make browser=firefox type=release",
@@ -66,7 +67,8 @@
         "standard": "17.0.0",
         "timekeeper": "^2.1.1",
         "webextension-polyfill": "^0.9.0",
-        "yargs": "^17.5.1"
+        "yargs": "^17.5.1",
+        "typescript": "^4.7.3"
     },
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#4.6.0",

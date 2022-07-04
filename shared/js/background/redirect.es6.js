@@ -1,3 +1,4 @@
+// @ts-ignore
 import browser from 'webextension-polyfill'
 const tldts = require('tldts')
 
@@ -154,6 +155,7 @@ function handleRequest (requestData) {
         }
 
         // add atb params only to main_frame
+        // @ts-ignore addParametersMainFrameRequestUrl is exported but TS doesn't know about it
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL)
 
         if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded) {
@@ -226,6 +228,7 @@ function handleRequest (requestData) {
             const cleanUrl = new URL(requestData.url)
             cleanUrl.search = ''
             cleanUrl.hash = ''
+            // @ts-ignore
             devtools.postMessage(tabId, 'tracker', {
                 tracker: {
                     ...reportedTracker,
@@ -271,7 +274,9 @@ function handleRequest (requestData) {
                 if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
 
                 // for debugging specific requests. see test/tests/debugSite.js
+                // @ts-ignore
                 if (debugRequest && debugRequest.length) {
+                    // @ts-ignore
                     if (debugRequest.includes(tracker.url)) {
                         console.log('UNBLOCKED: ', tracker.url)
                         return

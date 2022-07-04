@@ -172,8 +172,7 @@ function convertScriptingAPIOptionsForTabsAPI (options) {
  * 1 - https://developer.chrome.com/docs/extensions/reference/scripting/#method-executeScript
  * @param {object} options
  *   Script injection options.
- * @param {*} result
- *   The result of executing the script.
+ * @returns {Promise<*>}
  */
 export async function executeScript (options) {
     if (typeof browser.scripting === 'undefined') {
@@ -220,7 +219,7 @@ const sessionStorageFallback = sessionStorageSupported ? null : new Map()
  *       See https://developer.chrome.com/docs/extensions/reference/storage/#property-session-session-QUOTA_BYTES
  * @param {string} key
  *   The storage key to write to.
- * @param {*} value
+ * @param {*} data
  *   The value to write.
  */
 export async function setToSessionStorage (key, data) {
@@ -232,6 +231,7 @@ export async function setToSessionStorage (key, data) {
         return await browser.storage.session.set({ [key]: data })
     }
 
+    // @ts-ignore - TS doesn't know it is a Map
     sessionStorageFallback.set(key, data)
 }
 
@@ -239,7 +239,7 @@ export async function setToSessionStorage (key, data) {
  * Retrieve a value from memory.
  * @param {string} key
  *   The storage key to retrieve.
- * @return {*}
+ * @return {Promise<*>}
  *   The retrieved value.
  */
 export async function getFromSessionStorage (key) {
@@ -252,6 +252,7 @@ export async function getFromSessionStorage (key) {
         return result[key]
     }
 
+    // @ts-ignore
     return sessionStorageFallback.get(key)
 }
 
