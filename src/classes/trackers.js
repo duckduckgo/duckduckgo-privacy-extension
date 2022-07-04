@@ -1,3 +1,60 @@
+
+/**
+ * @typedef TrackerData
+ * @property {*} action
+ * @property {*} reason
+ * @property {*} firstParty
+ * @property {*} redirectUrl
+ * @property {*} matchedRule
+ * @property {*} matchedRuleException
+ * @property {TrackerObj} [tracker]
+ * @property {*} fullTrackerDomain
+ * @property {*} fromCname
+ */
+
+/**
+ * @typedef TrackerRule
+ * @property {string} rule
+ * @property {number} fingerprinting
+ * @property {number} cookies
+ * @property {*} exceptions
+ * @property {*} [options]
+ */
+
+/**
+ * @typedef OwnerData
+ * @property {string} name
+ * @property {string} displayName
+ */
+
+/**
+ * @typedef TrackerObj
+ * @property {string} domain
+ * @property {OwnerData} owner
+ * @property {number} prevalence
+ * @property {number} fingerprinting
+ * @property {number} cookies
+ * @property {string[]} categories
+ * @property {string} default
+ * @property {TrackerRule[]} rules
+ */
+
+/**
+ * @typedef RequestData
+ * @property {string} siteUrl
+ * @property {RequestExpression} request
+ * @property {string} siteDomain
+ * @property {string[]} siteUrlSplit
+ * @property {string} urlToCheck
+ * @property {string} urlToCheckDomain
+ * @property {string[]} urlToCheckSplit
+ */
+
+/**
+ * @typedef RequestExpression
+ * @property {string} type
+ */
+
 (function () {
     class Trackers {
         constructor (ops) {
@@ -61,6 +118,10 @@
             return surrogateList
         }
 
+        /**
+         * @param {string} url
+         * @returns {{fromCname: string, finalURL: string}}
+         */
         resolveCname (url) {
             const parsed = this.tldjs.parse(url)
             let finalURL = url
@@ -82,20 +143,17 @@
             }
         }
 
-        getTrackerData (urlToCheck, siteUrl, request, ops) {
-            ops = ops || {}
-
-            if (!this.entityList || !this.trackerList) {
-                throw new Error('tried to detect trackers before rules were loaded')
-            }
-
-            let fromCname
-
-            // single object with all of our requeest and site data split and
-            // processed into the correct format for the tracker set/get functions.
-            // This avoids repeat calls to split and util functions.
-            const requestData = {
-                ops: ops,
+        /**
+         * single object with all of our request and site data split and
+         * processed into the correct format for the tracker set/get functions.
+         * This avoids repeat calls to split and util functions.
+         * @param {string} urlToCheck
+         * @param {string} siteUrl
+         * @param {RequestExpression} request
+         * @returns {RequestData}
+         */
+        getRequestData (urlToCheck, siteUrl, request) {
+            return {
                 siteUrl: siteUrl,
                 request: request,
                 siteDomain: this.tldjs.parse(siteUrl).domain,
@@ -104,6 +162,26 @@
                 urlToCheckDomain: this.tldjs.parse(urlToCheck).domain,
                 urlToCheckSplit: this.utils.extractHostFromURL(urlToCheck).split('.')
             }
+        }
+
+        /**
+         * @param {string} urlToCheck
+         * @param {string} siteUrl
+         * @param {RequestExpression} request
+         * @returns {TrackerData | null}
+         */
+        getTrackerData (urlToCheck, siteUrl, request) {
+            if (!this.entityList || !this.trackerList) {
+                throw new Error('tried to detect trackers before rules were loaded')
+            }
+
+            let fromCname
+            const requestData = this.getRequestData(urlToCheck, siteUrl, request)
+            const trackerOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
+            const websiteOwner = this.findWebsiteOwner(requestData)
+
+            const firstParty = (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
+            const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
 
             // finds a tracker definition by iterating over the whole trackerList and finding the matching tracker.
             let tracker = this.findTracker(requestData)
@@ -112,33 +190,49 @@
                 // if request doesn't have any rules associated with it, we should check if it's a CNAMEed tracker
                 const cnameResolution = this.resolveCname(urlToCheck)
                 fromCname = cnameResolution.fromCname
-                urlToCheck = cnameResolution.finalURL
-
-                requestData.urlToCheck = urlToCheck
-                requestData.urlToCheckDomain = this.tldjs.parse(urlToCheck).domain
-                requestData.urlToCheckSplit = this.utils.extractHostFromURL(urlToCheck).split('.')
-                tracker = this.findTracker(requestData)
+                const cnameRequestData = this.getRequestData(urlToCheck, siteUrl, request)
+                tracker = this.findTracker(cnameRequestData)
 
                 if (!tracker) {
-                    return null
+                    if (firstParty) {
+                        return null
+                    }
+                    const owner = {
+                        name: trackerOwner || requestData.urlToCheckDomain || 'unknown',
+                        displayName: trackerOwner || requestData.urlToCheckDomain || 'Unknown'
+                    }
+                    const tracker = {
+                        domain: fullTrackerDomain,
+                        owner: owner,
+                        prevalence: 0,
+                        fingerprinting: 0,
+                        cookies: 0,
+                        categories: [],
+                        default: 'unknown',
+                        rules: []
+                    }
+                    return {
+                        action: tracker.default,
+                        reason: '',
+                        firstParty,
+                        redirectUrl: '',
+                        matchedRule: '',
+                        matchedRuleException: '',
+                        tracker,
+                        fullTrackerDomain,
+                        fromCname
+                    }
                 }
             }
 
             // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
             const matchedRule = this.findRule(tracker, requestData)
 
+            // @ts-ignore
             const redirectUrl = (matchedRule && matchedRule.surrogate) ? this.surrogateList[matchedRule.surrogate] : false
 
             // sets tracker.exception by looking at tracker.rule exceptions (if any)
             const matchedRuleException = matchedRule ? this.matchesRuleDefinition(matchedRule, 'exceptions', requestData) : false
-
-            const trackerOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
-
-            const websiteOwner = this.findWebsiteOwner(requestData)
-
-            const firstParty = (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : false
-
-            const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
 
             const { action, reason } = this.getAction({
                 firstParty,
@@ -147,7 +241,6 @@
                 defaultAction: tracker.default,
                 redirectUrl
             })
-
             return {
                 action,
                 reason,
@@ -161,12 +254,13 @@
             }
         }
 
-        /*
-         * Pull subdomains off of the reqeust rule and look for a matching tracker object in our data
+        /**
+         * Pull subdomains off of the request rule and look for a matching tracker object in our data
+         * @param {RequestData} requestData
+         * @returns {undefined | TrackerObj}
          */
         findTracker (requestData) {
             const urlList = Array.from(requestData.urlToCheckSplit)
-
             while (urlList.length > 1) {
                 const trackerDomain = urlList.join('.')
                 urlList.shift()
@@ -178,13 +272,20 @@
             }
         }
 
+        /**
+         * @param {string} trackerDomain
+         * @returns {string | undefined}
+         */
         findTrackerOwner (trackerDomain) {
+            // @ts-ignore
             return this.entityList[trackerDomain]
         }
 
-        /*
-        * Set parent and first party values on tracker
-        */
+        /**
+         * Set parent and first party values on tracker
+         * @param {RequestData} requestData
+         * @returns {string | undefined}
+         */
         findWebsiteOwner (requestData) {
             // find the site owner
             const siteUrlList = Array.from(requestData.siteUrlSplit)
@@ -193,14 +294,19 @@
                 const siteToCheck = siteUrlList.join('.')
                 siteUrlList.shift()
 
+                // @ts-ignore
                 if (this.entityList[siteToCheck]) {
+                    // @ts-ignore
                     return this.entityList[siteToCheck]
                 }
             }
         }
 
-        /*
+        /**
          * Iterate through a tracker rule list and return the first matching rule, if any.
+         * @param {TrackerObj} tracker
+         * @param {RequestData} requestData
+         * @returns {TrackerRule | null}
          */
         findRule (tracker, requestData) {
             let matchedRule = null
@@ -217,6 +323,11 @@
             return matchedRule
         }
 
+        /**
+         * @param {RequestData} requestData
+         * @param {TrackerRule} ruleObj
+         * @returns {boolean}
+         */
         requestMatchesRule (requestData, ruleObj) {
             if (requestData.urlToCheck.match(ruleObj.rule)) {
                 if (ruleObj.options) {
@@ -229,9 +340,14 @@
             }
         }
 
-        /* Check the matched rule  options against the request data
-        *  return: true (all options matched)
-        */
+        /**
+         * Check the matched rule options against the request data
+         * return: true (all options matched)
+         * @param {TrackerRule} rule
+         * @param {string} type
+         * @param {RequestData} requestData
+         * @returns {boolean}
+         */
         matchesRuleDefinition (rule, type, requestData) {
             if (!rule[type]) {
                 return false
@@ -285,6 +401,7 @@
     if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         module.exports = Trackers
     } else {
+        // @ts-ignore
         window.Trackers = Trackers
     }
 })()
