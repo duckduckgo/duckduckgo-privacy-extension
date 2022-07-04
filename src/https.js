@@ -1,4 +1,4 @@
-let utils = require('./utils')
+const utils = require('./utils')
 
 class HTTPS {
     addLists (lists) {

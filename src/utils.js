@@ -6,7 +6,7 @@ const parseUrl = require('url-parse-lax')
 const findParent = (url) => {
     if (!entityMap || url.length < 2) return
 
-    let joinURL = url.join('.')
+    const joinURL = url.join('.')
     if (entityMap[joinURL]) {
         return entityMap[joinURL]
     } else {
@@ -23,8 +23,8 @@ const getDomain = (url) => {
     if (!domain) {
         // handle e.g. underscore URLs which tldjs normally chokes on
         // note this is really slow and we don't want to do it unless necessary
-        let hostname = parseUrl(url).hostname || ''
-        let hostnameParts = hostname.split('.')
+        const hostname = parseUrl(url).hostname || ''
+        const hostnameParts = hostname.split('.')
 
         while (!domain && hostnameParts.length > 2) {
             hostnameParts.shift()

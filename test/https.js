@@ -12,7 +12,7 @@ https.addLists({
 })
 
 describe('getUpgradedUrl', () => {
-    let tests = [
+    const tests = [
         { url: 'http://github.com/', shouldUpgrade: true },
         { url: 'http://status.github.com/', shouldUpgrade: true },
         { url: 'http://test.github.com/', shouldUpgrade: false },
@@ -27,7 +27,7 @@ describe('getUpgradedUrl', () => {
 
     tests.forEach((test) => {
         it(`should ${test.shouldUpgrade ? '' : 'not '}upgrade ${test.url}`, () => {
-            let upgraded = https.getUpgradedUrl(test.url)
+            const upgraded = https.getUpgradedUrl(test.url)
 
             if (test.shouldUpgrade) {
                 expect(upgraded).toEqual(test.url.replace(/^http:/, 'https:'))

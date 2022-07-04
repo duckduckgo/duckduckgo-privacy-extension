@@ -138,23 +138,23 @@ class Grade {
 
         // PRIVACY
         // clamp to 10
-        let privacyScore = Math.min(this.privacyScore, 10)
+        const privacyScore = Math.min(this.privacyScore, 10)
 
         // TRACKERS
         let siteTrackerScore = 0
         let enhancedTrackerScore = 0
 
-        for (let entity in this.entitiesBlocked) {
+        for (const entity in this.entitiesBlocked) {
             siteTrackerScore += this._normalizeTrackerScore(this.entitiesBlocked[entity])
         }
 
-        for (let entity in this.entitiesNotBlocked) {
+        for (const entity in this.entitiesNotBlocked) {
             siteTrackerScore += this._normalizeTrackerScore(this.entitiesNotBlocked[entity])
             enhancedTrackerScore += this._normalizeTrackerScore(this.entitiesNotBlocked[entity])
         }
 
-        let siteTotalScore = siteHttpsScore + siteTrackerScore + privacyScore
-        let enhancedTotalScore = enhancedHttpsScore + enhancedTrackerScore + privacyScore
+        const siteTotalScore = siteHttpsScore + siteTrackerScore + privacyScore
+        const enhancedTotalScore = enhancedHttpsScore + enhancedTrackerScore + privacyScore
 
         this.scores = {
             site: {
@@ -181,7 +181,7 @@ class Grade {
     }
 
     _getValueFromRangeMap (value, rangeMapData) {
-        let steps = rangeMapData.steps
+        const steps = rangeMapData.steps
 
         if (!value || value <= 0) {
             return rangeMapData.zero
