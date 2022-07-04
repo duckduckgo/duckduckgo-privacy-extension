@@ -155,13 +155,18 @@ function appendCallStack (cell, stack) {
     }
 }
 
-function shouldShowRow (className) {
+function shouldShowRow (row) {
+    const className = row.classList[0]
     const filter = document.getElementById(`display-${className}`)
-    return !filter || filter.checked
+    const searchBoxValue = document.getElementById('search-box').value
+    // empty search box is considered to be no filter
+    // search box matches on the URL of the request
+    const searchFilter = searchBoxValue === '' || row.cells[1].textContent.match(searchBoxValue)
+    return searchFilter && (!filter || filter.checked)
 }
 
 function setRowVisible (row) {
-    row.hidden = !shouldShowRow(row.classList[0])
+    row.hidden = !shouldShowRow(row)
 }
 
 port.onMessage.addListener((message) => {
