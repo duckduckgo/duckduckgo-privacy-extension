@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1655989238391,
+    "version": 1656328791349,
     "features": {
         "ampLinks": {
             "exceptions": [
@@ -631,9 +631,10 @@
                             {
                                 "rule": "pubads.g.doubleclick.net/gampad/ads",
                                 "domains": [
-                                    "nhl.com"
+                                    "nhl.com",
+                                    "viki.com"
                                 ],
-                                "reason": "videos not loading"
+                                "reason": "nhl.com - videos not loading; viki.com - after a video has played for a few seconds an adwall pops up. Clicking 'I've turned off my adblocker' resets the video, then after a few seconds the adwall pops up again."
                             },
                             {
                                 "rule": "securepubads.g.doubleclick.net/tag/js/gpt.js",
