@@ -1,6 +1,6 @@
 /**
  * @typedef TrackerData
- * @property {string | null | undefined} action
+ * @property {ActionName | null | undefined} action
  * @property {string | undefined} reason
  * @property {boolean} firstParty
  * @property {string} redirectUrl
@@ -18,6 +18,7 @@
  * @property {number} cookies
  * @property {*} exceptions
  * @property {*} [options]
+ * @property {string} [surrogate]
  */
 
 /**
@@ -52,6 +53,10 @@
 /**
  * @typedef RequestExpression
  * @property {string} type
+ */
+
+/**
+ * @typedef {'ignore' | 'block' | 'redirect'} ActionName
  */
 
 class Trackers {
@@ -175,10 +180,10 @@ class Trackers {
 
         let fromCname
         const requestData = this.getRequestData(urlToCheck, siteUrl, request)
-        const trackerOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
+        const requestOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
         const websiteOwner = this.findWebsiteOwner(requestData)
 
-        const firstParty = (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
+        const firstParty = (requestOwner && websiteOwner) ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
         const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
 
         // finds a tracker definition by iterating over the whole trackerList and finding the matching tracker.
@@ -196,8 +201,8 @@ class Trackers {
                     return null
                 }
                 const owner = {
-                    name: trackerOwner || requestData.urlToCheckDomain || 'unknown',
-                    displayName: trackerOwner || requestData.urlToCheckDomain || 'Unknown'
+                    name: requestOwner || requestData.urlToCheckDomain || 'unknown',
+                    displayName: requestOwner || requestData.urlToCheckDomain || 'Unknown'
                 }
                 const tracker = {
                     domain: fullTrackerDomain,
@@ -364,9 +369,15 @@ class Trackers {
         return (matchTypes && matchDomains)
     }
 
+    /**
+     * @param {*} tracker
+     * @returns {{ action: ActionName | undefined, reason: string | undefined }}
+     */
     getAction (tracker) {
         // Determine the blocking decision and reason.
-        let action, reason
+        /** @type {ActionName | undefined} */
+        let action
+        let reason
         if (tracker.firstParty) {
             action = 'ignore'
             reason = 'first party'
