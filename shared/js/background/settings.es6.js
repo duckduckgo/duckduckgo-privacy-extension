@@ -36,7 +36,23 @@ function checkForLegacyKeys () {
         whitelistOptIn: 'allowlistOptIn',
 
         // Keys to remove
+        advanced_options: null,
         cookieExcludeList: null,
+        dev: null,
+        ducky: null,
+        extensionIsEnabled: null,
+        failedUpgrades: null,
+        last_search: null,
+        lastsearch_enabled: null,
+        meanings: null,
+        safesearch: null,
+        socialBlockingIsEnabled: null,
+        totalUpgrades: null,
+        trackerBlockingEnabled: null,
+        use_post: null,
+        version: null,
+        zeroclick_google_right: null,
+
         'surrogates-etag': null,
         'brokenSiteList-etag': null,
         'surrogateList-etag': null,

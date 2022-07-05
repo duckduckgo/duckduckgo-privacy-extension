@@ -471,7 +471,6 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
         browser.runtime.setUninstallURL(ATB.getSurveyURL())
     } else if (alarmEvent.name === 'updateLists') {
         await settings.ready()
-        https.sendHttpsUpgradeTotals()
 
         try {
             const lists = await tdsStorage.getLists()

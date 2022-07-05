@@ -247,19 +247,6 @@ class HTTPS {
         }
     }
 
-    // Send https upgrade and failure totals
-    sendHttpsUpgradeTotals () {
-        const upgrades = settings.getSetting('totalUpgrades')
-        const failed = settings.getSetting('failedUpgrades')
-
-        // only send if we have data
-        if (upgrades || failed) {
-            // clear the counts
-            settings.updateSetting('totalUpgrades', 0)
-            settings.updateSetting('failedUpgrades', 0)
-        }
-    }
-
     // Increment upgrade or failed upgrade settings
     incrementUpgradeCount (setting) {
         let value = parseInt(settings.getSetting(setting)) || 0

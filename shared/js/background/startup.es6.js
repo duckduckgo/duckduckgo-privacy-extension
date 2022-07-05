@@ -28,8 +28,6 @@ async function onStartup () {
         console.log(e)
     }
 
-    https.sendHttpsUpgradeTotals()
-
     Companies.buildFromStorage()
 
     // fetch alias if needed
