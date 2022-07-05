@@ -3,7 +3,7 @@ const trackerLists = require('./data/tracker-lists')
 const tldts = require('tldts')
 const utils = require('../src/utils')
 
-const trackers = new Trackers({ tldjs: tldts, utils: utils })
+const trackers = new Trackers({ tldts, utils: utils })
 trackers.setLists([
     {
         name: 'tds',
@@ -147,21 +147,55 @@ describe('getTrackerData', () => {
             })
         })
 
+        const malformedTests = [
+            // Malformed urls
+            {
+                urlToCheck: 'http://%20%20s.src%20%3D/',
+                siteUrl: 'https://example.com',
+                requestType: 'image'
+            },
+            // Special url schemes
+            {
+                urlToCheck: 'about:blank',
+                siteUrl: 'https://example.com',
+                requestType: 'image'
+            },
+            {
+                urlToCheck: 'chrome-extension://test-me',
+                siteUrl: 'https://example.com',
+                requestType: 'image'
+            },
+            {
+                urlToCheck: 'https://example.com',
+                siteUrl: 'chrome-extension://test-me',
+                requestType: 'image'
+            }
+        ]
+
+        malformedTests.forEach((test) => {
+            it(`should not block ${test.urlToCheck}`, () => {
+                const tracker = trackers.getTrackerData(
+                    test.urlToCheck,
+                    test.siteUrl,
+                    { url: test.urlToCheck, type: test.requestType })
+
+                expect(tracker).toEqual(null)
+            })
+        })
+
         const nonTrackerTests = [
-            // non tracker requests
+            // Non tracker requests
             {
                 urlToCheck: 'http://somecdn.com/jquery',
                 siteUrl: 'https://example.com',
                 requestType: 'script'
             },
-            // malformed urls
             {
-                urlToCheck: 'http://%20%20s.src%20%3D/',
+                urlToCheck: 'https://somecdn.com/jquery',
                 siteUrl: 'https://example.com',
-                requestType: 'image'
+                requestType: 'script'
             }
         ]
-
         nonTrackerTests.forEach((test) => {
             it(`should not block ${test.urlToCheck}`, () => {
                 const tracker = trackers.getTrackerData(
@@ -169,7 +203,7 @@ describe('getTrackerData', () => {
                     test.siteUrl,
                     { url: test.urlToCheck, type: test.requestType })
 
-                expect(tracker.action).toEqual(null)
+                expect(tracker.action).toEqual('none')
             })
         })
     })
