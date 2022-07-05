@@ -39,7 +39,10 @@ Run `git submodule update --remote` to fetch latest version of all git submodule
 - grunt-cli can be installed by running `npm install -g grunt-cli`
 
 ### Building the extension
-- `npm install`, `git submodule update --init --recursive` both have to be run before building the extension for the first time 
+
+#### Development builds
+
+- `npm install`, `git submodule update --init --recursive` both have to be run before building the extension for the first time.
 - Firefox
  1. Run `npm run dev-firefox`
  2. Load the extension in Firefox from the `build/firefox/dev` directory
@@ -54,6 +57,16 @@ Run `git submodule update --remote` to fetch latest version of all git submodule
 - Chrome MV3 (Work in progress, not working yet.)
  1. Run `npm run dev-chrome-mv3`
  2. Load the extension in Chrome from the `build/chrome-mv3/dev` directory
+
+Note: Development builds of the extension have a few differences from the release builds and are more convenient to use during development:
+ - The background page/ServiceWorker has an `dbg` Object that provides access to some of the extension's internal configuration and other state.
+ - Click to Load placeholders are created with an open shadowRoot, instead of a closed shadowRoot. This allows the integration tests to click the placeholder's buttons reliably.
+ - `test=1` parameter is added to the uninstall URL and to requests for the extension configuration.
+
+#### Release builds
+
+- Release builds can be produced in much the same was as the development builds, but by using the `npm run release-chrome` and `npm run release-firefox` commands.
+- These builds are stored in the `build/chrome/release` and `build/firefox/release` directories respectively.
 
 ### Updating or testing config
 
@@ -93,6 +106,14 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
     3. Verify that the link succeeded. You should see a symlink for the module in question when you run `ls -al node_modules/@duckduckgo/` from the extension directory.
 2. Manually run the module's build step (e.g., `npm run build`) - (If you're running a watch command like dev-chrome or dev-firefox you can skip this step).
 3. Manually run the extension's build command (e.g. `npm run dev-firefox`)
+
+### Linting
+- All linting: `npm lint`
+    - This includes ESLint and TypeScript checks.
+- ESLint fixes: `npm lint-fix`
+    - This only includes ESLint, but will fix mistakes automatically (where possible).
+- TypeScript Linting: `npm lint-tsc`
+    - This only includes TypeScript checks and will not fix mistakes automatically.
 
 ### Testing
 - Unit tests: `npm test`
