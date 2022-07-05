@@ -25,7 +25,7 @@
                 },
                 {
                     "rule": "a\\.yahoo\\.com($|[?/])",
-                    "surrogate": "yahoo.com/a.js",
+                    "surrogate": "a.js",
                     "exceptions" : {
                         "domains": ["example2.com"],
                         "types": ["image"]
