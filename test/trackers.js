@@ -1,7 +1,22 @@
-const trackers = require('../src/trackers')
+const Trackers = require('../src/classes/trackers')
 const trackerLists = require('./data/tracker-lists')
+const tldts = require('tldts')
+const utils = require('../src/utils')
 
-trackers.addLists(trackerLists)
+const trackers = new Trackers({ tldjs: tldts, utils: utils })
+trackers.setLists([
+    {
+        name: 'tds',
+        data: {
+            entities: trackerLists.entityList,
+            trackers: trackerLists.trackerList
+        }
+    },
+    {
+        name: 'surrogates',
+        data: trackerLists.surrogates
+    }
+])
 
 describe('getTrackerData', () => {
     describe('find tracker data', () => {
@@ -154,7 +169,7 @@ describe('getTrackerData', () => {
                     test.siteUrl,
                     { url: test.urlToCheck, type: test.requestType })
 
-                expect(tracker).toEqual(null)
+                expect(tracker.action).toEqual(null)
             })
         })
     })
