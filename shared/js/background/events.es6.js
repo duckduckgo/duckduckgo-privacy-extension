@@ -329,9 +329,25 @@ browser.runtime.onMessage.addListener((req, sender) => {
         'more info: https://github.com/duckduckgo/privacy-configuration')
             return
         }
-        if (!argumentsObject.site.allowlisted) {
-            return Promise.resolve(argumentsObject)
+
+        // FIXME - Autofill code expects the response, even if protections are
+        //         disabled, but content-scope code expects response to be
+        //         falsey when protections are disabled. Also, the autofill code
+        //         does not check if the site is allowlisted before enabling
+        //         autofill.
+        //           Once the content-scope and autofill code check for
+        //         `response.site.allowlisted === true`, this code path can be
+        //         removed and argumentsObject can be returned consistently.
+        if (argumentsObject.site.allowlisted) {
+            if (req.messageType === 'registeredContentScript') {
+                return
+            }
+            if (req.registeredTempAutofillContentScript) {
+                return Promise.resolve({ site: { allowlisted: true, enabledFeatures: [] } })
+            }
         }
+
+        return Promise.resolve(argumentsObject)
     }
 
     // TODO clean up legacy onboarding messaging
