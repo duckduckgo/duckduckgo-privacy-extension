@@ -1,7 +1,5 @@
 const browserWrapper = require('./wrapper.es6')
 
-let dev = false
-
 function JSONfromLocalFile (path) {
     return loadExtensionFile({ url: path, returnType: 'json' })
 }
@@ -20,12 +18,12 @@ function url (url) {
  *  - source: requests are internal by default. set source to 'external' for non-extension URLs
  *  - etag: set an if-none-match header
  */
-function loadExtensionFile (params) {
+async function loadExtensionFile (params) {
     const headers = new Headers()
     let url = params.url
 
     if (params.source === 'external') {
-        if (dev) {
+        if (await browserWrapper.getFromSessionStorage('dev')) {
             if (url.indexOf('?') > -1) {
                 url += '&'
             } else {
@@ -88,14 +86,9 @@ function loadExtensionFile (params) {
     return Promise.race([timeoutPromise, fetchResult])
 }
 
-function setDevMode () {
-    dev = true
-}
-
 module.exports = {
     loadExtensionFile: loadExtensionFile,
     JSONfromLocalFile: JSONfromLocalFile,
     JSONfromExternalFile: JSONfromExternalFile,
-    url: url,
-    setDevMode: setDevMode
+    url: url
 }

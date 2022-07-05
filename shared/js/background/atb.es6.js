@@ -16,8 +16,6 @@ const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 // list of accepted params in ATB url
 const ACCEPTED_URL_PARAMS = ['natb', 'cp', 'npi']
 
-let dev = false
-
 const ATB = (() => {
     // regex to match ddg urls to add atb params to.
     // Matching subdomains, searches, and newsletter page
@@ -202,7 +200,7 @@ const ATB = (() => {
                 !domain.match(regExpSoftwarePage)
         },
 
-        getSurveyURL: () => {
+        async getSurveyURL () {
             let url = ddgAtbURL + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
             const atb = settings.getSetting('atb')
             const setAtb = settings.getSetting('set_atb')
@@ -218,19 +216,17 @@ const ATB = (() => {
             if (browserName) url += `&browser=${browserName}`
             if (browserVersion) url += `&bv=${browserVersion}`
             if (extensionVersion) url += `&v=${extensionVersion}`
-            if (dev) url += '&test=1'
+            if (await browserWrapper.getFromSessionStorage('dev')) {
+                url += '&test=1'
+            }
             return url
-        },
-
-        setDevMode: () => {
-            dev = true
         }
     }
 })()
 
-settings.ready().then(() => {
+settings.ready().then(async () => {
     // set initial uninstall url
-    browserWrapper.setUninstallURL(ATB.getSurveyURL())
+    browserWrapper.setUninstallURL(await ATB.getSurveyURL())
 })
 
 module.exports = ATB
