@@ -88,6 +88,7 @@
         "bel": "6.0.0",
         "deep-freeze": "0.0.1",
         "dexie": "3.2.2",
+        "duckduckgo-privacy-dashboard": "github:more-duckduckgo-org/duckduckgo-privacy-dashboard#shane/new-design-bat.js_schema-file",
         "eventemitter2": "6.4.9",
         "i18next": "^21.9.2",
         "i18next-icu": "^2.0.3",
