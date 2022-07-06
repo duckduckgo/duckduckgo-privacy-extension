@@ -62,7 +62,7 @@
         "karma-source-map-support": "1.4.0",
         "load-grunt-tasks": "5.1.0",
         "node-fetch": "^3.2.4",
-        "puppeteer": "14.1.1",
+        "puppeteer": "15.3.1",
         "sass": "^1.52.3",
         "standard": "17.0.0",
         "timekeeper": "^2.1.1",
@@ -71,7 +71,7 @@
         "typescript": "^4.7.3"
     },
     "dependencies": {
-        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#4.6.0",
+        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#4.7.0",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#2.1.1",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "1.1.0",
