@@ -108,12 +108,11 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 3. Manually run the extension's build command (e.g. `npm run dev-firefox`)
 
 ### Linting
-- All linting: `npm lint`
-    - This includes ESLint and TypeScript checks.
-- ESLint fixes: `npm lint-fix`
-    - This only includes ESLint, but will fix mistakes automatically (where possible).
-- TypeScript Linting: `npm lint-tsc`
-    - This only includes TypeScript checks and will not fix mistakes automatically.
+- All linting: `npm run lint`
+    - This includes both the ESLint and TypeScript checks.
+- ESLint linting: `npm run eslint`
+    - To automatically fix mistakes found (where possible) use: `npm run eslint-fix`
+- TypeScript Linting: `npm run tsc`
 
 ### Testing
 - Unit tests: `npm test`
