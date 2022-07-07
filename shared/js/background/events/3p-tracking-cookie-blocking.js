@@ -7,6 +7,9 @@ function shouldBlockHeaders (request, tab, requestIsTracker) {
     if (!tab.site.isFeatureEnabled('cookie')) {
         return false
     }
+    if (tab.site.specialDomainName) {
+        return false // main frame is a special page (e.g. extension page)
+    }
 
     const cookieSettings = utils.getFeatureSettings('cookie')
     if (requestIsTracker && cookieSettings.trackerCookie !== 'enabled') {
