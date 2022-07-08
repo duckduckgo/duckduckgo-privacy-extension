@@ -25,6 +25,7 @@ class Site {
         domain = domain.toLowerCase()
 
         this.domain = domain
+        this.protocol = this.url.substr(0, this.url.indexOf(':'))
         this.trackerUrls = []
         this.grade = new Grade()
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
@@ -136,59 +137,44 @@ class Site {
      */
     getSpecialDomain () {
         const extensionId = browserWrapper.getExtensionId()
-        const url = this.url
         const localhostName = 'localhost'
-        let domain = this.domain
+        const { domain, protocol, url } = this
 
         if (url === '') {
             return 'new tab'
         }
 
-        // Both 'localhost' and the loopback ip have to be specified
-        // since they're treated as different domains
+        // Both 'localhost' and the loopback IP have to be specified
+        // since they're treated as different domains.
         if (domain === localhostName || domain.match(/^127\.0\.0\.1/)) {
             return localhostName
         }
 
-        // Handle non-routable meta-address
+        // Handle non-routable meta-address.
         if (domain.match(/^0\.0\.0\.0/)) {
             return domain
         }
 
-        // for some reason chrome passes this back from webNavigation events
-        // for new tabs instead of chrome://newtab
-        //
-        // "local-ntp" -> "local new tab page"
-        if (url.match(/^chrome-search:\/\/local-ntp/)) {
-            return 'new tab'
-        }
-
-        // for special pages with a protocol, just return whatever
-        // word comes after the protocol
-        // e.g. 'chrome://extensions' -> 'extensions'
-        if (url.match(/^chrome:\/\//) ||
-                url.match(/^vivaldi:\/\//)) {
-            if (domain === 'newtab') {
-                domain = 'new tab'
+        // For special pages with a protocol, just return whatever word comes
+        // after the protocol. E.g. 'chrome://extensions' becomes 'extensions'.
+        if (protocol === 'about' ||
+            protocol === 'chrome' ||
+            protocol === 'chrome-search' ||
+            protocol === 'vivaldi') {
+            if (domain === 'newtab' || domain === 'local-ntp') {
+                return 'new tab'
             }
-
             return domain
         }
 
-        // FF-style about: pages don't get their domains parsed properly
-        // so just extract the bit after about:
-        if (url.match(/^about:/)) {
-            domain = url.match(/^about:([a-z-]+)/)[1]
-            return domain
-        }
-
-        if (url.match(/^file:/)) {
+        if (protocol === 'file') {
             return 'local file'
         }
 
-        // extension pages
-        if (url.match(/^(chrome|moz)-extension:\/\//)) {
-            // this is our own extension, let's try and get a meaningful description
+        // Extension pages
+        if (protocol === 'chrome-extension' || protocol === 'moz-extension') {
+            // This is our own extension, let's try and get a meaningful
+            // description.
             if (domain === extensionId) {
                 const matches = url.match(/^(?:chrome|moz)-extension:\/\/[^/]+\/html\/([a-z-]+).html/)
 
@@ -197,8 +183,14 @@ class Site {
                 }
             }
 
-            // if we failed, or this is not our extension, return a generic message
+            // If we failed, or this is not our extension, return a generic message.
             return 'extension page'
+        }
+
+        // Our new tab page URL that is hard-coded in the Chromium source.
+        // See https://source.chromium.org/chromium/chromium/src/+/main:components/search_engines/prepopulated_engines.json
+        if (url === 'https://duckduckgo.com/chrome_newtab') {
+            return 'new tab'
         }
 
         return null

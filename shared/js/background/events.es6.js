@@ -422,10 +422,15 @@ if (manifestVersion === 2) {
     browser.webRequest.onBeforeSendHeaders.addListener(dropTracking3pCookiesFromRequest, { urls: ['<all_urls>'] }, extraInfoSpecSendHeaders)
 }
 
-// Inject our content script to overwite FB elements
+// Inject the Click to Load content script to display placeholders.
 browser.webNavigation.onCommitted.addListener(details => {
     const tab = tabManager.get({ tabId: details.tabId })
-    if (tab && tab.site.isBroken) {
+
+    if (!tab || tab.site.specialDomainName) {
+        return
+    }
+
+    if (tab.site.isBroken) {
         console.log('temporarily skip embedded object replacements for site: ' + details.url +
           'more info: https://github.com/duckduckgo/privacy-configuration')
         return
