@@ -77,72 +77,80 @@ browser.runtime.onInstalled.addListener(onInstalled)
  * ONBOARDING
  * Logic to allow the SERP to display onboarding UI
  */
-
-let onBeforeNavigateTimeStamp = null
-browser.webNavigation.onBeforeNavigate.addListener(details => {
-    onBeforeNavigateTimeStamp = details.timeStamp
-})
-
-browser.webNavigation.onCommitted.addListener(async details => {
+async function onboardingMessaging ({ transitionQualifiers, tabId }) {
     await settings.ready()
     const showWelcomeBanner = settings.getSetting('showWelcomeBanner')
     const showCounterMessaging = settings.getSetting('showCounterMessaging')
 
-    // We show the welcome banner and counter messaging only once
-    if (showWelcomeBanner || showCounterMessaging) {
-        const isAddressBarQuery = details.transitionQualifiers.includes('from_address_bar')
-
-        if (showWelcomeBanner) {
-            settings.removeSetting('showWelcomeBanner')
-        }
-        if (isAddressBarQuery && showCounterMessaging) {
-            settings.removeSetting('showCounterMessaging')
-        }
-
-        if (onBeforeNavigateTimeStamp < details.timeStamp) {
-            if (browserName === 'chrome') {
-                browserWrapper.executeScript({
-                    target: { tabId: details.tabId },
-                    func: onboarding.onDocumentStart,
-                    args: [{
-                        duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
-                    }],
-                    injectImmediately: true
-                })
-            }
-
-            browserWrapper.executeScript({
-                target: { tabId: details.tabId },
-                func: onboarding.onDocumentEnd,
-                args: [{
-                    isAddressBarQuery,
-                    showWelcomeBanner,
-                    showCounterMessaging,
-                    browserName,
-                    duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
-                    extensionId: browserWrapper.getExtensionId()
-                }],
-                injectImmediately: false
-            })
-        }
+    // If the onboarding messaging has already been displayed, there's no need
+    // to trigger this event listener any longer.
+    if (!showWelcomeBanner && !showCounterMessaging) {
+        browser.webNavigation.onCommitted.removeListener(onboardingMessaging)
+        return
     }
-}, {
-    // we only target the SERP (it has a `q` querystring param but not necessarily as the first querstring param)
-    url: [
-        {
-            schemes: ['https'],
-            hostEquals: constants.duckDuckGoSerpHostname,
-            pathEquals: '/',
-            queryContains: '?q='
-        },
-        {
-            schemes: ['https'],
-            hostEquals: constants.duckDuckGoSerpHostname,
-            pathEquals: '/',
-            queryContains: '&q='
-        }
-    ]
-})
+
+    // The counter messaging should only be active for the very first search
+    // navigation observed.
+    const isAddressBarQuery = transitionQualifiers.includes('from_address_bar')
+    if (isAddressBarQuery && showCounterMessaging) {
+        settings.removeSetting('showCounterMessaging')
+    }
+
+    // Clear the showWelcomeBanner setting to ensure that the welcome banner
+    // isn't shown again in the future.
+    if (showWelcomeBanner) {
+        settings.removeSetting('showWelcomeBanner')
+    }
+
+    // Display the onboarding messaging.
+
+    if (browserName === 'chrome') {
+        browserWrapper.executeScript({
+            target: { tabId: tabId },
+            func: onboarding.onDocumentStart,
+            args: [{
+                duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
+            }],
+            injectImmediately: true
+        })
+    }
+
+    browserWrapper.executeScript({
+        target: { tabId: tabId },
+        func: onboarding.onDocumentEnd,
+        args: [{
+            isAddressBarQuery,
+            showWelcomeBanner,
+            showCounterMessaging,
+            browserName,
+            duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
+            extensionId: browserWrapper.getExtensionId()
+        }],
+        injectImmediately: false
+    })
+}
+
+browser.webNavigation.onCommitted.addListener(
+    onboardingMessaging, {
+        // We only target the search results page (SERP), which has a 'q' query
+        // parameter. Two filters are required since the parameter is not
+        // necessarily first.
+        url: [
+            {
+                schemes: ['https'],
+                hostEquals: constants.duckDuckGoSerpHostname,
+                pathEquals: '/',
+                queryContains: '?q='
+            },
+            {
+                schemes: ['https'],
+                hostEquals: constants.duckDuckGoSerpHostname,
+                pathEquals: '/',
+                queryContains: '&q='
+            }
+        ]
+    }
+)
 
 /**
  * Health checks + `showCounterMessaging` mutation

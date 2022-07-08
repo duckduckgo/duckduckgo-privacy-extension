@@ -7,9 +7,7 @@ let browser, bgPage, teardown
 describe('onboarding', () => {
     beforeEach(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
-
-        await backgroundWait.forSetting(bgPage, 'showWelcomeBanner')
-        await backgroundWait.forSetting(bgPage, 'showCounterMessaging')
+        await backgroundWait.forAllConfiguration(bgPage)
     })
 
     afterEach(async () => {
