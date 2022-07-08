@@ -9,9 +9,9 @@ class Trackers {
     }
 
     processTrackerList (data) {
-        for (let name in data) {
+        for (const name in data) {
             if (data[name].rules) {
-                for (let i in data[name].rules) {
+                for (const i in data[name].rules) {
                     data[name].rules[i].rule = new RegExp(data[name].rules[i].rule, 'ig')
                 }
             }
@@ -21,7 +21,7 @@ class Trackers {
 
     processEntityList (data) {
         const processed = {}
-        for (let entity in data) {
+        for (const entity in data) {
             data[entity].properties.forEach(domain => {
                 processed[domain] = entity
             })
@@ -93,7 +93,7 @@ class Trackers {
 
         const firstParty = (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : false
 
-        const {action, reason} = this.getAction({
+        const { action, reason } = this.getAction({
             firstParty,
             matchedRule,
             matchedRuleException,
@@ -116,10 +116,10 @@ class Trackers {
      * Pull subdomains off of the reqeust rule and look for a matching tracker object in our data
      */
     findTracker (requestData) {
-        let urlList = Array.from(requestData.urlToCheckSplit)
+        const urlList = Array.from(requestData.urlToCheckSplit)
 
         while (urlList.length > 1) {
-            let trackerDomain = urlList.join('.')
+            const trackerDomain = urlList.join('.')
             urlList.shift()
 
             const matchedTracker = this.trackerList[trackerDomain]
@@ -138,10 +138,10 @@ class Trackers {
     */
     findWebsiteOwner (requestData) {
         // find the site owner
-        let siteUrlList = Array.from(requestData.siteUrlSplit)
+        const siteUrlList = Array.from(requestData.siteUrlSplit)
 
         while (siteUrlList.length > 1) {
-            let siteToCheck = siteUrlList.join('.')
+            const siteToCheck = siteUrlList.join('.')
             siteUrlList.shift()
 
             if (this.entityList[siteToCheck]) {
@@ -162,6 +162,7 @@ class Trackers {
                     matchedRule = ruleObj
                     return true
                 }
+                return false
             })
         }
         return matchedRule
@@ -190,10 +191,12 @@ class Trackers {
         const ruleDefinition = rule[type]
 
         const matchTypes = (ruleDefinition.types && ruleDefinition.types.length)
-            ? ruleDefinition.types.includes(requestData.request.type) : true
+            ? ruleDefinition.types.includes(requestData.request.type)
+            : true
 
         const matchDomains = (ruleDefinition.domains && ruleDefinition.domains.length)
-            ? ruleDefinition.domains.includes(requestData.siteDomain) : true
+            ? ruleDefinition.domains.includes(requestData.siteDomain)
+            : true
 
         return (matchTypes && matchDomains)
     }
@@ -226,7 +229,7 @@ class Trackers {
             }
         }
 
-        return {action, reason}
+        return { action, reason }
     }
 }
 

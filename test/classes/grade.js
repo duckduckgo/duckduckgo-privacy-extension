@@ -22,7 +22,7 @@ describe('example grades', () => {
                 }
             })
 
-            let gradeData = grade.get()
+            const gradeData = grade.get()
 
             expect(gradeData.site).toEqual(test.expected.site, 'site grade should be correct')
             expect(gradeData.enhanced).toEqual(test.expected.enhanced, 'enhanced grade should be correct')

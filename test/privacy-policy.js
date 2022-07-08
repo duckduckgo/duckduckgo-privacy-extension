@@ -3,16 +3,16 @@ const privacyPolicy = require('../src/privacy-policy')
 privacyPolicy.addLists({
     tosdr: {
         'couchsurfing.org': {
-            'score': 5,
-            'good': [],
-            'bad': [
+            score: 5,
+            good: [],
+            bad: [
                 'may sell your data in merger'
             ]
         },
         'google.com': {
-            'score': 10,
-            'good': [],
-            'bad': [
+            score: 10,
+            good: [],
+            bad: [
                 'they can use your content for all their existing and future services',
                 'tracks you on other websites',
                 'logs are kept forever'
@@ -43,17 +43,17 @@ privacyPolicy.addLists({
             score: 11
         },
         'thefreedictionary.com': {
-            'reasons': {
-                'bad': [],
-                'good': []
+            reasons: {
+                bad: [],
+                good: []
             },
-            'score': 0
+            score: 0
         }
     }
 })
 
 describe('getScoreForUrl', () => {
-    let tests = [
+    const tests = [
         { url: 'wikihow.com', expected: 11 },
         { url: 'de.yahoo.com', expected: 11 },
         { url: 'couchsurfing.org', expected: 5 },
