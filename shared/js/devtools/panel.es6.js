@@ -11,7 +11,16 @@ function sendMessage (messageType, options, callback) {
 }
 
 let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
-const port = chrome.runtime.connect()
+
+// Open the messaging port and re-open if disconnected. The connection will
+// disconnect for MV3 builds when the background ServiceWorker becomes inactive.
+let port
+function openPort () {
+    port = chrome.runtime.connect()
+    port.onDisconnect.addListener(openPort)
+}
+openPort()
+
 // fetch the list of configurable features from the config and create toggles for them.
 const loadConfigurableFeatures = new Promise((resolve) => {
     sendMessage('getListContents', 'config', ({ data: config }) => {
