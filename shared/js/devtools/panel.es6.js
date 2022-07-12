@@ -262,6 +262,6 @@ tdsOption.addEventListener('change', (e) => {
 
 displayFilters.forEach((input) => {
     input.addEventListener('change', () => {
-        document.querySelectorAll('tr').forEach(setRowVisible)
+        document.querySelectorAll('tbody > tr').forEach(setRowVisible)
     })
 })
