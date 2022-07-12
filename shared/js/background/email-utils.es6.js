@@ -2,9 +2,7 @@ import browser from 'webextension-polyfill'
 const { getSetting, updateSetting } = require('./settings.es6')
 const browserWrapper = require('./wrapper.es6')
 const REFETCH_ALIAS_ALARM = 'refetchAlias'
-
-// Keep track of the number of attempted fetches. Stop trying after 5.
-let attempts = 1
+const REFETCH_ALIAS_ATTEMPT = 'refetchAliasAttempt'
 
 const fetchAlias = () => {
     // if another fetch was previously scheduled, clear that and execute now
@@ -18,27 +16,28 @@ const fetchAlias = () => {
         method: 'post',
         headers: { Authorization: `Bearer ${userData.token}` }
     })
-        .then(response => {
+        .then(async response => {
             if (response.ok) {
-                return response.json().then(({ address }) => {
+                return response.json().then(async ({ address }) => {
                     if (!/^[a-z0-9]+$/.test(address)) throw new Error('Invalid address')
 
                     updateSetting('userData', Object.assign(userData, { nextAlias: `${address}` }))
                     // Reset attempts
-                    attempts = 1
+                    await browserWrapper.removeFromSessionStorage(REFETCH_ALIAS_ATTEMPT)
                     return { success: true }
                 })
             } else {
                 throw new Error('An error occurred while fetching the alias')
             }
         })
-        .catch(e => {
+        .catch(async e => {
             // TODO: Do we want to logout if the error is a 401 unauthorized?
             console.log('Error fetching new alias', e)
             // Don't try fetching more than 5 times in a row
+            const attempts = await browserWrapper.getFromSessionStorage(REFETCH_ALIAS_ATTEMPT) || 1
             if (attempts < 5) {
                 browserWrapper.createAlarm(REFETCH_ALIAS_ALARM, { delayInMinutes: 2 })
-                attempts++
+                await browserWrapper.setToSessionStorage(REFETCH_ALIAS_ATTEMPT, attempts + 1)
             }
             // Return the error so we can handle it
             return { error: e }

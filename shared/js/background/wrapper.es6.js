@@ -221,6 +221,7 @@ const sessionStorageFallback = sessionStorageSupported ? null : new Map()
  *   The storage key to write to.
  * @param {*} data
  *   The value to write.
+ * @return {Promise<undefined>}
  */
 export async function setToSessionStorage (key, data) {
     if (typeof key !== 'string') {
@@ -254,6 +255,25 @@ export async function getFromSessionStorage (key) {
 
     // @ts-ignore
     return sessionStorageFallback.get(key)
+}
+
+/**
+ * Removes a value from memory.
+ * @param {string} key
+ *   The storage key to remove.
+ * @return {Promise<undefined>}
+ */
+export async function removeFromSessionStorage (key) {
+    if (typeof key !== 'string') {
+        throw new Error('Invalid storage key, string expected.')
+    }
+
+    if (sessionStorageSupported) {
+        return await browser.storage.session.remove(key)
+    }
+
+    // @ts-ignore
+    return sessionStorageFallback.delete(key)
 }
 
 /**
