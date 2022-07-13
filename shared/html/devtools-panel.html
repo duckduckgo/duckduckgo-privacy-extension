@@ -28,6 +28,12 @@
       padding: 10px;
     }
 
+    #settings-panel {
+      position: sticky;
+      top: 0;
+      background-color: aliceblue;
+    }
+
     #protections {
       padding-top: 0px;
     }
@@ -62,6 +68,11 @@
       width: 100%;
       border-collapse: collapse;
       border: 1px solid black;
+    }
+
+    thead {
+      position: sticky;
+      background-color: antiquewhite;
     }
 
     thead th:nth-child(1) {
@@ -138,6 +149,7 @@
     </tr>
   </template>
 
+  <div id="settings-panel">
   <div class="header">
     <a href="./list-editor.html" target="_blank">🗒</a>
     <select id="tab-picker">
@@ -176,6 +188,7 @@
     <label class="canvas">
       <input id="display-canvas" type="checkbox" checked><span>Canvas API</span>
     </label>
+  </div>
   </div>
   <table>
     <thead>
