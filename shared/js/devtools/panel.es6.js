@@ -46,6 +46,33 @@ function assertTableRowElement(element) {
     return element
 }
 
+/**
+ * @param {string} id
+ * @returns {HTMLSelectElement}
+ */
+function getSelectElementById(id) {
+    // @ts-ignore
+    return document.getElementById(id)
+}
+
+/**
+ * @param {HTMLElement} element
+ * @returns {HTMLInputElement}
+ */
+function assertInputElement(element) {
+    // @ts-ignore
+    return element
+}
+
+/**
+ * @param {HTMLElement} element
+ * @returns {HTMLLinkElement}
+ */
+function assertLinkElement(element) {
+    // @ts-ignore
+    return element
+}
+
 function sendMessage (messageType, options, callback) {
     browser.runtime.sendMessage({ messageType, options }, callback)
 }
