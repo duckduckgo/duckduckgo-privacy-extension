@@ -30,7 +30,6 @@
       "shared/js/background/onboarding.es6.js",
       "shared/js/background/startup.es6.js",
       "shared/js/background/storage/https.es6.js",
-      "shared/js/devtools/list-editor.es6.js",
-      "shared/js/devtools/panel.es6.js"
+      "shared/js/devtools/list-editor.es6.js"
   ]
 }

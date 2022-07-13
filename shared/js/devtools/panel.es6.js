@@ -2,9 +2,36 @@ const table = document.querySelector('#request-table')
 const clearButton = document.getElementById('clear')
 const refreshButton = document.getElementById('refresh')
 const protectionButton = document.getElementById('protection')
-const tabPicker = document.getElementById('tab-picker')
-const tdsOption = document.getElementById('tds')
+const tabPicker = getSelectElementById('tab-picker')
+const tdsOption = getSelectElementById('tds')
 const displayFilters = document.querySelectorAll('#table-filter input')
+
+/**
+ * @param {string} id
+ * @returns {HTMLSelectElement}
+ */
+function getSelectElementById(id) {
+    // @ts-ignore
+    return document.getElementById(id)
+}
+
+/**
+ * @param {HTMLElement} element
+ * @returns {HTMLInputElement}
+ */
+function assertInputElement(element) {
+    // @ts-ignore
+    return element
+}
+
+/**
+ * @param {HTMLElement} element
+ * @returns {HTMLLinkElement}
+ */
+function assertLinkElement(element) {
+    // @ts-ignore
+    return element
+}
 
 function sendMessage (messageType, options, callback) {
     chrome.runtime.sendMessage({ messageType, options }, callback)
@@ -47,12 +74,28 @@ const actionIcons = {
     ignore: '⚠️'
 }
 
+/**
+ * @returns {HTMLTableRowElement}
+ */
+function requestRowFromTemplate() {
+    // @ts-ignore
+    return document.getElementById('request-row').content.firstElementChild.cloneNode(true)
+}
+
+/**
+ * @returns {HTMLTableRowElement}
+ */
+function cookieRowFromTemplate() {
+    // @ts-ignore
+    return document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+}
+
 const actionHandlers = {
     tracker: (m) => {
         const { tracker, url, requestData, siteUrl } = m.message
-        const row = document.getElementById('request-row').content.firstElementChild.cloneNode(true)
+        const row = requestRowFromTemplate()
         const cells = row.querySelectorAll('td')
-        const toggleLink = row.querySelector('.block-toggle')
+        const toggleLink = assertLinkElement(row.querySelector('.block-toggle'))
         toggleLink.href = ''
         if (tracker.action === 'block') {
             toggleLink.innerText = 'I'
@@ -95,7 +138,7 @@ const actionHandlers = {
             row.classList.add(kind)
             cells[3].textContent = `${cells[3].textContent}, ${kind}`
         } else {
-            const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+            const row = cookieRowFromTemplate()
             row.id = rowId
             const cells = row.querySelectorAll('td')
             const cleanUrl = new URL(url)
@@ -111,7 +154,7 @@ const actionHandlers = {
     },
     jscookie: (m) => {
         const { documentUrl, action, reason, value, stack, scriptOrigins } = m.message
-        const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+        const row = cookieRowFromTemplate()
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
         cells[2].textContent = `JS🍪 ${action} (${reason})`
@@ -123,12 +166,12 @@ const actionHandlers = {
     },
     fingerprintingCanvas: (m) => {
         const { documentUrl, action, kind, stack, args } = m.message
-        const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+        const row = cookieRowFromTemplate()
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
         cells[2].textContent = `Canvas ${action}`
         const argsOut = JSON.parse(args).join(', ')
-        cells[3].setAttribute('colspan', 2)
+        cells[3].setAttribute('colspan', '2')
         cells[4].remove()
 
         cells[3].textContent = `${kind}(${argsOut})`
@@ -155,10 +198,13 @@ function appendCallStack (cell, stack) {
     }
 }
 
+/** @type {HTMLInputElement} */
+const searchBox = assertInputElement(document.getElementById('search-box'))
+
 function shouldShowRow (row) {
     const className = row.classList[0]
-    const filter = document.getElementById(`display-${className}`)
-    const searchBoxValue = document.getElementById('search-box').value
+    const filter = assertInputElement(document.getElementById(`display-${className}`))
+    const searchBoxValue = searchBox.value
     // empty search box is considered to be no filter
     // search box matches on the URL of the request
     const searchFilter = searchBoxValue === '' || row.cells[1].textContent.match(searchBoxValue)
@@ -193,10 +239,10 @@ function updateTabSelector () {
         tabs.forEach((tab) => {
             if (tab.url.startsWith('http')) {
                 const elem = document.createElement('option')
-                elem.value = tab.id
+                elem.value = `${tab.id}`
                 elem.innerText = tab.title
                 if (tab.id === tabId) {
-                    elem.setAttribute('selected', true)
+                    elem.setAttribute('selected', 'true')
                 }
                 tabPicker.appendChild(elem)
             }
@@ -247,7 +293,7 @@ sendMessage('getSetting', { name: 'tds-channel' }, (result) => {
     console.log('setting', result)
     const active = tdsOption.querySelector(`[value=${result}`)
     if (active) {
-        active.setAttribute('selected', true)
+        active.setAttribute('selected', 'true')
     }
 })
 
