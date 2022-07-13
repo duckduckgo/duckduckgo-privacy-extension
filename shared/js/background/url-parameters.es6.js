@@ -9,6 +9,9 @@ const tdsStorage = require('./storage/tds.es6')
 // contain one of the following characters: * + ? { } [ ]
 const regexpParameterTest = /[*+?{}[\]]/
 
+// Note: These lists of parameters would need to be stored in session storage if
+//       this code was used by MV3 builds of the extension.
+//       See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#state
 let plainTextTrackingParameters = null
 let regexpTrackingParameters = null
 
