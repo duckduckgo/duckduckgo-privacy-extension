@@ -348,3 +348,12 @@ displayFilters.forEach((input) => {
         document.querySelectorAll('tbody > tr').forEach(setRowVisible)
     })
 })
+
+/**
+ * Observes the dev settings for resizing to ensure the table head sticks correctly to the bottom of the settings.
+ */
+const settingsResizeObserver = new ResizeObserver(function (entries) {
+    const height = entries[0].contentRect.height;
+    document.querySelector('thead').style['top'] = `${height}px`
+})
+settingsResizeObserver.observe(document.getElementById('settings-panel'))
