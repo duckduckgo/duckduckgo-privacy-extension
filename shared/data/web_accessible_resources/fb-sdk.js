@@ -140,7 +140,7 @@
                 return { status: '' }
             },
             // eslint-disable-next-line node/no-callback-literal
-            getLoginStatus: function (callback) { callback({ status: '' }) },
+            getLoginStatus: function (callback) { callback({ status: 'unknown' }) },
             getUserID: function () {},
             login: function (cb, params) {
                 fbLogin.callback = cb
