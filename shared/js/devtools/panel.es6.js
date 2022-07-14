@@ -16,12 +16,12 @@ function getSelectElementById(id) {
 }
 
 /**
- * @param {HTMLElement} element
+ * @param {string} id
  * @returns {HTMLInputElement}
  */
-function assertInputElement(element) {
+function getInputElementById(id) {
     // @ts-ignore
-    return element
+    return document.getElementById(id)
 }
 
 /**
@@ -252,12 +252,11 @@ function appendCallStack (cell, stack) {
     }
 }
 
-/** @type {HTMLInputElement} */
-const searchBox = assertInputElement(document.getElementById('search-box'))
+const searchBox = getInputElementById('search-box')
 
 function shouldShowRow (row) {
     const className = row.classList[0]
-    const filter = assertInputElement(document.getElementById(`display-${className}`))
+    const filter = getInputElementById(`display-${className}`)
     const searchBoxValue = searchBox.value
     // empty search box is considered to be no filter
     // search box matches on the URL of the request
