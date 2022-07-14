@@ -1,3 +1,4 @@
+const puppeteer = require('puppeteer')
 const { getDomain } = require('tldts')
 
 const harness = require('../helpers/harness')
@@ -159,7 +160,15 @@ describe('Facebook SDK schema', () => {
 
     it('CTL: Facebook SDK schema hasn\'t changed', async () => {
         const page = await browser.newPage()
-        await pageWait.forGoto(page, testSite)
+        try {
+            await page.goto(testSite)
+        } catch (e) {
+            // So much content is loaded by the page that timeout is common.
+            // Ignore that here, since the SDK should have loaded anyway.
+            if (!(e instanceof puppeteer.errors.TimeoutError)) {
+                throw e
+            }
+        }
 
         // Note: If these tests fail, update the
         //       /integration-test/data/api_schemas/facebook-sdk.json file
