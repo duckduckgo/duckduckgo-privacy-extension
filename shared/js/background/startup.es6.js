@@ -10,6 +10,7 @@ const tabManager = require('./tab-manager.es6')
 const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
 const { fetchAlias, showContextMenuAction } = require('./email-utils.es6')
+const { registerDevPanelContextMenuItem } = require('../devtools/util.es6.js')
 
 /** @module */
 
@@ -39,6 +40,9 @@ async function onStartup () {
         if (!userData.nextAlias) await fetchAlias()
         showContextMenuAction()
     }
+
+    // add the devtools panel context menu item
+    registerDevPanelContextMenuItem()
 
     const savedTabs = await browser.tabs.query({ currentWindow: true, status: 'complete' })
     for (let i = 0; i < savedTabs.length; i++) {

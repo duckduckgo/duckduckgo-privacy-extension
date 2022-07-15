@@ -12,6 +12,7 @@ const openOptionsPage = require('./mixins/open-options-page.es6.js')
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 const { registerUnloadListener } = require('./mixins/unload-listener.es6')
 const { getCurrentTab } = require('../../background/message-handlers.js')
+const { openDevtoolsCurrentTab } = require('../../devtools/util.es6.js')
 import browser from 'webextension-polyfill'
 
 function Site (ops) {
@@ -149,11 +150,7 @@ Site.prototype = window.$.extend({},
             if (this.model && this.model.disabled) {
                 return
             }
-            getCurrentTab().then((tabToMonitor) => {
-                browser.tabs.create({
-                    url: chrome.runtime.getURL(`/html/devtools-panel.html?tabId=${tabToMonitor.id}`)
-                })
-            })
+            openDevtoolsCurrentTab()
         },
 
         _onReportBrokenSiteClick: function (e) {
