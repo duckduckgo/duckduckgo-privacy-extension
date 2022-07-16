@@ -26,7 +26,7 @@ const gradeIconLocations = {
     F: '/img/toolbar-rating-f_48.png'
 }
 
-const Site = require('./site.es6')
+const { Site } = require('./site.es6')
 const Tracker = require('./tracker.es6')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
@@ -48,6 +48,8 @@ class Tab {
         this.cleanAmpUrl = null
         this.requestId = tabData.requestId
         this.status = tabData.status
+        // this is used in referrer-trimming.js
+        this.referrer = undefined
 
         // Consider the site URL to be the request initiator for requests fired
         // inside opaque 'tabs' (e.g. via ServiceWorkers). Otherwise, consider

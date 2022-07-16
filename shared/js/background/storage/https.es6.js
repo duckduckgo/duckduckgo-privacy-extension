@@ -1,5 +1,5 @@
 const load = require('./../load.es6')
-const Dexie = require('dexie')
+const { Dexie } = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
 
@@ -112,7 +112,7 @@ class HTTPSStorage {
 
     storeInLocalDB (name, type, data) {
         console.log(`HTTPS: storing ${name} in db`)
-        return this.dbc.httpsStorage.put({ name: name, type: type, data: data })
+        return this.dbc.table('httpsStorage').put({ name: name, type: type, data: data })
     }
 
     hasCorrectChecksum (data) {

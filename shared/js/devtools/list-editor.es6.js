@@ -1,6 +1,12 @@
+import browser from 'webextension-polyfill'
+
 const constants = require('../../data/constants')
 
+/** @type {HTMLSelectElement} */
+// @ts-ignore
 const listPicker = document.getElementById('list-picker')
+/** @type {HTMLTextAreaElement} */
+// @ts-ignore
 const listEditor = document.getElementById('list-content')
 const saveButton = document.getElementById('save')
 
@@ -28,13 +34,13 @@ listPicker.addEventListener('change', listSwitcher)
 listSwitcher()
 
 function sendMessage (messageType, options, callback) {
-    chrome.runtime.sendMessage({ messageType, options }, callback)
+    browser.runtime.sendMessage({ messageType, options }, callback)
 }
 
 function loadList (name) {
     sendMessage('getListContents', name, ({ etag, data }) => {
         const value = getListFormat(name) === 'json' ? JSON.stringify(data, null, '  ') : data
-        document.querySelector('#list-content').value = value
+        listEditor.value = value
     })
 }
 
@@ -66,7 +72,7 @@ listEditor.addEventListener('keypress', () => {
                 saveButton.removeAttribute('disabled')
             } catch (e) {
                 console.log('parse error')
-                saveButton.setAttribute('disabled', true)
+                saveButton.setAttribute('disabled', 'true')
             }
         } else {
             saveButton.removeAttribute('disabled')

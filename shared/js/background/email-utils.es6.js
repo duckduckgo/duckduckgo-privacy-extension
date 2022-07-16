@@ -1,10 +1,10 @@
 import browser from 'webextension-polyfill'
 const { getSetting, updateSetting } = require('./settings.es6')
 const browserWrapper = require('./wrapper.es6')
-const REFETCH_ALIAS_ALARM = 'refetchAlias'
+export const REFETCH_ALIAS_ALARM = 'refetchAlias'
 const REFETCH_ALIAS_ATTEMPT = 'refetchAliasAttempt'
 
-const fetchAlias = () => {
+export const fetchAlias = () => {
     // if another fetch was previously scheduled, clear that and execute now
     browser.alarms.clear(REFETCH_ALIAS_ALARM)
 
@@ -71,11 +71,11 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     }
 })
 
-const showContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: true })
+export const showContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: true })
 
-const hideContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: false })
+export const hideContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: false })
 
-const getAddresses = () => {
+export const getAddresses = () => {
     const userData = getSetting('userData')
     return {
         personalAddress: userData?.userName,
@@ -88,29 +88,18 @@ const getAddresses = () => {
  * @param {string} address
  * @returns {string}
  */
-const formatAddress = (address) => address + '@duck.com'
+export const formatAddress = (address) => address + '@duck.com'
 
 /**
  * Checks formal username validity
  * @param {string} userName
  * @returns {boolean}
  */
-const isValidUsername = (userName) => /^[a-z0-9_]+$/.test(userName)
+export const isValidUsername = (userName) => /^[a-z0-9_]+$/.test(userName)
 
 /**
  * Checks formal token validity
  * @param {string} token
  * @returns {boolean}
  */
-const isValidToken = (token) => /^[a-z0-9]+$/.test(token)
-
-module.exports = {
-    REFETCH_ALIAS_ALARM,
-    fetchAlias,
-    showContextMenuAction,
-    hideContextMenuAction,
-    getAddresses,
-    formatAddress,
-    isValidUsername,
-    isValidToken
-}
+export const isValidToken = (token) => /^[a-z0-9]+$/.test(token)

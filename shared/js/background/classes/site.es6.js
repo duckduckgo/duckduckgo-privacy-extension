@@ -17,7 +17,7 @@ const browserWrapper = require('../wrapper.es6')
  * @typedef {'allowlisted' | 'allowlistOptIn' | 'denylisted'} allowlistName
  */
 
-class Site {
+export class Site {
     constructor (url) {
         this.url = url || ''
 
@@ -32,8 +32,12 @@ class Site {
         this.protocol = this.url.substr(0, this.url.indexOf(':'))
         this.trackerUrls = []
         this.grade = new Grade()
+
+        /** @type {settings.allowlistedValue} */
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
+        /** @type {settings.allowlistedValue} */
         this.allowlistOptIn = false
+        /** @type {settings.allowlistedValue} */
         this.denylisted = false
         this.setListStatusFromGlobal()
 
@@ -83,7 +87,7 @@ class Site {
 
     /**
      * @param {allowlistName} listName
-     * @param {boolean} value
+     * @param {settings.allowlistedValue} value
      */
     setListValue (listName, value) {
         this[listName] = value
@@ -200,5 +204,3 @@ class Site {
         return null
     }
 }
-
-module.exports = Site

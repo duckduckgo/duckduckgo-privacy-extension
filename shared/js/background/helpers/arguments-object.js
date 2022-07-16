@@ -12,7 +12,8 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         return null
     }
     // Clone site so we don't retain any site changes
-    const site = Object.assign({}, tab.site || {})
+    /** @type {import('../classes/site.es6.js').Site} */
+    const site = Object.assign({}, tab.site)
     const referrer = tab?.referrer || ''
     let cookie = {}
 

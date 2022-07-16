@@ -4,12 +4,13 @@
  */
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
-const atb = require('./atb.es6')
+const { ATB: atb } = require('./atb.es6')
 const https = require('./https.es6')
 const tds = require('./storage/tds.es6')
 const startup = require('./startup.es6')
 const browserWrapper = require('./wrapper.es6')
 
+// @ts-ignore
 self.dbg = {
     settings,
     startup,

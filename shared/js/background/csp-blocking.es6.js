@@ -1,9 +1,10 @@
 import browser from 'webextension-polyfill'
 
-function init () {
+export function init () {
     browser.webRequest.onBeforeRequest.addListener((details) => {
         try {
             // parse requestBody as an ASCII string
+            // @ts-ignore
             const report = String.fromCharCode.apply(null, new Uint8Array(details.requestBody.raw[0].bytes))
             if (report.indexOf('moz-extension://') !== -1) {
                 return { cancel: true }
@@ -15,8 +16,4 @@ function init () {
         urls: ['<all_urls>'],
         types: ['csp_report']
     }, ['blocking', 'requestBody'])
-}
-
-module.exports = {
-    init
 }

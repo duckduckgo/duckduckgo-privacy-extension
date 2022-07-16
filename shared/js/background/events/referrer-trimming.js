@@ -9,12 +9,11 @@ const browserName = utils.getBrowserName()
  * @returns {{requestHeaders: Array<{name: string, value:string}>} | { redirectUrl: URL } | undefined}
  */
 module.exports = function limitReferrerData (e) {
-    let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
-    if (referrer) {
-        referrer = referrer.value
-    } else {
+    const referrerRaw = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
+    if (!referrerRaw) {
         return
     }
+    const referrer = referrerRaw.value
 
     const tab = tabManager.get({ tabId: e.tabId })
 

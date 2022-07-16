@@ -5,10 +5,10 @@ const { getCurrentTab } = require('../background/message-handlers.js')
 /**
  * Open a devtools panel page for monitoring the current tab.
  */
-function openDevtoolsCurrentTab() {
+export function openDevtoolsCurrentTab() {
     getCurrentTab().then((tabToMonitor) => {
         browser.tabs.create({
-            url: chrome.runtime.getURL(`/html/devtools-panel.html?tabId=${tabToMonitor.id}`)
+            url: browser.runtime.getURL(`/html/devtools-panel.html?tabId=${tabToMonitor.id}`)
         })
     })
 }
@@ -16,7 +16,7 @@ function openDevtoolsCurrentTab() {
 /**
  * Adds the context menu item for the devtools panel.
  */
-function registerDevPanelContextMenuItem() {
+export function registerDevPanelContextMenuItem() {
     const DEVPANEL_MENU_ITEM_ID = 'ddg-devpanel-context-menu-item'
     browser.contextMenus.create({
         id: DEVPANEL_MENU_ITEM_ID,
@@ -36,9 +36,4 @@ function registerDevPanelContextMenuItem() {
     browser.contextMenus.onClicked.addListener((info, tab) => {
         openDevtoolsCurrentTab()
     })
-}
-
-module.exports = {
-    openDevtoolsCurrentTab,
-    registerDevPanelContextMenuItem
 }

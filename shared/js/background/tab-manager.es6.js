@@ -62,7 +62,7 @@ class TabManager {
      * @param {object} data
      * @param {allowlistName} data.list - name of the allowlist to update
      * @param {string} data.domain - domain to allowlist
-     * @param {boolean} data.value - allowlist value, true or false
+     * @param {settings.allowlistedValue} data.value - allowlist value, true or false
      */
     setList (data) {
         this.setGlobalAllowlist(data.list, data.domain, data.value)
@@ -82,13 +82,13 @@ class TabManager {
      *
      * @param {allowlistName} list
      * @param {string} domain
-     * @param {boolean} value
+     * @param {settings.allowlistedValue} value
      */
     setGlobalAllowlist (list, domain, value) {
         const globalallowlist = settings.getSetting(list) || {}
 
         if (value) {
-            globalallowlist[domain] = true
+            globalallowlist[domain] = value
         } else {
             delete globalallowlist[domain]
         }
