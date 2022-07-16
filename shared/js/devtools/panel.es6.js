@@ -126,6 +126,17 @@ function cookieRowFromTemplate() {
     return document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
 }
 
+/**
+ * @param {HTMLElement} element
+ * @param {string} textName
+ * @param {boolean} isEnabled
+ */
+function setupProtectionButton(element, textName, isEnabled) {
+    element.innerText = `${textName}: ${isEnabled ? 'ON' : 'OFF'}`
+    element.classList.add(`protection-button-${isEnabled ? 'on' : 'off'}`)
+    element.classList.remove(`protection-button-${isEnabled ? 'off' : 'on'}`)
+}
+
 const actionHandlers = {
     tracker: addRequestRow((m) => {
         const { tracker, url, requestData, siteUrl } = m.message
@@ -159,10 +170,13 @@ const actionHandlers = {
     }),
     tabChange: (m) => {
         const tab = m.message
-        protectionButton.innerText = `Protection: ${tab.site?.allowlisted || tab.site?.isBroken ? 'OFF' : 'ON'}`
+        const protectionDisabled = tab.site?.allowlisted || tab.site?.isBroken
+        setupProtectionButton(protectionButton, 'Protection', !protectionDisabled)
         loadConfigurableFeatures.then((features) => {
             features.forEach((feature) => {
-                document.getElementById(feature).innerText = `${feature}: ${tab.site?.enabledFeatures.includes(feature) ? 'ON' : 'OFF'}`
+                const featureEnabled = tab.site?.enabledFeatures.includes(feature)
+                const featureButton = document.getElementById(feature)
+                setupProtectionButton(featureButton, feature, featureEnabled)
             })
         })
     },
