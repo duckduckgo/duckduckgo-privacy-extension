@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill'
+
 const table = document.querySelector('#request-table')
 const clearButton = document.getElementById('clear')
 const refreshButton = document.getElementById('refresh')
@@ -43,7 +45,7 @@ function assertTableRowElement(element) {
 }
 
 function sendMessage (messageType, options, callback) {
-    chrome.runtime.sendMessage({ messageType, options }, callback)
+    browser.runtime.sendMessage({ messageType, options }, callback)
 }
 
 /**
@@ -73,14 +75,14 @@ function addRequestRow(f) {
     }
 }
 
-let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
+let tabId = browser.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
 
 // Open the messaging port and re-open if disconnected. The connection will
 // disconnect for MV3 builds when the background ServiceWorker becomes inactive.
-let port
-function openPort () {
-    port = chrome.runtime.connect()
-    port.onDisconnect.addListener(openPort)
+globalThis.port
+const openPort = (callback) => {
+    globalThis.port = browser.runtime.connect()
+    globalThis.port.onDisconnect.addListener(openPort)
 }
 openPort()
 
@@ -94,7 +96,7 @@ const loadConfigurableFeatures = new Promise((resolve) => {
             btn.innerText = `${feature}: ???`
             document.querySelector('#protections').appendChild(btn)
             btn.addEventListener('click', () => {
-                port.postMessage({
+                globalThis.port.postMessage({
                     action: `toggle${feature}`,
                     tabId
                 })
@@ -154,7 +156,7 @@ const actionHandlers = {
         }
         toggleLink.addEventListener('click', (ev) => {
             ev.preventDefault()
-            port.postMessage({
+            globalThis.port.postMessage({
                 action: toggleLink.innerText,
                 tabId,
                 tracker,
@@ -268,7 +270,7 @@ function setRowVisible (row) {
     row.hidden = !shouldShowRow(row)
 }
 
-port.onMessage.addListener((message) => {
+globalThis.port.onMessage.addListener((message) => {
     const m = JSON.parse(message)
     if (m.tabId === tabId) {
         if (actionHandlers[m.action]) {
@@ -281,7 +283,7 @@ port.onMessage.addListener((message) => {
 })
 
 function updateTabSelector () {
-    chrome.tabs.query({}, (tabs) => {
+    browser.tabs.query({}, (tabs) => {
         while (tabPicker.firstChild !== null) {
             tabPicker.removeChild(tabPicker.firstChild)
         }
@@ -303,20 +305,20 @@ function updateTabSelector () {
     })
 }
 
-if (!chrome.devtools) {
+if (!browser.devtools) {
     updateTabSelector()
-    chrome.tabs.onUpdated.addListener(updateTabSelector)
+    browser.tabs.onUpdated.addListener(updateTabSelector)
     tabPicker.addEventListener('change', () => {
         tabId = parseInt(tabPicker.selectedOptions[0].value)
         clear()
-        port.postMessage({ action: 'setTab', tabId })
+        globalThis.port.postMessage({ action: 'setTab', tabId })
     })
 } else {
     tabPicker.hidden = true
 }
 
 if (tabId) {
-    port.postMessage({ action: 'setTab', tabId })
+    globalThis.port.postMessage({ action: 'setTab', tabId })
 }
 
 function clear () {
@@ -329,14 +331,14 @@ function clear () {
 clearButton.addEventListener('click', clear)
 refreshButton.addEventListener('click', () => {
     clear()
-    if (chrome.devtools) {
-        chrome.devtools.inspectedWindow.eval('window.location.reload();')
+    if (browser.devtools) {
+        browser.devtools.inspectedWindow.eval('window.location.reload();')
     } else {
-        chrome.tabs.reload(tabId)
+        browser.tabs.reload(tabId)
     }
 })
 protectionButton.addEventListener('click', () => {
-    port.postMessage({
+    globalThis.port.postMessage({
         action: 'toggleProtection',
         tabId
     })

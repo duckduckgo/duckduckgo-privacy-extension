@@ -1,6 +1,5 @@
-// @ts-nocheck
 const tldts = require('tldts')
-const tosdr = require('../../data/tosdr')
+const tosdr = require('../../data/tosdr.json')
 const constants = require('../../data/constants')
 const utils = require('./utils.es6')
 
@@ -49,16 +48,10 @@ class PrivacyPractices {
 
     getTosdr (url) {
         const domain = tldts.getDomain(url)
-        let tosdrData
-
-        tosdrRegexList.some(tosdrSite => {
+        const tosdrData = tosdrRegexList.find((tosdrSite) => {
             const match = tosdrSite.exec(domain)
-
             if (!match) return false
-
-            tosdrData = tosdr[match[0]]
-
-            return tosdrData
+            return tosdr[match[0]]
         })
 
         if (!tosdrData) return {}
