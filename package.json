@@ -38,7 +38,6 @@
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.18.2",
         "@fingerprintjs/fingerprintjs": "^3.3.3",
-        "@types/chrome": "^0.0.193",
         "asana": "github:Asana/node-asana",
         "babelify": "10.0.0",
         "brfs": "^2.0.2",

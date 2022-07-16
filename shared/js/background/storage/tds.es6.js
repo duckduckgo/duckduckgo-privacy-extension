@@ -1,5 +1,5 @@
 const load = require('./../load.es6')
-const Dexie = require('dexie')
+const { Dexie } = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')
 const browserWrapper = require('./../wrapper.es6')
@@ -18,7 +18,6 @@ const configNames = constants.tdsLists.map(({ name }) => name)
 
 class TDSStorage {
     constructor () {
-        // @ts-ignore
         this.dbc = new Dexie('tdsStorage')
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
@@ -125,7 +124,7 @@ class TDSStorage {
         const activeExperiment = settings.getSetting('activeExperiment')
         const channel = settings.getSetting(`${listCopy.name}-channel`) || ''
 
-        let experiment = ''
+        let experiment
         if (activeExperiment) {
             experiment = settings.getSetting('experimentData')
         }
@@ -224,7 +223,7 @@ class TDSStorage {
     }
 
     storeInLocalDB (name, data) {
-        return this.dbc.tdsStorage.put({ name: name, data: data })
+        return this.dbc.table('tdsStorage').put({ name: name, data: data })
     }
 
     parsedata (name, data) {
@@ -251,8 +250,7 @@ class TDSStorage {
 
         // check delta for last update
         if (lastTdsUpdate) {
-            // @ts-ignore
-            const delta = now - new Date(lastTdsUpdate)
+            const delta = now - lastTdsUpdate
 
             if (delta > ONEDAY) {
                 versionParam = `&v=${version}`
@@ -289,9 +287,9 @@ class TDSStorage {
     }
 
     removeLegacyLists () {
-        this.dbc.tdsStorage.delete('ReferrerExcludeList')
-        this.dbc.tdsStorage.delete('brokenSiteList')
-        this.dbc.tdsStorage.delete('protections')
+        this.dbc.table('tdsStorage').delete('ReferrerExcludeList')
+        this.dbc.table('tdsStorage').delete('brokenSiteList')
+        this.dbc.table('tdsStorage').delete('protections')
     }
 
     onUpdate (name, listener) {

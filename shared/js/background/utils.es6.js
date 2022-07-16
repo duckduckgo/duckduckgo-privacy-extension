@@ -35,8 +35,7 @@ export function extractHostFromURL (url, shouldKeepWWW) {
 }
 
 // Removes information from a URL, such as path, user information, and optionally sub domains
-// @ts-ignore
-export function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
+export function extractLimitedDomainFromURL (url, { keepSubdomains } = { keepSubdomains: false }) {
     if (!url) return undefined
     try {
         const parsedURL = new URL(url)
