@@ -99,7 +99,52 @@ function syncSettingTolocalStorage () {
     browserWrapper.syncToStorage({ settings })
 }
 
-function getSetting (name) {
+/**
+ * @typedef {import('./classes/site.es6.js').allowlistName} allowlistName
+ */
+
+/**
+ * @typedef {boolean} allowlistedValue
+ */
+
+/**
+ * @typedef {{[k: string]: allowlistedValue}} allowlistList
+ */
+
+/**
+ * @typedef {object} userData
+ * @property {string} nextAlias
+ * @property {string} userName
+ * @property {string} existingToken
+ * @property {string} [token]
+ */
+
+/**
+ * @type {((name: 'all') => object | null)
+ * & ((name: allowlistName) => allowlistList | null)
+ * & ((name: 'lastTdsUpdate') => number | null)
+ * & ((name: 'experimentData') => object | null)
+ * & ((name: `${string}-etag`) => string | null)
+ * & ((name: 'activeExperiment') => object | null)
+ * & ((name: `${string}-channel`) => string | null)
+ * & ((name: `${string}-lastUpdate`) => number | null)
+ * & ((name: 'atb') => string | null)
+ * & ((name: 'clickToLoadClicks') => {[k: string]: number} | null)
+ * & ((name: 'userData') => userData | null)
+ * & ((name: 'failedUpgrades') => number | null)
+ * & ((name: 'httpsEverywhereEnabled') => boolean | null)
+ * & ((name: 'totalUpgrades') => number | null)
+ * & ((name: 'GPC') => boolean | null)
+ * & ((name: 'rescheduleCounterMessagingOnStart') => boolean | null)
+ * & ((name: 'showCounterMessaging') => boolean | null)
+ * & ((name: 'showWelcomeBanner') => boolean | null)
+ * & ((name: 'hasSeenPostInstall') => boolean | null)
+ * & ((name: 'extiSent') => boolean | null)
+ * & ((name: 'set_atb') => string | null)
+ * & ((name: 'embeddedTweetsEnabled') => boolean | null)
+ * }
+ */
+const getSetting = (name) => {
     if (!isReady) {
         console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
         return

@@ -17,7 +17,7 @@ const { registerDevPanelContextMenuItem } = require('../devtools/util.es6.js')
 let resolveReadyPromise
 const readyPromise = new Promise(resolve => { resolveReadyPromise = resolve })
 
-async function onStartup () {
+export async function onStartup () {
     registerUnloadHandler()
     await settings.ready()
     experiment.setActiveExperiment()
@@ -59,7 +59,7 @@ async function onStartup () {
     }
 }
 
-function ready () {
+export function ready () {
     return readyPromise
 }
 
@@ -82,9 +82,4 @@ function registerUnloadHandler () {
             }, 500)
         }
     }
-}
-
-module.exports = {
-    onStartup,
-    ready
 }

@@ -1,3 +1,5 @@
+import browser from 'webextension-polyfill'
+
 /**
 * This is injected programatically on the DuckDuckGo SERP (mostly during the first search
 * post extension install) to assist with user onboarding
@@ -9,7 +11,7 @@
 *    - Assess if the extension has been deactivated by Chrome
 *    - Reschedule the onboarding for the next restart
 */
-function onDocumentEnd ({
+export function onDocumentEnd ({
     isAddressBarQuery,
     showWelcomeBanner,
     showCounterMessaging,
@@ -48,15 +50,17 @@ function onDocumentEnd ({
                         switch (e.data.type) {
                         case 'healthCheckRequest': {
                             try {
-                                chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
+                                browser.runtime.sendMessage(extensionId, e.data.type, (response) => {
                                     e.source.postMessage(
-                                        { type: 'healthCheckResponse', isAlive: !chrome.runtime.lastError },
+                                        { type: 'healthCheckResponse', isAlive: !browser.runtime.lastError },
+                                        /** @ts-ignore */
                                         e.origin
                                     )
                                 })
                             } catch (err) {
                                 e.source.postMessage(
                                     { type: 'healthCheckResponse', isAlive: false },
+                                    /** @ts-ignore */
                                     e.origin
                                 )
                             }
@@ -64,9 +68,9 @@ function onDocumentEnd ({
                         }
 
                         case 'rescheduleCounterMessagingRequest': {
-                            chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
-                                if (chrome.runtime.lastError) {
-                                    console.error(chrome.runtime.lastError)
+                            browser.runtime.sendMessage(extensionId, e.data.type, (response) => {
+                                if (browser.runtime.lastError) {
+                                    console.error(browser.runtime.lastError)
                                 }
                             })
                             break
@@ -99,18 +103,15 @@ function onDocumentEnd ({
     }
 }
 
-function onDocumentStart ({ duckDuckGoSerpHostname }) {
+export function onDocumentStart ({ duckDuckGoSerpHostname }) {
     const hadFocusOnStart = document.hasFocus()
 
     window.addEventListener('message', function handleMessage (e) {
         if (e.origin === `https://${duckDuckGoSerpHostname}` && e.data.type === 'documentStartDataRequest') {
             window.removeEventListener('message', handleMessage)
-            e.source.postMessage({ type: 'documentStartDataResponse', payload: { hadFocusOnStart } }, e.origin)
+            e.source.postMessage({ type: 'documentStartDataResponse', payload: { hadFocusOnStart } },
+                /** @ts-ignore */
+                e.origin)
         }
     })
-}
-
-module.exports = {
-    onDocumentEnd,
-    onDocumentStart
 }

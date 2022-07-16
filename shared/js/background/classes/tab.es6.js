@@ -26,6 +26,7 @@ const gradeIconLocations = {
 }
 
 const Site = require('./site.es6')
+const { Site } = require('./site.es6')
 const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')

@@ -1,4 +1,4 @@
-const Site = require('./classes/site.es6')
+const { Site } = require('./classes/site.es6')
 const tdsStorage = require('./storage/tds.es6')
 const utils = require('./utils.es6')
 
