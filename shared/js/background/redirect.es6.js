@@ -7,7 +7,7 @@ const trackerutils = require('./tracker-utils')
 const https = require('./https.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
-const { ATB } = require('./atb.es6')
+const ATB = require('./atb.es6')
 const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const devtools = require('./devtools.es6')
@@ -152,7 +152,6 @@ export function handleRequest (requestData) {
         }
 
         // add atb params only to main_frame
-        // @ts-ignore addParametersMainFrameRequestUrl is exported but TS doesn't know about it
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL)
 
         if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded) {
