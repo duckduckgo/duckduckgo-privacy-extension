@@ -18,6 +18,12 @@ export async function sendTabMessage (id, message, details) {
 export function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
 
+    // Tweak the URL for Firefox about:* pages to ensure that they are parsed
+    // correctly. For example, 'about:example' becomes 'about://example'.
+    if (url.startsWith('about:') && url[6] !== '/') {
+        url = 'about://' + url.substr(6)
+    }
+
     const urlObj = tldts.parse(url)
     let hostname = urlObj.hostname || ''
 
