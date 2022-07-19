@@ -1,9 +1,12 @@
 import browser from 'webextension-polyfill'
 
-const table = document.querySelector('#request-table')
-const clearButton = document.getElementById('clear')
-const refreshButton = document.getElementById('refresh')
-const protectionButton = document.getElementById('protection')
+const { getElementByIdOrFail, querySelectorOrFail } = require('./util.es6')
+
+const table = querySelectorOrFail('#request-table')
+const tableBody = querySelectorOrFail('tbody')
+const clearButton = getElementByIdOrFail('clear')
+const refreshButton = getElementByIdOrFail('refresh')
+const protectionButton = getElementByIdOrFail('protection')
 const tabPicker = getSelectElementById('tab-picker')
 const tdsOption = getSelectElementById('tds')
 const displayFilters = document.querySelectorAll('#table-filter input')
@@ -49,7 +52,7 @@ function sendMessage (messageType, options, callback) {
 }
 
 /**
- * @param {(m: any) => HTMLTableRowElement} f
+ * @param {(m: any) => HTMLTableRowElement?} f
  * @returns {(m: any) => void}
  */
 function addRequestRow(f) {
@@ -60,10 +63,10 @@ function addRequestRow(f) {
             const prevRow = document.querySelector('tbody > tr:last-child')
             if (prevRow) {
                 const prevRowCopy = assertTableRowElement(prevRow.cloneNode(true))
-                prevRowCopy.querySelector('.action-count').textContent = ''
+                querySelectorOrFail(prevRowCopy, '.action-count').textContent = ''
                 if (prevRowCopy.innerHTML == row.innerHTML) {
-                    const countElt = prevRow.querySelector('.action-count')
-                    const prevCount = parseInt(countElt.textContent.replaceAll(/[ \[\]]/g, '') || '1')
+                    const countElt = querySelectorOrFail(prevRow, '.action-count')
+                    const prevCount = parseInt(countElt.textContent?.replaceAll(/[ \[\]]/g, '') || '1')
                     countElt.textContent = ` [${prevCount + 1}]`
                 } else {
                     table.appendChild(row)
@@ -75,7 +78,7 @@ function addRequestRow(f) {
     }
 }
 
-let tabId = browser.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
+let tabId = browser.devtools?.inspectedWindow?.tabId || parseInt(new URL(document.location.href).searchParams.get('tabId') || '0')
 
 // Open the messaging port and re-open if disconnected. The connection will
 // disconnect for MV3 builds when the background ServiceWorker becomes inactive.
@@ -94,7 +97,7 @@ const loadConfigurableFeatures = new Promise((resolve) => {
             const btn = document.createElement('button')
             btn.id = feature
             btn.innerText = `${feature}: ???`
-            document.querySelector('#protections').appendChild(btn)
+            querySelectorOrFail('#protections').appendChild(btn)
             btn.addEventListener('click', () => {
                 globalThis.port.postMessage({
                     action: `toggle${feature}`,
@@ -144,7 +147,7 @@ const actionHandlers = {
         const { tracker, url, requestData, siteUrl } = m.message
         const row = requestRowFromTemplate()
         const cells = row.querySelectorAll('td')
-        const toggleLink = assertLinkElement(row.querySelector('.block-toggle'))
+        const toggleLink = assertLinkElement(querySelectorOrFail(row, '.block-toggle'))
         toggleLink.href = ''
         if (tracker.action === 'block') {
             toggleLink.innerText = 'I'
@@ -164,7 +167,7 @@ const actionHandlers = {
             row.classList.add(toggleLink.innerText === 'I' ? 'ignore' : 'block')
         });
         cells[1].textContent = url
-        cells[2].querySelector('.request-action').textContent = `${actionIcons[tracker.action]} ${tracker.action} (${tracker.reason})`
+        querySelectorOrFail(cells[2], '.request-action').textContent = `${actionIcons[tracker.action]} ${tracker.action} (${tracker.reason})`
         cells[3].textContent = tracker.fullTrackerDomain
         cells[4].textContent = requestData.type
         row.classList.add(tracker.action)
@@ -177,7 +180,7 @@ const actionHandlers = {
         loadConfigurableFeatures.then((features) => {
             features.forEach((feature) => {
                 const featureEnabled = tab.site?.enabledFeatures.includes(feature)
-                const featureButton = document.getElementById(feature)
+                const featureButton = getElementByIdOrFail(feature)
                 setupProtectionButton(featureButton, feature, featureEnabled)
             })
         })
@@ -185,11 +188,13 @@ const actionHandlers = {
     cookie: addRequestRow((m) => {
         const { action, kind, url, requestId, type } = m.message
         const rowId = `request-${requestId}`
-        if (document.getElementById(rowId) !== null) {
-            const row = document.getElementById(rowId)
+        const existingRow = document.getElementById(rowId)
+        if (existingRow !== null) {
+            const row = existingRow
             const cells = row.querySelectorAll('td')
             row.classList.add(kind)
             cells[3].textContent = `${cells[3].textContent}, ${kind}`
+            return null
         } else {
             const row = cookieRowFromTemplate()
             row.id = rowId
@@ -198,7 +203,7 @@ const actionHandlers = {
             cleanUrl.search = ''
             cleanUrl.hash = ''
             cells[1].textContent = cleanUrl.href
-            cells[2].querySelector('.request-action').textContent = `🍪 ${action}`
+            querySelectorOrFail(cells[2], '.request-action').textContent = `🍪 ${action}`
             cells[3].textContent = kind
             cells[4].textContent = type
             row.classList.add(kind)
@@ -210,7 +215,7 @@ const actionHandlers = {
         const row = cookieRowFromTemplate()
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
-        cells[2].querySelector('.request-action').textContent = `JS🍪 ${action} (${reason})`
+        querySelectorOrFail(cells[2], '.request-action').textContent = `JS🍪 ${action} (${reason})`
         cells[3].textContent = scriptOrigins.join(',')
         appendCallStack(cells[3], stack)
         cells[4].textContent = value.split(';')[0]
@@ -222,7 +227,7 @@ const actionHandlers = {
         const row = cookieRowFromTemplate()
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
-        cells[2].querySelector('.request-action').textContent = `Canvas ${action}`
+        querySelectorOrFail(cells[2], '.request-action').textContent = `Canvas ${action}`
         const argsOut = JSON.parse(args).join(', ')
         cells[3].setAttribute('colspan', '2')
         cells[4].remove()
@@ -273,8 +278,8 @@ globalThis.port.onMessage.addListener((message) => {
         if (actionHandlers[m.action]) {
             actionHandlers[m.action](m)
         }
-        if (document.querySelector('tbody').lastChild) {
-            setRowVisible(document.querySelector('tbody').lastChild)
+        if (tableBody.lastChild) {
+            setRowVisible(tableBody.lastChild)
         }
     }
 })
@@ -369,6 +374,6 @@ displayFilters.forEach((input) => {
  */
 const settingsResizeObserver = new ResizeObserver(function (entries) {
     const height = entries[0].contentRect.height;
-    document.querySelector('thead').style['top'] = `${height}px`
+    querySelectorOrFail('thead').style['top'] = `${height}px`
 })
-settingsResizeObserver.observe(document.getElementById('settings-panel'))
+settingsResizeObserver.observe(getElementByIdOrFail('settings-panel'))
