@@ -146,7 +146,8 @@ module.exports = function (grunt) {
                     debug: buildType === 'dev'
                 },
                 transform: [
-                    ['babelify']
+                    ['babelify'],
+                    ['require-globify']
                 ]
             },
             ui: {
@@ -175,7 +176,8 @@ module.exports = function (grunt) {
                                 ]
                             }]]
                         }],
-                        ['brfs']
+                        ['brfs'],
+                        ['require-globify']
                     ]
                 },
                 files: baseFileMap.unitTest
