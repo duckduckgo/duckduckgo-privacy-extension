@@ -137,7 +137,6 @@ module.exports = {
     platform: {
         name: 'extension'
     },
-    supportedLocales: ['cimode', 'en'], // cimode is for testing
     trackerStats: /** @type {const} */({
         allowedOrigin: 'https://duckduckgo.com',
         allowedPathname: 'ntp-tracker-stats.html',
