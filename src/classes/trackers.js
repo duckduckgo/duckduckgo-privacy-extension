@@ -1,7 +1,7 @@
 /**
  * @typedef TrackerData
- * @property {ActionName} [action]
- * @property {string} [reason]
+ * @property {ActionName} action
+ * @property {string} reason
  * @property {boolean} firstParty
  * @property {string | false} redirectUrl
  * @property {TrackerRule | null} matchedRule
@@ -226,9 +226,55 @@ class Trackers {
             // This really shouldn't happen but if it does, we'll just assume it's a special URL
             return true
         }
-        const specialProtocols = ['chrome-extension:', 'chrome-devtools:', 'chrome-search:', 'about:', 'file:', 'javascript:', 'data:']
+        const specialProtocols = [
+            // Browser specific internal protocols
+            'chrome-extension:',
+            'chrome-devtools:',
+            'chrome-search:',
+            'chrome:',
+            'edge:',
+            'opera:',
+            'about:',
+            'moz-extension:',
+
+            // Special web protocols
+            'file:',
+            'javascript:',
+            'data:',
+            'blob:',
+            'view-source:',
+
+            // Safelisted protocol handler schemes (https://html.spec.whatwg.org/#safelisted-scheme)
+            'bitcoin:',
+            'ftp:',
+            'ftps:',
+            'geo:',
+            'im:',
+            'irc:',
+            'ircs:',
+            'magnet:',
+            'mailto:',
+            'matrix:',
+            'mms:',
+            'news:',
+            'nntp:',
+            'openpgp4fpr:',
+            'sftp:',
+            'sip:',
+            'sms:',
+            'smsto:',
+            'ssh:',
+            'tel:',
+            'urn:',
+            'webcal:',
+            'wtai:',
+            'xmpp:'
+        ]
         if (urlObj) {
-            if (specialProtocols.includes(urlObj.protocol)) {
+            if (specialProtocols.includes(urlObj.protocol) ||
+                // https://html.spec.whatwg.org/#web+-scheme-prefix
+                urlObj.protocol.startsWith('web+') ||
+                urlObj.hostname === 'localhost') {
                 return true
             }
         }
@@ -246,7 +292,7 @@ class Trackers {
             throw new Error('tried to detect trackers before rules were loaded')
         }
 
-        if (this.isSpecialURL(urlToCheck)) {
+        if (this.isSpecialURL(urlToCheck) || this.isSpecialURL(siteUrl)) {
             return null
         }
 
@@ -255,10 +301,6 @@ class Trackers {
         if (!requestData) {
             return null
         }
-        const requestOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
-        const websiteOwner = this.findWebsiteOwner(requestData)
-
-        const firstParty = (requestOwner && websiteOwner) ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
         const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
 
         // finds a tracker definition by iterating over the whole trackerList and finding the matching tracker.
@@ -275,39 +317,43 @@ class Trackers {
             tracker = this.findTracker(cnameRequestData)
             if (tracker) {
                 requestData = cnameRequestData
-            } else {
-                if (firstParty) {
-                    return null
-                }
-                const owner = {
-                    name: requestOwner || requestData.urlToCheckDomain || 'unknown',
-                    displayName: requestOwner || requestData.urlToCheckDomain || 'Unknown'
-                }
-                /** @type {TrackerObj} */
-                const tracker = {
-                    domain: fullTrackerDomain,
-                    owner: owner,
-                    prevalence: 0,
-                    fingerprinting: 0,
-                    cookies: 0,
-                    categories: [],
-                    default: 'none',
-                    rules: []
-                }
-                return {
-                    action: tracker.default,
-                    reason: '',
-                    firstParty,
-                    redirectUrl: '',
-                    matchedRule: null,
-                    matchedRuleException: false,
-                    tracker,
-                    fullTrackerDomain,
-                    fromCname
-                }
             }
         }
+        const requestOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
+        const websiteOwner = this.findWebsiteOwner(requestData)
+        const firstParty = (requestOwner && websiteOwner) ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
 
+        if (!tracker) {
+            if (firstParty) {
+                return null
+            }
+            const owner = {
+                name: requestOwner || requestData.urlToCheckDomain || 'unknown',
+                displayName: requestOwner || requestData.urlToCheckDomain || 'Unknown'
+            }
+            /** @type {TrackerObj} */
+            const tracker = {
+                domain: fullTrackerDomain,
+                owner: owner,
+                prevalence: 0,
+                fingerprinting: 0,
+                cookies: 0,
+                categories: [],
+                default: 'none',
+                rules: []
+            }
+            return {
+                action: tracker.default,
+                reason: '',
+                firstParty,
+                redirectUrl: '',
+                matchedRule: null,
+                matchedRuleException: false,
+                tracker,
+                fullTrackerDomain,
+                fromCname
+            }
+        }
         // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
         const matchedRule = this.findRule(tracker, requestData)
 
@@ -458,13 +504,14 @@ class Trackers {
      *     defaultAction: ActionName | undefined,
      *     redirectUrl: string | boolean
      * }} tracker
-     * @returns {{ action: ActionName | undefined, reason: string | undefined }}
+     * @returns {{ action: ActionName, reason: string }}
      */
     getAction (tracker) {
         // Determine the blocking decision and reason.
         /** @type {ActionName | undefined} */
-        let action
-        let reason
+        let action = 'ignore'
+        let reason = 'unknown fallback'
+
         if (tracker.firstParty) {
             action = 'ignore'
             reason = 'first party'

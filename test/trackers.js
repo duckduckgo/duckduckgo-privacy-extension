@@ -169,6 +169,21 @@ describe('getTrackerData', () => {
                 urlToCheck: 'https://example.com',
                 siteUrl: 'chrome-extension://test-me',
                 requestType: 'image'
+            },
+            {
+                urlToCheck: 'https://example.com',
+                siteUrl: 'chrome-extension://test-me/test.html',
+                requestType: 'image'
+            },
+            {
+                urlToCheck: 'https://example.com',
+                siteUrl: 'about://test-me/test.html',
+                requestType: 'image'
+            },
+            {
+                urlToCheck: 'https://example.com',
+                siteUrl: 'ftp://blah.com/test.html',
+                requestType: 'image'
             }
         ]
 
