@@ -96,6 +96,7 @@
         "jquery": "3.6.1",
         "normalize.scss": "0.1.0",
         "punycode": "2.1.1",
+        "require-globify": "^1.4.1",
         "seedrandom": "^3.0.5",
         "tldts": "^5.7.97",
         "underscore": "1.13.6",

@@ -140,6 +140,5 @@ module.exports = {
     },
     platform: {
         name: 'extension'
-    },
-    supportedLocales: ['cimode', 'en'] // cimode is for testing
+    }
 }
