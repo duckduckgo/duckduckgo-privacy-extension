@@ -3,6 +3,30 @@ import browser from 'webextension-polyfill'
 const { getCurrentTab } = require('../background/message-handlers.js')
 
 /**
+ * @type {((parent: Element, selector: string) => HTMLElement)
+ * &      ((selector: string)                  => HTMLElement) }
+ */
+export const querySelectorOrFail = (selector) => {
+    const elt = document.querySelector(selector)
+    if (elt === null) {
+        throw new Error(`could not find an element for selector: ${selector}`)
+    }
+    return elt
+}
+
+/**
+ * @param {string} id
+ * @returns {HTMLElement}
+ */
+export function getElementByIdOrFail(id) {
+    const elt = document.getElementById(id)
+    if (elt === null) {
+        throw new Error(`could not find an element with the given ID: ${id}`)
+    }
+    return elt
+}
+
+/**
  * Open a devtools panel page for monitoring the current tab.
  */
 export function openDevtoolsCurrentTab() {

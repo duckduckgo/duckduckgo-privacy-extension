@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill'
 
 const constants = require('../../data/constants')
+const { getElementByIdOrFail } = require('./util.es6')
 
 /** @type {HTMLSelectElement} */
 // @ts-ignore
@@ -8,7 +9,7 @@ const listPicker = document.getElementById('list-picker')
 /** @type {HTMLTextAreaElement} */
 // @ts-ignore
 const listEditor = document.getElementById('list-content')
-const saveButton = document.getElementById('save')
+const saveButton = getElementByIdOrFail('save')
 
 const lists = constants.tdsLists
 let selected = lists[0].name
@@ -60,7 +61,7 @@ saveButton.addEventListener('click', () => {
     saveList(selected)
 })
 
-document.getElementById('reload').addEventListener('click', () => {
+getElementByIdOrFail('reload').addEventListener('click', () => {
     reloadList(selected)
 })
 
