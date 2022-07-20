@@ -88,6 +88,12 @@
         }
     },
     "entities": {
+        "Facebook": {
+            "domains": [
+                "facebook.com",
+                "facebook.net"
+            ]
+        },
         "Google LLC": {
             "domains": [
                 "googleapis.com",
@@ -1336,5 +1342,7 @@
         "enow.com": "Verizon Media",
         "aolsearch.com": "Verizon Media",
         "searchjam.com": "Verizon Media"
+    },
+    "cnames": {
     }
 }

@@ -19,6 +19,11 @@ globalThis.browser = {
     },
     tabs: {
         sendMessage: () => {}
+    },
+    declarativeNetRequest: {
+        isRegexSupported () { return { isSupported: true } },
+        getDynamicRules () { },
+        updateDynamicRules () { }
     }
 }
 globalThis.chrome = globalThis.browser
