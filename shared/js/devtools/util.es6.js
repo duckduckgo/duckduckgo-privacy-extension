@@ -3,13 +3,22 @@ import browser from 'webextension-polyfill'
 const { getCurrentTab } = require('../background/message-handlers.js')
 
 /**
- * @type {((parent: Element, selector: string) => HTMLElement)
- * &      ((selector: string)                  => HTMLElement) }
+ * @type {(<T extends Element>(searchIn: T,      selector: string) => T)
+ * &      (                   (searchIn: string, selector?: null)  => HTMLElement)
+ * }
  */
-export const querySelectorOrFail = (selector) => {
-    const elt = document.querySelector(selector)
+export const querySelectorOrFail = (searchIn, selector) => {
+    let realSearchIn, realSelector
+    if (typeof searchIn === 'string') {
+        realSearchIn = document
+        realSelector = searchIn
+    } else {
+        realSearchIn = searchIn
+        realSelector = selector
+    }
+    const elt = realSearchIn.querySelector(realSelector)
     if (elt === null) {
-        throw new Error(`could not find an element for selector: ${selector}`)
+        throw new Error(`could not find an element for selector: ${realSelector}`)
     }
     return elt
 }
