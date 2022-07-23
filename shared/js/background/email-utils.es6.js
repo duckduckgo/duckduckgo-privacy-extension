@@ -63,7 +63,7 @@ browser.contextMenus.create({
 })
 browser.contextMenus.onClicked.addListener((info, tab) => {
     const userData = getSetting('userData')
-    if (userData.nextAlias) {
+    if (userData?.nextAlias) {
         browser.tabs.sendMessage(tab.id, {
             type: 'contextualAutofill',
             alias: userData.nextAlias
