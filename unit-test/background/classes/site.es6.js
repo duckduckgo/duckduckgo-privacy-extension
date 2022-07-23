@@ -1,4 +1,4 @@
-const Site = require('../../../shared/js/background/classes/site.es6')
+const { Site } = require('../../../shared/js/background/classes/site.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const load = require('./../../helpers/utils.es6')
 const config = require('./../../../shared/data/bundled/extension-config.json')

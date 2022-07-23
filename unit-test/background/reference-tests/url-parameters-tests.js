@@ -1,4 +1,4 @@
-const Site = require('../../../shared/js/background/classes/site.es6')
+const { Site } = require('../../../shared/js/background/classes/site.es6')
 const tds = require('../../../shared/js/background/trackers.es6')
 const tdsStorageStub = require('../../helpers/tds.es6')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
