@@ -48,11 +48,14 @@ class PrivacyPractices {
 
     getTosdr (url) {
         const domain = tldts.getDomain(url)
-        const tosdrData = tosdrRegexList.find((tosdrSite) => {
+        let tosdrData
+        for (const tosdrSite of tosdrRegexList) {
             const match = tosdrSite.exec(domain)
-            if (!match) return false
-            return tosdr[match[0]]
-        })
+            if (match) {
+                tosdrData = tosdr[match[0]]
+                break
+            }
+        }
 
         if (!tosdrData) return {}
 
