@@ -149,6 +149,7 @@ async function fetchAMPURL (site, url) {
 
     const doc = new DOMParser().parseFromString(text, 'text/html')
 
+    /** @type {HTMLLinkElement?} */
     const firstCanonicalLink = doc.querySelector('[rel="canonical"]')
 
     if (firstCanonicalLink && firstCanonicalLink instanceof HTMLLinkElement) {

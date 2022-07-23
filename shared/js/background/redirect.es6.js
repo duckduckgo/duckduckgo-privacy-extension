@@ -1,4 +1,3 @@
-// @ts-ignore
 import browser from 'webextension-polyfill'
 const tldts = require('tldts')
 
@@ -19,6 +18,7 @@ const {
 } = require('./url-parameters.es6')
 const ampProtection = require('./amp-protection.es6')
 
+/** @type {false | string[]} */
 const debugRequest = false
 
 function buildResponse (url, requestData, tab, isMainFrame) {
@@ -271,9 +271,7 @@ function handleRequest (requestData) {
                 if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
 
                 // for debugging specific requests. see test/tests/debugSite.js
-                // @ts-ignore
                 if (debugRequest && debugRequest.length) {
-                    // @ts-ignore
                     if (debugRequest.includes(tracker.url)) {
                         console.log('UNBLOCKED: ', tracker.url)
                         return

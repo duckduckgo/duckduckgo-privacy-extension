@@ -13,6 +13,10 @@ const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper.es6')
 
+/**
+ * @typedef {'allowlisted' | 'allowlistOptIn' | 'denylisted'} allowlistName
+ */
+
 class Site {
     constructor (url) {
         this.url = url || ''
@@ -69,6 +73,7 @@ class Site {
      * and set the new site list statuses
      */
     setListStatusFromGlobal () {
+        /** @type {allowlistName[]} */
         const globalLists = ['allowlisted', 'allowlistOptIn', 'denylisted']
         globalLists.forEach((name) => {
             const list = settings.getSetting(name) || {}
@@ -76,6 +81,10 @@ class Site {
         })
     }
 
+    /**
+     * @param {allowlistName} listName
+     * @param {boolean} value
+     */
     setListValue (listName, value) {
         this[listName] = value
     }
@@ -110,18 +119,13 @@ class Site {
      * @param {*} t
      */
     addTracker (t) {
-        // @ts-ignore
         if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {
-            // @ts-ignore
             this.trackerUrls.push(t.tracker.domain)
-            // @ts-ignore
             const entityPrevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
 
             if (t.action.match(/block|redirect/)) {
-                // @ts-ignore
                 this.grade.addEntityBlocked(t.tracker.owner.name, entityPrevalence)
             } else {
-                // @ts-ignore
                 this.grade.addEntityNotBlocked(t.tracker.owner.name, entityPrevalence)
             }
         }

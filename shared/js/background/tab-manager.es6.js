@@ -3,6 +3,10 @@ const settings = require('./settings.es6')
 const Tab = require('./classes/tab.es6')
 const browserWrapper = require('./wrapper.es6')
 
+/**
+ * @typedef {import('./classes/site.es6.js').allowlistName} allowlistName
+ */
+
 class TabManager {
     constructor () {
         /** @type {Record<number, Tab>} */
@@ -52,10 +56,13 @@ class TabManager {
         return this.tabContainer[tabData.tabId]
     };
 
-    /* This will allowlist any open tabs with the same domain
-     * list: name of the allowlist to update
-     * domain: domain to allowlist
-     * value: allowlist value, true or false
+    /**
+     * This will allowlist any open tabs with the same domain
+     *
+     * @param {object} data
+     * @param {allowlistName} data.list - name of the allowlist to update
+     * @param {string} data.domain - domain to allowlist
+     * @param {boolean} data.value - allowlist value, true or false
      */
     setList (data) {
         this.setGlobalAllowlist(data.list, data.domain, data.value)
@@ -70,7 +77,12 @@ class TabManager {
         browserWrapper.notifyPopup({ allowlistChanged: true })
     }
 
-    /* Update the allowlists kept in settings
+    /**
+     * Update the allowlists kept in settings
+     *
+     * @param {allowlistName} list
+     * @param {string} domain
+     * @param {boolean} value
      */
     setGlobalAllowlist (list, domain, value) {
         const globalallowlist = settings.getSetting(list) || {}

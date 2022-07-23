@@ -28,7 +28,7 @@ const manifestVersion = browserWrapper.getManifestVersion()
 
 /**
  * Produce a random float, same output as Math.random()
- * @returns {float}
+ * @returns {number}
  */
 function getFloat () {
     return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32

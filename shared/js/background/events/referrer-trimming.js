@@ -6,7 +6,7 @@ const browserName = utils.getBrowserName()
 /**
  * @param {{tabId: number, url: string, requestHeaders: Array<{name: string, value:string}>}} e
  *
- * @returns {requestHeaders: Array<{name: string, value:string}>?}
+ * @returns {{requestHeaders: Array<{name: string, value:string}>} | { redirectUrl: URL } | undefined}
  */
 module.exports = function limitReferrerData (e) {
     let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')

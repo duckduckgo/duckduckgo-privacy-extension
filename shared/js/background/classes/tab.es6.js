@@ -61,6 +61,7 @@ class Tab {
 
         this.httpsRedirects = new HttpsRedirects()
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
+        /** @type {{begin: number, end: number?, completeMs: number?}} */
         this.stopwatch = {
             begin: Date.now(),
             end: null,
@@ -88,10 +89,8 @@ class Tab {
         const grade = this.site.grade.get()
 
         if (this.site.isContentBlockingEnabled()) {
-            // @ts-ignore
             gradeIcon = gradeIconLocations[grade.enhanced.grade]
         } else {
-            // @ts-ignore
             gradeIcon = gradeIconLocations[grade.site.grade]
         }
 
@@ -141,11 +140,8 @@ class Tab {
     };
 
     endStopwatch () {
-        // @ts-ignore
         this.stopwatch.end = Date.now()
-        // @ts-ignore
         this.stopwatch.completeMs = (this.stopwatch.end - this.stopwatch.begin)
-        // @ts-ignore
         console.log(`tab.status: complete. site took ${this.stopwatch.completeMs / 1000} seconds to load.`)
     };
 

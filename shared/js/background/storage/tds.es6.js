@@ -8,6 +8,14 @@ const etags = require('../../../data/etags.json')
 
 const configNames = constants.tdsLists.map(({ name }) => name)
 
+/**
+ * @typedef {Object} TDSList
+ * @property {string} name
+ * @property {string} source
+ * @property {string} url
+ * @property {Record<string,string>} [channels]
+ */
+
 class TDSStorage {
     constructor () {
         // @ts-ignore
@@ -102,11 +110,15 @@ class TDSStorage {
         ))
     }
 
+    /**
+     * @param {TDSList} list
+     */
     async getList (list) {
         // If initOnInstall was called, await the updating from the local bundles before fetching
         if (this.isInstalling) {
             await this._installingPromise
         }
+        /** @type {TDSList} */
         const listCopy = JSON.parse(JSON.stringify(list))
         const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
         const version = this.getVersionParam()
@@ -171,7 +183,6 @@ class TDSStorage {
                     throw new Error('TDS: process list xhr failed')
                 }
             })
-        // @ts-ignore
         }).catch(async e => {
             const result = await this.getListFromLocalDB(listCopy.name)
             if (result) {
