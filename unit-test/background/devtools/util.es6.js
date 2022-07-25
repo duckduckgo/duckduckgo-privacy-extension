@@ -101,6 +101,11 @@ describe('blockRequest:', () => {
             expectIgnore(trackerPath2)
         })
 
+        it('should not block longer request path (on right)', () => {
+            blockRequest(trackerPath)
+            expectIgnore(`${trackerPath}.`)
+        })
+
         it('block request should be idempotent', () => {
             compareTrackerLists(() => {
                 blockRequest(trackerPath)
@@ -177,6 +182,10 @@ describe('blockRequest:', () => {
             it('blocks the request', () => {
                 blockRequest(`${tracker2GeneralPath}/script.js`)
                 expectBlock(`${tracker2GeneralPath}/script.js`)
+            })
+            it('does not block request path longer on right', () => {
+                blockRequest(`${tracker2GeneralPath}/script.js`)
+                expectIgnore(`${tracker2GeneralPath}/script.js.`)
             })
             it('gives the correct trackers shape', () => {
                 blockRequest(`${tracker2GeneralPath}/script.js`)
