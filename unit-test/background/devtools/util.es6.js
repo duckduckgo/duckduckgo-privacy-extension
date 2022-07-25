@@ -247,4 +247,38 @@ describe('blockRequest:', () => {
             })
         })
     })
+
+    describe('resource types:', () => {
+        const req = 'tracker.com/simple/request.js'
+        beforeEach(() => {
+            initTds({
+                'tracker.com': {
+                    default: 'block',
+                    rules: [{
+                        rule: req,
+                        exceptions: { types: ['script'] }
+                    }]
+                },
+                'tracker2.com': {
+                    default: 'block',
+                    rules: [{
+                        rule: 'tracker2.com/.*/request.js',
+                        exceptions: { types: ['script'] }
+                    }]
+                }
+            })
+        })
+
+        it('blocks over resource exception', () => {
+            blockRequest(req)
+            expectBlock(req)
+        })
+
+        it('does not block for more general request', () => {
+            const req2 = 'tracker2.com/simple/request.js'
+            blockRequest(req2)
+            expectBlock(req2)
+            expectIgnore('tracker2.com/another/request.js')
+        })
+    })
 })

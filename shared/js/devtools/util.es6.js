@@ -97,7 +97,7 @@ export function blockRequest (tds, request) {
         rules.push({rule: requestRule})
     } else {
         const rule = rules[existingIndex]
-        if (rule.action === 'ignore') {
+        if (rule.action === 'ignore' || rule.exceptions) {
             // we already know that the rule matches the request, so we check if the request is the same,
             // otherwise this means the rule is more general and we shouldn't remove it
             if (rule.rule.toString() === new RegExp(request, 'gi').toString()) {
