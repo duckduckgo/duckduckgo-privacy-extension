@@ -17,6 +17,14 @@ function blockRequest(request) {
     util.blockRequest(tds, request)
 }
 
+function expectBlock (request) {
+    expect(getTrackerData(request).action).toEqual('block')
+}
+
+function expectIgnore (request) {
+    expect(getTrackerData(request).action).toEqual('ignore')
+}
+
 /**
  * Return a basic deep clone of the value. Does not support all types of value.
  *
@@ -70,7 +78,7 @@ describe('blockRequest:', () => {
 
         it('should block request', () => {
             blockRequest(trackerPath)
-            expect(getTrackerData(trackerPath).action).toEqual('block')
+            expectBlock(trackerPath)
         })
 
         it('gives the correct trackers shape', () => {
@@ -90,7 +98,7 @@ describe('blockRequest:', () => {
 
         it('should not block other requests', () => {
             blockRequest(trackerPath)
-            expect(getTrackerData(trackerPath2).action).toEqual('ignore')
+            expectIgnore(trackerPath2)
         })
 
         it('block request should be idempotent', () => {
@@ -108,13 +116,13 @@ describe('blockRequest:', () => {
                 blockRequest(trackerPath2)
             })
             it('retains ignore on unrelated requests', () => {
-                expect(getTrackerData('tracker1.com/other/path.js').action).toEqual('ignore')
+                expectIgnore('tracker1.com/other/path.js')
             })
             it('blocks on first request', () => {
-                expect(getTrackerData(trackerPath).action).toEqual('block')
+                expectBlock(trackerPath)
             })
             it('blocks on second request', () => {
-                expect(getTrackerData(trackerPath2).action).toEqual('block')
+                expectBlock(trackerPath2)
             })
         })
     })
@@ -164,11 +172,11 @@ describe('blockRequest:', () => {
         describe('with ignore more general than rule:', () => {
             it('retains ignore on the path', () => {
                 blockRequest(`${tracker2GeneralPath}/script.js`)
-                expect(getTrackerData(`${tracker2GeneralPath}/otherScript.js`).action).toEqual('ignore')
+                expectIgnore(`${tracker2GeneralPath}/otherScript.js`)
             })
             it('blocks the request', () => {
                 blockRequest(`${tracker2GeneralPath}/script.js`)
-                expect(getTrackerData(`${tracker2GeneralPath}/script.js`).action).toEqual('block')
+                expectBlock(`${tracker2GeneralPath}/script.js`)
             })
             it('gives the correct trackers shape', () => {
                 blockRequest(`${tracker2GeneralPath}/script.js`)
@@ -194,13 +202,13 @@ describe('blockRequest:', () => {
             expect(Object.keys(tds.trackerList)).toEqual(['tracker1.com'])
         })
         it('blocks the request', () => {
-            expect(getTrackerData(req).action).toEqual('block')
+            expectBlock(req)
         })
         it('does not block other subdomain', () => {
-            expect(getTrackerData(`sub2.${reqBase}`).action).toEqual('ignore')
+            expectIgnore(`sub2.${reqBase}`)
         })
         it('does not block domain', () => {
-            expect(getTrackerData(reqBase).action).toEqual('ignore')
+            expectIgnore(reqBase)
         })
     })
 
@@ -226,7 +234,7 @@ describe('blockRequest:', () => {
             })
 
             it('blocks the subdomain request', () => {
-                expect(getTrackerData(tracker2Request).action).toEqual('block')
+                expectBlock(tracker2Request)
             })
         })
     })
