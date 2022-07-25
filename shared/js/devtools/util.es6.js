@@ -85,7 +85,7 @@ export function blockRequest (tds, request) {
     if (!tracker.rules) tracker.rules = []
     const rules = tracker.rules
 
-    const existingIndex = rules.findIndex(r => r.rule === request || (typeof r.rule === 'string' ? r.rule.match(request) : r.rule.test(request)))
+    const existingIndex = rules.findIndex(r => request.match(r.rule))
     if (existingIndex === -1) {
         // presence of the rule without action is counted as "block" (i.e., default action is block for a rule)
         if (tracker.default === 'block') {
