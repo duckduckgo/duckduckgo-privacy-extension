@@ -70,3 +70,39 @@ export function registerDevPanelContextMenuItem() {
         openDevtoolsCurrentTab()
     })
 }
+
+/**
+ * @param {import('@duckduckgo/privacy-grade').Trackers} tds
+ * @param {string} request
+ */
+export function blockRequest (tds, request) {
+    const trackers = tds.trackerList
+    let tracker = tds.findTracker({ urlToCheckSplit: tds.utils.extractHostFromURL(request).split('.') })
+    if (!tracker) {
+        tracker = {}
+        trackers[tds.tldjs.getDomain(request)] = tracker
+    }
+    if (!tracker.rules) tracker.rules = []
+    const rules = tracker.rules
+
+    const existingIndex = rules.findIndex(r => r.rule === request || (typeof r.rule === 'string' ? r.rule.match(request) : r.rule.test(request)))
+    if (existingIndex === -1) {
+        // presence of the rule without action is counted as "block" (i.e., default action is block for a rule)
+        if (tracker.default === 'block') {
+            return
+        }
+        rules.push({rule: request})
+    } else {
+        const rule = rules[existingIndex]
+        if (rule.action === 'ignore') {
+            // we already know that the rule matches the request, so we check if the request is the same,
+            // otherwise this means the rule is more general and we shouldn't remove it
+            if (rule.rule.toString() === new RegExp(request, 'gi').toString()) {
+                rules.splice(existingIndex, 1)
+            } else {
+                // needs to go before the previous rule to ensure this matches first
+                rules.splice(existingIndex, 0, {rule: request})
+            }
+        }
+    }
+}
