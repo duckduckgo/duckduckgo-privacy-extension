@@ -91,7 +91,7 @@ export function blockRequest (tds, request) {
         if (tracker.default === 'block') {
             return
         }
-        rules.push({rule: request})
+        rules.push({rule: new RegExp(request, 'gi')})
     } else {
         const rule = rules[existingIndex]
         if (rule.action === 'ignore') {
@@ -101,7 +101,7 @@ export function blockRequest (tds, request) {
                 rules.splice(existingIndex, 1)
             } else {
                 // needs to go before the previous rule to ensure this matches first
-                rules.splice(existingIndex, 0, {rule: request})
+                rules.splice(existingIndex, 0, {rule: new RegExp(request, 'gi')})
             }
         }
     }
