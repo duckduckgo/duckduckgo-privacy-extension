@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 
-const { getCurrentTab } = require('../background/message-handlers.js')
+const { getCurrentTab } = require('../background/utils.es6.js')
 
 /**
  * @type {(<T extends Element>(searchIn: T,      selector: string) => T)
