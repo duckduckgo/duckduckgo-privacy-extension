@@ -38,10 +38,13 @@ describe('Tracker reference tests:', () => {
             const requestType = test.requestType
             const expectRedirect = test.expectRedirect
             const result = tds.getTrackerData(requestURL, rootURL, { type: requestType })
-            const action = (result && result.action)
-            expect(test.expectAction).toEqual(action)
+            let action = (result && result.action)
+            if (action === 'none') {
+                action = null
+            }
+            expect(action).toEqual(test.expectAction)
             if (expectRedirect) {
-                expect(expectRedirect).toEqual(result.redirectUrl)
+                expect(result.redirectUrl).toEqual(expectRedirect)
             }
         })
     }

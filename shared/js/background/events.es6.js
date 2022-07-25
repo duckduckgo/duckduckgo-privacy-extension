@@ -313,7 +313,7 @@ const {
     fetchAlias
 } = require('./email-utils.es6')
 
-// handle any messages that come from content/UI scripts
+// Handle any messages that come from content/UI scripts
 browser.runtime.onMessage.addListener((req, sender) => {
     if (sender.id !== browserWrapper.getExtensionId()) return
 

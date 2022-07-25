@@ -163,7 +163,9 @@ export function isFirstPartyByEntity (trackerUrl, siteUrl) {
         return true
     }
 
-    const trackerOwner = trackers.findTrackerOwner(tldts.parse(trackerUrl).domain)
+    const trackerDomain = tldts.parse(trackerUrl).domain
+    if (!trackerDomain) return false
+    const trackerOwner = trackers.findTrackerOwner(trackerDomain)
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(siteUrl).split('.') })
 
     return (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : false
