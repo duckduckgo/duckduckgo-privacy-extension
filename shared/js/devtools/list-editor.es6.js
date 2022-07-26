@@ -65,6 +65,18 @@ getElementByIdOrFail('reload').addEventListener('click', () => {
     reloadList(selected)
 })
 
+/**
+ * Refresh local changes to the given list. For example, if rule blocking
+ * has been toggled in the panel, then the editor will reflect this once
+ * the refresh button has been clicked.
+ *
+ * This can also be used to reset local unsaved changes back to their prior
+ * state, without loading a remote version.
+ */
+getElementByIdOrFail('refreshLocal').addEventListener('click', () => {
+    loadList(selected)
+})
+
 listEditor.addEventListener('keypress', () => {
     setTimeout(() => {
         console.log('changed', getListFormat(selected))
