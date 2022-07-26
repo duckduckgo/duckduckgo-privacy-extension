@@ -234,6 +234,21 @@ describe('blockRequest:', () => {
             expect(Object.keys(tds.trackerList)).toContain(tracker1Dom)
         })
 
+        it('blocks the request', () => {
+            blockRequest(tracker1Path1)
+            expectBlock(tracker1Path1)
+        })
+
+        it('does not block other requests for the same tracker', () => {
+            blockRequest(tracker1Path1)
+            expectIgnore(`${tracker1Dom}/another/request.js`)
+        })
+
+        it('defaults tracker to ignore', () => {
+            blockRequest(tracker1Path1)
+            expect(tds.trackerList[tracker1Dom].default).toEqual('ignore')
+        })
+
         describe('request with subdomain:', () => {
             beforeEach(() => {
                 blockRequest(tracker2Request)

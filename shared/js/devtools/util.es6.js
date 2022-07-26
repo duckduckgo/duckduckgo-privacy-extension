@@ -81,7 +81,8 @@ export function blockRequest (tds, request) {
     const trackers = tds.trackerList
     let tracker = tds.findTracker({ urlToCheckSplit: tds.utils.extractHostFromURL(request).split('.') })
     if (!tracker) {
-        tracker = {}
+        // we default new trackers to ignore, so that we only block the specified request
+        tracker = { default: 'ignore' }
         trackers[tds.tldjs.getDomain(request)] = tracker
     }
     if (!tracker.rules) tracker.rules = []
