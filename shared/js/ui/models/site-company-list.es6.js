@@ -1,11 +1,6 @@
 const Parent = window.DDG.base.Model
 const normalizeCompanyName = require('./mixins/normalize-company-name.es6')
 
-function unblockedFilter (company, url) {
-    const urlObj = company.urls[url]
-    return urlObj.action === 'ignore' && urlObj.isFirstParty === true
-}
-
 function SiteCompanyList (attrs) {
     attrs = attrs || {}
     attrs.tab = null
@@ -46,14 +41,6 @@ SiteCompanyList.prototype = window.$.extend({},
 
             // set trackerlist metadata for list display by company:
             this.companyListMap = companyNames
-                .filter((companyName) => {
-                    const company = this.trackers[companyName]
-                    const urlsList = company.urls ? Object.keys(company.urls) : []
-                    return urlsList.some((url) => {
-                        const urlObj = company.urls[url]
-                        return ['block', 'redirect'].includes(urlObj.action) || (urlObj.action === 'ignore' && urlObj.isFirstParty === true)
-                    })
-                })
                 .map((companyName) => {
                     const company = this.trackers[companyName]
                     const urlsList = company.urls ? Object.keys(company.urls) : []
@@ -103,7 +90,7 @@ SiteCompanyList.prototype = window.$.extend({},
         spliceUnblockedTrackers: function (company, urlsList) {
             if (!company || !company.urls || !urlsList) return null
 
-            return urlsList.filter((url) => unblockedFilter(company, url))
+            return urlsList.filter((url) => company.urls[url].isBlocked === false)
                 .reduce((unblockedTrackers, url) => {
                     unblockedTrackers[url] = company.urls[url]
 
@@ -119,7 +106,7 @@ SiteCompanyList.prototype = window.$.extend({},
         hasUnblockedTrackers: function (company, urlsList) {
             if (!company || !company.urls || !urlsList) return false
 
-            return urlsList.some((url) => unblockedFilter(company, url))
+            return urlsList.some((url) => company.urls[url].isBlocked === false)
         },
 
         // Determines sorting order of the company list

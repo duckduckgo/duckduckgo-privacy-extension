@@ -98,6 +98,11 @@ class Tab {
     // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
         const tracker = this.trackers[t.tracker.owner.name]
+        // Filter out cases we don't handle right now
+        if (['none'].includes(t.action) || (t.action === 'ignore' && t.firstParty === false)) {
+            return
+        }
+
         if (tracker) {
             tracker.addTrackerUrl(t)
         } else {
