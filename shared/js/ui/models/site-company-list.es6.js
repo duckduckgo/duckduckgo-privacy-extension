@@ -46,6 +46,14 @@ SiteCompanyList.prototype = window.$.extend({},
 
             // set trackerlist metadata for list display by company:
             this.companyListMap = companyNames
+                .filter((companyName) => {
+                    const company = this.trackers[companyName]
+                    const urlsList = company.urls ? Object.keys(company.urls) : []
+                    return urlsList.some((url) => {
+                        const urlObj = company.urls[url]
+                        return ['block', 'redirect'].includes(urlObj.action)
+                    })
+                })
                 .map((companyName) => {
                     const company = this.trackers[companyName]
                     const urlsList = company.urls ? Object.keys(company.urls) : []
