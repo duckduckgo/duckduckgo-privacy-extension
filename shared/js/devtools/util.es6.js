@@ -78,6 +78,7 @@ export function registerDevPanelContextMenuItem() {
  * @param {string} request
  */
 export function blockRequest (tds, request) {
+    request = request.replace(/^https?:\/\//, '')
     const trackers = tds.trackerList
     let tracker = tds.findTracker({ urlToCheckSplit: tds.utils.extractHostFromURL(request).split('.') })
     if (!tracker) {
