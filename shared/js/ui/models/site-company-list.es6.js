@@ -51,7 +51,7 @@ SiteCompanyList.prototype = window.$.extend({},
                     const urlsList = company.urls ? Object.keys(company.urls) : []
                     return urlsList.some((url) => {
                         const urlObj = company.urls[url]
-                        return ['block', 'redirect'].includes(urlObj.action)
+                        return ['block', 'redirect'].includes(urlObj.action) || (urlObj.action === 'ignore' && urlObj.isFirstParty === true)
                     })
                 })
                 .map((companyName) => {
