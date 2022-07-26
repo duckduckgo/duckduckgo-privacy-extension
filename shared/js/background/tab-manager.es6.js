@@ -46,14 +46,18 @@ class TabManager {
      * get({tabId: ###});
      * @returns {Tab}
      */
-    get (tabData) {
+    get (requestData) {
+        const id = requestData.tabId
         // Opaque 'tab' (e.g. ServiceWorker). Create the Tab Object, but don't
         // store it for later lookup.
-        if (tabData.tabId === -1) {
-            return this._createInternal(tabData)
+        if (id === -1) {
+            return this._createInternal({
+                url: requestData.originUrl,
+                id
+            })
         }
 
-        return this.tabContainer[tabData.tabId]
+        return this.tabContainer[id]
     };
 
     /**
