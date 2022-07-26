@@ -32,10 +32,6 @@ function shouldBlockHeaders (request, tab, requestIsTracker) {
  * @returns {{responseHeaders: Array<{name: string, value:string}>} | undefined}
  */
 function dropTracking3pCookiesFromResponse (request) {
-    // Skip requests not associated with tabs (e.g. requests initiated by
-    // ServiceWorkers) for now.
-    if (request.tabId === -1) { return }
-
     const tab = tabManager.get({ tabId: request.tabId })
     let responseHeaders = request.responseHeaders
 
@@ -68,10 +64,6 @@ function dropTracking3pCookiesFromResponse (request) {
  * @returns {{requestHeaders: Array<{name: string, value:string}>} | undefined}
  */
 function dropTracking3pCookiesFromRequest (request) {
-    // Skip requests not associated with tabs (e.g. requests initiated by
-    // ServiceWorkers) for now.
-    if (request.tabId === -1) { return }
-
     const tab = tabManager.get({ tabId: request.tabId })
     let requestHeaders = request.requestHeaders
 
