@@ -13,11 +13,6 @@ class TabManager {
         this.tabContainer = {}
     };
 
-    _createInternal (tabData) {
-        const normalizedData = browserWrapper.normalizeTabData(tabData)
-        return new Tab(normalizedData)
-    }
-
     /* This overwrites the current tab data for a given
      * id and is only called in three cases:
      * 1. When we rebuild saved tabs when the browser is restarted
@@ -25,7 +20,8 @@ class TabManager {
      * 3. When we get a new main_frame request
      */
     create (tabData) {
-        const newTab = this._createInternal(tabData)
+        const normalizedData = browserWrapper.normalizeTabData(tabData)
+        const newTab = new Tab(normalizedData)
 
         const oldTab = this.tabContainer[newTab.id]
         if (oldTab) {
@@ -47,12 +43,6 @@ class TabManager {
      * @returns {Tab}
      */
     get (tabData) {
-        // Opaque 'tab' (e.g. ServiceWorker). Create the Tab Object, but don't
-        // store it for later lookup.
-        if (tabData.tabId === -1) {
-            return this._createInternal(tabData)
-        }
-
         return this.tabContainer[tabData.tabId]
     };
 
