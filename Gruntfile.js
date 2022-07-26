@@ -67,6 +67,7 @@ module.exports = function (grunt) {
     const watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
         ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js', '<%= dirs.src.js %>/devtools/*.js'],
+        html: ['<%= dirs.src.html %>/*.html'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
         autofillContentScript: ['<%= ddgAutofill %>/*.js'],
@@ -114,10 +115,12 @@ module.exports = function (grunt) {
             cache: '.cache',
             src: {
                 js: 'shared/js',
+                html: 'shared/html',
                 scss: 'shared/scss',
                 templates: 'shared/templates'
             },
             data: 'shared/data',
+            html: `${buildPath}/html`,
             public: {
                 js: `${buildPath}/public/js`,
                 css: `${buildPath}/public/css`
@@ -191,6 +194,7 @@ module.exports = function (grunt) {
             installContentScope: contentScopeInstall,
             copyContentScope: `${contentScopeBuild} cp ${ddgContentScope}/build/${browserSimilar}/inject.js build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
+            copyHTML: `cp -r shared/html build/${browser}/${buildType}/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyAutofillCSS: `cp -r ${ddgAutofill}/autofill.css build/${browser}/${buildType}/public/css/`,
@@ -205,6 +209,10 @@ module.exports = function (grunt) {
             ui: {
                 files: watch.ui,
                 tasks: ['browserify:ui', 'exec:copyData']
+            },
+            html: {
+                files: watch.html,
+                tasks: ['exec:copyHTML']
             },
             contentScope: {
                 files: watch.contentScope,
