@@ -2,8 +2,16 @@ require('../../helpers/mock-browser-api')
 const tds = require('../../../shared/js/background/trackers.es6')
 const util = require('./../../../shared/js/devtools/util.es6.js')
 
-function getTrackerData (path) {
-    return tds.getTrackerData(`https://${path}`, 'test-site.com', {type: 'script'})
+/**
+ * Get tracker data (a la tds.getTrackerData) for the given request.
+ *
+ * Automatically adds a https:// protocol unless autoProtocol is falsey.
+ *
+ * @param {string} path
+ * @param {boolean} autoProtocol
+ */
+function getTrackerData (path, autoProtocol=true) {
+    return tds.getTrackerData(`${autoProtocol ? 'https://' : ''}${path}`, 'test-site.com', {type: 'script'})
 }
 
 function initTds (trackers) {
@@ -17,8 +25,13 @@ function blockRequest(request) {
     util.blockRequest(tds, request)
 }
 
-function expectBlock (request) {
-    expect(getTrackerData(request).action).toEqual('block')
+/**
+ * Test that the given request would be blocked.
+ *
+ * See `getTrackerData` for the use of `autoProtocol`.
+ */
+function expectBlock (request, autoProtocol=true) {
+    expect(getTrackerData(request, autoProtocol).action).toEqual('block')
 }
 
 function expectIgnore (request) {
@@ -261,6 +274,25 @@ describe('blockRequest:', () => {
                 expectBlock(tracker2Request)
             })
         })
+    })
+
+    describe('with protocol:', () => {
+        const reqBase = 'tracker.com/simple/request.js'
+        for (const protocol of ['https://', 'http://']) {
+            const otherProtocol = protocol === 'https://' ? 'http://' : 'https://'
+            describe(`'${protocol}':`, () => {
+                beforeEach(() => {
+                    initTds({})
+                    blockRequest(protocol + reqBase)
+                })
+                it('blocks request', () => {
+                    expectBlock(protocol + reqBase, false)
+                })
+                it(`blocks other protocol request (${otherProtocol})`, () => {
+                    expectBlock(otherProtocol + reqBase, false)
+                })
+            })
+        }
     })
 
     describe('resource types:', () => {
