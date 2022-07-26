@@ -301,7 +301,6 @@ class Trackers {
         if (!requestData) {
             return null
         }
-        const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
 
         // finds a tracker definition by iterating over the whole trackerList and finding the matching tracker.
         let tracker = this.findTracker(requestData)
@@ -309,16 +308,16 @@ class Trackers {
         if (!tracker) {
             // if request doesn't have any rules associated with it, we should check if it's a CNAMEed tracker
             const cnameResolution = this.resolveCname(urlToCheck)
-            fromCname = cnameResolution.fromCname
             const cnameRequestData = this.getRequestData(cnameResolution.finalURL, siteUrl, request)
-            if (!cnameRequestData) {
-                return null
-            }
-            tracker = this.findTracker(cnameRequestData)
-            if (tracker) {
-                requestData = cnameRequestData
+            if (cnameResolution.fromCname && cnameRequestData) {
+                tracker = this.findTracker(cnameRequestData)
+                if (tracker) {
+                    fromCname = cnameResolution.fromCname
+                    requestData = cnameRequestData
+                }
             }
         }
+        const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
         const requestOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
         const websiteOwner = this.findWebsiteOwner(requestData)
         const firstParty = (requestOwner && websiteOwner) ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
