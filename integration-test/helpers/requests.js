@@ -12,11 +12,31 @@
  * @param {LoggedRequestDetails[]} requests
  *   Array of request details, appended to as requests happen.
  *   Note: The requests array is mutated by this function.
+ * @param {function?} filter
+ *   Optional filter function that (if given) should return falsey for requests
+ *   that should be ignored.
  * @returns {function}
  *   Function that clears logged requests (and in progress requests).
  */
-function logPageRequests (page, requests) {
+function logPageRequests (page, requests, filter) {
     const requestDetailsByRequestId = new Map()
+
+    const saveRequestOutcome = (requestId, updateDetails) => {
+        if (!requestDetailsByRequestId.has(requestId)) {
+            return
+        }
+
+        const details = requestDetailsByRequestId.get(requestId)
+        requestDetailsByRequestId.delete(requestId)
+
+        updateDetails(details)
+
+        if (!filter || filter(details)) {
+            requests.push(details)
+        }
+    }
+
+    // HTTP requests
 
     page._client.on('Network.requestWillBeSent', ({
         requestId, request: { url, method }, redirectResponse, type
@@ -36,35 +56,51 @@ function logPageRequests (page, requests) {
     })
 
     page._client.on('Network.loadingFinished', ({ requestId }) => {
-        if (!requestDetailsByRequestId.has(requestId)) {
-            return
-        }
-
-        const details = requestDetailsByRequestId.get(requestId)
-        requestDetailsByRequestId.delete(requestId)
-
-        details.status = details.redirectUrl ? 'redirected' : 'allowed'
-        requests.push(details)
+        saveRequestOutcome(requestId, details => {
+            details.status = details.redirectUrl ? 'redirected' : 'allowed'
+        })
     })
 
     page._client.on('Network.loadingFailed', ({
         requestId, blockedReason, errorText
     }) => {
-        if (!requestDetailsByRequestId.has(requestId)) {
-            return
-        }
+        saveRequestOutcome(requestId, details => {
+            if (blockedReason === 'other' &&
+                errorText === 'net::ERR_BLOCKED_BY_CLIENT') {
+                details.status = 'blocked'
+            } else {
+                details.status = 'failed'
+                details.reason = errorText
+            }
+        })
+    })
 
-        const details = requestDetailsByRequestId.get(requestId)
-        requestDetailsByRequestId.delete(requestId)
+    // WebSockets
 
-        if (blockedReason === 'other' &&
-            errorText === 'net::ERR_BLOCKED_BY_CLIENT') {
+    page._client.on('Network.webSocketCreated', ({
+        requestId, url, initiator
+    }) => {
+        requestDetailsByRequestId.set(requestId, {
+            url: new URL(url),
+            initiator,
+            type: 'websocket'
+        })
+    })
+
+    page._client.on('Network.webSocketWillSendHandshakeRequest', ({
+        requestId, request: { headers }
+    }) => {
+        saveRequestOutcome(requestId, details => {
+            details.status = 'allowed'
+        })
+    })
+
+    page._client.on('Network.webSocketClosed', ({
+        requestId
+    }) => {
+        saveRequestOutcome(requestId, details => {
             details.status = 'blocked'
-        } else {
-            details.status = 'failed'
-            details.reason = errorText
-        }
-        requests.push(details)
+        })
     })
 
     return () => {
