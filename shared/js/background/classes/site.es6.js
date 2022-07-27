@@ -116,16 +116,20 @@ class Site {
     }
 
     /**
-     * @param {*} t
+     * @param {import("../../../../node_modules/@duckduckgo/privacy-grade/src/classes/trackers").TrackerData} t
      */
     addTracker (t) {
-        if (this.trackerUrls.indexOf(t.tracker.domain) === -1) {
+        // Ignore trackers that aren't first party
+        if (t.action === 'ignore' && !t.firstParty) {
+            return
+        }
+        if (t.tracker && this.trackerUrls.indexOf(t.tracker.domain) === -1) {
             this.trackerUrls.push(t.tracker.domain)
             const entityPrevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
 
-            if (t.action.match(/block|redirect/)) {
+            if (t.action && ['block', 'redirect'].includes(t.action)) {
                 this.grade.addEntityBlocked(t.tracker.owner.name, entityPrevalence)
-            } else {
+            } else if (t.action && t.action === 'ignore') {
                 this.grade.addEntityNotBlocked(t.tracker.owner.name, entityPrevalence)
             }
         }

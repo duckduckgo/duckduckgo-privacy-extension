@@ -29,11 +29,17 @@ function connected (port) {
         } else if (m.action === 'I' || m.action === 'B') {
             const { requestData, siteUrl, tracker } = m
             const matchedTracker = trackers.getTrackerData(requestData.url, siteUrl, requestData)
-            if (tracker.matchedRule) {
+            if (!matchedTracker || !matchedTracker.tracker) {
+                return
+            }
+            if (tracker.matchedRule && matchedTracker.tracker) {
                 // find the rule for this url
                 const ruleIndex = matchedTracker.tracker.rules.findIndex((r) => r.rule?.toString() === tracker.matchedRule)
                 const rule = matchedTracker.tracker.rules[ruleIndex]
                 const parsedHost = tldts.parse(siteUrl)
+                if (!parsedHost.domain || !parsedHost.hostname) {
+                    return
+                }
                 if (!rule.exceptions) {
                     rule.exceptions = {}
                 }
@@ -44,7 +50,7 @@ function connected (port) {
                     matchedTracker.tracker.rules.splice(ruleIndex, 1)
                 } else if (m.action === 'I') {
                     rule.exceptions.domains.push(parsedHost.domain)
-                    if (!rule.exceptions.types?.includes(requestData.type)) {
+                    if (rule.exceptions.types && !rule.exceptions.types.includes(requestData.type)) {
                         rule.exceptions.types.push(requestData.type)
                     }
                 } else {

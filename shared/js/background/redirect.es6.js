@@ -18,9 +18,6 @@ const {
 } = require('./url-parameters.es6')
 const ampProtection = require('./amp-protection.es6')
 
-/** @type {false | string[]} */
-const debugRequest = false
-
 function buildResponse (url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
         console.log('HTTPS: upgrade request url to ' + url)
@@ -174,156 +171,9 @@ function handleRequest (requestData) {
             return
         }
 
-        const blockingEnabled = thisTab.site.isContentBlockingEnabled()
-
-        /**
-         * Tracker blocking
-         * If request is a tracker, cancel the request
-         */
-
-        let tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
-        /**
-         * Click to Load Blocking
-         * If it isn't in the tracker list, check the clickToLoad block list
-         */
-        if (utils.getClickToPlaySupport(thisTab)) {
-            const socialTracker = trackerutils.getSocialTracker(requestData.url)
-            if (tracker && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
-                if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
-                    !thisTab.site.clickToLoad.includes(socialTracker.entity)) {
-                    // TDS doesn't block social sites by default, so update the action & redirect for click to load.
-                    tracker.action = 'block'
-                    if (socialTracker.redirectUrl) {
-                        tracker.action = 'redirect'
-                        tracker.reason = 'matched rule - surrogate'
-                        tracker.redirectUrl = socialTracker.redirectUrl
-                        if (!tracker.matchedRule) {
-                            tracker.matchedRule = {}
-                        }
-                        tracker.matchedRule.surrogate = socialTracker.redirectUrl
-                    }
-                } else {
-                    // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
-                    return
-                }
-            }
-        }
-
-        if (tracker) {
-            // temp allowlisted trackers to fix site breakage
-            if (thisTab.site.isFeatureEnabled('trackerAllowlist')) {
-                const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
-
-                if (allowListed) {
-                    console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`)
-                    tracker.action = 'ignore'
-                    tracker.reason = `tracker allowlist - ${allowListed.reason}`
-                }
-            }
-
-            const reportedTracker = { ...tracker }
-            if (!blockingEnabled) {
-                reportedTracker.action = 'ignore'
-            }
-            const cleanUrl = new URL(requestData.url)
-            cleanUrl.search = ''
-            cleanUrl.hash = ''
-            // @ts-ignore
-            devtools.postMessage(tabId, 'tracker', {
-                tracker: {
-                    ...reportedTracker,
-                    matchedRule: reportedTracker.matchedRule?.rule?.toString()
-                },
-                url: cleanUrl,
-                requestData,
-                siteUrl: thisTab.site.url
-            })
-        }
-
-        // allow embedded twitter content if user enabled this setting
-        if (tracker && tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
-            tracker = null
-        }
-
-        // count and block trackers. Skip things that matched in the trackersAllowlist unless they're first party
-        if (tracker && !(tracker.action === 'ignore' && tracker.reason !== 'first party')) {
-            // Determine if this tracker was coming from our current tab. There can be cases where a tracker request
-            // comes through on document unload and by the time we block it we have updated our tab data to the new
-            // site. This can make it look like the tracker was on the new site we navigated to. We're blocking the
-            // request anyway but deciding to show it in the popup or not. If we have a documentUrl, use it, otherwise
-            // just default to true.
-            const sameDomain = isSameDomainRequest(thisTab, requestData)
-
-            // Trackers on these sites are still
-            // blocked below but not counted on the popup. We can also run into a case where
-            // we block a tracker faster then we can update the tab so we check sameDomain.
-            if (sameDomain) {
-                // record all tracker urls on a site even if we don't block them
-                thisTab.site.addTracker(tracker)
-
-                // record potential blocked trackers for this tab
-                thisTab.addToTrackers(tracker)
-            }
-            // update badge icon for any requests that come in after
-            // the tab has finished loading
-            if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
-            browserWrapper.notifyPopup({ updateTabData: true })
-            // Block the request if the site is not allowlisted
-            if (blockingEnabled && tracker.action.match(/block|redirect/)) {
-                Companies.add(tracker.tracker.owner)
-                if (sameDomain) thisTab.addOrUpdateTrackersBlocked(tracker)
-
-                // for debugging specific requests. see test/tests/debugSite.js
-                if (debugRequest && debugRequest.length) {
-                    if (debugRequest.includes(tracker.url)) {
-                        console.log('UNBLOCKED: ', tracker.url)
-                        return
-                    }
-                }
-
-                console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
-                             ' [' + tracker.tracker.owner.name + '] ' + requestData.url)
-
-                // return surrogate redirect if match, otherwise
-                // tell Chrome to cancel this webrequest
-                if (tracker.redirectUrl) {
-                    const webResource = browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
-
-                    // Firefox: check these for Origin headers in onBeforeSendHeaders before redirecting or not. Workaround for
-                    // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679
-                    // Surrogates that for sure need to load should have 'strictRedirect' set, and will have their headers checked
-                    // in onBeforeSendHeaders
-                    if (tracker.matchedRule.strictRedirect && utils.getBrowserName() === 'moz') {
-                        thisTab.surrogates[requestData.url] = webResource
-                    } else {
-                        const key = thisTab.addWebResourceAccess(webResource)
-                        return { redirectUrl: `${webResource}?key=${key}` }
-                    }
-                } else {
-                    requestData.message = { cancel: true }
-                    return { cancel: true }
-                }
-            }
-        }
-
-        /**
-         * Notify skipping for broken sites
-         */
-        if (thisTab.site.isBroken) {
-            console.log('temporarily skip tracker blocking for site: ' +
-              utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/privacy-configuration')
-        }
-
-        // If we didn't block this script and it's a tracker, notify the content script.
-        if (requestData.type === 'script' && tracker && !tracker.firstParty) {
-            utils.sendTabMessage(requestData.tabId, {
-                type: 'update',
-                trackerDefinition: true,
-                hostname: tldts.parse(requestData.url).hostname
-            }, {
-                frameId: requestData.frameId
-            })
+        const handleResponse = blockHandleResponse(thisTab, requestData)
+        if (handleResponse) {
+            return handleResponse
         }
     }
 
@@ -361,6 +211,149 @@ function handleRequest (requestData) {
         return resultUrl.then(url => buildResponse(url, requestData, thisTab, isMainFrame))
     } else {
         return buildResponse(resultUrl, requestData, thisTab, isMainFrame)
+    }
+}
+
+/**
+ * Tracker blocking
+ * If request is a tracker, cancel the request
+ */
+function blockHandleResponse (thisTab, requestData) {
+    const tabId = requestData.tabId
+    const blockingEnabled = thisTab.site.isContentBlockingEnabled()
+
+    const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+
+    /**
+     * Click to Load Blocking
+     */
+    if (utils.getClickToPlaySupport(thisTab)) {
+        const socialTracker = trackerutils.getSocialTracker(requestData.url)
+        const isConsiderableForClickToPlay = tracker && ['block', 'ignore', 'redirect'].includes(tracker.action)
+        if (isConsiderableForClickToPlay && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
+            if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
+                !thisTab.site.clickToLoad.includes(socialTracker.entity)) {
+                // TDS doesn't block social sites by default, so update the action & redirect for click to load.
+                tracker.action = 'block'
+                if (socialTracker.redirectUrl) {
+                    tracker.action = 'redirect'
+                    tracker.reason = 'matched rule - surrogate'
+                    tracker.redirectUrl = socialTracker.redirectUrl
+                    if (!tracker.matchedRule) {
+                        // @ts-ignore
+                        tracker.matchedRule = {}
+                    }
+                    // @ts-ignore
+                    tracker.matchedRule.surrogate = socialTracker.redirectUrl
+                }
+            } else {
+                // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
+                return
+            }
+        }
+    }
+
+    if (tracker) {
+        // temp allowlisted trackers to fix site breakage
+        if (thisTab.site.isFeatureEnabled('trackerAllowlist')) {
+            const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)
+
+            if (allowListed) {
+                console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`)
+                tracker.action = 'ignore'
+                tracker.reason = `tracker allowlist - ${allowListed.reason}`
+            }
+        }
+
+        // allow embedded twitter content if user enabled this setting
+        if (tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
+            tracker.action = 'none'
+        }
+
+        const reportedTracker = { ...tracker }
+        const cleanUrl = new URL(requestData.url)
+        cleanUrl.search = ''
+        cleanUrl.hash = ''
+        // @ts-ignore
+        devtools.postMessage(tabId, 'tracker', {
+            tracker: {
+                ...reportedTracker,
+                matchedRule: reportedTracker.matchedRule?.rule?.toString()
+            },
+            url: cleanUrl,
+            requestData,
+            siteUrl: thisTab.site.url
+        })
+
+        // Count and block trackers.
+
+        // Determine if this tracker was coming from our current tab. There can be cases where a tracker request
+        // comes through on document unload and by the time we block it we have updated our tab data to the new
+        // site. This can make it look like the tracker was on the new site we navigated to. We're blocking the
+        // request anyway but deciding to show it in the popup or not. If we have a documentUrl, use it, otherwise
+        // just default to true.
+        const sameDomainDocument = isSameDomainRequest(thisTab, requestData)
+        if (sameDomainDocument) {
+            // record all tracker urls on a site even if we don't block them
+            thisTab.site.addTracker(tracker)
+
+            // record potential blocked trackers for this tab
+            thisTab.addToTrackers(tracker)
+        }
+        // update badge icon for any requests that come in after
+        // the tab has finished loading
+        if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
+        browserWrapper.notifyPopup({ updateTabData: true })
+        // Block the request if the site is not allowlisted
+        if (blockingEnabled && ['block', 'redirect'].includes(tracker.action)) {
+            // @ts-ignore
+            Companies.add(tracker.tracker.owner)
+            if (sameDomainDocument) thisTab.addOrUpdateTrackersBlocked(tracker)
+
+            console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
+                        // @ts-ignore
+                        ' [' + tracker.tracker.owner.name + '] ' + requestData.url)
+
+            // return surrogate redirect if match, otherwise
+            // tell Chrome to cancel this webrequest
+            if (tracker.redirectUrl && tracker.matchedRule) {
+                const webResource = browserWrapper.getExtensionURL(`web_accessible_resources/${tracker.matchedRule.surrogate}`)
+
+                // Firefox: check these for Origin headers in onBeforeSendHeaders before redirecting or not. Workaround for
+                // https://bugzilla.mozilla.org/show_bug.cgi?id=1694679
+                // Surrogates that for sure need to load should have 'strictRedirect' set, and will have their headers checked
+                // in onBeforeSendHeaders
+                if (tracker.matchedRule.strictRedirect && utils.getBrowserName() === 'moz') {
+                    thisTab.surrogates[requestData.url] = webResource
+                } else {
+                    const key = thisTab.addWebResourceAccess(webResource)
+                    return { redirectUrl: `${webResource}?key=${key}` }
+                }
+            } else {
+                requestData.message = { cancel: true }
+                return { cancel: true }
+            }
+        }
+    }
+
+    /**
+     * Notify skipping for broken sites
+     */
+    if (thisTab.site.isBroken) {
+        console.log('temporarily skip tracker blocking for site: ' +
+            utils.extractHostFromURL(thisTab.url) + '\n' +
+            'more info: https://github.com/duckduckgo/privacy-configuration')
+    }
+
+    // If we didn't block this script and it's a tracker, notify the content script.
+    if (requestData.type === 'script' && tracker && !tracker.firstParty) {
+        utils.sendTabMessage(requestData.tabId, {
+            type: 'update',
+            trackerDefinition: true,
+            hostname: tldts.parse(requestData.url).hostname
+        }, {
+            frameId: requestData.frameId
+        })
     }
 }
 

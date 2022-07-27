@@ -27,7 +27,7 @@ const gradeIconLocations = {
 }
 
 const Site = require('./site.es6')
-const Tracker = require('./tracker.es6')
+const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../wrapper.es6')
@@ -36,6 +36,7 @@ const webResourceKeyRegex = /.*\?key=(.*)/
 class Tab {
     constructor (tabData) {
         this.id = tabData.id || tabData.tabId
+        /** @type {Record<string, Tracker>} */
         this.trackers = {}
         this.trackersBlocked = {}
         this.url = tabData.url
@@ -97,9 +98,13 @@ class Tab {
     // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
         const tracker = this.trackers[t.tracker.owner.name]
+        // Filter out cases we don't handle right now
+        if (['none'].includes(t.action) || (t.action === 'ignore' && t.firstParty === false)) {
+            return
+        }
+
         if (tracker) {
-            tracker.increment()
-            tracker.update(t)
+            tracker.addTrackerUrl(t)
         } else {
             const newTracker = new Tracker(t)
             this.trackers[t.tracker.owner.name] = newTracker
@@ -114,8 +119,7 @@ class Tab {
     addOrUpdateTrackersBlocked (t) {
         const tracker = this.trackersBlocked[t.tracker.owner.name]
         if (tracker) {
-            tracker.increment()
-            tracker.update(t)
+            tracker.addTrackerUrl(t)
         } else {
             const newTracker = new Tracker(t)
             this.trackersBlocked[newTracker.parentCompany.name] = newTracker

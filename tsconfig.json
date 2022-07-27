@@ -13,6 +13,7 @@
     "strictNullChecks": true
   },
   "include": [
+      "node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js",
       "shared/js/background/**/*.js",
       "shared/js/devtools/**/*.js",
       "shared/js/shared-utils/**/*.js"
