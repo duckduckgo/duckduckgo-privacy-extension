@@ -1,7 +1,22 @@
-const trackers = require('../src/trackers')
+const Trackers = require('../src/classes/trackers')
 const trackerLists = require('./data/tracker-lists')
+const tldts = require('tldts')
+const utils = require('../src/utils')
 
-trackers.addLists(trackerLists)
+const trackers = new Trackers({ tldts, utils: utils })
+trackers.setLists([
+    {
+        name: 'tds',
+        data: {
+            entities: trackerLists.entityList,
+            trackers: trackerLists.trackerList
+        }
+    },
+    {
+        name: 'surrogates',
+        data: trackerLists.surrogates
+    }
+])
 
 describe('getTrackerData', () => {
     describe('find tracker data', () => {
@@ -132,22 +147,47 @@ describe('getTrackerData', () => {
             })
         })
 
-        const nonTrackerTests = [
-            // non tracker requests
-            {
-                urlToCheck: 'http://somecdn.com/jquery',
-                siteUrl: 'https://example.com',
-                requestType: 'script'
-            },
-            // malformed urls
+        const malformedTests = [
+            // Malformed urls
             {
                 urlToCheck: 'http://%20%20s.src%20%3D/',
                 siteUrl: 'https://example.com',
                 requestType: 'image'
+            },
+            // Special url schemes
+            {
+                urlToCheck: 'about:blank',
+                siteUrl: 'https://example.com',
+                requestType: 'image'
+            },
+            {
+                urlToCheck: 'chrome-extension://test-me',
+                siteUrl: 'https://example.com',
+                requestType: 'image'
+            },
+            {
+                urlToCheck: 'https://example.com',
+                siteUrl: 'chrome-extension://test-me',
+                requestType: 'image'
+            },
+            {
+                urlToCheck: 'https://example.com',
+                siteUrl: 'chrome-extension://test-me/test.html',
+                requestType: 'image'
+            },
+            {
+                urlToCheck: 'https://example.com',
+                siteUrl: 'about://test-me/test.html',
+                requestType: 'image'
+            },
+            {
+                urlToCheck: 'https://example.com',
+                siteUrl: 'ftp://blah.com/test.html',
+                requestType: 'image'
             }
         ]
 
-        nonTrackerTests.forEach((test) => {
+        malformedTests.forEach((test) => {
             it(`should not block ${test.urlToCheck}`, () => {
                 const tracker = trackers.getTrackerData(
                     test.urlToCheck,
@@ -155,6 +195,30 @@ describe('getTrackerData', () => {
                     { url: test.urlToCheck, type: test.requestType })
 
                 expect(tracker).toEqual(null)
+            })
+        })
+
+        const nonTrackerTests = [
+            // Non tracker requests
+            {
+                urlToCheck: 'http://somecdn.com/jquery',
+                siteUrl: 'https://example.com',
+                requestType: 'script'
+            },
+            {
+                urlToCheck: 'https://somecdn.com/jquery',
+                siteUrl: 'https://example.com',
+                requestType: 'script'
+            }
+        ]
+        nonTrackerTests.forEach((test) => {
+            it(`should not block ${test.urlToCheck}`, () => {
+                const tracker = trackers.getTrackerData(
+                    test.urlToCheck,
+                    test.siteUrl,
+                    { url: test.urlToCheck, type: test.requestType })
+
+                expect(tracker.action).toEqual('none')
             })
         })
     })

@@ -1,5 +1,5 @@
 const entityMap = require('../data/generated/entity-map')
-const tldjs = require('tldjs')
+const tldts = require('tldts')
 const parseUrl = require('url-parse-lax')
 
 // pull off subdomains and look for parent companies
@@ -18,10 +18,10 @@ const findParent = (url) => {
 const getDomain = (url) => {
     if (!url) return ''
 
-    let domain = tldjs.getDomain(url)
+    let domain = tldts.getDomain(url)
 
     if (!domain) {
-        // handle e.g. underscore URLs which tldjs normally chokes on
+        // handle e.g. underscore URLs which tldts normally chokes on
         // note this is really slow and we don't want to do it unless necessary
         const hostname = parseUrl(url).hostname || ''
         const hostnameParts = hostname.split('.')
@@ -29,7 +29,7 @@ const getDomain = (url) => {
         while (!domain && hostnameParts.length > 2) {
             hostnameParts.shift()
 
-            domain = tldjs.getDomain(hostnameParts.join('.'))
+            domain = tldts.getDomain(hostnameParts.join('.'))
         }
     }
 

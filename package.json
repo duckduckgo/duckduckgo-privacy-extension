@@ -6,7 +6,8 @@
   "scripts": {
     "test": "grunt test",
     "test-debug": "grunt test --type=dev --test-debug",
-    "lint": "eslint src test",
+    "tsc": "tsc",
+    "lint": "eslint src test && npm run tsc",
     "lint-fix": "eslint src test --fix",
     "updateLists": "grunt updateLists"
   },
@@ -32,8 +33,8 @@
     "load-grunt-tasks": "3.5.2",
     "puppeteer": "12.0.0",
     "request": "2.85.0",
-    "tldjs": "^2.3.1",
+    "tldts": "^5.7.84",
+    "typescript": "^4.7.3",
     "url-parse-lax": "^3.0.0"
-  },
-  "dependencies": {}
+  }
 }
