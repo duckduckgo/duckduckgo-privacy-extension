@@ -316,6 +316,14 @@ tdsOption.addEventListener('change', (e) => {
 const displayFilters = document.querySelector('#table-filter').querySelectorAll('input')
 
 displayFilters.forEach((input) => {
+    // initialise filters to default values
+    if (input.id === 'search-box') {
+        input.value = panelConfig.rowFilter
+    } else {
+        input.checked = panelConfig.rowVisibility[input.dataset.filterToggle]
+    }
+
+    // register listeners to update row visibility when filters are changed
     input.addEventListener('change', () => {
         if (input.id === 'search-box') {
             panelConfig.rowFilter = input.value
