@@ -137,7 +137,7 @@ function handleRequest (requestData) {
             // Strip tracking parameters if 1. there are any and 2. the feature
             // is enabled for both the request URL and the initiator URL.
             trackingParametersStrippingEnabled(
-                thisTab.site, requestData.initiatorUrl
+                thisTab.site, (requestData.initiator || requestData.originUrl)
             ) && stripTrackingParameters(mainFrameRequestURL)
         )
 
