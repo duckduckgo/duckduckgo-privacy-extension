@@ -9,7 +9,6 @@ const refreshButton = getElementByIdOrFail('refresh')
 const protectionButton = getElementByIdOrFail('protection')
 const tabPicker = getSelectElementById('tab-picker')
 const tdsOption = getSelectElementById('tds')
-const displayFilters = document.querySelectorAll('#table-filter input')
 
 /**
  * @param {string} id
@@ -261,14 +260,51 @@ function appendCallStack (cell, stack) {
 
 const searchBox = getInputElementById('search-box')
 
+/**
+ * General panel configuration that can change during its lifetime.
+ *
+ * Values below are the defaults.
+ */
+const panelConfig = {
+    rowVisibility: {
+        blocked: true,
+        ignored: true,
+        ignoredFirstParty: true,
+        redirected: true,
+        cookieHTTP: true,
+        cookieJS: true,
+        apiCanvas: true
+    },
+    rowFilter: ''
+}
+
 function shouldShowRow (row) {
-    const className = row.classList[0]
-    const filter = getInputElementById(`display-${className}`)
-    const searchBoxValue = searchBox.value
     // empty search box is considered to be no filter
-    // search box matches on the URL of the request
-    const searchFilter = searchBoxValue === '' || row.cells[1].textContent.match(searchBoxValue)
-    return searchFilter && (!filter || filter.checked)
+    if (panelConfig.rowFilter !== '') {
+        // when a filter is in effect, fail now if the URL does not match the filter
+        if (!row.cells[1].textContent.match(panelConfig.rowFilter)) {
+            return false
+        }
+    }
+
+    const className = row.classList[0]
+    switch (className) {
+        case "ignore":
+            if (querySelectorOrFail(row, '.request-action').textContent === `${actionIcons['ignore']} ignore (first party)`) {
+                return panelConfig.rowVisibility.ignored && panelConfig.rowVisibility.ignoredFirstParty
+            }
+            return panelConfig.rowVisibility.ignored
+        case "block":
+            return panelConfig.rowVisibility.blocked
+        case "redirect":
+            return panelConfig.rowVisibility.redirected
+        case "cookie-tracker":
+            return panelConfig.rowVisibility.cookieHTTP
+        case "jscookie":
+            return panelConfig.rowVisibility.cookieJS
+        case "canvas":
+            return panelConfig.rowVisibility.apiCanvas
+    }
 }
 
 function setRowVisible (row) {
@@ -366,8 +402,15 @@ tdsOption.addEventListener('change', (e) => {
     })
 })
 
+const displayFilters = querySelectorOrFail('#table-filter').querySelectorAll('input')
 displayFilters.forEach((input) => {
     input.addEventListener('change', () => {
+        if (input.id === 'search-box') {
+            panelConfig.rowFilter = input.value
+        }
+        if (input.dataset['filterToggle']) {
+            panelConfig.rowVisibility[input.dataset['filterToggle']] = input.checked
+        }
         document.querySelectorAll('tbody > tr').forEach(setRowVisible)
     })
 })
