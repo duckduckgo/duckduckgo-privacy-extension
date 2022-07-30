@@ -1,6 +1,6 @@
 const statusList = require('./status-list.es6.js')
 const constants = require('../../../../data/constants')
-const trackerNetworksText = require('./tracker-networks-text.es6.js')
+const { trackerNetworksText, majorTrackerNetworksText } = require('./tracker-networks-text.es6.js')
 
 module.exports = function (site) {
     const reasons = getReasons(site)
@@ -29,7 +29,7 @@ function getReasons (site) {
 
     // tracking networks blocked or found,
     // only show a message if there's any
-    const trackersCount = site.isAllowlisted ? site.trackersCount : site.trackersBlockedCount
+    const trackersCount = site.isAllowlisted ? site.aggregationStats.allowed.entitiesCount : site.aggregationStats.blocked.entitiesCount
     const trackersBadOrGood = (trackersCount !== 0) ? 'bad' : 'good'
     reasons.push({
         modifier: trackersBadOrGood,
@@ -41,7 +41,7 @@ function getReasons (site) {
     const majorTrackersBadOrGood = (site.majorTrackerNetworksCount !== 0) ? 'bad' : 'good'
     reasons.push({
         modifier: majorTrackersBadOrGood,
-        msg: `${trackerNetworksText(site, true)}`
+        msg: `${majorTrackerNetworksText(site.majorTrackerNetworksCount)}`
     })
 
     // Is the site itself a major tracking network?

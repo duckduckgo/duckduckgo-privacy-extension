@@ -194,6 +194,14 @@ a {
     padding: $card--padded--top;
 }
 
+.padded--top-half {
+    padding-top: 8px;
+}
+
+.padded--bottom-half {
+    padding-bottom: 8px;
+}
+
 .padded--no-bottom-padding {
     padding-bottom: 0;
 }

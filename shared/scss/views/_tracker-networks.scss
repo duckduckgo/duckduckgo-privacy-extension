@@ -10,13 +10,25 @@
     .tracker-networks__explainer {
         @include explainer-padding();
     }
+    .non-tracker-networks__explainer {
+        @include explainer-padding();
+        padding-bottom: 0;
+    }
+}
+
+.hero__icon--non-networks {
+    @include cross_platform_bg_image("hero-on-non-networks.svg");
+}
+
+.hero__icon--zero {
+    @include cross_platform_bg_image("hero-zero.svg");
 }
 
 .hero__icon--major-networks-blocked {
     @include cross_platform_bg_image("hero-on-major-networks.svg");
 }
 
-.icon-major-networks-blocked {
+.icon-major-networks-blocked, .icon-good {
     @include cross_platform_bg_image($status--good);
 }
 
@@ -26,6 +38,10 @@
 
 .icon-major-networks-warning {
     @include cross_platform_bg_image($status--bad);
+}
+
+.icon-info {
+    @include cross_platform_bg_image($status--info);
 }
 
 #popup-container .tracker-networks .default-list.site-info__trackers__company-list__url-list {
@@ -65,6 +81,8 @@
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+        // overflow to the left if the text is too long
+        direction: rtl;
     }
     .category {
         position: absolute;

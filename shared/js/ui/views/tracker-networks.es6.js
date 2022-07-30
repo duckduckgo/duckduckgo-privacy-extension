@@ -3,7 +3,7 @@ const heroTemplate = require('./../templates/shared/hero.es6.js')
 const CompanyListModel = require('./../models/site-company-list.es6.js')
 const SiteModel = require('./../models/site.es6.js')
 const trackerNetworksIconTemplate = require('./../templates/shared/tracker-network-icon.es6.js')
-const trackerNetworksTextTemplate = require('./../templates/shared/tracker-networks-text.es6.js')
+const { trackerNetworksText } = require('./../templates/shared/tracker-networks-text.es6.js')
 
 function TrackerNetworks (ops) {
     // model data is async
@@ -61,15 +61,15 @@ TrackerNetworks.prototype = window.$.extend({},
                 const trackerNetworksIconName = trackerNetworksIconTemplate(
                     this.model.site.siteRating,
                     this.model.site.isAllowlisted,
-                    this.model.site.totalTrackerNetworksCount
+                    this.model.aggregationStats.blocked.entitiesCount
                 )
 
-                const trackerNetworksText = trackerNetworksTextTemplate(this.model.site, false)
+                const trackerNetworksTextOut = trackerNetworksText(this.model.site, false)
 
                 this.$hero.html(heroTemplate({
                     status: trackerNetworksIconName,
                     title: this.model.site.domain,
-                    subtitle: trackerNetworksText,
+                    subtitle: trackerNetworksTextOut,
                     showClose: true
                 }))
             }
@@ -79,7 +79,6 @@ TrackerNetworks.prototype = window.$.extend({},
             if (e && e.change) {
                 if (e.change.attribute === 'isaMajorTrackingNetwork' ||
                     e.change.attribute === 'isAllowlisted' ||
-                    e.change.attribute === 'totalTrackerNetworksCount' ||
                     e.change.attribute === 'siteRating') {
                     this._renderHeroTemplate()
                     this.unbindEvents()

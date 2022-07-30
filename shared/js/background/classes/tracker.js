@@ -19,7 +19,6 @@ export class TrackerSite {
         this.reason = reason
         this.categories = categories
         this.isBlocked = this.action === 'block' || this.action === 'redirect'
-        this.isNonTracker = this.action === 'none'
         this.isFirstParty = isFirstParty
     }
 }

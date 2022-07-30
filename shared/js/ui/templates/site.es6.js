@@ -2,7 +2,7 @@ const bel = require('bel')
 const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
 const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
-const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
+const { trackerNetworksText, nonTrackerNetworksText } = require('./shared/tracker-networks-text.es6.js')
 const constants = require('../../../data/constants')
 
 module.exports = function () {
@@ -32,6 +32,11 @@ module.exports = function () {
         <li class="js-site-tracker-networks js-site-show-page-trackers site-info__li--trackers padded border--bottom">
             <a href="javascript:void(0)" class="link-secondary bold" role="button">
                 ${renderTrackerNetworks(this.model)}
+            </a>
+        </li>
+        <li class="js-site-non-tracker-networks js-site-show-page-non-trackers site-info__li--trackers padded border--bottom">
+            <a href="javascript:void(0)" class="link-secondary bold" role="button">
+                ${renderNonTrackerNetworks(this.model)}
             </a>
         </li>
         <li class="js-site-privacy-practices site-info__li--privacy-practices padded border--bottom">
@@ -94,10 +99,21 @@ module.exports = function () {
 
         return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
     <span class="site-info__trackers-status__icon
-        icon-${trackerNetworksIcon(model.siteRating, !model.protectionsEnabled, model.totalTrackerNetworksCount)}"></span>
+        icon-${trackerNetworksIcon(model.siteRating, !model.protectionsEnabled, model.aggregationStats.blocked.entitiesCount)}"></span>
     <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
     <span class="icon icon__arrow pull-right"></span>
 </a>`
+    }
+
+    function renderNonTrackerNetworks (model) {
+        const isActive = model.protectionsEnabled ? 'is-active' : ''
+
+        return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
+            <span class="site-info__trackers-status__icon
+                icon-${trackerNetworksIcon(model.siteRating, !model.protectionsEnabled, model.aggregationStats.other.entitiesCount)}"></span>
+            <span class="${isActive} text-line-after-icon"> ${nonTrackerNetworksText(model, false)} </span>
+            <span class="icon icon__arrow pull-right"></span>
+        </a>`
     }
 
     function renderManageAllowlist (model) {

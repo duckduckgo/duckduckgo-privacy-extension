@@ -5,6 +5,7 @@ const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
 const BreakageFormView = require('./../views/breakage-form.es6.js')
 const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
 const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
+const nonTrackerNetworksTemplate = require('./../templates/non-tracker-networks.es6.js')
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
 const breakageFormTemplate = require('./../templates/breakage-form.es6.js')
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
@@ -79,6 +80,7 @@ Site.prototype = window.$.extend({},
                 'allowlist-status',
                 'show-all-trackers',
                 'show-page-trackers',
+                'show-page-non-trackers',
                 'manage-allowlist',
                 'manage-allowlist-li',
                 'report-broken',
@@ -95,6 +97,7 @@ Site.prototype = window.$.extend({},
             this.bindEvents([
                 [this.$toggle, 'click', this._onToggleClick],
                 [this.$showpagetrackers, 'click', this._showPageTrackers],
+                [this.$showpagenontrackers, 'click', this._showPageNonTrackers],
                 [this.$privacypractices, 'click', this._showPrivacyPractices],
                 [this.$confirmbreakageyes, 'click', this._onConfirmBrokenClick],
                 [this.$confirmbreakageno, 'click', this._onConfirmNotBrokenClick],
@@ -181,6 +184,13 @@ Site.prototype = window.$.extend({},
             if (this.$body.hasClass('is-disabled')) return
             this.views.slidingSubview = new TrackerNetworksView({
                 template: trackerNetworksTemplate
+            })
+        },
+
+        _showPageNonTrackers: function (e) {
+            if (this.$body.hasClass('is-disabled')) return
+            this.views.slidingSubview = new TrackerNetworksView({
+                template: nonTrackerNetworksTemplate
             })
         },
 

@@ -4,7 +4,7 @@ const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
 const refTests = require('../../data/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_matching_tests.json')
 const allowList = require('../../../shared/js/background/allowlisted-trackers.es6')
-const config = require('../../data/extension-config.json')
+const config = require('../../../shared/data/bundled/extension-config.json')
 
 describe('Tracker allowlist tests:', () => {
     beforeAll(() => {

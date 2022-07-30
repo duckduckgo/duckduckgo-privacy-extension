@@ -1,3 +1,4 @@
+// @ts-nocheck
 module.exports = function (category) {
     if (!this.tab) return
 

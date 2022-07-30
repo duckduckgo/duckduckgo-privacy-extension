@@ -77,8 +77,8 @@ function handleAmpRedirect (thisTab, url) {
  * - Add ATB param
  * - Block tracker requests
  * - Upgrade http -> https where possible
+ * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  */
-
 function handleRequest (requestData) {
     const tabId = requestData.tabId
     // Skip requests to background tabs
@@ -217,6 +217,9 @@ function handleRequest (requestData) {
 /**
  * Tracker blocking
  * If request is a tracker, cancel the request
+ * @param {import('./classes/tab.es6')} thisTab
+ * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
+ * @returns {browser.WebRequest.BlockingResponseOrPromise | undefined}
  */
 function blockHandleResponse (thisTab, requestData) {
     const tabId = requestData.tabId
@@ -265,9 +268,21 @@ function blockHandleResponse (thisTab, requestData) {
             }
         }
 
+        // ad click attribution
+        if (thisTab.allowAdAttribution(requestData.url)) {
+            tracker.action = 'ad-attribution'
+            tracker.reason = 'tracker allowlist - ad click'
+        }
+
+        if (!blockingEnabled && (tracker.action === 'block' || tracker.action === 'redirect')) {
+            tracker.action = 'ignore-user'
+            tracker.reason = 'content blocking disabled'
+        }
+
         // allow embedded twitter content if user enabled this setting
         if (tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
-            tracker.action = 'none'
+            tracker.action = 'ignore-user'
+            tracker.reason = 'embedded tweets allowed'
         }
 
         const reportedTracker = { ...tracker }
@@ -305,7 +320,7 @@ function blockHandleResponse (thisTab, requestData) {
         if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
         browserWrapper.notifyPopup({ updateTabData: true })
         // Block the request if the site is not allowlisted
-        if (blockingEnabled && ['block', 'redirect'].includes(tracker.action)) {
+        if (['block', 'redirect'].includes(tracker.action)) {
             // @ts-ignore
             Companies.add(tracker.tracker.owner)
             if (sameDomainDocument) thisTab.addOrUpdateTrackersBlocked(tracker)
@@ -330,7 +345,6 @@ function blockHandleResponse (thisTab, requestData) {
                     return { redirectUrl: `${webResource}?key=${key}` }
                 }
             } else {
-                requestData.message = { cancel: true }
                 return { cancel: true }
             }
         }

@@ -8,15 +8,19 @@
     "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "declaration": true,
     "strict": true,
     "noImplicitAny": false,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "maxNodeModuleJsDepth": 0
   },
   "include": [
       "node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js",
       "shared/js/background/**/*.js",
       "shared/js/devtools/**/*.js",
-      "shared/js/shared-utils/**/*.js"
+      "shared/js/shared-utils/**/*.js",
+      "shared/js/ui/models/mixins/calculate-aggregation-stats.js",
+      "shared/js/ui/templates/shared/utils.js"
   ],
   "exclude": [
       "shared/js/background/background.es6.js",
