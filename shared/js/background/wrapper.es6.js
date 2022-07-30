@@ -177,6 +177,7 @@ function convertScriptingAPIOptionsForTabsAPI (options) {
 export async function executeScript (options) {
     if (typeof browser.scripting === 'undefined') {
         return await browser.tabs.executeScript(
+            // @ts-ignore
             ...convertScriptingAPIOptionsForTabsAPI(options)
         )
     }
@@ -198,6 +199,7 @@ export async function executeScript (options) {
 export async function insertCSS (options) {
     if (typeof browser.scripting === 'undefined') {
         return await browser.tabs.insertCSS(
+            // @ts-ignore
             ...convertScriptingAPIOptionsForTabsAPI(options)
         )
     }
@@ -206,6 +208,7 @@ export async function insertCSS (options) {
 }
 
 // Session storage
+// @ts-ignore
 const sessionStorageSupported = typeof browser.storage.session !== 'undefined'
 const sessionStorageFallback = sessionStorageSupported ? null : new Map()
 
@@ -229,6 +232,7 @@ export async function setToSessionStorage (key, data) {
     }
 
     if (sessionStorageSupported) {
+        // @ts-ignore
         return await browser.storage.session.set({ [key]: data })
     }
 
@@ -249,6 +253,7 @@ export async function getFromSessionStorage (key) {
     }
 
     if (sessionStorageSupported) {
+        // @ts-ignore
         const result = await browser.storage.session.get([key])
         return result[key]
     }
@@ -269,6 +274,7 @@ export async function removeFromSessionStorage (key) {
     }
 
     if (sessionStorageSupported) {
+        // @ts-ignore
         return await browser.storage.session.remove(key)
     }
 

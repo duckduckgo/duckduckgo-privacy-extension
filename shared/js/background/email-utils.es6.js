@@ -56,14 +56,14 @@ browser.contextMenus.create({
     // Note: Since webextension-polyfill does not wrap the contextMenus.create
     //       API, the old callback + runtime.lastError approach must be used.
     const { lastError } = browser.runtime
-    if (lastError &&
+    if (lastError && lastError.message &&
         !lastError.message.startsWith('Cannot create item with duplicate id')) {
         throw lastError
     }
 })
 browser.contextMenus.onClicked.addListener((info, tab) => {
     const userData = getSetting('userData')
-    if (userData.nextAlias) {
+    if (tab?.id && userData.nextAlias) {
         browser.tabs.sendMessage(tab.id, {
             type: 'contextualAutofill',
             alias: userData.nextAlias

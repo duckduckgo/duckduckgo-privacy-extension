@@ -9,8 +9,8 @@ const sendMessage = async (messageType, options) => {
 const backgroundMessage = (thisModel) => {
     // listen for messages from background and
     // // notify subscribers
-    window.chrome.runtime.onMessage.addListener((req, sender) => {
-        if (sender.id !== chrome.runtime.id) return
+    browser.runtime.onMessage.addListener((req, sender) => {
+        if (sender.id !== browser.runtime.id) return
         if (req.allowlistChanged) thisModel.send('allowlistChanged')
         if (req.updateTabData) thisModel.send('updateTabData')
         if (req.didResetTrackersData) thisModel.send('didResetTrackersData', req.didResetTrackersData)
@@ -18,28 +18,41 @@ const backgroundMessage = (thisModel) => {
     })
 }
 
-const getBackgroundTabData = () => {
-    return new Promise((resolve, reject) => {
-        sendMessage('getCurrentTab').then((tab) => {
-            if (tab) {
-                sendMessage('getTab', tab.id).then((backgroundTabObj) => {
-                    resolve(backgroundTabObj)
-                })
-            }
-        })
-    })
+/** @typedef {ReturnType<import('../../background/message-handlers.js').getTab>} Tab */
+
+/**
+ * @returns {Promise<Tab|undefined>}
+ */
+async function getBackgroundTabData () {
+    const url = new URL(window.location.href)
+    let tabId
+    // Used for ui debugging to open the dashboard in a new tab and set the tabId manually.
+    if (url.searchParams.has('tabId')) {
+        tabId = Number(url.searchParams.get('tabId'))
+    }
+    if (!tabId) {
+        const tab = await sendMessage('getCurrentTab')
+        if (tab) {
+            tabId = tab.id
+        }
+    }
+    if (tabId) {
+        /** @type {Tab} */
+        const backgroundTabObj = await sendMessage('getTab', tabId)
+        return backgroundTabObj
+    }
 }
 
 const search = (url) => {
-    window.chrome.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${browserInfo.os}cr` })
+    browser.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${browserInfo.os}cr` })
 }
 
 const getExtensionURL = (path) => {
-    return chrome.runtime.getURL(path)
+    return browser.runtime.getURL(path)
 }
 
 const openExtensionPage = (path) => {
-    window.chrome.tabs.create({ url: getExtensionURL(path) })
+    browser.tabs.create({ url: getExtensionURL(path) })
 }
 
 const openOptionsPage = (browser) => {
@@ -47,16 +60,16 @@ const openOptionsPage = (browser) => {
         openExtensionPage('/html/options.html')
         window.close()
     } else {
-        window.chrome.runtime.openOptionsPage()
+        browser.runtime.openOptionsPage()
     }
 }
 
 const reloadTab = (id) => {
-    window.chrome.tabs.reload(id)
+    browser.tabs.reload(id)
 }
 
 const closePopup = () => {
-    const w = window.chrome.extension.getViews({ type: 'popup' })[0]
+    const w = browser.extension.getViews({ type: 'popup' })[0]
     w.close()
 }
 

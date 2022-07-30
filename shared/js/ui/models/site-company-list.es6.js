@@ -1,5 +1,6 @@
 const Parent = window.DDG.base.Model
 const normalizeCompanyName = require('./mixins/normalize-company-name.es6')
+const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 
 function SiteCompanyList (attrs) {
     attrs = attrs || {}
@@ -17,18 +18,18 @@ SiteCompanyList.prototype = window.$.extend({},
 
         fetchAsyncData: function () {
             return new Promise((resolve, reject) => {
-                this.sendMessage('getCurrentTab').then((tab) => {
-                    if (tab) {
-                        this.sendMessage('getTab', tab.id).then((bkgTab) => {
-                            this.tab = bkgTab
-                            this.domain = this.tab && this.tab.site ? this.tab.site.domain : ''
-                            this._updateCompaniesList()
-                            resolve()
-                        })
+                browserUIWrapper.getBackgroundTabData().then((bkgTab) => {
+                    if (bkgTab) {
+                        this.tab = bkgTab
+                        this.domain = this.tab && this.tab.site ? this.tab.site.domain : ''
+                        this._updateCompaniesList()
                     } else {
                         console.debug('SiteDetails model: no tab')
-                        resolve()
                     }
+                    resolve()
+                }).catch(() => {
+                    console.debug('SiteDetails model: no tab')
+                    resolve()
                 })
             })
         },
