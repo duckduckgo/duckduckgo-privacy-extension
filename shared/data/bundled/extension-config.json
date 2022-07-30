@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1658152028028,
+    "version": 1658496463463,
     "features": {
         "ampLinks": {
             "exceptions": [
@@ -174,6 +174,10 @@
                 {
                     "domain": "hm.com",
                     "reason": "When adding an item to cart, there is an error 'something went wrong', and the item does not get added to the cart."
+                },
+                {
+                    "domain": "ikea.com",
+                    "reason": "When creating an account, after filling out details and going to e-mail confirmation, there is an error 'Something went wrong', and the e-mail may not be received. Clicking 'Send new code' appears successful, but after entering the code there is often another account creation error."
                 },
                 {
                     "domain": "spirit.com",
