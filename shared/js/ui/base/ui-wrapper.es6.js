@@ -55,8 +55,8 @@ const openExtensionPage = (path) => {
     browser.tabs.create({ url: getExtensionURL(path) })
 }
 
-const openOptionsPage = (browser) => {
-    if (browser === 'moz') {
+const openOptionsPage = (browserName) => {
+    if (browserName === 'moz') {
         openExtensionPage('/html/options.html')
         window.close()
     } else {
