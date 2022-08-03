@@ -276,8 +276,8 @@ class TDSStorage {
             Object.values(listCopy.trackers).forEach((tracker) => {
                 tracker.rules?.forEach((rule, i) => {
                     // convert Regex to string and cut slashes and flags
-                    const ruleRegexStr = this.tds.trackers[tracker.domain].rules[i].rule.toString()
-                    rule.rule = ruleRegexStr.slice(1, ruleRegexStr.length - 3)
+                    const ruleValue = this.tds.trackers[tracker.domain].rules[i].rule
+                    rule.rule = typeof ruleValue === 'string' ? ruleValue : ruleValue.source
                 })
             })
             return listCopy
