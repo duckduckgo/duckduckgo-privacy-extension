@@ -55,13 +55,9 @@ const openExtensionPage = (path) => {
     browser.tabs.create({ url: getExtensionURL(path) })
 }
 
-const openOptionsPage = (browser) => {
-    if (browser === 'moz') {
-        openExtensionPage('/html/options.html')
-        window.close()
-    } else {
-        browser.runtime.openOptionsPage()
-    }
+const openOptionsPage = () => {
+    openExtensionPage('/html/options.html')
+    window.close()
 }
 
 const reloadTab = (id) => {
