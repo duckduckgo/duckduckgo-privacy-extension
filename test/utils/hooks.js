@@ -1,8 +1,10 @@
 const { PuppeteerInterface } = require('../../puppeteerInterface')
 
 exports.mochaHooks = {
-    beforeAll () {
+    async beforeAll () {
+        this.timeout(20000)
         this.browser = new PuppeteerInterface()
+        await this.browser.ready
     },
     async afterAll () {
         await this.browser.closeBrowser()

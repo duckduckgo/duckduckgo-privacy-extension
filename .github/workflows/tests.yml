@@ -4,13 +4,18 @@ on: [push, pull_request]
 
 jobs:
   lint-test:
-    runs-on: ubuntu-latest
+    name: "${{ matrix.os }} (Node.js ${{ matrix.node }})"
+    runs-on: "${{ matrix.os }}"
+    strategy:
+      matrix:
+        node: [16.x, 18.x]
+        os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js 16
+      - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v1
         with:
-          node-version: 16.x
+          node-version: ${{ matrix.node }}
       - run: npm install
       - run: npm run lint
       - run: npm test
