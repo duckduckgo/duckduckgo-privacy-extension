@@ -50,15 +50,31 @@ function addDomain (blockList, domain, entity, defaultAction, rules) {
     }
 
     if (rules) {
+        // Rules can either be a string, or a RegExp Object. To ensure both are
+        // handled, convert every other rule to a RegExp Object.
+        for (let i = 0; i < rules.length; i++) {
+            if (i % 2) {
+                rules[i].rule = new RegExp(rules[i].rule)
+            }
+        }
+
         blockList.trackers[domain].rules = rules
     }
+}
+
+function stringifyBlocklist (tds) {
+    return JSON.stringify(
+        tds,
+        (key, value) => value instanceof RegExp ? value.source : value,
+        2
+    )
 }
 
 async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
     expectedRuleset, expectedLookup, rulesetTransform, ruleTransform,
     lookupTransform
 }) {
-    const tdsCopy = JSON.parse(JSON.stringify(tds))
+    const tdsBefore = stringifyBlocklist(tds)
 
     let result
     if (typeof startingRuleId === 'number') {
@@ -71,7 +87,7 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
         )
     }
 
-    assert.deepEqual(tds, tdsCopy, 'TDS mutated!')
+    assert.deepEqual(stringifyBlocklist(tds), tdsBefore, 'TDS mutated!')
     if (expectedRuleset) {
         let actualRuleset = result.ruleset
         if (rulesetTransform) {
