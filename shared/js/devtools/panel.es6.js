@@ -55,7 +55,7 @@ const actionIcons = {
  * @param {string} textName
  * @param {boolean} isEnabled
  */
-function setupProtectionButton(element, textName, isEnabled) {
+function setupProtectionButton (element, textName, isEnabled) {
     element.innerText = `${textName}: ${isEnabled ? 'ON' : 'OFF'}`
     element.classList.add(`protection-button-${isEnabled ? 'on' : 'off'}`)
     element.classList.remove(`protection-button-${isEnabled ? 'off' : 'on'}`)
@@ -282,7 +282,7 @@ displayFilters.forEach((input) => {
  * Observes the dev settings for resizing to ensure the table head sticks correctly to the bottom of the settings.
  */
 const settingsResizeObserver = new ResizeObserver(function (entries) {
-    const height = entries[0].contentRect.height;
-    document.querySelector('thead').style['top'] = `${height}px`
+    const height = entries[0].contentRect.height
+    document.querySelector('thead').style.top = `${height}px`
 })
 settingsResizeObserver.observe(document.getElementById('settings-panel'))
