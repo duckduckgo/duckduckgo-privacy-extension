@@ -25,7 +25,6 @@ const gradeIconLocations = {
     F: '/img/toolbar-rating-f_48.png'
 }
 
-const Site = require('./site.es6')
 const { Site } = require('./site.es6')
 const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects.es6')
