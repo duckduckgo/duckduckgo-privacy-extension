@@ -10,6 +10,11 @@ const {
     generateTrackerBlockingRuleset
 } = require('../lib/trackerBlocking')
 
+const MAXIMUM_RULES_PER_DOMAIN = Math.floor(
+    MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT /
+        TRACKER_RULE_PRIORITY_INCREMENT
+)
+
 function emptyBlockList () {
     return {
         cnames: {},
@@ -117,7 +122,7 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
 }
 
 describe('generateTrackerBlockingRuleset', () => {
-    it('should reject invalid tds.json file', () => {
+    it('should reject invalid tds.json file', async () => {
         const invalidBlockLists = [
             undefined,
             1,
@@ -130,19 +135,19 @@ describe('generateTrackerBlockingRuleset', () => {
         ]
 
         for (const blockList of invalidBlockLists) {
-            assert.rejects(() =>
+            await assert.rejects(() =>
                 generateTrackerBlockingRuleset(blockList, () => { })
             )
         }
     })
 
-    it('should notice missing isRegexSupported argument', () => {
-        assert.rejects(() =>
+    it('should notice missing isRegexSupported argument', async () => {
+        await assert.rejects(() =>
             generateTrackerBlockingRuleset(
                 { cnames: {}, domains: {}, entities: {}, trackers: {} }
             )
         )
-        assert.rejects(() =>
+        await assert.rejects(() =>
             generateTrackerBlockingRuleset(
                 { cnames: {}, domains: {}, entities: {}, trackers: {} }, 3
             )
@@ -171,58 +176,56 @@ describe('generateTrackerBlockingRuleset', () => {
 
         addDomain(blockList, 'a.' + domain, entity, 'block')
 
-        assert.rejects(() =>
+        await assert.rejects(() =>
             generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
         )
     })
 
     it('should reject a tds.json file if a tracker entry contains too many ' +
-       'rules', () => {
+       'rules', async () => {
         const blockList = emptyBlockList()
 
-        let maxNumRules = 1
-        for (let priority = BASELINE_PRIORITY;
-            priority <= MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT;
-            priority += TRACKER_RULE_PRIORITY_INCREMENT) {
-            maxNumRules++
-        }
-
-        const rules = new Array(maxNumRules)
+        const rules = new Array(MAXIMUM_RULES_PER_DOMAIN)
         rules.fill({ rule: 'example\\.com' })
 
         const entity = 'Example entity'
         const domain = 'example.invalid'
-        addDomain(blockList, domain, entity, 'block', rules)
+        addDomain(blockList, domain, entity, 'allow', rules)
 
-        assert.doesNotReject(() =>
+        await assert.doesNotReject(() =>
             generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
         )
 
-        blockList.trackers[domain].rules.push({ rule: 'example\\.com' })
+        blockList.trackers[domain].rules.push({ rule: 'example\\.com/extra' })
 
-        assert.rejects(() =>
+        await assert.rejects(() =>
             generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
         )
     })
 
     it('should reject a tds.json file if it requires too many regular ' +
-       'expression rule filters', () => {
+       'expression rule filters', async () => {
         const blockList = emptyBlockList()
 
-        const rules = new Array(MAXIMUM_REGEX_RULES)
+        const maxRegexDomains = Math.floor(MAXIMUM_REGEX_RULES / MAXIMUM_RULES_PER_DOMAIN)
+
+        const rules = new Array(MAXIMUM_RULES_PER_DOMAIN)
         rules.fill({ rule: '[0-9]+' })
 
         const entity = 'Example entity'
-        const domain = 'example.invalid'
-        addDomain(blockList, domain, entity, 'block', rules)
 
-        assert.doesNotReject(() =>
+        for (let i = 0; i < maxRegexDomains; i++) {
+            const domain = 'example' + i + '.invalid'
+            addDomain(blockList, domain, entity, 'allow', rules)
+        }
+
+        await assert.doesNotReject(() =>
             generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
         )
 
-        blockList.trackers[domain].rules.push({ rule: '[0-9]+' })
+        addDomain(blockList, 'example-extra.invalid', entity, 'allow', rules)
 
-        assert.rejects(() =>
+        await assert.rejects(() =>
             generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
         )
     })

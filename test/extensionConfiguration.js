@@ -5,17 +5,22 @@ const {
 } = require('../lib/extensionConfiguration')
 
 describe('generateExtensionConfigurationRuleset', () => {
-    it('should reject invalid extension configuration', () => {
-        assert.rejects(() =>
-            generateExtensionConfigurationRuleset(null)
+    it('should reject invalid extension configuration', async () => {
+        await assert.rejects(() =>
+            generateExtensionConfigurationRuleset(null, () => { })
         )
-        assert.rejects(() =>
-            generateExtensionConfigurationRuleset({})
+        await assert.rejects(() =>
+            generateExtensionConfigurationRuleset({}, () => { })
         )
-        assert.rejects(() =>
+        await assert.rejects(() =>
             generateExtensionConfigurationRuleset({
                 features: null
-            })
+            }, () => { })
+        )
+        await assert.doesNotReject(() =>
+            generateExtensionConfigurationRuleset({
+                features: {}
+            }, () => { })
         )
     })
 })

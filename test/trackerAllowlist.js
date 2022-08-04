@@ -12,9 +12,11 @@ const {
 
 describe('Tracker Allowlist', () => {
     it('should reject extension configuration if there are too many rules ' +
-       'for a tracker blocking allowlist entry', () => {
+       'for a tracker blocking allowlist entry', async () => {
         const rules = new Array(MAXIMUM_RULES_PER_TRACKER_ENTRY)
-        rules.fill({ rule: 'example\\.com' })
+        rules.fill({
+            rule: 'example\\.com', domains: ['<all>'], reason: ''
+        })
 
         const extensionConfig = {
             features: {
@@ -31,13 +33,19 @@ describe('Tracker Allowlist', () => {
             }
         }
 
-        assert.doesNotReject(() =>
-            generateExtensionConfigurationRuleset(extensionConfig))
+        await assert.doesNotReject(() =>
+            generateExtensionConfigurationRuleset(
+                extensionConfig
+            )
+        )
 
         rules.push(rules[0])
 
-        assert.rejects(() =>
-            generateExtensionConfigurationRuleset(extensionConfig))
+        await assert.rejects(() =>
+            generateExtensionConfigurationRuleset(
+                extensionConfig
+            )
+        )
     })
 
     it('should return no rules if trackerAllowlist feature is disabled or ' +
