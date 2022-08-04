@@ -23,4 +23,22 @@ describe('generateExtensionConfigurationRuleset', () => {
             }, () => { })
         )
     })
+
+    it('should notice missing isRegexSupported argument', async () => {
+        await assert.rejects(() =>
+            generateExtensionConfigurationRuleset({
+                features: {}
+            })
+        )
+        await assert.rejects(() =>
+            generateExtensionConfigurationRuleset({
+                features: {}
+            }, 3)
+        )
+        await assert.doesNotReject(() =>
+            generateExtensionConfigurationRuleset({
+                features: {}
+            }, () => { })
+        )
+    })
 })

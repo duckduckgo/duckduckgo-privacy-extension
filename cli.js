@@ -83,14 +83,20 @@ async function main () {
                 extensionConfigFilePath, rulesetFilePath, mappingFilePath
             ] = args
 
+            const browser = new PuppeteerInterface()
+            const isRegexSupported = browser.isRegexSupported.bind(browser)
+
             const { ruleset, matchDetailsByRuleId } =
                   await generateExtensionConfigurationRuleset(
                       JSON.parse(
                           fs.readFileSync(
                               extensionConfigFilePath, { encoding: 'utf8' }
                           )
-                      )
+                      ),
+                      isRegexSupported
                   )
+
+            browser.closeBrowser()
 
             fs.writeFileSync(
                 rulesetFilePath,

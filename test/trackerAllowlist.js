@@ -10,6 +10,10 @@ const {
     generateExtensionConfigurationRuleset
 } = require('../lib/extensionConfiguration')
 
+async function isRegexSupportedTrue ({ regex, isCaseSensitive }) {
+    return { isSupported: true }
+}
+
 describe('Tracker Allowlist', () => {
     it('should reject extension configuration if there are too many rules ' +
        'for a tracker blocking allowlist entry', async () => {
@@ -35,7 +39,7 @@ describe('Tracker Allowlist', () => {
 
         await assert.doesNotReject(() =>
             generateExtensionConfigurationRuleset(
-                extensionConfig
+                extensionConfig, isRegexSupportedTrue
             )
         )
 
@@ -43,7 +47,8 @@ describe('Tracker Allowlist', () => {
 
         await assert.rejects(() =>
             generateExtensionConfigurationRuleset(
-                extensionConfig
+                extensionConfig,
+                isRegexSupportedTrue
             )
         )
     })
@@ -55,7 +60,7 @@ describe('Tracker Allowlist', () => {
                 features: {
                     trackerAllowlist: {}
                 }
-            }, () => {}),
+            }, isRegexSupportedTrue),
             { ruleset: [], matchDetailsByRuleId: {} }
         )
 
@@ -77,7 +82,7 @@ describe('Tracker Allowlist', () => {
                         }
                     }
                 }
-            }, () => {}),
+            }, isRegexSupportedTrue),
             { ruleset: [], matchDetailsByRuleId: {} }
         )
 
@@ -91,7 +96,7 @@ describe('Tracker Allowlist', () => {
                         }
                     }
                 }
-            }, () => {}),
+            }, isRegexSupportedTrue),
             { ruleset: [], matchDetailsByRuleId: {} }
         )
     })
@@ -153,7 +158,7 @@ describe('Tracker Allowlist', () => {
 
         assert.deepEqual(
             await generateExtensionConfigurationRuleset(
-                extensionConfig, 23
+                extensionConfig, isRegexSupportedTrue, 23
             ),
             {
                 ruleset: [
