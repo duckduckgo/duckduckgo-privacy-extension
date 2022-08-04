@@ -12,11 +12,11 @@
         "puppeteer": "15.1.1"
     },
     "scripts": {
+        "extension-configuration": "node cli.js extension-configuration",
         "lint": "eslint . --ext .js",
         "smarter-encryption": "node cli.js smarter-encryption",
         "test": "mocha",
-        "tracker-blocking": "node cli.js tracker-blocking",
-        "tracker-blocking-allowlist": "node cli.js tracker-blocking-allowlist"
+        "tracker-blocking": "node cli.js tracker-blocking"
     },
     "mocha": {
         "require": "test/utils/hooks.js"

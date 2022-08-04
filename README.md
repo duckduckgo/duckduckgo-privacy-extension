@@ -30,13 +30,16 @@ Generate a Tracker Blocking ruleset:
 npm run tracker-blocking ../tds.json ../tracker-blocking-ruleset.json [../tracker-domain-by-rule-id.txt]
 ```
 
-Generate a Tracker Blocking Allowlist ruleset:
+Generate the extension configuration ruleset:
 
 ```bash
-npm run tracker-blocking-allowlist ../extension-config.json ../tracker-blocking-allowlist-ruleset.json \
-        [../tracker-domain-and-reason-by-rule-id.json]
+npm run extension-configuration ../extension-config.json ../extension-configuration-ruleset.json \
+        [../match-details-by-rule-id.json]
 ```
 
+Note:
+ - Extension configuration ruleset generation is a work in progress. So far,
+   only the tracker allowlist is supported.
 
 ## Development
 

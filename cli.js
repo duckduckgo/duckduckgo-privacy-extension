@@ -5,8 +5,8 @@ const { PuppeteerInterface } = require('./puppeteerInterface')
 
 const { generateSmarterEncryptionRuleset } = require('./lib/smarterEncryption')
 const { generateTrackerBlockingRuleset } = require('./lib/trackerBlocking')
-const { generateTrackerBlockingAllowlistRuleset } =
-      require('./lib/trackerBlockingAllowlist')
+const { generateExtensionConfigurationRuleset } =
+      require('./lib/extensionConfiguration')
 
 const [command, ...args] = process.argv.slice(2)
 
@@ -71,10 +71,10 @@ async function main () {
             }
         }
         break
-    case 'tracker-blocking-allowlist':
+    case 'extension-configuration':
         if (args.length < 2 || args.length > 3) {
             console.error(
-                'Usage: npm run tracker-blocking-allowlist',
+                'Usage: npm run extension-configuration',
                 './extension-config-input.json ./ruleset-output.json ',
                 '[./domain-and-reason-by-rule-id-output.json]'
             )
@@ -83,8 +83,8 @@ async function main () {
                 extensionConfigFilePath, rulesetFilePath, mappingFilePath
             ] = args
 
-            const { ruleset, trackerDomainAndReasonByRuleId } =
-                  await generateTrackerBlockingAllowlistRuleset(
+            const { ruleset, matchDetailsByRuleId } =
+                  await generateExtensionConfigurationRuleset(
                       JSON.parse(
                           fs.readFileSync(
                               extensionConfigFilePath, { encoding: 'utf8' }
@@ -100,7 +100,7 @@ async function main () {
             if (mappingFilePath) {
                 fs.writeFileSync(
                     mappingFilePath,
-                    JSON.stringify(trackerDomainAndReasonByRuleId, null, '\t')
+                    JSON.stringify(matchDetailsByRuleId, null, '\t')
                 )
             }
         }

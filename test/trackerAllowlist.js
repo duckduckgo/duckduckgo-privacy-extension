@@ -3,27 +3,14 @@ const assert = require('assert')
 const {
     BASELINE_PRIORITY,
     PRIORITY_INCREMENT,
-    MAXIMUM_RULES_PER_TRACKER_ENTRY,
-    generateTrackerBlockingAllowlistRuleset
-} = require('../lib/trackerBlockingAllowlist')
+    MAXIMUM_RULES_PER_TRACKER_ENTRY
+} = require('../lib/trackerAllowlist')
 
-describe('generateTrackerBlockingAllowlistRuleset', () => {
-    it('should reject invalid extension configuration', () => {
-        assert.rejects(() =>
-            generateTrackerBlockingAllowlistRuleset(null)
-        )
-        assert.rejects(() =>
-            generateTrackerBlockingAllowlistRuleset({})
-        )
-        assert.rejects(() =>
-            generateTrackerBlockingAllowlistRuleset({
-                features: {
-                    trackerAllowlist: null
-                }
-            })
-        )
-    })
+const {
+    generateExtensionConfigurationRuleset
+} = require('../lib/extensionConfiguration')
 
+describe('Tracker Allowlist', () => {
     it('should reject extension configuration if there are too many rules ' +
        'for a tracker blocking allowlist entry', () => {
         const rules = new Array(MAXIMUM_RULES_PER_TRACKER_ENTRY)
@@ -45,27 +32,27 @@ describe('generateTrackerBlockingAllowlistRuleset', () => {
         }
 
         assert.doesNotReject(() =>
-            generateTrackerBlockingAllowlistRuleset(extensionConfig))
+            generateExtensionConfigurationRuleset(extensionConfig))
 
         rules.push(rules[0])
 
         assert.rejects(() =>
-            generateTrackerBlockingAllowlistRuleset(extensionConfig))
+            generateExtensionConfigurationRuleset(extensionConfig))
     })
 
     it('should return no rules if trackerAllowlist feature is disabled or ' +
        'configuration is empty', async () => {
         assert.deepEqual(
-            await generateTrackerBlockingAllowlistRuleset({
+            await generateExtensionConfigurationRuleset({
                 features: {
                     trackerAllowlist: {}
                 }
             }, () => {}),
-            { ruleset: [], trackerDomainAndReasonByRuleId: {} }
+            { ruleset: [], matchDetailsByRuleId: {} }
         )
 
         assert.deepEqual(
-            await generateTrackerBlockingAllowlistRuleset({
+            await generateExtensionConfigurationRuleset({
                 features: {
                     trackerAllowlist: {
                         state: 'disabled',
@@ -83,11 +70,11 @@ describe('generateTrackerBlockingAllowlistRuleset', () => {
                     }
                 }
             }, () => {}),
-            { ruleset: [], trackerDomainAndReasonByRuleId: {} }
+            { ruleset: [], matchDetailsByRuleId: {} }
         )
 
         assert.deepEqual(
-            await generateTrackerBlockingAllowlistRuleset({
+            await generateExtensionConfigurationRuleset({
                 features: {
                     trackerAllowlist: {
                         state: 'enabled',
@@ -97,7 +84,7 @@ describe('generateTrackerBlockingAllowlistRuleset', () => {
                     }
                 }
             }, () => {}),
-            { ruleset: [], trackerDomainAndReasonByRuleId: {} }
+            { ruleset: [], matchDetailsByRuleId: {} }
         )
     })
 
@@ -157,7 +144,7 @@ describe('generateTrackerBlockingAllowlistRuleset', () => {
         const extensionConfigCopy = JSON.parse(JSON.stringify(extensionConfig))
 
         assert.deepEqual(
-            await generateTrackerBlockingAllowlistRuleset(
+            await generateExtensionConfigurationRuleset(
                 extensionConfig, 23
             ),
             {
@@ -244,24 +231,29 @@ describe('generateTrackerBlockingAllowlistRuleset', () => {
                         }
                     }
                 ],
-                trackerDomainAndReasonByRuleId: {
+                matchDetailsByRuleId: {
                     23: {
+                        type: 'trackerAllowlist',
                         domain: 'domain.invalid',
                         reason: 'reason 1'
                     },
                     24: {
+                        type: 'trackerAllowlist',
                         domain: 'subdomain.domain.invalid',
                         reason: 'reason 2'
                     },
                     25: {
+                        type: 'trackerAllowlist',
                         domain: 'another.subdomain.domain.invalid',
                         reason: 'reason 4'
                     },
                     26: {
+                        type: 'trackerAllowlist',
                         domain: 'another.subdomain.domain.invalid',
                         reason: 'reason 3'
                     },
                     27: {
+                        type: 'trackerAllowlist',
                         domain: 'different-tracker.invalid',
                         reason: 'reason 5'
                     }
