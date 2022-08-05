@@ -55,24 +55,6 @@ function assertInputElement(element) {
     return element
 }
 
-/**
- * @param {HTMLElement} element
- * @returns {HTMLLinkElement}
- */
-function assertLinkElement(element) {
-    // @ts-ignore
-    return element
-}
-
-/**
- * @param {Node} element
- * @returns {HTMLTableRowElement}
- */
-function assertTableRowElement(element) {
-    // @ts-ignore
-    return element
-}
-
 function sendMessage (messageType, options, callback) {
     browser.runtime.sendMessage({ messageType, options }, callback)
 }
@@ -93,33 +75,6 @@ function addRequestRow(f) {
                 if (prevRowCopy.innerHTML == row.innerHTML) {
                     const countElt = querySelectorOrFail(prevRow, '.action-count')
                     const prevCount = parseInt(countElt.textContent?.replaceAll(/[ \[\]]/g, '') || '1')
-                    countElt.textContent = ` [${prevCount + 1}]`
-                } else {
-                    table.appendChild(row)
-                }
-            } else {
-                table.appendChild(row)
-            }
-        }
-    }
-}
-
-/**
- * @param {(m: any) => HTMLTableRowElement} f
- * @returns {(m: any) => void}
- */
-function addRequestRow(f) {
-    return (m) => {
-        const row = f(m)
-        if (row) {
-            // if duplicate request lines would be printed, we instead show a counter increment
-            const prevRow = document.querySelector('tbody > tr:last-child')
-            if (prevRow) {
-                const prevRowCopy = assertTableRowElement(prevRow.cloneNode(true))
-                prevRowCopy.querySelector('.action-count').textContent = ''
-                if (prevRowCopy.innerHTML == row.innerHTML) {
-                    const countElt = prevRow.querySelector('.action-count')
-                    const prevCount = parseInt(countElt.textContent.replaceAll(/[ \[\]]/g, '') || '1')
                     countElt.textContent = ` [${prevCount + 1}]`
                 } else {
                     table.appendChild(row)
