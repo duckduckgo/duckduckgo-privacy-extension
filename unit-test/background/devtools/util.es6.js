@@ -301,6 +301,23 @@ describe('blockRequest:', () => {
         }
     })
 
+    describe('with URL params', () => {
+        const reqBase = 'tracker.com/simple/request.js'
+        const reqWithParam = `${reqBase}?param=1`
+        beforeEach(() => {
+            initTds({})
+            blockRequest(reqWithParam)
+        })
+
+        it('blocks the param request', () => {
+            expectBlock(reqWithParam)
+        })
+
+        it('blocks the base request', () => {
+            expectBlock(reqBase)
+        })
+    })
+
     describe('resource types:', () => {
         const req = 'tracker.com/simple/request.js'
         beforeEach(() => {
