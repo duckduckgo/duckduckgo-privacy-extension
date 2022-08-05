@@ -122,8 +122,8 @@ describe('blockRequest:', () => {
         it('block request should be idempotent', () => {
             compareTrackerLists(() => {
                 blockRequest(trackerPath)
-            }, () => {
                 blockRequest(trackerPath)
+            }, () => {
                 blockRequest(trackerPath)
             })
         })
