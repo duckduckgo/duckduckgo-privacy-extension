@@ -3,7 +3,7 @@ const displayCategories = require('./../../../../data/constants.js').displayCate
 
 export function renderAboutOurTrackingProtectionsLink () {
     const webProtectionsURL = 'https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/'
-    return bel`<a href="${webProtectionsURL}" target="_blank">About our Web Tracking Protections</a>`
+    return bel`<a class="about-link" href="${webProtectionsURL}" target="_blank">About our Web Tracking Protections</a>`
 }
 
 /**
@@ -38,7 +38,7 @@ export function renderTrackerDetails (companyListMap, site) {
         }
         const urlOutput = c.urlsList.map((url) => {
             const category = categoryText(c.urls[url])
-            return bel`<li>
+            return bel`<li class="url-list-item">
                 <div class="url" title="${url}">${url}</div>
                 <div class="category">${category}</div>
             </li>`

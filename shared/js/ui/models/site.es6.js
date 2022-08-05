@@ -239,6 +239,8 @@ Site.prototype = window.$.extend({},
 
         toggleAllowlist: function () {
             if (this.tab && this.tab.site) {
+                // broadcast that this was a user-initiated action
+                this.send('user-action', 'toggleAllowlist')
                 if (this.isBroken) {
                     this.initAllowlisted(this.isAllowlisted, !this.isDenylisted)
                     this.setList('denylisted', this.tab.site.domain, this.isDenylisted)

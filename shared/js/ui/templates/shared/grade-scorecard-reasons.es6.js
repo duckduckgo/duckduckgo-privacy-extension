@@ -1,6 +1,7 @@
 const statusList = require('./status-list.es6.js')
 const constants = require('../../../../data/constants')
-const { trackerNetworksText, majorTrackerNetworksText } = require('./tracker-networks-text.es6.js')
+const { majorTrackerNetworksText, gradeTrackerNetworksText } = require('./tracker-networks-text.es6.js')
+const { calculateTotals } = require('../../models/mixins/calculate-aggregation-stats')
 
 module.exports = function (site) {
     const reasons = getReasons(site)
@@ -27,31 +28,29 @@ function getReasons (site) {
         })
     }
 
-    // tracking networks blocked or found,
-    // only show a message if there's any
-    const trackersCount = site.isAllowlisted ? site.aggregationStats.allowed.entitiesCount : site.aggregationStats.blocked.entitiesCount
-    const trackersBadOrGood = (trackersCount !== 0) ? 'bad' : 'good'
+    // tracking requests found or not
+    const { specialRequestCount, trackersBlockedCount } = calculateTotals(site.aggregationStats)
+    const total = specialRequestCount + trackersBlockedCount
+    const trackersBadOrGood = (total !== 0) ? 'bad' : 'good'
     reasons.push({
         modifier: trackersBadOrGood,
-        msg: `${trackerNetworksText(site)}`
+        msg: `${gradeTrackerNetworksText(site)}`
     })
 
     // major tracking networks,
     // only show a message if there are any
-    const majorTrackersBadOrGood = (site.majorTrackerNetworksCount !== 0) ? 'bad' : 'good'
+    let totalTrackerNetworkCount = site.majorTrackerNetworksCount
+
+    // add 1 if the site itself is a tracker network
+    if (site.isaMajorTrackingNetwork) {
+        totalTrackerNetworkCount += 1
+    }
+
+    const majorTrackersBadOrGood = (totalTrackerNetworkCount !== 0) ? 'bad' : 'good'
     reasons.push({
         modifier: majorTrackersBadOrGood,
-        msg: `${majorTrackerNetworksText(site.majorTrackerNetworksCount)}`
+        msg: `${majorTrackerNetworksText(totalTrackerNetworkCount)}`
     })
-
-    // Is the site itself a major tracking network?
-    // only show a message if it is
-    if (site.isaMajorTrackingNetwork) {
-        reasons.push({
-            modifier: 'bad',
-            msg: 'Site Is a Major Tracker Network'
-        })
-    }
 
     // privacy practices from tosdr
     const unknownPractices = constants.tosdrMessages.unknown

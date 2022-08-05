@@ -1,6 +1,7 @@
 const bel = require('bel')
 const hero = require('./shared/hero.es6.js')
 const { renderAboutOurTrackingProtectionsLink, renderTrackerDetails } = require('./shared/utils.js')
+const { nonTrackerNetworksExplainer } = require('./shared/tracker-networks-text.es6')
 const advertisingLearnMoreURL = 'https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection'
 function calculateOverallCount (model) {
     if (!model) {
@@ -13,6 +14,7 @@ module.exports = function () {
     if (!this.model) {
         return bel`<section class="sliding-subview sliding-subview--has-fixed-header"></section>`
     }
+    const explainerText = nonTrackerNetworksExplainer(this.model.site)
     const overallCount = calculateOverallCount(this.model)
     if (!this.model.site.protectionsEnabled) {
         return bel`<div class="tracker-networks site-info site-info--full-height card">
@@ -20,13 +22,12 @@ module.exports = function () {
                 ${renderHero(this.model.site, overallCount)}
             </div>
             <div class="non-tracker-networks__explainer text--center">
-                No third-party requests were blocked from loading because Protections are turned off for this site. If a company's requests are loaded, it can allow them to profile you.<br />
-
+                <p>${explainerText}</p>
                 ${renderAboutOurTrackingProtectionsLink()}
             </div>
-            <div class="tracker-networks__details padded js-non-tracker-networks-details">
-                <ol class="default-list site-info__trackers__company-list ${this.model.aggregationStats.other.entitiesCount ? '' : 'is-hidden'}" aria-label="List of tracker networks">
-                    <li>The following domains’ requests were loaded.</li>
+            <div class="tracker-networks__details js-non-tracker-networks-details">
+                <ol class="default-list site-info__trackers__company-list ${this.model.aggregationStats.allowed.entitiesCount ? '' : 'is-hidden'}" aria-label="List of tracker networks">
+                    <li class="tracker-list-header border--bottom border--top padded--top-half padded--bottom-half text--center">The following domains’ requests were loaded.</li>
                     ${renderTrackerDetails(this.model.aggregationStats.allowed.list, this.model.site)}
                 </ol>
             </div>
@@ -41,22 +42,26 @@ module.exports = function () {
         <div class="js-non-tracker-networks-hero">
             ${renderHero(this.model.site, overallCount)}
         </div>
-        <div class="non-tracker-networks__explainer text--center">
-            We did not detect requests from any third-party domains.<br />
-            ${renderAboutOurTrackingProtectionsLink()}
+        <div class="non-tracker-networks__explainer border--bottom--inner text--center">
+            <p>${explainerText}</p>
+            <p>${renderAboutOurTrackingProtectionsLink()}</p>
         </div>
     </section>`
     } else {
         function renderSection (aggregationStatsSection, headingText, site) {
+            const headingElement = headingText
+                ? bel`<li class="tracker-list-header border--bottom border--top padded--top-half padded--bottom-half text--center">${headingText}</li>`
+                : bel`<li class="padded--top-half padded--bottom-half border--top text--center"></li>`
+
             return bel`<ol class="default-list site-info__trackers__company-list ${aggregationStatsSection.entitiesCount ? '' : 'is-hidden'}">
-                <li class="border--bottom border--top padded--top-half padded--bottom-half text--center">${headingText}</li>
+                ${headingElement}
                 ${renderTrackerDetails(aggregationStatsSection.list, site)}
             </ol>`
         }
         const adAttributionSection = renderSection(
             this.model.aggregationStats.adAttribution,
-            bel`<span>The following domain’s requests were loaded because a ${this.model.site.domain} ad on DuckDuckGo was recently clicked. These requests help evaluate ad effectiveness. All ads on DuckDuckGo are non-profiling.<br />
-            <a href="${advertisingLearnMoreURL}" target="_blank">How our search ads impact our protections</a></span>`,
+            bel`<span>The following domain’s requests were loaded because a ${this.model.site.domain} ad on DuckDuckGo was recently clicked. These requests help evaluate ad effectiveness. All ads on DuckDuckGo are non-profiling.<br/>
+            <a class="about-link" href="${advertisingLearnMoreURL}" target="_blank">How our search ads impact our protections</a></span>`,
             this.model.site
         )
         const ignoredSection = renderSection(
@@ -71,7 +76,7 @@ module.exports = function () {
         )
         const otherSection = renderSection(
             this.model.aggregationStats.other,
-            `The following domains' requests were ${onlyOther ? '' : 'also'} loaded.`,
+            onlyOther ? '' : 'The following domains\' requests were also loaded.',
             this.model.site
         )
 
@@ -80,10 +85,10 @@ module.exports = function () {
         ${renderHero(this.model.site, overallCount)}
     </div>
     <div class="non-tracker-networks__explainer text--center">
-        The following third-party domains’ requests were loaded. If a company's requests are loaded, it can allow them to profile you, though our other web tracking protections still apply.<br /><br />
+        <p>${explainerText}</p>
         ${renderAboutOurTrackingProtectionsLink()}
     </div>
-    <div class="tracker-networks__details padded js-non-tracker-networks-details">
+    <div class="tracker-networks__details js-non-tracker-networks-details">
         ${adAttributionSection}
         ${ignoredSection}
         ${firstPartySection}

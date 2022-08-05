@@ -10,6 +10,7 @@ const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.j
 const breakageFormTemplate = require('./../templates/breakage-form.es6.js')
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
+const { registerUnloadListener } = require('./mixins/unload-listener.es6')
 
 function Site (ops) {
     this.model = ops.model
@@ -18,6 +19,9 @@ function Site (ops) {
 
     // cache 'body' selector
     this.$body = window.$('body')
+
+    // register a listener for when the popup is unloaded
+    registerUnloadListener(this.model.store)
 
     // get data from background process, then re-render template with it
     this.model.getBackgroundTabData().then(() => {
@@ -215,7 +219,6 @@ Site.prototype = window.$.extend({},
         closePopupAndReload: function (delay) {
             delay = delay || 0
             setTimeout(() => {
-                browserUIWrapper.reloadTab(this.model.tab.id)
                 browserUIWrapper.closePopup()
             }, delay)
         }

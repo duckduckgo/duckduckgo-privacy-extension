@@ -87,3 +87,24 @@ export function getTrackerAggregationStats (trackers) {
     }
     return aggregationStats
 }
+
+/**
+ * Convenience calculations - most of the time for the UI we only care totals
+ * @param {Record<string, AggregatedCompanyResponseData>} aggregationStats
+ * @returns {{otherRequestCount: number, trackersBlockedCount: number, specialRequestCount: number, thirdPartyRequestCount: number}}
+ */
+export function calculateTotals (aggregationStats) {
+    const trackersBlockedCount = aggregationStats.blocked.entitiesCount || 0
+    const ignoredCount = aggregationStats.ignored.entitiesCount || 0
+    const firstPartyCount = aggregationStats.firstParty.entitiesCount || 0
+    const adAttributionCount = aggregationStats.adAttribution.entitiesCount || 0
+    const specialRequestCount = ignoredCount + firstPartyCount + adAttributionCount
+    const otherRequestCount = aggregationStats.other.entitiesCount || 0
+
+    return {
+        otherRequestCount,
+        specialRequestCount,
+        trackersBlockedCount,
+        thirdPartyRequestCount: aggregationStats.allowed.entitiesCount || 0
+    }
+}

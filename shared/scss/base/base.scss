@@ -257,6 +257,7 @@ a {
     background-size: contain;
     vertical-align: middle;
     margin-bottom: 2px;
+    margin-left: 5px;
 
     @each $rating in $ratings {
         &.rating-letter--#{$rating} {
@@ -302,7 +303,7 @@ a {
 
         @include cross_platform_bg_image("settings-gear@2x.png");
     }
-    
+
     &.icon__error {
         width: 24px;
         height: 24px;
@@ -311,7 +312,7 @@ a {
 
         @include cross_platform_bg_image("error.svg");
     }
-    
+
     &.icon__check {
         width: 22px;
         height: 22px;
@@ -321,7 +322,7 @@ a {
 
         @include cross_platform_bg_image("check.svg");
     }
-    
+
     &.icon__shield {
         width: 22px;
         height: 22px;
@@ -426,20 +427,20 @@ a {
         z-index: 1;
         float: right;
     }
-    
+
     .modal-box__popout {
         @include arrow-left(7px, $platinum);
-    
+
         margin-right: -15px;
         margin-top: 13px;
         z-index: 3;
         float: left;
         position: absolute;
     }
-    
+
     .modal-box__popout__body {
         @include arrow-left(6px, $white);
-    
+
         margin-left: 2px;
         margin-top: -6px;
         z-index: 5;

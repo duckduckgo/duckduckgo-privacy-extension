@@ -23,6 +23,7 @@
         "test-int": "make dev browser=chrome type=dev && jasmine --config=integration-test/config.json",
         "test-int-mv3": "make dev browser=chrome-mv3 type=dev && jasmine --config=integration-test/config-mv3.json",
         "tsc": "tsc",
+        "tsc-watch": "tsc --watch",
         "dev-firefox": "make dev browser=firefox type=dev watch=1",
         "open-dev-firefox": "web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.glitch.me/ -u https://www.search-company.site -u about:debugging",
         "release-firefox": "make browser=firefox type=release",
