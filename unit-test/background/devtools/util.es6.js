@@ -179,7 +179,7 @@ describe('blockRequest:', () => {
             initTds(trackers)
         })
 
-        it('does not bock before, blocks after', () => {
+        it('does not block before, blocks after', () => {
             const result1 = getTrackerData(tracker1Path1)
             expect(result1.action).toEqual('ignore')
             blockRequest(tracker1Path1)
