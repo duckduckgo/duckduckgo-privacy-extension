@@ -328,4 +328,19 @@ describe('blockRequest:', () => {
             expectIgnore('tracker2.com/another/request.js')
         })
     })
+
+    describe('with cnames:', () => {
+        it('directs through CNAMEs', () => {
+            tds.setLists([{name: 'tds', data: {trackers: {}, cnames: {"regular.com": "tracker.com"}, entities: {}, domains: {}}}])
+            blockRequest('regular.com/request')
+            expectBlock('tracker.com/request')
+            expectBlock('regular.com/request')
+        })
+        it('directs through CNAMEs (subdomain check)', () => {
+            tds.setLists([{name: 'tds', data: {trackers: {'in.d.us': {}}, cnames: {"a.b.c.in": "a.b.c.in.d.us"}, entities: {}, domains: {}}}])
+            blockRequest('a.b.c.in/request')
+            expectBlock('a.b.c.in/request')
+            expectBlock('a.b.c.in.d.us/request')
+        })
+    })
 })

@@ -71,20 +71,30 @@ export function registerDevPanelContextMenuItem() {
     })
 }
 
+function setup(tds, request) {
+    const url = new URL(tds.resolveCname(request).finalURL)
+    request = url.hostname + url.pathname
+    const trackers = tds.trackerList
+    let tracker = tds.findTracker({ urlToCheckSplit: tds.utils.extractHostFromURL(request).split('.') })
+    if (!tracker) {
+        tracker = {}
+        trackers[tds.tldjs.getDomain(request)] = tracker
+    }
+    if (!tracker.domain) tracker.domain = url.hostname
+    return { request, trackers, tracker }
+}
+
 /**
  * Block the exact specified request.
  *
  * @param {import('@duckduckgo/privacy-grade').Trackers} tds
- * @param {string} request
+ * @param {string} requestURL
  */
-export function blockRequest (tds, request) {
-    request = request.replace(/^https?:\/\//, '')
-    const trackers = tds.trackerList
-    let tracker = tds.findTracker({ urlToCheckSplit: tds.utils.extractHostFromURL(request).split('.') })
-    if (!tracker) {
+export function blockRequest (tds, requestURL) {
+    const { request, trackers, tracker } = setup(tds, requestURL)
+    if (!tracker.default) {
         // we default new trackers to ignore, so that we only block the specified request
-        tracker = { default: 'ignore' }
-        trackers[tds.tldjs.getDomain(request)] = tracker
+        tracker.default = 'ignore'
     }
     if (!tracker.rules) tracker.rules = []
     const rules = tracker.rules
