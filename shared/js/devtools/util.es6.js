@@ -82,7 +82,7 @@ function setup(tds, request) {
     }
     if (!tracker.domain) tracker.domain = url.hostname
     // escape regexps from request
-    const requestRule = new RegExp(`${request.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}($|\\?)`, 'gi')
+    const requestRule = new RegExp(`${request.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}($|\\?|#)`, 'gi')
     return { request, requestRule, trackers, tracker }
 }
 

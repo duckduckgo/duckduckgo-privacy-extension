@@ -301,9 +301,10 @@ describe('blockRequest:', () => {
         }
     })
 
-    describe('with URL params', () => {
+    describe('with URL params and anchors', () => {
         const reqBase = 'tracker.com/simple/request.js'
         const reqWithParam = `${reqBase}?param=1`
+        const reqWithAnchor = `${reqBase}#anchor`
         beforeEach(() => {
             initTds({})
             blockRequest(reqWithParam)
@@ -311,6 +312,10 @@ describe('blockRequest:', () => {
 
         it('blocks the param request', () => {
             expectBlock(reqWithParam)
+        })
+
+        it('blocks the anchor request', () => {
+            expectBlock(reqWithAnchor)
         })
 
         it('blocks the base request', () => {
