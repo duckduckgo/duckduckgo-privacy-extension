@@ -119,6 +119,12 @@ describe('blockRequest:', () => {
             expectIgnore(`${trackerPath}.`)
         })
 
+        it('should not block request path that replaces period (request is not a regexp test)', () => {
+            // this checks that we aren't treating the request like a regular expression
+            blockRequest(trackerPath)
+            expectIgnore(trackerPath.replace('.js', 'bjs'))
+        })
+
         it('block request should be idempotent', () => {
             compareTrackerLists(() => {
                 blockRequest(trackerPath)

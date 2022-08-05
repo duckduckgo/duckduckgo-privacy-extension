@@ -81,7 +81,9 @@ function setup(tds, request) {
         trackers[tds.tldjs.getDomain(request)] = tracker
     }
     if (!tracker.domain) tracker.domain = url.hostname
-    return { request, trackers, tracker }
+    // escape regexps from request
+    const requestRule = new RegExp(`${request.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')}$`, 'gi')
+    return { request, requestRule, trackers, tracker }
 }
 
 /**
@@ -91,7 +93,7 @@ function setup(tds, request) {
  * @param {string} requestURL
  */
 export function blockRequest (tds, requestURL) {
-    const { request, trackers, tracker } = setup(tds, requestURL)
+    const { request, requestRule, trackers, tracker } = setup(tds, requestURL)
     if (!tracker.default) {
         // we default new trackers to ignore, so that we only block the specified request
         tracker.default = 'ignore'
@@ -99,7 +101,6 @@ export function blockRequest (tds, requestURL) {
     if (!tracker.rules) tracker.rules = []
     const rules = tracker.rules
 
-    const requestRule = new RegExp(`${request}$`, 'gi')
     const existingIndex = rules.findIndex(r => request.match(r.rule))
     if (existingIndex === -1) {
         // presence of the rule without action is counted as "block" (i.e., default action is block for a rule)
