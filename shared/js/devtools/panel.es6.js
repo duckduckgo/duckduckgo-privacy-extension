@@ -47,15 +47,6 @@ function assertTableRowElement(element) {
 }
 
 /**
- * @param {string} id
- * @returns {HTMLSelectElement}
- */
-function getSelectElementById(id) {
-    // @ts-ignore
-    return document.getElementById(id)
-}
-
-/**
  * @param {HTMLElement} element
  * @returns {HTMLInputElement}
  */
