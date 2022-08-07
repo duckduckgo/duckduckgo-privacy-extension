@@ -11,15 +11,17 @@ export class TrackerSite {
      * @param {ActionName} action
      * @param {string} reason
      * @param {string[]} categories
-     * @param {boolean} isFirstParty
+     * @param {boolean} isSameEntity
+     * @param {boolean} isSameBaseDomain
      */
-    constructor (action, reason, categories, isFirstParty) {
+    constructor (action, reason, categories, isSameEntity, isSameBaseDomain) {
         /** @type {ActionName} */
         this.action = action
         this.reason = reason
         this.categories = categories
         this.isBlocked = this.action === 'block' || this.action === 'redirect'
-        this.isFirstParty = isFirstParty
+        this.isSameEntity = isSameEntity
+        this.isSameBaseDomain = isSameBaseDomain
     }
 }
 
@@ -43,7 +45,7 @@ export class Tracker {
     addTrackerUrl (t) {
         this.count += 1
         if (!this.urls[t.fullTrackerDomain]) {
-            this.urls[t.fullTrackerDomain] = new TrackerSite(t.action, t.reason, t.tracker?.categories || [], t.firstParty)
+            this.urls[t.fullTrackerDomain] = new TrackerSite(t.action, t.reason, t.tracker?.categories || [], t.sameEntity, t.sameBaseDomain)
         }
     }
 }

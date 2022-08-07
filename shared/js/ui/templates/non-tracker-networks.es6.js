@@ -36,7 +36,7 @@ module.exports = function () {
     }
 
     // For changing the text when only the 'other' list is shown
-    const onlyOther = !this.model.aggregationStats.firstParty.entitiesCount && !this.model.aggregationStats.ignored.entitiesCount && !this.model.aggregationStats.adAttribution.entitiesCount
+    const onlyOther = !this.model.aggregationStats.sameEntityOnly.entitiesCount && !this.model.aggregationStats.ignored.entitiesCount && !this.model.aggregationStats.adAttribution.entitiesCount
     if (!overallCount) {
         return bel`<section class="tracker-networks site-info site-info--full-height card">
         <div class="js-non-tracker-networks-hero">
@@ -70,7 +70,7 @@ module.exports = function () {
             this.model.site
         )
         const firstPartySection = renderSection(
-            this.model.aggregationStats.firstParty,
+            this.model.aggregationStats.sameEntityOnly,
             `The following domains’ requests were loaded because they’re associated with ${this.model.site.domain}.`,
             this.model.site
         )

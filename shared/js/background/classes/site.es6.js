@@ -135,7 +135,7 @@ class Site {
      */
     addTracker (t) {
         // Ignore trackers that aren't first party
-        if (t.action === 'ignore' && !t.firstParty) {
+        if (t.action === 'ignore' && !t.sameEntity) {
             return
         }
         if (t.tracker && this.trackerUrls.indexOf(t.tracker.domain) === -1) {

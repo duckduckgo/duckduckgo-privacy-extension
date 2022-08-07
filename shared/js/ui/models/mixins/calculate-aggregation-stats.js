@@ -56,9 +56,9 @@ export function getTrackerAggregationStats (trackers) {
     const listFilters = {
         all: () => true,
         blocked: (trackerSite) => trackerSite.isBlocked === true,
-        allowed: (trackerSite) => trackerSite.isBlocked === false,
-        ignored: (trackerSite) => trackerSite.isFirstParty === false && trackerSite.action === 'ignore',
-        firstParty: (trackerSite) => trackerSite.isFirstParty === true && trackerSite.action === 'ignore',
+        allowed: (trackerSite) => trackerSite.isBlocked === false && trackerSite.isSameBaseDomain === false,
+        ignored: (trackerSite) => trackerSite.isSameEntity === false && trackerSite.action === 'ignore',
+        sameEntityOnly: (trackerSite) => trackerSite.isSameEntity === true && trackerSite.action === 'ignore' && trackerSite.isSameBaseDomain === false,
         other: (trackerSite) => trackerSite.action === 'none' || trackerSite.action === 'ignore-user',
         adAttribution: (trackerSite) => trackerSite.action === 'ad-attribution'
     }
@@ -96,7 +96,7 @@ export function getTrackerAggregationStats (trackers) {
 export function calculateTotals (aggregationStats) {
     const trackersBlockedCount = aggregationStats.blocked.entitiesCount || 0
     const ignoredCount = aggregationStats.ignored.entitiesCount || 0
-    const firstPartyCount = aggregationStats.firstParty.entitiesCount || 0
+    const firstPartyCount = aggregationStats.sameEntityOnly.entitiesCount || 0
     const adAttributionCount = aggregationStats.adAttribution.entitiesCount || 0
     const specialRequestCount = ignoredCount + firstPartyCount + adAttributionCount
     const otherRequestCount = aggregationStats.other.entitiesCount || 0

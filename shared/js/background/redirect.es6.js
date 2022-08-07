@@ -360,7 +360,7 @@ function blockHandleResponse (thisTab, requestData) {
     }
 
     // If we didn't block this script and it's a tracker, notify the content script.
-    if (requestData.type === 'script' && tracker && !tracker.firstParty) {
+    if (requestData.type === 'script' && tracker && !tracker.sameEntity) {
         utils.sendTabMessage(requestData.tabId, {
             type: 'update',
             trackerDefinition: true,
