@@ -29,7 +29,7 @@ describe('getTrackerData', () => {
                 requestType: 'image',
                 expectedOwner: 'Oath',
                 expectedReason: 'matched rule - block',
-                firstParty: false,
+                sameEntity: false,
                 expectedRule: 'geo\\.yahoo\\.com',
                 redirectUrl: false,
                 matchedRuleException: false
@@ -42,7 +42,7 @@ describe('getTrackerData', () => {
                 requestType: 'image',
                 expectedOwner: 'Oath',
                 expectedReason: 'first party',
-                firstParty: true,
+                sameEntity: true,
                 expectedRule: 'geo\\.yahoo\\.com',
                 redirectUrl: false,
                 matchedRuleException: false
@@ -55,7 +55,7 @@ describe('getTrackerData', () => {
                 requestType: 'image',
                 expectedOwner: 'Oath',
                 expectedReason: 'matched rule - surrogate',
-                firstParty: false,
+                sameEntity: false,
                 expectedRule: 'a\\.yahoo\\.com($|[?/])',
                 redirectUrl: 'data:application/javascript;base64,KGZ1bmN0aW9uKCkge30p',
                 matchedRuleException: false
@@ -68,7 +68,7 @@ describe('getTrackerData', () => {
                 requestType: 'image',
                 expectedOwner: 'Oath',
                 expectedReason: 'matched rule - exception',
-                firstParty: false,
+                sameEntity: false,
                 expectedRule: 'a\\.yahoo\\.com($|[?/])',
                 redirectUrl: 'data:application/javascript;base64,KGZ1bmN0aW9uKCkge30p',
                 matchedRuleException: true
@@ -81,7 +81,7 @@ describe('getTrackerData', () => {
                 requestType: 'image',
                 expectedOwner: 'Oath',
                 expectedReason: 'first party',
-                firstParty: true,
+                sameEntity: true,
                 expectedRule: 'a\\.yahoo\\.com($|[?/])',
                 redirectUrl: 'data:application/javascript;base64,KGZ1bmN0aW9uKCkge30p',
                 matchedRuleException: false
@@ -94,7 +94,7 @@ describe('getTrackerData', () => {
                 requestType: 'image',
                 expectedOwner: 'Oath',
                 expectedReason: 'matched rule - ignore',
-                firstParty: false,
+                sameEntity: false,
                 expectedRule: 'b\\.yahoo\\.com\\/.*\\?ad=asdf',
                 redirectUrl: false,
                 matchedRuleException: false
@@ -107,7 +107,7 @@ describe('getTrackerData', () => {
                 requestType: 'script',
                 expectedOwner: 'Oath',
                 expectedReason: 'default block',
-                firstParty: false,
+                sameEntity: false,
                 expectedRule: null,
                 redirectUrl: false,
                 matchedRuleException: false
@@ -120,7 +120,7 @@ describe('getTrackerData', () => {
                 requestType: 'script',
                 expectedOwner: 'Example',
                 expectedReason: 'default ignore',
-                firstParty: false,
+                sameEntity: false,
                 expectedRule: null,
                 redirectUrl: false,
                 matchedRuleException: false
@@ -141,7 +141,7 @@ describe('getTrackerData', () => {
                     expect(tracker.matchedRule.rule.toString()).toEqual(new RegExp(test.expectedRule, 'gi').toString())
                 }
 
-                expect(tracker.firstParty).toEqual(test.firstParty)
+                expect(tracker.sameEntity).toEqual(test.sameEntity)
                 expect(tracker.redirectUrl).toEqual(test.redirectUrl)
                 expect(tracker.matchedRuleException).toEqual(test.matchedRuleException)
             })

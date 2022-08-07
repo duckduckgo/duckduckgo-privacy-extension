@@ -2,7 +2,8 @@
  * @typedef TrackerData
  * @property {ActionName} action
  * @property {string} reason
- * @property {boolean} firstParty
+ * @property {boolean} sameEntity
+ * @property {boolean} sameBaseDomain
  * @property {string | false} redirectUrl
  * @property {TrackerRule | null} matchedRule
  * @property {boolean} matchedRuleException
@@ -51,6 +52,7 @@
  * @typedef RequestData
  * @property {string} siteUrl
  * @property {RequestExpression} request
+ * @property {boolean} sameBaseDomain
  * @property {string} siteDomain
  * @property {string[]} siteUrlSplit
  * @property {string} urlToCheck
@@ -64,7 +66,7 @@
  */
 
 /**
- * @typedef {'ignore' | 'block' | 'redirect' | 'none'} ActionName
+ * @typedef {'ignore' | 'block' | 'redirect' | 'none' | 'ad-attribution' | 'ignore-user'} ActionName
  */
 
 /**
@@ -168,7 +170,7 @@ class Trackers {
      * @returns {{fromCname: string | undefined, finalURL: string}}
      */
     resolveCname (url) {
-        const parsed = this.tldts.parse(url)
+        const parsed = this.tldts.parse(url, { allowPrivateDomains: true })
         let finalURL = url
         let fromCname
         if (parsed && this.cnames && parsed.domain) {
@@ -189,6 +191,15 @@ class Trackers {
     }
 
     /**
+     * Copied from extension (FIX)
+     * @param {string} urlString
+     **/
+    getBaseDomain (urlString) {
+        const parsedUrl = this.tldts.parse(urlString, { allowPrivateDomains: true })
+        return parsedUrl.domain || parsedUrl.hostname
+    }
+
+    /**
      * single object with all of our request and site data split and
      * processed into the correct format for the tracker set/get functions.
      * This avoids repeat calls to split and util functions.
@@ -198,14 +209,15 @@ class Trackers {
      * @returns {RequestData | null}
      */
     getRequestData (urlToCheck, siteUrl, request) {
-        const siteDomain = this.tldts.parse(siteUrl).domain
-        const urlToCheckDomain = this.tldts.parse(urlToCheck).domain
+        const siteDomain = this.getBaseDomain(siteUrl)
+        const urlToCheckDomain = this.getBaseDomain(urlToCheck)
         if (!siteDomain || !urlToCheckDomain) {
             return null
         }
         return {
             siteUrl: siteUrl,
             request: request,
+            sameBaseDomain: siteDomain === urlToCheckDomain,
             siteDomain,
             siteUrlSplit: this.utils.extractHostFromURL(siteUrl).split('.'),
             urlToCheck: urlToCheck,
@@ -301,6 +313,9 @@ class Trackers {
         if (!requestData) {
             return null
         }
+        // We don't want to use CNAME check for this caluclation as we would avoid showing in the panel.
+        // So we're calcuating this before the CNAME check.
+        const sameBaseDomain = requestData.sameBaseDomain
 
         // finds a tracker definition by iterating over the whole trackerList and finding the matching tracker.
         let tracker = this.findTracker(requestData)
@@ -317,13 +332,14 @@ class Trackers {
                 }
             }
         }
+
         const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
         const requestOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
         const websiteOwner = this.findWebsiteOwner(requestData)
-        const firstParty = (requestOwner && websiteOwner) ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
+        const sameEntity = (requestOwner && websiteOwner) ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
 
         if (!tracker) {
-            if (firstParty) {
+            if (sameEntity) {
                 return null
             }
             const owner = {
@@ -344,7 +360,8 @@ class Trackers {
             return {
                 action: tracker.default,
                 reason: '',
-                firstParty,
+                sameEntity,
+                sameBaseDomain,
                 redirectUrl: '',
                 matchedRule: null,
                 matchedRuleException: false,
@@ -363,7 +380,7 @@ class Trackers {
         const matchedRuleException = matchedRule ? this.matchesRuleDefinition(matchedRule, 'exceptions', requestData) : false
 
         const { action, reason } = this.getAction({
-            firstParty,
+            sameEntity,
             matchedRule,
             matchedRuleException,
             defaultAction: tracker.default,
@@ -372,7 +389,8 @@ class Trackers {
         return {
             action,
             reason,
-            firstParty,
+            sameEntity,
+            sameBaseDomain,
             redirectUrl,
             matchedRule,
             matchedRuleException,
@@ -497,7 +515,7 @@ class Trackers {
 
     /**
      * @param {{
-     *     firstParty: boolean,
+     *     sameEntity: boolean,
      *     matchedRule: TrackerRule | null,
      *     matchedRuleException: boolean,
      *     defaultAction: ActionName | undefined,
@@ -511,7 +529,7 @@ class Trackers {
         let action = 'ignore'
         let reason = 'unknown fallback'
 
-        if (tracker.firstParty) {
+        if (tracker.sameEntity) {
             action = 'ignore'
             reason = 'first party'
         } else if (tracker.matchedRuleException) {
