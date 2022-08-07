@@ -1,3 +1,6 @@
+
+const { getTrackerAggregationStats } = require('./mixins/calculate-aggregation-stats')
+
 // @ts-nocheck
 module.exports = function (category) {
     if (!this.tab) return
@@ -8,6 +11,7 @@ module.exports = function (category) {
     // remove params and fragments from url to avoid including sensitive data
     const siteUrl = this.tab.url.split('?')[0].split('#')[0]
     const trackerObjects = this.tab.trackersBlocked
+    const aggregationStats = getTrackerAggregationStats(this.tab.trackers).blocked.list
     const urlParametersRemoved = this.tab.urlParametersRemoved ? 'true' : 'false'
     const ampUrl = this.tab.ampUrl || null
     const brokenSiteParams = [
@@ -22,8 +26,8 @@ module.exports = function (category) {
     for (const tracker in trackerObjects) {
         const trackerDomains = trackerObjects[tracker].urls
         Object.keys(trackerDomains).forEach((domain) => {
-            if (trackerDomains[domain].isBlocked) {
-                if (trackerDomains[domain].reason === 'matched rule - surrogate') {
+            if (trackerDomains[domain].blocked?.isBlocked) {
+                if (trackerDomains[domain].blocked.reason === 'matched rule - surrogate') {
                     surrogates.push(domain)
                 } else {
                     blockedTrackers.push(domain)

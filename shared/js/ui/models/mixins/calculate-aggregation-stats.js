@@ -39,10 +39,11 @@ export class AggregateCompanyData {
         this.displayName = company.displayName || companyName
         this.normalizedName = normalizeCompanyName(companyName)
         this.count = company.count
-        this.urls = company.urls
+        this.urls = urlsList
         this.urlsList = urlsList.filter((url) => {
-            const urlObject = company.urls[url]
-            return listFilter(urlObject)
+            return Object.values(company.urls[url]).some((trackerSiteObject) => {
+                return listFilter(trackerSiteObject)
+            })
         })
     }
 }
