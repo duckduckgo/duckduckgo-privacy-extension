@@ -96,7 +96,7 @@
         "tldts": "^5.7.81",
         "tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.0.0",
         "underscore": "1.13.4",
-        "web-ext": "^6.8.0"
+        "web-ext": "^7.1.1"
     },
     "babel": {
         "presets": [
