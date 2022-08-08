@@ -142,10 +142,12 @@ class Site {
             this.trackerUrls.push(t.tracker.domain)
             const entityPrevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
 
-            if (t.action && ['block', 'redirect'].includes(t.action)) {
-                this.grade.addEntityBlocked(t.tracker.owner.name, entityPrevalence)
-            } else if (t.action && t.action === 'ignore') {
-                this.grade.addEntityNotBlocked(t.tracker.owner.name, entityPrevalence)
+            if (t.action) {
+                if (['block', 'redirect', 'ignore-user'].includes(t.action)) {
+                    this.grade.addEntityBlocked(t.tracker.owner.name, entityPrevalence)
+                } else if (t.action === 'ignore') {
+                    this.grade.addEntityNotBlocked(t.tracker.owner.name, entityPrevalence)
+                }
             }
         }
     }
