@@ -275,13 +275,13 @@ function blockHandleResponse (thisTab, requestData) {
         }
 
         if (!blockingEnabled && (tracker.action === 'block' || tracker.action === 'redirect')) {
-            tracker.action = 'ignore'
+            tracker.action = 'ignore-user'
             tracker.reason = 'content blocking disabled'
         }
 
         // allow embedded twitter content if user enabled this setting
         if (tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
-            tracker.action = 'ignore'
+            tracker.action = 'ignore-user'
             tracker.reason = 'embedded tweets allowed'
         }
 

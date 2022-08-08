@@ -57,9 +57,9 @@ export function getTrackerAggregationStats (trackers) {
         all: () => true,
         blocked: (trackerSite) => trackerSite.isBlocked === true,
         allowed: (trackerSite) => trackerSite.isBlocked === false && trackerSite.isSameBaseDomain === false,
-        ignored: (trackerSite) => trackerSite.isSameEntity === false && trackerSite.action === 'ignore',
-        sameEntityOnly: (trackerSite) => trackerSite.isSameEntity === true && trackerSite.action === 'ignore' && trackerSite.isSameBaseDomain === false,
-        other: (trackerSite) => trackerSite.action === 'none' || trackerSite.action === 'ignore-user',
+        ignored: (trackerSite) => trackerSite.isSameEntity === false && (trackerSite.action === 'ignore' || trackerSite.action === 'ignore-user'),
+        sameEntityOnly: (trackerSite) => trackerSite.isSameEntity === true && (trackerSite.action === 'ignore' || trackerSite.action === 'ignore-user') && trackerSite.isSameBaseDomain === false,
+        other: (trackerSite) => trackerSite.action === 'none',
         adAttribution: (trackerSite) => trackerSite.action === 'ad-attribution'
     }
     /** @type {Record<string, AggregatedCompanyResponseData>} */
