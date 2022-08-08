@@ -98,6 +98,25 @@ describe('utils.getUpgradeToSecureSupport()', () => {
     })
 })
 
+describe('utils.isRedirect()', () => {
+    it('should return false with non redirect codes', () => {
+        for (let i = 0; i < 300; i++) {
+            const result = utils.isRedirect(i)
+            expect(result).toEqual(false)
+        }
+        for (let i = 400; i < 1000; i++) {
+            const result = utils.isRedirect(i)
+            expect(result).toEqual(false)
+        }
+    })
+    it('should return true with redirect codes', () => {
+        for (let i = 300; i < 400; i++) {
+            const result = utils.isRedirect(i)
+            expect(result).toEqual(true)
+        }
+    })
+})
+
 describe('utils.extractHostFromURL()', () => {
     extractHostFromURLTestCases.forEach((test) => {
         it(`should return ${test.result} as host for the url: ${test.url}`, () => {

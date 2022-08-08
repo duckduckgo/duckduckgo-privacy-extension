@@ -26,11 +26,13 @@ export function syncToStorage (data) {
     browser.storage.local.set(data)
 }
 
+// @ts-ignore
 export async function getFromStorage (key, cb) {
     const result = await browser.storage.local.get(key)
     return result[key]
 }
 
+// @ts-ignore
 export async function getFromManagedStorage (keys, cb) {
     try {
         return await browser.storage.managed.get(keys)

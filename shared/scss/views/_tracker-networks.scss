@@ -10,13 +10,55 @@
     .tracker-networks__explainer {
         @include explainer-padding();
     }
+    .non-tracker-networks__explainer {
+        @include explainer-padding();
+    }
+
+    .tracker-list-header {
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 13px;
+        padding: 13px 0;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .about-link {
+        padding-top: 10px;
+        display: block;
+    }
+}
+
+.tracker-networks__details {
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+// this handles lists without a heading element - those need a bit of extra room
+.tracker-networks__details--margin {
+    padding-top: 10px;
+}
+
+.hero__icon--non-networks {
+    @include cross_platform_bg_image("hero-on-non-networks.svg");
+}
+
+.hero__icon--zero {
+    @include cross_platform_bg_image("hero-zero.svg");
+}
+
+.hero__icon--zero {
+    @include cross_platform_bg_image("hero-zero.svg");
 }
 
 .hero__icon--major-networks-blocked {
     @include cross_platform_bg_image("hero-on-major-networks.svg");
 }
 
-.icon-major-networks-blocked {
+.hero__icon--major-networks-zero {
+    @include cross_platform_bg_image("hero-zero.svg");
+}
+
+.icon-major-networks-blocked, .icon-good {
     @include cross_platform_bg_image($status--good);
 }
 
@@ -24,8 +66,16 @@
     @include cross_platform_bg_image("hero-warning-major-networks.svg");
 }
 
+.hero__icon--major-networks-info {
+    @include cross_platform_bg_image("hero-on-non-networks.svg");
+}
+
 .icon-major-networks-warning {
     @include cross_platform_bg_image($status--bad);
+}
+
+.icon-major-networks-info, .icon-info {
+    @include cross_platform_bg_image($status--info);
 }
 
 #popup-container .tracker-networks .default-list.site-info__trackers__company-list__url-list {
@@ -60,15 +110,20 @@
 }
 
 .site-info__trackers__company-list__url-list {
+    .url-list-item {
+        display: flex;
+    }
     .url {
-        width: 65%;
+        width: 100%;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
+        // overflow to the left if the text is too long
+        direction: rtl;
+        padding-right: 10px;
     }
     .category {
-        position: absolute;
-        right: 0;
-        top: 0;
+        white-space: nowrap;
+        text-align: right;
     }
 }

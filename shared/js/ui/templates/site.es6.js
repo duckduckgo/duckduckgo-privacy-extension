@@ -1,8 +1,7 @@
 const bel = require('bel')
 const toggleButton = require('./shared/toggle-button.es6.js')
 const ratingHero = require('./shared/rating-hero.es6.js')
-const trackerNetworksIcon = require('./shared/tracker-network-icon.es6.js')
-const trackerNetworksText = require('./shared/tracker-networks-text.es6.js')
+const { trackerNetworksText, nonTrackerNetworksText, trackerNetworksIcon, nonTrackerNetworksIcon } = require('./shared/tracker-networks-text.es6.js')
 const constants = require('../../../data/constants')
 
 module.exports = function () {
@@ -30,9 +29,10 @@ module.exports = function () {
             </p>
         </li>
         <li class="js-site-tracker-networks js-site-show-page-trackers site-info__li--trackers padded border--bottom">
-            <a href="javascript:void(0)" class="link-secondary bold" role="button">
-                ${renderTrackerNetworks(this.model)}
-            </a>
+              ${renderTrackerNetworks(this.model)}
+        </li>
+        <li class="js-site-non-tracker-networks js-site-show-page-non-trackers site-info__li--trackers padded border--bottom">
+              ${renderNonTrackerNetworks(this.model)}
         </li>
         <li class="js-site-privacy-practices site-info__li--privacy-practices padded border--bottom">
             <span class="site-info__privacy-practices__icon
@@ -93,11 +93,20 @@ module.exports = function () {
         const isActive = model.protectionsEnabled ? 'is-active' : ''
 
         return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
-    <span class="site-info__trackers-status__icon
-        icon-${trackerNetworksIcon(model.siteRating, !model.protectionsEnabled, model.totalTrackerNetworksCount)}"></span>
+    <span class="site-info__trackers-status__icon icon-major-networks-${trackerNetworksIcon(model)}"></span>
     <span class="${isActive} text-line-after-icon"> ${trackerNetworksText(model, false)} </span>
     <span class="icon icon__arrow pull-right"></span>
 </a>`
+    }
+
+    function renderNonTrackerNetworks (model) {
+        const isActive = model.protectionsEnabled ? 'is-active' : ''
+
+        return bel`<a href="javascript:void(0)" class="site-info__trackers link-secondary bold">
+            <span class="site-info__trackers-status__icon icon-major-networks-${nonTrackerNetworksIcon(model)}"></span>
+            <span class="${isActive} text-line-after-icon"> ${nonTrackerNetworksText(model, false)} </span>
+            <span class="icon icon__arrow pull-right"></span>
+        </a>`
     }
 
     function renderManageAllowlist (model) {

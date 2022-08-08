@@ -1,11 +1,12 @@
 const Parent = window.DDG.base.Model
+const { getTrackerAggregationStats } = require('./mixins/calculate-aggregation-stats')
 const normalizeCompanyName = require('./mixins/normalize-company-name.es6')
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 
 function SiteCompanyList (attrs) {
     attrs = attrs || {}
     attrs.tab = null
-    attrs.companyListMap = []
+    this.aggregationStats = getTrackerAggregationStats([])
     Parent.call(this, attrs)
 }
 
@@ -20,9 +21,10 @@ SiteCompanyList.prototype = window.$.extend({},
             return new Promise((resolve, reject) => {
                 browserUIWrapper.getBackgroundTabData().then((bkgTab) => {
                     if (bkgTab) {
+                        /** @type {import('../../background/classes/tab.es6')} */
                         this.tab = bkgTab
                         this.domain = this.tab && this.tab.site ? this.tab.site.domain : ''
-                        this._updateCompaniesList()
+                        this.aggregationStats = getTrackerAggregationStats(this.tab.trackers)
                     } else {
                         console.debug('SiteDetails model: no tab')
                     }
@@ -32,96 +34,6 @@ SiteCompanyList.prototype = window.$.extend({},
                     resolve()
                 })
             })
-        },
-
-        _updateCompaniesList: function () {
-            // list of all trackers on page (whether we blocked them or not)
-            this.trackers = this.tab.trackers || {}
-            const companyNames = Object.keys(this.trackers)
-            let unknownSameDomainCompany = null
-
-            // set trackerlist metadata for list display by company:
-            this.companyListMap = companyNames
-                .map((companyName) => {
-                    const company = this.trackers[companyName]
-                    const urlsList = company.urls ? Object.keys(company.urls) : []
-                    // Unknown same domain trackers need to be individually fetched and put
-                    // in the unblocked list
-                    if (companyName === 'unknown' && this.hasUnblockedTrackers(company, urlsList)) {
-                        unknownSameDomainCompany = this.createUnblockedList(company, urlsList)
-                    }
-
-                    // calc max using pixels instead of % to make margins easier
-                    // max width: 300 - (horizontal padding in css) = 260
-                    return {
-                        name: companyName,
-                        displayName: company.displayName || companyName,
-                        normalizedName: this.normalizeCompanyName(companyName),
-                        count: this._setCount(company, companyName, urlsList),
-                        urls: company.urls,
-                        urlsList: urlsList
-                    }
-                }, this)
-                .sort((a, b) => {
-                    return b.count - a.count
-                })
-
-            if (unknownSameDomainCompany) {
-                this.companyListMap.push(unknownSameDomainCompany)
-            }
-        },
-
-        // Make ad-hoc unblocked list
-        // used to cherry pick unblocked trackers from unknown companies
-        // the name is the site domain, count is -2 to show the list at the bottom
-        createUnblockedList: function (company, urlsList) {
-            const unblockedTrackers = this.spliceUnblockedTrackers(company, urlsList)
-            return {
-                name: this.domain,
-                iconName: '', // we won't have an icon for unknown first party trackers
-                count: -2,
-                urls: unblockedTrackers,
-                urlsList: Object.keys(unblockedTrackers)
-            }
-        },
-
-        // Return an array of unblocked trackers
-        // and remove those entries from the specified company
-        // only needed for unknown trackers, so far
-        spliceUnblockedTrackers: function (company, urlsList) {
-            if (!company || !company.urls || !urlsList) return null
-
-            return urlsList.filter((url) => company.urls[url].isBlocked === false)
-                .reduce((unblockedTrackers, url) => {
-                    unblockedTrackers[url] = company.urls[url]
-
-                    // Update the company urls and urlsList
-                    delete company.urls[url]
-                    urlsList.splice(urlsList.indexOf(url), 1)
-
-                    return unblockedTrackers
-                }, {})
-        },
-
-        // Return true if company has unblocked trackers in the current tab
-        hasUnblockedTrackers: function (company, urlsList) {
-            if (!company || !company.urls || !urlsList) return false
-
-            return urlsList.some((url) => company.urls[url].isBlocked === false)
-        },
-
-        // Determines sorting order of the company list
-        _setCount: function (company, companyName, urlsList) {
-            let count = company.count
-            // Unknown trackers, followed by unblocked first party,
-            // should be at the bottom of the list
-            if (companyName === 'unknown') {
-                count = -1
-            } else if (this.hasUnblockedTrackers(company, urlsList)) {
-                count = -2
-            }
-
-            return count
         }
     }
 )

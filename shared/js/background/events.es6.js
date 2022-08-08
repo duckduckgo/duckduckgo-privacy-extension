@@ -211,6 +211,17 @@ if (manifestVersion === 2) {
         request => {
             if (request.type === 'main_frame') {
                 tabManager.updateTabUrl(request)
+
+                const tab = tabManager.get({ tabId: request.tabId })
+                // SERP ad click detection
+                if (
+                    utils.isRedirect(request.statusCode)
+                ) {
+                    tab.setAdClickIfValidRedirect(request, tab.site.baseDomain)
+                } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
+                    tab.adClick.adClickRedirect = false
+                    tab.adClick.adBaseDomain = tab.site.baseDomain
+                }
             }
 
             if (ATB.shouldUpdateSetAtb(request)) {
@@ -247,6 +258,16 @@ if (manifestVersion === 2) {
         )
     })
 }
+
+browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
+    const currentTab = tabManager.get({ tabId: details.sourceTabId })
+    if (currentTab && currentTab.adClick) {
+        const newTab = tabManager.createOrUpdateTab(details.tabId, { url: details.url })
+        if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
+            newTab.adClick = currentTab.adClick
+        }
+    }
+})
 
 /**
  * Web Navigation

@@ -30,6 +30,7 @@ class Site {
 
         this.domain = domain
         this.protocol = this.url.substr(0, this.url.indexOf(':'))
+        this.baseDomain = utils.getBaseDomain(url)
         this.trackerUrls = []
         this.grade = new Grade()
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
@@ -108,7 +109,21 @@ class Site {
         return !(this.allowlisted || this.isBroken)
     }
 
+    /**
+     * Checks different toggles we have in the application:
+     * - User toggle off
+     * - Remotely disable it
+     *      - tempAllowlist
+     *      - "status" check
+     *      - "exceptions" check
+     * - User toggle on
+     */
     isFeatureEnabled (featureName) {
+        const allowlistOnlyFeatures = ['autofill', 'adClickAttribution']
+        if (allowlistOnlyFeatures.includes(featureName)) {
+            return this.enabledFeatures.includes(featureName)
+        }
+
         if (this.denylisted) {
             return true
         }
@@ -120,7 +135,7 @@ class Site {
      */
     addTracker (t) {
         // Ignore trackers that aren't first party
-        if (t.action === 'ignore' && !t.firstParty) {
+        if (t.action === 'ignore' && !t.sameEntity) {
             return
         }
         if (t.tracker && this.trackerUrls.indexOf(t.tracker.domain) === -1) {

@@ -3,6 +3,7 @@ const constants = require('../../../data/constants')
 const httpsMessages = constants.httpsMessages
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 const submitBreakageForm = require('./submit-breakage-form.es6')
+const { getTrackerAggregationStats } = require('./mixins/calculate-aggregation-stats')
 
 // for now we consider tracker networks found on more than 7% of sites
 // as "major"
@@ -16,6 +17,7 @@ function Site (attrs) {
     attrs.protectionsEnabled = false
     attrs.isBroken = false
     attrs.displayBrokenUI = false
+    attrs.aggregationStats = getTrackerAggregationStats([])
 
     attrs.isAllowlisted = false
     attrs.allowlistOptIn = false
@@ -23,9 +25,7 @@ function Site (attrs) {
     attrs.siteRating = {}
     attrs.httpsState = 'none'
     attrs.httpsStatusText = ''
-    attrs.trackersCount = 0 // unique trackers count
     attrs.majorTrackerNetworksCount = 0
-    attrs.totalTrackerNetworksCount = 0
     attrs.trackerNetworks = []
     attrs.tosdr = {}
     attrs.isaMajorTrackingNetwork = false
@@ -46,6 +46,7 @@ Site.prototype = window.$.extend({},
             return new Promise((resolve) => {
                 browserUIWrapper.getBackgroundTabData().then((tab) => {
                     if (tab) {
+                        this.aggregationStats = getTrackerAggregationStats(tab.trackers)
                         this.set('tab', tab)
                         this.domain = tab.site.domain
                         this.fetchSiteRating()
@@ -121,7 +122,6 @@ Site.prototype = window.$.extend({},
 
         // calls `this.set()` to trigger view re-rendering
         update: function (ops) {
-            // console.log('[model] update()')
             if (this.tab) {
                 // got siteRating back from background process
                 if (ops &&
@@ -154,9 +154,9 @@ Site.prototype = window.$.extend({},
                     }
                 }
 
-                const newTrackersCount = this.getUniqueTrackersCount()
-                if (newTrackersCount !== this.trackersCount) {
-                    this.set('trackersCount', newTrackersCount)
+                const aggregationStats = getTrackerAggregationStats(this.tab.trackers)
+                if (aggregationStats.all.entitiesCount !== this.aggregationStats.all.entitiesCount) {
+                    this.set('aggregationStats', aggregationStats)
                 }
 
                 const newTrackersBlockedCount = this.getUniqueTrackersBlockedCount()
@@ -170,12 +170,6 @@ Site.prototype = window.$.extend({},
                     this.set('trackerNetworks', newTrackerNetworks)
                 }
 
-                const newUnknownTrackersCount = this.getUnknownTrackersCount()
-                const newTotalTrackerNetworksCount = newUnknownTrackersCount + newTrackerNetworks.length
-                if (newTotalTrackerNetworksCount !== this.totalTrackerNetworksCount) {
-                    this.set('totalTrackerNetworksCount', newTotalTrackerNetworksCount)
-                }
-
                 const newMajorTrackerNetworksCount = this.getMajorTrackerNetworksCount()
                 if (newMajorTrackerNetworksCount !== this.majorTrackerNetworksCount) {
                     this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount)
@@ -183,17 +177,7 @@ Site.prototype = window.$.extend({},
             }
         },
 
-        getUniqueTrackersCount: function () {
-            // console.log('[model] getUniqueTrackersCount()')
-            const count = Object.keys(this.tab.trackers).reduce((total, name) => {
-                return this.tab.trackers[name].count + total
-            }, 0)
-
-            return count
-        },
-
         getUniqueTrackersBlockedCount: function () {
-            // console.log('[model] getUniqueTrackersBlockedCount()')
             const count = Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
                 const companyBlocked = this.tab.trackersBlocked[name]
 
@@ -209,21 +193,7 @@ Site.prototype = window.$.extend({},
             return count
         },
 
-        getUnknownTrackersCount: function () {
-            // console.log('[model] getUnknownTrackersCount()')
-            const unknownTrackers = this.tab.trackers ? this.tab.trackers.unknown : {}
-
-            let count = 0
-            if (unknownTrackers && unknownTrackers.urls) {
-                const unknownTrackersUrls = Object.keys(unknownTrackers.urls)
-                count = unknownTrackersUrls ? unknownTrackersUrls.length : 0
-            }
-
-            return count
-        },
-
         getMajorTrackerNetworksCount: function () {
-            // console.log('[model] getMajorTrackerNetworksCount()')
             // Show only blocked major trackers count, unless site is allowlisted
             const trackers = this.protectionsEnabled ? this.tab.trackersBlocked : this.tab.trackers
             const count = Object.values(trackers).reduce((total, t) => {
@@ -236,7 +206,6 @@ Site.prototype = window.$.extend({},
         },
 
         getTrackerNetworksOnPage: function () {
-            // console.log('[model] getMajorTrackerNetworksOnPage()')
             // all tracker networks found on this page/tab
             const networks = Object.keys(this.tab.trackers)
                 .map((t) => t.toLowerCase())
@@ -270,6 +239,8 @@ Site.prototype = window.$.extend({},
 
         toggleAllowlist: function () {
             if (this.tab && this.tab.site) {
+                // broadcast that this was a user-initiated action
+                this.send('user-action', 'toggleAllowlist')
                 if (this.isBroken) {
                     this.initAllowlisted(this.isAllowlisted, !this.isDenylisted)
                     this.setList('denylisted', this.tab.site.domain, this.isDenylisted)

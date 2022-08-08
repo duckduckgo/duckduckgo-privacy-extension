@@ -15,6 +15,15 @@ export async function sendTabMessage (id, message, details) {
     }
 }
 
+/**
+ * @param {string} urlString
+ * @returns {string | null} etld plus one of the URL
+ */
+export function getBaseDomain (urlString) {
+    const parsedUrl = tldts.parse(urlString, { allowPrivateDomains: true })
+    return parsedUrl.domain || parsedUrl.hostname
+}
+
 export function extractHostFromURL (url, shouldKeepWWW) {
     if (!url) return ''
 
@@ -149,6 +158,14 @@ export function getAsyncBlockingSupport () {
 
     console.warn(`Unrecognized browser "${browser}" - async response disallowed`)
     return false
+}
+
+/**
+ * @param {number} statusCode
+ * @returns {boolean}
+ */
+export function isRedirect (statusCode) {
+    return (statusCode >= 300 && statusCode <= 399)
 }
 
 /*
@@ -299,13 +316,14 @@ export async function imgToData (imagePath) {
  * top level domain.
  */
 export function isSameTopLevelDomain (url1, url2) {
-    const first = tldts.parse(url1, { allowPrivateDomains: true })
-    const second = tldts.parse(url2, { allowPrivateDomains: true })
+    const first = getBaseDomain(url1)
+    const second = getBaseDomain(url2)
 
-    const firstDomain = first.domain === null ? first.hostname : first.domain
-    const secondDomain = first.domain === null ? second.hostname : second.domain
+    if (!first || !second) {
+        return false
+    }
 
-    return firstDomain === secondDomain
+    return first === second
 }
 
 export function parseVersionString (versionString) {

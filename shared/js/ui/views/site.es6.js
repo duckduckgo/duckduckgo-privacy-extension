@@ -5,10 +5,12 @@ const PrivacyPracticesView = require('./../views/privacy-practices.es6.js')
 const BreakageFormView = require('./../views/breakage-form.es6.js')
 const gradeScorecardTemplate = require('./../templates/grade-scorecard.es6.js')
 const trackerNetworksTemplate = require('./../templates/tracker-networks.es6.js')
+const nonTrackerNetworksTemplate = require('./../templates/non-tracker-networks.es6.js')
 const privacyPracticesTemplate = require('./../templates/privacy-practices.es6.js')
 const breakageFormTemplate = require('./../templates/breakage-form.es6.js')
 const openOptionsPage = require('./mixins/open-options-page.es6.js')
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
+const { registerUnloadListener } = require('./mixins/unload-listener.es6')
 
 function Site (ops) {
     this.model = ops.model
@@ -17,6 +19,9 @@ function Site (ops) {
 
     // cache 'body' selector
     this.$body = window.$('body')
+
+    // register a listener for when the popup is unloaded
+    registerUnloadListener(this.model.store)
 
     // get data from background process, then re-render template with it
     this.model.getBackgroundTabData().then(() => {
@@ -79,6 +84,7 @@ Site.prototype = window.$.extend({},
                 'allowlist-status',
                 'show-all-trackers',
                 'show-page-trackers',
+                'show-page-non-trackers',
                 'manage-allowlist',
                 'manage-allowlist-li',
                 'report-broken',
@@ -95,6 +101,7 @@ Site.prototype = window.$.extend({},
             this.bindEvents([
                 [this.$toggle, 'click', this._onToggleClick],
                 [this.$showpagetrackers, 'click', this._showPageTrackers],
+                [this.$showpagenontrackers, 'click', this._showPageNonTrackers],
                 [this.$privacypractices, 'click', this._showPrivacyPractices],
                 [this.$confirmbreakageyes, 'click', this._onConfirmBrokenClick],
                 [this.$confirmbreakageno, 'click', this._onConfirmNotBrokenClick],
@@ -184,6 +191,13 @@ Site.prototype = window.$.extend({},
             })
         },
 
+        _showPageNonTrackers: function (e) {
+            if (this.$body.hasClass('is-disabled')) return
+            this.views.slidingSubview = new TrackerNetworksView({
+                template: nonTrackerNetworksTemplate
+            })
+        },
+
         _showPrivacyPractices: function (e) {
             if (this.model.disabled) return
 
@@ -205,7 +219,6 @@ Site.prototype = window.$.extend({},
         closePopupAndReload: function (delay) {
             delay = delay || 0
             setTimeout(() => {
-                browserUIWrapper.reloadTab(this.model.tab.id)
                 browserUIWrapper.closePopup()
             }, delay)
         }

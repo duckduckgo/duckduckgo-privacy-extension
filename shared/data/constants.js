@@ -15,7 +15,7 @@ function getConfigFileName () {
 }
 
 module.exports = {
-    displayCategories: ['Analytics', 'Advertising', 'Social Network'],
+    displayCategories: ['Analytics', 'Advertising', 'Social Network', 'Content Delivery', 'Embedded Content'],
     feedbackUrl: 'https://duckduckgo.com/feedback.js?type=extension-feedback',
     tosdrMessages: {
         A: 'Good',
@@ -100,7 +100,7 @@ module.exports = {
         },
         {
             name: 'tds',
-            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds.json',
+            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v3/tds.json',
             format: 'json',
             source: 'external',
             channels: {

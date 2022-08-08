@@ -125,7 +125,7 @@
 /* Images & icons */
 @mixin icon_display () {
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
     display: inline-block;
     width: 20px;
     height: 20px;

@@ -32,6 +32,7 @@ const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
 const browserWrapper = require('./../wrapper.es6')
 const webResourceKeyRegex = /.*\?key=(.*)/
+const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
 
 class Tab {
     constructor (tabData) {
@@ -61,7 +62,42 @@ class Tab {
         this.resetBadgeIcon()
         this.webResourceAccess = []
         this.surrogates = {}
+
+        /** @type {null | import('./ad-click-attribution-policy').AdClick} */
+        this.adClick = null
     };
+
+    /**
+     * If given a valid adClick redirect, set the adClick to the tab.
+     * @param {*} request
+     * @param {string} tabDomain
+     */
+    setAdClickIfValidRedirect (request, tabDomain) {
+        const policy = this.getAdClickAttributionPolicy()
+        const adClick = policy.createAdClick(request.url, this)
+        if (adClick) {
+            this.adClick = adClick
+        }
+    }
+
+    /**
+     * @returns {AdClickAttributionPolicy}
+     */
+    getAdClickAttributionPolicy () {
+        this._adClickAttributionPolicy = this._adClickAttributionPolicy || new AdClickAttributionPolicy()
+        return this._adClickAttributionPolicy
+    }
+
+    /**
+     * Returns true if a resource should be permitted when the tab is in the adClick state.
+     * @param {string} resourcePath
+     * @returns {boolean}
+     */
+    allowAdAttribution (resourcePath) {
+        if (!this.site.isFeatureEnabled('adClickAttribution') || !this.adClick || !this.adClick.allowAdAttribution(this)) return false
+        const policy = this.getAdClickAttributionPolicy()
+        return policy.resourcePermitted(resourcePath)
+    }
 
     resetBadgeIcon () {
         // set the new tab icon to the dax logo
@@ -98,10 +134,6 @@ class Tab {
     // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
         const tracker = this.trackers[t.tracker.owner.name]
-        // Filter out cases we don't handle right now
-        if (['none'].includes(t.action) || (t.action === 'ignore' && t.firstParty === false)) {
-            return
-        }
 
         if (tracker) {
             tracker.addTrackerUrl(t)

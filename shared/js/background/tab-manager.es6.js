@@ -27,6 +27,9 @@ class TabManager {
         if (oldTab) {
             newTab.ampUrl = oldTab.ampUrl
             newTab.cleanAmpUrl = oldTab.cleanAmpUrl
+            if (oldTab.adClick?.shouldPropagateAdClickForNavigation(oldTab)) {
+                newTab.adClick = oldTab.adClick.clone()
+            }
         }
 
         this.tabContainer[newTab.id] = newTab
@@ -95,7 +98,7 @@ class TabManager {
     createOrUpdateTab (id, info) {
         if (!tabManager.get({ tabId: id })) {
             info.id = id
-            tabManager.create(info)
+            return tabManager.create(info)
         } else {
             const tab = tabManager.get({ tabId: id })
             if (tab && info.status) {
@@ -129,6 +132,7 @@ class TabManager {
                     if (tab.statusCode === 200) tab.endStopwatch()
                 }
             }
+            return tab
         }
     }
 

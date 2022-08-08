@@ -1,12 +1,77 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1658496463463,
+    "version": 1658849131560,
     "features": {
+        "adClickAttribution": {
+            "state": "enabled",
+            "exceptions": [],
+            "settings": {
+                "linkFormats": [
+                    {
+                        "url": "duckduckgo.com/y.js",
+                        "parameterName": "u3",
+                        "adDomainParameterName": "ad_domain",
+                        "desc": "SERP Ads"
+                    },
+                    {
+                        "url": "www.search-company.site/y.js",
+                        "parameterName": "u3",
+                        "adDomainParameterName": "ad_domain",
+                        "desc": "Test Domain"
+                    },
+                    {
+                        "url": "www.search-company.example/y.js",
+                        "parameterName": "u3",
+                        "adDomainParameterName": "ad_domain",
+                        "desc": "Test Domain"
+                    },
+                    {
+                        "url": "links.duckduckgo.com/m.js",
+                        "parameterName": "dsl",
+                        "parameterValue": "1",
+                        "adDomainParameterName": "ad_domain",
+                        "desc": "Shopping Ads"
+                    },
+                    {
+                        "url": "www.search-company.site/m.js",
+                        "parameterName": "dsl",
+                        "parameterValue": "1",
+                        "adDomainParameterName": "ad_domain",
+                        "desc": "Test Domain"
+                    },
+                    {
+                        "url": "www.search-company.example/m.js",
+                        "parameterName": "dsl",
+                        "parameterValue": "1",
+                        "adDomainParameterName": "ad_domain",
+                        "desc": "Test Domain"
+                    }
+                ],
+                "allowlist": [
+                    {
+                        "blocklistEntry": "bing.com",
+                        "host": "bat.bing.com"
+                    },
+                    {
+                        "blocklistEntry": "ad-company.site",
+                        "host": "convert.ad-company.site"
+                    },
+                    {
+                        "blocklistEntry": "ad-company.example",
+                        "host": "convert.ad-company.example"
+                    }
+                ],
+                "navigationExpiration": 1800,
+                "totalExpiration": 604800,
+                "heuristicDetection": "enabled",
+                "domainDetection": "enabled"
+            }
+        },
         "ampLinks": {
             "exceptions": [
                 {
                     "domain": "freecodecamp.org",
-                    "reason": "Clicking 'get started' reloads the page and does not progress to the login page."
+                    "reason": "sign-up issues"
                 }
             ],
             "settings": {
@@ -37,32 +102,48 @@
         "autoconsent": {
             "exceptions": [
                 {
+                    "domain": "spiegel.de",
+                    "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "www.derstandard.de",
+                    "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "www.derstandard.at",
+                    "reason": "Opt-out not possible"
+                },
+                {
+                    "domain": "kohler.com",
+                    "reason": "Opt-out not possible"
+                },
+                {
                     "domain": "zeitraum-moebel.de",
-                    "reason": "After the cookie popup is managed and disappears, a semi-transparent overlay remains on the page which prevents further interaction with the site."
+                    "reason": "broken autoconsent rule"
                 },
                 {
                     "domain": "mathebibel.de",
-                    "reason": "Page renders but one cannot scroll (and no CMP is shown) for a few seconds."
+                    "reason": "broken scrolling"
                 },
                 {
                     "domain": "focus.de",
-                    "reason": "Page renders but one cannot scroll (and no CMP is shown) for a few seconds."
+                    "reason": "broken scrolling"
                 },
                 {
                     "domain": "computerbild.de",
-                    "reason": "Page renders but one cannot scroll (and no CMP is shown) for a few seconds."
+                    "reason": "broken scrolling"
                 },
                 {
                     "domain": "techtarget.com",
-                    "reason": "Page renders but one cannot scroll (and no CMP is shown) for a few seconds."
+                    "reason": "broken scrolling"
                 },
                 {
                     "domain": "n-tv.de",
-                    "reason": "Page renders but one cannot scroll (and no CMP is shown) for a few seconds."
+                    "reason": "broken scrolling"
                 },
                 {
                     "domain": "concursolutions.com",
-                    "reason": "Page renders blank for several seconds before cookie management can complete."
+                    "reason": "blank page during opt-out"
                 }
             ],
             "settings": {
@@ -73,8 +154,12 @@
         "autofill": {
             "exceptions": [
                 {
-                    "domain": "containerstore.com",
-                    "reason": "Generally poor UX - no username saved on signup, prompts for Duck address on 'forgot password'."
+                    "domain": "asana.com",
+                    "reason": "site breakage"
+                },
+                {
+                    "domain": "fastmail.com",
+                    "reason": "site breakage"
                 }
             ],
             "state": "enabled"
@@ -87,8 +172,40 @@
             "state": "enabled",
             "exceptions": [
                 {
+                    "domain": "video.corriere.it",
+                    "reason": "Video not playing"
+                },
+                {
+                    "domain": "wp.pl",
+                    "reason": "Adblocker wall"
+                },
+                {
+                    "domain": "magicgameworld.com",
+                    "reason": "Adblocker wall"
+                },
+                {
+                    "domain": "www.cbssports.com",
+                    "reason": "Video content missing"
+                },
+                {
+                    "domain": "53.com",
+                    "reason": "Broken sign in"
+                },
+                {
+                    "domain": "www.livenewsnow.com",
+                    "reason": "Adblocker wall"
+                },
+                {
+                    "domain": "id.me",
+                    "reason": "Broken logins"
+                },
+                {
+                    "domain": "virginmedia.com",
+                    "reason": "Chat widget blocked"
+                },
+                {
                     "domain": "welt.de",
-                    "reason": "Video pauses at about 13-15 seconds in. Playing the video again results in a single frame rendering without progressing to the next frame."
+                    "reason": "Video not playing correctly"
                 }
             ]
         },
@@ -96,7 +213,15 @@
             "exceptions": [
                 {
                     "domain": "nespresso.com",
-                    "reason": "Clicking 'Continue' after filling out details for account creation yields an error."
+                    "reason": "login issues"
+                },
+                {
+                    "domain": "adidas.co.uk",
+                    "reason": "Login issues: https://github.com/duckduckgo/privacy-configuration/issues/257"
+                },
+                {
+                    "domain": "centralbank.com",
+                    "reason": "Bill pay issues: https://github.com/duckduckgo/privacy-configuration/issues/259"
                 }
             ],
             "state": "enabled",
@@ -106,26 +231,105 @@
                 "nonTrackerCookie": "disabled",
                 "excludedCookieDomains": [
                     {
+                        "domain": "hangouts.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "docs.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
                         "domain": "accounts.google.com",
-                        "reason": "On some Google sign-in flows, there is an error after entering username and proceeding: 'Your browser has cookies disabled. Make sure that your cookies are enabled and try again.'"
+                        "reason": "SSO which needs cookies for auth"
+                    },
+                    {
+                        "domain": "googleapis.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "login.live.com",
+                        "reason": "SSO which needs cookies for auth"
+                    },
+                    {
+                        "domain": "apis.google.com",
+                        "reason": "Site breakage"
                     },
                     {
                         "domain": "pay.google.com",
-                        "reason": "After sign-in for Google Pay flows, there is repeated flickering and a loading spinner, preventing the flow from proceeding."
+                        "reason": "Site breakage"
                     },
                     {
-                        "domain": "payments.google.com",
-                        "reason": "After sign-in for Google Pay flows (after flickering is resolved), blocking this causes the loading spinner to spin indefinitely, and the payment flow cannot proceed."
+                        "domain": "payments.amazon.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "payments.amazon.de",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "atlassian.net",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "atlassian.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "paypal.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "paypal.com",
+                        "reason": "site breakage"
+                    },
+                    {
+                        "domain": "salesforce.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "salesforceliveagent.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "force.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "disqus.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "spotify.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "hangouts.google.com",
+                        "reason": "site breakage"
+                    },
+                    {
+                        "domain": "docs.google.com",
+                        "reason": "site breakage"
+                    },
+                    {
+                        "domain": "btsport-utils-prod.akamaized.net",
+                        "reason": "broken videos"
+                    },
+                    {
+                        "domain": "api.target.com",
+                        "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/247"
+                    },
+                    {
+                        "domain": "api.bnc.ca",
+                        "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/256"
+                    },
+                    {
+                        "domain": "api2.bnc.ca",
+                        "reason": "broken login: https://github.com/duckduckgo/privacy-configuration/issues/256"
                     }
                 ],
                 "firstPartyTrackerCookiePolicy": {
-                    "readme": "This policy is deprecated. We are expanding this protection to all first party cookies set by scripts and using firstPartyCookiePolicy policy instead.",
                     "threshold": 86400,
                     "maxAge": 86400
-                },
-                "firstPartyCookiePolicy": {
-                    "threshold": 604800,
-                    "maxAge": 604800
                 }
             }
         },
@@ -133,12 +337,24 @@
             "settings": {
                 "omitApplicationSites": [
                     {
-                        "domain": "thingiverse.com",
-                        "reason": "Site loads blank and does not proceed."
+                        "domain": "cvs.com",
+                        "reason": "Site reports browser not supported"
                     },
                     {
-                        "domain": "qubushotel.com",
-                        "reason": "Homepage UI elements appear squashed together, preventing interaction with the site."
+                        "domain": "sovietgames.su",
+                        "reason": "Wordpress plugin reports our browser as a bot"
+                    },
+                    {
+                        "domain": "thingiverse.com",
+                        "reason": "Site loads blank"
+                    },
+                    {
+                        "domain": "accounts.google.com",
+                        "reason": "Site reports browser not supported"
+                    },
+                    {
+                        "domain": "facebook.com",
+                        "reason": "Site reports browser not supported"
                     }
                 ],
                 "omitVersionSites": []
@@ -148,7 +364,16 @@
         },
         "fingerprintingAudio": {
             "state": "disabled",
-            "exceptions": []
+            "exceptions": [
+                {
+                    "domain": "youtube.com",
+                    "reason": "site breakage"
+                },
+                {
+                    "domain": "meet.google.com",
+                    "reason": "site breakage"
+                }
+            ]
         },
         "fingerprintingBattery": {
             "exceptions": [],
@@ -161,31 +386,39 @@
             "exceptions": [
                 {
                     "domain": "adidas.com",
-                    "reason": "When adding an item to the cart, there is an error 'An unexpected problem occurred' and the item is not added to the cart."
-                },
-                {
-                    "domain": "adidas.co.uk",
-                    "reason": "When adding an item to the cart, there is an error 'An unexpected problem occurred' and the item is not added to the cart."
-                },
-                {
-                    "domain": "emirates.com",
-                    "reason": "After filling out flight information and clicking 'Search flights', a blank page is shown for several seconds before the page redirects."
+                    "reason": "Broken add to cart"
                 },
                 {
                     "domain": "hm.com",
-                    "reason": "When adding an item to cart, there is an error 'something went wrong', and the item does not get added to the cart."
+                    "reason": "Broken add to cart"
                 },
                 {
-                    "domain": "ikea.com",
-                    "reason": "When creating an account, after filling out details and going to e-mail confirmation, there is an error 'Something went wrong', and the e-mail may not be received. Clicking 'Send new code' appears successful, but after entering the code there is often another account creation error."
+                    "domain": "notebooksbilliger.de",
+                    "reason": "Broken add to cart"
                 },
                 {
                     "domain": "spirit.com",
-                    "reason": "When attempting to sign in, a semi-transparent overlay appears over the page which prevents further interaction with the site."
+                    "reason": "Broken login"
                 },
                 {
-                    "domain": "thetrainline.com",
-                    "reason": "After filling out travel info and clicking 'Get times & tickets', there is an error warning that 'Something went wrong', which prevents further interaction."
+                    "domain": "walgreens.com",
+                    "reason": "Broken login"
+                },
+                {
+                    "domain": "krunker.io",
+                    "reason": "Broken game init"
+                },
+                {
+                    "domain": "usaa.com",
+                    "reason": "Broken login"
+                },
+                {
+                    "domain": "academy.com",
+                    "reason": "Broken login"
+                },
+                {
+                    "domain": "kroger.com",
+                    "reason": "Broken login"
                 }
             ],
             "state": "enabled"
@@ -193,24 +426,40 @@
         "fingerprintingHardware": {
             "exceptions": [
                 {
+                    "domain": "accounts.nintendo.com",
+                    "reason": "broken login"
+                },
+                {
+                    "domain": "clearpay.co.uk",
+                    "reason": "broken login"
+                },
+                {
                     "domain": "gamestop.com",
-                    "reason": "Clicking 'add to cart' causes a spinner to load briefly, and the item doesn't get added to the cart."
+                    "reason": "broken add to cart"
                 },
                 {
                     "domain": "godaddy.com",
-                    "reason": "After entering login details and clicking to log in, the site shows an adwall and prevents login."
+                    "reason": "adwall"
+                },
+                {
+                    "domain": "play.geforcenow.com",
+                    "reason": "site breakage"
                 },
                 {
                     "domain": "realestate.com.au",
-                    "reason": "Site loads blank and does not proceed."
+                    "reason": "Site not loading"
                 },
                 {
                     "domain": "secureserver.net",
-                    "reason": "After entering login details and clicking to log in, the site shows an adwall and prevents login."
+                    "reason": "adwall"
+                },
+                {
+                    "domain": "stadia.google.com",
+                    "reason": "site breakage"
                 },
                 {
                     "domain": "hyatt.com",
-                    "reason": "Site loads blank and does not proceed."
+                    "reason": "site breakage"
                 }
             ],
             "state": "enabled"
@@ -219,19 +468,23 @@
             "exceptions": [
                 {
                     "domain": "gamestop.com",
-                    "reason": "Clicking 'add to cart' causes a spinner to load briefly, and the item doesn't get added to the cart."
+                    "reason": "broken add to cart"
                 },
                 {
                     "domain": "godaddy.com",
-                    "reason": "After entering login details and clicking to log in, the site shows an adwall and prevents login."
+                    "reason": "adwall"
                 },
                 {
                     "domain": "hyatt.com",
-                    "reason": "Site loads blank and does not proceed."
+                    "reason": "Site not loading"
+                },
+                {
+                    "domain": "realestate.com.au",
+                    "reason": "Site not loading"
                 },
                 {
                     "domain": "secureserver.net",
-                    "reason": "After entering login details and clicking to log in, the site shows an adwall and prevents login."
+                    "reason": "adwall"
                 }
             ],
             "state": "enabled"
@@ -248,8 +501,8 @@
             "state": "enabled",
             "exceptions": [
                 {
-                    "domain": "allegiantair.com",
-                    "reason": "Example URL: https://www.allegiantair.com/seating-checking-boarding; Clicking the 'show details' button in the FAQ sections does nothing."
+                    "domain": "newyorker.com",
+                    "reason": "Cookie consent box hiding audio"
                 }
             ],
             "settings": {
@@ -278,35 +531,66 @@
             "state": "disabled"
         },
         "referrer": {
-            "exceptions": [],
+            "exceptions": [
+                {
+                    "domain": "apple.com",
+                    "reason": "Login issues"
+                }
+            ],
             "state": "enabled"
         },
         "trackerAllowlist": {
             "state": "enabled",
             "settings": {
                 "allowlistedTrackers": {
-                    "adsafeprotected.com": {
+                    "acdn.no": {
                         "rules": [
                             {
-                                "rule": "static.adsafeprotected.com/favicon.ico",
+                                "rule": "assets.acdn.no/pkg/@amedia/browserid/",
                                 "domains": [
-                                    "tf1info.fr"
+                                    "<all>"
                                 ],
-                                "reason": "Adwall displays over video and prevents video from being played."
-                            },
+                                "reason": "site not loading"
+                            }
+                        ]
+                    },
+                    "adnxs.com": {
+                        "rules": [
                             {
-                                "rule": "static.adsafeprotected.com/iasPET.1.js",
+                                "rule": "ib.adnxs.com/ut/v3",
                                 "domains": [
-                                    "corriere.it"
+                                    "bild.de"
                                 ],
-                                "reason": "Example URL: https://www.corriere.it/video-articoli/2022/07/13/missione-wwf-liberare-mare-plastica/9abb64de-029d-11ed-a0cc-ad3c68cacbae.shtml;,Clicking on the video to play causes a still frame to show and the video does not continue."
-                            },
+                                "reason": "content alignment"
+                            }
+                        ]
+                    },
+                    "adsafeprotected.com": {
+                        "rules": [
                             {
                                 "rule": "static.adsafeprotected.com/vans-adapter-google-ima.js",
                                 "domains": [
                                     "nhl.com"
                                 ],
-                                "reason": "Videos show a spinner and never load."
+                                "reason": "video not loading"
+                            }
+                        ]
+                    },
+                    "adthrive.com": {
+                        "rules": [
+                            {
+                                "rule": "ads.adthrive.com/builds/core/",
+                                "domains": [
+                                    "mediaite.com"
+                                ],
+                                "reason": "video not loading"
+                            },
+                            {
+                                "rule": "ads.adthrive.com/sites/",
+                                "domains": [
+                                    "mediaite.com"
+                                ],
+                                "reason": "video not loading"
                             }
                         ]
                     },
@@ -317,7 +601,7 @@
                                 "domains": [
                                     "aldi.co.uk"
                                 ],
-                                "reason": "Product lists don't render."
+                                "reason": "product images missing"
                             }
                         ]
                     },
@@ -328,7 +612,7 @@
                                 "domains": [
                                     "aliexpress.com"
                                 ],
-                                "reason": "Page content renders as text without images."
+                                "reason": "content not loading"
                             }
                         ]
                     },
@@ -337,79 +621,21 @@
                             {
                                 "rule": "c.amazon-adsystem.com/aax2/apstag.js",
                                 "domains": [
-                                    "corriere.it",
                                     "eurogamer.net",
                                     "seattletimes.com"
                                 ],
-                                "reason": "corriere.it - ,Example URL: https://www.corriere.it/video-articoli/2022/07/13/missione-wwf-liberare-mare-plastica/9abb64de-029d-11ed-a0cc-ad3c68cacbae.shtml;,Clicking on the video to play causes a still frame to show and the video does not continue.,eurogamer.net, seattletimes.com - An unskippable adwall appears which prevents interaction with the page."
+                                "reason": "adwall"
                             }
                         ]
                     },
-                    "azureedge.net": {
+                    "chipotle.com": {
                         "rules": [
                             {
-                                "rule": "orderweb-cdn-endpoint-centralus.azureedge.net/js/chunk-vendors.js",
+                                "rule": "services.chipotle.com/new_cmg_utils1.js",
                                 "domains": [
                                     "chipotle.com"
                                 ],
-                                "reason": "Site loads blank and cannot be interacted with."
-                            }
-                        ]
-                    },
-                    "bc0a.com": {
-                        "rules": [
-                            {
-                                "rule": "marvel-b1-cdn.bc0a.com/f00000000269380/www.beretta.com/assets/",
-                                "domains": [
-                                    "beretta.com"
-                                ],
-                                "reason": "Example URL1: https://www.beretta.com/en-us/womens-clothing/caps-and-hats/;,Example URL2: https://www.beretta.com/en-us/mens-clothing/caps-and-hats/lp-trucker-hat/;,Various product and product-related images do not render - e.g., main product images on product pages, product images in product listings, etc."
-                            }
-                        ]
-                    },
-                    "bing.com": {
-                        "rules": [
-                            {
-                                "rule": "r.bing.com/rp/",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "See https://github.com/duckduckgo/privacy-configuration/issues/321.,These requests are associated with map/location functionality on websites."
-                            },
-                            {
-                                "rule": "th.bing.com/th",
-                                "domains": [
-                                    "drudgereport.com"
-                                ],
-                                "reason": "On the homepage (drudgereport.com), some images are fetched from bing.com.,When we block these requests, the images do not render, and the page appears to have blank boxes.,Note that requests can be of the form th.bing.com/th?id=... or th.bing.com/th/id/..., hence we unblock the common path here."
-                            },
-                            {
-                                "rule": "www.bing.com/api/maps/mapcontrol",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "See https://github.com/duckduckgo/privacy-configuration/issues/321.,This request is associated with map/location functionality on websites."
-                            },
-                            {
-                                "rule": "www.bing.com/api/v6/Places/AutoSuggest",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "See https://github.com/duckduckgo/privacy-configuration/issues/321.,This request is associated with map/location auto-suggest functionality on websites."
-                            },
-                            {
-                                "rule": "www.bing.com/maps/sdkrelease/mapcontrol",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "See https://github.com/duckduckgo/privacy-configuration/issues/321.,This request is associated with map/location functionality on websites."
-                            },
-                            {
-                                "rule": "www.bing.com/rp/",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "See https://github.com/duckduckgo/privacy-configuration/issues/321.,These requests are associated with map/location functionality on websites."
+                                "reason": "login issues"
                             }
                         ]
                     },
@@ -420,32 +646,14 @@
                                 "domains": [
                                     "winnipegfreepress.com"
                                 ],
-                                "reason": "Example URL: https://www.winnipegfreepress.com/local/city-will-try-to-fill-money-losing-ex-canada-post-office-576646662.html,Main text content on article does not load."
+                                "reason": "content not loading"
                             },
                             {
-                                "rule": "cdnjs.cloudflare.com/ajax/libs/three.js/84/three.min.js",
+                                "rule": "cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js",
                                 "domains": [
-                                    "2000mules.com"
+                                    "fortnitetracker.com"
                                 ],
-                                "reason": "Loading percentage hits 100% and the site does not proceed to display usual content."
-                            }
-                        ]
-                    },
-                    "criteo.net": {
-                        "rules": [
-                            {
-                                "rule": "static.criteo.net/js/ld/publishertag.js",
-                                "domains": [
-                                    "wp.pl"
-                                ],
-                                "reason": "Adwall appears which reappears when dismissed. The adwall prevents interaction with the page."
-                            },
-                            {
-                                "rule": "static.criteo.net/js/ld/publishertag.prebid.js",
-                                "domains": [
-                                    "wp.pl"
-                                ],
-                                "reason": "Adwall appears which reappears when dismissed. The adwall prevents interaction with the page."
+                                "reason": "content not loading"
                             }
                         ]
                     },
@@ -456,7 +664,18 @@
                                 "domains": [
                                     "wsj.com"
                                 ],
-                                "reason": "Opinion section article elements do not render. Note that Firefox Enhanced Tracking Protection may prevent mitigation from succeeding on Firefox."
+                                "reason": "content not loading"
+                            }
+                        ]
+                    },
+                    "datadoghq-browser-agent.com": {
+                        "rules": [
+                            {
+                                "rule": "www.datadoghq-browser-agent.com/datadog-logs-v3.js",
+                                "domains": [
+                                    "bbcgoodfood.com"
+                                ],
+                                "reason": "site not loading"
                             }
                         ]
                     },
@@ -467,31 +686,24 @@
                                 "domains": [
                                     "ah.nl"
                                 ],
-                                "reason": "'Bonus offer' elements do not render and are not clickable."
+                                "reason": "internal ads blocked"
                             },
                             {
                                 "rule": "pubads.g.doubleclick.net/gampad/ads",
                                 "domains": [
-                                    "nhl.com",
-                                    "viki.com"
+                                    "nhl.com"
                                 ],
-                                "reason": "nhl.com - Videos show a spinner and never load.,viki.com - after a video has played for a few seconds an adwall pops up. Clicking 'I've turned off my adblocker' resets the video, then after a few seconds the adwall pops up again."
-                            },
-                            {
-                                "rule": "pubads.g.doubleclick.net/ssai/event/",
-                                "domains": [
-                                    "cbssports.com"
-                                ],
-                                "reason": "Live videos do not load or render."
+                                "reason": "videos not loading"
                             },
                             {
                                 "rule": "securepubads.g.doubleclick.net/tag/js/gpt.js",
                                 "domains": [
                                     "ah.nl",
+                                    "mediaite.com",
                                     "wunderground.com",
                                     "youmath.it"
                                 ],
-                                "reason": "ah.nl - 'Bonus offer' elements do not render and are not clickable.,wunderground.com - Video element does not display.,youmath.it - Adwall displays which prevents page interaction and resets the page view when clicked."
+                                "reason": "videos not loading, adwall, internal ads blocked"
                             },
                             {
                                 "rule": "securepubads.g.doubleclick.net/gpt/pubads_impl_",
@@ -499,7 +711,43 @@
                                     "ah.nl",
                                     "wunderground.com"
                                 ],
-                                "reason": "ah.nl - 'Bonus offer' elements do not render and are not clickable.,wunderground.com - Video element does not display."
+                                "reason": "videos not loading, internal ads blocked"
+                            },
+                            {
+                                "rule": "www3.doubleclick.net",
+                                "domains": [
+                                    "thingiverse.com"
+                                ],
+                                "reason": "adwall"
+                            }
+                        ]
+                    },
+                    "dynamicyield.com": {
+                        "rules": [
+                            {
+                                "rule": "cdn-eu.dynamicyield.com/9878090/api_static.js",
+                                "domains": [
+                                    "decathlon.co.uk"
+                                ],
+                                "reason": "checkout broken"
+                            }
+                        ]
+                    },
+                    "evidon.com": {
+                        "rules": [
+                            {
+                                "rule": "c.evidon.com/geo/country.js",
+                                "domains": [
+                                    "crunchyroll.com"
+                                ],
+                                "reason": "video not loading"
+                            },
+                            {
+                                "rule": "evidon.com/sitenotice/",
+                                "domains": [
+                                    "crunchyroll.com"
+                                ],
+                                "reason": "video not loading"
                             }
                         ]
                     },
@@ -508,18 +756,9 @@
                             {
                                 "rule": "connect.facebook.net/en_US/sdk.js",
                                 "domains": [
-                                    "bandsintown.com",
-                                    "nextdoor.co.uk",
-                                    "nextdoor.com"
+                                    "grubhub.com"
                                 ],
-                                "reason": "bandsintown.com - Ticket page renders blank. With this exception the page redirects to ticketspice.com.,nextdoor.co.uk, nextdoor.com - Facebook login option appears greyed out and cannot be clicked."
-                            },
-                            {
-                                "rule": "connect.facebook.net/en_US/fbevents.js",
-                                "domains": [
-                                    "wp.pl"
-                                ],
-                                "reason": "Adwall appears which reappears when dismissed. The adwall prevents interaction with the page."
+                                "reason": "broken login"
                             }
                         ]
                     },
@@ -530,18 +769,18 @@
                                 "domains": [
                                     "channel4.com"
                                 ],
-                                "reason": "Unskippable adblock warning when trying to play a video."
+                                "reason": "adwall"
                             }
                         ]
                     },
-                    "gemius.pl": {
+                    "gigya.com": {
                         "rules": [
                             {
-                                "rule": "wp.hit.gemius.pl/xgemius.js",
+                                "rule": "gigya.com/js/gigya.services.plugins.base.min.js",
                                 "domains": [
-                                    "wp.pl"
+                                    "<all>"
                                 ],
-                                "reason": "Adwall appears which reappears when dismissed. The adwall prevents interaction with the page."
+                                "reason": "login content not loading"
                             }
                         ]
                     },
@@ -550,17 +789,9 @@
                             {
                                 "rule": "google-analytics.com/analytics.js",
                                 "domains": [
-                                    "doterra.com",
                                     "easyjet.com"
                                 ],
-                                "reason": "doterra.com - For doterra.com/login/loading, the page shows a loading indicator and never redirects.,easyjet.com - Clicking 'Show Worldwide flights' after entering parameters for a worldwide flight in the flight viewing form does nothing."
-                            },
-                            {
-                                "rule": "www.google-analytics.com/plugins/ua/ecommerce.js",
-                                "domains": [
-                                    "doterra.com"
-                                ],
-                                "reason": "For doterra.com/login/loading, the page shows a loading indicator and never redirects."
+                                "reason": "broken form"
                             }
                         ]
                     },
@@ -569,32 +800,37 @@
                             {
                                 "rule": "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
                                 "domains": [
-                                    "magicgameworld.com",
                                     "youmath.it"
                                 ],
-                                "reason": "Adwall displays with an overlay, preventing further interaction with the site."
+                                "reason": "adwall"
                             },
                             {
                                 "rule": "tpc.googlesyndication.com/pagead/js/loader21.html",
                                 "domains": [
                                     "rumble.com"
                                 ],
-                                "reason": "After clicking to play a video, the video will display a grey box for several seconds before playing."
+                                "reason": "adwall (video blocked)"
                             }
                         ]
                     },
                     "googletagmanager.com": {
                         "rules": [
                             {
+                                "rule": "googletagmanager.com/gtag/js",
+                                "domains": [
+                                    "ikea.com"
+                                ],
+                                "reason": "content not loading"
+                            },
+                            {
                                 "rule": "googletagmanager.com/gtm.js",
                                 "domains": [
                                     "ah.nl",
                                     "dailyherald.com",
-                                    "emirates.com",
                                     "iltalehti.fi",
                                     "rbcroyalbank.com"
                                 ],
-                                "reason": "ah.nl - 'Bonus offer' elements do not render and are not clickable.,dailyherald.com - Article images render as grey boxes.,emirates.com - After filling out login details and clicking to proceed, a loading spinners shows on the proceed button and the login does not progress.,iltalehti.fi - Article video renders as a blank box.,rbcroyalbank.com - Investments page renders blank."
+                                "reason": "page/video/image not loading, internal ads blocked"
                             }
                         ]
                     },
@@ -606,7 +842,7 @@
                                     "rei.com",
                                     "ups.com"
                                 ],
-                                "reason": "rei.com - When going to write a review for a product, there is an adblocker warning, and submission of the review fails.,ups.com - When trying to reset password, there is an error 'We are sorry, the application encountered an error during processing.'"
+                                "reason": "adwall, login issues"
                             }
                         ]
                     },
@@ -617,7 +853,7 @@
                                 "domains": [
                                     "livejournal.com"
                                 ],
-                                "reason": "Instagram embeds as main article content render as grey boxes."
+                                "reason": "embeds"
                             },
                             {
                                 "rule": "www.instagram.com/embed.js",
@@ -625,7 +861,7 @@
                                     "buzzfeed.com",
                                     "livejournal.com"
                                 ],
-                                "reason": "Instagram embeds as main article content render as grey boxes."
+                                "reason": "embeds"
                             }
                         ]
                     },
@@ -637,29 +873,7 @@
                                     "brooksrunning.com",
                                     "joann.com"
                                 ],
-                                "reason": "brooksrunning.com - When switching between product variants (e.g., different shoe colours) a loading spinner shows and the variant does not load.,joann.com - When switching between product variants (e.g., different shirt colours) the page shows an overlay and further interaction is prevented."
-                            }
-                        ]
-                    },
-                    "liveperson.net": {
-                        "rules": [
-                            {
-                                "rule": "liveperson.net",
-                                "domains": [
-                                    "virginmedia.com"
-                                ],
-                                "reason": "Chat button appears faded and cannot be interacted with."
-                            }
-                        ]
-                    },
-                    "lpsnmedia.net": {
-                        "rules": [
-                            {
-                                "rule": "lpsnmedia.net",
-                                "domains": [
-                                    "virginmedia.com"
-                                ],
-                                "reason": "Chat button appears faded and cannot be interacted with."
+                                "reason": "site not loading"
                             }
                         ]
                     },
@@ -671,29 +885,18 @@
                                     "shein.co.uk",
                                     "shein.com"
                                 ],
-                                "reason": "When attempting to create an account (after filling out registration form and clicking 'Register'), there is an 'access timed out' warning, and account creation does not proceed."
+                                "reason": "login issues"
                             }
                         ]
                     },
-                    "medicare.gov": {
+                    "mailgun.com": {
                         "rules": [
                             {
-                                "rule": "frontend.medicare.gov/static/js/2.6c6651b4.chunk.js",
+                                "rule": "hello.learn.mailgun.com/l/830283/2022-01-03/2q6vq5",
                                 "domains": [
-                                    "medicare.gov"
+                                    "mailjet.com"
                                 ],
-                                "reason": "Navigation bar at top of site does not display, preventing easy access to e.g., site login.,Note that this CNAMEs to iservprod.medicare.gov.edgekey.net at time of mitiagtion."
-                            }
-                        ]
-                    },
-                    "nintendo.com": {
-                        "rules": [
-                            {
-                                "rule": "cdn.accounts.nintendo.com/account/js/common.js",
-                                "domains": [
-                                    "nintendo.com"
-                                ],
-                                "reason": "Accounts page renders blank. Download buttons show loading stars and never finish loading. Pricing information doesn't load. Note that cdn.accounts.nintendo.com CNAMEs to star.accounts.nintendo.com.edgekey.net at the time of mitigation."
+                                "reason": "content missing"
                             }
                         ]
                     },
@@ -705,108 +908,66 @@
                                     "abc.net.au",
                                     "emol.com"
                                 ],
-                                "reason": "abc.net.au - Error message displays in place of scoreboard (scoreboard does not show).,emol.com - Scoreboard does not render."
+                                "reason": "widget blocked"
                             }
                         ]
                     },
-                    "plotrabbit.com": {
+                    "segment.io": {
                         "rules": [
-                            {
-                                "rule": "plotrabbit.com",
-                                "domains": [
-                                    "cbssports.com"
-                                ],
-                                "reason": "Live videos do not load or render."
-                            }
-                        ]
-                    },
-                    "primaryarms.com": {
-                        "rules": [
-                            {
-                                "rule": "images.primaryarms.com/f00000000191638/www.primaryarms.com/SSP%20Applications/NetSuite%20Inc.%20-%20SCA%20Mont%20Blanc/Development/img/",
-                                "domains": [
-                                    "primaryarms.com"
-                                ],
-                                "reason": "Product images on the main page don't render.,Note that this CNAMEs to marvel-b4-cdn.bc0a.com at time of mitigation."
-                            },
-                            {
-                                "rule": "images.primaryarms.com/f00000000191638/www.primaryarms.com/core/media/media.nl",
-                                "domains": [
-                                    "primaryarms.com"
-                                ],
-                                "reason": "Images in the large scrolling image banner on main page do not render.,Note that this CNAMEs to marvel-b4-cdn.bc0a.com at time of mitigation."
-                            }
-                        ]
-                    },
-                    "scene7.com": {
-                        "rules": [
-                            {
-                                "rule": "basspro.scene7.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "cabelas.com"
-                                ],
-                                "reason": "Product images don't render on product pages."
-                            }
-                        ]
-                    },
-                    "segment.com": {
-                        "rules": [
-                            {
-                                "rule": "cdn.segment.com/analytics-next/bundles/130.bundle.487014ebc6f0bb448b6e.js",
-                                "domains": [
-                                    "foxnews.com"
-                                ],
-                                "reason": "When on login page, clicking 'create account' has no effect."
-                            },
-                            {
-                                "rule": "cdn.segment.com/analytics-next/bundles/ajs-destination.bundle.5b76fa91c402ddfb4d2c.js",
-                                "domains": [
-                                    "foxnews.com"
-                                ],
-                                "reason": "When on login page, clicking 'create account' has no effect."
-                            },
-                            {
-                                "rule": "cdn.segment.com/analytics-next/bundles/schemaFilter.bundle.a77eb8c5db3e65045afc.js",
-                                "domains": [
-                                    "foxnews.com"
-                                ],
-                                "reason": "When on login page, clicking 'create account' has no effect."
-                            },
                             {
                                 "rule": "cdn.segment.com/analytics.js/v1/4I2fAtE5IxTlczNT3F91OckHtI5wfR7g/analytics.min.js",
                                 "domains": [
                                     "foxnews.com"
                                 ],
-                                "reason": "When on login page, clicking 'create account' has no effect."
-                            },
+                                "reason": "user cannot access create account page from sign up page"
+                            }
+                        ]
+                    },
+                    "shopeemobile.com": {
+                        "rules": [
                             {
-                                "rule": "cdn.segment.com/v1/projects/4I2fAtE5IxTlczNT3F91OckHtI5wfR7g/settings",
+                                "rule": "deo.shopeemobile.com/shopee/shopee-pcmall-live-sg//assets/",
                                 "domains": [
-                                    "foxnews.com"
+                                    "shopee.co.id",
+                                    "shopee.co.th",
+                                    "shopee.com.br",
+                                    "shopee.com.my",
+                                    "shopee.ph",
+                                    "shopee.sg",
+                                    "shopee.tw",
+                                    "shopee.vn"
                                 ],
-                                "reason": "When on login page, clicking 'create account' has no effect."
+                                "reason": "content not loading"
                             }
                         ]
                     },
                     "theplatform.com": {
                         "rules": [
                             {
+                                "rule": "pdk.theplatform.com/5.9.6/pdk/tpPdk.js",
+                                "domains": [
+                                    "bravotv.com",
+                                    "oxygen.com"
+                                ],
+                                "reason": "video not loading"
+                            },
+                            {
                                 "rule": "pdk.theplatform.com/pdk6/current/pdk/player.js",
                                 "domains": [
                                     "eonline.com"
                                 ],
-                                "reason": "Videos don't play (blank box after clicking to play)."
+                                "reason": "video not loading"
                             }
                         ]
                     },
                     "tiqcdn.com": {
                         "rules": [
                             {
-                                "rule": "tags.tiqcdn.com/utag/lgi/vm-uk/prod/utag.77.js",
+                                "rule": "tags.tiqcdn.com/utag/agl/community/prod/utag.sync.js",
                                 "domains": [
-                                    "virginmedia.com"
+                                    "agl.com.au"
                                 ],
-                                "reason": "Chat button appears faded and cannot be interacted with."
+                                "reason": "site loading delayed"
                             }
                         ]
                     },
@@ -818,14 +979,25 @@
                                     "notthebee.com",
                                     "upworthy.com"
                                 ],
-                                "reason": "notthebee.com - Tweets (as main article content) don't render - instead there are loading spinners for a while before errors are displayed.,upworthy.com - Tweets (as main article content) don't render - instead there are loading spinners which overlap some text content."
+                                "reason": "content not rendering"
                             },
                             {
                                 "rule": "platform.twitter.com/widgets/tweet_button",
                                 "domains": [
                                     "winnipegfreepress.com"
                                 ],
-                                "reason": "Tweet button does not render."
+                                "reason": "missing tweet button"
+                            }
+                        ]
+                    },
+                    "wellsfargo.com": {
+                        "rules": [
+                            {
+                                "rule": "connect.secure.wellsfargo.com/auth/static/prefs/login-userprefs.min.js",
+                                "domains": [
+                                    "wellsfargo.com"
+                                ],
+                                "reason": "broken login"
                             }
                         ]
                     },
@@ -836,18 +1008,7 @@
                                 "domains": [
                                     "tvrain.ru"
                                 ],
-                                "reason": "Adwall renders over video and video does not play."
-                            }
-                        ]
-                    },
-                    "zeustechnology.com": {
-                        "rules": [
-                            {
-                                "rule": "seattle-times.zeustechnology.com/main.js",
-                                "domains": [
-                                    "seattletimes.com"
-                                ],
-                                "reason": "An unskippable adwall appears which prevents interaction with the page."
+                                "reason": "adwall"
                             }
                         ]
                     }
@@ -862,12 +1023,122 @@
                     "maxAge": 86400
                 }
             },
-            "exceptions": [],
+            "exceptions": [
+                {
+                    "domain": "nespresso.com",
+                    "reason": "login issues"
+                }
+            ],
             "state": "enabled"
         },
         "trackingCookies3p": {
             "settings": {
-                "excludedCookieDomains": []
+                "excludedCookieDomains": [
+                    {
+                        "domain": "hangouts.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "docs.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "accounts.google.com",
+                        "reason": "SSO which needs cookies for auth"
+                    },
+                    {
+                        "domain": "googleapis.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "login.live.com",
+                        "reason": "SSO which needs cookies for auth"
+                    },
+                    {
+                        "domain": "apis.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "pay.google.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "payments.amazon.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "payments.amazon.de",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "microsoft.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "atlassian.net",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "atlassian.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "paypal.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "paypal.com",
+                        "reason": "site breakage"
+                    },
+                    {
+                        "domain": "bat.bing.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "bingapis.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "c.bing.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "bing.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "salesforce.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "salesforceliveagent.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "force.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "disqus.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "spotify.com",
+                        "reason": "Site breakage"
+                    },
+                    {
+                        "domain": "hangouts.google.com",
+                        "reason": "site breakage"
+                    },
+                    {
+                        "domain": "docs.google.com",
+                        "reason": "site breakage"
+                    },
+                    {
+                        "domain": "btsport-utils-prod.akamaized.net",
+                        "reason": "broken videos"
+                    }
+                ]
             },
             "exceptions": [],
             "state": "enabled"
@@ -903,16 +1174,54 @@
         },
         "userAgentRotation": {
             "settings": {
-                "agentExcludePatterns": []
+                "agentExcludePatterns": [
+                    {
+                        "agent": "Brave Chrome",
+                        "reason": "Uncommon UA"
+                    }
+                ]
             },
-            "exceptions": [],
+            "exceptions": [
+                {
+                    "domain": "duosecurity.com",
+                    "reason": "Two factor auth that verifies device pathes using user agent"
+                },
+                {
+                    "domain": "okta.com",
+                    "reason": "Two factor auth that verifies device pathes using user agent"
+                },
+                {
+                    "domain": "pingidentity.com",
+                    "reason": "Two factor auth that verifies device pathes using user agent"
+                },
+                {
+                    "domain": "googleapis.com",
+                    "reason": "Causes site breakage"
+                },
+                {
+                    "domain": "recaptcha.net",
+                    "reason": "Causes login breakage on some sites"
+                },
+                {
+                    "domain": "google.com",
+                    "reason": "If recaptcha is loaded from google, spoofed UA breaks recaptcha"
+                },
+                {
+                    "domain": "gstatic.com",
+                    "reason": "Sometimes hosts recaptcha"
+                },
+                {
+                    "domain": "weather.com",
+                    "reason": "Can break weather sites that depend on weather.com api's"
+                },
+                {
+                    "domain": "dzcdn.net",
+                    "reason": "Breaks images on deezer"
+                }
+            ],
             "state": "disabled"
         },
         "webCompat": {
-            "exceptions": [],
-            "state": "disabled"
-        },
-        "windowsPermissionUsage": {
             "exceptions": [],
             "state": "disabled"
         }
