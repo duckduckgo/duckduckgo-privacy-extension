@@ -39,18 +39,21 @@ function getReasons (site) {
 
     // major tracking networks,
     // only show a message if there are any
-    let totalTrackerNetworkCount = site.majorTrackerNetworksCount
+    const totalTrackerNetworkCount = site.majorTrackerNetworksCount
 
-    // add 1 if the site itself is a tracker network
+    // Show banner if the site itself is a tracker network
     if (site.isaMajorTrackingNetwork) {
-        totalTrackerNetworkCount += 1
+        reasons.push({
+            modifier: 'bad',
+            msg: 'Site Is a Major Tracker Network'
+        })
+    } else {
+        const majorTrackersBadOrGood = (totalTrackerNetworkCount !== 0) ? 'bad' : 'good'
+        reasons.push({
+            modifier: majorTrackersBadOrGood,
+            msg: `${majorTrackerNetworksText(totalTrackerNetworkCount)}`
+        })
     }
-
-    const majorTrackersBadOrGood = (totalTrackerNetworkCount !== 0) ? 'bad' : 'good'
-    reasons.push({
-        modifier: majorTrackersBadOrGood,
-        msg: `${majorTrackerNetworksText(totalTrackerNetworkCount)}`
-    })
 
     // privacy practices from tosdr
     const unknownPractices = constants.tosdrMessages.unknown
