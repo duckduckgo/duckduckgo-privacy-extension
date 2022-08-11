@@ -44,7 +44,10 @@ const loadConfigurableFeatures = new Promise((resolve) => {
 const actionIcons = {
     block: '🚫',
     redirect: '➡️',
-    ignore: '⚠️'
+    ignore: '⚠️',
+    none: '✅',
+    'ad-attribution': '🪄',
+    'ignore-user': '🎛️'
 }
 
 const actionHandlers = {
