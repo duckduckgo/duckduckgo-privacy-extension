@@ -22,7 +22,7 @@ const expectedFingerprintValues = {
 }
 
 const tests = [
-    { url: 'wikipedia.com' },
+    { url: 'duckduckgo.com' },
     { url: 'example.com' }
 ]
 
