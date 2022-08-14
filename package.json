@@ -75,7 +75,7 @@
         "yargs": "^17.5.1"
     },
     "dependencies": {
-        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#4.7.0",
+        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#5.0.1",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#2.1.1",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.0",
@@ -96,7 +96,7 @@
         "tldts": "^5.7.81",
         "tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.0.0",
         "underscore": "1.13.4",
-        "web-ext": "^6.8.0"
+        "web-ext": "^7.2.0"
     },
     "babel": {
         "presets": [
