@@ -24,9 +24,9 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
 
     const featureSettings = {}
     for (const feature of site.enabledFeatures) {
-        const settings = utils.getFeatureSettings(feature)
-        if (Object.keys(settings).length) {
-            featureSettings[feature] = settings
+        const featureSetting = utils.getFeatureSettings(feature)
+        if (Object.keys(featureSetting).length) {
+            featureSettings[feature] = featureSetting
         }
     }
 

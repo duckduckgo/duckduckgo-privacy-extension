@@ -65,9 +65,9 @@ describe('Test URL tracking parameters protection', () => {
         // Scrape the list of test cases.
         const testCases = []
         for (const li of await page.$$('li')) {
-            testCases.push(await page.evaluate(li => {
-                const { innerText: description, href: initialUrl } = li.querySelector('a')
-                let { innerText: expectedSearch } = li.querySelector('.expected')
+            testCases.push(await page.evaluate(liInstance => {
+                const { innerText: description, href: initialUrl } = liInstance.querySelector('a')
+                let { innerText: expectedSearch } = liInstance.querySelector('.expected')
 
                 // Strip the 'Expected: "..."' wrapper if it exists.
                 const match = /"([^"]*)"/.exec(expectedSearch)

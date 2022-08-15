@@ -130,8 +130,8 @@ describe('First Party Fingerprint Randomization', () => {
             await pageWait.forGoto(page, `http://127.0.0.1:8080/index.html?host=${iframeHost}`)
             const fingerprint = await getFingerprintOfContext(page)
 
-            const iframe = page.frames().find(iframe => iframe.url() === iframeHost + '/framed.html')
-            const fingerprint2 = await getFingerprintOfContext(iframe)
+            const iframeInstance = page.frames().find(iframe => iframe.url() === iframeHost + '/framed.html')
+            const fingerprint2 = await getFingerprintOfContext(iframeInstance)
 
             expect(fingerprint.components.canvas.value).toEqual(fingerprint2.components.canvas.value)
         })

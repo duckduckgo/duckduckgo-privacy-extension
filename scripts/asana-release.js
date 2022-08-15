@@ -14,13 +14,13 @@ const firefoxReleaseFolder = path.join(__dirname, '/../build/firefox/release/web
 const firefoxFileName = fs.readdirSync(firefoxReleaseFolder).find(fn => fn.endsWith('.zip'))
 const firefoxFilePath = path.join(firefoxReleaseFolder, firefoxFileName)
 
-const templateTaskGid = '1201192367380462'
-const projectGid = '312629933896096'
+const extensionTemplateTaskGid = '1201192367380462'
+const extensionProjectGid = '312629933896096'
 const releaseSectionGid = '1138897367672278'
 
 let asana
 
-const setupAsana = () => {
+function setupAsana () {
     asana = Asana.Client.create({
         defaultHeaders: {
             'Asana-Enable': 'new_user_task_lists'
@@ -28,7 +28,7 @@ const setupAsana = () => {
     }).useAccessToken(ASANA_ACCESS_TOKEN)
 }
 
-const duplicateTemplateTask = (templateTaskGid) => {
+function duplicateTemplateTask (templateTaskGid) {
     const duplicateOption = {
         include: ['notes', 'assignee', 'subtasks', 'projects'],
         name: `Extension Release ${version}`,
@@ -73,7 +73,7 @@ const run = async () => {
 
     console.info('Asana on. Duplicating template task...')
 
-    const { new_task } = await duplicateTemplateTask(templateTaskGid)
+    const { new_task } = await duplicateTemplateTask(extensionTemplateTaskGid)
 
     const { html_notes: notes } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' })
 
@@ -91,20 +91,20 @@ const run = async () => {
     console.info('Moving task to Release section...')
 
     await asana.tasks.addProjectForTask(new_task.gid, {
-        project: projectGid,
+        project: extensionProjectGid,
         insert_before: releaseTasks[0].gid
     })
 
     console.info('Uploading files...')
 
-    const uploadFile = async (path) => {
+    const uploadFile = async (pathString) => {
         // attachments.createAttachmentForTask won't work, Asana suggests this
         // https://github.com/Asana/node-asana/issues/220
         const params = {
             method: 'POST',
             url: `https://app.asana.com/api/1.0/tasks/${new_task.gid}/attachments`,
             formData: {
-                file: fs.createReadStream(path)
+                file: fs.createReadStream(pathString)
             },
             headers: {
                 'Content-Type': 'multipart/form-data'

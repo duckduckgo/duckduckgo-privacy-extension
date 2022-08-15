@@ -4,12 +4,12 @@ function JSONfromLocalFile (path) {
     return loadExtensionFile({ url: path, returnType: 'json' })
 }
 
-function JSONfromExternalFile (url) {
-    return loadExtensionFile({ url: url, returnType: 'json', source: 'external' })
+function JSONfromExternalFile (urlString) {
+    return loadExtensionFile({ url: urlString, returnType: 'json', source: 'external' })
 }
 
-function url (url) {
-    return loadExtensionFile({ url: url, source: 'external' })
+function url (urlString) {
+    return loadExtensionFile({ url: urlString, source: 'external' })
 }
 
 /*
@@ -20,24 +20,24 @@ function url (url) {
  */
 async function loadExtensionFile (params) {
     const headers = new Headers()
-    let url = params.url
+    let urlString = params.url
 
     if (params.source === 'external') {
         if (await browserWrapper.getFromSessionStorage('dev')) {
-            if (url.indexOf('?') > -1) {
-                url += '&'
+            if (urlString.indexOf('?') > -1) {
+                urlString += '&'
             } else {
-                url += '?'
+                urlString += '?'
             }
 
-            url += 'test=1'
+            urlString += 'test=1'
         }
 
         if (params.etag) {
             headers.append('If-None-Match', params.etag)
         }
     } else {
-        url = browserWrapper.getExtensionURL(url)
+        urlString = browserWrapper.getExtensionURL(urlString)
     }
 
     let rej
@@ -45,7 +45,7 @@ async function loadExtensionFile (params) {
     // @ts-ignore
     const fetchTimeout = setTimeout(rej, params.timeout || 30000)
 
-    const fetchResult = fetch(url, {
+    const fetchResult = fetch(urlString, {
         method: 'GET',
         headers
     }).then(async response => {

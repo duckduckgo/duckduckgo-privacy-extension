@@ -81,8 +81,8 @@ for (const setName of Object.keys(testSets)) {
                 // validate result
                 const result = dom.window.eval(test.property)
 
-                function check (result) {
-                    const resultString = result === undefined ? 'undefined' : result.toString()
+                function check (resultValue) {
+                    const resultString = resultValue === undefined ? 'undefined' : resultValue.toString()
                     expect(resultString).toBe(test.expectPropertyValue)
                     done()
                 }

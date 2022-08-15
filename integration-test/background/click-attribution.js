@@ -38,7 +38,7 @@ describe('Ad click blocking', () => {
      * @returns {Promise<*>}
      */
     async function waitForVariable (page, variableName) {
-        const callback = (variableName) => globalThis[variableName]
+        const callback = (variableNameInstance) => globalThis[variableNameInstance]
         await expectAsync(page.waitForFunction(callback, { timeout: 2000 }, variableName))
             .withContext(`waitForVariable for '${variableName}'`)
             .not.toBeRejected()

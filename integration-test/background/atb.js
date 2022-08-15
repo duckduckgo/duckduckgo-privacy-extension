@@ -2,6 +2,7 @@ const harness = require('../helpers/harness')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
 
+// eslint-disable-next-line no-shadow
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
 
 let browser
@@ -142,7 +143,7 @@ describe('install workflow', () => {
         it('should retreive stored ATB value on reload', async () => {
             // set an ATB value from the past
             const pastATBValue = 'v123-1'
-            await bgPage.evaluate((pastATBValue) => globalThis.dbg.settings.updateSetting('atb', pastATBValue), pastATBValue)
+            await bgPage.evaluate((pagePastATBValue) => globalThis.dbg.settings.updateSetting('atb', pagePastATBValue), pastATBValue)
             // Reload background
             // FIXME - Will not work for MV3, switch to browser.runtime.reload()?
             await bgPage.evaluate(() => globalThis.location.reload())
@@ -184,7 +185,7 @@ describe('search workflow', () => {
     })
     it('should not update set_atb if a repeat search is made on the same day', async () => {
         // set set_atb to today's version
-        await bgPage.evaluate((todaysAtb) => globalThis.dbg.settings.updateSetting('set_atb', todaysAtb), todaysAtb)
+        await bgPage.evaluate((pageTodaysAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageTodaysAtb), todaysAtb)
 
         // run a search
         const searchPage = await browser.newPage()
@@ -197,7 +198,7 @@ describe('search workflow', () => {
     })
     it('should update set_atb if a repeat search is made on a different day', async () => {
         // set set_atb to an older version
-        await bgPage.evaluate((lastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
+        await bgPage.evaluate((pageLastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageLastWeeksAtb), lastWeeksAtb)
         // run a search
         const searchPage = await browser.newPage()
         await pageWait.forGoto(searchPage, 'https://duckduckgo.com/?q=test')
@@ -209,7 +210,7 @@ describe('search workflow', () => {
     })
     it('should update atb if the server passes back updateVersion', async () => {
         // set set_atb and atb to older versions
-        await bgPage.evaluate((lastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', lastWeeksAtb), lastWeeksAtb)
+        await bgPage.evaluate((pageLastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageLastWeeksAtb), lastWeeksAtb)
         await bgPage.evaluate(() => globalThis.dbg.settings.updateSetting('atb', 'v123-6'))
 
         // run a search

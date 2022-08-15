@@ -116,10 +116,10 @@ export async function getCurrentTab (callback) {
 export function getBrowserName () {
     if (!browserInfo || !browserInfo.browser) return
 
-    let browser = browserInfo.browser.toLowerCase()
-    if (browser === 'firefox') browser = 'moz'
+    let browserName = browserInfo.browser.toLowerCase()
+    if (browserName === 'firefox') browserName = 'moz'
 
-    return browser
+    return browserName
 }
 
 export function getOsName () {
@@ -148,15 +148,15 @@ export function getClickToPlaySupport (tab) {
 
 // return true if browser allows to handle request async
 export function getAsyncBlockingSupport () {
-    const browser = getBrowserName()
+    const browserName = getBrowserName()
 
-    if (browser === 'moz' && browserInfo && browserInfo.version >= 52) {
+    if (browserName === 'moz' && browserInfo && browserInfo.version >= 52) {
         return true
-    } else if (['edg', 'edge', 'brave', 'chrome'].includes(browser)) {
+    } else if (['edg', 'edge', 'brave', 'chrome'].includes(browserName)) {
         return false
     }
 
-    console.warn(`Unrecognized browser "${browser}" - async response disallowed`)
+    console.warn(`Unrecognized browser "${browserName}" - async response disallowed`)
     return false
 }
 

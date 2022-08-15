@@ -78,10 +78,10 @@ describe('utils.getCurrentATB', () => {
             const baseTime = new Date(test.date)
             jasmine.clock().mockDate(baseTime)
 
-            const result = atbUtils.getCurrentATB()
+            const currentATBResult = atbUtils.getCurrentATB()
 
             jasmine.clock().uninstall()
-            expect(result.version).toEqual(test.atb)
+            expect(currentATBResult.version).toEqual(test.atb)
         })
     })
 })

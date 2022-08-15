@@ -1,7 +1,8 @@
 {
     "extends": "standard",
     "rules": {
-        "indent": ["error", 4]
+        "indent": ["error", 4],
+        "no-shadow": ["error"]
     },
     "env": {
         "webextensions": true,

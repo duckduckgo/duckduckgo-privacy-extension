@@ -65,8 +65,7 @@ function connected (port) {
                 matchedTracker.tracker.default = m.action === 'I' ? 'ignore' : 'block'
             }
         } else if (m.action === 'toggleProtection') {
-            const { tabId } = m
-            const tab = tabManager.get({ tabId })
+            const tab = tabManager.get({ tabId: m.tabId })
             if (tab.site?.isBroken) {
                 removeBroken(tab.site.domain)
                 removeBroken(new URL(tab.url).hostname)
@@ -85,9 +84,8 @@ function connected (port) {
                 tdsStorage.config.features.trackerAllowlist.state = 'enabled'
             }
         } else if (m.action.startsWith('toggle')) {
-            const { tabId } = m
             const feature = m.action.slice(6)
-            const tab = tabManager.get({ tabId })
+            const tab = tabManager.get({ tabId: m.tabId })
             const enabled = tab.site?.enabledFeatures.includes(feature)
             const excludedSites = tdsStorage.config.features[feature].exceptions
             const tabDomain = tldts.getDomain(tab.site.domain)

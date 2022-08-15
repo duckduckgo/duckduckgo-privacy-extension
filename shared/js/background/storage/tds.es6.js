@@ -229,8 +229,8 @@ class TDSStorage {
 
     parsedata (name, data) {
         const parsers = {
-            brokenSiteList: data => {
-                return data.trim().split('\n')
+            brokenSiteList: dataIn => {
+                return dataIn.trim().split('\n')
             }
         }
 

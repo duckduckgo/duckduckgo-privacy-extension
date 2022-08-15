@@ -65,8 +65,8 @@ describe('Ensure GPC is injected into frames', () => {
             await pageWait.forGoto(page, `http://127.0.0.1:8080/index.html?host=${iframeHost}`)
             const gpc = await getGPCValueOfContext(page)
 
-            const iframe = page.frames().find(iframe => iframe.url() === iframeHost + '/framed.html')
-            const gpc2 = await getGPCValueOfContext(iframe)
+            const iframeInstance = page.frames().find(iframe => iframe.url() === iframeHost + '/framed.html')
+            const gpc2 = await getGPCValueOfContext(iframeInstance)
 
             expect(gpc).toEqual(true)
             expect(gpc).toEqual(gpc2)
@@ -77,8 +77,8 @@ describe('Ensure GPC is injected into frames', () => {
             await pageWait.forGoto(page, 'http://127.0.0.1:8080/blank_framer.html')
             const gpc = await getGPCValueOfContext(page)
 
-            const iframe = page.frames().find(iframe => iframe.url() === 'about:blank')
-            const gpc2 = await getGPCValueOfContext(iframe)
+            const iframeInstance = page.frames().find(iframe => iframe.url() === 'about:blank')
+            const gpc2 = await getGPCValueOfContext(iframeInstance)
 
             expect(gpc).toEqual(true)
             expect(gpc).toEqual(gpc2)

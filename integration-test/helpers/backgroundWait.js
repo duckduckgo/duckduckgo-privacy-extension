@@ -65,7 +65,7 @@ function forFunction (bgPage, func, ...args) {
 async function forSetting (bgPage, key) {
     try {
         return await forFunction(
-            bgPage, key => globalThis.dbg?.settings?.getSetting(key), key
+            bgPage, pageKey => globalThis.dbg?.settings?.getSetting(pageKey), key
         )
     } catch (e) {
         if (e instanceof puppeteer.errors.TimeoutError) {

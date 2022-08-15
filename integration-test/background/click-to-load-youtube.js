@@ -166,9 +166,9 @@ describe('Test YouTube Click To Load', () => {
         // used with an existing video.
         {
             const waitForExpectedBorder = expectedBorder =>
-                page.waitForFunction(expectedBorder => (
+                page.waitForFunction(pageExpectedBorder => (
                     document.getElementById('existing-video')
-                        .style.border.split(' ').pop() === expectedBorder
+                        .style.border.split(' ').pop() === pageExpectedBorder
                 ),
                 { polling: 10 }, expectedBorder)
 
@@ -192,12 +192,12 @@ describe('Test YouTube Click To Load', () => {
         // Test the Iframe API controls a 360 video correctly.
         {
             const waitForExpectedRoll = (expectedRoll, clickFlip) =>
-                page.waitForFunction((expectedRoll, clickFlip) => {
-                    if (clickFlip) {
+                page.waitForFunction((pageExpectedRoll, pageClickFlip) => {
+                    if (pageClickFlip) {
                         document.getElementById('spherical-video-flip').click()
                     }
                     return document.getElementById('spherical-video-roll')
-                        .value === expectedRoll
+                        .value === pageExpectedRoll
                 },
                 { polling: 10 }, expectedRoll, clickFlip)
 

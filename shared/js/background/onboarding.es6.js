@@ -26,24 +26,20 @@ function onDocumentEnd ({
      */
     function getDocumentStartData (cb) {
         if (browserName !== 'chrome') {
-            return cb(null)
+            return cb()
         }
 
         window.postMessage({ type: 'documentStartDataRequest' }, origin)
         window.addEventListener('message', function handleMessage (e) {
             if (e.origin === origin && e.data.type === 'documentStartDataResponse') {
                 window.removeEventListener('message', handleMessage)
-                cb(null, e.data.payload)
+                cb(e.data.payload)
             }
         })
     }
 
     function start () {
-        getDocumentStartData((err, documentStartData) => {
-            if (err) {
-                console.error(err)
-            }
-
+        getDocumentStartData((documentStartData) => {
             // DDG privacy policy prevents us to use `chrome.runtime` on the SERP so we
             // setup a relay here so that the SERP can communicate with the background process
             if (browserName === 'chrome') {

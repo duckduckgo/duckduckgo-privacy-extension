@@ -26,7 +26,7 @@ async function getObjectSchema (page, targetObjectName) {
     // eslint-disable-next-line no-eval
     const targetObjectHandle = await page.evaluateHandle(name => eval(name), targetObjectName)
 
-    return await page.evaluate(function getObjectSchema (targetObject, previouslySeenObjects) {
+    return await page.evaluate(function inPageGetObjectSchema (targetObject, previouslySeenObjects) {
         // On first call, the only 'seen' Object is the current target Object.
         if (!previouslySeenObjects) {
             previouslySeenObjects = new Set([targetObject])
@@ -64,7 +64,7 @@ async function getObjectSchema (page, targetObjectName) {
                     if (previouslySeenObjects.has(value)) {
                         result[propertyName][key] = 'CYCLIC OBJECT VALUE'
                     } else {
-                        result[propertyName][key] = getObjectSchema(value, seenObjects)
+                        result[propertyName][key] = inPageGetObjectSchema(value, seenObjects)
                     }
                 } else {
                     result[propertyName][key] = JSON.stringify(value)
