@@ -36,7 +36,7 @@
     "devDependencies": {
         "@babel/cli": "^7.17.10",
         "@babel/core": "^7.18.10",
-        "@babel/node": "^7.18.9",
+        "@babel/node": "^7.18.10",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.18.2",
         "@fingerprintjs/fingerprintjs": "^3.3.3",
@@ -93,7 +93,7 @@
         "punycode": "2.1.1",
         "runtimer": "1.0.3",
         "seedrandom": "^3.0.5",
-        "tldts": "^5.7.81",
+        "tldts": "^5.7.89",
         "tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.0.0",
         "underscore": "1.13.4",
         "web-ext": "^7.2.0"
