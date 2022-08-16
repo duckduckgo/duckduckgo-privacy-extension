@@ -103,7 +103,7 @@ describe('Test Facebook Click To Load', () => {
         })
         for (let i = 0; i < buttonCount; i++) {
             const button = await page.evaluateHandle(
-                i => globalThis.buttons[i], i
+                pageI => globalThis.buttons[pageI], i
             )
             try {
                 await button.click()

@@ -1,13 +1,13 @@
 const fs = require('fs')
 const path = require('path')
 
-function parsePath (path) {
+function parsePath (pathString) {
     const pathParts = []
 
     // Split path by '.' but take escaping into account.
     let currentPart = ''
     let escaped = false
-    for (const char of path) {
+    for (const char of pathString) {
         if (escaped) {
             currentPart += char
             escaped = false
@@ -31,8 +31,8 @@ function parsePath (path) {
     // Find the target Object from that path.
     // eslint-disable-next-line no-eval
     let currentObject = eval(pathParts.shift())
-    for (const path of pathParts) {
-        currentObject = currentObject[path]
+    for (const pathPart of pathParts) {
+        currentObject = currentObject[pathPart]
     }
 
     return [currentObject, currentPart]
@@ -63,15 +63,15 @@ async function loadTestConfig (bgPage, testConfigFilename) {
     )
     const testConfig = JSON.parse(fs.readFileSync(filePath).toString())
 
-    await bgPage.evaluate((testConfig, parsePathString) => {
+    await bgPage.evaluate((pageTestConfig, parsePathString) => {
         globalThis.configBackup = globalThis.configBackup || {}
         // eslint-disable-next-line no-eval
         eval(parsePathString)
 
-        for (const path of Object.keys(testConfig)) {
-            const [target, lastPathPart] = parsePath(path)
-            globalThis.configBackup[path] = target[lastPathPart]
-            target[lastPathPart] = testConfig[path]
+        for (const pathString of Object.keys(pageTestConfig)) {
+            const [target, lastPathPart] = parsePath(pathString)
+            globalThis.configBackup[pathString] = target[lastPathPart]
+            target[lastPathPart] = pageTestConfig[pathString]
         }
     }, testConfig, parsePath.toString())
 }
@@ -91,9 +91,9 @@ async function unloadTestConfig (bgPage) {
         // eslint-disable-next-line no-eval
         eval(parsePathString)
 
-        for (const path of Object.keys(configBackup)) {
-            const [target, lastPathPart] = parsePath(path)
-            target[lastPathPart] = configBackup[path]
+        for (const pathString of Object.keys(configBackup)) {
+            const [target, lastPathPart] = parsePath(pathString)
+            target[lastPathPart] = configBackup[pathString]
         }
     }, parsePath.toString())
 }

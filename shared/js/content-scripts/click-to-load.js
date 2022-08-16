@@ -654,7 +654,7 @@
                             .then(v => {
                                 fbContainer.replaceWith(fbElement)
                                 this.dispatchEvent(fbElement, 'ddg-ctp-placeholder-clicked')
-                                this.fadeInElement(fadeIn).then(v => {
+                                this.fadeInElement(fadeIn).then(() => {
                                     fbElement.focus() // focus on new element for screen readers
                                 })
                             })
@@ -794,8 +794,8 @@
             const { height: placeholderHeight } = window.getComputedStyle(contentBlock)
             const { height: parentHeight } = window.getComputedStyle(contentBlock.parentElement)
             if (parseInt(placeholderHeight, 10) <= 200 || parseInt(parentHeight, 10) <= 200) {
-                const textButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
-                textButton.style.display = 'block'
+                const titleRowTextButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
+                titleRowTextButton.style.display = 'block'
             }
         }
     }

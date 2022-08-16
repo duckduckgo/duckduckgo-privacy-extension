@@ -14,7 +14,7 @@ function buildLocalesList () {
     return resources
 }
 
-function getLocale (supportedLocales) {
+function getLocale () {
     // truncate locale by dropping country suffix
     let browserLocale = chrome.i18n ? chrome.i18n.getUILanguage() : navigator.language
     browserLocale = browserLocale.split('-')[0]
@@ -28,7 +28,7 @@ i18next
         // debug: true,
         initImmediate: false,
         fallbackLng: 'en',
-        lng: getLocale(supportedLocales),
+        lng: getLocale(),
         ns: ['shared', 'options'],
         defaultNS: 'shared',
         resources: buildLocalesList()
