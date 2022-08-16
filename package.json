@@ -8,8 +8,8 @@
     "repository": "duckduckgo/duckduckgo-privacy-extension",
     "scripts": {
         "install-ci": "npm ci --ignore-scripts && npm rebuild puppeteer && npm run postinstall",
-        "postinstall": "git submodule update --init --recursive && npm run copy-modules && export PATH=\"$PATH:$PWD/node_modules/chromedriver/bin\" && npm run setup-test-int",
-        "copy-modules": "cp -r node_modules/@duckduckgo/content-scope-scripts shared/ && cp -r node_modules/@duckduckgo/tracker-surrogates shared/",
+        "postinstall": "npm run copy-modules && export PATH=\"$PATH:$PWD/node_modules/chromedriver/bin\" && npm run setup-test-int",
+        "copy-modules": "rsync -av --exclude='.git/' node_modules/@duckduckgo/privacy-reference-tests/ unit-test/data/reference-tests/ && cp -r node_modules/@duckduckgo/content-scope-scripts shared/ && cp -r node_modules/@duckduckgo/tracker-surrogates shared/",
         "bundle-config": "node scripts/bundleConfig.mjs",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
@@ -81,6 +81,7 @@
         "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.1.4",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.0",
+        "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests",
         "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates",
         "bel": "6.0.0",
         "deep-freeze": "0.0.1",
