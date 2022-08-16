@@ -34,11 +34,11 @@
         "release-chrome-mv3": "make browser=chrome-mv3 type=release && make chrome-mv3-release-zip"
     },
     "devDependencies": {
-        "@babel/cli": "^7.17.10",
+        "@babel/cli": "^7.18.10",
         "@babel/core": "^7.18.10",
         "@babel/node": "^7.18.10",
         "@babel/polyfill": "^7.10.4",
-        "@babel/preset-env": "^7.18.2",
+        "@babel/preset-env": "^7.18.10",
         "@fingerprintjs/fingerprintjs": "^3.3.3",
         "@types/webextension-polyfill": "^0.9.0",
         "asana": "github:Asana/node-asana",
