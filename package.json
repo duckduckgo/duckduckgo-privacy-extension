@@ -9,7 +9,7 @@
     "scripts": {
         "install-ci": "npm ci --ignore-scripts && npm rebuild puppeteer && npm run postinstall",
         "postinstall": "git submodule update --init --recursive && npm run copy-modules && export PATH=\"$PATH:$PWD/node_modules/chromedriver/bin\" && npm run setup-test-int",
-        "copy-modules": "cp -r node_modules/@duckduckgo/content-scope-scripts shared/ && cp -r node_modules/tracker-surrogates shared/",
+        "copy-modules": "cp -r node_modules/@duckduckgo/content-scope-scripts shared/ && cp -r node_modules/@duckduckgo/tracker-surrogates shared/",
         "bundle-config": "node scripts/bundleConfig.mjs",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
@@ -81,6 +81,7 @@
         "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.1.4",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.0",
+        "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates",
         "bel": "6.0.0",
         "deep-freeze": "0.0.1",
         "dexie": "3.2.2",
@@ -93,7 +94,6 @@
         "punycode": "2.1.1",
         "seedrandom": "^3.0.5",
         "tldts": "^5.7.89",
-        "tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.0.0",
         "underscore": "1.13.4",
         "web-ext": "^7.2.0"
     },
