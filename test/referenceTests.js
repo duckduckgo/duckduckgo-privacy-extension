@@ -11,7 +11,7 @@ const {
 
 function referenceTestPath (...args) {
     return path.join(
-        __dirname, '..', 'node_modules', 'privacy-reference-tests',
+        __dirname, '..', 'node_modules', '@duckduckgo/privacy-reference-tests',
         ...args
     )
 }
