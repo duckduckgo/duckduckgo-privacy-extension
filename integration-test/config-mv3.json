@@ -1,6 +1,7 @@
 {
     "spec_dir": "integration-test",
     "spec_files": [
-        "background/onboarding.js"
+        "background/onboarding.js",
+        "background/request-blocking.js"
     ]
 }

@@ -70,7 +70,7 @@ class TDSStorage {
         }
     }
 
-    _internalOnListUpdate (configName) {
+    _internalOnListUpdate (configName, configValue) {
         self.setTimeout(() => {
             // Ensure the onReady promise for this configuration is resolved.
             const resolve = this._onReadyResolvers.get(configName)
@@ -79,11 +79,15 @@ class TDSStorage {
                 this._onReadyResolvers.delete(configName)
             }
 
+            // Check the current etag for this configuration, so that can be
+            // passed to the listeners.
+            const etag = settings.getSetting(`${configName}-etag`) || ''
+
             // Notify any listeners that this list has updated.
             const listeners = this._onUpdatedListeners.get(configName)
             if (listeners) {
                 for (const listener of listeners.slice()) {
-                    listener(configName)
+                    listener(configName, etag, configValue)
                 }
             }
         }, 0)
@@ -176,7 +180,7 @@ class TDSStorage {
                     // store tds in memory so we can access it later if needed
                     this[listCopy.name] = resultData
 
-                    this._internalOnListUpdate(listCopy.name)
+                    this._internalOnListUpdate(listCopy.name, resultData)
 
                     return { name: listCopy.name, data: resultData }
                 } else {
@@ -218,7 +222,7 @@ class TDSStorage {
 
         if (list && list.data) {
             this[name] = list.data
-            this._internalOnListUpdate(name)
+            this._internalOnListUpdate(name, list.data)
             return { name, data: list.data }
         }
     }

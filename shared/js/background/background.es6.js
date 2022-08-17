@@ -19,6 +19,7 @@
 require('./events.es6')
 const settings = require('./settings.es6')
 const { onStartup } = require('./startup.es6')
+require('./declarative-net-request')
 
 settings.ready().then(() => {
     onStartup()
