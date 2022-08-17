@@ -1,5 +1,5 @@
 {
-    "name": "ddg2dnr",
+    "name": "@duckduckgo/ddg2dnr",
     "version": "0.1.2",
     "description": "Scripts to generate declarativeNetRequest rulesets for the DuckDuckGo Privacy Essentials extension",
     "license": "Apache-2.0",
