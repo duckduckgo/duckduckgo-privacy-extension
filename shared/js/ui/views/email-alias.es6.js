@@ -17,7 +17,8 @@ function EmailAliasView (ops) {
 EmailAliasView.prototype = window.$.extend({},
     Parent.prototype,
     {
-        _copyAliasToClipboard: function () {
+        _copyAliasToClipboard: function (e) {
+            e.preventDefault()
             const alias = this.model.userData.nextAlias
             navigator.clipboard.writeText(formatAddress(alias))
             this.$el.addClass('show-copied-label')
