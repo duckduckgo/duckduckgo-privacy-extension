@@ -155,9 +155,6 @@
                 logEvent: function (a, b, c) {},
                 logPageView: function () {}
             },
-            CheckboxPlugin: {
-                confirm: function () {}
-            },
             Event: {
                 subscribe: function (event, callback) {
                     if (event === 'xfbml.render') {
