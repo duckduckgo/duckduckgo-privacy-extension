@@ -17,13 +17,6 @@ const trackingConfigReference = require('../../data/reference-tests/block-third-
 const trackingBlocklistReference = require('../../data/reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
 const trackingTestSets = require('../../data/reference-tests/block-third-party-tracking-cookies/tests.json')
 
-// 3p non-tracking JS currently disabled
-const nonTrackingJsCookieProtection = null
-
-const nonTrackingConfigReference = require('../../data/reference-tests/block-non-tracking-third-party-cookies/config_reference.json')
-const nonTrackingBlocklistReference = require('../../data/reference-tests/block-non-tracking-third-party-cookies/tracker_radar_reference.json')
-const nonTrackingTestSets = require('../../data/reference-tests/block-non-tracking-third-party-cookies/tests.json')
-
 const { JSDOM } = jsdom
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
@@ -126,14 +119,4 @@ for (const setName of Object.keys(trackingTestSets)) {
     const testSet = trackingTestSets[setName]
 
     runTestSuite('tracking', testSet, trackingJsCookieProtection, trackingConfigReference, trackingBlocklistReference)
-}
-
-for (const setName of Object.keys(nonTrackingTestSets)) {
-    if (setName === 'cookieAPI') {
-        continue
-    }
-
-    const testSet = nonTrackingTestSets[setName]
-
-    runTestSuite('non-tracking', testSet, nonTrackingJsCookieProtection, nonTrackingConfigReference, nonTrackingBlocklistReference)
 }
