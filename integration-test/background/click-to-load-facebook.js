@@ -176,7 +176,7 @@ describe('Facebook SDK schema', () => {
         //       to match
         //       /integration-test/artifacts/api_schemas/facebook-sdk.json
         //       and make any corresponding changes required to the surrogate
-        //       script /shared/data/web_accessible_resources/facebook-sdk.js.
+        //       script /shared/data/web_accessible_resources/fb-sdk.js
         //       If no changes to the surrogate scripts are required, please
         //       explain why to the reviewer!
         //
