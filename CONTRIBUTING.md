@@ -27,10 +27,6 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 1. Create an issue describing the bug. see [Reporting bugs](CONTRIBUTING.md#reporting-bugs)
 2. Get approval from DDG staff before working on it. Since most bug fixes and feature development are handled internally, we want to make sure that your work doesn't conflict with any current projects.
 
-## Updating git submodules
-
-Run `git submodule update --remote` to fetch latest version of all git submodules.
-
 ## Testing locally
 
 ### Pre-Requisites
@@ -42,7 +38,7 @@ Run `git submodule update --remote` to fetch latest version of all git submodule
 
 #### Development builds
 
-- `npm install`, `git submodule update --init --recursive` both have to be run before building the extension for the first time.
+- Run `npm install` before building the extension for the first time.
 - Firefox
  1. Run `npm run dev-firefox`
  2. Load the extension in Firefox from the `build/firefox/dev` directory
