@@ -76,7 +76,7 @@
         "yargs": "^17.5.1"
     },
     "dependencies": {
-        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#5.0.1",
+        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#abrown/rename-autofill-content-script-message",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#2.1.1",
         "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.1.4",
         "@duckduckgo/jsbloom": "^1.0.2",
