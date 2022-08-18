@@ -66,16 +66,16 @@ for (const setName of Object.keys(testSets)) {
 
                 // init protections
                 if (!isFeatureBroken(args, 'fingerprintingBattery')) {
-                    batteryProtection.init()
+                    batteryProtection.init(args)
                 }
                 if (!isFeatureBroken(args, 'fingerprintingHardware')) {
-                    hardwareProtection.init()
+                    hardwareProtection.init(args)
                 }
                 if (!isFeatureBroken(args, 'fingerprintingScreenSize')) {
-                    screenProtection.init()
+                    screenProtection.init(args)
                 }
                 if (!isFeatureBroken(args, 'fingerprintingTemporaryStorage')) {
-                    tempStorageProtection.init()
+                    tempStorageProtection.init(args)
                 }
 
                 // validate result
