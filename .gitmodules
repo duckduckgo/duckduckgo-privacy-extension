@@ -1,3 +1,0 @@
-[submodule "unit-test/data/reference-tests"]
-	path = unit-test/data/reference-tests
-	url = https://github.com/duckduckgo/privacy-reference-tests
