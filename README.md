@@ -5,7 +5,7 @@
 
 DuckDuckGo Firefox, Chrome, and Edge extensions.
 
-Visit our [Web Tracking Protections](https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/) page to learn how each of our web tracking protections works, and how they work together in our browser extensions and apps to provide overlapping protection.
+Visit our [Web Tracking Protections](https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/) page to learn how each of our web tracking protections works and how they work together in our browser extensions and apps to provide overlapping protection.
 
 DuckDuckGo Privacy Extensions is distributed under the Apache 2.0 [License](LICENSE.md).
 
