@@ -345,13 +345,14 @@ export function satisfiesMinVersion (minVersionString, extensionVersionString) {
 }
 
 /**
- * Checks the config to see if a feature is enabled. You can optionally pass a second "customState"
- * parameter to check if the state is equeal to other states (i.e. state === 'beta').
+ * Checks the config to see if a feature is enabled.
+ *
+ * This is private and you likely want to use site.isFeatureEnabled instead.
  *
  * @param {String} featureName - the name of the feature
  * @returns {boolean} - if feature is enabled
  */
-export function isFeatureEnabled (featureName) {
+function isFeatureEnabled (featureName) {
     const feature = tdsStorage.config.features[featureName]
     if (!feature) {
         return false
