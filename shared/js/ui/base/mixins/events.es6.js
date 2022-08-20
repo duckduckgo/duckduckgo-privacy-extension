@@ -12,7 +12,7 @@ module.exports = {
 
             const eventObject = {
                 bound: evt[2].bind(this),
-                evt: evt
+                evt
             }
 
             if (typeof evt[0] === 'string') {

@@ -836,8 +836,8 @@
      *********************************************************/
     function enableSocialTracker (entity, isLogin) {
         const message = {
-            entity: entity,
-            isLogin: isLogin
+            entity,
+            isLogin
         }
         sendMessage('enableSocialTracker', message)
     }
@@ -1019,8 +1019,8 @@
         }
 
         return {
-            button: button,
-            container: container
+            button,
+            container
         }
     }
 

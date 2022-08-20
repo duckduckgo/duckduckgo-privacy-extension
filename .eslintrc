@@ -1,5 +1,5 @@
 {
-    "extends": "standard",
+    "extends": ["standard", "eslint:recommended"],
     "rules": {
         "indent": ["error", 4],
         "no-shadow": ["error"]

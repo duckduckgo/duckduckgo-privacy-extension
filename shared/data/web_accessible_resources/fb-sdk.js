@@ -132,14 +132,14 @@
                     const shareLink = 'https://www.facebook.com/sharer/sharer.php?u=' + obj.href
                     window.open(shareLink, 'share-facebook', 'width=550,height=235')
                 }
-                // eslint-disable-next-line node/no-callback-literal
+                // eslint-disable-next-line n/no-callback-literal
                 cb({})
             },
             getAccessToken: function () {},
             getAuthResponse: function () {
                 return { status: '' }
             },
-            // eslint-disable-next-line node/no-callback-literal
+            // eslint-disable-next-line n/no-callback-literal
             getLoginStatus: function (callback) { callback({ status: 'unknown' }) },
             getUserID: function () {},
             login: function (cb, params) {

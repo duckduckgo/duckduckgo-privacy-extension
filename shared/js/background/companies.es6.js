@@ -67,9 +67,9 @@ const Companies = (() => {
 
             return {
                 topBlocked: topBlockedData,
-                totalPages: totalPages,
+                totalPages,
                 pctPagesWithTrackers: Math.min(100, Math.round((totalPagesWithTrackers / totalPages) * 100)),
-                lastStatsResetDate: lastStatsResetDate
+                lastStatsResetDate
             }
         },
 
@@ -108,9 +108,9 @@ const Companies = (() => {
             const toSync = {}
             toSync[storageName] = companyContainer
             browserWrapper.syncToStorage(toSync)
-            browserWrapper.syncToStorage({ totalPages: totalPages })
-            browserWrapper.syncToStorage({ totalPagesWithTrackers: totalPagesWithTrackers })
-            browserWrapper.syncToStorage({ lastStatsResetDate: lastStatsResetDate })
+            browserWrapper.syncToStorage({ totalPages })
+            browserWrapper.syncToStorage({ totalPagesWithTrackers })
+            browserWrapper.syncToStorage({ lastStatsResetDate })
         },
 
         sanitizeData: (storageData) => {

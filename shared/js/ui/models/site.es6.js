@@ -259,7 +259,7 @@ Site.prototype = window.$.extend({},
             }
         },
 
-        submitBreakageForm: submitBreakageForm
+        submitBreakageForm
     }
 )
 
