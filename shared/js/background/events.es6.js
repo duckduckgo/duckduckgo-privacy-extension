@@ -371,11 +371,6 @@ browser.runtime.onMessage.addListener((req, sender) => {
             return
         }
 
-        // Disable content scripts when site protections are disabled
-        if (argumentsObject.site.allowlisted && req.messageType === 'registeredContentScript') {
-            return
-        }
-
         return Promise.resolve(argumentsObject)
     }
 

@@ -34,6 +34,8 @@ const browserWrapper = require('./../wrapper.es6')
 const webResourceKeyRegex = /.*\?key=(.*)/
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
 
+/** @typedef {Tab & { site: ReturnType<Tab['site']['clone']> }} SerializedTab */
+
 class Tab {
     constructor (tabData) {
         this.id = tabData.id || tabData.tabId
@@ -65,7 +67,16 @@ class Tab {
 
         /** @type {null | import('./ad-click-attribution-policy').AdClick} */
         this.adClick = null
-    };
+    }
+
+    /**
+     * @returns {SerializedTab}
+     */
+    clone () {
+        const out = Object.assign({}, this)
+        out.site = this.site.clone()
+        return out
+    }
 
     /**
      * If given a valid adClick redirect, set the adClick to the tab.

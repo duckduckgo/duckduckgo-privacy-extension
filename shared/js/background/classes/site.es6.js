@@ -44,7 +44,7 @@ class Site {
          * The other allowlisting code is different and probably should be changed to match.
          */
         this.isBroken = utils.isBroken(domainWWW) // broken sites reported to github repo
-        this.enabledFeatures = utils.getEnabledFeatures(domainWWW) // site issues reported to github repo
+        this._allowedFeatures = utils.getEnabledFeatures(domainWWW) // site issues reported to github repo
         this.didIncrementCompaniesData = false
 
         this.tosdr = privacyPractices.getTosdr(domain)
@@ -67,6 +67,23 @@ class Site {
         this.specialDomainName = this.getSpecialDomain()
         // domains which have been clicked to load
         this.clickToLoad = []
+    }
+
+    /** @typedef {Site & { enabledFeatures: string[] }} SerializedSite */
+
+    /**
+     * @returns {SerializedSite}
+     */
+    clone () {
+        // Typescript doesn't return the correct type for Object.assign, it's inclusive of the prototype chain which JS doesn't include
+        /** @type {SerializedSite} */
+        const out = Object.assign({}, this)
+        out.enabledFeatures = this.enabledFeatures
+        return out
+    }
+
+    get enabledFeatures () {
+        return this._allowedFeatures.filter((feature) => this.isFeatureEnabled(feature))
     }
 
     /*
@@ -121,13 +138,13 @@ class Site {
     isFeatureEnabled (featureName) {
         const allowlistOnlyFeatures = ['autofill', 'adClickAttribution']
         if (allowlistOnlyFeatures.includes(featureName)) {
-            return this.enabledFeatures.includes(featureName)
+            return this._allowedFeatures.includes(featureName)
         }
 
         if (this.denylisted) {
             return true
         }
-        return this.isProtectionEnabled() && this.enabledFeatures.includes(featureName)
+        return this.isProtectionEnabled() && this._allowedFeatures.includes(featureName)
     }
 
     /**

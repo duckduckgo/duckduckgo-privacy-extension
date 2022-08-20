@@ -45,7 +45,7 @@ export function submitBrokenSiteReport (brokenSiteArgs) {
 }
 
 export function getTab (tabId) {
-    return tabManager.get({ tabId })
+    return tabManager.get({ tabId }).clone()
 }
 
 export function getSiteGrade (tabId) {
