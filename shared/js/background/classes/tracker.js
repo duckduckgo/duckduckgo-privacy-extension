@@ -26,6 +26,9 @@ export class TrackerSite {
 }
 
 export class Tracker {
+    /**
+     * @param {TrackerData} t
+     */
     constructor (t) {
         this.parentCompany = Companies.get(t.tracker.owner.name)
         this.displayName = t.tracker.owner.displayName
@@ -34,7 +37,6 @@ export class Tracker {
         this.urls = {}
         this.count = 0 // request count
         this.addTrackerUrl(t)
-        this.type = t.type || ''
     }
 
     /**

@@ -56,6 +56,8 @@ export function getTrackerAggregationStats (trackers) {
     /** @type {Record<string, ListFilter>} */
     const listFilters = {
         all: () => true,
+        redirectAction: (trackerSite) => trackerSite.action === 'redirect',
+        blockAction: (trackerSite) => trackerSite.action === 'block',
         blocked: (trackerSite) => trackerSite.isBlocked === true,
         allowed: (trackerSite) => trackerSite.isBlocked === false && trackerSite.isSameBaseDomain === false,
         ignored: (trackerSite) => trackerSite.isSameEntity === false && (trackerSite.action === 'ignore' || trackerSite.action === 'ignore-user'),

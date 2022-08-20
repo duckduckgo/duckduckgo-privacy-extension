@@ -159,7 +159,7 @@ Site.prototype = window.$.extend({},
                     this.set('aggregationStats', aggregationStats)
                 }
 
-                const newTrackersBlockedCount = this.getUniqueTrackersBlockedCount()
+                const newTrackersBlockedCount = aggregationStats.blocked.entitiesCount
                 if (newTrackersBlockedCount !== this.trackersBlockedCount) {
                     this.set('trackersBlockedCount', newTrackersBlockedCount)
                 }
@@ -177,25 +177,9 @@ Site.prototype = window.$.extend({},
             }
         },
 
-        getUniqueTrackersBlockedCount: function () {
-            const count = Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
-                const companyBlocked = this.tab.trackersBlocked[name]
-
-                // Don't throw a TypeError if urls are not there
-                const trackersBlocked = companyBlocked.urls ? Object.keys(companyBlocked.urls) : null
-
-                // Counting unique URLs instead of using the count
-                // because the count refers to all requests rather than unique number of trackers
-                const trackersBlockedCount = trackersBlocked ? trackersBlocked.length : 0
-                return trackersBlockedCount + total
-            }, 0)
-
-            return count
-        },
-
         getMajorTrackerNetworksCount: function () {
             // Show only blocked major trackers count, unless site is allowlisted
-            const trackers = this.protectionsEnabled ? this.tab.trackersBlocked : this.tab.trackers
+            const trackers = this.tab.trackers
             const count = Object.values(trackers).reduce((total, t) => {
                 const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
                 total += isMajor ? 1 : 0
