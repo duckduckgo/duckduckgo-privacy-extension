@@ -25,7 +25,7 @@ function Site (attrs) {
     attrs.siteRating = {}
     attrs.httpsState = 'none'
     attrs.httpsStatusText = ''
-    attrs.majorTrackerNetworksCount = 0
+    attrs.hasMajorTrackerNetworks = false
     attrs.trackerNetworks = []
     attrs.tosdr = {}
     attrs.isaMajorTrackingNetwork = false
@@ -159,34 +159,26 @@ Site.prototype = window.$.extend({},
                     this.set('aggregationStats', aggregationStats)
                 }
 
-                const newTrackersBlockedCount = aggregationStats.blocked.entitiesCount
-                if (newTrackersBlockedCount !== this.trackersBlockedCount) {
-                    this.set('trackersBlockedCount', newTrackersBlockedCount)
-                }
-
                 const newTrackerNetworks = this.getTrackerNetworksOnPage()
                 if (this.trackerNetworks.length === 0 ||
                         (newTrackerNetworks.length !== this.trackerNetworks.length)) {
                     this.set('trackerNetworks', newTrackerNetworks)
                 }
 
-                const newMajorTrackerNetworksCount = this.getMajorTrackerNetworksCount()
-                if (newMajorTrackerNetworksCount !== this.majorTrackerNetworksCount) {
-                    this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount)
+                if (this.getHasMajorTrackerNetworks() && !this.hasMajorTrackerNetworks) {
+                    this.set('hasMajorTrackerNetworks', true)
                 }
             }
         },
 
-        getMajorTrackerNetworksCount: function () {
-            // Show only blocked major trackers count, unless site is allowlisted
+        getHasMajorTrackerNetworks: function () {
             const trackers = this.tab.trackers
-            const count = Object.values(trackers).reduce((total, t) => {
-                const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
-                total += isMajor ? 1 : 0
-                return total
-            }, 0)
-
-            return count
+            for (const tracker in trackers) {
+                if (trackers[tracker].prevalence >= MAJOR_TRACKER_THRESHOLD_PCT) {
+                    return true
+                }
+            }
+            return false
         },
 
         getTrackerNetworksOnPage: function () {

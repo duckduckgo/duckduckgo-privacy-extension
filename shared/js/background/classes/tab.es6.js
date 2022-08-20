@@ -135,7 +135,7 @@ class Tab {
 
         if (tracker) {
             tracker.addTrackerUrl(t)
-        } else {
+        } else if (t.tracker) {
             const newTracker = new Tracker(t)
             this.trackers[t.tracker.owner.name] = newTracker
 

@@ -97,8 +97,8 @@ function calculateHeadings (site) {
 }
 
 module.exports = {
-    majorTrackerNetworksText (count) {
-        if (count > 0) {
+    majorTrackerNetworksText (hasMajorTrackerNetworks) {
+        if (hasMajorTrackerNetworks) {
             return majorTrackerNetworksFound
         }
         return noMajorTrackerNetworksFound
