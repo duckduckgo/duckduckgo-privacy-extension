@@ -13,6 +13,9 @@ let browser
 let bgPage
 let teardown
 
+/**
+ * @param {import('../helpers/requests').LoggedRequestDetails[]} requests
+ */
 function summariseYouTubeRequests (requests) {
     const youTubeIframeApi = { checked: false, alwaysRedirected: true }
     const youTubeStandard = { blocked: 0, allowed: 0, total: 0 }
@@ -77,7 +80,7 @@ describe('Test YouTube Click To Load', () => {
         // Open the test page and start logging network requests.
         const page = await browser.newPage()
         const pageRequests = []
-        const clearRequests = logPageRequests(page, pageRequests)
+        const clearRequests = await logPageRequests(page, pageRequests)
 
         // Initially there should be a bunch of requests. The iframe_api should
         // be redirected to our surrogate but otherwise YouTube requests should

@@ -36,8 +36,9 @@ describe('Storage blocking Tests', () => {
                 await page.bringToFront()
                 await pageWait.forGoto(page, `https://${testPageDomain}/privacy-protections/storage-blocking/?store`)
                 await waitForAllResults(page)
+                const client = await page.target().createCDPSession()
                 // collect all browser cookies
-                cookies = (await page._client.send('Network.getAllCookies')).cookies
+                cookies = (await client.send('Network.getAllCookies')).cookies
             } finally {
                 await page.close()
                 await teardown()

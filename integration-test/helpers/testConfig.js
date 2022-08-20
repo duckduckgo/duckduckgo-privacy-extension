@@ -1,6 +1,11 @@
 const fs = require('fs')
 const path = require('path')
 
+/**
+ * @typedef {import('puppeteer').Page} Page - Puppeteer Page
+ * @typedef {import('puppeteer').WebWorker} WebWorker - Puppeteer WebWorker
+ */
+
 function parsePath (pathString) {
     const pathParts = []
 
@@ -29,8 +34,12 @@ function parsePath (pathString) {
     }
 
     // Find the target Object from that path.
+    const hostObject = pathParts.shift()
+    if (!hostObject) {
+        throw new Error(`Could not find host object for path: ${pathString}`)
+    }
     // eslint-disable-next-line no-eval
-    let currentObject = eval(pathParts.shift())
+    let currentObject = eval(hostObject)
     for (const pathPart of pathParts) {
         currentObject = currentObject[pathPart]
     }
@@ -43,7 +52,7 @@ function parsePath (pathString) {
  * test.
  * Note: Avoid overriding same configuration multiple times. Also ensure
  *       unloadTestConfig() is called after your tests are done.
- * @param {Page} bgPage
+ * @param {Page | WebWorker} bgPage
  *   The extension's background page.
  * @param {string} testConfigFilename
  *   The file name of your JSON test configuration, in the
@@ -83,6 +92,7 @@ async function loadTestConfig (bgPage, testConfigFilename) {
  */
 async function unloadTestConfig (bgPage) {
     await bgPage.evaluate(parsePathString => {
+        // @ts-ignore
         const { configBackup } = globalThis
         if (!configBackup) {
             return
