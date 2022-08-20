@@ -186,15 +186,19 @@ const redirect = require('./redirect.es6')
 const tabManager = require('./tab-manager.es6')
 const https = require('./https.es6')
 
+let onBeforeRequestExtraInfo = []
+// Manifest v2 can't block requests but we use for reporting to the privacy dashboard.
 if (manifestVersion === 2) {
-    browser.webRequest.onBeforeRequest.addListener(
-        redirect.handleRequest,
-        {
-            urls: ['<all_urls>']
-        },
-        ['blocking']
-    )
+    onBeforeRequestExtraInfo = ['blocking']
 }
+
+browser.webRequest.onBeforeRequest.addListener(
+    redirect.handleRequest,
+    {
+        urls: ['<all_urls>']
+    },
+    onBeforeRequestExtraInfo
+)
 
 if (manifestVersion === 2) {
     const extraInfoSpec = ['blocking', 'responseHeaders']
