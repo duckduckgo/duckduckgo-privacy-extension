@@ -128,8 +128,6 @@ class TabManager {
                         Companies.incrementTotalPages()
                         tab.site.didIncrementCompaniesData = true
                     }
-
-                    if (tab.statusCode === 200) tab.endStopwatch()
                 }
             }
             return tab
