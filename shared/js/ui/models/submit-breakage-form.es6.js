@@ -13,7 +13,7 @@ module.exports = function (category) {
     function collectAllUrls (list) {
         const urls = []
         list.forEach(item => {
-            item.urlsList.forEach(url => urls.push(url))
+            item.urlsMap.forEach((_, url) => urls.push(url))
         })
         return urls
     }

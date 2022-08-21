@@ -33,18 +33,20 @@ export class AggregateCompanyData {
      * @param {ListFilter} listFilter
      */
     constructor (companyName, company, listFilter) {
-        const urlsList = company.urls ? Object.keys(company.urls) : []
-
         this.name = companyName
         this.displayName = company.displayName || companyName
         this.normalizedName = normalizeCompanyName(companyName)
         this.count = company.count
-        this.urls = urlsList
-        this.urlsList = urlsList.filter((url) => {
-            return Object.values(company.urls[url]).some((trackerSiteObject) => {
-                return listFilter(trackerSiteObject)
-            })
-        })
+
+        this.urlsMap = new Map()
+        for (const urlString of Object.keys(company.urls)) {
+            const trackerSites = company.urls[urlString]
+            for (const trackerSite of Object.values(trackerSites)) {
+                if (listFilter(trackerSite)) {
+                    this.urlsMap.set(urlString, trackerSite)
+                }
+            }
+        }
     }
 }
 
@@ -78,11 +80,11 @@ export function getTrackerAggregationStats (trackers) {
             const outputCompany = new AggregateCompanyData(companyName, company, listFilter)
             // If unknown count all items distinctly.
             if (companyName === UNKNOWN_COMPANY_NAME) {
-                entitiesCount += outputCompany.urlsList.length
-            } else if (outputCompany.urlsList.length) {
+                entitiesCount += outputCompany.urlsMap.size
+            } else if (outputCompany.urlsMap.size) {
                 entitiesCount += 1
             }
-            if (outputCompany.urlsList.length) {
+            if (outputCompany.urlsMap.size) {
                 list.push(outputCompany)
             }
         }
