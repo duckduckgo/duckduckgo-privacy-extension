@@ -21,16 +21,6 @@ class Site {
     constructor (url) {
         this.url = url || ''
 
-        // Retain any www. prefix for our broken site lists
-        let domainWWW = utils.extractHostFromURL(this.url, true) || ''
-        domainWWW = domainWWW.toLowerCase()
-
-        let domain = utils.extractHostFromURL(this.url) || ''
-        domain = domain.toLowerCase()
-
-        this.domain = domain
-        this.protocol = this.url.substr(0, this.url.indexOf(':'))
-        this.baseDomain = utils.getBaseDomain(url)
         this.trackerUrls = []
         this.grade = new Grade()
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
@@ -38,26 +28,15 @@ class Site {
         this.denylisted = false
         this.setListStatusFromGlobal()
 
-        /**
-         * Broken site reporting relies on the www. prefix being present as a.com matches *.a.com
-         * This would make the list apply to a much larger audience than is required.
-         * The other allowlisting code is different and probably should be changed to match.
-         */
-        this.isBroken = utils.isBroken(domainWWW) // broken sites reported to github repo
-        this.enabledFeatures = utils.getEnabledFeatures(domainWWW) // site issues reported to github repo
         this.didIncrementCompaniesData = false
 
-        this.tosdr = privacyPractices.getTosdr(domain)
-
-        this.parentEntity = utils.findParent(domain) || ''
-        const parent = tdsStorage.tds.entities[this.parentEntity]
-        this.parentPrevalence = parent ? parent.prevalence : 0
+        this.tosdr = privacyPractices.getTosdr(this.domain)
 
         if (this.parentEntity && this.parentPrevalence) {
             this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)
         }
 
-        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain, parent))
+        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(this.domain, parent))
 
         if (this.url.match(/^https:\/\//)) {
             this.grade.setHttps(true, true)
@@ -67,6 +46,47 @@ class Site {
         this.specialDomainName = this.getSpecialDomain()
         // domains which have been clicked to load
         this.clickToLoad = []
+    }
+
+    /**
+     * Broken site reporting relies on the www. prefix being present as a.com matches *.a.com
+     * This would make the list apply to a much larger audience than is required.
+     * The other allowlisting code is different and probably should be changed to match.
+     */
+    get isBroken () {
+        return utils.isBroken(this.domainWWW) // broken sites reported to github repo
+    }
+
+    get enabledFeatures () {
+        return utils.getEnabledFeatures(this.domainWWW) // site issues reported to github repo
+    }
+
+    get domain () {
+        const domain = utils.extractHostFromURL(this.url) || ''
+        return domain.toLowerCase()
+    }
+
+    get domainWWW () {
+        // Retain any www. prefix for our broken site lists
+        const domainWWW = utils.extractHostFromURL(this.url, true) || ''
+        return domainWWW.toLowerCase()
+    }
+
+    get protocol () {
+        return this.url.substr(0, this.url.indexOf(':'))
+    }
+
+    get baseDomain () {
+        return utils.getBaseDomain(this.url)
+    }
+
+    get parentEntity () {
+        return utils.findParent(this.domain) || ''
+    }
+
+    get parentPrevalence () {
+        const parent = tdsStorage.tds.entities[this.parentEntity]
+        return parent ? parent.prevalence : 0
     }
 
     /*
