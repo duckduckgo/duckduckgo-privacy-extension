@@ -34,23 +34,26 @@ const webResourceKeyRegex = /.*\?key=(.*)/
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
 
 class Tab {
+    /**
+     * @param {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} tabData
+     */
     constructor (tabData) {
-        this.id = tabData.id || tabData.tabId
+        this.id = tabData.tabId
         /** @type {Record<string, Tracker>} */
         this.trackers = {}
         this._url = tabData.url
-        this.upgradedHttps = false
-        this.hasHttpsError = false
-        this.mainFrameUpgraded = false
-        this.urlParametersRemoved = false
-        this.urlParametersRemovedUrl = null
-        this.ampUrl = null
-        this.cleanAmpUrl = null
-        this.requestId = tabData.requestId
-        this.status = tabData.status
+        this._upgradedHttps = false
+        this._hasHttpsError = false
+        this._mainFrameUpgraded = false
+        this._urlParametersRemoved = false
+        this._urlParametersRemovedUrl = null
+        this._ampUrl = null
+        this._cleanAmpUrl = null
+        this._requestId = tabData.requestId
+        this._status = tabData.status
         this.site = new Site(this.url)
         this.httpsRedirects = new HttpsRedirects()
-        this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
+        this._statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.resetBadgeIcon()
         this.webResourceAccess = []
         this.surrogates = {}
@@ -60,6 +63,103 @@ class Tab {
 
         /** @type {null | import('../events/referrer-trimming').Referrer} */
         this.referrer = null
+    }
+
+    get upgradedHttps () {
+        return this._upgradedHttps
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    set upgradedHttps (value) {
+        this._upgradedHttps = value
+    }
+
+    get hasHttpsError () {
+        return this._hasHttpsError
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    set hasHttpsError (value) {
+        this._hasHttpsError = value
+    }
+
+    get mainFrameUpgraded () {
+        return this._mainFrameUpgraded
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    set mainFrameUpgraded (value) {
+        this._mainFrameUpgraded = value
+    }
+
+    get urlParametersRemoved () {
+        return this._urlParametersRemoved
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    set urlParametersRemoved (value) {
+        this._urlParametersRemoved = value
+    }
+
+    get urlParametersRemovedUrl () {
+        return this._urlParametersRemovedUrl
+    }
+
+    /**
+     * @param {string | null} value
+     */
+    set urlParametersRemovedUrl (value) {
+        this._urlParametersRemovedUrl = value
+    }
+
+    get ampUrl () {
+        return this._ampUrl
+    }
+
+    /**
+     * @param {string | null} url
+     */
+    set ampUrl (url) {
+        this._ampUrl = url
+    }
+
+    get cleanAmpUrl () {
+        return this._cleanAmpUrl
+    }
+
+    get requestId () {
+        return this._requestId
+    }
+
+    /**
+     * @param {string | null} url
+     */
+    set cleanAmpUrl (url) {
+        this._cleanAmpUrl = url
+    }
+
+    get status () {
+        return this._status
+    }
+
+    set status (value) {
+        this._status = value
+    }
+
+    get statusCode () {
+        return this._statusCode
+    }
+
+    set statusCode (value) {
+        this._statusCode = value
     }
 
     /**

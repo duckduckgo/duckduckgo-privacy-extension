@@ -54,8 +54,22 @@ export async function notifyPopup (message) {
     }
 }
 
+/**
+ * @param {browser.WebRequest.OnBeforeRedirectDetailsType | browser.Tabs.Tab | browser.Tabs.OnUpdatedChangeInfoType} tabData
+ * @returns {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}}
+ */
 export function normalizeTabData (tabData) {
-    return tabData
+    // @ts-expect-error - id doesn't exist onUpdatedChangeInfoType but we rectify in onCreateOrUpdateTab
+    const tabId = 'tabId' in tabData ? tabData.tabId : tabData.id
+    const url = tabData.url
+    const status = 'status' in tabData ? tabData.status : null
+    const requestId = 'requestId' in tabData ? tabData.requestId : undefined
+    return {
+        tabId,
+        url,
+        requestId,
+        status
+    }
 }
 
 export function mergeSavedSettings (settings, results) {
