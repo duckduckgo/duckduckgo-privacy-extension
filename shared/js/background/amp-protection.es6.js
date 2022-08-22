@@ -1,4 +1,5 @@
 const Site = require('./classes/site.es6')
+const { TabState } = require('./classes/tab-state')
 const tdsStorage = require('./storage/tds.es6')
 const utils = require('./utils.es6')
 
@@ -49,7 +50,7 @@ function extractAMPURL (site, url) {
     for (const regexPattern of ampSettings.linkFormats) {
         const match = url.match(regexPattern)
         if (match && match.length > 1) {
-            const newSite = new Site(match[1].startsWith('http') ? match[1] : `https://${match[1]}`)
+            const newSite = new Site(match[1].startsWith('http') ? match[1] : `https://${match[1]}`, new TabState({ tabId: 1, url, status: 'complete' }))
 
             if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
                 return null

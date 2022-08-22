@@ -5,6 +5,7 @@ const trackerutils = require('../tracker-utils')
 const settings = require('../settings.es6')
 const { isActive } = require('../devtools.es6')
 const constants = require('../../../data/constants')
+const Site = require('../classes/site.es6')
 
 function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
@@ -12,18 +13,24 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         return null
     }
     // Clone site so we don't retain any site changes
-    const site = Object.assign({}, tab.site || {})
+    const siteOut = Object.assign({}, tab.site || {})
+    for (const key of Object.getOwnPropertyNames(Site.prototype)) {
+        if (key === 'constructor') {
+            continue
+        }
+        siteOut[key] = tab.site[key]
+    }
     const referrer = tab?.referrer || ''
     let cookie = {}
 
     // Special case for iframes that are blank we check if it's also enabled
     if (sender.url === 'about:blank') {
         const aboutBlankEnabled = utils.getEnabledFeaturesAboutBlank(tab.url)
-        site.enabledFeatures = site.enabledFeatures.filter(feature => aboutBlankEnabled.includes(feature))
+        siteOut.enabledFeatures = siteOut.enabledFeatures.filter(feature => aboutBlankEnabled.includes(feature))
     }
 
     const featureSettings = {}
-    for (const feature of site.enabledFeatures) {
+    for (const feature of siteOut.enabledFeatures) {
         const featureSetting = utils.getFeatureSettings(feature)
         if (Object.keys(featureSetting).length) {
             featureSettings[feature] = featureSetting
@@ -65,7 +72,7 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         globalPrivacyControlValue: settings.getSetting('GPC'),
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,
-        site,
+        site: siteOut,
         referrer,
         platform: constants.platform
     }

@@ -18,14 +18,11 @@ const browserWrapper = require('../wrapper.es6')
  */
 
 class Site {
-    constructor (url) {
+    constructor (url, tabState) {
         this.url = url || ''
-
+        this._tabState = tabState
         this.trackerUrls = []
         this.grade = new Grade()
-        this._allowlisted = false // user-allowlisted sites; applies to all privacy features
-        this._allowlistOptIn = false
-        this._denylisted = false
         this.setListStatusFromGlobal()
 
         this.didIncrementCompaniesData = false
@@ -36,7 +33,9 @@ class Site {
             this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)
         }
 
-        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(this.domain, parent))
+        if ('parent' in globalThis) {
+            this.grade.setPrivacyScore(privacyPractices.getTosdrScore(this.domain, parent))
+        }
 
         if (this.url.match(/^https:\/\//)) {
             this.grade.setHttps(true, true)
@@ -49,7 +48,7 @@ class Site {
     }
 
     get allowlisted () {
-        return this._allowlisted
+        return this._tabState.allowlisted
     }
 
     /**
@@ -57,28 +56,31 @@ class Site {
      */
     set allowlisted (value) {
         this._allowlisted = value
+        this._tabState.backup()
     }
 
     get allowlistOptIn () {
-        return this._allowlistOptIn
+        return this._tabState.allowlistOptIn
     }
 
     /**
      * @param {boolean} value
      */
     set allowlistOptIn (value) {
-        this._allowlistOptIn = value
+        this._tabState.allowlistOptIn = value
+        this._tabState.backup()
     }
 
     get denylisted () {
-        return this._denylisted
+        return this._tabState.denylisted
     }
 
     /**
      * @param {boolean} value
      */
     set denylisted (value) {
-        this._denylisted = value
+        this._tabState.denylisted = value
+        this._tabState.backup()
     }
 
     /**
@@ -87,7 +89,11 @@ class Site {
      * The other allowlisting code is different and probably should be changed to match.
      */
     get isBroken () {
-        return utils.isBroken(this.domainWWW) // broken sites reported to github repo
+        let isBroken = utils.isBroken(this.domainWWW)
+        if (isBroken === undefined) {
+            isBroken = false
+        }
+        return isBroken // broken sites reported to github repo
     }
 
     get enabledFeatures () {
@@ -140,7 +146,9 @@ class Site {
      * @param {boolean} value
      */
     setListValue (listName, value) {
-        this[listName] = value
+        if (value === true || value === false) {
+            this[listName] = value
+        }
     }
 
     /*

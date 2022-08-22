@@ -4,6 +4,7 @@ const tdsStorageStub = require('../../helpers/tds.es6')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
 const Site = require('../../../shared/js/background/classes/site.es6')
+const { TabState } = require('../../../shared/js/background/classes/tab-state')
 const utils = require('../../../shared/js/background/utils.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 
@@ -52,7 +53,7 @@ for (const setName of Object.keys(testSets)) {
                 })
             } else {
                 it(`${test.name}`, () => {
-                    const site = new Site(test.siteURL)
+                    const site = new Site(test.siteURL, new TabState({ tabId: 1, url: test.siteURL, status: 'complete' }))
                     const isEnabled = site.isFeatureEnabled(test.featureName)
 
                     expect(isEnabled).toEqual(test.expectFeatureEnabled)

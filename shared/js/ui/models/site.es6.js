@@ -4,6 +4,7 @@ const httpsMessages = constants.httpsMessages
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 const submitBreakageForm = require('./submit-breakage-form.es6')
 const { getTrackerAggregationStats } = require('./mixins/calculate-aggregation-stats')
+const Tab = require('../../background/classes/tab.es6')
 
 // for now we consider tracker networks found on more than 7% of sites
 // as "major"
@@ -108,15 +109,13 @@ Site.prototype = window.$.extend({},
             this.httpsStatusText = httpsMessages[this.httpsState]
         },
 
-        handleBackgroundMsg: function (message) {
+        async handleBackgroundMsg (message) {
             // console.log('[model] handleBackgroundMsg()')
             if (!this.tab) return
             if (message.action && message.action === 'updateTabData') {
-                this.sendMessage('getTab', this.tab.id).then((backgroundTabObj) => {
-                    this.tab = backgroundTabObj
-                    this.update()
-                    this.fetchSiteRating()
-                })
+                this.tab = await Tab.restore(this.tab.id)
+                this.update()
+                this.fetchSiteRating()
             }
         },
 

@@ -13,7 +13,6 @@
  *          }
  *      }
  */
-const { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } = require('../wrapper.es6')
 const gradeIconLocations = {
     A: '/img/toolbar-rating-a_48.png',
     'B+': '/img/toolbar-rating-b-plus_48.png',
@@ -33,64 +32,9 @@ const Companies = require('../companies.es6')
 const browserWrapper = require('../wrapper.es6')
 const webResourceKeyRegex = /.*\?key=(.*)/
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
+const { TabState } = require('./tab-state')
 
 /** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
-
-class TabState {
-    /**
-     * @param {TabData} tabData
-     */
-    constructor (tabData) {
-        this.tabId = tabData.tabId
-        this.url = tabData.url
-        this.upgradedHttps = false
-        this.hasHttpsError = false
-        this.mainFrameUpgraded = false
-        this.urlParametersRemoved = false
-        this.urlParametersRemovedUrl = null
-        this.ampUrl = null
-        this.cleanAmpUrl = null
-        this.requestId = tabData.requestId
-        this.status = tabData.status
-        this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
-    }
-
-    static getStorageKey (tabId) {
-        return `tabState-${tabId}`
-    }
-
-    /**
-     * TODO ensure we only write in the correct order (wait other previous writes)
-     * TODO move setters into tabstate and call backup interally to reduce chance of impl drift
-     */
-    async backup () {
-        await setToSessionStorage(TabState.getStorageKey(this.tabId), JSON.stringify(this))
-    }
-
-    /**
-     * @param {number} tabId
-     * @returns {Promise<TabState | null>}
-     */
-    static async restore (tabId) {
-        const data = await getFromSessionStorage(TabState.getStorageKey(tabId))
-        if (!data) {
-            return null
-        }
-        const parsedData = JSON.parse(data)
-        const state = new TabState(parsedData)
-        for (const key of Object.keys(parsedData)) {
-            state[key] = parsedData[key]
-        }
-        return state
-    }
-
-    /**
-     * Used for removing the stored tab state.
-     */
-    static async clear (tabId) {
-        removeFromSessionStorage(`tabState-${tabId}`)
-    }
-}
 
 class Tab {
     /**
@@ -101,7 +45,7 @@ class Tab {
         this.trackers = {}
         this._tabState = new TabState(tabData)
 
-        this.site = new Site(this.url)
+        this.site = new Site(this.url, this._tabState)
         this.httpsRedirects = new HttpsRedirects()
         this.resetBadgeIcon()
         this.webResourceAccess = []
@@ -112,6 +56,15 @@ class Tab {
 
         /** @type {null | import('../events/referrer-trimming').Referrer} */
         this.referrer = null
+    }
+
+    get url () {
+        return this._tabState.url
+    }
+
+    set url (url) {
+        this._tabState.url = url
+        this._tabState.backup()
     }
 
     /**
@@ -303,7 +256,7 @@ class Tab {
         if (this.site.url === url) return
 
         this.url = url
-        this.site = new Site(url)
+        this.site = new Site(url, this._tabState)
 
         // reset badge to dax whenever we go to a new site
         this.resetBadgeIcon()
