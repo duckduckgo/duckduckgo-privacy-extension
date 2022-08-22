@@ -38,7 +38,7 @@ class Tab {
         this.id = tabData.id || tabData.tabId
         /** @type {Record<string, Tracker>} */
         this.trackers = {}
-        this.url = tabData.url
+        this._url = tabData.url
         this.upgradedHttps = false
         this.hasHttpsError = false
         this.mainFrameUpgraded = false

@@ -23,9 +23,9 @@ class Site {
 
         this.trackerUrls = []
         this.grade = new Grade()
-        this.allowlisted = false // user-allowlisted sites; applies to all privacy features
-        this.allowlistOptIn = false
-        this.denylisted = false
+        this._allowlisted = false // user-allowlisted sites; applies to all privacy features
+        this._allowlistOptIn = false
+        this._denylisted = false
         this.setListStatusFromGlobal()
 
         this.didIncrementCompaniesData = false
@@ -46,6 +46,39 @@ class Site {
         this.specialDomainName = this.getSpecialDomain()
         // domains which have been clicked to load
         this.clickToLoad = []
+    }
+
+    get allowlisted () {
+        return this._allowlisted
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    set allowlisted (value) {
+        this._allowlisted = value
+    }
+
+    get allowlistOptIn () {
+        return this._allowlistOptIn
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    set allowlistOptIn (value) {
+        this._allowlistOptIn = value
+    }
+
+    get denylisted () {
+        return this._denylisted
+    }
+
+    /**
+     * @param {boolean} value
+     */
+    set denylisted (value) {
+        this._denylisted = value
     }
 
     /**
