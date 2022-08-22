@@ -13,6 +13,7 @@
  *          }
  *      }
  */
+const { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } = require('../wrapper.es6')
 const gradeIconLocations = {
     A: '/img/toolbar-rating-a_48.png',
     'B+': '/img/toolbar-rating-b-plus_48.png',
@@ -33,27 +34,75 @@ const browserWrapper = require('../wrapper.es6')
 const webResourceKeyRegex = /.*\?key=(.*)/
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
 
-class Tab {
+/** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
+
+class TabState {
     /**
-     * @param {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} tabData
+     * @param {TabData} tabData
      */
     constructor (tabData) {
-        this.id = tabData.tabId
+        this.tabId = tabData.tabId
+        this.url = tabData.url
+        this.upgradedHttps = false
+        this.hasHttpsError = false
+        this.mainFrameUpgraded = false
+        this.urlParametersRemoved = false
+        this.urlParametersRemovedUrl = null
+        this.ampUrl = null
+        this.cleanAmpUrl = null
+        this.requestId = tabData.requestId
+        this.status = tabData.status
+        this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
+    }
+
+    static getStorageKey (tabId) {
+        return `tabState-${tabId}`
+    }
+
+    /**
+     * TODO ensure we only write in the correct order (wait other previous writes)
+     * TODO move setters into tabstate and call backup interally to reduce chance of impl drift
+     */
+    async backup () {
+        await setToSessionStorage(TabState.getStorageKey(this.tabId), JSON.stringify(this))
+    }
+
+    /**
+     * @param {number} tabId
+     * @returns {Promise<TabState | null>}
+     */
+    static async restore (tabId) {
+        const data = await getFromSessionStorage(TabState.getStorageKey(tabId))
+        if (!data) {
+            return null
+        }
+        const parsedData = JSON.parse(data)
+        const state = new TabState(parsedData)
+        for (const key of Object.keys(parsedData)) {
+            state[key] = parsedData[key]
+        }
+        return state
+    }
+
+    /**
+     * Used for removing the stored tab state.
+     */
+    static async clear (tabId) {
+        removeFromSessionStorage(`tabState-${tabId}`)
+    }
+}
+
+class Tab {
+    /**
+     * @param {TabData} tabData
+     */
+    constructor (tabData) {
         /** @type {Record<string, Tracker>} */
         this.trackers = {}
-        this._url = tabData.url
-        this._upgradedHttps = false
-        this._hasHttpsError = false
-        this._mainFrameUpgraded = false
-        this._urlParametersRemoved = false
-        this._urlParametersRemovedUrl = null
-        this._ampUrl = null
-        this._cleanAmpUrl = null
-        this._requestId = tabData.requestId
-        this._status = tabData.status
+        this._tabState = new TabState(tabData)
+
         this.site = new Site(this.url)
         this.httpsRedirects = new HttpsRedirects()
-        this._statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.resetBadgeIcon()
         this.webResourceAccess = []
         this.surrogates = {}
@@ -65,41 +114,69 @@ class Tab {
         this.referrer = null
     }
 
+    /**
+     * @param {number} tabId
+     */
+    static async restore (tabId) {
+        const state = await TabState.restore(tabId)
+        if (!state) {
+            return null
+        }
+        const tab = new Tab(state)
+        tab._tabState = state
+        return tab
+    }
+
+    get id () {
+        return this._tabState.tabId
+    }
+
+    /**
+     * @param {number} tabId
+     */
+    set id (tabId) {
+        this._tabState.tabId = tabId
+        this._tabState.backup()
+    }
+
     get upgradedHttps () {
-        return this._upgradedHttps
+        return this._tabState.upgradedHttps
     }
 
     /**
      * @param {boolean} value
      */
     set upgradedHttps (value) {
-        this._upgradedHttps = value
+        this._tabState.upgradedHttps = value
+        this._tabState.backup()
     }
 
     get hasHttpsError () {
-        return this._hasHttpsError
+        return this._tabState.hasHttpsError
     }
 
     /**
      * @param {boolean} value
      */
     set hasHttpsError (value) {
-        this._hasHttpsError = value
+        this._tabState.hasHttpsError = value
+        this._tabState.backup()
     }
 
     get mainFrameUpgraded () {
-        return this._mainFrameUpgraded
+        return this._tabState.mainFrameUpgraded
     }
 
     /**
      * @param {boolean} value
      */
     set mainFrameUpgraded (value) {
-        this._mainFrameUpgraded = value
+        this._tabState.mainFrameUpgraded = value
+        this._tabState.backup()
     }
 
     get urlParametersRemoved () {
-        return this._urlParametersRemoved
+        return this._tabState.urlParametersRemoved
     }
 
     /**
@@ -107,21 +184,23 @@ class Tab {
      */
     set urlParametersRemoved (value) {
         this._urlParametersRemoved = value
+        this._tabState.backup()
     }
 
     get urlParametersRemovedUrl () {
-        return this._urlParametersRemovedUrl
+        return this._tabState.urlParametersRemovedUrl
     }
 
     /**
      * @param {string | null} value
      */
     set urlParametersRemovedUrl (value) {
-        this._urlParametersRemovedUrl = value
+        this._tabState.urlParametersRemovedUrl = value
+        this._tabState.backup()
     }
 
     get ampUrl () {
-        return this._ampUrl
+        return this._tabState.ampUrl
     }
 
     /**
@@ -129,14 +208,15 @@ class Tab {
      */
     set ampUrl (url) {
         this._ampUrl = url
+        this._tabState.backup()
     }
 
     get cleanAmpUrl () {
-        return this._cleanAmpUrl
+        return this._tabState.cleanAmpUrl
     }
 
     get requestId () {
-        return this._requestId
+        return this._tabState.requestId
     }
 
     /**
@@ -144,22 +224,25 @@ class Tab {
      */
     set cleanAmpUrl (url) {
         this._cleanAmpUrl = url
+        this._tabState.backup()
     }
 
     get status () {
-        return this._status
+        return this._tabState.status
     }
 
     set status (value) {
-        this._status = value
+        this._tabState.status = value
+        this._tabState.backup()
     }
 
     get statusCode () {
-        return this._statusCode
+        return this._tabState.statusCode
     }
 
     set statusCode (value) {
-        this._statusCode = value
+        this._tabState.statusCode = value
+        this._tabState.backup()
     }
 
     /**
