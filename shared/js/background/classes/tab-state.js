@@ -52,6 +52,14 @@ export class TabState {
         return state
     }
 
+    static createFromSerialized (serialized) {
+        const state = new TabState(serialized)
+        for (const key of Object.keys(serialized)) {
+            state[key] = serialized[key]
+        }
+        return state
+    }
+
     /**
      * Used for removing the stored tab state.
      */

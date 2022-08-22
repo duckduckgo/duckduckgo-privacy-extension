@@ -80,6 +80,16 @@ class Tab {
         return tab
     }
 
+    static restoreFromTabStateData (serializedTabState) {
+        const tabState = TabState.createFromSerialized(serializedTabState)
+        if (!tabState) {
+            return null
+        }
+        const tab = new Tab(tabState)
+        tab._tabState = tabState
+        return tab
+    }
+
     get id () {
         return this._tabState.tabId
     }

@@ -226,7 +226,7 @@ export async function insertCSS (options) {
 // Session storage
 // @ts-ignore
 const sessionStorageSupported = typeof browser.storage.session !== 'undefined'
-const sessionStorageFallback = sessionStorageSupported ? null : new Map()
+export const sessionStorageFallback = sessionStorageSupported ? null : new Map()
 
 /**
  * Save some data to memory, which persists until the session ends (e.g. until

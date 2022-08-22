@@ -89,11 +89,7 @@ class Site {
      * The other allowlisting code is different and probably should be changed to match.
      */
     get isBroken () {
-        let isBroken = utils.isBroken(this.domainWWW)
-        if (isBroken === undefined) {
-            isBroken = false
-        }
-        return isBroken // broken sites reported to github repo
+        return utils.isBroken(this.domainWWW) // broken sites reported to github repo
     }
 
     get enabledFeatures () {

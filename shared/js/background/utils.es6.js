@@ -6,6 +6,7 @@ import load from './load.es6'
 import * as tldts from 'tldts'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 import sha1 from '../shared-utils/sha1'
+import { config } from '../shared-utils/config'
 const browserInfo = parseUserAgentString()
 
 /**
@@ -198,21 +199,21 @@ export function isRedirect (statusCode) {
  * check to see if this is a broken site reported on github
 */
 export function isBroken (url) {
-    if (!tdsStorage?.config.unprotectedTemporary) return
-    return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1
+    if (!config.data.unprotectedTemporary) return
+    return brokenListIndex(url, config.data.unprotectedTemporary) !== -1
 }
 
 export function removeBroken (domain) {
-    const index = brokenListIndex(domain, tdsStorage.config.unprotectedTemporary)
+    const index = brokenListIndex(domain, config.data.unprotectedTemporary)
     if (index !== -1) {
-        console.log('remove', tdsStorage.config.unprotectedTemporary.splice(index, 1))
+        console.log('remove', config.data.unprotectedTemporary.splice(index, 1))
     }
 }
 
 export function getEnabledFeaturesAboutBlank (url) {
-    if (!tdsStorage.config.features) return []
+    if (!config.data.features) return []
     const enabledFeatures = []
-    for (const feature in tdsStorage.config.features) {
+    for (const feature in config.data.features) {
         const featureSettings = getFeatureSettings(feature)
 
         if (featureSettings.aboutBlankEnabled !== 'disabled' && brokenListIndex(url, featureSettings.aboutBlankSites || []) === -1) {
@@ -223,10 +224,10 @@ export function getEnabledFeaturesAboutBlank (url) {
 }
 
 export function getEnabledFeatures (url) {
-    if (!tdsStorage.config.features) return []
+    if (!config.data.features) return []
     const enabledFeatures = []
-    for (const feature in tdsStorage.config.features) {
-        if (isFeatureEnabled(feature) && brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) === -1) {
+    for (const feature in config.data.features) {
+        if (isFeatureEnabled(feature) && brokenListIndex(url, config.data.features[feature].exceptions || []) === -1) {
             enabledFeatures.push(feature)
         }
     }
@@ -250,7 +251,7 @@ export function brokenListIndex (url, list) {
 // We inject this into content scripts
 export function getBrokenScriptLists () {
     const brokenScripts = {}
-    for (const key in tdsStorage.config.features) {
+    for (const key in config.data.features) {
         const featureSettings = getFeatureSettings(key)
         brokenScripts[key] = featureSettings.scripts?.map(obj => obj.domain) || []
     }
@@ -378,7 +379,7 @@ export function satisfiesMinVersion (minVersionString, extensionVersionString) {
  * @returns {boolean} - if feature is enabled
  */
 export function isFeatureEnabled (featureName) {
-    const feature = tdsStorage.config.features[featureName]
+    const feature = config.data.features[featureName]
     if (!feature) {
         return false
     }
@@ -401,7 +402,7 @@ export function isFeatureEnabled (featureName) {
  * @returns {Object} - Settings associated in the config with featureName
  */
 export function getFeatureSettings (featureName) {
-    const feature = tdsStorage.config.features[featureName]
+    const feature = config.data.features[featureName]
     if (typeof feature !== 'object' || feature === null || !feature.settings) {
         return {}
     }

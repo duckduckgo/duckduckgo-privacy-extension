@@ -5,6 +5,7 @@ const settings = require('./../settings.es6')
 const browserWrapper = require('./../wrapper.es6')
 const extensionConfig = require('./../../../data/bundled/extension-config.json')
 const etags = require('../../../data/etags.json')
+const { Config } = require('../../shared-utils/config')
 
 const configNames = constants.tdsLists.map(({ name }) => name)
 
@@ -55,6 +56,7 @@ class TDSStorage {
     async initOnInstall () {
         this.isInstalling = true
         this._installingPromise = await this._internalInitOnInstall()
+        Config.save(this.config)
         this.isInstalling = false
     }
 
@@ -319,4 +321,8 @@ class TDSStorage {
         return readyPromise
     }
 }
-module.exports = new TDSStorage()
+const instance = new TDSStorage()
+instance.onUpdate('config', () => {
+    Config.save(instance.config)
+})
+module.exports = instance
