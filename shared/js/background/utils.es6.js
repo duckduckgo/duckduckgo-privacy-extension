@@ -1,11 +1,34 @@
 import browser from 'webextension-polyfill'
-import { getExtensionVersion } from './wrapper.es6'
+import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from './wrapper.es6'
 import tdsStorage from './storage/tds.es6'
 import settings from './settings.es6'
 import load from './load.es6'
 import * as tldts from 'tldts'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
+import sha1 from '../shared-utils/sha1'
 const browserInfo = parseUserAgentString()
+
+/**
+ * Produce a random float, matches the output of Math.random() but much more cryptographically psudo-random.
+ * @returns {number}
+ */
+function getRandomFloat () {
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
+}
+
+export async function getSessionKey () {
+    let sessionKey = await getFromSessionStorage('sessionKey')
+    if (!sessionKey) {
+        sessionKey = await resetSessionKey()
+    }
+    return sessionKey
+}
+
+export async function resetSessionKey () {
+    const sessionKey = sha1(getRandomFloat().toString())
+    await setToSessionStorage('sessionKey', sessionKey)
+    return sessionKey
+}
 
 export async function sendTabMessage (id, message, details) {
     try {

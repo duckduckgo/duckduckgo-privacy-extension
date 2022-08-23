@@ -9,6 +9,7 @@ const https = require('./https.es6')
 const tds = require('./storage/tds.es6')
 const startup = require('./startup.es6')
 const browserWrapper = require('./wrapper.es6')
+const utils = require('./utils.es6')
 
 self.dbg = {
     settings,
@@ -16,7 +17,8 @@ self.dbg = {
     tabManager,
     atb,
     https,
-    tds
+    tds,
+    utils
 }
 
 // mark this as a dev build
