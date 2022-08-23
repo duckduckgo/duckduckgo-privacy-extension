@@ -139,7 +139,7 @@ class Tab {
             return newTracker
         }
     }
-    
+
     /**
      * Adds an entry to the tab webResourceAccess list.
      * @param {string} resourceName URL to the web accessible resource
