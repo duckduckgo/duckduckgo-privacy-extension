@@ -39,8 +39,7 @@ export class AggregateCompanyData {
         this.count = company.count
 
         this.urlsMap = new Map()
-        for (const urlString of Object.keys(company.urls)) {
-            const trackerSites = company.urls[urlString]
+        for (const [urlString, trackerSites] of Object.entries(company.urls)) {
             for (const trackerSite of Object.values(trackerSites)) {
                 if (listFilter(trackerSite)) {
                     this.urlsMap.set(urlString, trackerSite)
