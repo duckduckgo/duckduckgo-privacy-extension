@@ -48,18 +48,13 @@ const setup = async (ops) => {
     if (loadExtension) {
         // Grab a handle on the background page for the extension.
         try {
-            const targetFilter = target => (
-                target.type() === 'background_page' ||
-                target.type() === 'service_worker'
+            const backgroundPageTarget = await browser.waitForTarget(
+                target => (
+                    target.type() === 'background_page' ||
+                    target.type() === 'service_worker'
+                ),
+                { timeout: 2000 }
             )
-            let backgroundPageTarget = await browser.targets().find(targetFilter)
-            if (!backgroundPageTarget) {
-                backgroundPageTarget =
-                    await browser.waitForTarget(
-                        targetFilter,
-                        { timeout: 2000 }
-                    )
-            }
             bgPage = backgroundPageTarget.type() === 'background_page'
                 ? await backgroundPageTarget.page()
                 : await backgroundPageTarget.worker()
