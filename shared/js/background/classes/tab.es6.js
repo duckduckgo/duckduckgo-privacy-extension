@@ -40,12 +40,12 @@ class Tab {
     /**
      * @param {TabData} tabData
      */
-    constructor (tabData) {
+    constructor (tabData, useGlobalState = true) {
         /** @type {Record<string, Tracker>} */
         this.trackers = {}
         this._tabState = new TabState(tabData)
 
-        this.site = new Site(this.url, this._tabState)
+        this.site = new Site(this.url, this._tabState, useGlobalState)
         this.httpsRedirects = new HttpsRedirects()
         this.resetBadgeIcon()
         this.webResourceAccess = []
@@ -75,7 +75,7 @@ class Tab {
         if (!state) {
             return null
         }
-        const tab = new Tab(state)
+        const tab = new Tab(state, false)
         tab._tabState = state
         return tab
     }
@@ -85,7 +85,7 @@ class Tab {
         if (!tabState) {
             return null
         }
-        const tab = new Tab(tabState)
+        const tab = new Tab(tabState, false)
         tab._tabState = tabState
         return tab
     }

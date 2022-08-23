@@ -1,4 +1,5 @@
 const { getFeatureSettings, getBaseDomain } = require('../utils.es6')
+const { config } = require('../../shared-utils/config')
 
 /**
  * @typedef AdClickAttributionLinkFormat
@@ -18,7 +19,7 @@ const { getFeatureSettings, getBaseDomain } = require('../utils.es6')
 
 export class AdClickAttributionPolicy {
     constructor () {
-        const policy = getFeatureSettings('adClickAttribution')
+        const policy = getFeatureSettings('adClickAttribution', config)
 
         /** @type {AdClickAttributionLinkFormat[]} */
         this.linkFormats = policy.linkFormats || []

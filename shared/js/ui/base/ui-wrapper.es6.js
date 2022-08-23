@@ -39,7 +39,9 @@ async function getBackgroundTabData () {
     }
     if (tabId) {
         const backgroundTabState = await sendMessage('getTab', tabId)
+        console.log('getBackgroundTabData', { backgroundTabState })
         const backgroundTabObj = await Tab.restoreFromTabStateData(backgroundTabState)
+        console.log('restoredTab', { backgroundTabObj })
         if (backgroundTabObj) {
             return backgroundTabObj
         }

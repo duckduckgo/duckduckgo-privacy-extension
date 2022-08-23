@@ -1,4 +1,4 @@
-import { getFromSessionStorage, setToSessionStorage } from '../background/wrapper.es6'
+import { syncToStorage, getFromStorage } from '../background/wrapper.es6'
 
 const CONFIG_KEY = 'cachedConfig'
 
@@ -13,13 +13,14 @@ export class Config {
     }
 
     async init () {
-        const configData = await getFromSessionStorage(CONFIG_KEY)
+        const configData = await getFromStorage(CONFIG_KEY)
         this.data = configData ? JSON.parse(configData) : {}
     }
 
     // TODO consider sync with other Config objects across contexts
     static async save (configData) {
-        await setToSessionStorage(CONFIG_KEY, JSON.stringify(configData))
+        console.log('save config', configData)
+        await syncToStorage({ [CONFIG_KEY]: JSON.stringify(configData) })
     }
 }
 

@@ -64,6 +64,6 @@ export class TabState {
      * Used for removing the stored tab state.
      */
     static async clear (tabId) {
-        removeFromSessionStorage(`tabState-${tabId}`)
+        removeFromSessionStorage(TabState.getStorageKey(tabId))
     }
 }

@@ -1,6 +1,7 @@
 const tabManager = require('../tab-manager.es6')
 const trackerutils = require('../tracker-utils')
 const utils = require('../utils.es6')
+const config = require('../../shared-utils/config')
 const browserName = utils.getBrowserName()
 
 /**
@@ -42,7 +43,7 @@ module.exports = function limitReferrerData (e) {
     }
 
     // Additional safe list and broken site list checks are included in the referrer evaluation
-    const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
+    const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url, config)
     if (!modifiedReferrer) {
         return
     }

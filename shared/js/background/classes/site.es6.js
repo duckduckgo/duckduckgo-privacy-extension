@@ -12,18 +12,22 @@ const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper.es6')
+const { config } = require('../../shared-utils/config')
 
 /**
  * @typedef {'allowlisted' | 'allowlistOptIn' | 'denylisted'} allowlistName
  */
 
 class Site {
-    constructor (url, tabState) {
+    constructor (url, tabState, useGlobalState = true) {
         this.url = url || ''
         this._tabState = tabState
         this.trackerUrls = []
         this.grade = new Grade()
-        this.setListStatusFromGlobal()
+        console.log('Constructing new Site,', { tabState, useGlobalState, url })
+        if (useGlobalState) {
+            this.setListStatusFromGlobal()
+        }
 
         this.didIncrementCompaniesData = false
 
@@ -55,7 +59,7 @@ class Site {
      * @param {boolean} value
      */
     set allowlisted (value) {
-        this._allowlisted = value
+        this._tabState._allowlisted = value
         this._tabState.backup()
     }
 
@@ -89,11 +93,11 @@ class Site {
      * The other allowlisting code is different and probably should be changed to match.
      */
     get isBroken () {
-        return utils.isBroken(this.domainWWW) // broken sites reported to github repo
+        return utils.isBroken(this.domainWWW, config) // broken sites reported to github repo
     }
 
     get enabledFeatures () {
-        return utils.getEnabledFeatures(this.domainWWW) // site issues reported to github repo
+        return utils.getEnabledFeatures(this.domainWWW, config) // site issues reported to github repo
     }
 
     get domain () {

@@ -6,7 +6,6 @@ import load from './load.es6'
 import * as tldts from 'tldts'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 import sha1 from '../shared-utils/sha1'
-import { config } from '../shared-utils/config'
 const browserInfo = parseUserAgentString()
 
 /**
@@ -198,23 +197,23 @@ export function isRedirect (statusCode) {
 /*
  * check to see if this is a broken site reported on github
 */
-export function isBroken (url) {
+export function isBroken (url, config) {
     if (!config.data.unprotectedTemporary) return
     return brokenListIndex(url, config.data.unprotectedTemporary) !== -1
 }
 
-export function removeBroken (domain) {
+export function removeBroken (domain, config) {
     const index = brokenListIndex(domain, config.data.unprotectedTemporary)
     if (index !== -1) {
         console.log('remove', config.data.unprotectedTemporary.splice(index, 1))
     }
 }
 
-export function getEnabledFeaturesAboutBlank (url) {
+export function getEnabledFeaturesAboutBlank (url, config) {
     if (!config.data.features) return []
     const enabledFeatures = []
     for (const feature in config.data.features) {
-        const featureSettings = getFeatureSettings(feature)
+        const featureSettings = getFeatureSettings(feature, config)
 
         if (featureSettings.aboutBlankEnabled !== 'disabled' && brokenListIndex(url, featureSettings.aboutBlankSites || []) === -1) {
             enabledFeatures.push(feature)
@@ -223,11 +222,11 @@ export function getEnabledFeaturesAboutBlank (url) {
     return enabledFeatures
 }
 
-export function getEnabledFeatures (url) {
+export function getEnabledFeatures (url, config) {
     if (!config.data.features) return []
     const enabledFeatures = []
     for (const feature in config.data.features) {
-        if (isFeatureEnabled(feature) && brokenListIndex(url, config.data.features[feature].exceptions || []) === -1) {
+        if (isFeatureEnabled(feature, config) && brokenListIndex(url, config.data.features[feature].exceptions || []) === -1) {
             enabledFeatures.push(feature)
         }
     }
@@ -249,10 +248,10 @@ export function brokenListIndex (url, list) {
 }
 
 // We inject this into content scripts
-export function getBrokenScriptLists () {
+export function getBrokenScriptLists (config) {
     const brokenScripts = {}
     for (const key in config.data.features) {
-        const featureSettings = getFeatureSettings(key)
+        const featureSettings = getFeatureSettings(key, config)
         brokenScripts[key] = featureSettings.scripts?.map(obj => obj.domain) || []
     }
     return brokenScripts
@@ -260,7 +259,7 @@ export function getBrokenScriptLists () {
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
 // tabManager.site.isProtectionEnabled() is the preferred method.
-export function isSafeListed (url) {
+export function isSafeListed (url, config) {
     const hostname = extractHostFromURL(url)
     const safeList = settings.getSetting('allowlisted')
     const subdomains = hostname.split('.')
@@ -274,7 +273,7 @@ export function isSafeListed (url) {
     }
 
     // Check broken sites
-    if (isBroken(hostname)) {
+    if (isBroken(hostname, config)) {
         return true
     }
 
@@ -286,8 +285,8 @@ export function isCookieExcluded (url) {
     return isDomainCookieExcluded(domain)
 }
 
-function isDomainCookieExcluded (domain) {
-    const cookieSettings = getFeatureSettings('cookie')
+function isDomainCookieExcluded (domain, config) {
+    const cookieSettings = getFeatureSettings('cookie', config)
     if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
         return false
     }
@@ -378,7 +377,7 @@ export function satisfiesMinVersion (minVersionString, extensionVersionString) {
  * @param {String} featureName - the name of the feature
  * @returns {boolean} - if feature is enabled
  */
-export function isFeatureEnabled (featureName) {
+export function isFeatureEnabled (featureName, config) {
     const feature = config.data.features[featureName]
     if (!feature) {
         return false
@@ -401,7 +400,7 @@ export function isFeatureEnabled (featureName) {
  * @param {String} featureName - the name of the feature
  * @returns {Object} - Settings associated in the config with featureName
  */
-export function getFeatureSettings (featureName) {
+export function getFeatureSettings (featureName, config) {
     const feature = config.data.features[featureName]
     if (typeof feature !== 'object' || feature === null || !feature.settings) {
         return {}

@@ -322,7 +322,7 @@ class TDSStorage {
     }
 }
 const instance = new TDSStorage()
-instance.onUpdate('config', () => {
-    Config.save(instance.config)
+instance.onUpdate('config', (configName, etag, configValue) => {
+    Config.save(configValue)
 })
 module.exports = instance
