@@ -17,5 +17,5 @@ function getHeader () {
 }
 
 module.exports = {
-    getHeader: getHeader
+    getHeader
 }

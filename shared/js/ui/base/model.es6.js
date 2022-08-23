@@ -65,7 +65,7 @@ BaseModel.prototype = $.extend({},
 
             this.store.publish({
                 notifierName: this.modelName,
-                change: { attribute: attr, value: val, lastValue: lastValue },
+                change: { attribute: attr, value: val, lastValue },
                 attributes: this._toJSON()
             })
         },
@@ -123,8 +123,8 @@ BaseModel.prototype = $.extend({},
 
             this.store.publish({
                 notifierName: this.modelName,
-                action: action,
-                data: data,
+                action,
+                data,
                 attributes: this._toJSON()
             })
         },

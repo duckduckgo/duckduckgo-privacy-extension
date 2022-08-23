@@ -63,8 +63,8 @@ export function getDomainsToExludeByNetwork () {
             const excludedDomains = data.excludedDomains.map(e => e.domain)
             for (const domain of excludedDomains) {
                 socialExcludeCache.excludes.push({
-                    entity: entity,
-                    domain: domain
+                    entity,
+                    domain
                 })
             }
         }
@@ -88,8 +88,8 @@ export function getSocialTracker (url) {
                 }
             }
             return {
-                entity: entity,
-                data: data,
+                entity,
+                data,
                 redirectUrl: redirect
             }
         }

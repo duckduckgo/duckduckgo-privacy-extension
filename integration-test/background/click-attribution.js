@@ -87,9 +87,6 @@ describe('Ad click blocking', () => {
                         options.button = 'middle'
                     }
                     if (newTab) {
-                        if (process.env.CI) {
-                            pending()
-                        }
                         const newPage = await clickAndNewTab(page, clickSelector, options, step.expected.url)
                         page.close()
                         page = newPage

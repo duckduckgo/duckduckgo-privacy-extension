@@ -36,7 +36,6 @@ describe('Tracker Utilities', () => {
                 requestId: 123,
                 url: 'http://example.com',
                 status: 200,
-                addOrUpdateTrackersBlocked: () => {},
                 addWebResourceAccess: () => {},
                 site: {
                     allowlisted: false,

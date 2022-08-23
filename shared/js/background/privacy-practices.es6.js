@@ -93,7 +93,7 @@ class PrivacyPractices {
                 good: matchGood,
                 bad: matchBad
             },
-            message: message
+            message
         }
     }
 

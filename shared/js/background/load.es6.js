@@ -87,8 +87,8 @@ async function loadExtensionFile (params) {
 }
 
 module.exports = {
-    loadExtensionFile: loadExtensionFile,
-    JSONfromLocalFile: JSONfromLocalFile,
-    JSONfromExternalFile: JSONfromExternalFile,
-    url: url
+    loadExtensionFile,
+    JSONfromLocalFile,
+    JSONfromExternalFile,
+    url
 }

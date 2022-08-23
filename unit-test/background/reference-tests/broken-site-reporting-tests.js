@@ -1,3 +1,5 @@
+import Tab from '../../../shared/js/background/classes/tab.es6'
+
 require('../../helpers/mock-browser-api')
 
 const submitBreakageForm = require('../../../shared/js/ui/models/submit-breakage-form.es6')
@@ -17,36 +19,48 @@ for (const setName of Object.keys(testSets)) {
             it(test.name, () => {
                 const loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
 
-                const trackingUrls = {}
+                const trackerName = 'Ad Company'
+                const trackerObj = {
+                    owner: {
+                        name: trackerName,
+                        displayName: trackerName
+                    }
+                }
+                const tab = new Tab({
+                    url: test.siteURL
+                })
+                tab.upgradedHttps = test.wasUpgraded
 
                 test.blockedTrackers.forEach(domain => {
-                    trackingUrls[domain] = {
-                        isBlocked: true,
-                        reason: 'matched rule - block'
-                    }
+                    tab.addToTrackers({
+                        action: 'block',
+                        reason: 'matched rule - block',
+                        sameEntity: false,
+                        sameBaseDomain: false,
+                        redirectUrl: false,
+                        matchedRule: 'block',
+                        matchedRuleException: false,
+                        tracker: trackerObj,
+                        fullTrackerDomain: domain
+                    })
                 })
 
                 test.surrogates.forEach(domain => {
-                    trackingUrls[domain] = {
-                        isBlocked: true,
-                        reason: 'matched rule - surrogate'
-                    }
+                    tab.addToTrackers({
+                        action: 'redirect',
+                        reason: 'matched rule - surrogate',
+                        sameEntity: false,
+                        sameBaseDomain: false,
+                        redirectUrl: 'something.org/track.js',
+                        matchedRule: 'block',
+                        matchedRuleException: false,
+                        tracker: trackerObj,
+                        fullTrackerDomain: domain
+                    })
                 })
-
                 submitBreakageForm.call({
                     tds: test.blocklistVersion,
-                    tab: {
-                        url: test.siteURL,
-                        site: {
-                            domain: ''
-                        },
-                        upgradedHttps: test.wasUpgraded,
-                        trackersBlocked: {
-                            'Tracking INC': {
-                                urls: trackingUrls
-                            }
-                        }
-                    },
+                    tab,
                     // normally report params are passed from popup to background script via messaging,
                     // we are making a shortcut here
                     submitBrokenSiteReport: params => submitBrokenSiteReport.fire.apply(null, params),

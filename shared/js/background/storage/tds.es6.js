@@ -212,13 +212,13 @@ class TDSStorage {
     }
 
     getDataXHR (list, etag, source) {
-        return load.loadExtensionFile({ url: list.url, etag: etag, returnType: list.format, source, timeout: 60000 })
+        return load.loadExtensionFile({ url: list.url, etag, returnType: list.format, source, timeout: 60000 })
     }
 
     async getListFromLocalDB (name) {
         console.log('TDS: getting from db', name)
         await this.dbc.open()
-        const list = await this.dbc.table('tdsStorage').get({ name: name })
+        const list = await this.dbc.table('tdsStorage').get({ name })
 
         if (list && list.data) {
             this[name] = list.data
@@ -228,7 +228,7 @@ class TDSStorage {
     }
 
     storeInLocalDB (name, data) {
-        return this.dbc.tdsStorage.put({ name: name, data: data })
+        return this.dbc.tdsStorage.put({ name, data })
     }
 
     parsedata (name, data) {

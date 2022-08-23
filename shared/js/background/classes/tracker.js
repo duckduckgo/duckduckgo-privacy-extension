@@ -26,15 +26,20 @@ export class TrackerSite {
 }
 
 export class Tracker {
+    /**
+     * @param {TrackerData} t
+     */
     constructor (t) {
+        if (!t.tracker) {
+            throw new Error('Tracker object required for Tracker constructor')
+        }
         this.parentCompany = Companies.get(t.tracker.owner.name)
         this.displayName = t.tracker.owner.displayName
         this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
-        /** @type {Record<string, TrackerSite>} */
+        /** @type {Record<string, Record<string, TrackerSite>>} */
         this.urls = {}
         this.count = 0 // request count
         this.addTrackerUrl(t)
-        this.type = t.type || ''
     }
 
     /**
@@ -45,7 +50,10 @@ export class Tracker {
     addTrackerUrl (t) {
         this.count += 1
         if (!this.urls[t.fullTrackerDomain]) {
-            this.urls[t.fullTrackerDomain] = new TrackerSite(t.action, t.reason, t.tracker?.categories || [], t.sameEntity, t.sameBaseDomain)
+            this.urls[t.fullTrackerDomain] = {}
+        }
+        if (!this.urls[t.fullTrackerDomain][t.action]) {
+            this.urls[t.fullTrackerDomain][t.action] = new TrackerSite(t.action, t.reason, t.tracker?.categories || [], t.sameEntity, t.sameBaseDomain)
         }
     }
 }

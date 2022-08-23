@@ -97,7 +97,7 @@ class HTTPSStorage {
     }
 
     getDataXHR (url, etag) {
-        return load.loadExtensionFile({ url: url, etag: etag, returnType: 'json', source: 'external', timeout: 60000 })
+        return load.loadExtensionFile({ url, etag, returnType: 'json', source: 'external', timeout: 60000 })
     }
 
     async getListFromLocalDB (listDetails) {
@@ -112,7 +112,7 @@ class HTTPSStorage {
 
     storeInLocalDB (name, type, data) {
         console.log(`HTTPS: storing ${name} in db`)
-        return this.dbc.httpsStorage.put({ name: name, type: type, data: data })
+        return this.dbc.httpsStorage.put({ name, type, data })
     }
 
     hasCorrectChecksum (data) {

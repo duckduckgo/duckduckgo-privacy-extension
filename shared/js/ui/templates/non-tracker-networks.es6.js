@@ -10,6 +10,17 @@ function calculateOverallCount (model) {
     return model.aggregationStats.allowed.entitiesCount
 }
 
+function renderSection (aggregationStatsSection, headingText, site) {
+    const headingElement = headingText
+        ? bel`<li class="tracker-list-header border--bottom border--top padded--top-half padded--bottom-half text--center">${headingText}</li>`
+        : bel`<li class="padded--top-half padded--bottom-half border--top text--center"></li>`
+
+    return bel`<ol class="default-list site-info__trackers__company-list ${aggregationStatsSection.entitiesCount ? '' : 'is-hidden'}">
+        ${headingElement}
+        ${renderTrackerDetails(aggregationStatsSection.list, site)}
+    </ol>`
+}
+
 module.exports = function () {
     if (!this.model) {
         return bel`<section class="sliding-subview sliding-subview--has-fixed-header"></section>`
@@ -48,16 +59,6 @@ module.exports = function () {
         </div>
     </section>`
     } else {
-        function renderSection (aggregationStatsSection, headingText, site) {
-            const headingElement = headingText
-                ? bel`<li class="tracker-list-header border--bottom border--top padded--top-half padded--bottom-half text--center">${headingText}</li>`
-                : bel`<li class="padded--top-half padded--bottom-half border--top text--center"></li>`
-
-            return bel`<ol class="default-list site-info__trackers__company-list ${aggregationStatsSection.entitiesCount ? '' : 'is-hidden'}">
-                ${headingElement}
-                ${renderTrackerDetails(aggregationStatsSection.list, site)}
-            </ol>`
-        }
         const adAttributionSection = renderSection(
             this.model.aggregationStats.adAttribution,
             bel`<span>The following domain’s requests were loaded because a ${this.model.site.domain} ad on DuckDuckGo was recently clicked. These requests help evaluate ad effectiveness. All ads on DuckDuckGo are non-profiling.<br/>

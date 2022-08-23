@@ -21,9 +21,9 @@ module.exports = function (site, ops) {
 
     return bel`<div class="rating-hero-container js-rating-hero">
      ${hero({
-        status: status,
+        status,
         title: site.domain,
-        subtitle: subtitle,
+        subtitle,
         subtitleLabel: label,
         showClose: ops.showClose,
         showOpen: ops.showOpen

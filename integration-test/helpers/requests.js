@@ -1,8 +1,19 @@
-/* @typedef {object} LoggedRequestDetails
- * @property {string} url
+/**
+ * @typedef {import('puppeteer').Page} Page - Puppeteer Page
+ */
+
+/**
+ * @typedef {object} LoggedRequestDetails
+ * @property {URL} url
  *   The request's URL.
- * @property {bool} blocked
+ * @property {boolean} [blocked]
  *   False if the request was successful, true if it was blocked or failed.
+ * @property {string} [method]
+ * @property {string} type
+ * @property {string} [reason]
+ * @property {'redirected' | 'allowed' | 'blocked' | 'failed'} [status]
+ * @property {URL} [redirectUrl]
+ * @property {string} [initiator]
  */
 
 /**
@@ -12,15 +23,23 @@
  * @param {LoggedRequestDetails[]} requests
  *   Array of request details, appended to as requests happen.
  *   Note: The requests array is mutated by this function.
- * @param {function?} filter
+ * @param {function} [filter]
  *   Optional filter function that (if given) should return falsey for requests
  *   that should be ignored.
- * @returns {function}
+ * @returns {Promise<function>}
  *   Function that clears logged requests (and in progress requests).
  */
-function logPageRequests (page, requests, filter) {
+async function logPageRequests (page, requests, filter) {
+    /** @type {Map<number, LoggedRequestDetails>} */
     const requestDetailsByRequestId = new Map()
+    const client = await page.target().createCDPSession()
+    await client.send('Network.enable')
 
+    /**
+     * @param {number} requestId
+     * @param {(details: LoggedRequestDetails) => void} updateDetails
+     * @returns {void}
+     */
     const saveRequestOutcome = (requestId, updateDetails) => {
         if (!requestDetailsByRequestId.has(requestId)) {
             return
@@ -28,6 +47,9 @@ function logPageRequests (page, requests, filter) {
 
         const details = requestDetailsByRequestId.get(requestId)
         requestDetailsByRequestId.delete(requestId)
+        if (!details) {
+            return
+        }
 
         updateDetails(details)
 
@@ -38,7 +60,7 @@ function logPageRequests (page, requests, filter) {
 
     // HTTP requests
 
-    page._client.on('Network.requestWillBeSent', ({
+    client.on('Network.requestWillBeSent', ({
         requestId, request: { url, method }, redirectResponse, type
     }) => {
         const requestDetails = { url, method, type }
@@ -55,13 +77,13 @@ function logPageRequests (page, requests, filter) {
         requestDetailsByRequestId.set(requestId, requestDetails)
     })
 
-    page._client.on('Network.loadingFinished', ({ requestId }) => {
+    client.on('Network.loadingFinished', ({ requestId }) => {
         saveRequestOutcome(requestId, details => {
             details.status = details.redirectUrl ? 'redirected' : 'allowed'
         })
     })
 
-    page._client.on('Network.loadingFailed', ({
+    client.on('Network.loadingFailed', ({
         requestId, blockedReason, errorText
     }) => {
         saveRequestOutcome(requestId, details => {
@@ -77,7 +99,7 @@ function logPageRequests (page, requests, filter) {
 
     // WebSockets
 
-    page._client.on('Network.webSocketCreated', ({
+    client.on('Network.webSocketCreated', ({
         requestId, url, initiator
     }) => {
         requestDetailsByRequestId.set(requestId, {
@@ -87,7 +109,7 @@ function logPageRequests (page, requests, filter) {
         })
     })
 
-    page._client.on('Network.webSocketWillSendHandshakeRequest', ({
+    client.on('Network.webSocketWillSendHandshakeRequest', ({
         requestId, request: { headers }
     }) => {
         saveRequestOutcome(requestId, details => {
@@ -95,7 +117,7 @@ function logPageRequests (page, requests, filter) {
         })
     })
 
-    page._client.on('Network.webSocketClosed', ({
+    client.on('Network.webSocketClosed', ({
         requestId
     }) => {
         saveRequestOutcome(requestId, details => {

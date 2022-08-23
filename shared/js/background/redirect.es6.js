@@ -323,7 +323,6 @@ function blockHandleResponse (thisTab, requestData) {
         if (['block', 'redirect'].includes(tracker.action)) {
             // @ts-ignore
             Companies.add(tracker.tracker.owner)
-            if (sameDomainDocument) thisTab.addOrUpdateTrackersBlocked(tracker)
 
             console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                         // @ts-ignore

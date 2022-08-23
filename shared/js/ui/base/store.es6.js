@@ -157,16 +157,16 @@ function _createStore (notifier) {
     dispatch({ notifierName: '@@createStore/INIT' })
 
     return {
-        dispatch: dispatch,
-        subscribe: subscribe,
-        replaceNotifier: replaceNotifier
+        dispatch,
+        subscribe,
+        replaceNotifier
     }
 }
 
 // Public api
 module.exports = {
-    register: register, // registers a new notifier to the store (likely a model)
-    publish: publish, // publish a notification from notifier to subscribers
+    register, // registers a new notifier to the store (likely a model)
+    publish, // publish a notification from notifier to subscribers
     subscribe: _publisher, // subscribe to notifiers' notifications
-    remove: remove // remove a notifier from the store
+    remove // remove a notifier from the store
 }
