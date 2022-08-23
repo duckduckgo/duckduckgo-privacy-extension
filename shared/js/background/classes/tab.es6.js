@@ -51,12 +51,6 @@ class Tab {
         this.site = new Site(this.url)
         this.httpsRedirects = new HttpsRedirects()
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
-        /** @type {{begin: number, end: number?, completeMs: number?}} */
-        this.stopwatch = {
-            begin: Date.now(),
-            end: null,
-            completeMs: null
-        }
         this.resetBadgeIcon()
         this.webResourceAccess = []
         this.surrogates = {}
@@ -144,12 +138,6 @@ class Tab {
 
             return newTracker
         }
-    }
-
-    endStopwatch () {
-        this.stopwatch.end = Date.now()
-        this.stopwatch.completeMs = (this.stopwatch.end - this.stopwatch.begin)
-        console.log(`tab.status: complete. site took ${this.stopwatch.completeMs / 1000} seconds to load.`)
     }
 
     /**
