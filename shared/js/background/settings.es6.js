@@ -96,7 +96,7 @@ function buildSettingsFromDefaults () {
 }
 
 function syncSettingTolocalStorage () {
-    browserWrapper.syncToStorage({ settings: settings })
+    browserWrapper.syncToStorage({ settings })
 }
 
 function getSetting (name) {
@@ -143,9 +143,9 @@ function logSettings () {
 }
 
 module.exports = {
-    getSetting: getSetting,
-    updateSetting: updateSetting,
-    removeSetting: removeSetting,
-    logSettings: logSettings,
-    ready: ready
+    getSetting,
+    updateSetting,
+    removeSetting,
+    logSettings,
+    ready
 }

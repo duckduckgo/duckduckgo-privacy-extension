@@ -84,13 +84,13 @@ const popupUnloaded = (userActions) => {
 
 module.exports = {
     sendMessage,
-    reloadTab: reloadTab,
-    closePopup: closePopup,
-    backgroundMessage: backgroundMessage,
-    getBackgroundTabData: getBackgroundTabData,
-    search: search,
-    openOptionsPage: openOptionsPage,
-    openExtensionPage: openExtensionPage,
-    getExtensionURL: getExtensionURL,
-    popupUnloaded: popupUnloaded
+    reloadTab,
+    closePopup,
+    backgroundMessage,
+    getBackgroundTabData,
+    search,
+    openOptionsPage,
+    openExtensionPage,
+    getExtensionURL,
+    popupUnloaded
 }

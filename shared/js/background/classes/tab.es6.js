@@ -65,7 +65,7 @@ class Tab {
 
         /** @type {null | import('./ad-click-attribution-policy').AdClick} */
         this.adClick = null
-    };
+    }
 
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
@@ -129,7 +129,7 @@ class Tab {
 
         // reset badge to dax whenever we go to a new site
         this.resetBadgeIcon()
-    };
+    }
 
     // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
@@ -146,7 +146,7 @@ class Tab {
 
             return newTracker
         }
-    };
+    }
 
     addOrUpdateTrackersBlocked (t) {
         const tracker = this.trackersBlocked[t.tracker.owner.name]
@@ -157,13 +157,13 @@ class Tab {
             this.trackersBlocked[newTracker.parentCompany.name] = newTracker
             return newTracker
         }
-    };
+    }
 
     endStopwatch () {
         this.stopwatch.end = Date.now()
         this.stopwatch.completeMs = (this.stopwatch.end - this.stopwatch.begin)
         console.log(`tab.status: complete. site took ${this.stopwatch.completeMs / 1000} seconds to load.`)
-    };
+    }
 
     /**
      * Adds an entry to the tab webResourceAccess list.
@@ -175,7 +175,7 @@ class Tab {
         const key = Math.floor(Math.random() * 10000000000).toString(16)
         this.webResourceAccess.push({ key, resourceName, time: Date.now(), wasAccessed: false })
         return key
-    };
+    }
 
     /**
      * Access to web accessible resources needs to have the correct key passed in the URL

@@ -53,5 +53,5 @@ module.exports = function limitReferrerData (e) {
         name: 'referer',
         value: modifiedReferrer
     })
-    return { requestHeaders: requestHeaders }
+    return { requestHeaders }
 }

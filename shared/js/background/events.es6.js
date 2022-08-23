@@ -107,7 +107,7 @@ async function onboardingMessaging ({ transitionQualifiers, tabId }) {
 
     if (browserName === 'chrome') {
         browserWrapper.executeScript({
-            target: { tabId: tabId },
+            target: { tabId },
             func: onboarding.onDocumentStart,
             args: [{
                 duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
@@ -117,7 +117,7 @@ async function onboardingMessaging ({ transitionQualifiers, tabId }) {
     }
 
     browserWrapper.executeScript({
-        target: { tabId: tabId },
+        target: { tabId },
         func: onboarding.onDocumentEnd,
         args: [{
             isAddressBarQuery,

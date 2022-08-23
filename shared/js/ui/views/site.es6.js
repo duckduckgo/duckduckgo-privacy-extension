@@ -180,7 +180,7 @@ Site.prototype = window.$.extend({},
                 template: breakageFormTemplate,
                 model: this.model,
                 appendTo: this.$body,
-                clickSource: clickSource
+                clickSource
             })
         },
 

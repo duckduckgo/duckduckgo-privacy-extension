@@ -1,5 +1,5 @@
 const sha1 = require('../shared-utils/sha1')
-// eslint-disable-next-line node/no-deprecated-api
+// eslint-disable-next-line n/no-deprecated-api
 const punycode = require('punycode')
 const constants = require('../../data/constants')
 const HASH_PREFIX_SIZE = 4
@@ -21,7 +21,7 @@ class HTTPSService {
 
         this._cache.set(query, {
             expires: expiryDate,
-            data: data
+            data
         })
     }
 

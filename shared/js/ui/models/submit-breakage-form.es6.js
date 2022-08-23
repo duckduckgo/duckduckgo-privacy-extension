@@ -11,7 +11,7 @@ module.exports = function (category) {
     const urlParametersRemoved = this.tab.urlParametersRemoved ? 'true' : 'false'
     const ampUrl = this.tab.ampUrl || null
     const brokenSiteParams = [
-        { category: category },
+        { category },
         { siteUrl: encodeURIComponent(siteUrl) },
         { upgradedHttps: upgradedHttps.toString() },
         { tds: this.tds },
@@ -31,7 +31,7 @@ module.exports = function (category) {
             }
         })
     }
-    brokenSiteParams.push({ blockedTrackers: blockedTrackers }, { surrogates: surrogates })
+    brokenSiteParams.push({ blockedTrackers }, { surrogates })
     this.submitBrokenSiteReport(brokenSiteParams)
 
     // remember that user opted into sharing site breakage data
