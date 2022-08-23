@@ -468,6 +468,7 @@ browserWrapper.createAlarm('rotateUserAgent', { periodInMinutes: 24 * 60 })
 browserWrapper.createAlarm('rotateSessionKey', { periodInMinutes: 24 * 60 })
 
 browser.alarms.onAlarm.addListener(async alarmEvent => {
+    // Warning: Awaiting in this function doesn't actually wait for the promise to resolve before unblocking the main thread.
     if (alarmEvent.name === 'updateHTTPSLists') {
         await settings.ready()
         try {
@@ -490,7 +491,7 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
     } else if (alarmEvent.name === 'rotateSessionKey') {
-        utils.resetSessionKey()
+        await utils.resetSessionKey()
     } else if (alarmEvent.name === REFETCH_ALIAS_ALARM) {
         fetchAlias()
     }

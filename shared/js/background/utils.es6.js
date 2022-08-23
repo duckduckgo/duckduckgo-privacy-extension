@@ -9,7 +9,7 @@ import sha1 from '../shared-utils/sha1'
 const browserInfo = parseUserAgentString()
 
 /**
- * Produce a random float, same output as Math.random()
+ * Produce a random float, matches the output of Math.random() but much more cryptographically psudo-random.
  * @returns {number}
  */
 function getRandomFloat () {
