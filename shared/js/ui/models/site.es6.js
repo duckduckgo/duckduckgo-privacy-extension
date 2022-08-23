@@ -25,7 +25,7 @@ function Site (attrs) {
     attrs.siteRating = {}
     attrs.httpsState = 'none'
     attrs.httpsStatusText = ''
-    attrs.majorTrackerNetworksCount = 0
+    attrs.hasMajorTrackerNetworks = false
     attrs.trackerNetworks = []
     attrs.tosdr = {}
     attrs.isaMajorTrackingNetwork = false
@@ -159,50 +159,26 @@ Site.prototype = window.$.extend({},
                     this.set('aggregationStats', aggregationStats)
                 }
 
-                const newTrackersBlockedCount = this.getUniqueTrackersBlockedCount()
-                if (newTrackersBlockedCount !== this.trackersBlockedCount) {
-                    this.set('trackersBlockedCount', newTrackersBlockedCount)
-                }
-
                 const newTrackerNetworks = this.getTrackerNetworksOnPage()
                 if (this.trackerNetworks.length === 0 ||
                         (newTrackerNetworks.length !== this.trackerNetworks.length)) {
                     this.set('trackerNetworks', newTrackerNetworks)
                 }
 
-                const newMajorTrackerNetworksCount = this.getMajorTrackerNetworksCount()
-                if (newMajorTrackerNetworksCount !== this.majorTrackerNetworksCount) {
-                    this.set('majorTrackerNetworksCount', newMajorTrackerNetworksCount)
+                if (this.getHasMajorTrackerNetworks() && !this.hasMajorTrackerNetworks) {
+                    this.set('hasMajorTrackerNetworks', true)
                 }
             }
         },
 
-        getUniqueTrackersBlockedCount: function () {
-            const count = Object.keys(this.tab.trackersBlocked).reduce((total, name) => {
-                const companyBlocked = this.tab.trackersBlocked[name]
-
-                // Don't throw a TypeError if urls are not there
-                const trackersBlocked = companyBlocked.urls ? Object.keys(companyBlocked.urls) : null
-
-                // Counting unique URLs instead of using the count
-                // because the count refers to all requests rather than unique number of trackers
-                const trackersBlockedCount = trackersBlocked ? trackersBlocked.length : 0
-                return trackersBlockedCount + total
-            }, 0)
-
-            return count
-        },
-
-        getMajorTrackerNetworksCount: function () {
-            // Show only blocked major trackers count, unless site is allowlisted
-            const trackers = this.protectionsEnabled ? this.tab.trackersBlocked : this.tab.trackers
-            const count = Object.values(trackers).reduce((total, t) => {
-                const isMajor = t.prevalence > MAJOR_TRACKER_THRESHOLD_PCT
-                total += isMajor ? 1 : 0
-                return total
-            }, 0)
-
-            return count
+        getHasMajorTrackerNetworks: function () {
+            const trackers = this.tab.trackers
+            for (const tracker in trackers) {
+                if (trackers[tracker].prevalence >= MAJOR_TRACKER_THRESHOLD_PCT) {
+                    return true
+                }
+            }
+            return false
         },
 
         getTrackerNetworksOnPage: function () {

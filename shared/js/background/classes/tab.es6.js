@@ -4,8 +4,7 @@
  *  url: url of the tab
  *  site: ref to a Site object
  *  trackers: {object} all trackers requested on page/tab (listed by company)
- *  trackersBlocked: {object} tracker instances we blocked on page/tab (listed by company)
- *      both `trackers` and `trackersBlocked` objects are in this format:
+ *      is in this format:
  *      {
  *         '<companyName>': {
  *              parentCompany: ref to a Company object
@@ -39,7 +38,6 @@ class Tab {
         this.id = tabData.id || tabData.tabId
         /** @type {Record<string, Tracker>} */
         this.trackers = {}
-        this.trackersBlocked = {}
         this.url = tabData.url
         this.upgradedHttps = false
         this.hasHttpsError = false
@@ -137,24 +135,13 @@ class Tab {
 
         if (tracker) {
             tracker.addTrackerUrl(t)
-        } else {
+        } else if (t.tracker) {
             const newTracker = new Tracker(t)
             this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
             if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
 
-            return newTracker
-        }
-    }
-
-    addOrUpdateTrackersBlocked (t) {
-        const tracker = this.trackersBlocked[t.tracker.owner.name]
-        if (tracker) {
-            tracker.addTrackerUrl(t)
-        } else {
-            const newTracker = new Tracker(t)
-            this.trackersBlocked[newTracker.parentCompany.name] = newTracker
             return newTracker
         }
     }

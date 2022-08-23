@@ -1,13 +1,29 @@
+
+import { getTrackerAggregationStats } from './mixins/calculate-aggregation-stats'
+
 // @ts-nocheck
 module.exports = function (category) {
     if (!this.tab) return
 
-    const blockedTrackers = []
-    const surrogates = []
+    /**
+     * Returns a list of tracker URLs after looping through all the entities.
+     * @param {import('./mixins/calculate-aggregation-stats').AggregateCompanyData[]} list
+     * @returns {string[]}
+     */
+    function collectAllUrls (list) {
+        const urls = []
+        list.forEach(item => {
+            item.urlsMap.forEach((_, url) => urls.push(url))
+        })
+        return urls
+    }
+
     const upgradedHttps = this.tab.upgradedHttps
     // remove params and fragments from url to avoid including sensitive data
     const siteUrl = this.tab.url.split('?')[0].split('#')[0]
-    const trackerObjects = this.tab.trackersBlocked
+    const aggregationStats = getTrackerAggregationStats(this.tab.trackers)
+    const blockedTrackers = collectAllUrls(aggregationStats.blockAction.list)
+    const surrogates = collectAllUrls(aggregationStats.redirectAction.list)
     const urlParametersRemoved = this.tab.urlParametersRemoved ? 'true' : 'false'
     const ampUrl = this.tab.ampUrl || null
     const brokenSiteParams = [
@@ -16,22 +32,10 @@ module.exports = function (category) {
         { upgradedHttps: upgradedHttps.toString() },
         { tds: this.tds },
         { urlParametersRemoved },
-        { ampUrl }
+        { ampUrl },
+        { blockedTrackers },
+        { surrogates }
     ]
-
-    for (const tracker in trackerObjects) {
-        const trackerDomains = trackerObjects[tracker].urls
-        Object.keys(trackerDomains).forEach((domain) => {
-            if (trackerDomains[domain].isBlocked) {
-                if (trackerDomains[domain].reason === 'matched rule - surrogate') {
-                    surrogates.push(domain)
-                } else {
-                    blockedTrackers.push(domain)
-                }
-            }
-        })
-    }
-    brokenSiteParams.push({ blockedTrackers }, { surrogates })
     this.submitBrokenSiteReport(brokenSiteParams)
 
     // remember that user opted into sharing site breakage data
