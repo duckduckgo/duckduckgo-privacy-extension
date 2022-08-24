@@ -39,6 +39,7 @@ export function renderTrackerDetails (companyListMap, site) {
         const companyCssClass = c.normalizedName
             .replace(/ /g, '_') // replace whitespace with underscore
             .replace(/,.*/, '') // cut text after comma (e.g. for facebook, Inc -> facebook)
+            .replace(/[^a-z0-9_]/, '') // remove all non-alphanumeric and non-underscore characters
         const urlOutput = [...c.urlsMap.entries()].map(([url, tracker]) => {
             const category = categoryText(tracker)
             return bel`<li class="url-list-item">
