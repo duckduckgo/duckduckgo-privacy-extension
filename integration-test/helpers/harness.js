@@ -17,40 +17,29 @@ const setup = async (ops) => {
     const loadExtension = ops.loadExtension !== false
     const tmpDirPrefix = path.join(os.tmpdir(), DATA_DIR_PREFIX)
     const dataDir = fs.mkdtempSync(tmpDirPrefix)
+    /** @type {import('puppeteer').PuppeteerLaunchOptions} */
     const puppeteerOps = {
-        args: [
-            `--user-data-dir=${dataDir}`
-        ],
         headless: 'chrome'
     }
+    const args = [
+        `--user-data-dir=${dataDir}`
+    ]
 
     if (loadExtension) {
         let extensionPath = 'build/chrome/dev'
         if (process.env.npm_lifecycle_event === 'test-int-mv3') {
             extensionPath = extensionPath.replace('chrome', 'chrome-mv3')
         }
-        puppeteerOps.args.push('--disable-extensions-except=' + extensionPath)
-        puppeteerOps.args.push('--load-extension=' + extensionPath)
+        args.push('--disable-extensions-except=' + extensionPath)
+        args.push('--load-extension=' + extensionPath)
     }
 
     // github actions
     if (process.env.CI) {
-        puppeteerOps.args.push('--no-sandbox')
+        args.push('--no-sandbox')
     }
 
-    if (process.env.TRAVIS) {
-        // travis requires this to work
-        puppeteerOps.args.push('--no-sandbox')
-
-        // use the latest stable or beta Chrome versions on Travis
-        // rather than the bundled one
-        if (process.env.CHROME_CHANNEL === 'beta') {
-            puppeteerOps.path = 'google-chrome-beta'
-        } else if (process.env.CHROME_CHANNEL === 'stable') {
-            puppeteerOps.path = 'google-chrome-stable'
-        }
-    }
-
+    puppeteerOps.args = args
     const browser = await puppeteer.launch(puppeteerOps)
 
     let bgPage
@@ -59,19 +48,22 @@ const setup = async (ops) => {
     if (loadExtension) {
         // Grab a handle on the background page for the extension.
         try {
-            const backgroundPageTarget =
-                  await browser.waitForTarget(
-                      target => (
-                          target.type() === 'background_page' ||
-                          target.type() === 'service_worker'
-                      ),
-                      { timeout: 2000 }
-                  )
+            const backgroundPageTarget = await browser.waitForTarget(
+                target => (
+                    target.type() === 'background_page' ||
+                    target.type() === 'service_worker'
+                ),
+                { timeout: 2000 }
+            )
             bgPage = backgroundPageTarget.type() === 'background_page'
                 ? await backgroundPageTarget.page()
                 : await backgroundPageTarget.worker()
         } catch (e) {
             throw new Error(`Couldn't find background page. ${e}`)
+        }
+
+        if (!bgPage) {
+            throw new Error('Couldn\'t find background page.')
         }
 
         bgPage.on('request', (req) => { requests.push(req.url()) })
@@ -82,7 +74,7 @@ const setup = async (ops) => {
             return new Promise((resolve) => {
                 browser.on('disconnected', async () => {
                     await teardownInternal()
-                    resolve()
+                    resolve(undefined)
                 })
             })
         } else {

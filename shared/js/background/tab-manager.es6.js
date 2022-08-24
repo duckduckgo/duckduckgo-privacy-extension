@@ -11,7 +11,7 @@ class TabManager {
     constructor () {
         /** @type {Record<number, Tab>} */
         this.tabContainer = {}
-    };
+    }
 
     /* This overwrites the current tab data for a given
      * id and is only called in three cases:
@@ -34,11 +34,11 @@ class TabManager {
 
         this.tabContainer[newTab.id] = newTab
         return newTab
-    };
+    }
 
     delete (id) {
         delete this.tabContainer[id]
-    };
+    }
 
     /**
      * Called using either a chrome tab object or by id
@@ -47,7 +47,7 @@ class TabManager {
      */
     get (tabData) {
         return this.tabContainer[tabData.tabId]
-    };
+    }
 
     /**
      * This will allowlist any open tabs with the same domain
@@ -128,8 +128,6 @@ class TabManager {
                         Companies.incrementTotalPages()
                         tab.site.didIncrementCompaniesData = true
                     }
-
-                    if (tab.statusCode === 200) tab.endStopwatch()
                 }
             }
             return tab

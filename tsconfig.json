@@ -20,7 +20,9 @@
       "shared/js/devtools/**/*.js",
       "shared/js/shared-utils/**/*.js",
       "shared/js/ui/models/mixins/calculate-aggregation-stats.js",
-      "shared/js/ui/templates/shared/utils.js"
+      "shared/js/ui/templates/shared/utils.js",
+      "integration-test/helpers/requests.js",
+      "integration-test/background/click-to-load-facebook.js"
   ],
   "exclude": [
       "shared/js/background/background.es6.js",

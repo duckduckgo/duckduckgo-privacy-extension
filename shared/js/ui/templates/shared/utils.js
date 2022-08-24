@@ -33,14 +33,14 @@ export function renderTrackerDetails (companyListMap, site) {
         return bel`<li class="is-empty"></li>`
     }
     return companyListMap.map((c, i) => {
-        if (!c.urlsList.length) {
+        if (!c.urlsMap.size) {
             return ''
         }
         const companyCssClass = c.normalizedName
             .replace(/ /g, '_') // replace whitespace with underscore
             .replace(/,.*/, '') // cut text after comma (e.g. for facebook, Inc -> facebook)
-        const urlOutput = c.urlsList.map((url) => {
-            const category = categoryText(c.urls[url])
+        const urlOutput = [...c.urlsMap.entries()].map(([url, tracker]) => {
+            const category = categoryText(tracker)
             return bel`<li class="url-list-item">
                 <div class="url" title="${url}">${url}</div>
                 <div class="category">${category}</div>

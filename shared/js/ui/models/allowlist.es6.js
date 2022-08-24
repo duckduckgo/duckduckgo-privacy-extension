@@ -20,13 +20,13 @@ Allowlist.prototype = window.$.extend({},
 
             this.sendMessage('setList', {
                 list: 'allowlisted',
-                domain: domain,
+                domain,
                 value: false
             })
             // Remove domain allowlist opt-in status, if present
             this.sendMessage('allowlistOptIn', {
                 list: 'allowlistOptIn',
-                domain: domain,
+                domain,
                 value: false
             })
 

@@ -23,7 +23,12 @@ function summariseFacebookRequests (requests) {
     let blockCount = 0
 
     for (const request of requests) {
-        if (facebookDomains.has(getDomain(request.url.href))) {
+        const domain = getDomain(request.url.href)
+        if (!domain) {
+            // Ignore requests with no domain EG: data: URLs.
+            continue
+        }
+        if (facebookDomains.has(domain)) {
             if (request.url.pathname === '/en_US/sdk.js') {
                 facebookSDKRedirect.alwaysRedirected = (
                     facebookSDKRedirect.alwaysRedirected &&
@@ -55,6 +60,9 @@ describe('Test Facebook Click To Load', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
         await backgroundWait.forAllConfiguration(bgPage)
+        if (!bgPage) {
+            throw new Error('Background page not found')
+        }
 
         // Overwrite the parts of the configuration needed for our tests.
         await loadTestConfig(bgPage, 'click-to-load-facebook.json')
@@ -73,7 +81,7 @@ describe('Test Facebook Click To Load', () => {
         // Open the test page and start logging network requests.
         const page = await browser.newPage()
         const pageRequests = []
-        const clearRequests = logPageRequests(page, pageRequests)
+        const clearRequests = await logPageRequests(page, pageRequests)
 
         // Initially there should be a bunch of requests. The SDK should
         // be redirected to our surrogate but otherwise Facebook requests should

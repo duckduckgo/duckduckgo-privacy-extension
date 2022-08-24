@@ -38,9 +38,6 @@ function getReasons (site) {
     })
 
     // major tracking networks,
-    // only show a message if there are any
-    const totalTrackerNetworkCount = site.majorTrackerNetworksCount
-
     // Show banner if the site itself is a tracker network
     if (site.isaMajorTrackingNetwork) {
         reasons.push({
@@ -48,10 +45,10 @@ function getReasons (site) {
             msg: 'Site Is a Major Tracker Network'
         })
     } else {
-        const majorTrackersBadOrGood = (totalTrackerNetworkCount !== 0) ? 'bad' : 'good'
+        const majorTrackersBadOrGood = site.hasMajorTrackerNetworks ? 'bad' : 'good'
         reasons.push({
             modifier: majorTrackersBadOrGood,
-            msg: `${majorTrackerNetworksText(totalTrackerNetworkCount)}`
+            msg: `${majorTrackerNetworksText(site.hasMajorTrackerNetworks)}`
         })
     }
 
@@ -60,7 +57,7 @@ function getReasons (site) {
     const privacyMessage = (site.tosdr && site.tosdr.message) || unknownPractices
     const modifier = (privacyMessage === unknownPractices) ? 'poor' : privacyMessage.toLowerCase()
     reasons.push({
-        modifier: modifier,
+        modifier,
         msg: `${privacyMessage} Privacy Practices`
     })
 

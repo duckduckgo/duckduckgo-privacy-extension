@@ -4,6 +4,10 @@ const path = require('path')
 const puppeteer = require('puppeteer')
 
 /**
+ * @typedef {import('puppeteer').Page} Page - Puppeteer Page
+ */
+
+/**
  * Returns the schema of a given JavaScript Object in the given Page. Schema is
  * similar to the output of Object.getOwnPropertyDescriptors.
  * Notes:
@@ -19,7 +23,7 @@ const puppeteer = require('puppeteer')
  * @param {string} targetObjectName
  *   The name of the Object to inspect. A string which when eval'd in the page
  *   returns the target Object. For example, "globalThis.someApi".
- * @returns {Object}
+ * @returns {Promise<Object>}
  *   The target Object's schema.
  */
 async function getObjectSchema (page, targetObjectName) {
@@ -89,7 +93,7 @@ async function getObjectSchema (page, targetObjectName) {
  * @param {string[]} targetObjectNames
  *   The names of Objects to inspect. Strings which when eval'd in the page
  *   return the target Objects. For example, "globalThis.someApi".
- * @returns {Object}
+ * @returns {Promise<Object>}
  *   The target Object's schema.
  */
 async function setupAPISchemaTest (page, schemaFilename, targetObjectNames) {

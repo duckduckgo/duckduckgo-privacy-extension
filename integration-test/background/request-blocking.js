@@ -26,7 +26,7 @@ describe('Test request blocking', () => {
 
         // Start logging network requests.
         const pageRequests = []
-        logPageRequests(
+        await logPageRequests(
             page,
             pageRequests,
             ({ url }) => url.hostname === 'bad.third-party.site'
