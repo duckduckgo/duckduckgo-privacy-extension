@@ -1,6 +1,5 @@
 import parseUserAgentString from '../../shared-utils/parse-user-agent-string.es6'
 import browser from 'webextension-polyfill'
-import Tab from '../../background/classes/tab.es6'
 const browserInfo = parseUserAgentString()
 
 const sendMessage = async (messageType, options) => {
@@ -38,10 +37,7 @@ async function getBackgroundTabData () {
         }
     }
     if (tabId) {
-        const backgroundTabState = await sendMessage('getTab', tabId)
-        console.log('getBackgroundTabData', { backgroundTabState })
-        const backgroundTabObj = await Tab.restoreFromTabStateData(backgroundTabState)
-        console.log('restoredTab', { backgroundTabObj })
+        const backgroundTabObj = await sendMessage('getTab', tabId)
         if (backgroundTabObj) {
             return backgroundTabObj
         }

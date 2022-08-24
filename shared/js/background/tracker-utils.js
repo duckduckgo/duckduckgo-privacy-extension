@@ -117,12 +117,12 @@ export function allowSocialLogin (url) {
  *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
  *   - In all other cases (the general case), the referrer will be modified to only the referrer origin (includes subdomain).
  */
-export function truncateReferrer (referrer, target, config) {
+export function truncateReferrer (referrer, target) {
     if (!referrer || referrer === '') {
         return undefined
     }
 
-    if (utils.isSafeListed(referrer, config) || utils.isSafeListed(target, config)) {
+    if (utils.isSafeListed(referrer) || utils.isSafeListed(target)) {
         return undefined
     }
 

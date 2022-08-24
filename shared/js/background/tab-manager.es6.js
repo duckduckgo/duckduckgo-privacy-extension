@@ -1,6 +1,7 @@
 const Companies = require('./companies.es6')
 const settings = require('./settings.es6')
 const Tab = require('./classes/tab.es6')
+const { TabState } = require('./classes/tab-state')
 const browserWrapper = require('./wrapper.es6')
 
 /**
@@ -15,9 +16,8 @@ class TabManager {
 
     /* This overwrites the current tab data for a given
      * id and is only called in three cases:
-     * 1. When we rebuild saved tabs when the browser is restarted
-     * 2. When a new tab is opened. See onUpdated listener below
-     * 3. When we get a new main_frame request
+     * 1. When a new tab is opened. See onUpdated listener below
+     * 2. When we get a new main_frame request
      */
     create (tabData) {
         const normalizedData = browserWrapper.normalizeTabData(tabData)
@@ -36,8 +36,16 @@ class TabManager {
         return newTab
     }
 
+    async restore (tabData) {
+        const restoredState = await Tab.restore(tabData.id)
+        if (restoredState) {
+            this.tabContainer[tabData.id] = restoredState
+        }
+    }
+
     delete (id) {
         delete this.tabContainer[id]
+        TabState.delete(id)
     }
 
     /**

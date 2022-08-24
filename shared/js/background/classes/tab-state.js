@@ -17,10 +17,26 @@ export class TabState {
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
+        this.adClick = null
+        /* @type Record<string, Tracker> */
+        this.trackers = []
 
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
         this.allowlistOptIn = false
         this.denylisted = false
+    }
+
+    /**
+     * @template {InstanceType<typeof TabState>} T
+     * @template {keyof T} K
+     * @param {K} key
+     * @param {T[K]} value
+     */
+    setValue (key, value) {
+        // @ts-expect-error - we know this is a valid key, ts doesn't seem to understand T matches this
+        this[key] = value
+        // Fire and forget storage backup
+        this.backup()
     }
 
     static getStorageKey (tabId) {
@@ -30,9 +46,14 @@ export class TabState {
     /**
      * TODO ensure we only write in the correct order (wait other previous writes)
      * TODO move setters into tabstate and call backup interally to reduce chance of impl drift
+     * TODO debounce
      */
     async backup () {
-        await setToSessionStorage(TabState.getStorageKey(this.tabId), JSON.stringify(this))
+        try {
+            await setToSessionStorage(TabState.getStorageKey(this.tabId), JSON.stringify(this))
+        } catch (e) {
+            console.error('Storage of tab state failed', e)
+        }
     }
 
     /**
@@ -63,7 +84,7 @@ export class TabState {
     /**
      * Used for removing the stored tab state.
      */
-    static async clear (tabId) {
+    static async delete (tabId) {
         removeFromSessionStorage(TabState.getStorageKey(tabId))
     }
 }

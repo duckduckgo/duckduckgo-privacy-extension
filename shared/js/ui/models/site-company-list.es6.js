@@ -21,7 +21,7 @@ SiteCompanyList.prototype = window.$.extend({},
             return new Promise((resolve, reject) => {
                 browserUIWrapper.getBackgroundTabData().then((bkgTab) => {
                     if (bkgTab) {
-                        /** @type {import('../../background/classes/tab')} */
+                        /** @type {import('../../background/classes/tab.es6')} */
                         this.tab = bkgTab
                         this.domain = this.tab && this.tab.site ? this.tab.site.domain : ''
                         this.aggregationStats = getTrackerAggregationStats(this.tab.trackers)

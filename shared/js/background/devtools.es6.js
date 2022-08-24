@@ -66,7 +66,7 @@ function connected (port) {
             }
         } else if (m.action === 'toggleProtection') {
             const tab = tabManager.get({ tabId: m.tabId })
-            if (tab.site?.isBroken) {
+            if (tab.site?.isBroken && tab.url) {
                 removeBroken(tab.site.domain)
                 removeBroken(new URL(tab.url).hostname)
             } else {

@@ -12,22 +12,19 @@ const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper.es6')
-const { config } = require('../../shared-utils/config')
 
 /**
  * @typedef {'allowlisted' | 'allowlistOptIn' | 'denylisted'} allowlistName
  */
 
 class Site {
-    constructor (url, tabState, useGlobalState = true) {
+    constructor (url, tabState) {
         this.url = url || ''
         this._tabState = tabState
         this.trackerUrls = []
         this.grade = new Grade()
-        console.log('Constructing new Site,', { tabState, useGlobalState, url })
-        if (useGlobalState) {
-            this.setListStatusFromGlobal()
-        }
+        console.log('Constructing new Site,', { tabState, url })
+        this.setListStatusFromGlobal()
 
         this.didIncrementCompaniesData = false
 
@@ -59,8 +56,7 @@ class Site {
      * @param {boolean} value
      */
     set allowlisted (value) {
-        this._tabState._allowlisted = value
-        this._tabState.backup()
+        this._tabState.setValue('allowlisted', value)
     }
 
     get allowlistOptIn () {
@@ -71,8 +67,7 @@ class Site {
      * @param {boolean} value
      */
     set allowlistOptIn (value) {
-        this._tabState.allowlistOptIn = value
-        this._tabState.backup()
+        this._tabState.setValue('allowlistOptIn', value)
     }
 
     get denylisted () {
@@ -83,8 +78,7 @@ class Site {
      * @param {boolean} value
      */
     set denylisted (value) {
-        this._tabState.denylisted = value
-        this._tabState.backup()
+        this._tabState.setValue('denylisted', value)
     }
 
     /**
@@ -93,11 +87,11 @@ class Site {
      * The other allowlisting code is different and probably should be changed to match.
      */
     get isBroken () {
-        return utils.isBroken(this.domainWWW, config) // broken sites reported to github repo
+        return utils.isBroken(this.domainWWW) // broken sites reported to github repo
     }
 
     get enabledFeatures () {
-        return utils.getEnabledFeatures(this.domainWWW, config) // site issues reported to github repo
+        return utils.getEnabledFeatures(this.domainWWW) // site issues reported to github repo
     }
 
     get domain () {

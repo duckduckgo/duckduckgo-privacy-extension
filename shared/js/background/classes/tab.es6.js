@@ -40,31 +40,17 @@ class Tab {
     /**
      * @param {TabData} tabData
      */
-    constructor (tabData, useGlobalState = true) {
-        /** @type {Record<string, Tracker>} */
-        this.trackers = {}
+    constructor (tabData) {
         this._tabState = new TabState(tabData)
 
-        this.site = new Site(this.url, this._tabState, useGlobalState)
+        this.site = new Site(this.url, this._tabState)
         this.httpsRedirects = new HttpsRedirects()
         this.resetBadgeIcon()
         this.webResourceAccess = []
         this.surrogates = {}
 
-        /** @type {null | import('./ad-click-attribution-policy').AdClick} */
-        this.adClick = null
-
         /** @type {null | import('../events/referrer-trimming').Referrer} */
         this.referrer = null
-    }
-
-    get url () {
-        return this._tabState.url
-    }
-
-    set url (url) {
-        this._tabState.url = url
-        this._tabState.backup()
     }
 
     /**
@@ -75,11 +61,12 @@ class Tab {
         if (!state) {
             return null
         }
-        const tab = new Tab(state, false)
+        const tab = new Tab(state)
         tab._tabState = state
         return tab
     }
 
+    /*
     static restoreFromTabStateData (serializedTabState) {
         const tabState = TabState.createFromSerialized(serializedTabState)
         if (!tabState) {
@@ -88,6 +75,37 @@ class Tab {
         const tab = new Tab(tabState, false)
         tab._tabState = tabState
         return tab
+    }
+    */
+
+    get adClick () {
+        return this._tabState.adClick
+    }
+
+    /**
+     * @type {Record<string, Tracker>}
+     **/
+    set trackers (value) {
+        this._tabState.setValue('trackers', value)
+    }
+
+    get trackers () {
+        return this._tabState.trackers
+    }
+
+    /**
+     * @param {null | import('./ad-click-attribution-policy').AdClick} value
+     **/
+    set adClick (value) {
+        this._tabState.setValue('adClick', value)
+    }
+
+    get url () {
+        return this._tabState.url
+    }
+
+    set url (url) {
+        this._tabState.setValue('url', url)
     }
 
     get id () {
@@ -98,8 +116,7 @@ class Tab {
      * @param {number} tabId
      */
     set id (tabId) {
-        this._tabState.tabId = tabId
-        this._tabState.backup()
+        this._tabState.setValue('tabId', tabId)
     }
 
     get upgradedHttps () {
@@ -110,8 +127,7 @@ class Tab {
      * @param {boolean} value
      */
     set upgradedHttps (value) {
-        this._tabState.upgradedHttps = value
-        this._tabState.backup()
+        this._tabState.setValue('upgradedHttps', value)
     }
 
     get hasHttpsError () {
@@ -122,8 +138,7 @@ class Tab {
      * @param {boolean} value
      */
     set hasHttpsError (value) {
-        this._tabState.hasHttpsError = value
-        this._tabState.backup()
+        this._tabState.setValue('hasHttpsError', value)
     }
 
     get mainFrameUpgraded () {
@@ -134,8 +149,7 @@ class Tab {
      * @param {boolean} value
      */
     set mainFrameUpgraded (value) {
-        this._tabState.mainFrameUpgraded = value
-        this._tabState.backup()
+        this._tabState.setValue('mainFrameUpgraded', value)
     }
 
     get urlParametersRemoved () {
@@ -146,8 +160,7 @@ class Tab {
      * @param {boolean} value
      */
     set urlParametersRemoved (value) {
-        this._urlParametersRemoved = value
-        this._tabState.backup()
+        this._tabState.setValue('urlParametersRemoved', value)
     }
 
     get urlParametersRemovedUrl () {
@@ -158,8 +171,7 @@ class Tab {
      * @param {string | null} value
      */
     set urlParametersRemovedUrl (value) {
-        this._tabState.urlParametersRemovedUrl = value
-        this._tabState.backup()
+        this._tabState.setValue('urlParametersRemovedUrl', value)
     }
 
     get ampUrl () {
@@ -170,8 +182,7 @@ class Tab {
      * @param {string | null} url
      */
     set ampUrl (url) {
-        this._ampUrl = url
-        this._tabState.backup()
+        this._tabState.setValue('ampUrl', url)
     }
 
     get cleanAmpUrl () {
@@ -186,8 +197,7 @@ class Tab {
      * @param {string | null} url
      */
     set cleanAmpUrl (url) {
-        this._cleanAmpUrl = url
-        this._tabState.backup()
+        this._tabState.setValue('cleanAmpUrl', url)
     }
 
     get status () {
@@ -195,8 +205,7 @@ class Tab {
     }
 
     set status (value) {
-        this._tabState.status = value
-        this._tabState.backup()
+        this._tabState.setValue('status', value)
     }
 
     get statusCode () {
@@ -204,8 +213,7 @@ class Tab {
     }
 
     set statusCode (value) {
-        this._tabState.statusCode = value
-        this._tabState.backup()
+        this._tabState.setValue('statusCode', value)
     }
 
     /**
