@@ -36,6 +36,10 @@ export function renderTrackerDetails (companyListMap, site) {
         if (!c.urlsMap.size) {
             return ''
         }
+        const companyCssClass = c.normalizedName
+            .replace(/ /g, '_') // replace whitespace with underscore
+            .replace(/,.*/, '') // cut text after comma (e.g. for facebook, Inc -> facebook)
+            .replace(/[^a-z0-9_]/, '') // remove all non-alphanumeric and non-underscore characters
         const urlOutput = [...c.urlsMap.entries()].map(([url, tracker]) => {
             const category = categoryText(tracker)
             return bel`<li class="url-list-item">
@@ -44,8 +48,8 @@ export function renderTrackerDetails (companyListMap, site) {
             </li>`
         })
         return bel`<li class="padded--top-half">
-        <div class="site-info__tracker__wrapper ${c.normalizedName} float-right">
-            <span class="site-info__tracker__icon ${c.normalizedName}">
+        <div class="site-info__tracker__wrapper ${companyCssClass} float-right">
+            <span class="site-info__tracker__icon ${companyCssClass}">
             </span>
         </div>
         <h1 title="${c.name}" class="site-info__domain block">${c.displayName}</h1>
