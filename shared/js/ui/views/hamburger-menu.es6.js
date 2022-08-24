@@ -8,6 +8,7 @@ function HamburgerMenu (ops) {
     this.template = ops.template
     this.pageView = ops.pageView
     Parent.call(this, ops)
+    this.devModePromise = browserUIWrapper.sendMessage('getDevMode')
 
     this._setup()
 }
@@ -34,9 +35,19 @@ HamburgerMenu.prototype = window.$.extend({},
                 [this.model.store.subscribe, 'change:site', this._handleSiteUpdate],
                 [this.$debuggerpanellink, 'click', this._handleDebuggerClick]
             ])
+            this.devModePromise.then((devMode) => {
+                if (devMode) {
+                    this.showDebugerPanel()
+                }
+            })
+
             if (IS_BETA) {
-                this.$('#debugger-panel').removeClass('is-hidden')
+                this.showDebugerPanel()
             }
+        },
+
+        showDebugerPanel: function () {
+            this.$('#debugger-panel').removeClass('is-hidden')
         },
 
         _handleAction: function (notification) {
