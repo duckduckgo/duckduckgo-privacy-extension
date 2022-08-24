@@ -107,6 +107,11 @@
             runFacebookLogin()
         }
     })
+    window.addEventListener('ddg-ctp-cancel-modal', event => {
+        if (event.detail.entity === 'Facebook') {
+            fbLogin.callback({ })
+        }
+    })
 
     function init () {
         if (window.fbAsyncInit) {

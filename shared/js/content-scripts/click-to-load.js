@@ -898,6 +898,16 @@
         )
     }
 
+    function cancelModal (entity) {
+        window.dispatchEvent(
+            createCustomEvent('ddg-ctp-cancel-modal', {
+                detail: {
+                    entity
+                }
+            })
+        )
+    }
+
     /*********************************************************
      *  Widget building blocks
      *********************************************************/
@@ -1072,6 +1082,7 @@
         rejectButton.style.cssText += styles.modalButton + 'float: right;'
         rejectButton.addEventListener('click', function cancelLogin () {
             document.body.removeChild(modalContainer)
+            cancelModal(entity)
         })
 
         buttonRow.appendChild(allowButton)
