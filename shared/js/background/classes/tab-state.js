@@ -18,7 +18,7 @@ export class TabState {
         this.status = tabData.status
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.adClick = null
-        /* @type Record<string, Tracker> */
+        /** @type Record<string, import('./tracker').Tracker> */
         this.trackers = {}
 
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
@@ -69,14 +69,6 @@ export class TabState {
         const state = new TabState(parsedData)
         for (const key of Object.keys(parsedData)) {
             state[key] = parsedData[key]
-        }
-        return state
-    }
-
-    static createFromSerialized (serialized) {
-        const state = new TabState(serialized)
-        for (const key of Object.keys(serialized)) {
-            state[key] = serialized[key]
         }
         return state
     }

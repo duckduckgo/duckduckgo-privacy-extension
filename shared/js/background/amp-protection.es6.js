@@ -1,5 +1,4 @@
 const Site = require('./classes/site.es6')
-const { TabState } = require('./classes/tab-state')
 const tdsStorage = require('./storage/tds.es6')
 const utils = require('./utils.es6')
 

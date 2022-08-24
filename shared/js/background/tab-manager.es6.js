@@ -37,9 +37,9 @@ class TabManager {
     }
 
     async restore (tabData) {
-        const restoredState = await Tab.restore(tabData.id)
+        const restoredState = await Tab.restore(tabData.tabId)
         if (restoredState) {
-            this.tabContainer[tabData.id] = restoredState
+            this.tabContainer[tabData.tabId] = restoredState
         }
     }
 
@@ -62,7 +62,9 @@ class TabManager {
     }
 
     async getOrRestoreTab (tabData) {
+        console.log('getOrRestoreTab', tabData)
         if (!tabManager.has(tabData.tabId)) {
+            console.log('restore', tabData)
             await tabManager.restore(tabData)
         }
         return tabManager.get(tabData)

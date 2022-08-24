@@ -4,7 +4,6 @@ const tdsStorageStub = require('../../helpers/tds.es6')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
 const Site = require('../../../shared/js/background/classes/site.es6')
-const { TabState } = require('../../../shared/js/background/classes/tab-state')
 const utils = require('../../../shared/js/background/utils.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 

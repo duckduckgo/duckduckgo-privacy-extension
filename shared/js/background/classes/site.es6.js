@@ -28,7 +28,6 @@ class Site {
         this._tabState = tabState
         this.trackerUrls = []
         this.grade = new Grade()
-        console.log('Constructing new Site,', { tabState, url })
         this.setListStatusFromGlobal()
 
         this.didIncrementCompaniesData = false

@@ -8,7 +8,6 @@ export class LegacyTabTransfer {
         for (const [key, value] of entries) {
             this[key] = value
         }
-        console.log('LegacyTabTransfer', this, tab)
     }
 }
 
@@ -38,27 +37,9 @@ function cloneObject (object) {
             }
             const value = object[key]
             if (typeof value !== 'function') {
-                console.log(key, object[key], structuredClone(object[key]));
                 out[key] = structuredClone(object[key])
             }
         }
     }
-    if (object.trackers) {
-        out.trackers = structuredClone(object.trackers)
-    }
-    /*
-    if (Object.getPrototypeOf(object) !== Object.getPrototypeOf({})) {
-        // Clone getter values
-        for (const key of Object.getOwnPropertyNames(Object.getPrototypeOf(object))) {
-            if (key === 'constructor') {
-                continue
-            }
-            const value = object[key]
-            if (typeof value !== 'function') {
-                out[key] = cloneObject(value)
-            }
-        }
-    }
-    */
     return out
 }
