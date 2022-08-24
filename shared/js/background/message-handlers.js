@@ -68,8 +68,9 @@ export function submitBrokenSiteReport (brokenSiteArgs) {
     return brokenSiteReport.fire.apply(null, brokenSiteArgs)
 }
 
-export function getTab (tabId) {
-    return new LegacyTabTransfer(tabManager.get({ tabId }))
+export async function getTab (tabId) {
+    const tab = await tabManager.getOrRestoreTab({ tabId })
+    return new LegacyTabTransfer(tab)
 }
 
 export function getSiteGrade (tabId) {

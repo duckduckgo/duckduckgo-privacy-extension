@@ -50,7 +50,7 @@ function extractAMPURL (site, url) {
     for (const regexPattern of ampSettings.linkFormats) {
         const match = url.match(regexPattern)
         if (match && match.length > 1) {
-            const newSite = new Site(match[1].startsWith('http') ? match[1] : `https://${match[1]}`, new TabState({ tabId: 1, url, status: 'complete' }))
+            const newSite = new Site(match[1].startsWith('http') ? match[1] : `https://${match[1]}`)
 
             if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
                 return null

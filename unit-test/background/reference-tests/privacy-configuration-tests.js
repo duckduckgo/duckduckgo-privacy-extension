@@ -53,7 +53,7 @@ for (const setName of Object.keys(testSets)) {
                 })
             } else {
                 it(`${test.name}`, () => {
-                    const site = new Site(test.siteURL, new TabState({ tabId: 1, url: test.siteURL, status: 'complete' }))
+                    const site = new Site(test.siteURL)
                     const isEnabled = site.isFeatureEnabled(test.featureName)
 
                     expect(isEnabled).toEqual(test.expectFeatureEnabled)

@@ -19,7 +19,7 @@ export class TabState {
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.adClick = null
         /* @type Record<string, Tracker> */
-        this.trackers = []
+        this.trackers = {}
 
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
         this.allowlistOptIn = false

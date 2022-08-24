@@ -48,6 +48,10 @@ class TabManager {
         TabState.delete(id)
     }
 
+    has (id) {
+        return id in this.tabContainer
+    }
+
     /**
      * Called using either a chrome tab object or by id
      * get({tabId: ###});
@@ -55,6 +59,13 @@ class TabManager {
      */
     get (tabData) {
         return this.tabContainer[tabData.tabId]
+    }
+
+    async getOrRestoreTab (tabData) {
+        if (!tabManager.has(tabData.tabId)) {
+            await tabManager.restore(tabData)
+        }
+        return tabManager.get(tabData)
     }
 
     /**

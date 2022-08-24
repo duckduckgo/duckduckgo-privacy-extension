@@ -12,6 +12,7 @@ const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper.es6')
+const { TabState } = require('./tab-state')
 
 /**
  * @typedef {'allowlisted' | 'allowlistOptIn' | 'denylisted'} allowlistName
@@ -19,6 +20,10 @@ const browserWrapper = require('../wrapper.es6')
 
 class Site {
     constructor (url, tabState) {
+        // If no tabState is passed in then we create a new one to simulate a new tab
+        if (!tabState) {
+            tabState = new TabState({ tabId: 1, url, status: 'complete' })
+        }
         this.url = url || ''
         this._tabState = tabState
         this.trackerUrls = []
