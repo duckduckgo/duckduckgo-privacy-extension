@@ -166,7 +166,7 @@
         }
 
         &.sliding-subview--has-fixed-header {
-            padding: 60px 0 0 0;
+            padding: 58px 0 0 0;
         }
 
         .sliding-subview__header {
@@ -225,8 +225,8 @@
 }
 
 @mixin arrow-left($size, $color) {
-    width: 0; 
-    height: 0; 
+    width: 0;
+    height: 0;
     border-top: $size solid transparent;
     border-bottom: $size solid transparent;
     border-right: $size solid $color;
