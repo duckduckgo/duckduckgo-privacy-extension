@@ -75,6 +75,39 @@ function stringifyBlocklist (tds) {
     )
 }
 
+/**
+ * @typedef {object} rulesetEqualOptions
+ * @property {object[]} [expectedRuleset]
+ *   The expected declarativeNetRequest ruleset.
+ * @property {object[]} [expectedLookup]
+ *   The expected ruleId -> matchDetails lookup.
+ * @property {function} [rulesetTransform]
+ *   Function to apply to the generated ruleset before comparing it to the
+ *   expected ruleset.
+ * @property {function} [ruleTransform]
+ *   Function to apply to each of the generated rules, before the ruleset is
+ *   compared to the expected ruleset.
+ * @property {function} [lookupTransform]
+ *   Function to apply to the generated lookup before comparing it to the
+ *   expected lookup.
+ */
+
+/**
+ * Generates a declarativeNetRequest ruleset for the given block list and
+ * compares that to an expected ruleset. Optionally also compares the generated
+ * ruleId -> matchDetails lookup to an expected lookup.
+ * @param {object} tds
+ *   The Tracker Blocking configuration.
+ * @param {function} isRegexSupported
+ *   A function compatible with chrome.declarativeNetRequest.isRegexSupported.
+ *   See https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-isRegexSupported
+ * @param {number|null} startingRuleId
+ *   Rule ID for the generated declarativeNetRequest rules to start from. Rule
+ *   IDs are incremented sequentially from the starting point. If null is provided,
+ *   the startingRuleId argument is not passed through.
+ * @param {rulesetEqualOptions} options
+ * @return {Promise<>}
+ */
 async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
     expectedRuleset, expectedLookup, rulesetTransform, ruleTransform,
     lookupTransform
@@ -94,6 +127,7 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
 
     assert.deepEqual(stringifyBlocklist(tds), tdsBefore, 'TDS mutated!')
     if (expectedRuleset) {
+        /** @type {any} */
         let actualRuleset = result.ruleset
         if (rulesetTransform) {
             actualRuleset = rulesetTransform(actualRuleset)
@@ -143,12 +177,14 @@ describe('generateTrackerBlockingRuleset', () => {
 
     it('should notice missing isRegexSupported argument', async () => {
         await assert.rejects(() =>
+            // @ts-expect-error - Missing isRegexSupported argument.
             generateTrackerBlockingRuleset(
                 { cnames: {}, domains: {}, entities: {}, trackers: {} }
             )
         )
         await assert.rejects(() =>
             generateTrackerBlockingRuleset(
+                // @ts-expect-error - Invalid isRegexSupported argument.
                 { cnames: {}, domains: {}, entities: {}, trackers: {} }, 3
             )
         )
@@ -171,7 +207,8 @@ describe('generateTrackerBlockingRuleset', () => {
             blockList, isRegexSupportedTrue
         )
         for (const rule of ruleset) {
-            assert.ok(rule.priority <= MAXIMUM_SUBDOMAIN_PRIORITY)
+            assert.ok(typeof rule.priority === 'number' &&
+                      rule.priority <= MAXIMUM_SUBDOMAIN_PRIORITY)
         }
 
         addDomain(blockList, 'a.' + domain, entity, 'block')

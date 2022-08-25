@@ -26,14 +26,17 @@ describe('generateExtensionConfigurationRuleset', () => {
 
     it('should notice missing isRegexSupported argument', async () => {
         await assert.rejects(() =>
+            // @ts-expect-error - Missing isRegexSupported argument.
             generateExtensionConfigurationRuleset({
                 features: {}
             })
         )
         await assert.rejects(() =>
-            generateExtensionConfigurationRuleset({
-                features: {}
-            }, 3)
+            generateExtensionConfigurationRuleset(
+                { features: {} },
+                // @ts-expect-error - Invalid isRegexSupported argument.
+                3
+            )
         )
         await assert.doesNotReject(() =>
             generateExtensionConfigurationRuleset({
