@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "es2021",
+    "moduleResolution": "node",
+    "alwaysStrict": true,
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": true,
+    "maxNodeModuleJsDepth": 0
+  },
+  "include": [
+      "*.js",
+      "**/*.js"
+  ],
+  "exclude": [
+      "node_modules",
+      "puppeteerInterface.js"
+  ],
+  "types": [
+      "chrome"
+  ]
+}

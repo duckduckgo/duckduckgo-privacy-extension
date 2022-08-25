@@ -1,5 +1,9 @@
 /** @module puppeteerInterface */
 
+// @ts-nocheck - ruleById property on self Object inside background
+//               ServiceWorker context for the extension is cumbersome to type
+//               hint with JSDoc comments.
+
 const path = require('path')
 const puppeteer = require('puppeteer')
 
@@ -29,7 +33,7 @@ class PuppeteerInterface {
 
     async closeBrowser () {
         await this.ready
-        await this.browser.close()
+        await this.browser?.close()
     }
 
     constructor () {
@@ -39,8 +43,8 @@ class PuppeteerInterface {
     /**
      * @typedef {object} RegexOptions
      * @property {string} regex
-     * @property {bool} [isCaseSensitive]
-     * @property {bool} [requireCapturing]
+     * @property {boolean} [isCaseSensitive]
+     * @property {boolean} [requireCapturing]
      * See https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#type-RegexOptions
      */
 
@@ -48,11 +52,11 @@ class PuppeteerInterface {
      * Returns true if the given regexFilter condition will work for
      * declarativeNetRequest rules, false otherwise.
      * @param {RegexOptions} regexOptions
-     * @return {bool}
+     * @return {Promise<boolean>}
      */
     async isRegexSupported (regexOptions) {
         await this.ready
-        return await this.backgroundWorker.evaluate(regexOptions =>
+        return await this.backgroundWorker?.evaluate(regexOptions =>
             new Promise(
                 resolve => {
                     chrome.declarativeNetRequest.isRegexSupported(
@@ -71,7 +75,7 @@ class PuppeteerInterface {
      */
     async addRules (rules) {
         await this.ready
-        await this.backgroundWorker.evaluate(async rules => {
+        await this.backgroundWorker?.evaluate(async rules => {
             await chrome.declarativeNetRequest.updateDynamicRules({
                 addRules: rules
             })
@@ -94,7 +98,7 @@ class PuppeteerInterface {
      */
     async removeRules (rules) {
         await this.ready
-        await this.backgroundWorker.evaluate(async rules => {
+        await this.backgroundWorker?.evaluate(async rules => {
             const ruleIds = []
             for (const rule of rules) {
                 if (typeof self.ruleById !== 'undefined') {
@@ -114,7 +118,7 @@ class PuppeteerInterface {
      */
     async clearAllRules (rules) {
         await this.ready
-        await this.backgroundWorker.evaluate(async () => {
+        await this.backgroundWorker?.evaluate(async () => {
             if (typeof self.ruleById === 'undefined') {
                 return
             }
@@ -147,11 +151,12 @@ class PuppeteerInterface {
       * Returns an array of matching rules.
       * @param {TestRequestDetails} testRequest
       *   The request details to match against.
-      * @return {object[]}
+      * @return {Promise<object[]>}
       *   The matching rules (if any).
       */
     async testMatchOutcome (testRequest) {
         await this.ready
+        if (!this.backgroundWorker) return []
         return await this.backgroundWorker.evaluate(
             async testRequest =>
                 new Promise(resolve =>
