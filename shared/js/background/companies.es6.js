@@ -1,7 +1,6 @@
 const TopBlocked = require('./classes/top-blocked.es6')
 const Company = require('./classes/company.es6')
 const browserWrapper = require('./wrapper.es6')
-const migrate = require('./migrate.es6')
 
 const Companies = (() => {
     let companyContainer = {}
@@ -126,8 +125,7 @@ const Companies = (() => {
                 // storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
                 storageData = Companies.sanitizeData(storageData)
 
-                for (let company in storageData) {
-                    [company, storageData] = migrate.migrateCompanyData(company, storageData)
+                for (const company in storageData) {
                     const newCompany = Companies.add(storageData[company])
                     newCompany.set('count', storageData[company].count || 0)
                     newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0)
