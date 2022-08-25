@@ -4,7 +4,7 @@ const tds = require('../../../shared/js/background/trackers.es6')
 const tdsStorageStub = require('../../helpers/tds.es6')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
-const { handleRequest } = require('../../../shared/js/background/redirect.es6')
+const { handleRequest } = require('../../../shared/js/background/before-request.es6')
 const tabManager = require('../../../shared/js/background/tab-manager.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
