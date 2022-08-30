@@ -119,6 +119,9 @@ class Site {
      * - User toggle on
      */
     isFeatureEnabled (featureName) {
+        if (this.specialDomainName) {
+            return false
+        }
         const allowlistOnlyFeatures = ['autofill', 'adClickAttribution']
         if (allowlistOnlyFeatures.includes(featureName)) {
             return this.enabledFeatures.includes(featureName)

@@ -110,7 +110,7 @@ function stripTrackingParameters (url) {
 function trackingParametersStrippingEnabled (site, initiatorUrl) {
     // Only strip tracking parameters if the feature is enabled for the
     // request URL (URL that the user is navigating to).
-    if (site.specialDomainName || !site.isFeatureEnabled('trackingParameters')) {
+    if (!site.isFeatureEnabled('trackingParameters')) {
         return false
     }
 
@@ -118,8 +118,7 @@ function trackingParametersStrippingEnabled (site, initiatorUrl) {
     // the initiating URL (the URL that the user navigated from, if any).
     if (initiatorUrl) {
         const initiatorSite = new Site(initiatorUrl)
-        if (initiatorSite.specialDomainName ||
-            !initiatorSite.isFeatureEnabled('trackingParameters')) {
+        if (!initiatorSite.isFeatureEnabled('trackingParameters')) {
             return false
         }
     }

@@ -422,7 +422,7 @@ if (manifestVersion === 2) {
 browser.webNavigation.onCommitted.addListener(details => {
     const tab = tabManager.get({ tabId: details.tabId })
 
-    if (!tab || tab.site.specialDomainName) {
+    if (!tab) {
         return
     }
 
