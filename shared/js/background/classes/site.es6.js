@@ -27,6 +27,7 @@ class Site {
 
         let domain = utils.extractHostFromURL(this.url) || ''
         domain = domain.toLowerCase()
+        this.status = 'unknown'
 
         this.domain = domain
         this.protocol = this.url.substr(0, this.url.indexOf(':'))
@@ -67,6 +68,13 @@ class Site {
         this.specialDomainName = this.getSpecialDomain()
         // domains which have been clicked to load
         this.clickToLoad = []
+    }
+
+    get shouldApplyProtections () {
+        if (this.status !== 'complete' && this.specialDomainName === 'new tab') {
+            return true
+        }
+        return this.specialDomainName == null
     }
 
     /*
@@ -119,7 +127,7 @@ class Site {
      * - User toggle on
      */
     isFeatureEnabled (featureName) {
-        if (this.specialDomainName) {
+        if (!this.shouldApplyProtections) {
             return false
         }
         const allowlistOnlyFeatures = ['autofill', 'adClickAttribution']

@@ -103,6 +103,7 @@ class TabManager {
             const tab = tabManager.get({ tabId: id })
             if (tab && info.status) {
                 tab.status = info.status
+                tab.site.status = tab.status
 
                 /**
                  * Re: HTTPS. When the tab finishes loading:
@@ -140,6 +141,8 @@ class TabManager {
         const tab = tabManager.get({ tabId: request.tabId })
 
         if (tab) {
+            tab.status = request.status
+            tab.site.status = tab.status
             tab.statusCode = request.statusCode
             if (tab.statusCode === 200) {
                 tab.updateSite(request.url)

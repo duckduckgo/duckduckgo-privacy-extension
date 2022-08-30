@@ -426,12 +426,6 @@ browser.webNavigation.onCommitted.addListener(details => {
         return
     }
 
-    if (tab.site.isBroken) {
-        console.log('temporarily skip embedded object replacements for site: ' + details.url +
-          'more info: https://github.com/duckduckgo/privacy-configuration')
-        return
-    }
-
     if (utils.getClickToPlaySupport(tab)) {
         browserWrapper.executeScript({
             target: {
