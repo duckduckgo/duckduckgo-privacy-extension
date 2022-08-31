@@ -18,6 +18,7 @@ self.dbg = {
     atb,
     https,
     tds,
+    browserWrapper,
     utils
 }
 
