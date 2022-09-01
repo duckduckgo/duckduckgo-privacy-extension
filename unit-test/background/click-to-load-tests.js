@@ -3,7 +3,7 @@ const chromeWrapper = require('../../shared/js/background/wrapper.es6.js')
 const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
-const redirect = require('../../shared/js/background/redirect.es6')
+const beforeRequest = require('../../shared/js/background/before-request.es6')
 const Tab = require('../../shared/js/background/classes/tab.es6')
 const tabManager = require('../../shared/js/background/tab-manager.es6')
 const settings = require('../../shared/js/background/settings.es6')
@@ -57,7 +57,7 @@ describe('Tracker Utilities', () => {
             for (const tracker of socialTrackers) {
                 requestData.url = tracker
                 settings.ready().then(() => {
-                    expect(redirect.handleRequest(requestData)).withContext(`URL: ${tracker}`).toEqual({ cancel: true })
+                    expect(beforeRequest.handleRequest(requestData)).withContext(`URL: ${tracker}`).toEqual({ cancel: true })
                 })
             }
         })
@@ -73,7 +73,7 @@ describe('Tracker Utilities', () => {
             for (const url of sdkURLs) {
                 requestData.url = url
                 settings.ready().then(() => {
-                    expect(redirect.handleRequest(requestData).redirectUrl).withContext(`URL: ${url}`).toBeDefined()
+                    expect(beforeRequest.handleRequest(requestData).redirectUrl).withContext(`URL: ${url}`).toBeDefined()
                 })
             }
         })
@@ -86,7 +86,7 @@ describe('Tracker Utilities', () => {
             for (const url of socialTrackers) {
                 requestData.url = url
                 settings.ready().then(() => {
-                    expect(redirect.handleRequest(requestData)).toEqual(undefined)
+                    expect(beforeRequest.handleRequest(requestData)).toEqual(undefined)
                 })
             }
             // Reset to empty for other tests

@@ -31,6 +31,9 @@ describe('Test request blocking', () => {
             pageRequests,
             ({ url }) => url.hostname === 'bad.third-party.site'
         )
+        const manifestVersion = await bgPage.evaluate(() => {
+            return globalThis.dbg.browserWrapper.getManifestVersion()
+        })
 
         // Initiate the test requests and wait until they have all completed.
         // Note:
@@ -71,6 +74,37 @@ describe('Test request blocking', () => {
             const description = `ID: ${id}, Category: ${category}`
             expect(status).withContext(description).not.toEqual('loaded')
         }
+
+        // Test the tracker reporting matches the expected outcomes.
+        const trackers = await bgPage.evaluate(async () => {
+            const currentTab = await globalThis.dbg.utils.getCurrentTab()
+            return globalThis.dbg.tabManager.get({ tabId: currentTab.id }).trackers
+        })
+        // TODO fix manifest v3 blocking service workers (https://app.asana.com/0/1200940319964997/1202895557146471/f)
+        // The count is higher for MV2 as we permit a load that loads more requests.
+        const count = manifestVersion === 2 ? 20 : 19
+
+        // Test the tabs tracker objects match the expected snapshot.
+        const trackerSnapshot = {
+            'Test Site for Tracker Blocking': {
+                displayName: 'Bad Third Party Site',
+                prevalence: 0.1,
+                urls: {
+                    'bad.third-party.site': {
+                        block: {
+                            action: 'block',
+                            reason: 'default block',
+                            categories: [],
+                            isBlocked: true,
+                            isSameEntity: false,
+                            isSameBaseDomain: false
+                        }
+                    }
+                },
+                count
+            }
+        }
+        expect(trackers).toEqual(trackerSnapshot)
 
         await page.close()
     })

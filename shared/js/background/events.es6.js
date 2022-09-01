@@ -167,19 +167,21 @@ if (browserName === 'chrome') {
  * REQUESTS
  */
 
-const redirect = require('./redirect.es6')
+const beforeRequest = require('./before-request.es6')
 const tabManager = require('./tab-manager.es6')
 const https = require('./https.es6')
 
+let additionalOptions = []
 if (manifestVersion === 2) {
-    browser.webRequest.onBeforeRequest.addListener(
-        redirect.handleRequest,
-        {
-            urls: ['<all_urls>']
-        },
-        ['blocking']
-    )
+    additionalOptions = ['blocking']
 }
+browser.webRequest.onBeforeRequest.addListener(
+    beforeRequest.handleRequest,
+    {
+        urls: ['<all_urls>']
+    },
+    additionalOptions
+)
 
 if (manifestVersion === 2) {
     const extraInfoSpec = ['blocking', 'responseHeaders']
