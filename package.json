@@ -13,6 +13,9 @@
   },
   "author": "",
   "license": "Apache-2.0",
+  "dependencies": {
+    "tldts": "^5.7.84"
+  },
   "devDependencies": {
     "chalk": "2.4.0",
     "commander": "2.15.1",
@@ -33,7 +36,6 @@
     "load-grunt-tasks": "3.5.2",
     "puppeteer": "12.0.0",
     "request": "2.85.0",
-    "tldts": "^5.7.84",
     "typescript": "^4.7.3",
     "url-parse-lax": "^3.0.0"
   }
