@@ -4,11 +4,11 @@ module.exports = function (grunt) {
 
     const { join } = require('path')
     const { existsSync } = require('fs')
-    const dashboardDir = join(__dirname, 'node_modules', 'duckduckgo-privacy-dashboard');
+    const dashboardDir = join(__dirname, 'node_modules', 'duckduckgo-privacy-dashboard')
 
     // this check is here to ensure that `npm link` vs `npm install` are working correctly
     if (!existsSync(dashboardDir)) {
-        throw new Error('duckduckgo-privacy-dashboard module is missing.');
+        throw new Error('duckduckgo-privacy-dashboard module is missing.')
     }
 
     require('load-grunt-tasks')(grunt)

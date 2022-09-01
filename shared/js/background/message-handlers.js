@@ -80,11 +80,11 @@ export function getTab (tabId) {
  *
  * @returns {Promise<{emailProtectionUserData: (*|{}), tab: *}>}
  */
-export async function getPrivacyDashboardData() {
-    const current = await utils.getCurrentTab();
-    if (!current) throw new Error('unreachable - cannot access current tab');
+export async function getPrivacyDashboardData () {
+    const current = await utils.getCurrentTab()
+    if (!current) throw new Error('unreachable - cannot access current tab')
     const tab = getTab(current.id)
-    if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + current.id);
+    if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + current.id)
     await settings.ready()
     const userData = settings.getSetting('userData')
     return {
