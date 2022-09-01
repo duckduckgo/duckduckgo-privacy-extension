@@ -16,11 +16,8 @@
   },
   "include": [
       "*.js",
-      "**/*.js"
-  ],
-  "exclude": [
-      "node_modules",
-      "puppeteerInterface.js"
+      "**/*.js",
+      "node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js"
   ],
   "types": [
       "chrome"

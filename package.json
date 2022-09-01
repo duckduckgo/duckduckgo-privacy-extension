@@ -5,6 +5,7 @@
     "license": "Apache-2.0",
     "repository": "duckduckgo/ddg2dnr",
     "devDependencies": {
+        "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.1",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#c179445",
         "@types/chrome": "0.0.195",
         "@types/mocha": "^9.1.1",
