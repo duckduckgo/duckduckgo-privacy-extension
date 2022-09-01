@@ -1,21 +1,39 @@
+/**
+ * This is used by the dashboard to get the tab data.
+ */
 export class LegacyTabTransfer {
     /**
      * @param {import('./tab.es6')} tab
      */
     constructor (tab) {
-        const clonedTab = cloneObject(tab)
+        const clonedTab = cloneClassObject(tab)
         const entries = Object.entries(clonedTab)
-        for (const [key, value] of entries) {
-            this[key] = value
+        for (const [key] of entries) {
+            this[key] = clonedTab[key]
         }
     }
 }
 
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
 function isPrimative (value) {
-    return Array.isArray(value) || typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean' || value === null || value === undefined
+    return Object(value) !== value
 }
 
-function cloneObject (object) {
+/**
+ * @param {*} value
+ * @returns {boolean}
+ */
+function isStructuredCloneable (value) {
+    return isPrimative(value) || Array.isArray(value)
+}
+
+function cloneClassObject (object) {
+    if (isStructuredCloneable(object)) {
+        return structuredClone(object)
+    }
     const out = {}
     for (const key of Object.keys(object)) {
         const value = object[key]
@@ -23,23 +41,25 @@ function cloneObject (object) {
         if (key.startsWith('_')) {
             continue
         }
-        if (isPrimative(value)) {
+        if (isStructuredCloneable(value)) {
             out[key] = structuredClone(value)
         } else {
-            out[key] = cloneObject(value)
+            out[key] = cloneClassObject(value)
         }
     }
-    if (Object.getPrototypeOf(object) !== Object.getPrototypeOf({})) {
+    if (hasModifiedPrototype(object)) {
+        const objectDescriptors = Object.getOwnPropertyDescriptors(Object.getPrototypeOf(object))
+        // const getters = Object.entries(objectDescriptors).filter(([key, descriptor]) => typeof descriptor.get === 'function')
         // Clone getter values
-        for (const key of Object.getOwnPropertyNames(Object.getPrototypeOf(object))) {
-            if (key === 'constructor') {
-                continue
-            }
-            const value = object[key]
-            if (typeof value !== 'function') {
-                out[key] = structuredClone(object[key])
+        for (const [key, value] of Object.entries(objectDescriptors)) {
+            if (typeof value.get === 'function') {
+                out[key] = cloneClassObject(object[key])
             }
         }
     }
     return out
+}
+
+function hasModifiedPrototype (object) {
+    return Object.getPrototypeOf(object) !== Object.getPrototypeOf({})
 }

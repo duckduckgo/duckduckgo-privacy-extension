@@ -36,10 +36,10 @@ class TabManager {
         return newTab
     }
 
-    async restore (tabData) {
-        const restoredState = await Tab.restore(tabData.tabId)
+    async restore (tabId) {
+        const restoredState = await Tab.restore(tabId)
         if (restoredState) {
-            this.tabContainer[tabData.tabId] = restoredState
+            this.tabContainer[tabId] = restoredState
         }
     }
 
@@ -61,13 +61,11 @@ class TabManager {
         return this.tabContainer[tabData.tabId]
     }
 
-    async getOrRestoreTab (tabData) {
-        console.log('getOrRestoreTab', tabData)
-        if (!tabManager.has(tabData.tabId)) {
-            console.log('restore', tabData)
-            await tabManager.restore(tabData)
+    async getOrRestoreTab (tabId) {
+        if (!tabManager.has(tabId)) {
+            await tabManager.restore(tabId)
         }
-        return tabManager.get(tabData)
+        return tabManager.get({ tabId })
     }
 
     /**

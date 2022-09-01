@@ -69,7 +69,7 @@ export function submitBrokenSiteReport (brokenSiteArgs) {
 }
 
 export async function getTab (tabId) {
-    const tab = await tabManager.getOrRestoreTab({ tabId })
+    const tab = await tabManager.getOrRestoreTab(tabId)
     return new LegacyTabTransfer(tab)
 }
 
