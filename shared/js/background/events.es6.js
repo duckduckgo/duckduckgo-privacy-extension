@@ -420,20 +420,26 @@ if (manifestVersion === 2) {
     })
 }
 
-// Inject the Click to Load content script to display placeholders.
+/**
+ * Script injection.
+ */
+
+const { injectContentScopeScripts } = require('./script-injection')
+
 browser.webNavigation.onCommitted.addListener(details => {
     const tab = tabManager.get({ tabId: details.tabId })
 
-    if (!tab || tab.site.specialDomainName) {
+    if (!tab || tab.site.specialDomainName || tab.site.allowlisted) {
         return
     }
 
     if (tab.site.isBroken) {
-        console.log('temporarily skip embedded object replacements for site: ' + details.url +
+        console.log('temporarily skip script injection for site: ' + details.url +
           'more info: https://github.com/duckduckgo/privacy-configuration')
         return
     }
 
+    // Click to Load content script for placeholders.
     if (utils.getClickToPlaySupport(tab)) {
         browserWrapper.executeScript({
             target: {
@@ -443,6 +449,11 @@ browser.webNavigation.onCommitted.addListener(details => {
             files: ['public/js/content-scripts/click-to-load.js'],
             injectImmediately: true
         })
+    }
+
+    // Script injection of content-scope-scripts for MV3 builds.
+    if (manifestVersion === 3) {
+        injectContentScopeScripts(details)
     }
 })
 
