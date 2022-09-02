@@ -25,9 +25,12 @@ const setup = async (ops) => {
         `--user-data-dir=${dataDir}`
     ]
 
+    const manifestVersion =
+        process.env.npm_lifecycle_event === 'test-int-mv3' ? 3 : 2
+
     if (loadExtension) {
         let extensionPath = 'build/chrome/dev'
-        if (process.env.npm_lifecycle_event === 'test-int-mv3') {
+        if (manifestVersion === 3) {
             extensionPath = extensionPath.replace('chrome', 'chrome-mv3')
         }
         args.push('--disable-extensions-except=' + extensionPath)
@@ -90,7 +93,7 @@ const setup = async (ops) => {
         spawnSync('rm', ['-rf', dataDir])
     }
 
-    return { browser, bgPage, requests, teardown }
+    return { browser, bgPage, requests, teardown, manifestVersion }
 }
 
 module.exports = {
