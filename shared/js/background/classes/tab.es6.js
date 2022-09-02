@@ -48,9 +48,6 @@ class Tab {
         this.resetBadgeIcon()
         this.webResourceAccess = []
         this.surrogates = {}
-
-        /** @type {null | import('../events/referrer-trimming').Referrer} */
-        this.referrer = null
     }
 
     /**
@@ -66,6 +63,24 @@ class Tab {
         return tab
     }
 
+    /**
+     * @param {null | import('../events/referrer-trimming').Referrer} value
+     **/
+    set referrer (value) {
+        this._tabState.setValue('referrer', value)
+    }
+
+    get referrer () {
+        return this._tabState.referrer
+    }
+
+    /**
+     * @param {null | import('./ad-click-attribution-policy').AdClick} value
+     **/
+    set adClick (value) {
+        this._tabState.setValue('adClick', value)
+    }
+
     get adClick () {
         return this._tabState.adClick
     }
@@ -79,13 +94,6 @@ class Tab {
 
     get trackers () {
         return this._tabState.trackers
-    }
-
-    /**
-     * @param {null | import('./ad-click-attribution-policy').AdClick} value
-     **/
-    set adClick (value) {
-        this._tabState.setValue('adClick', value)
     }
 
     get url () {

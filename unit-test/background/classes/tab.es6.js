@@ -99,6 +99,7 @@ describe('Tab', () => {
                 },
                 webResourceAccess: [],
                 surrogates: {},
+                referrer: null,
                 adClick: null,
                 trackers: {},
                 url: 'http://example.com',

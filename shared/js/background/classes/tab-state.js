@@ -20,6 +20,7 @@ export class TabState {
         this.adClick = null
         /** @type Record<string, import('./tracker').Tracker> */
         this.trackers = {}
+        this.referrer = null
 
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
         this.allowlistOptIn = false
