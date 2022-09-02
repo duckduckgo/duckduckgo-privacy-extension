@@ -3,6 +3,11 @@ const { LegacyTabTransfer } = require('../../../shared/js/background/classes/leg
 const tabManager = require('../../../shared/js/background/tab-manager.es6')
 const utils = require('../../../shared/js/background/utils.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
+const { TabState } = require('../../../shared/js/background/classes/tab-state')
+
+const tdsStorageStub = require('../../helpers/tds.es6')
+const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
+const config = require('../../data/reference-tests/privacy-configuration/config2_reference.json')
 
 let tab
 
@@ -38,7 +43,11 @@ describe('Tab', () => {
     })
 
     describe('restore tabs', () => {
-        beforeEach(() => {
+        beforeEach(async () => {
+            tdsStorageStub.stub({ config })
+
+            await tdsStorage.getLists()
+
             // TODO ensure we have stored this into session storage before moving on
             tab = tabManager.create({
                 id: 123,
@@ -46,6 +55,7 @@ describe('Tab', () => {
                 url: 'http://example.com',
                 status: 200
             })
+            await TabState.done()
         })
         it('should serialize to the correct legacy state', () => {
             const tabClone = new LegacyTabTransfer(tab)
@@ -104,6 +114,7 @@ describe('Tab', () => {
                 status: 200,
                 statusCode: null
             }
+            expect(tabClone.site.enabledFeatures.length).toBe(17)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))
         })
         it('should be able to get the tab from tab manager', () => {
