@@ -75,18 +75,20 @@ export class TabState {
 }
 
 /**
- * Handles storage of tab state to session storage.
+ * Singleton that handles storage of tab state to session storage.
  * Guarantees that the tasks are performed in the order they are added.
  */
-class Storage {
-    static doneCheck = Promise.resolve()
+class StorageInstance {
+    taskQueue = []
+    processing = false
 
     /**
      * Awaits until the storage queue is empty.
      * @returns {Promise<void>}
      */
-    static async done () {
-        await Storage.doneCheck
+    async done () {
+        const queue = this.taskQueue
+        await Promise.all(queue)
     }
 
     /**
@@ -96,15 +98,30 @@ class Storage {
      * @param {() => Promise<T>} task
      * @returns {Promise<T>}
      */
-    static async addTask (task) {
+    async addTask (task) {
         let done = _ => {}
-        Storage.doneCheck = Storage.doneCheck.then(async () => {
+        this.taskQueue.push(async () => {
             const value = await Promise.resolve(task())
             done(value)
         })
+        this.processQueue()
         return new Promise(resolve => {
             done = resolve
         })
+    }
+
+    /**
+     * Processes the storage queue in order.
+     */
+    async processQueue () {
+        if (!this.processing) {
+            while (this.taskQueue.length > 0) {
+                this.processing = true
+                const task = this.taskQueue.shift()
+                await task()
+            }
+            this.processing = false
+        }
     }
 
     /**
@@ -120,10 +137,10 @@ class Storage {
      * Deletes a tab-state from session storage.
      * @param {number} tabId
      */
-    static async delete (tabId) {
-        await Storage.addTask(async () => {
+    async delete (tabId) {
+        await this.addTask(async () => {
             try {
-                await removeFromSessionStorage(Storage.getStorageKey(tabId))
+                await removeFromSessionStorage(StorageInstance.getStorageKey(tabId))
             } catch (e) {
                 console.error('Removal of tab state failed', e)
             }
@@ -135,9 +152,9 @@ class Storage {
      * @param {number} tabId
      * @returns {Promise<string | undefined>}
      */
-    static async get (tabId) {
-        return Storage.addTask(async () => {
-            return getFromSessionStorage(Storage.getStorageKey(tabId))
+    async get (tabId) {
+        return this.addTask(async () => {
+            return getFromSessionStorage(StorageInstance.getStorageKey(tabId))
         })
     }
 
@@ -146,13 +163,14 @@ class Storage {
      * @param {TabState} tabState
      * @returns {Promise<void>}
      */
-    static async backup (tabState) {
-        await Storage.addTask(async () => {
+    async backup (tabState) {
+        await this.addTask(async () => {
             try {
-                await setToSessionStorage(Storage.getStorageKey(tabState.tabId), JSON.stringify(tabState))
+                await setToSessionStorage(StorageInstance.getStorageKey(tabState.tabId), JSON.stringify(tabState))
             } catch (e) {
                 console.error('Storage of tab state failed', e)
             }
         })
     }
 }
+const Storage = new StorageInstance()
