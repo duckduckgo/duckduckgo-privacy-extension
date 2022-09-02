@@ -4,17 +4,23 @@ const utils = require('../utils.es6')
 const browserName = utils.getBrowserName()
 
 /**
+ * @typedef Referrer
+ * @property {string} site
+ *   The referrer URL.
+ * @property {string} referrerHost
+ *   The referrer host.
+ * @property {string} referrer
+ *   The truncated referrer.
+ */
+
+/**
  * @param {{tabId: number, url: string, requestHeaders: Array<{name: string, value:string}>}} e
  *
  * @returns {{requestHeaders: Array<{name: string, value:string}>} | { redirectUrl: URL } | undefined}
  */
 module.exports = function limitReferrerData (e) {
-    let referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')
-    if (referrer) {
-        referrer = referrer.value
-    } else {
-        return
-    }
+    const referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')?.value
+    if (!referrer) return
 
     const tab = tabManager.get({ tabId: e.tabId })
 
