@@ -57,6 +57,9 @@ class Tab {
 
         /** @type {null | import('./ad-click-attribution-policy').AdClick} */
         this.adClick = null
+
+        /** @type {null | import('../events/referrer-trimming').Referrer} */
+        this.referrer = null
     }
 
     /**

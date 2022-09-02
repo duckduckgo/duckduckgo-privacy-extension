@@ -31,8 +31,6 @@
       "shared/js/background/debug.es6.js",
       "shared/js/background/events.es6.js",
       "shared/js/background/events/3p-tracking-cookie-blocking.js",
-      "shared/js/background/events/referrer-trimming.js",
-      "shared/js/background/helpers/arguments-object.js",
       "shared/js/background/message-handlers.js",
       "shared/js/background/onboarding.es6.js",
       "shared/js/background/startup.es6.js",

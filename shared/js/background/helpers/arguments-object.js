@@ -3,7 +3,7 @@ const utils = require('../utils.es6')
 const tabManager = require('../tab-manager.es6')
 const trackerutils = require('../tracker-utils')
 const settings = require('../settings.es6')
-const devtools = require('../devtools.es6')
+const { isActive } = require('../devtools.es6')
 const constants = require('../../../data/constants')
 
 function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
@@ -60,7 +60,7 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     }
     return {
         featureSettings,
-        debug: devtools.isActive(tabId),
+        debug: isActive(tabId),
         cookie,
         globalPrivacyControlValue: settings.getSetting('GPC'),
         stringExemptionLists: utils.getBrokenScriptLists(),
