@@ -69,6 +69,10 @@ export function submitBrokenSiteReport (brokenSiteArgs) {
 }
 
 export async function getTab (tabId) {
+    // Await for storage to be ready; this happens on service worker closing mostly.
+    await settings.ready()
+    await tdsStorage.ready('config')
+
     const tab = await tabManager.getOrRestoreTab(tabId)
     return new LegacyTabTransfer(tab)
 }
