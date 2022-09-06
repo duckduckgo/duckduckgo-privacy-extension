@@ -9,11 +9,12 @@ const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
 
 function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
-    if (!tab) {
+    if (!tab || !tab.url) {
         return null
     }
     const tabClone = new LegacyTabTransfer(tab)
     // Clone site so we don't retain any site changes
+    // @ts-ignore
     const site = tabClone.site
     const referrer = tab?.referrer || ''
     let cookie = {}
