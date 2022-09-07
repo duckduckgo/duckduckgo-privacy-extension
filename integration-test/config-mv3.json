@@ -2,6 +2,9 @@
     "spec_dir": "integration-test",
     "spec_files": [
         "background/onboarding.js",
-        "background/request-blocking.js"
+        "background/request-blocking.js",
+        "background/test-fingerprint.js",
+        "background/storage.js",
+        "content-scripts/gpc.js"
     ]
 }
