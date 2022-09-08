@@ -63,6 +63,7 @@ export class TabState {
         for (const key of Object.keys(parsedData)) {
             state[key] = parsedData[key]
         }
+        Storage.backup(state)
         return state
     }
 
@@ -160,7 +161,6 @@ class StorageInstance {
     }
 
     /**
-     * TODO debounce
      * @param {TabState} tabState
      * @returns {Promise<void>}
      */
