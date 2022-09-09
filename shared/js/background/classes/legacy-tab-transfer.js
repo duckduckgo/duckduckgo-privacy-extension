@@ -18,7 +18,7 @@ export class LegacyTabTransfer {
  * @param {*} value
  * @returns {boolean}
  */
-function isPrimative (value) {
+function isPrimitive (value) {
     return Object(value) !== value
 }
 
@@ -27,7 +27,7 @@ function isPrimative (value) {
  * @returns {boolean}
  */
 function isStructuredCloneable (value) {
-    return isPrimative(value) || Array.isArray(value)
+    return isPrimitive(value) || Array.isArray(value)
 }
 
 function cloneClassObject (object) {
@@ -49,7 +49,6 @@ function cloneClassObject (object) {
     }
     if (hasModifiedPrototype(object)) {
         const objectDescriptors = Object.getOwnPropertyDescriptors(Object.getPrototypeOf(object))
-        // const getters = Object.entries(objectDescriptors).filter(([key, descriptor]) => typeof descriptor.get === 'function')
         // Clone getter values
         for (const [key, value] of Object.entries(objectDescriptors)) {
             if (typeof value.get === 'function') {

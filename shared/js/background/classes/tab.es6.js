@@ -41,6 +41,7 @@ class Tab {
      * @param {TabData} tabData
      */
     constructor (tabData) {
+        /** @type {TabState} */
         this._tabState = new TabState(tabData)
 
         this.site = new Site(this.url, this._tabState)
@@ -63,9 +64,6 @@ class Tab {
         return tab
     }
 
-    /**
-     * @param {null | import('../events/referrer-trimming').Referrer} value
-     **/
     set referrer (value) {
         this._tabState.setValue('referrer', value)
     }
@@ -74,9 +72,6 @@ class Tab {
         return this._tabState.referrer
     }
 
-    /**
-     * @param {null | import('./ad-click-attribution-policy').AdClick} value
-     **/
     set adClick (value) {
         this._tabState.setValue('adClick', value)
     }
@@ -85,9 +80,6 @@ class Tab {
         return this._tabState.adClick
     }
 
-    /**
-     * @type {Record<string, Tracker>}
-     **/
     set trackers (value) {
         this._tabState.setValue('trackers', value)
     }
@@ -108,9 +100,6 @@ class Tab {
         return this._tabState.tabId
     }
 
-    /**
-     * @param {number} tabId
-     */
     set id (tabId) {
         this._tabState.setValue('tabId', tabId)
     }
@@ -119,9 +108,6 @@ class Tab {
         return this._tabState.upgradedHttps
     }
 
-    /**
-     * @param {boolean} value
-     */
     set upgradedHttps (value) {
         this._tabState.setValue('upgradedHttps', value)
     }
@@ -130,9 +116,6 @@ class Tab {
         return this._tabState.hasHttpsError
     }
 
-    /**
-     * @param {boolean} value
-     */
     set hasHttpsError (value) {
         this._tabState.setValue('hasHttpsError', value)
     }
@@ -141,9 +124,6 @@ class Tab {
         return this._tabState.mainFrameUpgraded
     }
 
-    /**
-     * @param {boolean} value
-     */
     set mainFrameUpgraded (value) {
         this._tabState.setValue('mainFrameUpgraded', value)
     }
@@ -152,9 +132,6 @@ class Tab {
         return this._tabState.urlParametersRemoved
     }
 
-    /**
-     * @param {boolean} value
-     */
     set urlParametersRemoved (value) {
         this._tabState.setValue('urlParametersRemoved', value)
     }
@@ -163,9 +140,6 @@ class Tab {
         return this._tabState.urlParametersRemovedUrl
     }
 
-    /**
-     * @param {string | null} value
-     */
     set urlParametersRemovedUrl (value) {
         this._tabState.setValue('urlParametersRemovedUrl', value)
     }
@@ -174,9 +148,6 @@ class Tab {
         return this._tabState.ampUrl
     }
 
-    /**
-     * @param {string | null} url
-     */
     set ampUrl (url) {
         this._tabState.setValue('ampUrl', url)
     }
@@ -189,9 +160,6 @@ class Tab {
         return this._tabState.requestId
     }
 
-    /**
-     * @param {string | null} url
-     */
     set cleanAmpUrl (url) {
         this._tabState.setValue('cleanAmpUrl', url)
     }

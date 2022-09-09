@@ -25,6 +25,7 @@ class Site {
             tabState = new TabState({ tabId: 1, url, status: 'complete' })
         }
         this.url = url || ''
+        /** @type {TabState} */
         this._tabState = tabState
         this.trackerUrls = []
         this.grade = new Grade()
@@ -56,9 +57,6 @@ class Site {
         return this._tabState.allowlisted
     }
 
-    /**
-     * @param {boolean} value
-     */
     set allowlisted (value) {
         this._tabState.setValue('allowlisted', value)
     }
@@ -67,9 +65,6 @@ class Site {
         return this._tabState.allowlistOptIn
     }
 
-    /**
-     * @param {boolean} value
-     */
     set allowlistOptIn (value) {
         this._tabState.setValue('allowlistOptIn', value)
     }
@@ -78,9 +73,6 @@ class Site {
         return this._tabState.denylisted
     }
 
-    /**
-     * @param {boolean} value
-     */
     set denylisted (value) {
         this._tabState.setValue('denylisted', value)
     }

@@ -7,23 +7,35 @@ export class TabState {
     constructor (tabData, restoring = false) {
         this.tabId = tabData.tabId
         this.url = tabData.url
+        /** @type {boolean} */
         this.upgradedHttps = false
+        /** @type {boolean} */
         this.hasHttpsError = false
+        /** @type {boolean} */
         this.mainFrameUpgraded = false
+        /** @type {boolean} */
         this.urlParametersRemoved = false
+        /** @type {string | null} */
         this.urlParametersRemovedUrl = null
+        /** @type {string | null} */
         this.ampUrl = null
+        /** @type {string | null} */
         this.cleanAmpUrl = null
         this.requestId = tabData.requestId
         this.status = tabData.status
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
+        /** @type {null | import('./ad-click-attribution-policy').AdClick} */
         this.adClick = null
-        /** @type Record<string, import('./tracker').Tracker> */
+        /** @type {Record<string, import('./tracker').Tracker>} */
         this.trackers = {}
+        /** @type {null | import('../events/referrer-trimming').Referrer} */
         this.referrer = null
 
+        /** @type {boolean} */
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
+        /** @type {boolean} */
         this.allowlistOptIn = false
+        /** @type {boolean} */
         this.denylisted = false
         // Whilst restoring, prevent the tab data being stored
         if (!restoring) {
@@ -58,7 +70,13 @@ export class TabState {
         if (!data) {
             return null
         }
-        const parsedData = JSON.parse(data)
+        let parsedData
+        try {
+            parsedData = JSON.parse(data)
+        } catch (e) {
+            console.error('Error parsing tab state', e)
+            return null
+        }
         const state = new TabState(parsedData, true)
         for (const key of Object.keys(parsedData)) {
             state[key] = parsedData[key]
@@ -79,6 +97,7 @@ export class TabState {
 /**
  * Singleton that handles storage of tab state to session storage.
  * Guarantees that the tasks are performed in the order they are added.
+ * Fire and forget of the storage tasks to simplify call sites.
  */
 class StorageInstance {
     taskQueue = []
@@ -96,11 +115,12 @@ class StorageInstance {
     /**
      * Adds a task to the storage queue, prevents tasks from being executed in parallel.
      * Returns the result of the task.
+     * Please handle the error handling of the task method yourself.
      * @template T
      * @param {() => Promise<T>} task
      * @returns {Promise<T>}
      */
-    async addTask (task) {
+    async _addTask (task) {
         let done = _ => {}
         this.taskQueue.push(async () => {
             const value = await Promise.resolve(task())
@@ -131,7 +151,7 @@ class StorageInstance {
      * @param {number} tabId
      * @returns {string}
      */
-    static getStorageKey (tabId) {
+    static _getStorageKey (tabId) {
         return `tabState-${tabId}`
     }
 
@@ -140,9 +160,9 @@ class StorageInstance {
      * @param {number} tabId
      */
     async delete (tabId) {
-        await this.addTask(async () => {
+        await this._addTask(async () => {
             try {
-                await removeFromSessionStorage(StorageInstance.getStorageKey(tabId))
+                await removeFromSessionStorage(StorageInstance._getStorageKey(tabId))
             } catch (e) {
                 console.error('Removal of tab state failed', e)
             }
@@ -155,8 +175,13 @@ class StorageInstance {
      * @returns {Promise<string | undefined>}
      */
     async get (tabId) {
-        return this.addTask(async () => {
-            return getFromSessionStorage(StorageInstance.getStorageKey(tabId))
+        return this._addTask(async () => {
+            try {
+                return getFromSessionStorage(StorageInstance._getStorageKey(tabId))
+            } catch (e) {
+                console.error('Retrieval of tab state failed', e)
+                return undefined
+            }
         })
     }
 
@@ -165,9 +190,9 @@ class StorageInstance {
      * @returns {Promise<void>}
      */
     async backup (tabState) {
-        await this.addTask(async () => {
+        await this._addTask(async () => {
             try {
-                await setToSessionStorage(StorageInstance.getStorageKey(tabState.tabId), JSON.stringify(tabState))
+                await setToSessionStorage(StorageInstance._getStorageKey(tabState.tabId), JSON.stringify(tabState))
             } catch (e) {
                 console.error('Storage of tab state failed', e)
             }
