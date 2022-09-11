@@ -126,6 +126,34 @@ export async function initClickToLoad (unused, sender) {
     return config
 }
 
+export async function getYouTubeVideoDetails (videoURL) {
+    const endpointURL = new URL('https://www.youtube.com/oembed?format=json')
+    const url = new URL(videoURL)
+
+    const playlistID = url.searchParams.get('list')
+    const videoId = url.pathname.split('/').pop()
+
+    if (playlistID) {
+        url.hostname = endpointURL.hostname
+        endpointURL.searchParams.set('url', url.href)
+    } else {
+        endpointURL.searchParams.set('url', 'https://youtu.be/' + videoId)
+    }
+
+    try {
+        const { title, thumbnail_url: previewImage } =
+            await fetch(
+                endpointURL.href, {
+                    referrerPolicy: 'no-referrer',
+                    credentials: 'omit'
+                }
+            ).then(response => response.json())
+        return { status: 'success', title, previewImage }
+    } catch (e) {
+        return { status: 'failed' }
+    }
+}
+
 export function getLoadingImage (theme) {
     if (theme === 'dark') {
         return utils.imgToData('img/social/loading_dark.svg')
@@ -183,9 +211,14 @@ export async function enableSocialTracker (data, sender) {
     }
 }
 
+function sendUpdateSettingsMessage (name, value) {
+    utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
+}
+
 export async function updateSetting ({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)
+    sendUpdateSettingsMessage(name, value)
 }
 
 export async function getSetting ({ name }) {

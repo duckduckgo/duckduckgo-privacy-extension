@@ -36,14 +36,14 @@
                     "iframe[src*='://www.youtube-nocookie.com/embed']"
                 ],
                 "replaceSettings": {
-                    "type": "youtube-video",
+                    "type": "youtube-video-ctl",
                     "buttonText": "Unblock Video",
                     "infoTitle": "DuckDuckGo blocked this video to prevent YouTube from tracking you",
                     "infoText": "We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity.",
                     "simpleInfoText": "We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity."
                 },
                 "clickAction": {
-                    "type": "youtube-video"
+                    "type": "youtube-video-ctl"
                 }
             },
             "YouTube embedded subscription button": {
@@ -58,7 +58,13 @@
                 }
             }
         },
-        "informationalModal": {},
+        "informationalModal": {
+            "icon": "blocked_video.svg",
+            "messageTitle": "Enable YouTube previews and reduce privacy?",
+            "messageBody": "Showing previews will allow Google (which owns YouTube) to see some of your device’s information, but is still more private than playing the video. Learn More",
+            "confirmButtonText": "Enable Previews",
+            "rejectButtonText": "No Thanks"
+        },
         "surrogates": [
             {
                 "rule": "(www.)?youtube(-nocookie)?.com/iframe_api",

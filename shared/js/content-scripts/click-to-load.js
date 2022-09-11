@@ -11,6 +11,16 @@
             })
         })
     }
+    function onMessage (messageType) {
+        return new Promise((resolve, reject) => {
+            chrome.runtime.onMessage.addListener((message) => {
+                console.log(message)
+                if (message.messageType === messageType) {
+                    resolve(message)
+                }
+            })
+        })
+    }
 
     function createCustomEvent (eventName, eventDetail) {
         // By default, Firefox protects the event detail Object from the page,
@@ -186,6 +196,9 @@
             display: flex;
             flex-direction: row;
             align-items: center;
+            border: none;
+            padding: 0;
+            margin: 0;
         `,
         headerRow: `
 
@@ -219,6 +232,7 @@
             max-height: 44px;
             border-bottom: 1px solid;
             border-color: rgba(196, 196, 196, 0.3);
+            margin: 0;
         `,
         title: `
             font-family: DuckDuckGoPrivacyEssentials;
@@ -230,6 +244,8 @@
             flex-wrap: wrap;
             overflow: hidden;
             text-align: left;
+            border: none;
+            padding: 0;
         `,
         buttonRow: `
             display: flex;
@@ -245,6 +261,9 @@
             line-height: 21px;
             margin: 27px auto 10px;
             text-align: center;
+            border: none;
+            padding: 0;
+            margin: 0;
         `,
         modalContentText: `
             font-family: DuckDuckGoPrivacyEssentials;
@@ -252,6 +271,13 @@
             line-height: 21px;
             margin: 0px auto 24px;
             text-align: center;
+            border: none;
+            padding: 0;
+        `,
+        modalButtonRow: `
+            border: none;
+            padding: 0;
+            margin: auto;
         `,
         modalButton: `
         `,
@@ -283,6 +309,9 @@
             flex-basis: 0%;
             min-width: 20px;
             height: 21px;
+            border: none;
+            padding: 0;
+            margin: 0;
         `,
         logoImg: `
             height: 21px;
@@ -296,6 +325,7 @@
         `,
         modal: `
             width: 312px;
+            padding: 0;
             margin: auto;
             background-color: #FFFFFF;
             position: absolute;
@@ -304,11 +334,19 @@
             display: block;
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
+            border: none;
+        `,
+        modalYT: `
+            width: 350px;
+            left: calc(50% - 350px/2);
+            top: calc(50% - 350px/2 + 0.5px);
         `,
         modalContent: `
             padding: 24px;
             display: flex;
             flex-direction: column;
+            border: none;
+            margin: 0;
         `,
         overlay: `
             height: 100%;
@@ -319,6 +357,9 @@
             position: fixed;
             top: 0;
             right: 0;
+            border: none;
+            padding: 0;
+            margin: 0;
         `,
         modalContainer: `
             height: 100%;
@@ -357,6 +398,40 @@
             border: 0;
             padding: 0;
             margin: 0;
+        `,
+        youTubePlaceholder: `
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            cursor: pointer;
+        `,
+        youTubeTitle: `
+            position: absolute;
+            z-index: 2;
+            left: 0;
+            right: 0;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.5);
+            margin: 0;
+            padding: 0.5em;
+        `,
+        youTubePlayButton: `
+            position: absolute;
+            z-index: 2;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 1em;
+            text-align: center;
+            width: 50%;
+            align-self: center;
         `
     }
 
@@ -537,12 +612,19 @@
                 }
             }
 
-            // Ensure the video doesn't auto-play.
-            const allowString = videoElement.getAttribute('allow') || ''
+            // Configure auto-play correctly depending on if the video's preview
+            // loaded.
+            let allowString = videoElement.getAttribute('allow') || ''
             const allowed = new Set(allowString.split(';').map(s => s.trim()))
-            allowed.delete('autoplay')
-            url.searchParams.delete('autoplay')
-            videoElement.setAttribute('allow', Array.from(allowed).join('; '))
+            if (this.autoplay) {
+                allowed.add('autoplay')
+                url.searchParams.set('autoplay', '1')
+            } else {
+                allowed.delete('autoplay')
+                url.searchParams.delete('autoplay')
+            }
+            allowString = Array.from(allowed).join('; ')
+            videoElement.setAttribute('allow', allowString)
 
             videoElement.src = url.href
             return onError
@@ -633,7 +715,7 @@
                     case 'iFrame':
                         fbElement = this.createFBIFrame()
                         break
-                    case 'youtube-video':
+                    case 'youtube-video-ctl':
                         onError = await this.adjustYouTubeVideoElement(originalElement)
                         fbElement = originalElement
                         break
@@ -720,7 +802,7 @@
         window.dispatchEvent(createCustomEvent('ddg-ctp-ready'))
     }
 
-    function replaceTrackingElement (widget, trackingElement, placeholderElement, hideTrackingElement = false) {
+    function replaceTrackingElement (widget, trackingElement, placeholderElement, hideTrackingElement = false, blockingDialog = null) {
         widget.dispatchEvent(trackingElement, 'ddg-ctp-tracking-element')
 
         // Usually the tracking element can simply be replaced with the
@@ -740,12 +822,45 @@
             // the DOM.
             trackingElement.style.setProperty('display', 'none', 'important')
             trackingElement.style.setProperty('visibility', 'hidden', 'important')
-            trackingElement.parentElement.insertBefore(placeholderElement, trackingElement)
+            if (trackingElement.parentElement) {
+                trackingElement.parentElement.insertBefore(placeholderElement, trackingElement)
+            } else if (blockingDialog && blockingDialog.parentElement) {
+                blockingDialog.replaceWith(placeholderElement)
+        }
         } else {
             trackingElement.replaceWith(placeholderElement)
         }
 
         widget.dispatchEvent(placeholderElement, 'ddg-ctp-placeholder-element')
+    }
+
+    async function createYouTubeBlockingDialog (trackingElement, widget, placeholder) {
+        const bottom = document.createElement('div')
+
+        const previewToggle = makeButton('show preview', widget.getMode())
+        previewToggle.id = 'test-toggle'
+        previewToggle.addEventListener(
+            'click',
+            () => makeModal(widget.entity, () => sendMessage('updateSetting', {
+                name: 'youtubePreviewsEnabled',
+                value: true
+            }), widget.entity)
+        )
+        const button = makeButton(widget.replaceSettings.buttonText, widget.getMode())
+        bottom.appendChild(button)
+        bottom.appendChild(previewToggle)
+
+        const textButton = makeTextButton(widget.replaceSettings.buttonText, widget.getMode())
+        const { contentBlock, shadowRoot } = await createContentBlock(
+            widget, bottom, textButton
+        )
+        button.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
+        textButton.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
+
+        return {
+            blockingDialog: contentBlock,
+            shadowRoot
+        }
     }
 
     /**
@@ -773,8 +888,7 @@
             replaceTrackingElement(widget, trackingElement, container)
         }
 
-        const youTubeVideo = widget.replaceSettings.type === 'youtube-video'
-        if (widget.replaceSettings.type === 'dialog' || youTubeVideo) {
+        if (widget.replaceSettings.type === 'dialog') {
             const icon = await sendMessage('getImage', widget.replaceSettings.icon)
             const button = makeButton(widget.replaceSettings.buttonText, widget.getMode())
             const textButton = makeTextButton(widget.replaceSettings.buttonText, widget.getMode())
@@ -784,22 +898,7 @@
             button.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
             textButton.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
 
-            replaceTrackingElement(
-                widget, trackingElement, contentBlock, /* hideTrackingElement= */youTubeVideo
-            )
-
-            if (youTubeVideo) {
-                // Size the placeholder element to match the original video
-                // element.
-                // Note: If the website later resizes the video element, the
-                //       placeholder will not resize to match.
-                const {
-                    width: videoWidth,
-                    height: videoHeight
-                } = window.getComputedStyle(trackingElement)
-                contentBlock.style.width = videoWidth
-                contentBlock.style.height = videoHeight
-            }
+            replaceTrackingElement(widget, trackingElement, contentBlock)
 
             // Show the extra unblock link in the header if the placeholder or
             // its parent is too short for the normal unblock button to be visible.
@@ -807,6 +906,55 @@
             //       position in the parent element.
             const { height: placeholderHeight } = window.getComputedStyle(contentBlock)
             const { height: parentHeight } = window.getComputedStyle(contentBlock.parentElement)
+            if (parseInt(placeholderHeight, 10) <= 200 || parseInt(parentHeight, 10) <= 200) {
+                const titleRowTextButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
+                titleRowTextButton.style.display = 'block'
+            }
+        }
+
+        if (widget.replaceSettings.type === 'youtube-video-ctl') {
+            const { placeholder } =
+                await createYouTubePlaceholder(trackingElement, widget)
+            const { blockingDialog, shadowRoot } =
+                await createYouTubeBlockingDialog(trackingElement, widget)
+
+            await toggleYouTubeCTL(trackingElement, blockingDialog, shadowRoot, placeholder, widget)
+
+            onMessage('ddg-settings-youtubePreviewsEnabled').then(() => {
+                toggleYouTubeCTL(trackingElement, blockingDialog, shadowRoot, placeholder, widget)
+            })
+
+            // // Show YouTube Preview for embedded video
+            // if (youtubePreviewsEnabled === true) {
+            //     replaceTrackingElement(
+            //         widget, trackingElement, placeholder, /* hideTrackingElement= */ true
+            //     )
+            // // Block YouTube embedded video
+            // } else {
+            //     replaceTrackingElement(widget, trackingElement, blockingDialog)
+            //     const { height: placeholderHeight } = window.getComputedStyle(blockingDialog)
+            //     const { height: parentHeight } = window.getComputedStyle(blockingDialog.parentElement)
+            //     if (parseInt(placeholderHeight, 10) <= 200 || parseInt(parentHeight, 10) <= 200) {
+            //         const titleRowTextButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
+            //         titleRowTextButton.style.display = 'block'
+            //     }
+            // }
+        }
+    }
+
+    async function toggleYouTubeCTL (trackingElement, blockingDialog, shadowRoot, placeholder, widget) {
+        const youtubePreviewsEnabled = (await getYouTubePreviewsEnabled())
+
+        // Show YouTube Preview for embedded video
+        if (youtubePreviewsEnabled === true) {
+            replaceTrackingElement(
+                widget, trackingElement, placeholder, /* hideTrackingElement= */ true, blockingDialog
+            )
+        // Block YouTube embedded video
+        } else {
+            replaceTrackingElement(widget, trackingElement, blockingDialog, false)
+            const { height: placeholderHeight } = window.getComputedStyle(blockingDialog)
+            const { height: parentHeight } = window.getComputedStyle(blockingDialog.parentElement)
             if (parseInt(placeholderHeight, 10) <= 200 || parseInt(parentHeight, 10) <= 200) {
                 const titleRowTextButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
                 titleRowTextButton.style.display = 'block'
@@ -839,6 +987,11 @@
 
                 await Promise.all(trackingElements.map(trackingElement => {
                     const widget = new DuckWidget(widgetData, trackingElement, entity)
+
+                    // /** TODO ADD EVENT LISTENER TO SETTINGS */
+                    // onMessage('ddg-settings-youtubePreviewsEnabled').then(() => {
+                    //     createPlaceholderElementAndReplace(widget, trackingElement)
+                    // })
                     return createPlaceholderElementAndReplace(widget, trackingElement)
                 }))
             }
@@ -1055,7 +1208,7 @@
         const pageOverlay = document.createElement('div')
         pageOverlay.style.cssText = styles.overlay
         const modal = document.createElement('div')
-        modal.style.cssText = styles.modal
+        modal.style.cssText = styles.modal + styles.modalYT
 
         // Title
         const modalTitle = createTitleRow('DuckDuckGo')
@@ -1085,7 +1238,7 @@
 
         // Buttons
         const buttonRow = document.createElement('div')
-        buttonRow.style.cssText = 'margin:auto;'
+        buttonRow.style.cssText = styles.modalButtonRow
         const allowButton = makeButton(entityData[entity].modalAcceptText, 'lightMode')
         allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
         allowButton.addEventListener('click', function doLogin () {
@@ -1225,5 +1378,121 @@
         contentRow.appendChild(buttonRow)
 
         return { contentBlock, shadowRoot }
+    }
+
+    function getYouTubeVideoDetails (videoURL) {
+        return sendMessage('getYouTubeVideoDetails', videoURL)
+    }
+
+    function getYouTubePreviewsEnabled () {
+        return sendMessage('getSetting', { name: 'youtubePreviewsEnabled' })
+    }
+
+    /**
+     * Creates the placeholder element to replace a YouTube video iframe element
+     * with. Mutates widget Object to set the autoplay property as the preview
+     * details load.
+     * @param {Element} originalElement
+     *   The YouTube video iframe element.
+     * @param {Object} widget
+     *   The widget Object. We mutate this to set the autoplay property.
+     * @returns {Object}
+     *   Object containing the placeholder element and its shadowRoot.
+     */
+    async function createYouTubePlaceholder (originalElement, widget) {
+        const placeholder = document.createElement('div')
+        placeholder.style.cssText = styles.wrapperDiv
+
+        // Put our custom font-faces inside the wrapper element, since
+        // @font-face does not work inside a shadowRoot.
+        // See https://github.com/mdn/interactive-examples/issues/887.
+        const fontFaceStyleElement = document.createElement('style')
+        fontFaceStyleElement.textContent = styles.fontStyle
+        placeholder.appendChild(fontFaceStyleElement)
+
+        // Size the placeholder element to match the original video element.
+        // Note: The placeholder does later resize, even if the original video
+        //       element would have.
+        const { width, height } = originalElement.getBoundingClientRect()
+        placeholder.style.width = width + 'px'
+        placeholder.style.height = height + 'px'
+
+        // Protect the contents of our placeholder inside a shadowRoot, to avoid
+        // it being styled by the website's stylesheets.
+        const shadowRoot = placeholder.attachShadow({ mode: (await devMode) ? 'open' : 'closed' })
+
+        const innerDiv = document.createElement('div')
+        innerDiv.style.cssText = styles.youTubePlaceholder
+        innerDiv.style.position = 'relative'
+
+        // We use an image element for the preview image so that we can ensure
+        // the referrer isn't passed.
+        const previewImageElement = document.createElement('img')
+        previewImageElement.setAttribute('referrerPolicy', 'no-referrer')
+        previewImageElement.style.height = '100%'
+        innerDiv.appendChild(previewImageElement, innerDiv.firstChildElement)
+
+        const logoElement = document.createElement('img')
+        logoElement.style.cssText = styles.logoImg
+        logoElement.setAttribute('src', logoImg)
+
+        const titleElement = document.createElement('p')
+        titleElement.style.cssText = styles.youTubeTitle
+        titleElement.appendChild(logoElement)
+        innerDiv.appendChild(titleElement)
+
+        const buttonText = document.createElement('span')
+        buttonText.innerText = 'Click to Load'
+
+        const playButton = document.createElement('button')
+        playButton.style.cssText = styles.youTubePlayButton
+        // FIXME - Hack to position button in roughly the middle of video.
+        playButton.style.top = Math.round((height / 2)) + 'px'
+        playButton.addEventListener(
+            'click',
+            widget.clickFunction(originalElement, placeholder)
+        )
+        playButton.appendChild(buttonText)
+        innerDiv.appendChild(playButton)
+
+        shadowRoot.appendChild(innerDiv)
+
+        // TODO - Preview toggle, to be extracted and reused
+        const previewToggle = document.createElement('button')
+        previewToggle.style.cssText = styles.youTubePlayButton
+        previewToggle.style.top = Math.round((height / 4 * 3)) + 'px'
+        previewToggle.addEventListener(
+            'click',
+            () => sendMessage('updateSetting', {
+                name: 'youtubePreviewsEnabled',
+                value: false
+            })
+        )
+        const previewText = document.createElement('span')
+        previewText.innerText = 'Previews disabled for additional privacy'
+
+        previewToggle.appendChild(previewText)
+        innerDiv.appendChild(previewToggle)
+        // END OF preview toggle
+
+        shadowRoot.appendChild(innerDiv)
+
+        widget.autoplay = false
+        getYouTubeVideoDetails(originalElement.src).then(
+            ({ status, title, previewImage }) => {
+                if (status === 'success') {
+                    const span = document.createElement('span')
+                    span.innerText = title
+                    titleElement.appendChild(span)
+                    if (previewImage) {
+                        previewImageElement.setAttribute('src', previewImage)
+                    }
+                    buttonText.innerText = 'Click to Play'
+                    widget.autoplay = true
+                }
+            }
+        )
+
+        return { placeholder, shadowRoot }
     }
 })()

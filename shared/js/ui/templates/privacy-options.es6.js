@@ -35,6 +35,17 @@ module.exports = function () {
                 <a href="https://duckduckgo.com/global-privacy-control-learn-more">${t('shared:learnMore.title')}</a>
             </p>
         </li>
+        <li>
+            ${t('options:enableYoutubePreviews.title')}
+            ${toggleButton(this.model.youtubePreviewsEnabled,
+                'js-options-youtube-previews-enabled',
+                'youtubePreviewsEnabled')
+            }
+            <p class="menu-paragraph">
+                ${raw(t('options:enableYoutubePreviewsDesc.title'))}
+                <a href="https://help.duckduckgo.com/duckduckgo-help-pages/privacy/embedded-content-protection/">${t('shared:learnMore.title')}</a>
+            </p>
+        </li>
     </ul>
 </section>`
 }
