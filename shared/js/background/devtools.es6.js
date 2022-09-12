@@ -5,6 +5,7 @@ const tabManager = require('./tab-manager.es6')
 const trackers = require('./trackers.es6')
 const tdsStorage = require('./storage/tds.es6')
 const { removeBroken } = require('./utils.es6')
+const util = require('../devtools/util.es6')
 
 // Note: It is not necessary to use session storage to store the tabId -> port
 //       mapping for MV3 compatibility. That is because when the background
@@ -26,6 +27,12 @@ function connected (port) {
             ports.set(tabId, port)
             const tab = tabManager.get({ tabId })
             postMessage(tabId, 'tabChange', tab)
+        } else if (m.action === 'registerTrackingDomain') {
+            const { domain } = m
+            if (!domain.isIcann || !domain.domain) {
+                return
+            }
+            util.registerDefaultBlockDomain(trackers, domain.domain)
         } else if (m.action === 'I' || m.action === 'B') {
             const { requestData, siteUrl, tracker } = m
             const matchedTracker = trackers.getTrackerData(requestData.url, siteUrl, requestData)

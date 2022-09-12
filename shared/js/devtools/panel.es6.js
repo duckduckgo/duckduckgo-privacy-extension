@@ -1,5 +1,7 @@
 import browser from 'webextension-polyfill'
 
+const tldts = require('tldts')
+
 const { getElementByIdOrFail, querySelectorOrFail } = require('./util.es6')
 
 const table = querySelectorOrFail('#request-table')
@@ -430,6 +432,18 @@ displayFilters.forEach((input) => {
             panelConfig.rowVisibility[input.dataset['filterToggle']] = input.checked
         }
         document.querySelectorAll('tbody > tr').forEach(setRowVisible)
+    })
+})
+
+const addTrackerBox = querySelectorOrFail('#add-tracker-box')
+
+addTrackerBox.addEventListener('change', () => {
+    const raw = addTrackerBox.value
+    const domain = tldts.parse(raw)
+    globalThis.port.postMessage({
+        action: 'registerTrackingDomain',
+        tabId,
+        domain
     })
 })
 

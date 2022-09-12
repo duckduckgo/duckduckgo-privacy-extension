@@ -87,6 +87,19 @@ function setup(tds, request) {
 }
 
 /**
+ * If the domain isn't already registered in TDS, register it as a new tracking
+ * domain with default:block.
+ */
+export function registerDefaultBlockDomain(tds, domain) {
+    const trackers = tds.trackerList
+    const existing = tds.findTracker({ urlToCheckSplit: domain.split('.') })
+    if (!existing) {
+        const tracker = { domain, default: 'block', owner: { name: domain, displayName: domain } }
+        trackers[domain] = tracker
+    }
+}
+
+/**
  * Block the exact specified request.
  *
  * @param {import('@duckduckgo/privacy-grade').Trackers} tds
