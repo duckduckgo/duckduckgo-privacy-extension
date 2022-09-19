@@ -156,6 +156,32 @@ describe('utils.isSameTopLevelDomain()', () => {
     })
 })
 
+describe('utils.getBaseDomain()', () => {
+    [
+        ['com', null],
+        ['.com', null],
+        ['example.com', 'example.com'],
+        ['www.example.com', 'example.com'],
+        ['foo.www.example.com', 'example.com'],
+        ['foo.www.example.com:8000', 'example.com'],
+        ['www.example.app', 'example.app'],
+        ['foo.apps.fbsbx.com', 'foo.apps.fbsbx.com'],
+        ['bar.foo.apps.fbsbx.com', 'foo.apps.fbsbx.com'],
+        ['apps.fbsbx.com', null],
+        ['1.2.3.4', '1.2.3.4'],
+        ['127.0.0.1', '127.0.0.1'],
+        ['localhost', 'localhost'],
+        ['ddg.localhost', 'ddg.localhost'],
+        ['sub.ddg.local', 'ddg.local'],
+        ['abcefg', null],
+        ['1234', null]
+    ].forEach(([hostname, baseDomain]) => {
+        it(`returns ${baseDomain} for ${hostname}`, () => {
+            expect(utils.getBaseDomain(hostname)).toBe(baseDomain)
+        })
+    })
+})
+
 describe('utils.parseVersionString', () => {
     const cases = [
         ['12', { major: 12, minor: 0, patch: 0 }],

@@ -44,7 +44,10 @@ export async function sendTabMessage (id, message, details) {
  */
 export function getBaseDomain (urlString) {
     const parsedUrl = tldts.parse(urlString, { allowPrivateDomains: true })
-    return parsedUrl.domain || parsedUrl.hostname
+    if (parsedUrl.hostname === 'localhost' || parsedUrl.hostname?.endsWith('.localhost') || parsedUrl.isIp) {
+        return parsedUrl.hostname
+    }
+    return parsedUrl.domain
 }
 
 export function extractHostFromURL (url, shouldKeepWWW) {
