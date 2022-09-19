@@ -24,7 +24,7 @@ describe('tracker blocking', () => {
             const result = tds.getTrackerData(test.tracker, test.site, test.req)
             expect(result.action).toBe(test.result.action)
             expect(result.reason).toBe(test.result.reason)
-            expect(result.firstParty).toBe(test.result.firstParty)
+            expect(result.sameEntity).toBe(test.result.sameEntity)
         })
     })
 })
