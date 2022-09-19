@@ -36,7 +36,7 @@
     "devDependencies": {
         "@babel/cli": "^7.18.10",
         "@babel/core": "^7.19.0",
-        "@babel/node": "^7.18.10",
+        "@babel/node": "^7.19.1",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.19.0",
         "@fingerprintjs/fingerprintjs": "^3.3.6",
