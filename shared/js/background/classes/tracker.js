@@ -27,18 +27,22 @@ export class TrackerSite {
 
 export class Tracker {
     /**
-     * @param {TrackerData} t
+     * @param {TrackerData | null} t
      */
     constructor (t) {
+        /** @type {Record<string, Record<string, TrackerSite>>} */
+        this.urls = {}
+        this.count = 0 // request count
+        // Used for class deserizalization
+        if (!t) {
+            return
+        }
         if (!t.tracker) {
             throw new Error('Tracker object required for Tracker constructor')
         }
         this.parentCompany = Companies.get(t.tracker.owner.name)
         this.displayName = t.tracker.owner.displayName
         this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
-        /** @type {Record<string, Record<string, TrackerSite>>} */
-        this.urls = {}
-        this.count = 0 // request count
         this.addTrackerUrl(t)
     }
 
@@ -55,5 +59,17 @@ export class Tracker {
         if (!this.urls[t.fullTrackerDomain][t.action]) {
             this.urls[t.fullTrackerDomain][t.action] = new TrackerSite(t.action, t.reason, t.tracker?.categories || [], t.sameEntity, t.sameBaseDomain)
         }
+    }
+
+    /**
+     * @param {Tracker} data
+     * @returns {Tracker}
+     */
+    static restore (data) {
+        const tracker = new Tracker(null)
+        for (const [key, value] of Object.entries(data)) {
+            tracker[key] = value
+        }
+        return tracker
     }
 }

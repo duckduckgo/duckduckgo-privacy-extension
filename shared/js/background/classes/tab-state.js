@@ -1,4 +1,6 @@
 import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } from '../wrapper.es6'
+import { Tracker } from './tracker'
+import { AdClick } from './ad-click-attribution-policy'
 
 export class TabState {
     /**
@@ -78,10 +80,22 @@ export class TabState {
             return null
         }
         const state = new TabState(parsedData, true)
-        for (const key of Object.keys(parsedData)) {
-            state[key] = parsedData[key]
+        for (const [key, value] of Object.entries(parsedData)) {
+            if (key === 'trackers') {
+                /** @type {Record<string, import('./tracker').Tracker>} */
+                const trackers = {}
+                for (const trackerKey of Object.keys(value)) {
+                    const tracker = parsedData[key][trackerKey]
+                    trackers[trackerKey] = Tracker.restore(tracker)
+                }
+                state[key] = trackers
+            } else if (key === 'adClick' && value) {
+                state[key] = AdClick.restore(value)
+            } else {
+                state[key] = value
+            }
         }
-        Storage.backup(state)
+        await Storage.backup(state)
         return state
     }
 

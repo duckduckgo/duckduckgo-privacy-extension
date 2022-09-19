@@ -38,11 +38,16 @@ const { TabState } = require('./tab-state')
 
 class Tab {
     /**
-     * @param {TabData} tabData
+     * @param {TabData|TabState} tabData
      */
     constructor (tabData) {
-        /** @type {TabState} */
-        this._tabState = new TabState(tabData)
+        if (tabData instanceof TabState) {
+            /** @type {TabState} */
+            this._tabState = tabData
+        } else {
+            /** @type {TabState} */
+            this._tabState = new TabState(tabData)
+        }
 
         this.site = new Site(this.url, this._tabState)
         this.httpsRedirects = new HttpsRedirects()
@@ -59,9 +64,7 @@ class Tab {
         if (!state) {
             return null
         }
-        const tab = new Tab(state)
-        tab._tabState = state
-        return tab
+        return new Tab(state)
     }
 
     set referrer (value) {
@@ -182,12 +185,11 @@ class Tab {
 
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
-     * @param {*} request
-     * @param {string} tabDomain
+     * @param {string} requestURL
      */
-    setAdClickIfValidRedirect (request, tabDomain) {
+    setAdClickIfValidRedirect (requestURL) {
         const policy = this.getAdClickAttributionPolicy()
-        const adClick = policy.createAdClick(request.url, this)
+        const adClick = policy.createAdClick(requestURL, this)
         if (adClick) {
             this.adClick = adClick
         }
@@ -246,19 +248,20 @@ class Tab {
 
     // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
+        const trackers = this.trackers
         const tracker = this.trackers[t.tracker.owner.name]
 
         if (tracker) {
             tracker.addTrackerUrl(t)
         } else if (t.tracker) {
-            const newTracker = new Tracker(t)
-            this.trackers[t.tracker.owner.name] = newTracker
+            trackers[t.tracker.owner.name] = new Tracker(t)
 
             // first time we have seen this network tracker on the page
             if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
-
-            return newTracker
         }
+        // Set the trackers on the tab which will trigger a state update
+        this.trackers = trackers
+        return this.trackers[t.tracker.owner.name]
     }
 
     /**
