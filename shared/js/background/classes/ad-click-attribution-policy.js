@@ -3,8 +3,6 @@ const { getFeatureSettings, getBaseDomain } = require('../utils.es6')
 /**
  * @typedef AdClickAttributionLinkFormat
  * @property {string} url
- * @property {string} [parameterName]
- * @property {string|number} [parameterValue]
  * @property {string} [adDomainParameterName]
  **/
 
@@ -41,13 +39,6 @@ export class AdClickAttributionPolicy {
 
         for (const linkFormat of this.linkFormats) {
             if (hostnameAndPath === linkFormat.url) {
-                if (linkFormat.parameterName) {
-                    const parameterValue = resourceURL.searchParams.get(linkFormat.parameterName)
-                    if (parameterValue !== null && (!linkFormat.parameterValue || parameterValue === linkFormat.parameterValue)) {
-                        return linkFormat
-                    }
-                }
-
                 if (linkFormat.adDomainParameterName) {
                     const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName)
                     if (parameterDomain !== null) {
