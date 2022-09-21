@@ -7,7 +7,7 @@ const tests = [
     // Fixme flaking
     // { url: 'www.independent.co.uk', siteGrade: ['D', 'D-'], enhancedGrade: 'B' },
     { url: 'google.com', siteGrade: 'D', enhancedGrade: 'D' },
-    { url: 'reddit.com', siteGrade: ['D', 'D-', 'C'], enhancedGrade: 'B' },
+    { url: 'reddit.com', siteGrade: ['D', 'D-', 'C', 'B'], enhancedGrade: 'B' },
     { url: 'facebook.com', siteGrade: ['D', 'C+'], enhancedGrade: 'C+' },
     // FIXME - This case is flaking.
     //         Enhanced grade is something B and sometimes C.
