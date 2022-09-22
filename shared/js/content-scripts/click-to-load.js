@@ -470,10 +470,24 @@
             }
 
             for (const key of Object.keys(this.dataElements)) {
-                const attrValue = encodeURIComponent(this.dataElements[key])
-                if (attrValue) {
-                    this.clickAction.targetURL = this.clickAction.targetURL.replace(key, attrValue)
+                let attrValue = this.dataElements[key]
+
+                if (!attrValue) {
+                    continue
                 }
+
+                // The URL for Facebook videos are specified as the data-href
+                // attribute on a div, that is then used to create the iframe.
+                // Some websites omit the protocol part of the URL when doing
+                // that, which then prevents the iframe from loading correctly.
+                if (key === 'data-href' && attrValue.startsWith('//')) {
+                    attrValue = window.location.protocol + attrValue
+                }
+
+                this.clickAction.targetURL =
+                    this.clickAction.targetURL.replace(
+                        key, encodeURIComponent(attrValue)
+                    )
             }
         }
 
