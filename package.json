@@ -7,7 +7,7 @@
     "devDependencies": {
         "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.1",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#c179445",
-        "@types/chrome": "0.0.195",
+        "@types/chrome": "0.0.197",
         "@types/mocha": "^9.1.1",
         "@types/puppeteer": "5.4.6",
         "eslint": "7.32.0",
