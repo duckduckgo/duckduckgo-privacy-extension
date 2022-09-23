@@ -4,7 +4,7 @@ const process = require('process')
 const { PuppeteerInterface } = require('./puppeteerInterface')
 
 const { generateSmarterEncryptionRuleset } = require('./lib/smarterEncryption')
-const { generateTrackerBlockingRuleset } = require('./lib/trackerBlocking')
+const { generateTdsRuleset } = require('./lib/tds')
 const { generateExtensionConfigurationRuleset } =
       require('./lib/extensionConfiguration')
 
@@ -35,10 +35,10 @@ async function main () {
             )
         }
         break
-    case 'tracker-blocking':
+    case 'tds':
         if (args.length < 2 || args.length > 3) {
             console.error(
-                'Usage: npm run tracker-blocking',
+                'Usage: npm run tds',
                 './tds-input.json ./ruleset-output.json',
                 '[./domain-by-rule-id-output.txt]'
             )
@@ -49,7 +49,7 @@ async function main () {
             const isRegexSupported = browser.isRegexSupported.bind(browser)
 
             const { ruleset, trackerDomainByRuleId } =
-                  await generateTrackerBlockingRuleset(
+                  await generateTdsRuleset(
                       JSON.parse(
                           fs.readFileSync(tdsFilePath, { encoding: 'utf8' })
                       ),

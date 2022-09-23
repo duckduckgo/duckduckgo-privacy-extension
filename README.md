@@ -27,7 +27,7 @@ npm run smarter-encryption ../list-of-domains.txt ../smarter-encryption-ruleset.
 Generate a Tracker Blocking ruleset:
 
 ```bash
-npm run tracker-blocking ../tds.json ../tracker-blocking-ruleset.json [../tracker-domain-by-rule-id.txt]
+npm run tds ../tds.json ../tracker-blocking-ruleset.json [../tracker-domain-by-rule-id.txt]
 ```
 
 Generate the extension configuration ruleset:

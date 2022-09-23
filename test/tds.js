@@ -7,8 +7,8 @@ const {
     MAXIMUM_SUBDOMAIN_PRIORITY,
     MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT,
     MAXIMUM_REGEX_RULES,
-    generateTrackerBlockingRuleset
-} = require('../lib/trackerBlocking')
+    generateTdsRuleset
+} = require('../lib/tds')
 
 const MAXIMUM_RULES_PER_DOMAIN = Math.floor(
     MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT /
@@ -116,11 +116,11 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
 
     let result
     if (typeof startingRuleId === 'number') {
-        result = await generateTrackerBlockingRuleset(
+        result = await generateTdsRuleset(
             tds, isRegexSupported, startingRuleId
         )
     } else {
-        result = await generateTrackerBlockingRuleset(
+        result = await generateTdsRuleset(
             tds, isRegexSupported
         )
     }
@@ -155,7 +155,7 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
     }
 }
 
-describe('generateTrackerBlockingRuleset', () => {
+describe('generateTdsRuleset', () => {
     it('should reject invalid tds.json file', async () => {
         const invalidBlockLists = [
             undefined,
@@ -170,7 +170,7 @@ describe('generateTrackerBlockingRuleset', () => {
 
         for (const blockList of invalidBlockLists) {
             await assert.rejects(() =>
-                generateTrackerBlockingRuleset(blockList, () => { })
+                generateTdsRuleset(blockList, () => { })
             )
         }
     })
@@ -178,12 +178,12 @@ describe('generateTrackerBlockingRuleset', () => {
     it('should notice missing isRegexSupported argument', async () => {
         await assert.rejects(() =>
             // @ts-expect-error - Missing isRegexSupported argument.
-            generateTrackerBlockingRuleset(
+            generateTdsRuleset(
                 { cnames: {}, domains: {}, entities: {}, trackers: {} }
             )
         )
         await assert.rejects(() =>
-            generateTrackerBlockingRuleset(
+            generateTdsRuleset(
                 // @ts-expect-error - Invalid isRegexSupported argument.
                 { cnames: {}, domains: {}, entities: {}, trackers: {} }, 3
             )
@@ -203,7 +203,7 @@ describe('generateTrackerBlockingRuleset', () => {
             addDomain(blockList, domain, entity, 'block')
         }
 
-        const { ruleset } = await generateTrackerBlockingRuleset(
+        const { ruleset } = await generateTdsRuleset(
             blockList, isRegexSupportedTrue
         )
         for (const rule of ruleset) {
@@ -214,7 +214,7 @@ describe('generateTrackerBlockingRuleset', () => {
         addDomain(blockList, 'a.' + domain, entity, 'block')
 
         await assert.rejects(() =>
-            generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(blockList, isRegexSupportedTrue)
         )
     })
 
@@ -230,13 +230,13 @@ describe('generateTrackerBlockingRuleset', () => {
         addDomain(blockList, domain, entity, 'allow', rules)
 
         await assert.doesNotReject(() =>
-            generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(blockList, isRegexSupportedTrue)
         )
 
         blockList.trackers[domain].rules.push({ rule: 'example\\.com/extra' })
 
         await assert.rejects(() =>
-            generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(blockList, isRegexSupportedTrue)
         )
     })
 
@@ -257,13 +257,13 @@ describe('generateTrackerBlockingRuleset', () => {
         }
 
         await assert.doesNotReject(() =>
-            generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(blockList, isRegexSupportedTrue)
         )
 
         addDomain(blockList, 'example-extra.invalid', entity, 'allow', rules)
 
         await assert.rejects(() =>
-            generateTrackerBlockingRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(blockList, isRegexSupportedTrue)
         )
     })
 

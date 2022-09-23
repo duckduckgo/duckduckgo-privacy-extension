@@ -23,7 +23,7 @@
         "lint": "npm run eslint && npm run tsc",
         "smarter-encryption": "node cli.js smarter-encryption",
         "test": "mocha",
-        "tracker-blocking": "node cli.js tracker-blocking"
+        "tds": "node cli.js tds"
     },
     "mocha": {
         "require": "test/utils/hooks.js"

@@ -6,8 +6,8 @@ const {
     generateSmarterEncryptionRuleset
 } = require('../lib/smarterEncryption')
 const {
-    generateTrackerBlockingRuleset
-} = require('../lib/trackerBlocking')
+    generateTdsRuleset
+} = require('../lib/tds')
 
 function referenceTestPath (...args) {
     return path.join(
@@ -50,7 +50,7 @@ describe('Reference Tests', () => {
 
         const isRegexSupported =
               this.browser.isRegexSupported.bind(this.browser)
-        const { ruleset } = await generateTrackerBlockingRuleset(
+        const { ruleset } = await generateTdsRuleset(
             blockList, isRegexSupported
         )
         await this.browser.addRules(ruleset)
