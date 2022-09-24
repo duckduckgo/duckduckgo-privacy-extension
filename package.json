@@ -35,7 +35,7 @@
     "karma-source-map-support": "1.2.0",
     "load-grunt-tasks": "3.5.2",
     "puppeteer": "12.0.0",
-    "request": "2.85.0",
+    "request": "2.88.2",
     "typescript": "^4.7.3",
     "url-parse-lax": "^3.0.0"
   }
