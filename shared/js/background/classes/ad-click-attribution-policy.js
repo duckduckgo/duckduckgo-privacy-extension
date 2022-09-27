@@ -128,6 +128,15 @@ export class AdClick {
         return adClick
     }
 
+    static restore (adClick) {
+        const restoredAdClick = new AdClick(adClick.navigationExpiration, adClick.totalExpiration)
+        restoredAdClick.adBaseDomain = adClick.adBaseDomain
+        restoredAdClick.adClickRedirect = adClick.adClickRedirect
+        restoredAdClick.expires = adClick.expires
+        restoredAdClick.clickExpires = adClick.clickExpires
+        return restoredAdClick
+    }
+
     /**
      * @param {Tab} tab
      * @returns {boolean} true if a new tab should have the ad attribution policy applied

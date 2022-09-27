@@ -10,11 +10,17 @@ const tds = require('./storage/tds.es6')
 const startup = require('./startup.es6')
 const browserWrapper = require('./wrapper.es6')
 const utils = require('./utils.es6')
+const Tab = require('./classes/tab.es6')
+const { TabState } = require('./classes/tab-state')
+const Wrapper = require('./wrapper.es6.js')
 
 self.dbg = {
     settings,
     startup,
     tabManager,
+    Tab,
+    TabState,
+    Wrapper,
     atb,
     https,
     tds,

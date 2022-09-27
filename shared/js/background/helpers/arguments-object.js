@@ -5,14 +5,17 @@ const trackerutils = require('../tracker-utils')
 const settings = require('../settings.es6')
 const { isActive } = require('../devtools.es6')
 const constants = require('../../../data/constants')
+const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
 
 function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
-    if (!tab) {
+    if (!tab || !tab.url) {
         return null
     }
+    const tabClone = new LegacyTabTransfer(tab)
     // Clone site so we don't retain any site changes
-    const site = Object.assign({}, tab.site || {})
+    // @ts-ignore
+    const site = tabClone.site
     const referrer = tab?.referrer || ''
     let cookie = {}
 

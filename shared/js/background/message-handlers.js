@@ -13,6 +13,7 @@ const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
 const startup = require('./startup.es6')
+const { LegacyTabTransfer } = require('./classes/legacy-tab-transfer')
 const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
@@ -67,8 +68,13 @@ export function submitBrokenSiteReport (brokenSiteArgs) {
     return brokenSiteReport.fire.apply(null, brokenSiteArgs)
 }
 
-export function getTab (tabId) {
-    return tabManager.get({ tabId })
+export async function getTab (tabId) {
+    // Await for storage to be ready; this happens on service worker closing mostly.
+    await settings.ready()
+    await tdsStorage.ready('config')
+
+    const tab = await tabManager.getOrRestoreTab(tabId)
+    return new LegacyTabTransfer(tab)
 }
 
 export function getSiteGrade (tabId) {

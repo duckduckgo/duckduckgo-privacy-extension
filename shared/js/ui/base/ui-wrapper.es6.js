@@ -18,7 +18,7 @@ const backgroundMessage = (thisModel) => {
     })
 }
 
-/** @typedef {ReturnType<import('../../background/message-handlers.js').getTab>} Tab */
+/** @typedef {ReturnType<import('../../background/message-handlers.js').getTab>} TabState */
 
 /**
  * @returns {Promise<Tab|undefined>}
@@ -33,13 +33,14 @@ async function getBackgroundTabData () {
     if (!tabId) {
         const tab = await sendMessage('getCurrentTab')
         if (tab) {
-            tabId = tab.id
+            tabId = tab.id || tab.tabId
         }
     }
     if (tabId) {
-        /** @type {Tab} */
         const backgroundTabObj = await sendMessage('getTab', tabId)
-        return backgroundTabObj
+        if (backgroundTabObj) {
+            return backgroundTabObj
+        }
     }
 }
 

@@ -54,8 +54,22 @@ export async function notifyPopup (message) {
     }
 }
 
+/**
+ * @param {browser.WebRequest.OnBeforeRedirectDetailsType | browser.Tabs.Tab | browser.Tabs.OnUpdatedChangeInfoType} tabData
+ * @returns {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}}
+ */
 export function normalizeTabData (tabData) {
-    return tabData
+    // @ts-expect-error - id doesn't exist onUpdatedChangeInfoType but we rectify in onCreateOrUpdateTab
+    const tabId = 'tabId' in tabData ? tabData.tabId : tabData.id
+    const url = tabData.url
+    const status = 'status' in tabData ? tabData.status : null
+    const requestId = 'requestId' in tabData ? tabData.requestId : undefined
+    return {
+        tabId,
+        url,
+        requestId,
+        status
+    }
 }
 
 export function mergeSavedSettings (settings, results) {
@@ -212,7 +226,7 @@ export async function insertCSS (options) {
 // Session storage
 // @ts-ignore
 const sessionStorageSupported = typeof browser.storage.session !== 'undefined'
-const sessionStorageFallback = sessionStorageSupported ? null : new Map()
+export const sessionStorageFallback = sessionStorageSupported ? null : new Map()
 
 /**
  * Save some data to memory, which persists until the session ends (e.g. until

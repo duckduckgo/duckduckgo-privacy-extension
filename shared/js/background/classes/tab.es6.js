@@ -29,47 +29,167 @@ const Site = require('./site.es6')
 const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
-const browserWrapper = require('./../wrapper.es6')
+const browserWrapper = require('../wrapper.es6')
 const webResourceKeyRegex = /.*\?key=(.*)/
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
+const { TabState } = require('./tab-state')
+
+/** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
 
 class Tab {
+    /**
+     * @param {TabData|TabState} tabData
+     */
     constructor (tabData) {
-        this.id = tabData.id || tabData.tabId
-        /** @type {Record<string, Tracker>} */
-        this.trackers = {}
-        this.url = tabData.url
-        this.upgradedHttps = false
-        this.hasHttpsError = false
-        this.mainFrameUpgraded = false
-        this.urlParametersRemoved = false
-        this.urlParametersRemovedUrl = null
-        this.ampUrl = null
-        this.cleanAmpUrl = null
-        this.requestId = tabData.requestId
-        this.status = tabData.status
-        this.site = new Site(this.url)
+        if (tabData instanceof TabState) {
+            /** @type {TabState} */
+            this._tabState = tabData
+        } else {
+            /** @type {TabState} */
+            this._tabState = new TabState(tabData)
+        }
+
+        this.site = new Site(this.url, this._tabState)
         this.httpsRedirects = new HttpsRedirects()
-        this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         this.resetBadgeIcon()
         this.webResourceAccess = []
         this.surrogates = {}
+    }
 
-        /** @type {null | import('./ad-click-attribution-policy').AdClick} */
-        this.adClick = null
+    /**
+     * @param {number} tabId
+     */
+    static async restore (tabId) {
+        const state = await TabState.restore(tabId)
+        if (!state) {
+            return null
+        }
+        return new Tab(state)
+    }
 
-        /** @type {null | import('../events/referrer-trimming').Referrer} */
-        this.referrer = null
+    set referrer (value) {
+        this._tabState.setValue('referrer', value)
+    }
+
+    get referrer () {
+        return this._tabState.referrer
+    }
+
+    set adClick (value) {
+        this._tabState.setValue('adClick', value)
+    }
+
+    get adClick () {
+        return this._tabState.adClick
+    }
+
+    set trackers (value) {
+        this._tabState.setValue('trackers', value)
+    }
+
+    get trackers () {
+        return this._tabState.trackers
+    }
+
+    get url () {
+        return this._tabState.url
+    }
+
+    set url (url) {
+        this._tabState.setValue('url', url)
+    }
+
+    get id () {
+        return this._tabState.tabId
+    }
+
+    set id (tabId) {
+        this._tabState.setValue('tabId', tabId)
+    }
+
+    get upgradedHttps () {
+        return this._tabState.upgradedHttps
+    }
+
+    set upgradedHttps (value) {
+        this._tabState.setValue('upgradedHttps', value)
+    }
+
+    get hasHttpsError () {
+        return this._tabState.hasHttpsError
+    }
+
+    set hasHttpsError (value) {
+        this._tabState.setValue('hasHttpsError', value)
+    }
+
+    get mainFrameUpgraded () {
+        return this._tabState.mainFrameUpgraded
+    }
+
+    set mainFrameUpgraded (value) {
+        this._tabState.setValue('mainFrameUpgraded', value)
+    }
+
+    get urlParametersRemoved () {
+        return this._tabState.urlParametersRemoved
+    }
+
+    set urlParametersRemoved (value) {
+        this._tabState.setValue('urlParametersRemoved', value)
+    }
+
+    get urlParametersRemovedUrl () {
+        return this._tabState.urlParametersRemovedUrl
+    }
+
+    set urlParametersRemovedUrl (value) {
+        this._tabState.setValue('urlParametersRemovedUrl', value)
+    }
+
+    get ampUrl () {
+        return this._tabState.ampUrl
+    }
+
+    set ampUrl (url) {
+        this._tabState.setValue('ampUrl', url)
+    }
+
+    get cleanAmpUrl () {
+        return this._tabState.cleanAmpUrl
+    }
+
+    get requestId () {
+        return this._tabState.requestId
+    }
+
+    set cleanAmpUrl (url) {
+        this._tabState.setValue('cleanAmpUrl', url)
+    }
+
+    get status () {
+        return this._tabState.status
+    }
+
+    set status (value) {
+        this._tabState.setValue('status', value)
+    }
+
+    get statusCode () {
+        return this._tabState.statusCode
+    }
+
+    set statusCode (value) {
+        this._tabState.setValue('statusCode', value)
     }
 
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
-     * @param {*} request
-     * @param {string} tabDomain
+     * @param {string} requestURL
      */
-    setAdClickIfValidRedirect (request, tabDomain) {
+    setAdClickIfValidRedirect (requestURL) {
         const policy = this.getAdClickAttributionPolicy()
-        const adClick = policy.createAdClick(request.url, this)
+        const adClick = policy.createAdClick(requestURL, this)
         if (adClick) {
             this.adClick = adClick
         }
@@ -120,7 +240,7 @@ class Tab {
         if (this.site.url === url) return
 
         this.url = url
-        this.site = new Site(url)
+        this.site = new Site(url, this._tabState)
 
         // reset badge to dax whenever we go to a new site
         this.resetBadgeIcon()
@@ -128,19 +248,20 @@ class Tab {
 
     // Store all trackers for a given tab even if we don't block them.
     addToTrackers (t) {
+        const trackers = this.trackers
         const tracker = this.trackers[t.tracker.owner.name]
 
         if (tracker) {
             tracker.addTrackerUrl(t)
         } else if (t.tracker) {
-            const newTracker = new Tracker(t)
-            this.trackers[t.tracker.owner.name] = newTracker
+            trackers[t.tracker.owner.name] = new Tracker(t)
 
             // first time we have seen this network tracker on the page
             if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
-
-            return newTracker
         }
+        // Set the trackers on the tab which will trigger a state update
+        this.trackers = trackers
+        return this.trackers[t.tracker.owner.name]
     }
 
     /**

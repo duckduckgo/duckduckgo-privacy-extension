@@ -204,7 +204,7 @@ if (manifestVersion === 2) {
                 if (
                     utils.isRedirect(request.statusCode)
                 ) {
-                    tab.setAdClickIfValidRedirect(request, tab.site.baseDomain)
+                    tab.setAdClickIfValidRedirect(request.url)
                 } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
                     tab.adClick.adClickRedirect = false
                     tab.adClick.adBaseDomain = tab.site.baseDomain

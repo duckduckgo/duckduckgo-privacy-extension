@@ -45,7 +45,7 @@ async function onStartup () {
         const tab = savedTabs[i]
 
         if (tab.url) {
-            tabManager.create(tab)
+            tabManager.restore(tab.id)
         }
     }
 
