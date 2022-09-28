@@ -411,10 +411,11 @@
                 ],
                 "replaceSettings": {
                     "type": "youtube-video-ctl",
-                    "buttonText": "Unblock Video",
-                    "infoTitle": "DuckDuckGo blocked this YouTube Video",
-                    "infoText": "We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity.",
-                    "simpleInfoText": "We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity."
+                    "buttonText": "Unblock video",
+                    "infoTitle": "DuckDuckGo blocked this YouTube video to prevent Google from tracking you",
+                    "infoText": "We blocked Google (which owns YouTube) from tracking you when the page loaded. If you unblock this video, Google will know your activity.",
+                    "simpleInfoText": "We blocked Google (which owns YouTube) from tracking you when the page loaded. If you unblock this video, Google will know your activity.",
+                    "previewToggleText": "Previews disabled for additional privacy"
                 },
                 "clickAction": {
                     "type": "youtube-video-ctl"

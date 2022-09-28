@@ -76,6 +76,9 @@
             `,
             buttonBackground: `
                 background: #5784FF;
+            `,
+            toggleButtonText: `
+                color: #EEEEEE;
             `
         },
         lightMode: {
@@ -93,6 +96,9 @@
             `,
             buttonBackground: `
                 background: #3969EF;
+            `,
+            toggleButtonText: `
+                color: #666666;
             `
         },
         loginMode: {
@@ -116,7 +122,7 @@
 
             padding: 11px 22px;
             font-weight: bold;
-            margin: auto;
+            margin: 0 auto;
             border-color: #3969EF;
             border: none;
 
@@ -224,7 +230,8 @@
         content: `
             display: flex;
             flex-direction: column;
-            margin: auto;
+            padding: 16px 0;
+            flex: 1 1 1px;
         `,
         titleBox: `
             display: flex;
@@ -252,7 +259,8 @@
             height: 100%
             flex-direction: row;
             margin: 20px auto 0px;
-            padding-bottom: 36px;
+            height: 100%;
+            align-items: flex-start;
         `,
         modalContentTitle: `
             font-family: DuckDuckGoPrivacyEssentialsBold;
@@ -398,6 +406,69 @@
             border: 0;
             padding: 0;
             margin: 0;
+        `,
+        toggleButtonWrapper: `
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        `,
+        toggleButton: `
+            cursor: pointer;
+            position: relative;
+            width: 30px;
+            height: 16px;
+            margin-top: -3px;
+            margin: 0;
+            padding: 0;
+            border: none;
+            background-color: transparent;
+            text-align: left;
+        `,
+        toggleButtonBg: `
+            right: 0;
+            width: 30px;
+            height: 16px;
+            overflow: visible;
+            border-radius: 10px;
+        `,
+        toggleButtonText: `
+            display: inline-block;
+            margin: 0 0 0 7px;
+            padding: 0;
+        `,
+        toggleButtonBgState: {
+            active: `
+                background: #3969EF;
+            `,
+            inactive: `
+                background-color: #666666;
+            `
+        },
+        toggleButtonKnob: `
+            position: absolute;
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            margin-top: 1px;
+            top: calc(50% - 14px/2 - 1px);
+            box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.05), 0px 1px 1px rgba(0, 0, 0, 0.1);
+        `,
+        toggleButtonKnobState: {
+            active: `
+                right: 1px;
+            `,
+            inactive: `
+                left: 1px;
+            `
+        },
+        youTubeDialogButtonRow: `
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
         `,
         youTubePlaceholder: `
             display: flex;
@@ -802,7 +873,7 @@
         window.dispatchEvent(createCustomEvent('ddg-ctp-ready'))
     }
 
-    function replaceTrackingElement (widget, trackingElement, placeholderElement, hideTrackingElement = false, blockingDialog = null) {
+    function replaceTrackingElement (widget, trackingElement, placeholderElement, hideTrackingElement = false) {
         widget.dispatchEvent(trackingElement, 'ddg-ctp-tracking-element')
 
         // Usually the tracking element can simply be replaced with the
@@ -822,11 +893,7 @@
             // the DOM.
             trackingElement.style.setProperty('display', 'none', 'important')
             trackingElement.style.setProperty('visibility', 'hidden', 'important')
-            if (trackingElement.parentElement) {
-                trackingElement.parentElement.insertBefore(placeholderElement, trackingElement)
-            } else if (blockingDialog && blockingDialog.parentElement) {
-                blockingDialog.replaceWith(placeholderElement)
-        }
+            trackingElement.parentElement.insertBefore(placeholderElement, trackingElement)
         } else {
             trackingElement.replaceWith(placeholderElement)
         }
@@ -834,11 +901,52 @@
         widget.dispatchEvent(placeholderElement, 'ddg-ctp-placeholder-element')
     }
 
-    async function createYouTubeBlockingDialog (trackingElement, widget, placeholder) {
-        const bottom = document.createElement('div')
+    function makeToggleButton (isActive = false, classNames = '', dataKey = '') {
+        const toggleButton = document.createElement('button')
+        toggleButton.className = classNames
+        toggleButton.style.cssText = styles.toggleButton
+        toggleButton.type = 'button'
+        toggleButton.setAttribute('aria-pressed', isActive ? 'true' : 'false')
+        toggleButton.setAttribute('data-key', dataKey)
 
-        const previewToggle = makeButton('show preview', widget.getMode())
-        previewToggle.id = 'test-toggle'
+        const toggleBg = document.createElement('div')
+        toggleBg.style.cssText = styles.toggleButtonBg + (isActive ? styles.toggleButtonBgState.active : styles.toggleButtonBgState.inactive)
+
+        const toggleKnob = document.createElement('div')
+        toggleKnob.style.cssText = styles.toggleButtonKnob + (isActive ? styles.toggleButtonKnobState.active : styles.toggleButtonKnobState.inactive)
+
+        toggleButton.appendChild(toggleBg)
+        toggleButton.appendChild(toggleKnob)
+
+        return toggleButton
+    }
+
+    function makeToggleButtonWithText (text, mode, isActive = false, classNames = '', dataKey = '') {
+        const wrapper = document.createElement('div')
+        wrapper.style.cssText = styles.toggleButtonWrapper
+
+        const toggleButton = makeToggleButton(isActive = false, classNames = '', dataKey = '')
+
+        const textDiv = document.createElement('div')
+        textDiv.style.cssText = styles.contentText + styles.toggleButtonText + styles[mode].toggleButtonText
+        textDiv.textContent = text
+
+        wrapper.appendChild(toggleButton)
+        wrapper.appendChild(textDiv)
+        return wrapper
+    }
+
+    async function createYouTubeBlockingDialog (trackingElement, widget, placeholder) {
+        const bottomRow = document.createElement('div')
+        bottomRow.style.cssText = styles.youTubeDialogButtonRow
+
+        const previewToggle = makeToggleButtonWithText(
+            widget.replaceSettings.previewToggleText,
+            widget.getMode(),
+            false,
+            '',
+            'yt-preview-toggle'
+        )
         previewToggle.addEventListener(
             'click',
             () => makeModal(widget.entity, () => sendMessage('updateSetting', {
@@ -846,13 +954,14 @@
                 value: true
             }), widget.entity)
         )
+
         const button = makeButton(widget.replaceSettings.buttonText, widget.getMode())
-        bottom.appendChild(button)
-        bottom.appendChild(previewToggle)
+        bottomRow.appendChild(button)
+        bottomRow.appendChild(previewToggle)
 
         const textButton = makeTextButton(widget.replaceSettings.buttonText, widget.getMode())
         const { contentBlock, shadowRoot } = await createContentBlock(
-            widget, bottom, textButton
+            widget, bottomRow, textButton
         )
         button.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
         textButton.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
@@ -920,9 +1029,9 @@
 
             await toggleYouTubeCTL(trackingElement, blockingDialog, shadowRoot, placeholder, widget)
 
-            onMessage('ddg-settings-youtubePreviewsEnabled').then(() => {
-                toggleYouTubeCTL(trackingElement, blockingDialog, shadowRoot, placeholder, widget)
-            })
+            // onMessage('ddg-settings-youtubePreviewsEnabled').then(() => {
+            //     toggleYouTubeCTL(trackingElement, blockingDialog, shadowRoot, placeholder, widget)
+            // })
 
             // // Show YouTube Preview for embedded video
             // if (youtubePreviewsEnabled === true) {
@@ -948,7 +1057,7 @@
         // Show YouTube Preview for embedded video
         if (youtubePreviewsEnabled === true) {
             replaceTrackingElement(
-                widget, trackingElement, placeholder, /* hideTrackingElement= */ true, blockingDialog
+                widget, trackingElement, placeholder, /* hideTrackingElement= */ true
             )
         // Block YouTube embedded video
         } else {
