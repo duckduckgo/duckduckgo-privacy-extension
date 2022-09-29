@@ -66,6 +66,7 @@ export class AdClickAttributionPolicy {
         if (!linkFormat) return
 
         const adClick = new AdClick(this.navigationExpiration, this.totalExpiration)
+        adClick.adClickDNR = new AdClickDNR(tab.tabId, this.allowlist)
 
         if (linkFormat.adDomainParameterName) {
             const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName)
@@ -104,23 +105,73 @@ export class AdClickAttributionPolicy {
     }
 }
 
+export class AdClickDNR {
+    constructor (tabId, allowlist) {
+    this.allowlist = allowlist
+    this.tabId = tabId
+    this.rule  = {
+            "id" : this.tabId,
+            "priority": 20000,
+            "action" : { "type" : "allow" },
+            "condition" : {
+                "tabIds": [this.tabId],
+                "requestDomains": allowlist.reduce((lst, entry) => { lst.push(entry.host); return lst}, [])
+                "isUrlFilterCaseSensitive": false,
+                "urlFilter": "",
+                "initiatorDomains" : []
+            }
+        }
+    }
+    
+    /**
+     * Create initial tab scoped DNR not limited to an initiatorDomain
+     * @param {Tab} tab
+     * @returns {integer}
+     **/
+    createInitialAdClickDNR () {
+        console.log(`New DNR: tab: ${this.tabId}, Domain: ${this.adBaseDomain}`)
+        chrome.declarativeNetRequest.updateSessionRules({addRules: [this.]}
+    }
+
+    /*
+     * Update the tab DNR with initiator domain
+     */
+    addAdClickDNRInitiatorDomain (domain) {
+
+        // do update stuff 
+    }
+
+    removeAdClickDNR () {
+        console.log("REMOVE AD CLICK")
+        console.log(this.tabId)
+        chrome.declarativeNetRequest.updateSessionRules({removeRuleIds: [this.tabId]})
+    }
+
+
+}
 export class AdClick {
     /**
      * @param {number} navigationExpiration in seconds
      * @param {number} totalExpiration in seconds
      */
-    constructor (navigationExpiration, totalExpiration) {
+    constructor (navigationExpiration, totalExpiration, tabId, allowlist) {
+        console.log("Create Ad Click")
+
         /** @type {string | null} */
         this.adBaseDomain = null
         this.adClickRedirect = false
         this.navigationExpiration = navigationExpiration
         this.totalExpiration = totalExpiration
-        this.expires = Date.now() + (this.totalExpiration * 1000)
+        //this.expires = Date.now() + (this.totalExpiration * 1000)
+        this.expires = Date.now() + (60 * 1000)
         this.clickExpires = Date.now() + (this.navigationExpiration * 1000)
+
+        this.adClickDNR = adClickDNR
+
     }
 
     clone () {
-        const adClick = new AdClick(this.navigationExpiration, this.totalExpiration)
+        const adClick = new AdClick(this.navigationExpiration, this.totalExpiration, this.tabId)
         adClick.adBaseDomain = this.adBaseDomain
         adClick.adClickRedirect = this.adClickRedirect
         adClick.expires = this.expires
@@ -129,7 +180,7 @@ export class AdClick {
     }
 
     static restore (adClick) {
-        const restoredAdClick = new AdClick(adClick.navigationExpiration, adClick.totalExpiration)
+        const restoredAdClick = new AdClick(adClick.navigationExpiration, adClick.totalExpiration, this.tabId)
         restoredAdClick.adBaseDomain = adClick.adBaseDomain
         restoredAdClick.adClickRedirect = adClick.adClickRedirect
         restoredAdClick.expires = adClick.expires
@@ -143,6 +194,10 @@ export class AdClick {
      */
     shouldPropagateAdClickForNewTab (tab) {
         if (tab.site.baseDomain === this.adBaseDomain) {
+
+            // TODO update DNR with adBaseDomain
+            //
+
             return this.hasNotExpired()
         }
         return false
@@ -154,13 +209,19 @@ export class AdClick {
      */
     shouldPropagateAdClickForNavigation (tab) {
         if (tab.site.baseDomain !== this.adBaseDomain) {
+            // TODO need to update DNR with new baseDomain here if check below is true
             return this.clickExpires > Date.now()
         }
         return this.hasNotExpired()
     }
 
     hasNotExpired () {
-        return this.expires > Date.now()
+        if (this.expires > Date.now()) {
+            return true
+        } else {
+            this.removeAdClickDNR()
+            return false
+        }
     }
 
     /**
@@ -170,7 +231,13 @@ export class AdClick {
      * @returns {boolean}
      */
     allowAdAttribution (tab) {
+        console.log('Allow Attribution')
+        console.log(tab.site.domain)
+
+        this.createAdClickDNR(this.tabId, tab.site.domain)
+
         if (tab.site.baseDomain !== this.adBaseDomain) return false
         return this.hasNotExpired()
     }
+
 }
