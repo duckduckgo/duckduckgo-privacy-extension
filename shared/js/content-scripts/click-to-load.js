@@ -463,6 +463,11 @@
                 left: 1px;
             `
         },
+        youTubeWrapperDiv: `
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+        `,
         youTubeDialogButtonRow: `
             display: flex;
             flex-direction: column;
@@ -477,32 +482,66 @@
             position: relative;
             width: 100%;
             height: 100%;
-            background-color: black;
-            cursor: pointer;
+            background: rgba(45, 45, 45, 0.8);
+        `,
+        youTubePreviewWrapperImg: `
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        `,
+        youTubePreviewImg: `
+            min-width: 100%;
+            min-height: 100%;
+            height: auto;
         `,
         youTubeTitle: `
-            position: absolute;
-            z-index: 2;
-            left: 0;
-            right: 0;
-            font-size: 18px;
-            color: white;
+            flex: 1;
+            font-family: DuckDuckGoPrivacyEssentialsBold;
+            position: relative;
+            padding: 18px 12px 0;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 14px;
+            color: #FFFFFF;
             cursor: pointer;
-            background-color: rgba(0, 0, 0, 0.5);
             margin: 0;
-            padding: 0.5em;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            box-sizing: border-box;
+        `,
+        youTubePlayButtonRow: `
+            flex: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         `,
         youTubePlayButton: `
-            position: absolute;
-            z-index: 2;
-            font-size: 18px;
-            color: white;
-            cursor: pointer;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 1em;
-            text-align: center;
-            width: 50%;
-            align-self: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 48px;
+            width: 80px;
+            padding: 0px 24px;
+            border-radius: 8px;
+        `,
+        youTubePreviewToggleRow: `
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        `,
+        youTubePreviewToggleText: `
+            color: #EEEEEE;
+            font-weight: 400;
+        `,
+        youTubePreviewInfoText: `
+            color: #ABABAB;
         `
     }
 
@@ -921,14 +960,14 @@
         return toggleButton
     }
 
-    function makeToggleButtonWithText (text, mode, isActive = false, classNames = '', dataKey = '') {
+    function makeToggleButtonWithText (text, mode, isActive = false, toggleCssStyles = '', textCssStyles = '', dataKey = '') {
         const wrapper = document.createElement('div')
         wrapper.style.cssText = styles.toggleButtonWrapper
 
-        const toggleButton = makeToggleButton(isActive = false, classNames = '', dataKey = '')
+        const toggleButton = makeToggleButton(isActive, toggleCssStyles, dataKey)
 
         const textDiv = document.createElement('div')
-        textDiv.style.cssText = styles.contentText + styles.toggleButtonText + styles[mode].toggleButtonText
+        textDiv.style.cssText = styles.contentText + styles.toggleButtonText + styles[mode].toggleButtonText + textCssStyles
         textDiv.textContent = text
 
         wrapper.appendChild(toggleButton)
@@ -936,7 +975,7 @@
         return wrapper
     }
 
-    async function createYouTubeBlockingDialog (trackingElement, widget, placeholder) {
+    async function createYouTubeBlockingDialog (trackingElement, widget) {
         const bottomRow = document.createElement('div')
         bottomRow.style.cssText = styles.youTubeDialogButtonRow
 
@@ -944,6 +983,7 @@
             widget.replaceSettings.previewToggleText,
             widget.getMode(),
             false,
+            '',
             '',
             'yt-preview-toggle'
         )
@@ -1510,7 +1550,7 @@
      */
     async function createYouTubePlaceholder (originalElement, widget) {
         const placeholder = document.createElement('div')
-        placeholder.style.cssText = styles.wrapperDiv
+        placeholder.style.cssText = styles.wrapperDiv + styles.youTubeWrapperDiv
 
         // Put our custom font-faces inside the wrapper element, since
         // @font-face does not work inside a shadowRoot.
@@ -1530,46 +1570,57 @@
         // it being styled by the website's stylesheets.
         const shadowRoot = placeholder.attachShadow({ mode: (await devMode) ? 'open' : 'closed' })
 
-        const innerDiv = document.createElement('div')
-        innerDiv.style.cssText = styles.youTubePlaceholder
-        innerDiv.style.position = 'relative'
-
+        /** Preview Image */
         // We use an image element for the preview image so that we can ensure
         // the referrer isn't passed.
+        const previewImageWrapper = document.createElement('div')
+        previewImageWrapper.style.cssText = styles.youTubePreviewWrapperImg
+        shadowRoot.appendChild(previewImageWrapper)
+
         const previewImageElement = document.createElement('img')
         previewImageElement.setAttribute('referrerPolicy', 'no-referrer')
-        previewImageElement.style.height = '100%'
-        innerDiv.appendChild(previewImageElement, innerDiv.firstChildElement)
+        previewImageElement.style.cssText = styles.youTubePreviewImg
+        previewImageWrapper.appendChild(previewImageElement)
 
-        const logoElement = document.createElement('img')
-        logoElement.style.cssText = styles.logoImg
-        logoElement.setAttribute('src', logoImg)
+        const innerDiv = document.createElement('div')
+        innerDiv.style.cssText = styles.youTubePlaceholder
 
+        /** Video Title */
         const titleElement = document.createElement('p')
         titleElement.style.cssText = styles.youTubeTitle
-        titleElement.appendChild(logoElement)
         innerDiv.appendChild(titleElement)
 
-        const buttonText = document.createElement('span')
-        buttonText.innerText = 'Click to Load'
+        /** Play Button */
+        const playButtonRow = document.createElement('div')
+        playButtonRow.style.cssText = styles.youTubePlayButtonRow
 
         const playButton = document.createElement('button')
-        playButton.style.cssText = styles.youTubePlayButton
-        // FIXME - Hack to position button in roughly the middle of video.
-        playButton.style.top = Math.round((height / 2)) + 'px'
+        playButton.style.cssText = styles.button + styles.youTubePlayButton + styles[widget.getMode()].buttonBackground
+
+        const videoPlayImg = document.createElement('img')
+        const videoPlayIcon = await sendMessage('getImage', widget.replaceSettings.placeholder.videoPlayIcon[widget.getMode()])
+        videoPlayImg.setAttribute('src', videoPlayIcon)
+        playButton.appendChild(videoPlayImg)
+
         playButton.addEventListener(
             'click',
             widget.clickFunction(originalElement, placeholder)
         )
-        playButton.appendChild(buttonText)
-        innerDiv.appendChild(playButton)
+        playButtonRow.appendChild(playButton)
+        innerDiv.appendChild(playButtonRow)
 
-        shadowRoot.appendChild(innerDiv)
+        /** Preview Toggle */
+        const previewToggleRow = document.createElement('div')
+        previewToggleRow.style.cssText = styles.youTubePreviewToggleRow
 
-        // TODO - Preview toggle, to be extracted and reused
-        const previewToggle = document.createElement('button')
-        previewToggle.style.cssText = styles.youTubePlayButton
-        previewToggle.style.top = Math.round((height / 4 * 3)) + 'px'
+        const previewToggle = makeToggleButtonWithText(
+            widget.replaceSettings.placeholder.previewToggleEnabledText,
+            widget.getMode(),
+            true,
+            '',
+            styles.youTubePreviewToggleText,
+            'yt-preview-toggle'
+        )
         previewToggle.addEventListener(
             'click',
             () => sendMessage('updateSetting', {
@@ -1577,12 +1628,16 @@
                 value: false
             })
         )
-        const previewText = document.createElement('span')
-        previewText.innerText = 'Previews disabled for additional privacy'
 
-        previewToggle.appendChild(previewText)
-        innerDiv.appendChild(previewToggle)
-        // END OF preview toggle
+        /** Preview Info Text */
+        const previewText = document.createElement('div')
+        previewText.style.cssText = styles.contentText + styles.toggleButtonText + styles.youTubePreviewInfoText
+        previewText.innerText = widget.replaceSettings.placeholder.previewInfoText + ' '
+        previewText.appendChild(getLearnMoreLink())
+
+        previewToggleRow.appendChild(previewToggle)
+        previewToggleRow.appendChild(previewText)
+        innerDiv.appendChild(previewToggleRow)
 
         shadowRoot.appendChild(innerDiv)
 
@@ -1590,13 +1645,11 @@
         getYouTubeVideoDetails(originalElement.src).then(
             ({ status, title, previewImage }) => {
                 if (status === 'success') {
-                    const span = document.createElement('span')
-                    span.innerText = title
-                    titleElement.appendChild(span)
+                    titleElement.innerText = title
+                    titleElement.title = title
                     if (previewImage) {
                         previewImageElement.setAttribute('src', previewImage)
                     }
-                    buttonText.innerText = 'Click to Play'
                     widget.autoplay = true
                 }
             }
