@@ -442,9 +442,9 @@
             }
         },
         "informationalModal": {
-            "icon": "blocked_video.svg",
+            "icon": "blocked_youtube_video.svg",
             "messageTitle": "Enable YouTube previews and reduce privacy?",
-            "messageBody": "Showing previews will allow Google (which owns YouTube) to see some of your device’s information, but is still more private than playing the video. Learn More",
+            "messageBody": "Showing previews will allow Google (which owns YouTube) to see some of your device’s information, but is still more private than playing the video.",
             "confirmButtonText": "Enable Previews",
             "rejectButtonText": "No Thanks"
         },

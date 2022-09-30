@@ -174,6 +174,10 @@ export function getLogo () {
     return utils.imgToData('img/social/dax.png')
 }
 
+export function getCloseIcon () {
+    return utils.imgToData('img/social/close.svg')
+}
+
 export function getCurrentTab () {
     return utils.getCurrentTab()
 }

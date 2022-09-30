@@ -40,6 +40,7 @@
         lightMode: ''
     }
     let logoImg
+    let closeIcon
     const titleID = 'DuckDuckGoPrivacyEssentialsCTLElementTitle'
     const entities = []
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
@@ -240,6 +241,7 @@
             border-bottom: 1px solid;
             border-color: rgba(196, 196, 196, 0.3);
             margin: 0;
+            margin-bottom: 4px;
         `,
         title: `
             font-family: DuckDuckGoPrivacyEssentials;
@@ -267,17 +269,16 @@
             font-size: 17px;
             font-weight: bold;
             line-height: 21px;
-            margin: 27px auto 10px;
+            margin: 10px auto;
             text-align: center;
             border: none;
             padding: 0;
-            margin: 0;
         `,
         modalContentText: `
             font-family: DuckDuckGoPrivacyEssentials;
             font-size: 14px;
             line-height: 21px;
-            margin: 0px auto 24px;
+            margin: 0px auto 14px;
             text-align: center;
             border: none;
             padding: 0;
@@ -286,8 +287,16 @@
             border: none;
             padding: 0;
             margin: auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         `,
         modalButton: `
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         `,
         modalIcon: `
             display: block;
@@ -313,6 +322,21 @@
             width: 80px;
             margin: auto;
         `,
+        closeIcon: `
+            height: 12px;
+            width: 12px;
+            margin: auto;
+        `,
+        closeButton: `
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 20px;
+            height: 21px;
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+        `,
         logo: `
             flex-basis: 0%;
             min-width: 20px;
@@ -332,22 +356,17 @@
             width: 14px;
         `,
         modal: `
-            width: 312px;
+            width: 340px;
             padding: 0;
             margin: auto;
             background-color: #FFFFFF;
             position: absolute;
-            left: calc(50% - 312px/2);
-            top: calc(50% - 356px/2 + 0.5px);
+            left: calc(50% - 340px/2);
+            top: calc(50% - 340px/2 + 0.5px);
             display: block;
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
             border: none;
-        `,
-        modalYT: `
-            width: 350px;
-            left: calc(50% - 350px/2);
-            top: calc(50% - 350px/2 + 0.5px);
         `,
         modalContent: `
             padding: 24px;
@@ -370,11 +389,15 @@
             margin: 0;
         `,
         modalContainer: `
-            height: 100%;
-            width: 100%;
+            height: 100vh;
+            width: 100vw;
+            box-sizing: border-box;
             z-index: 2147483647;
             display: block;
             position: fixed;
+            border: 0;
+            margin: 0;
+            padding: 0;
         `,
         headerLinkContainer: `
             flex-basis: 100%;
@@ -1182,6 +1205,10 @@
         logoImg = response
     })
 
+    sendMessage('getCloseIcon', '').then(response => {
+        closeIcon = response
+    })
+
     // Listen for events from surrogates
     addEventListener('ddg-ctp', (event) => {
         if (!event.detail) return
@@ -1352,15 +1379,27 @@
 
     async function makeModal (entity, acceptFunction, ...acceptFunctionParams) {
         const icon = await sendMessage('getImage', entityData[entity].modalIcon)
+
         const modalContainer = document.createElement('div')
         modalContainer.style.cssText = styles.modalContainer
+
+        // Close Modal Function
+        function closeModal () {
+            document.body.removeChild(modalContainer)
+            cancelModal(entity)
+        }
+
+        // Protect the contents of our modal inside a shadowRoot, to avoid
+        // it being styled by the website's stylesheets.
+        const shadowRoot = modalContainer.attachShadow({ mode: (await devMode) ? 'open' : 'closed' })
+
         const pageOverlay = document.createElement('div')
         pageOverlay.style.cssText = styles.overlay
         const modal = document.createElement('div')
-        modal.style.cssText = styles.modal + styles.modalYT
+        modal.style.cssText = styles.modal
 
         // Title
-        const modalTitle = createTitleRow('DuckDuckGo')
+        const modalTitle = createTitleRow('DuckDuckGo', null, closeModal)
         modal.appendChild(modalTitle)
 
         // Content
@@ -1389,17 +1428,14 @@
         const buttonRow = document.createElement('div')
         buttonRow.style.cssText = styles.modalButtonRow
         const allowButton = makeButton(entityData[entity].modalAcceptText, 'lightMode')
-        allowButton.style.cssText += styles.modalButton + 'margin-right: 15px;'
+        allowButton.style.cssText += styles.modalButton + 'margin-bottom: 8px;'
         allowButton.addEventListener('click', function doLogin () {
             acceptFunction(...acceptFunctionParams)
             document.body.removeChild(modalContainer)
         })
         const rejectButton = makeButton(entityData[entity].modalRejectText, 'cancelMode')
-        rejectButton.style.cssText += styles.modalButton + 'float: right;'
-        rejectButton.addEventListener('click', function cancelLogin () {
-            document.body.removeChild(modalContainer)
-            cancelModal(entity)
-        })
+        rejectButton.style.cssText += styles.modalButton
+        rejectButton.addEventListener('click', closeModal)
 
         buttonRow.appendChild(allowButton)
         buttonRow.appendChild(rejectButton)
@@ -1407,12 +1443,13 @@
 
         modal.appendChild(modalContent)
 
-        modalContainer.appendChild(pageOverlay)
-        modalContainer.appendChild(modal)
+        shadowRoot.appendChild(pageOverlay)
+        shadowRoot.appendChild(modal)
+
         document.body.insertBefore(modalContainer, document.body.childNodes[0])
     }
 
-    function createTitleRow (message, textButton) {
+    function createTitleRow (message, textButton, closeBtnFn) {
         // Create row container
         const row = document.createElement('div')
         row.style.cssText = styles.titleBox
@@ -1433,6 +1470,19 @@
         msgElement.textContent = message
         msgElement.style.cssText = styles.title
         row.appendChild(msgElement)
+
+        // Close Button
+        if (closeBtnFn && typeof closeBtnFn === 'function') {
+            const closeButton = document.createElement('button')
+            closeButton.style.cssText = styles.closeButton
+            const closeIconImg = document.createElement('img')
+            closeIconImg.setAttribute('src', closeIcon)
+            closeIconImg.setAttribute('height', '12px')
+            closeIconImg.style.cssText = styles.closeIcon
+            closeButton.appendChild(closeIconImg)
+            closeButton.addEventListener('click', closeBtnFn)
+            row.appendChild(closeButton)
+        }
 
         // Text button for very small boxes
         if (textButton) {
