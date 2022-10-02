@@ -41,6 +41,7 @@
     }
     let logoImg
     let closeIcon
+    let shareFeedbackLink
     const titleID = 'DuckDuckGoPrivacyEssentialsCTLElementTitle'
     const entities = []
     const ddgFont = chrome.runtime.getURL('public/font/ProximaNova-Reg-webfont.woff')
@@ -223,6 +224,9 @@
             font-family: DuckDuckGoPrivacyEssentials;
             line-height: 1;
         `,
+        dialogBlock: `
+            height: calc(100% - 30px);
+        `,
         imgRow: `
             display: flex;
             flex-direction: column;
@@ -233,6 +237,21 @@
             flex-direction: column;
             padding: 16px 0;
             flex: 1 1 1px;
+        `,
+        feedbackLink: `
+            font-family: DuckDuckGoPrivacyEssentials;
+            font-style: normal;
+            font-weight: 400;
+            font-size: 12px;
+            line-height: 12px;
+            color: #ABABAB;
+            text-decoration: none;
+        `,
+        feedbackRow: `
+            height: 30px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
         `,
         titleBox: `
             display: flex;
@@ -491,6 +510,7 @@
             position: relative;
             overflow: hidden;
             border-radius: 12px;
+            height: calc(100% - 30px);
         `,
         youTubeDialogButtonRow: `
             display: flex;
@@ -1209,6 +1229,11 @@
         closeIcon = response
     })
 
+    /** TODO - Add message handler for returning Share Feedback Link */
+    sendMessage('getShareFeedbackLink', '').then(response => {
+        shareFeedbackLink = response
+    })
+
     // Listen for events from surrogates
     addEventListener('ddg-ctp', (event) => {
         if (!event.detail) return
@@ -1292,6 +1317,25 @@
         blockedIcon.style.cssText = styles.circle
         dash.style.cssText = styles.rectangle
         return blockedIcon
+    }
+
+    function makeShareFeedbackLink () {
+        const feedbackLink = document.createElement('a')
+        feedbackLink.style.cssText = styles.feedbackLink
+        feedbackLink.href = shareFeedbackLink
+        feedbackLink.text = 'Share Feedback'
+
+        return feedbackLink
+    }
+
+    function makeShareFeedbackDiv () {
+        const feedbackRow = document.createElement('div')
+        feedbackRow.style.cssText = styles.feedbackRow
+
+        const feedbackLink = makeShareFeedbackLink()
+        feedbackRow.appendChild(feedbackLink)
+
+        return feedbackRow
     }
 
     /* FB login replacement button, with hover text */
@@ -1528,7 +1572,7 @@
 
         // Create overall grid structure
         const element = document.createElement('div')
-        element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont
+        element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont + styles.dialogBlock
         element.className = wrapperClass
         shadowRoot.appendChild(element)
 
@@ -1576,6 +1620,10 @@
         buttonRow.appendChild(button)
         contentRow.appendChild(buttonRow)
 
+        /** Share Feedback Link */
+        const feedbackRow = makeShareFeedbackDiv()
+        shadowRoot.appendChild(feedbackRow)
+
         return { contentBlock, shadowRoot }
     }
 
@@ -1620,12 +1668,16 @@
         // it being styled by the website's stylesheets.
         const shadowRoot = placeholder.attachShadow({ mode: (await devMode) ? 'open' : 'closed' })
 
+        const youTubePreviewDiv = document.createElement('div')
+        youTubePreviewDiv.style.cssText = styles.youTubeWrapperDiv
+        shadowRoot.appendChild(youTubePreviewDiv)
+
         /** Preview Image */
         // We use an image element for the preview image so that we can ensure
         // the referrer isn't passed.
         const previewImageWrapper = document.createElement('div')
         previewImageWrapper.style.cssText = styles.youTubePreviewWrapperImg
-        shadowRoot.appendChild(previewImageWrapper)
+        youTubePreviewDiv.appendChild(previewImageWrapper)
 
         const previewImageElement = document.createElement('img')
         previewImageElement.setAttribute('referrerPolicy', 'no-referrer')
@@ -1689,7 +1741,7 @@
         previewToggleRow.appendChild(previewText)
         innerDiv.appendChild(previewToggleRow)
 
-        shadowRoot.appendChild(innerDiv)
+        youTubePreviewDiv.appendChild(innerDiv)
 
         widget.autoplay = false
         getYouTubeVideoDetails(originalElement.src).then(
@@ -1704,6 +1756,10 @@
                 }
             }
         )
+
+        /** Share Feedback Link */
+        const feedbackRow = makeShareFeedbackDiv()
+        shadowRoot.appendChild(feedbackRow)
 
         return { placeholder, shadowRoot }
     }
