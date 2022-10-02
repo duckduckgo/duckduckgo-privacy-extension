@@ -361,8 +361,9 @@
             margin: auto;
             background-color: #FFFFFF;
             position: absolute;
-            left: calc(50% - 340px/2);
-            top: calc(50% - 340px/2 + 0.5px);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             display: block;
             box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.1);
             border-radius: 12px;
@@ -529,7 +530,6 @@
             font-weight: bold;
             line-height: 14px;
             color: #FFFFFF;
-            cursor: pointer;
             margin: 0;
             width: 100%;
             white-space: nowrap;
