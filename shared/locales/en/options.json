@@ -92,7 +92,7 @@
         "note": "Whether the user wants to see YouTube Previews on embedded videos or if all YouTube embedded videos are completely blocked by default"
     },
     "enableYoutubePreviewsDesc": {
-        "title": "DuckDuckGo automatically blocks embedded YouTube videos, along with their title and preview, from being loaded to improve your privacy. You can choose to enable previews, but doing so will allow Google to see some of your device’s information when you visit any page with an embedded video. Learn More",
+        "title": "DuckDuckGo automatically blocks embedded YouTube videos, along with their title and preview, from being loaded to improve your privacy. You can choose to enable previews, but doing so will allow Google to see some of your device’s information when you visit any page with an embedded video.&nbsp;",
         "note": "Describes that DDG automatically blocks embedded YouTube videos to improve privacy, but users can choose to see the video preview and this will cause Google to see some device information"
     }
 }
