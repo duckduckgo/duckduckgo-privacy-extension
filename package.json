@@ -34,7 +34,7 @@
         "release-chrome-mv3": "make browser=chrome-mv3 type=release && make chrome-mv3-release-zip"
     },
     "devDependencies": {
-        "@babel/cli": "^7.18.10",
+        "@babel/cli": "^7.19.3",
         "@babel/core": "^7.19.1",
         "@babel/node": "^7.19.1",
         "@babel/polyfill": "^7.10.4",
