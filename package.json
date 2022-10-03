@@ -35,7 +35,7 @@
     },
     "devDependencies": {
         "@babel/cli": "^7.19.3",
-        "@babel/core": "^7.19.1",
+        "@babel/core": "^7.19.3",
         "@babel/node": "^7.19.1",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.19.1",
@@ -62,7 +62,7 @@
         "grunt-sass": "3.1.0",
         "jasmine": "4.4.0",
         "jasmine-core": "3.5.0",
-        "jsdom": "^20.0.0",
+        "jsdom": "^20.0.1",
         "karma": "6.4.1",
         "karma-chrome-launcher": "3.1.1",
         "karma-jasmine": "1.1.1",
@@ -75,7 +75,7 @@
         "timekeeper": "^2.1.1",
         "typescript": "^4.8.3",
         "webextension-polyfill": "^0.10.0",
-        "yargs": "^17.5.1"
+        "yargs": "^17.6.0"
     },
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#5.0.1",
