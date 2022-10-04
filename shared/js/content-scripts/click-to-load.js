@@ -1080,6 +1080,7 @@
             replaceTrackingElement(widget, trackingElement, container)
         }
 
+        /** General CTL */
         if (widget.replaceSettings.type === 'dialog') {
             const icon = await sendMessage('getImage', widget.replaceSettings.icon)
             const button = makeButton(widget.replaceSettings.buttonText, widget.getMode())
@@ -1104,6 +1105,7 @@
             }
         }
 
+        /** YouTube CTL */
         if (widget.replaceSettings.type === 'youtube-video-ctl') {
             const { placeholder } =
                 await createYouTubePlaceholder(trackingElement, widget)
@@ -1112,28 +1114,25 @@
 
             await toggleYouTubeCTL(trackingElement, blockingDialog, shadowRoot, placeholder, widget)
 
-            // onMessage('ddg-settings-youtubePreviewsEnabled').then(() => {
-            //     toggleYouTubeCTL(trackingElement, blockingDialog, shadowRoot, placeholder, widget)
-            // })
-
-            // // Show YouTube Preview for embedded video
-            // if (youtubePreviewsEnabled === true) {
-            //     replaceTrackingElement(
-            //         widget, trackingElement, placeholder, /* hideTrackingElement= */ true
-            //     )
-            // // Block YouTube embedded video
-            // } else {
-            //     replaceTrackingElement(widget, trackingElement, blockingDialog)
-            //     const { height: placeholderHeight } = window.getComputedStyle(blockingDialog)
-            //     const { height: parentHeight } = window.getComputedStyle(blockingDialog.parentElement)
-            //     if (parseInt(placeholderHeight, 10) <= 200 || parseInt(parentHeight, 10) <= 200) {
-            //         const titleRowTextButton = shadowRoot.querySelector(`#${titleID + 'TextButton'}`)
-            //         titleRowTextButton.style.display = 'block'
-            //     }
-            // }
+            onMessage('ddg-settings-youtubePreviewsEnabled').then(() => {
+                // TODO toggle between YT CTL states when "youtubePreviewsEnabled" settings change
+                // toggleYouTubeCTL(trackingElement, blockingDialog, shadowRoot, placeholder, widget)
+            })
         }
     }
 
+    /**
+     * @param {Element} trackingElement
+     *   The original tracking element (YouTube video iframe)
+     * @param {Element} blockingDialog
+     *   A blocking dialog with CTL element
+     * @param {Element} shadowRoot
+     *   The shadow root for the blocking dialog with CTL
+     * @param {Element} placeholder
+     *   A YouTube preview placeholder
+     * @param {DuckWidget} widget
+     *   The CTP 'widget' associated with the tracking element.
+     */
     async function toggleYouTubeCTL (trackingElement, blockingDialog, shadowRoot, placeholder, widget) {
         const youtubePreviewsEnabled = (await getYouTubePreviewsEnabled())
 
@@ -1142,7 +1141,7 @@
             replaceTrackingElement(
                 widget, trackingElement, placeholder, /* hideTrackingElement= */ true
             )
-        // Block YouTube embedded video
+        // Block YouTube embedded video and display blocking dialog
         } else {
             replaceTrackingElement(widget, trackingElement, blockingDialog, false)
             const { height: placeholderHeight } = window.getComputedStyle(blockingDialog)
@@ -1179,11 +1178,6 @@
 
                 await Promise.all(trackingElements.map(trackingElement => {
                     const widget = new DuckWidget(widgetData, trackingElement, entity)
-
-                    // /** TODO ADD EVENT LISTENER TO SETTINGS */
-                    // onMessage('ddg-settings-youtubePreviewsEnabled').then(() => {
-                    //     createPlaceholderElementAndReplace(widget, trackingElement)
-                    // })
                     return createPlaceholderElementAndReplace(widget, trackingElement)
                 }))
             }
@@ -1328,7 +1322,7 @@
         return feedbackLink
     }
 
-    function makeShareFeedbackDiv () {
+    function makeShareFeedbackRow () {
         const feedbackRow = document.createElement('div')
         feedbackRow.style.cssText = styles.feedbackRow
 
@@ -1621,7 +1615,7 @@
         contentRow.appendChild(buttonRow)
 
         /** Share Feedback Link */
-        const feedbackRow = makeShareFeedbackDiv()
+        const feedbackRow = makeShareFeedbackRow()
         shadowRoot.appendChild(feedbackRow)
 
         return { contentBlock, shadowRoot }
@@ -1758,7 +1752,7 @@
         )
 
         /** Share Feedback Link */
-        const feedbackRow = makeShareFeedbackDiv()
+        const feedbackRow = makeShareFeedbackRow()
         shadowRoot.appendChild(feedbackRow)
 
         return { placeholder, shadowRoot }
