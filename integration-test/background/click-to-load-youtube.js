@@ -138,7 +138,6 @@ describe('Test YouTube Click To Load', () => {
             expect(youTubeNocookie.allowed).toEqual(0)
         }
 
-
         // The header button should also unblock YouTube.
         clearRequests()
         const headerButton = await page.evaluateHandle(
@@ -151,7 +150,7 @@ describe('Test YouTube Click To Load', () => {
             const {
                 youTubeIframeApi, youTubeStandard, youTubeNocookie
             } = summariseYouTubeRequests(pageRequests)
-        
+
             expect(youTubeIframeApi.checked).toBeTrue()
             expect(youTubeIframeApi.alwaysRedirected).toBeFalse()
             expect(youTubeStandard.blocked).toEqual(0)
