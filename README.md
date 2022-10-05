@@ -21,20 +21,21 @@ npm install
 Generate a Smarter Encryption ruleset:
 
 ```bash
-npm run smarter-encryption ../list-of-domains.txt ../smarter-encryption-ruleset.json
+npm run smarter-encryption ../list-of-domains-input.txt ../smarter-encryption-ruleset-output.json
 ```
 
 Generate a Tracker Blocking ruleset:
 
 ```bash
-npm run tds ../tds.json ../tracker-blocking-ruleset.json [../tracker-domain-by-rule-id.txt]
+npm run tds ../tds-input.json ../tracker-blocking-ruleset-output.json \
+        [../tracker-domain-by-rule-id-output.txt]
 ```
 
 Generate the extension configuration ruleset:
 
 ```bash
-npm run extension-configuration ../extension-config.json ../extension-configuration-ruleset.json \
-        [../match-details-by-rule-id.json]
+npm run extension-configuration ../extension-config-input.json \
+        ../extension-configuration-ruleset-output.json [../match-details-by-rule-id-output.json]
 ```
 
 Note:
