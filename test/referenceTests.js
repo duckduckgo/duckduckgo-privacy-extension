@@ -48,39 +48,47 @@ describe('Reference Tests', () => {
             { encoding: 'utf8', flag: 'r' }
         ))
 
+        // Note - This should be taken from surrogates.txt, not hardcoded.
+        const supportedSurrogateScripts = new Set(['tracker', 'script.js'])
+
         const isRegexSupported =
               this.browser.isRegexSupported.bind(this.browser)
         const { ruleset } = await generateTdsRuleset(
-            blockList, isRegexSupported
+            blockList, supportedSurrogateScripts, '/', isRegexSupported
         )
+
         await this.browser.addRules(ruleset)
 
         for (const {
             testDescription, requestURL: initialUrl, requestType,
             siteURL: initiatorUrl, expectAction: expectedAction
         } of testCases(referenceTests)) {
-            // Note: Stop skipping these test cases once support for
-            //       Surrogates has been added.
-            if (testDescription.startsWith('surrogate-tests:')) {
-                continue
-            }
-
             const actualMatchedRules = await this.browser.testMatchOutcome({
                 url: initialUrl,
                 initiator: initiatorUrl,
                 type: requestType
             })
-            const actualMatchedBlockingRules =
-                  actualMatchedRules.filter(
-                      rule => rule.action.type === 'block'
-                  )
 
-            // Note: This will needed to be expanded upon to cover
-            //       non block/allow actions like redirections.
-            const actualAction =
-                  actualMatchedBlockingRules.length > 0
-                      ? 'block'
-                      : 'ignore'
+            let actualAction = 'ignore'
+            const actualRedirects = []
+            for (const rule of actualMatchedRules) {
+                if (rule.action.type === 'block') {
+                    actualAction = 'block'
+                    continue
+                }
+
+                if (rule.action.type === 'redirect') {
+                    actualRedirects.push(rule.action.redirect.extensionPath)
+                }
+            }
+
+            if (actualAction === 'ignore' && actualRedirects.length > 0) {
+                actualAction = 'redirect'
+
+                // Note - Check the redirection path is correct. Not possible
+                //        currently, since the expected redirect path is a data
+                //        URI instead of the script filename/path.
+            }
 
             assert.equal(
                 actualAction,

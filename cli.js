@@ -36,23 +36,37 @@ async function main () {
         }
         break
     case 'tds':
-        if (args.length < 2 || args.length > 3) {
+        if (args.length < 3 || args.length > 4) {
             console.error(
                 'Usage: npm run tds',
-                './tds-input.json ./ruleset-output.json',
-                '[./domain-by-rule-id-output.txt]'
+                './tds-input.json ./supported-surrogates-input.json ',
+                './tds-ruleset-output.json ',
+                '[./match-details-by-rule-id-output.json]'
             )
         } else {
-            const [tdsFilePath, rulesetFilePath, mappingFilePath] = args
+            const [
+                tdsFilePath,
+                supportedSurrogatesPath,
+                rulesetFilePath,
+                mappingFilePath
+            ] = args
 
             const browser = new PuppeteerInterface()
             const isRegexSupported = browser.isRegexSupported.bind(browser)
 
-            const { ruleset, trackerDomainByRuleId } =
+            const { ruleset, matchDetailsByRuleId } =
                   await generateTdsRuleset(
                       JSON.parse(
                           fs.readFileSync(tdsFilePath, { encoding: 'utf8' })
                       ),
+                      new Set(
+                          JSON.parse(
+                              fs.readFileSync(
+                                  supportedSurrogatesPath, { encoding: 'utf8' }
+                              )
+                          )
+                      ),
+                      '/web_accessible_resources/',
                       isRegexSupported
                   )
 
@@ -66,7 +80,7 @@ async function main () {
             if (mappingFilePath) {
                 fs.writeFileSync(
                     mappingFilePath,
-                    trackerDomainByRuleId.join('\n')
+                    JSON.stringify(matchDetailsByRuleId, null, '\t')
                 )
             }
         }
@@ -76,7 +90,7 @@ async function main () {
             console.error(
                 'Usage: npm run extension-configuration',
                 './extension-config-input.json ./ruleset-output.json ',
-                '[./domain-and-reason-by-rule-id-output.json]'
+                '[./match-details-by-rule-id-output.json]'
             )
         } else {
             const [

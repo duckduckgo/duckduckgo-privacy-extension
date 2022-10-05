@@ -24,12 +24,18 @@ Generate a Smarter Encryption ruleset:
 npm run smarter-encryption ../list-of-domains-input.txt ../smarter-encryption-ruleset-output.json
 ```
 
-Generate a Tracker Blocking ruleset:
+Generate the TDS ruleset:
 
 ```bash
-npm run tds ../tds-input.json ../tracker-blocking-ruleset-output.json \
-        [../tracker-domain-by-rule-id-output.txt]
+npm run tds ../tds-input.json ../supported-surrogates-input.json ../tds-ruleset-output.json \
+        [../match-details-by-rule-id-output.json]
 ```
+
+Note:
+ - This includes both Tracker blocking (see [tds.json][3]) and
+   "surrogate script" redirection. (see [tracker-surrogates][4]).
+ - supported-surrogates-input.json must be a JSON encoded array of surrogate
+   script names.
 
 Generate the extension configuration ruleset:
 
@@ -58,3 +64,5 @@ npm test
 
 [1]: https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/
 [2]: https://github.com/duckduckgo/duckduckgo-privacy-extension/
+[3]: https://staticcdn.duckduckgo.com/trackerblocking/v3/tds.json
+[4]: https://github.com/duckduckgo/tracker-surrogates/

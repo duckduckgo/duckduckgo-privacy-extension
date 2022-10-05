@@ -15,6 +15,8 @@ const MAXIMUM_RULES_PER_DOMAIN = Math.floor(
         TRACKER_RULE_PRIORITY_INCREMENT
 )
 
+const supportedSurrogateScripts = new Set(['supported.js', 'supported2.js'])
+
 function emptyBlockList () {
     return {
         cnames: {},
@@ -79,7 +81,7 @@ function stringifyBlocklist (tds) {
  * @typedef {object} rulesetEqualOptions
  * @property {object[]} [expectedRuleset]
  *   The expected declarativeNetRequest ruleset.
- * @property {object[]} [expectedLookup]
+ * @property {object} [expectedLookup]
  *   The expected ruleId -> matchDetails lookup.
  * @property {function} [rulesetTransform]
  *   Function to apply to the generated ruleset before comparing it to the
@@ -103,8 +105,8 @@ function stringifyBlocklist (tds) {
  *   See https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-isRegexSupported
  * @param {number|null} startingRuleId
  *   Rule ID for the generated declarativeNetRequest rules to start from. Rule
- *   IDs are incremented sequentially from the starting point. If null is provided,
- *   the startingRuleId argument is not passed through.
+ *   IDs are incremented sequentially from the starting point. If null is
+ *   provided, the startingRuleId argument is not passed through.
  * @param {rulesetEqualOptions} options
  * @return {Promise<>}
  */
@@ -117,11 +119,12 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
     let result
     if (typeof startingRuleId === 'number') {
         result = await generateTdsRuleset(
-            tds, isRegexSupported, startingRuleId
+            tds, supportedSurrogateScripts, '/', isRegexSupported,
+            startingRuleId
         )
     } else {
         result = await generateTdsRuleset(
-            tds, isRegexSupported
+            tds, supportedSurrogateScripts, '/', isRegexSupported
         )
     }
 
@@ -139,14 +142,7 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
         assert.deepEqual(actualRuleset, expectedRuleset)
     }
     if (expectedLookup) {
-        let actualLookup = result.trackerDomainByRuleId
-
-        // Replace empty keys with null, to make tests easier to write.
-        startingRuleId = startingRuleId || 1
-        for (let i = 0; i < startingRuleId; i++) {
-            assert.equal(actualLookup[i], undefined)
-            actualLookup[i] = null
-        }
+        let actualLookup = result.matchDetailsByRuleId
 
         if (lookupTransform) {
             actualLookup = lookupTransform(actualLookup, result.ruleset)
@@ -170,7 +166,9 @@ describe('generateTdsRuleset', () => {
 
         for (const blockList of invalidBlockLists) {
             await assert.rejects(() =>
-                generateTdsRuleset(blockList, () => { })
+                generateTdsRuleset(
+                    blockList, supportedSurrogateScripts, '', () => { }
+                )
             )
         }
     })
@@ -184,8 +182,19 @@ describe('generateTdsRuleset', () => {
         )
         await assert.rejects(() =>
             generateTdsRuleset(
+                { cnames: {}, domains: {}, entities: {}, trackers: {} },
                 // @ts-expect-error - Invalid isRegexSupported argument.
-                { cnames: {}, domains: {}, entities: {}, trackers: {} }, 3
+                supportedSurrogateScripts, '', 3
+            )
+        )
+    })
+
+    it('should reject an invalid list of surrogate scripts', async () => {
+        await assert.rejects(() =>
+            generateTdsRuleset(
+                { cnames: {}, domains: {}, entities: {}, trackers: {} },
+                // @ts-expect-error - Invalid surrogateScripts argument.
+                null, '', 3
             )
         )
     })
@@ -204,7 +213,7 @@ describe('generateTdsRuleset', () => {
         }
 
         const { ruleset } = await generateTdsRuleset(
-            blockList, isRegexSupportedTrue
+            blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
         )
         for (const rule of ruleset) {
             assert.ok(typeof rule.priority === 'number' &&
@@ -214,7 +223,9 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, 'a.' + domain, entity, 'block')
 
         await assert.rejects(() =>
-            generateTdsRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(
+                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
+            )
         )
     })
 
@@ -230,13 +241,17 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, domain, entity, 'allow', rules)
 
         await assert.doesNotReject(() =>
-            generateTdsRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(
+                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
+            )
         )
 
         blockList.trackers[domain].rules.push({ rule: 'example\\.com/extra' })
 
         await assert.rejects(() =>
-            generateTdsRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(
+                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
+            )
         )
     })
 
@@ -244,7 +259,8 @@ describe('generateTdsRuleset', () => {
        'expression rule filters', async () => {
         const blockList = emptyBlockList()
 
-        const maxRegexDomains = Math.floor(MAXIMUM_REGEX_RULES / MAXIMUM_RULES_PER_DOMAIN)
+        const maxRegexDomains =
+              Math.floor(MAXIMUM_REGEX_RULES / MAXIMUM_RULES_PER_DOMAIN)
 
         const rules = new Array(MAXIMUM_RULES_PER_DOMAIN)
         rules.fill({ rule: '[0-9]+' })
@@ -257,13 +273,17 @@ describe('generateTdsRuleset', () => {
         }
 
         await assert.doesNotReject(() =>
-            generateTdsRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(
+                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
+            )
         )
 
         addDomain(blockList, 'example-extra.invalid', entity, 'allow', rules)
 
         await assert.rejects(() =>
-            generateTdsRuleset(blockList, isRegexSupportedTrue)
+            generateTdsRuleset(
+                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
+            )
         )
     })
 
@@ -387,7 +407,16 @@ describe('generateTdsRuleset', () => {
                     }
                 }
             ],
-            expectedLookup: [null, 'block.invalid', 'allow.block.invalid']
+            expectedLookup: {
+                1: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['block.invalid']
+                },
+                2: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['allow.block.invalid']
+                }
+            }
         })
     })
 
@@ -1034,7 +1063,7 @@ describe('generateTdsRuleset', () => {
             lookupTransform (lookup, ruleset) {
                 const domains = []
                 for (const rule of ruleset) {
-                    domains.push(lookup[rule.id])
+                    domains.push(...lookup[rule.id].possibleTrackerDomains)
                 }
                 return domains
             },
@@ -1060,18 +1089,20 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, 'block.block.invalid', 'Block entity', 'block')
 
         await rulesetEqual(blockList, isRegexSupportedTrue, 3333, {
-            lookupTransform (lookup, ruleset) {
-                const domains = []
-                for (const rule of ruleset) {
-                    domains.push(lookup[rule.id])
+            expectedLookup: {
+                3333: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['block.invalid']
+                },
+                3334: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['allow.block.invalid']
+                },
+                3335: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['block.block.invalid']
                 }
-                return domains
-            },
-            expectedLookup: [
-                'block.invalid',
-                'allow.block.invalid',
-                'block.block.invalid'
-            ]
+            }
         })
     })
 
@@ -1163,11 +1194,17 @@ describe('generateTdsRuleset', () => {
                 }
 
             ],
-            expectedLookup: [
-                null,
-                'a.invalid,b.invalid,c.invalid',
-                'a.invalid'
-            ]
+            expectedLookup: {
+                1: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains:
+                        ['a.invalid', 'b.invalid', 'c.invalid']
+                },
+                2: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['a.invalid']
+                }
+            }
         })
     })
 
@@ -1257,6 +1294,125 @@ describe('generateTdsRuleset', () => {
                 ['/path', ''],
                 ['subdomain.example.invalid/path', '']
             ]
+        })
+    })
+
+    it('should handle surrogate rules', async () => {
+        const blockList = emptyBlockList()
+        addDomain(blockList, 'entity.invalid', 'Example entity', 'ignore', [
+            {
+                rule: 'entity\\.invalid\\/path'
+            },
+            {
+                rule: 'entity\\.invalid\\/.*foo\\.js',
+                surrogate: 'supported.js'
+            },
+            {
+                rule: 'entity\\.invalid\\/bar\\.js',
+                surrogate: 'not-supported.js'
+            },
+            {
+                rule: 'entity\\.invalid\\/cabbage\\.js',
+                surrogate: 'supported2.js',
+                exceptions: { domains: ['exception.invalid'] }
+            }
+        ].reverse())
+
+        await rulesetEqual(blockList, isRegexSupportedTrue, null, {
+            expectedRuleset: [
+                {
+                    id: 1,
+                    priority: BASELINE_PRIORITY +
+                              TRACKER_RULE_PRIORITY_INCREMENT,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        urlFilter: '||entity.invalid/path',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty'
+                    }
+                },
+                {
+                    id: 2,
+                    priority: BASELINE_PRIORITY +
+                              (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                    action: {
+                        type: 'redirect',
+                        redirect: { extensionPath: '/supported.js' }
+                    },
+                    condition: {
+                        urlFilter: '||entity.invalid/*foo.js',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty',
+                        resourceTypes: ['script']
+                    }
+                },
+                {
+                    id: 3,
+                    priority: BASELINE_PRIORITY +
+                              (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        urlFilter: '||entity.invalid/bar.js',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty',
+                        resourceTypes: ['script']
+                    }
+                },
+                {
+                    id: 4,
+                    priority: BASELINE_PRIORITY +
+                              (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                    action: {
+                        type: 'redirect',
+                        redirect: { extensionPath: '/supported2.js' }
+                    },
+                    condition: {
+                        urlFilter: '||entity.invalid/cabbage.js',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty',
+                        resourceTypes: ['script']
+                    }
+                },
+                {
+                    id: 5,
+                    priority: BASELINE_PRIORITY +
+                              (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                    action: {
+                        type: 'allow'
+                    },
+                    condition: {
+                        urlFilter: '||entity.invalid/cabbage.js',
+                        isUrlFilterCaseSensitive: false,
+                        initiatorDomains: ['exception.invalid']
+                    }
+                }
+            ],
+            expectedLookup: {
+                1: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['entity.invalid']
+                },
+                2: {
+                    type: 'surrogateScript',
+                    possibleTrackerDomains: ['entity.invalid']
+                },
+                3: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['entity.invalid']
+                },
+                4: {
+                    type: 'surrogateScript',
+                    possibleTrackerDomains: ['entity.invalid']
+                },
+                5: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['entity.invalid']
+                }
+            }
         })
     })
 })
