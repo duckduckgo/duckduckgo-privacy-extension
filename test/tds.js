@@ -1252,6 +1252,7 @@ describe('generateTdsRuleset', () => {
                 ]
             },
             expectedRuleset: [
+                ['||example.invalid/path', ''],
                 ['||example.invalid.foo/path', ''],
                 ['/path', ''],
                 ['subdomain.example.invalid/path', '']
