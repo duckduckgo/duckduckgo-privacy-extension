@@ -1566,7 +1566,10 @@
 
         // Create overall grid structure
         const element = document.createElement('div')
-        element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont + styles.dialogBlock
+        element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont
+        if (widget.replaceSettings.type === 'youtube-video-ctl') {
+            element.style.cssText += styles.dialogBlock
+        }
         element.className = wrapperClass
         shadowRoot.appendChild(element)
 
@@ -1615,8 +1618,10 @@
         contentRow.appendChild(buttonRow)
 
         /** Share Feedback Link */
-        const feedbackRow = makeShareFeedbackRow()
-        shadowRoot.appendChild(feedbackRow)
+        if (widget.replaceSettings.type === 'youtube-video-ctl') {
+            const feedbackRow = makeShareFeedbackRow()
+            shadowRoot.appendChild(feedbackRow)
+        }
 
         return { contentBlock, shadowRoot }
     }
