@@ -128,26 +128,26 @@ export async function initClickToLoad (unused, sender) {
 
 export async function getYouTubeVideoDetails (videoURL) {
     const endpointURL = new URL('https://www.youtube.com/oembed?format=json')
-    const url = new URL(videoURL)
+    const parsedVideoURL = new URL(videoURL)
 
-    const playlistID = url.searchParams.get('list')
-    const videoId = url.pathname.split('/').pop()
+    const playlistID = parsedVideoURL.searchParams.get('list')
+    const videoId = parsedVideoURL.pathname.split('/').pop()
 
     if (playlistID) {
-        url.hostname = endpointURL.hostname
-        endpointURL.searchParams.set('url', url.href)
+        parsedVideoURL.hostname = endpointURL.hostname
+        endpointURL.searchParams.set('url', parsedVideoURL.href)
     } else {
         endpointURL.searchParams.set('url', 'https://youtu.be/' + videoId)
     }
 
     try {
-        const { title, thumbnail_url: previewImage } =
-            await fetch(
-                endpointURL.href, {
-                    referrerPolicy: 'no-referrer',
-                    credentials: 'omit'
-                }
-            ).then(response => response.json())
+        const youTubeVideoResponse = await fetch(
+            endpointURL.href, {
+                referrerPolicy: 'no-referrer',
+                credentials: 'omit'
+            }
+        ).then(response => response.json())
+        const { title, thumbnail_url: previewImage } = youTubeVideoResponse
         return { status: 'success', title, previewImage }
     } catch (e) {
         return { status: 'failed' }
@@ -175,7 +175,7 @@ export function getLogo () {
 }
 
 export function getCloseIcon () {
-    return utils.imgToData('img/social/close.svg')
+    return getImage('img/social/close.svg')
 }
 
 export function getCurrentTab () {
@@ -215,14 +215,10 @@ export async function enableSocialTracker (data, sender) {
     }
 }
 
-function sendUpdateSettingsMessage (name, value) {
-    utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
-}
-
 export async function updateSetting ({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)
-    sendUpdateSettingsMessage(name, value)
+    utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
 }
 
 export async function getSetting ({ name }) {
