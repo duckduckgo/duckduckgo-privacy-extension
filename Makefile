@@ -37,7 +37,6 @@ fonts:
 
 web-resources:
 	mkdir -p build/$(browser)/$(type)/web_accessible_resources
-	cp shared/data/web_accessible_resources/* build/$(browser)/$(type)/web_accessible_resources/
 	cp shared/tracker-surrogates/surrogates/*.js build/$(browser)/$(type)/web_accessible_resources/
 	mkdir -p build/$(browser)/$(type)/data
 	node scripts/generateListOfSurrogates.js -i build/$(browser)/$(type)/web_accessible_resources/ >> build/$(browser)/$(type)/data/surrogates.txt
