@@ -66,7 +66,8 @@ export class AdClickAttributionPolicy {
         if (!linkFormat) return
 
         const adClick = new AdClick(this.navigationExpiration, this.totalExpiration)
-        adClick.adClickDNR = new AdClickDNR(tab.tabId, this.allowlist)
+        adClick.adClickDNR = new AdClickDNR(tab._tabState.tabId, this.allowlist)
+        adClick.adClickDNR.createInitialAdClickDNR()
 
         if (linkFormat.adDomainParameterName) {
             const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName)
@@ -105,50 +106,6 @@ export class AdClickAttributionPolicy {
     }
 }
 
-export class AdClickDNR {
-    constructor (tabId, allowlist) {
-    this.allowlist = allowlist
-    this.tabId = tabId
-    this.rule  = {
-            "id" : this.tabId,
-            "priority": 20000,
-            "action" : { "type" : "allow" },
-            "condition" : {
-                "tabIds": [this.tabId],
-                "requestDomains": allowlist.reduce((lst, entry) => { lst.push(entry.host); return lst}, [])
-                "isUrlFilterCaseSensitive": false,
-                "urlFilter": "",
-                "initiatorDomains" : []
-            }
-        }
-    }
-    
-    /**
-     * Create initial tab scoped DNR not limited to an initiatorDomain
-     * @param {Tab} tab
-     * @returns {integer}
-     **/
-    createInitialAdClickDNR () {
-        console.log(`New DNR: tab: ${this.tabId}, Domain: ${this.adBaseDomain}`)
-        chrome.declarativeNetRequest.updateSessionRules({addRules: [this.]}
-    }
-
-    /*
-     * Update the tab DNR with initiator domain
-     */
-    addAdClickDNRInitiatorDomain (domain) {
-
-        // do update stuff 
-    }
-
-    removeAdClickDNR () {
-        console.log("REMOVE AD CLICK")
-        console.log(this.tabId)
-        chrome.declarativeNetRequest.updateSessionRules({removeRuleIds: [this.tabId]})
-    }
-
-
-}
 export class AdClick {
     /**
      * @param {number} navigationExpiration in seconds
@@ -163,11 +120,10 @@ export class AdClick {
         this.navigationExpiration = navigationExpiration
         this.totalExpiration = totalExpiration
         //this.expires = Date.now() + (this.totalExpiration * 1000)
-        this.expires = Date.now() + (60 * 1000)
+        this.expires = Date.now() + (1000 * 1000)
         this.clickExpires = Date.now() + (this.navigationExpiration * 1000)
 
-        this.adClickDNR = adClickDNR
-
+        this.adClickDNR = null
     }
 
     clone () {
@@ -176,6 +132,7 @@ export class AdClick {
         adClick.adClickRedirect = this.adClickRedirect
         adClick.expires = this.expires
         adClick.clickExpires = Date.now() + (this.navigationExpiration * 1000)
+        adClick.adClickDNR = this.adClickDNR
         return adClick
     }
 
@@ -185,6 +142,7 @@ export class AdClick {
         restoredAdClick.adClickRedirect = adClick.adClickRedirect
         restoredAdClick.expires = adClick.expires
         restoredAdClick.clickExpires = adClick.clickExpires
+        restoredAdClick.adClickDNR = adClick.adClickDNR
         return restoredAdClick
     }
 
@@ -194,10 +152,8 @@ export class AdClick {
      */
     shouldPropagateAdClickForNewTab (tab) {
         if (tab.site.baseDomain === this.adBaseDomain) {
-
-            // TODO update DNR with adBaseDomain
-            //
-
+            this.adClickDNR.rule.condition.tabIds.push(tab._tabState.tabId)
+            this.adClickDNR.updateAdClickDNR()
             return this.hasNotExpired()
         }
         return false
@@ -209,7 +165,6 @@ export class AdClick {
      */
     shouldPropagateAdClickForNavigation (tab) {
         if (tab.site.baseDomain !== this.adBaseDomain) {
-            // TODO need to update DNR with new baseDomain here if check below is true
             return this.clickExpires > Date.now()
         }
         return this.hasNotExpired()
@@ -219,7 +174,7 @@ export class AdClick {
         if (this.expires > Date.now()) {
             return true
         } else {
-            this.removeAdClickDNR()
+            this.adClickDNR.removeAdClickDNR()
             return false
         }
     }
@@ -231,13 +186,56 @@ export class AdClick {
      * @returns {boolean}
      */
     allowAdAttribution (tab) {
-        console.log('Allow Attribution')
-        console.log(tab.site.domain)
-
-        this.createAdClickDNR(this.tabId, tab.site.domain)
-
         if (tab.site.baseDomain !== this.adBaseDomain) return false
         return this.hasNotExpired()
     }
 
+}
+
+export class AdClickDNR {
+    constructor (tabId, allowlist) {
+    this.allowlist = allowlist
+    this.tabId = tabId
+    this.initiatorDomain = null
+    this.rule  = {
+            "id" : tabId,
+            "priority": 20000,
+            "action" : { "type" : "allow" },
+            "condition" : {
+                "tabIds": [tabId],
+                "requestDomains": allowlist.reduce((lst, entry) => { lst.push(entry.host); return lst}, []),
+                "isUrlFilterCaseSensitive": false,
+            }
+        }
+    }
+    
+    /**
+     * Create initial tab scoped DNR not limited to an initiatorDomain
+     * @param {Tab} tab
+     * @returns {integer}
+     **/
+    createInitialAdClickDNR () {
+        chrome.declarativeNetRequest.updateSessionRules({addRules: [this.rule]})
+    }
+
+    /*
+     * Update the tab DNR with initiator domain
+     */
+    addAdClickDNRInitiatorDomain (domain) {
+        this.initiatorDomain = domain
+        this.rule.condition.initiatorDomain = [domain]
+
+    }
+
+    removeAdClickDNR () {
+        chrome.declarativeNetRequest.updateSessionRules({removeRuleIds: [this.tabId]})
+    }
+
+    updateAdClickDNR () {
+        chrome.declarativeNetRequest.updateSessionRules({
+            removeRuleIds: [this.rule.id],
+            addRules: [this.rule]
+        })
+
+    }
 }

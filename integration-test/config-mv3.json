@@ -5,6 +5,7 @@
         "background/request-blocking.js",
         "background/test-fingerprint.js",
         "background/storage.js",
+        "background/click-attribution.js",
         "content-scripts/gpc.js"
     ]
 }
