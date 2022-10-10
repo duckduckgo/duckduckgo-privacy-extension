@@ -10,6 +10,12 @@ globalThis.browser = {
     browserAction: {
         setIcon: () => {}
     },
+    contextMenus: {
+        create: () => {},
+        onClicked: {
+            addListener: () => {}
+        }
+    },
     runtime: {
         id: '577dc9b9-c381-115a-2246-3f95fe0e6ffe',
         sendMessage: () => {},

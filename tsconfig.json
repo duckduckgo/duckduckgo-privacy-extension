@@ -29,6 +29,7 @@
       "shared/js/background/broken-site-report.js",
       "shared/js/background/csp-blocking.es6.js",
       "shared/js/background/debug.es6.js",
+      "shared/js/background/declarative-net-request.js",
       "shared/js/background/events.es6.js",
       "shared/js/background/events/3p-tracking-cookie-blocking.js",
       "shared/js/background/message-handlers.js",

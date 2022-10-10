@@ -1,13 +1,15 @@
 import * as browserWrapper from './wrapper.es6'
 import settings from './settings.es6'
 import tdsStorage from './storage/tds.es6'
+import trackers from './trackers.es6'
+import * as startup from './startup.es6'
 
 import {
     generateExtensionConfigurationRuleset
 } from '@duckduckgo/ddg2dnr/lib/extensionConfiguration'
 import {
-    generateTrackerBlockingRuleset
-} from '@duckduckgo/ddg2dnr/lib/trackerBlocking'
+    generateTdsRuleset
+} from '@duckduckgo/ddg2dnr/lib/tds'
 
 export const SETTING_PREFIX = 'declarative_net_request-'
 
@@ -87,17 +89,22 @@ async function onUpdate (configName, etag, configValue) {
     let addRules
     let lookup
 
-    // Tracker blocking.
+    // TDS.
     if (configName === 'tds') {
+        await startup.ready()
+        const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
+
         const {
-            ruleset, trackerDomainByRuleId
-        } = await generateTrackerBlockingRuleset(
+            ruleset, matchDetailsByRuleId
+        } = await generateTdsRuleset(
             configValue,
+            supportedSurrogates,
+            '/web_accessible_resources/',
             chrome.declarativeNetRequest.isRegexSupported,
             ruleIdStart + 1
         )
         addRules = ruleset
-        lookup = trackerDomainByRuleId
+        lookup = matchDetailsByRuleId
     // Extension configuration.
     } else if (configName === 'config') {
         const {
