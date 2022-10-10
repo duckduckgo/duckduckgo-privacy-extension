@@ -4,6 +4,7 @@ import * as tds from '../data/tds.json'
 import * as browserWrapper from '../../shared/js/background/wrapper.es6'
 import * as testConfig from '../data/extension-config.json'
 import * as tdsStorageStub from '../helpers/tds.es6'
+import startup from '../../shared/js/background/startup.es6'
 import settings from '../../shared/js/background/settings.es6'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
@@ -27,12 +28,44 @@ const expectedRuleIdsByConfigName = {
 }
 
 const expectedLookupByConfigName = {
-    tds: [
-        undefined, undefined, 'facebook.com,facebook.net',
-        'google-analytics.com', 'google-analytics.com', 'google-analytics.com',
-        'google-analytics.com', 'google-analytics.com', 'google-analytics.com',
-        'google-analytics.com', 'yahoo.com'
-    ],
+    tds: {
+        2: {
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['facebook.com', 'facebook.net']
+        },
+        3: {
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['google-analytics.com']
+        },
+        4: {
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['google-analytics.com']
+        },
+        5: {
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['google-analytics.com']
+        },
+        6: {
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['google-analytics.com']
+        },
+        7: {
+            type: 'surrogateScript',
+            possibleTrackerDomains: ['google-analytics.com']
+        },
+        8: {
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['google-analytics.com']
+        },
+        9: {
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['google-analytics.com']
+        },
+        10: {
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['yahoo.com']
+        }
+    },
     config: {
         10002: {
             type: 'trackerAllowlist',
@@ -127,6 +160,10 @@ describe('declarativeNetRequest', () => {
         dynamicRulesByRuleId = new Map()
 
         onUpdateListeners = tdsStorageStub.stub({ config }).onUpdateListeners
+
+        spyOn(startup, 'ready').and.callFake(
+            () => Promise.resolve()
+        )
 
         spyOn(settings, 'getSetting').and.callFake(
             name => settingsStorage.get(name)
