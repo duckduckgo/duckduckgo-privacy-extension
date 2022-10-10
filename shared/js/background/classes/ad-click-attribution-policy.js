@@ -1,5 +1,14 @@
 const { getFeatureSettings, getBaseDomain } = require('../utils.es6')
 
+import {
+    CEILING_PRIORITY
+} from '@duckduckgo/ddg2dnr/lib/trackerAllowlist'
+
+import {
+    generateDNRRule
+} from '@duckduckgo/ddg2dnr/lib/utils'
+
+
 /**
  * @typedef AdClickAttributionLinkFormat
  * @property {string} url
@@ -197,16 +206,13 @@ export class AdClickDNR {
     this.allowlist = allowlist
     this.tabId = tabId
     this.initiatorDomain = null
-    this.rule  = {
+    this.rule  = generateDNRRule({
             "id" : tabId,
-            "priority": 20000,
-            "action" : { "type" : "allow" },
-            "condition" : {
-                "tabIds": [tabId],
-                "requestDomains": allowlist.reduce((lst, entry) => { lst.push(entry.host); return lst}, []),
-                "isUrlFilterCaseSensitive": false,
-            }
-        }
+            "priority": CEILING_PRIORITY,
+            "actionType": "allow",
+            "requestDomains": allowlist.reduce((lst, entry) => { lst.push(entry.host); return lst}, []),
+        })
+    this.rule.condition.tabIds = [tabId]
     }
     
     /**
