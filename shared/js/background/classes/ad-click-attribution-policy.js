@@ -210,7 +210,7 @@ export class AdClickDNR {
             "id" : tabId,
             "priority": CEILING_PRIORITY,
             "actionType": "allow",
-            "requestDomains": allowlist.reduce((lst, entry) => { lst.push(entry.host); return lst}, []),
+            "requestDomains": allowlist.map((entry) => entry.host),
         })
     this.rule.condition.tabIds = [tabId]
     }
