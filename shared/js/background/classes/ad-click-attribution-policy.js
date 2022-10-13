@@ -210,10 +210,10 @@ export class AdClickDNR {
         this.tabId = tabId
         this.initiatorDomain = null
         this.rule = generateDNRRule({
-            id: getDynamicRuleId(),
-            priority: CEILING_PRIORITY,
-            actionType: 'allow',
-            requestDomains: allowlist.reduce((lst, entry) => { lst.push(entry.host); return lst }, [])
+            "id": getDynamicRuleId(),
+            "priority": CEILING_PRIORITY,
+            "actionType": 'allow',
+            "requestDomains": allowlist.map((entry) => entry.host),
         })
         this.rule.condition.tabIds = [tabId]
         this.createInitialAdClickDNR()
