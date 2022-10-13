@@ -1,4 +1,4 @@
-const browser = require('webextension-polyfill')
+import browser from 'webextension-polyfill'
 const tldts = require('tldts')
 
 const utils = require('./utils.es6')
