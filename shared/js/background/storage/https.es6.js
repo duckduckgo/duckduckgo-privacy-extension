@@ -5,6 +5,7 @@ const settings = require('./../settings.es6')
 
 class HTTPSStorage {
     constructor () {
+        // @ts-ignore - TypeScript is not following the Dexie import property.
         this.dbc = new Dexie(constants.httpsDBName)
         this.dbc.version(1).stores({
             httpsStorage: 'name,type,data,checksum'

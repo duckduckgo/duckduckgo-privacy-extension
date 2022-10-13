@@ -14,6 +14,7 @@ const Tab = require('./classes/tab.es6')
 const { TabState } = require('./classes/tab-state')
 const Wrapper = require('./wrapper.es6.js')
 
+// @ts-ignore - dbg is not a standard property of self.
 self.dbg = {
     settings,
     startup,

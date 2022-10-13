@@ -18,7 +18,7 @@ const configNames = constants.tdsLists.map(({ name }) => name)
 
 class TDSStorage {
     constructor () {
-        // @ts-ignore
+        // @ts-ignore - TypeScript is not following the Dexie import property.
         this.dbc = new Dexie('tdsStorage')
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
