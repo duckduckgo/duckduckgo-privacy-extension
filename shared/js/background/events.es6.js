@@ -20,6 +20,7 @@ const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
+const { refreshUserAllowlistRules } = require('./declarative-net-request')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -54,6 +55,21 @@ async function onInstalled (details) {
                 files: ['public/js/content-scripts/autofill.js']
             })
         }
+    }
+
+    // Refresh the user allowlisting declarativeNetRequest rule.
+    if (manifestVersion === 3) {
+        await settings.ready()
+        const allowlist = settings.getSetting('allowlisted') || {}
+
+        const allowlistedDomains = []
+        for (const [domain, enabled] of Object.entries(allowlist)) {
+            if (enabled) {
+                allowlistedDomains.push(domain)
+            }
+        }
+
+        await refreshUserAllowlistRules(allowlistedDomains)
     }
 }
 
