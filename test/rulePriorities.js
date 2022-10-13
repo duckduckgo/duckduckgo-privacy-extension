@@ -14,6 +14,11 @@ const {
     CEILING_PRIORITY: TRACKER_ALLOWLIST_CEILING_PRIORITY
 } = require('../lib/trackerAllowlist')
 
+const {
+    AD_ATTRIBUTION_POLICY_PRIORITY,
+    USER_ALLOWLISTED_PRIORITY
+} = require('../lib/rulePriorities')
+
 describe('Rule Priorities', () => {
     it('correct relative rule priorities', () => {
         // Tracker Blocking priorities.
@@ -25,6 +30,10 @@ describe('Rule Priorities', () => {
         assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY >
                   TRACKER_BLOCKING_CEILING_PRIORITY)
 
+        // Extension state rule priorities.
+        assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY >
+                 TRACKER_BLOCKING_CEILING_PRIORITY)
+
         // Smarter Encryption priority.
         // Note: It's important that the Smarter Encryption rule priority is
         //       higher than the priority for Tracker Blocking etc rules.
@@ -34,5 +43,11 @@ describe('Rule Priorities', () => {
         //       will no longer have the opportunity to match.
         assert.ok(SMARTER_ENCRYPTION_PRIORITY >
                   TRACKER_ALLOWLIST_CEILING_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY >
+                 AD_ATTRIBUTION_POLICY_PRIORITY)
+
+        // If the user disables protections for a website, that should take
+        // precedence over everything else.
+        assert.ok(USER_ALLOWLISTED_PRIORITY > SMARTER_ENCRYPTION_PRIORITY)
     })
 })
