@@ -1,4 +1,4 @@
-import browser from 'webextension-polyfill'
+const browser = require('webextension-polyfill')
 
 function init () {
     browser.webRequest.onBeforeRequest.addListener((details) => {

@@ -1,4 +1,4 @@
-import browser from 'webextension-polyfill'
+const browser = require('webextension-polyfill')
 const { getCurrentTab } = require('./utils.es6')
 const browserUIWrapper = require('../ui/base/ui-wrapper.es6')
 const Companies = require('./companies.es6')
@@ -67,13 +67,15 @@ function ready () {
  */
 function registerUnloadHandler () {
     let timeout
-    /** @param {string[]} userActions */
+    // @ts-ignore - popupUnloaded is not a standard property of self.
     self.popupUnloaded = (userActions) => {
         clearTimeout(timeout)
         if (userActions.includes('toggleAllowlist')) {
             timeout = setTimeout(() => {
                 getCurrentTab().then(tab => {
-                    browserUIWrapper.reloadTab(tab.id)
+                    if (tab) {
+                        browserUIWrapper.reloadTab(tab.id)
+                    }
                 })
             }, 500)
         }

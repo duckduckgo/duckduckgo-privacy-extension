@@ -1,5 +1,5 @@
-import parseUserAgentString from '../../shared-utils/parse-user-agent-string.es6'
-import browser from 'webextension-polyfill'
+const parseUserAgentString = require('../../shared-utils/parse-user-agent-string.es6')
+const browser = require('webextension-polyfill')
 const browserInfo = parseUserAgentString()
 
 const sendMessage = async (messageType, options) => {
@@ -21,7 +21,7 @@ const backgroundMessage = (thisModel) => {
 /** @typedef {ReturnType<import('../../background/message-handlers.js').getTab>} TabState */
 
 /**
- * @returns {Promise<Tab|undefined>}
+ * @returns {Promise<TabState|undefined>}
  */
 async function getBackgroundTabData () {
     const url = new URL(window.location.href)
@@ -45,7 +45,7 @@ async function getBackgroundTabData () {
 }
 
 const search = (url) => {
-    browser.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${browserInfo.os}cr` })
+    browser.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${browserInfo?.os}cr` })
 }
 
 const getExtensionURL = (path) => {
@@ -80,6 +80,7 @@ const closePopup = () => {
  */
 const popupUnloaded = (userActions) => {
     const bg = chrome.extension.getBackgroundPage()
+    // @ts-ignore - popupUnloaded is not a standard property of self.
     bg?.popupUnloaded?.(userActions)
 }
 
