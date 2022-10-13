@@ -1,4 +1,4 @@
-const browser = require('webextension-polyfill')
+import browser from 'webextension-polyfill'
 const { getCurrentTab } = require('./utils.es6')
 const browserUIWrapper = require('../ui/base/ui-wrapper.es6')
 const Companies = require('./companies.es6')
@@ -16,7 +16,7 @@ const { fetchAlias, showContextMenuAction } = require('./email-utils.es6')
 let resolveReadyPromise
 const readyPromise = new Promise(resolve => { resolveReadyPromise = resolve })
 
-async function onStartup () {
+export async function onStartup () {
     registerUnloadHandler()
     await settings.ready()
     experiment.setActiveExperiment()
@@ -55,7 +55,7 @@ async function onStartup () {
     }
 }
 
-function ready () {
+export function ready () {
     return readyPromise
 }
 

@@ -1,12 +1,12 @@
-const parseUserAgentString = require('../../shared-utils/parse-user-agent-string.es6')
-const browser = require('webextension-polyfill')
+import parseUserAgentString from '../../shared-utils/parse-user-agent-string.es6'
+import browser from 'webextension-polyfill'
 const browserInfo = parseUserAgentString()
 
-const sendMessage = async (messageType, options) => {
+export const sendMessage = async (messageType, options) => {
     return await browser.runtime.sendMessage({ messageType, options })
 }
 
-const backgroundMessage = (thisModel) => {
+export const backgroundMessage = (thisModel) => {
     // listen for messages from background and
     // // notify subscribers
     browser.runtime.onMessage.addListener((req, sender) => {
@@ -23,7 +23,7 @@ const backgroundMessage = (thisModel) => {
 /**
  * @returns {Promise<TabState|undefined>}
  */
-async function getBackgroundTabData () {
+export async function getBackgroundTabData () {
     const url = new URL(window.location.href)
     let tabId
     // Used for ui debugging to open the dashboard in a new tab and set the tabId manually.
@@ -44,19 +44,19 @@ async function getBackgroundTabData () {
     }
 }
 
-const search = (url) => {
+export const search = (url) => {
     browser.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${browserInfo?.os}cr` })
 }
 
-const getExtensionURL = (path) => {
+export const getExtensionURL = (path) => {
     return browser.runtime.getURL(path)
 }
 
-const openExtensionPage = (path) => {
+export const openExtensionPage = (path) => {
     browser.tabs.create({ url: getExtensionURL(path) })
 }
 
-const openOptionsPage = (browserName) => {
+export const openOptionsPage = (browserName) => {
     if (browserName === 'moz') {
         openExtensionPage('/html/options.html')
         window.close()
@@ -65,11 +65,11 @@ const openOptionsPage = (browserName) => {
     }
 }
 
-const reloadTab = (id) => {
+export const reloadTab = (id) => {
     browser.tabs.reload(id)
 }
 
-const closePopup = () => {
+export const closePopup = () => {
     const w = browser.extension.getViews({ type: 'popup' })[0]
     w.close()
 }
@@ -78,7 +78,7 @@ const closePopup = () => {
  * Notify the background script that the popup was closed.
  * @param {string[]} userActions - a list of string indicating what actions a user may have taken
  */
-const popupUnloaded = (userActions) => {
+export const popupUnloaded = (userActions) => {
     const bg = chrome.extension.getBackgroundPage()
     // @ts-ignore - popupUnloaded is not a standard property of self.
     bg?.popupUnloaded?.(userActions)
