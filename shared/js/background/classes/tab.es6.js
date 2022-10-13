@@ -199,7 +199,7 @@ class Tab {
      * @returns {AdClickAttributionPolicy}
      */
     getAdClickAttributionPolicy () {
-        this._adClickAttributionPolicy = this._adClickAttributionPolicy || new AdClickAttributionPolicy()
+        this._adClickAttributionPolicy = new AdClickAttributionPolicy()
         return this._adClickAttributionPolicy
     }
 

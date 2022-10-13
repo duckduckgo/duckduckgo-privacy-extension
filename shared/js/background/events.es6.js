@@ -194,7 +194,7 @@ if (1 || manifestVersion === 2) {
     // Note: This approach will not work with MV3 since the background
     //       ServiceWorker does not have access to a `document` Object.
     const isTopicsEnabled = false
-        //('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
+    // ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
     browser.webRequest.onHeadersReceived.addListener(
         request => {
             if (request.type === 'main_frame') {
@@ -252,7 +252,7 @@ browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
     if (currentTab && currentTab.adClick) {
         const newTab = tabManager.createOrUpdateTab(details.tabId, { url: details.url })
         if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-            newTab.adClick = currentTab.adClick
+            newTab.adClick = currentTab.adClick.propagate(newTab._tabState.tabId)
         }
     }
 })

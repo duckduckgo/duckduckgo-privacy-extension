@@ -44,6 +44,9 @@ class TabManager {
     }
 
     delete (id) {
+        if (this.tabContainer[id].adClick) {
+            this.tabContainer[id].adClick.adClickDNR.removeAdClickDNR()
+        }
         delete this.tabContainer[id]
         TabState.delete(id)
     }
@@ -137,6 +140,11 @@ class TabManager {
 
                     console.info(tab.site.grade)
                     tab.updateBadgeIcon()
+
+                    if (tab._tabState?.adClick?.adClickDNR) {
+                        console.log(tab._tabState.adClick)
+                        tab._tabState.adClick.adClickDNR.addAdClickDNRInitiatorDomain(tab._tabState.adClick.adBaseDomain)
+                    }
 
                     if (tab.statusCode === 200 &&
                         !tab.site.didIncrementCompaniesData) {
