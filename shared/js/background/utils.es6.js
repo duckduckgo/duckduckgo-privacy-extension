@@ -40,10 +40,9 @@ export async function sendTabMessage (id, message, details) {
 
 export async function sendAllTabsMessage (message, details) {
     try {
-        const tabs = await browser.tabs.query({})
-        tabs.forEach((tab) =>
-            sendTabMessage(tab.id, message, details)
-        )
+        for (const { id: tabId } of await browser.tabs.query({})) {
+            sendTabMessage(tabId, message, details)
+        }
     } catch {
         // Ignore errors
     }
