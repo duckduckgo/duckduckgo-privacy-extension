@@ -80,7 +80,7 @@
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#5.1.0",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#2.6.0",
-        "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.2.0",
+        "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.2.1",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.1",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#main",

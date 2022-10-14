@@ -92,6 +92,8 @@ async function onUpdate (configName, etag, configValue) {
     // TDS.
     if (configName === 'tds') {
         await startup.ready()
+        // @ts-ignore: Once startup.ready() has finished, surrogateList will be
+        //             assigned.
         const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
         const {

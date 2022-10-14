@@ -16,7 +16,7 @@ const { fetchAlias, showContextMenuAction } = require('./email-utils.es6')
 let resolveReadyPromise
 const readyPromise = new Promise(resolve => { resolveReadyPromise = resolve })
 
-async function onStartup () {
+export async function onStartup () {
     registerUnloadHandler()
     await settings.ready()
     experiment.setActiveExperiment()
@@ -55,7 +55,7 @@ async function onStartup () {
     }
 }
 
-function ready () {
+export function ready () {
     return readyPromise
 }
 
@@ -67,13 +67,15 @@ function ready () {
  */
 function registerUnloadHandler () {
     let timeout
-    /** @param {string[]} userActions */
+    // @ts-ignore - popupUnloaded is not a standard property of self.
     self.popupUnloaded = (userActions) => {
         clearTimeout(timeout)
         if (userActions.includes('toggleAllowlist')) {
             timeout = setTimeout(() => {
                 getCurrentTab().then(tab => {
-                    browserUIWrapper.reloadTab(tab.id)
+                    if (tab) {
+                        browserUIWrapper.reloadTab(tab.id)
+                    }
                 })
             }, 500)
         }

@@ -6,6 +6,8 @@ import * as testConfig from '../data/extension-config.json'
 import * as tdsStorageStub from '../helpers/tds.es6'
 import startup from '../../shared/js/background/startup.es6'
 import settings from '../../shared/js/background/settings.es6'
+import tdsStorage from '../../shared/js/background/storage/tds.es6'
+import trackers from '../../shared/js/background/trackers.es6'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
 const TEST_EXTENION_VERSIONS = ['0.1', '0.2', '0.3']
@@ -160,6 +162,7 @@ describe('declarativeNetRequest', () => {
         dynamicRulesByRuleId = new Map()
 
         onUpdateListeners = tdsStorageStub.stub({ config }).onUpdateListeners
+        tdsStorage.getLists().then(lists => trackers.setLists(lists))
 
         spyOn(startup, 'ready').and.callFake(
             () => Promise.resolve()

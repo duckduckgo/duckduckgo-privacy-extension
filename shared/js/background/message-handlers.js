@@ -277,7 +277,10 @@ export async function addUserData (userData, sender) {
         settings.updateSetting('userData', userData)
         // Once user is set, fetch the alias and notify all tabs
         const response = await fetchAlias()
+        // @ts-ignore - Response might not have error property, but since we're
+        //              checking that it does... there's not a problem.
         if (response && response.error) {
+            // @ts-ignore
             return { error: response.error.message }
         }
 
@@ -321,10 +324,9 @@ export function setListContents ({ name, value }) {
 }
 
 export async function reloadList (listName) {
-    let list = constants.tdsLists.find(l => l.name === listName)
+    const list = constants.tdsLists.find(l => l.name === listName)
     if (list) {
-        list = await tdsStorage.getList(list)
-        trackers.setLists([list])
+        trackers.setLists([await tdsStorage.getList(list)])
     }
 }
 
