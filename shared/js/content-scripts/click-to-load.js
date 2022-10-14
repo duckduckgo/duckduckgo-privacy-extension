@@ -1049,6 +1049,17 @@
         button.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
         textButton.addEventListener('click', widget.clickFunction(trackingElement, contentBlock))
 
+        // Size the placeholder element to match the original video
+        // element.
+        // Note: If the website later resizes the video element, the
+        //       placeholder will not resize to match.
+        const {
+            width: videoWidth,
+            height: videoHeight
+        } = window.getComputedStyle(trackingElement)
+        contentBlock.style.width = videoWidth
+        contentBlock.style.height = videoHeight
+
         return {
             blockingDialog: contentBlock,
             shadowRoot
