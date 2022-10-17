@@ -183,76 +183,79 @@ browser.webRequest.onBeforeRequest.addListener(
     additionalOptions
 )
 
-if (1 || manifestVersion === 2) {
-    const extraInfoSpec = ['responseHeaders']
-    if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
-        extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
-    }
+const extraInfoSpec = manifestVersion === 3 ? ['responseHeaders'] : ['blocking', 'responseHeaders']
 
-    // We determine if browsingTopics is enabled by testing for availability of its
-    // JS API.
-    // Note: This approach will not work with MV3 since the background
-    //       ServiceWorker does not have access to a `document` Object.
-    const isTopicsEnabled = false
-    // ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
-    browser.webRequest.onHeadersReceived.addListener(
-        request => {
-            if (request.type === 'main_frame') {
-                tabManager.updateTabUrl(request)
+if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
+    extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
+}
 
-                const tab = tabManager.get({ tabId: request.tabId })
-                // SERP ad click detection
-                if (
-                    utils.isRedirect(request.statusCode)
-                ) {
-                    tab.setAdClickIfValidRedirect(request.url)
-                } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
-                    tab.adClick.adClickRedirect = false
-                    tab.adClick.adBaseDomain = tab.site.baseDomain
-                }
+// We determine if browsingTopics is enabled by testing for availability of its
+// JS API.
+// Note: This approach will not work with MV3 since the background
+//       ServiceWorker does not have access to a `document` Object.
+const isTopicsEnabled = manifestVersion === 3 ? false : ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
+
+browser.webRequest.onHeadersReceived.addListener(
+    request => {
+        if (request.type === 'main_frame') {
+            tabManager.updateTabUrl(request)
+
+            const tab = tabManager.get({ tabId: request.tabId })
+            // SERP ad click detection
+            if (
+                utils.isRedirect(request.statusCode)
+            ) {
+                tab.setAdClickIfValidRedirect(request.url)
+            } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
+                tab.adClick.adClickRedirect = false
+                tab.adClick.adBaseDomain = tab.site.baseDomain
             }
+        }
 
-            if (ATB.shouldUpdateSetAtb(request)) {
-                // returns a promise
-                return ATB.updateSetAtb()
-            }
+        if (ATB.shouldUpdateSetAtb(request)) {
+            // returns a promise
+            return ATB.updateSetAtb()
+        }
 
             const responseHeaders = request.responseHeaders
 
-            if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
-                // there can be multiple permissions-policy headers, so we are good always appending one
-                // According to Google's docs a site can opt out of browsing topics the same way as opting out of FLoC
-                // https://privacysandbox.com/proposals/topics (See FAQ)
-                responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
-            }
+        if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
+            // there can be multiple permissions-policy headers, so we are good always appending one
+            // According to Google's docs a site can opt out of browsing topics the same way as opting out of FLoC
+            // https://privacysandbox.com/proposals/topics (See FAQ)
+            responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
+        }
 
-            return { responseHeaders }
-        },
+    return { responseHeaders }
+    },
+    { urls: ['<all_urls>'] },
+    extraInfoSpec
+)
+
+// Wait until the extension configuration has finished loading and then
+// start dropping tracking cookies.
+// Note: Event listeners must be registered in the top-level of the script
+//       to be compatible with MV3. Registering the listener asynchronously
+//       is only possible here as this is a MV2-only event listener!
+// See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
+startup.ready().then(() => {
+    browser.webRequest.onHeadersReceived.addListener(
+        dropTracking3pCookiesFromResponse,
         { urls: ['<all_urls>'] },
         extraInfoSpec
     )
-
-    // Wait until the extension configuration has finished loading and then
-    // start dropping tracking cookies.
-    // Note: Event listeners must be registered in the top-level of the script
-    //       to be compatible with MV3. Registering the listener asynchronously
-    //       is only possible here as this is a MV2-only event listener!
-    // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-    startup.ready().then(() => {
-        browser.webRequest.onHeadersReceived.addListener(
-            dropTracking3pCookiesFromResponse,
-            { urls: ['<all_urls>'] },
-            extraInfoSpec
-        )
-    })
-}
+})
 
 browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
     const currentTab = tabManager.get({ tabId: details.sourceTabId })
     if (currentTab && currentTab.adClick) {
         const newTab = tabManager.createOrUpdateTab(details.tabId, { url: details.url })
         if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-            newTab.adClick = currentTab.adClick.propagate(newTab._tabState.tabId)
+            if (manifestVersion === 3) {
+                newTab.adClick = currentTab.adClick.propagate(newTab._tabState.tabId)
+            } else {
+                newTab.adClick = currentTab.adClick
+            }
         }
     }
 })

@@ -1,14 +1,16 @@
 import {
-    CEILING_PRIORITY
-} from '@duckduckgo/ddg2dnr/lib/trackerAllowlist'
+    AD_ATTRIBUTION_POLICY_PRIORITY
+} from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
 import {
     generateDNRRule
 } from '@duckduckgo/ddg2dnr/lib/utils'
 
 const { getFeatureSettings, getBaseDomain } = require('../utils.es6')
-
+const browserWrapper = require('../wrapper.es6')
 const { getDynamicRuleId } = require('../dynamic-rule-id')
+
+const manifestVersion = browserWrapper.getManifestVersion()
 
 /**
  * @typedef AdClickAttributionLinkFormat
@@ -76,7 +78,10 @@ export class AdClickAttributionPolicy {
         if (!linkFormat) return
 
         const adClick = new AdClick(this.navigationExpiration, this.totalExpiration, this.allowlist)
-        adClick.adClickDNR = new AdClickDNR(tab._tabState.tabId, this.allowlist)
+
+        if (manifestVersion === 3) {
+            adClick.adClickDNR = new AdClickDNR(tab._tabState.tabId, this.allowlist)
+        }
 
         if (linkFormat.adDomainParameterName) {
             const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName)
@@ -211,7 +216,7 @@ export class AdClickDNR {
         this.initiatorDomain = null
         this.rule = generateDNRRule({
             id: getDynamicRuleId(),
-            priority: CEILING_PRIORITY,
+            priority: AD_ATTRIBUTION_POLICY_PRIORITY,
             actionType: 'allow',
             requestDomains: allowlist.map((entry) => entry.host)
         })
