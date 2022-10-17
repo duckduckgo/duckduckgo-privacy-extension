@@ -125,6 +125,7 @@ export class AdClick {
     /**
      * @param {number} navigationExpiration in seconds
      * @param {number} totalExpiration in seconds
+     * @param {object} allowlist
      */
     constructor (navigationExpiration, totalExpiration, allowlist) {
         /** @type {string | null} */
@@ -157,7 +158,7 @@ export class AdClick {
     }
 
     static restore (adClick) {
-        const restoredAdClick = new AdClick(adClick.navigationExpiration, adClick.totalExpiration, this.allowList)
+        const restoredAdClick = new AdClick(adClick.navigationExpiration, adClick.totalExpiration, adClick.allowlist)
         restoredAdClick.adBaseDomain = adClick.adBaseDomain
         restoredAdClick.adClickRedirect = adClick.adClickRedirect
         restoredAdClick.expires = adClick.expires
@@ -209,6 +210,10 @@ export class AdClick {
     }
 }
 
+/**
+ * @param {number} tabId
+ * @param {object} allowlist
+ * **/
 export class AdClickDNR {
     constructor (tabId, allowlist) {
         this.allowlist = allowlist
@@ -226,8 +231,6 @@ export class AdClickDNR {
 
     /**
      * Create initial tab scoped DNR not limited to an initiatorDomain
-     * @param {Tab} tab
-     * @returns {integer}
      **/
     createInitialAdClickDNR () {
         chrome.declarativeNetRequest.updateSessionRules({ addRules: [this.rule] })

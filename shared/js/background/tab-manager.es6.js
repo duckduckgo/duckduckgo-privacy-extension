@@ -44,9 +44,7 @@ class TabManager {
     }
 
     delete (id) {
-        if (this.tabContainer[id]?.adClick) {
-            this.tabContainer[id].adClick.adClickDNR.removeAdClickDNR()
-        }
+        this.tabContainer[id]?.adClick?.adClickDNR?.removeAdClickDNR()
         delete this.tabContainer[id]
         TabState.delete(id)
     }
