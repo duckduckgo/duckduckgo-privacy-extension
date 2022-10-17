@@ -217,7 +217,7 @@ browser.webRequest.onHeadersReceived.addListener(
             return ATB.updateSetAtb()
         }
 
-            const responseHeaders = request.responseHeaders
+        const responseHeaders = request.responseHeaders
 
         if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
             // there can be multiple permissions-policy headers, so we are good always appending one
@@ -226,7 +226,7 @@ browser.webRequest.onHeadersReceived.addListener(
             responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
         }
 
-    return { responseHeaders }
+        return { responseHeaders }
     },
     { urls: ['<all_urls>'] },
     extraInfoSpec
