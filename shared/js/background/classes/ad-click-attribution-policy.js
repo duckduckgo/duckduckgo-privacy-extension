@@ -132,8 +132,7 @@ export class AdClick {
         this.adClickRedirect = false
         this.navigationExpiration = navigationExpiration
         this.totalExpiration = totalExpiration
-        // this.expires = Date.now() + (this.totalExpiration * 1000)
-        this.expires = Date.now() + (1000 * 1000)
+        this.expires = Date.now() + (this.totalExpiration * 1000)
         this.clickExpires = Date.now() + (this.navigationExpiration * 1000)
 
         this.allowlist = allowlist

@@ -140,7 +140,6 @@ class TabManager {
                     tab.updateBadgeIcon()
 
                     if (tab._tabState?.adClick?.adClickDNR) {
-                        console.log(tab._tabState.adClick)
                         tab._tabState.adClick.adClickDNR.addAdClickDNRInitiatorDomain(tab._tabState.adClick.adBaseDomain)
                     }
 
