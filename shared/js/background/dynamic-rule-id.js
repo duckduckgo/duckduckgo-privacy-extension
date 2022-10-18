@@ -7,8 +7,6 @@ export function getDynamicRuleId () {
     const nextRuleId = DYNAMIC_RULE_ID_START + dynamicRuleOffset
     dynamicRuleOffset += 1
     browserWrapper.setToSessionStorage(DYNAMIC_RULE_STORAGE_KEY, dynamicRuleOffset)
-
-    console.log(`NEXT RULE ID: ${nextRuleId}`)
     return nextRuleId
 }
 
