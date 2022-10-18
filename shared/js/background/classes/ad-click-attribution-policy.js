@@ -88,7 +88,6 @@ export class AdClickAttributionPolicy {
             if (parameterDomain && this.domainDetectionEnabled) {
                 const parsedParameterDomain = getBaseDomain(parameterDomain)
                 if (parsedParameterDomain) {
-                    console.log(parsedParameterDomain)
                     adClick.adBaseDomain = parsedParameterDomain
                     adClick.adClickRedirect = false
                     return adClick
@@ -248,7 +247,6 @@ export class AdClickDNR {
     }
 
     removeAdClickDNR () {
-        console.log(`Remove DNR #${this.rule.id}`)
         chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: [this.rule.id] })
     }
 

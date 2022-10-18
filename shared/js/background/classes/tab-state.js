@@ -80,7 +80,6 @@ export class TabState {
             return null
         }
         const state = new TabState(parsedData, true)
-
         for (const [key, value] of Object.entries(parsedData)) {
             if (key === 'trackers') {
                 /** @type {Record<string, import('./tracker').Tracker>} */
