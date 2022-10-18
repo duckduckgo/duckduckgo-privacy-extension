@@ -36,7 +36,7 @@
                     "iframe[src*='://www.youtube-nocookie.com/embed']"
                 ],
                 "replaceSettings": {
-                    "type": "youtube-video-ctl",
+                    "type": "youtube-video",
                     "buttonText": "Unblock video",
                     "infoTitle": "DuckDuckGo blocked this YouTube video to prevent Google from tracking you",
                     "infoText": "We blocked Google (which owns YouTube) from tracking you when the page loaded. If you unblock this video, Google will know your activity.",
@@ -52,7 +52,7 @@
                     }     
                 },
                 "clickAction": {
-                    "type": "youtube-video-ctl"
+                    "type": "youtube-video"
                 }
             },
             "YouTube embedded subscription button": {

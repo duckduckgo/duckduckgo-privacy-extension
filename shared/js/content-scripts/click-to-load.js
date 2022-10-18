@@ -858,7 +858,7 @@
                     case 'iFrame':
                         fbElement = this.createFBIFrame()
                         break
-                    case 'youtube-video-ctl':
+                    case 'youtube-video':
                         onError = await this.adjustYouTubeVideoElement(originalElement)
                         fbElement = originalElement
                         break
@@ -1107,7 +1107,7 @@
         }
 
         /** YouTube CTL */
-        if (widget.replaceSettings.type === 'youtube-video-ctl') {
+        if (widget.replaceSettings.type === 'youtube-video') {
             const { placeholder } =
                 await createYouTubePlaceholder(trackingElement, widget)
             const { blockingDialog, shadowRoot } =
@@ -1575,7 +1575,7 @@
         // Create overall grid structure
         const element = document.createElement('div')
         element.style.cssText = styles.block + styles[widget.getMode()].background + styles[widget.getMode()].textFont
-        if (widget.replaceSettings.type === 'youtube-video-ctl') {
+        if (widget.replaceSettings.type === 'youtube-video') {
             element.style.cssText += styles.dialogBlock
         }
         element.className = wrapperClass
@@ -1626,7 +1626,7 @@
         contentRow.appendChild(buttonRow)
 
         /** Share Feedback Link */
-        if (widget.replaceSettings.type === 'youtube-video-ctl') {
+        if (widget.replaceSettings.type === 'youtube-video') {
             const feedbackRow = makeShareFeedbackRow()
             shadowRoot.appendChild(feedbackRow)
         }
