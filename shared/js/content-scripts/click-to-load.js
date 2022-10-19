@@ -1145,7 +1145,7 @@
         // Block YouTube embedded video and display blocking dialog
         } else {
             replaceTrackingElement(
-                widget, trackingElement, blockingDialog, /* hideTrackingElement= */ false
+                widget, trackingElement, blockingDialog, /* hideTrackingElement= */ true
             )
             // Show the extra unblock link in the header if the placeholder or
             // its parent is too short for the normal unblock button to be visible.
