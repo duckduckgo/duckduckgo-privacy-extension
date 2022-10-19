@@ -183,7 +183,10 @@ browser.webRequest.onBeforeRequest.addListener(
     additionalOptions
 )
 
-const extraInfoSpec = manifestVersion === 3 ? ['responseHeaders'] : ['blocking', 'responseHeaders']
+const extraInfoSpec = ['responseHeaders']
+if (manifestVersion === 2) {
+    extraInfoSpec.push('blocking')
+}
 
 if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
     extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
@@ -193,7 +196,7 @@ if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
 // JS API.
 // Note: This approach will not work with MV3 since the background
 //       ServiceWorker does not have access to a `document` Object.
-const isTopicsEnabled = manifestVersion === 3 ? false : ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
+const isTopicsEnabled = manifestVersion === 2 && 'browsingTopics' in document && utils.isFeatureEnabled('googleRejected')
 
 browser.webRequest.onHeadersReceived.addListener(
     request => {

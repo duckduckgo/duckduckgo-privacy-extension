@@ -214,8 +214,6 @@ export class AdClick {
  **/
 export class AdClickDNR {
     constructor (tabId, allowlist) {
-        this.allowlist = allowlist
-        this.tabId = tabId
         this.initiatorDomain = null
         this.rule = generateDNRRule({
             id: null,
@@ -228,7 +226,7 @@ export class AdClickDNR {
     }
 
     /**
-     * Create initial tab scoped DNR not limited to an initiatorDomain
+     * Create initial tab scoped DNR rule not limited to any initiatorDomains.
      **/
     async createInitialAdClickDNR () {
         const ruleId = await getNextSessionRuleId()
@@ -236,8 +234,8 @@ export class AdClickDNR {
         chrome.declarativeNetRequest.updateSessionRules({ addRules: [this.rule] })
     }
 
-    /*
-     * Update the tab DNR with initiator domain
+    /**
+     * Update the tab scoped DNR rule with an initiatorDomains condition.
      */
     addAdClickDNRInitiatorDomain (domain) {
         if (!this.initiatorDomain) {
