@@ -31,7 +31,7 @@ async function updateOffsetFromExistingRules () {
 
         if (currentSessionRules) {
             // get offsets for session rules already created
-            const offsetsAssigned = currentSessionRules.map(r => (r.id - SESSION_RULE_ID_START)).sort((a, b) => b - a)
+            const offsetsAssigned = currentSessionRules.filter(r => (r.id >= SESSION_RULE_ID_START)).sort((a, b) => b - a)
 
             // adjust offset based on rules already created
             let newSessionRuleOffset = typeof offsetsAssigned[0] === 'number' ? offsetsAssigned[0] + 1 : 0
