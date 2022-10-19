@@ -1,7 +1,6 @@
 /**
- * For managingdynamically created MV3 session rules
- * getNextSessionRuleId will return the next unique session rule id to 
- * use when creating new session rules
+ * For managing dynamically created MV3 session rules
+ * getNextSessionRuleId will return the next unique session rule id to use when creating new session rules
  **/
 const browserWrapper = require('./wrapper.es6')
 const SESSION_RULE_ID_START = 100000
@@ -18,13 +17,6 @@ export async function getNextSessionRuleId () {
     sessionRuleOffset += 1
     browserWrapper.setToSessionStorage(SESSION_RULE_STORAGE_KEY, sessionRuleOffset)
     return nextRuleId
-}
-
-async function _getExistingRulesAssigned () {
-    let rules = []
-    // get all rules that were already sessionally created
-    rules = rules.concat(set2.filter(r => r.id >= SESSION_RULE_ID_START))
-    return rules
 }
 
 // set offset and update based on rules that have been created
