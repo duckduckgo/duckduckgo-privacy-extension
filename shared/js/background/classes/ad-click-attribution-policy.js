@@ -8,7 +8,7 @@ import {
 
 const { getFeatureSettings, getBaseDomain } = require('../utils.es6')
 const browserWrapper = require('../wrapper.es6')
-const { getDynamicRuleId } = require('../dynamic-rule-id')
+const { getNextSessionRuleId} = require('../dnr-session-rule-id')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -218,7 +218,7 @@ export class AdClickDNR {
         this.tabId = tabId
         this.initiatorDomain = null
         this.rule = generateDNRRule({
-            id: getDynamicRuleId(),
+            id: null,
             priority: AD_ATTRIBUTION_POLICY_PRIORITY,
             actionType: 'allow',
             requestDomains: allowlist.map((entry) => entry.host)
@@ -230,7 +230,9 @@ export class AdClickDNR {
     /**
      * Create initial tab scoped DNR not limited to an initiatorDomain
      **/
-    createInitialAdClickDNR () {
+    async createInitialAdClickDNR () {
+        const ruleId = await getNextSessionRuleId()
+        this.rule.id = ruleId
         chrome.declarativeNetRequest.updateSessionRules({ addRules: [this.rule] })
     }
 
