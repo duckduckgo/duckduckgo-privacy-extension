@@ -211,7 +211,7 @@ export class AdClick {
 /**
  * @param {number} tabId
  * @param {object} allowlist
- * **/
+ **/
 export class AdClickDNR {
     constructor (tabId, allowlist) {
         this.allowlist = allowlist
