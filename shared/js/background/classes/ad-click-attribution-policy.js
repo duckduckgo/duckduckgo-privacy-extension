@@ -203,7 +203,7 @@ export class AdClick {
         if (this.expires > Date.now()) {
             return true
         } else {
-            this.adClickDNR?.removeAdClickDNR()
+            this.removeAdClickDNR()
             return false
         }
     }
