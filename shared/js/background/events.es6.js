@@ -183,6 +183,8 @@ browser.webRequest.onBeforeRequest.addListener(
     additionalOptions
 )
 
+// MV2 needs blocking for webRequest
+// MV3 still needs some info from response headers
 const extraInfoSpec = ['responseHeaders']
 if (manifestVersion === 2) {
     extraInfoSpec.push('blocking')
@@ -253,11 +255,7 @@ browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
     if (currentTab && currentTab.adClick) {
         const newTab = tabManager.createOrUpdateTab(details.tabId, { url: details.url })
         if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-            if (manifestVersion === 3) {
-                newTab.adClick = currentTab.adClick.propagate(newTab._tabState.tabId)
-            } else {
-                newTab.adClick = currentTab.adClick
-            }
+            newTab.adClick = currentTab.adClick.propagate(newTab.id)
         }
     }
 })
