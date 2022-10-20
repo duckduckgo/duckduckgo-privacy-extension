@@ -14,6 +14,7 @@ const blocklistReference = require('../../data/reference-tests/expire-first-part
 const testSets = require('../../data/reference-tests/expire-first-party-js-cookies/tests.json')
 
 const jsdom = require('jsdom')
+const constants = require('../../../shared/data/constants')
 const { JSDOM } = jsdom
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
@@ -70,7 +71,9 @@ for (const setName of Object.keys(testSets)) {
 
                 const jsCookieProtection = require('../../../shared/content-scope-scripts/src/features/cookie')
 
-                jsCookieProtection.load({})
+                jsCookieProtection.load({
+                    platform: constants.platform
+                })
                 jsCookieProtection.init(args)
 
                 spyOn(browser.tabs, 'sendMessage').and.callFake((tabId, msg) => {
