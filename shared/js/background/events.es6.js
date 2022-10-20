@@ -210,8 +210,7 @@ browser.webRequest.onHeadersReceived.addListener(
             ) {
                 tab.setAdClickIfValidRedirect(request.url)
             } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
-                tab.adClick.adClickRedirect = false
-                tab.adClick.adBaseDomain = tab.site.baseDomain
+                tab.adClick.setAdBaseDomain(tab.site.baseDomain, tab.adClick.adClickRedirect)
             }
         }
 
