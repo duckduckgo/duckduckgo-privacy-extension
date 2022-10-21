@@ -36,11 +36,19 @@ class TabManager {
         return newTab
     }
 
+    async restoreOrCreate (tabData) {
+        const restored = await this.restore(tabData.id)
+        if (!restored) {
+            await this.create(tabData)
+        }
+    }
+
     async restore (tabId) {
         const restoredState = await Tab.restore(tabId)
         if (restoredState) {
             this.tabContainer[tabId] = restoredState
         }
+        return restoredState
     }
 
     delete (id) {

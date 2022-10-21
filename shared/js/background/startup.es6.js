@@ -45,7 +45,8 @@ export async function onStartup () {
         const tab = savedTabs[i]
 
         if (tab.url) {
-            tabManager.restore(tab.id)
+            // On reinstall we wish to create the tab again
+            await tabManager.restoreOrCreate(tab)
         }
     }
 
