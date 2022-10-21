@@ -31,7 +31,8 @@
         "dev-chrome-mv3": "make dev browser=chrome-mv3 type=dev watch=1",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip",
-        "release-chrome-mv3": "make browser=chrome-mv3 type=release && make chrome-mv3-release-zip"
+        "release-chrome-mv3": "make browser=chrome-mv3 type=release && make chrome-mv3-release-zip",
+        "beta-chrome-mv3": "make chrome-mv3-beta browser=chrome-mv3 type=release"
     },
     "devDependencies": {
         "@babel/cli": "^7.19.3",

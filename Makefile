@@ -5,7 +5,7 @@ release: npm setup-build-dir grunt moveout fonts web-resources
 dev: setup-build-dir moveout fonts web-resources grunt-dev
 
 npm:
-	npm ci
+	npm install-ci
 
 grunt:
 	grunt build --browser=$(browser) --type=$(type)
@@ -30,6 +30,17 @@ setup-build-dir:
 chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
 	cd build/chrome/release/ && zip -rq chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip *
+
+chrome-mv3-release-zip:
+	rm -f build/chrome-mv3/release/chrome-release-*.zip
+	cd build/chrome-mv3/release/ && zip -rq chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip *
+
+chrome-mv3-beta-zip: rename-chrome-beta chrome-mv3-release-zip
+	
+rename-chrome-beta:
+	sed 's/__MSG_appName__/DuckDuckGo Privacy Essentials MV3 Beta/' ./browsers/chrome-mv3/manifest.json > build/chrome-mv3/release/manifest.json
+
+chrome-mv3-beta: release chrome-mv3-beta-zip
 
 fonts:
 	mkdir -p build/$(browser)/$(type)/public
