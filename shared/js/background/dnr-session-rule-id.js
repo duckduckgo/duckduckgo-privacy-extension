@@ -6,11 +6,14 @@ const browserWrapper = require('./wrapper.es6')
 const SESSION_RULE_ID_START = 100000
 const SESSION_RULE_STORAGE_KEY = 'sessionRuleOffset'
 let sessionRuleOffset = 0
-browserWrapper.getFromSessionStorage(SESSION_RULE_STORAGE_KEY).then(offset => {
-    if (offset) {
-        sessionRuleOffset = offset
-    }
-})
+
+export async function setSessionRuleOffsetFromStorage () {
+    await browserWrapper.getFromSessionStorage(SESSION_RULE_STORAGE_KEY).then(offset => {
+        if (offset) {
+            sessionRuleOffset = offset
+        }
+    })
+}
 
 export function getNextSessionRuleId () {
     const nextRuleId = SESSION_RULE_ID_START + sessionRuleOffset
