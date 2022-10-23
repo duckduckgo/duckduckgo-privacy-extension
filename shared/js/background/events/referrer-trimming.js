@@ -3,22 +3,25 @@ const trackerutils = require('../tracker-utils')
 const utils = require('../utils.es6')
 const browserName = utils.getBrowserName()
 
-/**
- * @typedef Referrer
- * @property {string} site
- *   The referrer URL.
- * @property {string} referrerHost
- *   The referrer host.
- * @property {string} referrer
- *   The truncated referrer.
- */
+export class Referrer {
+    /**
+     * @property {string} site The referrer URL.
+     * @property {string} referrerHost The referrer host.
+     * @property {string} referrer The truncated referrer.
+     */
+    constructor (site, referrerHost, referrer) {
+        this.site = site
+        this.referrerHost = referrerHost
+        this.referrer = referrer
+    }
+}
 
 /**
  * @param {{tabId: number, url: string, requestHeaders: Array<{name: string, value:string}>}} e
  *
  * @returns {{requestHeaders: Array<{name: string, value:string}>} | { redirectUrl: URL } | undefined}
  */
-module.exports = function limitReferrerData (e) {
+export function limitReferrerData (e) {
     const referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')?.value
     if (!referrer) return
 
@@ -49,11 +52,7 @@ module.exports = function limitReferrerData (e) {
 
     const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
     if (!!tab && (!tab.referrer || tab.referrer.site !== tab.site.url)) {
-        tab.referrer = {
-            site: tab.site.url,
-            referrerHost: new URL(referrer).hostname,
-            referrer: modifiedReferrer
-        }
+        tab.referrer = new Referrer(tab.site.url, new URL(referrer).hostname, modifiedReferrer)
     }
     requestHeaders.push({
         name: 'referer',
