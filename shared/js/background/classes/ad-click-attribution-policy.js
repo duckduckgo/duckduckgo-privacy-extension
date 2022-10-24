@@ -80,8 +80,7 @@ export class AdClickAttributionPolicy {
         const adClick = new AdClick(this.navigationExpiration, this.totalExpiration, this.allowlist)
 
         if (manifestVersion === 3) {
-            adClick.adClickDNR = adClick.getAdClickDNR(tab.id)
-            adClick.createDNR()
+            adClick.createDNR(tab.id)
         }
 
         if (linkFormat.adDomainParameterName) {
@@ -89,7 +88,7 @@ export class AdClickAttributionPolicy {
             if (parameterDomain && this.domainDetectionEnabled) {
                 const parsedParameterDomain = getBaseDomain(parameterDomain)
                 if (parsedParameterDomain) {
-                    adClick.setAdBaseDomain(parsedParameterDomain, false)
+                    adClick.setAdBaseDomain(parsedParameterDomain)
                     return adClick
                 }
             }
@@ -156,8 +155,7 @@ export class AdClick {
         const adClick = this.clone()
 
         if (this.adClickDNR) {
-            adClick.adClickDNR = adClick.getAdClickDNR(tabId)
-            adClick.createDNR()
+            this.createDNR(tabId)
         }
 
         return adClick
@@ -175,11 +173,10 @@ export class AdClick {
 
     /**
      * @param {string} domain
-     * @param {boolean} adClickRedirect
      **/
-    setAdBaseDomain (domain, adClickRedirect) {
+    setAdBaseDomain (domain) {
         this.adBaseDomain = domain
-        this.adClickRedirect = adClickRedirect
+        this.adClickRedirect = false
 
         if (this.adClickDNR) {
             this.updateDNRInitiator(domain)
@@ -242,20 +239,25 @@ export class AdClick {
     }
 
     updateDNRInitiator (domain) {
-        this.adClickDNR.rule.condition.initiatorDomains = [domain]
-        this.updateDNR()
+        if (this.adClickDNR && domain) {
+            this.adClickDNR.rule.condition.initiatorDomains = [domain]
+            this.updateDNR()
+        }
     }
 
-    createDNR () {
+    createDNR (tabId) {
+        this.adClickDNR = this.getAdClickDNR(tabId)
         this.adClickDNR.rule.id = getNextSessionRuleId()
         chrome.declarativeNetRequest.updateSessionRules({ addRules: [this.adClickDNR.rule] })
     }
 
     updateDNR () {
-        chrome.declarativeNetRequest.updateSessionRules({
-            removeRuleIds: [this.adClickDNR.rule.id],
-            addRules: [this.adClickDNR.rule]
-        })
+        if (this.adClickDNR) {
+            chrome.declarativeNetRequest.updateSessionRules({
+                removeRuleIds: [this.adClickDNR.rule.id],
+                addRules: [this.adClickDNR.rule]
+            })
+        }
     }
 
     removeDNR () {
