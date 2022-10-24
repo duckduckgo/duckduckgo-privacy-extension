@@ -147,6 +147,10 @@ export class AdClick {
         return adClick
     }
 
+    /**
+     * Propagate an adclick to a new tab, used when a user navigates to a new tab.
+     * @param {number}
+     */
     propagate (tabId) {
         const adClick = this.clone()
 
