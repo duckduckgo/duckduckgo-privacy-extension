@@ -80,7 +80,7 @@ export class AdClickAttributionPolicy {
         const adClick = new AdClick(this.navigationExpiration, this.totalExpiration, this.allowlist)
 
         if (manifestVersion === 3) {
-            adClick.adClickDNR = adClick.getAdClickDNR(tab.id, this.allowlist)
+            adClick.adClickDNR = adClick.getAdClickDNR(tab.id)
             adClick.createDNR()
         }
 
@@ -149,13 +149,14 @@ export class AdClick {
 
     /**
      * Propagate an adclick to a new tab, used when a user navigates to a new tab.
-     * @param {number}
+     * @param {number} tabId
+     * @returns {AdClick} adClick
      */
     propagate (tabId) {
         const adClick = this.clone()
 
         if (this.adClickDNR) {
-            adClick.adClickDNR = adClick.getAdClickDNR(tabId, this.allowlist)
+            adClick.adClickDNR = adClick.getAdClickDNR(tabId)
             adClick.createDNR()
         }
 
@@ -227,13 +228,13 @@ export class AdClick {
         return this.hasNotExpired()
     }
 
-    getAdClickDNR (tabId, allowlist) {
+    getAdClickDNR (tabId) {
         const adClickDNR = {
             rule: generateDNRRule({
                 id: null,
                 priority: AD_ATTRIBUTION_POLICY_PRIORITY,
                 actionType: 'allow',
-                requestDomains: allowlist.map((entry) => entry.host)
+                requestDomains: this.allowlist.map((entry) => entry.host)
             })
         }
         adClickDNR.rule.condition.tabIds = [tabId]

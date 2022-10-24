@@ -14,6 +14,10 @@ export async function setSessionRuleOffsetFromStorage () {
     }
 }
 
+/**
+ * Get the next unique session rule id to use when craeting session DNR rules
+ * @returns {number} nextRuleId
+ */
 export function getNextSessionRuleId () {
     const nextRuleId = SESSION_RULE_ID_START + sessionRuleOffset
     sessionRuleOffset += 1
