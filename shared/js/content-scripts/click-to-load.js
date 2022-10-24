@@ -1108,12 +1108,7 @@
 
         /** YouTube CTL */
         if (widget.replaceSettings.type === 'youtube-video') {
-            const { placeholder } =
-                await createYouTubePlaceholder(trackingElement, widget)
-            const { blockingDialog, shadowRoot } =
-                await createYouTubeBlockingDialog(trackingElement, widget)
-
-            await toggleYouTubeCTL(trackingElement, blockingDialog, shadowRoot, placeholder, widget)
+            await toggleYouTubeCTL(trackingElement, widget)
 
             /** TODO
              *  Listen to `ddg-settings-youtubePreviewsEnabled` message to update YT CTL state
@@ -1125,25 +1120,22 @@
     /**
      * @param {Element} trackingElement
      *   The original tracking element (YouTube video iframe)
-     * @param {Element} blockingDialog
-     *   A blocking dialog with CTL element
-     * @param {Element} shadowRoot
-     *   The shadow root for the blocking dialog with CTL
-     * @param {Element} placeholder
-     *   A YouTube preview placeholder
      * @param {DuckWidget} widget
      *   The CTP 'widget' associated with the tracking element.
      */
-    async function toggleYouTubeCTL (trackingElement, blockingDialog, shadowRoot, placeholder, widget) {
+    async function toggleYouTubeCTL (trackingElement, widget) {
         const youtubePreviewsEnabled = await getYouTubePreviewsEnabled()
 
         // Show YouTube Preview for embedded video
         if (youtubePreviewsEnabled === true) {
+            const { placeholder } = await createYouTubePlaceholder(trackingElement, widget)
             replaceTrackingElement(
                 widget, trackingElement, placeholder, /* hideTrackingElement= */ true
             )
+
         // Block YouTube embedded video and display blocking dialog
         } else {
+            const { blockingDialog, shadowRoot } = await createYouTubeBlockingDialog(trackingElement, widget)
             replaceTrackingElement(
                 widget, trackingElement, blockingDialog, /* hideTrackingElement= */ true
             )
@@ -1644,8 +1636,8 @@
 
     /**
      * Creates the placeholder element to replace a YouTube video iframe element
-     * with. Mutates widget Object to set the autoplay property as the preview
-     * details load.
+     * with a preview image. Mutates widget Object to set the autoplay property
+     * as the preview details load.
      * @param {Element} originalElement
      *   The YouTube video iframe element.
      * @param {Object} widget
