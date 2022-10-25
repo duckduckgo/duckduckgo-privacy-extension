@@ -1415,4 +1415,140 @@ describe('generateTdsRuleset', () => {
             }
         })
     })
+
+    it('should ignore rules with an unknown action', async () => {
+        const randAction = () => Math.random().toString()
+
+        const blockList = emptyBlockList()
+        addDomain(blockList, 'default-ignore.invalid', 'Default Ignore entity', 'ignore', [
+            {
+                rule: 'default-ignore\\.invalid\\/known-action-1'
+            },
+            {
+                rule: 'default-ignore\\.invalid\\/unknown-action-1',
+                action: randAction()
+            },
+            {
+                rule: 'default-ignore\\.invalid\\/known-action-3',
+                exceptions: { types: ['script'] }
+            },
+            {
+                rule: 'default-ignore\\.invalid\\/unknown-action-2',
+                action: randAction(),
+                exceptions: { types: ['script'] }
+            }
+        ])
+        addDomain(blockList, 'default-block.invalid', 'Default Block entity', 'block', [
+            {
+                rule: 'default-block\\.invalid\\/known-action-1'
+            },
+            {
+                rule: 'default-block\\.invalid\\/unknown-action-1',
+                action: randAction()
+            },
+            {
+                rule: 'default-block\\.invalid\\/known-action-2',
+                exceptions: { types: ['script'] }
+            },
+            {
+                rule: 'default-block\\.invalid\\/unknown-action-2',
+                action: randAction(),
+                exceptions: { types: ['script'] }
+            }
+        ])
+        addDomain(blockList, 'default-unknown.invalid', 'Default Unknown entity', randAction(), [
+            {
+                rule: 'default-unknown\\.invalid\\/known-action-1'
+            },
+            {
+                rule: 'default-unknown\\.invalid\\/unknown-action-1',
+                action: randAction()
+            },
+            {
+                rule: 'default-unknown\\.invalid\\/known-action-2',
+                exceptions: { types: ['script'] }
+            },
+            {
+                rule: 'default-unknown\\.invalid\\/unknown-action-2',
+                action: randAction(),
+                exceptions: { types: ['script'] }
+            }
+        ])
+
+        await rulesetEqual(blockList, isRegexSupportedTrue, null, {
+            expectedRuleset: [
+                {
+                    id: 1,
+                    priority: 10001,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        domainType: 'thirdParty',
+                        isUrlFilterCaseSensitive: false,
+                        urlFilter: '||default-ignore.invalid/known-action-3'
+                    }
+                },
+                {
+                    id: 2,
+                    priority: 10001,
+                    action: {
+                        type: 'allow'
+                    },
+                    condition: {
+                        isUrlFilterCaseSensitive: false,
+                        resourceTypes: ['script'],
+                        urlFilter: '||default-ignore.invalid/known-action-3'
+                    }
+                },
+                {
+                    id: 3,
+                    priority: 10002,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        domainType: 'thirdParty',
+                        isUrlFilterCaseSensitive: false,
+                        urlFilter: '||default-ignore.invalid/known-action-1'
+                    }
+                },
+                {
+                    id: 4,
+                    priority: 10000,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        domainType: 'thirdParty',
+                        requestDomains: ['default-block.invalid']
+                    }
+                },
+                {
+                    id: 5,
+                    priority: 10001,
+                    action: {
+                        type: 'allow'
+                    },
+                    condition: {
+                        isUrlFilterCaseSensitive: false,
+                        resourceTypes: ['script'],
+                        urlFilter: '||default-block.invalid/known-action-2'
+                    }
+                },
+                {
+                    id: 6,
+                    priority: 10002,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        domainType: 'thirdParty',
+                        isUrlFilterCaseSensitive: false,
+                        urlFilter: '||default-block.invalid/known-action-1'
+                    }
+                }
+            ]
+        })
+    })
 })
