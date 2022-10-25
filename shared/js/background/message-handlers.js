@@ -175,7 +175,7 @@ export function getLogo () {
 }
 
 export function getCloseIcon () {
-    return getImage('img/social/close.svg')
+    return getImage('close.svg')
 }
 
 export function getCurrentTab () {
