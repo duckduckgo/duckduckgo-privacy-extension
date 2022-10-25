@@ -111,9 +111,9 @@ module.exports = {
         },
         {
             name: 'ClickToLoadConfig',
-            url: '/data/social_ctp_configuration.json',
+            url: 'https://staticcdn.duckduckgo.com/useragents/social_ctp_configuration.json',
             format: 'json',
-            source: 'local'
+            source: 'external'
         },
         {
             name: 'config',
