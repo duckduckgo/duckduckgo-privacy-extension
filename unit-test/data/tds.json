@@ -1,12 +1,16 @@
 {
     "trackers": {
         "facebook.com": {
+            "domain": "facebook.com",
+            "default": "block",
             "owner": {
                 "name": "Facebook",
                 "displayName": "Facebook"
             }
         },
         "facebook.net": {
+            "domain": "facebook.net",
+            "default": "block",
             "owner": {
                 "name": "Facebook",
                 "displayName": "Facebook"
