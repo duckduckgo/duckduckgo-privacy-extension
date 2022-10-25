@@ -5,6 +5,7 @@ function PrivacyOptions (attrs) {
     attrs.httpsEverywhereEnabled = true
     attrs.embeddedTweetsEnabled = false
     attrs.GPC = false
+    attrs.youtubePreviewsEnabled = false
 
     Parent.call(this, attrs)
 }
@@ -30,6 +31,7 @@ PrivacyOptions.prototype = window.$.extend({},
                     self.httpsEverywhereEnabled = settings.httpsEverywhereEnabled
                     self.embeddedTweetsEnabled = settings.embeddedTweetsEnabled
                     self.GPC = settings.GPC
+                    self.youtubePreviewsEnabled = settings.youtubePreviewsEnabled
 
                     resolve()
                 })

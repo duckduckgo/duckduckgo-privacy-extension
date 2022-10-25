@@ -126,6 +126,34 @@ export async function initClickToLoad (unused, sender) {
     return config
 }
 
+export async function getYouTubeVideoDetails (videoURL) {
+    const endpointURL = new URL('https://www.youtube.com/oembed?format=json')
+    const parsedVideoURL = new URL(videoURL)
+
+    const playlistID = parsedVideoURL.searchParams.get('list')
+    const videoId = parsedVideoURL.pathname.split('/').pop()
+
+    if (playlistID) {
+        parsedVideoURL.hostname = endpointURL.hostname
+        endpointURL.searchParams.set('url', parsedVideoURL.href)
+    } else {
+        endpointURL.searchParams.set('url', 'https://youtu.be/' + videoId)
+    }
+
+    try {
+        const youTubeVideoResponse = await fetch(
+            endpointURL.href, {
+                referrerPolicy: 'no-referrer',
+                credentials: 'omit'
+            }
+        ).then(response => response.json())
+        const { title, thumbnail_url: previewImage } = youTubeVideoResponse
+        return { status: 'success', title, previewImage }
+    } catch (e) {
+        return { status: 'failed' }
+    }
+}
+
 export function getLoadingImage (theme) {
     if (theme === 'dark') {
         return utils.imgToData('img/social/loading_dark.svg')
@@ -144,6 +172,10 @@ export function getImage (image) {
 
 export function getLogo () {
     return utils.imgToData('img/social/dax.png')
+}
+
+export function getCloseIcon () {
+    return getImage('close.svg')
 }
 
 export function getCurrentTab () {
@@ -186,6 +218,7 @@ export async function enableSocialTracker (data, sender) {
 export async function updateSetting ({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)
+    utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
 }
 
 export async function getSetting ({ name }) {
