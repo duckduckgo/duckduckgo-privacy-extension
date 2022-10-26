@@ -7,7 +7,7 @@ const tabManager = require('./tab-manager.es6')
 const atb = require('./atb.es6')
 const https = require('./https.es6')
 const tds = require('./storage/tds.es6')
-const startup = require('./startup.es6')
+const { startupReady } = require('./ready.es6')
 const browserWrapper = require('./wrapper.es6')
 const utils = require('./utils.es6')
 const Tab = require('./classes/tab.es6')
@@ -17,7 +17,7 @@ const Wrapper = require('./wrapper.es6.js')
 // @ts-ignore - dbg is not a standard property of self.
 self.dbg = {
     settings,
-    startup,
+    startupReady,
     tabManager,
     Tab,
     TabState,

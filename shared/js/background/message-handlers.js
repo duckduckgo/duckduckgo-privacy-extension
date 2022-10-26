@@ -12,7 +12,7 @@ const brokenSiteReport = require('./broken-site-report')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
-const startup = require('./startup.es6')
+const { startupReady } = require('./ready.es6')
 const { LegacyTabTransfer } = require('./classes/legacy-tab-transfer')
 const getArgumentsObject = require('./helpers/arguments-object')
 
@@ -101,7 +101,7 @@ export async function initClickToLoad (unused, sender) {
     const config = { ...tdsStorage.ClickToLoadConfig }
 
     // Remove first-party entries.
-    await startup.ready()
+    await startupReady()
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
     if (websiteOwner) {

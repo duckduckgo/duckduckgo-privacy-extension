@@ -2,7 +2,7 @@ import * as browserWrapper from './wrapper.es6'
 import settings from './settings.es6'
 import tdsStorage from './storage/tds.es6'
 import trackers from './trackers.es6'
-import * as startup from './startup.es6'
+import { startupReady } from './ready.es6'
 
 import {
     generateExtensionConfigurationRuleset
@@ -91,8 +91,8 @@ async function onUpdate (configName, etag, configValue) {
 
     // TDS.
     if (configName === 'tds') {
-        await startup.ready()
-        // @ts-ignore: Once startup.ready() has finished, surrogateList will be
+        await startupReady()
+        // @ts-ignore: Once startup module has finished, surrogateList will be
         //             assigned.
         const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
