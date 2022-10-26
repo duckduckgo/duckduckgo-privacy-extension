@@ -5,32 +5,33 @@
  * module.
  */
 
-/**
- * @typedef readyResolverResult
- * @property {function} ready
- * @property {function} resolve
- */
+class ReadyResolver {
+    constructor () {
+        /** @type {function|null} */
+        this._readyResolver = null
 
-/**
- * Create a new ready promise getter and resolver.
- * returns {readyResolverResult}
- */
-function createReadyResolver () {
-    let readyResolver = null
-    const readyPromise = new Promise(resolve => { readyResolver = resolve })
+        this._readyPromise = new Promise(
+            resolve => { this._readyResolver = resolve }
+        )
+    }
 
-    return {
-        ready () { return readyPromise },
-        resolve () {
-            if (readyResolver) {
-                readyResolver()
-                readyResolver = null
-            }
+    /**
+     * Returns a Promise which will resolve when the corresponding code-path is
+     * ready for use.
+     * @returns {Promise<>}
+     */
+    ready () { return this._readyPromise }
+
+    /**
+     * Resolves the Promise for the corresponding code-path, if it hasn't
+     * already been resolved.
+     */
+    resolve () {
+        if (this._readyResolver) {
+            this._readyResolver()
+            this._readyResolver = null
         }
     }
 }
 
-export const {
-    ready: startupReady,
-    resolve: startupReadyResolve
-} = createReadyResolver()
+export const startupReady = new ReadyResolver()

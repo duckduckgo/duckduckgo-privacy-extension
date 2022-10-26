@@ -101,7 +101,7 @@ export async function initClickToLoad (unused, sender) {
     const config = { ...tdsStorage.ClickToLoadConfig }
 
     // Remove first-party entries.
-    await startupReady()
+    await startupReady.ready()
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
     if (websiteOwner) {

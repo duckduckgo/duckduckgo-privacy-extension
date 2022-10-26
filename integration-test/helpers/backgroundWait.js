@@ -83,14 +83,14 @@ async function forAllConfiguration (bgPage) {
         await forFunction(bgPage, async () => {
             if (!globalThis.dbg?.https?.isReady ||
                 !globalThis.dbg?.settings?.ready ||
-                !globalThis.dbg?.startupReady ||
+                !globalThis.dbg?.startupReady?.ready ||
                 !globalThis.dbg?.tds?.ready) {
                 return false
             }
 
             await Promise.all([
                 globalThis.dbg.settings.ready(),
-                globalThis.dbg.startupReady(),
+                globalThis.dbg.startupReady.ready(),
                 globalThis.dbg.tds.ready()
             ])
 

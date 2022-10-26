@@ -91,7 +91,7 @@ async function onUpdate (configName, etag, configValue) {
 
     // TDS.
     if (configName === 'tds') {
-        await startupReady()
+        await startupReady.ready()
         // @ts-ignore: Once startup module has finished, surrogateList will be
         //             assigned.
         const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))

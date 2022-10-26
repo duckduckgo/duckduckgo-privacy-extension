@@ -12,7 +12,7 @@ const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
 const dnrSessionId = require('./dnr-session-rule-id')
 const { fetchAlias, showContextMenuAction } = require('./email-utils.es6')
-const { startupReadyResolve } = require('./ready.es6')
+const { startupReady } = require('./ready.es6')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -54,7 +54,7 @@ export async function onStartup () {
         }
     }
 
-    startupReadyResolve()
+    startupReady.resolve()
 }
 
 /**

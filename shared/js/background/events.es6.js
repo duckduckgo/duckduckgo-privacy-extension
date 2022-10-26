@@ -242,7 +242,7 @@ browser.webRequest.onHeadersReceived.addListener(
 //       to be compatible with MV3. Registering the listener asynchronously
 //       is only possible here as this is a MV2-only event listener!
 // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-startupReady().then(() => {
+startupReady.ready().then(() => {
     browser.webRequest.onHeadersReceived.addListener(
         dropTracking3pCookiesFromResponse,
         { urls: ['<all_urls>'] },
@@ -415,7 +415,7 @@ if (manifestVersion === 2) {
     //       to be compatible with MV3. Registering the listener asynchronously
     //       is only possible here as this is a MV2-only event listener!
     // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-    startupReady().then(() => {
+    startupReady.ready().then(() => {
         browser.webRequest.onBeforeSendHeaders.addListener(
             dropTracking3pCookiesFromRequest,
             { urls: ['<all_urls>'] },
