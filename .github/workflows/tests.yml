@@ -8,58 +8,42 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 16
+          cache: 'npm'
       - run: npm run install-ci
       - run: npm run lint
+
   unit:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.x
-      - uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 16
+          cache: 'npm'
       - run: npm run install-ci
       - run: npm test
+
   integration:
-    runs-on: ubuntu-20.04
     timeout-minutes: 10
+    runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16.x
-    - uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: Install dependencies
-      run: |
-        sudo apt-get install xvfb
-        npm run install-ci
-    - run: npm run test-int
-    - name: Store test artifacts
-      if: always()
-      uses: actions/upload-artifact@v2
-      with:
-        name: integration-test-artifacts
-        path: integration-test/artifacts
-    - run: npm run test-int-mv3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+      - run: npm run install-ci
+      - run: npm run test-int
+      - name: Store test artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: integration-test-artifacts
+          path: integration-test/artifacts
+      - run: npm run test-int-mv3
