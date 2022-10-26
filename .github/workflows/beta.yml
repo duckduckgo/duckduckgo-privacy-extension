@@ -37,6 +37,8 @@ jobs:
         with:
           commit_message: "Prepare release ${{ env.VERSION }}"
           tagging_message: ${{ env.VERSION }}
+          create_branch: true
+          branch: "release/beta/${{ env.VERSION }}"
 
       - name: Build Chrome MV3 Beta
         run: |
