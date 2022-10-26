@@ -2,7 +2,7 @@ import * as browserWrapper from './wrapper.es6'
 import settings from './settings.es6'
 import tdsStorage from './storage/tds.es6'
 import trackers from './trackers.es6'
-import * as startup from './startup.es6'
+import * as startup from './startup'
 
 import {
     generateExtensionConfigurationRuleset

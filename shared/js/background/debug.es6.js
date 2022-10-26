@@ -2,12 +2,12 @@
  * This exposes some modules we use for testing via the background page console.
  * NOTE this is not added to the release version of the extension
  */
+import * as startup from './startup'
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
 const atb = require('./atb.es6')
 const https = require('./https.es6')
 const tds = require('./storage/tds.es6')
-const startup = require('./startup.es6')
 const browserWrapper = require('./wrapper.es6')
 const utils = require('./utils.es6')
 const Tab = require('./classes/tab.es6')
