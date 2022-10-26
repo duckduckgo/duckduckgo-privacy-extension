@@ -6,6 +6,7 @@
  */
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
+import * as startup from './startup'
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const experiment = require('./experiments.es6')
@@ -19,8 +20,7 @@ const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
-const { refreshUserAllowlistRules } = require('./declarative-net-request')
-const startup = require('./startup.es6')
+import { refreshUserAllowlistRules } from './declarative-net-request'
 
 const manifestVersion = browserWrapper.getManifestVersion()
 

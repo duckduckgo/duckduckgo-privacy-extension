@@ -88,8 +88,3 @@ function registerUnloadHandler () {
         }
     }
 }
-
-module.exports = {
-    onStartup,
-    ready
-}
