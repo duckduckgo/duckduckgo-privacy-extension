@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1666099845162,
+    "version": 1666725542291,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -57,7 +57,8 @@
                 "totalExpiration": 604800,
                 "heuristicDetection": "enabled",
                 "domainDetection": "enabled"
-            }
+            },
+            "hash": "b813ade8472a097ffbd43a3331116fe1"
         },
         "ampLinks": {
             "exceptions": [
@@ -93,7 +94,8 @@
                     "?amp"
                 ]
             },
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "8668c1396cf49ac18e2e057c48dac1a7"
         },
         "autoconsent": {
             "exceptions": [
@@ -132,12 +134,17 @@
                 {
                     "domain": "concursolutions.com",
                     "reason": "Page renders blank for several seconds before cookie management can complete."
+                },
+                {
+                    "domain": "swm.de",
+                    "reason": "infinite reload"
                 }
             ],
             "settings": {
                 "disabledCMPs": []
             },
-            "state": "disabled"
+            "state": "disabled",
+            "hash": "ec8e53e69dee821e9e266a093d4f61f5"
         },
         "autofill": {
             "exceptions": [
@@ -146,7 +153,8 @@
                     "reason": "Generally poor UX - no username saved on signup, prompts for Duck address on 'forgot password'."
                 }
             ],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "cdb6aeccec0eb59ae554f3fd75d336cc"
         },
         "clickToPlay": {
             "exceptions": [],
@@ -155,7 +163,8 @@
                     "clicksBeforeSimpleVersion": 3
                 }
             },
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "180991e8c05ff1722771c58e955e4026"
         },
         "contentBlocking": {
             "state": "enabled",
@@ -164,7 +173,8 @@
                     "domain": "welt.de",
                     "reason": "Video pauses at about 13-15 seconds in. Playing the video again results in a single frame rendering without progressing to the next frame."
                 }
-            ]
+            ],
+            "hash": "ee4fc0c8e6acc9ef2629ae96156a76a5"
         },
         "cookie": {
             "exceptions": [
@@ -201,7 +211,8 @@
                     "threshold": 604800,
                     "maxAge": 604800
                 }
-            }
+            },
+            "hash": "a86050a6a0612aee10f70fd8ca9b6d0c"
         },
         "customUserAgent": {
             "settings": {
@@ -218,11 +229,13 @@
                 "omitVersionSites": []
             },
             "exceptions": [],
-            "state": "disabled"
+            "state": "disabled",
+            "hash": "acbe310f15d778d2e46f5266e319afcc"
         },
         "duckPlayer": {
             "exceptions": [],
-            "state": "disabled"
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
         },
         "elementHiding": {
             "exceptions": [],
@@ -512,15 +525,18 @@
                     }
                 ]
             },
-            "state": "disabled"
+            "state": "disabled",
+            "hash": "34eb0d2856d6d6c5146d2858ed249cef"
         },
         "fingerprintingAudio": {
             "state": "disabled",
-            "exceptions": []
+            "exceptions": [],
+            "hash": "c292bb627849854515cebbded288ef5a"
         },
         "fingerprintingBattery": {
             "exceptions": [],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "52857469413a66e8b0c7b00de5589162"
         },
         "fingerprintingCanvas": {
             "settings": {
@@ -568,7 +584,8 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/499"
                 }
             ],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "6c686d0cfa0451c69db18621438b1b0a"
         },
         "fingerprintingHardware": {
             "settings": {
@@ -606,7 +623,8 @@
                     "reason": "Site loads blank and does not proceed."
                 }
             ],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "a445e9d5b517efc11be4406673301d8a"
         },
         "fingerprintingScreenSize": {
             "settings": {
@@ -645,15 +663,18 @@
                     "reason": "After entering login details and clicking to log in, the site shows an adwall and prevents login."
                 }
             ],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "7d4ea2f0c3583b807e930b1397e82ba3"
         },
         "fingerprintingTemporaryStorage": {
             "exceptions": [],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "52857469413a66e8b0c7b00de5589162"
         },
         "googleRejected": {
             "exceptions": [],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "52857469413a66e8b0c7b00de5589162"
         },
         "gpc": {
             "state": "enabled",
@@ -671,26 +692,31 @@
                     "nytimes.com",
                     "privacy-test-pages.glitch.me"
                 ]
-            }
+            },
+            "hash": "3609d9c50837933e0b2f4a3f2ebc7e54"
         },
         "https": {
             "state": "enabled",
-            "exceptions": []
+            "exceptions": [],
+            "hash": "697382e31649d84b01166f1dc6f790d6"
         },
         "navigatorInterface": {
             "exceptions": [],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "52857469413a66e8b0c7b00de5589162"
         },
         "nonTracking3pCookies": {
             "settings": {
                 "excludedCookieDomains": []
             },
             "exceptions": [],
-            "state": "disabled"
+            "state": "disabled",
+            "hash": "d6bd423722e7888ee5372f871395f211"
         },
         "referrer": {
             "exceptions": [],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "52857469413a66e8b0c7b00de5589162"
         },
         "trackerAllowlist": {
             "state": "enabled",
@@ -3012,7 +3038,8 @@
                     }
                 }
             },
-            "exceptions": []
+            "exceptions": [],
+            "hash": "5ec48b3b70b0a0ba1b54b62dfe833eb8"
         },
         "trackingCookies1p": {
             "settings": {
@@ -3022,14 +3049,16 @@
                 }
             },
             "exceptions": [],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "66159bbb387e48b7d6295068e642fc99"
         },
         "trackingCookies3p": {
             "settings": {
                 "excludedCookieDomains": []
             },
             "exceptions": [],
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "6859f9cb854d6be96600b5757600ee5b"
         },
         "trackingParameters": {
             "exceptions": [],
@@ -3058,14 +3087,16 @@
                     "hmb_medium"
                 ]
             },
-            "state": "enabled"
+            "state": "enabled",
+            "hash": "69fbd3a82a04b8dfcf93498113009e23"
         },
         "userAgentRotation": {
             "settings": {
                 "agentExcludePatterns": []
             },
             "exceptions": [],
-            "state": "disabled"
+            "state": "disabled",
+            "hash": "5d33a7d6a3f780d2e07076e209a5bccb"
         },
         "webCompat": {
             "exceptions": [
@@ -3254,11 +3285,13 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
                 }
             ],
-            "state": "disabled"
+            "state": "disabled",
+            "hash": "ef06173bc0c3525cbfa46ae86189c4b5"
         },
         "windowsPermissionUsage": {
             "exceptions": [],
-            "state": "disabled"
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
         }
     },
     "unprotectedTemporary": []
