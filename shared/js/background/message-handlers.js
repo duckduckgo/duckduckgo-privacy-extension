@@ -390,3 +390,11 @@ export function search ({ term }) {
         browser.tabs.create({ url: url.toString() })
     }
 }
+
+export function getShareFeedbackLink () {
+    return browserWrapper.getExtensionURL('/html/feedback.html')
+}
+
+export function openShareFeedbackPage () {
+    return browserWrapper.openExtensionPage('/html/feedback.html')
+}

@@ -9,6 +9,10 @@ export function getExtensionVersion () {
     return manifest.version
 }
 
+export const openExtensionPage = (path) => {
+    browser.tabs.create({ url: getExtensionURL(path) })
+}
+
 export function getManifestVersion () {
     const manifest = browser.runtime.getManifest()
     return manifest.manifest_version
