@@ -5,10 +5,10 @@ function getConfigFileName () {
     let browserName = browserInfo?.browser?.toLowerCase() || ''
 
     // clamp to known browsers
-    if (!['chrome', 'firefox', 'brave', 'edge'].includes(browserName)) {
+    if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
         browserName = ''
     } else {
-        browserName = '-' + browserName
+        browserName = '-' + browserName + (browserInfo?.manifestVersion === 3 ? 'mv3' : '')
     }
 
     return `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName}-config.json`
