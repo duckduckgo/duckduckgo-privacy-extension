@@ -8,14 +8,14 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js 16
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
 
       - name: Restore npm artifact from cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -33,7 +33,7 @@ jobs:
           echo "VERSION=$(jq -r .version ./browser/chrome-mv3/manifest.json)" >> $GITHUB_ENV
 
       - name: Commit config and version updates
-        uses: stefanzweifel/git-auto-commit-action@8c3ed373fb7e451dbb9706bf99ad63124e33f614
+        uses: stefanzweifel/git-auto-commit-action@f6f7a9c351bb990cab0093f66c0d443d3a108a6f
         with:
           commit_message: "Prepare release ${{ env.VERSION }}"
           tagging_message: ${{ env.VERSION }}
