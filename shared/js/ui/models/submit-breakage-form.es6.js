@@ -25,17 +25,18 @@ module.exports = function (category) {
     const blockedTrackers = collectAllUrls(aggregationStats.blockAction.list)
     const surrogates = collectAllUrls(aggregationStats.redirectAction.list)
     const urlParametersRemoved = this.tab.urlParametersRemoved ? 'true' : 'false'
-    const ampUrl = this.tab.ampUrl || null
-    const brokenSiteParams = [
-        { category },
-        { siteUrl: encodeURIComponent(siteUrl) },
-        { upgradedHttps: upgradedHttps.toString() },
-        { tds: this.tds },
-        { urlParametersRemoved },
-        { ampUrl },
-        { blockedTrackers },
-        { surrogates }
-    ]
+    const ampUrl = this.tab.ampUrl || undefined
+    const brokenSiteParams = new URLSearchParams({
+        category,
+        siteUrl: encodeURIComponent(siteUrl),
+        upgradedHttps: upgradedHttps.toString(),
+        tds: this.tds,
+        urlParametersRemoved,
+        ampUrl,
+        blockedTrackers,
+        surrogates
+    })
+
     this.submitBrokenSiteReport(brokenSiteParams)
 
     // remember that user opted into sharing site breakage data
