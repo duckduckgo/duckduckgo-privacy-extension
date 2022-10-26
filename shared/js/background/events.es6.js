@@ -19,8 +19,8 @@ const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
-const { startupReady } = require('./ready.es6')
 const { refreshUserAllowlistRules } = require('./declarative-net-request')
+const startup = require('./startup.es6')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -258,7 +258,7 @@ browser.webRequest.onHeadersReceived.addListener(
 //       to be compatible with MV3. Registering the listener asynchronously
 //       is only possible here as this is a MV2-only event listener!
 // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-startupReady().then(() => {
+startup.ready().then(() => {
     browser.webRequest.onHeadersReceived.addListener(
         dropTracking3pCookiesFromResponse,
         { urls: ['<all_urls>'] },
@@ -431,7 +431,7 @@ if (manifestVersion === 2) {
     //       to be compatible with MV3. Registering the listener asynchronously
     //       is only possible here as this is a MV2-only event listener!
     // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-    startupReady().then(() => {
+    startup.ready().then(() => {
         browser.webRequest.onBeforeSendHeaders.addListener(
             dropTracking3pCookiesFromRequest,
             { urls: ['<all_urls>'] },

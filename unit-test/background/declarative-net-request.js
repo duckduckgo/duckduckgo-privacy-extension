@@ -4,7 +4,7 @@ import * as tds from '../data/tds.json'
 import * as browserWrapper from '../../shared/js/background/wrapper.es6'
 import * as testConfig from '../data/extension-config.json'
 import * as tdsStorageStub from '../helpers/tds.es6'
-import * as ready from '../../shared/js/background/ready.es6'
+import startup from '../../shared/js/background/startup.es6'
 import settings from '../../shared/js/background/settings.es6'
 import tdsStorage from '../../shared/js/background/storage/tds.es6'
 import trackers from '../../shared/js/background/trackers.es6'
@@ -134,7 +134,7 @@ describe('declarativeNetRequest', () => {
         onUpdateListeners.set('tds', [onConfigUpdate])
         tdsStorage.getLists().then(lists => trackers.setLists(lists))
 
-        spyOn(ready, 'startupReady').and.callFake(
+        spyOn(startup, 'ready').and.callFake(
             () => Promise.resolve()
         )
 

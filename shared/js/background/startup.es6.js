@@ -12,9 +12,11 @@ const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
 const dnrSessionId = require('./dnr-session-rule-id')
 const { fetchAlias, showContextMenuAction } = require('./email-utils.es6')
-const { startupReadyResolve } = require('./ready.es6')
-
 const manifestVersion = browserWrapper.getManifestVersion()
+/** @module */
+
+let resolveReadyPromise
+const readyPromise = new Promise(resolve => { resolveReadyPromise = resolve })
 
 export async function onStartup () {
     if (manifestVersion === 3) {
@@ -54,7 +56,14 @@ export async function onStartup () {
         }
     }
 
-    startupReadyResolve()
+    if (resolveReadyPromise) {
+        resolveReadyPromise()
+        resolveReadyPromise = null
+    }
+}
+
+export function ready () {
+    return readyPromise
 }
 
 /**
@@ -81,5 +90,6 @@ function registerUnloadHandler () {
 }
 
 module.exports = {
-    onStartup
+    onStartup,
+    ready
 }
