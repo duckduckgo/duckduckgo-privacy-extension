@@ -28,7 +28,7 @@ module.exports = function (category) {
     const ampUrl = this.tab.ampUrl || undefined
     const brokenSiteParams = new URLSearchParams({
         category,
-        siteUrl: encodeURIComponent(siteUrl),
+        siteUrl,
         upgradedHttps: upgradedHttps.toString(),
         tds: this.tds,
         urlParametersRemoved,
@@ -37,7 +37,7 @@ module.exports = function (category) {
         surrogates
     })
 
-    this.submitBrokenSiteReport(brokenSiteParams)
+    this.submitBrokenSiteReport(brokenSiteParams.toString())
 
     // remember that user opted into sharing site breakage data
     // for this domain, so that we can attach domain when they

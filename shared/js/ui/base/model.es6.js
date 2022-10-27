@@ -105,8 +105,8 @@ BaseModel.prototype = $.extend({},
          * @param {URLSearchParams} brokenSiteData Parameters to send
          * @returns {Promise<any>}
          */
-        submitBrokenSiteReport (brokenSiteData, params) {
-            return browserUIWrapper.sendMessage('submitBrokenSiteReport', brokenSiteData.toString())
+        submitBrokenSiteReport (brokenSiteData) {
+            return browserUIWrapper.sendMessage('submitBrokenSiteReport', brokenSiteData)
         },
 
         /**

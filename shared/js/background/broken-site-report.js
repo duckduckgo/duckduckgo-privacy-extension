@@ -17,30 +17,43 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  *
  */
 export function fire (querystring) {
+    const randomNum = Math.ceil(Math.random() * 1e7)
     const pixelName = 'epbf'
     const browserInfo = parseUserAgentString()
     const browser = browserInfo?.browser
     const extensionVersion = browserWrapper.getExtensionVersion()
     const atb = settings.getSetting('atb')
 
-    const url = new URL(getURL(pixelName))
-    url.search = querystring
+    const searchParams = new URLSearchParams(querystring)
 
-    if (browser) {
-        url.pathname += `_${browser.toLowerCase()}${browserInfo.manifestVersion === 3 ? 'mv3' : ''}`
-    }
     if (extensionVersion) {
-        url.searchParams.append('extensionVersion', extensionVersion)
+        searchParams.append('extensionVersion', extensionVersion)
     }
     if (atb) {
-        url.searchParams.append('atb', atb)
+        searchParams.append('atb', atb)
     }
-    if (url.searchParams.get('category') === 'null') {
-        url.searchParams.delete('category')
+    if (searchParams.get('category') === 'null') {
+        searchParams.delete('category')
     }
+    // build url string
+    let url = `${getURL(pixelName)}`
+    if (browser) {
+        url += `_${browser.toLowerCase()}${browserInfo.manifestVersion === 3 ? 'mv3' : ''}`
+    }
+    // random number cache buster
+    url += `?${randomNum}&`
+    // some params should be not urlencoded
+    let extraParams = '';
+    ['blockedTrackers', 'surrogates'].forEach((key) => {
+        if (searchParams.has(key)) {
+            extraParams += `&${key}=${decodeURIComponent(searchParams.get(key) || '')}`
+            searchParams.delete(key)
+        }
+    })
+    url += `${searchParams.toString()}${extraParams}`
 
     // Send the request
-    load.url(url.href)
+    load.url(url)
 }
 
 /**
