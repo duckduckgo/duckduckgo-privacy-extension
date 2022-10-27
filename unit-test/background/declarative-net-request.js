@@ -8,12 +8,21 @@ import * as startup from '../../shared/js/background/startup'
 import settings from '../../shared/js/background/settings.es6'
 import tdsStorage from '../../shared/js/background/storage/tds.es6'
 import trackers from '../../shared/js/background/trackers.es6'
+import {
+    getMatchDetails,
+    onConfigUpdate,
+    refreshUserAllowlistRules,
+    toggleUserAllowlistDomain,
+    SETTING_PREFIX,
+    USER_ALLOWLIST_RULE_ID
+} from '../../shared/js/background/declarative-net-request'
+import {
+    USER_ALLOWLISTED_PRIORITY
+} from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
 const TEST_EXTENION_VERSIONS = ['0.1', '0.2', '0.3']
 
-let SETTING_PREFIX
-let getMatchDetails
 let onUpdateListeners
 
 // Set up the extension configuration to ensure that tracker allowlisting is
@@ -115,53 +124,14 @@ describe('declarativeNetRequest', () => {
     let settingsStorage
     let dynamicRulesByRuleId
 
-    const expectState = (expectedSettings, expectedUpdateCallCount) => {
-        const expectedRuleIds = new Set()
-        for (const [configName, {
-            etag: expectedEtag,
-            extensionVersion: expectedExtensionVersion
-        }] of Object.entries(expectedSettings)) {
-            if (!expectedEtag) {
-                continue
-            }
-
-            const setting =
-                  settingsStorage.get(SETTING_PREFIX + configName) || {}
-
-            const {
-                etag: actualLookupEtag,
-                lookup: actualLookup,
-                extensionVersion: actualLookupExtensionVersion
-            } = setting
-            const etagRuleId = expectedRuleIdsByConfigName[configName][0]
-            const etagRule = dynamicRulesByRuleId.get(etagRuleId)
-            const actualRuleEtag = etagRule?.condition?.urlFilter
-
-            expect(actualLookup).toEqual(expectedLookupByConfigName[configName])
-            expect(actualRuleEtag).toEqual(expectedEtag)
-            expect(actualLookupEtag).toEqual(expectedEtag)
-            expect(actualLookupExtensionVersion)
-                .toEqual(expectedExtensionVersion)
-
-            for (const ruleId of expectedRuleIdsByConfigName[configName]) {
-                expectedRuleIds.add(ruleId)
-            }
-        }
-
-        expect(new Set(dynamicRulesByRuleId.keys())).toEqual(expectedRuleIds)
-
-        expect(updateDynamicRulesObserver.calls.count())
-            .toEqual(expectedUpdateCallCount)
-        expect(updateSettingObserver.calls.count())
-            .toEqual(expectedUpdateCallCount)
-    }
-
     beforeAll(async () => {
         extensionVersion = TEST_EXTENION_VERSIONS[0]
         settingsStorage = new Map()
         dynamicRulesByRuleId = new Map()
 
         onUpdateListeners = tdsStorageStub.stub({ config }).onUpdateListeners
+        onUpdateListeners.set('config', [onConfigUpdate])
+        onUpdateListeners.set('tds', [onConfigUpdate])
         tdsStorage.getLists().then(lists => trackers.setLists(lists))
 
         spyOn(startup, 'ready').and.callFake(
@@ -206,17 +176,9 @@ describe('declarativeNetRequest', () => {
         spyOn(browserWrapper, 'getExtensionVersion').and.callFake(
             () => extensionVersion
         )
-
-        // Force manifest version to '3' before requiring the
-        // declarativeNetRequest code to prevent the MV3 code paths from being
-        // skipped.
-        // Note: It would be better to use destructuring to assign
-        //       getMatchDetails and SETTING_PREFIX, but that confuses ESLint.
-        spyOn(browserWrapper, 'getManifestVersion').and.callFake(() => 3)
-        const declarativeNetRequest =
-              await import('../../shared/js/background/declarative-net-request')
-        getMatchDetails = declarativeNetRequest.getMatchDetails
-        SETTING_PREFIX = declarativeNetRequest.SETTING_PREFIX
+        spyOn(browserWrapper, 'getManifestVersion').and.callFake(
+            () => 3
+        )
     })
 
     beforeEach(() => {
@@ -226,7 +188,48 @@ describe('declarativeNetRequest', () => {
         dynamicRulesByRuleId.clear()
     })
 
-    it('Rule updates', async () => {
+    it('Config ruleset updates', async () => {
+        const expectState = (expectedSettings, expectedUpdateCallCount) => {
+            const expectedRuleIds = new Set()
+            for (const [configName, {
+                etag: expectedEtag,
+                extensionVersion: expectedExtensionVersion
+            }] of Object.entries(expectedSettings)) {
+                if (!expectedEtag) {
+                    continue
+                }
+
+                const setting =
+                      settingsStorage.get(SETTING_PREFIX + configName) || {}
+
+                const {
+                    etag: actualLookupEtag,
+                    lookup: actualLookup,
+                    extensionVersion: actualLookupExtensionVersion
+                } = setting
+                const etagRuleId = expectedRuleIdsByConfigName[configName][0]
+                const etagRule = dynamicRulesByRuleId.get(etagRuleId)
+                const actualRuleEtag = etagRule?.condition?.urlFilter
+
+                expect(actualLookup).toEqual(expectedLookupByConfigName[configName])
+                expect(actualRuleEtag).toEqual(expectedEtag)
+                expect(actualLookupEtag).toEqual(expectedEtag)
+                expect(actualLookupExtensionVersion)
+                    .toEqual(expectedExtensionVersion)
+
+                for (const ruleId of expectedRuleIdsByConfigName[configName]) {
+                    expectedRuleIds.add(ruleId)
+                }
+            }
+
+            expect(new Set(dynamicRulesByRuleId.keys())).toEqual(expectedRuleIds)
+
+            expect(updateDynamicRulesObserver.calls.count())
+                .toEqual(expectedUpdateCallCount)
+            expect(updateSettingObserver.calls.count())
+                .toEqual(expectedUpdateCallCount)
+        }
+
         expectState({
             tds: { etag: null, extensionVersion: null },
             config: { etag: null, extensionVersion: null }
@@ -359,6 +362,62 @@ describe('declarativeNetRequest', () => {
         }, 9)
     })
 
+    it('User allowlisting updates', async () => {
+        const expectState = expectedAllowlistedDomains => {
+            const ruleExists = dynamicRulesByRuleId.has(USER_ALLOWLIST_RULE_ID)
+
+            if (expectedAllowlistedDomains.length === 0) {
+                expect(ruleExists).toBe(false)
+            } else {
+                const rule = dynamicRulesByRuleId.get(USER_ALLOWLIST_RULE_ID)
+                expect(rule.id).toEqual(USER_ALLOWLIST_RULE_ID)
+                expect(rule.priority).toEqual(USER_ALLOWLISTED_PRIORITY)
+                expect(rule.action.type).toEqual('allowAllRequests')
+                expect(rule.condition.resourceTypes).toEqual(['main_frame'])
+                expect(rule.condition.requestDomains.sort())
+                    .toEqual(expectedAllowlistedDomains.sort())
+            }
+        }
+
+        // Initially there should be no domains allowlisted.
+        expectState([])
+
+        // Add a domain to the allowlist.
+        await toggleUserAllowlistDomain('example.invalid', true)
+        expectState(['example.invalid'])
+
+        // Invalid additions should be ignored.
+        await toggleUserAllowlistDomain('example.invalid', true)
+        expectState(['example.invalid'])
+        await toggleUserAllowlistDomain('', true)
+        expectState(['example.invalid'])
+        await toggleUserAllowlistDomain('/', true)
+        expectState(['example.invalid'])
+
+        // Domains should be normalized.
+        await toggleUserAllowlistDomain('FOO.InVaLiD', true)
+        expectState(['foo.invalid', 'example.invalid'])
+
+        // Allowlisting rule should be restored by refresh.
+        expectState(['foo.invalid', 'example.invalid'])
+        refreshUserAllowlistRules(['foo.invalid', 'ExAmPlE.invalid'])
+        expectState(['foo.invalid', 'example.invalid'])
+        dynamicRulesByRuleId.clear()
+        expectState([])
+        refreshUserAllowlistRules(['foo.invalid', 'example.invalid'])
+        expectState(['foo.invalid', 'example.invalid'])
+
+        // Try removing domains from the allowlist.
+        await toggleUserAllowlistDomain('unknown.invalid', false)
+        expectState(['foo.invalid', 'example.invalid'])
+        await toggleUserAllowlistDomain('foo.invalid', false)
+        expectState(['example.invalid'])
+        await toggleUserAllowlistDomain('EXAMPLE.invalid', false)
+        expectState([])
+        await toggleUserAllowlistDomain('another-unknown.invalid', false)
+        expectState([])
+    })
+
     it('getMatchDetails', async () => {
         // No rules, so no match details.
         // - Tracker blocking:
@@ -412,5 +471,10 @@ describe('declarativeNetRequest', () => {
                     expectedLookupByConfigName.tds[i].split(',')
             })
         }
+
+        // User allowlisting matches should be easy to identify.
+        expect(await getMatchDetails(USER_ALLOWLIST_RULE_ID)).toEqual({
+            type: 'userAllowlist'
+        })
     })
 })
