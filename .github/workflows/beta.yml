@@ -36,7 +36,6 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@f6f7a9c351bb990cab0093f66c0d443d3a108a6f
         with:
           commit_message: "Prepare release ${{ env.VERSION }}"
-          tagging_message: ${{ env.VERSION }}
           create_branch: true
           branch: "release/beta/${{ env.VERSION }}"
 
