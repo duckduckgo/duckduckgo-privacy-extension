@@ -26,7 +26,7 @@ jobs:
           echo "VERSION=$(jq -r .version ./browsers/chrome-mv3/manifest.json)" >> $GITHUB_ENV
 
       - name: Commit config and version updates
-        uses: stefanzweifel/git-auto-commit-action@f6f7a9c351bb990cab0093f66c0d443d3a108a6f
+        uses: stefanzweifel/git-auto-commit-action@0049e3fa4059ca715255fbbcb7dea4516f02ce0a
         with:
           commit_message: "Prepare release ${{ env.VERSION }}"
           create_branch: true

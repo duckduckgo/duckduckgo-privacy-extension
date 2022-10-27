@@ -36,7 +36,7 @@ jobs:
           git push --set-upstream origin release-${{ github.event.inputs.version }} -f
 
       - name: Commit config and version updates
-        uses: stefanzweifel/git-auto-commit-action@8c3ed373fb7e451dbb9706bf99ad63124e33f614
+        uses: stefanzweifel/git-auto-commit-action@0049e3fa4059ca715255fbbcb7dea4516f02ce0a
         with:
           commit_message: "Prepare release ${{ github.event.inputs.version }}"
           tagging_message: ${{ github.event.inputs.version }}
