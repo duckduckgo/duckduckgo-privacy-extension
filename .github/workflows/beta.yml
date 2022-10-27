@@ -30,7 +30,7 @@ jobs:
         run: |
           npm run bundle-config
           node scripts/bumpVersion.js $(date "+%Y.%m.%d")
-          echo "VERSION=$(jq -r .version ./browser/chrome-mv3/manifest.json)" >> $GITHUB_ENV
+          echo "VERSION=$(jq -r .version ./browsers/chrome-mv3/manifest.json)" >> $GITHUB_ENV
 
       - name: Commit config and version updates
         uses: stefanzweifel/git-auto-commit-action@f6f7a9c351bb990cab0093f66c0d443d3a108a6f
