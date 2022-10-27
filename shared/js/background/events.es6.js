@@ -381,6 +381,46 @@ browser.runtime.onMessage.addListener((req, sender) => {
     return false
 })
 
+/**
+ * Messaging connections
+ */
+
+// List of actions that the user is taking in the currently open popup UI.
+// Note: This is lost when the background ServiceWorker is restarted. At that
+//       point, the popup window reopens the connection - restarting the
+//       background ServiceWorker in the process - and then resends its user
+//       actions. It is not usually safe to store state from events in this way.
+// See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#state
+const popupUserActions = []
+
+chrome.runtime.onConnect.addListener(port => {
+    // Popup UI is opened.
+    if (port.name === 'popup') {
+        // Take note of new user actions as they happen.
+        port.onMessage.addListener(userAction => {
+            popupUserActions.push(userAction)
+        })
+
+        // Popup UI closed again, refresh page etc based on the actions user
+        // took in the popup while it was open.
+        port.onDisconnect.addListener(async () => {
+            // Reload the website after a short delay if the user toggled
+            // allowlisting for it.
+            if (popupUserActions.includes('toggleAllowlist')) {
+                const currentTab = await utils.getCurrentTab()
+                if (currentTab) {
+                    setTimeout(() => {
+                        browser.tabs.reload(currentTab.id)
+                    }, 500)
+                }
+            }
+
+            // Clear the list of user actions.
+            popupUserActions.length = 0
+        })
+    }
+})
+
 /*
  * Referrer Trimming
  */

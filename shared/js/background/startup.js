@@ -1,6 +1,4 @@
 import browser from 'webextension-polyfill'
-const { getCurrentTab } = require('./utils.es6')
-const browserUIWrapper = require('../ui/base/ui-wrapper.es6')
 const browserWrapper = require('./wrapper.es6')
 const Companies = require('./companies.es6')
 const experiment = require('./experiments.es6')
@@ -23,7 +21,6 @@ export async function onStartup () {
         await dnrSessionId.setSessionRuleOffsetFromStorage()
     }
 
-    registerUnloadHandler()
     await settings.ready()
     experiment.setActiveExperiment()
 
@@ -64,27 +61,4 @@ export async function onStartup () {
 
 export function ready () {
     return readyPromise
-}
-
-/**
- * Register a global function that the popup can call when it's closed.
- *
- * NOTE: This has to be a global method because messages via `chrome.runtime.sendMessage` don't make it in time
- * when the popup is closed.
- */
-function registerUnloadHandler () {
-    let timeout
-    // @ts-ignore - popupUnloaded is not a standard property of self.
-    self.popupUnloaded = (userActions) => {
-        clearTimeout(timeout)
-        if (userActions.includes('toggleAllowlist')) {
-            timeout = setTimeout(() => {
-                getCurrentTab().then(tab => {
-                    if (tab) {
-                        browserUIWrapper.reloadTab(tab.id)
-                    }
-                })
-            }, 500)
-        }
-    }
 }

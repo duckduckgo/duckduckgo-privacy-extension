@@ -19,6 +19,10 @@ export function init () {
 }
 
 function connected (port) {
+    if (port.name !== 'devtools') {
+        return
+    }
+
     let tabId = -1
     port.onMessage.addListener((m) => {
         if (m.action === 'setTab') {
