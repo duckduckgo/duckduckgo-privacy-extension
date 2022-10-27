@@ -16,7 +16,7 @@ let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(docu
 // disconnect for MV3 builds when the background ServiceWorker becomes inactive.
 let port
 function openPort () {
-    port = chrome.runtime.connect()
+    port = chrome.runtime.connect({ name: 'devtools' })
     port.onDisconnect.addListener(openPort)
 }
 openPort()
