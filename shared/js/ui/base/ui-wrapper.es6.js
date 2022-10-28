@@ -1,6 +1,4 @@
-import parseUserAgentString from '../../shared-utils/parse-user-agent-string.es6'
 import browser from 'webextension-polyfill'
-const browserInfo = parseUserAgentString()
 
 const sendMessage = async (messageType, options) => {
     return await browser.runtime.sendMessage({ messageType, options })
@@ -19,33 +17,6 @@ const backgroundMessage = (thisModel) => {
 }
 
 /** @typedef {ReturnType<import('../../background/message-handlers.js').getTab>} Tab */
-
-/**
- * @returns {Promise<Tab|undefined>}
- */
-async function getBackgroundTabData () {
-    const url = new URL(window.location.href)
-    let tabId
-    // Used for ui debugging to open the dashboard in a new tab and set the tabId manually.
-    if (url.searchParams.has('tabId')) {
-        tabId = Number(url.searchParams.get('tabId'))
-    }
-    if (!tabId) {
-        const tab = await sendMessage('getCurrentTab')
-        if (tab) {
-            tabId = tab.id
-        }
-    }
-    if (tabId) {
-        /** @type {Tab} */
-        const backgroundTabObj = await sendMessage('getTab', tabId)
-        return backgroundTabObj
-    }
-}
-
-const search = (url) => {
-    browser.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${browserInfo.os}cr` })
-}
 
 const getExtensionURL = (path) => {
     return browser.runtime.getURL(path)
@@ -79,6 +50,7 @@ const closePopup = () => {
  */
 const popupUnloaded = (userActions) => {
     const bg = chrome.extension.getBackgroundPage()
+    // @ts-ignore
     bg?.popupUnloaded?.(userActions)
 }
 
@@ -87,8 +59,6 @@ module.exports = {
     reloadTab,
     closePopup,
     backgroundMessage,
-    getBackgroundTabData,
-    search,
     openOptionsPage,
     openExtensionPage,
     getExtensionURL,

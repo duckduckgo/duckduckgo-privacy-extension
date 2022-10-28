@@ -9,14 +9,6 @@ export function getExtensionVersion () {
     return manifest.version
 }
 
-export async function setBadgeIcon (badgeData) {
-    if (typeof browser.action === 'undefined') {
-        return await browser.browserAction.setIcon(badgeData)
-    }
-
-    return await browser.action.setIcon(badgeData)
-}
-
 export function getManifestVersion () {
     const manifest = browser.runtime.getManifest()
     return manifest.manifest_version

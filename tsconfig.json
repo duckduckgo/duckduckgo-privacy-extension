@@ -16,13 +16,17 @@
   },
   "include": [
       "node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js",
+      "node_modules/@duckduckgo/privacy-dashboard/schema/__generated__/schema.types.ts",
       "shared/js/background/**/*.js",
       "shared/js/devtools/**/*.js",
       "shared/js/shared-utils/**/*.js",
       "shared/js/ui/models/mixins/calculate-aggregation-stats.js",
       "shared/js/ui/templates/shared/utils.js",
       "integration-test/helpers/requests.js",
-      "integration-test/background/click-to-load-facebook.js"
+      "integration-test/background/click-to-load-facebook.js",
+      "shared/js/background/message-handlers.js",
+      "shared/js/background/email-utils.es6.js",
+      "shared/js/background/classes/privacy-dashboard-data.js"
   ],
   "exclude": [
       "shared/js/background/background.es6.js",
@@ -31,7 +35,8 @@
       "shared/js/background/debug.es6.js",
       "shared/js/background/events.es6.js",
       "shared/js/background/events/3p-tracking-cookie-blocking.js",
-      "shared/js/background/message-handlers.js",
+      "shared/js/background/events/referrer-trimming.js",
+      "shared/js/background/helpers/arguments-object.js",
       "shared/js/background/onboarding.es6.js",
       "shared/js/background/startup.es6.js",
       "shared/js/background/storage/https.es6.js",

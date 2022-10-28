@@ -52,7 +52,7 @@ export function getURL (pixelName) {
  */
 function getAdditionalParams () {
     const browserInfo = parseUserAgentString()
-    const browser = browserInfo.browser
+    const browser = browserInfo?.browser
     const extensionVersion = browserWrapper.getExtensionVersion()
     const atb = settings.getSetting('atb')
     const queryStringParams = {}

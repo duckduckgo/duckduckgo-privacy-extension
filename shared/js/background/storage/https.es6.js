@@ -1,4 +1,5 @@
 const load = require('./../load.es6')
+/** @type {any} */
 const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings.es6')

@@ -24,7 +24,7 @@ i18next
         lng: getBrowserLocale(),
         ns: ['shared', 'options'],
         defaultNS: 'shared',
-        resources: resources
+        resources
     })
 
 module.exports = i18next

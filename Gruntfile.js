@@ -4,11 +4,11 @@ module.exports = function (grunt) {
 
     const { join } = require('path')
     const { existsSync } = require('fs')
-    const dashboardDir = join(__dirname, 'node_modules', 'duckduckgo-privacy-dashboard')
+    const dashboardDir = join(__dirname, 'node_modules', '@duckduckgo', 'privacy-dashboard')
 
     // this check is here to ensure that `npm link` vs `npm install` are working correctly
     if (!existsSync(dashboardDir)) {
-        throw new Error('duckduckgo-privacy-dashboard module is missing.')
+        throw new Error('@duckduckgo/privacy-dashboard module is missing.')
     }
 
     require('load-grunt-tasks')(grunt)
@@ -59,7 +59,6 @@ module.exports = function (grunt) {
         sass: {
             '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.scss %>/noatb.scss'],
             '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
-            '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss'],
             '<%= dirs.public.css %>/options.css': ['<%= dirs.src.scss %>/options.scss'],
             '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss']
         }
@@ -198,13 +197,14 @@ module.exports = function (grunt) {
 
         // used by watch to copy shared/js to build dir
         exec: {
-            buildDash: `cd ${dashboardDir} && npm run build.browser`,
+            buildDash: `echo '✅' buildDash already built`,
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             installContentScope: contentScopeInstall,
             copyContentScope: `${contentScopeBuild} cp ${ddgContentScope}/build/${browser}/inject.js build/${browser}/${buildType}/public/js/inject.js`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
-            copyDash: `cp -r ${join(dashboardDir, 'build/browser')} build/${browser}/${buildType}/dashboard`,
+            installDash: `echo '✅' install dash already done`,
+            copyDash: `cp -r ${join(dashboardDir, 'build/app')} build/${browser}/${buildType}/dashboard`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyAutofillCSS: `cp -r ${ddgAutofill}/autofill.css build/${browser}/${buildType}/public/css/`,
             copyAutofillHostCSS: `cp -r ${ddgAutofill}/autofill-host-styles_${browserSimilar}.css build/${browser}/${buildType}/public/css/autofill-host-styles.css`
@@ -270,6 +270,7 @@ module.exports = function (grunt) {
         'browserify:backgroundTest',
         'exec:installContentScope',
         'exec:copyContentScope',
+        'exec:installDash',
         'exec:copyDash',
         'exec:copyAutofillJs',
         'exec:copyAutofillCSS',

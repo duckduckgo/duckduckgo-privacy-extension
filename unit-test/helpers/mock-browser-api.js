@@ -7,9 +7,7 @@ globalThis.browser = {
             }
         }
     },
-    browserAction: {
-        setIcon: () => {}
-    },
+    browserAction: {},
     runtime: {
         id: '577dc9b9-c381-115a-2246-3f95fe0e6ffe',
         sendMessage: () => {},

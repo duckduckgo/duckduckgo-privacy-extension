@@ -1,4 +1,4 @@
-const { normalizeCompanyName } = require('./normalize-company-name.es6')
+const { normalizeCompanyName } = require('./normalize-company-name.es6.js')
 
 const UNKNOWN_COMPANY_NAME = 'unknown'
 

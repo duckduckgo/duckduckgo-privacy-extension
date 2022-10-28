@@ -9,6 +9,7 @@ const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
 const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
+// @ts-ignore
 const { fetchAlias, showContextMenuAction } = require('./email-utils.es6')
 
 /** @module */
@@ -68,12 +69,16 @@ function ready () {
 function registerUnloadHandler () {
     let timeout
     /** @param {string[]} userActions */
+    // @ts-ignore
     self.popupUnloaded = (userActions) => {
         clearTimeout(timeout)
         if (userActions.includes('toggleAllowlist')) {
             timeout = setTimeout(() => {
                 getCurrentTab().then(tab => {
-                    browserUIWrapper.reloadTab(tab.id)
+                    if (typeof tab !== 'undefined') {
+                        // @ts-ignore
+                        browserUIWrapper.reloadTab(tab.id)
+                    }
                 })
             }, 500)
         }

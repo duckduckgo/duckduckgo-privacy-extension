@@ -117,7 +117,7 @@ class TabManager {
                     tab.site.grade.setHttps(hasHttps, hasHttps)
 
                     console.info(tab.site.grade)
-                    tab.updateBadgeIcon()
+                    console.log(tab.id, tab.url)
 
                     if (tab.statusCode === 200 &&
                         !tab.site.didIncrementCompaniesData) {

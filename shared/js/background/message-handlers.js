@@ -1,4 +1,7 @@
 import browser from 'webextension-polyfill'
+import { getTrackerAggregationStats } from '../ui/models/mixins/calculate-aggregation-stats'
+import { fromTab } from './classes/privacy-dashboard-data'
+
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -10,6 +13,7 @@ const constants = require('../../data/constants')
 const Companies = require('./companies.es6')
 const brokenSiteReport = require('./broken-site-report')
 const browserName = utils.getBrowserName()
+/** @type {any} */
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
 const startup = require('./startup.es6')
@@ -25,7 +29,7 @@ export async function registeredContentScript (options, sender, req) {
 
     if (argumentsObject.site.isBroken) {
         console.log('temporarily skip protections for site: ' + sender.tab.url +
-    'more info: https://github.com/duckduckgo/privacy-configuration')
+            'more info: https://github.com/duckduckgo/privacy-configuration')
         return
     }
 
@@ -63,8 +67,61 @@ export function getBrowser () {
     return browserName
 }
 
-export function submitBrokenSiteReport (brokenSiteArgs) {
-    return brokenSiteReport.fire.apply(null, brokenSiteArgs)
+export async function submitBrokenSiteReport (brokenSiteArgs) {
+    const { category, description } = brokenSiteArgs
+
+    const currentTab = await utils.getCurrentTab()
+    if (!currentTab?.id) {
+        // todo: fix this
+        console.error('could not get tab...')
+        return
+    }
+
+    const tab = getTab(currentTab.id)
+    if (!tab) {
+        console.error('unreachable - cannot access current tab with ID ' + currentTab.id)
+        return
+    }
+
+    /**
+     * Returns a list of tracker URLs after looping through all the entities.
+     * @param {import('../ui/models/mixins/calculate-aggregation-stats.js').AggregateCompanyData[]} list
+     * @returns {string[]}
+     */
+    function collectAllUrls (list) {
+        const urls = []
+        list.forEach(item => {
+            item.urlsMap.forEach((_, url) => urls.push(url))
+        })
+        return urls
+    }
+
+    try {
+        const siteUrl = tab.url.split('?')[0].split('#')[0]
+        const aggregationStats = getTrackerAggregationStats(tab.trackers)
+        const blockedTrackers = collectAllUrls(aggregationStats.blockAction.list)
+        const surrogates = collectAllUrls(aggregationStats.redirectAction.list)
+        const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
+        const ampUrl = tab.ampUrl || null
+        const upgradedHttps = tab.upgradedHttps
+        const tdsETag = settings.getSetting('tds-etag')
+
+        const brokenSiteParams = [
+            { category: encodeURIComponent(category) },
+            { description: encodeURIComponent(description) },
+            { siteUrl: encodeURIComponent(siteUrl) },
+            { upgradedHttps: upgradedHttps.toString() },
+            { tds: tdsETag },
+            { urlParametersRemoved },
+            { ampUrl },
+            { blockedTrackers },
+            { surrogates }
+        ]
+
+        return brokenSiteReport.fire.apply(null, brokenSiteParams)
+    } catch (e) {
+        console.error(e)
+    }
 }
 
 export function getTab (tabId) {
@@ -77,35 +134,23 @@ export function getTab (tabId) {
  *
  * Currently, it will collect data for the current tab and email protection
  * user data.
- *
- * @returns {Promise<{emailProtectionUserData: (*|{}), tab: *}>}
  */
-export async function getPrivacyDashboardData () {
-    const current = await utils.getCurrentTab()
-    if (!current) throw new Error('unreachable - cannot access current tab')
-    const tab = getTab(current.id)
-    if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + current.id)
+export async function getPrivacyDashboardData (options) {
+    // let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
+    let { tabId } = options
+    if (Number(tabId) === 0) {
+        const currentTab = await utils.getCurrentTab()
+        if (!currentTab?.id) {
+            // todo: fix this
+            throw new Error('could not get tab...')
+        }
+        tabId = currentTab?.id
+    }
     await settings.ready()
+    const tab = getTab(tabId)
+    if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
-    return {
-        tab,
-        emailProtectionUserData: userData
-    }
-}
-
-export function getSiteGrade (tabId) {
-    const tab = tabManager.get({ tabId })
-    let grade = {}
-
-    if (!tab.site.specialDomainName) {
-        grade = tab.site.grade.get()
-    }
-
-    return grade
-}
-
-export function getTopBlockedByPages (options) {
-    return Companies.getTopBlockedByPages(options)
+    return fromTab(tab, userData)
 }
 
 // Click to load interactions
@@ -117,6 +162,7 @@ export async function initClickToLoad (unused, sender) {
     const config = { ...tdsStorage.ClickToLoadConfig }
 
     // Remove first-party entries.
+    // @ts-ignore
     await startup.ready()
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
@@ -199,7 +245,10 @@ export async function enableSocialTracker (data, sender) {
     }
 }
 
-export async function updateSetting ({ name, value }) {
+export async function updateSetting ({
+    name,
+    value
+}) {
     await settings.ready()
     settings.updateSetting(name, value)
 }
@@ -209,6 +258,7 @@ export async function getSetting ({ name }) {
     return settings.getSetting(name)
 }
 
+// @ts-ignore
 const {
     isValidToken,
     isValidUsername,
@@ -269,7 +319,10 @@ export async function getUserData (_, sender) {
 }
 
 export async function addUserData (userData, sender) {
-    const { userName, token } = userData
+    const {
+        userName,
+        token
+    } = userData
     if (!isExpectedSender(sender)) return
 
     const sendDdgUserReady = async () => {
@@ -293,7 +346,7 @@ export async function addUserData (userData, sender) {
         settings.updateSetting('userData', userData)
         // Once user is set, fetch the alias and notify all tabs
         const response = await fetchAlias()
-        if (response && response.error) {
+        if (response && 'error' in response) {
             return { error: response.error.message }
         }
 
@@ -327,7 +380,10 @@ export function getListContents (list) {
     }
 }
 
-export function setListContents ({ name, value }) {
+export function setListContents ({
+    name,
+    value
+}) {
     const parsed = tdsStorage.parsedata(name, value)
     tdsStorage[name] = parsed
     trackers.setLists([{
@@ -339,7 +395,9 @@ export function setListContents ({ name, value }) {
 export async function reloadList (listName) {
     let list = constants.tdsLists.find(l => l.name === listName)
     if (list) {
+        // @ts-ignore
         list = await tdsStorage.getList(list)
+        // @ts-ignore
         trackers.setLists([list])
     }
 }

@@ -3,6 +3,7 @@ const utils = require('../utils.es6')
 const tabManager = require('../tab-manager.es6')
 const trackerutils = require('../tracker-utils')
 const settings = require('../settings.es6')
+/** @type {any} */
 const { isActive } = require('../devtools.es6')
 const constants = require('../../../data/constants')
 
@@ -13,6 +14,7 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     }
     // Clone site so we don't retain any site changes
     const site = Object.assign({}, tab.site || {})
+    // @ts-ignore
     const referrer = tab?.referrer || ''
     let cookie = {}
 

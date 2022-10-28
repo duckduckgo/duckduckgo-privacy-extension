@@ -6,7 +6,6 @@ let tab
 describe('Tab', () => {
     describe('updateSite()', () => {
         beforeEach(() => {
-            spyOn(browserWrapper, 'setBadgeIcon')
             spyOn(browserWrapper, 'getExtensionId').and.returnValue('sdf')
 
             tab = new Tab({

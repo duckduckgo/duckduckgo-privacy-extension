@@ -408,3 +408,35 @@ export function getFeatureSettings (featureName) {
 
     return feature.settings
 }
+
+/**
+ * A helper for adding a value into a Map, or retrieving an existing one if present
+ *
+ * ```js
+ * let myMap = new Map();
+ * let values = getOrInsert(myMap, "foo", () => new Set());
+ * // values is the new, empty set.
+ *
+ * let myMap2 = new Map()
+ * myMap2.add("foo", new Set(["1", "2"])
+ * let values2 = getOrInsert(myMap, "foo", () => new Set());
+ * // values is the original Set(["1", "2"])
+ * ```
+ *
+ * @template T
+ * @template U
+ * @param {Map<T, U>} map
+ * @param {T} key
+ * @param {() => U} defaultValueFactory
+ * @returns {U}
+ */
+export function getOrInsert (map, key, defaultValueFactory) {
+    if (!map.has(key)) {
+        const value = defaultValueFactory()
+        map.set(key, value)
+        return value
+    }
+    const value = map.get(key)
+    if (value === undefined) throw new Error('unreachable')
+    return value
+}
