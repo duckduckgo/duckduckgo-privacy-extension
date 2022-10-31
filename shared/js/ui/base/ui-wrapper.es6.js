@@ -1,6 +1,4 @@
-import parseUserAgentString from '../../shared-utils/parse-user-agent-string.es6'
 import browser from 'webextension-polyfill'
-const browserInfo = parseUserAgentString()
 
 export const sendMessage = async (messageType, options) => {
     return await browser.runtime.sendMessage({ messageType, options })
@@ -20,35 +18,7 @@ export const backgroundMessage = (thisModel) => {
 
 /** @typedef {ReturnType<import('../../background/message-handlers.js').getTab>} TabState */
 
-/**
- * @returns {Promise<TabState|undefined>}
- */
-export async function getBackgroundTabData () {
-    const url = new URL(window.location.href)
-    let tabId
-    // Used for ui debugging to open the dashboard in a new tab and set the tabId manually.
-    if (url.searchParams.has('tabId')) {
-        tabId = Number(url.searchParams.get('tabId'))
-    }
-    if (!tabId) {
-        const tab = await sendMessage('getCurrentTab')
-        if (tab) {
-            tabId = tab.id || tab.tabId
-        }
-    }
-    if (tabId) {
-        const backgroundTabObj = await sendMessage('getTab', tabId)
-        if (backgroundTabObj) {
-            return backgroundTabObj
-        }
-    }
-}
-
-export const search = (url) => {
-    browser.tabs.create({ url: `https://duckduckgo.com/?q=${url}&bext=${browserInfo?.os}cr` })
-}
-
-export const getExtensionURL = (path) => {
+const getExtensionURL = (path) => {
     return browser.runtime.getURL(path)
 }
 
@@ -74,14 +44,23 @@ export const closePopup = () => {
     w.close()
 }
 
+/**
+ * Notify the background script that the popup was closed.
+ * @param {string[]} userActions - a list of string indicating what actions a user may have taken
+ */
+const popupUnloaded = (userActions) => {
+    const bg = chrome.extension.getBackgroundPage()
+    // @ts-ignore
+    bg?.popupUnloaded?.(userActions)
+}
+
 module.exports = {
     sendMessage,
     reloadTab,
     closePopup,
     backgroundMessage,
-    getBackgroundTabData,
-    search,
     openOptionsPage,
     openExtensionPage,
-    getExtensionURL
+    getExtensionURL,
+    popupUnloaded
 }

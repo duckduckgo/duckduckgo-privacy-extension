@@ -226,6 +226,7 @@ function blockHandleResponse (thisTab, requestData) {
     const blockingEnabled = thisTab.site.isContentBlockingEnabled()
 
     const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+    const baseDomain = trackers.getBaseDomain(requestData.url)
 
     /**
      * Click to Load Blocking
@@ -313,11 +314,9 @@ function blockHandleResponse (thisTab, requestData) {
             thisTab.site.addTracker(tracker)
 
             // record potential blocked trackers for this tab
-            thisTab.addToTrackers(tracker)
+            thisTab.addToTrackers(tracker, baseDomain, requestData.url)
         }
-        // update badge icon for any requests that come in after
         // the tab has finished loading
-        if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
         browserWrapper.notifyPopup({ updateTabData: true })
         // Block the request if the site is not allowlisted
         if (['block', 'redirect'].includes(tracker.action)) {
