@@ -41,7 +41,7 @@
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.19.4",
         "@fingerprintjs/fingerprintjs": "^3.3.6",
-        "@types/chrome": "0.0.199",
+        "@types/chrome": "0.0.200",
         "@types/jasmine": "^4.3.0",
         "@types/puppeteer": "^5.4.7",
         "@types/webextension-polyfill": "^0.9.1",
