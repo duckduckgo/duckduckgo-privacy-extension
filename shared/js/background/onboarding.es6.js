@@ -1,4 +1,12 @@
 /**
+ * @param {MessageEventSource | null} val
+ * @returns {val is WindowProxy}
+ */
+function isWindowProxy (val) {
+    return val instanceof Window
+}
+
+/**
 * This is injected programatically on the DuckDuckGo SERP (mostly during the first search
 * post extension install) to assist with user onboarding
 * We handle 2 cases:
@@ -44,18 +52,19 @@ function onDocumentEnd ({
             // setup a relay here so that the SERP can communicate with the background process
             if (browserName === 'chrome') {
                 window.addEventListener('message', (e) => {
-                    if (e.origin === origin) {
+                    const source = e.source
+                    if (e.origin === origin && isWindowProxy(source)) {
                         switch (e.data.type) {
                         case 'healthCheckRequest': {
                             try {
                                 chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
-                                    e.source.postMessage(
+                                    source.postMessage(
                                         { type: 'healthCheckResponse', isAlive: !chrome.runtime.lastError },
                                         e.origin
                                     )
                                 })
                             } catch (err) {
-                                e.source.postMessage(
+                                source.postMessage(
                                     { type: 'healthCheckResponse', isAlive: false },
                                     e.origin
                                 )
@@ -103,7 +112,9 @@ function onDocumentStart ({ duckDuckGoSerpHostname }) {
     const hadFocusOnStart = document.hasFocus()
 
     window.addEventListener('message', function handleMessage (e) {
-        if (e.origin === `https://${duckDuckGoSerpHostname}` && e.data.type === 'documentStartDataRequest') {
+        if (e.origin === `https://${duckDuckGoSerpHostname}` &&
+            e.data.type === 'documentStartDataRequest' &&
+            isWindowProxy(e.source)) {
             window.removeEventListener('message', handleMessage)
             e.source.postMessage({ type: 'documentStartDataResponse', payload: { hadFocusOnStart } }, e.origin)
         }

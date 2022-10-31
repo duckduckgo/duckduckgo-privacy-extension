@@ -1,8 +1,8 @@
-const settings = require('./settings.es6')
-const utils = require('./utils.es6')
+import { getAsyncBlockingSupport } from './utils'
+import { tabManager } from './tab-manager.es6'
+const settings = require('./settings')
 const BloomFilter = require('@duckduckgo/jsbloom').filter
 const httpsService = require('./https-service.es6')
-const tabManager = require('./tab-manager.es6')
 const browserWrapper = require('./wrapper.es6')
 const tldts = require('tldts')
 // as defined in https://tools.ietf.org/html/rfc6761
@@ -199,13 +199,13 @@ class HTTPS {
 
         // if this is a POST navigational request and browser doesn't support async blocking
         // let it continue over HTTP to avoid data loss
-        if (isMainFrame && isPost && !utils.getAsyncBlockingSupport()) {
+        if (isMainFrame && isPost && !getAsyncBlockingSupport()) {
             return reqUrl
         }
 
         // if async blocking is available:
         // we hold the request until we hear back from our service
-        if (utils.getAsyncBlockingSupport()) {
+        if (getAsyncBlockingSupport()) {
             return isUpgradable
                 .then(result => {
                     if (result) {
@@ -255,4 +255,5 @@ class HTTPS {
     }
 }
 
-module.exports = new HTTPS()
+export const https = new HTTPS()
+module.exports = https

@@ -1,6 +1,6 @@
-const tabManager = require('../tab-manager.es6')
+import * as utils from '../utils'
+import { tabManager } from '../tab-manager.es6'
 const trackerutils = require('../tracker-utils')
-const utils = require('../utils.es6')
 const devtools = require('../devtools.es6')
 
 function shouldBlockHeaders (request, tab, requestIsTracker) {
@@ -31,7 +31,7 @@ function shouldBlockHeaders (request, tab, requestIsTracker) {
  *
  * @returns {{responseHeaders: Array<{name: string, value:string}>} | undefined}
  */
-function dropTracking3pCookiesFromResponse (request) {
+export function dropTracking3pCookiesFromResponse (request) {
     const tab = tabManager.get({ tabId: request.tabId })
     let responseHeaders = request.responseHeaders
 
@@ -63,7 +63,7 @@ function dropTracking3pCookiesFromResponse (request) {
  *
  * @returns {{requestHeaders: Array<{name: string, value:string}>} | undefined}
  */
-function dropTracking3pCookiesFromRequest (request) {
+export function dropTracking3pCookiesFromRequest (request) {
     const tab = tabManager.get({ tabId: request.tabId })
     let requestHeaders = request.requestHeaders
 

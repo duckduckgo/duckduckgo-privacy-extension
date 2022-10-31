@@ -1,6 +1,6 @@
+import { Tab } from './classes/tab'
 const Companies = require('./companies.es6')
-const settings = require('./settings.es6')
-const Tab = require('./classes/tab.es6')
+const settings = require('./settings')
 const { TabState } = require('./classes/tab-state')
 const browserWrapper = require('./wrapper.es6')
 const { toggleUserAllowlistDomain } = require('./declarative-net-request.js')
@@ -8,7 +8,7 @@ const { toggleUserAllowlistDomain } = require('./declarative-net-request.js')
 const manifestVersion = browserWrapper.getManifestVersion()
 
 /**
- * @typedef {import('./classes/site.es6.js').allowlistName} allowlistName
+ * @typedef {import('./classes/site.js').allowlistName} allowlistName
  */
 
 class TabManager {
@@ -194,6 +194,6 @@ class TabManager {
     }
 }
 
-const tabManager = new TabManager()
+export const tabManager = new TabManager()
 
 module.exports = tabManager

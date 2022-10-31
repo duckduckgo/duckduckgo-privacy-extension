@@ -1,4 +1,4 @@
-const Site = require('./classes/site.es6')
+import { Site } from './classes/site'
 const tdsStorage = require('./storage/tds.es6')
 
 /** @module */
@@ -51,7 +51,7 @@ function ensureTrackingParametersConfig () {
  * @returns {boolean}
  *   True if tracking parameters were stripped, false otherwise.
  */
-function stripTrackingParameters (url) {
+export function stripTrackingParameters (url) {
     let parametersRemoved = false
 
     // No parameters, nothing to remove.
@@ -107,7 +107,7 @@ function stripTrackingParameters (url) {
  * @returns {boolean}
  *   True if the 'trackingParameters' feature is active, false otherwise.
  */
-function trackingParametersStrippingEnabled (site, initiatorUrl) {
+export function trackingParametersStrippingEnabled (site, initiatorUrl) {
     // Only strip tracking parameters if the feature is enabled for the
     // request URL (URL that the user is navigating to).
     if (site.specialDomainName || !site.isFeatureEnabled('trackingParameters')) {

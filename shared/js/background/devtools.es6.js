@@ -1,10 +1,10 @@
 import browser from 'webextension-polyfill'
+import { trackersInstance as trackers } from './trackers'
+import { tabManager } from './tab-manager.es6'
 const tldts = require('tldts')
 
-const tabManager = require('./tab-manager.es6')
-const trackers = require('./trackers.es6')
 const tdsStorage = require('./storage/tds.es6')
-const { removeBroken } = require('./utils.es6')
+const { removeBroken } = require('./utils')
 
 // Note: It is not necessary to use session storage to store the tabId -> port
 //       mapping for MV3 compatibility. That is because when the background

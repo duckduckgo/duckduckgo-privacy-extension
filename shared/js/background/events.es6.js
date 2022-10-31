@@ -7,13 +7,17 @@
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
 import * as startup from './startup'
-const ATB = require('./atb.es6')
-const utils = require('./utils.es6')
+import { ATB } from './atb'
+import * as beforeRequest from './before-request'
+import * as utils from './utils'
+import { tabManager } from './tab-manager.es6'
+import { https } from './https.es6'
+import { trackersInstance as trackers } from './trackers'
 const experiment = require('./experiments.es6')
-const settings = require('./settings.es6')
+const settings = require('./settings')
 const constants = require('../../data/constants')
 const onboarding = require('./onboarding.es6')
-const cspProtection = require('./csp-blocking.es6')
+const cspProtection = require('./csp-blocking')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const tdsStorage = require('./storage/tds.es6')
@@ -47,7 +51,7 @@ async function onInstalled (details) {
         const tabs = await browser.tabs.query({})
         for (const tab of tabs) {
             // Ignore URLs that we aren't permitted to access
-            if (tab.url.startsWith('chrome://')) {
+            if (tab.url?.startsWith('chrome://')) {
                 continue
             }
             await browserWrapper.executeScript({
@@ -78,7 +82,9 @@ browser.runtime.onInstalled.addListener(onInstalled)
 /**
  * ONBOARDING
  * Logic to allow the SERP to display onboarding UI
+ * @param {browser.WebNavigation.OnCommittedDetailsType} details - details of the request
  */
+// @ts-expect-error - details is not typed correctly in the webextension-polyfill
 async function onboardingMessaging ({ transitionQualifiers, tabId }) {
     await settings.ready()
     const showWelcomeBanner = settings.getSetting('showWelcomeBanner')
@@ -159,6 +165,7 @@ browser.webNavigation.onCommitted.addListener(
  * (Chrome only)
  */
 if (browserName === 'chrome') {
+    // @ts-ignore
     chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         if (request === 'healthCheckRequest') {
             sendResponse(true)
@@ -182,16 +189,12 @@ if (browserName === 'chrome') {
 /**
  * REQUESTS
  */
-
-const beforeRequest = require('./before-request.es6')
-const tabManager = require('./tab-manager.es6')
-const https = require('./https.es6')
-
 let additionalOptions = []
 if (manifestVersion === 2) {
     additionalOptions = ['blocking']
 }
 browser.webRequest.onBeforeRequest.addListener(
+    // @ts-ignore
     beforeRequest.handleRequest,
     {
         urls: ['<all_urls>']
@@ -206,7 +209,9 @@ if (manifestVersion === 2) {
     extraInfoSpec.push('blocking')
 }
 
+// @ts-expect-error OnBeforeSendHeadersOptions doesn't exist in shim but comes from chrome API
 if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
+    // @ts-expect-error OnBeforeSendHeadersOptions doesn't exist in shim but comes from chrome API
     extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
 }
 
@@ -217,6 +222,7 @@ if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
 const isTopicsEnabled = manifestVersion === 2 && 'browsingTopics' in document && utils.isFeatureEnabled('googleRejected')
 
 browser.webRequest.onHeadersReceived.addListener(
+    // @ts-ignore
     request => {
         if (request.type === 'main_frame') {
             tabManager.updateTabUrl(request)
@@ -227,7 +233,11 @@ browser.webRequest.onHeadersReceived.addListener(
                 utils.isRedirect(request.statusCode)
             ) {
                 tab.setAdClickIfValidRedirect(request.url)
-            } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
+            } else if (tab &&
+                       tab.site.baseDomain &&
+                       tab.adClick &&
+                       tab.adClick.adClickRedirect &&
+                       !utils.isRedirect(request.statusCode)) {
                 tab.adClick.setAdBaseDomain(tab.site.baseDomain)
             }
         }
@@ -260,6 +270,7 @@ browser.webRequest.onHeadersReceived.addListener(
 // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
 startup.ready().then(() => {
     browser.webRequest.onHeadersReceived.addListener(
+        // @ts-ignore
         dropTracking3pCookiesFromResponse,
         { urls: ['<all_urls>'] },
         extraInfoSpec
@@ -312,6 +323,7 @@ browser.tabs.onUpdated.addListener((id, info) => {
     tabManager.createOrUpdateTab(id, info)
 })
 
+// @ts-ignore
 browser.tabs.onRemoved.addListener((id, info) => {
     // remove the tab object
     tabManager.delete(id)
@@ -342,6 +354,7 @@ const {
 } = require('./email-utils.es6')
 
 // Handle any messages that come from content/UI scripts
+// @ts-ignore
 browser.runtime.onMessage.addListener((req, sender) => {
     if (sender.id !== browserWrapper.getExtensionId()) return
 
@@ -426,11 +439,14 @@ chrome.runtime.onConnect.addListener(port => {
  */
 if (manifestVersion === 2) {
     const referrerListenerOptions = ['blocking', 'requestHeaders']
+    // @ts-expect-error OnBeforeSendHeadersOptions doesn't exist in shim but comes from chrome API
     if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+        // @ts-expect-error OnBeforeSendHeadersOptions doesn't exist in shim but comes from chrome API
         referrerListenerOptions.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
     }
 
     browser.webRequest.onBeforeSendHeaders.addListener(
+        // @ts-ignore
         limitReferrerData,
         { urls: ['<all_urls>'] },
         referrerListenerOptions
@@ -443,8 +459,11 @@ if (manifestVersion === 2) {
 const GPC = require('./GPC.es6')
 
 if (manifestVersion === 2) {
+    /** @type {browser.WebRequest.OnBeforeSendHeadersOptions[]} */
     const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
+    // @ts-expect-error OnBeforeSendHeadersOptions doesn't exist in shim but comes from chrome API
     if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+        // @ts-expect-error OnBeforeSendHeadersOptions doesn't exist in shim but comes from chrome API
         extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
     }
     // Attach GPC header to all requests if enabled.
@@ -456,7 +475,7 @@ if (manifestVersion === 2) {
 
             const requestHeaders = request.requestHeaders
             if (GPCHeader && GPCEnabled) {
-                requestHeaders.push(GPCHeader)
+                requestHeaders?.push(GPCHeader)
             }
 
             return { requestHeaders }
@@ -473,6 +492,7 @@ if (manifestVersion === 2) {
     // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
     startup.ready().then(() => {
         browser.webRequest.onBeforeSendHeaders.addListener(
+            // @ts-ignore
             dropTracking3pCookiesFromRequest,
             { urls: ['<all_urls>'] },
             extraInfoSpecSendHeaders
@@ -512,7 +532,6 @@ browser.webNavigation.onCommitted.addListener(details => {
 
 const httpsStorage = require('./storage/https.es6')
 const httpsService = require('./https-service.es6')
-const trackers = require('./trackers.es6')
 
 browserWrapper.createAlarm('updateHTTPSLists', {
     periodInMinutes: httpsStorage.updatePeriodInMinutes

@@ -1,7 +1,7 @@
 const load = require('./../load.es6')
 const Dexie = require('dexie')
 const constants = require('../../../data/constants')
-const settings = require('./../settings.es6')
+const settings = require('../settings')
 
 class HTTPSStorage {
     constructor () {

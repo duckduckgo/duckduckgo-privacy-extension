@@ -6,7 +6,7 @@
  */
 const load = require('./load.es6')
 const browserWrapper = require('./wrapper.es6')
-const settings = require('./settings.es6')
+const settings = require('./settings')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 
 /**

@@ -24,7 +24,7 @@ async function init () {
     await buildSettingsFromLocalStorage()
 }
 
-function ready () {
+export function ready () {
     return _ready
 }
 
@@ -99,7 +99,7 @@ function syncSettingTolocalStorage () {
     browserWrapper.syncToStorage({ settings })
 }
 
-function getSetting (name) {
+export function getSetting (name) {
     if (!isReady) {
         console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
         return
@@ -115,7 +115,7 @@ function getSetting (name) {
     }
 }
 
-function updateSetting (name, value) {
+export function updateSetting (name, value) {
     if (!isReady) {
         console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
         return
@@ -125,7 +125,7 @@ function updateSetting (name, value) {
     syncSettingTolocalStorage()
 }
 
-function removeSetting (name) {
+export function removeSetting (name) {
     if (!isReady) {
         console.warn(`Settings: removeSetting() Setting not loaded: ${name}`)
         return
@@ -136,16 +136,8 @@ function removeSetting (name) {
     }
 }
 
-function logSettings () {
+export function logSettings () {
     browserWrapper.getFromStorage(['settings']).then((s) => {
         console.log(s.settings)
     })
-}
-
-module.exports = {
-    getSetting,
-    updateSetting,
-    removeSetting,
-    logSettings,
-    ready
 }

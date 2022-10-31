@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill'
-const { getSetting, updateSetting } = require('./settings.es6')
+const { getSetting, updateSetting } = require('./settings')
 const browserWrapper = require('./wrapper.es6')
 export const REFETCH_ALIAS_ALARM = 'refetchAlias'
 const REFETCH_ALIAS_ATTEMPT = 'refetchAliasAttempt'

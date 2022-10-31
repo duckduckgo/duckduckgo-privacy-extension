@@ -1,4 +1,4 @@
-const settings = require('./settings.es6')
+const settings = require('./settings')
 const atbUtils = require('./atb-utils.es6')
 const retentionExperiments = require('../../data/experiments-out')
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
