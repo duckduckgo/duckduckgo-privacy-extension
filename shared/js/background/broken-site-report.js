@@ -36,7 +36,7 @@ export function fire (querystring) {
         searchParams.delete('category')
     }
     // build url string
-    let url = `${getURL(pixelName)}`
+    let url = getURL(pixelName)}
     if (browser) {
         url += `_${browser.toLowerCase()}${browserInfo.manifestVersion === 3 ? 'mv3' : ''}`
     }
