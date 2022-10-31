@@ -1,4 +1,4 @@
-import Tab from '../../../shared/js/background/classes/tab.es6'
+import { Tab } from '../../../shared/js/background/classes/tab'
 
 require('../../helpers/mock-browser-api')
 

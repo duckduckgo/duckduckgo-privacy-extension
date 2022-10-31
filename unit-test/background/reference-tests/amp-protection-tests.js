@@ -1,7 +1,8 @@
-const Site = require('../../../shared/js/background/classes/site.es6')
-const tds = require('../../../shared/js/background/trackers.es6')
+import tds from '../../../shared/js/background/trackers'
+import * as ampProtection from '../../../shared/js/background/amp-protection'
+import tdsStorage from '../../../shared/js/background/storage/tds'
+import Site from '../../../shared/js/background/classes/site'
 const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 const config = require('../../data/reference-tests/amp-protections/config_reference.json')
 const {
     ampFormats: { name: formatFeatureDescription, tests: ampFormatsTests }
@@ -9,8 +10,6 @@ const {
 const {
     ampKeywords: { name: keywordFeatureDescription, tests: ampKeywordTests }
 } = require('../../data/reference-tests/amp-protections/tests.json')
-
-const ampProtection = require('../../../shared/js/background/amp-protection.es6')
 
 describe(formatFeatureDescription + ': ', () => {
     beforeAll(() => {

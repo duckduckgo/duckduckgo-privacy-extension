@@ -1,5 +1,5 @@
-const utils = require('../../shared/js/background/utils.es6')
-const tdsStorage = require('../../shared/js/background/storage/tds.es6')
+import * as utils from '../../shared/js/background/utils'
+import tdsStorage from '../../shared/js/background/storage/tds'
 const tds = require('./../data/tds')
 const load = require('./../helpers/utils.es6.js')
 const config = require('./../data/extension-config.json')

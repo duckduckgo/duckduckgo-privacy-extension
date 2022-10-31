@@ -5,14 +5,14 @@
 import * as startup from './startup'
 import * as settings from './settings'
 import tds from './storage/tds'
-const tabManager = require('./tab-manager')
-const atb = require('./atb.es6')
-const https = require('./https')
-const browserWrapper = require('./wrapper.es6')
-const utils = require('./utils')
-const Tab = require('./classes/tab')
-const { TabState } = require('./classes/tab-state')
-const Wrapper = require('./wrapper.es6.js')
+import tabManager from './tab-manager'
+import atb from './atb'
+import https from './https'
+import * as utils from './utils'
+import { TabState } from './classes/tab-state'
+import { Tab } from './classes/tab'
+import * as browserWrapper from './wrapper.es6'
+const Wrapper = browserWrapper
 
 // @ts-ignore - dbg is not a standard property of self.
 self.dbg = {

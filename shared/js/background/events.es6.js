@@ -8,6 +8,10 @@ import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
 import * as startup from './startup'
 import * as settings from './settings'
+import handleRequest from './before-request'
+import tabManager from './tab-manager'
+import tdsStorage from './storage/tds'
+import httpsStorage from './storage/https'
 const ATB = require('./atb.es6')
 const utils = require('./utils')
 const experiment = require('./experiments')
@@ -16,7 +20,6 @@ const onboarding = require('./onboarding.es6')
 const cspProtection = require('./csp-blocking.es6')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
-const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
@@ -183,8 +186,6 @@ if (browserName === 'chrome') {
  * REQUESTS
  */
 
-const beforeRequest = require('./before-request.es6')
-const tabManager = require('./tab-manager')
 const https = require('./https')
 
 let additionalOptions = []
@@ -192,7 +193,7 @@ if (manifestVersion === 2) {
     additionalOptions = ['blocking']
 }
 browser.webRequest.onBeforeRequest.addListener(
-    beforeRequest.handleRequest,
+    handleRequest,
     {
         urls: ['<all_urls>']
     },
@@ -510,7 +511,6 @@ browser.webNavigation.onCommitted.addListener(details => {
  * ALARMS
  */
 
-const httpsStorage = require('./storage/https')
 const httpsService = require('./https-service.es6')
 const trackers = require('./trackers')
 

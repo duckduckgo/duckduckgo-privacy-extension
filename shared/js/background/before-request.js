@@ -79,7 +79,7 @@ function handleAmpRedirect (thisTab, url) {
  * - Upgrade http -> https where possible
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  */
-export function handleRequest (requestData) {
+export default function handleRequest (requestData) {
     const tabId = requestData.tabId
     // Skip requests to background tabs
     if (tabId === -1) { return }
@@ -398,5 +398,3 @@ function isSameDomainRequest (tab, req) {
         return true
     }
 }
-
-exports.handleRequest = handleRequest

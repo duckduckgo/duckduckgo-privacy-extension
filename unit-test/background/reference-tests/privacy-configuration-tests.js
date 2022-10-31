@@ -1,10 +1,10 @@
+import * as utils from '../../../shared/js/background/utils'
+import tdsStorage from '../../../shared/js/background/storage/tds'
+import Site from '../../../shared/js/background/classes/site'
 require('../../helpers/mock-browser-api')
 
 const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
-const Site = require('../../../shared/js/background/classes/site.es6')
-const utils = require('../../../shared/js/background/utils.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 
 const contentScriptUtils = require('../../../shared/content-scope-scripts/src/utils.js')

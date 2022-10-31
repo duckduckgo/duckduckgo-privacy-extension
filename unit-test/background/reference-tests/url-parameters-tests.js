@@ -1,17 +1,16 @@
-const Site = require('../../../shared/js/background/classes/site.es6')
-const tds = require('../../../shared/js/background/trackers.es6')
+import tds from '../../../shared/js/background/trackers'
+import {
+    stripTrackingParameters,
+    trackingParametersStrippingEnabled
+} from '../../../shared/js/background/url-parameters'
+import tdsStorage from '../../../shared/js/background/storage/tds'
+import Site from '../../../shared/js/background/classes/site'
 const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
 const config = require('../../data/reference-tests/url-parameters/config_reference.json')
 const {
     trackingParameters: { name: featureDescription, tests }
 } = require('../../data/reference-tests/url-parameters/tests.json')
-
-const {
-    stripTrackingParameters,
-    trackingParametersStrippingEnabled
-} = require('../../../shared/js/background/url-parameters.es6')
 
 describe(featureDescription + ': ', () => {
     beforeAll(() => {

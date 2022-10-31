@@ -1,12 +1,12 @@
+import tds from '../../../shared/js/background/trackers'
+import tdsStorage from '../../../shared/js/background/storage/tds'
+import tabManager from '../../../shared/js/background/tab-manager'
+import { getArgumentsObject } from '../../../shared/js/background/helpers/arguments-object'
 require('../../helpers/mock-browser-api')
 
-const tds = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
-const tabManager = require('../../../shared/js/background/tab-manager')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
-const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 
 const batteryProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-battery')
 const hardwareProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-hardware')

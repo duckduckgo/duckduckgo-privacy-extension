@@ -5,8 +5,8 @@ import * as browserWrapper from '../../shared/js/background/wrapper.es6'
 import * as testConfig from '../data/extension-config.json'
 import * as tdsStorageStub from '../helpers/tds.es6'
 import * as startup from '../../shared/js/background/startup'
-import settings from '../../shared/js/background/settings'
-import tdsStorage from '../../shared/js/background/storage/tds.es6'
+import * as settings from '../../shared/js/background/settings'
+import tdsStorage from '../../shared/js/background/storage/tds'
 import trackers from '../../shared/js/background/trackers'
 import {
     getMatchDetails,

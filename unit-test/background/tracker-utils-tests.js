@@ -1,7 +1,7 @@
 import * as settings from '../../shared/js/background/settings'
+import tds from '../../shared/js/background/trackers'
+import tdsStorage from '../../shared/js/background/storage/tds'
 const trackerutils = require('../../shared/js/background/tracker-utils')
-const tds = require('../../shared/js/background/trackers')
-const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
 
 describe('Tracker Utilities', () => {

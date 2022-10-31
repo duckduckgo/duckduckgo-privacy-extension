@@ -1,8 +1,8 @@
-const Site = require('../../../shared/js/background/classes/site.es6')
+import tdsStorage from '../../../shared/js/background/storage/tds'
+import Site from '../../../shared/js/background/classes/site'
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const load = require('./../../helpers/utils.es6')
 const config = require('./../../../shared/data/bundled/extension-config.json')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../../helpers/tds.es6')
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'

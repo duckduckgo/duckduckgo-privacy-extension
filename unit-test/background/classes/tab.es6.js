@@ -1,13 +1,13 @@
-const Tab = require('../../../shared/js/background/classes/tab.es6')
+import tabManager from '../../../shared/js/background/tab-manager'
+import * as utils from '../../../shared/js/background/utils'
+import tdsStorage from '../../../shared/js/background/storage/tds'
+import { Tab } from '../../../shared/js/background/classes/tab'
 const { LegacyTabTransfer } = require('../../../shared/js/background/classes/legacy-tab-transfer')
-const tabManager = require('../../../shared/js/background/tab-manager.es6')
-const utils = require('../../../shared/js/background/utils.es6')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const { TabState } = require('../../../shared/js/background/classes/tab-state')
 const { AdClickAttributionPolicy } = require('../../../shared/js/background/classes/ad-click-attribution-policy')
 
 const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 const config = require('../../../shared/data/bundled/extension-config.json')
 
 let tab

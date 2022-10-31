@@ -1,7 +1,10 @@
+import https from '../../../shared/js/background/https'
+import tdsStorage from '../../../shared/js/background/storage/tds'
+import httpsStorage from '../../../shared/js/background/storage/https'
+import { Tab } from '../../../shared/js/background/classes/tab'
 require('../../helpers/mock-browser-api')
 
 const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 
@@ -13,10 +16,7 @@ const bloomFilterAllowlist = require('../../data/reference-tests/https-upgrades/
 const negativeBloomFilter = require('../../data/reference-tests/https-upgrades/https_negative_bloomfilter_reference.json')
 const negativeBloomFilterAllowlist = require('../../data/reference-tests/https-upgrades/https_negative_allowlist_reference.json')
 
-const https = require('../../../shared/js/background/https.es6')
-const httpsStorage = require('../../../shared/js/background/storage/https.es6')
 const load = require('./../../helpers/https.es6')
-const Tab = require('../../../shared/js/background/classes/tab.es6')
 const httpsService = require('../../../shared/js/background/https-service.es6')
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'

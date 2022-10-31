@@ -1,6 +1,6 @@
+import tdsStorage from '../../shared/js/background/storage/tds'
+import tds from '../../shared/js/background/trackers'
 const tdsTests = require('./../data/tdsTestDomains.json')
-const tds = require('../../shared/js/background/trackers.es6')
-const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
 
 describe('tracker blocking', () => {
