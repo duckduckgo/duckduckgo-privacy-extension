@@ -4,9 +4,9 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
+import * as settings from './settings'
 const load = require('./load.es6')
 const browserWrapper = require('./wrapper.es6')
-const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 
 /**

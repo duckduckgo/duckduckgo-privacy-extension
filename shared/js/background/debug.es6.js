@@ -3,14 +3,14 @@
  * NOTE this is not added to the release version of the extension
  */
 import * as startup from './startup'
-const settings = require('./settings.es6')
-const tabManager = require('./tab-manager.es6')
+import * as settings from './settings'
+import tds from './storage/tds'
+const tabManager = require('./tab-manager')
 const atb = require('./atb.es6')
-const https = require('./https.es6')
-const tds = require('./storage/tds.es6')
+const https = require('./https')
 const browserWrapper = require('./wrapper.es6')
-const utils = require('./utils.es6')
-const Tab = require('./classes/tab.es6')
+const utils = require('./utils')
+const Tab = require('./classes/tab')
 const { TabState } = require('./classes/tab-state')
 const Wrapper = require('./wrapper.es6.js')
 

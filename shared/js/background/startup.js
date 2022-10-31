@@ -1,13 +1,13 @@
 import browser from 'webextension-polyfill'
+import * as settings from './settings'
+import https from './https'
+import tabManager from './tab-manager'
+import httpsStorage from './storage/https'
+import experiment from './experiments'
+import tdsStorage from './storage/tds'
+import trackers from './trackers'
 const browserWrapper = require('./wrapper.es6')
 const Companies = require('./companies.es6')
-const experiment = require('./experiments.es6')
-const https = require('./https.es6')
-const httpsStorage = require('./storage/https.es6')
-const settings = require('./settings.es6')
-const tabManager = require('./tab-manager.es6')
-const tdsStorage = require('./storage/tds.es6')
-const trackers = require('./trackers.es6')
 const dnrSessionId = require('./dnr-session-rule-id')
 const { fetchAlias, showContextMenuAction } = require('./email-utils.es6')
 const manifestVersion = browserWrapper.getManifestVersion()

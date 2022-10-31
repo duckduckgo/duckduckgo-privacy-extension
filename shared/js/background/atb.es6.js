@@ -3,8 +3,8 @@
  * Please see https://duck.co/help/privacy/atb for more information.
  */
 import browser from 'webextension-polyfill'
+import * as settings from './settings'
 
-const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
 const browserWrapper = require('./wrapper.es6')

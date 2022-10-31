@@ -1,12 +1,12 @@
+import * as settings from '../../shared/js/background/settings'
 require('../helpers/mock-browser-api')
 const chromeWrapper = require('../../shared/js/background/wrapper.es6.js')
-const tds = require('../../shared/js/background/trackers.es6')
+const tds = require('../../shared/js/background/trackers')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
 const beforeRequest = require('../../shared/js/background/before-request.es6')
-const Tab = require('../../shared/js/background/classes/tab.es6')
-const tabManager = require('../../shared/js/background/tab-manager.es6')
-const settings = require('../../shared/js/background/settings.es6')
+const Tab = require('../../shared/js/background/classes/tab')
+const tabManager = require('../../shared/js/background/tab-manager')
 
 describe('Tracker Utilities', () => {
     let tabObserver

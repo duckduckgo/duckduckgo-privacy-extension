@@ -4,9 +4,9 @@
  * Because this is a Jasmine spy, it resets after every test case,
  * so make sure to have it within a it() or beforeEach()/beforeAll()
  */
-const origSettings = require('../../shared/js/background/settings.es6')
+import * as origSettings from '../../shared/js/background/settings'
 
-const stub = (startingVals) => {
+export const stub = (startingVals) => {
     const settingObj = startingVals || {}
 
     const get = spyOn(origSettings, 'getSetting')
@@ -22,8 +22,4 @@ const stub = (startingVals) => {
         .and.callFake(() => Promise.resolve())
 
     return { get, update, remove, ready }
-}
-
-module.exports = {
-    stub
 }

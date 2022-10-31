@@ -13,6 +13,7 @@
  *          }
  *      }
  */
+import Site from './site'
 const gradeIconLocations = {
     A: '/img/toolbar-rating-a_48.png',
     'B+': '/img/toolbar-rating-b-plus_48.png',
@@ -25,7 +26,6 @@ const gradeIconLocations = {
     F: '/img/toolbar-rating-f_48.png'
 }
 
-const Site = require('./site.es6')
 const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
@@ -36,7 +36,7 @@ const { TabState } = require('./tab-state')
 
 /** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
 
-class Tab {
+export class Tab {
     /**
      * @param {TabData|TabState} tabData
      */
@@ -327,5 +327,3 @@ class Tab {
         this.ampUrl = url
     }
 }
-
-module.exports = Tab

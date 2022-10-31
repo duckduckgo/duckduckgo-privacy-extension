@@ -6,7 +6,7 @@ import {
     generateDNRRule
 } from '@duckduckgo/ddg2dnr/lib/utils'
 
-const { getFeatureSettings, getBaseDomain } = require('../utils.es6')
+const { getFeatureSettings, getBaseDomain } = require('../utils')
 const browserWrapper = require('../wrapper.es6')
 const { getNextSessionRuleId } = require('../dnr-session-rule-id')
 
@@ -25,7 +25,7 @@ const manifestVersion = browserWrapper.getManifestVersion()
  **/
 
 /**
- * @typedef { import('./tab.es6') } Tab
+ * @typedef { import('./tab').Tab } Tab
  */
 
 export class AdClickAttributionPolicy {

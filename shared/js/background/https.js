@@ -1,8 +1,8 @@
-const settings = require('./settings.es6')
-const utils = require('./utils.es6')
+import * as settings from './settings'
+import tabManager from './tab-manager'
+const utils = require('./utils')
 const BloomFilter = require('@duckduckgo/jsbloom').filter
 const httpsService = require('./https-service.es6')
-const tabManager = require('./tab-manager.es6')
 const browserWrapper = require('./wrapper.es6')
 const tldts = require('tldts')
 // as defined in https://tools.ietf.org/html/rfc6761
@@ -255,4 +255,5 @@ class HTTPS {
     }
 }
 
-module.exports = new HTTPS()
+const https = new HTTPS()
+export default https

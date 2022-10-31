@@ -2,7 +2,7 @@
 const tldts = require('tldts')
 const tosdr = require('../../data/tosdr')
 const constants = require('../../data/constants')
-const utils = require('./utils.es6')
+const utils = require('./utils')
 
 const tosdrRegexList = []
 const tosdrScores = {}

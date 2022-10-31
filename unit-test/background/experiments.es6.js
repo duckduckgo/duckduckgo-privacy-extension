@@ -1,5 +1,5 @@
-const experiment = require('../../shared/js/background/experiments.es6')
-const settings = require('../../shared/js/background/settings.es6')
+import * as settings from '../../shared/js/background/settings'
+const experiment = require('../../shared/js/background/experiments')
 const atbUtils = require('../../shared/js/background/atb-utils.es6')
 
 describe('experiment.getVariant', () => {

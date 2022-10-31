@@ -1,7 +1,7 @@
+import * as settings from '../settings'
 const load = require('./../load.es6')
 const Dexie = require('dexie')
 const constants = require('../../../data/constants')
-const settings = require('./../settings.es6')
 const browserWrapper = require('./../wrapper.es6')
 const extensionConfig = require('./../../../data/bundled/extension-config.json')
 const etags = require('../../../data/etags.json')
@@ -319,4 +319,5 @@ class TDSStorage {
         return readyPromise
     }
 }
-module.exports = new TDSStorage()
+const tdsStorage = new TDSStorage()
+export default tdsStorage

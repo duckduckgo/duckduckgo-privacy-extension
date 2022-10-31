@@ -7,10 +7,10 @@
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
 import * as startup from './startup'
+import * as settings from './settings'
 const ATB = require('./atb.es6')
-const utils = require('./utils.es6')
-const experiment = require('./experiments.es6')
-const settings = require('./settings.es6')
+const utils = require('./utils')
+const experiment = require('./experiments')
 const constants = require('../../data/constants')
 const onboarding = require('./onboarding.es6')
 const cspProtection = require('./csp-blocking.es6')
@@ -184,8 +184,8 @@ if (browserName === 'chrome') {
  */
 
 const beforeRequest = require('./before-request.es6')
-const tabManager = require('./tab-manager.es6')
-const https = require('./https.es6')
+const tabManager = require('./tab-manager')
+const https = require('./https')
 
 let additionalOptions = []
 if (manifestVersion === 2) {
@@ -510,9 +510,9 @@ browser.webNavigation.onCommitted.addListener(details => {
  * ALARMS
  */
 
-const httpsStorage = require('./storage/https.es6')
+const httpsStorage = require('./storage/https')
 const httpsService = require('./https-service.es6')
-const trackers = require('./trackers.es6')
+const trackers = require('./trackers')
 
 browserWrapper.createAlarm('updateHTTPSLists', {
     periodInMinutes: httpsStorage.updatePeriodInMinutes

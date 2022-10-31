@@ -1,9 +1,9 @@
+import tdsStorage from '../storage/tds'
 const Companies = require('../companies.es6')
-const tdsStorage = require('../storage/tds.es6')
 
 /**
- * @typedef {import('../trackers.es6').ActionName} ActionName
- * @typedef {import('../trackers.es6').TrackerData} TrackerData
+ * @typedef {import('../trackers').ActionName} ActionName
+ * @typedef {import('../trackers').TrackerData} TrackerData
  */
 
 export class TrackerSite {

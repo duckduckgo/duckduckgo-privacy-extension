@@ -1,12 +1,13 @@
 import browser from 'webextension-polyfill'
 import * as startup from './startup'
+import * as settings from './settings'
+import tabManager from './tab-manager'
+import { getArgumentsObject } from './helpers/arguments-object'
+import tdsStorage from './storage/tds'
+import trackers from './trackers'
 const { getDomain } = require('tldts')
-const utils = require('./utils.es6')
-const settings = require('./settings.es6')
-const tabManager = require('./tab-manager.es6')
-const tdsStorage = require('./storage/tds.es6')
+const utils = require('./utils')
 const trackerutils = require('./tracker-utils')
-const trackers = require('./trackers.es6')
 const constants = require('../../data/constants')
 const Companies = require('./companies.es6')
 const brokenSiteReport = require('./broken-site-report')
@@ -14,7 +15,6 @@ const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
 const { LegacyTabTransfer } = require('./classes/legacy-tab-transfer')
-const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
     const sessionKey = await utils.getSessionKey()

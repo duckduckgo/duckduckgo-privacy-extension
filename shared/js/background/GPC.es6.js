@@ -3,7 +3,7 @@
  * Sets GPC signal header
  *
  */
-const settings = require('./settings.es6')
+import * as settings from './settings'
 
 // Return Sec-GPC header if setting enabled
 function getHeader () {

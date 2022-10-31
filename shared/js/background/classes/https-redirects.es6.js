@@ -1,4 +1,4 @@
-const utils = require('../utils.es6')
+const utils = require('../utils')
 
 const MAINFRAME_RESET_MS = 3000
 const REQUEST_REDIRECT_LIMIT = 7

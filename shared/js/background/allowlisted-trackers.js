@@ -1,7 +1,7 @@
-const tdsStorage = require('./storage/tds.es6')
+import tdsStorage from './storage/tds'
 const tldts = require('tldts')
 
-function isTrackerAllowlisted (site, request) {
+export default function isTrackerAllowlisted (site, request) {
     // check that allowlist exists and is not disabled
     if (!tdsStorage.config.features.trackerAllowlist || tdsStorage.config.features.trackerAllowlist.state === 'disabled') {
         return false
@@ -56,5 +56,3 @@ function _matchesRule (site, request, allowListEntry) {
 
     return false
 }
-
-module.exports = isTrackerAllowlisted

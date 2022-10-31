@@ -6,9 +6,9 @@
  * The Grade attributes are then used generate a site
  * privacy grade used in the popup.
  */
-const settings = require('../settings.es6')
-const utils = require('../utils.es6')
-const tdsStorage = require('./../storage/tds.es6')
+import * as settings from '../settings'
+import tdsStorage from '../storage/tds'
+const utils = require('../utils')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper.es6')
@@ -18,7 +18,7 @@ const { TabState } = require('./tab-state')
  * @typedef {'allowlisted' | 'allowlistOptIn' | 'denylisted'} allowlistName
  */
 
-class Site {
+export default class Site {
     constructor (url, tabState) {
         // If no tabState is passed in then we create a new one to simulate a new tab
         if (!tabState) {
@@ -182,7 +182,7 @@ class Site {
     }
 
     /**
-     * @param {import("../../../../node_modules/@duckduckgo/privacy-grade/src/classes/trackers").TrackerData} t
+     * @param {import("@duckduckgo/privacy-grade/src/classes/trackers").TrackerData} t
      */
     addTracker (t) {
         // Ignore trackers that aren't first party
@@ -272,5 +272,3 @@ class Site {
         return null
     }
 }
-
-module.exports = Site

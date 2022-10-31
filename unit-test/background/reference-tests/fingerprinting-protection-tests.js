@@ -1,10 +1,10 @@
 require('../../helpers/mock-browser-api')
 
-const tds = require('../../../shared/js/background/trackers.es6')
+const tds = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds.es6')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
-const tabManager = require('../../../shared/js/background/tab-manager.es6')
+const tabManager = require('../../../shared/js/background/tab-manager')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 

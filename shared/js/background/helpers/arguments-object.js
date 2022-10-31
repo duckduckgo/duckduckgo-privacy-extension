@@ -1,13 +1,13 @@
+import * as settings from '../settings'
+import tabManager from '../tab-manager'
 const tldts = require('tldts')
-const utils = require('../utils.es6')
-const tabManager = require('../tab-manager.es6')
+const utils = require('../utils')
 const trackerutils = require('../tracker-utils')
-const settings = require('../settings.es6')
 const { isActive } = require('../devtools.es6')
 const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
 
-function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
+export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
     if (!tab || !tab.url) {
         return null
@@ -73,5 +73,3 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         platform: constants.platform
     }
 }
-
-module.exports = getArgumentsObject

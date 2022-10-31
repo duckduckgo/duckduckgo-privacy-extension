@@ -4,7 +4,7 @@ import { AdClick } from './ad-click-attribution-policy'
 
 export class TabState {
     /**
-     * @param {import('./tab.es6').TabData} tabData
+     * @param {import('./tab').TabData} tabData
      */
     constructor (tabData, restoring = false) {
         this.tabId = tabData.tabId

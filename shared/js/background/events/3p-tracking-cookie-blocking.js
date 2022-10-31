@@ -1,6 +1,6 @@
-const tabManager = require('../tab-manager.es6')
+import tabManager from '../tab-manager'
 const trackerutils = require('../tracker-utils')
-const utils = require('../utils.es6')
+const utils = require('../utils')
 const devtools = require('../devtools.es6')
 
 function shouldBlockHeaders (request, tab, requestIsTracker) {
