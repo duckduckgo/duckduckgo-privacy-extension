@@ -38,7 +38,7 @@ export function fire (querystring) {
     // build url string
     let url = getURL(pixelName)
     if (browser) {
-        url += `_${browser.toLowerCase()}${browserInfo.manifestVersion === 3 ? 'mv3' : ''}`
+        url += `_${browser.toLowerCase()}${browserWrapper.getManifestVersion() === 3 ? 'mv3' : ''}`
     }
     // random number cache buster
     url += `?${randomNum}&`

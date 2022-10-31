@@ -33,7 +33,6 @@ module.exports = (uaString) => {
     return {
         os,
         browser,
-        version,
-        manifestVersion: chrome.runtime.getManifest().manifest_version
+        version
     }
 }
