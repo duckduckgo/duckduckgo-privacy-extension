@@ -13,8 +13,9 @@ export class TrackerSite {
      * @param {string[]} categories
      * @param {boolean} isSameEntity
      * @param {boolean} isSameBaseDomain
+     * @param {string} url
      */
-    constructor (action, reason, categories, isSameEntity, isSameBaseDomain) {
+    constructor (action, reason, categories, isSameEntity, isSameBaseDomain, url) {
         /** @type {ActionName} */
         this.action = action
         this.reason = reason
@@ -22,17 +23,22 @@ export class TrackerSite {
         this.isBlocked = this.action === 'block' || this.action === 'redirect'
         this.isSameEntity = isSameEntity
         this.isSameBaseDomain = isSameBaseDomain
+        this.url = url
     }
 }
 
 export class Tracker {
     /**
      * @param {TrackerData | null} t
+     * @param {string} baseDomain
+     * @param {string} url
      */
-    constructor (t) {
+    constructor (t, baseDomain, url) {
         /** @type {Record<string, Record<string, TrackerSite>>} */
         this.urls = {}
         this.count = 0 // request count
+        this.baseDomain = baseDomain
+        this.url = url
         // Used for class deserizalization
         if (!t) {
             return
@@ -43,21 +49,22 @@ export class Tracker {
         this.parentCompany = Companies.get(t.tracker.owner.name)
         this.displayName = t.tracker.owner.displayName
         this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
-        this.addTrackerUrl(t)
+        this.addTrackerUrl(t, url)
     }
 
     /**
      * A parent company may try to track you through many different entities.
      * We store a list of all unique urls here.
      * @param {TrackerData} t
+     * @param {string} url
      */
-    addTrackerUrl (t) {
+    addTrackerUrl (t, url) {
         this.count += 1
         if (!this.urls[t.fullTrackerDomain]) {
             this.urls[t.fullTrackerDomain] = {}
         }
         if (!this.urls[t.fullTrackerDomain][t.action]) {
-            this.urls[t.fullTrackerDomain][t.action] = new TrackerSite(t.action, t.reason, t.tracker?.categories || [], t.sameEntity, t.sameBaseDomain)
+            this.urls[t.fullTrackerDomain][t.action] = new TrackerSite(t.action, t.reason, t.tracker?.categories || [], t.sameEntity, t.sameBaseDomain, url)
         }
     }
 
@@ -66,7 +73,7 @@ export class Tracker {
      * @returns {Tracker}
      */
     static restore (data) {
-        const tracker = new Tracker(null)
+        const tracker = new Tracker(null, data.baseDomain, data.url)
         for (const [key, value] of Object.entries(data)) {
             tracker[key] = value
         }

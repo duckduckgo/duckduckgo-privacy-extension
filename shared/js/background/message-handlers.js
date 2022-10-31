@@ -1,5 +1,7 @@
 import browser from 'webextension-polyfill'
 import * as startup from './startup'
+import { getTrackerAggregationStats } from '../ui/models/mixins/calculate-aggregation-stats'
+import { fromTab } from './classes/privacy-dashboard-data'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -64,13 +66,73 @@ export function getBrowser () {
     return browserName
 }
 
+export async function submitBrokenSiteReport (brokenSiteArgs) {
+    const { category, description } = brokenSiteArgs
+
+    const currentTab = await utils.getCurrentTab()
+    if (!currentTab?.id) {
+        // todo: fix this
+        console.error('could not get tab...')
+        return
+    }
+
+    const tab = await getTabOriginal(currentTab.id)
+    if (!tab) {
+        console.error('unreachable - cannot access current tab with ID ' + currentTab.id)
+        return
+    }
+
+    /**
+     * Returns a list of tracker URLs after looping through all the entities.
+     * @param {import('../ui/models/mixins/calculate-aggregation-stats.js').AggregateCompanyData[]} list
+     * @returns {string[]}
+     */
+    function collectAllUrls (list) {
+        const urls = []
+        list.forEach(item => {
+            item.urlsMap.forEach((_, url) => urls.push(url))
+        })
+        return urls
+    }
+
+    try {
+        const siteUrl = tab.url?.split('?')[0].split('#')[0]
+        const aggregationStats = getTrackerAggregationStats(tab.trackers)
+        const blockedTrackers = collectAllUrls(aggregationStats.blockAction.list)
+        const surrogates = collectAllUrls(aggregationStats.redirectAction.list)
+        const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
+        const ampUrl = tab.ampUrl || null
+        const upgradedHttps = tab.upgradedHttps
+        const tdsETag = settings.getSetting('tds-etag')
+
+        const brokenSiteParams = [
+            { category: encodeURIComponent(category) },
+            { description: encodeURIComponent(description) },
+            { siteUrl: encodeURIComponent(siteUrl || '') },
+            { upgradedHttps: upgradedHttps.toString() },
+            { tds: tdsETag },
+            { urlParametersRemoved },
+            { ampUrl },
+            { blockedTrackers },
+            { surrogates }
+        ]
+
+        return brokenSiteReport.fire.apply(null, brokenSiteParams)
+    } catch (e) {
+        console.error(e)
+    }
+}
+
 /**
- * Send a broken site report to the pixel endpoint.
- * @param {string} brokenSiteParams Search param string to send to the broken site pixel endpoint
- * @returns {void}
+ * @param tabId
+ * @returns {Promise<import("./classes/tab.es6")>}
  */
-export function submitBrokenSiteReport (brokenSiteParams) {
-    return brokenSiteReport.fire(brokenSiteParams)
+async function getTabOriginal (tabId) {
+    // Await for storage to be ready; this happens on service worker closing mostly.
+    await settings.ready()
+    await tdsStorage.ready('config')
+
+    return tabManager.getOrRestoreTab(tabId)
 }
 
 export async function getTab (tabId) {
@@ -82,15 +144,27 @@ export async function getTab (tabId) {
     return new LegacyTabTransfer(tab)
 }
 
-export function getSiteGrade (tabId) {
-    const tab = tabManager.get({ tabId })
-    let grade = {}
-
-    if (!tab.site.specialDomainName) {
-        grade = tab.site.grade.get()
+/**
+ * This message is here to ensure the privacy dashboard can render
+ * from a single call to the extension.
+ *
+ * Currently, it will collect data for the current tab and email protection
+ * user data.
+ */
+export async function getPrivacyDashboardData (options) {
+    let { tabId } = options
+    if (Number(tabId) === 0) {
+        const currentTab = await utils.getCurrentTab()
+        if (!currentTab?.id) {
+            // todo: how to handle this case?
+            throw new Error('could not get tab...')
+        }
+        tabId = currentTab?.id
     }
-
-    return grade
+    const tab = await getTabOriginal(tabId)
+    if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
+    const userData = settings.getSetting('userData')
+    return fromTab(tab, userData)
 }
 
 export function getTopBlockedByPages (options) {
@@ -277,10 +351,7 @@ export async function addUserData (userData, sender) {
         settings.updateSetting('userData', userData)
         // Once user is set, fetch the alias and notify all tabs
         const response = await fetchAlias()
-        // @ts-ignore - Response might not have error property, but since we're
-        //              checking that it does... there's not a problem.
-        if (response && response.error) {
-            // @ts-ignore
+        if (response && 'error' in response) {
             return { error: response.error.message }
         }
 
