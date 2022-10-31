@@ -124,7 +124,6 @@
             position: relative;
             cursor: pointer;
             box-shadow: none;
-            z-index: 2147483646;
         `,
         circle: `
             border-radius: 50%;
