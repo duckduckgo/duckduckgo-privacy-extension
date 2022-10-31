@@ -36,7 +36,6 @@ module.exports = function () {
             </p>
         </li>
     </ul>
-    <!--
     <ul class="default-list">
         <li>
             <h2 class="menu-title">
@@ -49,6 +48,5 @@ module.exports = function () {
             </p>
         </li>
     </ul>
-    -->
 </section>`
 }
