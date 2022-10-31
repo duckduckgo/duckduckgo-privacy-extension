@@ -1,14 +1,15 @@
 const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string.es6')
+const browserWrapper = require('../js/background/wrapper.es6')
 const browserInfo = parseUserAgentString()
 
 function getConfigFileName () {
     let browserName = browserInfo?.browser?.toLowerCase() || ''
 
     // clamp to known browsers
-    if (!['chrome', 'firefox', 'brave', 'edge'].includes(browserName)) {
+    if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
         browserName = ''
     } else {
-        browserName = '-' + browserName
+        browserName = '-' + browserName + (browserWrapper.getManifestVersion() === 3 ? 'mv3' : '')
     }
 
     return `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName}-config.json`

@@ -64,8 +64,13 @@ export function getBrowser () {
     return browserName
 }
 
-export function submitBrokenSiteReport (brokenSiteArgs) {
-    return brokenSiteReport.fire.apply(null, brokenSiteArgs)
+/**
+ * Send a broken site report to the pixel endpoint.
+ * @param {string} brokenSiteParams Search param string to send to the broken site pixel endpoint
+ * @returns {void}
+ */
+export function submitBrokenSiteReport (brokenSiteParams) {
+    return brokenSiteReport.fire(brokenSiteParams)
 }
 
 export async function getTab (tabId) {

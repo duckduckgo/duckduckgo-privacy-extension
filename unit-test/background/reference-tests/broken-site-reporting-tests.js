@@ -63,7 +63,7 @@ for (const setName of Object.keys(testSets)) {
                     tab,
                     // normally report params are passed from popup to background script via messaging,
                     // we are making a shortcut here
-                    submitBrokenSiteReport: params => submitBrokenSiteReport.fire.apply(null, params),
+                    submitBrokenSiteReport: params => submitBrokenSiteReport.fire.apply(null, [params]),
                     set: () => {},
                     sendMessage: () => {}
                 }, test.category)
