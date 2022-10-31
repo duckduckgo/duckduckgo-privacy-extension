@@ -1,4 +1,4 @@
-const utils = require('../utils.es6')
+import * as utils from '../utils'
 
 const MAINFRAME_RESET_MS = 3000
 const REQUEST_REDIRECT_LIMIT = 7
@@ -11,7 +11,7 @@ const REQUEST_REDIRECT_LIMIT = 7
  * If we hit too many redirects for a request, we block it via canRedirect().
  */
 
-class HttpsRedirects {
+export class HttpsRedirects {
     constructor () {
         this.failedUpgradeHosts = {}
         this.redirectCounts = {}
@@ -119,5 +119,3 @@ class HttpsRedirects {
         this.mainFrameRedirect = null
     }
 }
-
-module.exports = HttpsRedirects

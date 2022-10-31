@@ -1,4 +1,4 @@
-import { handleRequest } from '../../../shared/js/background/before-request'
+import { handleRequest } from '../../../shared/js/background/before-request.es6'
 require('../../helpers/mock-browser-api')
 
 const tds = require('../../../shared/js/background/trackers')

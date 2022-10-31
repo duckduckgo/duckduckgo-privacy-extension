@@ -1,4 +1,4 @@
-const HttpsRedirects = require('../../../shared/js/background/classes/https-redirects.es6')
+import { HttpsRedirects } from '../../../shared/js/background/classes/https-redirects'
 const tk = require('timekeeper')
 let httpsRedirects
 

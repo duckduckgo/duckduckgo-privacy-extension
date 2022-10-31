@@ -1,8 +1,8 @@
+import * as settings from '../../shared/js/background/settings'
 const trackerutils = require('../../shared/js/background/tracker-utils')
 const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
-const settings = require('../../shared/js/background/settings.es6')
 
 describe('Tracker Utilities', () => {
     let settingsObserver

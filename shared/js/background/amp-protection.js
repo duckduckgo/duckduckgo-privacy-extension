@@ -1,6 +1,6 @@
-const Site = require('./classes/site.es6')
+import * as utils from './utils'
+import { Site } from './classes/site'
 const tdsStorage = require('./storage/tds.es6')
-const utils = require('./utils.es6')
 
 let ampSettings = null
 
@@ -37,7 +37,7 @@ function ensureConfig () {
  * @param {string} url - the url being loaded
  * @returns canonical url if found, null otherwise
  */
-function extractAMPURL (site, url) {
+export function extractAMPURL (site, url) {
     if (!ensureConfig()) {
         return null
     }
@@ -70,7 +70,7 @@ function extractAMPURL (site, url) {
  * @param {object} mainFrameRequestURL - main frame request url
  * @returns true if the request is a suspected 1st party AMP url
  */
-function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
+export function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
     if (utils.getBrowserName() !== 'moz') {
         // deep extraction is only supported on Firefox
         return false
@@ -97,7 +97,7 @@ function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
  * @param {string} url - the url being loaded
  * @returns true is the url is suspected to be a 1st party AMP url
  */
-function isAMPURL (url) {
+export function isAMPURL (url) {
     if (!ensureConfig()) {
         return false
     }
@@ -118,7 +118,7 @@ function isAMPURL (url) {
  * @param {string} url - the url being loaded
  * @returns cancalon url if found, null otherwise
  */
-async function fetchAMPURL (site, url) {
+export async function fetchAMPURL (site, url) {
     if (!ensureConfig()) {
         return null
     }
@@ -179,10 +179,3 @@ function requestIsExtension (request) {
 tdsStorage.onUpdate('config', () => {
     ampSettings = null
 })
-
-module.exports = {
-    isAMPURL,
-    extractAMPURL,
-    fetchAMPURL,
-    tabNeedsDeepExtraction
-}

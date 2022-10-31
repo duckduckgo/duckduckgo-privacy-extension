@@ -1,3 +1,4 @@
+import * as settings from '../../shared/js/background/settings'
 require('../../helpers/mock-browser-api')
 
 const tdsStorageStub = require('../../helpers/tds.es6')
@@ -7,7 +8,6 @@ const Site = require('../../../shared/js/background/classes/site.es6')
 const GPC = require('../../../shared/js/background/GPC.es6')
 const gpcContentScript = require('../../../shared/content-scope-scripts/src/features/gpc')
 const browserWrapper = require('../../../shared/js/background/wrapper.es6')
-const settings = require('../../../shared/js/background/settings.es6')
 
 const contentScriptUtils = require('../../../shared/content-scope-scripts/src/utils.js')
 

@@ -1,6 +1,6 @@
+import * as settings from '../../shared/js/background/settings'
 require('../helpers/mock-browser-api')
-const atb = require('../../shared/js/background/atb.es6')
-const settings = require('../../shared/js/background/settings.es6')
+const atb = require('../../shared/js/background/atb')
 const load = require('../../shared/js/background/load.es6')
 const browserWrapper = require('../../shared/js/background/wrapper.es6')
 

@@ -1,22 +1,22 @@
 import browser from 'webextension-polyfill'
+import { ATB } from './atb'
+import * as utils from './utils'
+import { tabManager } from './tab-manager.es6'
+import { https } from './https.es6'
+import { trackersInstance as trackers } from './trackers'
 const tldts = require('tldts')
 
-const utils = require('./utils.es6')
-const trackers = require('./trackers.es6')
 const trackerutils = require('./tracker-utils')
-const https = require('./https.es6')
 const Companies = require('./companies.es6')
-const tabManager = require('./tab-manager.es6')
-const ATB = require('./atb.es6')
 const browserWrapper = require('./wrapper.es6')
-const settings = require('./settings.es6')
+const settings = require('./settings')
 const devtools = require('./devtools.es6')
 const trackerAllowlist = require('./allowlisted-trackers.es6')
 const {
     stripTrackingParameters,
     trackingParametersStrippingEnabled
 } = require('./url-parameters.es6')
-const ampProtection = require('./amp-protection.es6')
+const ampProtection = require('./amp-protection')
 
 function buildResponse (url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -79,7 +79,7 @@ function handleAmpRedirect (thisTab, url) {
  * - Upgrade http -> https where possible
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  */
-function handleRequest (requestData) {
+export function handleRequest (requestData) {
     const tabId = requestData.tabId
     // Skip requests to background tabs
     if (tabId === -1) { return }
@@ -217,7 +217,7 @@ function handleRequest (requestData) {
 /**
  * Tracker blocking
  * If request is a tracker, cancel the request
- * @param {import('./classes/tab.es6')} thisTab
+ * @param {import('./classes/tab').Tab } thisTab
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  * @returns {browser.WebRequest.BlockingResponseOrPromise | undefined}
  */
