@@ -59,7 +59,8 @@ export function fire (querystring) {
 /**
  *
  * Return URL for the pixel request
- *
+ * @param {string}
+ * @returns {string}
  */
 export function getURL (pixelName) {
     if (!pixelName) throw new Error('pixelName is required')
