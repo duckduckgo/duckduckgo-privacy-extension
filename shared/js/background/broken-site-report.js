@@ -77,26 +77,26 @@ export function getURL (pixelName) {
  * came from.
  *
  * @param {import("./classes/tab.es6")} tab
+ * @param {string} tds - tds-etag from settings
  * @param {string | undefined} category - optional category
  * @param {string | undefined} description - optional description
  */
-export function breakageReportForTab (tab, category, description) {
-
+export function breakageReportForTab (tab, tds, category, description) {
     const siteUrl = tab.url?.split('?')[0].split('#')[0]
     if (!siteUrl) {
         return
     }
 
-    const blocked = [];
-    const surrogates = [];
+    const blocked = []
+    const surrogates = []
 
-    for (let tracker of Object.values(tab.trackers)) {
-        for (let [key, entry] of Object.entries(tracker.urls)) {
-            const [fullDomain] = key.split(":");
-            if (entry.action === "block") {
+    for (const tracker of Object.values(tab.trackers)) {
+        for (const [key, entry] of Object.entries(tracker.urls)) {
+            const [fullDomain] = key.split(':')
+            if (entry.action === 'block') {
                 blocked.push(fullDomain)
             }
-            if (entry.action === "redirect") {
+            if (entry.action === 'redirect') {
                 surrogates.push(fullDomain)
             }
         }
@@ -105,12 +105,11 @@ export function breakageReportForTab (tab, category, description) {
     const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
     const ampUrl = tab.ampUrl || undefined
     const upgradedHttps = tab.upgradedHttps
-    const tdsETag = settings.getSetting('tds-etag')
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
+        tds,
         upgradedHttps: upgradedHttps.toString(),
-        tds: tdsETag,
         urlParametersRemoved,
         blockedTrackers: blocked.join(','),
         surrogates: surrogates.join(',')
@@ -120,6 +119,5 @@ export function breakageReportForTab (tab, category, description) {
     if (category) brokenSiteParams.set('category', category)
     if (description) brokenSiteParams.set('description', description)
 
-    console.log(brokenSiteParams.toString());
-    // return fire(brokenSiteParams.toString())
+    return fire(brokenSiteParams.toString())
 }

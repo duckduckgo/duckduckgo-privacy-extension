@@ -209,15 +209,21 @@ class Tab {
     }
 
     // Store all trackers for a given tab even if we don't block them.
+    /**
+     * @param t
+     * @param {string} baseDomain
+     * @param {string} url
+     * @returns {Tracker}
+     */
     addToTrackers (t, baseDomain, url) {
         const trackers = this.trackers
         const tracker = this.trackers[t.tracker.owner.name]
 
         if (tracker) {
-            tracker.addTrackerUrl(t, this.url || "", baseDomain, url)
+            tracker.addTrackerUrl(t, this.url || '', baseDomain, url)
         } else if (t.tracker) {
             const newTracker = new Tracker(t)
-            newTracker.addTrackerUrl(t, this.url || "",baseDomain, url)
+            newTracker.addTrackerUrl(t, this.url || '', baseDomain, url)
             this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
