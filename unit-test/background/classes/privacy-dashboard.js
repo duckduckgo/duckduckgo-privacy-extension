@@ -1,5 +1,5 @@
 const Tab = require('../../../shared/js/background/classes/tab.es6')
-const { fromTab } = require('../../../shared/js/background/classes/privacy-dashboard-data')
+const { dashboardDataFromTab } = require('../../../shared/js/background/classes/privacy-dashboard-data')
 
 fdescribe('Tab -> Privacy Dashboard conversion', () => {
     it('converts basic tab without trackers', async () => {
@@ -10,7 +10,7 @@ fdescribe('Tab -> Privacy Dashboard conversion', () => {
             status: 200
         })
         tab.site.enabledFeatures = ['contentBlocking']
-        const data = fromTab(tab, undefined)
+        const data = dashboardDataFromTab(tab, undefined)
         expect(data).toEqual({
             tab: {
                 id: 123,
@@ -58,7 +58,7 @@ fdescribe('Tab -> Privacy Dashboard conversion', () => {
             tracker: trackerObj,
             fullTrackerDomain: 'subdomain.abc.com'
         })
-        const data = fromTab(tab, undefined)
+        const data = dashboardDataFromTab(tab, undefined)
         expect(data.tab).toEqual({
             id: 123,
             url: 'https://example.com',
@@ -117,7 +117,7 @@ fdescribe('Tab -> Privacy Dashboard conversion', () => {
             tracker: trackerObj,
             fullTrackerDomain: 'subdomain.abc.com'
         })
-        const data = fromTab(tab, undefined)
+        const data = dashboardDataFromTab(tab, undefined)
         expect(data.tab).toEqual({
             id: 123,
             url: 'https://example.com',

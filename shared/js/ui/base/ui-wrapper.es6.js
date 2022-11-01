@@ -44,16 +44,6 @@ export const closePopup = () => {
     w.close()
 }
 
-/**
- * Notify the background script that the popup was closed.
- * @param {string[]} userActions - a list of string indicating what actions a user may have taken
- */
-const popupUnloaded = (userActions) => {
-    const bg = chrome.extension.getBackgroundPage()
-    // @ts-ignore
-    bg?.popupUnloaded?.(userActions)
-}
-
 module.exports = {
     sendMessage,
     reloadTab,
@@ -62,5 +52,4 @@ module.exports = {
     openOptionsPage,
     openExtensionPage,
     getExtensionURL,
-    popupUnloaded
 }

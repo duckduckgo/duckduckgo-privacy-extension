@@ -1,44 +1,24 @@
+import constants from '../../../data/constants'
+import { deriveState } from './privacy-dashboard-data'
+
 const Companies = require('../companies.es6')
 const tdsStorage = require('../storage/tds.es6')
 
 /**
  * @typedef {import('../trackers.es6').ActionName} ActionName
  * @typedef {import('../trackers.es6').TrackerData} TrackerData
+ * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').DetectedRequest} DetectedRequest
+ * @typedef {DetectedRequest & { action: ActionName }} DetectedRequestWithAction
  */
-
-export class TrackerSite {
-    /**
-     * @param {ActionName} action
-     * @param {string} reason
-     * @param {string[]} categories
-     * @param {boolean} isSameEntity
-     * @param {boolean} isSameBaseDomain
-     * @param {string} url
-     */
-    constructor (action, reason, categories, isSameEntity, isSameBaseDomain, url) {
-        /** @type {ActionName} */
-        this.action = action
-        this.reason = reason
-        this.categories = categories
-        this.isBlocked = this.action === 'block' || this.action === 'redirect'
-        this.isSameEntity = isSameEntity
-        this.isSameBaseDomain = isSameBaseDomain
-        this.url = url
-    }
-}
 
 export class Tracker {
     /**
      * @param {TrackerData | null} t
-     * @param {string} baseDomain
-     * @param {string} url
      */
-    constructor (t, baseDomain, url) {
-        /** @type {Record<string, Record<string, TrackerSite>>} */
+    constructor (t) {
+        /** @type {Record<string, DetectedRequestWithAction>} */
         this.urls = {}
         this.count = 0 // request count
-        this.baseDomain = baseDomain
-        this.url = url
         // Used for class deserizalization
         if (!t) {
             return
@@ -49,23 +29,47 @@ export class Tracker {
         this.parentCompany = Companies.get(t.tracker.owner.name)
         this.displayName = t.tracker.owner.displayName
         this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
-        this.addTrackerUrl(t, url)
     }
 
     /**
      * A parent company may try to track you through many different entities.
      * We store a list of all unique urls here.
      * @param {TrackerData} t
+     * @param {string} tabUrl
+     * @param {string} baseDomain
      * @param {string} url
      */
-    addTrackerUrl (t, url) {
+    addTrackerUrl (t, tabUrl, baseDomain, url) {
         this.count += 1
-        if (!this.urls[t.fullTrackerDomain]) {
-            this.urls[t.fullTrackerDomain] = {}
+
+        // make a key from `fullTrackerDomain` + action to ensure we only deliver 1 entry per domain + status.
+        const key = t.fullTrackerDomain + ":" + t.action;
+
+        // return early if this combination exists.
+        if (this.urls[key]) return
+
+        const category = t.tracker?.categories?.find(category => constants.displayCategories.includes(category))
+        const state = deriveState(t.action, t.sameEntity);
+
+        if (!state) {
+            return;
         }
-        if (!this.urls[t.fullTrackerDomain][t.action]) {
-            this.urls[t.fullTrackerDomain][t.action] = new TrackerSite(t.action, t.reason, t.tracker?.categories || [], t.sameEntity, t.sameBaseDomain, url)
+        /**
+         * @type {DetectedRequestWithAction}
+         */
+        const detectedRequest = {
+            action: t.action,
+            url,
+            eTLDplus1: baseDomain,
+            pageUrl: tabUrl,
+            entityName: this.displayName,
+            prevalence: this.prevalence,
+            ownerName: this.parentCompany?.name,
+            category,
+            state,
         }
+
+        this.urls[key] = detectedRequest;
     }
 
     /**
@@ -73,10 +77,12 @@ export class Tracker {
      * @returns {Tracker}
      */
     static restore (data) {
-        const tracker = new Tracker(null, data.baseDomain, data.url)
+        const tracker = new Tracker(null)
         for (const [key, value] of Object.entries(data)) {
             tracker[key] = value
         }
         return tracker
     }
 }
+
+

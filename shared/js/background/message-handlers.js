@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 import * as startup from './startup'
-import { fromTab } from './classes/privacy-dashboard-data'
+import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
 import { breakageReportForTab } from './broken-site-report'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
@@ -129,7 +129,7 @@ export async function getPrivacyDashboardData (options) {
     const tab = await getTabOriginal(tabId)
     if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
-    return fromTab(tab, userData)
+    return dashboardDataFromTab(tab, userData)
 }
 
 export function getTopBlockedByPages (options) {
