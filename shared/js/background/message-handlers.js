@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill'
 import * as startup from './startup'
-import { getTrackerAggregationStats } from '../ui/models/mixins/calculate-aggregation-stats'
 import { fromTab } from './classes/privacy-dashboard-data'
+import { breakageReportForTab } from './broken-site-report'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -11,7 +11,6 @@ const trackerutils = require('./tracker-utils')
 const trackers = require('./trackers.es6')
 const constants = require('../../data/constants')
 const Companies = require('./companies.es6')
-const brokenSiteReport = require('./broken-site-report')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
@@ -55,61 +54,27 @@ export function getBrowser () {
     return browserName
 }
 
-export async function submitBrokenSiteReport (brokenSiteArgs) {
-    const { category, description } = brokenSiteArgs
+/**
+ * Only the dashboard sends this message, so we import the types from there.
+ * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').BreakageReportRequest} breakageReport
+ * @returns {Promise<void>}
+ */
+export async function submitBrokenSiteReport (breakageReport) {
+    const { category, description } = breakageReport
 
     const currentTab = await utils.getCurrentTab()
     if (!currentTab?.id) {
-        // todo: fix this
-        console.error('could not get tab...')
+        console.error('could not access the current tab...')
         return
     }
 
     const tab = await getTabOriginal(currentTab.id)
     if (!tab) {
-        console.error('unreachable - cannot access current tab with ID ' + currentTab.id)
+        console.error('cannot access current tab with ID ' + currentTab.id)
         return
     }
 
-    /**
-     * Returns a list of tracker URLs after looping through all the entities.
-     * @param {import('../ui/models/mixins/calculate-aggregation-stats.js').AggregateCompanyData[]} list
-     * @returns {string[]}
-     */
-    function collectAllUrls (list) {
-        const urls = []
-        list.forEach(item => {
-            item.urlsMap.forEach((_, url) => urls.push(url))
-        })
-        return urls
-    }
-
-    try {
-        const siteUrl = tab.url?.split('?')[0].split('#')[0]
-        const aggregationStats = getTrackerAggregationStats(tab.trackers)
-        const blockedTrackers = collectAllUrls(aggregationStats.blockAction.list)
-        const surrogates = collectAllUrls(aggregationStats.redirectAction.list)
-        const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
-        const ampUrl = tab.ampUrl || null
-        const upgradedHttps = tab.upgradedHttps
-        const tdsETag = settings.getSetting('tds-etag')
-
-        const brokenSiteParams = [
-            { category: encodeURIComponent(category) },
-            { description: encodeURIComponent(description) },
-            { siteUrl: encodeURIComponent(siteUrl || '') },
-            { upgradedHttps: upgradedHttps.toString() },
-            { tds: tdsETag },
-            { urlParametersRemoved },
-            { ampUrl },
-            { blockedTrackers },
-            { surrogates }
-        ]
-
-        return brokenSiteReport.fire.apply(null, brokenSiteParams)
-    } catch (e) {
-        console.error(e)
-    }
+    return breakageReportForTab(tab, category, description)
 }
 
 /**
