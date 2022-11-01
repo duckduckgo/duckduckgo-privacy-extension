@@ -64,13 +64,13 @@ function convertToRequests (tab, protectionsEnabled) {
     for (const tracker of Object.values(tab.trackers || {})) {
         for (const detectedRequest of Object.values(tracker.urls || {})) {
             // When protections are off, change the 'state' of each tracking request
-            if (!protectionsEnabled && detectedRequest.action !== "none") {
+            if (!protectionsEnabled && detectedRequest.action !== 'none') {
                 /** @type {DetectedRequest["state"]} */
-                const nextState = { allowed: { reason: "protectionDisabled" } }
-                if (!nextState) continue; // This should never happen, but if it
+                const nextState = { allowed: { reason: 'protectionDisabled' } }
+                if (!nextState) continue // This should never happen, but if it
                 const request = {
                     ...detectedRequest,
-                    state: nextState,
+                    state: nextState
                 }
                 detectedRequests.push(request)
                 continue
@@ -88,7 +88,7 @@ function convertToRequests (tab, protectionsEnabled) {
  * @param {boolean} isSameEntity
  * @return {DetectedRequest["state"] | null}
  */
-export function deriveState (action, isSameEntity) {
+export function convertState (action, isSameEntity) {
     if (action === 'none') {
         return { allowed: { reason: 'otherThirdPartyRequest' } }
     }
@@ -108,7 +108,7 @@ export function deriveState (action, isSameEntity) {
         return { blocked: {} }
     }
     /** @type {never} */
-        // eslint-disable-next-line no-unused-vars
+    // eslint-disable-next-line no-unused-vars
     const _output = action
     return null
 }

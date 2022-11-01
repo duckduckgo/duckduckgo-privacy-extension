@@ -1,5 +1,5 @@
 import constants from '../../../data/constants'
-import { deriveState } from './privacy-dashboard-data'
+import { convertState } from './privacy-dashboard-data'
 
 const Companies = require('../companies.es6')
 const tdsStorage = require('../storage/tds.es6')
@@ -43,20 +43,17 @@ export class Tracker {
         this.count += 1
 
         // make a key from `fullTrackerDomain` + action to ensure we only deliver 1 entry per domain + status.
-        const key = t.fullTrackerDomain + ":" + t.action;
+        const key = t.fullTrackerDomain + ':' + t.action
 
         // return early if this combination exists.
         if (this.urls[key]) return
 
-        const category = t.tracker?.categories?.find(category => constants.displayCategories.includes(category))
-        const state = deriveState(t.action, t.sameEntity);
+        const state = convertState(t.action, t.sameEntity)
 
-        if (!state) {
-            return;
-        }
-        /**
-         * @type {DetectedRequestWithAction}
-         */
+        // if we can't convert the state, do nothing.
+        if (!state) return
+
+        /** @type {DetectedRequestWithAction} */
         const detectedRequest = {
             action: t.action,
             url,
@@ -65,11 +62,11 @@ export class Tracker {
             entityName: this.displayName,
             prevalence: this.prevalence,
             ownerName: this.parentCompany?.name,
-            category,
-            state,
+            category: t.tracker?.categories?.find(category => constants.displayCategories.includes(category)),
+            state
         }
 
-        this.urls[key] = detectedRequest;
+        this.urls[key] = detectedRequest
     }
 
     /**
@@ -84,5 +81,3 @@ export class Tracker {
         return tracker
     }
 }
-
-

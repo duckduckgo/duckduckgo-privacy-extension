@@ -314,7 +314,10 @@ function blockHandleResponse (thisTab, requestData) {
             thisTab.site.addTracker(tracker)
 
             // record potential blocked trackers for this tab
-            thisTab.addToTrackers(tracker, baseDomain, requestData.url)
+            // without a baseDomain, it wouldn't make sense to record this
+            if (baseDomain) {
+                thisTab.addToTrackers(tracker, baseDomain, requestData.url)
+            }
         }
         // the tab has finished loading
         browserWrapper.notifyPopup({ updateTabData: true })

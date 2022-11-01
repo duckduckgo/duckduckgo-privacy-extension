@@ -84,8 +84,8 @@ export async function submitBrokenSiteReport (breakageReport) {
         console.error('cannot access current tab with ID ' + currentTab.id)
         return
     }
-
-    return breakageReportForTab(tab, category, description)
+    const tsd = settings.getSetting('tds-etag')
+    return breakageReportForTab(tab, tsd, category, description)
 }
 
 /**
