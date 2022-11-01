@@ -46,9 +46,9 @@ describe('Test privacy dashboard', () => {
 function linksText (panel) {
     return panel.evaluate(() => {
         const links = [
-            `[aria-label="View Connection Information"]`,
-            `[aria-label="View Tracker Companies"]`,
-            `[aria-label="View Non-Tracker Companies"]`,
+            '[aria-label="View Connection Information"]',
+            '[aria-label="View Tracker Companies"]',
+            '[aria-label="View Non-Tracker Companies"]'
         ]
         const linkTexts = []
         document.querySelectorAll(links.join(',')).forEach(li => {

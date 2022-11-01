@@ -121,6 +121,7 @@ function deriveState (trackerSite, protectionsEnabled) {
         return { blocked: {} }
     }
     /** @type {never} */
+    // eslint-disable-next-line no-unused-vars
     const _output = trackerSite.action
     return null
 }
