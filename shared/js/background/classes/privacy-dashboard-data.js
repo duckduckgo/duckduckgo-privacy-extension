@@ -1,11 +1,7 @@
-import constants from '../../../data/constants'
-
 /**
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').ExtensionGetPrivacyDashboardData} ExtensionGetPrivacyDashboardData
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').DetectedRequest} DetectedRequest
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').ProtectionsStatus} ProtectionsStatus
- * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').StateAllowed} StateAllowed
- * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').StateBlocked} StateBlocked
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').EmailProtectionUserData} EmailProtectionUserData
  */
 
@@ -17,7 +13,7 @@ import constants from '../../../data/constants'
  * @param {EmailProtectionUserData | undefined} userData
  * @returns {ExtensionGetPrivacyDashboardData}
  */
-export function fromTab (tab, userData) {
+export function dashboardDataFromTab (tab, userData) {
     const protectionsEnabled = !tab.site.allowlisted && !tab.site.isBroken && tab.site.enabledFeatures.includes('contentBlocking')
 
     // parent entity, if available
@@ -65,63 +61,54 @@ export function fromTab (tab, userData) {
 function convertToRequests (tab, protectionsEnabled) {
     /** @type {DetectedRequest[]} */
     const detectedRequests = []
-    // loop over `Record<string, Tracker>`, accessing just the Tracker values
     for (const tracker of Object.values(tab.trackers || {})) {
-        // loop over `Record<string, TrackerSite[]>`, accessing just the list of TrackerSite's
-        for (const trackerSites of Object.values(tracker.urls || {})) {
-            for (const trackerSite of Object.values(trackerSites)) {
-                const state = deriveState(trackerSite, protectionsEnabled)
-                if (!state) {
-                    continue
+        for (const detectedRequest of Object.values(tracker.urls || {})) {
+            // When protections are off, change the 'state' of each tracking request
+            if (!protectionsEnabled && detectedRequest.action !== "none") {
+                /** @type {DetectedRequest["state"]} */
+                const nextState = { allowed: { reason: "protectionDisabled" } }
+                if (!nextState) continue; // This should never happen, but if it
+                const request = {
+                    ...detectedRequest,
+                    state: nextState,
                 }
-                /** @type {DetectedRequest} */
-                const req = {
-                    url: trackerSite.url || tracker.baseDomain || '',
-                    eTLDplus1: tracker.baseDomain,
-                    entityName: tracker.displayName,
-                    prevalence: tracker.prevalence,
-                    ownerName: tracker.parentCompany?.name,
-                    pageUrl: tab.url || '',
-                    category: trackerSite.categories?.find(category => constants.displayCategories.includes(category)),
-                    state
-                }
-                detectedRequests.push(req)
+                detectedRequests.push(request)
+                continue
             }
+
+            // other, just add the request as-is
+            detectedRequests.push(detectedRequest)
         }
     }
-
     return detectedRequests
 }
 
 /**
- * @param {import('../../ui/models/mixins/calculate-aggregation-stats').TrackerSite} trackerSite
- * @param {boolean} protectionsEnabled
+ * @param {import('@duckduckgo/privacy-grade/src/classes/trackers.js').ActionName} action
+ * @param {boolean} isSameEntity
  * @return {DetectedRequest["state"] | null}
  */
-function deriveState (trackerSite, protectionsEnabled) {
-    if (trackerSite.action === 'none') {
+export function deriveState (action, isSameEntity) {
+    if (action === 'none') {
         return { allowed: { reason: 'otherThirdPartyRequest' } }
     }
-    if (trackerSite.action === 'ignore' || trackerSite.action === 'ignore-user') {
-        if (!protectionsEnabled) {
-            return { allowed: { reason: 'protectionDisabled' } }
-        }
-        if (trackerSite.isSameEntity) {
+    if (action === 'ignore' || action === 'ignore-user') {
+        if (isSameEntity) {
             return { allowed: { reason: 'ownedByFirstParty' } }
         }
         return { allowed: { reason: 'ruleException' } }
     }
-    if (trackerSite.action === 'ad-attribution') {
+    if (action === 'ad-attribution') {
         return { allowed: { reason: 'adClickAttribution' } }
     }
-    if (trackerSite.action === 'block') {
+    if (action === 'block') {
         return { blocked: {} }
     }
-    if (trackerSite.action === 'redirect') {
+    if (action === 'redirect') {
         return { blocked: {} }
     }
     /** @type {never} */
-    // eslint-disable-next-line no-unused-vars
-    const _output = trackerSite.action
+        // eslint-disable-next-line no-unused-vars
+    const _output = action
     return null
 }

@@ -1,5 +1,3 @@
-import { getTrackerAggregationStats } from '../ui/models/mixins/calculate-aggregation-stats'
-
 /**
  *
  * This is part of our tool for anonymous broken site reports
@@ -83,26 +81,27 @@ export function getURL (pixelName) {
  * @param {string | undefined} description - optional description
  */
 export function breakageReportForTab (tab, category, description) {
-    /**
-     * Returns a list of tracker URLs after looping through all the entities.
-     * @param {import('../ui/models/mixins/calculate-aggregation-stats.js').AggregateCompanyData[]} list
-     * @returns {string[]}
-     */
-    function collectAllUrls (list) {
-        const urls = []
-        list.forEach(item => {
-            item.urlsMap.forEach((_, url) => urls.push(url))
-        })
-        return urls
-    }
 
     const siteUrl = tab.url?.split('?')[0].split('#')[0]
     if (!siteUrl) {
         return
     }
-    const aggregationStats = getTrackerAggregationStats(tab.trackers)
-    const blockedTrackers = collectAllUrls(aggregationStats.blockAction.list)
-    const surrogates = collectAllUrls(aggregationStats.redirectAction.list)
+
+    const blocked = [];
+    const surrogates = [];
+
+    for (let tracker of Object.values(tab.trackers)) {
+        for (let [key, entry] of Object.entries(tracker.urls)) {
+            const [fullDomain] = key.split(":");
+            if (entry.action === "block") {
+                blocked.push(fullDomain)
+            }
+            if (entry.action === "redirect") {
+                surrogates.push(fullDomain)
+            }
+        }
+    }
+
     const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
     const ampUrl = tab.ampUrl || undefined
     const upgradedHttps = tab.upgradedHttps
@@ -113,7 +112,7 @@ export function breakageReportForTab (tab, category, description) {
         upgradedHttps: upgradedHttps.toString(),
         tds: tdsETag,
         urlParametersRemoved,
-        blockedTrackers: blockedTrackers.join(','),
+        blockedTrackers: blocked.join(','),
         surrogates: surrogates.join(',')
     })
 
@@ -121,5 +120,6 @@ export function breakageReportForTab (tab, category, description) {
     if (category) brokenSiteParams.set('category', category)
     if (description) brokenSiteParams.set('description', description)
 
-    return fire(brokenSiteParams.toString())
+    console.log(brokenSiteParams.toString());
+    // return fire(brokenSiteParams.toString())
 }

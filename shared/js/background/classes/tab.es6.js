@@ -214,9 +214,10 @@ class Tab {
         const tracker = this.trackers[t.tracker.owner.name]
 
         if (tracker) {
-            tracker.addTrackerUrl(t, url)
+            tracker.addTrackerUrl(t, this.url || "", baseDomain, url)
         } else if (t.tracker) {
-            const newTracker = new Tracker(t, baseDomain, url)
+            const newTracker = new Tracker(t)
+            newTracker.addTrackerUrl(t, this.url || "",baseDomain, url)
             this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
