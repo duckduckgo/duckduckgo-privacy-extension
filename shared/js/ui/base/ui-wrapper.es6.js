@@ -16,8 +16,6 @@ export const backgroundMessage = (thisModel) => {
     })
 }
 
-/** @typedef {ReturnType<import('../../background/message-handlers.js').getTab>} TabState */
-
 const getExtensionURL = (path) => {
     return browser.runtime.getURL(path)
 }
@@ -51,5 +49,5 @@ module.exports = {
     backgroundMessage,
     openOptionsPage,
     openExtensionPage,
-    getExtensionURL,
+    getExtensionURL
 }

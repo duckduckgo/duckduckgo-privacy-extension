@@ -14,7 +14,6 @@ const Companies = require('./companies.es6')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
-const { LegacyTabTransfer } = require('./classes/legacy-tab-transfer')
 const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
@@ -79,7 +78,7 @@ export async function submitBrokenSiteReport (breakageReport) {
         return
     }
 
-    const tab = await getTabOriginal(currentTab.id)
+    const tab = await getTab(currentTab.id)
     if (!tab) {
         console.error('cannot access current tab with ID ' + currentTab.id)
         return
@@ -92,21 +91,11 @@ export async function submitBrokenSiteReport (breakageReport) {
  * @param tabId
  * @returns {Promise<import("./classes/tab.es6")>}
  */
-async function getTabOriginal (tabId) {
+async function getTab (tabId) {
     // Await for storage to be ready; this happens on service worker closing mostly.
     await settings.ready()
     await tdsStorage.ready('config')
-
     return tabManager.getOrRestoreTab(tabId)
-}
-
-export async function getTab (tabId) {
-    // Await for storage to be ready; this happens on service worker closing mostly.
-    await settings.ready()
-    await tdsStorage.ready('config')
-
-    const tab = await tabManager.getOrRestoreTab(tabId)
-    return new LegacyTabTransfer(tab)
 }
 
 /**
@@ -126,7 +115,7 @@ export async function getPrivacyDashboardData (options) {
         }
         tabId = currentTab?.id
     }
-    const tab = await getTabOriginal(tabId)
+    const tab = await getTab(tabId)
     if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
     return dashboardDataFromTab(tab, userData)
