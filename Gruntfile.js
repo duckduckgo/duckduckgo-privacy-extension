@@ -1,6 +1,10 @@
 module.exports = function (grunt) {
     const sass = require('sass')
     const fileMapTransform = require('./scripts/browserifyFileMapTransform')
+
+    const { join } = require('path')
+    const dashboardDir = join(__dirname, 'node_modules', '@duckduckgo', 'privacy-dashboard')
+
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-karma')
 
