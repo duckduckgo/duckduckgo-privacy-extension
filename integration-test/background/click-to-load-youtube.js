@@ -8,6 +8,7 @@ const { setupAPISchemaTest } = require('../helpers/apiSchema')
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/youtube-click-to-load/'
 const youTubeStandardDomains = new Set(['youtu.be', 'youtube.com', 'www.youtube.com'])
 const youTubeNocookieDomains = new Set(['youtube-nocookie.com', 'www.youtube-nocookie.com'])
+const youTubeImageDomains = new Set(['i.ytimg.com'])
 
 let browser
 let bgPage
@@ -20,6 +21,7 @@ function summariseYouTubeRequests (requests) {
     const youTubeIframeApi = { checked: false, alwaysRedirected: true }
     const youTubeStandard = { blocked: 0, allowed: 0, total: 0 }
     const youTubeNocookie = { blocked: 0, allowed: 0, total: 0 }
+    const youTubeImage = { blocked: 0, allowed: 0, total: 0 }
 
     for (const request of requests) {
         if (request.url.href === 'https://www.youtube.com/iframe_api') {
@@ -40,6 +42,8 @@ function summariseYouTubeRequests (requests) {
             stats = youTubeStandard
         } else if (youTubeNocookieDomains.has(request.url.hostname)) {
             stats = youTubeNocookie
+        } else if (youTubeImageDomains.has(request.url.hostname)) {
+            stats = youTubeImage
         } else {
             continue
         }
@@ -55,7 +59,16 @@ function summariseYouTubeRequests (requests) {
         }
     }
 
-    return { youTubeIframeApi, youTubeStandard, youTubeNocookie }
+    return { youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage }
+}
+
+/**
+ * @param {import('../helpers/requests').LoggedRequestDetails[]} request
+ */
+function hasAutoplay (requests) {
+    return requests.some(request =>
+        youTubeNocookieDomains.has(request.url.hostname) && request.url.searchParams.autoplay === 1
+    )
 }
 
 describe('Test YouTube Click To Load', () => {
@@ -240,6 +253,116 @@ describe('Test YouTube Click To Load', () => {
 
             await page.click('#spherical-video-flip')
             await waitForExpectedRoll('0.0000')
+        }
+
+        await page.close()
+    })
+
+    it('CTL: YouTube Preview', async () => {
+        const waitForExpectedElement = dataKey =>
+            page.waitForFunction((expectedDataKey) => (
+                Boolean(document.querySelector(`[data-key=${expectedDataKey}]`))
+            ),
+            { polling: 10 }, dataKey)
+
+        // Open the test page and start logging network requests.
+        const page = await browser.newPage()
+        const pageRequests = []
+        const clearRequests = await logPageRequests(page, pageRequests)
+
+        // Navigate to test page
+        await pageWait.forGoto(page, testSite)
+
+        // Once the user clicks to preview a video, should request only
+        // YouTube Preview images
+        clearRequests()
+        // Click toggle to enable previews
+        const previewToggle = await page.evaluateHandle(
+            'document.querySelector("div:nth-child(2) > div")' +
+            '.shadowRoot.querySelector("button[data-key=yt-preview-toggle]")'
+        )
+        await previewToggle.click()
+        await waitForExpectedElement('modal')
+        // Click modal button to confirm enabling YT previews
+        const enablePreviewsButton = await page.evaluateHandle(
+            'document.querySelector("body > div[data-key=modal]")' +
+            '.shadowRoot.querySelector("button[data-key=allow]")'
+        )
+        await enablePreviewsButton.click()
+        await pageWait.forNetworkIdle(page)
+        {
+            const {
+                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage
+            } = summariseYouTubeRequests(pageRequests)
+            expect(youTubeIframeApi.checked).toBeFalse()
+            expect(youTubeIframeApi.alwaysRedirected).toBeTrue()
+            expect(youTubeStandard.blocked).toEqual(0)
+            expect(youTubeNocookie.blocked).toEqual(0)
+            expect(youTubeNocookie.allowed).toEqual(0)
+            expect(youTubeImage.blocked).toEqual(0)
+            expect(youTubeImage.allowed).toEqual(youTubeImage.total)
+        }
+
+        // Once the user clicks to load a video, the iframe_api should be loaded
+        // and the video should be unblocked and played automatically
+        clearRequests()
+        const playButton = await page.evaluateHandle(
+            'document.querySelector("div:nth-child(2) > div")' +
+            '.shadowRoot.querySelector("button")'
+        )
+        await playButton.click()
+        await pageWait.forNetworkIdle(page)
+        {
+            const {
+                youTubeIframeApi, youTubeStandard, youTubeNocookie
+            } = summariseYouTubeRequests(pageRequests)
+
+            expect(youTubeIframeApi.checked).toBeTrue()
+            expect(youTubeIframeApi.alwaysRedirected).toBeFalse()
+            expect(youTubeStandard.blocked).toEqual(0)
+            expect(youTubeNocookie.blocked).toEqual(0)
+            expect(youTubeNocookie.allowed).toBeGreaterThanOrEqual(1)
+            expect(hasAutoplay(pageRequests)).toBeTrue()
+        }
+
+        // The header button should also unblock YouTube.
+        clearRequests()
+        const headerButton = await page.evaluateHandle(
+            'document.querySelector("#short-container > div")' +
+            '.shadowRoot.querySelector("#DuckDuckGoPrivacyEssentialsCTLElementTitleTextButton")'
+        )
+        await headerButton.click()
+        await pageWait.forNetworkIdle(page)
+        {
+            const {
+                youTubeIframeApi, youTubeStandard, youTubeNocookie
+            } = summariseYouTubeRequests(pageRequests)
+
+            expect(youTubeIframeApi.checked).toBeTrue()
+            expect(youTubeIframeApi.alwaysRedirected).toBeFalse()
+            expect(youTubeStandard.blocked).toEqual(0)
+            expect(youTubeNocookie.blocked).toEqual(0)
+            expect(youTubeNocookie.allowed).toBeGreaterThanOrEqual(1)
+        }
+
+        // When the page is reloaded, YouTube Preview should continue enabled,
+        // requests should be blocked still
+        // and only YouTube Preview images should be requested
+        clearRequests()
+        await pageWait.forReload(page)
+        {
+            const {
+                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage
+            } = summariseYouTubeRequests(pageRequests)
+            expect(youTubeIframeApi.checked).toBeTrue()
+            expect(youTubeIframeApi.alwaysRedirected).toBeTrue()
+            expect(youTubeStandard.total).toBeGreaterThanOrEqual(2)
+            expect(youTubeStandard.blocked).toEqual(youTubeStandard.total)
+            expect(youTubeStandard.allowed).toEqual(0)
+            expect(youTubeNocookie.blocked).toEqual(youTubeNocookie.total)
+            expect(youTubeNocookie.allowed).toEqual(0)
+            expect(youTubeImage.blocked).toEqual(0)
+            expect(youTubeImage.allowed).toEqual(youTubeImage.total)
         }
 
         await page.close()
