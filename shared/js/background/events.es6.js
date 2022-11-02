@@ -433,17 +433,6 @@ browser.webNavigation.onCommitted.addListener(details => {
           'more info: https://github.com/duckduckgo/privacy-configuration')
         return
     }
-
-    if (utils.getClickToPlaySupport(tab)) {
-        browserWrapper.executeScript({
-            target: {
-                tabId: details.tabId,
-                frameIds: [details.frameId]
-            },
-            files: ['public/js/content-scripts/click-to-load.js'],
-            injectImmediately: true
-        })
-    }
 })
 
 /**
