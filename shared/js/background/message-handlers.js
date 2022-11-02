@@ -126,39 +126,8 @@ export async function initClickToLoad (unused, sender) {
     return config
 }
 
-export function getLoadingImage (theme) {
-    if (theme === 'dark') {
-        return utils.imgToData('img/social/loading_dark.svg')
-    } else if (theme === 'light') {
-        return utils.imgToData('img/social/loading_light.svg')
-    }
-}
-
-export function getImage (image) {
-    if (image === 'None' || image === 'none' || image === undefined) {
-        return Promise.resolve(undefined)
-    } else {
-        return utils.imgToData(`img/social/${image}`)
-    }
-}
-
-export function getLogo () {
-    return utils.imgToData('img/social/dax.png')
-}
-
 export function getCurrentTab () {
     return utils.getCurrentTab()
-}
-
-export function getSocialSurrogateRules (entity) {
-    const entityData = tdsStorage.ClickToLoadConfig[entity]
-    if (entityData && entityData.surrogates) {
-        const rules = entityData.surrogates.reduce(function reducer (accumulator, value) {
-            accumulator.push(value.rule)
-            return accumulator
-        }, [])
-        return rules
-    }
 }
 
 export async function enableSocialTracker (data, sender) {
