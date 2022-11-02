@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+import * as startup from './startup'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -12,7 +13,6 @@ const brokenSiteReport = require('./broken-site-report')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
-const startup = require('./startup.es6')
 const { LegacyTabTransfer } = require('./classes/legacy-tab-transfer')
 const getArgumentsObject = require('./helpers/arguments-object')
 
@@ -64,8 +64,13 @@ export function getBrowser () {
     return browserName
 }
 
-export function submitBrokenSiteReport (brokenSiteArgs) {
-    return brokenSiteReport.fire.apply(null, brokenSiteArgs)
+/**
+ * Send a broken site report to the pixel endpoint.
+ * @param {string} brokenSiteParams Search param string to send to the broken site pixel endpoint
+ * @returns {void}
+ */
+export function submitBrokenSiteReport (brokenSiteParams) {
+    return brokenSiteReport.fire(brokenSiteParams)
 }
 
 export async function getTab (tabId) {
@@ -126,6 +131,34 @@ export async function initClickToLoad (unused, sender) {
     return config
 }
 
+export async function getYouTubeVideoDetails (videoURL) {
+    const endpointURL = new URL('https://www.youtube.com/oembed?format=json')
+    const parsedVideoURL = new URL(videoURL)
+
+    const playlistID = parsedVideoURL.searchParams.get('list')
+    const videoId = parsedVideoURL.pathname.split('/').pop()
+
+    if (playlistID) {
+        parsedVideoURL.hostname = endpointURL.hostname
+        endpointURL.searchParams.set('url', parsedVideoURL.href)
+    } else {
+        endpointURL.searchParams.set('url', 'https://youtu.be/' + videoId)
+    }
+
+    try {
+        const youTubeVideoResponse = await fetch(
+            endpointURL.href, {
+                referrerPolicy: 'no-referrer',
+                credentials: 'omit'
+            }
+        ).then(response => response.json())
+        const { title, thumbnail_url: previewImage } = youTubeVideoResponse
+        return { status: 'success', title, previewImage }
+    } catch (e) {
+        return { status: 'failed' }
+    }
+}
+
 export function getCurrentTab () {
     return utils.getCurrentTab()
 }
@@ -155,6 +188,7 @@ export async function enableSocialTracker (data, sender) {
 export async function updateSetting ({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)
+    utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
 }
 
 export async function getSetting ({ name }) {

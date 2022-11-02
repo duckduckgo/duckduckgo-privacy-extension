@@ -21,6 +21,16 @@
 
 .options-content__privacy {
     padding-bottom: 8px;
+
+    .menu-paragraph {
+        font-weight: normal;
+        line-height: 1.4;
+        color: #666666;
+        
+        a {
+            font-weight: bold;
+        }
+    }
 }
 
 .options-content__gpc-enabled {

@@ -6,6 +6,7 @@
  */
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
+import * as startup from './startup'
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const experiment = require('./experiments.es6')
@@ -19,7 +20,7 @@ const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
-const startup = require('./startup.es6')
+const { refreshUserAllowlistRules } = require('./declarative-net-request')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -54,6 +55,21 @@ async function onInstalled (details) {
                 files: ['public/js/content-scripts/autofill.js']
             })
         }
+    }
+
+    // Refresh the user allowlisting declarativeNetRequest rule.
+    if (manifestVersion === 3) {
+        await settings.ready()
+        const allowlist = settings.getSetting('allowlisted') || {}
+
+        const allowlistedDomains = []
+        for (const [domain, enabled] of Object.entries(allowlist)) {
+            if (enabled) {
+                allowlistedDomains.push(domain)
+            }
+        }
+
+        await refreshUserAllowlistRules(allowlistedDomains)
     }
 }
 
@@ -183,75 +199,79 @@ browser.webRequest.onBeforeRequest.addListener(
     additionalOptions
 )
 
+// MV2 needs blocking for webRequest
+// MV3 still needs some info from response headers
+const extraInfoSpec = ['responseHeaders']
 if (manifestVersion === 2) {
-    const extraInfoSpec = ['blocking', 'responseHeaders']
-    if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
-        extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
-    }
+    extraInfoSpec.push('blocking')
+}
 
-    // We determine if browsingTopics is enabled by testing for availability of its
-    // JS API.
-    // Note: This approach will not work with MV3 since the background
-    //       ServiceWorker does not have access to a `document` Object.
-    const isTopicsEnabled = ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
+if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
+    extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
+}
+
+// We determine if browsingTopics is enabled by testing for availability of its
+// JS API.
+// Note: This approach will not work with MV3 since the background
+//       ServiceWorker does not have access to a `document` Object.
+const isTopicsEnabled = manifestVersion === 2 && 'browsingTopics' in document && utils.isFeatureEnabled('googleRejected')
+
+browser.webRequest.onHeadersReceived.addListener(
+    request => {
+        if (request.type === 'main_frame') {
+            tabManager.updateTabUrl(request)
+
+            const tab = tabManager.get({ tabId: request.tabId })
+            // SERP ad click detection
+            if (
+                utils.isRedirect(request.statusCode)
+            ) {
+                tab.setAdClickIfValidRedirect(request.url)
+            } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
+                tab.adClick.setAdBaseDomain(tab.site.baseDomain)
+            }
+        }
+
+        if (ATB.shouldUpdateSetAtb(request)) {
+            // returns a promise
+            return ATB.updateSetAtb()
+        }
+
+        const responseHeaders = request.responseHeaders
+
+        if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
+            // there can be multiple permissions-policy headers, so we are good always appending one
+            // According to Google's docs a site can opt out of browsing topics the same way as opting out of FLoC
+            // https://privacysandbox.com/proposals/topics (See FAQ)
+            responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
+        }
+
+        return { responseHeaders }
+    },
+    { urls: ['<all_urls>'] },
+    extraInfoSpec
+)
+
+// Wait until the extension configuration has finished loading and then
+// start dropping tracking cookies.
+// Note: Event listeners must be registered in the top-level of the script
+//       to be compatible with MV3. Registering the listener asynchronously
+//       is only possible here as this is a MV2-only event listener!
+// See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
+startup.ready().then(() => {
     browser.webRequest.onHeadersReceived.addListener(
-        request => {
-            if (request.type === 'main_frame') {
-                tabManager.updateTabUrl(request)
-
-                const tab = tabManager.get({ tabId: request.tabId })
-                // SERP ad click detection
-                if (
-                    utils.isRedirect(request.statusCode)
-                ) {
-                    tab.setAdClickIfValidRedirect(request.url)
-                } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
-                    tab.adClick.adClickRedirect = false
-                    tab.adClick.adBaseDomain = tab.site.baseDomain
-                }
-            }
-
-            if (ATB.shouldUpdateSetAtb(request)) {
-                // returns a promise
-                return ATB.updateSetAtb()
-            }
-
-            const responseHeaders = request.responseHeaders
-
-            if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
-                // there can be multiple permissions-policy headers, so we are good always appending one
-                // According to Google's docs a site can opt out of browsing topics the same way as opting out of FLoC
-                // https://privacysandbox.com/proposals/topics (See FAQ)
-                responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
-            }
-
-            return { responseHeaders }
-        },
+        dropTracking3pCookiesFromResponse,
         { urls: ['<all_urls>'] },
         extraInfoSpec
     )
-
-    // Wait until the extension configuration has finished loading and then
-    // start dropping tracking cookies.
-    // Note: Event listeners must be registered in the top-level of the script
-    //       to be compatible with MV3. Registering the listener asynchronously
-    //       is only possible here as this is a MV2-only event listener!
-    // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-    startup.ready().then(() => {
-        browser.webRequest.onHeadersReceived.addListener(
-            dropTracking3pCookiesFromResponse,
-            { urls: ['<all_urls>'] },
-            extraInfoSpec
-        )
-    })
-}
+})
 
 browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
     const currentTab = tabManager.get({ tabId: details.sourceTabId })
     if (currentTab && currentTab.adClick) {
         const newTab = tabManager.createOrUpdateTab(details.tabId, { url: details.url })
         if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-            newTab.adClick = currentTab.adClick
+            newTab.adClick = currentTab.adClick.propagate(newTab.id)
         }
     }
 })
@@ -359,6 +379,46 @@ browser.runtime.onMessage.addListener((req, sender) => {
 
     console.error('Unrecognized message to background:', req, sender)
     return false
+})
+
+/**
+ * Messaging connections
+ */
+
+// List of actions that the user is taking in the currently open popup UI.
+// Note: This is lost when the background ServiceWorker is restarted. At that
+//       point, the popup window reopens the connection - restarting the
+//       background ServiceWorker in the process - and then resends its user
+//       actions. It is not usually safe to store state from events in this way.
+// See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#state
+const popupUserActions = []
+
+chrome.runtime.onConnect.addListener(port => {
+    // Popup UI is opened.
+    if (port.name === 'popup') {
+        // Take note of new user actions as they happen.
+        port.onMessage.addListener(userAction => {
+            popupUserActions.push(userAction)
+        })
+
+        // Popup UI closed again, refresh page etc based on the actions user
+        // took in the popup while it was open.
+        port.onDisconnect.addListener(async () => {
+            // Reload the website after a short delay if the user toggled
+            // allowlisting for it.
+            if (popupUserActions.includes('toggleAllowlist')) {
+                const currentTab = await utils.getCurrentTab()
+                if (currentTab) {
+                    setTimeout(() => {
+                        browser.tabs.reload(currentTab.id)
+                    }, 500)
+                }
+            }
+
+            // Clear the list of user actions.
+            popupUserActions.length = 0
+        })
+    }
 })
 
 /*

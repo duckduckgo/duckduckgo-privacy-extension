@@ -3,6 +3,9 @@ const settings = require('./settings.es6')
 const Tab = require('./classes/tab.es6')
 const { TabState } = require('./classes/tab-state')
 const browserWrapper = require('./wrapper.es6')
+const { toggleUserAllowlistDomain } = require('./declarative-net-request.js')
+
+const manifestVersion = browserWrapper.getManifestVersion()
 
 /**
  * @typedef {import('./classes/site.es6.js').allowlistName} allowlistName
@@ -36,14 +39,23 @@ class TabManager {
         return newTab
     }
 
+    async restoreOrCreate (tabData) {
+        const restored = await this.restore(tabData.id)
+        if (!restored) {
+            await this.create(tabData)
+        }
+    }
+
     async restore (tabId) {
         const restoredState = await Tab.restore(tabId)
         if (restoredState) {
             this.tabContainer[tabId] = restoredState
         }
+        return restoredState
     }
 
     delete (id) {
+        this.tabContainer[id]?.adClick?.removeDNR()
         delete this.tabContainer[id]
         TabState.delete(id)
     }
@@ -75,8 +87,9 @@ class TabManager {
      * @param {allowlistName} data.list - name of the allowlist to update
      * @param {string} data.domain - domain to allowlist
      * @param {boolean} data.value - allowlist value, true or false
+     * @return {Promise}
      */
-    setList (data) {
+    async setList (data) {
         this.setGlobalAllowlist(data.list, data.domain, data.value)
 
         for (const tabId in this.tabContainer) {
@@ -84,6 +97,20 @@ class TabManager {
             if (tab.site && tab.site.domain === data.domain) {
                 tab.site.setListValue(data.list, data.value)
             }
+        }
+
+        if (manifestVersion === 3) {
+            // Ensure that user allowlisting/denylisting is honoured for
+            // manifest v3 builds of the extension, by adding/removing the
+            // necessary declarativeNetRequest rules.
+            await toggleUserAllowlistDomain(data.domain, data.value)
+
+            // TODO - Once support for the temporary allowlist
+            //        (the contentBlocking) section of extension-config.json is
+            //        added, the "denylisted" event needs to be handled here to
+            //        ensure that users are able to override the temporary
+            //        allowlist manually be re-enabling protections for a
+            //        webiste.
         }
 
         browserWrapper.notifyPopup({ allowlistChanged: true })

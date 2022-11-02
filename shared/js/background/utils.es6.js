@@ -38,6 +38,16 @@ export async function sendTabMessage (id, message, details) {
     }
 }
 
+export async function sendAllTabsMessage (message, details) {
+    try {
+        for (const { id: tabId } of await browser.tabs.query({})) {
+            sendTabMessage(tabId, message, details)
+        }
+    } catch {
+        // Ignore errors
+    }
+}
+
 /**
  * @param {string} urlString
  * @returns {string | null} etld plus one of the URL

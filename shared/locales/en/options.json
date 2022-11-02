@@ -49,7 +49,7 @@
     },
     "globalPrivacyControlDisclaimer": {
         "title": "<b>Since Global Privacy Control (GPC) is a new standard,\nmost websites won't recognize it yet, but we're working hard\nto ensure it becomes accepted worldwide.</b> However, websites are only required to act on the signal to the\nextent applicable laws compel them to do so.&nbsp;",
-        "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+        "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
     },
     "emailProtection": {
         "title": "Email Protection",
@@ -77,14 +77,22 @@
     },
     "addUnprotectedSite": {
         "title": "Add unprotected site",
-        "note": "Header for the user to add a site to the uprotected list"
+        "note": "Header for the user to add a site to the unprotected list"
     },
     "enterURL": {
         "title": "Enter URL",
-        "note": "Promopt to enter the website URL here"
+        "note": "Prompt to enter the website URL here"
     },
     "invalidURL": {
         "title": "Invalid URL",
         "note": "The URL the user entered is not a valid website address"
+    },
+    "enableYoutubePreviews": {
+        "title": "Enable YouTube Previews",
+        "note": "Whether the user wants to see YouTube Previews on embedded videos or if all YouTube embedded videos are completely blocked by default"
+    },
+    "enableYoutubePreviewsDesc": {
+        "title": "DuckDuckGo automatically blocks embedded YouTube videos, along with their title and preview, from being loaded to improve your privacy. You can choose to enable previews, but doing so will allow Google to see some of your device’s information when you visit any page with an embedded video.&nbsp;",
+        "note": "Describes that DDG automatically blocks embedded YouTube videos to improve privacy, but users can choose to see the video preview and this will cause Google to see some device information"
     }
 }

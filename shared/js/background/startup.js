@@ -1,6 +1,5 @@
 import browser from 'webextension-polyfill'
-const { getCurrentTab } = require('./utils.es6')
-const browserUIWrapper = require('../ui/base/ui-wrapper.es6')
+const browserWrapper = require('./wrapper.es6')
 const Companies = require('./companies.es6')
 const experiment = require('./experiments.es6')
 const https = require('./https.es6')
@@ -9,15 +8,19 @@ const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
 const tdsStorage = require('./storage/tds.es6')
 const trackers = require('./trackers.es6')
+const dnrSessionId = require('./dnr-session-rule-id')
 const { fetchAlias, showContextMenuAction } = require('./email-utils.es6')
-
+const manifestVersion = browserWrapper.getManifestVersion()
 /** @module */
 
 let resolveReadyPromise
 const readyPromise = new Promise(resolve => { resolveReadyPromise = resolve })
 
 export async function onStartup () {
-    registerUnloadHandler()
+    if (manifestVersion === 3) {
+        await dnrSessionId.setSessionRuleOffsetFromStorage()
+    }
+
     await settings.ready()
     experiment.setActiveExperiment()
 
@@ -45,7 +48,8 @@ export async function onStartup () {
         const tab = savedTabs[i]
 
         if (tab.url) {
-            tabManager.restore(tab.id)
+            // On reinstall we wish to create the tab again
+            await tabManager.restoreOrCreate(tab)
         }
     }
 
@@ -57,32 +61,4 @@ export async function onStartup () {
 
 export function ready () {
     return readyPromise
-}
-
-/**
- * Register a global function that the popup can call when it's closed.
- *
- * NOTE: This has to be a global method because messages via `chrome.runtime.sendMessage` don't make it in time
- * when the popup is closed.
- */
-function registerUnloadHandler () {
-    let timeout
-    // @ts-ignore - popupUnloaded is not a standard property of self.
-    self.popupUnloaded = (userActions) => {
-        clearTimeout(timeout)
-        if (userActions.includes('toggleAllowlist')) {
-            timeout = setTimeout(() => {
-                getCurrentTab().then(tab => {
-                    if (tab) {
-                        browserUIWrapper.reloadTab(tab.id)
-                    }
-                })
-            }, 500)
-        }
-    }
-}
-
-module.exports = {
-    onStartup,
-    ready
 }

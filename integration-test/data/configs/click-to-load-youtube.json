@@ -37,10 +37,19 @@
                 ],
                 "replaceSettings": {
                     "type": "youtube-video",
-                    "buttonText": "Unblock Video",
-                    "infoTitle": "DuckDuckGo blocked this video to prevent YouTube from tracking you",
-                    "infoText": "We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity.",
-                    "simpleInfoText": "We blocked YouTube from tracking you when the page loaded. If you unblock this Video, YouTube will know your activity."
+                    "buttonText": "Unblock video",
+                    "infoTitle": "DuckDuckGo blocked this YouTube video to prevent Google from tracking you",
+                    "infoText": "We blocked Google (which owns YouTube) from tracking you when the page loaded. If you unblock this video, Google will know your activity.",
+                    "simpleInfoText": "We blocked Google (which owns YouTube) from tracking you when the page loaded. If you unblock this video, Google will know your activity.",
+                    "previewToggleText": "Previews disabled for additional privacy",
+                    "placeholder": {
+                        "previewToggleEnabledText": "Previews enabled",
+                        "previewInfoText": "Turn previews off for additional privacy from DuckDuckGo.",
+                        "videoPlayIcon": {
+                            "lightMode": "video_play_light.svg",
+                            "darkMode": "video_play_dark.svg"
+                        }
+                    }     
                 },
                 "clickAction": {
                     "type": "youtube-video"
@@ -58,7 +67,13 @@
                 }
             }
         },
-        "informationalModal": {},
+        "informationalModal": {
+            "icon": "blocked_youtube_video.svg",
+            "messageTitle": "Enable YouTube previews and reduce privacy?",
+            "messageBody": "Showing previews will allow Google (which owns YouTube) to see some of your device’s information, but is still more private than playing the video.",
+            "confirmButtonText": "Enable Previews",
+            "rejectButtonText": "No Thanks"
+        },
         "surrogates": [
             {
                 "rule": "(www.)?youtube(-nocookie)?.com/iframe_api",

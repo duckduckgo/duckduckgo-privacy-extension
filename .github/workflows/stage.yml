@@ -9,22 +9,15 @@ on:
 
 jobs:
   release_pr:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node.js 16
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
-          node-version: 16.x
-
-      - name: Restore npm artifact from cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 16
+          cache: 'npm'
 
       - name: Install dependencies
         run: |
@@ -43,7 +36,7 @@ jobs:
           git push --set-upstream origin release-${{ github.event.inputs.version }} -f
 
       - name: Commit config and version updates
-        uses: stefanzweifel/git-auto-commit-action@8c3ed373fb7e451dbb9706bf99ad63124e33f614
+        uses: stefanzweifel/git-auto-commit-action@0049e3fa4059ca715255fbbcb7dea4516f02ce0a
         with:
           commit_message: "Prepare release ${{ github.event.inputs.version }}"
           tagging_message: ${{ github.event.inputs.version }}

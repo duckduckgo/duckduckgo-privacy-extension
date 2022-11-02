@@ -13,88 +13,58 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es
  *
  * Fire a pixel
  *
- * @param {string} pixelName
- * @param {...*} args - any number of extra data
+ * @param {string} querystring
  *
  */
-export function fire () {
-    if (!arguments.length) return
-
-    let args = Array.prototype.slice.call(arguments)
+export function fire (querystring) {
+    const randomNum = Math.ceil(Math.random() * 1e7)
     const pixelName = 'epbf'
-    const url = getURL(pixelName)
+    const browserInfo = parseUserAgentString()
+    const browser = browserInfo?.browser
+    const extensionVersion = browserWrapper.getExtensionVersion()
+    const atb = settings.getSetting('atb')
 
-    if (!url) return
+    const searchParams = new URLSearchParams(querystring)
 
-    args = args.concat(getAdditionalParams())
-    const paramString = concatParams(args)
+    if (extensionVersion) {
+        searchParams.append('extensionVersion', extensionVersion)
+    }
+    if (atb) {
+        searchParams.append('atb', atb)
+    }
+    if (searchParams.get('category') === 'null') {
+        searchParams.delete('category')
+    }
+    // build url string
+    let url = getURL(pixelName)
+    if (browser) {
+        url += `_${browser.toLowerCase()}${browserWrapper.getManifestVersion() === 3 ? 'mv3' : ''}`
+    }
+    // random number cache buster
+    url += `?${randomNum}&`
+    // some params should be not urlencoded
+    let extraParams = '';
+    ['blockedTrackers', 'surrogates'].forEach((key) => {
+        if (searchParams.has(key)) {
+            extraParams += `&${key}=${decodeURIComponent(searchParams.get(key) || '')}`
+            searchParams.delete(key)
+        }
+    })
+    url += `${searchParams.toString()}${extraParams}`
 
     // Send the request
-    load.url(url + paramString)
+    load.url(url)
 }
 
 /**
  *
  * Return URL for the pixel request
- *
+ * @param {string} pixelName
+ * @returns {string}
  */
 export function getURL (pixelName) {
-    if (!pixelName) return
+    if (!pixelName) throw new Error('pixelName is required')
 
     const url = 'https://improving.duckduckgo.com/t/'
     return url + pixelName
-}
-
-/**
- *
- * Return additional params for the pixel request
- *
- */
-function getAdditionalParams () {
-    const browserInfo = parseUserAgentString()
-    const browser = browserInfo?.browser
-    const extensionVersion = browserWrapper.getExtensionVersion()
-    const atb = settings.getSetting('atb')
-    const queryStringParams = {}
-    const result = []
-
-    if (browser) result.push(browser.toLowerCase())
-    if (extensionVersion) queryStringParams.extensionVersion = extensionVersion
-    if (atb) queryStringParams.atb = atb
-
-    result.push(queryStringParams)
-
-    return result
-}
-
-/**
- *
- * @param {array} args - data we need to append
- *
- */
-export function concatParams (args) {
-    args = args || []
-
-    let paramString = ''
-    let objParamString = ''
-    let resultString = ''
-    const randomNum = Math.ceil(Math.random() * 1e7)
-
-    args.forEach((arg) => {
-        // append keys if object
-        if (typeof arg === 'object') {
-            objParamString += Object.keys(arg).reduce((params, key) => {
-                const val = arg[key]
-                if (val || val === 0) return `${params}&${key}=${val}`
-                return params
-            }, '')
-        } else if (arg) {
-            // otherwise just add args separated by _
-            paramString += `_${arg}`
-        }
-    })
-
-    resultString = `${paramString}?${randomNum}${objParamString}`
-
-    return resultString
 }

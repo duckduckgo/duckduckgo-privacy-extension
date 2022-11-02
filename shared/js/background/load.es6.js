@@ -72,14 +72,14 @@ async function loadExtensionFile (params) {
                 data
             }
         } else if (status === 304) {
-            console.log(`${url} returned 304, resource not changed`)
+            console.log(`${urlString} returned 304, resource not changed`)
             return {
                 status,
                 date,
                 etag
             }
         } else {
-            throw new Error(`${url} returned ${response.status}`)
+            throw new Error(`${urlString} returned ${response.status}`)
         }
     })
 
