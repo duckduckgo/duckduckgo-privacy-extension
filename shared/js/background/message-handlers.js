@@ -98,12 +98,9 @@ export function getTopBlockedByPages (options) {
 }
 
 // Click to load interactions
-export async function initClickToLoad (unused, sender) {
+export async function initClickToLoad (config, sender) {
     await settings.ready()
     const tab = tabManager.get({ tabId: sender.tab.id })
-
-    await tdsStorage.ready('ClickToLoadConfig')
-    const config = { ...tdsStorage.ClickToLoadConfig }
 
     // Remove first-party entries.
     await startup.ready()
