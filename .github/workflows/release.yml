@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - 'develop'
-      - 'new-release-workflow'
     paths:
       - 'browsers/chrome/manifest.json'
 
@@ -27,7 +26,7 @@ jobs:
 
       - name: Generate changelog
         id: changelog
-        uses: metcalfc/changelog-generator@c3f61b2a3db543ceee83c759ac8e48419a1a2211
+        uses: metcalfc/changelog-generator@31b6d6f9e6e17e84ad34bee780f82d8ee79f6842
         with:
           myToken: ${{ secrets.GITHUB_TOKEN }}
 
@@ -44,7 +43,7 @@ jobs:
         run: |
           npm run release-chrome-mv3
 
-      - name: Package Firefox Release
+      - name: Package Firefox
         run: |
           cd build/firefox/release && web-ext build
           echo "BUILT_WITH=Built with node $(node --version) and npm $(npm --version)" >> $GITHUB_ENV
@@ -55,7 +54,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           draft: true
-          prerelease: true
+          prerelease: false
           body: "${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}"
           tag_name: ${{ env.VERSION }}
           files: |
@@ -68,5 +67,4 @@ jobs:
           ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
           RELEASE_URL: "https://github.com/duckduckgo/duckduckgo-privacy-extension/releases/tag/${{ env.VERSION }}"
         run:
-          echo $RELEASE_URL
-          echo $VERSION
+          node scripts/asana-release.js

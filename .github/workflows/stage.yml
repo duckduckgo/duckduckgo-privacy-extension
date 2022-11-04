@@ -35,6 +35,6 @@ jobs:
 
       - name: Create Pull Request
         run: |
-          gh pr create -B new-release-workflow --title "Prepare release ${{ github.event.inputs.version }}" --body "Updated version and bundled config."
+          gh pr create -B develop --title "Prepare release ${{ github.event.inputs.version }}" --body "Updated version and bundled config."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
