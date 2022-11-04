@@ -40,6 +40,10 @@ jobs:
         run: |
           npm run release-chrome
 
+      - name: Build Chrome MV3
+        run: |
+          npm run release-chrome-mv3
+
       - name: Package Firefox Release
         run: |
           cd build/firefox/release && web-ext build
@@ -53,10 +57,11 @@ jobs:
           draft: true
           prerelease: true
           body: "${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}"
-          tag_name: ${{ github.event.inputs.version }}
+          tag_name: ${{ env.VERSION }}
           files: |
             ./build/firefox/release/web-ext-artifacts/*.zip
             ./build/chrome/release/*.zip
+            ./build/chrome-mv3/release/*.zip
 
       - name: Asana Workflow
         env:
