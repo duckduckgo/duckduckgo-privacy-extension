@@ -20,13 +20,21 @@ jobs:
           node-version: 16
           cache: 'npm'
 
-      - name: Setup git config
+      - name: Bump version and config
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "<>"
+          npm run install-ci
+          npm run bundle-config
+          node scripts/bumpVersion.js ${{ github.event.inputs.version }}
 
-      - name: Prepare Release PR
+      - name: Commit config and version updates
+        uses: stefanzweifel/git-auto-commit-action@0049e3fa4059ca715255fbbcb7dea4516f02ce0a
+        with:
+          commit_message: "Release ${{ github.event.inputs.version }} [ci release]"
+          create_branch: true
+          branch: "release/${{ github.event.inputs.version }}"
+
+      - name: Create Pull Request
         run: |
-          ./scripts/prepare-release-pr.sh ${{ github.event.inputs.version }}
+          gh pr create -B new-release-workflow --title "Prepare release ${{ github.event.inputs.version }}" --body "Updated version and bundled config."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
