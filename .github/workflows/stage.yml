@@ -31,9 +31,9 @@ jobs:
 
       - name: Prepare release branch
         run: |
-          git checkout -B release-${{ github.event.inputs.version }}
-          git fetch origin release-${{ github.event.inputs.version }} || true
-          git push --set-upstream origin release-${{ github.event.inputs.version }} -f
+          git checkout -B release/${{ github.event.inputs.version }}
+          git fetch origin release/${{ github.event.inputs.version }} || true
+          git push --set-upstream origin release/${{ github.event.inputs.version }} -f
 
       - name: Commit config and version updates
         uses: stefanzweifel/git-auto-commit-action@0049e3fa4059ca715255fbbcb7dea4516f02ce0a
@@ -41,43 +41,8 @@ jobs:
           commit_message: "Prepare release ${{ github.event.inputs.version }}"
           tagging_message: ${{ github.event.inputs.version }}
 
-      - name: Generate changelog
-        id: changelog
-        uses: metcalfc/changelog-generator@c3f61b2a3db543ceee83c759ac8e48419a1a2211
-        with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build Firefox
+      - name: "Create release PR"
         run: |
-          npm run release-firefox
-          echo "VERSION=$(jq -r .version ./browsers/firefox/manifest.json)" >> $GITHUB_ENV
-
-      - name: Build Chrome
-        run: |
-          npm run release-chrome
-
-      - name: Package Firefox Release
-        run: |
-          cd build/firefox/release && web-ext build
-          echo "BUILT_WITH=Built with node $(node --version) and npm $(npm --version)" >> $GITHUB_ENV
-
-      - name: Create release draft
-        uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
+          gh pr create -B new-release-workflow --tile "Release ${{ github.events.inputs.version }} [ci release]" --body "Updated version and bundled config."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          draft: true
-          prerelease: true
-          body: "${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}"
-          tag_name: ${{ github.event.inputs.version }}
-          files: |
-            ./build/firefox/release/web-ext-artifacts/*.zip
-            ./build/chrome/release/*.zip
-
-      - name: Asana Workflow
-        env:
-          ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
-          VERSION: ${{ github.event.inputs.version }}
-          RELEASE_URL: "https://github.com/duckduckgo/duckduckgo-privacy-extension/releases/tag/${{ github.event.inputs.version }}"
-        run:
-          node scripts/asana-release.js

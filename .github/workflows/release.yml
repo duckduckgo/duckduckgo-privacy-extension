@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - 'develop'
+      - 'new-release-workflow'
+    paths:
+      - 'browsers/chrome/manifest.json'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, 'ci release')"
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm i -g web-ext
+          npm run install-ci
+
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@c3f61b2a3db543ceee83c759ac8e48419a1a2211
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Firefox
+        run: |
+          npm run release-firefox
+          echo "VERSION=$(jq -r .version ./browsers/firefox/manifest.json)" >> $GITHUB_ENV
+
+      - name: Build Chrome
+        run: |
+          npm run release-chrome
+
+      - name: Package Firefox Release
+        run: |
+          cd build/firefox/release && web-ext build
+          echo "BUILT_WITH=Built with node $(node --version) and npm $(npm --version)" >> $GITHUB_ENV
+
+      - name: Create release draft
+        uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          draft: true
+          prerelease: true
+          body: "${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}"
+          tag_name: ${{ github.event.inputs.version }}
+          files: |
+            ./build/firefox/release/web-ext-artifacts/*.zip
+            ./build/chrome/release/*.zip
+
+      - name: Asana Workflow
+        env:
+          ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
+          RELEASE_URL: "https://github.com/duckduckgo/duckduckgo-privacy-extension/releases/tag/${{ env.VERSION }}"
+        run:
+          echo $RELEASE_URL
+          echo $VERSION
