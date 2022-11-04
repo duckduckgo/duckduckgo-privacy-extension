@@ -15,8 +15,8 @@ node scripts/bumpVersion.js $VERSION
 # Create release commit
 git checkout -b release/$1
 git add browsers/*/manifest.json shared/data/*
-git commit -m "Prepare release $VERSION"
+git commit -m "Release $VERSION [ci release]"
 git push --set-upstream origin release/$1 -f
 
 # Open Github PR
-gh pr create -B new-release-workflow --title "Release $VERSION [ci release]" --body "Updated version and bundled config."
+gh pr create -B new-release-workflow --title "Prepare release $VERSION" --body "Updated version and bundled config."
