@@ -45,7 +45,7 @@ jobs:
           cd build/firefox/release && web-ext build
           echo "BUILT_WITH=Built with node $(node --version) and npm $(npm --version)" >> $GITHUB_ENV
 
-      - name: Create release draft
+      - name: Create Release
         uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

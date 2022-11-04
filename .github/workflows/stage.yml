@@ -13,36 +13,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+
       - name: Use Node.js 16
         uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: Setup git config
         run: |
-          npm i -g web-ext
-          npm run install-ci
+          git config user.name "GitHub Actions"
+          git config user.email "<>"
 
-      - name: Fetch config and update version
+      - name: Prepare Release PR
         run: |
-          npm run bundle-config
-          node scripts/bumpVersion.js ${{ github.event.inputs.version }}
-
-      - name: Prepare release branch
-        run: |
-          git checkout -B release/${{ github.event.inputs.version }}
-          git fetch origin release/${{ github.event.inputs.version }} || true
-          git push --set-upstream origin release/${{ github.event.inputs.version }} -f
-
-      - name: Commit config and version updates
-        uses: stefanzweifel/git-auto-commit-action@0049e3fa4059ca715255fbbcb7dea4516f02ce0a
-        with:
-          commit_message: "Prepare release ${{ github.event.inputs.version }}"
-          tagging_message: ${{ github.event.inputs.version }}
-
-      - name: "Create release PR"
-        run: |
-          gh pr create -B new-release-workflow --tile "Release ${{ github.events.inputs.version }} [ci release]" --body "Updated version and bundled config."
+          ./scripts/prepare-release-pr.sh ${{ github.event.inputs.version }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
