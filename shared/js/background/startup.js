@@ -43,7 +43,7 @@ export async function onStartup () {
         showContextMenuAction()
     }
 
-    const savedTabs = await browser.tabs.query({ currentWindow: true, status: 'complete' })
+    const savedTabs = await browser.tabs.query({ status: 'complete' })
     for (let i = 0; i < savedTabs.length; i++) {
         const tab = savedTabs[i]
 
