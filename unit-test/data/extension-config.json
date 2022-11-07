@@ -4,7 +4,10 @@
     "features": {
         "contentBlocking": {
             "state": "enabled",
-            "exceptions": []
+            "exceptions": [{
+                "domain": "content-blocking.example",
+                "reason": "site breakage"
+            }]
         },
         "trackingCookies3p": {
             "state": "enabled",
