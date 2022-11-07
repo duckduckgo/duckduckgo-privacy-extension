@@ -2,6 +2,8 @@ import browser from 'webextension-polyfill'
 import * as startup from './startup'
 import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
 import { breakageReportForTab } from './broken-site-report'
+import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
+import { getExtensionURL } from './wrapper.es6'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -40,8 +42,23 @@ export function getExtensionVersion () {
     return browserWrapper.getExtensionVersion()
 }
 
-export function setList (options) {
-    tabManager.setList(options)
+/**
+ * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').SetListOptions} options
+ */
+export async function setLists (options) {
+    for (const listItem of options.lists) {
+        tabManager.setList(listItem)
+    }
+
+    // close the popup
+    const popup = chrome.extension.getViews({ type: 'popup' })[0]
+    popup?.close()
+
+    // reload the current tab
+    const tab = await utils.getCurrentTab()
+    if (tab && tab.id) {
+        browser.tabs.reload(tab.id)
+    }
 }
 
 export function allowlistOptIn (optInData) {
@@ -51,6 +68,14 @@ export function allowlistOptIn (optInData) {
 // popup will ask for the browser type then it is created
 export function getBrowser () {
     return browserName
+}
+
+export function openOptions () {
+    if (browserName === 'moz') {
+        browser.tabs.create({ url: getExtensionURL('/html/options.html') })
+    } else {
+        browser.runtime.openOptionsPage()
+    }
 }
 
 /**
@@ -96,11 +121,10 @@ async function getTab (tabId) {
  */
 export async function getPrivacyDashboardData (options) {
     let { tabId } = options
-    if (Number(tabId) === 0) {
+    if (tabId === null) {
         const currentTab = await utils.getCurrentTab()
         if (!currentTab?.id) {
-            // todo: how to handle this case?
-            throw new Error('could not get tab...')
+            throw new Error('could not get the current tab...')
         }
         tabId = currentTab?.id
     }
@@ -226,6 +250,9 @@ export function getAlias () {
     return { alias: userData?.nextAlias }
 }
 
+/**
+ * @returns {Promise<import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').RefreshAliasResponse>}
+ */
 export async function refreshAlias () {
     await fetchAlias()
     return getAddresses()
@@ -346,4 +373,14 @@ export async function reloadList (listName) {
 
 export function debuggerMessage (message, sender) {
     devtools.postMessage(sender.tab?.id, message.action, message.message)
+}
+
+export function search ({ term }) {
+    const browserInfo = parseUserAgentString()
+    if (browserInfo?.os) {
+        const url = new URL('https://duckduckgo.com')
+        url.searchParams.set('q', term)
+        url.searchParams.set('bext', browserInfo.os + 'cr')
+        browser.tabs.create({ url: url.toString() })
+    }
 }
