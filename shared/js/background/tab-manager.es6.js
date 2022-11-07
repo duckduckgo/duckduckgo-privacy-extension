@@ -99,18 +99,20 @@ class TabManager {
             }
         }
 
+        // Ensure that user allowlisting/denylisting is honoured for manifest v3
+        // builds of the extension, by adding/removing the necessary
+        // declarativeNetRequest rules.
         if (manifestVersion === 3) {
-            // Ensure that user allowlisting/denylisting is honoured for
-            // manifest v3 builds of the extension, by adding/removing the
-            // necessary declarativeNetRequest rules.
-            await toggleUserAllowlistDomain(data.domain, data.value)
+            if (data.list === 'allowlisted') {
+                await toggleUserAllowlistDomain(data.domain, data.value)
+            }
 
             // TODO - Once support for the temporary allowlist
             //        (the contentBlocking) section of extension-config.json is
             //        added, the "denylisted" event needs to be handled here to
             //        ensure that users are able to override the temporary
             //        allowlist manually be re-enabling protections for a
-            //        webiste.
+            //        website.
         }
 
         browserWrapper.notifyPopup({ allowlistChanged: true })
