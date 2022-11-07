@@ -11,7 +11,6 @@ import trackers from '../../shared/js/background/trackers.es6'
 import {
     getMatchDetails,
     onConfigUpdate,
-    refreshUserAllowlistRules,
     toggleUserAllowlistDomain,
     SETTING_PREFIX,
     USER_ALLOWLIST_RULE_ID
@@ -396,15 +395,6 @@ describe('declarativeNetRequest', () => {
 
         // Domains should be normalized.
         await toggleUserAllowlistDomain('FOO.InVaLiD', true)
-        expectState(['foo.invalid', 'example.invalid'])
-
-        // Allowlisting rule should be restored by refresh.
-        expectState(['foo.invalid', 'example.invalid'])
-        refreshUserAllowlistRules(['foo.invalid', 'ExAmPlE.invalid'])
-        expectState(['foo.invalid', 'example.invalid'])
-        dynamicRulesByRuleId.clear()
-        expectState([])
-        refreshUserAllowlistRules(['foo.invalid', 'example.invalid'])
         expectState(['foo.invalid', 'example.invalid'])
 
         // Try removing domains from the allowlist.

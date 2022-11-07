@@ -308,25 +308,6 @@ export async function toggleUserAllowlistDomain (domain, enable) {
     await updateUserAllowlistRule(Array.from(allowlistedDomains))
 }
 
-/**
- * Reset the user allowlisting declarativeNetRequest rule to match the given
- * array of user allowlisted domains.
- * @param {string[]} allowlistedDomains
- * @return {Promise}
- */
-export async function refreshUserAllowlistRules (allowlistedDomains) {
-    // Normalise and validate the domains. We're passing the user provided
-    // domains through to the declarativeNetRequest API, so it's important to
-    // prevent invalid input sneaking through.
-    const normalizedAllowlistedDomains = /** @type {string[]} */ (
-        allowlistedDomains
-            .map(normalizeUntrustedDomain)
-            .filter(domain => typeof domain === 'string')
-    )
-
-    await updateUserAllowlistRule(normalizedAllowlistedDomains)
-}
-
 if (browserWrapper.getManifestVersion() === 3) {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)
