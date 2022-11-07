@@ -69,7 +69,6 @@ function convertToRequests (tab, protectionsEnabled) {
             if (!protectionsEnabled && detectedRequest.action !== 'none') {
                 /** @type {DetectedRequest["state"]} */
                 const nextState = { allowed: { reason: 'protectionDisabled' } }
-                if (!nextState) continue // This should never happen, but if it
                 const request = {
                     ...detectedRequest,
                     state: nextState

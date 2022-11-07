@@ -53,6 +53,9 @@ export class Tracker {
         // if we can't convert the state, do nothing.
         if (!state) return
 
+        // Chose the first tracker radar category that we accept
+        const category = t.tracker?.categories?.find(trackerRadarCategory => constants.displayCategories.includes(trackerRadarCategory));
+
         /** @type {DetectedRequestWithAction} */
         const detectedRequest = {
             action: t.action,
@@ -62,7 +65,7 @@ export class Tracker {
             entityName: this.displayName,
             prevalence: this.prevalence,
             ownerName: this.parentCompany?.name,
-            category: t.tracker?.categories?.find(category => constants.displayCategories.includes(category)),
+            category,
             state
         }
 

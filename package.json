@@ -83,7 +83,7 @@
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#3.3.1",
         "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.2.5",
         "@duckduckgo/jsbloom": "^1.0.2",
-        "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#d70bcec5b8f90ee792fe006b08207d1010809133",
+        "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#c82b66d02bcb756134524f99c38bdaa4f02418b7",
         "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.1",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#main",
         "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.1.0",
