@@ -39,7 +39,7 @@
         "@babel/core": "^7.19.6",
         "@babel/node": "^7.20.2",
         "@babel/polyfill": "^7.10.4",
-        "@babel/preset-env": "^7.19.4",
+        "@babel/preset-env": "^7.20.2",
         "@fingerprintjs/fingerprintjs": "^3.3.6",
         "@types/chrome": "0.0.200",
         "@types/jasmine": "^4.3.0",
