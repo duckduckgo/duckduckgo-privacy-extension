@@ -1,7 +1,8 @@
 /**
- * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').ExtensionGetPrivacyDashboardData} ExtensionGetPrivacyDashboardData
+ * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').GetPrivacyDashboardData} ExtensionGetPrivacyDashboardData
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').DetectedRequest} DetectedRequest
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').ProtectionsStatus} ProtectionsStatus
+ * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').ParentEntity} ParentEntity
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').EmailProtectionUserData} EmailProtectionUserData
  */
 
@@ -17,6 +18,7 @@ export function dashboardDataFromTab (tab, userData) {
     const protectionsEnabled = !tab.site.allowlisted && !tab.site.isBroken && tab.site.enabledFeatures.includes('contentBlocking')
 
     // parent entity, if available
+    /** @type {ParentEntity | undefined} */
     let parentEntity
     if (tab.site.parentEntity) {
         parentEntity = {
