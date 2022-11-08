@@ -54,7 +54,7 @@ export class Tracker {
         if (!state) return
 
         // Choose the first tracker radar category that we accept
-        const category = t.tracker?.categories?.find(trackerRadarCategory => constants.displayCategories.includes(trackerRadarCategory));
+        const category = t.tracker?.categories?.find(trackerRadarCategory => constants.displayCategories.includes(trackerRadarCategory))
 
         /** @type {DetectedRequestWithAction} */
         const detectedRequest = {
