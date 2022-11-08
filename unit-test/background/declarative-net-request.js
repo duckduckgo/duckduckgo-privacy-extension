@@ -203,7 +203,7 @@ describe('declarativeNetRequest', () => {
 
                 const {
                     etag: actualLookupEtag,
-                    lookup: actualLookup,
+                    matchDetailsByRuleId: actualLookup,
                     extensionVersion: actualLookupExtensionVersion
                 } = setting
                 const etagRuleId = expectedRuleIdsByConfigName[configName][0]
