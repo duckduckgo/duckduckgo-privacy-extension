@@ -67,14 +67,6 @@ describe('Tab', () => {
                 site: {
                     url: 'http://example.com',
                     trackerUrls: [],
-                    grade: {
-                        https: false,
-                        httpsAutoUpgrade: false,
-                        privacyScore: 2,
-                        entitiesBlocked: {},
-                        entitiesNotBlocked: {},
-                        scores: null
-                    },
                     didIncrementCompaniesData: false,
                     tosdr: {},
                     specialDomainName: null,

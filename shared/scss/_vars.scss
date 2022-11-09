@@ -41,13 +41,6 @@ $color--site-rating--c: $color--orange;
 $color--site-rating--d: $color--red;
 $color--site-rating--f: $color--red;
 
-/* Popup */
-$popup__width: 300px;
-
-/* Hamburger Button & Menu */
-$hamburger-button__color: #afafaf;
-$hamburger-menu__bg-color: $slate;
-
 /* The ratings we give */
 $ratings: ("a", "b-plus", "b", "c", "c-plus", "d", "f");
 
@@ -64,11 +57,6 @@ $card__margin--right: 0;
 $card__margin--bottom: 0;
 $card__margin--left: 0;
 $card__margin: $card__margin--top $card__margin--right $card__margin--bottom $card__margin--left;
-
-/* Popover */
-$popover__color: $white;
-$popover__bg-color: $slate;
-$popover__border-radius: 3px;
 
 /* CSS Arrow */
 $arrow__bg-color: $white;

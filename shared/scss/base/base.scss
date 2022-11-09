@@ -288,21 +288,6 @@ a {
 }
 
 
-/* Popover
- * Template is in templates/shread/popover.es6.js
- * Sample usage:
- *    .site-info__li--trackers {
- *        position: relative;
- *
- *        &:hover {
- *            .popover.site_info__trackers__popover {
- *                display: block;
- *                top: initial;
- *                bottom: 45px;
- *            }
- *        }
- */
-
 /* Popout box with left arrow */
 .modal-box {
     .modal-box__body {

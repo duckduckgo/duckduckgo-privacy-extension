@@ -6,12 +6,6 @@
     background-size: contain;
 }
 
-@mixin ddg_logo--small () {
-    @include cross_platform_bg_image("logo-small.svg");
-    background-size: contain;
-}
-
-
 /* App states */
 @mixin is_disabled () {
     opacity: 0.5;
@@ -139,77 +133,6 @@
     }
     .is-browser--moz & {
         background-image: url("moz-extension://#{$asset-path}#{$image}");
-    }
-}
-
-/* Sliding subviews */
-@mixin sliding_subview () {
-
-    .sliding-subview {
-        position: absolute;
-        top: 0;
-        left: $popup__width;
-        width: $popup__width;
-        height: 100%;
-        box-sizing: border-box;
-
-        &.sliding-subview--root {
-            position: relative;
-            top: 0;
-            left: 0;
-            transition: left 0.35s ease-in-out;
-
-            &.sliding-subview--open {
-                left: -$popup__width;
-            }
-        }
-
-        &.sliding-subview--has-fixed-header {
-            padding: 58px 0 0 0;
-        }
-
-        .sliding-subview__header {
-            z-index: 10;
-            position: fixed;
-            top: 10px;
-            left: 0;
-            right: 0;
-            height: 42px;
-            margin: 0;
-            font-size: 1.14em;
-            color: #383838;
-            overflow: hidden;
-
-            .sliding-subview__header__back,
-            .sliding-subview__header__title {
-                height: 26px;
-                width: 14px;
-                color: $slate;
-                font-size: 14px;
-                font-weight: bold;
-                padding: 14px 0 0 14px;
-                display: inline-block;
-
-                &.sliding-subview__header__back--is-icon {
-                    padding-left: 35px;
-                }
-            }
-
-            .sliding-subview__header__title {
-                z-index: -1;
-                position: absolute;
-                top: 0;
-                right: 0;
-                left: 0;
-                width: auto;
-                text-align: center;
-                font-weight: bold;
-                color: $slate;
-                padding: 14px 0 10px 0;
-                text-decoration: none;
-            }
-
-        }
     }
 }
 

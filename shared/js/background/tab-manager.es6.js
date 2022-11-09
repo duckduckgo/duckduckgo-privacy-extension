@@ -154,18 +154,12 @@ class TabManager {
 
                 /**
                  * Re: HTTPS. When the tab finishes loading:
-                 * 1. check main_frame url (via tab.url) for http/s, update site grade
-                 * 2. check for incomplete upgraded https upgrade requests, allowlist
+                 * Check for incomplete upgraded https upgrade requests, allowlist
                  * the entire site if there are any then notify tabManager
                  * NOTE: we aren't making a distinction between active and passive
                  * content when https content is mixed after a forced upgrade
                  */
                 if (tab.status === 'complete') {
-                    const hasHttps = !!(tab.url && tab.url.match(/^https:\/\//))
-                    tab.site.grade.setHttps(hasHttps, hasHttps)
-
-                    console.info(tab.site.grade)
-
                     if (tab.statusCode === 200 &&
                         !tab.site.didIncrementCompaniesData) {
                         if (tab.trackers && Object.keys(tab.trackers).length > 0) {

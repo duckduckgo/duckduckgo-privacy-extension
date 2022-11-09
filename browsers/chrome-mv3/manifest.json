@@ -78,7 +78,6 @@
         {
             "resources": [
                 "/web_accessible_resources/*",
-                "/img/logo-small.svg",
                 "/public/css/autofill.css",
                 "/public/font/*"
             ],

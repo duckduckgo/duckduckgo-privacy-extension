@@ -1,16 +1,7 @@
-/**
- * Each Site creates its own Grade instance. The attributes
- * of the Grade are updated as we process new events e.g. trackers
- * blocked or https status.
- *
- * The Grade attributes are then used generate a site
- * privacy grade used in the popup.
- */
 const settings = require('../settings.es6')
 const utils = require('../utils.es6')
 const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
-const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper.es6')
 const { TabState } = require('./tab-state')
 
@@ -28,24 +19,11 @@ class Site {
         /** @type {TabState} */
         this._tabState = tabState
         this.trackerUrls = []
-        this.grade = new Grade()
         this.setListStatusFromGlobal()
 
         this.didIncrementCompaniesData = false
 
         this.tosdr = privacyPractices.getTosdr(this.domain)
-
-        if (this.parentEntity && this.parentPrevalence) {
-            this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)
-        }
-
-        if ('parent' in globalThis) {
-            this.grade.setPrivacyScore(privacyPractices.getTosdrScore(this.domain, parent))
-        }
-
-        if (this.url.match(/^https:\/\//)) {
-            this.grade.setHttps(true, true)
-        }
 
         // set specialDomainName when the site is created
         this.specialDomainName = this.getSpecialDomain()
@@ -191,15 +169,6 @@ class Site {
         }
         if (t.tracker && this.trackerUrls.indexOf(t.tracker.domain) === -1) {
             this.trackerUrls.push(t.tracker.domain)
-            const entityPrevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
-
-            if (t.action) {
-                if (['block', 'redirect', 'ignore-user'].includes(t.action)) {
-                    this.grade.addEntityBlocked(t.tracker.owner.name, entityPrevalence)
-                } else if (t.action === 'ignore') {
-                    this.grade.addEntityNotBlocked(t.tracker.owner.name, entityPrevalence)
-                }
-            }
         }
     }
 
