@@ -69,6 +69,111 @@ async function findExistingDynamicRule (desiredRuleId) {
 }
 
 /**
+ * Check if the declarativeNetRequest rules for a configuration need to be
+ * updated. Returns true if so, false if they are already up to date.
+ * @param {string} configName
+ * @param {Object} expectedState
+ * @returns {Promise<boolean>}
+ */
+async function configRulesNeedUpdate (configName, expectedState) {
+    await settings.ready()
+    const settingName = SETTING_PREFIX + configName
+    const settingValue = settings.getSetting(settingName)
+
+    // No setting saved for the configuration yet, this is likely the first time
+    // it has been updated - rules definitely need to be updated.
+    if (!settingValue) {
+        return true
+    }
+
+    // If any of the setting values aren't as expected, the rules could be out
+    // of date.
+    for (const [key, value] of Object.entries(expectedState)) {
+        if (settingValue[key] !== value) {
+            return true
+        }
+    }
+
+    // To be sure the rules are up to date, there must be an expected etag.
+    const expectedEtag = expectedState.etag || settingValue.etag
+    if (!expectedEtag) {
+        return true
+    }
+
+    // Find the etag rule for this configuration.
+    const [etagRuleId] = ruleIdRangeByConfigName[configName]
+    const existingEtagRule = await findExistingDynamicRule(etagRuleId)
+
+    // If none exists, the rules definitely need to be updated.
+    if (!existingEtagRule) {
+        return true
+    }
+
+    // Otherwise, the rules only need be updated if the etags no longer match.
+    return existingEtagRule.condition.urlFilter !== expectedEtag
+}
+
+/**
+ * Update the declarativeNetRequest rules and corresponding state in settings
+ * for a configuration.
+ * @param {string} configName
+ * @param {Object} latestState
+ * @param {import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule[]} rules
+ * @param {Object} matchDetailsByRuleId
+ * @returns {Promise<>}
+ */
+async function updateConfigRules (
+    configName, latestState, rules, matchDetailsByRuleId
+) {
+    const [ruleIdStart, ruleIdEnd] = ruleIdRangeByConfigName[configName]
+    const etagRuleId = ruleIdStart
+    const maxNumberOfRules = ruleIdEnd - ruleIdStart
+
+    const { etag } = latestState
+
+    if (!rules) {
+        console.error(
+            'No declarativeNetRequest rules generated for configuration: ',
+            configName, '(Etag: ', etag, ')'
+        )
+        return
+    }
+
+    // Add the new etag rule.
+    rules.push(generateEtagRule(etagRuleId, etag))
+
+    if (rules.length > maxNumberOfRules) {
+        console.error(
+            'Too many declarativeNetRequest rules generated for configuration: ',
+            configName,
+            '(Etag: ', etag, ', Rules generated: ', rules.length, ')'
+        )
+        return
+    }
+
+    // Ensure any existing rules for the configuration are removed.
+    const removeRuleIds = []
+    for (let i = ruleIdStart; i <= ruleIdEnd; i++) {
+        removeRuleIds.push(i)
+    }
+
+    // Install the updated rules.
+    await chrome.declarativeNetRequest.updateDynamicRules({
+        removeRuleIds, addRules: rules
+    })
+
+    // Then update the setting entry.
+    const settingName = SETTING_PREFIX + configName
+    const settingValue = {
+        matchDetailsByRuleId
+    }
+    for (const key of Object.keys(latestState)) {
+        settingValue[key] = latestState[key]
+    }
+    settings.updateSetting(settingName, settingValue)
+}
+
+/**
  * tdsStorage.onUpdate listener which is called when the configurations are
  * updated and when the background ServiceWorker is restarted.
  * Note: Only exported for use by unit tests, do not call manually.
@@ -78,46 +183,16 @@ async function findExistingDynamicRule (desiredRuleId) {
  * @returns {Promise}
  */
 export async function onConfigUpdate (configName, etag, configValue) {
-    await settings.ready()
-
-    const [ruleIdStart, ruleIdEnd] = ruleIdRangeByConfigName[configName]
-    const etagRuleId = ruleIdStart
-    const maxNumberOfRules = ruleIdEnd - ruleIdStart
-
-    const settingName = SETTING_PREFIX + configName
-    const settingValue = settings.getSetting(settingName)
-
     const extensionVersion = browserWrapper.getExtensionVersion()
-    const previousSettingEtag = settingValue?.etag
-    const previousExtensionVersion = settingValue?.extensionVersion
+    const [ruleIdStart] = ruleIdRangeByConfigName[configName]
 
-    // If both the settings entry and declarativeNetRequest rules are present
-    // and the etags all match, everything is already up to date.
-    // Note: We also check the extension version here, so that if the extension
-    //       is updated and the ddg2dnr dependency was updated, we have the
-    //       opportunity to regenerate the rulesets with the latest code.
-    if (previousSettingEtag &&
-        previousSettingEtag === etag &&
-        previousExtensionVersion &&
-        previousExtensionVersion === extensionVersion) {
-        const existingEtagRule = await findExistingDynamicRule(etagRuleId)
-        const previousRuleEtag =
-            existingEtagRule && existingEtagRule.condition.urlFilter
-
-        // No change, rules are already current.
-        if (previousRuleEtag && previousRuleEtag === etag) {
+    // TDS (aka the block list).
+    if (configName === 'tds') {
+        const latestState = { etag, extensionVersion }
+        if (!(await configRulesNeedUpdate(configName, latestState))) {
             return
         }
-    }
 
-    // Otherwise, it is necessary to update the declarativeNetRequest rules and
-    // settings again.
-
-    let addRules
-    let lookup
-
-    // TDS.
-    if (configName === 'tds') {
         await startup.ready()
         // @ts-ignore: Once startup.ready() has finished, surrogateList will be
         //             assigned.
@@ -132,10 +207,16 @@ export async function onConfigUpdate (configName, etag, configValue) {
             chrome.declarativeNetRequest.isRegexSupported,
             ruleIdStart + 1
         )
-        addRules = ruleset
-        lookup = matchDetailsByRuleId
+
+        await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId)
+
     // Extension configuration.
     } else if (configName === 'config') {
+        const latestState = { etag, extensionVersion }
+        if (!(await configRulesNeedUpdate(configName, latestState))) {
+            return
+        }
+
         const {
             ruleset, matchDetailsByRuleId
         } = await generateExtensionConfigurationRuleset(
@@ -143,41 +224,9 @@ export async function onConfigUpdate (configName, etag, configValue) {
             chrome.declarativeNetRequest.isRegexSupported,
             ruleIdStart + 1
         )
-        addRules = ruleset
-        lookup = matchDetailsByRuleId
+
+        await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId)
     }
-
-    if (!addRules) {
-        console.error(
-            'No declarativeNetRequest rules generated for configuration: ',
-            configName, '(Etag: ', etag, ')'
-        )
-        return
-    }
-
-    // Add the new etag rule.
-    addRules.push(generateEtagRule(etagRuleId, etag))
-
-    if (addRules.length > maxNumberOfRules) {
-        console.error(
-            'Too many declarativeNetRequest rules generated for configuration: ',
-            configName,
-            '(Etag: ', etag, ', Rules generated: ', addRules.length, ')'
-        )
-        return
-    }
-
-    // Ensure any existing rules for the configuration are removed.
-    const removeRuleIds = []
-    for (let i = ruleIdStart; i <= ruleIdEnd; i++) {
-        removeRuleIds.push(i)
-    }
-
-    // Install the updated rules and then update the setting entry.
-    await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds, addRules
-    })
-    settings.updateSetting(settingName, { etag, lookup, extensionVersion })
 }
 
 /**
@@ -226,7 +275,7 @@ export async function getMatchDetails (ruleId) {
         if (ruleId >= ruleIdStart && ruleId <= ruleIdEnd) {
             const settingName = SETTING_PREFIX + configName
             const settingValue = settings.getSetting(settingName)
-            const matchDetails = settingValue?.lookup?.[ruleId]
+            const matchDetails = settingValue?.matchDetailsByRuleId?.[ruleId]
             if (matchDetails) {
                 if (configName === 'tds') {
                     return {
