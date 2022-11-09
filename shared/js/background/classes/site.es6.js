@@ -119,13 +119,6 @@ class Site {
         }
     }
 
-    /*
-     * Send message to the popup to rerender the allowlist
-     */
-    notifyAllowlistChanged () {
-        browserWrapper.notifyPopup({ allowlistChanged: true })
-    }
-
     isContentBlockingEnabled () {
         return this.isFeatureEnabled('contentBlocking')
     }
@@ -160,7 +153,7 @@ class Site {
     }
 
     /**
-     * @param {import("../../../../node_modules/@duckduckgo/privacy-grade/src/classes/trackers").TrackerData} t
+     * @param {import("./trackers").TrackerData} t
      */
     addTracker (t) {
         // Ignore trackers that aren't first party

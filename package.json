@@ -84,7 +84,6 @@
         "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.2.2",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#b79e0bb965cc1b4f56f61d2f5027563a83d19ef3",
-        "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#jkt/remove-grade",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#main",
         "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.1.0",
         "bel": "6.0.0",

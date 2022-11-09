@@ -114,8 +114,6 @@ class TabManager {
             //        allowlist manually be re-enabling protections for a
             //        website.
         }
-
-        browserWrapper.notifyPopup({ allowlistChanged: true })
     }
 
     /**

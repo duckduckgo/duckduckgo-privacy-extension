@@ -85,7 +85,7 @@ function convertToRequests (tab, protectionsEnabled) {
 }
 
 /**
- * @param {import('@duckduckgo/privacy-grade/src/classes/trackers.js').ActionName} action
+ * @param {import('./trackers.js').ActionName} action
  * @param {boolean} isSameEntity
  * @return {DetectedRequest["state"] | null}
  */

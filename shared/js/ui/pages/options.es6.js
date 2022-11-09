@@ -9,7 +9,6 @@ const allowlistTemplate = require('./../templates/allowlist.es6.js')
 const UserDataView = require('./../views/user-data.es6.js')
 const UserDataModel = require('./../models/user-data.es6.js')
 const userDataTemplate = require('./../templates/user-data.es6.js')
-const BackgroundMessageModel = require('./../models/background-message.es6.js')
 const browserUIWrapper = require('./../base/ui-wrapper.es6.js')
 const t = window.DDG.base.i18n.t
 
@@ -62,8 +61,6 @@ Options.prototype = window.$.extend({},
                 appendTo: $parent,
                 template: allowlistTemplate
             })
-
-            this.message = new BackgroundMessageModel({})
         },
 
         _onFeedbackClick: function (e) {
