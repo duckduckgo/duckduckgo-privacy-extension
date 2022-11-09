@@ -1,5 +1,6 @@
 const tdsStorage = require('./storage/tds.es6')
 const tldts = require('tldts')
+const { getURLWithoutQueryString } = require('./utils.es6')
 
 function isTrackerAllowlisted (site, request) {
     // check that allowlist exists and is not disabled
@@ -28,7 +29,7 @@ function isTrackerAllowlisted (site, request) {
 
 function _matchesRule (site, request, allowListEntry) {
     let matchedRule = null
-    request = request.split('?')[0].split(';')[0]
+    request = getURLWithoutQueryString(request).split(';')[0]
 
     // remove port from request urls
     const parsedRequest = new URL(request)

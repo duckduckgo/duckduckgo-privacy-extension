@@ -87,21 +87,22 @@ describe('Test request blocking', () => {
         // Test the tabs tracker objects match the expected snapshot.
         const trackerSnapshot = {
             'Test Site for Tracker Blocking': {
-                displayName: 'Bad Third Party Site',
-                prevalence: 0.1,
                 urls: {
-                    'bad.third-party.site': {
-                        block: {
-                            action: 'block',
-                            reason: 'default block',
-                            categories: [],
-                            isBlocked: true,
-                            isSameEntity: false,
-                            isSameBaseDomain: false
+                    'bad.third-party.site:block': {
+                        action: 'block',
+                        url: 'https://bad.third-party.site/privacy-protections/request-blocking/block-me/script.js',
+                        eTLDplus1: 'third-party.site',
+                        pageUrl: 'https://privacy-test-pages.glitch.me/privacy-protections/request-blocking/',
+                        entityName: 'Bad Third Party Site',
+                        prevalence: 0.1,
+                        state: {
+                            blocked: {}
                         }
                     }
                 },
-                count
+                count,
+                displayName: 'Bad Third Party Site',
+                prevalence: 0.1
             }
         }
         expect(trackers).toEqual(trackerSnapshot)

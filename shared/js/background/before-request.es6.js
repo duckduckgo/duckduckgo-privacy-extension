@@ -316,7 +316,8 @@ function blockHandleResponse (thisTab, requestData) {
             // record potential blocked trackers for this tab
             // without a baseDomain, it wouldn't make sense to record this
             if (baseDomain) {
-                thisTab.addToTrackers(tracker, baseDomain, requestData.url)
+                const url = utils.getURLWithoutQueryString(requestData.url)
+                thisTab.addToTrackers(tracker, baseDomain, url)
             }
         }
         // the tab has finished loading
