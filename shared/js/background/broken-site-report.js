@@ -8,6 +8,7 @@ const load = require('./load.es6')
 const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
+const { getURLWithoutQueryString } = require('./utils.es6')
 
 /**
  *
@@ -82,11 +83,10 @@ export function getURL (pixelName) {
  * @param {string | undefined} description - optional description
  */
 export function breakageReportForTab (tab, tds, category, description) {
-    const siteUrl = tab.url?.split('?')[0].split('#')[0]
-    if (!siteUrl) {
+    if (!tab.url) {
         return
     }
-
+    const siteUrl = getURLWithoutQueryString(tab.url).split('#')[0]
     const blocked = []
     const surrogates = []
 
