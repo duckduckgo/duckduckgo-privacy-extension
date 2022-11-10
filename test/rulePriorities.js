@@ -15,6 +15,11 @@ const {
 } = require('../lib/trackerAllowlist')
 
 const {
+    CONTENT_BLOCKING_ALLOWLIST_PRIORITY,
+    UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY
+} = require('../lib/temporaryAllowlist')
+
+const {
     AD_ATTRIBUTION_POLICY_PRIORITY,
     USER_ALLOWLISTED_PRIORITY
 } = require('../lib/rulePriorities')
@@ -30,9 +35,12 @@ describe('Rule Priorities', () => {
         assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY >
                   TRACKER_BLOCKING_CEILING_PRIORITY)
 
-        // Extension state rule priorities.
-        assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY >
-                 TRACKER_BLOCKING_CEILING_PRIORITY)
+        // Content Blocking allowlist and ad attribution allowlisting rules
+        // should disable Tracker Blocking, but not other protections.
+        assert.ok(CONTENT_BLOCKING_ALLOWLIST_PRIORITY >
+                  TRACKER_BLOCKING_CEILING_PRIORITY)
+        assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY ===
+                  CONTENT_BLOCKING_ALLOWLIST_PRIORITY)
 
         // Smarter Encryption priority.
         // Note: It's important that the Smarter Encryption rule priority is
@@ -45,9 +53,16 @@ describe('Rule Priorities', () => {
                   TRACKER_ALLOWLIST_CEILING_PRIORITY)
         assert.ok(SMARTER_ENCRYPTION_PRIORITY >
                  AD_ATTRIBUTION_POLICY_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY >
+                  CONTENT_BLOCKING_ALLOWLIST_PRIORITY)
 
-        // If the user disables protections for a website, that should take
-        // precedence over everything else.
-        assert.ok(USER_ALLOWLISTED_PRIORITY > SMARTER_ENCRYPTION_PRIORITY)
+        // Unprotected Temporary allowlist and user allowlist should disable all
+        // protections.
+        assert.ok(UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY >
+                  TRACKER_BLOCKING_CEILING_PRIORITY)
+        assert.ok(UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY >
+                  SMARTER_ENCRYPTION_PRIORITY)
+        assert.ok(USER_ALLOWLISTED_PRIORITY ===
+                  UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
     })
 })

@@ -39,7 +39,7 @@ describe('Tracker Allowlist', () => {
 
         await assert.doesNotReject(() =>
             generateExtensionConfigurationRuleset(
-                extensionConfig, isRegexSupportedTrue
+                extensionConfig, [], isRegexSupportedTrue
             )
         )
 
@@ -48,6 +48,7 @@ describe('Tracker Allowlist', () => {
         await assert.rejects(() =>
             generateExtensionConfigurationRuleset(
                 extensionConfig,
+                [],
                 isRegexSupportedTrue
             )
         )
@@ -60,7 +61,7 @@ describe('Tracker Allowlist', () => {
                 features: {
                     trackerAllowlist: {}
                 }
-            }, isRegexSupportedTrue),
+            }, [], isRegexSupportedTrue),
             { ruleset: [], matchDetailsByRuleId: {} }
         )
 
@@ -82,7 +83,7 @@ describe('Tracker Allowlist', () => {
                         }
                     }
                 }
-            }, isRegexSupportedTrue),
+            }, [], isRegexSupportedTrue),
             { ruleset: [], matchDetailsByRuleId: {} }
         )
 
@@ -96,7 +97,7 @@ describe('Tracker Allowlist', () => {
                         }
                     }
                 }
-            }, isRegexSupportedTrue),
+            }, [], isRegexSupportedTrue),
             { ruleset: [], matchDetailsByRuleId: {} }
         )
     })
@@ -158,7 +159,7 @@ describe('Tracker Allowlist', () => {
 
         assert.deepEqual(
             await generateExtensionConfigurationRuleset(
-                extensionConfig, isRegexSupportedTrue, 23
+                extensionConfig, [], isRegexSupportedTrue, 23
             ),
             {
                 ruleset: [

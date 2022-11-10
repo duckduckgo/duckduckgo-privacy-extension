@@ -107,6 +107,7 @@ async function main () {
                               extensionConfigFilePath, { encoding: 'utf8' }
                           )
                       ),
+                      [],
                       isRegexSupported
                   )
 
