@@ -76,13 +76,18 @@ async function findExistingDynamicRule (desiredRuleId) {
  * @returns {Promise<boolean>}
  */
 async function configRulesNeedUpdate (configName, expectedState) {
-    await settings.ready()
     const settingName = SETTING_PREFIX + configName
+    await settings.ready()
     const settingValue = settings.getSetting(settingName)
 
     // No setting saved for the configuration yet, this is likely the first time
     // it has been updated - rules definitely need to be updated.
     if (!settingValue) {
+        return true
+    }
+
+    // To be sure the rules are up to date, there must be an expected etag.
+    if (!expectedState.etag) {
         return true
     }
 
@@ -92,12 +97,6 @@ async function configRulesNeedUpdate (configName, expectedState) {
         if (settingValue[key] !== value) {
             return true
         }
-    }
-
-    // To be sure the rules are up to date, there must be an expected etag.
-    const expectedEtag = expectedState.etag || settingValue.etag
-    if (!expectedEtag) {
-        return true
     }
 
     // Find the etag rule for this configuration.
@@ -110,7 +109,7 @@ async function configRulesNeedUpdate (configName, expectedState) {
     }
 
     // Otherwise, the rules only need be updated if the etags no longer match.
-    return existingEtagRule.condition.urlFilter !== expectedEtag
+    return existingEtagRule.condition.urlFilter !== expectedState.etag
 }
 
 /**
@@ -170,7 +169,85 @@ async function updateConfigRules (
     for (const key of Object.keys(latestState)) {
         settingValue[key] = latestState[key]
     }
+    await settings.ready()
     settings.updateSetting(settingName, settingValue)
+}
+
+/**
+ * Retrieve a normalized and sorted list of user denylisted domains.
+ * @returns {Promise<string[]>}
+ */
+async function getDenylistedDomains () {
+    await settings.ready()
+    const denylist = settings.getSetting('denylisted') || {}
+
+    const denylistedDomains = []
+    for (const [domain, enabled] of Object.entries(denylist)) {
+        if (enabled) {
+            const normalizedDomain = normalizeUntrustedDomain(domain)
+            if (normalizedDomain) {
+                denylistedDomains.push(normalizedDomain)
+            }
+        }
+    }
+
+    return denylistedDomains.sort()
+}
+
+/**
+ * Utility function to regenerate the declarativeNetRequest rules for the
+ * extension configuration (extension-config.json). The configuration's value
+ * and etag can optionally be passed in (e.g. when the configuration has just
+ * been updated), but will be read from settings storage otherwise.
+ * @param {string?} etag
+ * @param {object?} configValue
+ * @returns {Promise<>}
+ */
+async function updateExtensionConfigRules (etag = null, configValue = null) {
+    const extensionVersion = browserWrapper.getExtensionVersion()
+    const denylistedDomains = await getDenylistedDomains()
+
+    const latestState = {
+        extensionVersion,
+        denylistedDomains: denylistedDomains.join(),
+        etag
+    }
+
+    if (!configValue) {
+        await tdsStorage.ready('config')
+        configValue = await tdsStorage.getListFromLocalDB('config')
+    }
+
+    if (!etag) {
+        const settingName = SETTING_PREFIX + 'config'
+        await settings.ready()
+        await tdsStorage.ready('config')
+        const settingValue = settings.getSetting(settingName)
+        if (!settingValue?.etag) {
+            // Should not be possible, but if the etag is unknown at this point
+            // there's not much that can be done.
+            return
+        }
+        latestState.etag = settingValue.etag
+    }
+
+    if (!(await configRulesNeedUpdate('config', latestState))) {
+        return
+    }
+
+    const [ruleIdStart] = ruleIdRangeByConfigName.config
+    const {
+        ruleset, matchDetailsByRuleId
+    } = await generateExtensionConfigurationRuleset(
+        configValue,
+        denylistedDomains,
+        chrome.declarativeNetRequest.isRegexSupported,
+        ruleIdStart + 1
+    )
+
+    await updateConfigRules(
+        'config', latestState, ruleset, matchDetailsByRuleId
+    )
 }
 
 /**
@@ -183,11 +260,10 @@ async function updateConfigRules (
  * @returns {Promise}
  */
 export async function onConfigUpdate (configName, etag, configValue) {
-    const extensionVersion = browserWrapper.getExtensionVersion()
-    const [ruleIdStart] = ruleIdRangeByConfigName[configName]
-
     // TDS (aka the block list).
     if (configName === 'tds') {
+        const extensionVersion = browserWrapper.getExtensionVersion()
+        const [ruleIdStart] = ruleIdRangeByConfigName[configName]
         const latestState = { etag, extensionVersion }
         if (!(await configRulesNeedUpdate(configName, latestState))) {
             return
@@ -212,20 +288,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
 
     // Extension configuration.
     } else if (configName === 'config') {
-        const latestState = { etag, extensionVersion }
-        if (!(await configRulesNeedUpdate(configName, latestState))) {
-            return
-        }
-
-        const {
-            ruleset, matchDetailsByRuleId
-        } = await generateExtensionConfigurationRuleset(
-            configValue,
-            chrome.declarativeNetRequest.isRegexSupported,
-            ruleIdStart + 1
-        )
-
-        await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId)
+        await updateExtensionConfigRules(etag, configValue)
     }
 }
 
@@ -355,6 +418,15 @@ export async function toggleUserAllowlistDomain (domain, enable) {
     allowlistedDomains[enable ? 'add' : 'delete'](normalizedDomain)
 
     await updateUserAllowlistRule(Array.from(allowlistedDomains))
+}
+
+/**
+ * Update all contentBlocking and unprotectedTemporary allowlisting rules so
+ * that user "denylisted" domains are excluded.
+ * @return {Promise}
+ */
+export async function updateUserDenylist () {
+    await updateExtensionConfigRules()
 }
 
 if (browserWrapper.getManifestVersion() === 3) {
