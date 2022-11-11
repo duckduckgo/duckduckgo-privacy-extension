@@ -391,10 +391,6 @@ export function search ({ term }) {
     }
 }
 
-export function getShareFeedbackLink () {
-    return browserWrapper.getExtensionURL('/html/feedback.html')
-}
-
 export function openShareFeedbackPage () {
     return browserWrapper.openExtensionPage('/html/feedback.html')
 }
