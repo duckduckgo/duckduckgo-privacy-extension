@@ -229,6 +229,11 @@ export async function enableSocialTracker (data, sender) {
     }
 }
 
+export function updateYouTubeCTLAddedFlag (value, sender) {
+    const tab = tabManager.get({ tabId: sender.tab.id })
+    tab.ctlYouTubeAdded = Boolean(value)
+}
+
 export async function updateSetting ({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)

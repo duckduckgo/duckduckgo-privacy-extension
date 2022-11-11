@@ -170,6 +170,14 @@ class Tab {
         this._tabState.setValue('statusCode', value)
     }
 
+    get ctlYouTubeAdded () {
+        return this._tabState.ctlYouTubeAdded
+    }
+
+    set ctlYouTubeAdded (value) {
+        this._tabState.setValue('ctlYouTubeAdded', value)
+    }
+
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
      * @param {string} requestURL
