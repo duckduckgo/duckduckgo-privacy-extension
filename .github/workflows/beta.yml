@@ -42,4 +42,4 @@ jobs:
           CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
           CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
         run: |
-          bash ./scripts/chrome-store-publish.sh ${{ secrets.CWS_BETA_EXTENSION_ID }} ./build/chrome-mv3/release/chrome-release-*.zip
+          bash ./scripts/chrome-store-publish.sh ${{ secrets.CWS_BETA_EXTENSION_ID }} ./build/chrome-mv3/release/chrome-mv3-release-*.zip
