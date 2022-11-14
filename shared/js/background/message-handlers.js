@@ -13,6 +13,7 @@ const brokenSiteReport = require('./broken-site-report')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
+const { enableInverseRules } = require('./classes/custom-rules-manager')
 const { LegacyTabTransfer } = require('./classes/legacy-tab-transfer')
 const getArgumentsObject = require('./helpers/arguments-object')
 
@@ -164,6 +165,11 @@ export async function enableSocialTracker (data, sender) {
     await settings.ready()
     const tab = tabManager.get({ tabId: sender.tab.id })
     const entity = data.entity
+
+    if (browserWrapper.getManifestVersion() === 3) {
+        enableInverseRules(data.action, sender.tab.id)
+
+    }
     tab.site.clickToLoad.push(entity)
 
     if (data.isLogin) {

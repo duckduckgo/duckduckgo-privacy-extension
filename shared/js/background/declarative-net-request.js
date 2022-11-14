@@ -180,6 +180,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
         removeRuleIds, addRules
     })
     settings.updateSetting(settingName, { etag, lookup, extensionVersion })
+    settings.updateSetting('inverseCustomRules', inverseCustomRules )
 }
 
 /**
