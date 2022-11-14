@@ -115,6 +115,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
 
     let addRules
     let lookup
+    let inverseCustomRules = []
 
     // TDS.
     if (configName === 'tds') {
@@ -124,7 +125,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
         const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
         const {
-            ruleset, matchDetailsByRuleId
+            ruleset, matchDetailsByRuleId, customActionRules
         } = await generateTdsRuleset(
             configValue,
             supportedSurrogates,
@@ -134,6 +135,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
         )
         addRules = ruleset
         lookup = matchDetailsByRuleId
+        inverseCustomRules = customActionRules
     // Extension configuration.
     } else if (configName === 'config') {
         const {
