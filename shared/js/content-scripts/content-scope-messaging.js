@@ -10,6 +10,23 @@ function getSecret () {
 async function init () {
     const secret = await getSecret()
 
+    window.addEventListener('sendMessage', event => {
+        // MV3 message proxy for click to load
+        event.stopImmediatePropagation()
+        const detail = event && event.detail
+        if(!detail) {
+            console.warn('no details in sendMessage proxy', event)
+            return
+        }
+        chrome.runtime.sendMessage(detail, response => {
+            const msg = { type: 'update', detail: { func: detail.messageType, response } }
+            const stringifiedArgs = JSON.stringify(msg)
+            window.dispatchEvent(new CustomEvent(secret, {
+                detail: msg
+            }))
+        })
+    })
+
     chrome.runtime.onMessage.addListener((message) => {
         window.dispatchEvent(new CustomEvent(secret, {
             detail: message
