@@ -82,7 +82,7 @@ describe('Test request blocking', () => {
         })
         // TODO fix manifest v3 blocking service workers (https://app.asana.com/0/1200940319964997/1202895557146471/f)
         // The count is higher for MV2 as we permit a load that loads more requests.
-        const count = manifestVersion === 2 ? 20 : 19
+        const count = manifestVersion === 2 ? testCount + 1 : testCount
 
         // Test the tabs tracker objects match the expected snapshot.
         const trackerSnapshot = {
