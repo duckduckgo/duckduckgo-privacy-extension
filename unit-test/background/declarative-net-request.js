@@ -35,7 +35,7 @@ config.features.trackerAllowlist = {
 
 const expectedRuleIdsByConfigName = {
     tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    config: [10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009]
+    config: [10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010]
 }
 
 const expectedLookupByConfigName = {
@@ -117,6 +117,9 @@ const expectedLookupByConfigName = {
             type: 'contentBlocking',
             domain: 'content-blocking.example',
             reason: 'site breakage'
+        },
+        10010: {
+            type: 'gpc'
         }
     }
 }
