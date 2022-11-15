@@ -18,6 +18,23 @@ export function init () {
     browser.runtime.onConnect.addListener(connected)
 }
 
+/**
+ * Serialize a subset of the tab object to be sent to the panel
+ * @param {Object} tab
+ */
+export function serializeTab (tab) {
+    if (tab.site) {
+        return {
+            site: {
+                allowlisted: tab.site.allowlisted,
+                isBroken: tab.site.isBroken,
+                enabledFeatures: tab.site.enabledFeatures || []
+            }
+        }
+    }
+    return {}
+}
+
 function connected (port) {
     if (port.name !== 'devtools') {
         return
@@ -29,7 +46,7 @@ function connected (port) {
             tabId = m.tabId
             ports.set(tabId, port)
             const tab = tabManager.get({ tabId })
-            postMessage(tabId, 'tabChange', tab)
+            postMessage(tabId, 'tabChange', serializeTab(tab))
         } else if (m.action === 'I' || m.action === 'B') {
             const { requestData, siteUrl, tracker } = m
             const matchedTracker = trackers.getTrackerData(requestData.url, siteUrl, requestData)
@@ -80,7 +97,7 @@ function connected (port) {
                     value: !tab.site.allowlisted
                 })
             }
-            postMessage(tabId, 'tabChange', tab)
+            postMessage(tabId, 'tabChange', serializeTab(tab))
         } else if (m.action === 'toggletrackerAllowlist') {
             if (tdsStorage.config.features.trackerAllowlist.state === 'enabled') {
                 tdsStorage.config.features.trackerAllowlist.state = 'disabled'
