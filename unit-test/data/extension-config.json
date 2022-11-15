@@ -31,6 +31,24 @@
             },
             "exceptions": []
         },
+        "cookie": {
+            "state": "enabled",
+            "minSupportedVersion": "2022.6.1",
+            "settings": {
+                "trackerCookie": "enabled",
+                "nonTrackerCookie": "disabled",
+                "excludedCookieDomains": [],
+                "firstPartyTrackerCookiePolicy": {
+                    "threshold": 86400,
+                    "maxAge": 86400
+                },
+                "firstPartyCookiePolicy": {
+                    "threshold": 604800,
+                    "maxAge": 604800
+                }
+            },
+            "exceptions": []
+        },
         "clickToPlay": {
             "state": "enabled",
             "exceptions": []

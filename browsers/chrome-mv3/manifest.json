@@ -69,7 +69,8 @@
         "storage",
         "tabs",
         "webRequest",
-        "webNavigation"
+        "webNavigation",
+        "cookies"
     ],
     "host_permissions": [
         "*://*/*"

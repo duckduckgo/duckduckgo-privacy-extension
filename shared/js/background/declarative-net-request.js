@@ -18,6 +18,7 @@ import {
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
+import { generateCombinedConfigBlocklistRuleset } from '@duckduckgo/ddg2dnr/lib/combined'
 
 export const SETTING_PREFIX = 'declarative_net_request-'
 
@@ -25,15 +26,22 @@ export const SETTING_PREFIX = 'declarative_net_request-'
 // rules associated with a configuration can be safely cleared without the risk
 // of removing rules associated with different configurations.
 const ruleIdRangeByConfigName = {
-    tds: [1, 10000],
-    config: [10001, 20000]
+    _RESERVED: [1, 1000],
+    tds: [1001, 10000],
+    config: [10001, 20000],
+    combined: [20001, 30000]
 }
 
 // User allowlisting and the ServicerWorker initiated request exception both
 // only require one declarativeNetRequest rule, so hardcode the rule IDs here.
-export const USER_ALLOWLIST_RULE_ID = 20001
-export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
-export const ATB_PARAM_RULE_ID = 20003
+export const USER_ALLOWLIST_RULE_ID = 1
+export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 2
+export const ATB_PARAM_RULE_ID = 3
+const RESERVED_RULE_IDS = [
+    USER_ALLOWLIST_RULE_ID,
+    SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
+    ATB_PARAM_RULE_ID
+]
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
@@ -223,7 +231,7 @@ async function updateExtensionConfigRules (etag = null, configValue = null) {
 
     if (!configValue) {
         await tdsStorage.ready('config')
-        configValue = await tdsStorage.getListFromLocalDB('config')
+        configValue = await tdsStorage.config
     }
 
     if (!etag) {
@@ -258,6 +266,23 @@ async function updateExtensionConfigRules (etag = null, configValue = null) {
     )
 }
 
+async function updateCombinedConfigBlocklistRules () {
+    const extensionVersion = browserWrapper.getExtensionVersion()
+    const denylistedDomains = await getDenylistedDomains()
+    const tdsEtag = settings.getSetting('tds-etag')
+    const combinedState = {
+        etag: `${settings.getSetting('config-etag')}-${tdsEtag}`,
+        denylistedDomains: denylistedDomains.join(),
+        extensionVersion
+    }
+    // require a blocklist before generating rules - config is optional
+    if (tdsEtag && await configRulesNeedUpdate('combined', combinedState)) {
+        const { ruleset, matchDetailsByRuleId } = generateCombinedConfigBlocklistRuleset(tdsStorage.tds, tdsStorage.config, denylistedDomains, ruleIdRangeByConfigName.combined[0] + 1)
+        await updateConfigRules('combined', combinedState, ruleset, matchDetailsByRuleId)
+    }
+}
+
+let ruleUpdateLock = Promise.resolve()
 /**
  * tdsStorage.onUpdate listener which is called when the configurations are
  * updated and when the background ServiceWorker is restarted.
@@ -268,36 +293,41 @@ async function updateExtensionConfigRules (etag = null, configValue = null) {
  * @returns {Promise}
  */
 export async function onConfigUpdate (configName, etag, configValue) {
+    const extensionVersion = browserWrapper.getExtensionVersion()
+    // Run an async lock on all blocklist updates so the latest update is always processed last
+    ruleUpdateLock = ruleUpdateLock.then(async () => {
     // TDS (aka the block list).
-    if (configName === 'tds') {
-        const extensionVersion = browserWrapper.getExtensionVersion()
-        const [ruleIdStart] = ruleIdRangeByConfigName[configName]
-        const latestState = { etag, extensionVersion }
-        if (!(await configRulesNeedUpdate(configName, latestState))) {
-            return
+        if (configName === 'tds') {
+            const [ruleIdStart] = ruleIdRangeByConfigName[configName]
+            const latestState = { etag, extensionVersion }
+            if (!(await configRulesNeedUpdate(configName, latestState))) {
+                return
+            }
+
+            await startup.ready()
+            // @ts-ignore: Once startup.ready() has finished, surrogateList will be
+            //             assigned.
+            const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
+
+            const {
+                ruleset, matchDetailsByRuleId, inverseCustomActionRules
+            } = await generateTdsRuleset(
+                configValue,
+                supportedSurrogates,
+                '/web_accessible_resources/',
+                chrome.declarativeNetRequest.isRegexSupported,
+                ruleIdStart + 1
+            )
+
+            await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId, inverseCustomActionRules)
+        // Extension configuration.
+        } else if (configName === 'config') {
+            await updateExtensionConfigRules(etag, configValue)
         }
-
-        await startup.ready()
-        // @ts-ignore: Once startup.ready() has finished, surrogateList will be
-        //             assigned.
-        const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
-
-        const {
-            ruleset, matchDetailsByRuleId, inverseCustomActionRules
-        } = await generateTdsRuleset(
-            configValue,
-            supportedSurrogates,
-            '/web_accessible_resources/',
-            chrome.declarativeNetRequest.isRegexSupported,
-            ruleIdStart + 1
-        )
-
-        await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId, inverseCustomActionRules)
-
-    // Extension configuration.
-    } else if (configName === 'config') {
-        await updateExtensionConfigRules(etag, configValue)
-    }
+        // combined rules (cookie blocking)
+        await updateCombinedConfigBlocklistRules()
+    })
+    await ruleUpdateLock
 }
 
 /**
@@ -447,6 +477,7 @@ export async function toggleUserAllowlistDomain (domain, enable) {
  */
 export async function updateUserDenylist () {
     await updateExtensionConfigRules()
+    await updateCombinedConfigBlocklistRules()
 }
 
 /**
@@ -478,6 +509,28 @@ export async function ensureServiceWorkerInitiatedRequestException () {
 }
 
 /**
+ * Find any dynamic rules outside of the existing expected rule range and remove them.
+ */
+async function clearInvalidRules () {
+    const existingRules = await chrome.declarativeNetRequest.getDynamicRules()
+    const invalidRules = existingRules.filter((rule) => {
+        if (rule.id >= ruleIdRangeByConfigName.combined[1]) {
+            // greater than the max rule ID
+            return true
+        }
+        if (rule.id >= ruleIdRangeByConfigName._RESERVED[0] && rule.id <= ruleIdRangeByConfigName._RESERVED[1]) {
+            // in the reserved rule range, only explictly defined IDs are allowed
+            return !RESERVED_RULE_IDS.includes(rule.id)
+        }
+        return false
+    }).map((rule) => rule.id)
+    if (invalidRules.length > 0) {
+        console.log('Removing invliad rule ids', invalidRules)
+        await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: invalidRules })
+    }
+}
+
+/**
 * Remove orphaned session ids
 * We increment the rule IDs for some session rules, starting at STARTING_RULE_ID and
 * keep a note of the next rule ID in session storage. During extesion update/restarts
@@ -499,4 +552,8 @@ if (browserWrapper.getManifestVersion() === 3) {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)
     ensureServiceWorkerInitiatedRequestException()
+    // on update, check that the dynamic rule state is consistent with the rule ranges we expect
+    chrome.runtime.onInstalled.addListener(() => {
+        clearInvalidRules()
+    })
 }

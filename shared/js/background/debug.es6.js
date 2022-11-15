@@ -13,6 +13,7 @@ const utils = require('./utils.es6')
 const Tab = require('./classes/tab.es6')
 const { TabState } = require('./classes/tab-state')
 const Wrapper = require('./wrapper.es6.js')
+const { setListContents, getListContents } = require('./message-handlers')
 
 // @ts-ignore - dbg is not a standard property of self.
 self.dbg = {
@@ -26,7 +27,9 @@ self.dbg = {
     https,
     tds,
     browserWrapper,
-    utils
+    utils,
+    setListContents,
+    getListContents
 }
 
 // mark this as a dev build
