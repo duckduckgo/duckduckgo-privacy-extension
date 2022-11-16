@@ -5,6 +5,10 @@ const {
 } = require('../lib/smarterEncryption')
 
 const {
+    GPC_HEADER_PRIORITY
+} = require('../lib/gpc')
+
+const {
     BASELINE_PRIORITY: TRACKER_BLOCKING_BASELINE_PRIORITY,
     CEILING_PRIORITY: TRACKER_BLOCKING_CEILING_PRIORITY
 } = require('../lib/tds')
@@ -26,6 +30,9 @@ const {
 
 describe('Rule Priorities', () => {
     it('correct relative rule priorities', () => {
+        assert.ok(GPC_HEADER_PRIORITY >
+                  TRACKER_BLOCKING_CEILING_PRIORITY)
+
         // Tracker Blocking priorities.
         assert.ok(TRACKER_BLOCKING_BASELINE_PRIORITY > 0)
         assert.ok(TRACKER_BLOCKING_CEILING_PRIORITY >
@@ -64,5 +71,7 @@ describe('Rule Priorities', () => {
                   SMARTER_ENCRYPTION_PRIORITY)
         assert.ok(USER_ALLOWLISTED_PRIORITY ===
                   UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
+        assert.ok(USER_ALLOWLISTED_PRIORITY >
+                  GPC_HEADER_PRIORITY)
     })
 })
