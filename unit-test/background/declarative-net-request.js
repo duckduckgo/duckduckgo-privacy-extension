@@ -10,13 +10,16 @@ import tabManager from '../../shared/js/background/tab-manager.es6'
 import tdsStorage from '../../shared/js/background/storage/tds.es6'
 import trackers from '../../shared/js/background/trackers.es6'
 import {
+    ensureServiceWorkerInitiatedRequestException,
     getMatchDetails,
     onConfigUpdate,
     toggleUserAllowlistDomain,
     SETTING_PREFIX,
+    SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
     USER_ALLOWLIST_RULE_ID
 } from '../../shared/js/background/declarative-net-request'
 import {
+    SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
@@ -139,15 +142,18 @@ async function updateConfiguration (configName, etag) {
 describe('declarativeNetRequest', () => {
     let updateSettingObserver
     let updateDynamicRulesObserver
+    let updateSessionRulesObserver
 
     let extensionVersion
     let settingsStorage
     let dynamicRulesByRuleId
+    let sessionRulesByRuleId
 
     beforeAll(async () => {
         extensionVersion = TEST_EXTENION_VERSIONS[0]
         settingsStorage = new Map()
         dynamicRulesByRuleId = new Map()
+        sessionRulesByRuleId = new Map()
 
         onUpdateListeners = tdsStorageStub.stub({ config }).onUpdateListeners
         onUpdateListeners.set('config', [onConfigUpdate])
@@ -167,6 +173,7 @@ describe('declarativeNetRequest', () => {
                     settingsStorage.set(name, value)
                 }
             )
+
         updateDynamicRulesObserver =
             spyOn(
                 chrome.declarativeNetRequest,
@@ -193,6 +200,32 @@ describe('declarativeNetRequest', () => {
             () => Array.from(dynamicRulesByRuleId.values())
         )
 
+        updateSessionRulesObserver =
+            spyOn(
+                chrome.declarativeNetRequest,
+                'updateSessionRules'
+            ).and.callFake(
+                ({ removeRuleIds, addRules }) => {
+                    if (removeRuleIds) {
+                        for (const id of removeRuleIds) {
+                            sessionRulesByRuleId.delete(id)
+                        }
+                    }
+                    if (addRules) {
+                        for (const rule of addRules) {
+                            if (sessionRulesByRuleId.has(rule.id)) {
+                                throw new Error('Duplicate rule ID: ' + rule.id)
+                            }
+                            sessionRulesByRuleId.set(rule.id, rule)
+                        }
+                    }
+                    return Promise.resolve()
+                }
+            )
+        spyOn(chrome.declarativeNetRequest, 'getSessionRules').and.callFake(
+            () => Array.from(sessionRulesByRuleId.values())
+        )
+
         spyOn(browserWrapper, 'getExtensionVersion').and.callFake(
             () => extensionVersion
         )
@@ -204,8 +237,10 @@ describe('declarativeNetRequest', () => {
     beforeEach(() => {
         updateSettingObserver.calls.reset()
         updateDynamicRulesObserver.calls.reset()
+        updateSessionRulesObserver.calls.reset()
         settingsStorage.clear()
         dynamicRulesByRuleId.clear()
+        sessionRulesByRuleId.clear()
     })
 
     it('Config ruleset updates', async () => {
@@ -628,6 +663,35 @@ describe('declarativeNetRequest', () => {
         })
     })
 
+    it('ServiceWorker initiated request allowing', async () => {
+        const ruleId = SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID
+        const rulePriority = SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY
+        const rule = {
+            id: ruleId,
+            priority: rulePriority,
+            action: { type: 'allow' },
+            condition: { tabIds: [-1] }
+        }
+
+        // The rule won't exist initially.
+        expect(updateSessionRulesObserver.calls.count()).toEqual(0)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
+
+        // Once ensureServiceWorkerInitiatedRequestException is called it should
+        // be though.
+        ensureServiceWorkerInitiatedRequestException()
+        expect(updateSessionRulesObserver.calls.count()).toEqual(1)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
+
+        // If ensureServiceWorkerInitiatedRequestException is called again, the
+        // rule should just be recreated.
+        ensureServiceWorkerInitiatedRequestException()
+        expect(updateSessionRulesObserver.calls.count()).toEqual(2)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
+    })
+
     it('getMatchDetails', async () => {
         // No rules, so no match details.
         // - Tracker blocking:
@@ -686,5 +750,10 @@ describe('declarativeNetRequest', () => {
         expect(await getMatchDetails(USER_ALLOWLIST_RULE_ID)).toEqual({
             type: 'userAllowlist'
         })
+
+        // Likewise for ServiceWorker initiated requests.
+        expect(
+            await getMatchDetails(SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID)
+        ).toEqual({ type: 'serviceWorkerInitiatedAllowing' })
     })
 })
