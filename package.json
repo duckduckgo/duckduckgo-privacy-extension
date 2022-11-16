@@ -79,7 +79,7 @@
         "yargs": "^17.6.2"
     },
     "dependencies": {
-        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#5.2.0",
+        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#5.3.1",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#3.3.0",
         "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.2.3",
         "@duckduckgo/jsbloom": "^1.0.2",
