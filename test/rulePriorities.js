@@ -25,6 +25,7 @@ const {
 
 const {
     AD_ATTRIBUTION_POLICY_PRIORITY,
+    SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY
 } = require('../lib/rulePriorities')
 
@@ -64,14 +65,17 @@ describe('Rule Priorities', () => {
                   CONTENT_BLOCKING_ALLOWLIST_PRIORITY)
 
         // Unprotected Temporary allowlist and user allowlist should disable all
-        // protections.
+        // protections. All protections should also be disabled for
+        // ServiceWorker initiated requests.
         assert.ok(UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY >
                   TRACKER_BLOCKING_CEILING_PRIORITY)
         assert.ok(UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY >
                   SMARTER_ENCRYPTION_PRIORITY)
-        assert.ok(USER_ALLOWLISTED_PRIORITY ===
-                  UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
         assert.ok(USER_ALLOWLISTED_PRIORITY >
                   GPC_HEADER_PRIORITY)
+        assert.ok(USER_ALLOWLISTED_PRIORITY ===
+                  UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
+        assert.ok(USER_ALLOWLISTED_PRIORITY ===
+                  SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
     })
 })
