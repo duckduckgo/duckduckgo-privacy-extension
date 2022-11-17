@@ -24,17 +24,6 @@ export async function registeredContentScript (options, sender, req) {
         return
     }
 
-    if (argumentsObject.site.isBroken) {
-        console.log('temporarily skip protections for site: ' + sender.tab.url +
-    'more info: https://github.com/duckduckgo/privacy-configuration')
-        return
-    }
-
-    // Disable content scripts when site protections are disabled
-    if (argumentsObject.site.allowlisted && req.messageType === 'registeredContentScript') {
-        return
-    }
-
     return argumentsObject
 }
 
