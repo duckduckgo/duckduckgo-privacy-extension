@@ -83,6 +83,14 @@ class Tab {
         return this._tabState.adClick
     }
 
+    set customActionRules (value) {
+        this._tabState.setValue('customActionRules', value)
+    }
+
+    get customActionRules () {
+        return this._tabState.customActionRules
+    }
+
     set trackers (value) {
         this._tabState.setValue('trackers', value)
     }

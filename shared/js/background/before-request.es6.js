@@ -97,6 +97,17 @@ function handleRequest (requestData) {
     // don't have a tab instance for this tabId or this is a new requestId.
     if (requestData.type === 'main_frame') {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
+            if(thisTab) {
+                // upon navigation, remove any custom action session rules
+                const customRulesIds = []
+                for (const ruleSet in thisTab.customActionRules) {
+                    customRulesIds.push(...thisTab.customActionRules[ruleSet])
+                }
+                if (customRulesIds) {
+                    chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: customRulesIds})
+                }
+            }
+
             const newTab = tabManager.create(requestData)
 
             // persist the last URL the tab was trying to upgrade to HTTPS
