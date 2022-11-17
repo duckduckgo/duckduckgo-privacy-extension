@@ -143,5 +143,37 @@ describe('Storage blocking Tests', () => {
             await page.close()
             await teardown()
         })
+
+        it('does not block safe third party iframe JS cookies when protections are disabled', async () => {
+            // https://app.asana.com/0/1201614831475344/1203336793368587
+            const { page, bgPage, teardown } = await setup()
+            // add testPageDomain to the allowlist
+            await bgPage.evaluate(async (domain) => {
+                return new Promise((resolve, reject) => {
+                    chrome.storage.local.get('settings', ({ settings }) => {
+                        try {
+                            settings.allowlisted = {
+                                [domain]: true
+                            }
+                            chrome.storage.local.set({ settings }, resolve)
+                        } catch (e) {
+                            reject(e)
+                        }
+                    })
+                })
+            }, testPageDomain)
+            await pageWait.forGoto(page, `https://${testPageDomain}/privacy-protections/storage-blocking/?store`)
+            await page.bringToFront()
+            await waitForAllResults(page)
+            await page.click('#retrive')
+            await waitForAllResults(page)
+            const results = JSON.parse(await page.evaluate('JSON.stringify(results);'))
+            const savedResult = results.results.find(({ id }) => id === 'memory').value
+            const safeFrameCookieResult = results.results.find(({ id }) => id === 'safe third party iframe - JS cookie')?.value
+            expect(safeFrameCookieResult).toBeTruthy()
+            expect(safeFrameCookieResult).toEqual(savedResult)
+            await page.close()
+            await teardown()
+        })
     })
 })
