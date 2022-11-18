@@ -14,6 +14,7 @@ import {
     generateDNRRule
 } from '@duckduckgo/ddg2dnr/lib/utils'
 import {
+    SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
@@ -27,9 +28,10 @@ const ruleIdRangeByConfigName = {
     config: [10001, 20000]
 }
 
-// User allowlisting only requires one declarativeNetRequest rule, so hardcode
-// the rule ID here.
+// User allowlisting and the ServicerWorker initiated request exception both
+// only require one declarativeNetRequest rule, so hardcode the rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001
+export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
@@ -333,6 +335,12 @@ export async function getMatchDetails (ruleId) {
         }
     }
 
+    if (ruleId === SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID) {
+        return {
+            type: 'serviceWorkerInitiatedAllowing'
+        }
+    }
+
     for (const [configName, [ruleIdStart, ruleIdEnd]]
         of Object.entries(ruleIdRangeByConfigName)) {
         if (ruleId >= ruleIdStart && ruleId <= ruleIdEnd) {
@@ -429,7 +437,36 @@ export async function updateUserDenylist () {
     await updateExtensionConfigRules()
 }
 
+/**
+ * Ensure that the allowing rule for ServiceWorker initiated requests is
+ * enabled. Since the rule needs to be restricted to matching requests not
+ * associated with a tab (tabId of -1) and so must be a session rule. Session
+ * rules don't persist past a browsing session, so must be re-added.
+ * Note: Only exported for use by unit tests, do not call manually.
+ * @return {Promise}
+ */
+export async function ensureServiceWorkerInitiatedRequestException () {
+    const removeRuleIds = [SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID]
+    const addRules = [generateDNRRule({
+        id: SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
+        priority: SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
+        actionType: 'allow',
+        tabIds: [-1]
+    })]
+
+    // Rather than check if the rule already exists before adding it, add it and
+    // just clear the existing rule if it exists.
+    // Note: This might need to be adjusted in the future if there is a
+    //       performance impact, on the other hand, checking for the rule first
+    //       might cause a race-condition, where ServiceWorker requests are
+    //       blocked before the rule is added.
+    await chrome.declarativeNetRequest.updateSessionRules({
+        removeRuleIds, addRules
+    })
+}
+
 if (browserWrapper.getManifestVersion() === 3) {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)
+    ensureServiceWorkerInitiatedRequestException()
 }
