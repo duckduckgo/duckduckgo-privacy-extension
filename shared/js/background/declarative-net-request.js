@@ -330,6 +330,16 @@ export async function refreshUserAllowlistRules (allowlistedDomains) {
     await updateUserAllowlistRule(normalizedAllowlistedDomains)
 }
 
+export async function flushSessionRules () {
+    chrome.declarativeNetRequest.getSessionRules().then(rules => {
+        if(rules.length) {
+            const ruleIds = rules.map(r => r.id)
+            console.log('removing session rules', ruleIds)
+            return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds})
+        }
+    })
+}
+
 if (browserWrapper.getManifestVersion() === 3) {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)

@@ -20,7 +20,7 @@ const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
-const { refreshUserAllowlistRules } = require('./declarative-net-request')
+const { refreshUserAllowlistRules, flushSessionRules } = require('./declarative-net-request')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -68,6 +68,9 @@ async function onInstalled (details) {
                 allowlistedDomains.push(domain)
             }
         }
+
+        // remove any orphaned session rules (can happen on extension update/restart)
+        await flushSessionRules()
 
         await refreshUserAllowlistRules(allowlistedDomains)
     }
