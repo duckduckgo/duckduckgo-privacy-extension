@@ -25,8 +25,7 @@ const setup = async (ops) => {
         `--user-data-dir=${dataDir}`
     ]
 
-    const manifestVersion =
-        process.env.npm_lifecycle_event === 'test-int-mv3' ? 3 : 2
+    const manifestVersion = getManifestVersion()
 
     if (loadExtension) {
         let extensionPath = 'build/chrome/dev'
@@ -96,6 +95,11 @@ const setup = async (ops) => {
     return { browser, bgPage, requests, teardown, manifestVersion }
 }
 
+function getManifestVersion () {
+    return process.env.npm_lifecycle_event === 'test-int-mv3' ? 3 : 2
+}
+
 module.exports = {
-    setup
+    setup,
+    getManifestVersion
 }

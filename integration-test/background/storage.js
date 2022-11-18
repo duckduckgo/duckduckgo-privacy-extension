@@ -26,12 +26,9 @@ async function waitForAllResults (page) {
 describe('Storage blocking Tests', () => {
     describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
         let cookies = []
-        let manifestVersion
 
         beforeAll(async () => {
-            let page
-            let teardown
-            ({ page, teardown, manifestVersion } = await setup())
+            const { page, teardown } = await setup()
             try {
                 // Load the test pages home first to give some time for the extension background to start
                 // and register the content-script-message handler
@@ -57,7 +54,7 @@ describe('Storage blocking Tests', () => {
         // FIXME - Once Cookie header blocking is working in the experimental
         //         Chrome MV3 build of the extension we should remove this
         //         condition.
-        if (manifestVersion !== 3) {
+        if (harness.getManifestVersion() !== 3) {
             it('allows 3rd party HTTP cookies not on block list', () => {
                 const headerCookie = cookies.find(({ name, domain }) => name === 'top_thirdparty_headerdata' && domain === thirdPartyDomain)
                 expect(headerCookie).toBeTruthy()
