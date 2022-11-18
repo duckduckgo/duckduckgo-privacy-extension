@@ -43,17 +43,25 @@ describe('Test privacy dashboard', () => {
     })
 })
 
-function linksText (panel) {
-    return panel.evaluate(() => {
-        const links = [
-            '[aria-label="View Connection Information"]',
-            '[aria-label="View Tracker Companies"]',
-            '[aria-label="View Non-Tracker Companies"]'
-        ]
-        const linkTexts = []
-        document.querySelectorAll(links.join(',')).forEach(li => {
-            linkTexts.push(li.textContent.trim())
+async function linksText (panel) {
+    // the list of CSS selectors for the main-nav links
+    const links = [
+        '[aria-label="View Connection Information"]',
+        '[aria-label="View Tracker Companies"]',
+        '[aria-label="View Non-Tracker Companies"]'
+    ]
+
+    // create 1 combined css selector for all elements
+    const cssSelector = links.join(',')
+
+    // we don't want to make any assertions until the elements are rendered
+    await panel.waitForFunction((selector) => document.querySelectorAll(selector).length === 3, {}, cssSelector)
+
+    // now we can read the text-content of each element
+    return panel.evaluate(selector => {
+        const elements = Array.from(document.querySelectorAll(selector))
+        return elements.map(li => {
+            return li.textContent.trim()
         })
-        return linkTexts
-    })
+    }, cssSelector)
 }
