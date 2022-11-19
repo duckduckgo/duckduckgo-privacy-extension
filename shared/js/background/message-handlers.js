@@ -4,6 +4,7 @@ import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
 import { breakageReportForTab } from './broken-site-report'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 import { getExtensionURL } from './wrapper.es6'
+import { closePopup, reloadCurrentTab } from './utils.es6'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -50,15 +51,8 @@ export async function setLists (options) {
         tabManager.setList(listItem)
     }
 
-    // close the popup
-    const popup = chrome.extension.getViews({ type: 'popup' })[0]
-    popup?.close()
-
-    // reload the current tab
-    const tab = await utils.getCurrentTab()
-    if (tab && tab.id) {
-        browser.tabs.reload(tab.id)
-    }
+    closePopup()
+    reloadCurrentTab()
 }
 
 export function allowlistOptIn (optInData) {
@@ -73,6 +67,7 @@ export function getBrowser () {
 export function openOptions () {
     if (browserName === 'moz') {
         browser.tabs.create({ url: getExtensionURL('/html/options.html') })
+        window.close()
     } else {
         browser.runtime.openOptionsPage()
     }

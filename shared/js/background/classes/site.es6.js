@@ -141,13 +141,6 @@ class Site {
         }
     }
 
-    /*
-     * Send message to the popup to rerender the allowlist
-     */
-    notifyAllowlistChanged () {
-        browserWrapper.notifyPopup({ allowlistChanged: true })
-    }
-
     isContentBlockingEnabled () {
         return this.isFeatureEnabled('contentBlocking')
     }

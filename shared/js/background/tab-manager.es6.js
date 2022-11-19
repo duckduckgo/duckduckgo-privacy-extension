@@ -110,8 +110,6 @@ class TabManager {
                 await updateUserDenylist()
             }
         }
-
-        browserWrapper.notifyPopup({ allowlistChanged: true })
     }
 
     /**
