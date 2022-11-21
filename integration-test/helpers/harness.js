@@ -92,7 +92,7 @@ const setup = async (ops) => {
         spawnSync('rm', ['-rf', dataDir])
     }
 
-    return { browser, bgPage, requests, teardown, manifestVersion }
+    return { browser, bgPage, requests, teardown }
 }
 
 function getManifestVersion () {

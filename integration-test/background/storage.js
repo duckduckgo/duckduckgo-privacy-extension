@@ -8,13 +8,13 @@ const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
 
 async function setup () {
-    const { browser, bgPage, teardown, manifestVersion } = await harness.setup()
+    const { browser, bgPage, teardown } = await harness.setup()
     const page = await browser.newPage()
 
     await backgroundWait.forAllConfiguration(bgPage)
     await loadTestConfig(bgPage, 'storage-blocking.json')
 
-    return { browser, page, teardown, bgPage, manifestVersion }
+    return { browser, page, teardown, bgPage }
 }
 
 async function waitForAllResults (page) {
