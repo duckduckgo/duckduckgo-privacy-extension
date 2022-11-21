@@ -36,4 +36,3 @@ export function getNextSessionRuleId () {
     browserWrapper.setToSessionStorage(SESSION_RULE_STORAGE_KEY, sessionRuleOffset)
     return nextRuleId
 }
-

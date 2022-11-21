@@ -24,7 +24,7 @@ export function enableInverseRules (customAction, tabId) {
         .map(rule => {
             rule.id = getNextSessionRuleId()
             ruleIds.push(rule.id)
-            delete rule.customAction // temporary
+            delete rule.customAction
             return rule
         })
 
