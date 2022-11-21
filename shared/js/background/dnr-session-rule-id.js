@@ -8,6 +8,11 @@ const SESSION_RULE_STORAGE_KEY = 'sessionRuleOffset'
 let sessionRuleOffset = 0
 let ready = false
 
+
+export function isValidSessionId ( id ) {
+    return id >= SESSION_RULE_ID_START
+}
+
 export async function setSessionRuleOffsetFromStorage () {
     const offset = await browserWrapper.getFromSessionStorage(SESSION_RULE_STORAGE_KEY)
     if (offset) {
@@ -31,3 +36,4 @@ export function getNextSessionRuleId () {
     browserWrapper.setToSessionStorage(SESSION_RULE_STORAGE_KEY, sessionRuleOffset)
     return nextRuleId
 }
+

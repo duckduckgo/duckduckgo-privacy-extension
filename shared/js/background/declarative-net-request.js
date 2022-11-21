@@ -3,6 +3,7 @@ import settings from './settings.es6'
 import tdsStorage from './storage/tds.es6'
 import trackers from './trackers.es6'
 import * as startup from './startup'
+import { isValidSessionId } from './dnr-session-rule-id'
 
 import {
     generateExtensionConfigurationRuleset
@@ -333,8 +334,8 @@ export async function refreshUserAllowlistRules (allowlistedDomains) {
 export async function flushSessionRules () {
     chrome.declarativeNetRequest.getSessionRules().then(rules => {
         if(rules.length) {
-            const ruleIds = rules.map(r => r.id)
             console.log('removing session rules', ruleIds)
+            const ruleIds = rules.filter(r => isValidSessionId(r.id)).map(r => r.id)
             return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds})
         }
     })
