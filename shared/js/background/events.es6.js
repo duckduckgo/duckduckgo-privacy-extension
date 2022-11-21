@@ -273,7 +273,14 @@ browser.webNavigation.onCommitted.addListener(details => {
     // ignore navigation on iframes
     if (details.frameId !== 0) return
 
-    const tab = tabManager.get({ tabId: details.tabId })
+    let tab = tabManager.get({ tabId: details.tabId })
+
+    const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
+    // persist the last URL the tab was trying to upgrade to HTTPS
+    if (tab && tab.httpsRedirects) {
+        newTab.httpsRedirects.persistMainFrameRedirect(tab.httpsRedirects.getMainFrameRedirect())
+    }
+    tab = newTab
 
     if (!tab) return
 
