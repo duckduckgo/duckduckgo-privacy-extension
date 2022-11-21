@@ -250,14 +250,9 @@ startup.ready().then(() => {
     )
 })
 
+const createdTargets = new Map()
 browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
-    const currentTab = tabManager.get({ tabId: details.sourceTabId })
-    if (currentTab && currentTab.adClick) {
-        const newTab = tabManager.createOrUpdateTab(details.tabId, { url: details.url })
-        if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-            newTab.adClick = currentTab.adClick.propagate(newTab.id)
-        }
-    }
+    createdTargets.set(details.tabId, details.sourceTabId)
 })
 
 /**
@@ -279,6 +274,17 @@ browser.webNavigation.onCommitted.addListener(details => {
     // persist the last URL the tab was trying to upgrade to HTTPS
     if (tab && tab.httpsRedirects) {
         newTab.httpsRedirects.persistMainFrameRedirect(tab.httpsRedirects.getMainFrameRedirect())
+    }
+    if (createdTargets.has(details.tabId)) {
+        const sourceTabId = createdTargets.get(details.tabId)
+        createdTargets.delete(details.tabId)
+        const currentTab = tabManager.get({ tabId: sourceTabId })
+        if (currentTab && currentTab.adClick) {
+            createdTargets.set(details.tabId, sourceTabId)
+            if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
+                newTab.adClick = currentTab.adClick.propagate(newTab.id)
+            }
+        }
     }
     tab = newTab
 

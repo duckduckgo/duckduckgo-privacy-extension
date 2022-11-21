@@ -84,7 +84,7 @@ function handleRequest (requestData) {
     // Skip requests to background tabs
     if (tabId === -1) { return }
 
-    let thisTab = tabManager.get(requestData)
+    const thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
     if (requestData.url.startsWith(browserWrapper.getExtensionURL('/web_accessible_resources'))) {
