@@ -8,13 +8,13 @@ const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
 
 async function setup () {
-    const { browser, bgPage, teardown, manifestVersion } = await harness.setup()
+    const { browser, bgPage, teardown } = await harness.setup()
     const page = await browser.newPage()
 
     await backgroundWait.forAllConfiguration(bgPage)
     await loadTestConfig(bgPage, 'storage-blocking.json')
 
-    return { browser, page, teardown, bgPage, manifestVersion }
+    return { browser, page, teardown, bgPage }
 }
 
 async function waitForAllResults (page) {
@@ -26,12 +26,9 @@ async function waitForAllResults (page) {
 describe('Storage blocking Tests', () => {
     describe(`On https://${testPageDomain}/privacy-protections/storage-blocking/`, () => {
         let cookies = []
-        let manifestVersion
 
         beforeAll(async () => {
-            let page
-            let teardown
-            ({ page, teardown, manifestVersion } = await setup())
+            const { page, teardown } = await setup()
             try {
                 // Load the test pages home first to give some time for the extension background to start
                 // and register the content-script-message handler
@@ -49,7 +46,7 @@ describe('Storage blocking Tests', () => {
         })
 
         it('does not block 1st party HTTP cookies', () => {
-            const headerCookie = cookies.find(({ name, domain }) => name === 'headerdata' && domain === testPageDomain)
+            const headerCookie = cookies.find(({ name, domain }) => name === 'top_firstparty_headerdata' && domain === testPageDomain)
             expect(headerCookie).toBeTruthy()
             expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
         })
@@ -57,15 +54,38 @@ describe('Storage blocking Tests', () => {
         // FIXME - Once Cookie header blocking is working in the experimental
         //         Chrome MV3 build of the extension we should remove this
         //         condition.
-        if (manifestVersion === 2) {
-            it('blocks 3rd party HTTP cookies not on block list', () => {
-                const headerCookie = cookies.find(({ name, domain }) => name === 'headerdata' && domain === thirdPartyDomain)
-                expect(headerCookie).toBeUndefined()
+        if (harness.getManifestVersion() !== 3) {
+            it('allows 3rd party HTTP cookies not on block list', () => {
+                const headerCookie = cookies.find(({ name, domain }) => name === 'top_thirdparty_headerdata' && domain === thirdPartyDomain)
+                expect(headerCookie).toBeTruthy()
+                expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
             })
 
             it('blocks 3rd party HTTP cookies for trackers', () => {
-                const headerCookie = cookies.find(({ name, domain }) => name === 'headerdata' && domain === thirdPartyTracker)
+                const headerCookie = cookies.find(({ name, domain }) => name === 'top_tracker_headerdata' && domain === thirdPartyTracker)
                 expect(headerCookie).toBeUndefined()
+            })
+
+            it('allows 1st party HTTP cookies from non-tracker frames', () => {
+                const headerCookie = cookies.find(({ name, domain }) => name === 'thirdparty_firstparty_headerdata' && domain === thirdPartyDomain)
+                expect(headerCookie).toBeTruthy()
+                expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
+            })
+
+            it('blocks 3rd party tracker HTTP cookies from non-tracker frames', () => {
+                const headerCookie = cookies.find(({ name, domain }) => name === 'thirdparty_tracker_headerdata' && domain === thirdPartyTracker)
+                expect(headerCookie).toBeUndefined()
+            })
+
+            it('blocks 1st party HTTP cookies from tracker frames', () => {
+                const headerCookie = cookies.find(({ name, domain }) => name === 'thirdpartytracker_firstparty_headerdata' && domain === thirdPartyTracker)
+                expect(headerCookie).toBeUndefined()
+            })
+
+            it('allows 3rd party tracker HTTP cookies from tracker frames', () => {
+                const headerCookie = cookies.find(({ name, domain }) => name === 'thirdpartytracker_thirdparty_headerdata' && domain === thirdPartyDomain)
+                expect(headerCookie).toBeTruthy()
+                expect(headerCookie.expires).toBeGreaterThan(Date.now() / 1000)
             })
         }
 
@@ -75,9 +95,9 @@ describe('Storage blocking Tests', () => {
             expect(jsCookie.expires).toBeGreaterThan(Date.now() / 1000)
         })
 
-        it('does block 3rd party JS cookies not on block list', () => {
+        it('does not block 3rd party JS cookies not on block list', () => {
             const jsCookie = cookies.find(({ name, domain }) => name === 'jsdata' && domain === thirdPartyDomain)
-            expect(jsCookie).toBeUndefined()
+            expect(jsCookie).toBeTruthy()
         })
 
         it('blocks 3rd party JS cookies from trackers', () => {
