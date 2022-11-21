@@ -250,6 +250,7 @@ startup.ready().then(() => {
     )
 })
 
+// Store the created tab id for when onBeforeNavigate is called so data can be copied across from the source tab
 const createdTargets = new Map()
 browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
     createdTargets.set(details.tabId, details.sourceTabId)
@@ -260,38 +261,35 @@ browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
  */
 // keep track of URLs that the browser navigates to.
 //
-// this is currently meant to supplement tabManager.updateTabUrl() above:
+// this is supplemented by tabManager.updateTabUrl() on headersReceived:
 // tabManager.updateTabUrl only fires when a tab has finished loading with a 200,
 // which misses a couple of edge cases like browser special pages
 // and Gmail's weird redirect which returns a 200 via a service worker
-browser.webNavigation.onCommitted.addListener(details => {
+browser.webNavigation.onBeforeNavigate.addListener(details => {
     // ignore navigation on iframes
     if (details.frameId !== 0) return
 
-    let tab = tabManager.get({ tabId: details.tabId })
-
+    const currentTab = tabManager.get({ tabId: details.tabId })
     const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
     // persist the last URL the tab was trying to upgrade to HTTPS
-    if (tab && tab.httpsRedirects) {
-        newTab.httpsRedirects.persistMainFrameRedirect(tab.httpsRedirects.getMainFrameRedirect())
+    if (currentTab && currentTab.httpsRedirects) {
+        newTab.httpsRedirects.persistMainFrameRedirect(currentTab.httpsRedirects.getMainFrameRedirect())
     }
     if (createdTargets.has(details.tabId)) {
         const sourceTabId = createdTargets.get(details.tabId)
         createdTargets.delete(details.tabId)
-        const currentTab = tabManager.get({ tabId: sourceTabId })
-        if (currentTab && currentTab.adClick) {
+
+        const sourceTab = tabManager.get({ tabId: sourceTabId })
+        if (sourceTab && sourceTab.adClick) {
             createdTargets.set(details.tabId, sourceTabId)
-            if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-                newTab.adClick = currentTab.adClick.propagate(newTab.id)
+            if (sourceTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
+                newTab.adClick = sourceTab.adClick.propagate(newTab.id)
             }
         }
     }
-    tab = newTab
 
-    if (!tab) return
-
-    tab.updateSite(details.url)
-    devtools.postMessage(details.tabId, 'tabChange', devtools.serializeTab(tab))
+    newTab.updateSite(details.url)
+    devtools.postMessage(details.tabId, 'tabChange', devtools.serializeTab(newTab))
 })
 
 /**
