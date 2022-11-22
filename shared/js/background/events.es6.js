@@ -278,7 +278,7 @@ browser.webNavigation.onCommitted.addListener(details => {
     if (!tab) return
 
     tab.updateSite(details.url)
-    devtools.postMessage(details.tabId, 'tabChange', tab)
+    devtools.postMessage(details.tabId, 'tabChange', devtools.serializeTab(tab))
 })
 
 /**
