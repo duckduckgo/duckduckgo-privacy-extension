@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1668602428954,
+    "version": 1669031767818,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -69,6 +69,10 @@
                 {
                     "domain": "www.audiosciencereview.com",
                     "reason": "Pages on the site end up in redirect loops in Firefox."
+                },
+                {
+                    "domain": "identity.ibs.bankwest.com.au",
+                    "reason": "Breaks auth flow: https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/1545"
                 }
             ],
             "settings": {
@@ -95,7 +99,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "8668c1396cf49ac18e2e057c48dac1a7"
+            "hash": "62576f16d5b019c8d22cc289c2be6ebd"
         },
         "autoconsent": {
             "exceptions": [
