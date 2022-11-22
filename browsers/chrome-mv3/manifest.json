@@ -11,8 +11,8 @@
     "manifest_version": 3,
     "minimum_chrome_version": "102.0",
     "action": {
-        "default_icon": "img/icon_48.png",
-        "default_popup": "html/popup.html"
+        "default_icon": "img/icon_browser_action.png",
+        "default_popup": "dashboard/html/browser.html"
     },
     "omnibox": {
         "keyword": "ddg"

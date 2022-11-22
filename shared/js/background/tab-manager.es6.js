@@ -110,8 +110,6 @@ class TabManager {
                 await updateUserDenylist()
             }
         }
-
-        browserWrapper.notifyPopup({ allowlistChanged: true })
     }
 
     /**
@@ -161,7 +159,6 @@ class TabManager {
                     tab.site.grade.setHttps(hasHttps, hasHttps)
 
                     console.info(tab.site.grade)
-                    tab.updateBadgeIcon()
 
                     if (tab.statusCode === 200 &&
                         !tab.site.didIncrementCompaniesData) {

@@ -220,53 +220,6 @@ a {
     background-color: $color--yellow;
 }
 
-/* Hamburger Button */
-.hamburger-button {
-    position: absolute;
-    top: 8px;
-    right: 16px;
-    width: 22px;
-    height: 22px;
-    @include cross_platform_bg_image("settings.svg");
-}
-
-
-/* Card Display */
-.card {
-    background-color: $card__bg-color;
-    border-radius: $card__border-radius;
-    padding: $card__padding;
-    margin: $card__margin;
-
-    &.card--transparent {
-        background-color: transparent;
-        box-shadow: none;
-    }
-
-    &.card--no-top-margin {
-        margin-top: 0;
-    }
-}
-
-
-/* Rating letter icons */
-.rating-letter {
-    width: 22px;
-    height: 22px;
-    display: inline-block;
-    background-size: contain;
-    vertical-align: middle;
-    margin-bottom: 2px;
-    margin-left: 5px;
-
-    @each $rating in $ratings {
-        &.rating-letter--#{$rating} {
-            @include cross_platform_bg_image("rating-letters/#{$rating}.svg");
-        }
-    }
-}
-
-
 /* Icons */
 /* Standard icon display within the extension */
 .icon {
@@ -350,66 +303,6 @@ a {
  *        }
  */
 
-.popover {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 20px;
-    right: 20px;
-    opacity: 0.9;
-
-    .popover__inner {
-        padding: 10px;
-        color: $popover__color;
-        font-size: 13px;
-        font-weight: normal;
-        background-color: $popover__bg-color;
-        border-radius: $popover__border-radius;
-
-        em {
-            font-style: normal;
-            font-weight: bold;
-        }
-    }
-
-    .arrow {
-        background-color: $popover__bg-color;
-
-        &.arrow--down {
-            &:after {
-                left: 240px;
-                border-top: 10px solid $popover__bg-color;
-            }
-        }
-    }
-}
-
-
-/* Arrow */
-.arrow {
-    border-top: 10px solid $arrow__bg-color;
-
-    &.arrow--down {
-        position: absolute;
-        bottom: -10px;
-        display: inline-block;
-        width: 0;
-
-        &:after {
-            position: relative;
-            content: '';
-            display: block;
-            left: 20px;
-            width: 0;
-            height: 0;
-            border-top: 10px solid $arrow__bg-color;
-            border-bottom: 0px solid transparent;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-        }
-    }
-}
-
 /* Popout box with left arrow */
 .modal-box {
     .modal-box__body {
@@ -445,13 +338,4 @@ a {
         margin-top: -6px;
         z-index: 5;
     }
-}
-
-.separator {
-    width: 1px;
-    height: 18px;
-    background-color: $color--medium-light-platinum;
-    display: inline-block;
-    vertical-align: bottom;
-    margin: 0 7px;
 }

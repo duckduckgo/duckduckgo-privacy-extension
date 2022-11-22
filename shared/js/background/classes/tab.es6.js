@@ -13,23 +13,11 @@
  *          }
  *      }
  */
-const gradeIconLocations = {
-    A: '/img/toolbar-rating-a_48.png',
-    'B+': '/img/toolbar-rating-b-plus_48.png',
-    B: '/img/toolbar-rating-b_48.png',
-    'C+': '/img/toolbar-rating-c-plus_48.png',
-    C: '/img/toolbar-rating-c_48.png',
-    D: '/img/toolbar-rating-d_48.png',
-    // we don't currently show the D- grade
-    'D-': '/img/toolbar-rating-d_48.png',
-    F: '/img/toolbar-rating-f_48.png'
-}
 
 const Site = require('./site.es6')
 const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
-const browserWrapper = require('../wrapper.es6')
 const webResourceKeyRegex = /.*\?key=(.*)/
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
 const { TabState } = require('./tab-state')
@@ -51,7 +39,6 @@ class Tab {
 
         this.site = new Site(this.url, this._tabState)
         this.httpsRedirects = new HttpsRedirects()
-        this.resetBadgeIcon()
         this.webResourceAccess = []
         this.surrogates = {}
     }
@@ -214,47 +201,30 @@ class Tab {
         return policy.resourcePermitted(resourcePath)
     }
 
-    resetBadgeIcon () {
-        // set the new tab icon to the dax logo
-        browserWrapper.setBadgeIcon({ path: '/img/icon_48.png', tabId: this.id })
-    }
-
-    updateBadgeIcon (target) {
-        if (this.site.specialDomainName) return
-        let gradeIcon
-        const grade = this.site.grade.get()
-
-        if (this.site.isContentBlockingEnabled()) {
-            gradeIcon = gradeIconLocations[grade.enhanced.grade]
-        } else {
-            gradeIcon = gradeIconLocations[grade.site.grade]
-        }
-
-        const badgeData = { path: gradeIcon, tabId: this.id }
-        if (target) badgeData.target = target
-
-        browserWrapper.setBadgeIcon(badgeData)
-    }
-
     updateSite (url) {
         if (this.site.url === url) return
 
         this.url = url
         this.site = new Site(url, this._tabState)
-
-        // reset badge to dax whenever we go to a new site
-        this.resetBadgeIcon()
     }
 
     // Store all trackers for a given tab even if we don't block them.
-    addToTrackers (t) {
+    /**
+     * @param t
+     * @param {string} baseDomain
+     * @param {string} url
+     * @returns {Tracker}
+     */
+    addToTrackers (t, baseDomain, url) {
         const trackers = this.trackers
         const tracker = this.trackers[t.tracker.owner.name]
 
         if (tracker) {
-            tracker.addTrackerUrl(t)
+            tracker.addTrackerUrl(t, this.url || '', baseDomain, url)
         } else if (t.tracker) {
-            trackers[t.tracker.owner.name] = new Tracker(t)
+            const newTracker = new Tracker(t)
+            newTracker.addTrackerUrl(t, this.url || '', baseDomain, url)
+            this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
             if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
