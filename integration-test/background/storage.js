@@ -149,17 +149,9 @@ describe('Storage blocking Tests', () => {
             const { page, bgPage, teardown } = await setup()
             // add testPageDomain to the allowlist
             await bgPage.evaluate(async (domain) => {
-                return new Promise((resolve, reject) => {
-                    chrome.storage.local.get('settings', ({ settings }) => {
-                        try {
-                            settings.allowlisted = {
-                                [domain]: true
-                            }
-                            chrome.storage.local.set({ settings }, resolve)
-                        } catch (e) {
-                            reject(e)
-                        }
-                    })
+                /* global dbg */
+                dbg.settings.updateSetting('allowlisted', {
+                    [domain]: true
                 })
             }, testPageDomain)
             await pageWait.forGoto(page, `https://${testPageDomain}/privacy-protections/storage-blocking/?store`)
