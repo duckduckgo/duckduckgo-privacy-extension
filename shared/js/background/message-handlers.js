@@ -145,12 +145,21 @@ export function getTopBlockedByPages (options) {
 }
 
 // Click to load interactions
-export async function initClickToLoad (config, sender) {
+export async function initClickToLoad (incomingConfig, sender) {
     await settings.ready()
     const tab = tabManager.get({ tabId: sender.tab.id })
 
     // Remove first-party entries.
     await startup.ready()
+
+    // Only return config for ClickToLoadConfig configured in storage
+    const config = Object.keys(incomingConfig).reduce((filteredConfig, entity) => {
+        if (tdsStorage.ClickToLoadConfig[entity]) {
+            return { ...filteredConfig, [entity]: incomingConfig[entity] }
+        }
+        return filteredConfig
+    }, {})
+
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
     if (websiteOwner) {
