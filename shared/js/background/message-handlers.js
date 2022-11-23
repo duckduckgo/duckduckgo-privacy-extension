@@ -197,10 +197,9 @@ export async function getYouTubeVideoDetails (videoURL) {
             }
         ).then(response => response.json())
         const { title, thumbnail_url: previewImage } = youTubeVideoResponse
-        const response = { status: 'success', title, previewImage }
-        window.dispatchEvent(new CustomEvent('ddg-ctl-youTubeVideoDetails-response', { detail: { messageType: 'ddg-ctl-youTubeVideoDetails-response', ...response } }))
+        return { status: 'success', videoURL, title, previewImage }
     } catch (e) {
-        window.dispatchEvent(new CustomEvent('ddg-ctl-youTubeVideoDetails-response', { detail: { messageType: 'ddg-ctl-youTubeVideoDetails-response', status: 'failed' } }))
+        return { status: 'failed', videoURL }
     }
 }
 
@@ -239,7 +238,7 @@ export async function updateSetting ({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)
     utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
-    window.dispatchEvent(new CustomEvent(`ddg-settings-${name}`, { detail: { messageType: `ddg-settings-${name}`, value } }))
+    return { messageType: `ddg-settings-${name}`, value }
 }
 
 export async function getSetting ({ name }) {
