@@ -298,6 +298,12 @@ browser.webNavigation.onBeforeNavigate.addListener(details => {
 
 const Companies = require('./companies.es6')
 
+browser.tabs.onCreated.addListener((info) => {
+    if (info.id) {
+        tabManager.createOrUpdateTab(info.id, info)
+    }
+})
+
 browser.tabs.onUpdated.addListener((id, info) => {
     // sync company data to storage when a tab finishes loading
     if (info.status === 'complete') {
