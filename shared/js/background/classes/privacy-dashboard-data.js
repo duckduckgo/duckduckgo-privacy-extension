@@ -11,7 +11,7 @@
  * The return type of this function comes from a schema defined in the Privacy Dashboard,
  *
  * @param {import("./tab.es6.js")} tab
- * @param {EmailProtectionUserData | undefined} userData
+ * @param {EmailProtectionUserData | undefined | {}} userData
  * @returns {ExtensionGetPrivacyDashboardData}
  */
 export function dashboardDataFromTab (tab, userData) {
@@ -37,6 +37,12 @@ export function dashboardDataFromTab (tab, userData) {
 
     const requests = convertToRequests(tab, protectionsEnabled)
 
+    // Only assign `emailProtectionUserData` if we're sure it is valid data - otherwise allow it to be undefined.
+    let emailProtectionUserData
+    if (userData && 'userName' in userData) {
+        emailProtectionUserData = userData
+    }
+
     return {
         tab: {
             id: tab.id,
@@ -49,7 +55,7 @@ export function dashboardDataFromTab (tab, userData) {
         requestData: {
             requests
         },
-        emailProtectionUserData: userData
+        emailProtectionUserData
     }
 }
 
