@@ -44,6 +44,17 @@ export function getExtensionVersion () {
 }
 
 /**
+ * This is used from the options page - to manually update the user allow list
+ *
+ * @param options
+ */
+export function setList (options) {
+    tabManager.setList(options)
+}
+
+/**
+ * This is used by the Dashboard to update the allow/deny lists, close the popup + reload
+ *
  * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').SetListOptions} options
  */
 export async function setLists (options) {
