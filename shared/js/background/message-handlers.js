@@ -153,12 +153,12 @@ export async function initClickToLoad (incomingConfig, sender) {
     await startup.ready()
 
     // Only return config for ClickToLoadConfig configured in storage
-    const config = Object.keys(incomingConfig).reduce((filteredConfig, entity) => {
+    const config = {}
+    for (const entity in incomingConfig) {
         if (tdsStorage.ClickToLoadConfig[entity]) {
-            return { ...filteredConfig, [entity]: incomingConfig[entity] }
+            config[entity] = incomingConfig[entity]
         }
-        return filteredConfig
-    }, {})
+    }
 
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
