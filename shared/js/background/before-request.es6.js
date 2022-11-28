@@ -106,7 +106,7 @@ function handleRequest (requestData) {
                 for (const ruleSet in thisTab.customActionRules) {
                     customRulesIds.push(...thisTab.customActionRules[ruleSet])
                 }
-                if (customRulesIds) {
+                if (customRulesIds.length) {
                     chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: customRulesIds })
                 }
             }
