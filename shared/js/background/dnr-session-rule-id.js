@@ -8,8 +8,7 @@ const SESSION_RULE_STORAGE_KEY = 'sessionRuleOffset'
 let sessionRuleOffset = 0
 let ready = false
 
-
-export function isValidSessionId ( id ) {
+export function isValidSessionId (id) {
     return id >= SESSION_RULE_ID_START
 }
 

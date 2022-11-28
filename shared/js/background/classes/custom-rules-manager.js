@@ -1,9 +1,6 @@
 import settings from '../settings.es6'
-const tabManager = require('../tab-manager.es6')
+import tabManager from '../tab-manager.es6'
 
-import {
-    generateDNRRule
-} from '@duckduckgo/ddg2dnr/lib/utils'
 const { getNextSessionRuleId } = require('../dnr-session-rule-id')
 
 function getInverseRules (action) {
@@ -14,12 +11,12 @@ function getInverseRules (action) {
 export function enableInverseRules (customAction, tabId) {
     const tab = tabManager.get({ tabId })
     const rules = tab.customActionRules || {}
-    if(rules[customAction]) {
+    if (rules[customAction]) {
         console.warn('session rules already exists for', customAction)
         return
     }
 
-    let ruleIds = []
+    const ruleIds = []
     const inverseRules = getInverseRules(customAction)
         .map(rule => {
             rule.id = getNextSessionRuleId()
@@ -29,12 +26,14 @@ export function enableInverseRules (customAction, tabId) {
         })
 
     setInterval(() => {
-        const tab = tabManager.get({ tabId: tabId })
-        console.warn('current inverse rules', tab.id, tab.customActionRules)
+        const currentTab = tabManager.get({ tabId: tabId })
+        console.warn('current inverse rules', currentTab.id, currentTab.customActionRules)
         chrome.declarativeNetRequest.getSessionRules().then((r) => console.warn('DNR sesh rules', r))
     }, 5000)
+
     rules[customAction] = ruleIds
     tab.customActionRules = rules
+
     console.warn('enableInverseRules updated for tab', tab.id, tab.customActionRules)
     return chrome.declarativeNetRequest.updateSessionRules({ addRules: inverseRules })
 }

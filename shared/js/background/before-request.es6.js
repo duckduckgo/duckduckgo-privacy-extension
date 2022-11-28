@@ -97,14 +97,14 @@ function handleRequest (requestData) {
     // don't have a tab instance for this tabId or this is a new requestId.
     if (requestData.type === 'main_frame') {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
-            if(thisTab) {
+            if (thisTab) {
                 // upon navigation, remove any custom action session rules
                 const customRulesIds = []
                 for (const ruleSet in thisTab.customActionRules) {
                     customRulesIds.push(...thisTab.customActionRules[ruleSet])
                 }
                 if (customRulesIds) {
-                    chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: customRulesIds})
+                    chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: customRulesIds })
                 }
             }
 

@@ -14,13 +14,12 @@ async function init () {
         // MV3 message proxy for click to load
         event.stopImmediatePropagation()
         const detail = event && event.detail
-        if(!detail) {
+        if (!detail) {
             console.warn('no details in sendMessage proxy', event)
             return
         }
         chrome.runtime.sendMessage(detail, response => {
             const msg = { type: 'update', detail: { func: detail.messageType, response } }
-            const stringifiedArgs = JSON.stringify(msg)
             window.dispatchEvent(new CustomEvent(secret, {
                 detail: msg
             }))
