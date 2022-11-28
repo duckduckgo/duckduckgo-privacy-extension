@@ -98,7 +98,10 @@ function handleRequest (requestData) {
     if (requestData.type === 'main_frame') {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
             if (thisTab) {
-                // upon navigation, remove any custom action session rules
+                // Upon navigation, remove any custom action session rules that may have been applied to this tab
+                // for example, by click-to-load to temporarily allow FB content to be displayed
+                // Should we instead rely on chrome.webNavigation.onCommitted events, since a main_frame req may not result
+                // in a navigation?O . TOH that may result in a race condition if reules aren't removed quickly enough
                 const customRulesIds = []
                 for (const ruleSet in thisTab.customActionRules) {
                     customRulesIds.push(...thisTab.customActionRules[ruleSet])

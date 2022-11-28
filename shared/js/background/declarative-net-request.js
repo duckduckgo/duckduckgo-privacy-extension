@@ -181,7 +181,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
         removeRuleIds, addRules
     })
     settings.updateSetting(settingName, { etag, lookup, extensionVersion })
-    settings.updateSetting('inverseCustomRules', inverseCustomRules )
+    settings.updateSetting('inverseCustomRules', inverseCustomRules)
 }
 
 /**
@@ -333,10 +333,10 @@ export async function refreshUserAllowlistRules (allowlistedDomains) {
 
 export async function flushSessionRules () {
     chrome.declarativeNetRequest.getSessionRules().then(rules => {
-        if(rules.length) {
-            console.log('removing session rules', ruleIds)
+        if (rules.length) {
             const ruleIds = rules.filter(r => isValidSessionId(r.id)).map(r => r.id)
-            return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds})
+            console.warn('removing session rules', ruleIds)
+            return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })
         }
     })
 }
