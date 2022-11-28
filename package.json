@@ -98,7 +98,7 @@
         "normalize.scss": "0.1.0",
         "punycode": "2.1.1",
         "seedrandom": "^3.0.5",
-        "tldts": "^5.7.100",
+        "tldts": "^5.7.101",
         "underscore": "1.13.6",
         "web-ext": "^7.3.1"
     },
