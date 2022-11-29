@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+import { removeInverseRules } from './classes/custom-rules-manager'
 const tldts = require('tldts')
 
 const utils = require('./utils.es6')
@@ -102,13 +103,7 @@ function handleRequest (requestData) {
                 // for example, by click-to-load to temporarily allow FB content to be displayed
                 // Should we instead rely on chrome.webNavigation.onCommitted events, since a main_frame req may not result
                 // in a navigation?O . TOH that may result in a race condition if reules aren't removed quickly enough
-                const customRulesIds = []
-                for (const ruleSet in thisTab.customActionRules) {
-                    customRulesIds.push(...thisTab.customActionRules[ruleSet])
-                }
-                if (customRulesIds.length) {
-                    chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: customRulesIds })
-                }
+                removeInverseRules(thisTab)
             }
 
             const newTab = tabManager.create(requestData)

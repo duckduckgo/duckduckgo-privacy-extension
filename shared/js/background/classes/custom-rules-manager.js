@@ -37,3 +37,13 @@ export function enableInverseRules (customAction, tabId) {
     console.warn('enableInverseRules updated for tab', tab.id, tab.customActionRules)
     return chrome.declarativeNetRequest.updateSessionRules({ addRules: inverseRules })
 }
+
+export function removeInverseRules (tab) {
+    const customRulesIds = []
+    for (const ruleSet in tab.customActionRules) {
+        customRulesIds.push(...tab.customActionRules[ruleSet])
+    }
+    if (customRulesIds.length) {
+        chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: customRulesIds })
+    }
+}

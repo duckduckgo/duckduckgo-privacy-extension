@@ -168,7 +168,6 @@ export async function enableSocialTracker (data, sender) {
 
     if (browserWrapper.getManifestVersion() === 3) {
         enableInverseRules(data.action, sender.tab.id)
-
     }
     tab.site.clickToLoad.push(entity)
 
