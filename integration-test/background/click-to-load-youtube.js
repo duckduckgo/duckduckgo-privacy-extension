@@ -49,7 +49,9 @@ function summariseYouTubeRequests (requests) {
             continue
         }
 
-        hasYouTubeAutoPlay = hasYouTubeAutoPlay || request.url.searchParams.get('autoplay') === '1'
+        if (request.url.searchParams.get('autoplay') === '1') {
+            hasYouTubeAutoPlay = true
+        }
 
         stats.total += 1
 
