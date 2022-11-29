@@ -170,12 +170,12 @@ class Tab {
         this._tabState.setValue('statusCode', value)
     }
 
-    get ctlYouTubeAdded () {
-        return this._tabState.ctlYouTubeAdded
+    get ctlYouTube () {
+        return this._tabState.ctlYouTube
     }
 
-    set ctlYouTubeAdded (value) {
-        this._tabState.setValue('ctlYouTubeAdded', value)
+    set ctlYouTube (value) {
+        this._tabState.setValue('ctlYouTube', value)
     }
 
     /**

@@ -114,7 +114,7 @@ describe('Tab', () => {
                 requestId: 123,
                 status: 200,
                 statusCode: null,
-                ctlYouTubeAdded: false
+                ctlYouTube: false
             }
             expect(tabClone.site.enabledFeatures.length).toBe(19)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))
