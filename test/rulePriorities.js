@@ -9,6 +9,10 @@ const {
 } = require('../lib/gpc')
 
 const {
+    TRACKING_PARAM_PRIORITY
+} = require('../lib/trackingParams')
+
+const {
     BASELINE_PRIORITY: TRACKER_BLOCKING_BASELINE_PRIORITY,
     CEILING_PRIORITY: TRACKER_BLOCKING_CEILING_PRIORITY
 } = require('../lib/tds')
@@ -43,12 +47,18 @@ describe('Rule Priorities', () => {
         assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY >
                   TRACKER_BLOCKING_CEILING_PRIORITY)
 
+        assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY <
+                  TRACKING_PARAM_PRIORITY)
+
         // Content Blocking allowlist and ad attribution allowlisting rules
         // should disable Tracker Blocking, but not other protections.
         assert.ok(CONTENT_BLOCKING_ALLOWLIST_PRIORITY >
                   TRACKER_BLOCKING_CEILING_PRIORITY)
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY ===
                   CONTENT_BLOCKING_ALLOWLIST_PRIORITY)
+
+        assert.ok(TRACKING_PARAM_PRIORITY >
+                  TRACKER_BLOCKING_CEILING_PRIORITY)
 
         // Smarter Encryption priority.
         // Note: It's important that the Smarter Encryption rule priority is
@@ -73,6 +83,8 @@ describe('Rule Priorities', () => {
                   SMARTER_ENCRYPTION_PRIORITY)
         assert.ok(USER_ALLOWLISTED_PRIORITY >
                   GPC_HEADER_PRIORITY)
+        assert.ok(USER_ALLOWLISTED_PRIORITY >
+                  TRACKING_PARAM_PRIORITY)
         assert.ok(USER_ALLOWLISTED_PRIORITY ===
                   UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
         assert.ok(USER_ALLOWLISTED_PRIORITY ===
