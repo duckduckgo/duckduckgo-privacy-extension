@@ -37,9 +37,10 @@ export function dashboardDataFromTab (tab, userData) {
 
     const requests = convertToRequests(tab, protectionsEnabled)
 
-    // Only assign `emailProtectionUserData` if we're sure it is valid data - otherwise allow it to be undefined.
+    // Only assign `emailProtectionUserData` if we're sure it is valid data (eg: has at least 'nextAlias'
+    // - otherwise allow it to be undefined.
     let emailProtectionUserData
-    if (userData && 'userName' in userData) {
+    if (userData && 'nextAlias' in userData) {
         emailProtectionUserData = userData
     }
 
