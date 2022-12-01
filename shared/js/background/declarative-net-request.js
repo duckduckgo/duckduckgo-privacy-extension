@@ -333,11 +333,16 @@ export async function refreshUserAllowlistRules (allowlistedDomains) {
     await updateUserAllowlistRule(normalizedAllowlistedDomains)
 }
 
+/**
+* Remove orphaned session ids
+* We increment the rule IDs for some session rules, starting at STARTING_RULE_ID and
+* keep a note of the next rule ID in session storage. During extesion update/restarts
+* session storage is cleared, while session rules are not, which causes errors due to
+* session rule ID conflicts
+ * @return {Promise}
+ */
+
 export async function flushSessionRules () {
-    // We increment the rule IDs for some session rules, starting at STARTING_RULE_ID and
-    // keep a note of the next rule ID in session storage. During extesion update/restarts
-    // session storage is cleared, while session rules are not, which causes errors due to
-    // session rule ID conflicts
     chrome.declarativeNetRequest.getSessionRules().then(rules => {
         if (rules.length) {
             const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId)
