@@ -145,26 +145,12 @@ export function getTopBlockedByPages (options) {
 }
 
 // Click to load interactions
-export async function initClickToLoad (contentScopeConfig, sender) {
+export async function initClickToLoad (config, sender) {
     await settings.ready()
     const tab = tabManager.get({ tabId: sender.tab.id })
 
     // Remove first-party entries.
     await startup.ready()
-
-    /**
-     * The Click to Load configuration is in the process of being migrated, but it is currently split
-     * between tdsStorage.ClickToLoadConfig (aka social_ctp_configuration.json), the block list (aka tds.json),
-     * and content-scope-scripts/features/click-to-play.js.
-     * Here we take care to remove any entries from the content-scope-scripts configuration (aka contentScopeConfig)
-     * that aren't also found in tdsStorage.ClickToLoadConfig - otherwise the feature can end up in an inconsistent state.
-     */
-    const config = {}
-    for (const entity in contentScopeConfig) {
-        if (tdsStorage.ClickToLoadConfig[entity]) {
-            config[entity] = contentScopeConfig[entity]
-        }
-    }
 
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
