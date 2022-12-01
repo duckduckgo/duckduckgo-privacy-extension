@@ -32,7 +32,7 @@ export class TabState {
         this.trackers = {}
         /** @type {null | import('../events/referrer-trimming').Referrer} */
         this.referrer = null
-        /** @type {Object} */
+        /** @type {Object.<string, number[]>} */
         this.customActionRules = {}
 
         /** @type {boolean} */

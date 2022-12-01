@@ -58,7 +58,7 @@ async function onInstalled (details) {
                 })
             }
         }
-    } catch(e) {
+    } catch (e) {
         console.error('Failed to inject email content script at startup:', e)
     }
 
