@@ -334,10 +334,13 @@ export async function refreshUserAllowlistRules (allowlistedDomains) {
 }
 
 export async function flushSessionRules () {
+    // We increment the rule IDs for some session rules, starting at STARTING_RULE_ID and
+    // keep a note of the next rule ID in session storage. During extesion update/restarts
+    // session storage is cleared, while session rules are not, which causes errors due to
+    // session rule ID conflicts
     chrome.declarativeNetRequest.getSessionRules().then(rules => {
         if (rules.length) {
-            const ruleIds = rules.filter(r => isValidSessionId(r.id)).map(r => r.id)
-            console.warn('removing session rules', ruleIds)
+            const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId)
             return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })
         }
     })
