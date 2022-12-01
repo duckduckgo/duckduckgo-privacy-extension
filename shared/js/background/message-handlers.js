@@ -261,6 +261,10 @@ export async function getSetting ({ name }) {
     return settings.getSetting(name)
 }
 
+export async function getYoutubePreviewsEnabled () {
+    return getSetting({ name: 'youtubePreviewsEnabled' })
+}
+
 const {
     isValidToken,
     isValidUsername,
