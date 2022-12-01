@@ -81,6 +81,8 @@ function stringifyBlocklist (tds) {
  * @typedef {object} rulesetEqualOptions
  * @property {object[]} [expectedRuleset]
  *   The expected declarativeNetRequest ruleset.
+ * @property {object} [expectedInverseCustomActionRules]
+ *   The expected declarativeNetRequest ruleset.
  * @property {object} [expectedLookup]
  *   The expected ruleId -> matchDetails lookup.
  * @property {function} [rulesetTransform]
@@ -112,7 +114,7 @@ function stringifyBlocklist (tds) {
  */
 async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
     expectedRuleset, expectedLookup, rulesetTransform, ruleTransform,
-    lookupTransform
+    lookupTransform, expectedInverseCustomActionRules
 }) {
     const tdsBefore = stringifyBlocklist(tds)
 
@@ -132,6 +134,7 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
     if (expectedRuleset) {
         /** @type {any} */
         let actualRuleset = result.ruleset
+
         if (rulesetTransform) {
             actualRuleset = rulesetTransform(actualRuleset)
         }
@@ -141,6 +144,7 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
         }
         assert.deepEqual(actualRuleset, expectedRuleset)
     }
+
     if (expectedLookup) {
         let actualLookup = result.matchDetailsByRuleId
 
@@ -148,6 +152,12 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
             actualLookup = lookupTransform(actualLookup, result.ruleset)
         }
         assert.deepEqual(actualLookup, expectedLookup)
+    }
+
+    if (expectedInverseCustomActionRules) {
+        const actualInverseRules = result.inverseCustomActionRules
+
+        assert.deepEqual(actualInverseRules, expectedInverseCustomActionRules)
     }
 }
 
@@ -200,7 +210,7 @@ describe('generateTdsRuleset', () => {
     })
 
     it('should reject a tds.json file that contains too many tracker entries ' +
-       'for subdomains of the same domain', async () => {
+        'for subdomains of the same domain', async () => {
         const blockList = emptyBlockList()
         const entity = 'Example entity'
 
@@ -217,7 +227,7 @@ describe('generateTdsRuleset', () => {
         )
         for (const rule of ruleset) {
             assert.ok(typeof rule.priority === 'number' &&
-                      rule.priority <= MAXIMUM_SUBDOMAIN_PRIORITY)
+                    rule.priority <= MAXIMUM_SUBDOMAIN_PRIORITY)
         }
 
         addDomain(blockList, 'a.' + domain, entity, 'block')
@@ -230,7 +240,7 @@ describe('generateTdsRuleset', () => {
     })
 
     it('should reject a tds.json file if a tracker entry contains too many ' +
-       'rules', async () => {
+        'rules', async () => {
         const blockList = emptyBlockList()
 
         const rules = new Array(MAXIMUM_RULES_PER_DOMAIN)
@@ -256,11 +266,11 @@ describe('generateTdsRuleset', () => {
     })
 
     it('should reject a tds.json file if it requires too many regular ' +
-       'expression rule filters', async () => {
+        'expression rule filters', async () => {
         const blockList = emptyBlockList()
 
         const maxRegexDomains =
-              Math.floor(MAXIMUM_REGEX_RULES / MAXIMUM_RULES_PER_DOMAIN)
+                Math.floor(MAXIMUM_REGEX_RULES / MAXIMUM_RULES_PER_DOMAIN)
 
         const rules = new Array(MAXIMUM_RULES_PER_DOMAIN)
         rules.fill({ rule: '[0-9]+' })
@@ -353,7 +363,7 @@ describe('generateTdsRuleset', () => {
     })
 
     it('should return an empty ruleset for an empty tds.json ' +
-       'file', async () => {
+        'file', async () => {
         await rulesetEqual(
             emptyBlockList(), isRegexSupportedTrue, null,
             { expectedRuleset: [] })
@@ -439,7 +449,7 @@ describe('generateTdsRuleset', () => {
                 return [
                     rule.condition.requestDomains.join(','),
                     rule.condition.domainType ||
-                        rule.condition.excludedInitiatorDomains?.join(',') || ''
+                    rule.condition.excludedInitiatorDomains?.join(',') || ''
                 ]
             },
             expectedRuleset: [
@@ -476,7 +486,7 @@ describe('generateTdsRuleset', () => {
     })
 
     it('should increase priority for tracker rules, in descending ' +
-       'order', async () => {
+        'order', async () => {
         const blockList = emptyBlockList()
         addDomain(blockList, 'domain.invalid', 'Example entity', 'ignore', [
             { rule: '1', exceptions: { domains: ['a.invalid'] } },
@@ -496,20 +506,20 @@ describe('generateTdsRuleset', () => {
                 // generated declarativeNetRequest rules are in reverse order.
                 ['5', BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT],
                 ['4', BASELINE_PRIORITY +
-                    (TRACKER_RULE_PRIORITY_INCREMENT * 2)],
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 2)],
                 ['3', BASELINE_PRIORITY +
-                    (TRACKER_RULE_PRIORITY_INCREMENT * 3)],
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 3)],
                 // Allowing exception for the rule has the same priority, since
                 // declarativeNetRequest rules with 'allow' actions take
                 // priority over rules with 'block' action of same priority.
                 ['3', BASELINE_PRIORITY +
-                    (TRACKER_RULE_PRIORITY_INCREMENT * 3)],
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 3)],
                 ['2', BASELINE_PRIORITY +
-                    (TRACKER_RULE_PRIORITY_INCREMENT * 4)],
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 4)],
                 ['1', BASELINE_PRIORITY +
-                    (TRACKER_RULE_PRIORITY_INCREMENT * 5)],
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 5)],
                 ['1', BASELINE_PRIORITY +
-                    (TRACKER_RULE_PRIORITY_INCREMENT * 5)]
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 5)]
             ]
         })
     })
@@ -599,7 +609,7 @@ describe('generateTdsRuleset', () => {
     })
 
     it('should ignore cname entries for subdomains of tracking ' +
-       'domains', async () => {
+        'domains', async () => {
         const blockList = emptyBlockList()
         // Do not require declarativeNetRequest rules since they are default
         // action ignore.
@@ -641,7 +651,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 2,
                     priority: BASELINE_PRIORITY +
-                              TRACKER_RULE_PRIORITY_INCREMENT,
+                        TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
                         type: 'allow'
                     },
@@ -667,7 +677,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 1,
                     priority: BASELINE_PRIORITY +
-                              TRACKER_RULE_PRIORITY_INCREMENT,
+                        TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
                         type: 'block'
                     },
@@ -683,7 +693,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 2,
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 2),
                     action: {
                         type: 'block'
                     },
@@ -699,7 +709,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 3,
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 3),
                     action: {
                         type: 'block'
                     },
@@ -879,7 +889,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 2,
                     priority: BASELINE_PRIORITY +
-                              TRACKER_RULE_PRIORITY_INCREMENT,
+                        TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
                         type: 'allow'
                     },
@@ -895,7 +905,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 3,
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 2),
                     action: {
                         type: 'block'
                     },
@@ -911,7 +921,7 @@ describe('generateTdsRuleset', () => {
                     //       exceptions since 'allow' rules trump 'block' rules
                     //       of the same priority.
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 2),
                     action: {
                         type: 'allow'
                     },
@@ -924,7 +934,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 5,
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 3),
                     action: {
                         type: 'block'
                     },
@@ -937,7 +947,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 6,
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 3),
                     action: {
                         type: 'allow'
                     },
@@ -1132,7 +1142,7 @@ describe('generateTdsRuleset', () => {
             ruleTransform (rule) {
                 return [
                     rule.condition.urlFilter ||
-                        rule.condition.requestDomains.join(','),
+                    rule.condition.requestDomains.join(','),
                     rule.action.type
                 ]
             },
@@ -1240,7 +1250,7 @@ describe('generateTdsRuleset', () => {
     })
 
     it('should handle domain-anchored rules for cnames where ' +
-       'possible', async () => {
+        'possible', async () => {
         const blockList = emptyBlockList()
         addDomain(blockList, 'example.invalid', 'Example entity', 'ignore', [
             // Anchored to domain, workaround is viable.
@@ -1323,7 +1333,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 1,
                     priority: BASELINE_PRIORITY +
-                              TRACKER_RULE_PRIORITY_INCREMENT,
+                        TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
                         type: 'block'
                     },
@@ -1336,7 +1346,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 2,
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 2),
                     action: {
                         type: 'redirect',
                         redirect: { extensionPath: '/supported.js' }
@@ -1351,7 +1361,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 3,
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 3),
                     action: {
                         type: 'block'
                     },
@@ -1365,7 +1375,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 4,
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 4),
                     action: {
                         type: 'redirect',
                         redirect: { extensionPath: '/supported2.js' }
@@ -1380,7 +1390,7 @@ describe('generateTdsRuleset', () => {
                 {
                     id: 5,
                     priority: BASELINE_PRIORITY +
-                              (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                        (TRACKER_RULE_PRIORITY_INCREMENT * 4),
                     action: {
                         type: 'allow'
                     },
@@ -1550,5 +1560,215 @@ describe('generateTdsRuleset', () => {
                 }
             ]
         })
+    })
+
+    it('should include rules with known custom actions', async () => {
+        const blockList = emptyBlockList()
+        addDomain(blockList, 'default-ignore.invalid', 'Default Ignore entity', 'ignore', [
+            {
+                rule: 'default-ignore\\.invalid\\/known-action-1'
+            },
+            {
+                rule: 'default-ignore\\.invalid\\/block-ctl-fb-1',
+                action: 'block-ctl-fb'
+            },
+            {
+                rule: 'default-ignore\\.invalid\\/known-action-2',
+                exceptions: { types: ['script'] }
+            },
+            {
+                rule: 'default-ignore\\.invalid\\/block-ctl-yt-1',
+                action: 'block-ctl-yt',
+                exceptions: { types: ['script'] }
+            }
+        ])
+        addDomain(blockList, 'default-block.invalid', 'Default Block entity', 'block', [
+            {
+                rule: 'default-block\\.invalid\\/known-action-1'
+            },
+            {
+                rule: 'default-block\\.invalid\\/block-ctl-fb-1',
+                action: 'block-ctl-fb',
+                surrogate: 'supported.js'
+            },
+            {
+                rule: 'default-block\\.invalid\\/known-action-2',
+                exceptions: { types: ['script'] }
+            },
+            {
+                rule: 'default-block\\.invalid\\/block-ctl-yt-1',
+                action: 'block-ctl-yt',
+                exceptions: { types: ['script'] }
+            }
+        ])
+        const expectedRules = {
+            expectedRuleset: [{
+                priority: 10001,
+                action: {
+                    type: 'block'
+                },
+                condition: {
+                    urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
+                    isUrlFilterCaseSensitive: false,
+                    domainType: 'thirdParty'
+                },
+                id: 1
+            }, {
+                priority: 10001,
+                action: {
+                    type: 'allow'
+                },
+                condition: {
+                    urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
+                    isUrlFilterCaseSensitive: false,
+                    resourceTypes: ['script']
+                },
+                id: 2
+            }, {
+                priority: 10002,
+                action: {
+                    type: 'block'
+                },
+                condition: {
+                    urlFilter: '||default-ignore.invalid/known-action-2',
+                    isUrlFilterCaseSensitive: false,
+                    domainType: 'thirdParty'
+                },
+                id: 3
+            }, {
+                priority: 10002,
+                action: {
+                    type: 'allow'
+                },
+                condition: {
+                    urlFilter: '||default-ignore.invalid/known-action-2',
+                    isUrlFilterCaseSensitive: false,
+                    resourceTypes: ['script']
+                },
+                id: 4
+            }, {
+                priority: 10003,
+                action: {
+                    type: 'block'
+                },
+                condition: {
+                    urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
+                    isUrlFilterCaseSensitive: false,
+                    domainType: 'thirdParty'
+                },
+                id: 5
+            }, {
+                priority: 10004,
+                action: {
+                    type: 'block'
+                },
+                condition: {
+                    urlFilter: '||default-ignore.invalid/known-action-1',
+                    isUrlFilterCaseSensitive: false,
+                    domainType: 'thirdParty'
+                },
+                id: 6
+            }, {
+                priority: 10000,
+                action: {
+                    type: 'block'
+                },
+                condition: {
+                    domainType: 'thirdParty',
+                    requestDomains: ['default-block.invalid']
+                },
+                id: 7
+            }, {
+                priority: 10001,
+                action: {
+                    type: 'allow'
+                },
+                condition: {
+                    urlFilter: '||default-block.invalid/block-ctl-yt-1',
+                    isUrlFilterCaseSensitive: false,
+                    resourceTypes: ['script']
+                },
+                id: 8
+            }, {
+                priority: 10002,
+                action: {
+                    type: 'block'
+                },
+                condition: {
+                    urlFilter: '||default-block.invalid/known-action-2',
+                    isUrlFilterCaseSensitive: false,
+                    domainType: 'thirdParty'
+                },
+                id: 9
+            }, {
+                priority: 10002,
+                action: {
+                    type: 'allow'
+                },
+                condition: {
+                    urlFilter: '||default-block.invalid/known-action-2',
+                    isUrlFilterCaseSensitive: false,
+                    resourceTypes: ['script']
+                },
+                id: 10
+            }, {
+                priority: 10003,
+                action: {
+                    redirect: {
+                        extensionPath: '/supported.js'
+                    },
+                    type: 'redirect'
+                },
+                condition: {
+                    urlFilter: '||default-block.invalid/block-ctl-fb-1',
+                    isUrlFilterCaseSensitive: false,
+                    domainType: 'thirdParty',
+                    resourceTypes: ['script']
+                },
+                id: 11
+            }, {
+                priority: 10004,
+                action: {
+                    type: 'block'
+                },
+                condition: {
+                    urlFilter: '||default-block.invalid/known-action-1',
+                    isUrlFilterCaseSensitive: false,
+                    domainType: 'thirdParty'
+                },
+                id: 12
+            }],
+            expectedInverseCustomActionRules: {}
+        }
+        expectedRules.expectedInverseCustomActionRules['block-ctl-yt'] = [
+            {
+                priority: 10001,
+                action: { type: 'allow' },
+                condition: {
+                    urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
+                    isUrlFilterCaseSensitive: false
+                }
+            }
+        ]
+        expectedRules.expectedInverseCustomActionRules['block-ctl-fb'] = [
+            {
+                priority: 10003,
+                action: { type: 'allow' },
+                condition: {
+                    urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
+                    isUrlFilterCaseSensitive: false
+                }
+            },
+            {
+                priority: 10003,
+                action: { type: 'allow' },
+                condition: {
+                    urlFilter: '||default-block.invalid/block-ctl-fb-1',
+                    isUrlFilterCaseSensitive: false,
+                    resourceTypes: ['script']
+                }
+            }
+        ]
+        await rulesetEqual(blockList, isRegexSupportedTrue, null, expectedRules)
     })
 })
