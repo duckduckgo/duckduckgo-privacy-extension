@@ -116,7 +116,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
 
     let addRules
     let lookup
-    let inverseCustomRules = []
+    let inverseCustomRules = {}
 
     // TDS.
     if (configName === 'tds') {
@@ -181,7 +181,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
         removeRuleIds, addRules
     })
     settings.updateSetting(settingName, { etag, lookup, extensionVersion })
-    if (inverseCustomRules && inverseCustomRules.length) {
+    if (inverseCustomRules && Object.keys(inverseCustomRules).length) {
         settings.updateSetting('inverseCustomRules', inverseCustomRules)
     }
 }

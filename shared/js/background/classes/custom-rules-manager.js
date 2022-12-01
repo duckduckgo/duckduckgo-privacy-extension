@@ -10,7 +10,7 @@ const { getNextSessionRuleId } = require('../dnr-session-rule-id')
  */
 function getInverseRules (action) {
     const inverseCustomRules = JSON.parse(JSON.stringify(settings.getSetting('inverseCustomRules')))
-    return inverseCustomRules?.filter(rule => rule.customAction === action)
+    return inverseCustomRules[action]
 }
 
 /**
