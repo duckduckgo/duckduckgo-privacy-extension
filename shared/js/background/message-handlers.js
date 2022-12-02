@@ -154,6 +154,7 @@ export async function initClickToLoad (config, sender) {
 
     // Remove first-party entries.
     await startup.ready()
+
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
     if (websiteOwner) {
@@ -200,9 +201,9 @@ export async function getYouTubeVideoDetails (videoURL) {
             }
         ).then(response => response.json())
         const { title, thumbnail_url: previewImage } = youTubeVideoResponse
-        return { status: 'success', title, previewImage }
+        return { status: 'success', videoURL, title, previewImage }
     } catch (e) {
-        return { status: 'failed' }
+        return { status: 'failed', videoURL }
     }
 }
 
@@ -232,15 +233,25 @@ export async function enableSocialTracker (data, sender) {
     }
 }
 
+export function updateYouTubeCTLAddedFlag (value, sender) {
+    const tab = tabManager.get({ tabId: sender.tab.id })
+    tab.ctlYouTube = Boolean(value)
+}
+
 export async function updateSetting ({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)
     utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
+    return { messageType: `ddg-settings-${name}`, value }
 }
 
 export async function getSetting ({ name }) {
     await settings.ready()
     return settings.getSetting(name)
+}
+
+export async function getYoutubePreviewsEnabled () {
+    return getSetting({ name: 'youtubePreviewsEnabled' })
 }
 
 const {
@@ -392,4 +403,8 @@ export function search ({ term }) {
         url.searchParams.set('bext', browserInfo.os + 'cr')
         browser.tabs.create({ url: url.toString() })
     }
+}
+
+export function openShareFeedbackPage () {
+    return browserWrapper.openExtensionPage('/html/feedback.html')
 }

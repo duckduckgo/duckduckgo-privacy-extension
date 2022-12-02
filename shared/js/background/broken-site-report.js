@@ -103,6 +103,7 @@ export function breakageReportForTab (tab, tds, category, description) {
     }
 
     const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
+    const ctlYouTube = tab.ctlYouTube ? 'true' : 'false'
     const ampUrl = tab.ampUrl || undefined
     const upgradedHttps = tab.upgradedHttps
 
@@ -111,6 +112,7 @@ export function breakageReportForTab (tab, tds, category, description) {
         tds,
         upgradedHttps: upgradedHttps.toString(),
         urlParametersRemoved,
+        ctlYouTube,
         blockedTrackers: blocked.join(','),
         surrogates: surrogates.join(',')
     })
