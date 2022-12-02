@@ -342,8 +342,8 @@ export async function refreshUserAllowlistRules (allowlistedDomains) {
  * @return {Promise}
  */
 
-export async function flushSessionRules () {
-    chrome.declarativeNetRequest.getSessionRules().then(rules => {
+export function flushSessionRules () {
+    return chrome.declarativeNetRequest.getSessionRules().then(rules => {
         if (rules.length) {
             const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId)
             return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })
