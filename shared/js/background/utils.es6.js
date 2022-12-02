@@ -428,11 +428,6 @@ export function getURLWithoutQueryString (urlString) {
     return urlString?.split('?')[0]
 }
 
-export function closePopup () {
-    const w = browser.extension.getViews({ type: 'popup' })[0]
-    w.close()
-}
-
 export async function reloadCurrentTab () {
     const tab = await getCurrentTab()
     if (tab && tab.id) {

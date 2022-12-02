@@ -3,8 +3,8 @@ import * as startup from './startup'
 import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
 import { breakageReportForTab } from './broken-site-report'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
-import { getExtensionURL } from './wrapper.es6'
-import { closePopup, reloadCurrentTab } from './utils.es6'
+import { getExtensionURL, notifyPopup } from './wrapper.es6'
+import { reloadCurrentTab } from './utils.es6'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -62,8 +62,12 @@ export async function setLists (options) {
         tabManager.setList(listItem)
     }
 
-    closePopup()
-    reloadCurrentTab()
+    try {
+        notifyPopup({ closePopup: true })
+        reloadCurrentTab()
+    } catch (e) {
+        console.error('Error trying to reload+refresh following `setLists` message', e)
+    }
 }
 
 export function allowlistOptIn (optInData) {
@@ -78,7 +82,6 @@ export function getBrowser () {
 export function openOptions () {
     if (browserName === 'moz') {
         browser.tabs.create({ url: getExtensionURL('/html/options.html') })
-        window.close()
     } else {
         browser.runtime.openOptionsPage()
     }
