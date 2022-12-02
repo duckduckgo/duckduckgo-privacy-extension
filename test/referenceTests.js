@@ -8,12 +8,20 @@ const {
 const {
     generateTdsRuleset
 } = require('../lib/tds')
+const { generateCookieBlockingRuleset } = require('../lib/cookies')
 
 function referenceTestPath (...args) {
     return path.join(
         __dirname, '..', 'node_modules', '@duckduckgo/privacy-reference-tests',
         ...args
     )
+}
+
+function loadJSONFile (prefix, file) {
+    return JSON.parse(fs.readFileSync(
+        path.join(prefix, file),
+        { encoding: 'utf8', flag: 'r' }
+    ))
 }
 
 function* testCases (referenceTests) {
@@ -38,15 +46,9 @@ describe('Reference Tests', () => {
             'tracker-radar-tests', 'TR-domain-matching'
         )
 
-        const blockList = JSON.parse(fs.readFileSync(
-            path.join(referenceTestsPath, 'tracker_radar_reference.json'),
-            { encoding: 'utf8', flag: 'r' }
-        ))
+        const blockList = loadJSONFile(referenceTestsPath, 'tracker_radar_reference.json')
 
-        const referenceTests = JSON.parse(fs.readFileSync(
-            path.join(referenceTestsPath, 'domain_matching_tests.json'),
-            { encoding: 'utf8', flag: 'r' }
-        ))
+        const referenceTests = loadJSONFile(referenceTestsPath, 'domain_matching_tests.json')
 
         // Note - This should be taken from surrogates.txt, not hardcoded.
         const supportedSurrogateScripts = new Set(['tracker', 'script.js'])
@@ -106,10 +108,7 @@ describe('Reference Tests', () => {
             { encoding: 'utf8', flag: 'r' }
         ).split('\n')
 
-        const referenceTests = JSON.parse(fs.readFileSync(
-            path.join(referenceTestsPath, 'tests.json'),
-            { encoding: 'utf8', flag: 'r' }
-        ))
+        const referenceTests = loadJSONFile(referenceTestsPath, 'tests.json')
 
         await this.browser.addRules(generateSmarterEncryptionRuleset(domains))
 
@@ -142,6 +141,57 @@ describe('Reference Tests', () => {
             assert.equal(
                 actualUpgrade, expectedUpgrade, testDescription
             )
+        }
+    })
+
+    describe('cookie blocking', async function () {
+        const referenceTestsPath = referenceTestPath(
+            'block-third-party-tracking-cookies'
+        )
+        const referenceTests = loadJSONFile(referenceTestsPath, 'tests.json')
+        let cookieRules = []
+
+        this.beforeAll(async function () {
+            const tds = loadJSONFile(referenceTestsPath, 'tracker_radar_reference.json')
+            const config = loadJSONFile(referenceTestsPath, 'config_reference.json')
+
+            // TODO: legacy feature name in test config. Should be changed to 'cookies'
+            const excludedCookieDomains = config.features.trackingCookies3p.settings.excludedCookieDomains.map(e => e.domain)
+            const siteAllowlist = config.features.trackingCookies3p.exceptions.map(e => e.domain)
+            const unprotectedTemporary = config.unprotectedTemporary.map(e => e.domain)
+
+            cookieRules = generateCookieBlockingRuleset(tds, excludedCookieDomains, [...siteAllowlist, ...unprotectedTemporary], 1000).ruleset
+        })
+
+        this.beforeEach(async function () {
+            await this.browser.addRules(cookieRules)
+        })
+
+        for (const {
+            testDescription, requestURL: initialUrl,
+            siteURL: initiatorUrl, expectCookieHeadersRemoved,
+            expectSetCookieHeadersRemoved
+        } of testCases(referenceTests)) {
+            // exclude document.cookie specs (DNR only does header cookies)
+            if (!testDescription.startsWith('document.cookie')) {
+                it(testDescription, async function () {
+                    const actualMatchedRules = await this.browser.testMatchOutcome({
+                        url: initialUrl,
+                        initiator: initiatorUrl,
+                        type: 'xmlhttprequest',
+                        tabId: 1
+                    })
+                    if (expectCookieHeadersRemoved || expectSetCookieHeadersRemoved) {
+                        assert.equal(actualMatchedRules.length, 1)
+                        const firstMatch = actualMatchedRules[0]
+                        assert.equal(firstMatch.action.type, 'modifyHeaders')
+                        assert.equal(firstMatch.action.requestHeaders[0].header, 'cookie')
+                        assert.equal(firstMatch.action.responseHeaders[0].header, 'set-cookie')
+                    } else {
+                        assert.equal(actualMatchedRules.length, 0)
+                    }
+                })
+            }
         }
     })
 })

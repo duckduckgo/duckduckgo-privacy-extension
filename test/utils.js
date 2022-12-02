@@ -1,7 +1,8 @@
 const assert = require('assert')
 
 const {
-    generateDNRRule
+    generateDNRRule,
+    generateRequestDomainsByTrackerDomain
 } = require('../lib/utils')
 
 describe('generateDNRRule', () => {
@@ -498,5 +499,35 @@ describe('generateDNRRule', () => {
                 excludedRequestMethods: ['connect']
             })
         }
+    })
+})
+
+describe('generateRequestDomainsByTrackerDomain', () => {
+    it('collects CNAMEs for a domain together with the tracker', () => {
+        const mapping = generateRequestDomainsByTrackerDomain({
+            trackers: {
+                'tracker.com': {
+                    domain: 'tracker.com',
+                    default: 'block',
+                    prevalence: 0,
+                    rules: [],
+                    owner: {
+                        name: '',
+                        displayName: ''
+                    },
+                    cookies: 0,
+                    fingerprinting: 0,
+                    categories: []
+                }
+            },
+            cnames: {
+                'a.example.com': 'sub.tracker.com',
+                'b.example.com': 'sub.other.com'
+            },
+            entities: {}
+        })
+        assert.ok(mapping.has('tracker.com'))
+        assert.deepEqual(mapping.get('tracker.com'), ['tracker.com', 'a.example.com'])
+        assert.ok(!mapping.has('example.com'))
     })
 })
