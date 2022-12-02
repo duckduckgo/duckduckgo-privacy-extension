@@ -86,7 +86,7 @@
         "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#1.0.2",
         "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.1",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#main",
-        "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.1.0",
+        "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.2.0",
         "bel": "6.0.0",
         "deep-freeze": "0.0.1",
         "dexie": "3.2.2",
