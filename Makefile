@@ -32,13 +32,14 @@ chrome-release-zip:
 	cd build/chrome/release/ && zip -rq chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip *
 
 chrome-mv3-release-zip:
-	rm -f build/chrome-mv3/release/chrome-release-*.zip
-	cd build/chrome-mv3/release/ && zip -rq chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip *
+	rm -f build/chrome-mv3/release/chrome-mv3-release-*.zip
+	cd build/chrome-mv3/release/ && zip -rq chrome-mv3-release-$(shell date +"%Y%m%d_%H%M%S").zip *
 
-chrome-mv3-beta-zip: rename-chrome-beta chrome-mv3-release-zip
+chrome-mv3-beta-zip: prepare-chrome-beta chrome-mv3-release-zip
 	
-rename-chrome-beta:
+prepare-chrome-beta:
 	sed 's/__MSG_appName__/DuckDuckGo Privacy Essentials MV3 Beta/' ./browsers/chrome-mv3/manifest.json > build/chrome-mv3/release/manifest.json
+	cp -r build/chrome-mv3/release/img/beta/* build/chrome-mv3/release/img/
 
 chrome-mv3-beta: release chrome-mv3-beta-zip
 

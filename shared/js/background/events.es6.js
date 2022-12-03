@@ -20,7 +20,7 @@ const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
-const { refreshUserAllowlistRules, flushSessionRules } = require('./declarative-net-request')
+const { flushSessionRules } = require('./declarative-net-request')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -52,32 +52,21 @@ async function onInstalled (details) {
                 if (tab.url.startsWith('chrome://')) {
                     continue
                 }
-                await browserWrapper.executeScript({
+                browserWrapper.executeScript({
                     target: { tabId: tab.id },
                     files: ['public/js/content-scripts/autofill.js']
                 })
             }
         }
     } catch (e) {
-        console.error('Failed to inject email content script at startup:', e)
+        console.warn('Failed to inject email content script at startup:', e)
     }
 
-    // Refresh the user allowlisting declarativeNetRequest rule.
+    // remove any orphaned session rules (can happen on extension update/restart)
     if (manifestVersion === 3) {
         await settings.ready()
-        const allowlist = settings.getSetting('allowlisted') || {}
 
-        const allowlistedDomains = []
-        for (const [domain, enabled] of Object.entries(allowlist)) {
-            if (enabled) {
-                allowlistedDomains.push(domain)
-            }
-        }
-
-        // remove any orphaned session rules (can happen on extension update/restart)
         await flushSessionRules()
-
-        await refreshUserAllowlistRules(allowlistedDomains)
     }
 }
 
@@ -274,14 +263,10 @@ startup.ready().then(() => {
     )
 })
 
+// Store the created tab id for when onBeforeNavigate is called so data can be copied across from the source tab
+const createdTargets = new Map()
 browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
-    const currentTab = tabManager.get({ tabId: details.sourceTabId })
-    if (currentTab && currentTab.adClick) {
-        const newTab = tabManager.createOrUpdateTab(details.tabId, { url: details.url })
-        if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-            newTab.adClick = currentTab.adClick.propagate(newTab.id)
-        }
-    }
+    createdTargets.set(details.tabId, details.sourceTabId)
 })
 
 /**
@@ -289,20 +274,35 @@ browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
  */
 // keep track of URLs that the browser navigates to.
 //
-// this is currently meant to supplement tabManager.updateTabUrl() above:
+// this is supplemented by tabManager.updateTabUrl() on headersReceived:
 // tabManager.updateTabUrl only fires when a tab has finished loading with a 200,
 // which misses a couple of edge cases like browser special pages
 // and Gmail's weird redirect which returns a 200 via a service worker
-browser.webNavigation.onCommitted.addListener(details => {
+browser.webNavigation.onBeforeNavigate.addListener(details => {
     // ignore navigation on iframes
     if (details.frameId !== 0) return
 
-    const tab = tabManager.get({ tabId: details.tabId })
+    const currentTab = tabManager.get({ tabId: details.tabId })
+    const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
+    // persist the last URL the tab was trying to upgrade to HTTPS
+    if (currentTab && currentTab.httpsRedirects) {
+        newTab.httpsRedirects.persistMainFrameRedirect(currentTab.httpsRedirects.getMainFrameRedirect())
+    }
+    if (createdTargets.has(details.tabId)) {
+        const sourceTabId = createdTargets.get(details.tabId)
+        createdTargets.delete(details.tabId)
 
-    if (!tab) return
+        const sourceTab = tabManager.get({ tabId: sourceTabId })
+        if (sourceTab && sourceTab.adClick) {
+            createdTargets.set(details.tabId, sourceTabId)
+            if (sourceTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
+                newTab.adClick = sourceTab.adClick.propagate(newTab.id)
+            }
+        }
+    }
 
-    tab.updateSite(details.url)
-    devtools.postMessage(details.tabId, 'tabChange', tab)
+    newTab.updateSite(details.url)
+    devtools.postMessage(details.tabId, 'tabChange', devtools.serializeTab(newTab))
 })
 
 /**
@@ -310,6 +310,12 @@ browser.webNavigation.onCommitted.addListener(details => {
  */
 
 const Companies = require('./companies.es6')
+
+browser.tabs.onCreated.addListener((info) => {
+    if (info.id) {
+        tabManager.createOrUpdateTab(info.id, info)
+    }
+})
 
 browser.tabs.onUpdated.addListener((id, info) => {
     // sync company data to storage when a tab finishes loading
@@ -387,46 +393,6 @@ browser.runtime.onMessage.addListener((req, sender) => {
 
     console.error('Unrecognized message to background:', req, sender)
     return false
-})
-
-/**
- * Messaging connections
- */
-
-// List of actions that the user is taking in the currently open popup UI.
-// Note: This is lost when the background ServiceWorker is restarted. At that
-//       point, the popup window reopens the connection - restarting the
-//       background ServiceWorker in the process - and then resends its user
-//       actions. It is not usually safe to store state from events in this way.
-// See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#state
-const popupUserActions = []
-
-chrome.runtime.onConnect.addListener(port => {
-    // Popup UI is opened.
-    if (port.name === 'popup') {
-        // Take note of new user actions as they happen.
-        port.onMessage.addListener(userAction => {
-            popupUserActions.push(userAction)
-        })
-
-        // Popup UI closed again, refresh page etc based on the actions user
-        // took in the popup while it was open.
-        port.onDisconnect.addListener(async () => {
-            // Reload the website after a short delay if the user toggled
-            // allowlisting for it.
-            if (popupUserActions.includes('toggleAllowlist')) {
-                const currentTab = await utils.getCurrentTab()
-                if (currentTab) {
-                    setTimeout(() => {
-                        browser.tabs.reload(currentTab.id)
-                    }, 500)
-                }
-            }
-
-            // Clear the list of user actions.
-            popupUserActions.length = 0
-        })
-    }
 })
 
 /*

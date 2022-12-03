@@ -31,9 +31,6 @@ describe('Test request blocking', () => {
             pageRequests,
             ({ url }) => url.hostname === 'bad.third-party.site'
         )
-        const manifestVersion = await bgPage.evaluate(() => {
-            return globalThis.dbg.browserWrapper.getManifestVersion()
-        })
 
         // Initiate the test requests and wait until they have all completed.
         // Note:
@@ -66,45 +63,46 @@ describe('Test request blocking', () => {
             () => results.results // eslint-disable-line no-undef
         )
         for (const { id, category, status } of pageResults) {
+            const description = `ID: ${id}, Category: ${category}`
+
             // ServiceWorker initiated request blocking is not yet supported.
+            // TODO: Remove this condition once they are blocked again.
             if (id === 'serviceworker-fetch') {
+                expect(status).withContext(description).toEqual('loaded')
                 continue
             }
 
-            const description = `ID: ${id}, Category: ${category}`
             expect(status).withContext(description).not.toEqual('loaded')
         }
 
-        // Test the tracker reporting matches the expected outcomes.
-        const trackers = await bgPage.evaluate(async () => {
+        // Test the extension's tracker reporting matches the expected outcomes.
+        const extensionTrackers = await bgPage.evaluate(async () => {
             const currentTab = await globalThis.dbg.utils.getCurrentTab()
             return globalThis.dbg.tabManager.get({ tabId: currentTab.id }).trackers
         })
-        // TODO fix manifest v3 blocking service workers (https://app.asana.com/0/1200940319964997/1202895557146471/f)
-        // The count is higher for MV2 as we permit a load that loads more requests.
-        const count = manifestVersion === 2 ? 20 : 19
 
-        // Test the tabs tracker objects match the expected snapshot.
-        const trackerSnapshot = {
+        const extensionTrackersCount =
+              extensionTrackers['Test Site for Tracker Blocking'].count
+        expect(extensionTrackersCount).toBeGreaterThanOrEqual(testCount)
+
+        expect(extensionTrackers).toEqual({
             'Test Site for Tracker Blocking': {
                 displayName: 'Bad Third Party Site',
                 prevalence: 0.1,
                 urls: {
-                    'bad.third-party.site': {
-                        block: {
-                            action: 'block',
-                            reason: 'default block',
-                            categories: [],
-                            isBlocked: true,
-                            isSameEntity: false,
-                            isSameBaseDomain: false
-                        }
+                    'bad.third-party.site:block': {
+                        action: 'block',
+                        url: 'https://bad.third-party.site/privacy-protections/request-blocking/block-me/script.js',
+                        eTLDplus1: 'third-party.site',
+                        pageUrl: 'https://privacy-test-pages.glitch.me/privacy-protections/request-blocking/',
+                        entityName: 'Bad Third Party Site',
+                        prevalence: 0.1,
+                        state: { blocked: {} }
                     }
                 },
-                count
+                count: extensionTrackersCount
             }
-        }
-        expect(trackers).toEqual(trackerSnapshot)
+        })
 
         await page.close()
     })

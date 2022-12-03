@@ -418,3 +418,19 @@ export function getFeatureSettings (featureName) {
 
     return feature.settings
 }
+
+/**
+ * Strips off a query string from the URL
+ * @param {string} urlString
+ * @returns {string}
+ */
+export function getURLWithoutQueryString (urlString) {
+    return urlString?.split('?')[0]
+}
+
+export async function reloadCurrentTab () {
+    const tab = await getCurrentTab()
+    if (tab && tab.id) {
+        browser.tabs.reload(tab.id)
+    }
+}

@@ -85,7 +85,7 @@ function handleRequest (requestData) {
     // Skip requests to background tabs
     if (tabId === -1) { return }
 
-    let thisTab = tabManager.get(requestData)
+    const thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
     if (requestData.url.startsWith(browserWrapper.getExtensionURL('/web_accessible_resources'))) {
@@ -94,8 +94,6 @@ function handleRequest (requestData) {
         }
     }
 
-    // For main_frame requests: create a new tab instance whenever we either
-    // don't have a tab instance for this tabId or this is a new requestId.
     if (requestData.type === 'main_frame') {
         if (!thisTab || thisTab.requestId !== requestData.requestId) {
             if (thisTab) {
@@ -235,6 +233,7 @@ function blockHandleResponse (thisTab, requestData) {
     const blockingEnabled = thisTab.site.isContentBlockingEnabled()
 
     const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+    const baseDomain = trackers.getBaseDomain(requestData.url)
 
     /**
      * Click to Load Blocking
@@ -322,11 +321,13 @@ function blockHandleResponse (thisTab, requestData) {
             thisTab.site.addTracker(tracker)
 
             // record potential blocked trackers for this tab
-            thisTab.addToTrackers(tracker)
+            // without a baseDomain, it wouldn't make sense to record this
+            if (baseDomain) {
+                const url = utils.getURLWithoutQueryString(requestData.url)
+                thisTab.addToTrackers(tracker, baseDomain, url)
+            }
         }
-        // update badge icon for any requests that come in after
         // the tab has finished loading
-        if (thisTab.status === 'complete') thisTab.updateBadgeIcon()
         browserWrapper.notifyPopup({ updateTabData: true })
         // Block the request if the site is not allowlisted
         if (['block', 'redirect'].includes(tracker.action)) {

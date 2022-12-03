@@ -28,6 +28,12 @@
       padding: 10px;
     }
 
+    #settings-panel {
+      position: sticky;
+      top: 0;
+      background-color: aliceblue;
+    }
+
     #protections {
       padding-top: 0px;
     }
@@ -36,8 +42,24 @@
       margin: 2px;
     }
 
+    .protection-button-on {
+      background-color: #A0F2A8;
+    }
+
+    .protection-button-on:hover {
+      background-color: #ADFFAD
+    }
+
+    .protection-button-off {
+      background-color: #FBBEBF;
+    }
+
+    .protection-button-off:hover {
+      background-color: #FFCBCC;
+    }
+
     .block {
-      background-color: #DE5833;
+      background-color: #FBBEBF;
     }
 
     .redirect {
@@ -52,16 +74,20 @@
       background-color: #9CB8FF
     }
 
-    .set-cookie {
+    .set-cookie-tracker {
       background-color: #BDA8FC
     }
-
 
     table {
       table-layout: fixed;
       width: 100%;
       border-collapse: collapse;
       border: 1px solid black;
+    }
+
+    thead {
+      position: sticky;
+      background-color: antiquewhite;
     }
 
     thead th:nth-child(1) {
@@ -90,6 +116,17 @@
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
+    }
+
+    /* Make it easier to view contents of currently-hovered cell. */
+    td:hover {
+      white-space: break-spaces;
+      background-color: beige;
+      word-wrap: break-word;
+    }
+
+    tr:hover {
+      border: 1px solid black;
     }
 
     tr > td:nth-child(4) {
@@ -130,6 +167,7 @@
     </tr>
   </template>
 
+  <div id="settings-panel">
   <div class="header">
     <a href="./list-editor.html" target="_blank">🗒</a>
     <select id="tab-picker">
@@ -160,7 +198,7 @@
       <input id="display-redirect" type="checkbox" checked><span>Redirected</span>
     </label>
     <label class="cookie">
-      <input id="display-cookie" type="checkbox" checked><span>HTTP Cookies</span>
+      <input id="display-cookie-tracker" type="checkbox" checked><span>HTTP Cookies</span>
     </label>
     <label class="jscookie">
       <input id="display-jscookie" type="checkbox" checked><span>JS Cookies</span>
@@ -168,6 +206,7 @@
     <label class="canvas">
       <input id="display-canvas" type="checkbox" checked><span>Canvas API</span>
     </label>
+  </div>
   </div>
   <table>
     <thead>

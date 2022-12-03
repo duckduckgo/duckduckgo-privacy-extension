@@ -15,6 +15,7 @@ import {
     generateDNRRule
 } from '@duckduckgo/ddg2dnr/lib/utils'
 import {
+    SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
@@ -28,9 +29,10 @@ const ruleIdRangeByConfigName = {
     config: [10001, 20000]
 }
 
-// User allowlisting only requires one declarativeNetRequest rule, so hardcode
-// the rule ID here.
+// User allowlisting and the ServicerWorker initiated request exception both
+// only require one declarativeNetRequest rule, so hardcode the rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001
+export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
@@ -70,6 +72,193 @@ async function findExistingDynamicRule (desiredRuleId) {
 }
 
 /**
+ * Check if the declarativeNetRequest rules for a configuration need to be
+ * updated. Returns true if so, false if they are already up to date.
+ * @param {string} configName
+ * @param {Object} expectedState
+ * @returns {Promise<boolean>}
+ */
+async function configRulesNeedUpdate (configName, expectedState) {
+    const settingName = SETTING_PREFIX + configName
+    await settings.ready()
+    const settingValue = settings.getSetting(settingName)
+
+    // No setting saved for the configuration yet, this is likely the first time
+    // it has been updated - rules definitely need to be updated.
+    if (!settingValue) {
+        return true
+    }
+
+    // To be sure the rules are up to date, there must be an expected etag.
+    if (!expectedState.etag) {
+        return true
+    }
+
+    // If any of the setting values aren't as expected, the rules could be out
+    // of date.
+    for (const [key, value] of Object.entries(expectedState)) {
+        if (settingValue[key] !== value) {
+            return true
+        }
+    }
+
+    // Find the etag rule for this configuration.
+    const [etagRuleId] = ruleIdRangeByConfigName[configName]
+    const existingEtagRule = await findExistingDynamicRule(etagRuleId)
+
+    // If none exists, the rules definitely need to be updated.
+    if (!existingEtagRule) {
+        return true
+    }
+
+    // Otherwise, the rules only need be updated if the etags no longer match.
+    return existingEtagRule.condition.urlFilter !== expectedState.etag
+}
+
+/**
+ * Update the declarativeNetRequest rules and corresponding state in settings
+ * for a configuration.
+ * @param {string} configName
+ * @param {Object} latestState
+ * @param {import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule[]} rules
+ * @param {Object} matchDetailsByRuleId
+ * @returns {Promise<>}
+ */
+async function updateConfigRules (
+    configName, latestState, rules, matchDetailsByRuleId, inverseCustomRules = {}
+) {
+    const [ruleIdStart, ruleIdEnd] = ruleIdRangeByConfigName[configName]
+    const etagRuleId = ruleIdStart
+    const maxNumberOfRules = ruleIdEnd - ruleIdStart
+
+    const { etag } = latestState
+
+    if (!rules) {
+        console.error(
+            'No declarativeNetRequest rules generated for configuration: ',
+            configName, '(Etag: ', etag, ')'
+        )
+        return
+    }
+
+    // Add the new etag rule.
+    rules.push(generateEtagRule(etagRuleId, etag))
+
+    if (rules.length > maxNumberOfRules) {
+        console.error(
+            'Too many declarativeNetRequest rules generated for configuration: ',
+            configName,
+            '(Etag: ', etag, ', Rules generated: ', rules.length, ')'
+        )
+        return
+    }
+
+    // Ensure any existing rules for the configuration are removed.
+    const removeRuleIds = []
+    for (let i = ruleIdStart; i <= ruleIdEnd; i++) {
+        removeRuleIds.push(i)
+    }
+
+    // Install the updated rules.
+    await chrome.declarativeNetRequest.updateDynamicRules({
+        removeRuleIds, addRules: rules
+    })
+
+    // Then update the setting entry.
+    const settingName = SETTING_PREFIX + configName
+    const settingValue = {
+        matchDetailsByRuleId
+    }
+    for (const key of Object.keys(latestState)) {
+        settingValue[key] = latestState[key]
+    }
+
+    await settings.ready()
+    if (Object.keys(inverseCustomRules).length) {
+        console.warn('updating inverseCustomRules', inverseCustomRules)
+        settings.updateSetting('inverseCustomRules', inverseCustomRules)
+    }
+    settings.updateSetting(settingName, settingValue)
+}
+
+/**
+ * Retrieve a normalized and sorted list of user denylisted domains.
+ * @returns {Promise<string[]>}
+ */
+async function getDenylistedDomains () {
+    await settings.ready()
+    const denylist = settings.getSetting('denylisted') || {}
+
+    const denylistedDomains = []
+    for (const [domain, enabled] of Object.entries(denylist)) {
+        if (enabled) {
+            const normalizedDomain = normalizeUntrustedDomain(domain)
+            if (normalizedDomain) {
+                denylistedDomains.push(normalizedDomain)
+            }
+        }
+    }
+
+    return denylistedDomains.sort()
+}
+
+/**
+ * Utility function to regenerate the declarativeNetRequest rules for the
+ * extension configuration (extension-config.json). The configuration's value
+ * and etag can optionally be passed in (e.g. when the configuration has just
+ * been updated), but will be read from settings storage otherwise.
+ * @param {string?} etag
+ * @param {object?} configValue
+ * @returns {Promise<>}
+ */
+async function updateExtensionConfigRules (etag = null, configValue = null) {
+    const extensionVersion = browserWrapper.getExtensionVersion()
+    const denylistedDomains = await getDenylistedDomains()
+
+    const latestState = {
+        extensionVersion,
+        denylistedDomains: denylistedDomains.join(),
+        etag
+    }
+
+    if (!configValue) {
+        await tdsStorage.ready('config')
+        configValue = await tdsStorage.getListFromLocalDB('config')
+    }
+
+    if (!etag) {
+        const settingName = SETTING_PREFIX + 'config'
+        await settings.ready()
+        await tdsStorage.ready('config')
+        const settingValue = settings.getSetting(settingName)
+        if (!settingValue?.etag) {
+            // Should not be possible, but if the etag is unknown at this point
+            // there's not much that can be done.
+            return
+        }
+        latestState.etag = settingValue.etag
+    }
+
+    if (!(await configRulesNeedUpdate('config', latestState))) {
+        return
+    }
+
+    const [ruleIdStart] = ruleIdRangeByConfigName.config
+    const {
+        ruleset, matchDetailsByRuleId
+    } = await generateExtensionConfigurationRuleset(
+        configValue,
+        denylistedDomains,
+        chrome.declarativeNetRequest.isRegexSupported,
+        ruleIdStart + 1
+    )
+
+    await updateConfigRules(
+        'config', latestState, ruleset, matchDetailsByRuleId
+    )
+}
+
+/**
  * tdsStorage.onUpdate listener which is called when the configurations are
  * updated and when the background ServiceWorker is restarted.
  * Note: Only exported for use by unit tests, do not call manually.
@@ -79,47 +268,15 @@ async function findExistingDynamicRule (desiredRuleId) {
  * @returns {Promise}
  */
 export async function onConfigUpdate (configName, etag, configValue) {
-    await settings.ready()
-
-    const [ruleIdStart, ruleIdEnd] = ruleIdRangeByConfigName[configName]
-    const etagRuleId = ruleIdStart
-    const maxNumberOfRules = ruleIdEnd - ruleIdStart
-
-    const settingName = SETTING_PREFIX + configName
-    const settingValue = settings.getSetting(settingName)
-
-    const extensionVersion = browserWrapper.getExtensionVersion()
-    const previousSettingEtag = settingValue?.etag
-    const previousExtensionVersion = settingValue?.extensionVersion
-
-    // If both the settings entry and declarativeNetRequest rules are present
-    // and the etags all match, everything is already up to date.
-    // Note: We also check the extension version here, so that if the extension
-    //       is updated and the ddg2dnr dependency was updated, we have the
-    //       opportunity to regenerate the rulesets with the latest code.
-    if (previousSettingEtag &&
-        previousSettingEtag === etag &&
-        previousExtensionVersion &&
-        previousExtensionVersion === extensionVersion) {
-        const existingEtagRule = await findExistingDynamicRule(etagRuleId)
-        const previousRuleEtag =
-            existingEtagRule && existingEtagRule.condition.urlFilter
-
-        // No change, rules are already current.
-        if (previousRuleEtag && previousRuleEtag === etag) {
+    // TDS (aka the block list).
+    if (configName === 'tds') {
+        const extensionVersion = browserWrapper.getExtensionVersion()
+        const [ruleIdStart] = ruleIdRangeByConfigName[configName]
+        const latestState = { etag, extensionVersion }
+        if (!(await configRulesNeedUpdate(configName, latestState))) {
             return
         }
-    }
 
-    // Otherwise, it is necessary to update the declarativeNetRequest rules and
-    // settings again.
-
-    let addRules
-    let lookup
-    let inverseCustomRules = {}
-
-    // TDS.
-    if (configName === 'tds') {
         await startup.ready()
         // @ts-ignore: Once startup.ready() has finished, surrogateList will be
         //             assigned.
@@ -134,55 +291,12 @@ export async function onConfigUpdate (configName, etag, configValue) {
             chrome.declarativeNetRequest.isRegexSupported,
             ruleIdStart + 1
         )
-        addRules = ruleset
-        lookup = matchDetailsByRuleId
-        inverseCustomRules = inverseCustomActionRules
+
+        await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId, inverseCustomActionRules)
+
     // Extension configuration.
     } else if (configName === 'config') {
-        const {
-            ruleset, matchDetailsByRuleId
-        } = await generateExtensionConfigurationRuleset(
-            configValue,
-            chrome.declarativeNetRequest.isRegexSupported,
-            ruleIdStart + 1
-        )
-        addRules = ruleset
-        lookup = matchDetailsByRuleId
-    }
-
-    if (!addRules) {
-        console.error(
-            'No declarativeNetRequest rules generated for configuration: ',
-            configName, '(Etag: ', etag, ')'
-        )
-        return
-    }
-
-    // Add the new etag rule.
-    addRules.push(generateEtagRule(etagRuleId, etag))
-
-    if (addRules.length > maxNumberOfRules) {
-        console.error(
-            'Too many declarativeNetRequest rules generated for configuration: ',
-            configName,
-            '(Etag: ', etag, ', Rules generated: ', addRules.length, ')'
-        )
-        return
-    }
-
-    // Ensure any existing rules for the configuration are removed.
-    const removeRuleIds = []
-    for (let i = ruleIdStart; i <= ruleIdEnd; i++) {
-        removeRuleIds.push(i)
-    }
-
-    // Install the updated rules and then update the setting entry.
-    await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds, addRules
-    })
-    settings.updateSetting(settingName, { etag, lookup, extensionVersion })
-    if (inverseCustomRules && Object.keys(inverseCustomRules).length) {
-        settings.updateSetting('inverseCustomRules', inverseCustomRules)
+        await updateExtensionConfigRules(etag, configValue)
     }
 }
 
@@ -227,12 +341,18 @@ export async function getMatchDetails (ruleId) {
         }
     }
 
+    if (ruleId === SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID) {
+        return {
+            type: 'serviceWorkerInitiatedAllowing'
+        }
+    }
+
     for (const [configName, [ruleIdStart, ruleIdEnd]]
         of Object.entries(ruleIdRangeByConfigName)) {
         if (ruleId >= ruleIdStart && ruleId <= ruleIdEnd) {
             const settingName = SETTING_PREFIX + configName
             const settingValue = settings.getSetting(settingName)
-            const matchDetails = settingValue?.lookup?.[ruleId]
+            const matchDetails = settingValue?.matchDetailsByRuleId?.[ruleId]
             if (matchDetails) {
                 if (configName === 'tds') {
                     return {
@@ -315,22 +435,40 @@ export async function toggleUserAllowlistDomain (domain, enable) {
 }
 
 /**
- * Reset the user allowlisting declarativeNetRequest rule to match the given
- * array of user allowlisted domains.
- * @param {string[]} allowlistedDomains
+ * Update all contentBlocking and unprotectedTemporary allowlisting rules so
+ * that user "denylisted" domains are excluded.
  * @return {Promise}
  */
-export async function refreshUserAllowlistRules (allowlistedDomains) {
-    // Normalise and validate the domains. We're passing the user provided
-    // domains through to the declarativeNetRequest API, so it's important to
-    // prevent invalid input sneaking through.
-    const normalizedAllowlistedDomains = /** @type {string[]} */ (
-        allowlistedDomains
-            .map(normalizeUntrustedDomain)
-            .filter(domain => typeof domain === 'string')
-    )
+export async function updateUserDenylist () {
+    await updateExtensionConfigRules()
+}
 
-    await updateUserAllowlistRule(normalizedAllowlistedDomains)
+/**
+ * Ensure that the allowing rule for ServiceWorker initiated requests is
+ * enabled. Since the rule needs to be restricted to matching requests not
+ * associated with a tab (tabId of -1) and so must be a session rule. Session
+ * rules don't persist past a browsing session, so must be re-added.
+ * Note: Only exported for use by unit tests, do not call manually.
+ * @return {Promise}
+ */
+export async function ensureServiceWorkerInitiatedRequestException () {
+    const removeRuleIds = [SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID]
+    const addRules = [generateDNRRule({
+        id: SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
+        priority: SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
+        actionType: 'allow',
+        tabIds: [-1]
+    })]
+
+    // Rather than check if the rule already exists before adding it, add it and
+    // just clear the existing rule if it exists.
+    // Note: This might need to be adjusted in the future if there is a
+    //       performance impact, on the other hand, checking for the rule first
+    //       might cause a race-condition, where ServiceWorker requests are
+    //       blocked before the rule is added.
+    await chrome.declarativeNetRequest.updateSessionRules({
+        removeRuleIds, addRules
+    })
 }
 
 /**
@@ -354,4 +492,5 @@ export function flushSessionRules () {
 if (browserWrapper.getManifestVersion() === 3) {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)
+    ensureServiceWorkerInitiatedRequestException()
 }

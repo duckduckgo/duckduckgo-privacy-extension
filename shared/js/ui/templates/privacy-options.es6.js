@@ -36,7 +36,7 @@ module.exports = function () {
             </p>
         </li>
     </ul>
-    <!--
+    <!-- TODO: Remove content when YouTube CTL is live
     <ul class="default-list">
         <li>
             <h2 class="menu-title">

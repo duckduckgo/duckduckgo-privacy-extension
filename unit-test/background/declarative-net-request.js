@@ -6,17 +6,20 @@ import * as testConfig from '../data/extension-config.json'
 import * as tdsStorageStub from '../helpers/tds.es6'
 import * as startup from '../../shared/js/background/startup'
 import settings from '../../shared/js/background/settings.es6'
+import tabManager from '../../shared/js/background/tab-manager.es6'
 import tdsStorage from '../../shared/js/background/storage/tds.es6'
 import trackers from '../../shared/js/background/trackers.es6'
 import {
+    ensureServiceWorkerInitiatedRequestException,
     getMatchDetails,
     onConfigUpdate,
-    refreshUserAllowlistRules,
     toggleUserAllowlistDomain,
     SETTING_PREFIX,
+    SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
     USER_ALLOWLIST_RULE_ID
 } from '../../shared/js/background/declarative-net-request'
 import {
+    SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
@@ -35,7 +38,9 @@ config.features.trackerAllowlist = {
 
 const expectedRuleIdsByConfigName = {
     tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    config: [10001, 10002, 10003, 10004, 10005, 10006]
+    config: [
+        10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010
+    ]
 }
 
 const expectedLookupByConfigName = {
@@ -102,6 +107,24 @@ const expectedLookupByConfigName = {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-3.com',
             reason: 'match all requests'
+        },
+        10007: {
+            type: 'unprotectedTemporary',
+            domain: 'google.com',
+            reason: 'site breakage'
+        },
+        10008: {
+            type: 'unprotectedTemporary',
+            domain: 'suntrust.com',
+            reason: 'site breakage'
+        },
+        10009: {
+            type: 'contentBlocking',
+            domain: 'content-blocking.example',
+            reason: 'site breakage'
+        },
+        10010: {
+            type: 'gpc'
         }
     }
 }
@@ -119,15 +142,18 @@ async function updateConfiguration (configName, etag) {
 describe('declarativeNetRequest', () => {
     let updateSettingObserver
     let updateDynamicRulesObserver
+    let updateSessionRulesObserver
 
     let extensionVersion
     let settingsStorage
     let dynamicRulesByRuleId
+    let sessionRulesByRuleId
 
     beforeAll(async () => {
         extensionVersion = TEST_EXTENION_VERSIONS[0]
         settingsStorage = new Map()
         dynamicRulesByRuleId = new Map()
+        sessionRulesByRuleId = new Map()
 
         onUpdateListeners = tdsStorageStub.stub({ config }).onUpdateListeners
         onUpdateListeners.set('config', [onConfigUpdate])
@@ -147,6 +173,7 @@ describe('declarativeNetRequest', () => {
                     settingsStorage.set(name, value)
                 }
             )
+
         updateDynamicRulesObserver =
             spyOn(
                 chrome.declarativeNetRequest,
@@ -173,6 +200,32 @@ describe('declarativeNetRequest', () => {
             () => Array.from(dynamicRulesByRuleId.values())
         )
 
+        updateSessionRulesObserver =
+            spyOn(
+                chrome.declarativeNetRequest,
+                'updateSessionRules'
+            ).and.callFake(
+                ({ removeRuleIds, addRules }) => {
+                    if (removeRuleIds) {
+                        for (const id of removeRuleIds) {
+                            sessionRulesByRuleId.delete(id)
+                        }
+                    }
+                    if (addRules) {
+                        for (const rule of addRules) {
+                            if (sessionRulesByRuleId.has(rule.id)) {
+                                throw new Error('Duplicate rule ID: ' + rule.id)
+                            }
+                            sessionRulesByRuleId.set(rule.id, rule)
+                        }
+                    }
+                    return Promise.resolve()
+                }
+            )
+        spyOn(chrome.declarativeNetRequest, 'getSessionRules').and.callFake(
+            () => Array.from(sessionRulesByRuleId.values())
+        )
+
         spyOn(browserWrapper, 'getExtensionVersion').and.callFake(
             () => extensionVersion
         )
@@ -184,8 +237,10 @@ describe('declarativeNetRequest', () => {
     beforeEach(() => {
         updateSettingObserver.calls.reset()
         updateDynamicRulesObserver.calls.reset()
+        updateSessionRulesObserver.calls.reset()
         settingsStorage.clear()
         dynamicRulesByRuleId.clear()
+        sessionRulesByRuleId.clear()
     })
 
     it('Config ruleset updates', async () => {
@@ -204,7 +259,7 @@ describe('declarativeNetRequest', () => {
 
                 const {
                     etag: actualLookupEtag,
-                    lookup: actualLookup,
+                    matchDetailsByRuleId: actualLookup,
                     extensionVersion: actualLookupExtensionVersion
                 } = setting
                 const etagRuleId = expectedRuleIdsByConfigName[configName][0]
@@ -398,15 +453,6 @@ describe('declarativeNetRequest', () => {
         await toggleUserAllowlistDomain('FOO.InVaLiD', true)
         expectState(['foo.invalid', 'example.invalid'])
 
-        // Allowlisting rule should be restored by refresh.
-        expectState(['foo.invalid', 'example.invalid'])
-        refreshUserAllowlistRules(['foo.invalid', 'ExAmPlE.invalid'])
-        expectState(['foo.invalid', 'example.invalid'])
-        dynamicRulesByRuleId.clear()
-        expectState([])
-        refreshUserAllowlistRules(['foo.invalid', 'example.invalid'])
-        expectState(['foo.invalid', 'example.invalid'])
-
         // Try removing domains from the allowlist.
         await toggleUserAllowlistDomain('unknown.invalid', false)
         expectState(['foo.invalid', 'example.invalid'])
@@ -416,6 +462,234 @@ describe('declarativeNetRequest', () => {
         expectState([])
         await toggleUserAllowlistDomain('another-unknown.invalid', false)
         expectState([])
+    })
+
+    it('User denylisting updates', async () => {
+        const expectAllowlistDenylistState = ({
+            expectedDenylistedDomains,
+            expectedUnprotectedTemporaryDomains,
+            expectedContentBlockingDomains
+        }) => {
+            const setting =
+                settingsStorage.get(SETTING_PREFIX + 'config') || {}
+            const matchDetailsByRuleId = setting.matchDetailsByRuleId || {}
+            const denylistedDomains = setting.denylistedDomains || ''
+
+            expect(denylistedDomains)
+                .toEqual(expectedDenylistedDomains.sort().join())
+
+            const allowlistedDomains = new Map([
+                ['unprotectedTemporary', []],
+                ['contentBlocking', []]
+            ])
+            for (const [ruleIdString, matchDetails]
+                of Object.entries(matchDetailsByRuleId)) {
+                const ruleId = parseInt(ruleIdString, 10)
+                if (allowlistedDomains.has(matchDetails.type)) {
+                    const domains = allowlistedDomains.get(matchDetails.type)
+                    domains.push(matchDetails.domain)
+
+                    // Sanity check that the rule exists and it's an allowing
+                    // rule
+                    expect(dynamicRulesByRuleId.has(ruleId)).toBeTrue()
+                    expect(
+                        dynamicRulesByRuleId.get(ruleId).action.type
+                    ).toEqual('allowAllRequests')
+                }
+            }
+
+            expect(allowlistedDomains.get('unprotectedTemporary'))
+                .toEqual(expectedUnprotectedTemporaryDomains)
+            expect(allowlistedDomains.get('contentBlocking'))
+                .toEqual(expectedContentBlockingDomains)
+        }
+
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(0)
+
+        // If a domain is denylisted before the configuration is ready, not much
+        // should happen.
+        await tabManager.setList(
+            { list: 'denylisted', domain: 'denylisted.example', value: true }
+        )
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(0)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: [],
+            expectedUnprotectedTemporaryDomains: [],
+            expectedContentBlockingDomains: []
+        })
+
+        // But once the configuration is ready, the domain should be denylisted.
+        await updateConfiguration('config', TEST_ETAGS[0])
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(1)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: ['denylisted.example'],
+            expectedUnprotectedTemporaryDomains: ['google.com', 'suntrust.com'],
+            expectedContentBlockingDomains: ['content-blocking.example']
+        })
+
+        // By default, contentBlocking and unprotectedTemporary allowlist rules
+        // should be added and no domains should be denylisted.
+        await tabManager.setList(
+            { list: 'denylisted', domain: 'denylisted.example', value: false }
+        )
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(2)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: [],
+            expectedUnprotectedTemporaryDomains: ['google.com', 'suntrust.com'],
+            expectedContentBlockingDomains: ['content-blocking.example']
+        })
+
+        // Denylisting a domain should cancel an unprotectedTemporary allow.
+        settingsStorage.set(
+            'denylisted',
+            { 'google.com': true }
+        )
+        await updateConfiguration('config', TEST_ETAGS[0])
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(3)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: ['google.com'],
+            expectedUnprotectedTemporaryDomains: ['suntrust.com'],
+            expectedContentBlockingDomains: ['content-blocking.example']
+        })
+
+        // If denylist (and other state) hasn't changed, rules should not be
+        // regenerated.
+        await updateConfiguration('config', TEST_ETAGS[0])
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(3)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: ['google.com'],
+            expectedUnprotectedTemporaryDomains: ['suntrust.com'],
+            expectedContentBlockingDomains: ['content-blocking.example']
+        })
+
+        // But if other state changes, rules should be regenerates.
+        await updateConfiguration('config', TEST_ETAGS[1])
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(4)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: ['google.com'],
+            expectedUnprotectedTemporaryDomains: ['suntrust.com'],
+            expectedContentBlockingDomains: ['content-blocking.example']
+        })
+
+        // Denylisting a domain should cancel a contentblocking allow.
+        settingsStorage.set(
+            'denylisted',
+            { 'google.com': false, 'content-blocking.example': true }
+        )
+        await updateConfiguration('config', TEST_ETAGS[1])
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(5)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: ['content-blocking.example'],
+            expectedUnprotectedTemporaryDomains: ['google.com', 'suntrust.com'],
+            expectedContentBlockingDomains: []
+        })
+
+        // Denylisting domains should be normalized.
+        settingsStorage.set(
+            'denylisted',
+            { ':': true, 'suntrust.COM': true, 'cOnTeNt-blocking.example': true }
+        )
+        await updateConfiguration('config', TEST_ETAGS[1])
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(6)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: [
+                'content-blocking.example',
+                'suntrust.com'
+            ],
+            expectedUnprotectedTemporaryDomains: ['google.com'],
+            expectedContentBlockingDomains: []
+        })
+
+        // The tabManager.setList() code path should trigger the rules to be
+        // regenerated when a new domain is added to the denylist.
+        await tabManager.setList(
+            { list: 'denylisted', domain: 'google.com', value: true }
+        )
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(7)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: [
+                'content-blocking.example',
+                'google.com',
+                'suntrust.com'
+            ],
+            expectedUnprotectedTemporaryDomains: [],
+            expectedContentBlockingDomains: []
+        })
+
+        // But not when the domain was already in the list.
+        await tabManager.setList(
+            { list: 'denylisted', domain: 'google.com', value: true }
+        )
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(7)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: [
+                'content-blocking.example',
+                'google.com',
+                'suntrust.com'
+            ],
+            expectedUnprotectedTemporaryDomains: [],
+            expectedContentBlockingDomains: []
+        })
+
+        // Nor when removing a domain that didn't previously exist in the
+        // denylist.
+        await tabManager.setList(
+            { list: 'denylisted', domain: 'unknown.example', value: false }
+        )
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(7)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: [
+                'content-blocking.example',
+                'google.com',
+                'suntrust.com'
+            ],
+            expectedUnprotectedTemporaryDomains: [],
+            expectedContentBlockingDomains: []
+        })
+
+        // The tabManager.setList() code path should trigger the rules to be
+        // regenerated when an existing domains is removed from the denylist.
+        await tabManager.setList(
+            { list: 'denylisted', domain: 'google.com', value: false }
+        )
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(8)
+        expectAllowlistDenylistState({
+            expectedDenylistedDomains: [
+                'content-blocking.example',
+                'suntrust.com'
+            ],
+            expectedUnprotectedTemporaryDomains: ['google.com'],
+            expectedContentBlockingDomains: []
+        })
+    })
+
+    it('ServiceWorker initiated request allowing', async () => {
+        const ruleId = SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID
+        const rulePriority = SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY
+        const rule = {
+            id: ruleId,
+            priority: rulePriority,
+            action: { type: 'allow' },
+            condition: { tabIds: [-1] }
+        }
+
+        // The rule won't exist initially.
+        expect(updateSessionRulesObserver.calls.count()).toEqual(0)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
+
+        // Once ensureServiceWorkerInitiatedRequestException is called it should
+        // be though.
+        ensureServiceWorkerInitiatedRequestException()
+        expect(updateSessionRulesObserver.calls.count()).toEqual(1)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
+
+        // If ensureServiceWorkerInitiatedRequestException is called again, the
+        // rule should just be recreated.
+        ensureServiceWorkerInitiatedRequestException()
+        expect(updateSessionRulesObserver.calls.count()).toEqual(2)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
     })
 
     it('getMatchDetails', async () => {
@@ -476,5 +750,10 @@ describe('declarativeNetRequest', () => {
         expect(await getMatchDetails(USER_ALLOWLIST_RULE_ID)).toEqual({
             type: 'userAllowlist'
         })
+
+        // Likewise for ServiceWorker initiated requests.
+        expect(
+            await getMatchDetails(SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID)
+        ).toEqual({ type: 'serviceWorkerInitiatedAllowing' })
     })
 })

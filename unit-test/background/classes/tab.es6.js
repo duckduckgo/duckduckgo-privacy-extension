@@ -15,7 +15,6 @@ let tab
 describe('Tab', () => {
     describe('updateSite()', () => {
         beforeEach(() => {
-            spyOn(browserWrapper, 'setBadgeIcon')
             spyOn(browserWrapper, 'getExtensionId').and.returnValue('sdf')
 
             tab = new Tab({
@@ -115,7 +114,8 @@ describe('Tab', () => {
                 cleanAmpUrl: null,
                 requestId: 123,
                 status: 200,
-                statusCode: null
+                statusCode: null,
+                ctlYouTube: false
             }
             expect(tabClone.site.enabledFeatures.length).toBe(19)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))

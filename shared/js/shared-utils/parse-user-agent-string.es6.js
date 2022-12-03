@@ -8,9 +8,14 @@ module.exports = (uaString) => {
 
     try {
         let parsedUaParts = uaString.match(/(Firefox|Chrome|Edg)\/([0-9]+)/)
-        if (uaString.match(/(Edge?)\/([0-9]+)/)) {
-            // Above regex matches on Chrome first, so check if this is really Edge
-            parsedUaParts = uaString.match(/(Edge?)\/([0-9]+)/)
+        const isEdge = /(Edge?)\/([0-9]+)/
+        const isOpera = /(OPR)\/([0-9]+)/
+        // Above regex matches on Chrome first, so check if this is really Edge
+        if (uaString.match(isEdge)) {
+            parsedUaParts = uaString.match(isEdge)
+        } else if (uaString.match(isOpera)) {
+            parsedUaParts = uaString.match(isOpera)
+            parsedUaParts[1] = 'Opera'
         }
         browser = parsedUaParts[1]
         version = parsedUaParts[2]

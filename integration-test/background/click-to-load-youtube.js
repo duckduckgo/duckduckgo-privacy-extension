@@ -8,6 +8,7 @@ const { setupAPISchemaTest } = require('../helpers/apiSchema')
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/youtube-click-to-load/'
 const youTubeStandardDomains = new Set(['youtu.be', 'youtube.com', 'www.youtube.com'])
 const youTubeNocookieDomains = new Set(['youtube-nocookie.com', 'www.youtube-nocookie.com'])
+const youTubeImageDomains = new Set(['i.ytimg.com'])
 
 let browser
 let bgPage
@@ -20,6 +21,8 @@ function summariseYouTubeRequests (requests) {
     const youTubeIframeApi = { checked: false, alwaysRedirected: true }
     const youTubeStandard = { blocked: 0, allowed: 0, total: 0 }
     const youTubeNocookie = { blocked: 0, allowed: 0, total: 0 }
+    const youTubeImage = { blocked: 0, allowed: 0, total: 0 }
+    let hasYouTubeAutoPlay = false
 
     for (const request of requests) {
         if (request.url.href === 'https://www.youtube.com/iframe_api') {
@@ -40,8 +43,14 @@ function summariseYouTubeRequests (requests) {
             stats = youTubeStandard
         } else if (youTubeNocookieDomains.has(request.url.hostname)) {
             stats = youTubeNocookie
+        } else if (youTubeImageDomains.has(request.url.hostname)) {
+            stats = youTubeImage
         } else {
             continue
+        }
+
+        if (request.url.searchParams.get('autoplay') === '1') {
+            hasYouTubeAutoPlay = true
         }
 
         stats.total += 1
@@ -55,7 +64,7 @@ function summariseYouTubeRequests (requests) {
         }
     }
 
-    return { youTubeIframeApi, youTubeStandard, youTubeNocookie }
+    return { youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage, hasYouTubeAutoPlay }
 }
 
 describe('Test YouTube Click To Load', () => {
@@ -88,11 +97,11 @@ describe('Test YouTube Click To Load', () => {
         await pageWait.forGoto(page, testSite)
         {
             const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie
+                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage
             } = summariseYouTubeRequests(pageRequests)
 
             if (!youTubeIframeApi.checked) {
-                pending('Timed out requesting YouTube Iframe API script.')
+                pending('1/ Timed out requesting YouTube Iframe API script.')
             }
             expect(youTubeIframeApi.alwaysRedirected).toBeTrue()
             expect(youTubeStandard.total).toBeGreaterThanOrEqual(2)
@@ -100,10 +109,12 @@ describe('Test YouTube Click To Load', () => {
             expect(youTubeStandard.allowed).toEqual(0)
             expect(youTubeNocookie.blocked).toEqual(youTubeNocookie.total)
             expect(youTubeNocookie.allowed).toEqual(0)
+            expect(youTubeImage.blocked).toEqual(youTubeImage.total)
+            expect(youTubeImage.allowed).toEqual(0)
         }
 
         // Once the user clicks to load a video, the iframe_api should be loaded
-        // and the video should be unblocked.
+        // and the video should be unblocked but should not autoplay.
         clearRequests()
         const button = await page.evaluateHandle(
             'document.querySelector("div:nth-child(2) > div")' +
@@ -113,16 +124,19 @@ describe('Test YouTube Click To Load', () => {
         await pageWait.forNetworkIdle(page)
         {
             const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie
+                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage, hasYouTubeAutoPlay
             } = summariseYouTubeRequests(pageRequests)
 
             if (!youTubeIframeApi.checked) {
-                pending('Timed out requesting YouTube Iframe API script.')
+                pending('2/ Timed out requesting YouTube Iframe API script.')
             }
             expect(youTubeIframeApi.alwaysRedirected).toBeFalse()
             expect(youTubeStandard.blocked).toEqual(0)
             expect(youTubeNocookie.blocked).toEqual(0)
             expect(youTubeNocookie.allowed).toBeGreaterThanOrEqual(1)
+            expect(youTubeImage.blocked).toEqual(0)
+            expect(youTubeImage.allowed).toEqual(youTubeImage.total)
+            expect(hasYouTubeAutoPlay).toBeFalse()
         }
 
         // When the page is reloaded, requests should be blocked again.
@@ -134,7 +148,7 @@ describe('Test YouTube Click To Load', () => {
             } = summariseYouTubeRequests(pageRequests)
 
             if (!youTubeIframeApi.checked) {
-                pending('Timed out requesting YouTube Iframe API script.')
+                pending('3/ Timed out requesting YouTube Iframe API script.')
             }
             expect(youTubeIframeApi.alwaysRedirected).toBeTrue()
             expect(youTubeStandard.total).toBeGreaterThanOrEqual(2)
@@ -158,7 +172,7 @@ describe('Test YouTube Click To Load', () => {
             } = summariseYouTubeRequests(pageRequests)
 
             if (!youTubeIframeApi.checked) {
-                pending('Timed out requesting YouTube Iframe API script.')
+                pending('4/ Timed out requesting YouTube Iframe API script.')
             }
             expect(youTubeIframeApi.alwaysRedirected).toBeFalse()
             expect(youTubeStandard.blocked).toEqual(0)
@@ -240,6 +254,145 @@ describe('Test YouTube Click To Load', () => {
 
             await page.click('#spherical-video-flip')
             await waitForExpectedRoll('0.0000')
+        }
+
+        await page.close()
+    })
+
+    xit('CTL: YouTube Preview', async () => {
+        // Open the test page and start logging network requests.
+        const page = await browser.newPage()
+        const pageRequests = []
+        const clearRequests = await logPageRequests(page, pageRequests)
+
+        // Navigate to test page
+        await pageWait.forGoto(page, testSite)
+
+        // Once the user clicks to preview a video, should change from blocked state
+        // to preview state and request only YouTube Preview images
+        clearRequests()
+        {
+            const totalEmbeddedVideosBlocked = (await page.$$('div[id^=yt-ctl-dialog-')).length
+
+            // Click toggle to enable previews
+            const previewToggle = await page.evaluateHandle(
+                'document.querySelector("div:nth-child(2) > div")' +
+                '.shadowRoot.querySelector("button[data-key=yt-preview-toggle]")'
+            )
+            await previewToggle.click()
+            await page.waitForSelector('div[data-key="modal"]')
+
+            // Click modal button to confirm enabling YT previews
+            const enablePreviewsButton = await page.evaluateHandle(
+                'document.querySelector("body > div[data-key=modal]")' +
+                    '.shadowRoot.querySelector("button[data-key=allow]")'
+            )
+            await enablePreviewsButton.click()
+            await pageWait.forNetworkIdle(page)
+
+            const totalEmbeddedVideosPreviews = (await page.$$('div[id^=yt-ctl-preview-')).length
+
+            expect(totalEmbeddedVideosBlocked).toEqual(totalEmbeddedVideosPreviews)
+
+            const {
+                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage
+            } = summariseYouTubeRequests(pageRequests)
+
+            expect(youTubeIframeApi.checked).toBeFalse()
+            expect(youTubeIframeApi.alwaysRedirected).toBeTrue()
+            expect(youTubeStandard.blocked).toEqual(0)
+            expect(youTubeNocookie.blocked).toEqual(0)
+            expect(youTubeNocookie.allowed).toEqual(0)
+            expect(youTubeImage.blocked).toEqual(0)
+            expect(youTubeImage.allowed).toBeGreaterThan(0)
+        }
+
+        // Once the user clicks to load a video, the iframe_api should be loaded
+        // and the video should be unblocked and played automatically
+        clearRequests()
+        const playButton = await page.evaluateHandle(
+            'document.querySelector("div:nth-child(2) > div")' +
+            '.shadowRoot.querySelector("button")'
+        )
+        await playButton.click()
+        await pageWait.forNetworkIdle(page)
+        {
+            const {
+                youTubeIframeApi, youTubeStandard, youTubeNocookie, hasYouTubeAutoPlay
+            } = summariseYouTubeRequests(pageRequests)
+
+            if (!youTubeIframeApi.checked) {
+                pending('1/ Timed out requesting YouTube Iframe API script.')
+            }
+            expect(youTubeIframeApi.alwaysRedirected).toBeFalse()
+            expect(youTubeStandard.blocked).toEqual(0)
+            expect(youTubeNocookie.blocked).toEqual(0)
+            expect(youTubeNocookie.allowed).toBeGreaterThanOrEqual(1)
+            expect(hasYouTubeAutoPlay).toBeTrue()
+        }
+
+        // When the page is reloaded, YouTube Preview should continue enabled,
+        // requests should be blocked still
+        // and only YouTube Preview images should be requested
+        clearRequests()
+        await pageWait.forReload(page)
+        {
+            const {
+                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage
+            } = summariseYouTubeRequests(pageRequests)
+
+            if (!youTubeIframeApi.checked) {
+                pending('2/ Timed out requesting YouTube Iframe API script.')
+            }
+            expect(youTubeIframeApi.alwaysRedirected).toBeTrue()
+            expect(youTubeStandard.total).toBeGreaterThanOrEqual(2)
+            expect(youTubeStandard.blocked).toEqual(youTubeStandard.total)
+            expect(youTubeStandard.allowed).toEqual(0)
+            expect(youTubeNocookie.blocked).toEqual(youTubeNocookie.total)
+            expect(youTubeNocookie.allowed).toEqual(0)
+            expect(youTubeImage.blocked).toEqual(0)
+            expect(youTubeImage.allowed).toEqual(youTubeImage.total)
+        }
+
+        // The header button should also unblock YouTube.
+        clearRequests()
+        const headerButton = await page.evaluateHandle(
+            'document.querySelector("#short-container > div")' +
+            '.shadowRoot.querySelector("#DuckDuckGoPrivacyEssentialsCTLElementTitleTextButton")'
+        )
+        await headerButton.click()
+        await pageWait.forNetworkIdle(page)
+        {
+            const {
+                youTubeIframeApi, youTubeStandard, youTubeNocookie, hasYouTubeAutoPlay
+            } = summariseYouTubeRequests(pageRequests)
+
+            if (!youTubeIframeApi.checked) {
+                pending('3/ Timed out requesting YouTube Iframe API script.')
+            }
+            expect(youTubeIframeApi.alwaysRedirected).toBeFalse()
+            expect(youTubeStandard.blocked).toEqual(0)
+            expect(youTubeNocookie.blocked).toEqual(0)
+            expect(youTubeNocookie.allowed).toBeGreaterThanOrEqual(1)
+            expect(hasYouTubeAutoPlay).toBeTrue()
+        }
+
+        // Pressing "Previews enabled" toggle should block all YT videos again
+        clearRequests()
+        await pageWait.forReload(page)
+        {
+            const totalEmbeddedVideosPreviews = (await page.$$('div[id^=yt-ctl-preview-')).length
+            // Click toggle to disable YT previews
+            const disablePreviewToggle = await page.evaluateHandle(
+                'document.querySelector("div:nth-child(2) > div")' +
+                '.shadowRoot.querySelector("button[data-key=yt-preview-toggle]")'
+            )
+            await disablePreviewToggle.click()
+            await pageWait.forNetworkIdle(page)
+
+            const totalEmbeddedVideosBlocked = (await page.$$('div[id^=yt-ctl-dialog-')).length
+
+            expect(totalEmbeddedVideosBlocked).toEqual(totalEmbeddedVideosPreviews)
         }
 
         await page.close()

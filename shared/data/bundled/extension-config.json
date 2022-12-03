@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1666800609754,
+    "version": 1669853651814,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -69,6 +69,10 @@
                 {
                     "domain": "www.audiosciencereview.com",
                     "reason": "Pages on the site end up in redirect loops in Firefox."
+                },
+                {
+                    "domain": "identity.ibs.bankwest.com.au",
+                    "reason": "Breaks auth flow: https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/1545"
                 }
             ],
             "settings": {
@@ -95,7 +99,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "8668c1396cf49ac18e2e057c48dac1a7"
+            "hash": "62576f16d5b019c8d22cc289c2be6ebd"
         },
         "autoconsent": {
             "exceptions": [
@@ -136,15 +140,25 @@
                     "reason": "Page renders blank for several seconds before cookie management can complete."
                 },
                 {
+                    "domain": "asus.com",
+                    "reason": "Opt out is broken on the US version of the site"
+                },
+                {
                     "domain": "swm.de",
+                    "reason": "infinite reload"
+                },
+                {
+                    "domain": "heise.de",
                     "reason": "infinite reload"
                 }
             ],
             "settings": {
-                "disabledCMPs": []
+                "disabledCMPs": [
+                    "Sourcepoint-top"
+                ]
             },
             "state": "disabled",
-            "hash": "ec8e53e69dee821e9e266a093d4f61f5"
+            "hash": "4308f34f46e1a478afca3d66bf5fedbf"
         },
         "autofill": {
             "exceptions": [
@@ -200,6 +214,10 @@
                     {
                         "domain": "payments.google.com",
                         "reason": "After sign-in for Google Pay flows (after flickering is resolved), blocking this causes the loading spinner to spin indefinitely, and the payment flow cannot proceed."
+                    },
+                    {
+                        "domain": "shutterfly.com",
+                        "reason": "https://github.com/duckduckgo/privacy-configuration/issues/544"
                     }
                 ],
                 "firstPartyTrackerCookiePolicy": {
@@ -212,7 +230,7 @@
                     "maxAge": 604800
                 }
             },
-            "hash": "a86050a6a0612aee10f70fd8ca9b6d0c"
+            "hash": "dc7b21ce8b5beab82313643c79b626da"
         },
         "customUserAgent": {
             "settings": {
@@ -271,7 +289,7 @@
                     },
                     {
                         "selector": "[class*='bannerAd']",
-                        "type": "closest-empty"
+                        "type": "hide-empty"
                     },
                     {
                         "selector": ".ad-container",
@@ -526,7 +544,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "34eb0d2856d6d6c5146d2858ed249cef"
+            "hash": "06df7e5edc350785822747f710072574"
         },
         "fingerprintingAudio": {
             "state": "disabled",
@@ -1174,6 +1192,17 @@
                             }
                         ]
                     },
+                    "dynamicyield.com": {
+                        "rules": [
+                            {
+                                "rule": "cdn.dynamicyield.com/api/",
+                                "domains": [
+                                    "seatosummit.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/535"
+                            }
+                        ]
+                    },
                     "edgekey.net": {
                         "rules": [
                             {
@@ -1447,10 +1476,11 @@
                             {
                                 "rule": "pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
                                 "domains": [
+                                    "duden.de",
                                     "magicgameworld.com",
                                     "youmath.it"
                                 ],
-                                "reason": "Adwall displays with an overlay, preventing further interaction with the site."
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/388"
                             },
                             {
                                 "rule": "tpc.googlesyndication.com/pagead/js/loader21.html",
@@ -1599,6 +1629,13 @@
                                     "shopyalehome.com"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/362"
+                            },
+                            {
+                                "rule": "klaviyo.com/",
+                                "domains": [
+                                    "kmail-lists.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/362"
                             }
                         ]
                     },
@@ -1736,6 +1773,17 @@
                                     "emol.com"
                                 ],
                                 "reason": "abc.net.au - Error message displays in place of scoreboard (scoreboard does not show).,emol.com - Scoreboard does not render."
+                            }
+                        ]
+                    },
+                    "osano.com": {
+                        "rules": [
+                            {
+                                "rule": "dsar.api.osano.com/",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/529"
                             }
                         ]
                     },
@@ -2106,7 +2154,21 @@
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/477"
                             },
                             {
+                                "rule": "api.usercentrics.eu/translations",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/477"
+                            },
+                            {
                                 "rule": "app.usercentrics.eu/browser",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/477"
+                            },
+                            {
+                                "rule": "app.usercentrics.eu/session/",
                                 "domains": [
                                     "<all>"
                                 ],
@@ -2121,6 +2183,13 @@
                             },
                             {
                                 "rule": "privacy-proxy.usercentrics.eu/latest/",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/477"
+                            },
+                            {
+                                "rule": "aggregator.service.usercentrics.eu/aggregate",
                                 "domains": [
                                     "<all>"
                                 ],
@@ -3039,7 +3108,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "5ec48b3b70b0a0ba1b54b62dfe833eb8"
+            "hash": "48392c52a7fa7d058e26fa553defabce"
         },
         "trackingCookies1p": {
             "settings": {
@@ -3064,7 +3133,11 @@
             "exceptions": [],
             "settings": {
                 "parameters": [
-                    "utm_[a-zA-Z]*",
+                    "utm_source",
+                    "utm_medium",
+                    "utm_campaign",
+                    "utm_term",
+                    "utm_content",
                     "gclid",
                     "fbclid",
                     "fb_action_ids",
@@ -3088,7 +3161,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "69fbd3a82a04b8dfcf93498113009e23"
+            "hash": "4eb7caeea36d5a0d96fe06386d403d54"
         },
         "userAgentRotation": {
             "settings": {
@@ -3100,6 +3173,14 @@
         },
         "webCompat": {
             "exceptions": [
+                {
+                    "domain": "portal.azure.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/526"
+                },
+                {
+                    "domain": "lastpass.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/533"
+                },
                 {
                     "domain": "forums.swift.org",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
@@ -3283,10 +3364,114 @@
                 {
                     "domain": "forum.schizophrenia.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forum.octopus.energy",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forum.level1techs.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forums.zwift.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forums.plex.tv",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forum.arduino.cc",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forum.restic.net",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forum.openwrt.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "www.horlogeforum.nl",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forum.infinityfree.net",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forum.manjaro.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forum.projectpanoptes.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "forum.obsidian.md",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "us.forums.blizzard.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.home-assistant.io",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.openfl.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.sonarsource.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "ubuntu-mate.community",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.letsencrypt.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.naimaudio.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.ipfire.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.squirrelsquadron.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.signalusers.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.haxe.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.grafana.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.octoprint.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
+                },
+                {
+                    "domain": "community.bitwarden.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/519"
                 }
             ],
             "state": "disabled",
-            "hash": "ef06173bc0c3525cbfa46ae86189c4b5"
+            "hash": "b90668dd2aa466abc5eb36578c53ba7f"
         },
         "windowsPermissionUsage": {
             "exceptions": [],

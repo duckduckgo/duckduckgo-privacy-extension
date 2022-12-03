@@ -8,6 +8,7 @@ const load = require('./load.es6')
 const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
+const { getURLWithoutQueryString } = require('./utils.es6')
 
 /**
  *
@@ -38,7 +39,7 @@ export function fire (querystring) {
     // build url string
     let url = getURL(pixelName)
     if (browser) {
-        url += `_${browser.toLowerCase()}${browserWrapper.getManifestVersion() === 3 ? 'mv3' : ''}`
+        url += `_${browser.toLowerCase()}`
     }
     // random number cache buster
     url += `?${randomNum}&`
@@ -67,4 +68,58 @@ export function getURL (pixelName) {
 
     const url = 'https://improving.duckduckgo.com/t/'
     return url + pixelName
+}
+
+/**
+ * Given an optional category and description, create a report for a given Tab instance.
+ *
+ * This code previously lived within the UI section of the dashboard,
+ * but has been moved here since there's no longer a relationship to 'where' this request
+ * came from.
+ *
+ * @param {import("./classes/tab.es6")} tab
+ * @param {string} tds - tds-etag from settings
+ * @param {string | undefined} category - optional category
+ * @param {string | undefined} description - optional description
+ */
+export function breakageReportForTab (tab, tds, category, description) {
+    if (!tab.url) {
+        return
+    }
+    const siteUrl = getURLWithoutQueryString(tab.url).split('#')[0]
+    const blocked = []
+    const surrogates = []
+
+    for (const tracker of Object.values(tab.trackers)) {
+        for (const [key, entry] of Object.entries(tracker.urls)) {
+            const [fullDomain] = key.split(':')
+            if (entry.action === 'block') {
+                blocked.push(fullDomain)
+            }
+            if (entry.action === 'redirect') {
+                surrogates.push(fullDomain)
+            }
+        }
+    }
+
+    const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
+    const ctlYouTube = tab.ctlYouTube ? 'true' : 'false'
+    const ampUrl = tab.ampUrl || undefined
+    const upgradedHttps = tab.upgradedHttps
+
+    const brokenSiteParams = new URLSearchParams({
+        siteUrl,
+        tds,
+        upgradedHttps: upgradedHttps.toString(),
+        urlParametersRemoved,
+        ctlYouTube,
+        blockedTrackers: blocked.join(','),
+        surrogates: surrogates.join(',')
+    })
+
+    if (ampUrl) brokenSiteParams.set('ampUrl', ampUrl)
+    if (category) brokenSiteParams.set('category', category)
+    if (description) brokenSiteParams.set('description', description)
+
+    return fire(brokenSiteParams.toString())
 }

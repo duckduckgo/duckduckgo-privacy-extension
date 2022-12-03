@@ -3,9 +3,10 @@ const settings = require('./settings.es6')
 const Tab = require('./classes/tab.es6')
 const { TabState } = require('./classes/tab-state')
 const browserWrapper = require('./wrapper.es6')
-const { toggleUserAllowlistDomain } = require('./declarative-net-request.js')
-
-const manifestVersion = browserWrapper.getManifestVersion()
+const {
+    toggleUserAllowlistDomain,
+    updateUserDenylist
+} = require('./declarative-net-request.js')
 
 /**
  * @typedef {import('./classes/site.es6.js').allowlistName} allowlistName
@@ -99,21 +100,16 @@ class TabManager {
             }
         }
 
-        if (manifestVersion === 3) {
-            // Ensure that user allowlisting/denylisting is honoured for
-            // manifest v3 builds of the extension, by adding/removing the
-            // necessary declarativeNetRequest rules.
-            await toggleUserAllowlistDomain(data.domain, data.value)
-
-            // TODO - Once support for the temporary allowlist
-            //        (the contentBlocking) section of extension-config.json is
-            //        added, the "denylisted" event needs to be handled here to
-            //        ensure that users are able to override the temporary
-            //        allowlist manually be re-enabling protections for a
-            //        webiste.
+        // Ensure that user allowlisting/denylisting is honoured for manifest v3
+        // builds of the extension, by adding/removing the necessary
+        // declarativeNetRequest rules.
+        if (browserWrapper.getManifestVersion() === 3) {
+            if (data.list === 'allowlisted') {
+                await toggleUserAllowlistDomain(data.domain, data.value)
+            } else if (data.list === 'denylisted') {
+                await updateUserDenylist()
+            }
         }
-
-        browserWrapper.notifyPopup({ allowlistChanged: true })
     }
 
     /**
@@ -163,7 +159,6 @@ class TabManager {
                     tab.site.grade.setHttps(hasHttps, hasHttps)
 
                     console.info(tab.site.grade)
-                    tab.updateBadgeIcon()
 
                     if (tab.statusCode === 200 &&
                         !tab.site.didIncrementCompaniesData) {

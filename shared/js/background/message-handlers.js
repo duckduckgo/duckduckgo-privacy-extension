@@ -1,5 +1,10 @@
 import browser from 'webextension-polyfill'
 import * as startup from './startup'
+import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
+import { breakageReportForTab } from './broken-site-report'
+import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
+import { getExtensionURL, notifyPopup } from './wrapper.es6'
+import { reloadCurrentTab } from './utils.es6'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -9,12 +14,10 @@ const trackerutils = require('./tracker-utils')
 const trackers = require('./trackers.es6')
 const constants = require('../../data/constants')
 const Companies = require('./companies.es6')
-const brokenSiteReport = require('./broken-site-report')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
 const { enableInverseRules } = require('./classes/custom-rules-manager')
-const { LegacyTabTransfer } = require('./classes/legacy-tab-transfer')
 const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
@@ -22,17 +25,6 @@ export async function registeredContentScript (options, sender, req) {
     const argumentsObject = getArgumentsObject(sender.tab.id, sender, options?.documentUrl || req.documentUrl, sessionKey)
     if (!argumentsObject) {
         // No info for the tab available, do nothing.
-        return
-    }
-
-    if (argumentsObject.site.isBroken) {
-        console.log('temporarily skip protections for site: ' + sender.tab.url +
-    'more info: https://github.com/duckduckgo/privacy-configuration')
-        return
-    }
-
-    // Disable content scripts when site protections are disabled
-    if (argumentsObject.site.allowlisted && req.messageType === 'registeredContentScript') {
         return
     }
 
@@ -52,8 +44,31 @@ export function getExtensionVersion () {
     return browserWrapper.getExtensionVersion()
 }
 
+/**
+ * This is used from the options page - to manually update the user allow list
+ *
+ * @param options
+ */
 export function setList (options) {
     tabManager.setList(options)
+}
+
+/**
+ * This is used by the Dashboard to update the allow/deny lists, close the popup + reload
+ *
+ * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').SetListOptions} options
+ */
+export async function setLists (options) {
+    for (const listItem of options.lists) {
+        tabManager.setList(listItem)
+    }
+
+    try {
+        notifyPopup({ closePopup: true })
+        reloadCurrentTab()
+    } catch (e) {
+        console.error('Error trying to reload+refresh following `setLists` message', e)
+    }
 }
 
 export function allowlistOptIn (optInData) {
@@ -65,33 +80,68 @@ export function getBrowser () {
     return browserName
 }
 
-/**
- * Send a broken site report to the pixel endpoint.
- * @param {string} brokenSiteParams Search param string to send to the broken site pixel endpoint
- * @returns {void}
- */
-export function submitBrokenSiteReport (brokenSiteParams) {
-    return brokenSiteReport.fire(brokenSiteParams)
+export function openOptions () {
+    if (browserName === 'moz') {
+        browser.tabs.create({ url: getExtensionURL('/html/options.html') })
+    } else {
+        browser.runtime.openOptionsPage()
+    }
 }
 
-export async function getTab (tabId) {
+/**
+ * Only the dashboard sends this message, so we import the types from there.
+ * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').BreakageReportRequest} breakageReport
+ * @returns {Promise<void>}
+ */
+export async function submitBrokenSiteReport (breakageReport) {
+    const { category, description } = breakageReport
+
+    const currentTab = await utils.getCurrentTab()
+    if (!currentTab?.id) {
+        console.error('could not access the current tab...')
+        return
+    }
+
+    const tab = await getTab(currentTab.id)
+    if (!tab) {
+        console.error('cannot access current tab with ID ' + currentTab.id)
+        return
+    }
+    const tsd = settings.getSetting('tds-etag')
+    return breakageReportForTab(tab, tsd, category, description)
+}
+
+/**
+ * @param tabId
+ * @returns {Promise<import("./classes/tab.es6")>}
+ */
+async function getTab (tabId) {
     // Await for storage to be ready; this happens on service worker closing mostly.
     await settings.ready()
     await tdsStorage.ready('config')
-
-    const tab = await tabManager.getOrRestoreTab(tabId)
-    return new LegacyTabTransfer(tab)
+    return tabManager.getOrRestoreTab(tabId)
 }
 
-export function getSiteGrade (tabId) {
-    const tab = tabManager.get({ tabId })
-    let grade = {}
-
-    if (!tab.site.specialDomainName) {
-        grade = tab.site.grade.get()
+/**
+ * This message is here to ensure the privacy dashboard can render
+ * from a single call to the extension.
+ *
+ * Currently, it will collect data for the current tab and email protection
+ * user data.
+ */
+export async function getPrivacyDashboardData (options) {
+    let { tabId } = options
+    if (tabId === null) {
+        const currentTab = await utils.getCurrentTab()
+        if (!currentTab?.id) {
+            throw new Error('could not get the current tab...')
+        }
+        tabId = currentTab?.id
     }
-
-    return grade
+    const tab = await getTab(tabId)
+    if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
+    const userData = settings.getSetting('userData')
+    return dashboardDataFromTab(tab, userData)
 }
 
 export function getTopBlockedByPages (options) {
@@ -105,6 +155,7 @@ export async function initClickToLoad (config, sender) {
 
     // Remove first-party entries.
     await startup.ready()
+
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
     if (websiteOwner) {
@@ -151,9 +202,9 @@ export async function getYouTubeVideoDetails (videoURL) {
             }
         ).then(response => response.json())
         const { title, thumbnail_url: previewImage } = youTubeVideoResponse
-        return { status: 'success', title, previewImage }
+        return { status: 'success', videoURL, title, previewImage }
     } catch (e) {
-        return { status: 'failed' }
+        return { status: 'failed', videoURL }
     }
 }
 
@@ -187,15 +238,25 @@ export async function enableSocialTracker (data, sender) {
     }
 }
 
+export function updateYouTubeCTLAddedFlag (value, sender) {
+    const tab = tabManager.get({ tabId: sender.tab.id })
+    tab.ctlYouTube = Boolean(value)
+}
+
 export async function updateSetting ({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)
     utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
+    return { messageType: `ddg-settings-${name}`, value }
 }
 
 export async function getSetting ({ name }) {
     await settings.ready()
     return settings.getSetting(name)
+}
+
+export async function getYoutubePreviewsEnabled () {
+    return getSetting({ name: 'youtubePreviewsEnabled' })
 }
 
 const {
@@ -214,6 +275,9 @@ export function getAlias () {
     return { alias: userData?.nextAlias }
 }
 
+/**
+ * @returns {Promise<import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').RefreshAliasResponse>}
+ */
 export async function refreshAlias () {
     await fetchAlias()
     return getAddresses()
@@ -282,10 +346,7 @@ export async function addUserData (userData, sender) {
         settings.updateSetting('userData', userData)
         // Once user is set, fetch the alias and notify all tabs
         const response = await fetchAlias()
-        // @ts-ignore - Response might not have error property, but since we're
-        //              checking that it does... there's not a problem.
-        if (response && response.error) {
-            // @ts-ignore
+        if (response && 'error' in response) {
             return { error: response.error.message }
         }
 
@@ -337,4 +398,18 @@ export async function reloadList (listName) {
 
 export function debuggerMessage (message, sender) {
     devtools.postMessage(sender.tab?.id, message.action, message.message)
+}
+
+export function search ({ term }) {
+    const browserInfo = parseUserAgentString()
+    if (browserInfo?.os) {
+        const url = new URL('https://duckduckgo.com')
+        url.searchParams.set('q', term)
+        url.searchParams.set('bext', browserInfo.os + 'cr')
+        browser.tabs.create({ url: url.toString() })
+    }
+}
+
+export function openShareFeedbackPage () {
+    return browserWrapper.openExtensionPage('/html/feedback.html')
 }
