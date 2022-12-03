@@ -289,7 +289,6 @@ browser.webNavigation.onBeforeNavigate.addListener(details => {
     // for example, by click-to-load to temporarily allow FB content to be displayed
     // Should we instead rely on chrome.webNavigation.onCommitted events, since a main_frame req may not result
     // in a navigation?O . TOH that may result in a race condition if reules aren't removed quickly enough
-console.warn('EVENTS.removeInverseRules', currentTab.id, currentTab.customActionRules)
     removeInverseRules(currentTab)
 
     const newTab = tabManager.create({ tabId: details.tabId, url: details.url })

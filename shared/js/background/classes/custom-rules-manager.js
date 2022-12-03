@@ -20,11 +20,10 @@ function getInverseRules (action) {
  * @param {string} customAction
  * @param {number} tabId
  */
- export async function enableInverseRules (customAction, tabId) {
+export async function enableInverseRules (customAction, tabId) {
     const tab = tabManager.get({ tabId })
     const rules = tab.customActionRules || {}
     if (rules[customAction]) {
-        console.warn('session rules already exists for', customAction)
         return
     }
 
@@ -37,16 +36,9 @@ function getInverseRules (action) {
             return rule
         })
 
-    setInterval(() => {
-        const currentTab = tabManager.get({ tabId: tabId })
-        console.warn('current inverse rules', currentTab.id, currentTab.customActionRules)
-        chrome.declarativeNetRequest.getSessionRules().then((r) => console.warn('DNR sesh rules', r))
-    }, 5000)
-
     rules[customAction] = ruleIds
     tab.customActionRules = rules
 
-    console.warn('enableInverseRules updated for tab', tab.id, tab.customActionRules)
     await chrome.declarativeNetRequest.updateSessionRules({ addRules: inverseRules })
 }
 

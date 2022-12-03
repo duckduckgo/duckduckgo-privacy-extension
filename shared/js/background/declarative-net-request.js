@@ -175,7 +175,6 @@ async function updateConfigRules (
 
     await settings.ready()
     if (Object.keys(inverseCustomRules).length) {
-        console.warn('updating inverseCustomRules', inverseCustomRules)
         settings.updateSetting('inverseCustomRules', inverseCustomRules)
     }
     settings.updateSetting(settingName, settingValue)
