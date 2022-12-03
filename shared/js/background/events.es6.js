@@ -7,6 +7,8 @@
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
 import * as startup from './startup'
+import { removeInverseRules } from './classes/custom-rules-manager'
+import { flushSessionRules } from './declarative-net-request'
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const experiment = require('./experiments.es6')
@@ -20,7 +22,6 @@ const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
-const { flushSessionRules } = require('./declarative-net-request')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -42,6 +43,13 @@ async function onInstalled (details) {
         experiment.setActiveExperiment()
     }
 
+    // remove any orphaned session rules (can happen on extension update/restart)
+    if (manifestVersion === 3) {
+        await settings.ready()
+
+        await flushSessionRules()
+    }
+
     // Inject the email content script on all tabs upon installation (not needed on Firefox)
     // FIXME the below code throws an unhandled exception in MV3
     try {
@@ -52,7 +60,7 @@ async function onInstalled (details) {
                 if (tab.url.startsWith('chrome://')) {
                     continue
                 }
-                browserWrapper.executeScript({
+                await browserWrapper.executeScript({
                     target: { tabId: tab.id },
                     files: ['public/js/content-scripts/autofill.js']
                 })
@@ -60,13 +68,6 @@ async function onInstalled (details) {
         }
     } catch (e) {
         console.warn('Failed to inject email content script at startup:', e)
-    }
-
-    // remove any orphaned session rules (can happen on extension update/restart)
-    if (manifestVersion === 3) {
-        await settings.ready()
-
-        await flushSessionRules()
     }
 }
 
@@ -283,6 +284,14 @@ browser.webNavigation.onBeforeNavigate.addListener(details => {
     if (details.frameId !== 0) return
 
     const currentTab = tabManager.get({ tabId: details.tabId })
+
+    // Upon navigation, remove any custom action session rules that may have been applied to this tab
+    // for example, by click-to-load to temporarily allow FB content to be displayed
+    // Should we instead rely on chrome.webNavigation.onCommitted events, since a main_frame req may not result
+    // in a navigation?O . TOH that may result in a race condition if reules aren't removed quickly enough
+console.warn('EVENTS.removeInverseRules', currentTab.id, currentTab.customActionRules)
+    removeInverseRules(currentTab)
+
     const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
     // persist the last URL the tab was trying to upgrade to HTTPS
     if (currentTab && currentTab.httpsRedirects) {

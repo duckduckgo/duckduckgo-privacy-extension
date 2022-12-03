@@ -1,5 +1,4 @@
 import browser from 'webextension-polyfill'
-import { removeInverseRules } from './classes/custom-rules-manager'
 const tldts = require('tldts')
 
 const utils = require('./utils.es6')
@@ -95,24 +94,6 @@ function handleRequest (requestData) {
     }
 
     if (requestData.type === 'main_frame') {
-        if (!thisTab || thisTab.requestId !== requestData.requestId) {
-            if (thisTab) {
-                // Upon navigation, remove any custom action session rules that may have been applied to this tab
-                // for example, by click-to-load to temporarily allow FB content to be displayed
-                // Should we instead rely on chrome.webNavigation.onCommitted events, since a main_frame req may not result
-                // in a navigation?O . TOH that may result in a race condition if reules aren't removed quickly enough
-                removeInverseRules(thisTab)
-            }
-
-            const newTab = tabManager.create(requestData)
-
-            // persist the last URL the tab was trying to upgrade to HTTPS
-            if (thisTab && thisTab.httpsRedirects) {
-                newTab.httpsRedirects.persistMainFrameRedirect(thisTab.httpsRedirects.getMainFrameRedirect())
-            }
-            thisTab = newTab
-        }
-
         let mainFrameRequestURL = new URL(requestData.url)
 
         // AMP protection

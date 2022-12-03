@@ -60,5 +60,6 @@ export async function removeInverseRules (tab) {
     for (const ruleSet in tab.customActionRules) {
         customRulesIds.push(...tab.customActionRules[ruleSet])
     }
+    tab.customActionRules = {}
     await chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: customRulesIds })
 }
