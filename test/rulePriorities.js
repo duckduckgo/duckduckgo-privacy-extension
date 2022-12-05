@@ -34,7 +34,8 @@ const {
 const {
     AD_ATTRIBUTION_POLICY_PRIORITY,
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
-    USER_ALLOWLISTED_PRIORITY
+    USER_ALLOWLISTED_PRIORITY,
+    ATB_PARAM_PRIORITY
 } = require('../lib/rulePriorities')
 
 describe('Rule Priorities', () => {
@@ -52,9 +53,15 @@ describe('Rule Priorities', () => {
         assert.equal(UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY, 1000000)
         assert.equal(SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY, 1000000)
         assert.equal(USER_ALLOWLISTED_PRIORITY, 1000000)
+        assert.equal(ATB_PARAM_PRIORITY, 2000000)
     })
 
     it('should have the correct relative rule priorities', () => {
+        // ATB is higher than allowlist
+        assert.ok(ATB_PARAM_PRIORITY > UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
+        assert.ok(ATB_PARAM_PRIORITY > USER_ALLOWLISTED_PRIORITY)
+        assert.ok(ATB_PARAM_PRIORITY > SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
+
         // Ceiling priorities should always be higher than baseline.
         assert.ok(TRACKER_BLOCKING_BASELINE_PRIORITY < TRACKER_BLOCKING_CEILING_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY < TRACKER_ALLOWLIST_CEILING_PRIORITY)
