@@ -24,6 +24,10 @@ const ATB = (() => {
     const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
+        getRegExpAboutPage () {
+            return regExpAboutPage
+        },
+
         shouldUpdateSetAtb (request) {
             return matchPage.test(request.url)
         },
