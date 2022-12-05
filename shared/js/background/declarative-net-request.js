@@ -15,7 +15,8 @@ import {
 } from '@duckduckgo/ddg2dnr/lib/utils'
 import {
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
-    USER_ALLOWLISTED_PRIORITY
+    USER_ALLOWLISTED_PRIORITY,
+    ATB_PARAM_PRIORITY
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
 export const SETTING_PREFIX = 'declarative_net_request-'
@@ -32,6 +33,7 @@ const ruleIdRangeByConfigName = {
 // only require one declarativeNetRequest rule, so hardcode the rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001
 export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
+export const ATB_PARAM_RULE_ID = 20003
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
@@ -341,6 +343,12 @@ export async function getMatchDetails (ruleId) {
         }
     }
 
+    if (ruleId === ATB_PARAM_RULE_ID) {
+        return {
+            type: 'atbParam'
+        }
+    }
+
     for (const [configName, [ruleIdStart, ruleIdEnd]]
         of Object.entries(ruleIdRangeByConfigName)) {
         if (ruleId >= ruleIdStart && ruleId <= ruleIdEnd) {
@@ -463,6 +471,39 @@ export async function ensureServiceWorkerInitiatedRequestException () {
     await chrome.declarativeNetRequest.updateSessionRules({
         removeRuleIds, addRules
     })
+}
+
+export async function setOrUpdateATBdnrRule (atb, regexFilter) {
+    if (!(atb && regexFilter)) {
+        return
+    }
+
+    // format regex for json and dnr
+    regexFilter = regexFilter.toString().replace(/\\/g, "\\").replace(/^\//, '').replace(/\/$/, '')
+
+    const atbRule = generateDNRRule({
+        id: ATB_PARAM_RULE_ID,
+        priority: ATB_PARAM_PRIORITY,
+        actionType: 'redirect',
+        redirect: {
+            transform: {
+                queryTransform: {
+                    addOrReplaceParams: [{key: 'atb', value: atb}]
+                }
+            }
+        },
+        resourceTypes: ['main_frame'],
+        requestDomains: ['duckduckgo.com'],
+        regexFilter: regexFilter
+    })
+
+    if (atbRule?.id === ATB_PARAM_RULE_ID) {
+    console.log(atbRule)
+        await chrome.declarativeNetRequest.updateDynamicRules({
+            removeRuleIds: [atbRule.id],
+            addRules: [atbRule]
+        })
+    }
 }
 
 if (browserWrapper.getManifestVersion() === 3) {

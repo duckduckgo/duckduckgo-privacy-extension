@@ -8,6 +8,7 @@ const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
 const browserWrapper = require('./wrapper.es6')
+const {setOrUpdateATBdnrRule} = require('./declarative-net-request')
 
 const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
@@ -40,6 +41,7 @@ const ATB = (() => {
             if (!atbSetting) {
                 atbSetting = ATB_ERROR_COHORT
                 settings.updateSetting('atb', ATB_ERROR_COHORT)
+                setOrUpdateATBdnrRule(ATB_ERROR_COHORT, regExpAboutPage)
                 errorParam = '&e=1'
             }
 
@@ -52,8 +54,10 @@ const ATB = (() => {
 
                 if (res.data.updateVersion) {
                     settings.updateSetting('atb', res.data.updateVersion)
+                    setOrUpdateATBdnrRule(res.data.updateVersion, regExpAboutPage)
                 } else if (atbSetting === ATB_ERROR_COHORT) {
                     settings.updateSetting('atb', res.data.version)
+                    setOrUpdateATBdnrRule(res.data.version, regExpAboutPage)
                 }
             })
         },
@@ -92,6 +96,7 @@ const ATB = (() => {
             const url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
+                setOrUpdateATBdnrRule(res.data.version, regExpAboutPage)
             }, () => {
                 console.log('couldn\'t reach atb.js for initial server call, trying again')
                 numTries += 1
@@ -164,6 +169,7 @@ const ATB = (() => {
 
                     if (atb) {
                         settings.updateSetting('atb', atb)
+                        setOrUpdateATBdnrRule(res.data.version, regExpAboutPage)
                     }
 
                     ATB.finalizeATB(params)
