@@ -473,13 +473,18 @@ export async function ensureServiceWorkerInitiatedRequestException () {
     })
 }
 
+/**
+ * Creates a DNR rule for ATB parameters
+ * @param {string} atb
+ * @param {object} regexFilter
+ */
 export async function setOrUpdateATBdnrRule (atb, regexFilter) {
     if (!(atb && regexFilter)) {
         return
     }
 
     // format regex for json and dnr
-    regexFilter = regexFilter.toString().replace(/\\/g, "\\").replace(/^\//, '').replace(/\/$/, '')
+    regexFilter = regexFilter.toString().replace(/\\/g, '\\').replace(/^\//, '').replace(/\/$/, '')
 
     const atbRule = generateDNRRule({
         id: ATB_PARAM_RULE_ID,
@@ -488,17 +493,16 @@ export async function setOrUpdateATBdnrRule (atb, regexFilter) {
         redirect: {
             transform: {
                 queryTransform: {
-                    addOrReplaceParams: [{key: 'atb', value: atb}]
+                    addOrReplaceParams: [{ key: 'atb', value: atb }]
                 }
             }
         },
         resourceTypes: ['main_frame'],
         requestDomains: ['duckduckgo.com'],
-        regexFilter: regexFilter
+        regexFilter
     })
 
     if (atbRule?.id === ATB_PARAM_RULE_ID) {
-    console.log(atbRule)
         await chrome.declarativeNetRequest.updateDynamicRules({
             removeRuleIds: [atbRule.id],
             addRules: [atbRule]

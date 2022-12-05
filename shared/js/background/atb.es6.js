@@ -8,7 +8,7 @@ const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
 const browserWrapper = require('./wrapper.es6')
-const {setOrUpdateATBdnrRule} = require('./declarative-net-request')
+const { setOrUpdateATBdnrRule } = require('./declarative-net-request')
 
 const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
@@ -169,7 +169,7 @@ const ATB = (() => {
 
                     if (atb) {
                         settings.updateSetting('atb', atb)
-                        setOrUpdateATBdnrRule(res.data.version, regExpAboutPage)
+                        setOrUpdateATBdnrRule(atb, regExpAboutPage)
                     }
 
                     ATB.finalizeATB(params)
