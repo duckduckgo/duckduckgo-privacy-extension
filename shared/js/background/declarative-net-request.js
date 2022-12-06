@@ -481,8 +481,8 @@ export async function ensureServiceWorkerInitiatedRequestException () {
 
 export function flushSessionRules () {
     return chrome.declarativeNetRequest.getSessionRules().then(rules => {
-        if (rules.length) {
-            const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId)
+        const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId)
+        if (ruleIds.length) {
             return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })
         }
     })
