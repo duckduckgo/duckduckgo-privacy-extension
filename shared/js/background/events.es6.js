@@ -41,7 +41,7 @@ async function onInstalled (details) {
         }
     } else if (details.reason.match(/update/) && browserName === 'chrome') {
         if (manifestVersion === 3) {
-            setOrUpdateATBdnrRule(settings.getSetting('atb'), ATB.getRegExpAboutPage())
+            ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'))
         }
         experiment.setActiveExperiment()
     }

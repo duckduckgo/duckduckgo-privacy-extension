@@ -5,6 +5,8 @@ const pageWait = require('../helpers/pageWait')
 // eslint-disable-next-line no-shadow
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args))
 
+const manifestVersion = harness.getManifestVersion()
+
 let browser
 let bgPage
 let requests
@@ -68,6 +70,10 @@ describe('install workflow', () => {
         })
 
         it('should get its ATB param from atb.js when there\'s no install success page', async () => {
+            if (manifestVersion === 3) {
+                return
+            }
+
             // try get ATB params
             await bgPage.evaluate(() => globalThis.dbg.atb.updateATBValues())
             await backgroundWait.forSetting(bgPage, 'extiSent')
@@ -97,6 +103,10 @@ describe('install workflow', () => {
             expect(numExtiCalled).toEqual(1)
         })
         it('should get its ATB param from the success page when one is present', async () => {
+            if (manifestVersion === 3) {
+                return 
+            }
+
             // open a success page and wait for it to have finished loading
             const successPage = await browser.newPage()
             await pageWait.forGoto(successPage, 'https://duckduckgo.com/?natb=v123-4ab&cp=atbhc')
@@ -141,6 +151,10 @@ describe('install workflow', () => {
         })
 
         it('should retreive stored ATB value on reload', async () => {
+            if (manifestVersion === 3) {
+                return
+            }
+
             // set an ATB value from the past
             const pastATBValue = 'v123-1'
             await bgPage.evaluate((pagePastATBValue) => globalThis.dbg.settings.updateSetting('atb', pagePastATBValue), pastATBValue)
