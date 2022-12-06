@@ -19,6 +19,7 @@ function getInverseRules (action) {
  * This is used by CTL for example to override certain rules when a user has clicked through
  * @param {string} customAction
  * @param {number} tabId
+ * @return {Promise}
  */
 export async function enableInverseRules (customAction, tabId) {
     const tab = tabManager.get({ tabId })
@@ -46,12 +47,13 @@ export async function enableInverseRules (customAction, tabId) {
  * For a given tab, we remove any session rules that were added by enableInverseRules
  * This is called during page navigation or example, to remove any temporary loading exceptions
  * @param {Object} tab
+ * @return {Promise}
  */
-export async function removeInverseRules (tab) {
+export function removeInverseRules (tab) {
     const customRulesIds = []
     for (const ruleSet in tab.customActionRules) {
         customRulesIds.push(...tab.customActionRules[ruleSet])
     }
     tab.customActionRules = {}
-    await chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: customRulesIds })
+    return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: customRulesIds })
 }
