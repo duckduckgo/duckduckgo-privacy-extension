@@ -20,7 +20,6 @@ const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
-const { setOrUpdateATBdnrRule } = require('./declarative-net-request')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 

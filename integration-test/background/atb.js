@@ -104,7 +104,7 @@ describe('install workflow', () => {
         })
         it('should get its ATB param from the success page when one is present', async () => {
             if (manifestVersion === 3) {
-                return 
+                return
             }
 
             // open a success page and wait for it to have finished loading

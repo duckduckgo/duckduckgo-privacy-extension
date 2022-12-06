@@ -209,17 +209,13 @@ const ATB = (() => {
                 !domain.match(regExpPostInstall) &&
                 !domain.match(regExpSoftwarePage)
         },
-        
+
         /**
         * Creates a DNR rule for ATB parameters
         * @param {string} atb
         */
         setOrUpdateATBdnrRule: (atb) => {
-            if (manifestVersion === 2) {
-                return 
-            }
-
-            if (!atb) {
+            if (!(manifestVersion === 3 && atb)) {
                 return
             }
 
