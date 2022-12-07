@@ -235,12 +235,10 @@ const ATB = (() => {
                 regexFilter: regExpAboutPage.source
             })
 
-            if (atbRule?.id === ATB_PARAM_RULE_ID) {
-                chrome.declarativeNetRequest.updateDynamicRules({
-                    removeRuleIds: [atbRule.id],
-                    addRules: [atbRule]
-                })
-            }
+            chrome.declarativeNetRequest.updateDynamicRules({
+                removeRuleIds: [atbRule.id],
+                addRules: [atbRule]
+            })
         },
 
         async getSurveyURL () {
