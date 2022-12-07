@@ -99,7 +99,7 @@ module.exports = {
         },
         {
             name: 'tds',
-            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v3/tds.json',
+            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json',
             format: 'json',
             source: 'external',
             channels: {

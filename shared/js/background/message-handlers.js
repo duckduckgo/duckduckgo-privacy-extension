@@ -17,6 +17,7 @@ const Companies = require('./companies.es6')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
+const { enableInverseRules } = require('./classes/custom-rules-manager')
 const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
@@ -215,6 +216,10 @@ export async function enableSocialTracker (data, sender) {
     await settings.ready()
     const tab = tabManager.get({ tabId: sender.tab.id })
     const entity = data.entity
+
+    if (browserWrapper.getManifestVersion() === 3) {
+        enableInverseRules(data.action, sender.tab.id)
+    }
     tab.site.clickToLoad.push(entity)
 
     if (data.isLogin) {

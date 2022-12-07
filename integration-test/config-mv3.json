@@ -6,6 +6,8 @@
         "background/test-fingerprint.js",
         "background/storage.js",
         "background/click-attribution.js",
+        "background/click-to-load-facebook.js",
+        "background/click-to-load-youtube.js",
         "content-scripts/gpc.js"
     ]
 }

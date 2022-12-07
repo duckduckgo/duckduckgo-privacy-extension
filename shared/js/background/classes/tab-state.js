@@ -32,6 +32,8 @@ export class TabState {
         this.trackers = {}
         /** @type {null | import('../events/referrer-trimming').Referrer} */
         this.referrer = null
+        /** @type {Object.<string, number[]>} */
+        this.customActionRules = {}
         /** @type {boolean} */
         this.ctlYouTube = false // True when at least one YouTube Click to Load placeholder was displayed in the tab.
 
