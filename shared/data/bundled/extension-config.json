@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1669853651814,
+    "version": 1670329475539,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -284,7 +284,19 @@
                         "type": "closest-empty"
                     },
                     {
+                        "selector": ".ad",
+                        "type": "closest-empty"
+                    },
+                    {
                         "selector": ".ad-leaderboard",
+                        "type": "closest-empty"
+                    },
+                    {
+                        "selector": ".leaderboard",
+                        "type": "closest-empty"
+                    },
+                    {
+                        "selector": "#leaderboard",
                         "type": "closest-empty"
                     },
                     {
@@ -305,6 +317,10 @@
                     },
                     {
                         "selector": ".ad-wrapper",
+                        "type": "closest-empty"
+                    },
+                    {
+                        "selector": "[class*='adWrapper']",
                         "type": "closest-empty"
                     },
                     {
@@ -330,7 +346,10 @@
                 ],
                 "adLabelStrings": [
                     "advertisement",
+                    "advertisment",
                     "advertisementclose",
+                    "advertisement\ncontinue reading the main story",
+                    "advertisement - scroll to continue",
                     "advertising",
                     "ad feedback",
                     "sponsored",
@@ -544,7 +563,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "06df7e5edc350785822747f710072574"
+            "hash": "4daf40cc553735d22c090b5e1d90fe94"
         },
         "fingerprintingAudio": {
             "state": "disabled",
