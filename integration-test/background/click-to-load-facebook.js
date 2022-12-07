@@ -77,7 +77,7 @@ describe('Test Facebook Click To Load', () => {
         } catch (e) {}
     })
 
-    it('CTL: Facebook request blocking/redirecting', async () => {
+    xit('CTL: Facebook request blocking/redirecting', async () => {
         // Open the test page and start logging network requests.
         const page = await browser.newPage()
         const pageRequests = []

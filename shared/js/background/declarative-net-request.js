@@ -3,6 +3,7 @@ import settings from './settings.es6'
 import tdsStorage from './storage/tds.es6'
 import trackers from './trackers.es6'
 import * as startup from './startup'
+import { isValidSessionId } from './dnr-session-rule-id'
 
 import {
     generateExtensionConfigurationRuleset
@@ -125,7 +126,7 @@ async function configRulesNeedUpdate (configName, expectedState) {
  * @returns {Promise<>}
  */
 async function updateConfigRules (
-    configName, latestState, rules, matchDetailsByRuleId
+    configName, latestState, rules, matchDetailsByRuleId, inverseCustomRules = {}
 ) {
     const [ruleIdStart, ruleIdEnd] = ruleIdRangeByConfigName[configName]
     const etagRuleId = ruleIdStart
@@ -172,7 +173,11 @@ async function updateConfigRules (
     for (const key of Object.keys(latestState)) {
         settingValue[key] = latestState[key]
     }
+
     await settings.ready()
+    if (Object.keys(inverseCustomRules).length) {
+        settings.updateSetting('inverseCustomRules', inverseCustomRules)
+    }
     settings.updateSetting(settingName, settingValue)
 }
 
@@ -278,7 +283,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
         const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
         const {
-            ruleset, matchDetailsByRuleId
+            ruleset, matchDetailsByRuleId, inverseCustomActionRules
         } = await generateTdsRuleset(
             configValue,
             supportedSurrogates,
@@ -287,7 +292,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
             ruleIdStart + 1
         )
 
-        await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId)
+        await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId, inverseCustomActionRules)
 
     // Extension configuration.
     } else if (configName === 'config') {
@@ -469,6 +474,24 @@ export async function ensureServiceWorkerInitiatedRequestException () {
     //       blocked before the rule is added.
     await chrome.declarativeNetRequest.updateSessionRules({
         removeRuleIds, addRules
+    })
+}
+
+/**
+* Remove orphaned session ids
+* We increment the rule IDs for some session rules, starting at STARTING_RULE_ID and
+* keep a note of the next rule ID in session storage. During extesion update/restarts
+* session storage is cleared, while session rules are not, which causes errors due to
+* session rule ID conflicts
+ * @return {Promise}
+ */
+
+export function flushSessionRules () {
+    return chrome.declarativeNetRequest.getSessionRules().then(rules => {
+        const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId)
+        if (ruleIds.length) {
+            return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })
+        }
     })
 }
 

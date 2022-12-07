@@ -7,6 +7,8 @@
         "background/storage.js",
         "background/click-attribution.js",
         "background/atb.js",
+        "background/click-to-load-facebook.js",
+        "background/click-to-load-youtube.js",
         "content-scripts/gpc.js"
     ]
 }

@@ -8,6 +8,10 @@ const SESSION_RULE_STORAGE_KEY = 'sessionRuleOffset'
 let sessionRuleOffset = 0
 let ready = false
 
+export function isValidSessionId (id) {
+    return id >= SESSION_RULE_ID_START
+}
+
 export async function setSessionRuleOffsetFromStorage () {
     const offset = await browserWrapper.getFromSessionStorage(SESSION_RULE_STORAGE_KEY)
     if (offset) {
@@ -17,7 +21,7 @@ export async function setSessionRuleOffsetFromStorage () {
 }
 
 /**
- * Get the next unique session rule id to use when craeting session DNR rules
+ * Get the next unique session rule id to use when creating session DNR rules
  * @returns {number | null} nextRuleId
  */
 export function getNextSessionRuleId () {
