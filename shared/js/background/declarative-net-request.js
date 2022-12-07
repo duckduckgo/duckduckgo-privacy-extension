@@ -33,6 +33,7 @@ const ruleIdRangeByConfigName = {
 // only require one declarativeNetRequest rule, so hardcode the rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001
 export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
+export const ATB_PARAM_RULE_ID = 20003
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
@@ -343,6 +344,12 @@ export async function getMatchDetails (ruleId) {
     if (ruleId === SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID) {
         return {
             type: 'serviceWorkerInitiatedAllowing'
+        }
+    }
+
+    if (ruleId === ATB_PARAM_RULE_ID) {
+        return {
+            type: 'atbParam'
         }
     }
 

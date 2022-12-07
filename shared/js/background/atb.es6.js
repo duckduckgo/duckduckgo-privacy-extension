@@ -8,12 +8,17 @@ const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
 const browserWrapper = require('./wrapper.es6')
+const { ATB_PARAM_RULE_ID } = require('./declarative-net-request')
+const { ATB_PARAM_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities')
+const { generateDNRRule } = require('@duckduckgo/ddg2dnr/lib/utils')
 
 const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 
 // list of accepted params in ATB url
 const ACCEPTED_URL_PARAMS = ['natb', 'cp', 'npi']
+
+const manifestVersion = browserWrapper.getManifestVersion()
 
 const ATB = (() => {
     // regex to match ddg urls to add atb params to.
@@ -23,6 +28,7 @@ const ATB = (() => {
     const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
+
         shouldUpdateSetAtb (request) {
             return matchPage.test(request.url)
         },
@@ -40,6 +46,7 @@ const ATB = (() => {
             if (!atbSetting) {
                 atbSetting = ATB_ERROR_COHORT
                 settings.updateSetting('atb', ATB_ERROR_COHORT)
+                ATB.setOrUpdateATBdnrRule(ATB_ERROR_COHORT)
                 errorParam = '&e=1'
             }
 
@@ -52,8 +59,10 @@ const ATB = (() => {
 
                 if (res.data.updateVersion) {
                     settings.updateSetting('atb', res.data.updateVersion)
+                    ATB.setOrUpdateATBdnrRule(res.data.updateVersion)
                 } else if (atbSetting === ATB_ERROR_COHORT) {
                     settings.updateSetting('atb', res.data.version)
+                    ATB.setOrUpdateATBdnrRule(res.data.version)
                 }
             })
         },
@@ -92,6 +101,7 @@ const ATB = (() => {
             const url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
+                ATB.setOrUpdateATBdnrRule(res.data.version)
             }, () => {
                 console.log('couldn\'t reach atb.js for initial server call, trying again')
                 numTries += 1
@@ -164,6 +174,7 @@ const ATB = (() => {
 
                     if (atb) {
                         settings.updateSetting('atb', atb)
+                        ATB.setOrUpdateATBdnrRule(atb)
                     }
 
                     ATB.finalizeATB(params)
@@ -197,6 +208,37 @@ const ATB = (() => {
             return !settings.getSetting('hasSeenPostInstall') &&
                 !domain.match(regExpPostInstall) &&
                 !domain.match(regExpSoftwarePage)
+        },
+
+        /**
+        * Creates a DNR rule for ATB parameters
+        * @param {string} atb
+        */
+        setOrUpdateATBdnrRule: (atb) => {
+            if (!atb || manifestVersion !== 3) {
+                return
+            }
+
+            const atbRule = generateDNRRule({
+                id: ATB_PARAM_RULE_ID,
+                priority: ATB_PARAM_PRIORITY,
+                actionType: 'redirect',
+                redirect: {
+                    transform: {
+                        queryTransform: {
+                            addOrReplaceParams: [{ key: 'atb', value: atb }]
+                        }
+                    }
+                },
+                resourceTypes: ['main_frame'],
+                requestDomains: ['duckduckgo.com'],
+                regexFilter: regExpAboutPage.source
+            })
+
+            chrome.declarativeNetRequest.updateDynamicRules({
+                removeRuleIds: [atbRule.id],
+                addRules: [atbRule]
+            })
         },
 
         async getSurveyURL () {

@@ -36,10 +36,14 @@ async function onInstalled (details) {
         }
         await ATB.updateATBValues()
         await ATB.openPostInstallPage()
+
         if (browserName === 'chrome') {
             experiment.setActiveExperiment()
         }
     } else if (details.reason.match(/update/) && browserName === 'chrome') {
+        if (manifestVersion === 3) {
+            ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'))
+        }
         experiment.setActiveExperiment()
     }
 
