@@ -11,7 +11,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    if: "contains(github.event.head_commit.message, 'ci release')"
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js 16
