@@ -71,6 +71,8 @@ describe('install workflow', () => {
 
         it('should get its ATB param from atb.js when there\'s no install success page', async () => {
             if (manifestVersion === 3) {
+                // TODO: Can't see requests from service workers. Re-enable once this is fixed
+                // https://github.com/puppeteer/puppeteer/issues/2781
                 return
             }
 
@@ -104,6 +106,8 @@ describe('install workflow', () => {
         })
         it('should get its ATB param from the success page when one is present', async () => {
             if (manifestVersion === 3) {
+                // TODO: Can't see requests from service workers. Re-enable once this is fixed
+                // https://github.com/puppeteer/puppeteer/issues/2781
                 return
             }
 
