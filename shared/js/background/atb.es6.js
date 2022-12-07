@@ -215,7 +215,7 @@ const ATB = (() => {
         * @param {string} atb
         */
         setOrUpdateATBdnrRule: (atb) => {
-            if (!(manifestVersion === 3 && atb)) {
+            if (!atb || manifestVersion !== 3)) {
                 return
             }
 
