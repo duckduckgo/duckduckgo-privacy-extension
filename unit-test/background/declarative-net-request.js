@@ -37,7 +37,7 @@ config.features.trackerAllowlist = {
 }
 
 const expectedRuleIdsByConfigName = {
-    tds: [1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009, 1010, 20002, 20003, 20004, 20001],
+    tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21001, 21002, 21003, 21004],
     config: [
         10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010
     ]
@@ -45,39 +45,39 @@ const expectedRuleIdsByConfigName = {
 
 const expectedLookupByConfigName = {
     tds: {
-        1002: {
+        2: {
             type: 'trackerBlocking',
             possibleTrackerDomains: ['facebook.com', 'facebook.net']
         },
-        1003: {
+        3: {
             type: 'trackerBlocking',
             possibleTrackerDomains: ['google-analytics.com']
         },
-        1004: {
+        4: {
             type: 'trackerBlocking',
             possibleTrackerDomains: ['google-analytics.com']
         },
-        1005: {
+        5: {
             type: 'trackerBlocking',
             possibleTrackerDomains: ['google-analytics.com']
         },
-        1006: {
+        6: {
             type: 'trackerBlocking',
             possibleTrackerDomains: ['google-analytics.com']
         },
-        1007: {
+        7: {
             type: 'surrogateScript',
             possibleTrackerDomains: ['google-analytics.com']
         },
-        1008: {
+        8: {
             type: 'trackerBlocking',
             possibleTrackerDomains: ['google-analytics.com']
         },
-        1009: {
+        9: {
             type: 'trackerBlocking',
             possibleTrackerDomains: ['google-analytics.com']
         },
-        1010: {
+        10: {
             type: 'trackerBlocking',
             possibleTrackerDomains: ['yahoo.com']
         }

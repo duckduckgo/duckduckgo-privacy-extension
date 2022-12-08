@@ -26,17 +26,17 @@ export const SETTING_PREFIX = 'declarative_net_request-'
 // rules associated with a configuration can be safely cleared without the risk
 // of removing rules associated with different configurations.
 const ruleIdRangeByConfigName = {
-    _RESERVED: [1, 1000],
-    tds: [1001, 10000],
+    tds: [1, 10000],
     config: [10001, 20000],
-    combined: [20001, 30000]
+    _RESERVED: [20001, 21000],
+    combined: [21001, 31000]
 }
 
 // User allowlisting and the ServicerWorker initiated request exception both
 // only require one declarativeNetRequest rule, so hardcode the rule IDs here.
-export const USER_ALLOWLIST_RULE_ID = 1
-export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 2
-export const ATB_PARAM_RULE_ID = 3
+export const USER_ALLOWLIST_RULE_ID = 20001
+export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
+export const ATB_PARAM_RULE_ID = 20003
 const RESERVED_RULE_IDS = [
     USER_ALLOWLIST_RULE_ID,
     SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
