@@ -1,6 +1,7 @@
 function getSecret () {
     return new Promise(resolve => {
         window.addEventListener('ddg-secret', event => {
+            console.warn('secret', event)
             event.stopImmediatePropagation()
             resolve(event.detail)
         }, { once: true })
@@ -10,9 +11,10 @@ function getSecret () {
 async function init () {
     const secret = await getSecret()
 
-    window.addEventListener('sendMessage', event => {
+    window.addEventListener('sendMessage' + secret, event => {
         // MV3 message proxy for click to load
         event.stopImmediatePropagation()
+        console.warn('received sendMessage for', secret, event)
         const detail = event && event.detail
         if (!detail) {
             console.warn('no details in sendMessage proxy', event)
