@@ -44,10 +44,6 @@ npm run extension-configuration ../extension-config-input.json \
         ../extension-configuration-ruleset-output.json [../match-details-by-rule-id-output.json]
 ```
 
-Note:
- - Extension configuration ruleset generation is a work in progress. So far,
-   only the tracker allowlist is supported.
-
 ## Development
 
 Lint the code:

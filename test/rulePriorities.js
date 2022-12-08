@@ -5,6 +5,10 @@ const {
 } = require('../lib/smarterEncryption')
 
 const {
+    AMP_PROTECTION_PRIORITY
+} = require('../lib/ampProtection')
+
+const {
     GPC_HEADER_PRIORITY
 } = require('../lib/gpc')
 
@@ -46,6 +50,7 @@ describe('Rule Priorities', () => {
         assert.equal(TRACKER_ALLOWLIST_CEILING_PRIORITY, 20100)
         assert.equal(AD_ATTRIBUTION_POLICY_PRIORITY, 30000)
         assert.equal(CONTENT_BLOCKING_ALLOWLIST_PRIORITY, 30000)
+        assert.equal(AMP_PROTECTION_PRIORITY, 40000)
         assert.equal(GPC_HEADER_PRIORITY, 40000)
         assert.equal(TRACKING_PARAM_PRIORITY, 40000)
         assert.equal(COOKIE_PRIORITY, 40000)
@@ -91,9 +96,10 @@ describe('Rule Priorities', () => {
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY < SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY < USER_ALLOWLISTED_PRIORITY)
 
-        // Tracking parameter protection and GPC should take priority over
-        // tracker blocking, the tracker allowlist and the contentBlocking
-        // allowlist, but not over the other features/allowlists.
+        // Tracking parameter protection, AMP protection  and GPC should take
+        // priority overtracker blocking, the tracker allowlist and the
+        // contentBlocking allowlist, but not over the other features/allowlists.
+        assert.equal(TRACKING_PARAM_PRIORITY, AMP_PROTECTION_PRIORITY)
         assert.equal(TRACKING_PARAM_PRIORITY, GPC_HEADER_PRIORITY)
         assert.ok(TRACKING_PARAM_PRIORITY > TRACKER_BLOCKING_CEILING_PRIORITY)
         assert.ok(TRACKING_PARAM_PRIORITY > TRACKER_ALLOWLIST_CEILING_PRIORITY)
