@@ -6,7 +6,6 @@
  */
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
-import * as startup from './startup'
 import { removeInverseRules } from './classes/custom-rules-manager'
 import { flushSessionRules } from './declarative-net-request'
 const ATB = require('./atb.es6')
@@ -21,7 +20,7 @@ const devtools = require('./devtools.es6')
 const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
-const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
+const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest, validateSetCookieBlock } = require('./events/3p-tracking-cookie-blocking')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -254,20 +253,6 @@ browser.webRequest.onHeadersReceived.addListener(
     extraInfoSpec
 )
 
-// Wait until the extension configuration has finished loading and then
-// start dropping tracking cookies.
-// Note: Event listeners must be registered in the top-level of the script
-//       to be compatible with MV3. Registering the listener asynchronously
-//       is only possible here as this is a MV2-only event listener!
-// See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-startup.ready().then(() => {
-    browser.webRequest.onHeadersReceived.addListener(
-        dropTracking3pCookiesFromResponse,
-        { urls: ['<all_urls>'] },
-        extraInfoSpec
-    )
-})
-
 // Store the created tab id for when onBeforeNavigate is called so data can be copied across from the source tab
 const createdTargets = new Map()
 browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
@@ -429,12 +414,13 @@ if (manifestVersion === 2) {
  * Global Privacy Control
  */
 const GPC = require('./GPC.es6')
+const extraInfoSpecSendHeaders = ['requestHeaders']
+if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+    extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+}
 
 if (manifestVersion === 2) {
-    const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
-    if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
-        extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
-    }
+    extraInfoSpecSendHeaders.push('blocking')
     // Attach GPC header to all requests if enabled.
     browser.webRequest.onBeforeSendHeaders.addListener(
         request => {
@@ -452,20 +438,26 @@ if (manifestVersion === 2) {
         { urls: ['<all_urls>'] },
         extraInfoSpecSendHeaders
     )
+}
 
-    // Wait until the extension configuration has finished loading and then
-    // start dropping tracking cookies.
-    // Note: Event listeners must be registered in the top-level of the script
-    //       to be compatible with MV3. Registering the listener asynchronously
-    //       is only possible here as this is a MV2-only event listener!
-    // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-    startup.ready().then(() => {
-        browser.webRequest.onBeforeSendHeaders.addListener(
-            dropTracking3pCookiesFromRequest,
-            { urls: ['<all_urls>'] },
-            extraInfoSpecSendHeaders
-        )
-    })
+browser.webRequest.onBeforeSendHeaders.addListener(
+    dropTracking3pCookiesFromRequest,
+    { urls: ['<all_urls>'] },
+    extraInfoSpecSendHeaders
+)
+
+browser.webRequest.onHeadersReceived.addListener(
+    dropTracking3pCookiesFromResponse,
+    { urls: ['<all_urls>'] },
+    extraInfoSpec
+)
+
+if (manifestVersion === 3) {
+    browser.webRequest.onCompleted.addListener(
+        validateSetCookieBlock,
+        { urls: ['<all_urls>'] },
+        extraInfoSpec
+    )
 }
 
 // Inject the Click to Load content script to display placeholders.

@@ -59,9 +59,12 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                             type: 'script'
                         })
 
-                        const headersAreRemoved = outputRequest.responseHeaders.find(h => h.name.toLocaleLowerCase() === 'set-cookie') === undefined
-
-                        expect(headersAreRemoved).toBe(test.expectSetCookieHeadersRemoved)
+                        if (test.expectCookieHeadersRemoved) {
+                            const headersAreRemoved = outputRequest?.responseHeaders.find(h => h.name.toLocaleLowerCase() === 'set-cookie') === undefined
+                            expect(headersAreRemoved).toBe(test.expectSetCookieHeadersRemoved)
+                        } else {
+                            expect(outputRequest).toBeFalsy()
+                        }
                     } else if ('expectCookieHeadersRemoved' in test) {
                         const outputRequest = dropTracking3pCookiesFromRequest({
                             tabId: 1,
@@ -71,9 +74,12 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                             type: 'script'
                         })
 
-                        const headersAreRemoved = outputRequest.requestHeaders.find(h => h.name.toLocaleLowerCase() === 'cookie') === undefined
-
-                        expect(headersAreRemoved).toBe(test.expectCookieHeadersRemoved)
+                        if (test.expectCookieHeadersRemoved) {
+                            const headersAreRemoved = outputRequest?.requestHeaders.find(h => h.name.toLocaleLowerCase() === 'cookie') === undefined
+                            expect(headersAreRemoved).toBe(test.expectCookieHeadersRemoved)
+                        } else {
+                            expect(outputRequest).toBeFalsy()
+                        }
                     }
                 })
             } else if ('expectDocumentCookieSet' in test) {
