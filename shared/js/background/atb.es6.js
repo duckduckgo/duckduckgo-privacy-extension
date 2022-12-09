@@ -50,9 +50,12 @@ const ATB = (() => {
                 errorParam = '&e=1'
             }
 
+            const user = settings.getSetting('userData')
+            const emailSetting = user && user.userName ? 1 : 0
+
             const randomValue = Math.ceil(Math.random() * 1e7)
             // @ts-ignore
-            const url = `${ddgAtbURL}${randomValue}&browser=${parseUserAgentString().browser}&atb=${atbSetting}&set_atb=${setAtbSetting}${errorParam}`
+            const url = `${ddgAtbURL}${randomValue}&browser=${parseUserAgentString().browser}&atb=${atbSetting}&set_atb=${setAtbSetting}&email=${emailSetting}${errorParam}`
 
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('set_atb', res.data.version)
