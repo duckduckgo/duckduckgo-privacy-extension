@@ -213,34 +213,40 @@ export function getCurrentTab () {
 }
 
 export async function enableSocialTracker (data, sender) {
-    await settings.ready()
     const tab = tabManager.get({ tabId: sender.tab.id })
     const entity = data.entity
 
     if (browserWrapper.getManifestVersion() === 3) {
-        enableInverseRules(data.action, sender.tab.id)
+        await enableInverseRules(data.action, sender.tab.id)
     }
     tab.site.clickToLoad.push(entity)
 
     if (data.isLogin) {
         trackerutils.allowSocialLogin(tab.site.domain)
     }
-    // Update number of times this social network has been 'clicked'
-    if (tdsStorage.ClickToLoadConfig[entity]) {
-        const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-        const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
-        if (!clickToLoadClicks[entity]) {
-            clickToLoadClicks[entity] = 1
-        } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
-            clickToLoadClicks[entity] += 1
+    settings.ready().then(() => {
+        // Update number of times this social network has been 'clicked'
+        if (tdsStorage.ClickToLoadConfig[entity]) {
+            const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+            const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+            if (!clickToLoadClicks[entity]) {
+                clickToLoadClicks[entity] = 1
+            } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
+                clickToLoadClicks[entity] += 1
+            }
+            // don't await for setting to be updated
+            settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
         }
-        settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
-    }
+    })
 }
 
 export function updateYouTubeCTLAddedFlag (value, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id })
     tab.ctlYouTube = Boolean(value)
+}
+
+export async function setYoutubePreviewsEnabled (value, sender) {
+    return updateSetting({ name: 'youtubePreviewsEnabled', value })
 }
 
 export async function updateSetting ({ name, value }) {

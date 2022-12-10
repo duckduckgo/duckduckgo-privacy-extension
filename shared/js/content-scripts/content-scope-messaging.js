@@ -1,7 +1,6 @@
 function getSecret () {
     return new Promise(resolve => {
         window.addEventListener('ddg-secret', event => {
-            console.warn('secret', event)
             event.stopImmediatePropagation()
             resolve(event.detail)
         }, { once: true })

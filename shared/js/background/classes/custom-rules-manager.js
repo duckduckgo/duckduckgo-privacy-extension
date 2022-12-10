@@ -40,7 +40,9 @@ export async function enableInverseRules (customAction, tabId) {
     rules[customAction] = ruleIds
     tab.customActionRules = rules
 
-    await chrome.declarativeNetRequest.updateSessionRules({ addRules: inverseRules })
+    await chrome.declarativeNetRequest.updateSessionRules({ addRules: inverseRules }).then(() => {
+        console.warn('inverse rules ENABLED for', customAction, tabId)
+    })
 }
 
 /**
