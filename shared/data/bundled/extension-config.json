@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1670457062879,
+    "version": 1670625729346,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -324,6 +324,10 @@
                         "type": "hide"
                     },
                     {
+                        "selector": "#credential_picker_iframe",
+                        "type": "hide"
+                    },
+                    {
                         "selector": ".ad_container",
                         "type": "closest-empty"
                     },
@@ -391,6 +395,8 @@
                     "advertisement\ncontinue reading the main story",
                     "advertisement - scroll to continue",
                     "advertising",
+                    "advertising\nskip ad",
+                    "advertising\nskip ad\nskip ad\nskip ad",
                     "ad feedback",
                     "anzeige",
                     "sponsored",
@@ -398,6 +404,7 @@
                     "publicité",
                     "publicidade",
                     "reklama",
+                    "skip ad",
                     "continue reading the main story"
                 ],
                 "domains": [
@@ -447,6 +454,28 @@
                             {
                                 "selector": ".unsupported-browser-notification-container",
                                 "type": "hide"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "bostonglobe.com",
+                        "rules": [
+                            {
+                                "selector": ".arc_ad",
+                                "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "cbssports.com",
+                        "rules": [
+                            {
+                                "selector": ".leaderboard-wrap",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".skybox-top-wrapper",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -584,6 +613,19 @@
                         ]
                     },
                     {
+                        "domain": "nbcsports.com",
+                        "rules": [
+                            {
+                                "selector": ".block-mps",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "#nbcsports-leaderboard",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "orange.fr",
                         "rules": [
                             {
@@ -598,6 +640,15 @@
                             {
                                 "selector": "#marquee-ad",
                                 "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "reuters.com",
+                        "rules": [
+                            {
+                                "selector": "[testid='ResponsiveAdSlot']",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -773,7 +824,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "1608a1e4daf968c7d5fea23f22a33131"
+            "hash": "f8a30103538d86f71274dba70425d9a9"
         },
         "fingerprintingAudio": {
             "state": "disabled",
