@@ -1,3 +1,14 @@
+const allowedMessages = [
+    'getDevMode',
+    'initClickToLoad',
+    'enableSocialTracker',
+    'openShareFeedbackPage',
+    'getYouTubeVideoDetails',
+    'updateYouTubeCTLAddedFlag',
+    'getYoutubePreviewsEnabled',
+    'setYoutubePreviewsEnabled'
+]
+
 function getSecret () {
     return new Promise(resolve => {
         window.addEventListener('ddg-secret', event => {
@@ -10,14 +21,18 @@ function getSecret () {
 async function init () {
     const secret = await getSecret()
 
-    window.addEventListener('sendMessage' + secret, event => {
+    window.addEventListener('sendMessageProxy' + secret, event => {
         // MV3 message proxy for click to load
         event.stopImmediatePropagation()
-        console.warn('received sendMessage for', secret, event)
+        console.warn('received sendMessageProxy for', secret, event)
         const detail = event && event.detail
         if (!detail) {
             console.warn('no details in sendMessage proxy', event)
             return
+        }
+        const messageType = detail.messageType
+        if (!allowedMessages.includes(messageType)) {
+            return console.warn('Ignoring invalid sendMessage messageType', messageType)
         }
         chrome.runtime.sendMessage(detail, response => {
             const msg = { type: 'update', detail: { func: detail.messageType, response } }
