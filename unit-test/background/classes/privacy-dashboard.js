@@ -32,7 +32,8 @@ describe('Tab -> Privacy Dashboard conversion', () => {
                     unprotectedTemporary: false,
                     enabledFeatures: ['contentBlocking']
                 },
-                upgradedHttps: false
+                upgradedHttps: false,
+                localeSettings: { locale: 'en' }
             },
             requestData: {
                 requests: []
@@ -57,7 +58,8 @@ describe('Tab -> Privacy Dashboard conversion', () => {
                     unprotectedTemporary: false,
                     enabledFeatures: ['contentBlocking']
                 },
-                upgradedHttps: false
+                upgradedHttps: false,
+                localeSettings: { locale: 'en' }
             },
             requestData: {
                 requests: []
@@ -98,7 +100,8 @@ describe('Tab -> Privacy Dashboard conversion', () => {
                 unprotectedTemporary: false,
                 enabledFeatures: ['contentBlocking']
             },
-            upgradedHttps: false
+            upgradedHttps: false,
+            localeSettings: { locale: 'en' }
         })
         /**
          * Not asserting on everything in the request data for 2 reasons:
@@ -152,7 +155,8 @@ describe('Tab -> Privacy Dashboard conversion', () => {
                 unprotectedTemporary: false,
                 enabledFeatures: ['contentBlocking']
             },
-            upgradedHttps: false
+            upgradedHttps: false,
+            localeSettings: { locale: 'en' }
         })
         /**
          * There should be 2 entries now, even though the domains match, one was "block"
