@@ -1,4 +1,7 @@
 import browser from 'webextension-polyfill'
+import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
+import { getURL } from './pixels'
+import load from './load.es6'
 const { getSetting, updateSetting } = require('./settings.es6')
 const browserWrapper = require('./wrapper.es6')
 export const REFETCH_ALIAS_ALARM = 'refetchAlias'
@@ -83,6 +86,48 @@ export const getAddresses = () => {
     }
 }
 
+function firePixel (pixelName, params) {
+    const randomNum = Math.ceil(Math.random() * 1e7)
+
+    const searchParams = new URLSearchParams(Object.entries(params))
+
+    const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
+
+    console.log(url)
+
+    load.url(url)
+}
+
+function currentDate () {
+    return new Date().toLocaleString('en-CA', {
+        timeZone: 'America/New_York',
+        dateStyle: 'short'
+    })
+}
+
+const pixelName = (name) => {
+    const browserInfo = parseUserAgentString()
+    const browserName = browserInfo?.browser ?? 'unknown'
+
+    return `${name}_${browserName.toLowerCase()}`
+}
+
+export const privateAddressUsed = () => {
+    const userData = getSetting('userData')
+    if (!userData) return
+    const lastAddressUsedAt = getSetting('lastAddressUsedAt') ?? ''
+    firePixel(pixelName('email_filled_random_extension'), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
+    updateSetting('lastAddressUsedAt', currentDate())
+}
+
+export const personalAddressUsed = () => {
+    const userData = getSetting('userData')
+    if (!userData) return
+    const lastAddressUsedAt = getSetting('lastAddressUsedAt') ?? ''
+    firePixel(pixelName('email_filled_main_extension'), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
+    updateSetting('lastAddressUsedAt', currentDate())
+}
+
 /**
  * Given a username, returns a valid email address with the duck domain
  * @param {string} address
@@ -112,5 +157,7 @@ module.exports = {
     getAddresses,
     formatAddress,
     isValidUsername,
-    isValidToken
+    isValidToken,
+    privateAddressUsed,
+    personalAddressUsed
 }

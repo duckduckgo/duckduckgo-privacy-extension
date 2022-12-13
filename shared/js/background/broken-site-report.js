@@ -9,6 +9,7 @@ const browserWrapper = require('./wrapper.es6')
 const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const { getURLWithoutQueryString } = require('./utils.es6')
+const { getURL } = require('./pixels')
 
 /**
  *
@@ -63,12 +64,6 @@ export function fire (querystring) {
  * @param {string} pixelName
  * @returns {string}
  */
-export function getURL (pixelName) {
-    if (!pixelName) throw new Error('pixelName is required')
-
-    const url = 'https://improving.duckduckgo.com/t/'
-    return url + pixelName
-}
 
 /**
  * Given an optional category and description, create a report for a given Tab instance.

@@ -292,12 +292,14 @@ const {
     isValidToken,
     isValidUsername,
     getAddresses,
+    personalAddressUsed,
+    privateAddressUsed,
     fetchAlias,
     showContextMenuAction,
     hideContextMenuAction
 } = require('./email-utils.es6')
 
-export { getAddresses }
+export { getAddresses, privateAddressUsed, personalAddressUsed }
 
 export function getAlias () {
     const userData = settings.getSetting('userData')
@@ -394,6 +396,7 @@ export async function removeUserData (_, sender) {
 
 export async function logout () {
     settings.updateSetting('userData', {})
+    settings.updateSetting('lastAddressUsedAt', '')
     // Broadcast the logout to all tabs
     const tabs = await browser.tabs.query({})
     tabs.forEach((tab) => {

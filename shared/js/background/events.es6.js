@@ -382,6 +382,8 @@ browser.runtime.onMessage.addListener((req, sender) => {
         'removeUserData',
         'getEmailProtectionCapabilities',
         'getAddresses',
+        'privateAddressUsed',
+        'personalAddressUsed',
         'refreshAlias',
         'debuggerMessage'
     ]
