@@ -40,17 +40,17 @@ async function onInstalled (details) {
             experiment.setActiveExperiment()
         }
     } else if (details.reason.match(/update/) && browserName === 'chrome') {
-        if (manifestVersion === 3) {
-            ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'))
-        }
         experiment.setActiveExperiment()
     }
 
-    // remove any orphaned session rules (can happen on extension update/restart)
     if (manifestVersion === 3) {
         await settings.ready()
 
+        // remove any orphaned session rules (can happen on extension update/restart)
         await flushSessionRules()
+
+        // create ATB rule if there is a stored value in settings
+        ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'))
     }
 
     // Inject the email content script on all tabs upon installation (not needed on Firefox)
