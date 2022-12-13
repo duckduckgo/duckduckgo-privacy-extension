@@ -58,6 +58,7 @@ jobs:
           prerelease: false
           body: "${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}"
           tag_name: ${{ env.VERSION }}
+          target_commitish: ${{ github.ref }}
           files: |
             ./build/firefox/release/web-ext-artifacts/*.zip
             ./build/chrome/release/*.zip
