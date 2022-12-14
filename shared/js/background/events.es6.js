@@ -395,7 +395,6 @@ browser.runtime.onMessage.addListener((req, sender) => {
     }
 
     if (req.messageType && req.messageType in messageHandlers) {
-        console.warn('message received in ext', req)
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req))
     }
 

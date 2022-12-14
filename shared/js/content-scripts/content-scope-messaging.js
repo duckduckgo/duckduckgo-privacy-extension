@@ -24,11 +24,9 @@ async function init () {
     window.addEventListener('sendMessageProxy' + secret, event => {
         // MV3 message proxy for click to load
         event.stopImmediatePropagation()
-        console.warn('received sendMessageProxy for', secret, event)
         const detail = event && event.detail
         if (!detail) {
-            console.warn('no details in sendMessage proxy', event)
-            return
+            return console.warn('no details in sendMessage proxy', event)
         }
         const messageType = detail.messageType
         if (!allowedMessages.includes(messageType)) {
