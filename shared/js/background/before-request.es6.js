@@ -93,6 +93,12 @@ function handleRequest (requestData) {
         }
     }
 
+    // There is a chance this tab was closed before the
+    // webRequest.onBeforeRequest event fired. For new tabs, there is also a
+    // chance that the webRequest.onBeforeRequest event fired before the
+    // tabs.onCreated event.
+    if (!thisTab) return
+
     if (requestData.type === 'main_frame') {
         let mainFrameRequestURL = new URL(requestData.url)
 
@@ -152,7 +158,7 @@ function handleRequest (requestData) {
          * there is a chance this tab was closed before
          * we got the webrequest event
          */
-        if (!(thisTab && thisTab.url && thisTab.id)) return
+        if (!(thisTab.url && thisTab.id)) return
 
         // skip blocking on new tab and extension pages
         if (thisTab.site.specialDomainName) {
