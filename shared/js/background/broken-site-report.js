@@ -45,7 +45,7 @@ export function fire (querystring) {
     url += `?${randomNum}&`
     // some params should be not urlencoded
     let extraParams = '';
-    ['blockedTrackers', 'surrogates'].forEach((key) => {
+    ['tds', 'blockedTrackers', 'surrogates'].forEach((key) => {
         if (searchParams.has(key)) {
             extraParams += `&${key}=${decodeURIComponent(searchParams.get(key) || '')}`
             searchParams.delete(key)

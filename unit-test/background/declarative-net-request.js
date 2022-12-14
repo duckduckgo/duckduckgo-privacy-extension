@@ -37,7 +37,7 @@ config.features.trackerAllowlist = {
 }
 
 const expectedRuleIdsByConfigName = {
-    tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21001, 21002, 21003, 21004],
     config: [
         10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010
     ]
@@ -132,6 +132,7 @@ const expectedLookupByConfigName = {
 async function updateConfiguration (configName, etag) {
     const configValue = { config, tds }[configName]
     const listeners = onUpdateListeners.get(configName)
+    settings.updateSetting(`${configName}-etag`, etag)
     if (listeners) {
         await Promise.all(
             listeners.map(listener => listener(configName, etag, configValue))
@@ -281,8 +282,6 @@ describe('declarativeNetRequest', () => {
 
             expect(updateDynamicRulesObserver.calls.count())
                 .toEqual(expectedUpdateCallCount)
-            expect(updateSettingObserver.calls.count())
-                .toEqual(expectedUpdateCallCount)
         }
 
         expectState({
@@ -299,7 +298,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: null, extensionVersion: null
             }
-        }, 1)
+        }, 2) // 1x TDS, 1x Combined
 
         // Rules for that ruleset are already present, skip.
         await updateConfiguration('tds', TEST_ETAGS[0])
@@ -310,7 +309,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: null, extensionVersion: null
             }
-        }, 1)
+        }, 2) // 1x TDS, 1x Combined
 
         // Add configuration ruleset.
         await updateConfiguration('config', TEST_ETAGS[2])
@@ -321,7 +320,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
             }
-        }, 2)
+        }, 4) // 1x TDS, 2x Combined, 1x Config
 
         // Tracker blocking rules are outdated, replace with new ones.
         await updateConfiguration('tds', TEST_ETAGS[1])
@@ -332,7 +331,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
             }
-        }, 3)
+        }, 6) // 2x TDS, 3x Combined, 1x Config
 
         // Configuration ruleset already present, skip.
         await updateConfiguration('config', TEST_ETAGS[2])
@@ -343,7 +342,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
             }
-        }, 3)
+        }, 6) // 2x TDS, 3x Combined, 1x Config
 
         // Settings missing, add rules again.
         settingsStorage.clear()
@@ -356,7 +355,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
             }
-        }, 5)
+        }, 10) // 3x TDS, 5x Combined, 2x Config
 
         // Rules missing, add tracker blocking rules again.
         dynamicRulesByRuleId.clear()
@@ -369,7 +368,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
             }
-        }, 7)
+        }, 13) // 4x TDS, 6x Combined, 3x Config
 
         // All good again, skip.
         await updateConfiguration('tds', TEST_ETAGS[1])
@@ -381,7 +380,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
             }
-        }, 7)
+        }, 13) // 4x TDS, 6x Combined, 3x Config
 
         // Extension has been updated, refresh rules again
         extensionVersion = TEST_EXTENION_VERSIONS[1]
@@ -393,7 +392,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
             }
-        }, 8)
+        }, 15) // 5x TDS, 7x Combined, 3x Config
         await updateConfiguration('config', TEST_ETAGS[2])
         expectState({
             tds: {
@@ -402,7 +401,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[1]
             }
-        }, 9)
+        }, 16) // 5x TDS, 7x Combined, 4x Config
 
         // All good again, skip.
         await updateConfiguration('tds', TEST_ETAGS[1])
@@ -414,7 +413,7 @@ describe('declarativeNetRequest', () => {
             config: {
                 etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[1]
             }
-        }, 9)
+        }, 16) // 5x TDS, 7x Combined, 4x Config
     })
 
     it('User allowlisting updates', async () => {
@@ -527,12 +526,15 @@ describe('declarativeNetRequest', () => {
             expectedContentBlockingDomains: ['content-blocking.example']
         })
 
+        // Once TDS is also set, combined rules are also updated
+        await updateConfiguration('tds', TEST_ETAGS[0])
+
         // By default, contentBlocking and unprotectedTemporary allowlist rules
         // should be added and no domains should be denylisted.
         await tabManager.setList(
             { list: 'denylisted', domain: 'denylisted.example', value: false }
         )
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(2)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(5) // 2x Config, 2x Combined, 1x TDS
         expectAllowlistDenylistState({
             expectedDenylistedDomains: [],
             expectedUnprotectedTemporaryDomains: ['google.com', 'suntrust.com'],
@@ -545,7 +547,7 @@ describe('declarativeNetRequest', () => {
             { 'google.com': true }
         )
         await updateConfiguration('config', TEST_ETAGS[0])
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(3)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(7) // 3x Config, 3x Combined, 1x TDS
         expectAllowlistDenylistState({
             expectedDenylistedDomains: ['google.com'],
             expectedUnprotectedTemporaryDomains: ['suntrust.com'],
@@ -555,7 +557,7 @@ describe('declarativeNetRequest', () => {
         // If denylist (and other state) hasn't changed, rules should not be
         // regenerated.
         await updateConfiguration('config', TEST_ETAGS[0])
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(3)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(7) // 3x Config, 3x Combined, 1x TDS
         expectAllowlistDenylistState({
             expectedDenylistedDomains: ['google.com'],
             expectedUnprotectedTemporaryDomains: ['suntrust.com'],
@@ -564,7 +566,7 @@ describe('declarativeNetRequest', () => {
 
         // But if other state changes, rules should be regenerates.
         await updateConfiguration('config', TEST_ETAGS[1])
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(4)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(9)
         expectAllowlistDenylistState({
             expectedDenylistedDomains: ['google.com'],
             expectedUnprotectedTemporaryDomains: ['suntrust.com'],
@@ -577,7 +579,7 @@ describe('declarativeNetRequest', () => {
             { 'google.com': false, 'content-blocking.example': true }
         )
         await updateConfiguration('config', TEST_ETAGS[1])
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(5)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(11)
         expectAllowlistDenylistState({
             expectedDenylistedDomains: ['content-blocking.example'],
             expectedUnprotectedTemporaryDomains: ['google.com', 'suntrust.com'],
@@ -590,7 +592,7 @@ describe('declarativeNetRequest', () => {
             { ':': true, 'suntrust.COM': true, 'cOnTeNt-blocking.example': true }
         )
         await updateConfiguration('config', TEST_ETAGS[1])
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(6)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(13)
         expectAllowlistDenylistState({
             expectedDenylistedDomains: [
                 'content-blocking.example',
@@ -605,7 +607,7 @@ describe('declarativeNetRequest', () => {
         await tabManager.setList(
             { list: 'denylisted', domain: 'google.com', value: true }
         )
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(7)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(15)
         expectAllowlistDenylistState({
             expectedDenylistedDomains: [
                 'content-blocking.example',
@@ -620,7 +622,7 @@ describe('declarativeNetRequest', () => {
         await tabManager.setList(
             { list: 'denylisted', domain: 'google.com', value: true }
         )
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(7)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(15)
         expectAllowlistDenylistState({
             expectedDenylistedDomains: [
                 'content-blocking.example',
@@ -636,7 +638,7 @@ describe('declarativeNetRequest', () => {
         await tabManager.setList(
             { list: 'denylisted', domain: 'unknown.example', value: false }
         )
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(7)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(15)
         expectAllowlistDenylistState({
             expectedDenylistedDomains: [
                 'content-blocking.example',
@@ -652,7 +654,7 @@ describe('declarativeNetRequest', () => {
         await tabManager.setList(
             { list: 'denylisted', domain: 'google.com', value: false }
         )
-        expect(updateDynamicRulesObserver.calls.count()).toEqual(8)
+        expect(updateDynamicRulesObserver.calls.count()).toEqual(17)
         expectAllowlistDenylistState({
             expectedDenylistedDomains: [
                 'content-blocking.example',

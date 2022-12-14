@@ -386,13 +386,26 @@ export function getListContents (list) {
     }
 }
 
-export function setListContents ({ name, value }) {
+/**
+ * Manually override the value of a list
+ * @param {{ name: string, value: object}} list value
+ */
+export async function setListContents ({ name, value }) {
     const parsed = tdsStorage.parsedata(name, value)
     tdsStorage[name] = parsed
     trackers.setLists([{
         name,
         data: parsed
     }])
+    // create an etag hash based on the content
+    const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(parsed)))
+    const etag = [...new Uint8Array(hash)]
+        .map(x => x.toString(16).padStart(2, '0'))
+        .join('')
+    settings.updateSetting(`${name}-lastUpdate`, Date.now())
+    settings.updateSetting(`${name}-etag`, etag)
+    await tdsStorage._internalOnListUpdate(name, value)
+    return etag
 }
 
 export async function reloadList (listName) {

@@ -71,26 +71,33 @@ class TDSStorage {
     }
 
     _internalOnListUpdate (configName, configValue) {
-        self.setTimeout(() => {
-            // Ensure the onReady promise for this configuration is resolved.
-            const resolve = this._onReadyResolvers.get(configName)
-            if (resolve) {
-                resolve()
-                this._onReadyResolvers.delete(configName)
-            }
+        return new Promise((resolve, reject) => {
+            self.setTimeout(async () => {
+                // Ensure the onReady promise for this configuration is resolved.
+                try {
+                    const readyResolve = this._onReadyResolvers.get(configName)
+                    if (readyResolve) {
+                        readyResolve()
+                        this._onReadyResolvers.delete(configName)
+                    }
 
-            // Check the current etag for this configuration, so that can be
-            // passed to the listeners.
-            const etag = settings.getSetting(`${configName}-etag`) || ''
+                    // Check the current etag for this configuration, so that can be
+                    // passed to the listeners.
+                    const etag = settings.getSetting(`${configName}-etag`) || ''
 
-            // Notify any listeners that this list has updated.
-            const listeners = this._onUpdatedListeners.get(configName)
-            if (listeners) {
-                for (const listener of listeners.slice()) {
-                    listener(configName, etag, configValue)
+                    // Notify any listeners that this list has updated.
+                    const listeners = this._onUpdatedListeners.get(configName)
+                    if (listeners) {
+                        for (const listener of listeners.slice()) {
+                            await listener(configName, etag, configValue)
+                        }
+                    }
+                    resolve(null)
+                } catch (e) {
+                    reject(e)
                 }
-            }
-        }, 0)
+            }, 0)
+        })
     }
 
     getLists (preferLocal = false) {

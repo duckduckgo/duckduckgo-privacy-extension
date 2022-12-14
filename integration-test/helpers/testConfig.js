@@ -108,7 +108,22 @@ async function unloadTestConfig (bgPage) {
     }, parsePath.toString())
 }
 
+/**
+ * Load a given TDS file in the extension
+ * @param {Page | WebWorker} bgPage
+ * @param {string} tdsFilePath path to TDS file to load (from integration-test/data)
+ */
+async function loadTestTds (bgPage, tdsFilePath) {
+    await bgPage.evaluate((tds) => {
+        return globalThis.dbg.setListContents({
+            name: 'tds',
+            value: tds
+        })
+    }, JSON.parse(await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8')))
+}
+
 module.exports = {
     loadTestConfig,
-    unloadTestConfig
+    unloadTestConfig,
+    loadTestTds
 }
