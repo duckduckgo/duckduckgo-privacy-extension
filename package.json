@@ -80,7 +80,7 @@
     },
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#5.3.1",
-        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#3ff48cb646d037a88936ac29e89aa649a445a364",
+        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#ab1f1211f8d6d084c51f9ab506b1ce6826ff3f7e",
         "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.2.6",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#1.1.1",

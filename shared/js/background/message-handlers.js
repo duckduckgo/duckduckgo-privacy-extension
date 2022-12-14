@@ -245,7 +245,7 @@ export function updateYouTubeCTLAddedFlag (value, sender) {
     tab.ctlYouTube = Boolean(value)
 }
 
-export async function setYoutubePreviewsEnabled (value, sender) {
+export function setYoutubePreviewsEnabled (value, sender) {
     return updateSetting({ name: 'youtubePreviewsEnabled', value })
 }
 
@@ -261,7 +261,7 @@ export async function getSetting ({ name }) {
     return settings.getSetting(name)
 }
 
-export async function getYoutubePreviewsEnabled () {
+export function getYoutubePreviewsEnabled () {
     return getSetting({ name: 'youtubePreviewsEnabled' })
 }
 
