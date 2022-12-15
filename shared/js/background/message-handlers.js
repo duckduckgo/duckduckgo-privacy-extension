@@ -292,14 +292,13 @@ const {
     isValidToken,
     isValidUsername,
     getAddresses,
-    personalAddressUsed,
-    privateAddressUsed,
+    firePixel,
     fetchAlias,
     showContextMenuAction,
     hideContextMenuAction
 } = require('./email-utils.es6')
 
-export { getAddresses, privateAddressUsed, personalAddressUsed }
+export { getAddresses, firePixel }
 
 export function getAlias () {
     const userData = settings.getSetting('userData')

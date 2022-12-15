@@ -1,5 +1,5 @@
 
-const pixel = require('../../shared/js/background/broken-site-report')
+const pixel = require('../../shared/js/background/pixels')
 const url = 'https://improving.duckduckgo.com/t/'
 const getURLTestCases = [
     {

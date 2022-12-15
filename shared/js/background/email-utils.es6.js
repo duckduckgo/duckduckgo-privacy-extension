@@ -86,14 +86,12 @@ export const getAddresses = () => {
     }
 }
 
-function firePixel (pixelName, params) {
+function sendPixelRequest (pixelName, params) {
     const randomNum = Math.ceil(Math.random() * 1e7)
 
     const searchParams = new URLSearchParams(Object.entries(params))
 
     const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
-
-    console.log(url)
 
     load.url(url)
 }
@@ -105,12 +103,11 @@ function currentDate () {
     })
 }
 
-const pixelName = (name, browserName) => {
-
+const getFullPixelName = (name, browserName) => {
     return `${name}_${browserName.toLowerCase()}`
 }
 
-const addressUsed = (pixel) => {
+const fireAddressUsedPixel = (pixel) => {
     const browserInfo = parseUserAgentString()
     const browserName = browserInfo?.browser?.toLowerCase() ?? 'unknown'
     if (browserName === 'firefox') return
@@ -120,16 +117,32 @@ const addressUsed = (pixel) => {
 
     const lastAddressUsedAt = getSetting('lastAddressUsedAt') ?? ''
 
-    firePixel(pixelName(pixel, browserName), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
+    sendPixelRequest(getFullPixelName(pixel, browserName), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
     updateSetting('lastAddressUsedAt', currentDate())
 }
 
-export const privateAddressUsed = () => {
-    addressUsed('email_filled_random_extension')
-}
+/**
+ * Config type definition
+ * @typedef {Object} FirePixelOptions
+ * @property {import('@duckduckgo/autofill/src/deviceApiCalls/__generated__/validators-ts').SendJSPixelParams['pixelName']} pixelName
+ */
 
-export const personalAddressUsed = () => {
-    addressUsed('email_filled_main_extension')
+/**
+ *
+ * @param {FirePixelOptions}  options
+ */
+export const firePixel = (options) => {
+    const { pixelName } = options
+    switch (pixelName) {
+    case 'autofill_private_address':
+        fireAddressUsedPixel('email_filled_random_extension')
+        break
+    case 'autofill_personal_address':
+        fireAddressUsedPixel('email_filled_main_extension')
+        break
+    default:
+        console.error('Unknown pixel name', pixelName)
+    }
 }
 
 /**
@@ -162,6 +175,5 @@ module.exports = {
     formatAddress,
     isValidUsername,
     isValidToken,
-    privateAddressUsed,
-    personalAddressUsed
+    firePixel
 }

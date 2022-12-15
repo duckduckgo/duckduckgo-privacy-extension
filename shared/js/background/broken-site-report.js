@@ -59,13 +59,6 @@ export function fire (querystring) {
 }
 
 /**
- *
- * Return URL for the pixel request
- * @param {string} pixelName
- * @returns {string}
- */
-
-/**
  * Given an optional category and description, create a report for a given Tab instance.
  *
  * This code previously lived within the UI section of the dashboard,
