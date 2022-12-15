@@ -252,9 +252,14 @@ module.exports = function (grunt) {
                 dest: `build/${browser}/${buildType}/public/js/inject.js`,
                 options: {
                     process: function (content) {
+                        const config = grunt.file.readJSON('shared/data/bundled/extension-config.json')
+                        // prune to only features that need early access to their config
+                        config.features = {
+                            cookie: config.features.cookie
+                        }
                         return content
                             .replace('$TRACKER_LOOKUP$', grunt.file.read('shared/data/bundled/tracker-lookup.json'))
-                            .replace('$BUNDLED_CONFIG$', grunt.file.read('shared/data/bundled/extension-config.json'))
+                            .replace('$BUNDLED_CONFIG$', JSON.stringify(config))
                     }
                 }
             }
