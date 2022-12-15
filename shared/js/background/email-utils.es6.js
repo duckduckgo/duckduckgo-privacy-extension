@@ -105,27 +105,31 @@ function currentDate () {
     })
 }
 
-const pixelName = (name) => {
-    const browserInfo = parseUserAgentString()
-    const browserName = browserInfo?.browser ?? 'unknown'
+const pixelName = (name, browserName) => {
 
     return `${name}_${browserName.toLowerCase()}`
 }
 
-export const privateAddressUsed = () => {
+const addressUsed = (pixel) => {
+    const browserInfo = parseUserAgentString()
+    const browserName = browserInfo?.browser?.toLowerCase() ?? 'unknown'
+    if (browserName === 'firefox') return
+
     const userData = getSetting('userData')
-    if (!userData) return
+    if (!userData?.userName) return
+
     const lastAddressUsedAt = getSetting('lastAddressUsedAt') ?? ''
-    firePixel(pixelName('email_filled_random_extension'), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
+
+    firePixel(pixelName(pixel, browserName), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
     updateSetting('lastAddressUsedAt', currentDate())
 }
 
+export const privateAddressUsed = () => {
+    addressUsed('email_filled_random_extension')
+}
+
 export const personalAddressUsed = () => {
-    const userData = getSetting('userData')
-    if (!userData) return
-    const lastAddressUsedAt = getSetting('lastAddressUsedAt') ?? ''
-    firePixel(pixelName('email_filled_main_extension'), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
-    updateSetting('lastAddressUsedAt', currentDate())
+    addressUsed('email_filled_main_extension')
 }
 
 /**
