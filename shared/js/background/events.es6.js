@@ -482,7 +482,7 @@ browser.webNavigation.onCommitted.addListener(details => {
  */
 browser.webNavigation.onCompleted.addListener(details => {
     // only update the icon when the outermost frame is complete
-    if (!(details.frameType === 'outermost_frame')) return
+    if (details.parentFrameId !== -1) return
 
     // try to access the tab where this event originated
     const tab = tabManager.get({ tabId: details.tabId })
