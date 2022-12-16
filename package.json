@@ -71,7 +71,7 @@
         "load-grunt-tasks": "5.1.0",
         "node-fetch": "^3.3.0",
         "puppeteer": "^19.3.0",
-        "sass": "^1.56.1",
+        "sass": "^1.56.2",
         "standard": "17.0.0",
         "timekeeper": "^2.1.1",
         "typescript": "^4.8.4",
