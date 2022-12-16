@@ -117,7 +117,7 @@ describe('Tab', () => {
                 statusCode: null,
                 ctlYouTube: false
             }
-            expect(tabClone.site.enabledFeatures.length).toBe(19)
+            expect(tabClone.site.enabledFeatures.length).toBe(20)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))
         })
         it('should be able to get the tab from tab manager', () => {
