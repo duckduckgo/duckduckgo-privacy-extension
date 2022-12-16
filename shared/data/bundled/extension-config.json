@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1671048813956,
+    "version": 1671161624909,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -150,6 +150,10 @@
                 {
                     "domain": "heise.de",
                     "reason": "infinite reload"
+                },
+                {
+                    "domain": "voici.fr",
+                    "reason": "https://github.com/duckduckgo/autoconsent/issues/66"
                 }
             ],
             "settings": {
@@ -158,7 +162,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "4308f34f46e1a478afca3d66bf5fedbf"
+            "hash": "04955ce02edd71c1d1bc701b3a3b6aca"
         },
         "autofill": {
             "exceptions": [
@@ -276,6 +280,10 @@
                         "type": "closest-empty"
                     },
                     {
+                        "selector": "[id*='google_ads_iframe']",
+                        "type": "hide"
+                    },
+                    {
                         "selector": "#google_ads",
                         "type": "hide-empty"
                     },
@@ -352,6 +360,10 @@
                         "type": "closest-empty"
                     },
                     {
+                        "selector": ".ad-wrap",
+                        "type": "closest-empty"
+                    },
+                    {
                         "selector": ".ad-wrapper",
                         "type": "closest-empty"
                     },
@@ -405,6 +417,7 @@
                     "anzeige",
                     "sponsored",
                     "sponsorisé",
+                    "story continues below advertisement",
                     "publicité",
                     "publicidade",
                     "reklama",
@@ -467,6 +480,23 @@
                             {
                                 "selector": ".arc_ad",
                                 "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "cbc.ca",
+                        "rules": [
+                            {
+                                "selector": ".ad-risingstar-container",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".bigBoxContainer",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".stickyRailAd",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -648,6 +678,15 @@
                         ]
                     },
                     {
+                        "domain": "psypost.com",
+                        "rules": [
+                            {
+                                "selector": ".jeg_midbar",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "qz.com",
                         "rules": [
                             {
@@ -723,6 +762,10 @@
                             },
                             {
                                 "selector": "#leaderboard-wrapper",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".outbrain-wrapper",
                                 "type": "hide-empty"
                             }
                         ]
@@ -846,7 +889,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "ef05c5a03911c3f4dfa5e49f82d50659"
+            "hash": "3b9de0f68dc4478c321fc83f76c54e2e"
         },
         "fingerprintingAudio": {
             "state": "disabled",
