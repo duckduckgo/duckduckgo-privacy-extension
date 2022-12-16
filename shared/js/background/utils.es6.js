@@ -125,7 +125,10 @@ export function findParent (url) {
     while (parts.length > 1) {
         const joinURL = parts.join('.')
 
-        if (tdsStorage.tds.domains[joinURL]) {
+        // check if tracker owner has 'ownedBy' to indicate a parent.
+        if (tdsStorage.tds.trackers[joinURL]?.owner?.ownedBy) {
+            return tdsStorage.tds.trackers[joinURL].owner.ownedBy
+        } else if (tdsStorage.tds.domains[joinURL]) {
             return tdsStorage.tds.domains[joinURL]
         }
         parts.shift()

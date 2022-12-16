@@ -26,8 +26,8 @@ export class Tracker {
         if (!t.tracker) {
             throw new Error('Tracker object required for Tracker constructor')
         }
-        this.parentCompany = Companies.get(t.tracker.owner.name)
-        this.displayName = t.tracker.owner.displayName
+        this.parentCompany = Companies.get(t.tracker.owner.ownedBy || t.tracker.owner.name)
+        this.displayName = this.parentCompany?.displayName || t.tracker.owner.displayName
         this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
     }
 
