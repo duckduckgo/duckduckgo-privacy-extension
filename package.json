@@ -49,7 +49,7 @@
         "babelify": "10.0.0",
         "brfs": "^2.0.2",
         "duckduckgo-colors": "0.0.1",
-        "eslint": "^8.28.0",
+        "eslint": "^8.29.0",
         "eslint-config-standard": "^17.0.0",
         "eslint-plugin-import": "^2.26.0",
         "eslint-plugin-node": "^11.1.0",
