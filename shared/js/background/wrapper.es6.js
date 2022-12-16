@@ -13,6 +13,17 @@ export function openExtensionPage (path) {
     browser.tabs.create({ url: getExtensionURL(path) })
 }
 
+/**
+ * @param {string} iconPath
+ * @param {number} tabId
+ * @returns {Promise<void>}
+ */
+export async function setActionIcon (iconPath, tabId) {
+    if (typeof browser.action === 'undefined') {
+        return browser.browserAction.setIcon({ path: iconPath, tabId })
+    }
+    return browser.action.setIcon({ path: iconPath, tabId })
+}
 export function getManifestVersion () {
     const manifest = browser.runtime.getManifest()
     return manifest.manifest_version

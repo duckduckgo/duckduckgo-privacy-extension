@@ -136,6 +136,10 @@ module.exports = {
         'The certificate is not trusted because it is self-signed.': 12,
         downgrade_redirect_loop: 13
     },
+    iconPaths: /** @type {const} */ ({
+        regular: './img/icon_browser_action.png',
+        withSpecialState: './img/icon_browser_action_special.png'
+    }),
     platform: {
         name: 'extension'
     },
