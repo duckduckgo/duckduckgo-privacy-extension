@@ -6,6 +6,7 @@
  */
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
+import { updateActionIcon } from './events/privacy-icon-indicator'
 import { removeInverseRules } from './classes/custom-rules-manager'
 import { flushSessionRules } from './declarative-net-request'
 const ATB = require('./atb.es6')
@@ -474,6 +475,24 @@ browser.webNavigation.onCommitted.addListener(details => {
         // eslint-disable-next-line
         return
     }
+})
+
+/**
+ * For each completed page load, update the extension's action icon
+ */
+browser.webNavigation.onCompleted.addListener(details => {
+    // only update the icon when the outermost frame is complete
+    if (!(details.frameType === 'outermost_frame')) return
+
+    // try to access the tab where this event originated
+    const tab = tabManager.get({ tabId: details.tabId })
+
+    // just to be sure that we can access the current tab
+    if (!tab) return
+
+    // select the next icon state
+    updateActionIcon(tab.site, tab.id)
+        .catch(e => console.error('could not set the action icon', e))
 })
 
 /**
