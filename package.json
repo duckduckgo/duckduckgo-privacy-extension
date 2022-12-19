@@ -70,7 +70,7 @@
         "karma-source-map-support": "1.4.0",
         "load-grunt-tasks": "5.1.0",
         "node-fetch": "^3.3.0",
-        "puppeteer": "^19.3.0",
+        "puppeteer": "^19.4.1",
         "sass": "^1.56.2",
         "standard": "17.0.0",
         "timekeeper": "^2.1.1",
