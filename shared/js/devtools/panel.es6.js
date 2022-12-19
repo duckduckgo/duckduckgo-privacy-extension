@@ -184,7 +184,8 @@ const panelConfig = {
         redirected: true,
         cookieHTTP: true,
         cookieJS: true,
-        apiCanvas: true
+        apiCanvas: true,
+        noneRequest: true
     },
     rowFilter: ''
 }
@@ -215,6 +216,8 @@ function shouldShowRow (row) {
         return panelConfig.rowVisibility.cookieJS
     case 'canvas':
         return panelConfig.rowVisibility.apiCanvas
+    case 'none':
+        return panelConfig.rowVisibility.noneRequest
     }
 }
 
