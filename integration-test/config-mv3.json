@@ -1,15 +1,7 @@
 {
     "spec_dir": "integration-test",
     "spec_files": [
-        "background/ampProtection.js",
-        "background/atb.js",
-        "background/click-attribution.js",
-        "background/click-to-load-facebook.js",
-        "background/click-to-load-youtube.js",
-        "background/onboarding.js",
-        "background/request-blocking.js",
-        "background/storage.js",
-        "background/test-fingerprint.js",
+        "background/*.js",
         "content-scripts/gpc.js"
     ]
 }
