@@ -185,7 +185,8 @@ const panelConfig = {
         cookieHTTP: true,
         cookieJS: true,
         apiCanvas: true,
-        noneRequest: true
+        noneRequest: true,
+        ignoreUser: true
     },
     rowFilter: ''
 }
@@ -218,6 +219,8 @@ function shouldShowRow (row) {
         return panelConfig.rowVisibility.apiCanvas
     case 'none':
         return panelConfig.rowVisibility.noneRequest
+    case 'ignore-user':
+        return panelConfig.rowVisibility.ignoreUser
     }
     // always show if we don't have an appropriate toggle
     return true
