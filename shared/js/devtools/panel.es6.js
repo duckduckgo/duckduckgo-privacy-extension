@@ -212,6 +212,7 @@ function shouldShowRow (row) {
     case 'redirect':
         return panelConfig.rowVisibility.redirected
     case 'cookie-tracker':
+    case 'set-cookie-tracker':
         return panelConfig.rowVisibility.cookieHTTP
     case 'jscookie':
         return panelConfig.rowVisibility.cookieJS
