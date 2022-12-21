@@ -3,7 +3,11 @@ const { getDomain } = require('tldts')
 
 const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
-const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
+const {
+    loadTestConfig,
+    unloadTestConfig,
+    loadTestTds
+} = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
 const { setupAPISchemaTest } = require('../helpers/apiSchema')
@@ -66,6 +70,7 @@ describe('Test Facebook Click To Load', () => {
 
         // Overwrite the parts of the configuration needed for our tests.
         await loadTestConfig(bgPage, 'click-to-load-facebook.json')
+        await loadTestTds(bgPage, 'click-to-load-tds.json')
     })
 
     afterAll(async () => {
@@ -77,7 +82,7 @@ describe('Test Facebook Click To Load', () => {
         } catch (e) {}
     })
 
-    xit('CTL: Facebook request blocking/redirecting', async () => {
+    it('CTL: Facebook request blocking/redirecting', async () => {
         // Open the test page and start logging network requests.
         const page = await browser.newPage()
         const pageRequests = []

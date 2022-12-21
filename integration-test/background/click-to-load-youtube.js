@@ -1,6 +1,10 @@
 const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
-const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
+const {
+    loadTestConfig,
+    unloadTestConfig,
+    loadTestTds
+} = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
 const { setupAPISchemaTest } = require('../helpers/apiSchema')
@@ -74,6 +78,7 @@ describe('Test YouTube Click To Load', () => {
 
         // Overwrite the parts of the configuration needed for our tests.
         await loadTestConfig(bgPage, 'click-to-load-youtube.json')
+        await loadTestTds(bgPage, 'click-to-load-tds.json')
     })
 
     afterAll(async () => {
@@ -85,7 +90,7 @@ describe('Test YouTube Click To Load', () => {
         } catch (e) {}
     })
 
-    xit('CTL: YouTube request blocking/redirecting', async () => {
+    it('CTL: YouTube request blocking/redirecting', async () => {
         // Open the test page and start logging network requests.
         const page = await browser.newPage()
         const pageRequests = []
@@ -183,7 +188,7 @@ describe('Test YouTube Click To Load', () => {
         await page.close()
     })
 
-    xit('CTL: YouTube interacting with iframe API', async () => {
+    it('CTL: YouTube interacting with iframe API', async () => {
         const page = await browser.newPage()
         await pageWait.forGoto(page, testSite)
 
@@ -259,7 +264,7 @@ describe('Test YouTube Click To Load', () => {
         await page.close()
     })
 
-    xit('CTL: YouTube Preview', async () => {
+    it('CTL: YouTube Preview', async () => {
         // Open the test page and start logging network requests.
         const page = await browser.newPage()
         const pageRequests = []
