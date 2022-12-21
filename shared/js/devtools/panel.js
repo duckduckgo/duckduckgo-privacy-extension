@@ -19,29 +19,23 @@ function sendMessage (messageType, options, callback) {
 }
 
 /**
- * @param {(m: any) => HTMLTableRowElement} f
- * @returns {(m: any) => void}
+ * @param {HTMLTableRowElement} row
  */
-function addRequestRow (f) {
-    return (m) => {
-        const row = f(m)
-        if (row) {
-            // if duplicate request lines would be printed, we instead show a counter increment
-            const prevRow = document.querySelector('tbody > tr:last-child')
-            if (prevRow) {
-                const prevRowCopy = assertTableRowElement(prevRow.cloneNode(true))
-                prevRowCopy.querySelector('.action-count').textContent = ''
-                if (prevRowCopy.innerHTML === row.innerHTML) {
-                    const countElt = prevRow.querySelector('.action-count')
-                    const prevCount = parseInt(countElt.textContent.replaceAll(/[ [\]]/g, '') || '1')
-                    countElt.textContent = ` [${prevCount + 1}]`
-                } else {
-                    table.appendChild(row)
-                }
-            } else {
-                table.appendChild(row)
-            }
+function addRequestRow (row) {
+    // if duplicate request lines would be printed, we instead show a counter increment
+    const prevRow = document.querySelector('tbody > tr:last-child')
+    if (prevRow) {
+        const prevRowCopy = assertTableRowElement(prevRow.cloneNode(true))
+        prevRowCopy.querySelector('.action-count').textContent = ''
+        if (prevRowCopy.innerHTML === row.innerHTML) {
+            const countElt = prevRow.querySelector('.action-count')
+            const prevCount = parseInt(countElt.textContent.replaceAll(/[ [\]]/g, '') || '1')
+            countElt.textContent = ` [${prevCount + 1}]`
+        } else {
+            table.appendChild(row)
         }
+    } else {
+        table.appendChild(row)
     }
 }
 
@@ -97,7 +91,7 @@ function setupProtectionButton (element, textName, isEnabled) {
 }
 
 const actionHandlers = {
-    tracker: addRequestRow((m) => {
+    tracker: (m) => {
         const { tracker, url, requestData, siteUrl, serviceWorkerInitiated } = m.message
         const row = document.getElementById('request-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
@@ -125,8 +119,8 @@ const actionHandlers = {
         cells[3].textContent = tracker.fullTrackerDomain
         cells[4].textContent = requestData.type
         row.classList.add(tracker.action)
-        return row
-    }),
+        addRequestRow(row)
+    },
     tabChange: (m) => {
         const tab = m.message
         const protectionDisabled = tab.site?.allowlisted || tab.site?.isBroken
@@ -139,7 +133,7 @@ const actionHandlers = {
             })
         })
     },
-    cookie: addRequestRow((m) => {
+    cookie: (m) => {
         const { action, kind, url, requestId, type } = m.message
         const rowId = `request-${requestId}`
         if (document.getElementById(rowId) !== null) {
@@ -159,10 +153,10 @@ const actionHandlers = {
             cells[3].textContent = kind
             cells[4].textContent = type
             row.classList.add(kind)
-            return row
+            addRequestRow(row)
         }
-    }),
-    jscookie: addRequestRow((m) => {
+    },
+    jscookie: (m) => {
         const { documentUrl, action, reason, value, stack, scriptOrigins } = m.message
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
@@ -172,9 +166,9 @@ const actionHandlers = {
         appendCallStack(cells[3], stack)
         cells[4].textContent = value.split(';')[0]
         row.classList.add('jscookie')
-        return row
-    }),
-    fingerprintingCanvas: addRequestRow((m) => {
+        addRequestRow(row)
+    },
+    fingerprintingCanvas: (m) => {
         const { documentUrl, action, kind, stack, args } = m.message
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
@@ -188,8 +182,8 @@ const actionHandlers = {
         appendCallStack(cells[3], stack)
 
         row.classList.add('canvas')
-        return row
-    })
+        addRequestRow(row)
+    }
 }
 
 function appendCallStack (cell, stack) {
