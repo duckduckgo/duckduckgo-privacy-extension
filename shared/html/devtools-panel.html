@@ -70,7 +70,7 @@
       background-color: #CACACA;
     }
 
-    .cookie {
+    .cookie-tracker {
       background-color: #9CB8FF
     }
 
@@ -151,7 +151,7 @@
     <tr>
       <td></td>
       <td></td>
-      <td></td>
+      <td class="request-action"></td>
       <td></td>
       <td></td>
     </tr>
@@ -161,7 +161,7 @@
     <tr>
       <td><a href="" class="block-toggle">I</a></td>
       <td></td>
-      <td></td>
+      <td class="request-action"></td>
       <td></td>
       <td></td>
     </tr>
@@ -189,23 +189,33 @@
   <div id="table-filter">
     Display options:
     <label class="block">
-      <input id="display-block" type="checkbox" checked><span>Blocked</span>
-   </label>
-   <label class="ignore">
-      <input id="display-ignore" type="checkbox" checked><span>Ignored</span>
+      <input data-filter-toggle="blocked" type="checkbox" checked><span>Blocked</span>
+    </label>
+    <label class="ignore">
+      <input data-filter-toggle="ignored" type="checkbox" checked><span>Ignored</span>
+    </label>
+    <label class="ignore">
+      <input data-filter-toggle="ignoredFirstParty" type="checkbox" checked><span>Ignored (1P)</span>
     </label>
     <label class="redirect">
-      <input id="display-redirect" type="checkbox" checked><span>Redirected</span>
+      <input data-filter-toggle="redirected" type="checkbox" checked><span>Redirected</span>
     </label>
-    <label class="cookie">
-      <input id="display-cookie-tracker" type="checkbox" checked><span>HTTP Cookies</span>
+    <label class="cookie-tracker">
+      <input data-filter-toggle="cookieHTTP" type="checkbox" checked><span>HTTP Cookies</span>
     </label>
     <label class="jscookie">
-      <input id="display-jscookie" type="checkbox" checked><span>JS Cookies</span>
+      <input data-filter-toggle="cookieJS" type="checkbox" checked><span>JS Cookies</span>
     </label>
     <label class="canvas">
-      <input id="display-canvas" type="checkbox" checked><span>Canvas API</span>
+      <input data-filter-toggle="apiCanvas" type="checkbox" checked><span>Canvas API</span>
+    <label class="none">
+      <input data-filter-toggle="noneRequest" type="checkbox" checked><span>none</span>
     </label>
+    <label class="ignore-user">
+      <input data-filter-toggle="ignoreUser" type="checkbox" checked><span>ignore-user</span>
+    </label>
+    <label for="search-box">Filter: </label>
+    <input type="text" name="search-box" id="search-box" />
   </div>
   </div>
   <table>

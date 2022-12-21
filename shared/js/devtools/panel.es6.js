@@ -4,7 +4,6 @@ const refreshButton = document.getElementById('refresh')
 const protectionButton = document.getElementById('protection')
 const tabPicker = document.getElementById('tab-picker')
 const tdsOption = document.getElementById('tds')
-const displayFilters = document.querySelectorAll('#table-filter input')
 
 function sendMessage (messageType, options, callback) {
     chrome.runtime.sendMessage({ messageType, options }, callback)
@@ -172,13 +171,64 @@ function appendCallStack (cell, stack) {
     }
 }
 
-function shouldShowRow (className) {
-    const filter = document.getElementById(`display-${className}`)
-    return !filter || filter.checked
+/**
+ * General panel configuration that can change during its lifetime.
+ *
+ * Values below are the defaults.
+ */
+const panelConfig = {
+    rowVisibility: {
+        blocked: true,
+        ignored: true,
+        ignoredFirstParty: true,
+        redirected: true,
+        cookieHTTP: true,
+        cookieJS: true,
+        apiCanvas: true,
+        noneRequest: true,
+        ignoreUser: true
+    },
+    rowFilter: ''
+}
+
+function shouldShowRow (row) {
+    // empty search box is considered to be no filter
+    if (panelConfig.rowFilter !== '') {
+        // when a filter is in effect, fail now if the URL does not match the filter
+        if (!row.cells[1].textContent.match(panelConfig.rowFilter)) {
+            return false
+        }
+    }
+
+    const className = row.classList[0]
+    switch (className) {
+    case 'ignore':
+        if (row.querySelector('.request-action').textContent === `${actionIcons.ignore} ignore (first party)`) {
+            return panelConfig.rowVisibility.ignored && panelConfig.rowVisibility.ignoredFirstParty
+        }
+        return panelConfig.rowVisibility.ignored
+    case 'block':
+        return panelConfig.rowVisibility.blocked
+    case 'redirect':
+        return panelConfig.rowVisibility.redirected
+    case 'cookie-tracker':
+    case 'set-cookie-tracker':
+        return panelConfig.rowVisibility.cookieHTTP
+    case 'jscookie':
+        return panelConfig.rowVisibility.cookieJS
+    case 'canvas':
+        return panelConfig.rowVisibility.apiCanvas
+    case 'none':
+        return panelConfig.rowVisibility.noneRequest
+    case 'ignore-user':
+        return panelConfig.rowVisibility.ignoreUser
+    }
+    // always show if we don't have an appropriate toggle
+    return true
 }
 
 function setRowVisible (row) {
-    row.hidden = !shouldShowRow(row.classList[0])
+    row.hidden = !shouldShowRow(row)
 }
 
 port.onMessage.addListener((message) => {
@@ -272,9 +322,25 @@ tdsOption.addEventListener('change', (e) => {
     })
 })
 
+const displayFilters = document.querySelector('#table-filter').querySelectorAll('input')
+
 displayFilters.forEach((input) => {
+    // initialise filters to default values
+    if (input.id === 'search-box') {
+        input.value = panelConfig.rowFilter
+    } else {
+        input.checked = panelConfig.rowVisibility[input.dataset.filterToggle]
+    }
+
+    // register listeners to update row visibility when filters are changed
     input.addEventListener('change', () => {
-        document.querySelectorAll('tr').forEach(setRowVisible)
+        if (input.id === 'search-box') {
+            panelConfig.rowFilter = input.value
+        }
+        if (input.dataset.filterToggle) {
+            panelConfig.rowVisibility[input.dataset.filterToggle] = input.checked
+        }
+        document.querySelectorAll('tbody > tr').forEach(setRowVisible)
     })
 })
 
