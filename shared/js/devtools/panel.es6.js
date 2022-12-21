@@ -219,6 +219,8 @@ function shouldShowRow (row) {
     case 'none':
         return panelConfig.rowVisibility.noneRequest
     }
+    // always show if we don't have an appropriate toggle
+    return true
 }
 
 function setRowVisible (row) {
