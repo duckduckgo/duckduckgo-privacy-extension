@@ -5,38 +5,49 @@ const protectionButton = document.getElementById('protection')
 const tabPicker = document.getElementById('tab-picker')
 const tdsOption = document.getElementById('tds')
 
-/**
- * @param {Node} element
- * @returns {HTMLTableRowElement}
- */
-function assertTableRowElement (element) {
-    // @ts-ignore
-    return element
-}
-
 function sendMessage (messageType, options, callback) {
     chrome.runtime.sendMessage({ messageType, options }, callback)
 }
 
 /**
+ * Add a new request row to the panel table without checking for duplicates.
+ *
+ * @param {HTMLTableRowElement} row
+ */
+function addNewRequestRow (row) {
+    const counter = row.querySelector('.action-count')
+    panelConfig.currentCounter = counter
+    panelConfig.lastRowTemplate = row.cloneNode(true)
+    table.appendChild(row)
+}
+
+/**
+ * Add a new request row to the panel table, checking for duplicates.
+ *
  * @param {HTMLTableRowElement} row
  */
 function addRequestRow (row) {
-    // if duplicate request lines would be printed, we instead show a counter increment
-    const prevRow = document.querySelector('tbody > tr:last-child')
-    if (prevRow) {
-        const prevRowCopy = assertTableRowElement(prevRow.cloneNode(true))
-        prevRowCopy.querySelector('.action-count').textContent = ''
-        if (prevRowCopy.innerHTML === row.innerHTML) {
-            const countElt = prevRow.querySelector('.action-count')
-            const prevCount = parseInt(countElt.textContent.replaceAll(/[ [\]]/g, '') || '1')
-            countElt.textContent = ` [${prevCount + 1}]`
+    const prevRowTemplate = panelConfig.lastRowTemplate
+    if (prevRowTemplate) {
+        // if duplicate request lines would be printed, we instead show a
+        // counter increment
+        if (prevRowTemplate.innerHTML === row.innerHTML) {
+            incrementCurrentRequestCounter()
         } else {
-            table.appendChild(row)
+            addNewRequestRow(row)
         }
     } else {
-        table.appendChild(row)
+        addNewRequestRow(row)
     }
+}
+
+/**
+ * Increment the counter for the current request type.
+ */
+function incrementCurrentRequestCounter () {
+    const counter = panelConfig.currentCounter
+    const prevCount = parseInt(counter.textContent.replaceAll(/[ [\]]/g, '') || '1')
+    counter.textContent = ` [${prevCount + 1}]`
 }
 
 let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
@@ -317,6 +328,8 @@ function clear () {
     while (table.lastChild) {
         table.removeChild(table.lastChild)
     }
+    panelConfig.lastRowTemplate = undefined
+    panelConfig.currentCounter = undefined
 }
 
 // listeners for buttons and toggles
