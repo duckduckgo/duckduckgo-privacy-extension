@@ -3,6 +3,7 @@ const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
 
+const manifestVersion = harness.getManifestVersion()
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/query-parameters/'
 
 /**
@@ -87,13 +88,23 @@ describe('Test URL tracking parameters protection', () => {
         for (const { initialUrl, expectedUrl, description } of testCases) {
             // Test the tracking parameters were stripped.
             await pageWait.forGoto(page, initialUrl)
-            expect(page.url()).withContext(description).toEqual(expectedUrl)
+            let actualUrl = page.url()
+            if (actualUrl.endsWith('?')) {
+                // Query transform declarativeNetRequest rules do not strip the
+                // trailing `?` when removing the last parameter from a URL.
+                actualUrl = actualUrl.substr(0, actualUrl.length - 1)
+            }
+            expect(actualUrl).withContext(description).toEqual(expectedUrl)
 
             // Test the `urlParametersRemoved` breakage flag was set correctly.
-            // Note: `null` denotes tab not found.
-            expect(await getUrlParametersRemoved(bgPage))
-                .withContext(description + ' (urlParametersRemoved)')
-                .toEqual(expectedUrl.length < initialUrl.length)
+            // Notes:
+            //  - `null` denotes tab not found.
+            //  - This is not supported with Chrome MV3.
+            if (manifestVersion === 2) {
+                expect(await getUrlParametersRemoved(bgPage))
+                    .withContext(description + ' (urlParametersRemoved)')
+                    .toEqual(expectedUrl.length < initialUrl.length)
+            }
 
             // Reload the page, to check that `urlParametersRemoved` was cleared.
             await pageWait.forReload(page)

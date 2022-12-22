@@ -10,6 +10,7 @@
         "background/request-blocking.js",
         "background/storage.js",
         "background/test-fingerprint.js",
+        "background/url-parameters.js",
         "content-scripts/gpc.js"
     ]
 }
