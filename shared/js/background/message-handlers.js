@@ -36,6 +36,12 @@ export async function getDevMode () {
     return dev || false
 }
 
+export async function getIntegrationTestMode () {
+    const integrationTest =
+        await browserWrapper.getFromSessionStorage('integrationTest')
+    return integrationTest || false
+}
+
 export function resetTrackersData () {
     return Companies.resetData()
 }
@@ -156,6 +162,14 @@ export async function initClickToLoad (config, sender) {
     // Remove first-party entries.
     await startup.ready()
 
+    // Overwrite the content-scope-scripts Click to Load configuration with the
+    // legacy configuration for the integration tests.
+    // TODO: When the legacy configuration is finally removed, this should be
+    //       adjusted.
+    if (await getDevMode() && await getIntegrationTestMode()) {
+        config = tdsStorage.ClickToLoadConfig
+    }
+
     const siteUrlSplit = tab.site.domain.split('.')
     const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
     if (websiteOwner) {
@@ -163,9 +177,9 @@ export async function initClickToLoad (config, sender) {
     }
 
     // Determine whether to show one time messages or simplified messages
-    for (const [entity] of Object.entries(config)) {
+    for (const entity of Object.keys(config)) {
         const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-        const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+        const maxClicks = config[entity].clicksBeforeSimpleVersion || 3
         if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
             config[entity].simpleVersion = true
         }
@@ -217,7 +231,16 @@ export async function enableSocialTracker (data, sender) {
     const entity = data.entity
 
     if (browserWrapper.getManifestVersion() === 3) {
-        await enableInverseRules(data.action, sender.tab.id)
+        let { action } = data
+
+        // TODO: Remove this workaround once the corresponding
+        //       content-scope-scripts code is fixed. So far, the action is
+        //       hardcoded to "block-ctl-fb" no matter the entity.
+        if (data.entity === 'Youtube' && action === 'block-ctl-fb') {
+            action = 'block-ctl-yt'
+        }
+
+        await enableInverseRules(action, sender.tab.id)
     }
     tab.site.clickToLoad.push(entity)
 
