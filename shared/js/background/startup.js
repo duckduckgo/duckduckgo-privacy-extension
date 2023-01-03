@@ -27,11 +27,14 @@ export async function onStartup () {
     try {
         const httpsLists = await httpsStorage.getLists(/* preferLocal= */true)
         https.setLists(httpsLists)
-
+    } catch (e) {
+        console.warn('Error loading https lists', e)
+    }
+    try {
         const tdsLists = await tdsStorage.getLists(/* preferLocal= */true)
         trackers.setLists(tdsLists)
     } catch (e) {
-        console.log(e)
+        console.warn('Error loading tds lists', e)
     }
 
     Companies.buildFromStorage()
