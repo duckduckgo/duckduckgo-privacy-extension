@@ -1,11 +1,15 @@
 import browser from 'webextension-polyfill'
-import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
+
 import { getURL } from './pixels'
 import load from './load.es6'
 const { getSetting, updateSetting } = require('./settings.es6')
 const browserWrapper = require('./wrapper.es6')
+const utils = require('./utils.es6')
+
 export const REFETCH_ALIAS_ALARM = 'refetchAlias'
 const REFETCH_ALIAS_ATTEMPT = 'refetchAliasAttempt'
+
+const pixelsEnabled = utils.getBrowserName() !== 'moz'
 
 export const fetchAlias = () => {
     // if another fetch was previously scheduled, clear that and execute now
@@ -108,9 +112,8 @@ const getFullPixelName = (name, browserName) => {
 }
 
 const fireAddressUsedPixel = (pixel) => {
-    const browserInfo = parseUserAgentString()
-    const browserName = browserInfo?.browser?.toLowerCase() ?? 'unknown'
-    if (browserName === 'firefox') return
+    const browserName = utils.getBrowserName() ?? 'unknown'
+    if (!pixelsEnabled) return
 
     const userData = getSetting('userData')
     if (!userData?.userName) return
@@ -131,7 +134,7 @@ const fireAddressUsedPixel = (pixel) => {
  *
  * @param {FirePixelOptions}  options
  */
-export const firePixel = (options) => {
+export const sendJSPixel = (options) => {
     const { pixelName } = options
     switch (pixelName) {
     case 'autofill_private_address':
@@ -175,5 +178,5 @@ module.exports = {
     formatAddress,
     isValidUsername,
     isValidToken,
-    firePixel
+    sendJSPixel
 }
