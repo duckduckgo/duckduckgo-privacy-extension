@@ -103,17 +103,25 @@ class HTTPSStorage {
 
     async getListFromLocalDB (listDetails) {
         console.log('HTTPS: getting from db', listDetails.name)
-        await this.dbc.open()
-        const list = await this.dbc.table('httpsStorage').get({ name: listDetails.name })
+        try {
+            await this.dbc.open()
+            const list = await this.dbc.table('httpsStorage').get({ name: listDetails.name })
 
-        if (list && list.data && await this.hasCorrectChecksum(list.data)) {
-            return Object.assign(listDetails, list.data)
+            if (list && list.data && await this.hasCorrectChecksum(list.data)) {
+                return Object.assign(listDetails, list.data)
+            }
+        } catch (e) {
+            console.warn(`getListFromLocalDB failed for ${listDetails.name}`, e)
+            return null
         }
     }
 
     storeInLocalDB (name, type, data) {
-        console.log(`HTTPS: storing ${name} in db`)
-        return this.dbc.httpsStorage.put({ name, type, data })
+        return this.dbc.httpsStorage.put({ name, type, data }).catch(e => {
+            console.warn(`storeInLocalDB failed for ${name}: resetting stored etag`, e)
+            settings.updateSetting(`${name}-etag`, '')
+            settings.updateSetting(`${name}-lastUpdate`, '')
+        })
     }
 
     hasCorrectChecksum (data) {
