@@ -92,11 +92,8 @@ export const getAddresses = () => {
 
 function sendPixelRequest (pixelName, params) {
     const randomNum = Math.ceil(Math.random() * 1e7)
-
     const searchParams = new URLSearchParams(Object.entries(params))
-
     const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
-
     load.url(url)
 }
 
