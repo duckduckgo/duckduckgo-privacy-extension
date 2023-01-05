@@ -224,18 +224,27 @@ class TDSStorage {
 
     async getListFromLocalDB (name) {
         console.log('TDS: getting from db', name)
-        await this.dbc.open()
-        const list = await this.dbc.table('tdsStorage').get({ name })
+        try {
+            await this.dbc.open()
+            const list = await this.dbc.table('tdsStorage').get({ name })
 
-        if (list && list.data) {
-            this[name] = list.data
-            this._internalOnListUpdate(name, list.data)
-            return { name, data: list.data }
+            if (list && list.data) {
+                this[name] = list.data
+                this._internalOnListUpdate(name, list.data)
+                return { name, data: list.data }
+            }
+        } catch (e) {
+            console.warn(`getListFromLocalDB failed for ${name}`, e)
+            return null
         }
     }
 
     storeInLocalDB (name, data) {
-        return this.dbc.tdsStorage.put({ name, data })
+        return this.dbc.tdsStorage.put({ name, data }).catch(e => {
+            console.warn(`storeInLocalDB failed for ${name}: resetting stored etag`, e)
+            settings.updateSetting(`${name}-etag`, '')
+            settings.updateSetting(`${name}-lastUpdate`, '')
+        })
     }
 
     parsedata (name, data) {
