@@ -7,6 +7,7 @@ module.exports = function (grunt) {
 
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-karma')
+    grunt.loadNpmTasks('grunt-contrib-copy')
 
     const browser = grunt.option('browser')
     const buildType = grunt.option('type')
@@ -101,11 +102,11 @@ module.exports = function (grunt) {
     }
 
     let contentScopeInstall = 'echo "Skipping content-scope-scripts install";'
-    let contentScopeBuild = ''
+    let contentScopeBuild = 'echo "Skipping content-scope-scripts build";'
     // If we're watching the content scope files, regenerate them
     if (grunt.option('watch')) {
         contentScopeInstall = `cd ${ddgContentScope} && npm install --legacy-peer-deps`
-        contentScopeBuild = `cd ${ddgContentScope} && npm run build && cd - && `
+        contentScopeBuild = `cd ${ddgContentScope} && npm run build && cd -`
     }
 
     const ddgAutofill = 'node_modules/@duckduckgo/autofill/dist'
@@ -191,7 +192,7 @@ module.exports = function (grunt) {
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             installContentScope: contentScopeInstall,
-            copyContentScope: `${contentScopeBuild} cp ${ddgContentScope}/build/${browser}/inject.js build/${browser}/${buildType}/public/js/inject.js`,
+            buildContentScope: `${contentScopeBuild}`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
             copyDash: `cp -r ${join(dashboardDir, 'build/app')} build/${browser}/${buildType}/dashboard`,
@@ -211,7 +212,7 @@ module.exports = function (grunt) {
             },
             contentScope: {
                 files: watch.contentScope,
-                tasks: ['exec:copyContentScope']
+                tasks: ['exec:buildContentScope', 'copy:contentScope']
             },
             backgroundES6JS: {
                 files: watch.background,
@@ -243,6 +244,25 @@ module.exports = function (grunt) {
             unit: {
                 options: karmaOps
             }
+        },
+
+        copy: {
+            contentScope: {
+                src: [`${ddgContentScope}/build/${browser}/inject.js`],
+                dest: `build/${browser}/${buildType}/public/js/inject.js`,
+                options: {
+                    process: function (content) {
+                        const config = grunt.file.readJSON('shared/data/bundled/extension-config.json')
+                        // prune to only features that need early access to their config
+                        config.features = {
+                            cookie: config.features.cookie
+                        }
+                        return content
+                            .replace('$TRACKER_LOOKUP$', grunt.file.read('shared/data/bundled/tracker-lookup.json'))
+                            .replace('$BUNDLED_CONFIG$', JSON.stringify(config))
+                    }
+                }
+            }
         }
     })
 
@@ -259,7 +279,8 @@ module.exports = function (grunt) {
         'browserify:background',
         'browserify:backgroundTest',
         'exec:installContentScope',
-        'exec:copyContentScope',
+        'exec:buildContentScope',
+        'copy:contentScope',
         'exec:copyDash',
         'exec:copyAutofillJs',
         'exec:copyAutofillCSS',
