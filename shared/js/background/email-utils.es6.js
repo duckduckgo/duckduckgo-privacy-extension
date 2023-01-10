@@ -1,8 +1,15 @@
 import browser from 'webextension-polyfill'
+
+import { getURL } from './pixels'
+import load from './load.es6'
 const { getSetting, updateSetting } = require('./settings.es6')
 const browserWrapper = require('./wrapper.es6')
+const utils = require('./utils.es6')
+
 export const REFETCH_ALIAS_ALARM = 'refetchAlias'
 const REFETCH_ALIAS_ATTEMPT = 'refetchAliasAttempt'
+
+const pixelsEnabled = utils.getBrowserName() !== 'moz'
 
 export const fetchAlias = () => {
     // if another fetch was previously scheduled, clear that and execute now
@@ -83,6 +90,61 @@ export const getAddresses = () => {
     }
 }
 
+function sendPixelRequest (pixelName, params) {
+    const randomNum = Math.ceil(Math.random() * 1e7)
+    const searchParams = new URLSearchParams(Object.entries(params))
+    const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
+    load.url(url)
+}
+
+function currentDate () {
+    return new Date().toLocaleString('en-CA', {
+        timeZone: 'America/New_York',
+        dateStyle: 'short'
+    })
+}
+
+const getFullPixelName = (name, browserName) => {
+    return `${name}_${browserName.toLowerCase()}`
+}
+
+const fireAddressUsedPixel = (pixel) => {
+    const browserName = utils.getBrowserName() ?? 'unknown'
+    if (!pixelsEnabled) return
+
+    const userData = getSetting('userData')
+    if (!userData?.userName) return
+
+    const lastAddressUsedAt = getSetting('lastAddressUsedAt') ?? ''
+
+    sendPixelRequest(getFullPixelName(pixel, browserName), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
+    updateSetting('lastAddressUsedAt', currentDate())
+}
+
+/**
+ * Config type definition
+ * @typedef {Object} FirePixelOptions
+ * @property {import('@duckduckgo/autofill/src/deviceApiCalls/__generated__/validators-ts').SendJSPixelParams['pixelName']} pixelName
+ */
+
+/**
+ *
+ * @param {FirePixelOptions}  options
+ */
+export const sendJSPixel = (options) => {
+    const { pixelName } = options
+    switch (pixelName) {
+    case 'autofill_private_address':
+        fireAddressUsedPixel('email_filled_random_extension')
+        break
+    case 'autofill_personal_address':
+        fireAddressUsedPixel('email_filled_main_extension')
+        break
+    default:
+        console.error('Unknown pixel name', pixelName)
+    }
+}
+
 /**
  * Given a username, returns a valid email address with the duck domain
  * @param {string} address
@@ -112,5 +174,6 @@ module.exports = {
     getAddresses,
     formatAddress,
     isValidUsername,
-    isValidToken
+    isValidToken,
+    sendJSPixel
 }
