@@ -14,7 +14,7 @@ grunt-dev:
 	mkdir -p build/$(browser)/dev/test/html
 	cp -r shared/img build/$(browser)/dev/test/html
 	cp -r shared/data build/$(browser)/dev/test/html
-	grunt dev --browser=$(browser) --type=$(type) --watch=$(watch)
+	grunt dev --browser=$(browser) --type=$(type)
 
 setup-artifacts-dir:
 	rm -rf integration-test/artifacts
