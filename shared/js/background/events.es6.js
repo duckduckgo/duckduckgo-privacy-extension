@@ -12,6 +12,7 @@ import {
     flushSessionRules,
     refreshUserAllowlistRules
 } from './declarative-net-request'
+import * as trackerStats from './events/newtab-tracker-stats'
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const experiment = require('./experiments.es6')
@@ -400,6 +401,14 @@ browser.runtime.onMessage.addListener((req, sender) => {
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req))
     }
 
+    /**
+     * Handle every message prefixed with `newTabPage_`
+     */
+    if (req.messageType && req.messageType.startsWith('newTabPage_')) {
+        trackerStats.handleIncomingNewtabPageEvent(req)
+        return
+    }
+
     // TODO clean up legacy onboarding messaging
     if (browserName === 'chrome') {
         if (req === 'healthCheckRequest' || req === 'rescheduleCounterMessagingRequest') {
@@ -477,7 +486,25 @@ if (manifestVersion === 3) {
     )
 }
 
-// Inject the Click to Load content script to display placeholders.
+/**
+ * The listener that we redirect the request for tracker-stats.html
+ * on the new tab page.
+ */
+browser.webRequest.onBeforeRequest.addListener(trackerStats.redirectIframeForTrackerStatsMV2,
+    {
+        // todo(Shane): mv3 implementation
+        // todo(Shane): chrome only?
+        // todo(Shane): limit this to only the urls we care about
+        urls: ['<all_urls>']
+    },
+    additionalOptions
+)
+
+/**
+ * A trigger to re-send tracking data to the new tab page when a navigation is complete
+ */
+browser.webNavigation.onCompleted.addListener(trackerStats.sendTrackerStatsOnComplete)
+
 browser.webNavigation.onCommitted.addListener(details => {
     const tab = tabManager.get({ tabId: details.tabId })
 
@@ -533,6 +560,8 @@ browserWrapper.createAlarm('clearExpiredHTTPSServiceCache', { periodInMinutes: 6
 browserWrapper.createAlarm('rotateUserAgent', { periodInMinutes: 24 * 60 })
 // Rotate the sessionKey
 browserWrapper.createAlarm('rotateSessionKey', { periodInMinutes: 24 * 60 })
+// Send new tab Data
+browserWrapper.createAlarm('pruneNewTabData', { periodInMinutes: 5 })
 
 browser.alarms.onAlarm.addListener(async alarmEvent => {
     // Warning: Awaiting in this function doesn't actually wait for the promise to resolve before unblocking the main thread.
@@ -557,6 +586,8 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
         }
     } else if (alarmEvent.name === 'clearExpiredHTTPSServiceCache') {
         httpsService.clearExpiredCache()
+    } else if (alarmEvent.name === 'pruneNewTabData') {
+        trackerStats.pruneAlarm()
     } else if (alarmEvent.name === 'rotateSessionKey') {
         await utils.resetSessionKey()
     } else if (alarmEvent.name === REFETCH_ALIAS_ALARM) {

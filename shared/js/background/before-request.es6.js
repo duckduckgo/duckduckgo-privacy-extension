@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+import { blockedRequests } from './events/newtab-tracker-stats'
 const tldts = require('tldts')
 
 const utils = require('./utils.es6')
@@ -320,6 +321,10 @@ function blockHandleResponse (thisTab, requestData) {
         if (['block', 'redirect'].includes(tracker.action)) {
             // @ts-ignore
             Companies.add(tracker.tracker.owner)
+
+            if (tracker?.tracker?.owner) {
+                blockedRequests.record(tracker.tracker.owner.displayName)
+            }
 
             console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                         // @ts-ignore
