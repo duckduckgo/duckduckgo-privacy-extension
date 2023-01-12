@@ -137,8 +137,8 @@ module.exports = {
         downgrade_redirect_loop: 13
     },
     iconPaths: /** @type {const} */ ({
-        regular: './img/icon_browser_action.png',
-        withSpecialState: './img/icon_browser_action_special.png'
+        regular: '/img/icon_browser_action.png',
+        withSpecialState: '/img/icon_browser_action_special.png'
     }),
     platform: {
         name: 'extension'
