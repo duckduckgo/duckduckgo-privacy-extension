@@ -136,6 +136,7 @@ function companyDisplayNameToIconName (companyName) {
 }
 
 export const iconsTheExtensionCanRender = [
+    'other',
     'adjust',
     'adobe',
     'amazon',

@@ -11,14 +11,14 @@ window.chrome.runtime.onMessage.addListener(msg => {
     // check we're only sending known outgoing messages
     if (msg.messageType in events.outgoing) {
         console.log('📤 OUTGOING newtab.js', msg)
-        window.parent.postMessage(msg, allowedOrigin)
+        sendToNewTabPage(msg)
     }
 })
 
 /**
  * When the iframe loads, always initialize an initial read
  */
-window.chrome.runtime.sendMessage({ messageType: events.incoming.newTabPage_readInitial })
+sendToChromeRuntime({ messageType: events.incoming.newTabPage_readInitial })
 
 /**
  * Listen for incoming messages from the New Tab Page and forward them
@@ -43,5 +43,22 @@ window.addEventListener('message', (e) => {
 
     // if we get this far, it's a valid message that we can forward into the Extension
     console.log('📩 INCOMING newtab.js', e.data)
-    window.chrome.runtime.sendMessage(e.data)
+    sendToChromeRuntime(e.data)
 })
+
+function sendToNewTabPage (msg) {
+    if (typeof window.parent?.postMessage === 'function') {
+        window.parent.postMessage(msg, allowedOrigin)
+    } else {
+        console.error('lost connection to window.parent')
+    }
+}
+
+function sendToChromeRuntime (msg) {
+    try {
+        window.chrome.runtime.sendMessage(msg)
+    } catch (e) {
+        console.error('could not access `window.chrome.runtime.sendMessage`', e)
+        sendToNewTabPage({ messageType: events.outgoing.newTabPage_disconnect })
+    }
+}

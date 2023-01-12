@@ -156,7 +156,8 @@ module.exports = {
                 newTabPage_hideDetails: 'newTabPage_hideDetails'
             },
             outgoing: {
-                newTabPage_data: 'newTabPage_data'
+                newTabPage_data: 'newTabPage_data',
+                newTabPage_disconnect: 'newTabPage_disconnect'
             }
         }
     })
