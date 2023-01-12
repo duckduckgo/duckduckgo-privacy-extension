@@ -1,4 +1,4 @@
-name: Test
+name: Check
 
 on:
   push:
@@ -18,7 +18,21 @@ jobs:
       - run: npm run install-ci
       - run: npm run lint
 
-  unit:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [16, 18]
+        target: ['release-firefox', 'release-chrome', 'release-chrome-mv3']
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.version }}
+          cache: 'npm'
+      - run: npm run ${{ matrix.target }}  
+
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,7 +43,7 @@ jobs:
       - run: npm run install-ci
       - run: npm test
 
-  integration:
+  integration-tests:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
@@ -46,4 +60,16 @@ jobs:
         with:
           name: integration-test-artifacts
           path: integration-test/artifacts
+      - run: npm run test-int-mv3
+
+  integration-mv3-tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+      - run: npm run install-ci
       - run: npm run test-int-mv3
