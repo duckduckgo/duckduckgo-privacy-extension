@@ -153,7 +153,8 @@ module.exports = {
                 newTabPage_readInitial: 'newTabPage_readInitial',
                 newTabPage_reset: 'newTabPage_reset',
                 newTabPage_showDetails: 'newTabPage_showDetails',
-                newTabPage_hideDetails: 'newTabPage_hideDetails'
+                newTabPage_hideDetails: 'newTabPage_hideDetails',
+                newTabPage_heartbeat: 'newTabPage_heartbeat'
             },
             outgoing: {
                 newTabPage_data: 'newTabPage_data',

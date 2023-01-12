@@ -57,6 +57,9 @@ const handlers = {
     [incoming.newTabPage_hideDetails]: () => {
         aggregatedTrackerStats.hide()
         sendNewTabPage()
+    },
+    [incoming.newTabPage_heartbeat]: () => {
+        sendNewTabPage()
     }
 }
 
