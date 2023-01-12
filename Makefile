@@ -21,7 +21,11 @@ setup-artifacts-dir:
 	mkdir -p integration-test/artifacts/screenshots
 	mkdir -p integration-test/artifacts/api_schemas
 
+ifeq ('$(browser)','chrome-mv3')
+setup-build-dir: shared/data/bundled/smarter-encryption-rules.json
+else
 setup-build-dir:
+endif
 	mkdir -p build/$(browser)
 	rm -rf build/$(browser)/$(type)
 	mkdir build/$(browser)/$(type)
@@ -73,3 +77,12 @@ remove-firefox-id:
 
 beta-firefox-zip: remove-firefox-id
 	cd build/firefox/release/ && web-ext build
+
+shared/data/smarter_encryption.txt:
+	curl https://staticcdn.duckduckgo.com/trackerblocking/smarter_encryption_test.txt.gz | gunzip -c > shared/data/smarter_encryption.txt
+
+shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryption.txt
+	npm run bundle-se
+
+clean:
+	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json

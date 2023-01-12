@@ -91,5 +91,12 @@
     ],
     "storage": {
         "managed_schema": "managed-schema.json"
+    },
+    "declarative_net_request": {
+        "rule_resources": [{
+            "id": "smarter_encryption",
+            "enabled": true,
+            "path": "data/bundled/smarter-encryption-rules.json"
+        }]
     }
 }
