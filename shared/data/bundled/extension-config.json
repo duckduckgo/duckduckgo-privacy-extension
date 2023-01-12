@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1671616050879,
+    "version": 1673474640013,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -246,13 +246,17 @@
                     {
                         "domain": "qubushotel.com",
                         "reason": "Homepage UI elements appear squashed together, preventing interaction with the site."
+                    },
+                    {
+                        "domain": "digid.nl",
+                        "reason": "https://github.com/duckduckgo/privacy-configuration/issues/602"
                     }
                 ],
                 "omitVersionSites": []
             },
             "exceptions": [],
             "state": "disabled",
-            "hash": "acbe310f15d778d2e46f5266e319afcc"
+            "hash": "f303f2b5c222373004029d0dd657fe56"
         },
         "duckPlayer": {
             "exceptions": [],
@@ -283,6 +287,14 @@
                 },
                 {
                     "domain": "manhwascan.net",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
+                },
+                {
+                    "domain": "wiwo.de",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
+                },
+                {
+                    "domain": "metro.co.uk",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
                 }
             ],
@@ -879,6 +891,19 @@
                         ]
                     },
                     {
+                        "domain": "xfinity.com",
+                        "rules": [
+                            {
+                                "selector": ".f-gpc-flyout",
+                                "type": "hide"
+                            },
+                            {
+                                "selector": ".f-gpc-banner",
+                                "type": "hide"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "first-party.site",
                         "rules": [
                             {
@@ -923,7 +948,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "4463a4596404ee770625b9009d660f09"
+            "hash": "713823f7d7e219814cb96e879736f4d3"
         },
         "fingerprintingAudio": {
             "state": "disabled",
@@ -1114,6 +1139,14 @@
             "exceptions": [],
             "state": "enabled",
             "hash": "52857469413a66e8b0c7b00de5589162"
+        },
+        "requestFilterer": {
+            "state": "disabled",
+            "exceptions": [],
+            "settings": {
+                "windowInMs": 0
+            },
+            "hash": "9439c856372a09f0cfdc9e2e0fd086fd"
         },
         "trackerAllowlist": {
             "state": "enabled",
