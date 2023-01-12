@@ -53,7 +53,7 @@ describe('AggregatedTrackerStats', () => {
         const readTime = now + (MIN * 61)
 
         // produce the view data as consumers would
-        const actual = ats.toDisplayData(readTime);
+        const actual = ats.toDisplayData(readTime)
 
         // should have dropped the 8.00am entry
         expect(actual.trackerCompanies[0].count).toEqual(1)
