@@ -3,7 +3,6 @@
     "spec_files": [
         "background/*.js",
         "content-scripts/gpc.js",
-        "!background/click-to-load-youtube.js",
-        "!background/https-loop-protection.js"
+        "!background/click-to-load-youtube.js"
     ]
 }

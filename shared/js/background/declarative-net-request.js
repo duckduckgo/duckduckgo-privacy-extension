@@ -12,6 +12,9 @@ import {
     generateTdsRuleset
 } from '@duckduckgo/ddg2dnr/lib/tds'
 import {
+    createSmarterEncryptionExceptionRule
+} from '@duckduckgo/ddg2dnr/lib/smarterEncryption'
+import {
     generateDNRRule
 } from '@duckduckgo/ddg2dnr/lib/utils'
 import {
@@ -35,13 +38,16 @@ const ruleIdRangeByConfigName = {
 // User allowlisting and the ServicerWorker initiated request exception both
 // only require one declarativeNetRequest rule, so hardcode the rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001
-export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
 export const ATB_PARAM_RULE_ID = 20003
 const RESERVED_RULE_IDS = [
     USER_ALLOWLIST_RULE_ID,
-    SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
     ATB_PARAM_RULE_ID
 ]
+
+// Rule IDs for static session rules
+export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 100
+export const HTTPS_SESSION_ALLOWLIST_RULE_ID = 101 
+export const HTTPS_SESSION_UPGRADE_RULE_ID = 102
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
@@ -569,6 +575,44 @@ export function flushSessionRules () {
             return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })
         }
     })
+}
+
+/**
+ * 
+ * @param {number} id 
+ * @returns {Promise<chrome.declarativeNetRequest.Rule | undefined>}
+ */
+async function findSessionRuleFromId (id) {
+    const sessionRules = await chrome.declarativeNetRequest.getSessionRules();
+    return sessionRules.find(r => r.id === id)
+}
+
+/**
+ * 
+ * @param {number} ruleId 
+ * @param {string} addDomain 
+ * @param {'allow' | 'upgrade'} type 
+ */
+async function updateSeSessionRule (ruleId, addDomain, type) {
+    const existingRule = await findSessionRuleFromId(ruleId)
+    const ruleDomains = existingRule?.condition.requestDomains || []
+    if (ruleDomains.includes(addDomain)) {
+        return
+    }
+    ruleDomains.push(addDomain)
+    const { rule } = createSmarterEncryptionExceptionRule(ruleDomains, ruleId, type)
+    await chrome.declarativeNetRequest.updateSessionRules({
+        removeRuleIds: [ruleId],
+        addRules: [rule]
+    })
+}
+
+export async function addSmarterEncryptionSessionException(domain) {
+    return updateSeSessionRule(HTTPS_SESSION_ALLOWLIST_RULE_ID, domain, 'allow')
+}
+
+export async function addSmarterEncryptionSessionRule(domain) {
+    return updateSeSessionRule(HTTPS_SESSION_UPGRADE_RULE_ID, domain, 'upgrade')
 }
 
 if (browserWrapper.getManifestVersion() === 3) {
