@@ -159,16 +159,6 @@ class TabManager {
                     tab.site.grade.setHttps(hasHttps, hasHttps)
 
                     console.info(tab.site.grade)
-
-                    if (tab.statusCode === 200 &&
-                        !tab.site.didIncrementCompaniesData) {
-                        if (tab.trackers && Object.keys(tab.trackers).length > 0) {
-                            Companies.incrementTotalPagesWithTrackers()
-                        }
-
-                        Companies.incrementTotalPages()
-                        tab.site.didIncrementCompaniesData = true
-                    }
                 }
             }
             return tab

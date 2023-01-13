@@ -335,11 +335,6 @@ browser.tabs.onCreated.addListener((info) => {
 })
 
 browser.tabs.onUpdated.addListener((id, info) => {
-    // sync company data to storage when a tab finishes loading
-    if (info.status === 'complete') {
-        Companies.syncToStorage()
-    }
-
     tabManager.createOrUpdateTab(id, info)
 })
 

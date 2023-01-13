@@ -37,8 +37,6 @@ export async function onStartup () {
         console.warn('Error loading tds lists', e)
     }
 
-    Companies.buildFromStorage()
-
     // fetch alias if needed
     const userData = settings.getSetting('userData')
     if (userData && userData.token) {

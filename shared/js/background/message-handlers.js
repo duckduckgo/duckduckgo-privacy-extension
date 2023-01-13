@@ -42,10 +42,6 @@ export async function getIntegrationTestMode () {
     return integrationTest || false
 }
 
-export function resetTrackersData () {
-    return Companies.resetData()
-}
-
 export function getExtensionVersion () {
     return browserWrapper.getExtensionVersion()
 }
@@ -148,10 +144,6 @@ export async function getPrivacyDashboardData (options) {
     if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
     return dashboardDataFromTab(tab, userData)
-}
-
-export function getTopBlockedByPages (options) {
-    return Companies.getTopBlockedByPages(options)
 }
 
 // Click to load interactions
@@ -311,10 +303,6 @@ export function getAlias () {
 export async function refreshAlias () {
     await fetchAlias()
     return getAddresses()
-}
-
-export function getTopBlocked (options) {
-    return Companies.getTopBlocked(options)
 }
 
 function isExpectedSender (sender) {

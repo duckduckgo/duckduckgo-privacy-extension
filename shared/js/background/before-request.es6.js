@@ -6,7 +6,6 @@ const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
 const trackerutils = require('./tracker-utils')
 const https = require('./https.es6')
-const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
 const ATB = require('./atb.es6')
 const browserWrapper = require('./wrapper.es6')
@@ -320,10 +319,12 @@ function blockHandleResponse (thisTab, requestData) {
         // Block the request if the site is not allowlisted
         if (['block', 'redirect'].includes(tracker.action)) {
             // @ts-ignore
-            Companies.add(tracker.tracker.owner)
+            // Companies.add(tracker.tracker.owner)
 
             if (tracker?.tracker?.owner) {
                 blockedRequests.record(tracker.tracker.owner.displayName)
+            } else {
+                console.log("a tracker without an owner?", tracker?.tracker?.owner)
             }
 
             console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
