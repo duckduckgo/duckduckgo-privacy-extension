@@ -1,14 +1,22 @@
+import { getFromSessionStorage, setToSessionStorage } from './wrapper.es6'
 const sha1 = require('../shared-utils/sha1')
 // eslint-disable-next-line n/no-deprecated-api
 const punycode = require('punycode')
 const constants = require('../../data/constants')
 const HASH_PREFIX_SIZE = 4
 const ONE_HOUR_MS = 60 * 60 * 1000
+const sessionStoreKey = 'httpsServiceCache'
 
 class HTTPSService {
     constructor () {
         this._cache = new Map()
         this._activeRequests = new Map()
+        // Pull cache values from session storage (for MV3)
+        getFromSessionStorage(sessionStoreKey).then((values) => {
+            if (values) {
+                this._cache = new Map(values)
+            }
+        })
     }
 
     _cacheResponse (query, data, expires) {
@@ -23,6 +31,7 @@ class HTTPSService {
             expires: expiryDate,
             data
         })
+        setToSessionStorage(sessionStoreKey, [...this._cache.entries()])
     }
 
     _hostToHash (host) {
@@ -97,6 +106,7 @@ class HTTPSService {
 
     clearCache () {
         this._cache.clear()
+        setToSessionStorage(sessionStoreKey, this._cache.entries())
     }
 
     clearExpiredCache () {
@@ -104,7 +114,8 @@ class HTTPSService {
 
         Array.from(this._cache.keys())
             .filter(key => this._cache.get(key).expires < now)
-            .forEach(key => this._cache.delete(key))
+            .forEach(key => this._cache.delete(key));
+        setToSessionStorage(sessionStoreKey, this._cache.entries())
     }
 }
 
