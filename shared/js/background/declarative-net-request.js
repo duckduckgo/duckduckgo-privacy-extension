@@ -46,7 +46,7 @@ const RESERVED_RULE_IDS = [
 
 // Rule IDs for static session rules
 export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 100
-export const HTTPS_SESSION_ALLOWLIST_RULE_ID = 101 
+export const HTTPS_SESSION_ALLOWLIST_RULE_ID = 101
 export const HTTPS_SESSION_UPGRADE_RULE_ID = 102
 
 /**
@@ -578,20 +578,20 @@ export function flushSessionRules () {
 }
 
 /**
- * 
- * @param {number} id 
+ * Find the session rule with the given ID, if it exists.
+ * @param {number} id Rule ID
  * @returns {Promise<chrome.declarativeNetRequest.Rule | undefined>}
  */
 async function findSessionRuleFromId (id) {
-    const sessionRules = await chrome.declarativeNetRequest.getSessionRules();
+    const sessionRules = await chrome.declarativeNetRequest.getSessionRules()
     return sessionRules.find(r => r.id === id)
 }
 
 /**
- * 
- * @param {number} ruleId 
- * @param {string} addDomain 
- * @param {'allow' | 'upgrade'} type 
+ * Update a Smarter Encryption session rule, adding the given domain to the list of domains in the condition.
+ * @param {number} ruleId Session rule ID
+ * @param {string} addDomain Domain to add to this rule's requestDomains condition.
+ * @param {'allow' | 'upgrade'} type If the rule should be an allow or upgrade rule.
  */
 async function updateSeSessionRule (ruleId, addDomain, type) {
     const existingRule = await findSessionRuleFromId(ruleId)
@@ -607,11 +607,11 @@ async function updateSeSessionRule (ruleId, addDomain, type) {
     })
 }
 
-export async function addSmarterEncryptionSessionException(domain) {
+export async function addSmarterEncryptionSessionException (domain) {
     return updateSeSessionRule(HTTPS_SESSION_ALLOWLIST_RULE_ID, domain, 'allow')
 }
 
-export async function addSmarterEncryptionSessionRule(domain) {
+export async function addSmarterEncryptionSessionRule (domain) {
     return updateSeSessionRule(HTTPS_SESSION_UPGRADE_RULE_ID, domain, 'upgrade')
 }
 

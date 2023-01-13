@@ -1,4 +1,4 @@
-import { getFromSessionStorage, setToSessionStorage } from './wrapper.es6'
+const { getFromSessionStorage, setToSessionStorage } = require('./wrapper.es6')
 const sha1 = require('../shared-utils/sha1')
 // eslint-disable-next-line n/no-deprecated-api
 const punycode = require('punycode')
@@ -114,7 +114,7 @@ class HTTPSService {
 
         Array.from(this._cache.keys())
             .filter(key => this._cache.get(key).expires < now)
-            .forEach(key => this._cache.delete(key));
+            .forEach(key => this._cache.delete(key))
         setToSessionStorage(sessionStoreKey, this._cache.entries())
     }
 }
