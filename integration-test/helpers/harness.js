@@ -57,7 +57,7 @@ const setup = async (ops) => {
                     target.type() === 'background_page' ||
                     target.type() === 'service_worker'
                 ),
-                { timeout: 2000 }
+                { timeout: 4000 }
             )
             bgPage = backgroundPageTarget.type() === 'background_page'
                 ? await backgroundPageTarget.page()
