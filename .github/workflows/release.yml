@@ -14,10 +14,9 @@ jobs:
     if: "contains(github.event.head_commit.message, 'ci release')"
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js 16
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
           cache: 'npm'
 
       - name: Install dependencies
