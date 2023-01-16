@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: [18, 19]
+        version: [16, 18]
         target: ['release-firefox', 'release-chrome', 'release-chrome-mv3']
     steps:
       - uses: actions/checkout@v3
