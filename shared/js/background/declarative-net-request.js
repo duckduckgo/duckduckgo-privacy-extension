@@ -69,6 +69,10 @@ function generateEtagRule (id, etag) {
  * @returns {Promise<import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule|null>}
  */
 async function findExistingDynamicRule (desiredRuleId) {
+    // TODO: Pass a rule ID filter[1] (to avoid querying all rules) once
+    //       Chrome >= 111 is the minimum supported version.
+    //       See https://crbug.com/1379699
+    // 1 - https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#type-GetRulesFilter
     const existingRules = await chrome.declarativeNetRequest.getDynamicRules()
 
     for (const rule of existingRules) {
