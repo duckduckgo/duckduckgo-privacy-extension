@@ -1,5 +1,4 @@
 import browser from 'webextension-polyfill'
-import * as startup from './startup'
 import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
 import { breakageReportForTab } from './broken-site-report'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
@@ -29,17 +28,6 @@ export async function registeredContentScript (options, sender, req) {
     }
 
     return argumentsObject
-}
-
-export async function getDevMode () {
-    const dev = await browserWrapper.getFromSessionStorage('dev')
-    return dev || false
-}
-
-export async function getIntegrationTestMode () {
-    const integrationTest =
-        await browserWrapper.getFromSessionStorage('integrationTest')
-    return integrationTest || false
 }
 
 export function resetTrackersData () {
@@ -154,44 +142,33 @@ export function getTopBlockedByPages (options) {
     return Companies.getTopBlockedByPages(options)
 }
 
-// Click to load interactions
-export async function initClickToLoad (config, sender) {
+/**
+ * @typedef getClickToLoadStateResponse
+ * @property {Record<string,number>} clickToLoadClicks
+ *   Entity name to click count mapping. Click count being the number of times
+ *   the user has clicked to load content for the entity so far.
+ * @property {boolean} devMode
+ *   True if developer mode is enabled (e.g. this is a development build or a
+ *   test run), false if this is a release build.
+ * @property {boolean} youtubePreviewsEnabled
+ *   True if the user has enabled YouTube video previews, false otherwise.
+ */
+
+/**
+ * Returns the current state of the Click to Load feature.
+ * @returns {Promise<getClickToLoadStateResponse>}
+ */
+export async function getClickToLoadState () {
+    const devMode =
+        (await browserWrapper.getFromSessionStorage('dev')) || false
+
     await settings.ready()
-    const tab = tabManager.get({ tabId: sender.tab.id })
+    const clickToLoadClicks =
+        (await settings.getSetting('clickToLoadClicks')) || {}
+    const youtubePreviewsEnabled =
+        (await settings.getSetting('youtubePreviewsEnabled')) || false
 
-    // Remove first-party entries.
-    await startup.ready()
-
-    // Overwrite the content-scope-scripts Click to Load configuration with the
-    // legacy configuration for the integration tests.
-    // TODO: When the legacy configuration is finally removed, this should be
-    //       adjusted.
-    if (await getDevMode() && await getIntegrationTestMode()) {
-        config = tdsStorage.ClickToLoadConfig
-    }
-
-    const siteUrlSplit = tab.site.domain.split('.')
-    const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
-    if (websiteOwner) {
-        delete config[websiteOwner]
-    }
-
-    // Determine whether to show one time messages or simplified messages
-    for (const entity of Object.keys(config)) {
-        const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-        const maxClicks = config[entity].clicksBeforeSimpleVersion || 3
-        if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
-            config[entity].simpleVersion = true
-        }
-    }
-
-    // if the current site is on the social exception list, remove it from the config.
-    let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
-    if (excludedNetworks) {
-        excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
-        excludedNetworks.forEach(e => delete config[e.entity])
-    }
-    return config
+    return { clickToLoadClicks, devMode, youtubePreviewsEnabled }
 }
 
 export async function getYouTubeVideoDetails (videoURL) {
@@ -226,21 +203,12 @@ export function getCurrentTab () {
     return utils.getCurrentTab()
 }
 
-export async function enableSocialTracker (data, sender) {
+export async function unblockClickToLoadContent (data, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id })
     const entity = data.entity
 
     if (browserWrapper.getManifestVersion() === 3) {
-        let { action } = data
-
-        // TODO: Remove this workaround once the corresponding
-        //       content-scope-scripts code is fixed. So far, the action is
-        //       hardcoded to "block-ctl-fb" no matter the entity.
-        if (data.entity === 'Youtube' && action === 'block-ctl-fb') {
-            action = 'block-ctl-yt'
-        }
-
-        await enableInverseRules(action, sender.tab.id)
+        await enableInverseRules(data.action, sender.tab.id)
     }
     tab.site.clickToLoad.push(entity)
 
@@ -282,10 +250,6 @@ export async function updateSetting ({ name, value }) {
 export async function getSetting ({ name }) {
     await settings.ready()
     return settings.getSetting(name)
-}
-
-export function getYoutubePreviewsEnabled () {
-    return getSetting({ name: 'youtubePreviewsEnabled' })
 }
 
 const {

@@ -1,4 +1,11 @@
 {
+    "globalThis.dbg.tds.config.features.clickToPlay": {
+        "state": "enabled",
+        "exceptions": [ ],
+        "settings": {
+            "Youtube": { }
+        }
+    },
     "globalThis.dbg.tds.ClickToLoadConfig.Youtube": {
         "domains": [
             "youtube.com",
