@@ -31,6 +31,11 @@ class HTTPSService {
             expires: expiryDate,
             data
         })
+        this._persistCache()
+    }
+
+    _persistCache() {
+        // put the cache in session storage, so when the background restarts (i.e. on MV3), we can reload the previous cache state.
         setToSessionStorage(sessionStoreKey, [...this._cache.entries()])
     }
 
@@ -106,7 +111,7 @@ class HTTPSService {
 
     clearCache () {
         this._cache.clear()
-        setToSessionStorage(sessionStoreKey, this._cache.entries())
+        this._persistCache()
     }
 
     clearExpiredCache () {
@@ -115,7 +120,7 @@ class HTTPSService {
         Array.from(this._cache.keys())
             .filter(key => this._cache.get(key).expires < now)
             .forEach(key => this._cache.delete(key))
-        setToSessionStorage(sessionStoreKey, this._cache.entries())
+        this._persistCache()
     }
 }
 
