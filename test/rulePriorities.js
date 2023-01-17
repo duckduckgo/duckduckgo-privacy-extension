@@ -44,6 +44,7 @@ const {
 
 describe('Rule Priorities', () => {
     it('should have an up to date overview of all rule priorities', () => {
+        assert.equal(SMARTER_ENCRYPTION_PRIORITY, 5000)
         assert.equal(TRACKER_BLOCKING_BASELINE_PRIORITY, 10000)
         assert.equal(TRACKER_BLOCKING_CEILING_PRIORITY, 19999)
         assert.equal(TRACKER_ALLOWLIST_BASELINE_PRIORITY, 20000)
@@ -54,7 +55,6 @@ describe('Rule Priorities', () => {
         assert.equal(GPC_HEADER_PRIORITY, 40000)
         assert.equal(TRACKING_PARAM_PRIORITY, 40000)
         assert.equal(COOKIE_PRIORITY, 40000)
-        assert.equal(SMARTER_ENCRYPTION_PRIORITY, 100000)
         assert.equal(UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY, 1000000)
         assert.equal(SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY, 1000000)
         assert.equal(USER_ALLOWLISTED_PRIORITY, 1000000)
@@ -71,56 +71,54 @@ describe('Rule Priorities', () => {
         assert.ok(TRACKER_BLOCKING_BASELINE_PRIORITY < TRACKER_BLOCKING_CEILING_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY < TRACKER_ALLOWLIST_CEILING_PRIORITY)
 
-        // Tracker allowlist should take priority over tracker blocking, but not
+        // Smarter encryption is lower priority than all other rules.
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < TRACKER_BLOCKING_CEILING_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < TRACKER_ALLOWLIST_CEILING_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < AD_ATTRIBUTION_POLICY_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < CONTENT_BLOCKING_ALLOWLIST_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < GPC_HEADER_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < TRACKING_PARAM_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < USER_ALLOWLISTED_PRIORITY)
+
+        // Tracker allowlist should take priority over tracker blocking and smarter encryption, but not
         // other features/allowlists.
+        assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY > SMARTER_ENCRYPTION_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY > TRACKER_BLOCKING_CEILING_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < AD_ATTRIBUTION_POLICY_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < CONTENT_BLOCKING_ALLOWLIST_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < GPC_HEADER_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < TRACKING_PARAM_PRIORITY)
-        assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < SMARTER_ENCRYPTION_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < USER_ALLOWLISTED_PRIORITY)
 
         // Ad attribution allowlisting and the contentBlocking allowlist should
-        // take priority over tracker blocking and the tracker allowlist, but
+        // take priority over tracker blocking, the tracker allowlist and smarter encryption, but
         // not other features/allowlists.
+        assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY > SMARTER_ENCRYPTION_PRIORITY)
         assert.equal(AD_ATTRIBUTION_POLICY_PRIORITY, CONTENT_BLOCKING_ALLOWLIST_PRIORITY)
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY > TRACKER_BLOCKING_CEILING_PRIORITY)
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY > TRACKER_ALLOWLIST_CEILING_PRIORITY)
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY < GPC_HEADER_PRIORITY)
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY < TRACKING_PARAM_PRIORITY)
-        assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY < SMARTER_ENCRYPTION_PRIORITY)
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY < UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY < SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
         assert.ok(AD_ATTRIBUTION_POLICY_PRIORITY < USER_ALLOWLISTED_PRIORITY)
 
         // Tracking parameter protection, AMP protection  and GPC should take
-        // priority overtracker blocking, the tracker allowlist and the
+        // priority overtracker blocking, the tracker allowlist, smarter encryption and the
         // contentBlocking allowlist, but not over the other features/allowlists.
+        assert.ok(TRACKING_PARAM_PRIORITY > SMARTER_ENCRYPTION_PRIORITY)
         assert.equal(TRACKING_PARAM_PRIORITY, AMP_PROTECTION_PRIORITY)
         assert.equal(TRACKING_PARAM_PRIORITY, GPC_HEADER_PRIORITY)
         assert.ok(TRACKING_PARAM_PRIORITY > TRACKER_BLOCKING_CEILING_PRIORITY)
         assert.ok(TRACKING_PARAM_PRIORITY > TRACKER_ALLOWLIST_CEILING_PRIORITY)
         assert.ok(TRACKING_PARAM_PRIORITY > CONTENT_BLOCKING_ALLOWLIST_PRIORITY)
-        assert.ok(TRACKING_PARAM_PRIORITY < SMARTER_ENCRYPTION_PRIORITY)
         assert.ok(TRACKING_PARAM_PRIORITY < UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
         assert.ok(TRACKING_PARAM_PRIORITY < SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
         assert.ok(TRACKING_PARAM_PRIORITY < USER_ALLOWLISTED_PRIORITY)
-
-        // Smarter encryption should take priority over most features and
-        // allowlists, except for the unprotectedTemporary allowlist, the
-        // exception for ServiceWorker initiated requests and user allowlisting.
-        assert.ok(SMARTER_ENCRYPTION_PRIORITY > TRACKER_BLOCKING_CEILING_PRIORITY)
-        assert.ok(SMARTER_ENCRYPTION_PRIORITY > TRACKER_ALLOWLIST_CEILING_PRIORITY)
-        assert.ok(SMARTER_ENCRYPTION_PRIORITY > AD_ATTRIBUTION_POLICY_PRIORITY)
-        assert.ok(SMARTER_ENCRYPTION_PRIORITY > CONTENT_BLOCKING_ALLOWLIST_PRIORITY)
-        assert.ok(SMARTER_ENCRYPTION_PRIORITY > GPC_HEADER_PRIORITY)
-        assert.ok(SMARTER_ENCRYPTION_PRIORITY > TRACKING_PARAM_PRIORITY)
-        assert.ok(SMARTER_ENCRYPTION_PRIORITY < UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
-        assert.ok(SMARTER_ENCRYPTION_PRIORITY < SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
-        assert.ok(SMARTER_ENCRYPTION_PRIORITY < USER_ALLOWLISTED_PRIORITY)
 
         // The unprotectedTemporary allowlist, exception for ServiceWorker
         // initiated requests and the user allowlist should take priority over

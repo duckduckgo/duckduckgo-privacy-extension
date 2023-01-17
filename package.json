@@ -4,6 +4,7 @@
     "description": "Scripts to generate declarativeNetRequest rulesets for the DuckDuckGo Privacy Essentials extension",
     "license": "Apache-2.0",
     "repository": "duckduckgo/ddg2dnr",
+    "bin": "cli.js",
     "devDependencies": {
         "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.1",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#c179445",
