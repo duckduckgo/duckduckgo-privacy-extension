@@ -143,5 +143,21 @@ module.exports = {
     platform: {
         name: 'extension'
     },
-    supportedLocales: ['cimode', 'en'] // cimode is for testing
+    supportedLocales: ['cimode', 'en'], // cimode is for testing
+    trackerStats: /** @type {const} */({
+        allowedOrigin: 'https://eun-sosbourne1.duckduckgo.com',
+        allowedPathname: 'tracker-stats.html',
+        redirectTarget: 'html/tracker-stats.html',
+        events: {
+            incoming: {
+                newTabPage_readInitial: 'newTabPage_readInitial',
+                // newTabPage_reset: 'newTabPage_reset',
+                newTabPage_heartbeat: 'newTabPage_heartbeat'
+            },
+            outgoing: {
+                newTabPage_data: 'newTabPage_data',
+                newTabPage_disconnect: 'newTabPage_disconnect'
+            }
+        }
+    })
 }

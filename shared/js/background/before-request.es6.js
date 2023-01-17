@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill'
+import EventEmitter2 from 'eventemitter2'
 const tldts = require('tldts')
 
 const utils = require('./utils.es6')
@@ -17,6 +18,12 @@ const {
     trackingParametersStrippingEnabled
 } = require('./url-parameters.es6')
 const ampProtection = require('./amp-protection.es6')
+
+/**
+ * For publishing tracking events that other modules might care about
+ * @type {EventEmitter2}
+ */
+export const emitter = new EventEmitter2()
 
 function buildResponse (url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -326,6 +333,9 @@ function blockHandleResponse (thisTab, requestData) {
         if (['block', 'redirect'].includes(tracker.action)) {
             // @ts-ignore
             Companies.add(tracker.tracker.owner)
+
+            // publish this event
+            emitter.emit('tracker-blocked', { trackerData: tracker })
 
             console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                         // @ts-ignore

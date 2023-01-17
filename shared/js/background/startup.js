@@ -1,4 +1,7 @@
 import browser from 'webextension-polyfill'
+import { NewTabTrackerStats } from './newtab-tracker-stats'
+import { TrackerStats } from './classes/tracker-stats'
+const utils = require('./utils.es6')
 const browserWrapper = require('./wrapper.es6')
 const Companies = require('./companies.es6')
 const experiment = require('./experiments.es6')
@@ -38,6 +41,25 @@ export async function onStartup () {
     }
 
     Companies.buildFromStorage()
+
+    /**
+     * On none-mozilla browsers, try to initiate the `NewTabTrackerStats` feature
+     */
+    if (utils.getBrowserName() === 'chrome') {
+        try {
+            // build up dependencies
+            const trackerStats = new TrackerStats()
+            const newTabTrackerStats = new NewTabTrackerStats(trackerStats)
+
+            // restore from storage first
+            await newTabTrackerStats.restoreFromStorage()
+
+            // now setup extension-listeners
+            newTabTrackerStats.register()
+        } catch (e) {
+            console.warn('an error occurred setting up TrackerStats')
+        }
+    }
 
     // fetch alias if needed
     const userData = settings.getSetting('userData')

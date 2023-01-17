@@ -403,6 +403,14 @@ browser.runtime.onMessage.addListener((req, sender) => {
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req))
     }
 
+    /**
+     * Handle every message prefixed with `newTabPage_`
+     */
+    if (req.messageType && req.messageType.startsWith('newTabPage_')) {
+        // handled elsewhere
+        return
+    }
+
     // TODO clean up legacy onboarding messaging
     if (browserName === 'chrome') {
         if (req === 'healthCheckRequest' || req === 'rescheduleCounterMessagingRequest') {
