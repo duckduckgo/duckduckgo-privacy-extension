@@ -12,7 +12,7 @@ import {
     generateTdsRuleset
 } from '@duckduckgo/ddg2dnr/lib/tds'
 import {
-    createSmarterEncryptionExceptionRule
+    createSmarterEncryptionTemporaryRule
 } from '@duckduckgo/ddg2dnr/lib/smarterEncryption'
 import {
     generateDNRRule
@@ -600,7 +600,7 @@ async function updateSeSessionRule (ruleId, addDomain, type) {
         return
     }
     ruleDomains.push(addDomain)
-    const { rule } = createSmarterEncryptionExceptionRule(ruleDomains, ruleId, type)
+    const { rule } = createSmarterEncryptionTemporaryRule(ruleDomains, type, ruleId)
     await chrome.declarativeNetRequest.updateSessionRules({
         removeRuleIds: [ruleId],
         addRules: [rule]
