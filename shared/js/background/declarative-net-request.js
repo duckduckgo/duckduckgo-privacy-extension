@@ -39,15 +39,16 @@ const ruleIdRangeByConfigName = {
 // only require one declarativeNetRequest rule, so hardcode the rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001
 export const ATB_PARAM_RULE_ID = 20003
+// Valid dynamic rule IDs - others will be removed on extension start
 const RESERVED_RULE_IDS = [
     USER_ALLOWLIST_RULE_ID,
     ATB_PARAM_RULE_ID
 ]
 
 // Rule IDs for static session rules
-export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 100
-export const HTTPS_SESSION_ALLOWLIST_RULE_ID = 101
-export const HTTPS_SESSION_UPGRADE_RULE_ID = 102
+export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
+export const HTTPS_SESSION_ALLOWLIST_RULE_ID = 20004
+export const HTTPS_SESSION_UPGRADE_RULE_ID = 20005
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
