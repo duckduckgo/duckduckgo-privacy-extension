@@ -31,7 +31,7 @@ describe('install workflow', () => {
             // if it never does, jasmine timeout will kick in
             while (!postInstallOpened) {
                 const urls = await Promise.all(browser.targets().map(target => target.url()))
-                postInstallOpened = urls.some(url => url.includes('duckduckgo.com/app?post=1'))
+                postInstallOpened = urls.some(url => url.includes('duckduckgo.com/extension-success'))
                 await backgroundWait.forTimeout(bgPage, 100)
             }
 
