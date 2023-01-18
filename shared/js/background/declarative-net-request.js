@@ -69,16 +69,23 @@ function generateEtagRule (id, etag) {
 }
 
 /**
- * Find an existing dynamic declarativeNetRequest rule with the given rule ID
+ * Find an existing session or dynamic declarativeNetRequest rule with the given rule ID
  * and return it.
  * @param {number} desiredRuleId
  * @returns {Promise<import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule|null>}
  */
-async function findExistingDynamicRule (desiredRuleId) {
+async function findExistingSessionOrDynamicRule (desiredRuleId) {
     // TODO: Pass a rule ID filter[1] (to avoid querying all rules) once
     //       Chrome >= 111 is the minimum supported version.
     //       See https://crbug.com/1379699
     // 1 - https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#type-GetRulesFilter
+
+    const sessionRules = await chrome.declarativeNetRequest.getSessionRules()
+    const matchingSessionRule = sessionRules.find(r => r.id === desiredRuleId)
+    if (matchingSessionRule) {
+        return matchingSessionRule
+    }
+
     const existingRules = await chrome.declarativeNetRequest.getDynamicRules()
 
     for (const rule of existingRules) {
@@ -123,7 +130,7 @@ async function configRulesNeedUpdate (configName, expectedState) {
 
     // Find the etag rule for this configuration.
     const [etagRuleId] = ruleIdRangeByConfigName[configName]
-    const existingEtagRule = await findExistingDynamicRule(etagRuleId)
+    const existingEtagRule = await findExistingSessionOrDynamicRule(etagRuleId)
 
     // If none exists, the rules definitely need to be updated.
     if (!existingEtagRule) {
@@ -471,7 +478,7 @@ export async function toggleUserAllowlistDomain (domain, enable) {
     }
 
     // Figure out the correct set of allowlisted domains.
-    const existingRule = await findExistingDynamicRule(USER_ALLOWLIST_RULE_ID)
+    const existingRule = await findExistingSessionOrDynamicRule(USER_ALLOWLIST_RULE_ID)
     const allowlistedDomains = new Set(
         existingRule ? existingRule.condition.requestDomains : []
     )
@@ -578,23 +585,13 @@ export function flushSessionRules () {
 }
 
 /**
- * Find the session rule with the given ID, if it exists.
- * @param {number} id Rule ID
- * @returns {Promise<chrome.declarativeNetRequest.Rule | undefined>}
- */
-async function findSessionRuleFromId (id) {
-    const sessionRules = await chrome.declarativeNetRequest.getSessionRules()
-    return sessionRules.find(r => r.id === id)
-}
-
-/**
  * Update a Smarter Encryption session rule, adding the given domain to the list of domains in the condition.
  * @param {number} ruleId Session rule ID
  * @param {string} addDomain Domain to add to this rule's requestDomains condition.
  * @param {'allow' | 'upgrade'} type If the rule should be an allow or upgrade rule.
  */
 async function updateSeSessionRule (ruleId, addDomain, type) {
-    const existingRule = await findSessionRuleFromId(ruleId)
+    const existingRule = await findExistingSessionOrDynamicRule(ruleId)
     const ruleDomains = existingRule?.condition.requestDomains || []
     if (ruleDomains.includes(addDomain)) {
         return
