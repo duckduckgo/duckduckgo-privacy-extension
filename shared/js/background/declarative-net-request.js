@@ -590,7 +590,7 @@ export function flushSessionRules () {
  * @param {string} addDomain Domain to add to this rule's requestDomains condition.
  * @param {'allow' | 'upgrade'} type If the rule should be an allow or upgrade rule.
  */
-async function updateSeSessionRule (ruleId, addDomain, type) {
+async function updateSmarterEncryptionSessionRule (ruleId, addDomain, type) {
     const existingRule = await findExistingSessionOrDynamicRule(ruleId)
     const ruleDomains = existingRule?.condition.requestDomains || []
     if (ruleDomains.includes(addDomain)) {
@@ -605,11 +605,11 @@ async function updateSeSessionRule (ruleId, addDomain, type) {
 }
 
 export async function addSmarterEncryptionSessionException (domain) {
-    return updateSeSessionRule(HTTPS_SESSION_ALLOWLIST_RULE_ID, domain, 'allow')
+    return updateSmarterEncryptionSessionRule(HTTPS_SESSION_ALLOWLIST_RULE_ID, domain, 'allow')
 }
 
 export async function addSmarterEncryptionSessionRule (domain) {
-    return updateSeSessionRule(HTTPS_SESSION_UPGRADE_RULE_ID, domain, 'upgrade')
+    return updateSmarterEncryptionSessionRule(HTTPS_SESSION_UPGRADE_RULE_ID, domain, 'upgrade')
 }
 
 if (browserWrapper.getManifestVersion() === 3) {
