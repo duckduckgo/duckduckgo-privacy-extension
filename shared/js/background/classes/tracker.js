@@ -40,6 +40,12 @@ export class Tracker {
      * @param {string} url
      */
     addTrackerUrl (t, tabUrl, baseDomain, url) {
+
+        // don't consider first-party requests at all
+        if (t.sameBaseDomain) {
+            return;
+        }
+
         this.count += 1
 
         // make a key from `fullTrackerDomain` + action to ensure we only deliver 1 entry per domain + status.
