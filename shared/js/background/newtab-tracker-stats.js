@@ -1,17 +1,9 @@
-import constants from '../../data/constants'
 import browser from 'webextension-polyfill'
+import constants from '../../data/constants'
 import * as browserWrapper from './wrapper.es6.js'
 import { emitter, TrackerBlockedEvent } from './before-request.es6.js'
 import tdsStorage from './storage/tds.es6'
 const { incoming, outgoing } = constants.trackerStats.events
-
-/**
- * @typedef {object} TrackerStatsDisplay
- * @property {number} totalCount
- * @property {'install-time'} totalPeriod
- * @property {'last-hour'} trackerCompaniesPeriod
- * @property {{displayName: string, count: number, favicon: string}[]} trackerCompanies
- */
 
 /**
  * The extension-specific interface to tracker stats.
@@ -230,10 +222,12 @@ export class NewTabTrackerStats {
         if (this._debug) {
             console.info(`sending new tab data because: ${reason}`)
         }
-        chrome.runtime.sendMessage({
+        /** @type {import("zod").infer<typeof import("../newtab/schema").dataMessage>} */
+        const msg = {
             messageType: outgoing.newTabPage_data,
             options: this.toDisplayData()
-        })
+        }
+        chrome.runtime.sendMessage(msg)
     }
 
     /**
@@ -257,7 +251,7 @@ export class NewTabTrackerStats {
      *
      * @param {number} maxCount
      * @param {number} [now] - optional timestamp to use in comparisons
-     * @returns {TrackerStatsDisplay}
+     * @returns {import("zod").infer<typeof import("../newtab/schema").dataFormatSchema>}
      */
     toDisplayData (maxCount = 10, now = Date.now()) {
         // access the entries once they are sorted and grouped
