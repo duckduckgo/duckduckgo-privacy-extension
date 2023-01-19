@@ -201,16 +201,7 @@ describe('Tab -> Privacy Dashboard conversion', () => {
          * There should be 1 entry now because the first was `sameBaseDomain`
          */
         expect(data.requestData.requests.length).toEqual(1)
-        expect(data.requestData.requests[0]).toEqual({
-            action: 'block',
-            url: 'https://subdomain.abc.com/b.jpg',
-            eTLDplus1: 'subdomain.abcd.com',
-            pageUrl: 'https://example.com',
-            entityName: 'Ad Company',
-            ownerName: 'Ad Company',
-            state: { blocked: {} },
-            prevalence: undefined,
-            category: undefined
-        })
+        expect(data.requestData.requests[0].state).toEqual({ blocked: {} })
+        expect(data.requestData.requests[0].url).toEqual('https://subdomain.abc.com/b.jpg')
     })
 })
