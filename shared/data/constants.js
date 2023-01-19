@@ -145,7 +145,7 @@ module.exports = {
     },
     supportedLocales: ['cimode', 'en'], // cimode is for testing
     trackerStats: /** @type {const} */({
-        allowedOrigin: 'https://eun-sosbourne1.duckduckgo.com',
+        allowedOrigin: 'https://use-devtesting13.duckduckgo.com',
         allowedPathname: 'tracker-stats.html',
         redirectTarget: 'html/tracker-stats.html',
         /** @type {ReadonlyArray<string>} */
