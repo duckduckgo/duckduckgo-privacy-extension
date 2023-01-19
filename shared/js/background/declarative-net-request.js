@@ -73,30 +73,19 @@ function generateEtagRule (id, etag) {
  * Find an existing session or dynamic declarativeNetRequest rule with the given rule ID
  * and return it.
  * @param {number} desiredRuleId
- * @returns {Promise<import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule|null>}
+ * @returns {Promise<chrome.declarativeNetRequest.Rule | undefined>}
  */
-async function findExistingSessionOrDynamicRule (desiredRuleId) {
+async function findExistingRule (isSessionRule = false, desiredRuleId) {
     // TODO: Pass a rule ID filter[1] (to avoid querying all rules) once
     //       Chrome >= 111 is the minimum supported version.
     //       See https://crbug.com/1379699
     // 1 - https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#type-GetRulesFilter
-
-    const sessionRules = await chrome.declarativeNetRequest.getSessionRules()
-    const matchingSessionRule = sessionRules.find(r => r.id === desiredRuleId)
-    if (matchingSessionRule) {
-        return matchingSessionRule
-    }
-
-    const existingRules = await chrome.declarativeNetRequest.getDynamicRules()
-
-    for (const rule of existingRules) {
-        if (rule.id === desiredRuleId) {
-            return rule
-        }
-    }
-
-    return null
+    const rules = await chrome.declarativeNetRequest[isSessionRule ? 'getSessionRules' : 'getDynamicRules']()
+    return rules.find(r => r.id === desiredRuleId)
 }
+
+const findExistingDynamicRule = findExistingRule.bind(null, false)
+const findExistingSessionRule = findExistingRule.bind(null, true)
 
 /**
  * Check if the declarativeNetRequest rules for a configuration need to be
@@ -131,7 +120,7 @@ async function configRulesNeedUpdate (configName, expectedState) {
 
     // Find the etag rule for this configuration.
     const [etagRuleId] = ruleIdRangeByConfigName[configName]
-    const existingEtagRule = await findExistingSessionOrDynamicRule(etagRuleId)
+    const existingEtagRule = await findExistingDynamicRule(etagRuleId)
 
     // If none exists, the rules definitely need to be updated.
     if (!existingEtagRule) {
@@ -479,7 +468,7 @@ export async function toggleUserAllowlistDomain (domain, enable) {
     }
 
     // Figure out the correct set of allowlisted domains.
-    const existingRule = await findExistingSessionOrDynamicRule(USER_ALLOWLIST_RULE_ID)
+    const existingRule = await findExistingDynamicRule(USER_ALLOWLIST_RULE_ID)
     const allowlistedDomains = new Set(
         existingRule ? existingRule.condition.requestDomains : []
     )
@@ -592,7 +581,7 @@ export function flushSessionRules () {
  * @param {'allow' | 'upgrade'} type If the rule should be an allow or upgrade rule.
  */
 async function updateSmarterEncryptionSessionRule (ruleId, addDomain, type) {
-    const existingRule = await findExistingSessionOrDynamicRule(ruleId)
+    const existingRule = await findExistingSessionRule(ruleId)
     const ruleDomains = existingRule?.condition.requestDomains || []
     if (ruleDomains.includes(addDomain)) {
         return
