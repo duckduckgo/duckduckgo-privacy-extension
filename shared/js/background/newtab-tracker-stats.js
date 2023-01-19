@@ -339,8 +339,10 @@ export class NewTabTrackerStats {
 export function redirectIframeForTrackerStatsMV2 (details) {
     // NOTE: This part is just for internal testing, it will be removed once the PR is approved
     if (details.url === chrome.runtime.getURL('html/redirect.html')) {
+        const url = new URL('/chrome_newtab', constants.trackerStats.allowedOrigin)
+        url.searchParams.set('ntp_test', '1')
         return {
-            redirectUrl: 'https://eun-sosbourne1.duckduckgo.com/chrome_newtab?ntp_test'
+            redirectUrl: url.toString()
         }
     }
     if (!details.url.endsWith('tracker-stats.html')) {
