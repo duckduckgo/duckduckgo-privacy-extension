@@ -34,7 +34,7 @@ class HTTPSService {
         this._persistCache()
     }
 
-    _persistCache() {
+    _persistCache () {
         // put the cache in session storage, so when the background restarts (i.e. on MV3), we can reload the previous cache state.
         setToSessionStorage(sessionStoreKey, [...this._cache.entries()])
     }
