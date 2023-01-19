@@ -40,10 +40,9 @@ export class Tracker {
      * @param {string} url
      */
     addTrackerUrl (t, tabUrl, baseDomain, url) {
-
         // don't consider first-party requests at all
         if (t.sameBaseDomain) {
-            return;
+            return
         }
 
         this.count += 1
