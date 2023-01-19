@@ -43,9 +43,9 @@ export async function onStartup () {
     Companies.buildFromStorage()
 
     /**
-     * in Chrome only (for now), try to initiate the `NewTabTrackerStats` feature
+     * in Chrome only (and MV2 for now), try to initiate the `NewTabTrackerStats` feature
      */
-    if (utils.getBrowserName() === 'chrome') {
+    if (utils.getBrowserName() === 'chrome' && manifestVersion === 2) {
         try {
             // build up dependencies
             const trackerStats = new TrackerStats()

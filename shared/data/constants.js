@@ -152,8 +152,6 @@ module.exports = {
         excludedCompanies: ['ExoClick'],
         events: {
             incoming: {
-                newTabPage_readInitial: 'newTabPage_readInitial',
-                // newTabPage_reset: 'newTabPage_reset',
                 newTabPage_heartbeat: 'newTabPage_heartbeat'
             },
             outgoing: {

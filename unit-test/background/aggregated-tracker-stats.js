@@ -1,27 +1,12 @@
-const z = require('zod')
 const { NewTabTrackerStats } = require('../../shared/js/background/newtab-tracker-stats')
 const { TrackerStats } = require('../../shared/js/background/classes/tracker-stats')
 const browserWrapper = require('../../shared/js/background/wrapper.es6')
 const constants = require('../../shared/data/constants')
 const testTDS = require('../data/tds.json')
+const { dataFormatSchema } = require('../../shared/js/newtab/schema')
 
 const SEC = 1000
 const MIN = SEC * 60
-
-// This helps to validate that .toDisplayData() on instances of TrackerStats will produce
-// a well-known set of data to be sent to tabs
-const jsonSchema = z.object({
-    totalCount: z.number(),
-    totalPeriod: z.enum(['install-time']),
-    trackerCompaniesPeriod: z.enum(['last-hour']),
-    trackerCompanies: z.array(
-        z.object({
-            displayName: z.string(),
-            count: z.number(),
-            favicon: z.string()
-        })
-    )
-})
 
 describe('NewTabTrackerStats', () => {
     it('produces a filtered output for multiple companies', () => {
@@ -41,7 +26,7 @@ describe('NewTabTrackerStats', () => {
 
         // this will throw (and cause the test to fail) if the
         // data has deviated from the schema defined here
-        jsonSchema.parse(output)
+        dataFormatSchema.parse(output)
 
         // just some manual checks on the values too
         expect(output.totalCount).toEqual(4)
@@ -60,7 +45,7 @@ describe('NewTabTrackerStats', () => {
 
         // produce the data as consumers would
         const output = newtab.toDisplayData(10, now)
-        jsonSchema.parse(output)
+        dataFormatSchema.parse(output)
 
         expect(output.totalCount).toEqual(3)
 
@@ -98,7 +83,7 @@ describe('NewTabTrackerStats', () => {
 
         // produce the data as consumers would
         const output = newtab.toDisplayData(5, now)
-        jsonSchema.parse(output)
+        dataFormatSchema.parse(output)
 
         // The `A` and `B` should be grouped into the `Other` category
         expect(output).toEqual({
@@ -196,16 +181,6 @@ describe('incoming events', () => {
         // simulate a valid incoming event
         newtab.handleIncomingEvent({
             messageType: constants.trackerStats.events.incoming.newTabPage_heartbeat
-        })
-
-        // allow for the debouncing on send
-        jasmine.clock().tick(201)
-        expect(sendSpy).toHaveBeenCalledTimes(1)
-    })
-    it('should respond to readInitial', () => {
-        // simulate a valid incoming event
-        newtab.handleIncomingEvent({
-            messageType: constants.trackerStats.events.incoming.newTabPage_readInitial
         })
 
         // allow for the debouncing on send

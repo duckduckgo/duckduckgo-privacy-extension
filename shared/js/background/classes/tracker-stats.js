@@ -5,7 +5,7 @@ import z from 'zod'
  * we have blocked, grouped by the owner's display name.
  */
 export class TrackerStats {
-    companiesMaxAgeMs = 1000 * 60 * 60
+    maxAgeMs = 1000 * 60 * 60 // 1hr
     /**
      * A time-based mechanism
      * @type {Map<string, number[]>}
@@ -17,13 +17,14 @@ export class TrackerStats {
      */
     totalCount = 0
     /**
-     * Given a 'displayName', increment the companies running total for the
-     * last hour + increment the 'since-install-time' value
+     * Given a key eg: 'displayName', store current timestamp +
+     * increment the 'since-install-time' value
+     *
      * @param {string} key
      * @param {number} [timestamp] - optional timestamp
      */
     increment (key, timestamp = Date.now()) {
-        // ensure we always have an array for this incoming name
+        // ensure we always have an array for this incoming key
         const prev = this.entries.get(key) || []
 
         // now add this entry to the end
@@ -55,12 +56,14 @@ export class TrackerStats {
             // in response to things like timed-alarm.
             const filteredTimestamps = timestamps.filter(previousTimestamp => {
                 const delta = now - previousTimestamp
-                return delta <= this.companiesMaxAgeMs
+                return delta <= this.maxAgeMs
             })
 
+            // evict the entry entirely if there are no valid timestamps
             if (filteredTimestamps.length === 0) {
                 this.entries.delete(key)
             } else {
+                // otherwise just re-set this entry to have only valid ones.
                 this.entries.set(key, filteredTimestamps)
             }
         }
@@ -87,7 +90,7 @@ export class TrackerStats {
      * }
      *
      * Where 'overflow' represents the number of requests for companies
-     * outside of the `maxCount`.
+     * outside the `maxCount`.
      *
      * @param {number} [maxCount] - how many companies to display
      * @param {number} [now] - an optional timestamp, defaults to call-time
@@ -105,7 +108,7 @@ export class TrackerStats {
             let count = 0
             for (const timestamp of timestamps) {
                 const delta = now - timestamp
-                if (delta <= this.companiesMaxAgeMs) {
+                if (delta <= this.maxAgeMs) {
                     count += 1
                 }
             }
@@ -117,18 +120,17 @@ export class TrackerStats {
         // sort them, so that the highest count's are first
         const sorted = stats.sort((a, b) => b.count - a.count)
 
-        // the UI will only render 9 + 'Other', so we take the first 9 here
-        const outputList = sorted.slice(0, maxCount)
+        // now it's sorted, we need to partition the array based on the maxCount
+        const results = sorted.slice(0, maxCount)
 
-        // everything after is classes as 'Other'
-        const other = sorted.slice(maxCount)
-
-        // aggregate the count for all in the 'Other' category
-        const otherTotal = other.reduce((sum, item) => sum + item.count, 0)
+        // everything else will make up the 'overflow' count that can be used to
+        // display a category like 'Other'
+        const overflowItems = sorted.slice(maxCount)
+        const overflow = overflowItems.reduce((sum, item) => sum + item.count, 0)
 
         return {
-            results: outputList,
-            overflow: otherTotal
+            results,
+            overflow
         }
     }
 
@@ -138,7 +140,7 @@ export class TrackerStats {
      * We are very strict about the incoming data here, mostly treating
      * it as untrusted.
      *
-     * It should be in the format:
+     * It should be in this format:
      *
      * {
      *     "totalCount": 12,
@@ -147,6 +149,8 @@ export class TrackerStats {
      *         "Facebook: [1673438914778, 1673438914778, 1673438914792]
      *     }
      * }
+     *
+     * This is normally produced by `.serialize()` on this instance (see below)
      *
      * @param {object} params
      * @param {number} params.totalCount
@@ -163,7 +167,7 @@ export class TrackerStats {
         // try to validate the data
         const result = storageSchema.safeParse(params)
 
-        // if any errors occur, bail and don't use this data at all
+        // if any errors occur, bail and don't use this data at all (start a fresh)
         if (!result.success) {
             console.warn('could not accept the incoming data because of schema errors', result.error.errors.length)
         } else {

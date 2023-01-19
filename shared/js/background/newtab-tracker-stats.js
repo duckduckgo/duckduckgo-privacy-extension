@@ -1,7 +1,7 @@
 import constants from '../../data/constants'
 import browser from 'webextension-polyfill'
 import * as browserWrapper from './wrapper.es6.js'
-import { emitter } from './before-request.es6.js'
+import { emitter, TrackerBlockedEvent } from './before-request.es6.js'
 import tdsStorage from './storage/tds.es6'
 const { incoming, outgoing } = constants.trackerStats.events
 
@@ -16,7 +16,7 @@ const { incoming, outgoing } = constants.trackerStats.events
 /**
  * The extension-specific interface to tracker stats.
  *
- * This class handles all interaction with the extension.
+ * This class handles all interaction with the extension like event handlers, alarms etc.
  *
  * Example:
  *
@@ -26,7 +26,6 @@ const { incoming, outgoing } = constants.trackerStats.events
  *
  * await newtab.restoreFromStorage();
  * newtab.register()
- *
  * ```
  */
 export class NewTabTrackerStats {
@@ -61,25 +60,22 @@ export class NewTabTrackerStats {
     }
 
     /**
-     * Register *all* communications with the extension here
+     * Register *all* communications with the extension here.
+     *
+     * The purpose of this method is to co-locate all extension handlers in a single
+     * place for this module.
      */
     register () {
-        let additionalOptions = []
-        if (browserWrapper.getManifestVersion() === 2) {
-            additionalOptions = ['blocking']
-        }
-
         /**
          * This listener will redirect the request for tracker-stats.html
          * on the new tab page to our own HTML file under `web_accessible_resources`
          */
         browser.webRequest.onBeforeRequest.addListener(redirectIframeForTrackerStatsMV2,
             {
-                // todo(Shane): mv3 implementation
                 // todo(Shane): limit this to only the urls we care about
                 urls: ['<all_urls>']
             },
-            additionalOptions
+            ['blocking']
         )
 
         /**
@@ -94,9 +90,10 @@ export class NewTabTrackerStats {
          * Register an alarm and handle when it fires.
          * For now we're pruning data every 5 min
          */
-        browserWrapper.createAlarm('pruneNewTabData', { periodInMinutes: 5 })
+        const pruneAlarmName = 'pruneNewTabData'
+        browserWrapper.createAlarm(pruneAlarmName, { periodInMinutes: 5 })
         browser.alarms.onAlarm.addListener(async alarmEvent => {
-            if (alarmEvent.name === 'pruneNewTabData') {
+            if (alarmEvent.name === pruneAlarmName) {
                 this.handlePruneAlarm()
             }
         })
@@ -105,10 +102,8 @@ export class NewTabTrackerStats {
          * listen for the 'tracker-blocked' event that is fired from `before-request.es6.js`
          * when a request is either blocked or a surrogate was used
          */
-        emitter.on('tracker-blocked', (event) => {
-            if (typeof event.companyDisplayName !== 'string') {
-                return console.warn('missing displayName on the tracker-blocked event')
-            }
+        emitter.on(TrackerBlockedEvent.eventName, (event) => {
+            if (!(event instanceof TrackerBlockedEvent)) return
             this.record(event.companyDisplayName)
         })
 
@@ -186,15 +181,13 @@ export class NewTabTrackerStats {
      * @returns {Promise<void>}
      */
     async restoreFromStorage () {
-        let prev
         try {
-            prev = await browserWrapper.getFromStorage(NewTabTrackerStats.storageKey)
+            const prev = await browserWrapper.getFromStorage(NewTabTrackerStats.storageKey)
             if (prev) {
                 this.stats.deserialize(prev.stats)
             }
         } catch (e) {
             console.warn("could not deserialize data from _cachedDisplayData 'trackerStats' storage")
-            console.warn(prev)
         }
 
         // also evictExpired once we've restored
@@ -324,6 +317,11 @@ export class NewTabTrackerStats {
 
     debounceTimers = {}
 
+    /**
+     * @param {string} name
+     * @param {number} timeout
+     * @param {() => unknown} fn
+     */
     debounced (name, timeout, fn) {
         clearTimeout(this.debounceTimers[name])
         this.debounceTimers[name] = setTimeout(fn, timeout)
@@ -339,6 +337,7 @@ export class NewTabTrackerStats {
  * @returns {undefined|{redirectUrl: string}}
  */
 export function redirectIframeForTrackerStatsMV2 (details) {
+    // NOTE: This part is just for internal testing, it will be removed once the PR is approved
     if (details.url === chrome.runtime.getURL('html/redirect.html')) {
         return {
             redirectUrl: 'https://eun-sosbourne1.duckduckgo.com/chrome_newtab?ntp_test'
@@ -350,6 +349,7 @@ export function redirectIframeForTrackerStatsMV2 (details) {
     if (details.url.startsWith('chrome-extension')) {
         return
     }
+    // Only do the redirect if we're being iframed into a known origin
     if (details.type === 'sub_frame') {
         const parsed = new URL(details.url)
         if (parsed.origin === constants.trackerStats.allowedOrigin) {

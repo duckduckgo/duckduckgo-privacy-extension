@@ -19,12 +19,6 @@ const {
 } = require('./url-parameters.es6')
 const ampProtection = require('./amp-protection.es6')
 
-/**
- * For publishing tracking events that other modules might care about
- * @type {EventEmitter2}
- */
-export const emitter = new EventEmitter2()
-
 function buildResponse (url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
         console.log('HTTPS: upgrade request url to ' + url)
@@ -212,6 +206,30 @@ function handleRequest (requestData) {
 }
 
 /**
+ * For publishing tracking events that other modules might care about
+ * @type {EventEmitter2}
+ */
+export const emitter = new EventEmitter2()
+
+/**
+ * An event to publish the fact that we blocked a tracker.
+ * Note: this is deliberately conservative about how much information is published,
+ * for now it's just the parent company's display name which is enough
+ * to power the NewTabTrackerStats module.
+ */
+export class TrackerBlockedEvent {
+    static eventName = 'tracker-blocked'
+
+    /**
+     * @param {object} params
+     * @param {string} params.companyDisplayName
+     */
+    constructor (params) {
+        this.companyDisplayName = params.companyDisplayName
+    }
+}
+
+/**
  * Tracker blocking
  * If request is a tracker, cancel the request
  * @param {import('./classes/tab.es6')} thisTab
@@ -336,7 +354,7 @@ function blockHandleResponse (thisTab, requestData) {
 
             // publish the parent's display name only
             const displayName = utils.findParentDisplayName(requestData.url)
-            emitter.emit('tracker-blocked', { companyDisplayName: displayName })
+            emitter.emit(TrackerBlockedEvent.eventName, new TrackerBlockedEvent({ companyDisplayName: displayName }))
 
             console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                         // @ts-ignore
