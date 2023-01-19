@@ -12,6 +12,7 @@ import {
     flushSessionRules,
     refreshUserAllowlistRules
 } from './declarative-net-request'
+import { NewTabTrackerStats } from './newtab-tracker-stats'
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const experiment = require('./experiments.es6')
@@ -406,7 +407,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
     /**
      * Handle every message prefixed with `newTabPage_`
      */
-    if (req.messageType && req.messageType.startsWith('newTabPage_')) {
+    if (req.messageType && req.messageType.startsWith(NewTabTrackerStats.eventPrefix)) {
         // handled elsewhere
         return
     }

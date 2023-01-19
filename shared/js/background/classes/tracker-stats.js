@@ -81,12 +81,22 @@ export class TrackerStats {
      * We have to keep track of those timestamps, but only internally. When a consumer
      * wants access to our data, we collapse it down into the following format:
      *
-     * [ { Facebook: 3, Google: 1 } ]
+     * {
+     *     results: { Facebook: 3, Google: 1 },
+     *     overflow: 5
+     * }
      *
+     * Where 'overflow' represents the number of requests for companies
+     * outside of the `maxCount`.
+     *
+     * @param {number} [maxCount] - how many companies to display
      * @param {number} [now] - an optional timestamp, defaults to call-time
-     * @returns {{key: string, count: number}[]}
+     * @returns {{
+     *     results: { key: string, count: number }[],
+     *     overflow: number
+     * }}
      */
-    sorted (now = Date.now()) {
+    sorted (maxCount = 10, now = Date.now()) {
         /** @type {{key: string, count: number}[]} */
         const stats = []
 
@@ -108,30 +118,25 @@ export class TrackerStats {
         const sorted = stats.sort((a, b) => b.count - a.count)
 
         // the UI will only render 9 + 'Other', so we take the first 9 here
-        const outputList = sorted.slice(0, 9)
+        const outputList = sorted.slice(0, maxCount)
 
         // everything after is classes as 'Other'
-        const other = sorted.slice(9)
+        const other = sorted.slice(maxCount)
 
         // aggregate the count for all in the 'Other' category
         const otherTotal = other.reduce((sum, item) => sum + item.count, 0)
 
-        // if there were any in the 'Other' category, add a fake entry to the end of the array
-        if (otherTotal > 0) {
-            outputList.push({
-                key: 'Other',
-                count: otherTotal
-            })
+        return {
+            results: outputList,
+            overflow: otherTotal
         }
-
-        return outputList
     }
 
     /**
      * Allow our internal data to be 'set'.
      *
      * We are very strict about the incoming data here, mostly treating
-     * it as 'untrusted'
+     * it as untrusted.
      *
      * It should be in the format:
      *
@@ -160,7 +165,7 @@ export class TrackerStats {
 
         // if any errors occur, bail and don't use this data at all
         if (!result.success) {
-            console.warn('could not accept the incoming data because of d% schema errors', result.error.errors.length)
+            console.warn('could not accept the incoming data because of schema errors', result.error.errors.length)
         } else {
             // but if we get here, we can use the data internally, we 'trust' it.
             this.totalCount = result.data.totalCount

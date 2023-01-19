@@ -334,8 +334,9 @@ function blockHandleResponse (thisTab, requestData) {
             // @ts-ignore
             Companies.add(tracker.tracker.owner)
 
-            // publish this event
-            emitter.emit('tracker-blocked', { trackerData: tracker })
+            // publish the parent's display name only
+            const displayName = utils.findParentDisplayName(requestData.url)
+            emitter.emit('tracker-blocked', { companyDisplayName: displayName })
 
             console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                         // @ts-ignore

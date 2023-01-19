@@ -26,8 +26,9 @@ describe('TrackerStats', () => {
         tc.increment('Company 12', now)
 
         // viewing immediately, should produce all values
-        const view = tc.sorted(now)
-        expect(view).toEqual([
+        const { results, overflow } = tc.sorted(10, now)
+        expect(overflow).toEqual(2)
+        expect(results).toEqual([
             {
                 key: 'Google',
                 count: 3
@@ -65,11 +66,43 @@ describe('TrackerStats', () => {
                 count: 1
             },
             {
-                key: 'Other',
-                count: 3
+                key: 'Company 10',
+                count: 1
             }
         ]
         )
+    })
+    it('combines `Other` entries ', () => {
+        const tc = new TrackerStats()
+        const now = Date.now()
+        tc.increment('Google', now)
+        tc.increment('Google', now)
+        tc.increment('Google', now)
+
+        tc.increment('Other', now)
+        tc.increment('Other', now)
+
+        tc.increment('Facebook', now)
+
+        tc.increment('Company 4', now)
+        tc.increment('Company 5', now)
+
+        tc.increment('Company 6', now)
+        tc.increment('Company 7', now)
+        tc.increment('Company 8', now)
+        tc.increment('Company 9', now)
+        tc.increment('Company 10', now)
+
+        // viewing immediately, should produce all values
+        const { results, overflow } = tc.sorted(5, now)
+        expect(overflow).toEqual(5)
+        expect(results).toEqual([
+            { key: 'Google', count: 3 },
+            { key: 'Other', count: 2 },
+            { key: 'Facebook', count: 1 },
+            { key: 'Company 4', count: 1 },
+            { key: 'Company 5', count: 1 }
+        ])
     })
     it('prunes stale entries when producing a sorted view', () => {
         const trackerStats = new TrackerStats()
@@ -84,10 +117,11 @@ describe('TrackerStats', () => {
         trackerStats.increment('Facebook', now + MIN * 2)
 
         // sorted time is 1 minute over `maxAgeMs`, eg: 9.01
-        const view = trackerStats.sorted(now + MIN * 61)
+        const { results, overflow } = trackerStats.sorted(10, now + MIN * 61)
 
         // so we expect there to only be the most recent entry
-        expect(view).toEqual([{
+        expect(overflow).toEqual(0)
+        expect(results).toEqual([{
             key: 'Facebook',
             count: 3
         }])

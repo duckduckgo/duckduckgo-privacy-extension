@@ -96,7 +96,8 @@
             "domains": [
                 "facebook.com",
                 "facebook.net"
-            ]
+            ],
+            "displayName": "Facebook"
         },
         "Google LLC": {
             "domains": [
@@ -726,6 +727,109 @@
             ],
             "displayName": "Verizon Media",
             "prevalence": 18.922
+        },
+        "Microsoft Corporation": {
+            "domains": [
+                "1drv.ms",
+                "3plearning.com"
+            ],
+            "prevalence": 24.1,
+            "displayName": "Microsoft"
+        },
+        "Xandr, Inc.": {
+            "domains": [
+                "adnxs-simple.com",
+                "adnxs.com"
+            ],
+            "prevalence": 23.5,
+            "displayName": "Xandr"
+        },
+        "Amazon Technologies, Inc.": {
+            "domains": [
+                "365bywholefoods.com",
+                "6pm.com"
+            ],
+            "prevalence": 22.4,
+            "displayName": "Amazon.com"
+        },
+        "Adobe Inc.": {
+            "domains": [
+                "2o7.net",
+                "acrobat.com"
+            ],
+            "prevalence": 22.3,
+            "displayName": "Adobe"
+        },
+        "The Trade Desk Inc": {
+            "domains": [
+                "adbrain.com",
+                "adbrn.com"
+            ],
+            "prevalence": 21.2,
+            "displayName": "The Trade Desk"
+        },
+        "PubMatic, Inc.": {
+            "domains": [
+                "pubmatic.com"
+            ],
+            "prevalence": 20.8,
+            "displayName": "PubMatic"
+        },
+        "LiveRamp Holdings, Inc.": {
+            "domains": [
+                "acuity-data.com",
+                "arbor.io"
+            ],
+            "prevalence": 20.1,
+            "displayName": "LiveRamp"
+        },
+        "Oracle Corporation": {
+            "domains": [
+                "addthis.com",
+                "addthiscdn.com"
+            ],
+            "prevalence": 19.9,
+            "displayName": "Oracle"
+        },
+        "Magnite, Inc.": {
+            "domains": [
+                "chango.com",
+                "dpclk.com"
+            ],
+            "prevalence": 19.9,
+            "displayName": "Magnite"
+        },
+        "OpenX Technologies Inc": {
+            "domains": [
+                "deliverimp.com",
+                "godengo.com"
+            ],
+            "prevalence": 18.9,
+            "displayName": "OpenX"
+        },
+        "Index Exchange, Inc.": {
+            "domains": [
+                "casalemedia.com",
+                "indexww.com"
+            ],
+            "prevalence": 18.7,
+            "displayName": "Index Exchange"
+        },
+        "IPONWEB GmbH": {
+            "domains": [
+                "bidswitch.com",
+                "bidswitch.net"
+            ],
+            "prevalence": 16.3,
+            "displayName": "IPONWEB"
+        },
+        "ExoClick, S.L.": {
+            "domains": [
+                "dynsrvazg.com",
+                "dynsrvazh.com"
+            ],
+            "prevalence": 3.44,
+            "displayName": "ExoClick"
         }
     },
     "domains": {

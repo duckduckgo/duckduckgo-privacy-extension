@@ -43,7 +43,7 @@ export async function onStartup () {
     Companies.buildFromStorage()
 
     /**
-     * On none-mozilla browsers, try to initiate the `NewTabTrackerStats` feature
+     * in Chrome only (for now), try to initiate the `NewTabTrackerStats` feature
      */
     if (utils.getBrowserName() === 'chrome') {
         try {
@@ -54,7 +54,7 @@ export async function onStartup () {
             // restore from storage first
             await newTabTrackerStats.restoreFromStorage()
 
-            // now setup extension-listeners
+            // now setup extension listeners
             newTabTrackerStats.register()
         } catch (e) {
             console.warn('an error occurred setting up TrackerStats')

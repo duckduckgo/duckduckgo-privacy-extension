@@ -2,6 +2,7 @@ import constants from '../../data/constants'
 import browser from 'webextension-polyfill'
 import * as browserWrapper from './wrapper.es6.js'
 import { emitter } from './before-request.es6.js'
+import tdsStorage from './storage/tds.es6'
 const { incoming, outgoing } = constants.trackerStats.events
 
 /**
@@ -29,8 +30,27 @@ const { incoming, outgoing } = constants.trackerStats.events
  * ```
  */
 export class NewTabTrackerStats {
+    /**
+     * The key to use when persisting data into storage
+     */
     static storageKey = 'trackerStats'
+    /**
+     * The key to use when we don't want to record the company name
+     */
+    static unknownCompanyKey = 'unknown'
+    /**
+     * The prefix used for events. This is used to ensure we only handle events we care about
+     */
+    static eventPrefix = 'newTabPage_'
 
+    /**
+     * @type {Map<string, number> | null}
+     */
+    top100Companies = null
+
+    /**
+     * Internal flag to enable some certain types of logging when developing
+     */
     _debug = false
 
     /**
@@ -41,7 +61,7 @@ export class NewTabTrackerStats {
     }
 
     /**
-     * Register all communications with the extension here
+     * Register *all* communications with the extension here
      */
     register () {
         let additionalOptions = []
@@ -86,12 +106,34 @@ export class NewTabTrackerStats {
          * when a request is either blocked or a surrogate was used
          */
         emitter.on('tracker-blocked', (event) => {
-            const displayName = event.trackerData?.tracker?.owner?.displayName
-            if (typeof displayName !== 'string') {
+            if (typeof event.companyDisplayName !== 'string') {
                 return console.warn('missing displayName on the tracker-blocked event')
             }
-            this.record(displayName)
+            this.record(event.companyDisplayName)
         })
+
+        /**
+         * Assign the entities from the `tds` data
+         */
+        this.assignTopCompanies(tdsStorage.tds.entities)
+    }
+
+    /**
+     * @param {Record<string, { displayName: string, prevalence: number }>} entities
+     * @param {number} [maxCount] - how many to consider 'top companies'
+     */
+    assignTopCompanies (entities, maxCount = 100) {
+        const sorted = Object.keys(entities)
+            .map(
+                /** @returns {[string, number]} */
+                (key) => {
+                    const current = entities[key]
+                    return [current.displayName, current.prevalence]
+                })
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, maxCount)
+
+        this.top100Companies = new Map(sorted)
     }
 
     /**
@@ -102,7 +144,20 @@ export class NewTabTrackerStats {
      * @param {number} [timestamp] - optional timestamp
      */
     record (displayName, timestamp) {
-        this.stats.increment(displayName, timestamp)
+        /**
+         * Increment the count of this company if the following 2 predicates are satisfied
+         *
+         * 1) the `displayName` of the company is in our top100Companies list
+         * 2) the `displayName` of the company is NOT in our `excludedCompanies` list
+         */
+        if (this.top100Companies?.has(displayName) && !constants.trackerStats.excludedCompanies.includes(displayName)) {
+            this.stats.increment(displayName, timestamp)
+        } else {
+            /**
+             * Otherwise just increase the 'unknown' count
+             */
+            this.stats.increment(NewTabTrackerStats.unknownCompanyKey, timestamp)
+        }
 
         // enqueue a sync + data push
         this.debounced('record', 1000, () => {
@@ -131,11 +186,15 @@ export class NewTabTrackerStats {
      * @returns {Promise<void>}
      */
     async restoreFromStorage () {
+        let prev
         try {
-            const prev = await browserWrapper.getFromStorage(NewTabTrackerStats.storageKey)
-            this.stats.deserialize(prev.stats)
+            prev = await browserWrapper.getFromStorage(NewTabTrackerStats.storageKey)
+            if (prev) {
+                this.stats.deserialize(prev.stats)
+            }
         } catch (e) {
             console.warn("could not deserialize data from _cachedDisplayData 'trackerStats' storage")
+            console.warn(prev)
         }
 
         // also evictExpired once we've restored
@@ -152,11 +211,11 @@ export class NewTabTrackerStats {
          * Handle every message prefixed with `newTabPage_`
          * For now every event just causes new data to be pushed
          */
-        if (typeof event.messageType === 'string' && event.messageType.startsWith('newTabPage_')) {
+        if (typeof event.messageType === 'string' && event.messageType.startsWith(NewTabTrackerStats.eventPrefix)) {
             if (event.messageType in incoming) {
                 this.sendToNewTab(`response to '${event.messageType}'`)
             } else {
-                console.error('unhandled event prefixed with newTabPage_', event)
+                console.error('unhandled event prefixed with: ', NewTabTrackerStats.eventPrefix, event)
             }
         }
     }
@@ -198,30 +257,64 @@ export class NewTabTrackerStats {
     }
 
     /**
-     * Sort the stats and append a favicon path that's specific to the extension
+     * Convert the internal data into a format that can be used in the New Tab Page UI
      *
+     * First, we group & sort the data, and then we increase the count of "Other" to account
+     * for overflows or for trackers where the owner was not in the top 100 list
+     *
+     * @param {number} maxCount
      * @param {number} [now] - optional timestamp to use in comparisons
      * @returns {TrackerStatsDisplay}
      */
-    toDisplayData (now = Date.now()) {
+    toDisplayData (maxCount = 10, now = Date.now()) {
         // access the entries once they are sorted and grouped
-        const stats = this.stats.sorted(now)
+        const stats = this.stats.sorted(maxCount, now)
+
+        // is there an entry for 'unknownCompanyKey' (meaning an entry where the company name was skipped)
+        const index = stats.results.findIndex(result => result.key === NewTabTrackerStats.unknownCompanyKey)
+
+        // if there is an entry, add the 'overflow' count and move it to the end of the list
+        if (index > -1) {
+            const element = stats.results[index]
+            if (stats.overflow) {
+                element.count += stats.overflow
+            }
+            const spliced = stats.results.splice(index, 1)
+            stats.results.push(...spliced)
+        } else {
+            // if we get here, there was no entry for `unknownCompanyKey`, so we need to add one to cover the overflow
+            if (stats.overflow) {
+                stats.results.push({
+                    key: NewTabTrackerStats.unknownCompanyKey,
+                    count: stats.overflow
+                })
+            }
+        }
 
         // now produce the data in the shape consumers require for rendering their UI
         return {
             totalCount: this.stats.totalCount,
             totalPeriod: 'install-time',
             trackerCompaniesPeriod: 'last-hour',
-            trackerCompanies: stats.map(item => {
-                const iconName = companyDisplayNameToIconName(item.key)
+            trackerCompanies: stats.results.map(item => {
+                // convert our known key into the 'Other'
+                const displayName = item.key === NewTabTrackerStats.unknownCompanyKey
+                    ? 'Other'
+                    : item.key
+
+                // create an icon path based on the name
+                const iconName = companyDisplayNameToIconName(displayName)
+
+                // use the icon path to formulate an absolute URL to a web_accessible_resource
                 let favicon
                 if (iconsTheExtensionCanRender.includes(iconName)) {
                     favicon = chrome.runtime.getURL('/img/logos/' + iconName + '.svg')
                 } else {
                     favicon = chrome.runtime.getURL('/img/letters/' + iconName[0] + '.svg')
                 }
+
                 return {
-                    displayName: item.key,
+                    displayName,
                     count: item.count,
                     favicon
                 }

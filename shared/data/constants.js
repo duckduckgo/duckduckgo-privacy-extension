@@ -148,6 +148,8 @@ module.exports = {
         allowedOrigin: 'https://eun-sosbourne1.duckduckgo.com',
         allowedPathname: 'tracker-stats.html',
         redirectTarget: 'html/tracker-stats.html',
+        /** @type {ReadonlyArray<string>} */
+        excludedCompanies: ['ExoClick'],
         events: {
             incoming: {
                 newTabPage_readInitial: 'newTabPage_readInitial',

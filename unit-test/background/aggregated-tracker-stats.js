@@ -3,6 +3,7 @@ const { NewTabTrackerStats } = require('../../shared/js/background/newtab-tracke
 const { TrackerStats } = require('../../shared/js/background/classes/tracker-stats')
 const browserWrapper = require('../../shared/js/background/wrapper.es6')
 const constants = require('../../shared/data/constants')
+const testTDS = require('../data/tds.json')
 
 const SEC = 1000
 const MIN = SEC * 60
@@ -26,6 +27,7 @@ describe('NewTabTrackerStats', () => {
     it('produces a filtered output for multiple companies', () => {
         const stats = new TrackerStats()
         const newtab = new NewTabTrackerStats(stats)
+        newtab.assignTopCompanies(testTDS.entities)
 
         const now = Date.now()
 
@@ -35,7 +37,7 @@ describe('NewTabTrackerStats', () => {
         newtab.record('Facebook', now + MIN * 2)
 
         // produce the data as consumers would
-        const output = newtab.toDisplayData(now)
+        const output = newtab.toDisplayData(10, now)
 
         // this will throw (and cause the test to fail) if the
         // data has deviated from the schema defined here
@@ -44,6 +46,87 @@ describe('NewTabTrackerStats', () => {
         // just some manual checks on the values too
         expect(output.totalCount).toEqual(4)
         expect(output.trackerCompanies.length).toEqual(2)
+    })
+    it('only lists the names of entries in the top100 list', () => {
+        const stats = new TrackerStats()
+        const newtab = new NewTabTrackerStats(stats)
+        newtab.assignTopCompanies(testTDS.entities)
+
+        const now = Date.now()
+
+        newtab.record('Google', now)
+        newtab.record('A', now)
+        newtab.record('B', now)
+
+        // produce the data as consumers would
+        const output = newtab.toDisplayData(10, now)
+        jsonSchema.parse(output)
+
+        expect(output.totalCount).toEqual(3)
+
+        // The `A` and `B` should be grouped into the `Other` category
+        expect(output.trackerCompanies).toEqual([
+            {
+                displayName: 'Google',
+                count: 1,
+                favicon: '/img/logos/google.svg'
+            },
+            {
+                displayName: 'Other',
+                count: 2,
+                favicon: '/img/logos/other.svg'
+            }
+        ])
+    })
+    it('combines none-top entries', () => {
+        const stats = new TrackerStats()
+        const newtab = new NewTabTrackerStats(stats)
+        newtab.assignTopCompanies(testTDS.entities, 5)
+
+        const now = Date.now()
+        const top10 = Object.keys(testTDS.entities)
+            .slice(0, 5)
+            .map(key => testTDS.entities[key].displayName)
+
+        for (const displayName of top10) {
+            newtab.record(displayName, now)
+        }
+
+        // not in the top 100
+        newtab.record('A', now)
+        newtab.record('B', now)
+
+        // produce the data as consumers would
+        const output = newtab.toDisplayData(5, now)
+        jsonSchema.parse(output)
+
+        // The `A` and `B` should be grouped into the `Other` category
+        expect(output).toEqual({
+            totalCount: 7,
+            totalPeriod: 'install-time',
+            trackerCompaniesPeriod: 'last-hour',
+            trackerCompanies: [{
+                displayName: 'Facebook',
+                count: 1,
+                favicon: '/img/logos/facebook.svg'
+            }, {
+                displayName: 'Google',
+                count: 1,
+                favicon: '/img/logos/google.svg'
+            }, {
+                displayName: 'Microsoft',
+                count: 1,
+                favicon: '/img/logos/microsoft.svg'
+            }, {
+                displayName: 'Xandr',
+                count: 1,
+                favicon: '/img/letters/x.svg'
+            }, {
+                displayName: 'Other',
+                count: 3,
+                favicon: '/img/logos/other.svg'
+            }]
+        })
     })
 })
 
@@ -57,6 +140,7 @@ describe('sending data', () => {
     it('should debounce sending data after recording tracker events', () => {
         const stats = new TrackerStats()
         const newtab = new NewTabTrackerStats(stats)
+        newtab.assignTopCompanies(testTDS.entities)
         const sendSpy = spyOn(newtab, '_publish')
         const syncSpy = spyOn(browserWrapper, 'syncToStorage')
 
@@ -159,7 +243,7 @@ describe('alarms', () => {
         jasmine.clock().tick(201)
         expect(sendSpy).toHaveBeenCalledTimes(1)
 
-        const display = newtab.toDisplayData(callTime)
+        const display = newtab.toDisplayData(10, callTime)
         expect(display).toEqual({
             totalCount: 6,
             totalPeriod: 'install-time',
