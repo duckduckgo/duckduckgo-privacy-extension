@@ -164,4 +164,44 @@ describe('Tab -> Privacy Dashboard conversion', () => {
          */
         expect(data.requestData.requests.length).toEqual(2)
     })
+    it('excludes first party requests', async () => {
+        const tab = baseTab()
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
+        const trackerName = 'Ad Company'
+        const trackerObj = {
+            owner: {
+                name: trackerName,
+                displayName: trackerName
+            }
+        }
+        tab.addToTrackers({
+            action: 'ignore',
+            reason: 'first party',
+            sameEntity: true,
+            sameBaseDomain: true,
+            redirectUrl: false,
+            matchedRule: 'block',
+            matchedRuleException: false,
+            tracker: trackerObj,
+            fullTrackerDomain: 'subdomain.abc.com'
+        }, 'subdomain.abc.com', 'https://subdomain.abc.com/a.js')
+        tab.addToTrackers({
+            action: 'block',
+            reason: 'not sure',
+            sameEntity: true,
+            sameBaseDomain: false,
+            redirectUrl: false,
+            matchedRule: 'block',
+            matchedRuleException: false,
+            tracker: trackerObj,
+            fullTrackerDomain: 'subdomain.abcd.com'
+        }, 'subdomain.abcd.com', 'https://subdomain.abc.com/b.jpg')
+        const data = dashboardDataFromTab(tab, undefined)
+        /**
+         * There should be 1 entry now because the first was `sameBaseDomain`
+         */
+        expect(data.requestData.requests.length).toEqual(1)
+        expect(data.requestData.requests[0].state).toEqual({ blocked: {} })
+        expect(data.requestData.requests[0].url).toEqual('https://subdomain.abc.com/b.jpg')
+    })
 })
