@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2023.1.12",
+    "version": "2023.01.20",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -93,10 +93,12 @@
         "managed_schema": "managed-schema.json"
     },
     "declarative_net_request": {
-        "rule_resources": [{
-            "id": "smarter_encryption",
-            "enabled": true,
-            "path": "data/bundled/smarter-encryption-rules.json"
-        }]
+        "rule_resources": [
+            {
+                "id": "smarter_encryption",
+                "enabled": true,
+                "path": "data/bundled/smarter-encryption-rules.json"
+            }
+        ]
     }
 }
