@@ -289,21 +289,9 @@ export class NewTabTrackerStats {
                     ? 'Other'
                     : item.key
 
-                // create an icon path based on the name
-                const iconName = companyDisplayNameToIconName(displayName)
-
-                // use the icon path to formulate an absolute URL to a web_accessible_resource
-                let favicon
-                if (iconsTheExtensionCanRender.includes(iconName)) {
-                    favicon = chrome.runtime.getURL('/img/logos/' + iconName + '.svg')
-                } else {
-                    favicon = chrome.runtime.getURL('/img/letters/' + iconName[0] + '.svg')
-                }
-
                 return {
                     displayName,
-                    count: item.count,
-                    favicon
+                    count: item.count
                 }
             })
         }
@@ -358,73 +346,3 @@ export function redirectIframeForTrackerStatsMV2 (details) {
     }
     return undefined
 }
-
-export function companyDisplayNameToIconName (companyName) {
-    return (
-        (companyName || '')
-            .toLowerCase()
-            // Remove TLD suffixes
-            // e.g. Fixes cases like "amazon.com" -> "amazon"
-            .replace(/\.[a-z]+$/i, '')
-            // Remove non-alphanumeric characters
-            // e.g. Fixes cases like "new relic" -> "newrelic"
-            .replace(/[^a-z0-9]/g, '')
-    )
-}
-
-export const iconsTheExtensionCanRender = [
-    'other',
-    'adjust',
-    'adobe',
-    'amazon',
-    'amplitude',
-    'appnexus',
-    'appsflyer',
-    'beeswax',
-    'branchmetrics',
-    'braze',
-    'bugsnag',
-    'chartbeat',
-    'comscore',
-    'criteo',
-    'facebook',
-    'google',
-    'googleadsgoogle',
-    'googleanalyticsgoogle',
-    'indexexchange',
-    'instagramfacebook',
-    'iponweb',
-    'kochava',
-    'linkedin',
-    'liveramp',
-    'magnite',
-    'mediamath',
-    'microsoft',
-    'mixpanel',
-    'neustar',
-    'newrelic',
-    'openx',
-    'oracle',
-    'outbrain',
-    'pinterest',
-    'pubmatic',
-    'quantcast',
-    'rythmone',
-    'salesforce',
-    'sharetrough',
-    'smaato',
-    'spotx',
-    'taboola',
-    'tapad',
-    'thenielsencompany',
-    'thetradedesk',
-    'twitter',
-    'urbanairship',
-    'verizonmedia',
-    'warnermedia',
-    'xaxis',
-    'yahoojapan',
-    'yandex',
-    'youtubegoogle',
-    'zeotap'
-]

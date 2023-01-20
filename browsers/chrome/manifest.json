@@ -85,9 +85,7 @@
         "/public/css/autofill.css",
         "/public/font/*",
         "/public/js/newtab.js",
-        "/html/tracker-stats.html",
-        "/img/logos/**",
-        "/img/letters/**"
+        "/html/tracker-stats.html"
     ],
     "storage": {
         "managed_schema": "managed-schema.json"

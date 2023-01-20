@@ -9,8 +9,7 @@ export const dataFormatSchema = z.object({
     trackerCompanies: z.array(
         z.object({
             displayName: z.string(),
-            count: z.number(),
-            favicon: z.string()
+            count: z.number()
         })
     )
 })

@@ -53,13 +53,11 @@ describe('NewTabTrackerStats', () => {
         expect(output.trackerCompanies).toEqual([
             {
                 displayName: 'Google',
-                count: 1,
-                favicon: '/img/logos/google.svg'
+                count: 1
             },
             {
                 displayName: 'Other',
-                count: 2,
-                favicon: '/img/logos/other.svg'
+                count: 2
             }
         ])
     })
@@ -92,24 +90,19 @@ describe('NewTabTrackerStats', () => {
             trackerCompaniesPeriod: 'last-hour',
             trackerCompanies: [{
                 displayName: 'Facebook',
-                count: 1,
-                favicon: '/img/logos/facebook.svg'
+                count: 1
             }, {
                 displayName: 'Google',
-                count: 1,
-                favicon: '/img/logos/google.svg'
+                count: 1
             }, {
                 displayName: 'Microsoft',
-                count: 1,
-                favicon: '/img/logos/microsoft.svg'
+                count: 1
             }, {
                 displayName: 'Xandr',
-                count: 1,
-                favicon: '/img/letters/x.svg'
+                count: 1
             }, {
                 displayName: 'Other',
-                count: 3,
-                favicon: '/img/logos/other.svg'
+                count: 3
             }]
         })
     })
