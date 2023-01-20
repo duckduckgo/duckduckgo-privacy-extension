@@ -60,7 +60,6 @@ jobs:
         with:
           name: integration-test-artifacts
           path: integration-test/artifacts
-      - run: npm run test-int-mv3
 
   integration-mv3-tests:
     timeout-minutes: 10

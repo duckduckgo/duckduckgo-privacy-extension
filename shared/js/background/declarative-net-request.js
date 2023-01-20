@@ -12,6 +12,9 @@ import {
     generateTdsRuleset
 } from '@duckduckgo/ddg2dnr/lib/tds'
 import {
+    createSmarterEncryptionTemporaryRule
+} from '@duckduckgo/ddg2dnr/lib/smarterEncryption'
+import {
     generateDNRRule
 } from '@duckduckgo/ddg2dnr/lib/utils'
 import {
@@ -35,13 +38,17 @@ const ruleIdRangeByConfigName = {
 // User allowlisting and the ServicerWorker initiated request exception both
 // only require one declarativeNetRequest rule, so hardcode the rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001
-export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
 export const ATB_PARAM_RULE_ID = 20003
+// Valid dynamic rule IDs - others will be removed on extension start
 const RESERVED_RULE_IDS = [
     USER_ALLOWLIST_RULE_ID,
-    SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
     ATB_PARAM_RULE_ID
 ]
+
+// Rule IDs for static session rules
+export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
+export const HTTPS_SESSION_ALLOWLIST_RULE_ID = 20004
+export const HTTPS_SESSION_UPGRADE_RULE_ID = 20005
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
@@ -63,26 +70,22 @@ function generateEtagRule (id, etag) {
 }
 
 /**
- * Find an existing dynamic declarativeNetRequest rule with the given rule ID
+ * Find an existing session or dynamic declarativeNetRequest rule with the given rule ID
  * and return it.
  * @param {number} desiredRuleId
- * @returns {Promise<import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule|null>}
+ * @returns {Promise<chrome.declarativeNetRequest.Rule | undefined>}
  */
-async function findExistingDynamicRule (desiredRuleId) {
+async function findExistingRule (isSessionRule = false, desiredRuleId) {
     // TODO: Pass a rule ID filter[1] (to avoid querying all rules) once
     //       Chrome >= 111 is the minimum supported version.
     //       See https://crbug.com/1379699
     // 1 - https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#type-GetRulesFilter
-    const existingRules = await chrome.declarativeNetRequest.getDynamicRules()
-
-    for (const rule of existingRules) {
-        if (rule.id === desiredRuleId) {
-            return rule
-        }
-    }
-
-    return null
+    const rules = await chrome.declarativeNetRequest[isSessionRule ? 'getSessionRules' : 'getDynamicRules']()
+    return rules.find(r => r.id === desiredRuleId)
 }
+
+const findExistingDynamicRule = findExistingRule.bind(null, false)
+const findExistingSessionRule = findExistingRule.bind(null, true)
 
 /**
  * Check if the declarativeNetRequest rules for a configuration need to be
@@ -569,6 +572,34 @@ export function flushSessionRules () {
             return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })
         }
     })
+}
+
+/**
+ * Update a Smarter Encryption session rule, adding the given domain to the list of domains in the condition.
+ * @param {number} ruleId Session rule ID
+ * @param {string} addDomain Domain to add to this rule's requestDomains condition.
+ * @param {'allow' | 'upgrade'} type If the rule should be an allow or upgrade rule.
+ */
+async function updateSmarterEncryptionSessionRule (ruleId, addDomain, type) {
+    const existingRule = await findExistingSessionRule(ruleId)
+    const ruleDomains = existingRule?.condition.requestDomains || []
+    if (ruleDomains.includes(addDomain)) {
+        return
+    }
+    ruleDomains.push(addDomain)
+    const { rule } = createSmarterEncryptionTemporaryRule(ruleDomains, type, ruleId)
+    await chrome.declarativeNetRequest.updateSessionRules({
+        removeRuleIds: [ruleId],
+        addRules: [rule]
+    })
+}
+
+export async function addSmarterEncryptionSessionException (domain) {
+    return updateSmarterEncryptionSessionRule(HTTPS_SESSION_ALLOWLIST_RULE_ID, domain, 'allow')
+}
+
+export async function addSmarterEncryptionSessionRule (domain) {
+    return updateSmarterEncryptionSessionRule(HTTPS_SESSION_UPGRADE_RULE_ID, domain, 'upgrade')
 }
 
 if (browserWrapper.getManifestVersion() === 3) {

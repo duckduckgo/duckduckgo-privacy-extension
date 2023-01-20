@@ -47,7 +47,7 @@ describe('Fingerprint Defense Tests', () => {
             const ua = await browser.userAgent()
             await page.setUserAgent(ua.replace(/Headless /, ''))
 
-            await pageWait.forGoto(page, `http://${test.url}`)
+            await pageWait.forGoto(page, `https://${test.url}`)
             const values = await page.evaluate(() => {
                 return {
                     availTop: screen.availTop,
@@ -140,7 +140,7 @@ describe('Verify injected script is not visible to the page', () => {
         it('Fingerprints should not match across first parties', async () => {
             const page = await browser.newPage()
 
-            await pageWait.forGoto(page, `http://${test.url}`)
+            await pageWait.forGoto(page, `https://${test.url}`)
 
             const sjclVal = await page.evaluate(() => {
                 if ('sjcl' in globalThis) {

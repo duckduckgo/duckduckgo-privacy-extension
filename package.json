@@ -11,6 +11,7 @@
         "postinstall": "npm run copy-modules && export PATH=\"$PATH:$PWD/node_modules/chromedriver/bin\" && npm run setup-test-int",
         "copy-modules": "rsync -av --exclude='.git/' node_modules/@duckduckgo/privacy-reference-tests/ unit-test/data/reference-tests/ && cp -r node_modules/@duckduckgo/content-scope-scripts shared/ && cp -r node_modules/@duckduckgo/tracker-surrogates shared/",
         "bundle-config": "node scripts/bundleConfig.mjs && node scripts/bundleTrackers.mjs",
+        "bundle-se": "ddg2dnr smarter-encryption shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "release": "grunt build",
@@ -82,7 +83,7 @@
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#6.1.1",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#4.0.1",
-        "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.3.0",
+        "@duckduckgo/ddg2dnr": "github:duckduckgo/ddg2dnr#0.3.1",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#1.2.0",
         "@duckduckgo/privacy-grade": "github:duckduckgo/privacy-grade#2.1.2",
