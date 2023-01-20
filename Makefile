@@ -79,7 +79,7 @@ beta-firefox-zip: remove-firefox-id
 	cd build/firefox/release/ && web-ext build
 
 shared/data/smarter_encryption.txt:
-	curl https://staticcdn.duckduckgo.com/trackerblocking/smarter_encryption_test.txt.gz | gunzip -c > shared/data/smarter_encryption.txt
+	curl https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz | gunzip -c > shared/data/smarter_encryption.txt
 
 shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryption.txt
 	npm run bundle-se
