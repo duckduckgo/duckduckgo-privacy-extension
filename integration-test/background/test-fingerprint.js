@@ -79,7 +79,7 @@ describe('First Party Fingerprint Randomization', () => {
     async function runTest (test) {
         const page = await browser.newPage()
 
-        await pageWait.forGoto(page, `http://${test.url}`)
+        await pageWait.forGoto(page, `https://${test.url}`)
 
         await page.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' })
 
