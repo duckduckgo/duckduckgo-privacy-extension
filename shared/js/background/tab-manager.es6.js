@@ -71,13 +71,26 @@ class TabManager {
      * @returns {Tab}
      */
     get (tabData) {
-        if (tabData.tabId === -1) {
-            return this.create({
+        if (tabData.tabId === -1 && tabData.initiator) {
+            // service worker request - try to find a tab that matches this initiator
+            const swOrigin = new URL(tabData.initiator).origin
+            return this._findTabMatchingOrigin(swOrigin) || this.create({
                 tabId: -1,
                 url: tabData.initiator,
             })
         }
         return this.tabContainer[tabData.tabId]
+    }
+
+    _findTabMatchingOrigin(origin) {
+        const tabId = Object.keys(this.tabContainer).find(tabId => {
+            const tab = this.tabContainer[tabId]
+            return Number(tabId) > -1 && new URL(tab.url).origin === origin
+        });
+        if (!tabId) {
+            return null
+        }
+        return this.tabContainer[tabId]
     }
 
     async getOrRestoreTab (tabId) {

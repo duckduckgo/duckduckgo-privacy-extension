@@ -272,6 +272,15 @@ function blockHandleResponse (thisTab, requestData) {
             tracker.reason = 'content blocking disabled'
         }
 
+        if (requestData.tabId === -1 && (tracker.action === 'block' || tracker.action === 'redirect')) {
+            if (!thisTab.site.isFeatureEnabled('serviceworkerBlocking')) {
+                tracker.action = 'ignore-user'
+                tracker.reason = 'service worker blocking disabled for site'
+            } else {
+                tracker.reason += ' (service worker)'
+            }
+        }
+
         // allow embedded twitter content if user enabled this setting
         if (tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
             tracker.action = 'ignore-user'
@@ -283,7 +292,7 @@ function blockHandleResponse (thisTab, requestData) {
         cleanUrl.search = ''
         cleanUrl.hash = ''
         // @ts-ignore
-        devtools.postMessage(tabId, 'tracker', {
+        devtools.postMessage(thisTab.id, 'tracker', {
             tracker: {
                 ...reportedTracker,
                 matchedRule: reportedTracker.matchedRule?.rule?.toString()
