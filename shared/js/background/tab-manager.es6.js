@@ -71,9 +71,9 @@ class TabManager {
      * @returns {Tab}
      */
     get (tabData) {
-        if (tabData.tabId === -1 && tabData.initiator) {
+        if (tabData.tabId === -1 && (tabData.initiator || tabData.documentUrl)) {
             // service worker request - try to find a tab that matches this initiator
-            const swOrigin = new URL(tabData.initiator).origin
+            const swOrigin = new URL(tabData.initiator || tabData.documentUrl).origin
             return this._findTabMatchingOrigin(swOrigin) || this.create({
                 tabId: -1,
                 url: tabData.initiator,
