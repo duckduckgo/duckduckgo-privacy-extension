@@ -3,13 +3,24 @@
         "state": "enabled",
         "exceptions": [ ],
         "settings": {
-            "Youtube": { }
+            "Youtube": {
+                "state": "enabled",
+                "ruleActions": [
+                    "block-ctl-yt"
+                ]
+            }
         }
     },
     "globalThis.dbg.tds.ClickToLoadConfig.Youtube": {
         "domains": [
             "youtube.com",
             "youtube-nocookie.com"
+        ],
+        "surrogates": [
+            {
+                "rule": "(www.)?youtube(-nocookie)?.com/iframe_api",
+                "surrogate": "youtube-iframe-api.js"
+            }
         ],
         "excludedSubdomains": [],
         "excludedDomains": [{
