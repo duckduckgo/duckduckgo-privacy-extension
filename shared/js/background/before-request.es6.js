@@ -80,8 +80,6 @@ function handleAmpRedirect (thisTab, url) {
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  */
 function handleRequest (requestData) {
-    const tabId = requestData.tabId
-
     const thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
@@ -214,7 +212,6 @@ function handleRequest (requestData) {
  * @returns {browser.WebRequest.BlockingResponseOrPromise | undefined}
  */
 function blockHandleResponse (thisTab, requestData) {
-    const tabId = requestData.tabId
     const blockingEnabled = thisTab.site.isContentBlockingEnabled()
 
     const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
