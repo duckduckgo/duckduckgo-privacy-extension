@@ -147,8 +147,9 @@ module.exports = {
     trackerStats: /** @type {const} */({
         allowedOrigin: 'https://use-devtesting13.duckduckgo.com',
         // allowedOrigin: 'https://eun-sosbourne1.duckduckgo.com',
-        allowedPathname: 'tracker-stats.html',
+        allowedPathname: 'ntp-tracker-stats.html',
         redirectTarget: 'html/tracker-stats.html',
+        clientPortName: 'newtab-tracker-stats',
         /** @type {ReadonlyArray<string>} */
         excludedCompanies: ['ExoClick'],
         events: {

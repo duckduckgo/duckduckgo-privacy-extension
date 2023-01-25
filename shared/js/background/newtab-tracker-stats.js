@@ -3,7 +3,12 @@ import constants from '../../data/constants'
 import * as browserWrapper from './wrapper.es6.js'
 import { emitter, TrackerBlockedEvent } from './before-request.es6.js'
 import tdsStorage from './storage/tds.es6'
-const { incoming, outgoing } = constants.trackerStats.events
+
+const {
+    incoming,
+    outgoing
+} = constants.trackerStats.events
+const { clientPortName } = constants.trackerStats
 
 /**
  * The extension-specific interface to tracker stats.
@@ -44,8 +49,10 @@ export class NewTabTrackerStats {
      */
     _debug = false
 
+    ports = []
+
     /**
-     * @param {import("./classes/tracker-stats").TrackerStats} stats
+     * @param {import('./classes/tracker-stats').TrackerStats} stats
      */
     constructor (stats) {
         this.stats = stats
@@ -58,24 +65,36 @@ export class NewTabTrackerStats {
      * place for this module.
      */
     register () {
-        /**
-         * This listener will redirect the request for tracker-stats.html
-         * on the new tab page to our own HTML file under `web_accessible_resources`
-         */
-        browser.webRequest.onBeforeRequest.addListener(redirectIframeForTrackerStatsMV2,
-            {
-                // todo(Shane): limit this to only the urls we care about
-                urls: ['<all_urls>']
-            },
-            ['blocking']
-        )
+        const manifestVersion = browserWrapper.getManifestVersion()
+        if (manifestVersion === 3) {
+            mv3Redirect()
+        } else {
+            mv2Redirect()
+        }
 
         /**
-         * Handle runtime messages sent from the new tab page
+         * Maintain a pool of connections - these will occur for every New Tab Page
+         * instance.
          */
-        browser.runtime.onMessage.addListener((event, sender) => {
-            if (sender.id !== browserWrapper.getExtensionId()) return
-            this.handleIncomingEvent(event)
+        chrome.runtime.onConnect.addListener((port) => {
+            if (port.name !== clientPortName) return
+
+            // keep a reference to this port
+            this.ports.push(port)
+
+            // handle every message on this port
+            port.onMessage.addListener((msg) => {
+                this.handleIncomingEvent(msg)
+            })
+
+            // ensure we're not holding on to zombie ports (those that have disconnected)
+            port.onDisconnect.addListener((msg) => {
+                const index = this.ports.indexOf(port)
+                if (index > -1) {
+                    console.log('removing index', index)
+                    this.ports.splice(index, 1)
+                }
+            })
         })
 
         /**
@@ -179,7 +198,7 @@ export class NewTabTrackerStats {
                 this.stats.deserialize(prev.stats)
             }
         } catch (e) {
-            console.warn("could not deserialize data from _cachedDisplayData 'trackerStats' storage")
+            console.warn('could not deserialize data from _cachedDisplayData \'trackerStats\' storage')
         }
 
         // also evictExpired once we've restored
@@ -210,7 +229,7 @@ export class NewTabTrackerStats {
      * @param {string} reason - a reason or path that caused this
      */
     sendToNewTab (reason) {
-        if (!reason) throw new Error("you must provide a 'reason' for sending new data")
+        if (!reason) throw new Error('you must provide a \'reason\' for sending new data')
         this.debounced('sendToNewTab', 200, () => this._publish(reason))
     }
 
@@ -222,12 +241,23 @@ export class NewTabTrackerStats {
         if (this._debug) {
             console.info(`sending new tab data because: ${reason}`)
         }
-        /** @type {import("zod").infer<typeof import("../newtab/schema").dataMessage>} */
+        /** @type {import('zod').infer<typeof import('../newtab/schema').dataMessage>} */
         const msg = {
             messageType: outgoing.newTabPage_data,
             options: this.toDisplayData()
         }
-        chrome.runtime.sendMessage(msg)
+
+        const invalidPorts = []
+        for (const port of this.ports) {
+            try {
+                port.postMessage(msg)
+            } catch (e) {
+                invalidPorts.push(port)
+            }
+        }
+        if (invalidPorts.length) {
+            console.error('Stale ports detected...', invalidPorts)
+        }
     }
 
     /**
@@ -251,7 +281,7 @@ export class NewTabTrackerStats {
      *
      * @param {number} maxCount
      * @param {number} [now] - optional timestamp to use in comparisons
-     * @returns {import("zod").infer<typeof import("../newtab/schema").dataFormatSchema>}
+     * @returns {import('zod').infer<typeof import('../newtab/schema').dataFormatSchema>}
      */
     toDisplayData (maxCount = 10, now = Date.now()) {
         // access the entries once they are sorted and grouped
@@ -316,33 +346,67 @@ export class NewTabTrackerStats {
  * request to the web_accessible_resource file 'html/tracker-stats.html'
  *
  * @param details
- * @returns {undefined|{redirectUrl: string}}
  */
-export function redirectIframeForTrackerStatsMV2 (details) {
-    // NOTE: This part is just for internal testing, it will be removed once the PR is approved
-    if (details.url === chrome.runtime.getURL('html/redirect.html')) {
-        const url = new URL('/chrome_newtab', constants.trackerStats.allowedOrigin)
-        url.searchParams.set('ntp_test', '1')
-        return {
-            redirectUrl: url.toString()
+export function mv2Redirect () {
+    /**
+     * This listener will redirect the request for tracker-stats.html
+     * on the new tab page to our own HTML file under `web_accessible_resources`
+     */
+    browser.webRequest.onBeforeRequest.addListener((details) => {
+        // NOTE: This part is just for internal testing, it will be removed once the PR is approved
+        if (details.url === chrome.runtime.getURL('html/redirect.html')) {
+            const url = new URL('/chrome_newtab', constants.trackerStats.allowedOrigin)
+            url.searchParams.set('ntp_test', '1')
+            return {
+                redirectUrl: url.toString()
+            }
         }
-    }
-    if (!details.url.endsWith('tracker-stats.html')) {
-        return
-    }
-    if (details.url.startsWith('chrome-extension')) {
-        return
-    }
-    // Only do the redirect if we're being iframed into a known origin
-    if (details.type === 'sub_frame') {
-        const parsed = new URL(details.url)
-        if (parsed.origin === constants.trackerStats.allowedOrigin) {
-            if (parsed.pathname.includes(constants.trackerStats.allowedPathname)) {
-                return {
-                    redirectUrl: chrome.runtime.getURL(constants.trackerStats.redirectTarget)
+        if (!details.url.endsWith('tracker-stats.html')) {
+            return
+        }
+        if (details.url.startsWith('chrome-extension')) {
+            return
+        }
+        // Only do the redirect if we're being iframed into a known origin
+        if (details.type === 'sub_frame') {
+            const parsed = new URL(details.url)
+            if (parsed.origin === constants.trackerStats.allowedOrigin) {
+                if (parsed.pathname.includes(constants.trackerStats.allowedPathname)) {
+                    return {
+                        redirectUrl: chrome.runtime.getURL(constants.trackerStats.redirectTarget)
+                    }
                 }
             }
         }
-    }
-    return undefined
+        return undefined
+    },
+    {
+        urls: [`${constants.trackerStats.allowedOrigin}/*`],
+        types: ['sub_frame']
+    },
+    ['blocking'])
+}
+
+function mv3Redirect () {
+    const targetUrl = chrome.runtime.getURL(constants.trackerStats.redirectTarget)
+    const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin)
+    chrome.declarativeNetRequest.updateDynamicRules({
+        removeRuleIds: [100000000001],
+        addRules: [
+            {
+                priority: 1,
+                id: 100000000001,
+                action: {
+                    // @ts-ignore  - this is an enum in @types/chrome, can't represent that here
+                    type: 'redirect',
+                    redirect: { url: targetUrl }
+                },
+                condition: {
+                    urlFilter: incomingUrl.toString(),
+                    // @ts-ignore  - this is an enum in @types/chrome, can't represent that here
+                    resourceTypes: ['sub_frame']
+                }
+            }
+        ]
+    })
 }

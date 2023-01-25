@@ -1,34 +1,38 @@
 import constants from '../../data/constants'
-import { outgoing, incoming } from './schema'
-const { events, allowedOrigin } = constants.trackerStats
+import * as schema from './schema'
+const { events, allowedOrigin, clientPortName } = constants.trackerStats
 
 /**
  * A flag to ensure we're not doing work until we've received a trusted event
- * It's initiall set to false, meaning we're inactive.
+ * It's initially set to false, meaning we're inactive.
  *
  * Once a single `postMessage` is received from the allow-listed origin we
  * will flip this switch and allow communications with the extension to continue
  *
  * @type {boolean}
  */
-let listening = false
+let receivedMessageFromAllowedOrigin = false
 
 /**
  * Establish the connection with the extension, but not initially.
+ *
+ * Because this JS file is loaded into an iframe with access to `window.chrome.runtime`
+ * we use it to forward data into the parent page.
  */
-function listenToChromeRuntimeMessages () {
-    listening = true
-    /**
-     * Because this JS file is loaded into an iframe with access to `window.chrome.runtime`
-     * we use it to forward data into the parent page. In this case that
-     * would be the *remote* new tab page.
-     */
-    window.chrome.runtime.onMessage.addListener(msg => {
-        // check we're only sending known outgoing messages
+function connect () {
+    const port = chrome.runtime.connect({ name: clientPortName })
+
+    port.onMessage.addListener((msg) => {
         if (msg.messageType in events.outgoing) {
             sendToNewTabPage(msg)
         }
     })
+
+    port.onDisconnect.addListener((msg) => {
+        console.log('🚨 PORT onDisconnect', msg)
+    })
+
+    return port
 }
 
 /**
@@ -41,6 +45,9 @@ window.addEventListener('message', (e) => {
         console.error('this message or origin was not trusted', e.data)
         return
     }
+
+    // if we get here, we've observed a trusted event
+    receivedMessageFromAllowedOrigin = true
 
     if (typeof e.data?.messageType !== 'string') {
         console.error('unknown message format. required: { messageType: ... } ', e.data)
@@ -67,11 +74,11 @@ window.addEventListener('message', (e) => {
  * This allows developers to come here and read the schemas to figure out what data
  * will be sent.
  *
- * @param {import("zod").infer<outgoing>} msg
+ * @param {import("zod").infer<schema.outgoing>} msg
  */
 function sendToNewTabPage (msg) {
     // try to validate the message
-    const parsed = outgoing.safeParse(msg)
+    const parsed = schema.outgoing.safeParse(msg)
     if (!parsed.success) {
         console.warn('not forwarding as validation failed on', msg)
         return console.error(parsed.error)
@@ -89,29 +96,35 @@ function sendToNewTabPage (msg) {
 /**
  * A single place to try/catch around sending messages back to the extension
  *
- * @param {import("zod").infer<incoming>} msg
+ * During testing I realised that every method on chrome.runtime.* can throw at some point,
+ * so we take a straight-forward approach to errors. Any communication error found here
+ * will result in the NTP receiving a 'disconnect' message so that it can remove its UI
+ *
+ * @param {import("zod").infer<schema.incoming>} msg
  */
+let port = null
 function sendToChromeRuntime (msg) {
-    // If we get here and we're not currently listening to internal events, flip the
-    // switch and start listening
-    if (!listening) {
-        listenToChromeRuntimeMessages()
-    }
-
-    // now ensure the event is valid
-    const parsed = incoming.safeParse(msg)
-    if (!parsed.success) {
-        console.warn('not forwarding to the chrome runtime because validation failed for:', msg)
-        return console.error(parsed.error)
-    }
-
-    /**
-     * Now send the message as normal
-     */
+    if (!receivedMessageFromAllowedOrigin) return
     try {
-        window.chrome.runtime.sendMessage(parsed.data)
+        // If we get here and we're not currently listening to internal events, flip the
+        // switch and start listening
+        if (!port) {
+            port = connect()
+        }
+
+        // now ensure the event is valid
+        const parsed = schema.incoming.safeParse(msg)
+        if (!parsed.success) {
+            console.warn('not forwarding to the chrome runtime because validation failed for:', msg)
+            return console.error(parsed.error)
+        }
+
+        /**
+         * send the message as normal now
+         */
+        port.postMessage(parsed.data)
     } catch (e) {
-        console.error('could not access `window.chrome.runtime.sendMessage`', e)
+        console.error('could not connect to, or send to `port.postMessage`', e)
         sendToNewTabPage({ messageType: events.outgoing.newTabPage_disconnect })
     }
 }

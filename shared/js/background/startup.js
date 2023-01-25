@@ -45,7 +45,7 @@ export async function onStartup () {
     /**
      * in Chrome only (and MV2 for now), try to initiate the `NewTabTrackerStats` feature
      */
-    if (utils.getBrowserName() === 'chrome' && manifestVersion === 2) {
+    if (utils.getBrowserName() === 'chrome') {
         try {
             // build up dependencies
             const trackerStats = new TrackerStats()
@@ -57,7 +57,7 @@ export async function onStartup () {
             // now setup extension listeners
             newTabTrackerStats.register()
         } catch (e) {
-            console.warn('an error occurred setting up TrackerStats')
+            console.warn('an error occurred setting up TrackerStats', e)
         }
     }
 
