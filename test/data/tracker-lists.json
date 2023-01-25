@@ -43,7 +43,19 @@
             "owner": {
                 "name": "Example",
                 "url": "example.com"
-            }
+            },
+            "rules": [
+                {
+                    "rule": "example\\.com/custom-action-block",
+                    "action": "custom-action"
+                },
+                {
+                    "rule": "example\\.com/custom-action-surrogate",
+                    "action": "custom-action",
+                    "surrogate": "a.js"
+                }
+
+            ]
         }
     },
     "surrogates": "yahoo.com/a.js application/javascript\n(function() {})"

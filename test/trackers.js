@@ -124,6 +124,47 @@ describe('getTrackerData', () => {
                 expectedRule: null,
                 redirectUrl: false,
                 matchedRuleException: false
+            },
+            // tracker rule unsupported rule action and default ignore => ignore
+            {
+                action: 'ignore',
+                urlToCheck: 'https://example.com/custom-action-block',
+                siteUrl: 'https://aol.com',
+                requestType: 'script',
+                expectedOwner: 'Example',
+                expectedReason: 'default ignore',
+                sameEntity: false,
+                expectedRule: null,
+                redirectUrl: false,
+                matchedRuleException: false
+            },
+            // tracker rule with supported custom rule action => block
+            {
+                action: 'block',
+                urlToCheck: 'https://example.com/custom-action-block',
+                siteUrl: 'https://aol.com',
+                requestType: 'script',
+                expectedOwner: 'Example',
+                expectedReason: 'matched rule - block',
+                sameEntity: false,
+                expectedRule: 'example\\.com/custom-action-block',
+                redirectUrl: false,
+                matchedRuleException: false,
+                supportedCustomRuleActions: new Set(['custom-action'])
+            },
+            // surrogate rule with supported custom rule action => redirect
+            {
+                action: 'redirect',
+                urlToCheck: 'https://example.com/custom-action-surrogate',
+                siteUrl: 'https://aol.com',
+                requestType: 'script',
+                expectedOwner: 'Example',
+                expectedReason: 'matched rule - surrogate',
+                sameEntity: false,
+                expectedRule: 'example\\.com/custom-action-surrogate',
+                redirectUrl: 'data:application/javascript;base64,KGZ1bmN0aW9uKCkge30p',
+                matchedRuleException: false,
+                supportedCustomRuleActions: new Set(['custom-action'])
             }
         ]
 
@@ -132,7 +173,9 @@ describe('getTrackerData', () => {
                 const tracker = trackers.getTrackerData(
                     test.urlToCheck,
                     test.siteUrl,
-                    { url: test.urlToCheck, type: test.requestType })
+                    { url: test.urlToCheck, type: test.requestType },
+                    test.supportedCustomRuleActions
+                )
 
                 expect(tracker.action).toEqual(test.action)
                 expect(tracker.reason).toEqual(test.expectedReason)

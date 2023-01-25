@@ -78,6 +78,8 @@
  */
 
 class Trackers {
+    static standardRuleActions = new Set(['block', 'ignore'])
+
     /**
      * @param {{
      *    tldts: import('tldts'),
@@ -298,9 +300,17 @@ class Trackers {
      * @param {string} urlToCheck
      * @param {string} siteUrl
      * @param {RequestExpression} request
+     * @param {Set<string>} [supportedCustomRuleActions]
+     *   Optional set containing supported "custom" (aka non-standard) rule
+     *   actions.
+     *   Note: Standard block/ignore rule actions are always supported, and do
+     *         not need to be included here. Custom rule actions are only
+     *         necessary for features like Click to Load that have their own
+     *         special rule actions.
+     *         @see {Trackers.prototype.standardRuleActions}.
      * @returns {TrackerData | null}
      */
-    getTrackerData (urlToCheck, siteUrl, request) {
+    getTrackerData (urlToCheck, siteUrl, request, supportedCustomRuleActions) {
         if (!this.entityList || !this.trackerList) {
             throw new Error('tried to detect trackers before rules were loaded')
         }
@@ -372,7 +382,7 @@ class Trackers {
             }
         }
         // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
-        const matchedRule = this.findRule(tracker, requestData)
+        const matchedRule = this.findRule(tracker, requestData, supportedCustomRuleActions)
 
         // @ts-ignore
         const redirectUrl = (matchedRule && matchedRule.surrogate) ? this.surrogateList[matchedRule.surrogate] : false
@@ -453,17 +463,37 @@ class Trackers {
     }
 
     /**
+     * Returns false if the given rule has an unsupported rule action, true
+     * otherwise.
+     * @param {TrackerRule} ruleObj
+     * @param {Set<string>} [supportedCustomRuleActions]
+     * @returns {boolean}
+     */
+    ruleActionSupported ({ action }, supportedCustomRuleActions) {
+        return (
+            // Rule action generally defaults to 'block' if omitted.
+            !action ||
+            // Standard rule actions are always supported.
+            Trackers.standardRuleActions.has(action) ||
+            // Provided custom rule actions (if any) are also supported.
+            (!!supportedCustomRuleActions && supportedCustomRuleActions.has(action))
+        )
+    }
+
+    /**
      * Iterate through a tracker rule list and return the first matching rule, if any.
      * @param {TrackerObj} tracker
      * @param {RequestData} requestData
+     * @param {Set<string>} [supportedCustomRuleActions]
      * @returns {TrackerRule | null}
      */
-    findRule (tracker, requestData) {
+    findRule (tracker, requestData, supportedCustomRuleActions) {
         let matchedRule = null
         // Find a matching rule from this tracker
         if (tracker.rules && tracker.rules.length) {
             tracker.rules.some(ruleObj => {
-                if (this.requestMatchesRule(requestData, ruleObj)) {
+                if (this.requestMatchesRule(requestData, ruleObj) &&
+                    this.ruleActionSupported(ruleObj, supportedCustomRuleActions)) {
                     matchedRule = ruleObj
                     return true
                 }
