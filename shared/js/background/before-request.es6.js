@@ -81,8 +81,6 @@ function handleAmpRedirect (thisTab, url) {
  */
 function handleRequest (requestData) {
     const tabId = requestData.tabId
-    // Skip requests to background tabs
-    if (tabId === -1) { return }
 
     const thisTab = tabManager.get(requestData)
 
@@ -323,7 +321,7 @@ function blockHandleResponse (thisTab, requestData) {
 
             console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                         // @ts-ignore
-                        ' [' + tracker.tracker.owner.name + '] ' + requestData.url)
+                        ' [' + tracker.tracker.owner.name + '] ' + requestData.url + (requestData.tabId === -1 ? ' (serviceworker)' : ''))
 
             // return surrogate redirect if match, otherwise
             // tell Chrome to cancel this webrequest

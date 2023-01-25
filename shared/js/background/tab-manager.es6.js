@@ -71,6 +71,12 @@ class TabManager {
      * @returns {Tab}
      */
     get (tabData) {
+        if (tabData.tabId === -1) {
+            return this.create({
+                tabId: -1,
+                url: tabData.initiator,
+            })
+        }
         return this.tabContainer[tabData.tabId]
     }
 
