@@ -99,12 +99,12 @@ module.exports = {
         },
         {
             name: 'tds',
-            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v3/tds.json',
+            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json',
             format: 'json',
             source: 'external',
             channels: {
-                live: 'https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds.json',
-                next: 'https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds-next.json',
+                live: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json',
+                next: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds-next.json',
                 beta: 'https://staticcdn.duckduckgo.com/trackerblocking/beta/tds.json'
             }
         },
