@@ -74,23 +74,23 @@ class TabManager {
         if (tabData.tabId === -1 && (tabData.initiator || tabData.documentUrl)) {
             // service worker request - try to find a tab that matches this initiator
             const swOrigin = new URL(tabData.initiator || tabData.documentUrl).origin
-            return this._findTabMatchingOrigin(swOrigin) || this.create({
+            const matchingTabs = this._findTabsMatchingOrigin(swOrigin)
+            if (matchingTabs.length > 0) {
+                return this.tabContainer[matchingTabs[0]]
+            }
+            return this.create({
                 tabId: -1,
-                url: tabData.initiator,
+                url: tabData.initiator
             })
         }
         return this.tabContainer[tabData.tabId]
     }
 
-    _findTabMatchingOrigin(origin) {
-        const tabId = Object.keys(this.tabContainer).find(tabId => {
+    _findTabsMatchingOrigin (origin) {
+        return Object.keys(this.tabContainer).filter(tabId => {
             const tab = this.tabContainer[tabId]
             return Number(tabId) > -1 && new URL(tab.url).origin === origin
-        });
-        if (!tabId) {
-            return null
-        }
-        return this.tabContainer[tabId]
+        })
     }
 
     async getOrRestoreTab (tabId) {
