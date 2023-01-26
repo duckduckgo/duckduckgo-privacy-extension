@@ -193,7 +193,7 @@ const ATB = (() => {
             const domain = (tabs && tabs[0]) ? tabs[0].url : ''
             if (ATB.canShowPostInstall(domain)) {
                 settings.updateSetting('hasSeenPostInstall', true)
-                let postInstallURL = 'https://duckduckgo.com/app?post=1'
+                let postInstallURL = 'https://duckduckgo.com/extension-success'
                 const atb = settings.getSetting('atb')
                 postInstallURL += atb ? `&atb=${atb}` : ''
                 browser.tabs.create({
