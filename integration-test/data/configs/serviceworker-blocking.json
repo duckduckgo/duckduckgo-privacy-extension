@@ -1,0 +1,6 @@
+{
+    "globalThis.dbg.tds.config.features.serviceworkerBlocking": {
+        "state": "enabled",
+        "exceptions": [ ]
+    }
+}
