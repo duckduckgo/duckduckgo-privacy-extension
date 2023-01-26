@@ -166,7 +166,7 @@ export class NewTabTrackerStats {
         }
 
         // enqueue a sync + data push
-        this.debounced('record', 1000, () => {
+        this.throttled('record', 1000, () => {
             this.syncToStorage()
             this.sendToNewTab('following a recorded tracker-blocked event')
         })
@@ -230,7 +230,7 @@ export class NewTabTrackerStats {
      */
     sendToNewTab (reason) {
         if (!reason) throw new Error('you must provide a \'reason\' for sending new data')
-        this.debounced('sendToNewTab', 200, () => this._publish(reason))
+        this.throttled('sendToNewTab', 200, () => this._publish(reason))
     }
 
     /**
@@ -327,16 +327,32 @@ export class NewTabTrackerStats {
         }
     }
 
-    debounceTimers = {}
+    throttleFlags = {}
 
     /**
+     * A trailing throttle implementation.
+     *
+     * This will ensure a given operation does not execute more
+     * than once within the given timeframe;
+     *
      * @param {string} name
      * @param {number} timeout
      * @param {() => unknown} fn
      */
-    debounced (name, timeout, fn) {
-        clearTimeout(this.debounceTimers[name])
-        this.debounceTimers[name] = setTimeout(fn, timeout)
+    throttled (name, timeout, fn) {
+        if (this.throttleFlags[name] === true) {
+            // do nothing, if we get here we're already throttled
+        } else {
+            // mark this operation as active
+            this.throttleFlags[name] = true
+
+            // schedule the callback
+            setTimeout(() => {
+                // mark this operation as 'inactive'
+                this.throttleFlags[name] = false
+                fn()
+            }, timeout)
+        }
     }
 }
 
