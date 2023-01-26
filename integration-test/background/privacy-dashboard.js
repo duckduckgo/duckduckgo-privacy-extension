@@ -1,6 +1,7 @@
 const harness = require('../helpers/harness')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
+const { loadTestConfig } = require('../helpers/testConfig')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/request-blocking/'
 
@@ -12,6 +13,7 @@ describe('Test privacy dashboard', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
         await backgroundWait.forAllConfiguration(bgPage)
+        await loadTestConfig(bgPage, 'serviceworker-blocking.json')
     })
 
     afterAll(async () => {
