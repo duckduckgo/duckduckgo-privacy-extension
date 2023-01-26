@@ -605,7 +605,6 @@ export async function addSmarterEncryptionSessionRule (domain) {
 if (browserWrapper.getManifestVersion() === 3) {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)
-    ensureServiceWorkerInitiatedRequestException()
     // on update, check that the dynamic rule state is consistent with the rule ranges we expect
     chrome.runtime.onInstalled.addListener(() => {
         clearInvalidRules()
