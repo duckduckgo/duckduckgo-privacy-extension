@@ -2,6 +2,7 @@ const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
+const { loadTestConfig } = require('../helpers/testConfig')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/request-blocking/'
 
@@ -13,6 +14,7 @@ describe('Test request blocking', () => {
     beforeAll(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
         await backgroundWait.forAllConfiguration(bgPage)
+        await loadTestConfig(bgPage, 'serviceworker-blocking.json')
     })
 
     afterAll(async () => {
@@ -64,14 +66,6 @@ describe('Test request blocking', () => {
         )
         for (const { id, category, status } of pageResults) {
             const description = `ID: ${id}, Category: ${category}`
-
-            // ServiceWorker initiated request blocking is not yet supported.
-            // TODO: Remove this condition once they are blocked again.
-            if (id === 'serviceworker-fetch') {
-                expect(status).withContext(description).toEqual('loaded')
-                continue
-            }
-
             expect(status).withContext(description).not.toEqual('loaded')
         }
 
