@@ -121,7 +121,7 @@ describe('sending data', () => {
     })
     it('should debounce sending data after recording tracker events', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats, )
+        const newtab = new NewTabTrackerStats(stats)
 
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)

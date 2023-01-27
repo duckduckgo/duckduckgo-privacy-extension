@@ -12,7 +12,6 @@ import {
     flushSessionRules,
     refreshUserAllowlistRules
 } from './declarative-net-request'
-import { NewTabTrackerStats } from './newtab-tracker-stats'
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const experiment = require('./experiments.es6')
@@ -402,14 +401,6 @@ browser.runtime.onMessage.addListener((req, sender) => {
 
     if (req.messageType && req.messageType in messageHandlers) {
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req))
-    }
-
-    /**
-     * Handle every message prefixed with `newTabPage_`
-     */
-    if (req.messageType && req.messageType.startsWith(NewTabTrackerStats.eventPrefix)) {
-        // handled elsewhere
-        return
     }
 
     // TODO clean up legacy onboarding messaging
