@@ -81,9 +81,10 @@ function stringifyBlocklist (tds) {
  * @typedef {object} rulesetEqualOptions
  * @property {object[]} [expectedRuleset]
  *   The expected declarativeNetRequest ruleset.
- * @property {object} [expectedInverseCustomActionRules]
- *   The expected declarativeNetRequest ruleset.
- * @property {object} [expectedLookup]
+ * @property {object} [expectedCTLAllowingRules]
+ *   The expected allowing declarativeNetRequest rules by Click to Load action
+ *   lookup.
+ * @property {object} [expectedMatchDetailsLookup]
  *   The expected ruleId -> matchDetails lookup.
  * @property {function} [rulesetTransform]
  *   Function to apply to the generated ruleset before comparing it to the
@@ -113,8 +114,8 @@ function stringifyBlocklist (tds) {
  * @return {Promise<>}
  */
 async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
-    expectedRuleset, expectedLookup, rulesetTransform, ruleTransform,
-    lookupTransform, expectedInverseCustomActionRules
+    expectedRuleset, expectedMatchDetailsLookup, rulesetTransform,
+    ruleTransform, lookupTransform, expectedCTLAllowingRules
 }) {
     const tdsBefore = stringifyBlocklist(tds)
 
@@ -145,19 +146,19 @@ async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
         assert.deepEqual(actualRuleset, expectedRuleset)
     }
 
-    if (expectedLookup) {
+    if (expectedMatchDetailsLookup) {
         let actualLookup = result.matchDetailsByRuleId
 
         if (lookupTransform) {
             actualLookup = lookupTransform(actualLookup, result.ruleset)
         }
-        assert.deepEqual(actualLookup, expectedLookup)
+        assert.deepEqual(actualLookup, expectedMatchDetailsLookup)
     }
 
-    if (expectedInverseCustomActionRules) {
-        const actualInverseRules = result.inverseCustomActionRules
+    if (expectedCTLAllowingRules) {
+        const actuaCTLAllowingRules = result.allowingRulesByClickToLoadAction
 
-        assert.deepEqual(actualInverseRules, expectedInverseCustomActionRules)
+        assert.deepEqual(actuaCTLAllowingRules, expectedCTLAllowingRules)
     }
 }
 
@@ -417,7 +418,7 @@ describe('generateTdsRuleset', () => {
                     }
                 }
             ],
-            expectedLookup: {
+            expectedMatchDetailsLookup: {
                 1: {
                     type: 'trackerBlocking',
                     possibleTrackerDomains: ['block.invalid']
@@ -1077,7 +1078,7 @@ describe('generateTdsRuleset', () => {
                 }
                 return domains
             },
-            expectedLookup: [
+            expectedMatchDetailsLookup: [
                 'rule.invalid',
                 'rule.invalid',
                 'subdomain.rule.invalid',
@@ -1099,7 +1100,7 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, 'block.block.invalid', 'Block entity', 'block')
 
         await rulesetEqual(blockList, isRegexSupportedTrue, 3333, {
-            expectedLookup: {
+            expectedMatchDetailsLookup: {
                 3333: {
                     type: 'trackerBlocking',
                     possibleTrackerDomains: ['block.invalid']
@@ -1204,7 +1205,7 @@ describe('generateTdsRuleset', () => {
                 }
 
             ],
-            expectedLookup: {
+            expectedMatchDetailsLookup: {
                 1: {
                     type: 'trackerBlocking',
                     possibleTrackerDomains:
@@ -1401,7 +1402,7 @@ describe('generateTdsRuleset', () => {
                     }
                 }
             ],
-            expectedLookup: {
+            expectedMatchDetailsLookup: {
                 1: {
                     type: 'trackerBlocking',
                     possibleTrackerDomains: ['entity.invalid']
@@ -1562,7 +1563,7 @@ describe('generateTdsRuleset', () => {
         })
     })
 
-    it('should include rules with known custom actions', async () => {
+    it('should handle "Click to Load" rule actions', async () => {
         const blockList = emptyBlockList()
         addDomain(blockList, 'default-ignore.invalid', 'Default Ignore entity', 'ignore', [
             {
@@ -1601,174 +1602,238 @@ describe('generateTdsRuleset', () => {
                 exceptions: { types: ['script'] }
             }
         ])
-        const expectedRules = {
-            expectedRuleset: [{
-                priority: 10001,
-                action: {
-                    type: 'block'
-                },
-                condition: {
-                    urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
-                    isUrlFilterCaseSensitive: false,
-                    domainType: 'thirdParty'
-                },
-                id: 1
-            }, {
-                priority: 10001,
-                action: {
-                    type: 'allow'
-                },
-                condition: {
-                    urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
-                    isUrlFilterCaseSensitive: false,
-                    resourceTypes: ['script']
-                },
-                id: 2
-            }, {
-                priority: 10002,
-                action: {
-                    type: 'block'
-                },
-                condition: {
-                    urlFilter: '||default-ignore.invalid/known-action-2',
-                    isUrlFilterCaseSensitive: false,
-                    domainType: 'thirdParty'
-                },
-                id: 3
-            }, {
-                priority: 10002,
-                action: {
-                    type: 'allow'
-                },
-                condition: {
-                    urlFilter: '||default-ignore.invalid/known-action-2',
-                    isUrlFilterCaseSensitive: false,
-                    resourceTypes: ['script']
-                },
-                id: 4
-            }, {
-                priority: 10003,
-                action: {
-                    type: 'block'
-                },
-                condition: {
-                    urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
-                    isUrlFilterCaseSensitive: false,
-                    domainType: 'thirdParty'
-                },
-                id: 5
-            }, {
-                priority: 10004,
-                action: {
-                    type: 'block'
-                },
-                condition: {
-                    urlFilter: '||default-ignore.invalid/known-action-1',
-                    isUrlFilterCaseSensitive: false,
-                    domainType: 'thirdParty'
-                },
-                id: 6
-            }, {
-                priority: 10000,
-                action: {
-                    type: 'block'
-                },
-                condition: {
-                    domainType: 'thirdParty',
-                    requestDomains: ['default-block.invalid']
-                },
-                id: 7
-            }, {
-                priority: 10001,
-                action: {
-                    type: 'allow'
-                },
-                condition: {
-                    urlFilter: '||default-block.invalid/block-ctl-yt-1',
-                    isUrlFilterCaseSensitive: false,
-                    resourceTypes: ['script']
-                },
-                id: 8
-            }, {
-                priority: 10002,
-                action: {
-                    type: 'block'
-                },
-                condition: {
-                    urlFilter: '||default-block.invalid/known-action-2',
-                    isUrlFilterCaseSensitive: false,
-                    domainType: 'thirdParty'
-                },
-                id: 9
-            }, {
-                priority: 10002,
-                action: {
-                    type: 'allow'
-                },
-                condition: {
-                    urlFilter: '||default-block.invalid/known-action-2',
-                    isUrlFilterCaseSensitive: false,
-                    resourceTypes: ['script']
-                },
-                id: 10
-            }, {
-                priority: 10003,
-                action: {
-                    redirect: {
-                        extensionPath: '/supported.js'
+
+        await rulesetEqual(blockList, isRegexSupportedTrue, null, {
+            expectedRuleset: [
+                {
+                    id: 1,
+                    priority: 10001,
+                    action: {
+                        type: 'block'
                     },
-                    type: 'redirect'
+                    condition: {
+                        urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty'
+                    }
                 },
-                condition: {
-                    urlFilter: '||default-block.invalid/block-ctl-fb-1',
-                    isUrlFilterCaseSensitive: false,
-                    domainType: 'thirdParty',
-                    resourceTypes: ['script']
+                {
+                    id: 2,
+                    priority: 10001,
+                    action: {
+                        type: 'allow'
+                    },
+                    condition: {
+                        urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
+                        isUrlFilterCaseSensitive: false,
+                        resourceTypes: ['script']
+                    }
                 },
-                id: 11
-            }, {
-                priority: 10004,
-                action: {
-                    type: 'block'
+                {
+                    id: 3,
+                    priority: 10002,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        urlFilter: '||default-ignore.invalid/known-action-2',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty'
+                    }
                 },
-                condition: {
-                    urlFilter: '||default-block.invalid/known-action-1',
-                    isUrlFilterCaseSensitive: false,
-                    domainType: 'thirdParty'
+                {
+                    id: 4,
+                    priority: 10002,
+                    action: {
+                        type: 'allow'
+                    },
+                    condition: {
+                        urlFilter: '||default-ignore.invalid/known-action-2',
+                        isUrlFilterCaseSensitive: false,
+                        resourceTypes: ['script']
+                    }
                 },
-                id: 12
-            }],
-            expectedInverseCustomActionRules: {}
-        }
-        expectedRules.expectedInverseCustomActionRules['block-ctl-yt'] = [
-            {
-                priority: 10001,
-                action: { type: 'allow' },
-                condition: {
-                    urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
-                    isUrlFilterCaseSensitive: false
+                {
+                    id: 5,
+                    priority: 10003,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty'
+                    }
+                },
+                {
+                    id: 6,
+                    priority: 10004,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        urlFilter: '||default-ignore.invalid/known-action-1',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty'
+                    }
+                },
+                {
+                    id: 7,
+                    priority: 10000,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        domainType: 'thirdParty',
+                        requestDomains: ['default-block.invalid']
+                    }
+                },
+                {
+                    id: 8,
+                    priority: 10001,
+                    action: {
+                        type: 'allow'
+                    },
+                    condition: {
+                        urlFilter: '||default-block.invalid/block-ctl-yt-1',
+                        isUrlFilterCaseSensitive: false,
+                        resourceTypes: ['script']
+                    }
+                },
+                {
+                    id: 9,
+                    priority: 10002,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        urlFilter: '||default-block.invalid/known-action-2',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty'
+                    }
+                },
+                {
+                    id: 10,
+                    priority: 10002,
+                    action: {
+                        type: 'allow'
+                    },
+                    condition: {
+                        urlFilter: '||default-block.invalid/known-action-2',
+                        isUrlFilterCaseSensitive: false,
+                        resourceTypes: ['script']
+                    }
+                },
+                {
+                    id: 11,
+                    priority: 10003,
+                    action: {
+                        redirect: {
+                            extensionPath: '/supported.js'
+                        },
+                        type: 'redirect'
+                    },
+                    condition: {
+                        urlFilter: '||default-block.invalid/block-ctl-fb-1',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty',
+                        resourceTypes: ['script']
+                    }
+                },
+                {
+                    id: 12,
+                    priority: 10004,
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        urlFilter: '||default-block.invalid/known-action-1',
+                        isUrlFilterCaseSensitive: false,
+                        domainType: 'thirdParty'
+                    }
                 }
-            }
-        ]
-        expectedRules.expectedInverseCustomActionRules['block-ctl-fb'] = [
-            {
-                priority: 10003,
-                action: { type: 'allow' },
-                condition: {
-                    urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
-                    isUrlFilterCaseSensitive: false
-                }
+            ],
+            expectedCTLAllowingRules: {
+                'block-ctl-fb': [
+                    {
+                        priority: 10003,
+                        action: { type: 'allow' },
+                        condition: {
+                            urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
+                            isUrlFilterCaseSensitive: false
+                        }
+                    },
+                    {
+                        priority: 10003,
+                        action: { type: 'allow' },
+                        condition: {
+                            urlFilter: '||default-block.invalid/block-ctl-fb-1',
+                            isUrlFilterCaseSensitive: false,
+                            resourceTypes: ['script']
+                        }
+                    }
+                ],
+                'block-ctl-yt': [
+                    {
+                        priority: 10001,
+                        action: { type: 'allow' },
+                        condition: {
+                            urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
+                            isUrlFilterCaseSensitive: false
+                        }
+                    }
+                ]
             },
-            {
-                priority: 10003,
-                action: { type: 'allow' },
-                condition: {
-                    urlFilter: '||default-block.invalid/block-ctl-fb-1',
-                    isUrlFilterCaseSensitive: false,
-                    resourceTypes: ['script']
+            expectedMatchDetailsLookup: {
+                1: {
+                    type: 'clickToLoad',
+                    possibleTrackerDomains: ['default-ignore.invalid']
+                },
+                2: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['default-ignore.invalid']
+                },
+                3: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['default-ignore.invalid']
+                },
+                4: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['default-ignore.invalid']
+                },
+                5: {
+                    type: 'clickToLoad',
+                    possibleTrackerDomains: ['default-ignore.invalid']
+                },
+                6: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['default-ignore.invalid']
+                },
+                7: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['default-block.invalid']
+                },
+                8: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['default-block.invalid']
+                },
+                9: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['default-block.invalid']
+                },
+                10: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['default-block.invalid']
+                },
+                11: {
+                    type: 'clickToLoad',
+                    possibleTrackerDomains: ['default-block.invalid']
+                },
+                12: {
+                    type: 'trackerBlocking',
+                    possibleTrackerDomains: ['default-block.invalid']
                 }
             }
-        ]
-        await rulesetEqual(blockList, isRegexSupportedTrue, null, expectedRules)
+        })
     })
 })

@@ -2,8 +2,42 @@ const assert = require('assert')
 
 const {
     generateDNRRule,
-    generateRequestDomainsByTrackerDomain
+    generateRequestDomainsByTrackerDomain,
+    storeInLookup
 } = require('../lib/utils')
+
+describe('storeInLookup', () => {
+    it('should work with Map lookups correctly', () => {
+        const lookup = new Map()
+        // Non-string key.
+        storeInLookup(lookup, 10, ['foo', 'bar'])
+        storeInLookup(lookup, 10, ['hello'])
+        storeInLookup(lookup, 10, ['world'])
+        // String key
+        storeInLookup(lookup, '10', [20])
+
+        // Map lookup should not be treated as vanilla Object.
+        assert.equal(Object.prototype.hasOwnProperty.call(lookup, '10'), false)
+        // Both the 10 and '10' keys should be set.
+        assert.deepEqual(lookup.get(10), ['foo', 'bar', 'hello', 'world'])
+        assert.deepEqual(lookup.get('10'), [20])
+    })
+
+    it('should work with vanilla Object lookups correctly', () => {
+        const lookup = Object.create(null)
+        // Non-string key.
+        storeInLookup(lookup, 10, ['foo', 'bar'])
+        storeInLookup(lookup, 10, ['hello'])
+        storeInLookup(lookup, 10, ['world'])
+        // String key
+        storeInLookup(lookup, '10', [20])
+
+        // Values should be combined, since keys are treated as strings for
+        // vanilla Objects.
+        assert.equal(Object.prototype.hasOwnProperty.call(lookup, '10'), true)
+        assert.deepEqual(lookup['10'], ['foo', 'bar', 'hello', 'world', 20])
+    })
+})
 
 describe('generateDNRRule', () => {
     it('should populate the rule priority', async () => {
