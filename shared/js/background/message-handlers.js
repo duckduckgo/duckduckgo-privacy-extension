@@ -4,6 +4,7 @@ import { breakageReportForTab } from './broken-site-report'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 import { getExtensionURL, notifyPopup } from './wrapper.es6'
 import { reloadCurrentTab } from './utils.es6'
+import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -16,7 +17,6 @@ const Companies = require('./companies.es6')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
-const { enableInverseRules } = require('./classes/custom-rules-manager')
 const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
@@ -208,7 +208,7 @@ export async function unblockClickToLoadContent (data, sender) {
     const entity = data.entity
 
     if (browserWrapper.getManifestVersion() === 3) {
-        await enableInverseRules(data.action, sender.tab.id)
+        await ensureClickToLoadRuleActionDisabled(data.action, tab)
     }
     tab.site.clickToLoad.push(entity)
 

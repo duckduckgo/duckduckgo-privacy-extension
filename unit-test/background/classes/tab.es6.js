@@ -101,7 +101,7 @@ describe('Tab', () => {
                 surrogates: {},
                 referrer: null,
                 adClick: null,
-                customActionRules: {},
+                dnrRuleIdsByDisabledClickToLoadRuleAction: {},
                 trackers: {},
                 url: 'http://example.com',
                 id: 123,
