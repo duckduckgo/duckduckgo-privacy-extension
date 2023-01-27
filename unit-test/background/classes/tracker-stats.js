@@ -196,6 +196,7 @@ describe('TrackerStats', () => {
 
         // this is incorrect, should be `totalCount`
         trackerStats.deserialize({
+            // @ts-expect-error
             total_count: 2,
             entries: {
                 Google: [now],

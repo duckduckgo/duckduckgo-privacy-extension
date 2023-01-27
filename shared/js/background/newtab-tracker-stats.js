@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill'
 import constants from '../../data/constants'
 import * as browserWrapper from './wrapper.es6.js'
-import { emitter, TrackerBlockedEvent } from './before-request.es6.js'
 import tdsStorage from './storage/tds.es6'
+import { emitter, TrackerBlockedEvent } from './before-request.es6.js'
 
 const {
     incoming,
@@ -84,7 +84,7 @@ export class NewTabTrackerStats {
 
             // handle every message on this port
             port.onMessage.addListener((msg) => {
-                this.handleIncomingEvent(msg)
+                this._handleIncomingEvent(msg)
             })
 
             // ensure we're not holding on to zombie ports (those that have disconnected)
@@ -105,7 +105,7 @@ export class NewTabTrackerStats {
         browserWrapper.createAlarm(pruneAlarmName, { periodInMinutes: 5 })
         browser.alarms.onAlarm.addListener(async alarmEvent => {
             if (alarmEvent.name === pruneAlarmName) {
-                this.handlePruneAlarm()
+                this._handlePruneAlarm()
             }
         })
 
@@ -119,12 +119,25 @@ export class NewTabTrackerStats {
         })
 
         /**
-         * Assign the entities from the `tds` data
+         * Assign the entities from the initial `tds` data
          */
         this.assignTopCompanies(tdsStorage.tds.entities)
+
+        /**
+         * Observe changes to the 'tds' data and update the topCompanies
+         */
+        tdsStorage.onUpdate('tds', (name, etag, updatedValue) => {
+            // just double-checking, is this incoming data validated anywhere else?
+            if (updatedValue?.tds?.entities) {
+                this.assignTopCompanies(updatedValue.tds.entities)
+            }
+        })
     }
 
     /**
+     * Create a Map of 'top companies' based on entity prevalence
+     * This is used to ensure we only store the names of companies in the top 100 list
+     *
      * @param {Record<string, { displayName: string, prevalence: number }>} entities
      * @param {number} [maxCount] - how many to consider 'top companies'
      */
@@ -166,7 +179,7 @@ export class NewTabTrackerStats {
         }
 
         // enqueue a sync + data push
-        this.throttled('record', 1000, () => {
+        this._throttled('record', 1000, () => {
             this.syncToStorage()
             this.sendToNewTab('following a recorded tracker-blocked event')
         })
@@ -206,11 +219,20 @@ export class NewTabTrackerStats {
     }
 
     /**
+     * Convert locally stored data into data that can be consumed by a UI
+     * @param {string} reason - a reason or path that caused this
+     */
+    sendToNewTab (reason) {
+        if (!reason) throw new Error('you must provide a \'reason\' for sending new data')
+        this._throttled('sendToNewTab', 200, () => this._publish(reason))
+    }
+
+    /**
      * A single handler for all incoming events relating
      * to the new tab page such as heartbeat, sendInitial etc
      * @returns {void}
      */
-    handleIncomingEvent (event) {
+    _handleIncomingEvent (event) {
         /**
          * Handle every message prefixed with `newTabPage_`
          * For now every event just causes new data to be pushed
@@ -222,15 +244,6 @@ export class NewTabTrackerStats {
                 console.error('unhandled event prefixed with: ', NewTabTrackerStats.eventPrefix, event)
             }
         }
-    }
-
-    /**
-     * Convert locally stored data into data that can be consumed by a UI
-     * @param {string} reason - a reason or path that caused this
-     */
-    sendToNewTab (reason) {
-        if (!reason) throw new Error('you must provide a \'reason\' for sending new data')
-        this.throttled('sendToNewTab', 200, () => this._publish(reason))
     }
 
     /**
@@ -267,7 +280,7 @@ export class NewTabTrackerStats {
      *   - publish the changed data
      * @param {number} [now] - optional timestamp to use in comparisons
      */
-    handlePruneAlarm (now = Date.now()) {
+    _handlePruneAlarm (now = Date.now()) {
         this.stats.evictExpired()
         this.syncToStorage()
         this.sendToNewTab('following a evictExpired alarm')
@@ -339,9 +352,9 @@ export class NewTabTrackerStats {
      * @param {number} timeout
      * @param {() => unknown} fn
      */
-    throttled (name, timeout, fn) {
+    _throttled (name, timeout, fn) {
         if (this.throttleFlags[name] === true) {
-            // do nothing, if we get here we're already throttled
+            // do nothing, if we get here we're already _throttled
         } else {
             // mark this operation as active
             this.throttleFlags[name] = true

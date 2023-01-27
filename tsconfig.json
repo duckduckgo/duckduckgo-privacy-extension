@@ -22,7 +22,9 @@
       "shared/js/newtab/**/*.js",
       "shared/js/shared-utils/**/*.js",
       "integration-test/helpers/requests.js",
-      "integration-test/background/click-to-load-facebook.js"
+      "integration-test/background/click-to-load-facebook.js",
+      "unit-test/background/newtab-tracker-stats.js",
+      "unit-test/background/classes/tracker-stats.js"
   ],
   "exclude": [
       "shared/js/background/background.es6.js",

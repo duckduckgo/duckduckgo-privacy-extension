@@ -60,7 +60,7 @@ window.addEventListener('message', (e) => {
     }
 
     // if we get this far, it's a valid message that we can forward into the Extension
-    console.log('📩 INCOMING newtab.js', e.data)
+    // console.log('📩 INCOMING newtab.js', e.data)
     sendToChromeRuntime(e.data)
 })
 

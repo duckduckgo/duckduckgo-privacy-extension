@@ -43,7 +43,7 @@ export async function onStartup () {
     Companies.buildFromStorage()
 
     /**
-     * in Chrome only (and MV2 for now), try to initiate the `NewTabTrackerStats` feature
+     * in Chrome only, try to initiate the `NewTabTrackerStats` feature
      */
     if (utils.getBrowserName() === 'chrome') {
         try {

@@ -12,6 +12,7 @@ describe('NewTabTrackerStats', () => {
     it('produces a filtered output for multiple companies', () => {
         const stats = new TrackerStats()
         const newtab = new NewTabTrackerStats(stats)
+        // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
 
         const now = Date.now()
@@ -35,6 +36,7 @@ describe('NewTabTrackerStats', () => {
     it('only lists the names of entries in the top100 list', () => {
         const stats = new TrackerStats()
         const newtab = new NewTabTrackerStats(stats)
+        // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
 
         const now = Date.now()
@@ -64,6 +66,8 @@ describe('NewTabTrackerStats', () => {
     it('combines none-top entries', () => {
         const stats = new TrackerStats()
         const newtab = new NewTabTrackerStats(stats)
+
+        // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities, 5)
 
         const now = Date.now()
@@ -117,7 +121,9 @@ describe('sending data', () => {
     })
     it('should debounce sending data after recording tracker events', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats)
+        const newtab = new NewTabTrackerStats(stats, )
+
+        // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
         const sendSpy = spyOn(newtab, '_publish')
         const syncSpy = spyOn(browserWrapper, 'syncToStorage')
@@ -172,7 +178,7 @@ describe('incoming events', () => {
     })
     it('should respond to heartbeat', () => {
         // simulate a valid incoming event
-        newtab.handleIncomingEvent({
+        newtab._handleIncomingEvent({
             messageType: constants.trackerStats.events.incoming.newTabPage_heartbeat
         })
 
@@ -205,7 +211,7 @@ describe('alarms', () => {
         const callTime = now + MIN * 61
 
         // simulate calling evictExpired at a time that would evict all entries (61 min in this case)
-        newtab.handlePruneAlarm(callTime)
+        newtab._handlePruneAlarm(callTime)
 
         // allow for the debouncing on send
         jasmine.clock().tick(201)
