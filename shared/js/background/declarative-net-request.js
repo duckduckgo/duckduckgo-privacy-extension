@@ -141,7 +141,7 @@ async function configRulesNeedUpdate (configName, expectedState) {
  * @returns {Promise<>}
  */
 async function updateConfigRules (
-    configName, latestState, rules, matchDetailsByRuleId, inverseCustomRules = {}
+    configName, latestState, rules, matchDetailsByRuleId, allowingRulesByClickToLoadAction = {}
 ) {
     const [ruleIdStart, ruleIdEnd] = ruleIdRangeByConfigName[configName]
     const etagRuleId = ruleIdStart
@@ -190,8 +190,8 @@ async function updateConfigRules (
     }
 
     await settings.ready()
-    if (Object.keys(inverseCustomRules).length) {
-        settings.updateSetting('inverseCustomRules', inverseCustomRules)
+    if (Object.keys(allowingRulesByClickToLoadAction).length) {
+        settings.updateSetting('allowingRulesByClickToLoadAction', allowingRulesByClickToLoadAction)
     }
     settings.updateSetting(settingName, settingValue)
 }
@@ -317,7 +317,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
             const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
             const {
-                ruleset, matchDetailsByRuleId, inverseCustomActionRules
+                ruleset, matchDetailsByRuleId, allowingRulesByClickToLoadAction
             } = await generateTdsRuleset(
                 configValue,
                 supportedSurrogates,
@@ -326,7 +326,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
                 ruleIdStart + 1
             )
 
-            await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId, inverseCustomActionRules)
+            await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId, allowingRulesByClickToLoadAction)
         // Extension configuration.
         } else if (configName === 'config') {
             await updateExtensionConfigRules(etag, configValue)
