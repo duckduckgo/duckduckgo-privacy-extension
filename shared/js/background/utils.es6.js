@@ -454,13 +454,3 @@ export async function reloadCurrentTab () {
         browser.tabs.reload(tab.id)
     }
 }
-
-export function perf (name) {
-    const start = 'start.' + name
-    const end = 'end.' + name
-    globalThis.performance.mark(start)
-    return () => {
-        globalThis.performance.mark(end)
-        globalThis.performance.measure(name, start, end)
-    }
-}
