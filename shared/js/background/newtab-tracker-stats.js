@@ -33,7 +33,7 @@ export class NewTabTrackerStats {
     /**
      * The key to use when we don't want to record the company name
      */
-    static unknownCompanyKey = 'unknown'
+    static otherCompaniesKey = 'others'
     /**
      * The prefix used for events. This is used to ensure we only handle events we care about
      */
@@ -162,7 +162,7 @@ export class NewTabTrackerStats {
             /**
              * Otherwise just increase the 'unknown' count
              */
-            this.stats.increment(NewTabTrackerStats.unknownCompanyKey, timestamp)
+            this.stats.increment(NewTabTrackerStats.otherCompaniesKey, timestamp)
         }
 
         // enqueue a sync + data push
@@ -287,8 +287,8 @@ export class NewTabTrackerStats {
         // access the entries once they are sorted and grouped
         const stats = this.stats.sorted(maxCount, now)
 
-        // is there an entry for 'unknownCompanyKey' (meaning an entry where the company name was skipped)
-        const index = stats.results.findIndex(result => result.key === NewTabTrackerStats.unknownCompanyKey)
+        // is there an entry for 'otherCompaniesKey' (meaning an entry where the company name was skipped)
+        const index = stats.results.findIndex(result => result.key === NewTabTrackerStats.otherCompaniesKey)
 
         // if there is an entry, add the 'overflow' count and move it to the end of the list
         if (index > -1) {
@@ -299,10 +299,10 @@ export class NewTabTrackerStats {
             const spliced = stats.results.splice(index, 1)
             stats.results.push(...spliced)
         } else {
-            // if we get here, there was no entry for `unknownCompanyKey`, so we need to add one to cover the overflow
+            // if we get here, there was no entry for `otherCompaniesKey`, so we need to add one to cover the overflow
             if (stats.overflow) {
                 stats.results.push({
-                    key: NewTabTrackerStats.unknownCompanyKey,
+                    key: NewTabTrackerStats.otherCompaniesKey,
                     count: stats.overflow
                 })
             }
@@ -315,7 +315,7 @@ export class NewTabTrackerStats {
             trackerCompaniesPeriod: 'last-hour',
             trackerCompanies: stats.results.map(item => {
                 // convert our known key into the 'Other'
-                const displayName = item.key === NewTabTrackerStats.unknownCompanyKey
+                const displayName = item.key === NewTabTrackerStats.otherCompaniesKey
                     ? 'Other'
                     : item.key
 
