@@ -39,7 +39,8 @@ const {
     AD_ATTRIBUTION_POLICY_PRIORITY,
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY,
-    ATB_PARAM_PRIORITY
+    ATB_PARAM_PRIORITY,
+    NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY
 } = require('../lib/rulePriorities')
 
 describe('Rule Priorities', () => {
@@ -59,6 +60,7 @@ describe('Rule Priorities', () => {
         assert.equal(SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY, 1000000)
         assert.equal(USER_ALLOWLISTED_PRIORITY, 1000000)
         assert.equal(ATB_PARAM_PRIORITY, 2000000)
+        assert.equal(NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY, 2000000)
     })
 
     it('should have the correct relative rule priorities', () => {
@@ -66,6 +68,11 @@ describe('Rule Priorities', () => {
         assert.ok(ATB_PARAM_PRIORITY > UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
         assert.ok(ATB_PARAM_PRIORITY > USER_ALLOWLISTED_PRIORITY)
         assert.ok(ATB_PARAM_PRIORITY > SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
+
+        // NEWTAB_TRACKER_STATS is higher than allowlist
+        assert.ok(NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY > UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
+        assert.ok(NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY > USER_ALLOWLISTED_PRIORITY)
+        assert.ok(NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY > SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
 
         // Ceiling priorities should always be higher than baseline.
         assert.ok(TRACKER_BLOCKING_BASELINE_PRIORITY < TRACKER_BLOCKING_CEILING_PRIORITY)
@@ -81,6 +88,7 @@ describe('Rule Priorities', () => {
         assert.ok(SMARTER_ENCRYPTION_PRIORITY < UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY)
         assert.ok(SMARTER_ENCRYPTION_PRIORITY < SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY)
         assert.ok(SMARTER_ENCRYPTION_PRIORITY < USER_ALLOWLISTED_PRIORITY)
+        assert.ok(SMARTER_ENCRYPTION_PRIORITY < NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY)
 
         // Tracker allowlist should take priority over tracker blocking and smarter encryption, but not
         // other features/allowlists.
