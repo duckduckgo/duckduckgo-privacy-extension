@@ -427,7 +427,7 @@ function mv3Redirect () {
         priority: NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY,
         actionType: 'redirect',
         redirect: {
-            url: targetUrl,
+            url: targetUrl
         },
         urlFilter: incomingUrl.toString(),
         resourceTypes: ['sub_frame']
