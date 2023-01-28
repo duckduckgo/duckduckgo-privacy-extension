@@ -3,6 +3,9 @@ import constants from '../../data/constants'
 import * as browserWrapper from './wrapper.es6.js'
 import tdsStorage from './storage/tds.es6'
 import { emitter, TrackerBlockedEvent } from './before-request.es6.js'
+import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
+import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
+import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './declarative-net-request'
 
 const {
     incoming,
@@ -419,23 +422,18 @@ export function mv2Redirect () {
 function mv3Redirect () {
     const targetUrl = chrome.runtime.getURL(constants.trackerStats.redirectTarget)
     const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin)
+    const redirectRule = generateDNRRule({
+        id: NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID,
+        priority: NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY,
+        actionType: 'redirect',
+        redirect: {
+            url: targetUrl,
+        },
+        urlFilter: incomingUrl.toString(),
+        resourceTypes: ['sub_frame']
+    })
     chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds: [100000000001],
-        addRules: [
-            {
-                priority: 1,
-                id: 100000000001,
-                action: {
-                    // @ts-ignore  - this is an enum in @types/chrome, can't represent that here
-                    type: 'redirect',
-                    redirect: { url: targetUrl }
-                },
-                condition: {
-                    urlFilter: incomingUrl.toString(),
-                    // @ts-ignore  - this is an enum in @types/chrome, can't represent that here
-                    resourceTypes: ['sub_frame']
-                }
-            }
-        ]
+        removeRuleIds: [redirectRule.id],
+        addRules: [redirectRule]
     })
 }
