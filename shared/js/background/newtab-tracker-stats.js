@@ -381,6 +381,7 @@ export class NewTabTrackerStats {
  * @param details
  */
 export function mv2Redirect () {
+    const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin)
     /**
      * This listener will redirect the request for tracker-stats.html
      * on the new tab page to our own HTML file under `web_accessible_resources`
@@ -393,9 +394,6 @@ export function mv2Redirect () {
             return {
                 redirectUrl: url.toString()
             }
-        }
-        if (!details.url.endsWith('tracker-stats.html')) {
-            return
         }
         if (details.url.startsWith('chrome-extension')) {
             return
@@ -414,7 +412,7 @@ export function mv2Redirect () {
         return undefined
     },
     {
-        urls: [`${constants.trackerStats.allowedOrigin}/*`],
+        urls: [incomingUrl.toString()],
         types: ['sub_frame']
     },
     ['blocking'])
