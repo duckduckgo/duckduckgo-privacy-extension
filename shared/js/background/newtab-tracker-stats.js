@@ -36,7 +36,7 @@ export class NewTabTrackerStats {
     /**
      * The key to use when we don't want to record the company name
      */
-    static otherCompaniesKey = 'others'
+    static otherCompaniesKey = '__others__'
     /**
      * The prefix used for events. This is used to ensure we only handle events we care about
      */
@@ -94,7 +94,7 @@ export class NewTabTrackerStats {
             port.onDisconnect.addListener((msg) => {
                 const index = this.ports.indexOf(port)
                 if (index > -1) {
-                    console.log('removing index', index)
+                    console.log('removing port with index:', index)
                     this.ports.splice(index, 1)
                 }
             })
@@ -102,7 +102,7 @@ export class NewTabTrackerStats {
 
         /**
          * Register an alarm and handle when it fires.
-         * For now we're pruning data every 5 min
+         * For now, we're pruning data every 5 min
          */
         const pruneAlarmName = 'pruneNewTabData'
         browserWrapper.createAlarm(pruneAlarmName, { periodInMinutes: 5 })
@@ -176,7 +176,7 @@ export class NewTabTrackerStats {
             this.stats.increment(displayName, timestamp)
         } else {
             /**
-             * Otherwise just increase the 'unknown' count
+             * Otherwise just increase the 'Other' count
              */
             this.stats.increment(NewTabTrackerStats.otherCompaniesKey, timestamp)
         }
@@ -232,16 +232,14 @@ export class NewTabTrackerStats {
 
     /**
      * A single handler for all incoming events relating
-     * to the new tab page such as heartbeat, sendInitial etc
+     * to the new tab page such as heartbeat etc
      * @returns {void}
      */
     _handleIncomingEvent (event) {
-        /**
-         * Handle every message prefixed with `newTabPage_`
-         * For now every event just causes new data to be pushed
-         */
+        // only handle messages prefixed with `newTabPage_`
         if (typeof event.messageType === 'string' && event.messageType.startsWith(NewTabTrackerStats.eventPrefix)) {
-            if (event.messageType in incoming) {
+            // currently this is the only incoming message we accept
+            if (event.messageType === incoming.newTabPage_heartbeat) {
                 this.sendToNewTab(`response to '${event.messageType}'`)
             } else {
                 console.error('unhandled event prefixed with: ', NewTabTrackerStats.eventPrefix, event)
@@ -257,6 +255,7 @@ export class NewTabTrackerStats {
         if (this._debug) {
             console.info(`sending new tab data because: ${reason}`)
         }
+
         /** @type {import('zod').infer<typeof import('../newtab/schema').dataMessage>} */
         const msg = {
             messageType: outgoing.newTabPage_data,
@@ -271,6 +270,7 @@ export class NewTabTrackerStats {
                 invalidPorts.push(port)
             }
         }
+
         if (invalidPorts.length) {
             console.error('Stale ports detected...', invalidPorts)
         }
@@ -303,7 +303,7 @@ export class NewTabTrackerStats {
         // access the entries once they are sorted and grouped
         const stats = this.stats.sorted(maxCount, now)
 
-        // is there an entry for 'otherCompaniesKey' (meaning an entry where the company name was skipped)
+        // is there an entry for 'otherCompaniesKey'? (meaning an entry where the company name was skipped)
         const index = stats.results.findIndex(result => result.key === NewTabTrackerStats.otherCompaniesKey)
 
         // if there is an entry, add the 'overflow' count and move it to the end of the list
@@ -325,6 +325,7 @@ export class NewTabTrackerStats {
         }
 
         // now produce the data in the shape consumers require for rendering their UI
+        // see 'dataFormatSchema' for the required format, it's in the `../newtab/schema` file
         return {
             totalCount: this.stats.totalCount,
             totalPeriod: 'install-time',

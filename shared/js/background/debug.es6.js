@@ -3,6 +3,7 @@
  * NOTE this is not added to the release version of the extension
  */
 import * as startup from './startup'
+import Companies from './companies.es6'
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
 const atb = require('./atb.es6')
@@ -29,7 +30,8 @@ self.dbg = {
     browserWrapper,
     utils,
     setListContents,
-    getListContents
+    getListContents,
+    companies: Companies
 }
 
 // mark this as a dev build

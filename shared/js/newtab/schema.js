@@ -32,9 +32,7 @@ export const outgoing = z.discriminatedUnion('messageType', [
 ])
 
 /**
- *
  * Incoming messages: that means from new tab page to the extension
- *
  */
 const heartbeatMessage = z.object({
     messageType: z.literal(events.incoming.newTabPage_heartbeat)

@@ -42,7 +42,7 @@ function connect () {
 window.addEventListener('message', (e) => {
     if (!e.isTrusted || e.origin !== constants.trackerStats.allowedOrigin) {
         // ignore messages from any domain that we have not explicitly allowed
-        console.error('this message or origin was not trusted', e.data)
+        console.error('this event was not trusted:', e)
         return
     }
 
