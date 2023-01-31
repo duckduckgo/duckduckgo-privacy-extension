@@ -111,7 +111,7 @@ describe('Test Facebook Click To Load', () => {
             globalThis.buttons =
                 Array.from(document.querySelectorAll('body > div'))
                     .map(div => div.shadowRoot && div.shadowRoot.querySelector('button'))
-                    .filter(button => button)
+                    .filter(button => button && button.innerText.startsWith('Unblock'))
             return globalThis.buttons.length
         })
         for (let i = 0; i < buttonCount; i++) {
