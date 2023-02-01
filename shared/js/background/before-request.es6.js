@@ -270,7 +270,7 @@ function blockHandleResponse (thisTab, requestData) {
         }
 
         if (requestData.tabId === -1 && (tracker.action === 'block' || tracker.action === 'redirect')) {
-            if (!thisTab.site.isFeatureEnabled('serviceworkerBlocking')) {
+            if (!thisTab.site.isFeatureEnabled('serviceworkerInitiatedRequests')) {
                 tracker.action = 'ignore-user'
                 tracker.reason = 'service worker blocking disabled'
             } else {

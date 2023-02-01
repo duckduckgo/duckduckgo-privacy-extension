@@ -1,5 +1,5 @@
 {
-    "globalThis.dbg.tds.config.features.serviceworkerBlocking": {
+    "globalThis.dbg.tds.config.features.serviceworkerInitiatedRequests": {
         "state": "enabled",
         "exceptions": [ ]
     }
