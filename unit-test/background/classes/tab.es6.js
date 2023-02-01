@@ -8,7 +8,7 @@ const { AdClickAttributionPolicy } = require('../../../shared/js/background/clas
 
 const tdsStorageStub = require('../../helpers/tds.es6')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
-const config = require('../../../shared/data/bundled/extension-config.json')
+const config = require('../../data/extension-config.json')
 
 let tab
 
@@ -117,7 +117,7 @@ describe('Tab', () => {
                 statusCode: null,
                 ctlYouTube: false
             }
-            expect(tabClone.site.enabledFeatures.length).toBe(20)
+            expect(tabClone.site.enabledFeatures.length).toBe(14)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))
         })
         it('should be able to get the tab from tab manager', () => {
