@@ -4,20 +4,21 @@ const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
 const { loadTestConfig } = require('../helpers/testConfig')
 
-const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/request-blocking/'
+const testHost = 'privacy-test-pages.glitch.me'
+const testSite = `https://${testHost}/privacy-protections/request-blocking/`
 
 let browser
 let bgPage
 let teardown
 
 describe('Test request blocking', () => {
-    beforeAll(async () => {
+    beforeEach(async () => {
         ({ browser, bgPage, teardown } = await harness.setup())
         await backgroundWait.forAllConfiguration(bgPage)
         await loadTestConfig(bgPage, 'serviceworker-blocking.json')
     })
 
-    afterAll(async () => {
+    afterEach(async () => {
         await teardown()
     })
 
@@ -99,5 +100,57 @@ describe('Test request blocking', () => {
         })
 
         await page.close()
+    })
+
+    it('serviceworkerInitiatedRequests exceptions should disable service worker blocking', async () => {
+        const page = await browser.newPage()
+        await bgPage.evaluate(async (domain) => {
+            /* global dbg */
+            const { data: config } = dbg.getListContents('config')
+            config.features.serviceworkerInitiatedRequests.exceptions.push({
+                domain,
+                reason: 'test'
+            })
+            await dbg.setListContents({
+                name: 'config',
+                value: config
+            })
+        }, testHost)
+        await pageWait.forGoto(page, testSite)
+
+        // Start logging network requests.
+        const pageRequests = []
+        await logPageRequests(
+            page,
+            pageRequests,
+            ({ url }) => url.hostname === 'bad.third-party.site'
+        )
+        await page.click('#start')
+        const testCount = await page.evaluate(
+            // eslint-disable-next-line no-undef
+            () => tests.filter(({ id }) => !id.includes('worker')).length
+        )
+        while (pageRequests.length < testCount) {
+            await backgroundWait.forTimeout(bgPage, 100)
+        }
+        // Verify that no logged requests were allowed.
+        for (const { url, method, type, status } of pageRequests) {
+            const description = `URL: ${url}, Method: ${method}, Type: ${type}`
+            expect(status).withContext(description).toEqual('blocked')
+        }
+
+        // Also check that the test page itself agrees that no requests were
+        // allowed.
+        const pageResults = await page.evaluate(
+            () => results.results // eslint-disable-line no-undef
+        )
+        for (const { id, category, status } of pageResults) {
+            const description = `ID: ${id}, Category: ${category}`
+            if (id === 'serviceworker-fetch') {
+                expect(status).withContext(description).toEqual('loaded')
+            } else {
+                expect(status).withContext(description).not.toEqual('loaded')
+            }
+        }
     })
 })
