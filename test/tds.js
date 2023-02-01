@@ -1602,6 +1602,7 @@ describe('generateTdsRuleset', () => {
                 exceptions: { types: ['script'] }
             }
         ])
+        addDomain(blockList, 'another-default-block.invalid', 'Default Block entity', 'block')
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
             expectedRuleset: [
@@ -1684,8 +1685,14 @@ describe('generateTdsRuleset', () => {
                         type: 'block'
                     },
                     condition: {
-                        domainType: 'thirdParty',
-                        requestDomains: ['default-block.invalid']
+                        excludedInitiatorDomains: [
+                            'default-block.invalid',
+                            'another-default-block.invalid'
+                        ],
+                        requestDomains: [
+                            'default-block.invalid',
+                            'another-default-block.invalid'
+                        ]
                     }
                 },
                 {
@@ -1709,7 +1716,10 @@ describe('generateTdsRuleset', () => {
                     condition: {
                         urlFilter: '||default-block.invalid/known-action-2',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
+                        excludedInitiatorDomains: [
+                            'default-block.invalid',
+                            'another-default-block.invalid'
+                        ]
                     }
                 },
                 {
@@ -1736,7 +1746,10 @@ describe('generateTdsRuleset', () => {
                     condition: {
                         urlFilter: '||default-block.invalid/block-ctl-fb-1',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty',
+                        excludedInitiatorDomains: [
+                            'default-block.invalid',
+                            'another-default-block.invalid'
+                        ],
                         resourceTypes: ['script']
                     }
                 },
@@ -1749,7 +1762,10 @@ describe('generateTdsRuleset', () => {
                     condition: {
                         urlFilter: '||default-block.invalid/known-action-1',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
+                        excludedInitiatorDomains: [
+                            'default-block.invalid',
+                            'another-default-block.invalid'
+                        ]
                     }
                 }
             ],
@@ -1811,7 +1827,10 @@ describe('generateTdsRuleset', () => {
                 },
                 7: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['default-block.invalid']
+                    possibleTrackerDomains: [
+                        'default-block.invalid',
+                        'another-default-block.invalid'
+                    ]
                 },
                 8: {
                     type: 'trackerBlocking',
