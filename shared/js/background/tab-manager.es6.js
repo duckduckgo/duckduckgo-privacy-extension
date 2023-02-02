@@ -89,7 +89,12 @@ class TabManager {
     _findTabsMatchingOrigin (origin) {
         return Object.keys(this.tabContainer).filter(tabId => {
             const tab = this.tabContainer[tabId]
-            return Number(tabId) > -1 && new URL(tab.url).origin === origin
+            try {
+                return Number(tabId) > -1 && new URL(tab.url).origin === origin
+            } catch (e) {
+                // URL can throw on invalid URL
+                return false
+            }
         })
     }
 
