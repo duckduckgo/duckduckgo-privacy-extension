@@ -7,10 +7,19 @@ const {
     toggleUserAllowlistDomain,
     updateUserDenylist
 } = require('./declarative-net-request.js')
+const {
+    clearClickToLoadDnrRulesForTab
+} = require('./dnr-click-to-load')
 
 /**
  * @typedef {import('./classes/site.es6.js').allowlistName} allowlistName
  */
+
+// These tab properties are preserved when a new tab Object replaces an existing
+// one for the same tab ID.
+const persistentTabProperties = [
+    'ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction'
+]
 
 class TabManager {
     constructor () {
@@ -29,8 +38,9 @@ class TabManager {
 
         const oldTab = this.tabContainer[newTab.id]
         if (oldTab) {
-            newTab.ampUrl = oldTab.ampUrl
-            newTab.cleanAmpUrl = oldTab.cleanAmpUrl
+            for (const property of persistentTabProperties) {
+                newTab[property] = oldTab[property]
+            }
             if (oldTab.adClick?.shouldPropagateAdClickForNavigation(oldTab)) {
                 newTab.adClick = oldTab.adClick.clone()
             }
@@ -56,7 +66,14 @@ class TabManager {
     }
 
     delete (id) {
-        this.tabContainer[id]?.adClick?.removeDNR()
+        const tabToRemove = this.tabContainer[id]
+        if (tabToRemove) {
+            tabToRemove?.adClick?.removeDNR()
+
+            if (browserWrapper.getManifestVersion() === 3) {
+                clearClickToLoadDnrRulesForTab(tabToRemove)
+            }
+        }
         delete this.tabContainer[id]
         TabState.delete(id)
     }

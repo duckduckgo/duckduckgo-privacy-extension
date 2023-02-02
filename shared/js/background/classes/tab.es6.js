@@ -70,12 +70,12 @@ class Tab {
         return this._tabState.adClick
     }
 
-    set customActionRules (value) {
-        this._tabState.setValue('customActionRules', value)
+    set dnrRuleIdsByDisabledClickToLoadRuleAction (value) {
+        this._tabState.setValue('dnrRuleIdsByDisabledClickToLoadRuleAction', value)
     }
 
-    get customActionRules () {
-        return this._tabState.customActionRules
+    get dnrRuleIdsByDisabledClickToLoadRuleAction () {
+        return this._tabState.dnrRuleIdsByDisabledClickToLoadRuleAction
     }
 
     set trackers (value) {

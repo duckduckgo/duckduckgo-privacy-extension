@@ -7,7 +7,7 @@
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
 import { updateActionIcon } from './events/privacy-icon-indicator'
-import { removeInverseRules } from './classes/custom-rules-manager'
+import { restoreDefaultClickToLoadRuleActions } from './dnr-click-to-load'
 import {
     flushSessionRules,
     refreshUserAllowlistRules
@@ -290,16 +290,19 @@ browser.webNavigation.onBeforeNavigate.addListener(details => {
     if (details.frameId !== 0) return
 
     const currentTab = tabManager.get({ tabId: details.tabId })
+    const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
 
     if (manifestVersion === 3) {
-        // Upon navigation, remove any custom action session rules that may have been applied to this tab
-        // for example, by click-to-load to temporarily allow FB content to be displayed
-        // Should we instead rely on chrome.webNavigation.onCommitted events, since a main_frame req may not result
-        // in a navigation?O . TOH that may result in a race condition if reules aren't removed quickly enough
-        removeInverseRules(currentTab)
+        // Ensure that the correct declarativeNetRequest allowing rules are
+        // added for this tab.
+        // Note: The webNavigation.onBeforeCommitted event would be better,
+        //       since onBeforeNavigate can be fired for a navigation that is
+        //       not later committed. But since there is a race-condition
+        //       between the page loading and the rules being added, let's use
+        //       onBeforeNavigate for now as it fires sooner.
+        restoreDefaultClickToLoadRuleActions(newTab)
     }
 
-    const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
     // persist the last URL the tab was trying to upgrade to HTTPS
     if (currentTab && currentTab.httpsRedirects) {
         newTab.httpsRedirects.persistMainFrameRedirect(currentTab.httpsRedirects.getMainFrameRedirect())

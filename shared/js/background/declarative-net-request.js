@@ -191,7 +191,7 @@ async function updateConfigRules (
 
     await settings.ready()
     if (Object.keys(allowingRulesByClickToLoadAction).length) {
-        settings.updateSetting('allowingRulesByClickToLoadAction', allowingRulesByClickToLoadAction)
+        settings.updateSetting('allowingDnrRulesByClickToLoadRuleAction', allowingRulesByClickToLoadAction)
     }
     settings.updateSetting(settingName, settingValue)
 }
