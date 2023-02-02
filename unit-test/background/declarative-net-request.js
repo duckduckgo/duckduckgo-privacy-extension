@@ -10,7 +10,7 @@ import tabManager from '../../shared/js/background/tab-manager.es6'
 import tdsStorage from '../../shared/js/background/storage/tds.es6'
 import trackers from '../../shared/js/background/trackers.es6'
 import {
-    ensureServiceWorkerInitiatedRequestException,
+    ensureServiceWorkerInitiatedRequestExceptions,
     getMatchDetails,
     onConfigUpdate,
     refreshUserAllowlistRules,
@@ -682,24 +682,34 @@ describe('declarativeNetRequest', () => {
             id: ruleId,
             priority: rulePriority,
             action: { type: 'allow' },
-            condition: { tabIds: [-1] }
+            condition: { tabIds: [-1], initiatorDomains: ['example.com'] }
         }
 
         // The rule won't exist initially.
         expect(updateSessionRulesObserver.calls.count()).toEqual(0)
         expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
 
-        // Once ensureServiceWorkerInitiatedRequestException is called it should
-        // be though.
-        ensureServiceWorkerInitiatedRequestException()
+        // if there are no serviceworker exceptions, no rule should be created
+        config.features.serviceworkerInitiatedRequests = {
+            enabled: true,
+            exceptions: []
+        }
+        await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(1)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
+
+        // Once ensureServiceWorkerInitiatedRequestException an exception is added
+        // it should be though
+        config.features.serviceworkerInitiatedRequests.exceptions.push({ domain: 'example.com' })
+        ensureServiceWorkerInitiatedRequestExceptions(config)
+        expect(updateSessionRulesObserver.calls.count()).toEqual(2)
         expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
         expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
 
         // If ensureServiceWorkerInitiatedRequestException is called again, the
         // rule should just be recreated.
-        ensureServiceWorkerInitiatedRequestException()
-        expect(updateSessionRulesObserver.calls.count()).toEqual(2)
+        ensureServiceWorkerInitiatedRequestExceptions(config)
+        expect(updateSessionRulesObserver.calls.count()).toEqual(3)
         expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
         expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
     })

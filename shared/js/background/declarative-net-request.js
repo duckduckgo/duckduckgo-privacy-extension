@@ -330,7 +330,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
         // Extension configuration.
         } else if (configName === 'config') {
             await updateExtensionConfigRules(etag, configValue)
-            await ensureServiceWorkerInitiatedRequestExceptions()
+            await ensureServiceWorkerInitiatedRequestExceptions(configValue)
         }
         // combined rules (cookie blocking)
         await updateCombinedConfigBlocklistRules()
@@ -513,11 +513,10 @@ export async function updateUserDenylist () {
  * associated with a tab (tabId of -1) and so must be a session rule. Session
  * rules don't persist past a browsing session, so must be re-added.
  * Note: Only exported for use by unit tests, do not call manually.
+ * @param {Object} config The privacy configuration
  * @return {Promise}
  */
-export async function ensureServiceWorkerInitiatedRequestExceptions () {
-    const config = tdsStorage.config
-
+export async function ensureServiceWorkerInitiatedRequestExceptions (config) {
     const removeRuleIds = [SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID]
     const addRules = []
     if (config.features.serviceworkerInitiatedRequests?.exceptions?.length) {
