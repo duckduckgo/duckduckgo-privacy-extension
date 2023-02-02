@@ -330,6 +330,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
         // Extension configuration.
         } else if (configName === 'config') {
             await updateExtensionConfigRules(etag, configValue)
+            await ensureServiceWorkerInitiatedRequestExceptions()
         }
         // combined rules (cookie blocking)
         await updateCombinedConfigBlocklistRules()
@@ -514,14 +515,21 @@ export async function updateUserDenylist () {
  * Note: Only exported for use by unit tests, do not call manually.
  * @return {Promise}
  */
-export async function ensureServiceWorkerInitiatedRequestException () {
+export async function ensureServiceWorkerInitiatedRequestExceptions () {
+    const config = tdsStorage.config
+
     const removeRuleIds = [SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID]
-    const addRules = [generateDNRRule({
-        id: SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
-        priority: SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
-        actionType: 'allow',
-        tabIds: [-1]
-    })]
+    const addRules = []
+    if (config.features.serviceworkerInitiatedRequests?.exceptions?.length) {
+        const exceptionDomains = config.features.serviceworkerInitiatedRequests.exceptions.map(entry => entry.domain)
+        addRules.push(generateDNRRule({
+            id: SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
+            priority: SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
+            actionType: 'allow',
+            tabIds: [-1],
+            initiatorDomains: exceptionDomains
+        }))
+    }
 
     // Rather than check if the rule already exists before adding it, add it and
     // just clear the existing rule if it exists.
