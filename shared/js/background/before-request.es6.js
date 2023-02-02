@@ -289,14 +289,15 @@ function blockHandleResponse (thisTab, requestData) {
         cleanUrl.search = ''
         cleanUrl.hash = ''
         // @ts-ignore
-        devtools.postMessage(thisTab.id, 'tracker', {
+        thisTab.postDevtoolsMessage(devtools, 'tracker', {
             tracker: {
                 ...reportedTracker,
                 matchedRule: reportedTracker.matchedRule?.rule?.toString()
             },
             url: cleanUrl,
             requestData,
-            siteUrl: thisTab.site.url
+            siteUrl: thisTab.site.url,
+            serviceworkerInitiated: requestData.tabId === -1
         })
 
         // Count and block trackers.

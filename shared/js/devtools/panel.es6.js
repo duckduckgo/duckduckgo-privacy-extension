@@ -62,7 +62,7 @@ function setupProtectionButton (element, textName, isEnabled) {
 
 const actionHandlers = {
     tracker: (m) => {
-        const { tracker, url, requestData, siteUrl } = m.message
+        const { tracker, url, requestData, siteUrl, serviceworkerInitiated } = m.message
         const row = document.getElementById('request-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
         const toggleLink = row.querySelector('.block-toggle')
@@ -84,7 +84,7 @@ const actionHandlers = {
             row.classList.remove(tracker.action)
             row.classList.add(toggleLink.innerText === 'I' ? 'ignore' : 'block')
         });
-        [url, `${actionIcons[tracker.action]} ${tracker.action} (${tracker.reason})`, tracker.fullTrackerDomain, requestData.type].forEach((text, i) => {
+        [`${serviceworkerInitiated ? '⚙️ ' : ''}${url}`, `${actionIcons[tracker.action]} ${tracker.action} (${tracker.reason})`, tracker.fullTrackerDomain, requestData.type].forEach((text, i) => {
             cells[i + 1].innerText = text
         })
         row.classList.add(tracker.action)

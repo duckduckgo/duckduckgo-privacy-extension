@@ -1,6 +1,7 @@
 const Companies = require('./companies.es6')
 const settings = require('./settings.es6')
 const Tab = require('./classes/tab.es6')
+const ServiceWorkerTab = require('./classes/sw-tab.es6')
 const { TabState } = require('./classes/tab-state')
 const browserWrapper = require('./wrapper.es6')
 const {
@@ -16,6 +17,8 @@ class TabManager {
     constructor () {
         /** @type {Record<number, Tab>} */
         this.tabContainer = {}
+        /** @type {Record<string, Tab>} */
+        this.swContainer = {}
     }
 
     /* This overwrites the current tab data for a given
@@ -72,30 +75,15 @@ class TabManager {
      */
     get (tabData) {
         if (tabData.tabId === -1 && (tabData.initiator || tabData.documentUrl)) {
-            // service worker request - try to find a tab that matches this initiator
-            const swOrigin = new URL(tabData.initiator || tabData.documentUrl).origin
-            const matchingTabs = this._findTabsMatchingOrigin(swOrigin)
-            if (matchingTabs.length > 0) {
-                return this.tabContainer[matchingTabs[0]]
+            // service worker request - use a 'ServiceWorkerTab' for the origin as a proxy for the real tab(s)
+            const swUrl = tabData.initiator || tabData.documentUrl
+            const swOrigin = new URL(swUrl).origin
+            if (!this.swContainer[swOrigin]) {
+                this.swContainer[swOrigin] = new ServiceWorkerTab(swUrl, this.tabContainer)
             }
-            return this.create({
-                tabId: -1,
-                url: tabData.initiator
-            })
+            return this.swContainer[swOrigin]
         }
         return this.tabContainer[tabData.tabId]
-    }
-
-    _findTabsMatchingOrigin (origin) {
-        return Object.keys(this.tabContainer).filter(tabId => {
-            const tab = this.tabContainer[tabId]
-            try {
-                return Number(tabId) > -1 && new URL(tab.url).origin === origin
-            } catch (e) {
-                // URL can throw on invalid URL
-                return false
-            }
-        })
     }
 
     async getOrRestoreTab (tabId) {
