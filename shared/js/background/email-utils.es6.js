@@ -122,6 +122,13 @@ const fireAddressUsedPixel = (pixel) => {
     updateSetting('lastAddressUsedAt', currentDate())
 }
 
+const fireIncontextSignupPixel = (pixel) => {
+    const browserName = utils.getBrowserName() ?? 'unknown'
+    if (!pixelsEnabled) return
+
+    sendPixelRequest(getFullPixelName(pixel, browserName))
+}
+
 /**
  * Config type definition
  * @typedef {Object} FirePixelOptions
@@ -140,6 +147,18 @@ export const sendJSPixel = (options) => {
         break
     case 'autofill_personal_address':
         fireAddressUsedPixel('email_filled_main_extension')
+        break
+    case 'incontext_show':
+        fireIncontextSignupPixel('incontext_show_extension')
+        break
+    case 'incontext_get_email_protection':
+        fireIncontextSignupPixel('incontext_get_email_protection_extension')
+        break
+    case 'incontext_dismiss_persisted':
+        fireIncontextSignupPixel('incontext_dismiss_persisted_extension')
+        break
+    case 'incontext_dismiss_initial':
+        fireIncontextSignupPixel('incontext_dismiss_initial_extension')
         break
     default:
         console.error('Unknown pixel name', pixelName)
