@@ -23,9 +23,6 @@
             "public/js/background.js"
         ]
     },
-    "chrome_url_overrides" : {
-        "newtab": "html/redirect.html"
-    },
     "chrome_settings_overrides": {
         "search_provider": {
             "encoding": "UTF-8",

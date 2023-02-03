@@ -387,17 +387,6 @@ export function mv2Redirect () {
      * on the new tab page to our own HTML file under `web_accessible_resources`
      */
     browser.webRequest.onBeforeRequest.addListener((details) => {
-        // NOTE: This part is just for internal testing, it will be removed once the PR is approved
-        if (details.url === chrome.runtime.getURL('html/redirect.html')) {
-            const url = new URL('/chrome_newtab', constants.trackerStats.allowedOrigin)
-            url.searchParams.set('ntp_test', '1')
-            return {
-                redirectUrl: url.toString()
-            }
-        }
-        if (details.url.startsWith('chrome-extension')) {
-            return
-        }
         // Only do the redirect if we're being iframed into a known origin
         if (details.type === 'sub_frame') {
             const parsed = new URL(details.url)
