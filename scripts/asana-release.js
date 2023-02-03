@@ -7,12 +7,16 @@ const path = require('path')
 const ASANA_ACCESS_TOKEN = process.env.ASANA_ACCESS_TOKEN
 const version = process.env.VERSION
 const releaseUrl = process.env.RELEASE_URL
-const chromeReleaseFolder = path.join(__dirname, '/../build/chrome/release/')
-const chromeFileName = fs.readdirSync(chromeReleaseFolder).find(fn => fn.endsWith('.zip'))
-const chromeFilePath = path.join(chromeReleaseFolder, chromeFileName)
-const firefoxReleaseFolder = path.join(__dirname, '/../build/firefox/release/web-ext-artifacts')
-const firefoxFileName = fs.readdirSync(firefoxReleaseFolder).find(fn => fn.endsWith('.zip'))
-const firefoxFilePath = path.join(firefoxReleaseFolder, firefoxFileName)
+const platforms = ['chrome', 'chrome_mv3', 'firefox']
+const artifacts = platforms.map((platform) => {
+    const pathParts = [__dirname, '/../build/', platform, 'release']
+    if (platform === 'firefox') {
+        pathParts.push('web-ext-artifacts')
+    }
+    const folder = path.join(pathParts)
+    const filename = fs.readdirSync(folder).find(fn => fn.endsWith('.zip'))
+    return path.join(folder, filename)
+})
 
 const extensionTemplateTaskGid = '1201192367380462'
 const extensionProjectGid = '312629933896096'
@@ -113,8 +117,7 @@ const run = async () => {
         return asana.dispatcher.dispatch(params, {})
     }
 
-    await uploadFile(chromeFilePath)
-    await uploadFile(firefoxFilePath)
+    await Promise.all(artifacts.map(uploadFile))
 
     console.info('Adding followers...')
 
