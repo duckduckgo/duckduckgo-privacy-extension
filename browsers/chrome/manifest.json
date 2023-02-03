@@ -84,7 +84,6 @@
         "/img/logo-small.svg",
         "/public/css/autofill.css",
         "/public/font/*",
-        "/public/js/newtab.js",
         "/html/tracker-stats.html"
     ],
     "storage": {
