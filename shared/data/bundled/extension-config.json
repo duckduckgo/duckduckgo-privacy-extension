@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1675283054430,
+    "version": 1675355869054,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -490,10 +490,6 @@
                     },
                     {
                         "selector": "[data-adunitpath]",
-                        "type": "closest-empty"
-                    },
-                    {
-                        "selector": "[data-unit]",
                         "type": "closest-empty"
                     },
                     {
@@ -1155,7 +1151,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "783c73d88967936790232d4073c7924f"
+            "hash": "c878b39c9ccbf96d26f4550223b63c79"
         },
         "fingerprintingAudio": {
             "state": "disabled",
