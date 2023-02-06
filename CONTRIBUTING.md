@@ -96,6 +96,8 @@ Run the dev build task for your browser from the 'Build' section above. The gene
 
 After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you.
 
+Note: If you wish to *not* monitor for changes please add watch=0 to your command such as `npm run dev-chrome -- watch=0`. This will require you to build other module changes yourself listed below.
+
 ### Locally testing changes to modules
 
 The extension imports several DDG-owned modules (see [package.json](https://github.com/duckduckgo/duckduckgo-privacy-extension/blob/7a5616b5c54155a99f79c672e007785f76a8d3ee/package.json#L75-L78)). If you need to locally test changes to these modules follow these steps.
