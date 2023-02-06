@@ -3,7 +3,11 @@ const { getDomain } = require('tldts')
 
 const harness = require('../helpers/harness')
 const { logPageRequests } = require('../helpers/requests')
-const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
+const {
+    loadTestConfig,
+    unloadTestConfig,
+    loadTestTds
+} = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
 const { setupAPISchemaTest } = require('../helpers/apiSchema')
@@ -66,6 +70,7 @@ describe('Test Facebook Click To Load', () => {
 
         // Overwrite the parts of the configuration needed for our tests.
         await loadTestConfig(bgPage, 'click-to-load-facebook.json')
+        await loadTestTds(bgPage, 'click-to-load-tds.json')
     })
 
     afterAll(async () => {
@@ -106,7 +111,7 @@ describe('Test Facebook Click To Load', () => {
             globalThis.buttons =
                 Array.from(document.querySelectorAll('body > div'))
                     .map(div => div.shadowRoot && div.shadowRoot.querySelector('button'))
-                    .filter(button => button)
+                    .filter(button => button && button.innerText.startsWith('Unblock'))
             return globalThis.buttons.length
         })
         for (let i = 0; i < buttonCount; i++) {
@@ -129,7 +134,14 @@ describe('Test Facebook Click To Load', () => {
 
             expect(facebookSDKRedirect.checked).toBeTrue()
             expect(facebookSDKRedirect.alwaysRedirected).toBeFalse()
-            // Reducing from 3 as failing in ci (https://app.asana.com/0/892838074342800/1202683879327697/f)
+
+            // The network is too slow for any requests to have been made.
+            // Better to mark these tests as pending than to consider requests
+            // to have been blocked (or not blocked).
+            if (requestCount === 0) {
+                pending('Timed out waiting for Facebook requests!')
+            }
+
             expect(requestCount).toBeGreaterThan(0)
             expect(blockCount).toEqual(0)
             expect(allowCount).toEqual(requestCount)

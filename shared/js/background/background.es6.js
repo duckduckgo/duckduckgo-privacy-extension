@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
+import { onStartup } from './startup'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events.es6')
 const settings = require('./settings.es6')
-const { onStartup } = require('./startup.es6')
 require('./declarative-net-request')
+require('./script-injection')
 
 settings.ready().then(() => {
     onStartup()

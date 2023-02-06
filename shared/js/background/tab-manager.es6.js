@@ -1,11 +1,25 @@
 const Companies = require('./companies.es6')
 const settings = require('./settings.es6')
 const Tab = require('./classes/tab.es6')
+const { TabState } = require('./classes/tab-state')
 const browserWrapper = require('./wrapper.es6')
+const {
+    toggleUserAllowlistDomain,
+    updateUserDenylist
+} = require('./declarative-net-request.js')
+const {
+    clearClickToLoadDnrRulesForTab
+} = require('./dnr-click-to-load')
 
 /**
  * @typedef {import('./classes/site.es6.js').allowlistName} allowlistName
  */
+
+// These tab properties are preserved when a new tab Object replaces an existing
+// one for the same tab ID.
+const persistentTabProperties = [
+    'ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction'
+]
 
 class TabManager {
     constructor () {
@@ -15,9 +29,8 @@ class TabManager {
 
     /* This overwrites the current tab data for a given
      * id and is only called in three cases:
-     * 1. When we rebuild saved tabs when the browser is restarted
-     * 2. When a new tab is opened. See onUpdated listener below
-     * 3. When we get a new main_frame request
+     * 1. When a new tab is opened. See onUpdated listener below
+     * 2. When we get a new main_frame request
      */
     create (tabData) {
         const normalizedData = browserWrapper.normalizeTabData(tabData)
@@ -25,8 +38,9 @@ class TabManager {
 
         const oldTab = this.tabContainer[newTab.id]
         if (oldTab) {
-            newTab.ampUrl = oldTab.ampUrl
-            newTab.cleanAmpUrl = oldTab.cleanAmpUrl
+            for (const property of persistentTabProperties) {
+                newTab[property] = oldTab[property]
+            }
             if (oldTab.adClick?.shouldPropagateAdClickForNavigation(oldTab)) {
                 newTab.adClick = oldTab.adClick.clone()
             }
@@ -36,8 +50,36 @@ class TabManager {
         return newTab
     }
 
+    async restoreOrCreate (tabData) {
+        const restored = await this.restore(tabData.id)
+        if (!restored) {
+            await this.create(tabData)
+        }
+    }
+
+    async restore (tabId) {
+        const restoredState = await Tab.restore(tabId)
+        if (restoredState) {
+            this.tabContainer[tabId] = restoredState
+        }
+        return restoredState
+    }
+
     delete (id) {
+        const tabToRemove = this.tabContainer[id]
+        if (tabToRemove) {
+            tabToRemove?.adClick?.removeDNR()
+
+            if (browserWrapper.getManifestVersion() === 3) {
+                clearClickToLoadDnrRulesForTab(tabToRemove)
+            }
+        }
         delete this.tabContainer[id]
+        TabState.delete(id)
+    }
+
+    has (id) {
+        return id in this.tabContainer
     }
 
     /**
@@ -49,6 +91,13 @@ class TabManager {
         return this.tabContainer[tabData.tabId]
     }
 
+    async getOrRestoreTab (tabId) {
+        if (!tabManager.has(tabId)) {
+            await tabManager.restore(tabId)
+        }
+        return tabManager.get({ tabId })
+    }
+
     /**
      * This will allowlist any open tabs with the same domain
      *
@@ -56,8 +105,9 @@ class TabManager {
      * @param {allowlistName} data.list - name of the allowlist to update
      * @param {string} data.domain - domain to allowlist
      * @param {boolean} data.value - allowlist value, true or false
+     * @return {Promise}
      */
-    setList (data) {
+    async setList (data) {
         this.setGlobalAllowlist(data.list, data.domain, data.value)
 
         for (const tabId in this.tabContainer) {
@@ -67,7 +117,16 @@ class TabManager {
             }
         }
 
-        browserWrapper.notifyPopup({ allowlistChanged: true })
+        // Ensure that user allowlisting/denylisting is honoured for manifest v3
+        // builds of the extension, by adding/removing the necessary
+        // declarativeNetRequest rules.
+        if (browserWrapper.getManifestVersion() === 3) {
+            if (data.list === 'allowlisted') {
+                await toggleUserAllowlistDomain(data.domain, data.value)
+            } else if (data.list === 'denylisted') {
+                await updateUserDenylist()
+            }
+        }
     }
 
     /**
@@ -118,7 +177,6 @@ class TabManager {
                     tab.site.grade.setHttps(hasHttps, hasHttps)
 
                     console.info(tab.site.grade)
-                    tab.updateBadgeIcon()
 
                     if (tab.statusCode === 200 &&
                         !tab.site.didIncrementCompaniesData) {

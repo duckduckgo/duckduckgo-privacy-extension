@@ -1,7 +1,10 @@
 const utils = require('../utils.es6')
+const browserWrapper = require('../wrapper.es6')
+const { addSmarterEncryptionSessionException } = require('../declarative-net-request')
 
 const MAINFRAME_RESET_MS = 3000
 const REQUEST_REDIRECT_LIMIT = 7
+const manifestVersion = browserWrapper.getManifestVersion()
 
 /**
  * This class protects users from accidentally being sent into a redirect loop
@@ -88,6 +91,10 @@ class HttpsRedirects {
         if (!canRedirect) {
             this.failedUpgradeHosts[hostname] = true
             console.log(`HTTPS: not upgrading, redirect loop protection kicked in for url: ${request.url}`)
+            if (manifestVersion === 3) {
+                // Create a temporary exception for the duration of the session
+                addSmarterEncryptionSessionException(hostname)
+            }
         }
 
         return canRedirect

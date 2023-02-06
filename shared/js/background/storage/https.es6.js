@@ -5,6 +5,7 @@ const settings = require('./../settings.es6')
 
 class HTTPSStorage {
     constructor () {
+        // @ts-ignore - TypeScript is not following the Dexie import property.
         this.dbc = new Dexie(constants.httpsDBName)
         this.dbc.version(1).stores({
             httpsStorage: 'name,type,data,checksum'
@@ -102,17 +103,25 @@ class HTTPSStorage {
 
     async getListFromLocalDB (listDetails) {
         console.log('HTTPS: getting from db', listDetails.name)
-        await this.dbc.open()
-        const list = await this.dbc.table('httpsStorage').get({ name: listDetails.name })
+        try {
+            await this.dbc.open()
+            const list = await this.dbc.table('httpsStorage').get({ name: listDetails.name })
 
-        if (list && list.data && await this.hasCorrectChecksum(list.data)) {
-            return Object.assign(listDetails, list.data)
+            if (list && list.data && await this.hasCorrectChecksum(list.data)) {
+                return Object.assign(listDetails, list.data)
+            }
+        } catch (e) {
+            console.warn(`getListFromLocalDB failed for ${listDetails.name}`, e)
+            return null
         }
     }
 
     storeInLocalDB (name, type, data) {
-        console.log(`HTTPS: storing ${name} in db`)
-        return this.dbc.httpsStorage.put({ name, type, data })
+        return this.dbc.httpsStorage.put({ name, type, data }).catch(e => {
+            console.warn(`storeInLocalDB failed for ${name}: resetting stored etag`, e)
+            settings.updateSetting(`${name}-etag`, '')
+            settings.updateSetting(`${name}-lastUpdate`, '')
+        })
     }
 
     hasCorrectChecksum (data) {

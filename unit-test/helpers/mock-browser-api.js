@@ -10,6 +10,12 @@ globalThis.browser = {
     browserAction: {
         setIcon: () => {}
     },
+    contextMenus: {
+        create: () => {},
+        onClicked: {
+            addListener: () => {}
+        }
+    },
     runtime: {
         id: '577dc9b9-c381-115a-2246-3f95fe0e6ffe',
         sendMessage: () => {},
@@ -23,7 +29,9 @@ globalThis.browser = {
     declarativeNetRequest: {
         isRegexSupported () { return { isSupported: true } },
         getDynamicRules () { },
-        updateDynamicRules () { }
+        getSessionRules () { },
+        updateDynamicRules () { },
+        updateSessionRules () { }
     }
 }
 globalThis.chrome = globalThis.browser

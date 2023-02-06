@@ -100,11 +100,6 @@ BaseModel.prototype = $.extend({},
         sendMessage (messageType, options) {
             return browserUIWrapper.sendMessage(messageType, options)
         },
-
-        submitBrokenSiteReport (brokenSiteData) {
-            return browserUIWrapper.sendMessage('submitBrokenSiteReport', brokenSiteData)
-        },
-
         /**
          * Send a user action
          * Broadcasts an action to other UI components

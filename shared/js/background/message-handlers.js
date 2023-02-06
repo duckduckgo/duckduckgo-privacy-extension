@@ -1,4 +1,10 @@
 import browser from 'webextension-polyfill'
+import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
+import { breakageReportForTab } from './broken-site-report'
+import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
+import { getExtensionURL, notifyPopup } from './wrapper.es6'
+import { reloadCurrentTab } from './utils.es6'
+import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 const { getDomain } = require('tldts')
 const utils = require('./utils.es6')
 const settings = require('./settings.es6')
@@ -8,11 +14,9 @@ const trackerutils = require('./tracker-utils')
 const trackers = require('./trackers.es6')
 const constants = require('../../data/constants')
 const Companies = require('./companies.es6')
-const brokenSiteReport = require('./broken-site-report')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools.es6')
 const browserWrapper = require('./wrapper.es6')
-const startup = require('./startup.es6')
 const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
@@ -23,23 +27,7 @@ export async function registeredContentScript (options, sender, req) {
         return
     }
 
-    if (argumentsObject.site.isBroken) {
-        console.log('temporarily skip protections for site: ' + sender.tab.url +
-    'more info: https://github.com/duckduckgo/privacy-configuration')
-        return
-    }
-
-    // Disable content scripts when site protections are disabled
-    if (argumentsObject.site.allowlisted && req.messageType === 'registeredContentScript') {
-        return
-    }
-
     return argumentsObject
-}
-
-export async function getDevMode () {
-    const dev = await browserWrapper.getFromSessionStorage('dev')
-    return dev || false
 }
 
 export function resetTrackersData () {
@@ -50,8 +38,31 @@ export function getExtensionVersion () {
     return browserWrapper.getExtensionVersion()
 }
 
+/**
+ * This is used from the options page - to manually update the user allow list
+ *
+ * @param options
+ */
 export function setList (options) {
     tabManager.setList(options)
+}
+
+/**
+ * This is used by the Dashboard to update the allow/deny lists, close the popup + reload
+ *
+ * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').SetListOptions} options
+ */
+export async function setLists (options) {
+    for (const listItem of options.lists) {
+        tabManager.setList(listItem)
+    }
+
+    try {
+        notifyPopup({ closePopup: true })
+        reloadCurrentTab()
+    } catch (e) {
+        console.error('Error trying to reload+refresh following `setLists` message', e)
+    }
 }
 
 export function allowlistOptIn (optInData) {
@@ -63,123 +74,177 @@ export function getBrowser () {
     return browserName
 }
 
-export function submitBrokenSiteReport (brokenSiteArgs) {
-    return brokenSiteReport.fire.apply(null, brokenSiteArgs)
+export function openOptions () {
+    if (browserName === 'moz') {
+        browser.tabs.create({ url: getExtensionURL('/html/options.html') })
+    } else {
+        browser.runtime.openOptionsPage()
+    }
 }
 
-export function getTab (tabId) {
-    return tabManager.get({ tabId })
-}
+/**
+ * Only the dashboard sends this message, so we import the types from there.
+ * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').BreakageReportRequest} breakageReport
+ * @returns {Promise<void>}
+ */
+export async function submitBrokenSiteReport (breakageReport) {
+    const { category, description } = breakageReport
 
-export function getSiteGrade (tabId) {
-    const tab = tabManager.get({ tabId })
-    let grade = {}
-
-    if (!tab.site.specialDomainName) {
-        grade = tab.site.grade.get()
+    const currentTab = await utils.getCurrentTab()
+    if (!currentTab?.id) {
+        console.error('could not access the current tab...')
+        return
     }
 
-    return grade
+    const tab = await getTab(currentTab.id)
+    if (!tab) {
+        console.error('cannot access current tab with ID ' + currentTab.id)
+        return
+    }
+    const tsd = settings.getSetting('tds-etag')
+    return breakageReportForTab(tab, tsd, category, description)
+}
+
+/**
+ * @param tabId
+ * @returns {Promise<import("./classes/tab.es6")>}
+ */
+async function getTab (tabId) {
+    // Await for storage to be ready; this happens on service worker closing mostly.
+    await settings.ready()
+    await tdsStorage.ready('config')
+    return tabManager.getOrRestoreTab(tabId)
+}
+
+/**
+ * This message is here to ensure the privacy dashboard can render
+ * from a single call to the extension.
+ *
+ * Currently, it will collect data for the current tab and email protection
+ * user data.
+ */
+export async function getPrivacyDashboardData (options) {
+    let { tabId } = options
+    if (tabId === null) {
+        const currentTab = await utils.getCurrentTab()
+        if (!currentTab?.id) {
+            throw new Error('could not get the current tab...')
+        }
+        tabId = currentTab?.id
+    }
+    const tab = await getTab(tabId)
+    if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
+    const userData = settings.getSetting('userData')
+    return dashboardDataFromTab(tab, userData)
 }
 
 export function getTopBlockedByPages (options) {
     return Companies.getTopBlockedByPages(options)
 }
 
-// Click to load interactions
-export async function initClickToLoad (unused, sender) {
+/**
+ * @typedef getClickToLoadStateResponse
+ * @property {Record<string,number>} clickToLoadClicks
+ *   Entity name to click count mapping. Click count being the number of times
+ *   the user has clicked to load content for the entity so far.
+ * @property {boolean} devMode
+ *   True if developer mode is enabled (e.g. this is a development build or a
+ *   test run), false if this is a release build.
+ * @property {boolean} youtubePreviewsEnabled
+ *   True if the user has enabled YouTube video previews, false otherwise.
+ */
+
+/**
+ * Returns the current state of the Click to Load feature.
+ * @returns {Promise<getClickToLoadStateResponse>}
+ */
+export async function getClickToLoadState () {
+    const devMode =
+        (await browserWrapper.getFromSessionStorage('dev')) || false
+
     await settings.ready()
-    const tab = tabManager.get({ tabId: sender.tab.id })
+    const clickToLoadClicks =
+        (await settings.getSetting('clickToLoadClicks')) || {}
+    const youtubePreviewsEnabled =
+        (await settings.getSetting('youtubePreviewsEnabled')) || false
 
-    await tdsStorage.ready('ClickToLoadConfig')
-    const config = { ...tdsStorage.ClickToLoadConfig }
-
-    // Remove first-party entries.
-    await startup.ready()
-    const siteUrlSplit = tab.site.domain.split('.')
-    const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit })
-    if (websiteOwner) {
-        delete config[websiteOwner]
-    }
-
-    // Determine whether to show one time messages or simplified messages
-    for (const [entity] of Object.entries(config)) {
-        const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-        const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
-        if (clickToLoadClicks[entity] && clickToLoadClicks[entity] >= maxClicks) {
-            config[entity].simpleVersion = true
-        }
-    }
-
-    // if the current site is on the social exception list, remove it from the config.
-    let excludedNetworks = trackerutils.getDomainsToExludeByNetwork()
-    if (excludedNetworks) {
-        excludedNetworks = excludedNetworks.filter(e => e.domain === tab.site.domain)
-        excludedNetworks.forEach(e => delete config[e.entity])
-    }
-    return config
+    return { clickToLoadClicks, devMode, youtubePreviewsEnabled }
 }
 
-export function getLoadingImage (theme) {
-    if (theme === 'dark') {
-        return utils.imgToData('img/social/loading_dark.svg')
-    } else if (theme === 'light') {
-        return utils.imgToData('img/social/loading_light.svg')
-    }
-}
+export async function getYouTubeVideoDetails (videoURL) {
+    const endpointURL = new URL('https://www.youtube.com/oembed?format=json')
+    const parsedVideoURL = new URL(videoURL)
 
-export function getImage (image) {
-    if (image === 'None' || image === 'none' || image === undefined) {
-        return Promise.resolve(undefined)
+    const playlistID = parsedVideoURL.searchParams.get('list')
+    const videoId = parsedVideoURL.pathname.split('/').pop()
+
+    if (playlistID) {
+        parsedVideoURL.hostname = endpointURL.hostname
+        endpointURL.searchParams.set('url', parsedVideoURL.href)
     } else {
-        return utils.imgToData(`img/social/${image}`)
+        endpointURL.searchParams.set('url', 'https://youtu.be/' + videoId)
     }
-}
 
-export function getLogo () {
-    return utils.imgToData('img/social/dax.png')
+    try {
+        const youTubeVideoResponse = await fetch(
+            endpointURL.href, {
+                referrerPolicy: 'no-referrer',
+                credentials: 'omit'
+            }
+        ).then(response => response.json())
+        const { title, thumbnail_url: previewImage } = youTubeVideoResponse
+        return { status: 'success', videoURL, title, previewImage }
+    } catch (e) {
+        return { status: 'failed', videoURL }
+    }
 }
 
 export function getCurrentTab () {
     return utils.getCurrentTab()
 }
 
-export function getSocialSurrogateRules (entity) {
-    const entityData = tdsStorage.ClickToLoadConfig[entity]
-    if (entityData && entityData.surrogates) {
-        const rules = entityData.surrogates.reduce(function reducer (accumulator, value) {
-            accumulator.push(value.rule)
-            return accumulator
-        }, [])
-        return rules
-    }
-}
-
-export async function enableSocialTracker (data, sender) {
-    await settings.ready()
+export async function unblockClickToLoadContent (data, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id })
     const entity = data.entity
+
+    if (browserWrapper.getManifestVersion() === 3) {
+        await ensureClickToLoadRuleActionDisabled(data.action, tab)
+    }
     tab.site.clickToLoad.push(entity)
 
     if (data.isLogin) {
         trackerutils.allowSocialLogin(tab.site.domain)
     }
-    // Update number of times this social network has been 'clicked'
-    if (tdsStorage.ClickToLoadConfig[entity]) {
-        const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-        const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
-        if (!clickToLoadClicks[entity]) {
-            clickToLoadClicks[entity] = 1
-        } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
-            clickToLoadClicks[entity] += 1
+    settings.ready().then(() => {
+        // Update number of times this social network has been 'clicked'
+        if (tdsStorage.ClickToLoadConfig[entity]) {
+            const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
+            const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
+            if (!clickToLoadClicks[entity]) {
+                clickToLoadClicks[entity] = 1
+            } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
+                clickToLoadClicks[entity] += 1
+            }
+            // don't await for setting to be updated
+            settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
         }
-        settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
-    }
+    })
+}
+
+export function updateYouTubeCTLAddedFlag (value, sender) {
+    const tab = tabManager.get({ tabId: sender.tab.id })
+    tab.ctlYouTube = Boolean(value)
+}
+
+export function setYoutubePreviewsEnabled (value, sender) {
+    return updateSetting({ name: 'youtubePreviewsEnabled', value })
 }
 
 export async function updateSetting ({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)
+    utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
+    return { messageType: `ddg-settings-${name}`, value }
 }
 
 export async function getSetting ({ name }) {
@@ -191,18 +256,22 @@ const {
     isValidToken,
     isValidUsername,
     getAddresses,
+    sendJSPixel,
     fetchAlias,
     showContextMenuAction,
     hideContextMenuAction
 } = require('./email-utils.es6')
 
-export { getAddresses }
+export { getAddresses, sendJSPixel }
 
 export function getAlias () {
     const userData = settings.getSetting('userData')
     return { alias: userData?.nextAlias }
 }
 
+/**
+ * @returns {Promise<import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').RefreshAliasResponse>}
+ */
 export async function refreshAlias () {
     await fetchAlias()
     return getAddresses()
@@ -271,7 +340,7 @@ export async function addUserData (userData, sender) {
         settings.updateSetting('userData', userData)
         // Once user is set, fetch the alias and notify all tabs
         const response = await fetchAlias()
-        if (response && response.error) {
+        if (response && 'error' in response) {
             return { error: response.error.message }
         }
 
@@ -290,6 +359,7 @@ export async function removeUserData (_, sender) {
 
 export async function logout () {
     settings.updateSetting('userData', {})
+    settings.updateSetting('lastAddressUsedAt', '')
     // Broadcast the logout to all tabs
     const tabs = await browser.tabs.query({})
     tabs.forEach((tab) => {
@@ -305,23 +375,49 @@ export function getListContents (list) {
     }
 }
 
-export function setListContents ({ name, value }) {
+/**
+ * Manually override the value of a list
+ * @param {{ name: string, value: object}} list value
+ */
+export async function setListContents ({ name, value }) {
     const parsed = tdsStorage.parsedata(name, value)
     tdsStorage[name] = parsed
     trackers.setLists([{
         name,
         data: parsed
     }])
+    // create an etag hash based on the content
+    const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(parsed)))
+    const etag = [...new Uint8Array(hash)]
+        .map(x => x.toString(16).padStart(2, '0'))
+        .join('')
+    settings.updateSetting(`${name}-lastUpdate`, Date.now())
+    settings.updateSetting(`${name}-etag`, etag)
+    await tdsStorage._internalOnListUpdate(name, value)
+    return etag
 }
 
 export async function reloadList (listName) {
-    let list = constants.tdsLists.find(l => l.name === listName)
+    const list = constants.tdsLists.find(l => l.name === listName)
     if (list) {
-        list = await tdsStorage.getList(list)
-        trackers.setLists([list])
+        trackers.setLists([await tdsStorage.getList(list)])
     }
 }
 
 export function debuggerMessage (message, sender) {
     devtools.postMessage(sender.tab?.id, message.action, message.message)
+}
+
+export function search ({ term }) {
+    const browserInfo = parseUserAgentString()
+    if (browserInfo?.os) {
+        const url = new URL('https://duckduckgo.com')
+        url.searchParams.set('q', term)
+        url.searchParams.set('bext', browserInfo.os + 'cr')
+        browser.tabs.create({ url: url.toString() })
+    }
+}
+
+export function openShareFeedbackPage () {
+    return browserWrapper.openExtensionPage('/html/feedback.html')
 }

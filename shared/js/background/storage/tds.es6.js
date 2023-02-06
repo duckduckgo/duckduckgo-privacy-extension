@@ -18,7 +18,7 @@ const configNames = constants.tdsLists.map(({ name }) => name)
 
 class TDSStorage {
     constructor () {
-        // @ts-ignore
+        // @ts-ignore - TypeScript is not following the Dexie import property.
         this.dbc = new Dexie('tdsStorage')
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
@@ -71,26 +71,33 @@ class TDSStorage {
     }
 
     _internalOnListUpdate (configName, configValue) {
-        self.setTimeout(() => {
-            // Ensure the onReady promise for this configuration is resolved.
-            const resolve = this._onReadyResolvers.get(configName)
-            if (resolve) {
-                resolve()
-                this._onReadyResolvers.delete(configName)
-            }
+        return new Promise((resolve, reject) => {
+            self.setTimeout(async () => {
+                // Ensure the onReady promise for this configuration is resolved.
+                try {
+                    const readyResolve = this._onReadyResolvers.get(configName)
+                    if (readyResolve) {
+                        readyResolve()
+                        this._onReadyResolvers.delete(configName)
+                    }
 
-            // Check the current etag for this configuration, so that can be
-            // passed to the listeners.
-            const etag = settings.getSetting(`${configName}-etag`) || ''
+                    // Check the current etag for this configuration, so that can be
+                    // passed to the listeners.
+                    const etag = settings.getSetting(`${configName}-etag`) || ''
 
-            // Notify any listeners that this list has updated.
-            const listeners = this._onUpdatedListeners.get(configName)
-            if (listeners) {
-                for (const listener of listeners.slice()) {
-                    listener(configName, etag, configValue)
+                    // Notify any listeners that this list has updated.
+                    const listeners = this._onUpdatedListeners.get(configName)
+                    if (listeners) {
+                        for (const listener of listeners.slice()) {
+                            await listener(configName, etag, configValue)
+                        }
+                    }
+                    resolve(null)
+                } catch (e) {
+                    reject(e)
                 }
-            }
-        }, 0)
+            }, 0)
+        })
     }
 
     getLists (preferLocal = false) {
@@ -217,18 +224,27 @@ class TDSStorage {
 
     async getListFromLocalDB (name) {
         console.log('TDS: getting from db', name)
-        await this.dbc.open()
-        const list = await this.dbc.table('tdsStorage').get({ name })
+        try {
+            await this.dbc.open()
+            const list = await this.dbc.table('tdsStorage').get({ name })
 
-        if (list && list.data) {
-            this[name] = list.data
-            this._internalOnListUpdate(name, list.data)
-            return { name, data: list.data }
+            if (list && list.data) {
+                this[name] = list.data
+                this._internalOnListUpdate(name, list.data)
+                return { name, data: list.data }
+            }
+        } catch (e) {
+            console.warn(`getListFromLocalDB failed for ${name}`, e)
+            return null
         }
     }
 
     storeInLocalDB (name, data) {
-        return this.dbc.tdsStorage.put({ name, data })
+        return this.dbc.tdsStorage.put({ name, data }).catch(e => {
+            console.warn(`storeInLocalDB failed for ${name}: resetting stored etag`, e)
+            settings.updateSetting(`${name}-etag`, '')
+            settings.updateSetting(`${name}-lastUpdate`, '')
+        })
     }
 
     parsedata (name, data) {

@@ -6,6 +6,12 @@
  */
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
+import { updateActionIcon } from './events/privacy-icon-indicator'
+import { restoreDefaultClickToLoadRuleActions } from './dnr-click-to-load'
+import {
+    flushSessionRules,
+    refreshUserAllowlistRules
+} from './declarative-net-request'
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const experiment = require('./experiments.es6')
@@ -18,8 +24,7 @@ const devtools = require('./devtools.es6')
 const tdsStorage = require('./storage/tds.es6')
 const browserWrapper = require('./wrapper.es6')
 const limitReferrerData = require('./events/referrer-trimming')
-const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('./events/3p-tracking-cookie-blocking')
-const startup = require('./startup.es6')
+const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest, validateSetCookieBlock } = require('./events/3p-tracking-cookie-blocking')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -34,6 +39,7 @@ async function onInstalled (details) {
         }
         await ATB.updateATBValues()
         await ATB.openPostInstallPage()
+
         if (browserName === 'chrome') {
             experiment.setActiveExperiment()
         }
@@ -41,19 +47,47 @@ async function onInstalled (details) {
         experiment.setActiveExperiment()
     }
 
-    // Inject the email content script on all tabs upon installation (not needed on Firefox)
-    if (browserName !== 'moz') {
-        const tabs = await browser.tabs.query({})
-        for (const tab of tabs) {
-            // Ignore URLs that we aren't permitted to access
-            if (tab.url.startsWith('chrome://')) {
-                continue
+    if (manifestVersion === 3) {
+        await settings.ready()
+
+        // remove any orphaned session rules (can happen on extension update/restart)
+        await flushSessionRules()
+
+        // create ATB rule if there is a stored value in settings
+        ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'))
+
+        // Refresh the user allowlisting declarativeNetRequest rule, only
+        // necessary to handle the upgrade between MV2 and MV3 extensions.
+        // TODO: Remove this a while after users have all been migrated to
+        //       the MV3 build.
+        const allowlist = settings.getSetting('allowlisted') || {}
+        const allowlistedDomains = []
+        for (const [domain, enabled] of Object.entries(allowlist)) {
+            if (enabled) {
+                allowlistedDomains.push(domain)
             }
-            await browserWrapper.executeScript({
-                target: { tabId: tab.id },
-                files: ['public/js/content-scripts/autofill.js']
-            })
         }
+        await refreshUserAllowlistRules(allowlistedDomains)
+    }
+
+    // Inject the email content script on all tabs upon installation (not needed on Firefox)
+    // FIXME the below code throws an unhandled exception in MV3
+    try {
+        if (browserName !== 'moz') {
+            const tabs = await browser.tabs.query({})
+            for (const tab of tabs) {
+                // Ignore URLs that we aren't permitted to access
+                if (tab.url.startsWith('chrome://')) {
+                    continue
+                }
+                await browserWrapper.executeScript({
+                    target: { tabId: tab.id },
+                    files: ['public/js/content-scripts/autofill.js']
+                })
+            }
+        }
+    } catch (e) {
+        console.warn('Failed to inject email content script at startup:', e)
     }
 }
 
@@ -167,91 +201,79 @@ if (browserName === 'chrome') {
  * REQUESTS
  */
 
-const redirect = require('./redirect.es6')
+const beforeRequest = require('./before-request.es6')
 const tabManager = require('./tab-manager.es6')
 const https = require('./https.es6')
 
+let additionalOptions = []
 if (manifestVersion === 2) {
-    browser.webRequest.onBeforeRequest.addListener(
-        redirect.handleRequest,
-        {
-            urls: ['<all_urls>']
-        },
-        ['blocking']
-    )
+    additionalOptions = ['blocking']
+}
+browser.webRequest.onBeforeRequest.addListener(
+    beforeRequest.handleRequest,
+    {
+        urls: ['<all_urls>']
+    },
+    additionalOptions
+)
+
+// MV2 needs blocking for webRequest
+// MV3 still needs some info from response headers
+const extraInfoSpec = ['responseHeaders']
+if (manifestVersion === 2) {
+    extraInfoSpec.push('blocking')
 }
 
-if (manifestVersion === 2) {
-    const extraInfoSpec = ['blocking', 'responseHeaders']
-    if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
-        extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
-    }
-
-    // We determine if browsingTopics is enabled by testing for availability of its
-    // JS API.
-    // Note: This approach will not work with MV3 since the background
-    //       ServiceWorker does not have access to a `document` Object.
-    const isTopicsEnabled = ('browsingTopics' in document) && utils.isFeatureEnabled('googleRejected')
-    browser.webRequest.onHeadersReceived.addListener(
-        request => {
-            if (request.type === 'main_frame') {
-                tabManager.updateTabUrl(request)
-
-                const tab = tabManager.get({ tabId: request.tabId })
-                // SERP ad click detection
-                if (
-                    utils.isRedirect(request.statusCode)
-                ) {
-                    tab.setAdClickIfValidRedirect(request, tab.site.baseDomain)
-                } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
-                    tab.adClick.adClickRedirect = false
-                    tab.adClick.adBaseDomain = tab.site.baseDomain
-                }
-            }
-
-            if (ATB.shouldUpdateSetAtb(request)) {
-                // returns a promise
-                return ATB.updateSetAtb()
-            }
-
-            const responseHeaders = request.responseHeaders
-
-            if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
-                // there can be multiple permissions-policy headers, so we are good always appending one
-                // According to Google's docs a site can opt out of browsing topics the same way as opting out of FLoC
-                // https://privacysandbox.com/proposals/topics (See FAQ)
-                responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
-            }
-
-            return { responseHeaders }
-        },
-        { urls: ['<all_urls>'] },
-        extraInfoSpec
-    )
-
-    // Wait until the extension configuration has finished loading and then
-    // start dropping tracking cookies.
-    // Note: Event listeners must be registered in the top-level of the script
-    //       to be compatible with MV3. Registering the listener asynchronously
-    //       is only possible here as this is a MV2-only event listener!
-    // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-    startup.ready().then(() => {
-        browser.webRequest.onHeadersReceived.addListener(
-            dropTracking3pCookiesFromResponse,
-            { urls: ['<all_urls>'] },
-            extraInfoSpec
-        )
-    })
+if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
+    extraInfoSpec.push(browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS)
 }
 
-browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
-    const currentTab = tabManager.get({ tabId: details.sourceTabId })
-    if (currentTab && currentTab.adClick) {
-        const newTab = tabManager.createOrUpdateTab(details.tabId, { url: details.url })
-        if (currentTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-            newTab.adClick = currentTab.adClick
+// We determine if browsingTopics is enabled by testing for availability of its
+// JS API.
+// Note: This approach will not work with MV3 since the background
+//       ServiceWorker does not have access to a `document` Object.
+const isTopicsEnabled = manifestVersion === 2 && 'browsingTopics' in document && utils.isFeatureEnabled('googleRejected')
+
+browser.webRequest.onHeadersReceived.addListener(
+    request => {
+        if (request.type === 'main_frame') {
+            tabManager.updateTabUrl(request)
+
+            const tab = tabManager.get({ tabId: request.tabId })
+            // SERP ad click detection
+            if (
+                utils.isRedirect(request.statusCode)
+            ) {
+                tab.setAdClickIfValidRedirect(request.url)
+            } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
+                tab.adClick.setAdBaseDomain(tab.site.baseDomain)
+            }
         }
-    }
+
+        if (ATB.shouldUpdateSetAtb(request)) {
+            // returns a promise
+            return ATB.updateSetAtb()
+        }
+
+        const responseHeaders = request.responseHeaders
+
+        if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {
+            // there can be multiple permissions-policy headers, so we are good always appending one
+            // According to Google's docs a site can opt out of browsing topics the same way as opting out of FLoC
+            // https://privacysandbox.com/proposals/topics (See FAQ)
+            responseHeaders.push({ name: 'permissions-policy', value: 'interest-cohort=()' })
+        }
+
+        return { responseHeaders }
+    },
+    { urls: ['<all_urls>'] },
+    extraInfoSpec
+)
+
+// Store the created tab id for when onBeforeNavigate is called so data can be copied across from the source tab
+const createdTargets = new Map()
+browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
+    createdTargets.set(details.tabId, details.sourceTabId)
 })
 
 /**
@@ -259,20 +281,47 @@ browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
  */
 // keep track of URLs that the browser navigates to.
 //
-// this is currently meant to supplement tabManager.updateTabUrl() above:
+// this is supplemented by tabManager.updateTabUrl() on headersReceived:
 // tabManager.updateTabUrl only fires when a tab has finished loading with a 200,
 // which misses a couple of edge cases like browser special pages
 // and Gmail's weird redirect which returns a 200 via a service worker
-browser.webNavigation.onCommitted.addListener(details => {
+browser.webNavigation.onBeforeNavigate.addListener(details => {
     // ignore navigation on iframes
     if (details.frameId !== 0) return
 
-    const tab = tabManager.get({ tabId: details.tabId })
+    const currentTab = tabManager.get({ tabId: details.tabId })
+    const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
 
-    if (!tab) return
+    if (manifestVersion === 3) {
+        // Ensure that the correct declarativeNetRequest allowing rules are
+        // added for this tab.
+        // Note: The webNavigation.onBeforeCommitted event would be better,
+        //       since onBeforeNavigate can be fired for a navigation that is
+        //       not later committed. But since there is a race-condition
+        //       between the page loading and the rules being added, let's use
+        //       onBeforeNavigate for now as it fires sooner.
+        restoreDefaultClickToLoadRuleActions(newTab)
+    }
 
-    tab.updateSite(details.url)
-    devtools.postMessage(details.tabId, 'tabChange', tab)
+    // persist the last URL the tab was trying to upgrade to HTTPS
+    if (currentTab && currentTab.httpsRedirects) {
+        newTab.httpsRedirects.persistMainFrameRedirect(currentTab.httpsRedirects.getMainFrameRedirect())
+    }
+    if (createdTargets.has(details.tabId)) {
+        const sourceTabId = createdTargets.get(details.tabId)
+        createdTargets.delete(details.tabId)
+
+        const sourceTab = tabManager.get({ tabId: sourceTabId })
+        if (sourceTab && sourceTab.adClick) {
+            createdTargets.set(details.tabId, sourceTabId)
+            if (sourceTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
+                newTab.adClick = sourceTab.adClick.propagate(newTab.id)
+            }
+        }
+    }
+
+    newTab.updateSite(details.url)
+    devtools.postMessage(details.tabId, 'tabChange', devtools.serializeTab(newTab))
 })
 
 /**
@@ -280,6 +329,12 @@ browser.webNavigation.onCommitted.addListener(details => {
  */
 
 const Companies = require('./companies.es6')
+
+browser.tabs.onCreated.addListener((info) => {
+    if (info.id) {
+        tabManager.createOrUpdateTab(info.id, info)
+    }
+})
 
 browser.tabs.onUpdated.addListener((id, info) => {
     // sync company data to storage when a tab finishes loading
@@ -379,12 +434,13 @@ if (manifestVersion === 2) {
  * Global Privacy Control
  */
 const GPC = require('./GPC.es6')
+const extraInfoSpecSendHeaders = ['requestHeaders']
+if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
+    extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
+}
 
 if (manifestVersion === 2) {
-    const extraInfoSpecSendHeaders = ['blocking', 'requestHeaders']
-    if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
-        extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
-    }
+    extraInfoSpecSendHeaders.push('blocking')
     // Attach GPC header to all requests if enabled.
     browser.webRequest.onBeforeSendHeaders.addListener(
         request => {
@@ -402,20 +458,26 @@ if (manifestVersion === 2) {
         { urls: ['<all_urls>'] },
         extraInfoSpecSendHeaders
     )
+}
 
-    // Wait until the extension configuration has finished loading and then
-    // start dropping tracking cookies.
-    // Note: Event listeners must be registered in the top-level of the script
-    //       to be compatible with MV3. Registering the listener asynchronously
-    //       is only possible here as this is a MV2-only event listener!
-    // See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#event_listeners
-    startup.ready().then(() => {
-        browser.webRequest.onBeforeSendHeaders.addListener(
-            dropTracking3pCookiesFromRequest,
-            { urls: ['<all_urls>'] },
-            extraInfoSpecSendHeaders
-        )
-    })
+browser.webRequest.onBeforeSendHeaders.addListener(
+    dropTracking3pCookiesFromRequest,
+    { urls: ['<all_urls>'] },
+    extraInfoSpecSendHeaders
+)
+
+browser.webRequest.onHeadersReceived.addListener(
+    dropTracking3pCookiesFromResponse,
+    { urls: ['<all_urls>'] },
+    extraInfoSpec
+)
+
+if (manifestVersion === 3) {
+    browser.webRequest.onCompleted.addListener(
+        validateSetCookieBlock,
+        { urls: ['<all_urls>'] },
+        extraInfoSpec
+    )
 }
 
 // Inject the Click to Load content script to display placeholders.
@@ -426,16 +488,30 @@ browser.webNavigation.onCommitted.addListener(details => {
         return
     }
 
-    if (utils.getClickToPlaySupport(tab)) {
-        browserWrapper.executeScript({
-            target: {
-                tabId: details.tabId,
-                frameIds: [details.frameId]
-            },
-            files: ['public/js/content-scripts/click-to-load.js'],
-            injectImmediately: true
-        })
+    if (tab.site.isBroken) {
+        console.log('temporarily skip embedded object replacements for site: ' + details.url +
+          'more info: https://github.com/duckduckgo/privacy-configuration')
+        // eslint-disable-next-line
+        return
     }
+})
+
+/**
+ * For each completed page load, update the extension's action icon
+ */
+browser.webNavigation.onCompleted.addListener(details => {
+    // only update the icon when the outermost frame is complete
+    if (details.parentFrameId !== -1) return
+
+    // try to access the tab where this event originated
+    const tab = tabManager.get({ tabId: details.tabId })
+
+    // just to be sure that we can access the current tab
+    if (!tab) return
+
+    // select the next icon state
+    updateActionIcon(tab.site, tab.id)
+        .catch(e => console.error('could not set the action icon', e))
 })
 
 /**

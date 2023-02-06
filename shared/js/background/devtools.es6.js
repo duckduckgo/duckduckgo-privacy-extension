@@ -14,18 +14,39 @@ const { removeBroken } = require('./utils.es6')
 //       event will fire again.
 const ports = new Map()
 
-function init () {
+export function init () {
     browser.runtime.onConnect.addListener(connected)
 }
 
+/**
+ * Serialize a subset of the tab object to be sent to the panel
+ * @param {Object} tab
+ */
+export function serializeTab (tab) {
+    if (tab.site) {
+        return {
+            site: {
+                allowlisted: tab.site.allowlisted,
+                isBroken: tab.site.isBroken,
+                enabledFeatures: tab.site.enabledFeatures || []
+            }
+        }
+    }
+    return {}
+}
+
 function connected (port) {
+    if (port.name !== 'devtools') {
+        return
+    }
+
     let tabId = -1
     port.onMessage.addListener((m) => {
         if (m.action === 'setTab') {
             tabId = m.tabId
             ports.set(tabId, port)
             const tab = tabManager.get({ tabId })
-            postMessage(tabId, 'tabChange', tab)
+            postMessage(tabId, 'tabChange', serializeTab(tab))
         } else if (m.action === 'I' || m.action === 'B') {
             const { requestData, siteUrl, tracker } = m
             const matchedTracker = trackers.getTrackerData(requestData.url, siteUrl, requestData)
@@ -66,7 +87,7 @@ function connected (port) {
             }
         } else if (m.action === 'toggleProtection') {
             const tab = tabManager.get({ tabId: m.tabId })
-            if (tab.site?.isBroken) {
+            if (tab.site?.isBroken && tab.url) {
                 removeBroken(tab.site.domain)
                 removeBroken(new URL(tab.url).hostname)
             } else {
@@ -76,7 +97,7 @@ function connected (port) {
                     value: !tab.site.allowlisted
                 })
             }
-            postMessage(tabId, 'tabChange', tab)
+            postMessage(tabId, 'tabChange', serializeTab(tab))
         } else if (m.action === 'toggletrackerAllowlist') {
             if (tdsStorage.config.features.trackerAllowlist.state === 'enabled') {
                 tdsStorage.config.features.trackerAllowlist.state = 'disabled'
@@ -106,18 +127,12 @@ function connected (port) {
     })
 }
 
-function postMessage (tabId, action, message) {
+export function postMessage (tabId, action, message) {
     if (ports.has(tabId)) {
         ports.get(tabId).postMessage(JSON.stringify({ tabId, action, message }))
     }
 }
 
-function isActive (tabId) {
+export function isActive (tabId) {
     return ports.has(tabId)
-}
-
-module.exports = {
-    init,
-    postMessage,
-    isActive
 }

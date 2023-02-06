@@ -12,6 +12,7 @@ const tdsStorage = require('./../storage/tds.es6')
 const privacyPractices = require('../privacy-practices.es6')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper.es6')
+const { TabState } = require('./tab-state')
 
 const NEW_TAB_CODE = 'new tab'
 
@@ -20,47 +21,30 @@ const NEW_TAB_CODE = 'new tab'
  */
 
 class Site {
-    constructor (url) {
+    constructor (url, tabState) {
+        // If no tabState is passed in then we create a new one to simulate a new tab
+        if (!tabState) {
+            tabState = new TabState({ tabId: 1, url, status: 'complete' })
+        }
         this.url = url || ''
 
-        // Retain any www. prefix for our broken site lists
-        let domainWWW = utils.extractHostFromURL(this.url, true) || ''
-        domainWWW = domainWWW.toLowerCase()
-
-        let domain = utils.extractHostFromURL(this.url) || ''
-        domain = domain.toLowerCase()
-        this.status = 'unknown'
-
-        this.domain = domain
-        this.protocol = this.url.substr(0, this.url.indexOf(':'))
-        this.baseDomain = utils.getBaseDomain(url)
+        /** @type {TabState} */
+        this._tabState = tabState
         this.trackerUrls = []
         this.grade = new Grade()
-        this.allowlisted = false // user-allowlisted sites; applies to all privacy features
-        this.allowlistOptIn = false
-        this.denylisted = false
         this.setListStatusFromGlobal()
 
-        /**
-         * Broken site reporting relies on the www. prefix being present as a.com matches *.a.com
-         * This would make the list apply to a much larger audience than is required.
-         * The other allowlisting code is different and probably should be changed to match.
-         */
-        this.isBroken = utils.isBroken(domainWWW) // broken sites reported to github repo
-        this.enabledFeatures = utils.getEnabledFeatures(domainWWW) // site issues reported to github repo
         this.didIncrementCompaniesData = false
 
-        this.tosdr = privacyPractices.getTosdr(domain)
-
-        this.parentEntity = utils.findParent(domain) || ''
-        const parent = tdsStorage.tds.entities[this.parentEntity]
-        this.parentPrevalence = parent ? parent.prevalence : 0
+        this.tosdr = privacyPractices.getTosdr(this.domain)
 
         if (this.parentEntity && this.parentPrevalence) {
             this.grade.setParentEntity(this.parentEntity, this.parentPrevalence)
         }
 
-        this.grade.setPrivacyScore(privacyPractices.getTosdrScore(domain, parent))
+        if ('parent' in globalThis) {
+            this.grade.setPrivacyScore(privacyPractices.getTosdrScore(this.domain, parent))
+        }
 
         if (this.url.match(/^https:\/\//)) {
             this.grade.setHttps(true, true)
@@ -77,10 +61,75 @@ class Site {
      */
     get shouldApplyProtections () {
         // Allow protections to be enabled whilst loading tabs
-        if (this.status !== 'complete' && this.specialDomainName === NEW_TAB_CODE) {
+        if (this.tabState.status !== 'complete' && this.specialDomainName === NEW_TAB_CODE) {
             return true
         }
         return this.specialDomainName == null
+    }
+
+    get allowlisted () {
+        return this._tabState.allowlisted
+    }
+
+    set allowlisted (value) {
+        this._tabState.setValue('allowlisted', value)
+    }
+
+    get allowlistOptIn () {
+        return this._tabState.allowlistOptIn
+    }
+
+    set allowlistOptIn (value) {
+        this._tabState.setValue('allowlistOptIn', value)
+    }
+
+    get denylisted () {
+        return this._tabState.denylisted
+    }
+
+    set denylisted (value) {
+        this._tabState.setValue('denylisted', value)
+    }
+
+    /**
+     * Broken site reporting relies on the www. prefix being present as a.com matches *.a.com
+     * This would make the list apply to a much larger audience than is required.
+     * The other allowlisting code is different and probably should be changed to match.
+     */
+    get isBroken () {
+        return utils.isBroken(this.domainWWW) // broken sites reported to github repo
+    }
+
+    get enabledFeatures () {
+        return utils.getEnabledFeatures(this.domainWWW) // site issues reported to github repo
+    }
+
+    get domain () {
+        const domain = utils.extractHostFromURL(this.url) || ''
+        return domain.toLowerCase()
+    }
+
+    get domainWWW () {
+        // Retain any www. prefix for our broken site lists
+        const domainWWW = utils.extractHostFromURL(this.url, true) || ''
+        return domainWWW.toLowerCase()
+    }
+
+    get protocol () {
+        return this.url.substr(0, this.url.indexOf(':'))
+    }
+
+    get baseDomain () {
+        return utils.getBaseDomain(this.url)
+    }
+
+    get parentEntity () {
+        return utils.findParent(this.domain) || ''
+    }
+
+    get parentPrevalence () {
+        const parent = tdsStorage.tds.entities[this.parentEntity]
+        return parent ? parent.prevalence : 0
     }
 
     /*
@@ -101,14 +150,9 @@ class Site {
      * @param {boolean} value
      */
     setListValue (listName, value) {
-        this[listName] = value
-    }
-
-    /*
-     * Send message to the popup to rerender the allowlist
-     */
-    notifyAllowlistChanged () {
-        browserWrapper.notifyPopup({ allowlistChanged: true })
+        if (value === true || value === false) {
+            this[listName] = value
+        }
     }
 
     isContentBlockingEnabled () {

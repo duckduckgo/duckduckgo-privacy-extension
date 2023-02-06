@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'develop'
+    paths:
+      - 'browsers/chrome/manifest.json'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, 'ci release')"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm i -g web-ext
+          npm run install-ci
+
+      - name: Generate changelog
+        id: changelog
+        uses: metcalfc/changelog-generator@31b6d6f9e6e17e84ad34bee780f82d8ee79f6842
+        with:
+          myToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Firefox
+        run: |
+          npm run release-firefox
+          echo "VERSION=$(jq -r .version ./browsers/firefox/manifest.json)" >> $GITHUB_ENV
+
+      - name: Build Chrome
+        run: |
+          npm run release-chrome
+
+      - name: Build Chrome MV3
+        run: |
+          npm run release-chrome-mv3
+
+      - name: Package Firefox
+        run: |
+          cd build/firefox/release && web-ext build
+          echo "BUILT_WITH=Built with node $(node --version) and npm $(npm --version)" >> $GITHUB_ENV
+
+      - name: Create Release
+        uses: softprops/action-gh-release@d4e8205d7e959a9107da6396278b2f1f07af0f9b
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          draft: true
+          prerelease: false
+          body: "${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}"
+          tag_name: ${{ env.VERSION }}
+          target_commitish: ${{ github.ref }}
+          files: |
+            ./build/firefox/release/web-ext-artifacts/*.zip
+            ./build/chrome/release/*.zip
+            ./build/chrome-mv3/release/*.zip
+
+      - name: Asana Workflow
+        env:
+          ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
+          RELEASE_URL: "https://github.com/duckduckgo/duckduckgo-privacy-extension/releases/tag/${{ env.VERSION }}"
+        run:
+          node scripts/asana-release.js

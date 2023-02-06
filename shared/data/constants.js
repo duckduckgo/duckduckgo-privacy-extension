@@ -5,12 +5,11 @@ function getConfigFileName () {
     let browserName = browserInfo?.browser?.toLowerCase() || ''
 
     // clamp to known browsers
-    if (!['chrome', 'firefox', 'brave', 'edge'].includes(browserName)) {
+    if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
         browserName = ''
     } else {
-        browserName = '-' + browserName
+        browserName = '-' + browserName + (chrome?.runtime.getManifest().manifest_version === 3 ? 'mv3' : '')
     }
-
     return `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName}-config.json`
 }
 
@@ -100,12 +99,12 @@ module.exports = {
         },
         {
             name: 'tds',
-            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v3/tds.json',
+            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json',
             format: 'json',
             source: 'external',
             channels: {
-                live: 'https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds.json',
-                next: 'https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds-next.json',
+                live: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json',
+                next: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds-next.json',
                 beta: 'https://staticcdn.duckduckgo.com/trackerblocking/beta/tds.json'
             }
         },
@@ -137,6 +136,10 @@ module.exports = {
         'The certificate is not trusted because it is self-signed.': 12,
         downgrade_redirect_loop: 13
     },
+    iconPaths: /** @type {const} */ ({
+        regular: '/img/icon_browser_action.png',
+        withSpecialState: '/img/icon_browser_action_special.png'
+    }),
     platform: {
         name: 'extension'
     },

@@ -1,10 +1,20 @@
+import {
+    AD_ATTRIBUTION_POLICY_PRIORITY
+} from '@duckduckgo/ddg2dnr/lib/rulePriorities'
+
+import {
+    generateDNRRule
+} from '@duckduckgo/ddg2dnr/lib/utils'
+
 const { getFeatureSettings, getBaseDomain } = require('../utils.es6')
+const browserWrapper = require('../wrapper.es6')
+const { getNextSessionRuleId } = require('../dnr-session-rule-id')
+
+const manifestVersion = browserWrapper.getManifestVersion()
 
 /**
  * @typedef AdClickAttributionLinkFormat
  * @property {string} url
- * @property {string} [parameterName]
- * @property {string|number} [parameterValue]
  * @property {string} [adDomainParameterName]
  **/
 
@@ -41,13 +51,6 @@ export class AdClickAttributionPolicy {
 
         for (const linkFormat of this.linkFormats) {
             if (hostnameAndPath === linkFormat.url) {
-                if (linkFormat.parameterName) {
-                    const parameterValue = resourceURL.searchParams.get(linkFormat.parameterName)
-                    if (parameterValue !== null && (!linkFormat.parameterValue || parameterValue === linkFormat.parameterValue)) {
-                        return linkFormat
-                    }
-                }
-
                 if (linkFormat.adDomainParameterName) {
                     const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName)
                     if (parameterDomain !== null) {
@@ -74,15 +77,18 @@ export class AdClickAttributionPolicy {
         const linkFormat = this.getMatchingLinkFormat(resourceURL)
         if (!linkFormat) return
 
-        const adClick = new AdClick(this.navigationExpiration, this.totalExpiration)
+        const adClick = new AdClick(this.navigationExpiration, this.totalExpiration, this.allowlist)
+
+        if (manifestVersion === 3) {
+            adClick.createDNR(tab.id)
+        }
 
         if (linkFormat.adDomainParameterName) {
             const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName)
             if (parameterDomain && this.domainDetectionEnabled) {
                 const parsedParameterDomain = getBaseDomain(parameterDomain)
                 if (parsedParameterDomain) {
-                    adClick.adBaseDomain = parsedParameterDomain
-                    adClick.adClickRedirect = false
+                    adClick.setAdBaseDomain(parsedParameterDomain)
                     return adClick
                 }
             }
@@ -118,7 +124,7 @@ export class AdClick {
      * @param {number} navigationExpiration in seconds
      * @param {number} totalExpiration in seconds
      */
-    constructor (navigationExpiration, totalExpiration) {
+    constructor (navigationExpiration, totalExpiration, allowlist) {
         /** @type {string | null} */
         this.adBaseDomain = null
         this.adClickRedirect = false
@@ -126,15 +132,55 @@ export class AdClick {
         this.totalExpiration = totalExpiration
         this.expires = Date.now() + (this.totalExpiration * 1000)
         this.clickExpires = Date.now() + (this.navigationExpiration * 1000)
+        this.allowlist = allowlist
+        this.adClickDNR = null
     }
 
     clone () {
-        const adClick = new AdClick(this.navigationExpiration, this.totalExpiration)
+        const adClick = new AdClick(this.navigationExpiration, this.totalExpiration, this.allowlist)
         adClick.adBaseDomain = this.adBaseDomain
         adClick.adClickRedirect = this.adClickRedirect
         adClick.expires = this.expires
         adClick.clickExpires = Date.now() + (this.navigationExpiration * 1000)
+        adClick.adClickDNR = this.adClickDNR
         return adClick
+    }
+
+    /**
+     * Propagate an adclick to a new tab, used when a user navigates to a new tab.
+     * @param {number} tabId
+     * @returns {AdClick} adClick
+     */
+    propagate (tabId) {
+        const adClick = this.clone()
+
+        if (this.adClickDNR) {
+            this.createDNR(tabId)
+        }
+
+        return adClick
+    }
+
+    static restore (adClick) {
+        const restoredAdClick = new AdClick(adClick.navigationExpiration, adClick.totalExpiration, adClick.allowlist)
+        restoredAdClick.adBaseDomain = adClick.adBaseDomain
+        restoredAdClick.adClickRedirect = adClick.adClickRedirect
+        restoredAdClick.expires = adClick.expires
+        restoredAdClick.clickExpires = adClick.clickExpires
+        restoredAdClick.adClickDNR = adClick.adClickDNR
+        return restoredAdClick
+    }
+
+    /**
+     * @param {string} domain
+     **/
+    setAdBaseDomain (domain) {
+        this.adBaseDomain = domain
+        this.adClickRedirect = false
+
+        if (this.adClickDNR) {
+            this.updateDNRInitiator(domain)
+        }
     }
 
     /**
@@ -160,7 +206,12 @@ export class AdClick {
     }
 
     hasNotExpired () {
-        return this.expires > Date.now()
+        if (this.expires > Date.now()) {
+            return true
+        } else {
+            this.removeDNR()
+            return false
+        }
     }
 
     /**
@@ -172,5 +223,46 @@ export class AdClick {
     allowAdAttribution (tab) {
         if (tab.site.baseDomain !== this.adBaseDomain) return false
         return this.hasNotExpired()
+    }
+
+    getAdClickDNR (tabId) {
+        const adClickDNR = {
+            rule: generateDNRRule({
+                id: null,
+                priority: AD_ATTRIBUTION_POLICY_PRIORITY,
+                actionType: 'allow',
+                requestDomains: this.allowlist.map((entry) => entry.host)
+            })
+        }
+        adClickDNR.rule.condition.tabIds = [tabId]
+        return adClickDNR
+    }
+
+    updateDNRInitiator (domain) {
+        if (this.adClickDNR && domain) {
+            this.adClickDNR.rule.condition.initiatorDomains = [domain]
+            this.updateDNR()
+        }
+    }
+
+    createDNR (tabId) {
+        this.adClickDNR = this.getAdClickDNR(tabId)
+        this.adClickDNR.rule.id = getNextSessionRuleId()
+        chrome.declarativeNetRequest.updateSessionRules({ addRules: [this.adClickDNR.rule] })
+    }
+
+    updateDNR () {
+        if (this.adClickDNR) {
+            chrome.declarativeNetRequest.updateSessionRules({
+                removeRuleIds: [this.adClickDNR.rule.id],
+                addRules: [this.adClickDNR.rule]
+            })
+        }
+    }
+
+    removeDNR () {
+        if (this.adClickDNR) {
+            chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: [this.adClickDNR.rule.id] })
+        }
     }
 }

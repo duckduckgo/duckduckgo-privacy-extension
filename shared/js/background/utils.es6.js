@@ -38,13 +38,26 @@ export async function sendTabMessage (id, message, details) {
     }
 }
 
+export async function sendAllTabsMessage (message, details) {
+    try {
+        for (const { id: tabId } of await browser.tabs.query({})) {
+            sendTabMessage(tabId, message, details)
+        }
+    } catch {
+        // Ignore errors
+    }
+}
+
 /**
  * @param {string} urlString
  * @returns {string | null} etld plus one of the URL
  */
 export function getBaseDomain (urlString) {
     const parsedUrl = tldts.parse(urlString, { allowPrivateDomains: true })
-    return parsedUrl.domain || parsedUrl.hostname
+    if (parsedUrl.hostname === 'localhost' || parsedUrl.hostname?.endsWith('.localhost') || parsedUrl.isIp) {
+        return parsedUrl.hostname
+    }
+    return parsedUrl.domain
 }
 
 export function extractHostFromURL (url, shouldKeepWWW) {
@@ -112,7 +125,10 @@ export function findParent (url) {
     while (parts.length > 1) {
         const joinURL = parts.join('.')
 
-        if (tdsStorage.tds.domains[joinURL]) {
+        // check if tracker owner has 'ownedBy' to indicate a parent.
+        if (tdsStorage.tds.trackers[joinURL]?.owner?.ownedBy) {
+            return tdsStorage.tds.trackers[joinURL].owner.ownedBy
+        } else if (tdsStorage.tds.domains[joinURL]) {
             return tdsStorage.tds.domains[joinURL]
         }
         parts.shift()
@@ -404,4 +420,20 @@ export function getFeatureSettings (featureName) {
     }
 
     return feature.settings
+}
+
+/**
+ * Strips off a query string from the URL
+ * @param {string} urlString
+ * @returns {string}
+ */
+export function getURLWithoutQueryString (urlString) {
+    return urlString?.split('?')[0]
+}
+
+export async function reloadCurrentTab () {
+    const tab = await getCurrentTab()
+    if (tab && tab.id) {
+        browser.tabs.reload(tab.id)
+    }
 }

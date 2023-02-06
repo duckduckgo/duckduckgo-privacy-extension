@@ -1,7 +1,8 @@
 {
     "spec_dir": "integration-test",
     "spec_files": [
-        "background/onboarding.js",
-        "background/request-blocking.js"
+        "background/*.js",
+        "content-scripts/gpc.js",
+        "!background/click-to-load-youtube.js"
     ]
 }

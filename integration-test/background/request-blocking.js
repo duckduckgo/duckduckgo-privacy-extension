@@ -63,14 +63,46 @@ describe('Test request blocking', () => {
             () => results.results // eslint-disable-line no-undef
         )
         for (const { id, category, status } of pageResults) {
+            const description = `ID: ${id}, Category: ${category}`
+
             // ServiceWorker initiated request blocking is not yet supported.
+            // TODO: Remove this condition once they are blocked again.
             if (id === 'serviceworker-fetch') {
+                expect(status).withContext(description).toEqual('loaded')
                 continue
             }
 
-            const description = `ID: ${id}, Category: ${category}`
             expect(status).withContext(description).not.toEqual('loaded')
         }
+
+        // Test the extension's tracker reporting matches the expected outcomes.
+        const extensionTrackers = await bgPage.evaluate(async () => {
+            const currentTab = await globalThis.dbg.utils.getCurrentTab()
+            return globalThis.dbg.tabManager.get({ tabId: currentTab.id }).trackers
+        })
+
+        const extensionTrackersCount =
+              extensionTrackers['Test Site for Tracker Blocking'].count
+        expect(extensionTrackersCount).toBeGreaterThanOrEqual(testCount)
+
+        expect(extensionTrackers).toEqual({
+            'Test Site for Tracker Blocking': {
+                displayName: 'Bad Third Party Site',
+                prevalence: 0.1,
+                urls: {
+                    'bad.third-party.site:block': {
+                        action: 'block',
+                        url: 'https://bad.third-party.site/privacy-protections/request-blocking/block-me/script.js',
+                        eTLDplus1: 'third-party.site',
+                        pageUrl: 'https://privacy-test-pages.glitch.me/privacy-protections/request-blocking/',
+                        entityName: 'Bad Third Party Site',
+                        prevalence: 0.1,
+                        state: { blocked: {} }
+                    }
+                },
+                count: extensionTrackersCount
+            }
+        })
 
         await page.close()
     })

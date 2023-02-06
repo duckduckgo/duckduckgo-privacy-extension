@@ -5,8 +5,11 @@ const httpsService = require('./https-service.es6')
 const tabManager = require('./tab-manager.es6')
 const browserWrapper = require('./wrapper.es6')
 const tldts = require('tldts')
+const { addSmarterEncryptionSessionRule } = require('./declarative-net-request')
 // as defined in https://tools.ietf.org/html/rfc6761
 const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test']
+
+const manifestVersion = browserWrapper.getManifestVersion()
 
 class HTTPS {
     constructor () {
@@ -116,12 +119,26 @@ class HTTPS {
 
         const foundInServiceCache = httpsService.checkInCache(host)
 
+        if (foundInServiceCache === true && manifestVersion === 3) {
+            // This domain should be upgraded and is not in the bloom filter.
+            // Ensure that we have an upgrade rule in place for it for this session
+            addSmarterEncryptionSessionRule(host)
+        }
         if (foundInServiceCache !== null) {
             console.log(`HTTPS: Service cache - host is${foundInServiceCache ? '' : ' not'} upgradable`, host)
             return foundInServiceCache
         }
 
-        return httpsService.checkInService(host)
+        const serviceCheck = httpsService.checkInService(host)
+        if (manifestVersion === 3) {
+            // Once we get the result from the service, ensure we add a session upgrade rule
+            serviceCheck.then((result) => {
+                if (result) {
+                    addSmarterEncryptionSessionRule(host)
+                }
+            }, (e) => {})
+        }
+        return serviceCheck
     }
 
     downgradeTab ({ tabId, expectedUrl, targetUrl }) {
@@ -242,6 +259,10 @@ class HTTPS {
 
             tab.mainFrameUpgraded = true
             this.incrementUpgradeCount('totalUpgrades')
+            if (manifestVersion === 3) {
+                // returning from webRequest won't cause the upgrade, so we have to do it manually with webNavigation
+                browserWrapper.changeTabURL(tab.id, upgradedUrl)
+            }
 
             return upgradedUrl
         }

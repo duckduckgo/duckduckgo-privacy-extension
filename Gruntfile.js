@@ -1,8 +1,13 @@
 module.exports = function (grunt) {
     const sass = require('sass')
     const fileMapTransform = require('./scripts/browserifyFileMapTransform')
+
+    const { join } = require('path')
+    const dashboardDir = join(__dirname, 'node_modules', '@duckduckgo', 'privacy-dashboard')
+
     require('load-grunt-tasks')(grunt)
     grunt.loadNpmTasks('grunt-karma')
+    grunt.loadNpmTasks('grunt-contrib-copy')
 
     const browser = grunt.option('browser')
     const buildType = grunt.option('type')
@@ -24,7 +29,6 @@ module.exports = function (grunt) {
     const baseFileMap = {
         ui: {
             '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
-            '<%= dirs.public.js %>/popup.js': ['<%= dirs.src.js %>/ui/pages/popup.es6.js'],
             '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js'],
             '<%= dirs.public.js %>/feedback.js': ['<%= dirs.src.js %>/ui/pages/feedback.es6.js'],
             '<%= dirs.public.js %>/devtools-panel.js': ['<%= dirs.src.js %>/devtools/panel.es6.js'],
@@ -50,7 +54,6 @@ module.exports = function (grunt) {
         sass: {
             '<%= dirs.public.css %>/noatb.css': ['<%= dirs.src.scss %>/noatb.scss'],
             '<%= dirs.public.css %>/base.css': ['<%= dirs.src.scss %>/base/base.scss'],
-            '<%= dirs.public.css %>/popup.css': ['<%= dirs.src.scss %>/popup.scss'],
             '<%= dirs.public.css %>/options.css': ['<%= dirs.src.scss %>/options.scss'],
             '<%= dirs.public.css %>/feedback.css': ['<%= dirs.src.scss %>/feedback.scss']
         }
@@ -99,11 +102,11 @@ module.exports = function (grunt) {
     }
 
     let contentScopeInstall = 'echo "Skipping content-scope-scripts install";'
-    let contentScopeBuild = ''
+    let contentScopeBuild = 'echo "Skipping content-scope-scripts build";'
     // If we're watching the content scope files, regenerate them
     if (grunt.option('watch')) {
         contentScopeInstall = `cd ${ddgContentScope} && npm install --legacy-peer-deps`
-        contentScopeBuild = `cd ${ddgContentScope} && npm run build && cd - && `
+        contentScopeBuild = `cd ${ddgContentScope} && npm run build && cd -`
     }
 
     const ddgAutofill = 'node_modules/@duckduckgo/autofill/dist'
@@ -189,9 +192,10 @@ module.exports = function (grunt) {
         exec: {
             copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
             installContentScope: contentScopeInstall,
-            copyContentScope: `${contentScopeBuild} cp ${ddgContentScope}/build/${browserSimilar}/inject.js build/${browser}/${buildType}/public/js/inject.js`,
+            buildContentScope: `${contentScopeBuild}`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyData: `cp -r shared/data build/${browser}/${buildType}/`,
+            copyDash: `cp -r ${join(dashboardDir, 'build/app')} build/${browser}/${buildType}/dashboard`,
             copyAutofillJs: `mkdir -p build/${browser}/${buildType}/public/js/content-scripts/ && cp ${ddgAutofill}/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
             copyAutofillCSS: `cp -r ${ddgAutofill}/autofill.css build/${browser}/${buildType}/public/css/`,
             copyAutofillHostCSS: `cp -r ${ddgAutofill}/autofill-host-styles_${browserSimilar}.css build/${browser}/${buildType}/public/css/autofill-host-styles.css`
@@ -208,7 +212,7 @@ module.exports = function (grunt) {
             },
             contentScope: {
                 files: watch.contentScope,
-                tasks: ['exec:copyContentScope']
+                tasks: ['exec:buildContentScope', 'copy:contentScope']
             },
             backgroundES6JS: {
                 files: watch.background,
@@ -240,6 +244,25 @@ module.exports = function (grunt) {
             unit: {
                 options: karmaOps
             }
+        },
+
+        copy: {
+            contentScope: {
+                src: [`${ddgContentScope}/build/${browser}/inject.js`],
+                dest: `build/${browser}/${buildType}/public/js/inject.js`,
+                options: {
+                    process: function (content) {
+                        const config = grunt.file.readJSON('shared/data/bundled/extension-config.json')
+                        // prune to only features that need early access to their config
+                        config.features = {
+                            cookie: config.features.cookie
+                        }
+                        return content
+                            .replace('$TRACKER_LOOKUP$', grunt.file.read('shared/data/bundled/tracker-lookup.json'))
+                            .replace('$BUNDLED_CONFIG$', JSON.stringify(config))
+                    }
+                }
+            }
         }
     })
 
@@ -256,7 +279,9 @@ module.exports = function (grunt) {
         'browserify:background',
         'browserify:backgroundTest',
         'exec:installContentScope',
-        'exec:copyContentScope',
+        'exec:buildContentScope',
+        'copy:contentScope',
+        'exec:copyDash',
         'exec:copyAutofillJs',
         'exec:copyAutofillCSS',
         'exec:copyAutofillHostCSS'

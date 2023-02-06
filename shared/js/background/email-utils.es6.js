@@ -1,10 +1,17 @@
 import browser from 'webextension-polyfill'
+
+import { getURL } from './pixels'
+import load from './load.es6'
 const { getSetting, updateSetting } = require('./settings.es6')
 const browserWrapper = require('./wrapper.es6')
-const REFETCH_ALIAS_ALARM = 'refetchAlias'
+const utils = require('./utils.es6')
+
+export const REFETCH_ALIAS_ALARM = 'refetchAlias'
 const REFETCH_ALIAS_ATTEMPT = 'refetchAliasAttempt'
 
-const fetchAlias = () => {
+const pixelsEnabled = utils.getBrowserName() !== 'moz'
+
+export const fetchAlias = () => {
     // if another fetch was previously scheduled, clear that and execute now
     browser.alarms.clear(REFETCH_ALIAS_ALARM)
 
@@ -48,7 +55,7 @@ const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
 // Create the contextual menu hidden by default
 browser.contextMenus.create({
     id: MENU_ITEM_ID,
-    title: 'Use Duck Address',
+    title: 'Generate Private Duck Address',
     contexts: ['editable'],
     visible: false
 }, () => {
@@ -71,15 +78,70 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
     }
 })
 
-const showContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: true })
+export const showContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: true })
 
-const hideContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: false })
+export const hideContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: false })
 
-const getAddresses = () => {
+export const getAddresses = () => {
     const userData = getSetting('userData')
     return {
         personalAddress: userData?.userName,
         privateAddress: userData?.nextAlias
+    }
+}
+
+function sendPixelRequest (pixelName, params) {
+    const randomNum = Math.ceil(Math.random() * 1e7)
+    const searchParams = new URLSearchParams(Object.entries(params))
+    const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
+    load.url(url)
+}
+
+function currentDate () {
+    return new Date().toLocaleString('en-CA', {
+        timeZone: 'America/New_York',
+        dateStyle: 'short'
+    })
+}
+
+const getFullPixelName = (name, browserName) => {
+    return `${name}_${browserName.toLowerCase()}`
+}
+
+const fireAddressUsedPixel = (pixel) => {
+    const browserName = utils.getBrowserName() ?? 'unknown'
+    if (!pixelsEnabled) return
+
+    const userData = getSetting('userData')
+    if (!userData?.userName) return
+
+    const lastAddressUsedAt = getSetting('lastAddressUsedAt') ?? ''
+
+    sendPixelRequest(getFullPixelName(pixel, browserName), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
+    updateSetting('lastAddressUsedAt', currentDate())
+}
+
+/**
+ * Config type definition
+ * @typedef {Object} FirePixelOptions
+ * @property {import('@duckduckgo/autofill/src/deviceApiCalls/__generated__/validators-ts').SendJSPixelParams['pixelName']} pixelName
+ */
+
+/**
+ *
+ * @param {FirePixelOptions}  options
+ */
+export const sendJSPixel = (options) => {
+    const { pixelName } = options
+    switch (pixelName) {
+    case 'autofill_private_address':
+        fireAddressUsedPixel('email_filled_random_extension')
+        break
+    case 'autofill_personal_address':
+        fireAddressUsedPixel('email_filled_main_extension')
+        break
+    default:
+        console.error('Unknown pixel name', pixelName)
     }
 }
 
@@ -88,21 +150,21 @@ const getAddresses = () => {
  * @param {string} address
  * @returns {string}
  */
-const formatAddress = (address) => address + '@duck.com'
+export const formatAddress = (address) => address + '@duck.com'
 
 /**
  * Checks formal username validity
  * @param {string} userName
  * @returns {boolean}
  */
-const isValidUsername = (userName) => /^[a-z0-9_]+$/.test(userName)
+export const isValidUsername = (userName) => /^[a-z0-9_]+$/.test(userName)
 
 /**
  * Checks formal token validity
  * @param {string} token
  * @returns {boolean}
  */
-const isValidToken = (token) => /^[a-z0-9]+$/.test(token)
+export const isValidToken = (token) => /^[a-z0-9]+$/.test(token)
 
 module.exports = {
     REFETCH_ALIAS_ALARM,
@@ -112,5 +174,6 @@ module.exports = {
     getAddresses,
     formatAddress,
     isValidUsername,
-    isValidToken
+    isValidToken,
+    sendJSPixel
 }

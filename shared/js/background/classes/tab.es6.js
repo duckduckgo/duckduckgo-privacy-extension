@@ -13,60 +13,186 @@
  *          }
  *      }
  */
-const gradeIconLocations = {
-    A: '/img/toolbar-rating-a_48.png',
-    'B+': '/img/toolbar-rating-b-plus_48.png',
-    B: '/img/toolbar-rating-b_48.png',
-    'C+': '/img/toolbar-rating-c-plus_48.png',
-    C: '/img/toolbar-rating-c_48.png',
-    D: '/img/toolbar-rating-d_48.png',
-    // we don't currently show the D- grade
-    'D-': '/img/toolbar-rating-d_48.png',
-    F: '/img/toolbar-rating-f_48.png'
-}
 
 const Site = require('./site.es6')
 const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects.es6')
 const Companies = require('../companies.es6')
-const browserWrapper = require('./../wrapper.es6')
 const webResourceKeyRegex = /.*\?key=(.*)/
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
+const { TabState } = require('./tab-state')
+
+/** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
 
 class Tab {
+    /**
+     * @param {TabData|TabState} tabData
+     */
     constructor (tabData) {
-        this.id = tabData.id || tabData.tabId
-        /** @type {Record<string, Tracker>} */
-        this.trackers = {}
-        this.url = tabData.url
-        this.upgradedHttps = false
-        this.hasHttpsError = false
-        this.mainFrameUpgraded = false
-        this.urlParametersRemoved = false
-        this.urlParametersRemovedUrl = null
-        this.ampUrl = null
-        this.cleanAmpUrl = null
-        this.requestId = tabData.requestId
-        this.status = tabData.status
-        this.site = new Site(this.url)
+        if (tabData instanceof TabState) {
+            /** @type {TabState} */
+            this._tabState = tabData
+        } else {
+            /** @type {TabState} */
+            this._tabState = new TabState(tabData)
+        }
+
+        this.site = new Site(this.url, this._tabState)
         this.httpsRedirects = new HttpsRedirects()
-        this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
-        this.resetBadgeIcon()
         this.webResourceAccess = []
         this.surrogates = {}
+    }
 
-        /** @type {null | import('./ad-click-attribution-policy').AdClick} */
-        this.adClick = null
+    /**
+     * @param {number} tabId
+     */
+    static async restore (tabId) {
+        const state = await TabState.restore(tabId)
+        if (!state) {
+            return null
+        }
+        return new Tab(state)
+    }
+
+    set referrer (value) {
+        this._tabState.setValue('referrer', value)
+    }
+
+    get referrer () {
+        return this._tabState.referrer
+    }
+
+    set adClick (value) {
+        this._tabState.setValue('adClick', value)
+    }
+
+    get adClick () {
+        return this._tabState.adClick
+    }
+
+    set dnrRuleIdsByDisabledClickToLoadRuleAction (value) {
+        this._tabState.setValue('dnrRuleIdsByDisabledClickToLoadRuleAction', value)
+    }
+
+    get dnrRuleIdsByDisabledClickToLoadRuleAction () {
+        return this._tabState.dnrRuleIdsByDisabledClickToLoadRuleAction
+    }
+
+    set trackers (value) {
+        this._tabState.setValue('trackers', value)
+    }
+
+    get trackers () {
+        return this._tabState.trackers
+    }
+
+    get url () {
+        return this._tabState.url
+    }
+
+    set url (url) {
+        this._tabState.setValue('url', url)
+    }
+
+    get id () {
+        return this._tabState.tabId
+    }
+
+    set id (tabId) {
+        this._tabState.setValue('tabId', tabId)
+    }
+
+    get upgradedHttps () {
+        return this._tabState.upgradedHttps
+    }
+
+    set upgradedHttps (value) {
+        this._tabState.setValue('upgradedHttps', value)
+    }
+
+    get hasHttpsError () {
+        return this._tabState.hasHttpsError
+    }
+
+    set hasHttpsError (value) {
+        this._tabState.setValue('hasHttpsError', value)
+    }
+
+    get mainFrameUpgraded () {
+        return this._tabState.mainFrameUpgraded
+    }
+
+    set mainFrameUpgraded (value) {
+        this._tabState.setValue('mainFrameUpgraded', value)
+    }
+
+    get urlParametersRemoved () {
+        return this._tabState.urlParametersRemoved
+    }
+
+    set urlParametersRemoved (value) {
+        this._tabState.setValue('urlParametersRemoved', value)
+    }
+
+    get urlParametersRemovedUrl () {
+        return this._tabState.urlParametersRemovedUrl
+    }
+
+    set urlParametersRemovedUrl (value) {
+        this._tabState.setValue('urlParametersRemovedUrl', value)
+    }
+
+    get ampUrl () {
+        return this._tabState.ampUrl
+    }
+
+    set ampUrl (url) {
+        this._tabState.setValue('ampUrl', url)
+    }
+
+    get cleanAmpUrl () {
+        return this._tabState.cleanAmpUrl
+    }
+
+    get requestId () {
+        return this._tabState.requestId
+    }
+
+    set cleanAmpUrl (url) {
+        this._tabState.setValue('cleanAmpUrl', url)
+    }
+
+    get status () {
+        return this._tabState.status
+    }
+
+    set status (value) {
+        this._tabState.setValue('status', value)
+    }
+
+    get statusCode () {
+        return this._tabState.statusCode
+    }
+
+    set statusCode (value) {
+        this._tabState.setValue('statusCode', value)
+    }
+
+    get ctlYouTube () {
+        return this._tabState.ctlYouTube
+    }
+
+    set ctlYouTube (value) {
+        this._tabState.setValue('ctlYouTube', value)
     }
 
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
-     * @param {*} request
-     * @param {string} tabDomain
+     * @param {string} requestURL
      */
-    setAdClickIfValidRedirect (request, tabDomain) {
+    setAdClickIfValidRedirect (requestURL) {
         const policy = this.getAdClickAttributionPolicy()
-        const adClick = policy.createAdClick(request.url, this)
+        const adClick = policy.createAdClick(requestURL, this)
         if (adClick) {
             this.adClick = adClick
         }
@@ -91,53 +217,37 @@ class Tab {
         return policy.resourcePermitted(resourcePath)
     }
 
-    resetBadgeIcon () {
-        // set the new tab icon to the dax logo
-        browserWrapper.setBadgeIcon({ path: '/img/icon_48.png', tabId: this.id })
-    }
-
-    updateBadgeIcon (target) {
-        if (this.site.specialDomainName) return
-        let gradeIcon
-        const grade = this.site.grade.get()
-
-        if (this.site.isContentBlockingEnabled()) {
-            gradeIcon = gradeIconLocations[grade.enhanced.grade]
-        } else {
-            gradeIcon = gradeIconLocations[grade.site.grade]
-        }
-
-        const badgeData = { path: gradeIcon, tabId: this.id }
-        if (target) badgeData.target = target
-
-        browserWrapper.setBadgeIcon(badgeData)
-    }
-
     updateSite (url) {
         if (this.site.url === url) return
 
         this.url = url
-        this.site = new Site(url)
-
-        // reset badge to dax whenever we go to a new site
-        this.resetBadgeIcon()
+        this.site = new Site(url, this._tabState)
     }
 
     // Store all trackers for a given tab even if we don't block them.
-    addToTrackers (t) {
+    /**
+     * @param t
+     * @param {string} baseDomain
+     * @param {string} url
+     * @returns {Tracker}
+     */
+    addToTrackers (t, baseDomain, url) {
+        const trackers = this.trackers
         const tracker = this.trackers[t.tracker.owner.name]
 
         if (tracker) {
-            tracker.addTrackerUrl(t)
+            tracker.addTrackerUrl(t, this.url || '', baseDomain, url)
         } else if (t.tracker) {
             const newTracker = new Tracker(t)
+            newTracker.addTrackerUrl(t, this.url || '', baseDomain, url)
             this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
             if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
-
-            return newTracker
         }
+        // Set the trackers on the tab which will trigger a state update
+        this.trackers = trackers
+        return this.trackers[t.tracker.owner.name]
     }
 
     /**

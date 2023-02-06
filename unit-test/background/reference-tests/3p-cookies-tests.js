@@ -1,6 +1,6 @@
 require('../../helpers/mock-browser-api')
 
-const tds = require('../../../shared/js/background/trackers.es6')
+const trackers = require('../../../shared/js/background/trackers.es6')
 const tdsStorageStub = require('../../helpers/tds.es6')
 const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
 
@@ -16,6 +16,7 @@ const trackingJsCookieProtection = require('../../../shared/content-scope-script
 const trackingConfigReference = require('../../data/reference-tests/block-third-party-tracking-cookies/config_reference.json')
 const trackingBlocklistReference = require('../../data/reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
 const trackingTestSets = require('../../data/reference-tests/block-third-party-tracking-cookies/tests.json')
+const constants = require('../../../shared/data/constants')
 
 const { JSDOM } = jsdom
 
@@ -28,7 +29,7 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
             spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
-            return tdsStorage.getLists().then(lists => tds.setLists(lists))
+            return tdsStorage.getLists().then(lists => trackers.setLists(lists))
         })
 
         afterEach(() => {
@@ -58,9 +59,12 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                             type: 'script'
                         })
 
-                        const headersAreRemoved = outputRequest.responseHeaders.find(h => h.name.toLocaleLowerCase() === 'set-cookie') === undefined
-
-                        expect(headersAreRemoved).toBe(test.expectSetCookieHeadersRemoved)
+                        if (test.expectCookieHeadersRemoved) {
+                            const headersAreRemoved = outputRequest?.responseHeaders.find(h => h.name.toLocaleLowerCase() === 'set-cookie') === undefined
+                            expect(headersAreRemoved).toBe(test.expectSetCookieHeadersRemoved)
+                        } else {
+                            expect(outputRequest).toBeFalsy()
+                        }
                     } else if ('expectCookieHeadersRemoved' in test) {
                         const outputRequest = dropTracking3pCookiesFromRequest({
                             tabId: 1,
@@ -70,9 +74,12 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                             type: 'script'
                         })
 
-                        const headersAreRemoved = outputRequest.requestHeaders.find(h => h.name.toLocaleLowerCase() === 'cookie') === undefined
-
-                        expect(headersAreRemoved).toBe(test.expectCookieHeadersRemoved)
+                        if (test.expectCookieHeadersRemoved) {
+                            const headersAreRemoved = outputRequest?.requestHeaders.find(h => h.name.toLocaleLowerCase() === 'cookie') === undefined
+                            expect(headersAreRemoved).toBe(test.expectCookieHeadersRemoved)
+                        } else {
+                            expect(outputRequest).toBeFalsy()
+                        }
                     }
                 })
             } else if ('expectDocumentCookieSet' in test) {
@@ -97,7 +104,9 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                     // eslint-disable-next-line no-global-assign
                     globalThis = jsdomWindow
 
-                    jsCookieProtection.load()
+                    jsCookieProtection.load({
+                        platform: constants.platform
+                    })
                     jsCookieProtection.init(args)
 
                     jsdomWindow.document.cookie = test.setDocumentCookie
