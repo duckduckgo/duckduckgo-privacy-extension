@@ -52,7 +52,7 @@
         "duckduckgo-colors": "0.0.1",
         "eslint": "^8.33.0",
         "eslint-config-standard": "^17.0.0",
-        "eslint-plugin-import": "^2.27.4",
+        "eslint-plugin-import": "^2.27.5",
         "eslint-plugin-node": "^11.1.0",
         "glob": "^8.0.3",
         "grunt": "1.5.3",
