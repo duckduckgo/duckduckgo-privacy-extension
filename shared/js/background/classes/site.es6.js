@@ -61,7 +61,7 @@ class Site {
      */
     get shouldApplyProtections () {
         // Allow protections to be enabled whilst loading tabs
-        if (this.tabState.status !== 'complete' && this.specialDomainName === NEW_TAB_CODE) {
+        if (this._tabState.status !== 'complete' && this.specialDomainName === NEW_TAB_CODE) {
             return true
         }
         return this.specialDomainName == null
