@@ -104,7 +104,7 @@ module.exports = function (grunt) {
     let contentScopeInstall = 'echo "Skipping content-scope-scripts install";'
     let contentScopeBuild = 'echo "Skipping content-scope-scripts build";'
     // If we're watching the content scope files, regenerate them
-    if (grunt.option('watch')) {
+    if (Number(grunt.option('monitor'))) {
         contentScopeInstall = `cd ${ddgContentScope} && npm install --legacy-peer-deps`
         contentScopeBuild = `cd ${ddgContentScope} && npm run build && cd -`
     }
@@ -288,7 +288,7 @@ module.exports = function (grunt) {
     ])
 
     const devTasks = ['build']
-    if (grunt.option('watch')) {
+    if (Number(grunt.option('monitor'))) {
         devTasks.push('watch')
     }
 
