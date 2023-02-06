@@ -10,11 +10,22 @@
         },
         "facebook.net": {
             "domain": "facebook.net",
-            "default": "block",
+            "default": "ignore",
             "owner": {
                 "name": "Facebook",
                 "displayName": "Facebook"
-            }
+            },
+            "rules": [
+                {
+                    "rule": "facebook\\.net/tracker",
+                    "action": "block-ctl-fb"
+                },
+                {
+                    "rule": "facebook\\.net/script\\.js",
+                    "surrogate": "sdk.js",
+                    "action": "block-ctl-fb"
+                }
+            ]
         },
         "google-analytics.com": {
             "domain": "google-analytics.com",

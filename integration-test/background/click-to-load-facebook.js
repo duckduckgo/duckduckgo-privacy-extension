@@ -87,6 +87,7 @@ describe('Test Facebook Click To Load', () => {
         const page = await browser.newPage()
         const pageRequests = []
         const clearRequests = await logPageRequests(page, pageRequests)
+        let blockingFailed
 
         // Initially there should be a bunch of requests. The SDK should
         // be redirected to our surrogate but otherwise Facebook requests should
@@ -102,6 +103,10 @@ describe('Test Facebook Click To Load', () => {
             expect(requestCount).toBeGreaterThan(3)
             expect(blockCount).toEqual(requestCount)
             expect(allowCount).toEqual(0)
+
+            // Note a failure, so that it's not ignored as pending later.
+            blockingFailed = allowCount > 0 || blockCount < requestCount ||
+                facebookSDKRedirect.alwaysRedirected === false
         }
 
         // Once the user clicks to load the Facebook content, the SDK should be
@@ -138,7 +143,7 @@ describe('Test Facebook Click To Load', () => {
             // The network is too slow for any requests to have been made.
             // Better to mark these tests as pending than to consider requests
             // to have been blocked (or not blocked).
-            if (requestCount === 0) {
+            if (requestCount === 0 && !blockingFailed) {
                 pending('Timed out waiting for Facebook requests!')
             }
 
