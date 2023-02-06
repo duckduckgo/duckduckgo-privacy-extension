@@ -57,6 +57,7 @@ browser.contextMenus.create({
     id: MENU_ITEM_ID,
     title: 'Generate Private Duck Address',
     contexts: ['editable'],
+    documentUrlPatterns: ['https://*/*'],
     visible: false
 }, () => {
     // It's fine if this context menu already exists, suppress that error.
