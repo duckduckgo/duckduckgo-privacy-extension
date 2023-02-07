@@ -216,6 +216,7 @@ function blockHandleResponse (thisTab, requestData) {
 
     const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
     const baseDomain = trackers.getBaseDomain(requestData.url)
+    const serviceWorkerInitiated = requestData.tabId === -1
 
     /**
      * Click to Load Blocking
@@ -269,10 +270,10 @@ function blockHandleResponse (thisTab, requestData) {
             tracker.reason = 'content blocking disabled'
         }
 
-        if (requestData.tabId === -1 && (tracker.action === 'block' || tracker.action === 'redirect')) {
+        if (serviceWorkerInitiated && (tracker.action === 'block' || tracker.action === 'redirect')) {
             if (!thisTab.site.isFeatureEnabled('serviceworkerInitiatedRequests')) {
                 tracker.action = 'ignore-user'
-                tracker.reason = 'service worker blocking disabled'
+                tracker.reason = 'service worker initiated request blocking disabled'
             } else {
                 tracker.reason += ' (service worker)'
             }
@@ -297,7 +298,7 @@ function blockHandleResponse (thisTab, requestData) {
             url: cleanUrl,
             requestData,
             siteUrl: thisTab.site.url,
-            serviceworkerInitiated: requestData.tabId === -1
+            serviceWorkerInitiated,
         })
 
         // Count and block trackers.
@@ -328,7 +329,7 @@ function blockHandleResponse (thisTab, requestData) {
 
             console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                         // @ts-ignore
-                        ' [' + tracker.tracker.owner.name + '] ' + requestData.url + (requestData.tabId === -1 ? ' (serviceworker)' : ''))
+                        ' [' + tracker.tracker.owner.name + '] ' + requestData.url + (serviceWorkerInitiated ? ' (serviceworker)' : ''))
 
             // return surrogate redirect if match, otherwise
             // tell Chrome to cancel this webrequest

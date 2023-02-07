@@ -62,7 +62,7 @@ function setupProtectionButton (element, textName, isEnabled) {
 
 const actionHandlers = {
     tracker: (m) => {
-        const { tracker, url, requestData, siteUrl, serviceworkerInitiated } = m.message
+        const { tracker, url, requestData, siteUrl, serviceWorkerInitiated } = m.message
         const row = document.getElementById('request-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
         const toggleLink = row.querySelector('.block-toggle')
