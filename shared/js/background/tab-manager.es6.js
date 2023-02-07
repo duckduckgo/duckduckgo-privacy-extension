@@ -198,6 +198,7 @@ class TabManager {
         const tab = tabManager.get({ tabId: request.tabId })
 
         if (tab) {
+            tab.status = request.status
             tab.statusCode = request.statusCode
             if (tab.statusCode === 200) {
                 tab.updateSite(request.url)

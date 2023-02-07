@@ -14,6 +14,8 @@ const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper.es6')
 const { TabState } = require('./tab-state')
 
+const NEW_TAB_CODE = 'new tab'
+
 /**
  * @typedef {'allowlisted' | 'allowlistOptIn' | 'denylisted'} allowlistName
  */
@@ -25,6 +27,7 @@ class Site {
             tabState = new TabState({ tabId: 1, url, status: 'complete' })
         }
         this.url = url || ''
+
         /** @type {TabState} */
         this._tabState = tabState
         this.trackerUrls = []
@@ -51,6 +54,17 @@ class Site {
         this.specialDomainName = this.getSpecialDomain()
         // domains which have been clicked to load
         this.clickToLoad = []
+    }
+
+    /**
+     * @returns {boolean} true if the site is not a special page
+     */
+    get shouldApplyProtections () {
+        // Allow protections to be enabled whilst loading tabs
+        if (this._tabState.status !== 'complete' && this.specialDomainName === NEW_TAB_CODE) {
+            return true
+        }
+        return this.specialDomainName == null
     }
 
     get allowlisted () {
@@ -163,6 +177,9 @@ class Site {
      * - User toggle on
      */
     isFeatureEnabled (featureName) {
+        if (!this.shouldApplyProtections) {
+            return false
+        }
         const allowlistOnlyFeatures = ['autofill', 'adClickAttribution']
         if (allowlistOnlyFeatures.includes(featureName)) {
             return this.enabledFeatures.includes(featureName)
@@ -210,7 +227,7 @@ class Site {
         const { domain, protocol, url } = this
 
         if (url === '') {
-            return 'new tab'
+            return NEW_TAB_CODE
         }
 
         // Both 'localhost' and the loopback IP have to be specified
@@ -231,7 +248,7 @@ class Site {
             protocol === 'chrome-search' ||
             protocol === 'vivaldi') {
             if (domain === 'newtab' || domain === 'local-ntp') {
-                return 'new tab'
+                return NEW_TAB_CODE
             }
             return domain
         }
@@ -259,7 +276,7 @@ class Site {
         // Our new tab page URL that is hard-coded in the Chromium source.
         // See https://source.chromium.org/chromium/chromium/src/+/main:components/search_engines/prepopulated_engines.json
         if (url === 'https://duckduckgo.com/chrome_newtab') {
-            return 'new tab'
+            return NEW_TAB_CODE
         }
 
         return null

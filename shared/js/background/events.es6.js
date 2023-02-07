@@ -480,22 +480,6 @@ if (manifestVersion === 3) {
     )
 }
 
-// Inject the Click to Load content script to display placeholders.
-browser.webNavigation.onCommitted.addListener(details => {
-    const tab = tabManager.get({ tabId: details.tabId })
-
-    if (!tab || tab.site.specialDomainName) {
-        return
-    }
-
-    if (tab.site.isBroken) {
-        console.log('temporarily skip embedded object replacements for site: ' + details.url +
-          'more info: https://github.com/duckduckgo/privacy-configuration')
-        // eslint-disable-next-line
-        return
-    }
-})
-
 /**
  * For each completed page load, update the extension's action icon
  */

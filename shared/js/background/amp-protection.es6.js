@@ -42,7 +42,7 @@ function extractAMPURL (site, url) {
         return null
     }
 
-    if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
+    if (!site.isFeatureEnabled(featureName)) {
         return null
     }
 
@@ -51,7 +51,7 @@ function extractAMPURL (site, url) {
         if (match && match.length > 1) {
             const newSite = new Site(match[1].startsWith('http') ? match[1] : `https://${match[1]}`)
 
-            if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
+            if (!newSite.isFeatureEnabled(featureName)) {
                 return null
             }
 
@@ -103,7 +103,7 @@ function isAMPURL (url) {
     }
 
     const site = new Site(url)
-    if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
+    if (!site.isFeatureEnabled(featureName)) {
         return false
     }
 
@@ -123,7 +123,7 @@ async function fetchAMPURL (site, url) {
         return null
     }
 
-    if (site.specialDomainName || !site.isFeatureEnabled(featureName) || site.url === 'about:blank') {
+    if (!site.isFeatureEnabled(featureName)) {
         return null
     }
 
@@ -155,7 +155,7 @@ async function fetchAMPURL (site, url) {
     if (firstCanonicalLink && firstCanonicalLink instanceof HTMLLinkElement) {
         const newSite = new Site(firstCanonicalLink.href)
 
-        if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
+        if (!newSite.isFeatureEnabled(featureName)) {
             return null
         }
 
