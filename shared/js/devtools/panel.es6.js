@@ -84,7 +84,7 @@ const actionHandlers = {
             row.classList.remove(tracker.action)
             row.classList.add(toggleLink.innerText === 'I' ? 'ignore' : 'block')
         });
-        [`${serviceworkerInitiated ? '⚙️ ' : ''}${url}`, `${actionIcons[tracker.action]} ${tracker.action} (${tracker.reason})`, tracker.fullTrackerDomain, requestData.type].forEach((text, i) => {
+        [`${serviceWorkerInitiated ? '⚙️ ' : ''}${url}`, `${actionIcons[tracker.action]} ${tracker.action} (${tracker.reason})`, tracker.fullTrackerDomain, requestData.type].forEach((text, i) => {
             cells[i + 1].innerText = text
         })
         row.classList.add(tracker.action)

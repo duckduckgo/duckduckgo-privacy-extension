@@ -298,7 +298,7 @@ function blockHandleResponse (thisTab, requestData) {
             url: cleanUrl,
             requestData,
             siteUrl: thisTab.site.url,
-            serviceWorkerInitiated,
+            serviceWorkerInitiated
         })
 
         // Count and block trackers.
