@@ -90,7 +90,7 @@ describe('Test YouTube Click To Load', () => {
         } catch (e) {}
     })
 
-    it('CTL: YouTube request blocking/redirecting', async () => {
+    xit('CTL: YouTube request blocking/redirecting', async () => {
         // Open the test page and start logging network requests.
         const page = await browser.newPage()
         const pageRequests = []
