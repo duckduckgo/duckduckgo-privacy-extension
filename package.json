@@ -91,7 +91,7 @@
         "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.2.0",
         "bel": "6.0.0",
         "deep-freeze": "0.0.1",
-        "dexie": "3.2.2",
+        "dexie": "3.2.3",
         "eventemitter2": "6.4.9",
         "i18next": "^22.1.4",
         "i18next-icu": "^2.1.0",
