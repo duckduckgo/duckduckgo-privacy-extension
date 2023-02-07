@@ -26,6 +26,8 @@ class ServiceWorkerTab extends Tab {
      * @returns {Tab[]}
      */
     _findMatchingTabs () {
+        // Iterate all tabs to find matching origins.
+        // In future we may want to consider caching this data to avoid O(n) cost per request
         return Object.keys(this.tabContainer).filter(tabId => {
             const tab = this.tabContainer[tabId]
             try {
