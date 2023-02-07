@@ -80,10 +80,6 @@ function handleAmpRedirect (thisTab, url) {
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  */
 function handleRequest (requestData) {
-    const tabId = requestData.tabId
-    // Skip requests to background tabs
-    if (tabId === -1) { return }
-
     const thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
@@ -216,11 +212,11 @@ function handleRequest (requestData) {
  * @returns {browser.WebRequest.BlockingResponseOrPromise | undefined}
  */
 function blockHandleResponse (thisTab, requestData) {
-    const tabId = requestData.tabId
     const blockingEnabled = thisTab.site.isContentBlockingEnabled()
 
     const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
     const baseDomain = trackers.getBaseDomain(requestData.url)
+    const serviceWorkerInitiated = requestData.tabId === -1
 
     /**
      * Click to Load Blocking
@@ -274,6 +270,15 @@ function blockHandleResponse (thisTab, requestData) {
             tracker.reason = 'content blocking disabled'
         }
 
+        if (serviceWorkerInitiated && (tracker.action === 'block' || tracker.action === 'redirect')) {
+            if (!thisTab.site.isFeatureEnabled('serviceworkerInitiatedRequests')) {
+                tracker.action = 'ignore-user'
+                tracker.reason = 'service worker initiated request blocking disabled'
+            } else {
+                tracker.reason += ' (service worker)'
+            }
+        }
+
         // allow embedded twitter content if user enabled this setting
         if (tracker.fullTrackerDomain === 'platform.twitter.com' && settings.getSetting('embeddedTweetsEnabled') === true) {
             tracker.action = 'ignore-user'
@@ -285,14 +290,15 @@ function blockHandleResponse (thisTab, requestData) {
         cleanUrl.search = ''
         cleanUrl.hash = ''
         // @ts-ignore
-        devtools.postMessage(tabId, 'tracker', {
+        thisTab.postDevtoolsMessage(devtools, 'tracker', {
             tracker: {
                 ...reportedTracker,
                 matchedRule: reportedTracker.matchedRule?.rule?.toString()
             },
             url: cleanUrl,
             requestData,
-            siteUrl: thisTab.site.url
+            siteUrl: thisTab.site.url,
+            serviceWorkerInitiated
         })
 
         // Count and block trackers.
@@ -323,7 +329,7 @@ function blockHandleResponse (thisTab, requestData) {
 
             console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
                         // @ts-ignore
-                        ' [' + tracker.tracker.owner.name + '] ' + requestData.url)
+                        ' [' + tracker.tracker.owner.name + '] ' + requestData.url + (serviceWorkerInitiated ? ' (serviceworker)' : ''))
 
             // return surrogate redirect if match, otherwise
             // tell Chrome to cancel this webrequest

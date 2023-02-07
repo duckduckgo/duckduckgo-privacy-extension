@@ -312,6 +312,16 @@ class Tab {
 
         this.ampUrl = url
     }
+
+    /**
+     * Post a message to the devtools panel for this tab
+     * @param {Object} devtools
+     * @param {string} action
+     * @param {Object} message
+     */
+    postDevtoolsMessage (devtools, action, message) {
+        devtools.postMessage(this.id, action, message)
+    }
 }
 
 module.exports = Tab
