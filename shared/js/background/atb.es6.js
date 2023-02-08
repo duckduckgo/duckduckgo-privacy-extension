@@ -195,7 +195,7 @@ const ATB = (() => {
                 settings.updateSetting('hasSeenPostInstall', true)
                 let postInstallURL = 'https://duckduckgo.com/extension-success'
                 const atb = settings.getSetting('atb')
-                postInstallURL += atb ? `&atb=${atb}` : ''
+                postInstallURL += atb ? `?atb=${atb}` : ''
                 browser.tabs.create({
                     url: postInstallURL
                 })
