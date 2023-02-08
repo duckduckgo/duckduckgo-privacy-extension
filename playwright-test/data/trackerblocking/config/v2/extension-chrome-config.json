@@ -1,0 +1,15 @@
+--2023-02-08 11:32:20--  https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension-chrome-config.json
+Resolving staticcdn.duckduckgo.com (staticcdn.duckduckgo.com)... 40.114.178.124
+Connecting to staticcdn.duckduckgo.com (staticcdn.duckduckgo.com)|40.114.178.124|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 226363 (221K) [application/json]
+Saving to: ‘extension-chrome-config.json’
+
+     0K .......... .......... .......... .......... .......... 22%  887K 0s
+    50K .......... .......... .......... .......... .......... 45% 4,30M 0s
+   100K .......... .......... .......... .......... .......... 67% 1,55M 0s
+   150K .......... .......... .......... .......... .......... 90% 1,39M 0s
+   200K .......... .......... .                               100% 8,61M=0,1s
+
+2023-02-08 11:32:20 (1,58 MB/s) - ‘extension-chrome-config.json’ saved [226363/226363]
+
