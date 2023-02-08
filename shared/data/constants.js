@@ -143,5 +143,22 @@ module.exports = {
     platform: {
         name: 'extension'
     },
-    supportedLocales: ['cimode', 'en'] // cimode is for testing
+    supportedLocales: ['cimode', 'en'], // cimode is for testing
+    trackerStats: /** @type {const} */({
+        allowedOrigin: 'https://duckduckgo.com',
+        allowedPathname: 'ntp-tracker-stats.html',
+        redirectTarget: 'html/tracker-stats.html',
+        clientPortName: 'newtab-tracker-stats',
+        /** @type {ReadonlyArray<string>} */
+        excludedCompanies: ['ExoClick'],
+        events: {
+            incoming: {
+                newTabPage_heartbeat: 'newTabPage_heartbeat'
+            },
+            outgoing: {
+                newTabPage_data: 'newTabPage_data',
+                newTabPage_disconnect: 'newTabPage_disconnect'
+            }
+        }
+    })
 }

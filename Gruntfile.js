@@ -32,7 +32,8 @@ module.exports = function (grunt) {
             '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js'],
             '<%= dirs.public.js %>/feedback.js': ['<%= dirs.src.js %>/ui/pages/feedback.es6.js'],
             '<%= dirs.public.js %>/devtools-panel.js': ['<%= dirs.src.js %>/devtools/panel.es6.js'],
-            '<%= dirs.public.js %>/list-editor.js': ['<%= dirs.src.js %>/devtools/list-editor.es6.js']
+            '<%= dirs.public.js %>/list-editor.js': ['<%= dirs.src.js %>/devtools/list-editor.es6.js'],
+            '<%= dirs.public.js %>/newtab.js': ['<%= dirs.src.js %>/newtab/newtab.js']
         },
         background: {
             '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
@@ -75,7 +76,8 @@ module.exports = function (grunt) {
         autofillContentScript: ['<%= ddgAutofill %>/*.js'],
         autofillCSS: ['<%= ddgAutofill %>/*.css'],
         contentScope: [`${ddgContentScope}/src/**/*.js`, `${ddgContentScope}/inject/**/*.js`],
-        data: ['<%= dirs.data %>/*.js']
+        data: ['<%= dirs.data %>/*.js'],
+        newtab: 'shared/newtab/**'
     }
 
     const karmaOps = {
@@ -121,6 +123,7 @@ module.exports = function (grunt) {
                 templates: 'shared/templates'
             },
             data: 'shared/data',
+            newtab: `${buildPath}/newtab`,
             public: {
                 js: `${buildPath}/public/js`,
                 css: `${buildPath}/public/css`

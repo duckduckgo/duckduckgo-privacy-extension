@@ -135,6 +135,23 @@ export function findParent (url) {
     }
 }
 
+/**
+ * There are situations where we want to access the parent's displayName
+ * only - for instance in the NewtabTrackerStats feature.
+ * @param {string} url
+ * @returns {string}
+ */
+export function findParentDisplayName (url) {
+    const parent = findParent(url)
+    const entity = tdsStorage.tds.entities[parent]
+
+    if (entity && entity.displayName) {
+        return entity.displayName
+    }
+
+    return 'unknown'
+}
+
 export function getCurrentURL (callback) {
     browser.tabs.query({ active: true, lastFocusedWindow: true }).then((tabData) => {
         if (tabData.length) {

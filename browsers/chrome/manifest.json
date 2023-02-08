@@ -80,7 +80,8 @@
         "/web_accessible_resources/*",
         "/img/logo-small.svg",
         "/public/css/autofill.css",
-        "/public/font/*"
+        "/public/font/*",
+        "/html/tracker-stats.html"
     ],
     "storage": {
         "managed_schema": "managed-schema.json"

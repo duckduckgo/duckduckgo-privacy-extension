@@ -39,10 +39,12 @@ const ruleIdRangeByConfigName = {
 // only require one declarativeNetRequest rule, so hardcode the rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001
 export const ATB_PARAM_RULE_ID = 20003
+export const NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID = 20006
 // Valid dynamic rule IDs - others will be removed on extension start
 const RESERVED_RULE_IDS = [
     USER_ALLOWLIST_RULE_ID,
-    ATB_PARAM_RULE_ID
+    ATB_PARAM_RULE_ID,
+    NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID
 ]
 
 // Rule IDs for static session rules
