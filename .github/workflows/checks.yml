@@ -86,7 +86,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run tests
-        run: xvfb-run npm run playwright
+        run: xvfb-run --auto-servernum -- npm run playwright
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -107,7 +107,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run tests
-        run: xvfb-run npm run playwright-mv3
+        run: xvfb-run --auto-servernum -- npm run playwright-mv3
       - uses: actions/upload-artifact@v3
         if: always()
         with:
