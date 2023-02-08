@@ -145,8 +145,7 @@ module.exports = {
     },
     supportedLocales: ['cimode', 'en'], // cimode is for testing
     trackerStats: /** @type {const} */({
-        allowedOrigin: 'https://use-devtesting13.duckduckgo.com',
-        // allowedOrigin: 'https://eun-sosbourne1.duckduckgo.com',
+        allowedOrigin: 'https://duckduckgo.com',
         allowedPathname: 'ntp-tracker-stats.html',
         redirectTarget: 'html/tracker-stats.html',
         clientPortName: 'newtab-tracker-stats',
