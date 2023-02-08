@@ -21,7 +21,7 @@ const setup = async (ops) => {
     const dataDir = fs.mkdtempSync(tmpDirPrefix)
     /** @type {import('puppeteer').PuppeteerLaunchOptions} */
     const puppeteerOps = {
-        headless: 'chrome'
+        headless: true
     }
     const args = [
         `--user-data-dir=${dataDir}`
