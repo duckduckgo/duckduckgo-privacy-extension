@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1675436756812,
+    "version": 1675788746363,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -280,6 +280,10 @@
                 {
                     "domain": "kbb.com",
                     "reason": "Adblocker wall"
+                },
+                {
+                    "domain": "medium.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
                 },
                 {
                     "domain": "speedtest.net",
@@ -1151,7 +1155,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "dde22884f79b05d7767818bc4391ff27"
+            "hash": "3bf687283e5ce5d96b49c28efdd1eb40"
         },
         "fingerprintingAudio": {
             "state": "disabled",
@@ -2705,6 +2709,13 @@
                     "pubmatic.com": {
                         "rules": [
                             {
+                                "rule": "ads.pubmatic.com/AdServer/",
+                                "domains": [
+                                    "hindustantimes.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/388"
+                            },
+                            {
                                 "rule": "hbopenbid.pubmatic.com/translator",
                                 "domains": [
                                     "aternos.org"
@@ -2761,6 +2772,17 @@
                                     "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/356"
+                            }
+                        ]
+                    },
+                    "searchspring.io": {
+                        "rules": [
+                            {
+                                "rule": "searchspring.io",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/435"
                             }
                         ]
                     },
@@ -4613,7 +4635,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "88acc32385b5d0589388d0470e2c88b0"
+            "hash": "c84b0cd057a8c8e0e985f41e47756f5a"
         },
         "trackingCookies1p": {
             "settings": {
