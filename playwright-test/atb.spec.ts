@@ -46,6 +46,10 @@ test("postinstall page: should get its ATB param from atb.js when there's no ins
         } else if (url.match(/exti/)) {
             numExtiCalled += 1
             expect(url).toContain(`atb=${mockAtb.version}`)
+            return route.fulfill({
+                status: 200,
+                body: '',
+            })
         }
         route.continue()
     })
