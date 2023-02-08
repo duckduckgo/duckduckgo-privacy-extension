@@ -27,12 +27,19 @@ async function routeLocalResources(route: Route) {
     }
 }
 
+export const mockAtb = {
+    majorVersion: 364,
+    minorVersion: 2,
+    version: 'v364-2'
+};
+
 // based off example at https://playwright.dev/docs/chrome-extensions#testing
 export const test = base.extend<{
     manifestVersion: 2 | 3;
     context: BrowserContext;
     backgroundPage: Page | Worker;
-    routeExtensionRequests: (url: string | RegExp, handler: (route: Route, request: Request) => any) => Promise<void>
+    routeExtensionRequests: (url: string | RegExp, handler: (route: Route, request: Request) => any) => Promise<void>;
+    backgroundNetworkContext: Page | BrowserContext;
 }>({
     manifestVersion: getManifestVersion(),
     context: async ({ manifestVersion }, use) => {
@@ -61,14 +68,29 @@ export const test = base.extend<{
     },
     backgroundPage: async ({ context, manifestVersion }, use) => {
         // let background: Page | Worker
+        const routeHandler = (route: Route) => {
+            const url = route.request().url()
+            if (url.startsWith('https://staticcdn.duckduckgo.com/')) {
+                return routeLocalResources(route)
+            }
+            if (url.startsWith('https://duckduckgo.com/atb.js')) {
+                return route.fulfill({
+                    body: JSON.stringify(mockAtb)
+                })
+            }
+            if (url.startsWith('https://duckduckgo.com/exti')) {
+                return route.fulfill({
+                    status: 200,
+                    body: '',
+                })
+            }
+            route.continue()
+        }
         if (manifestVersion === 3) {
             let [background] = context.serviceWorkers();
             if (!background) background = await context.waitForEvent("serviceworker");
             // SW request routing is experimental: https://playwright.dev/docs/service-workers-experimental
-            context.route(
-                "https://staticcdn.duckduckgo.com/**/*",
-                routeLocalResources
-            );
+            context.route('**/*', routeHandler);
             await use(background);
         } else {
             let [background] = context.backgroundPages();
@@ -76,10 +98,7 @@ export const test = base.extend<{
                 background = await context.waitForEvent("backgroundpage");
 
             // Serve extension background requests from local cache
-            background.route(
-                "https://staticcdn.duckduckgo.com/**/*",
-                routeLocalResources
-            );
+            background.route('**/*', routeHandler);
             await use(background);
         }
     }, 
@@ -91,7 +110,16 @@ export const test = base.extend<{
             const page = (backgroundPage as Page)
             await use(page.route.bind(page))
         }
-    }
+    },
+    // Use this for listening and modifying network events for both MV2 and MV3
+    backgroundNetworkContext: async ({ manifestVersion, backgroundPage, context}, use) => {
+        if (manifestVersion === 3) {
+            await use(context)
+        } else {
+            const page = (backgroundPage as Page)
+            await use(page)
+        }
+    },
 });
 
 export const expect = test.expect;
