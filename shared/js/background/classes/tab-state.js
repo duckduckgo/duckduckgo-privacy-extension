@@ -32,6 +32,8 @@ export class TabState {
         this.trackers = {}
         /** @type {null | import('../events/referrer-trimming').Referrer} */
         this.referrer = null
+        /** @type {string[]} */
+        this.disabledClickToLoadRuleActions = []
         /** @type {Record<string, number[]>} */
         this.dnrRuleIdsByDisabledClickToLoadRuleAction = {}
         /** @type {boolean} */

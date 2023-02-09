@@ -1,96 +1,68 @@
-require('../helpers/mock-browser-api')
-const chromeWrapper = require('../../shared/js/background/wrapper.es6.js')
 const tds = require('../../shared/js/background/trackers.es6')
 const tdsStorage = require('../../shared/js/background/storage/tds.es6')
 const tdsStorageStub = require('./../helpers/tds.es6')
-const beforeRequest = require('../../shared/js/background/before-request.es6')
+
+const { blockHandleResponse } = require('../../shared/js/background/before-request.es6')
 const Tab = require('../../shared/js/background/classes/tab.es6')
-const tabManager = require('../../shared/js/background/tab-manager.es6')
-const settings = require('../../shared/js/background/settings.es6')
 
-describe('Tracker Utilities', () => {
-    let tabObserver
-    let managerObserver
+const testCases = [
+    { url: 'https://facebook.net/example/', expectedAction: 'ignore' },
+    { url: 'https://facebook.net/tracker', expectedAction: 'block' },
+    { url: 'https://facebook.net/script.js', expectedAction: 'redirect' }
+]
 
-    beforeAll(() => {
+async function testMatchOutcomes (siteUrl, disabledRuleActions, expectedActions) {
+    for (let i = 0; i < testCases.length; i++) {
+        const requestData = {
+            url: testCases[i].url, type: 'script', tabId: 1, frameId: 1
+        }
+
+        const tab = new Tab({ tabId: requestData.tabId, url: siteUrl, status: null })
+        tab.disabledClickToLoadRuleActions = disabledRuleActions
+
+        const result = await blockHandleResponse(tab, requestData)
+        let actualAction = 'ignore'
+        if (result?.cancel === true) {
+            actualAction = 'block'
+        } else if (result?.redirectUrl) {
+            actualAction = 'redirect'
+        }
+        expect(actualAction).toEqual(expectedActions[i])
+
+        tab.disabledClickToLoadRuleActions = []
+    }
+}
+
+describe('Click to Load', () => {
+    beforeEach(() => {
         tdsStorageStub.stub()
-        settings.updateSetting('activeExperiment', true)
-        settings.updateSetting('experimentData', { blockFacebook: true })
-        /* eslint-disable no-unused-vars */
-        spyOn(chromeWrapper, 'getExtensionURL').and.returnValue('chrome://extension/')
-        spyOn(chromeWrapper, 'notifyPopup').and.returnValue(undefined)
-        tabObserver = spyOn(Tab, 'constructor')
-        managerObserver = spyOn(tabManager, 'get')
-        tdsStorage.getLists()
+        return tdsStorage.getLists()
             .then(lists => {
                 return tds.setLists(lists)
             })
     })
 
-    describe('Click-to-Load', () => {
-        let tab
+    it('Applies known Click to Load rule actions', async () => {
+        await testMatchOutcomes(
+            'https://third-party.example',
+            [],
+            ['ignore', 'block', 'redirect']
+        )
+    })
 
-        beforeAll(() => {
-            tab = {
-                id: 123,
-                requestId: 123,
-                url: 'http://example.com',
-                status: 200,
-                addWebResourceAccess: () => {},
-                site: {
-                    allowlisted: false,
-                    clickToLoad: []
-                }
-            }
-        })
-
-        const socialTrackers = [
+    it('Ignores first-party Click to Load rule actions', async () => {
+        await testMatchOutcomes(
             'https://facebook.com',
-            'https://facebook.net',
-            'https://developers.facebook.com/docs/plugins/',
-            'https://www.facebook.com/plugins/like.php'
-        ]
-        it('Should block social trackers by default', () => {
-            const requestData = {}
-            tabObserver.and.returnValue(tab)
-            managerObserver.and.returnValue(tab)
-            for (const tracker of socialTrackers) {
-                requestData.url = tracker
-                settings.ready().then(() => {
-                    expect(beforeRequest.handleRequest(requestData)).withContext(`URL: ${tracker}`).toEqual({ cancel: true })
-                })
-            }
-        })
+            [],
+            ['ignore', 'ignore', 'ignore']
+        )
+    })
 
-        const sdkURLs = [
-            'https://connect.facebook.net/en_US/sdk.js',
-            'https://connect.facebook.net/en_GB/sdk.js'
-        ]
-        it('Should provide a surrogate SDK', () => {
-            tabObserver.and.returnValue(tab)
-            managerObserver.and.returnValue(tab)
-            const requestData = {}
-            for (const url of sdkURLs) {
-                requestData.url = url
-                settings.ready().then(() => {
-                    expect(beforeRequest.handleRequest(requestData).redirectUrl).withContext(`URL: ${url}`).toBeDefined()
-                })
-            }
-        })
-
-        it('Should allow requests after element click', () => {
-            tab.site.clickToLoad.push('Facebook')
-            tabObserver.and.returnValue(tab)
-            managerObserver.and.returnValue(tab)
-            const requestData = {}
-            for (const url of socialTrackers) {
-                requestData.url = url
-                settings.ready().then(() => {
-                    expect(beforeRequest.handleRequest(requestData)).toEqual(undefined)
-                })
-            }
-            // Reset to empty for other tests
-            tab.site.clickToLoad = []
-        })
+    it('Ignores disabled Click to Load rule actions', async () => {
+        await testMatchOutcomes(
+            'https://third-party.example',
+            ['block-ctl-fb'],
+            ['ignore', 'ignore', 'ignore']
+        )
     })
 })

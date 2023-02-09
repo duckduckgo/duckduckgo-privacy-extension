@@ -9,7 +9,6 @@ const stub = (arg) => {
     const tdsData = {
         tds: require('./../data/tds.json'),
         surrogates: require('./../data/surrogates.js').surrogates,
-        ClickToLoadConfig: require('./../data/clickToLoadConfig.json'),
         config: require('./../data/extension-config.json')
     }
 

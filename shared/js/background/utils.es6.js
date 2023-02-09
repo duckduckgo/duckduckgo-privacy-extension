@@ -2,7 +2,6 @@ import browser from 'webextension-polyfill'
 import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from './wrapper.es6'
 import tdsStorage from './storage/tds.es6'
 import settings from './settings.es6'
-import load from './load.es6'
 import * as tldts from 'tldts'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
 import sha1 from '../shared-utils/sha1'
@@ -195,7 +194,7 @@ export function getUpgradeToSecureSupport () {
     return canUpgrade
 }
 
-export function getClickToPlaySupport (tab) {
+export function getClickToLoadSupport (tab) {
     if (getBrowserName() === 'moz' && browserInfo && browserInfo.version <= 88) {
         return false
     }
@@ -332,39 +331,6 @@ function isDomainCookieExcluded (domain) {
     }
 
     return false
-}
-
-/**
- * Convert an image file to a base64 data:image file,
- * for use in injections where the extension URL may not be
- * accessible
- */
-export async function imgToData (imagePath) {
-    const imgType = imagePath.substring(imagePath.lastIndexOf('.') + 1)
-    try {
-        const options = {
-            url: imagePath,
-            type: 'internal'
-        }
-        if (imgType !== 'svg') {
-            options.responseType = 'arraybuffer'
-            options.returnType = 'arraybuffer'
-        }
-        const xhrRes = await load.loadExtensionFile(options)
-        const imgData = xhrRes.data
-        if (imgType === 'svg') {
-            return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(imgData)}`
-        }
-        // Based on https://stackoverflow.com/questions/9267899/arraybuffer-to-base64-encoded-string/9458996#9458996
-        let binary = ''
-        const bytes = new Uint8Array(imgData)
-        for (const i of bytes) {
-            binary += String.fromCharCode(i)
-        }
-        return `data:image/${imgType};base64,${btoa(binary)}`
-    } catch (e) {
-        console.error('Could not load image file to process: ' + e)
-    }
 }
 
 /**

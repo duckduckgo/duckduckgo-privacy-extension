@@ -26,7 +26,6 @@ class TDSStorage {
 
         this.tds = { entities: {}, trackers: {}, domains: {}, cnames: {} }
         this.surrogates = ''
-        this.ClickToLoadConfig = {}
         this.config = { features: {} }
 
         this.isInstalling = false

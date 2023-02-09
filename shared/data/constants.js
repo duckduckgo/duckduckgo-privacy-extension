@@ -109,12 +109,6 @@ module.exports = {
             }
         },
         {
-            name: 'ClickToLoadConfig',
-            url: 'https://staticcdn.duckduckgo.com/useragents/social_ctp_configuration.json',
-            format: 'json',
-            source: 'external'
-        },
-        {
             name: 'config',
             url: getConfigFileName(),
             format: 'json',

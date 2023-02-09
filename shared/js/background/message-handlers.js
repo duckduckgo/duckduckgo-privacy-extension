@@ -10,7 +10,6 @@ const utils = require('./utils.es6')
 const settings = require('./settings.es6')
 const tabManager = require('./tab-manager.es6')
 const tdsStorage = require('./storage/tds.es6')
-const trackerutils = require('./tracker-utils')
 const trackers = require('./trackers.es6')
 const constants = require('../../data/constants')
 const Companies = require('./companies.es6')
@@ -144,9 +143,8 @@ export function getTopBlockedByPages (options) {
 
 /**
  * @typedef getClickToLoadStateResponse
- * @property {Record<string,number>} clickToLoadClicks
- *   Entity name to click count mapping. Click count being the number of times
- *   the user has clicked to load content for the entity so far.
+ * @property {Object} clickToLoadClicks
+ *   [DEPRECATED] Empty Object.
  * @property {boolean} devMode
  *   True if developer mode is enabled (e.g. this is a development build or a
  *   test run), false if this is a release build.
@@ -159,12 +157,14 @@ export function getTopBlockedByPages (options) {
  * @returns {Promise<getClickToLoadStateResponse>}
  */
 export async function getClickToLoadState () {
+    // TODO: Remove clickToLoadClicks once corresponding content-scope-scripts
+    //       changes are made.
+    const clickToLoadClicks = {}
+
     const devMode =
         (await browserWrapper.getFromSessionStorage('dev')) || false
 
     await settings.ready()
-    const clickToLoadClicks =
-        (await settings.getSetting('clickToLoadClicks')) || {}
     const youtubePreviewsEnabled =
         (await settings.getSetting('youtubePreviewsEnabled')) || false
 
@@ -205,30 +205,14 @@ export function getCurrentTab () {
 
 export async function unblockClickToLoadContent (data, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id })
-    const entity = data.entity
+
+    if (!tab.disabledClickToLoadRuleActions.includes(data.action)) {
+        tab.disabledClickToLoadRuleActions.push(data.action)
+    }
 
     if (browserWrapper.getManifestVersion() === 3) {
         await ensureClickToLoadRuleActionDisabled(data.action, tab)
     }
-    tab.site.clickToLoad.push(entity)
-
-    if (data.isLogin) {
-        trackerutils.allowSocialLogin(tab.site.domain)
-    }
-    settings.ready().then(() => {
-        // Update number of times this social network has been 'clicked'
-        if (tdsStorage.ClickToLoadConfig[entity]) {
-            const clickToLoadClicks = settings.getSetting('clickToLoadClicks') || {}
-            const maxClicks = tdsStorage.ClickToLoadConfig[entity].clicksBeforeSimpleVersion || 3
-            if (!clickToLoadClicks[entity]) {
-                clickToLoadClicks[entity] = 1
-            } else if (clickToLoadClicks[entity] && clickToLoadClicks[entity] < maxClicks) {
-                clickToLoadClicks[entity] += 1
-            }
-            // don't await for setting to be updated
-            settings.updateSetting('clickToLoadClicks', clickToLoadClicks)
-        }
-    })
 }
 
 export function updateYouTubeCTLAddedFlag (value, sender) {

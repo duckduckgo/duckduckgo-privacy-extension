@@ -37,6 +37,7 @@ function checkForLegacyKeys () {
 
         // Keys to remove
         advanced_options: null,
+        clickToLoadClicks: null,
         cookieExcludeList: null,
         dev: null,
         ducky: null,

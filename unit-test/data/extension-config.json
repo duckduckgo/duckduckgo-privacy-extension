@@ -109,7 +109,13 @@
         },
         "clickToPlay": {
             "state": "enabled",
-            "exceptions": []
+            "exceptions": [],
+            "settings": {
+                "Facebook": {
+                    "state": "enabled",
+                    "ruleActions": ["block-ctl-fb"]
+                }
+            }
         },
         "fingerprintingCanvas": {
             "state": "enabled",

@@ -70,6 +70,51 @@ async function generateDnrAllowingRules (tab, ruleAction) {
 }
 
 /**
+ * Find the enabled Click to Load rule actions for the given tab.
+ * Note: Take care to ensure wait for the extension configuration to be ready
+ *       first.
+ * @param {import('./classes/tab.es6')} tab
+ * @return {string[]}
+ */
+export function getDefaultEnabledClickToLoadRuleActionsForTab (tab) {
+    // Click to Load feature isn't supported or is disabled for the tab.
+    if (!utils.getClickToLoadSupport(tab)) {
+        return []
+    }
+
+    const clickToLoadSettings =
+        tdsStorage?.config?.features?.clickToPlay?.settings
+
+    // Click to Load configuration isn't ready yet.
+    if (!clickToLoadSettings) {
+        console.warn('Click to Load configuration not ready yet, skipped.')
+        return []
+    }
+
+    const enabledRuleActions = []
+    const { parentEntity } = tab.site
+
+    for (let [entity, { ruleActions, state }] of Object.entries(clickToLoadSettings)) {
+        // No rule actions, or entity is disabled.
+        if (!ruleActions || ruleActions.length === 0 || state !== 'enabled') {
+            continue
+        }
+
+        // TODO: Remove this workaround once the content-scope-scripts and
+        //       privacy-configuration repositories have been updated.
+        if (entity === 'Facebook') entity = 'Facebook, Inc.'
+
+        // Enabled Click to Load entity is third-party for this tab, note its
+        // rule actions.
+        if (parentEntity !== entity) {
+            enabledRuleActions.push(...ruleActions)
+        }
+    }
+
+    return enabledRuleActions
+}
+
+/**
  * Ensure the correct declarativeNetRequest allowing session rules are added so
  * that the default Click to Load rule actions are enabled/disabled for the tab.
  *
@@ -107,30 +152,9 @@ export async function restoreDefaultClickToLoadRuleActions (tab) {
 
     // If the Click to Load feature is supported and enabled for this tab, see
     // which rule actions shouldn't be disabled.
-    if (utils.getClickToPlaySupport(tab)) {
-        let { parentEntity } = tab.site
-
-        // TODO: Remove this workaround once the content-scope-scripts and
-        //       privacy-configuration repositories have been updated.
-        if (parentEntity === 'Facebook, Inc.') {
-            parentEntity = 'Facebook'
-        }
-
-        // Rule actions for enabled third-party entities shouldn't be disabled.
-        await tdsStorage.ready('config')
-        const clickToLoadSettings =
-            tdsStorage?.config?.features?.clickToPlay?.settings || {}
-        for (const entity of Object.keys(clickToLoadSettings)) {
-            if (clickToLoadSettings?.[entity]?.state === 'enabled' &&
-                parentEntity !== entity) {
-                const { ruleActions } = clickToLoadSettings[entity]
-                if (ruleActions) {
-                    for (const ruleAction of ruleActions) {
-                        disabledRuleActions.delete(ruleAction)
-                    }
-                }
-            }
-        }
+    await tdsStorage.ready('config')
+    for (const ruleAction of getDefaultEnabledClickToLoadRuleActionsForTab(tab)) {
+        disabledRuleActions.delete(ruleAction)
     }
 
     // Tab was cleared by the time the extension configuration was read.

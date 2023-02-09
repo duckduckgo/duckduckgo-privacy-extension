@@ -4,7 +4,6 @@ const tldts = require('tldts')
 
 const utils = require('./utils.es6')
 const trackers = require('./trackers.es6')
-const trackerutils = require('./tracker-utils')
 const https = require('./https.es6')
 const Companies = require('./companies.es6')
 const tabManager = require('./tab-manager.es6')
@@ -18,6 +17,9 @@ const {
     trackingParametersStrippingEnabled
 } = require('./url-parameters.es6')
 const ampProtection = require('./amp-protection.es6')
+const {
+    getDefaultEnabledClickToLoadRuleActionsForTab
+} = require('./dnr-click-to-load')
 
 function buildResponse (url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -239,38 +241,18 @@ export class TrackerBlockedEvent {
 function blockHandleResponse (thisTab, requestData) {
     const blockingEnabled = thisTab.site.isContentBlockingEnabled()
 
-    const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData)
+    // Find the supported and enabled Click to Load rule actions for this tab.
+    const enabledRuleActions = new Set(
+        getDefaultEnabledClickToLoadRuleActionsForTab(thisTab).filter(
+            ruleAction => !thisTab.disabledClickToLoadRuleActions.includes(ruleAction)
+        )
+    )
+
+    const tracker = trackers.getTrackerData(
+        requestData.url, thisTab.site.url, requestData, enabledRuleActions
+    )
     const baseDomain = trackers.getBaseDomain(requestData.url)
     const serviceWorkerInitiated = requestData.tabId === -1
-
-    /**
-     * Click to Load Blocking
-     */
-    if (utils.getClickToPlaySupport(thisTab)) {
-        const socialTracker = trackerutils.getSocialTracker(requestData.url)
-        const isConsiderableForClickToPlay = tracker && ['block', 'ignore', 'redirect'].includes(tracker.action)
-        if (isConsiderableForClickToPlay && socialTracker && trackerutils.shouldBlockSocialNetwork(socialTracker.entity, thisTab.site.url)) {
-            if (!trackerutils.isSameEntity(requestData.url, thisTab.site.url) && // first party
-                !thisTab.site.clickToLoad.includes(socialTracker.entity)) {
-                // TDS doesn't block social sites by default, so update the action & redirect for click to load.
-                tracker.action = 'block'
-                if (socialTracker.redirectUrl) {
-                    tracker.action = 'redirect'
-                    tracker.reason = 'matched rule - surrogate'
-                    tracker.redirectUrl = socialTracker.redirectUrl
-                    if (!tracker.matchedRule) {
-                        // @ts-ignore
-                        tracker.matchedRule = {}
-                    }
-                    // @ts-ignore
-                    tracker.matchedRule.surrogate = socialTracker.redirectUrl
-                }
-            } else {
-                // Social tracker has been 'clicked'. we don't want to block any more requests to these properties.
-                return
-            }
-        }
-    }
 
     if (tracker) {
         // temp allowlisted trackers to fix site breakage
@@ -431,4 +413,5 @@ function isSameDomainRequest (tab, req) {
     }
 }
 
+exports.blockHandleResponse = blockHandleResponse
 exports.handleRequest = handleRequest

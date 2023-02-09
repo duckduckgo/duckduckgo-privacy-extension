@@ -70,6 +70,14 @@ class Tab {
         return this._tabState.adClick
     }
 
+    set disabledClickToLoadRuleActions (value) {
+        this._tabState.setValue('disabledClickToLoadRuleActions', value)
+    }
+
+    get disabledClickToLoadRuleActions () {
+        return this._tabState.disabledClickToLoadRuleActions
+    }
+
     set dnrRuleIdsByDisabledClickToLoadRuleAction (value) {
         this._tabState.setValue('dnrRuleIdsByDisabledClickToLoadRuleAction', value)
     }
