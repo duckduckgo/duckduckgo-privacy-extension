@@ -285,6 +285,20 @@ export function getEmailProtectionCapabilities (_, sender) {
     }
 }
 
+export function getIncontextSignupDismissedAt () {
+    const initiallyDismissedAt = settings.getSetting('incontextSignupInitiallyDismissedAt')
+    const permanentlyDismissedAt = settings.getSetting('incontextSignupPermanentlyDismissedAt')
+    return { success: { initiallyDismissedAt, permanentlyDismissedAt } }
+}
+
+export function setIncontextSignupInitiallyDismissedAt ({ value }) {
+    settings.updateSetting('incontextSignupInitiallyDismissedAt', value)
+}
+
+export function setIncontextSignupPermanentlyDismissedAt ({ value }) {
+    settings.updateSetting('incontextSignupPermanentlyDismissedAt', value)
+}
+
 // Get user data to be used by the email web app settings page. This includes
 // username, last alias, and a token for generating additional aliases.
 export async function getUserData (_, sender) {
