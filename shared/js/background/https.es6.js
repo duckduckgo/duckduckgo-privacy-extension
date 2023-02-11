@@ -5,7 +5,7 @@ const httpsService = require('./https-service.es6')
 const tabManager = require('./tab-manager.es6')
 const browserWrapper = require('./wrapper.es6')
 const tldts = require('tldts')
-const { addSmarterEncryptionSessionRule } = require('./declarative-net-request')
+const { addSmarterEncryptionSessionRule } = require('./dnr-smarter-encryption')
 // as defined in https://tools.ietf.org/html/rfc6761
 const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test']
 

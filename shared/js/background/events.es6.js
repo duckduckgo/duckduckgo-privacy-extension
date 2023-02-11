@@ -7,11 +7,14 @@
 import browser from 'webextension-polyfill'
 import * as messageHandlers from './message-handlers'
 import { updateActionIcon } from './events/privacy-icon-indicator'
+import { flushSessionRules } from './dnr-session-rule-id'
 import { restoreDefaultClickToLoadRuleActions } from './dnr-click-to-load'
 import {
-    flushSessionRules,
+    clearInvalidDynamicRules
+} from './dnr-utils'
+import {
     refreshUserAllowlistRules
-} from './declarative-net-request'
+} from './dnr-user-allowlist'
 const ATB = require('./atb.es6')
 const utils = require('./utils.es6')
 const experiment = require('./experiments.es6')
@@ -52,6 +55,9 @@ async function onInstalled (details) {
 
         // remove any orphaned session rules (can happen on extension update/restart)
         await flushSessionRules()
+
+        // check that the dynamic rule state is consistent with the rule ranges we expect
+        clearInvalidDynamicRules()
 
         // create ATB rule if there is a stored value in settings
         ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'))

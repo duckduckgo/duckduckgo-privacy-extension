@@ -10,15 +10,21 @@ import tabManager from '../../shared/js/background/tab-manager.es6'
 import tdsStorage from '../../shared/js/background/storage/tds.es6'
 import trackers from '../../shared/js/background/trackers.es6'
 import {
-    ensureServiceWorkerInitiatedRequestExceptions,
-    getMatchDetails,
+    ensureServiceWorkerInitiatedRequestExceptions
+} from '../../shared/js/background/dnr-service-worker-initiated'
+import {
     onConfigUpdate,
+    SETTING_PREFIX
+} from '../../shared/js/background/dnr-config-rulesets'
+import {
     refreshUserAllowlistRules,
-    toggleUserAllowlistDomain,
-    SETTING_PREFIX,
+    toggleUserAllowlistDomain
+} from '../../shared/js/background/dnr-user-allowlist'
+import {
+    getMatchDetails,
     SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
     USER_ALLOWLIST_RULE_ID
-} from '../../shared/js/background/declarative-net-request'
+} from '../../shared/js/background/dnr-utils'
 import {
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY
