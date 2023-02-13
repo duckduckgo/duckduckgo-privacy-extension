@@ -1,31 +1,31 @@
-import { test, expect, mockAtb } from "./harness";
+import { test, expect, mockAtb } from './harness'
 
 test.describe('install workflow', () => {
-    test("postinstall page: should open the postinstall page correctly", async ({
+    test('postinstall page: should open the postinstall page correctly', async ({
         context,
-        page,
+        page
     }) => {
-        let postInstallOpened = false;
+        let postInstallOpened = false
 
         // wait for post install page to open
         // if it never does, jasmine timeout will kick in
         while (!postInstallOpened) {
             const urls = await Promise.all(
                 context.pages().map((target) => target.url())
-            );
+            )
             postInstallOpened = urls.some((url) =>
-                url.includes("duckduckgo.com/extension-success")
-            );
-            await page.waitForTimeout(100);
+                url.includes('duckduckgo.com/extension-success')
+            )
+            await page.waitForTimeout(100)
         }
 
-        expect(postInstallOpened).toBeTruthy();
-    });
+        expect(postInstallOpened).toBeTruthy()
+    })
 
     test.describe('atb values', () => {
         test.beforeEach(async ({ backgroundNetworkContext, backgroundPage }) => {
             // wait for the exti call to go out
-            await new Promise<void>(resolve => {
+            await new Promise(resolve => {
                 const extiListener = request => {
                     if (request.url().match(/exti/)) {
                         resolve()
@@ -60,21 +60,22 @@ test.describe('install workflow', () => {
             await backgroundPage.evaluate(() => globalThis.dbg.atb.updateATBValues())
 
             // wait for an exti call
+            // eslint-disable-next-line no-unmodified-loop-condition
             while (numExtiCalled < 0) {
                 page.waitForTimeout(100)
             }
 
-            const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting("atb"));
-            const setAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting("set_atb"));
-            const extiSent = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('extiSent'));
+            const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
+            const setAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+            const extiSent = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('extiSent'))
 
             // check the extension's internal state is correct
             expect(atb).toEqual(mockAtb.version)
-            expect(setAtb).toEqual(atb);
-            expect(extiSent).toBeTruthy();
+            expect(setAtb).toEqual(atb)
+            expect(extiSent).toBeTruthy()
 
-            expect(numAtbCalled).toEqual(1);
-            expect(numExtiCalled).toEqual(1);
+            expect(numAtbCalled).toEqual(1)
+            expect(numExtiCalled).toEqual(1)
         })
 
         test('should get its ATB param from the success page when one is present', async ({ page, backgroundNetworkContext, backgroundPage }) => {
@@ -83,7 +84,7 @@ test.describe('install workflow', () => {
                 const url = request.url()
                 if (url.match(/exti/)) {
                     numExtiCalled += 1
-                    expect(url).toContain(`atb=v123-4`)
+                    expect(url).toContain('atb=v123-4')
                 }
             })
 
@@ -92,13 +93,14 @@ test.describe('install workflow', () => {
 
             // try get ATB params again
             await backgroundPage.evaluate(() => globalThis.dbg.atb.updateATBValues())
+            // eslint-disable-next-line no-unmodified-loop-condition
             while (numExtiCalled < 0) {
                 page.waitForTimeout(100)
             }
 
-            const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting("atb"));
-            const setAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting("set_atb"));
-            const extiSent = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('extiSent'));
+            const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
+            const setAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+            const extiSent = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('extiSent'))
 
             // check the extension's internal state is correct
             expect(atb).toMatch(/v123-4ab/)
