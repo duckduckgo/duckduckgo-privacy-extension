@@ -53,7 +53,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          draft: true
+          draft: false
           prerelease: false
           body: "${{ steps.changelog.outputs.changelog }}\n\n${{ env.BUILT_WITH }}"
           tag_name: ${{ env.VERSION }}
