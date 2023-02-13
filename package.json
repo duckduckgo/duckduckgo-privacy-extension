@@ -100,7 +100,7 @@
         "normalize.scss": "0.1.0",
         "punycode": "2.3.0",
         "seedrandom": "^3.0.5",
-        "tldts": "^5.7.105",
+        "tldts": "^5.7.108",
         "underscore": "1.13.6",
         "web-ext": "^7.5.0",
         "zod": "^3.19.1"
