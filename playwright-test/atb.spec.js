@@ -13,7 +13,7 @@ test.describe('install workflow', () => {
             const urls = await Promise.all(
                 context.pages().map((target) => target.url())
             )
-            postInstallOpened = urls.some((url) =>
+            postInstallOpened = urls.find((url) =>
                 url.includes('duckduckgo.com/extension-success')
             )
             await page.waitForTimeout(100)
