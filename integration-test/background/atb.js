@@ -48,7 +48,7 @@ describe('search workflow', () => {
     let twoWeeksAgoAtb
 
     beforeAll(async () => {
-        ({ browser, bgPage, requests, teardown } = await harness.setup())
+        ({ browser, bgPage, teardown } = await harness.setup())
 
         // wait until normal exti workflow is done so we don't confuse atb.js requests
         // when the actual tests run
