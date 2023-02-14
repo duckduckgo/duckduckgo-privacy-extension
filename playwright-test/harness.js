@@ -54,7 +54,7 @@ export const test = base.extend({
             if (page.url().includes('duckduckgo.com/extension-success')) {
                 // HAR file generated with the following command:
                 // npx playwright open --save-har=data/har/duckduckgo.com/extension-success.har https://duckduckgo.com/extension-success
-                page.routeFromHAR(path.join(__dirname, 'data', 'duckduckgo.com', 'extension-success.har'), {
+                page.routeFromHAR(path.join(__dirname, 'data', 'har', 'duckduckgo.com', 'extension-success.har'), {
                     notFound: 'abort'
                 })
             }
