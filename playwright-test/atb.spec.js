@@ -20,6 +20,7 @@ test.describe('install workflow', () => {
         }
 
         expect(postInstallOpened).toBeTruthy()
+        expect(new URL(postInstallOpened).pathname).toBe('/extension-success')
     })
 
     test.describe('atb values', () => {
