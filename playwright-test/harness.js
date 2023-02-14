@@ -11,7 +11,7 @@ function getManifestVersion () {
 
 async function routeLocalResources (route) {
     const url = new URL(route.request().url())
-    const localPath = path.join(__dirname, 'data', url.pathname)
+    const localPath = path.join(__dirname, 'data', 'staticcdn', url.pathname)
     try {
         const body = await fs.readFile(localPath)
         console.log('request served from disk', route.request().url())
