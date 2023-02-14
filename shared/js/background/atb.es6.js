@@ -8,7 +8,7 @@ const settings = require('./settings.es6')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
 const load = require('./load.es6')
 const browserWrapper = require('./wrapper.es6')
-const { ATB_PARAM_RULE_ID } = require('./declarative-net-request')
+const { ATB_PARAM_RULE_ID } = require('./dnr-utils')
 const { ATB_PARAM_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities')
 const { generateDNRRule } = require('@duckduckgo/ddg2dnr/lib/utils')
 

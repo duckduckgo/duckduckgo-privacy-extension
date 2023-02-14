@@ -19,7 +19,7 @@ import { onStartup } from './startup'
 // otherwise FF might miss the onInstalled event
 require('./events.es6')
 const settings = require('./settings.es6')
-require('./declarative-net-request')
+require('./dnr-config-rulesets')
 require('./script-injection')
 
 settings.ready().then(() => {

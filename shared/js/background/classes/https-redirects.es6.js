@@ -1,6 +1,6 @@
 const utils = require('../utils.es6')
 const browserWrapper = require('../wrapper.es6')
-const { addSmarterEncryptionSessionException } = require('../declarative-net-request')
+const { addSmarterEncryptionSessionException } = require('../dnr-smarter-encryption')
 
 const MAINFRAME_RESET_MS = 3000
 const REQUEST_REDIRECT_LIMIT = 7

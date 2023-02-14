@@ -5,7 +5,7 @@ import tdsStorage from './storage/tds.es6'
 import { emitter, TrackerBlockedEvent } from './before-request.es6.js'
 import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
 import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
-import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './declarative-net-request'
+import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils'
 
 const {
     incoming,

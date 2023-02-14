@@ -7,7 +7,7 @@ const browserWrapper = require('./wrapper.es6')
 const {
     toggleUserAllowlistDomain,
     updateUserDenylist
-} = require('./declarative-net-request.js')
+} = require('./dnr-user-allowlist.js')
 const {
     clearClickToLoadDnrRulesForTab
 } = require('./dnr-click-to-load')
