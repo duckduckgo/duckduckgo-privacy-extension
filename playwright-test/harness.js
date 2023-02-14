@@ -30,7 +30,13 @@ export const mockAtb = {
 
 // based off example at https://playwright.dev/docs/chrome-extensions#testing
 export const test = base.extend({
+    /**
+     * @type {2 | 3}
+     */
     manifestVersion: getManifestVersion(),
+    /**
+     * @type {import('@playwright/test').BrowserContext}
+     */
     context: async ({ manifestVersion }, use) => {
         const extensionPath =
             manifestVersion === 3 ? 'build/chrome-mv3/dev' : 'build/chrome/dev'
@@ -57,6 +63,9 @@ export const test = base.extend({
         await use(context)
         await context.close()
     },
+    /**
+     * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
+     */
     backgroundPage: async ({ context, manifestVersion }, use) => {
         // let background: Page | Worker
         const routeHandler = (route) => {
@@ -94,7 +103,10 @@ export const test = base.extend({
             await use(background)
         }
     },
-    // wraps the 'route' function in a manifest agnostic way
+    /**
+     * wraps the 'route' function in a manifest agnostic way
+     * @type {(url: string | RegExp, handler: (route: Route, request: Request) => any) => Promise<void>}
+     */
     routeExtensionRequests: async ({ manifestVersion, backgroundPage, context }, use) => {
         if (manifestVersion === 3) {
             await use(context.route.bind(context))
@@ -102,7 +114,10 @@ export const test = base.extend({
             await use(backgroundPage.route.bind(backgroundPage))
         }
     },
-    // Use this for listening and modifying network events for both MV2 and MV3
+    /**
+     * Use this for listening and modifying network events for both MV2 and MV3
+     * @type {import('@playwright/test').Page | import('@playwright/test').BrowserContext}
+     */
     backgroundNetworkContext: async ({ manifestVersion, backgroundPage, context }, use) => {
         if (manifestVersion === 3) {
             await use(context)
