@@ -1,5 +1,5 @@
-import { test, expect } from './harness'
-import { forAllConfiguration, forExtensionLoaded } from './backgroundWait'
+import { test, expect } from './helpers/playwrightHarness'
+import { forAllConfiguration, forExtensionLoaded } from './helpers/backgroundWait'
 
 const testHost = 'privacy-test-pages.glitch.me'
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`
@@ -7,7 +7,7 @@ const testSite = `https://${testHost}/privacy-protections/request-blocking/`
 async function runRequestBlockingTest (page) {
     const pageRequests = []
     page.on('request', async (req) => {
-        if (!req.url().startsWith('https://bad.third-party.site')) {
+        if (!req.url().startsWith('https://bad.third-party.site/')) {
             return
         }
         let status = 'unknown'

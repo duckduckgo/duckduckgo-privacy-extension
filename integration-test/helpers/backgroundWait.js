@@ -101,9 +101,22 @@ async function forAllConfiguration (bgPage) {
     }
 }
 
+async function forExtensionLoaded (context) {
+    return /** @type {Promise<void>} */(new Promise((resolve) => {
+        const listenForPostinstall = (page) => {
+            if (page.url().startsWith('https://duckduckgo.com/extension-success')) {
+                resolve()
+                context.off('page', listenForPostinstall)
+            }
+        }
+        context.on('page', listenForPostinstall)
+    }))
+}
+
 module.exports = {
     forTimeout,
     forFunction,
     forSetting,
-    forAllConfiguration
+    forAllConfiguration,
+    forExtensionLoaded
 }

@@ -1,4 +1,4 @@
-import { test, expect, mockAtb } from './harness'
+import { test, expect, mockAtb } from './helpers/playwrightHarness'
 
 test.describe('install workflow', () => {
     test('postinstall page: should open the postinstall page correctly', async ({

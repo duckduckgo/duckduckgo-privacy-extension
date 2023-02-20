@@ -5,13 +5,16 @@ import {
 import path from 'path'
 import fs from 'fs/promises'
 
+const testRoot = path.join(__dirname, '..')
+const projectRoot = path.join(testRoot, '..')
+
 function getManifestVersion () {
     return process.env.npm_lifecycle_event === 'playwright-mv3' ? 3 : 2
 }
 
 async function routeLocalResources (route) {
     const url = new URL(route.request().url())
-    const localPath = path.join(__dirname, 'data', 'staticcdn', url.pathname)
+    const localPath = path.join(testRoot, 'data', 'staticcdn', url.pathname)
     try {
         const body = await fs.readFile(localPath)
         console.log('request served from disk', route.request().url())
@@ -40,7 +43,7 @@ export const test = base.extend({
     context: async ({ manifestVersion }, use) => {
         const extensionPath =
             manifestVersion === 3 ? 'build/chrome-mv3/dev' : 'build/chrome/dev'
-        const pathToExtension = path.join(__dirname, '..', extensionPath)
+        const pathToExtension = path.join(projectRoot, extensionPath)
         const context = await chromium.launchPersistentContext('', {
             headless: false,
             args: [
@@ -54,7 +57,7 @@ export const test = base.extend({
             if (page.url().includes('duckduckgo.com/extension-success')) {
                 // HAR file generated with the following command:
                 // npx playwright open --save-har=data/har/duckduckgo.com/extension-success.har https://duckduckgo.com/extension-success
-                page.routeFromHAR(path.join(__dirname, 'data', 'har', 'duckduckgo.com', 'extension-success.har'), {
+                page.routeFromHAR(path.join(testRoot, 'data', 'har', 'duckduckgo.com', 'extension-success.har'), {
                     notFound: 'abort'
                 })
             }
