@@ -1,69 +1,55 @@
-const harness = require('../helpers/harness')
-const { logPageRequests } = require('../helpers/requests')
-const backgroundWait = require('../helpers/backgroundWait')
-const pageWait = require('../helpers/pageWait')
-const { loadTestConfig } = require('../helpers/testConfig')
+import { test, expect } from './harness'
+import { forAllConfiguration, forExtensionLoaded } from './backgroundWait'
 
 const testHost = 'privacy-test-pages.glitch.me'
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`
 
-let browser
-let bgPage
-let teardown
-
 async function runRequestBlockingTest (page) {
-    await pageWait.forGoto(page, testSite)
-
-    // Start logging network requests.
     const pageRequests = []
-    await logPageRequests(
-        page,
-        pageRequests,
-        ({ url }) => url.hostname === 'bad.third-party.site'
-    )
+    page.on('request', async (req) => {
+        if (!req.url().startsWith('https://bad.third-party.site')) {
+            return
+        }
+        let status = 'unknown'
+        const resp = await req.response()
+        if (!resp) {
+            status = 'blocked'
+        } else {
+            status = resp.ok ? 'allowed' : 'redirected'
+        }
+        pageRequests.push({
+            url: req.url(),
+            mathod: req.method(),
+            type: req.resourceType(),
+            status
+        })
+    })
 
-    // Initiate the test requests and wait until they have all completed.
-    // Note:
-    //  - Waiting for network idle here does not work for some reason.
-    //  - ServiceWorker + WebWorker initiated requests are not yet logged by
-    //    logPageRequests.
+    await page.bringToFront()
+    await page.goto(testSite, { waitUntil: 'networkidle' })
     await page.click('#start')
     const testCount = await page.evaluate(
         // eslint-disable-next-line no-undef
         () => tests.filter(({ id }) => !id.includes('worker')).length
     )
     while (pageRequests.length < testCount) {
-        await backgroundWait.forTimeout(bgPage, 100)
+        await page.waitForTimeout(100)
     }
-
-    // Wait an additional second to ensure that the WebWorker +
-    // ServiceWorker initiated requests have finished. This can be removed
-    // once logPageRequests can intercept those requests.
-    await backgroundWait.forTimeout(bgPage, 1000)
+    await page.waitForTimeout(1000)
 
     return [testCount, pageRequests]
 }
 
-describe('Test request blocking', () => {
-    beforeEach(async () => {
-        ({ browser, bgPage, teardown } = await harness.setup())
-        await backgroundWait.forAllConfiguration(bgPage)
-        await loadTestConfig(bgPage, 'serviceworker-blocking.json')
-    })
-
-    afterEach(async () => {
-        await teardown()
-    })
-
-    it('Should block all the test tracking requests', async () => {
-        // Load the test page.
-        const page = await browser.newPage()
+test.describe('Test request blocking', () => {
+    test('Should block all the test tracking requests', async ({ page, backgroundPage, context }) => {
+        await forExtensionLoaded(context)
+        await forAllConfiguration(backgroundPage)
         const [testCount, pageRequests] = await runRequestBlockingTest(page)
 
         // Verify that no logged requests were allowed.
         for (const { url, method, type, status } of pageRequests) {
             const description = `URL: ${url}, Method: ${method}, Type: ${type}`
-            expect(status).withContext(description).toEqual('blocked')
+            expect(status, description).toEqual('blocked')
         }
 
         // Also check that the test page itself agrees that no requests were
@@ -73,11 +59,11 @@ describe('Test request blocking', () => {
         )
         for (const { id, category, status } of pageResults) {
             const description = `ID: ${id}, Category: ${category}`
-            expect(status).withContext(description).not.toEqual('loaded')
+            expect(status, description).not.toEqual('loaded')
         }
 
         // Test the extension's tracker reporting matches the expected outcomes.
-        const extensionTrackers = await bgPage.evaluate(async () => {
+        const extensionTrackers = await backgroundPage.evaluate(async () => {
             const currentTab = await globalThis.dbg.utils.getCurrentTab()
             return globalThis.dbg.tabManager.get({ tabId: currentTab.id }).trackers
         })
@@ -108,9 +94,10 @@ describe('Test request blocking', () => {
         await page.close()
     })
 
-    it('serviceworkerInitiatedRequests exceptions should disable service worker blocking', async () => {
-        const page = await browser.newPage()
-        await bgPage.evaluate(async (domain) => {
+    test('serviceworkerInitiatedRequests exceptions should disable service worker blocking', async ({ page, backgroundPage, context }) => {
+        await forExtensionLoaded(context)
+        await forAllConfiguration(backgroundPage)
+        await backgroundPage.evaluate(async (domain) => {
             /* global dbg */
             const { data: config } = dbg.getListContents('config')
             config.features.serviceworkerInitiatedRequests.exceptions.push({
@@ -127,7 +114,7 @@ describe('Test request blocking', () => {
         // Verify that no logged requests were allowed.
         for (const { url, method, type, status } of pageRequests) {
             const description = `URL: ${url}, Method: ${method}, Type: ${type}`
-            expect(status).withContext(description).toEqual('blocked')
+            expect(status, description).toEqual('blocked')
         }
 
         // Check that the test page itself agrees that no requests were
@@ -138,9 +125,9 @@ describe('Test request blocking', () => {
         for (const { id, category, status } of pageResults) {
             const description = `ID: ${id}, Category: ${category}`
             if (id === 'serviceworker-fetch') {
-                expect(status).withContext(description).toEqual('loaded')
+                expect(status, description).toEqual('loaded')
             } else {
-                expect(status).withContext(description).not.toEqual('loaded')
+                expect(status, description).not.toEqual('loaded')
             }
         }
     })
