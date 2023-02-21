@@ -48,6 +48,10 @@ test('my test', async ({ manifestVersion, page, backgroundPage, backgroundNetwor
 The arguments to the test function are:
  - `manifestVersion`: `2` or `3`. Allows you to check which version of the extension is being tested.
  - `page`: A [Page](https://playwright.dev/docs/api/class-page) instance for loading web pages.
- - `backgroundPage`: The extension's background page, which is a `Page` for MV3, or `Worker` for MV3. Use `backgroundPage.evaluate` to run code in the extension's background context.
-- `backgroundNetworkContext`: A context for listening to and intercepting requests from the extension's background context with Playwright's [Network](https://playwright.dev/docs/network) APIs.
-- `context`: The [BrowserContext](https://playwright.dev/docs/api/class-browsercontext) for the test run.
+ - `backgroundPage`: The extension's background page, which is a `Page` for MV2, or `Worker` for MV3. Use `backgroundPage.evaluate` to run code in the extension's background context.
+ - `backgroundNetworkContext`: A context for listening to and intercepting requests from the extension's background context with Playwright's [Network](https://playwright.dev/docs/network) APIs. 
+ - `context`: The [BrowserContext](https://playwright.dev/docs/api/class-browsercontext) for the test run.
+
+Static files for tests are in the `data` directory:
+ - `har` - [HAR files](./data/har/README.md) for offline tests.
+ - `staticcdn` - Mocked CDN resources to used when the extension loads.
