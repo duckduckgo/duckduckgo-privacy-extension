@@ -104,6 +104,22 @@ test.describe('install workflow', () => {
             expect(numExtiCalled).toEqual(1)
         })
     })
+
+    test('atb storage should retreive stored ATB value on reload', async ({ manifestVersion, context, backgroundPage }) => {
+        if (manifestVersion === 3) {
+            return
+        }
+        await backgroundWait.forExtensionLoaded(context)
+        // set an ATB value from the past
+        const pastATBValue = 'v123-1'
+        await backgroundPage.evaluate((pagePastATBValue) => globalThis.dbg.settings.updateSetting('atb', pagePastATBValue), pastATBValue)
+        // Reload background
+        // FIXME - Will not work for MV3, switch to browser.runtime.reload()?
+        await backgroundPage.evaluate(() => globalThis.location.reload())
+        await backgroundWait.forSetting(backgroundPage, 'extiSent')
+        const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
+        expect(atb).toEqual(pastATBValue)
+    })
 })
 
 test.describe('search workflow', () => {

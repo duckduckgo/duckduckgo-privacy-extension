@@ -56,6 +56,10 @@ function manuallyWaitForFunction (bgPage, func, { polling, timeout }, ...args) {
 //     (rather than the default of 30 seconds) to improve the error output on
 //     timeout.
 function forFunction (bgPage, func, ...args) {
+    if (bgPage.waitForFunction && bgPage.routeFromHAR) {
+        // In Playwright, the waitForFunction signature differs from the puppeteer one
+        return bgPage.waitForFunction(func, ...args)
+    }
     const waitForFunction = bgPage.waitForFunction
         ? bgPage.waitForFunction.bind(bgPage)
         : manuallyWaitForFunction.bind(null, bgPage)
