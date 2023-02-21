@@ -143,8 +143,6 @@ export function getTopBlockedByPages (options) {
 
 /**
  * @typedef getClickToLoadStateResponse
- * @property {Object} clickToLoadClicks
- *   [DEPRECATED] Empty Object.
  * @property {boolean} devMode
  *   True if developer mode is enabled (e.g. this is a development build or a
  *   test run), false if this is a release build.
@@ -157,10 +155,6 @@ export function getTopBlockedByPages (options) {
  * @returns {Promise<getClickToLoadStateResponse>}
  */
 export async function getClickToLoadState () {
-    // TODO: Remove clickToLoadClicks once corresponding content-scope-scripts
-    //       changes are made.
-    const clickToLoadClicks = {}
-
     const devMode =
         (await browserWrapper.getFromSessionStorage('dev')) || false
 
@@ -168,7 +162,7 @@ export async function getClickToLoadState () {
     const youtubePreviewsEnabled =
         (await settings.getSetting('youtubePreviewsEnabled')) || false
 
-    return { clickToLoadClicks, devMode, youtubePreviewsEnabled }
+    return { devMode, youtubePreviewsEnabled }
 }
 
 export async function getYouTubeVideoDetails (videoURL) {
