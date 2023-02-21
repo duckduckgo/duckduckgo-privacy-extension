@@ -1,8 +1,8 @@
 const fs = require('fs')
 const path = require('path')
 
-const tds = require('../../../shared/js/background/trackers.es6')
-const tdsStorageStub = require('../../helpers/tds.es6')
+const tds = require('../../../shared/js/background/trackers')
+const tdsStorageStub = require('../../helpers/tds')
 
 const refTrackers = require('../../data/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_radar_reference.json')
 const refTests = require('../../data/reference-tests/tracker-radar-tests/TR-domain-matching/domain_matching_tests.json')

@@ -1,11 +1,11 @@
 require('../../helpers/mock-browser-api')
 
-const trackers = require('../../../shared/js/background/trackers.es6')
-const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
+const trackers = require('../../../shared/js/background/trackers')
+const tdsStorageStub = require('../../helpers/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds')
 
-const tabManager = require('../../../shared/js/background/tab-manager.es6')
-const browserWrapper = require('../../../shared/js/background/wrapper.es6')
+const tabManager = require('../../../shared/js/background/tab-manager')
+const browserWrapper = require('../../../shared/js/background/wrapper')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('../../../shared/js/background/events/3p-tracking-cookie-blocking')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 

@@ -1,5 +1,5 @@
 import * as constants from '../../../data/constants'
-import { setActionIcon } from '../wrapper.es6'
+import { setActionIcon } from '../wrapper'
 
 /**
  * The 'browser action icon' action has 2 possible variants
@@ -7,7 +7,7 @@ import { setActionIcon } from '../wrapper.es6'
  * 1) Our regular Dax Icon
  * 2) Greyed-out Dax Icon (special state)
  *
- * @param {import("../classes/site.es6")} site
+ * @param {import("../classes/site")} site
  * @param {number} tabId
  * @returns {Promise<void>}
  */

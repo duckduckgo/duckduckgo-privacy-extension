@@ -10,7 +10,7 @@
  * Convert internal extension data into a format accepted by the Privacy dashboard
  * The return type of this function comes from a schema defined in the Privacy Dashboard,
  *
- * @param {import("./tab.es6.js")} tab
+ * @param {import("./tab.js")} tab
  * @param {EmailProtectionUserData | undefined | {}} userData
  * @returns {ExtensionGetPrivacyDashboardData}
  */
@@ -68,7 +68,7 @@ export function dashboardDataFromTab (tab, userData) {
 /**
  * WIP - this is a just a hack to get the types working together, we'll create a better implementation
  *
- * @param {import('./tab.es6')} tab
+ * @param {import('./tab')} tab
  * @param {boolean} protectionsEnabled
  * @returns {DetectedRequest[]}
  */

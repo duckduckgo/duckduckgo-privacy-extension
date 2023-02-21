@@ -1,8 +1,8 @@
 import browser from 'webextension-polyfill'
 import constants from '../../data/constants'
-import * as browserWrapper from './wrapper.es6.js'
-import tdsStorage from './storage/tds.es6'
-import { emitter, TrackerBlockedEvent } from './before-request.es6.js'
+import * as browserWrapper from './wrapper.js'
+import tdsStorage from './storage/tds'
+import { emitter, TrackerBlockedEvent } from './before-request.js'
 import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
 import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils'
@@ -113,7 +113,7 @@ export class NewTabTrackerStats {
         })
 
         /**
-         * listen for the 'tracker-blocked' event that is fired from `before-request.es6.js`
+         * listen for the 'tracker-blocked' event that is fired from `before-request.js`
          * when a request is either blocked or a surrogate was used
          */
         emitter.on(TrackerBlockedEvent.eventName, (event) => {

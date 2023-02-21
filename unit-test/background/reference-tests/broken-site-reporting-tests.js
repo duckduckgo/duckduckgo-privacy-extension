@@ -1,9 +1,9 @@
-import Tab from '../../../shared/js/background/classes/tab.es6'
+import Tab from '../../../shared/js/background/classes/tab'
 import { breakageReportForTab } from '../../../shared/js/background/broken-site-report'
 
 require('../../helpers/mock-browser-api')
 
-const loadPixel = require('../../../shared/js/background/load.es6')
+const loadPixel = require('../../../shared/js/background/load')
 const testSets = require('../../data/reference-tests/broken-site-reporting/tests.json')
 
 for (const setName of Object.keys(testSets)) {

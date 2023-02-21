@@ -1,4 +1,4 @@
-const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string.es6')
+const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string')
 const browserInfo = parseUserAgentString()
 
 function getConfigFileName () {

@@ -1,6 +1,6 @@
 const { NewTabTrackerStats } = require('../../shared/js/background/newtab-tracker-stats')
 const { TrackerStats } = require('../../shared/js/background/classes/tracker-stats')
-const browserWrapper = require('../../shared/js/background/wrapper.es6')
+const browserWrapper = require('../../shared/js/background/wrapper')
 const constants = require('../../shared/data/constants')
 const testTDS = require('../data/tds.json')
 const { dataFormatSchema } = require('../../shared/js/newtab/schema')

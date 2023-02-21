@@ -28,18 +28,18 @@ module.exports = function (grunt) {
      * see the browserMap object below */
     const baseFileMap = {
         ui: {
-            '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.es6.js'],
-            '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.es6.js'],
-            '<%= dirs.public.js %>/feedback.js': ['<%= dirs.src.js %>/ui/pages/feedback.es6.js'],
-            '<%= dirs.public.js %>/devtools-panel.js': ['<%= dirs.src.js %>/devtools/panel.es6.js'],
-            '<%= dirs.public.js %>/list-editor.js': ['<%= dirs.src.js %>/devtools/list-editor.es6.js'],
+            '<%= dirs.public.js %>/base.js': ['<%= dirs.src.js %>/ui/base/index.js'],
+            '<%= dirs.public.js %>/options.js': ['<%= dirs.src.js %>/ui/pages/options.js'],
+            '<%= dirs.public.js %>/feedback.js': ['<%= dirs.src.js %>/ui/pages/feedback.js'],
+            '<%= dirs.public.js %>/devtools-panel.js': ['<%= dirs.src.js %>/devtools/panel.js'],
+            '<%= dirs.public.js %>/list-editor.js': ['<%= dirs.src.js %>/devtools/list-editor.js'],
             '<%= dirs.public.js %>/newtab.js': ['<%= dirs.src.js %>/newtab/newtab.js']
         },
         background: {
-            '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js']
+            '<%= dirs.public.js %>/background.js': ['<%= dirs.src.js %>/background/background.js']
         },
         backgroundTest: {
-            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.es6.js', '<%= dirs.test %>/requireHelper.js']
+            '<%= dirs.test %>/background.js': ['<%= dirs.src.js %>/background/background.js', '<%= dirs.test %>/requireHelper.js']
         },
         autofillContentScript: {
             '<%= dirs.public.js %>/content-scripts/autofill.js': ['<%= ddgAutofill %>/autofill.js']
@@ -49,7 +49,7 @@ module.exports = function (grunt) {
         },
         unitTest: {
             '<%= dirs.unitTest.build %>/background.js': ['<%= dirs.unitTest.background %>/**/*.js'],
-            '<%= dirs.unitTest.build %>/ui.js': ['<%= dirs.src.js %>/ui/base/index.es6.js', '<%= dirs.unitTest.ui %>/**/*.js'],
+            '<%= dirs.unitTest.build %>/ui.js': ['<%= dirs.src.js %>/ui/base/index.js', '<%= dirs.unitTest.ui %>/**/*.js'],
             '<%= dirs.unitTest.build %>/shared-utils.js': ['<%= dirs.unitTest.sharedUtils %>/**/*.js']
         },
         sass: {
@@ -62,7 +62,7 @@ module.exports = function (grunt) {
 
     // for the dev version of the extension only, add some extra debug code
     if (buildType === 'dev') {
-        baseFileMap.background['<%= dirs.public.js %>/background.js'].unshift('<%= dirs.src.js %>/background/debug.es6.js')
+        baseFileMap.background['<%= dirs.public.js %>/background.js'].unshift('<%= dirs.src.js %>/background/debug.js')
     }
 
     const ddgContentScope = 'node_modules/@duckduckgo/content-scope-scripts/'
@@ -70,7 +70,7 @@ module.exports = function (grunt) {
     /* watch any base files and browser specific files */
     const watch = {
         sass: ['<%= dirs.src.scss %>/**/*.scss'],
-        ui: ['<%= dirs.src.js %>/ui/**/*.es6.js', '<%= dirs.data %>/*.js', '<%= dirs.src.js %>/devtools/*.js'],
+        ui: ['<%= dirs.src.js %>/ui/**/*.js', '<%= dirs.data %>/*.js', '<%= dirs.src.js %>/devtools/*.js'],
         background: ['<%= dirs.src.js %>/background/**/*.js', '<%= dirs.data %>/*.js'],
         contentScripts: ['<%= dirs.src.js %>/content-scripts/*.js'],
         autofillContentScript: ['<%= ddgAutofill %>/*.js'],
@@ -193,7 +193,7 @@ module.exports = function (grunt) {
 
         // used by watch to copy shared/js to build dir
         exec: {
-            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.es6.js`,
+            copyjs: `cp shared/js/*.js build/${browser}/${buildType}/js/ && rm build/${browser}/${buildType}/js/*.js`,
             installContentScope: contentScopeInstall,
             buildContentScope: `${contentScopeBuild}`,
             copyContentScripts: `cp shared/js/content-scripts/*.js build/${browser}/${buildType}/public/js/content-scripts/`,
@@ -216,10 +216,6 @@ module.exports = function (grunt) {
             contentScope: {
                 files: watch.contentScope,
                 tasks: ['exec:buildContentScope', 'copy:contentScope']
-            },
-            backgroundES6JS: {
-                files: watch.background,
-                tasks: ['browserify:background']
             },
             backgroundJS: {
                 files: ['<%= dirs.src.js %>/*.js'],

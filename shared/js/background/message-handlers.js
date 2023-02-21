@@ -1,21 +1,21 @@
 import browser from 'webextension-polyfill'
 import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
 import { breakageReportForTab } from './broken-site-report'
-import parseUserAgentString from '../shared-utils/parse-user-agent-string.es6'
-import { getExtensionURL, notifyPopup } from './wrapper.es6'
-import { reloadCurrentTab } from './utils.es6'
+import parseUserAgentString from '../shared-utils/parse-user-agent-string'
+import { getExtensionURL, notifyPopup } from './wrapper'
+import { reloadCurrentTab } from './utils'
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 const { getDomain } = require('tldts')
-const utils = require('./utils.es6')
-const settings = require('./settings.es6')
-const tabManager = require('./tab-manager.es6')
-const tdsStorage = require('./storage/tds.es6')
-const trackers = require('./trackers.es6')
+const utils = require('./utils')
+const settings = require('./settings')
+const tabManager = require('./tab-manager')
+const tdsStorage = require('./storage/tds')
+const trackers = require('./trackers')
 const constants = require('../../data/constants')
-const Companies = require('./companies.es6')
+const Companies = require('./companies')
 const browserName = utils.getBrowserName()
-const devtools = require('./devtools.es6')
-const browserWrapper = require('./wrapper.es6')
+const devtools = require('./devtools')
+const browserWrapper = require('./wrapper')
 const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
@@ -106,7 +106,7 @@ export async function submitBrokenSiteReport (breakageReport) {
 
 /**
  * @param tabId
- * @returns {Promise<import("./classes/tab.es6")>}
+ * @returns {Promise<import("./classes/tab")>}
  */
 async function getTab (tabId) {
     // Await for storage to be ready; this happens on service worker closing mostly.
@@ -238,7 +238,7 @@ const {
     fetchAlias,
     showContextMenuAction,
     hideContextMenuAction
-} = require('./email-utils.es6')
+} = require('./email-utils')
 
 export { getAddresses, sendJSPixel }
 

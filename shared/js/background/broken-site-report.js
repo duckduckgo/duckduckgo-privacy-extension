@@ -4,11 +4,11 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
-const load = require('./load.es6')
-const browserWrapper = require('./wrapper.es6')
-const settings = require('./settings.es6')
-const parseUserAgentString = require('../shared-utils/parse-user-agent-string.es6')
-const { getURLWithoutQueryString } = require('./utils.es6')
+const load = require('./load')
+const browserWrapper = require('./wrapper')
+const settings = require('./settings')
+const parseUserAgentString = require('../shared-utils/parse-user-agent-string')
+const { getURLWithoutQueryString } = require('./utils')
 const { getURL } = require('./pixels')
 
 /**
@@ -65,7 +65,7 @@ export function fire (querystring) {
  * but has been moved here since there's no longer a relationship to 'where' this request
  * came from.
  *
- * @param {import("./classes/tab.es6")} tab
+ * @param {import("./classes/tab")} tab
  * @param {string} tds - tds-etag from settings
  * @param {string | undefined} category - optional category
  * @param {string | undefined} description - optional description
