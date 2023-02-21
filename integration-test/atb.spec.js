@@ -1,26 +1,20 @@
 import { test, expect, mockAtb } from './helpers/playwrightHarness'
+import { forExtensionLoaded } from './helpers/backgroundWait'
 
 test.describe('install workflow', () => {
     test('postinstall page: should open the postinstall page correctly', async ({
         context,
         page
     }) => {
-        let postInstallOpened = false
-
         // wait for post install page to open
-        // if it never does, jasmine timeout will kick in
-        while (!postInstallOpened) {
-            const urls = await Promise.all(
-                context.pages().map((target) => target.url())
-            )
-            postInstallOpened = urls.find((url) =>
-                url.includes('duckduckgo.com/extension-success')
-            )
-            await page.waitForTimeout(100)
-        }
-
+        // we leverage the extension loaded helper, which returns the extension success URL when it is opened
+        const postInstallOpened = await forExtensionLoaded(context)
+        const postInstallURL = new URL(postInstallOpened)
         expect(postInstallOpened).toBeTruthy()
-        expect(new URL(postInstallOpened).pathname).toBe('/extension-success')
+        expect(postInstallURL.pathname).toBe('/extension-success')
+        expect(postInstallURL.searchParams.has('atb')).toBe(true)
+        // This ATB comes from the success page.
+        expect(postInstallURL.searchParams.get('atb')).not.toEqual(mockAtb.version)
     })
 
     test.describe('atb values', () => {

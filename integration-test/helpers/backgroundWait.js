@@ -102,10 +102,10 @@ async function forAllConfiguration (bgPage) {
 }
 
 async function forExtensionLoaded (context) {
-    return /** @type {Promise<void>} */(new Promise((resolve) => {
+    return /** @type {Promise<string>} */(new Promise((resolve) => {
         const listenForPostinstall = (page) => {
             if (page.url().startsWith('https://duckduckgo.com/extension-success')) {
-                resolve()
+                resolve(page.url())
                 context.off('page', listenForPostinstall)
             }
         }

@@ -64,7 +64,6 @@ export const test = base.extend({
         })
         //
         await use(context)
-        await context.close()
     },
     /**
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
