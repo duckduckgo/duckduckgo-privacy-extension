@@ -194,13 +194,6 @@ export function getUpgradeToSecureSupport () {
     return canUpgrade
 }
 
-export function getClickToLoadSupport (tab) {
-    if (getBrowserName() === 'moz' && browserInfo && browserInfo.version <= 88) {
-        return false
-    }
-    return (tab && tab.site.isFeatureEnabled('clickToPlay'))
-}
-
 // return true if browser allows to handle request async
 export function getAsyncBlockingSupport () {
     const browserName = getBrowserName()

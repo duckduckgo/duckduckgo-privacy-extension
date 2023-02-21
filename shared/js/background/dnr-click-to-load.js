@@ -1,7 +1,6 @@
 import { getNextSessionRuleId } from './dnr-session-rule-id'
 import settings from './settings.es6'
 import tdsStorage from './storage/tds.es6'
-import * as utils from './utils.es6'
 
 /**
  * Generates the declarativeNetRequest allowing rules required to disable the
@@ -78,7 +77,7 @@ async function generateDnrAllowingRules (tab, ruleAction) {
  */
 export function getDefaultEnabledClickToLoadRuleActionsForTab (tab) {
     // Click to Load feature isn't supported or is disabled for the tab.
-    if (!utils.getClickToLoadSupport(tab)) {
+    if (!tab?.site?.isFeatureEnabled('clickToPlay')) {
         return []
     }
 
