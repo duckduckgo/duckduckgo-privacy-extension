@@ -7,7 +7,7 @@ import fs from 'fs/promises'
 
 const testRoot = path.join(__dirname, '..')
 const projectRoot = path.join(testRoot, '..')
-export function getHARPath(harFile) {
+export function getHARPath (harFile) {
     return path.join(testRoot, 'data', 'har', harFile)
 }
 
