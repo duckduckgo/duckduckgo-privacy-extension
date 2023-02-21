@@ -1,5 +1,5 @@
-import { test, expect, mockAtb } from './helpers/playwrightHarness'
-import { forExtensionLoaded } from './helpers/backgroundWait'
+import { test, expect, mockAtb, getHARPath } from './helpers/playwrightHarness'
+import backgroundWait from './helpers/backgroundWait'
 
 test.describe('install workflow', () => {
     test('postinstall page: should open the postinstall page correctly', async ({
@@ -8,7 +8,7 @@ test.describe('install workflow', () => {
     }) => {
         // wait for post install page to open
         // we leverage the extension loaded helper, which returns the extension success URL when it is opened
-        const postInstallOpened = await forExtensionLoaded(context)
+        const postInstallOpened = await backgroundWait.forExtensionLoaded(context)
         const postInstallURL = new URL(postInstallOpened)
         expect(postInstallOpened).toBeTruthy()
         expect(postInstallURL.pathname).toBe('/extension-success')

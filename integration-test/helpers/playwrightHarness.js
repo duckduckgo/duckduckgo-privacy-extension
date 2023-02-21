@@ -7,6 +7,9 @@ import fs from 'fs/promises'
 
 const testRoot = path.join(__dirname, '..')
 const projectRoot = path.join(testRoot, '..')
+export function getHARPath(harFile) {
+    return path.join(testRoot, 'data', 'har', harFile)
+}
 
 function getManifestVersion () {
     return process.env.npm_lifecycle_event === 'playwright-mv3' ? 3 : 2
@@ -57,7 +60,7 @@ export const test = base.extend({
             if (page.url().includes('duckduckgo.com/extension-success')) {
                 // HAR file generated with the following command:
                 // npx playwright open --save-har=data/har/duckduckgo.com/extension-success.har https://duckduckgo.com/extension-success
-                page.routeFromHAR(path.join(testRoot, 'data', 'har', 'duckduckgo.com', 'extension-success.har'), {
+                page.routeFromHAR(getHARPath('duckduckgo.com/extension-success.har'), {
                     notFound: 'abort'
                 })
             }
