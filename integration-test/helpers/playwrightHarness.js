@@ -20,10 +20,10 @@ async function routeLocalResources (route) {
     const localPath = path.join(testRoot, 'data', 'staticcdn', url.pathname)
     try {
         const body = await fs.readFile(localPath)
-        console.log('request served from disk', route.request().url())
+        // console.log('request served from disk', route.request().url())
         route.fulfill({ status: 200, body })
     } catch (e) {
-        console.log('request served from network', route.request().url())
+        // console.log('request served from network', route.request().url())
         route.continue()
     }
 }
@@ -79,6 +79,20 @@ export const test = base.extend({
                 return routeLocalResources(route)
             }
             if (url.startsWith('https://duckduckgo.com/atb.js')) {
+                // mock ATB endpoint
+                const params = new URL(url).searchParams
+                if (params.has('atb')) {
+                    const version = params.get('atb')
+                    const [majorVersion, minorVersion] = version.slice(1).split('-')
+                    if (majorVersion < 360 && minorVersion > 1) {
+                        return route.fulfill({
+                            body: JSON.stringify({
+                                ...mockAtb,
+                                updateVersion: `v${majorVersion}-1`
+                            })
+                        })
+                    }
+                }
                 return route.fulfill({
                     body: JSON.stringify(mockAtb)
                 })

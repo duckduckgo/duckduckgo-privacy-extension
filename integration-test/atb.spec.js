@@ -105,3 +105,67 @@ test.describe('install workflow', () => {
         })
     })
 })
+
+test.describe('search workflow', () => {
+    let todaysAtb
+    let lastWeeksAtb
+    let twoWeeksAgoAtb
+
+    test.beforeAll(async ({ context, routeExtensionRequests }) => {
+        // grab current atb data
+        let data = await fetch('https://duckduckgo.com/atb.js')
+        data = await data.json()
+        todaysAtb = data.version
+        lastWeeksAtb = `v${data.majorVersion - 1}-${data.minorVersion}`
+        twoWeeksAgoAtb = `v${data.majorVersion - 2}-${data.minorVersion}`
+
+        mockAtb.version = data.version
+        mockAtb.majorVersion = data.majorVersion
+        mockAtb.minorVersion = data.minorVersion
+
+        await backgroundWait.forExtensionLoaded(context)
+    })
+
+    test.beforeEach(async ({ backgroundPage, context }) => {
+        await backgroundPage.evaluate((atb) => globalThis.dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
+    })
+
+    test('should not update set_atb if a repeat search is made on the same day', async ({ backgroundPage, page }) => {
+        // set set_atb to today's version
+        await backgroundPage.evaluate((pageTodaysAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageTodaysAtb), todaysAtb)
+
+        // run a search
+        await page.goto('https://duckduckgo.com/?q=test')
+
+        const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+        const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
+        expect(newSetAtb).toEqual(todaysAtb)
+        expect(atb).toEqual(twoWeeksAgoAtb)
+    })
+
+    test('should update set_atb if a repeat search is made on a different day', async ({ backgroundPage, page }) => {
+        // set set_atb to an older version
+        await backgroundPage.evaluate((pageLastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageLastWeeksAtb), lastWeeksAtb)
+        // run a search
+        await page.goto('https://duckduckgo.com/?q=test')
+
+        const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+        const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
+        expect(newSetAtb).toEqual(todaysAtb)
+        expect(atb).toEqual(twoWeeksAgoAtb)
+    })
+
+    test('should update atb if the server passes back updateVersion', async ({ backgroundPage, page }) => {
+        // set set_atb and atb to older versions
+        await backgroundPage.evaluate((pageLastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageLastWeeksAtb), lastWeeksAtb)
+        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('atb', 'v123-6'))
+
+        // run a search
+        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' })
+
+        const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
+        const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
+        expect(newSetAtb).toEqual(todaysAtb)
+        expect(atb).toEqual('v123-1')
+    })
+})
