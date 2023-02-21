@@ -1,4 +1,4 @@
-import { test, expect, mockAtb, getHARPath } from './helpers/playwrightHarness'
+import { test, expect, mockAtb } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 
 test.describe('install workflow', () => {
