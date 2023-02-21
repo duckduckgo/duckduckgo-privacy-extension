@@ -1,7 +1,7 @@
 {
     "spec_dir": "integration-test",
     "spec_files": [
-        "background/*.js",
+        "legacy/*.js",
         "content-scripts/gpc.js",
         "!background/click-to-load-youtube.js"
     ]
