@@ -1,5 +1,5 @@
 const dnrSessionId = require('../../shared/js/background/dnr-session-rule-id.js')
-const browserWrapper = require('../../shared/js/background/wrapper.es6')
+const browserWrapper = require('../../shared/js/background/wrapper')
 
 describe('Check DNR session IDs', () => {
     it('should increment session rule IDs', async () => {

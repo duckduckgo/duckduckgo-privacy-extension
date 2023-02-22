@@ -2,7 +2,7 @@ import {
     ruleIdRangeByConfigName,
     SETTING_PREFIX
 } from './dnr-config-rulesets'
-import settings from './settings.es6'
+import settings from './settings'
 
 // Rule IDs notes:
 // - Individual hardcoded rule IDs live here.

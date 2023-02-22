@@ -1,6 +1,6 @@
 import { updateActionIcon } from '../../../shared/js/background/events/privacy-icon-indicator'
 import { iconPaths } from '../../../shared/data/constants'
-import Site from '../../../shared/js/background/classes/site.es6'
+import Site from '../../../shared/js/background/classes/site'
 import browser from 'webextension-polyfill'
 
 describe('privacy icon indicator', () => {

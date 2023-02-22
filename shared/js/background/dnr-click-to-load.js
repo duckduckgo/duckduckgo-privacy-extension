@@ -1,6 +1,6 @@
 import { getNextSessionRuleId } from './dnr-session-rule-id'
-import settings from './settings.es6'
-import tdsStorage from './storage/tds.es6'
+import settings from './settings'
+import tdsStorage from './storage/tds'
 
 /**
  * Generates the declarativeNetRequest allowing rules required to disable the
@@ -9,7 +9,7 @@ import tdsStorage from './storage/tds.es6'
  * declarativeNetRequest rules are returned, the tab's rule lookup is also
  * mutated to note the new rule IDs as a side effect.
  * @param {string} ruleAction
- * @param {import('./classes/tab.es6')} tab
+ * @param {import('./classes/tab')} tab
  * @return {Promise<import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule[]>}
  */
 async function generateDnrAllowingRules (tab, ruleAction) {
@@ -72,7 +72,7 @@ async function generateDnrAllowingRules (tab, ruleAction) {
  * Find the enabled Click to Load rule actions for the given tab.
  * Note: Take care to ensure wait for the extension configuration to be ready
  *       first.
- * @param {import('./classes/tab.es6')} tab
+ * @param {import('./classes/tab')} tab
  * @return {string[]}
  */
 export function getDefaultEnabledClickToLoadRuleActionsForTab (tab) {
@@ -130,7 +130,7 @@ export function getDefaultEnabledClickToLoadRuleActionsForTab (tab) {
  * Factors that determine which Click to Load rule actions should be enabled for
  * a tab include the tab's origin, the extension configuration and the user's
  * list of allowlisted domains.
- * @param {import('./classes/tab.es6')} tab
+ * @param {import('./classes/tab')} tab
  * @return {Promise}
  */
 export async function restoreDefaultClickToLoadRuleActions (tab) {
@@ -215,7 +215,7 @@ export async function restoreDefaultClickToLoadRuleActions (tab) {
  * Ensure the necessary declarativeNetRequest allowing rules are added to
  * disable the given Click to Load rule action for the tab.
  * @param {string} ruleAction
- * @param {import('./classes/tab.es6')} tab
+ * @param {import('./classes/tab')} tab
  * @return {Promise}
  */
 export async function ensureClickToLoadRuleActionDisabled (ruleAction, tab) {
@@ -229,7 +229,7 @@ export async function ensureClickToLoadRuleActionDisabled (ruleAction, tab) {
 /**
  * Removes all Click to Load session declarativeNetRequest rules associated with
  * the given tab.
- * @param {import('./classes/tab.es6')} tab
+ * @param {import('./classes/tab')} tab
  * @return {Promise}
  */
 export async function clearClickToLoadDnrRulesForTab (tab) {

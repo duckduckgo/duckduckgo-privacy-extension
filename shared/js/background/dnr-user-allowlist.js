@@ -1,4 +1,4 @@
-import settings from './settings.es6'
+import settings from './settings'
 
 import {
     USER_ALLOWLISTED_PRIORITY

@@ -1,7 +1,7 @@
-import * as browserWrapper from './wrapper.es6'
-import settings from './settings.es6'
-import tdsStorage from './storage/tds.es6'
-import trackers from './trackers.es6'
+import * as browserWrapper from './wrapper'
+import settings from './settings'
+import tdsStorage from './storage/tds'
+import trackers from './trackers'
 import * as startup from './startup'
 import {
     ensureServiceWorkerInitiatedRequestExceptions

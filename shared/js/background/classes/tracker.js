@@ -1,12 +1,12 @@
 import constants from '../../../data/constants'
 import { convertState } from './privacy-dashboard-data'
 
-const Companies = require('../companies.es6')
-const tdsStorage = require('../storage/tds.es6')
+const Companies = require('../companies')
+const tdsStorage = require('../storage/tds')
 
 /**
- * @typedef {import('../trackers.es6').ActionName} ActionName
- * @typedef {import('../trackers.es6').TrackerData} TrackerData
+ * @typedef {import('../trackers').ActionName} ActionName
+ * @typedef {import('../trackers').TrackerData} TrackerData
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').DetectedRequest} DetectedRequest
  * @typedef {DetectedRequest & { action: ActionName }} DetectedRequestWithAction
  */

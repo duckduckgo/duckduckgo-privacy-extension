@@ -27,12 +27,12 @@
       "unit-test/background/classes/tracker-stats.js"
   ],
   "exclude": [
-      "shared/js/background/background.es6.js",
-      "shared/js/background/csp-blocking.es6.js",
-      "shared/js/background/events.es6.js",
-      "shared/js/background/onboarding.es6.js",
-      "shared/js/devtools/list-editor.es6.js",
-      "shared/js/devtools/panel.es6.js"
+      "shared/js/background/background.js",
+      "shared/js/background/csp-blocking.js",
+      "shared/js/background/events.js",
+      "shared/js/background/onboarding.js",
+      "shared/js/devtools/list-editor.js",
+      "shared/js/devtools/panel.js"
   ],
     "types": [
         "chrome"

@@ -1,9 +1,9 @@
 const tldts = require('tldts')
-const utils = require('../utils.es6')
-const tabManager = require('../tab-manager.es6')
+const utils = require('../utils')
+const tabManager = require('../tab-manager')
 const trackerutils = require('../tracker-utils')
-const settings = require('../settings.es6')
-const { isActive } = require('../devtools.es6')
+const settings = require('../settings')
+const { isActive } = require('../devtools')
 const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
 

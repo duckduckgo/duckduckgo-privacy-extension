@@ -1,6 +1,6 @@
-const Tab = require('../../../shared/js/background/classes/tab.es6')
+const Tab = require('../../../shared/js/background/classes/tab')
 const { dashboardDataFromTab } = require('../../../shared/js/background/classes/privacy-dashboard-data')
-const { normalizeTabData } = require('../../../shared/js/background/wrapper.es6')
+const { normalizeTabData } = require('../../../shared/js/background/wrapper')
 
 /**
  * @returns {Tab}

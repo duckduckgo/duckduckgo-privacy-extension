@@ -1,9 +1,9 @@
 const fs = require('fs')
 const path = require('path')
 
-const tds = require('../../../shared/js/background/trackers.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
-const tdsStorageStub = require('../../helpers/tds.es6')
+const tds = require('../../../shared/js/background/trackers')
+const tdsStorage = require('../../../shared/js/background/storage/tds')
+const tdsStorageStub = require('../../helpers/tds')
 
 const configReference =
       require('../../data/reference-tests/click-to-load/config_reference.json')
@@ -16,8 +16,8 @@ const surrogatesReference =
 const { clickToLoadRequestBlocking: { tests } } =
       require('../../data/reference-tests/click-to-load/tests.json')
 
-const { blockHandleResponse } = require('../../../shared/js/background/before-request.es6')
-const Tab = require('../../../shared/js/background/classes/tab.es6')
+const { blockHandleResponse } = require('../../../shared/js/background/before-request')
+const Tab = require('../../../shared/js/background/classes/tab')
 
 async function testMatchOutcome (requestUrl, siteUrl, disabledRuleActions, expectedOutcome) {
     const requestData = {

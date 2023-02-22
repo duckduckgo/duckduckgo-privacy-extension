@@ -1,6 +1,6 @@
-const tabManager = require('../tab-manager.es6')
+const tabManager = require('../tab-manager')
 const trackerutils = require('../tracker-utils')
-const utils = require('../utils.es6')
+const utils = require('../utils')
 const browserName = utils.getBrowserName()
 
 /**

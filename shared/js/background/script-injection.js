@@ -1,4 +1,4 @@
-const browserWrapper = require('./wrapper.es6')
+const browserWrapper = require('./wrapper')
 
 // With Manifest V2 the content scripts are run directly from the manifest and
 // they inject into the main world of websites by adding a <script> element to

@@ -1,10 +1,10 @@
-import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } from '../wrapper.es6'
+import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } from '../wrapper'
 import { Tracker } from './tracker'
 import { AdClick } from './ad-click-attribution-policy'
 
 export class TabState {
     /**
-     * @param {import('./tab.es6').TabData} tabData
+     * @param {import('./tab').TabData} tabData
      */
     constructor (tabData, restoring = false) {
         this.tabId = tabData.tabId

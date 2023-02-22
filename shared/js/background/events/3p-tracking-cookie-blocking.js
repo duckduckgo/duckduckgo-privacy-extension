@@ -1,8 +1,8 @@
-const tabManager = require('../tab-manager.es6')
+const tabManager = require('../tab-manager')
 const trackerutils = require('../tracker-utils')
-const utils = require('../utils.es6')
-const devtools = require('../devtools.es6')
-const browserWrapper = require('../wrapper.es6')
+const utils = require('../utils')
+const devtools = require('../devtools')
+const browserWrapper = require('../wrapper')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 /**

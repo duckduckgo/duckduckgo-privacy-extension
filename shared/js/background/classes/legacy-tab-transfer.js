@@ -3,7 +3,7 @@
  */
 export class LegacyTabTransfer {
     /**
-     * @param {import('./tab.es6')} tab
+     * @param {import('./tab')} tab
      */
     constructor (tab) {
         const clonedTab = cloneClassObject(tab)
