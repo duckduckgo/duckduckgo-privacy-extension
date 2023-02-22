@@ -217,6 +217,10 @@ module.exports = function (grunt) {
                 files: watch.contentScope,
                 tasks: ['exec:buildContentScope', 'copy:contentScope']
             },
+            backgroundES6JS: {
+                files: watch.background,
+                tasks: ['browserify:background']
+            },
             backgroundJS: {
                 files: ['<%= dirs.src.js %>/*.js'],
                 tasks: ['exec:copyjs']
