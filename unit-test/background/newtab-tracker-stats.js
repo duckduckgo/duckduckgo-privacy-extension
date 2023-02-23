@@ -226,3 +226,14 @@ describe('alarms', () => {
         })
     })
 })
+
+describe('CSP for new tab page', () => {
+    it('should contain a valid CSP entry for MV2', () => {
+        const mv2 = require('../../browsers/chrome/manifest.json')
+        expect(mv2.content_security_policy).toBe("script-src 'self'; object-src 'self'; frame-ancestors https://*.duckduckgo.com")
+    })
+    it('should contain a valid CSP entry for MV3', () => {
+        const mv2 = require('../../browsers/chrome-mv3/manifest.json')
+        expect(mv2.content_security_policy.extension_pages).toBe("script-src 'self'; object-src 'self'; frame-ancestors https://*.duckduckgo.com")
+    })
+})

@@ -35,6 +35,7 @@
             "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
         }
     },
+    "content_security_policy": "script-src 'self'; object-src 'self'; frame-ancestors https://*.duckduckgo.com",
     "content_scripts": [
         {
             "matches": [
