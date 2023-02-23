@@ -1,0 +1,53 @@
+{
+    "name": "__MSG_appName__",
+    "description": "__MSG_appDesc__",
+    "default_locale": "en",
+    "version": "2023.2.16",
+    "icons": {
+        "16": "img/icon_16.png",
+        "48": "img/icon_48.png",
+        "128": "img/icon_128.png"
+    },
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "dashboard/html/browser.html",
+        "default_icon": "img/icon_browser_action.png"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "permissions": [
+        "activeTab",
+        "alarms",
+        "contextMenus",
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback",
+        "scripting",
+        "storage",
+        "tabs",
+        "webNavigation",
+        "cookies"
+    ],
+    "host_permissions": [
+        "*://*/*"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "/web_accessible_resources/*"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ],
+    "declarative_net_request": {
+        "rule_resources": [
+            {
+                "id": "tds",
+                "enabled": true,
+                "path": "data/tds-rules.json"
+            }
+        ]
+    }
+}
