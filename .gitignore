@@ -13,6 +13,7 @@ public/css/*.*
 build/firefox
 build/chrome
 build/chrome-mv3
+build/safari
 build/test
 test/background.js
 integration-test/artifacts/
@@ -21,6 +22,7 @@ shared/content-scope-scripts/
 unit-test/data/reference-tests/
 shared/data/smarter_encryption.txt
 shared/data/bundled/smarter-encryption-rules.json
+shared/data/bundled/tds.json
 /test-results/
 /playwright-report/
 /playwright/.cache/

@@ -39,29 +39,17 @@ function convertDnrRule (accumulator, rule) {
 }
 
 (async () => {
+    const tdsPath = process.argv[2]
+    const surrogatesPath = process.argv[3]
+    const rulesPath = process.argv[4]
     // Collect and merge surrogates from node_modules into web_accessible_resources
-    const extensionDir = path.join('browsers', 'safari', 'Shared (Extension)', 'Resources')
-    const surrogatesDir = path.join('node_modules', '@duckduckgo', 'tracker-surrogates', 'surrogates')
-    const warDir = path.join(extensionDir, 'web_accessible_resources')
-    const existingSurrogates = await fs.readdir(warDir)
-    const availableSurrogates = await fs.readdir(surrogatesDir)
-    const linkSurrogates = availableSurrogates.map(async (file) => {
-        if (!existingSurrogates.includes(file)) {
-            await fs.symlink(path.join(surrogatesDir, file), path.join(warDir, file))
-        }
-    })
-    await Promise.all(linkSurrogates)
+    const availableSurrogates = await fs.readdir(surrogatesPath)
+
     // Fetch TDS, build ruleset, and convert to Safari compatible rules.
-    const request = await fetch('https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json')
-    const tds = await request.json()
+    const tds = JSON.parse(await fs.readFile(tdsPath, { encoding: 'utf-8' }))
     const rules = await generateTdsRuleset(tds, new Set(availableSurrogates), '/web_accessible_resources/', () => false)
     const conversionResult = rules.ruleset.reduce(convertDnrRule, { ruleset: [], nextId: 1 })
 
-    if (!(await fs.readdir(extensionDir)).includes('data')) {
-        await fs.mkdir(path.join(extensionDir, 'data'))
-    }
-    // Write TDS to disk
-    await fs.writeFile(path.join(extensionDir, 'data', 'tds.json'), JSON.stringify(tds))
     // Write DNR blocklist to disk
-    await fs.writeFile(path.join(extensionDir, 'data', 'tds-rules.json'), JSON.stringify(conversionResult.ruleset, undefined, 2))
+    await fs.writeFile(rulesPath, JSON.stringify(conversionResult.ruleset, undefined, 2))
 })()
