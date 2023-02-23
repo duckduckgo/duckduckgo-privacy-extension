@@ -1,5 +1,7 @@
 _locales/*
 data/*
 web_accessible_resources/*
+dashboard/*
 _metadata/
 img/
+*.js

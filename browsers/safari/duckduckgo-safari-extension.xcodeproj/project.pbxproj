@@ -41,6 +41,8 @@
 		B3CAA9B129A77B7500132DC9 /* web_accessible_resources in Resources */ = {isa = PBXBuildFile; fileRef = B3CAA9AF29A77B7500132DC9 /* web_accessible_resources */; };
 		B3CAA9B329A77B8F00132DC9 /* data in Resources */ = {isa = PBXBuildFile; fileRef = B3CAA9B229A77B8F00132DC9 /* data */; };
 		B3CAA9B429A77B8F00132DC9 /* data in Resources */ = {isa = PBXBuildFile; fileRef = B3CAA9B229A77B8F00132DC9 /* data */; };
+		B3CAA9B629A79E1C00132DC9 /* dashboard in Resources */ = {isa = PBXBuildFile; fileRef = B3CAA9B529A79E1C00132DC9 /* dashboard */; };
+		B3CAA9B729A79E1C00132DC9 /* dashboard in Resources */ = {isa = PBXBuildFile; fileRef = B3CAA9B529A79E1C00132DC9 /* dashboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -114,6 +116,7 @@
 		B3CAA9AC29A77B5B00132DC9 /* img */ = {isa = PBXFileReference; lastKnownFileType = folder; path = img; sourceTree = "<group>"; };
 		B3CAA9AF29A77B7500132DC9 /* web_accessible_resources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = web_accessible_resources; sourceTree = "<group>"; };
 		B3CAA9B229A77B8F00132DC9 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; path = data; sourceTree = "<group>"; };
+		B3CAA9B529A79E1C00132DC9 /* dashboard */ = {isa = PBXFileReference; lastKnownFileType = folder; path = dashboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -194,6 +197,7 @@
 		B39FE43A299258E80041874B /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				B3CAA9B529A79E1C00132DC9 /* dashboard */,
 				B3CAA9B229A77B8F00132DC9 /* data */,
 				B39FE43B299258E80041874B /* _locales */,
 				B3CAA9AC29A77B5B00132DC9 /* img */,
@@ -410,6 +414,7 @@
 				B3CAA9AD29A77B5B00132DC9 /* img in Resources */,
 				B39FE48A299258E80041874B /* background.js in Resources */,
 				B39FE488299258E80041874B /* manifest.json in Resources */,
+				B3CAA9B629A79E1C00132DC9 /* dashboard in Resources */,
 				B3CAA9B329A77B8F00132DC9 /* data in Resources */,
 				B39FE484299258E80041874B /* _locales in Resources */,
 			);
@@ -423,6 +428,7 @@
 				B3CAA9AE29A77B5B00132DC9 /* img in Resources */,
 				B39FE48B299258E80041874B /* background.js in Resources */,
 				B39FE489299258E80041874B /* manifest.json in Resources */,
+				B3CAA9B729A79E1C00132DC9 /* dashboard in Resources */,
 				B3CAA9B429A77B8F00132DC9 /* data in Resources */,
 				B39FE485299258E80041874B /* _locales in Resources */,
 			);
