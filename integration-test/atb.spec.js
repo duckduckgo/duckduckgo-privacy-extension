@@ -151,7 +151,7 @@ test.describe('search workflow', () => {
         await backgroundPage.evaluate((pageTodaysAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageTodaysAtb), todaysAtb)
 
         // run a search
-        await page.goto('https://duckduckgo.com/?q=test')
+        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' })
 
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
         const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
@@ -163,7 +163,7 @@ test.describe('search workflow', () => {
         // set set_atb to an older version
         await backgroundPage.evaluate((pageLastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageLastWeeksAtb), lastWeeksAtb)
         // run a search
-        await page.goto('https://duckduckgo.com/?q=test')
+        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' })
 
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
         const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
