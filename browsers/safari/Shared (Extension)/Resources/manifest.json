@@ -46,7 +46,7 @@
             {
                 "id": "tds",
                 "enabled": true,
-                "path": "data/tds-rules.json"
+                "path": "data/bundled/tds-rules.json"
             }
         ]
     }
