@@ -1,8 +1,8 @@
 ITEMS   := shared/html shared/data shared/img
 
-release: npm setup-build-dir grunt moveout fonts web-resources
+release: npm prepare-build-dir copy sass js
 
-dev: setup-build-dir moveout fonts web-resources grunt-dev
+dev: prepare-build-dir copy sass js
 
 npm:
 	npm install-ci
@@ -89,7 +89,7 @@ clean:
 	rm -r $(BUILD_DIR)
 
 AUTOFILL_DIR = node_modules/@duckduckgo/autofill/dist
-BUILD_DIR = build/$(browser)/wip
+BUILD_DIR = build/$(browser)/$(type)
 ESBUILD = node_modules/.bin/esbuild
 SASS = node_modules/.bin/sass
 BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
@@ -170,4 +170,3 @@ sass: $(BUILD_DIR)/public/css/base.css $(CSS_FILES)
 
 .PHONY: esbuild
 esbuild: prepare-build-dir copy sass js
-	cp build/chrome/wip/public/js/*.js build/chrome/dev/public/js/
