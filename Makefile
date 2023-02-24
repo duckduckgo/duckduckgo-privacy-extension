@@ -1,11 +1,11 @@
 ITEMS   := shared/html shared/data shared/img
 
-release: npm prepare-build-dir copy sass js
+release: clean npm setup-build-dir copy sass js
 
-dev: prepare-build-dir copy sass js
+dev: setup-build-dir copy sass js
 
 npm:
-	npm install-ci
+	npm ci
 
 grunt:
 	grunt build --browser=$(browser) --type=$(type)
@@ -26,10 +26,8 @@ setup-build-dir: shared/data/bundled/smarter-encryption-rules.json
 else
 setup-build-dir:
 endif
-	mkdir -p build/$(browser)
-	rm -rf build/$(browser)/$(type)
-	mkdir build/$(browser)/$(type)
 	mkdir -p build/$(browser)/$(type)/public/js/
+	mkdir -p $(BUILD_FOLDERS)
 
 chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
@@ -86,7 +84,7 @@ shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryptio
 
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json
-	rm -r $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
 
 AUTOFILL_DIR = node_modules/@duckduckgo/autofill/dist
 BUILD_DIR = build/$(browser)/$(type)
@@ -94,28 +92,24 @@ ESBUILD = node_modules/.bin/esbuild
 SASS = node_modules/.bin/sass
 BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
 BROWSERIFY = node_modules/.bin/browserify
-DASHBOARD_DIR = node_modules/@duckduckgo/privacy-dashboard/build/app/
-SURROGATES_DIR = node_modules/@duckduckgo/tracker-surrogates/surrogates
+DASHBOARD_DIR = node_modules/\@duckduckgo/privacy-dashboard/build/app
+SURROGATES_DIR = node_modules/\@duckduckgo/tracker-surrogates/surrogates
 BROWSER_TYPE = $(browser)
 ifeq ($(browser),chrome-mv3)
 	BROWSER_TYPE := chrome
 endif
 
-# create build dir
-prepare-build-dir:
-	mkdir -p $(BUILD_FOLDERS)
-
 # Copy tasks
 $(BUILD_DIR)/manifest.json: browsers/$(browser)/*
 	cp -r browsers/$(browser)/* $(BUILD_DIR)
 
-$(BUILD_DIR)/_locales: browsers/$(BROWSER_TYPE)/_locales
+$(BUILD_DIR)/_locales: browsers/chrome/_locales
 	cp -r $< $@
 
 $(BUILD_DIR)/data: $(ITEMS)
 	cp -r $(ITEMS) $(BUILD_DIR)
 
-$(BUILD_DIR)/dashboard: $(DASHBOARD_DIR) $(DASHBOARD_DIR)/**/*
+$(BUILD_DIR)/dashboard: $(DASHBOARD_DIR)/
 	cp -r $< $@
 
 $(BUILD_DIR)/web_accessible_resources: $(SURROGATES_DIR)/
