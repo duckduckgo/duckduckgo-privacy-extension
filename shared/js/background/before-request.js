@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 import EventEmitter2 from 'eventemitter2'
-const tldts = require('tldts')
+import tldts from 'tldts'
 
 const utils = require('./utils')
 const trackers = require('./trackers')
@@ -413,5 +413,7 @@ function isSameDomainRequest (tab, req) {
     }
 }
 
-exports.blockHandleResponse = blockHandleResponse
-exports.handleRequest = handleRequest
+export {
+    blockHandleResponse,
+    handleRequest
+}

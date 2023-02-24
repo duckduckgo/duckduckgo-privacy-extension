@@ -86,3 +86,18 @@ shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryptio
 
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json
+
+BUILD_DIR = build/$(browser)/wip
+ESBUILD = node_modules/.bin/esbuild
+
+# create build dir
+$(BUILD_DIR):
+	mkdir -p $@
+
+$(BUILD_DIR)/public/js/background.js: $(BUILD_DIR) shared/js/background/*.js shared/js/background/**/*.js 
+	mkdir -p `dirname $@`
+	$(ESBUILD) shared/js/background/background.js --bundle --outfile=$@ --target=esnext
+
+.PHONY: esbuild
+esbuild: $(BUILD_DIR)/public/js/background.js
+	cp build/chrome/wip/public/js/background.js build/chrome/dev/public/js/background.js

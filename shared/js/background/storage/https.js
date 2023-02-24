@@ -1,7 +1,17 @@
+import Dexie from 'dexie'
 const load = require('./../load')
-const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings')
+
+function arrayBufferToBase64 (buffer) {
+    let binary = ''
+    const bytes = new Uint8Array(buffer)
+    const len = bytes.byteLength
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i])
+    }
+    return globalThis.btoa(binary)
+}
 
 class HTTPSStorage {
     constructor () {
@@ -129,10 +139,10 @@ class HTTPSStorage {
         if (!data.checksum) return Promise.resolve(true)
 
         // need a buffer to send to crypto.subtle
-        const buffer = Buffer.from(data.data, 'base64')
+        const buffer = Uint8Array.from(atob(data.data), c => c.charCodeAt(0))
 
         return crypto.subtle.digest('SHA-256', buffer).then(arrayBuffer => {
-            const sha256 = Buffer.from(arrayBuffer).toString('base64')
+            const sha256 = arrayBufferToBase64(arrayBuffer)
             if (data.checksum.sha256 && data.checksum.sha256 === sha256) {
                 return true
             } else {
