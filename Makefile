@@ -86,17 +86,38 @@ shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryptio
 
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json
+	rm -r $(BUILD_DIR)
 
 AUTOFILL_DIR = node_modules/@duckduckgo/autofill/dist
 BUILD_DIR = build/$(browser)/wip
 ESBUILD = node_modules/.bin/esbuild
 SASS = node_modules/.bin/sass
-BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css $(BUILD_DIR)/public/font
+BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
 BROWSERIFY = node_modules/.bin/browserify
+DASHBOARD_DIR = node_modules/@duckduckgo/privacy-dashboard/build/app/
+SURROGATES_DIR = node_modules/@duckduckgo/tracker-surrogates/surrogates
 
 # create build dir
 prepare-build-dir:
 	mkdir -p $(BUILD_FOLDERS)
+
+# Copy tasks
+$(BUILD_DIR)/manifest.json: browsers/$(browser)/* browsers/$(browser)/**/*
+	cp -r browsers/$(browser)/* $(BUILD_DIR)
+
+$(BUILD_DIR)/data: $(ITEMS)
+	cp -r $(ITEMS) $(BUILD_DIR)
+
+$(BUILD_DIR)/dashboard: $(DASHBOARD_DIR) $(DASHBOARD_DIR)/**/*
+	cp -r $< $@
+
+$(BUILD_DIR)/web_accessible_resources: $(SURROGATES_DIR)/
+	cp -r $< $@
+
+$(BUILD_DIR)/public/font: shared/font
+	cp -r $< $@
+
+copy: $(BUILD_DIR)/manifest.json $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/public/font
 
 # JS Build steps
 BACKGROUND_JS = shared/js/background/background.js
@@ -128,5 +149,5 @@ $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss shared/scss/* shared/scss/**/*
 sass: $(BUILD_DIR)/public/css/base.css $(CSS_FILES)
 
 .PHONY: esbuild
-esbuild: prepare-build-dir sass js
+esbuild: prepare-build-dir copy sass js
 	cp build/chrome/wip/public/js/*.js build/chrome/dev/public/js/
