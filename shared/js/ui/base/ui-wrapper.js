@@ -23,7 +23,7 @@ export const openExtensionPage = (path) => {
     browser.tabs.create({ url: getExtensionURL(path) })
 }
 
-module.exports = {
+export default {
     sendMessage,
     backgroundMessage,
     openExtensionPage,

@@ -87,17 +87,35 @@ shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryptio
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json
 
+AUTOFILL_DIR = node_modules/@duckduckgo/autofill/dist
 BUILD_DIR = build/$(browser)/wip
 ESBUILD = node_modules/.bin/esbuild
+SASS = node_modules/.bin/sass
+BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css $(BUILD_DIR)/public/font
 
 # create build dir
-$(BUILD_DIR):
-	mkdir -p $@
+prepare-build-dir:
+	mkdir -p $(BUILD_FOLDERS)
 
-$(BUILD_DIR)/public/js/background.js: $(BUILD_DIR) shared/js/background/*.js shared/js/background/**/*.js 
+$(BUILD_DIR)/public/js/background.js: shared/js/**/*.js
 	mkdir -p `dirname $@`
-	$(ESBUILD) shared/js/background/background.js --bundle --outfile=$@ --target=esnext
+	$(ESBUILD) shared/js/bundles/*.js \
+		shared/js/content-scripts/*.js \
+	--bundle --outdir=`dirname $@` --target=esnext
+
+$(BUILD_DIR)/public/js/content-scripts/autofill.js: $(AUTOFILL_DIR)/*.js
+	cp $< `dirname $@`
+
+# SASS
+CSS_FILES = $(BUILD_DIR)/public/css/noatb.css $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
+$(BUILD_DIR)/public/css/base.css: shared/scss/base/base.scss shared/scss/* shared/scss/**/*
+	$(SASS) $< $@
+$(BUILD_DIR)/public/css/%.css: shared/scss/%.scss shared/scss/* shared/scss/**/*
+	$(SASS) $< $@
+
+.PHONY: sass
+sass: $(BUILD_DIR)/public/css/base.css $(CSS_FILES)
 
 .PHONY: esbuild
-esbuild: $(BUILD_DIR)/public/js/background.js
-	cp build/chrome/wip/public/js/background.js build/chrome/dev/public/js/background.js
+esbuild: prepare-build-dir sass $(BUILD_DIR)/public/js/background.js
+	cp build/chrome/wip/public/js/*.js build/chrome/dev/public/js/
