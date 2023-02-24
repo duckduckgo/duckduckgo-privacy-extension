@@ -5,7 +5,8 @@ release: clean npm setup-build-dir copy sass js
 dev: setup-build-dir copy sass js
 
 npm:
-	npm ci
+	npm ci --ignore-scripts
+	npm rebuild puppeteer
 
 grunt:
 	grunt build --browser=$(browser) --type=$(type)
@@ -92,8 +93,8 @@ ESBUILD = node_modules/.bin/esbuild
 SASS = node_modules/.bin/sass
 BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
 BROWSERIFY = node_modules/.bin/browserify
-DASHBOARD_DIR = node_modules/\@duckduckgo/privacy-dashboard/build/app
-SURROGATES_DIR = node_modules/\@duckduckgo/tracker-surrogates/surrogates
+DASHBOARD_DIR = node_modules/@duckduckgo/privacy-dashboard/build/app
+SURROGATES_DIR = node_modules/@duckduckgo/tracker-surrogates/surrogates
 BROWSER_TYPE = $(browser)
 ifeq ($(browser),chrome-mv3)
 	BROWSER_TYPE := chrome
@@ -119,7 +120,7 @@ $(BUILD_DIR)/public/font: shared/font
 	cp -r $< $@
 
 # Copy autofill scripts and assets
-$(BUILD_DIR)/public/js/content-scripts/autofill.js: $(AUTOFILL_DIR)/*.js
+$(BUILD_DIR)/public/js/content-scripts/autofill.js: $(AUTOFILL_DIR)/autofill.js
 	cp $(AUTOFILL_DIR)/*.js `dirname $@`
 
 $(BUILD_DIR)/public/css/autofill.css: $(AUTOFILL_DIR)/autofill.css

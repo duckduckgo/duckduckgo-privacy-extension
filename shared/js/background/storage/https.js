@@ -1,5 +1,5 @@
-import Dexie from 'dexie'
 const load = require('./../load')
+const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings')
 
