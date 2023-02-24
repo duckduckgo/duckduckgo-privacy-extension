@@ -92,15 +92,26 @@ BUILD_DIR = build/$(browser)/wip
 ESBUILD = node_modules/.bin/esbuild
 SASS = node_modules/.bin/sass
 BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css $(BUILD_DIR)/public/font
+BROWSERIFY = node_modules/.bin/browserify
 
 # create build dir
 prepare-build-dir:
 	mkdir -p $(BUILD_FOLDERS)
 
+# JS Build steps
+BACKGROUND_JS = shared/js/background/background.js
+ifeq ($(type), dev)
+	BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
+endif
+
+js: $(BUILD_DIR)/public/js/background.js $(BUILD_DIR)/public/js/base.js
+
 $(BUILD_DIR)/public/js/background.js: shared/js/**/*.js
+	$(BROWSERIFY) -t babelify $(BACKGROUND_JS) -o $@
+
+$(BUILD_DIR)/public/js/base.js: shared/js/**/*.js
 	mkdir -p `dirname $@`
 	$(ESBUILD) shared/js/bundles/*.js \
-		shared/js/content-scripts/*.js \
 	--bundle --outdir=`dirname $@` --target=esnext
 
 $(BUILD_DIR)/public/js/content-scripts/autofill.js: $(AUTOFILL_DIR)/*.js
@@ -117,5 +128,5 @@ $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss shared/scss/* shared/scss/**/*
 sass: $(BUILD_DIR)/public/css/base.css $(CSS_FILES)
 
 .PHONY: esbuild
-esbuild: prepare-build-dir sass $(BUILD_DIR)/public/js/background.js
+esbuild: prepare-build-dir sass js
 	cp build/chrome/wip/public/js/*.js build/chrome/dev/public/js/
