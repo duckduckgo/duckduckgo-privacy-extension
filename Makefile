@@ -141,7 +141,7 @@ ifeq ($(type), dev)
 	BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
 endif
 
-js: $(BUILD_DIR)/public/js/background.js $(BUILD_DIR)/public/js/base.js
+js: $(BUILD_DIR)/public/js/background.js $(BUILD_DIR)/public/js/base.js $(BUILD_DIR)/public/js/inject.js
 
 $(BUILD_DIR)/public/js/background.js: shared/js/**/*.js
 	$(BROWSERIFY) -t babelify $(BACKGROUND_JS) -o $@
@@ -151,7 +151,12 @@ $(BUILD_DIR)/public/js/base.js: shared/js/**/*.js
 	$(ESBUILD) shared/js/bundles/*.js \
 	--bundle --outdir=`dirname $@` --target=esnext
 
+# Content Scope Scripts
+shared/data/bundled/tracker-lookup.json:
+	node scripts/bundleTrackers.mjs
 
+$(BUILD_DIR)/public/js/inject.js: node_modules/@duckduckgo/content-scope-scripts/build/$(browser)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
+	node scripts/bundleContentScopeScripts.mjs $@ $^
 
 # SASS
 CSS_FILES = $(BUILD_DIR)/public/css/noatb.css $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
