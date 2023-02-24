@@ -96,6 +96,10 @@ BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
 BROWSERIFY = node_modules/.bin/browserify
 DASHBOARD_DIR = node_modules/@duckduckgo/privacy-dashboard/build/app/
 SURROGATES_DIR = node_modules/@duckduckgo/tracker-surrogates/surrogates
+BROWSER_TYPE = $(browser)
+ifeq ($(browser), chrome-mv3)
+	BROWSER_TYPE := chrome
+endif
 
 # create build dir
 prepare-build-dir:
@@ -117,7 +121,19 @@ $(BUILD_DIR)/web_accessible_resources: $(SURROGATES_DIR)/
 $(BUILD_DIR)/public/font: shared/font
 	cp -r $< $@
 
-copy: $(BUILD_DIR)/manifest.json $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/public/font
+# Copy autofill scripts and assets
+$(BUILD_DIR)/public/js/content-scripts/autofill.js: $(AUTOFILL_DIR)/*.js
+	cp $(AUTOFILL_DIR)/*.js `dirname $@`
+
+$(BUILD_DIR)/public/css/autofill.css: $(AUTOFILL_DIR)/autofill.css
+	cp $< $@
+
+$(BUILD_DIR)/public/css/autofill-host-styles.css: $(AUTOFILL_DIR)/autofill-host-styles_$(BROWSER_TYPE).css
+	cp $< $@
+.PHONY: copy-autofill
+copy-autofill: $(BUILD_DIR)/public/js/content-scripts/autofill.js $(BUILD_DIR)/public/css/autofill.css $(BUILD_DIR)/public/css/autofill-host-styles.css
+
+copy: $(BUILD_DIR)/manifest.json $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/public/font copy-autofill
 
 # JS Build steps
 BACKGROUND_JS = shared/js/background/background.js
@@ -135,8 +151,7 @@ $(BUILD_DIR)/public/js/base.js: shared/js/**/*.js
 	$(ESBUILD) shared/js/bundles/*.js \
 	--bundle --outdir=`dirname $@` --target=esnext
 
-$(BUILD_DIR)/public/js/content-scripts/autofill.js: $(AUTOFILL_DIR)/*.js
-	cp $< `dirname $@`
+
 
 # SASS
 CSS_FILES = $(BUILD_DIR)/public/css/noatb.css $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
