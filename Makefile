@@ -4,6 +4,15 @@ release: clean npm setup-build-dir copy sass js
 
 dev: setup-build-dir copy sass js
 
+.PHONY: test-int
+test-int: integration-test/artifacts/attribution.json
+	make dev browser=chrome type=dev
+	jasmine --config=integration-test/config.json
+
+test-int-mv3: integration-test/artifacts/attribution.json
+	make dev browser=chrome-mv3 type=dev
+	jasmine --config=integration-test/config-mv3.json
+
 npm:
 	npm ci --ignore-scripts
 	npm rebuild puppeteer
@@ -80,11 +89,15 @@ beta-firefox-zip: remove-firefox-id
 shared/data/smarter_encryption.txt:
 	curl https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz | gunzip -c > shared/data/smarter_encryption.txt
 
+integration-test/artifacts/attribution.json: setup-artifacts-dir
+	mkdir -p integration-test/artifacts
+	node scripts/attributionTestCases.mjs
+
 shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryption.txt
 	npm run bundle-se
 
 clean:
-	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json
+	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
 	rm -rf $(BUILD_DIR)
 
 AUTOFILL_DIR = node_modules/@duckduckgo/autofill/dist
@@ -117,7 +130,7 @@ $(BUILD_DIR)/web_accessible_resources: $(SURROGATES_DIR)/
 	cp -r $< $@
 
 $(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources
-	node scripts/generateListOfSurrogates.js -i $</ >> $@
+	node scripts/generateListOfSurrogates.js -i $</ > $@
 
 $(BUILD_DIR)/public/font: shared/font
 	cp -r $< $@
