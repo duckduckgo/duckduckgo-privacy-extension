@@ -109,13 +109,18 @@ BROWSERIFY = node_modules/.bin/browserify
 DASHBOARD_DIR = node_modules/@duckduckgo/privacy-dashboard/build/app
 SURROGATES_DIR = node_modules/@duckduckgo/tracker-surrogates/surrogates
 BROWSER_TYPE = $(browser)
+COPY_DIRS = $(BUILD_DIR)/manifest.json
 ifeq ($(browser),chrome-mv3)
 	BROWSER_TYPE := chrome
+	COPY_DIRS += $(BUILD_DIR)/managed-schema.json
 endif
 
 # Copy tasks
 $(BUILD_DIR)/manifest.json: browsers/$(browser)/*
 	cp -r browsers/$(browser)/* $(BUILD_DIR)
+
+build/chrome-mv3/$(type)/managed-schema.json: browsers/chrome/managed-schema.json
+	cp $< $@
 
 $(BUILD_DIR)/_locales: browsers/chrome/_locales
 	cp -r $< $@
@@ -147,7 +152,7 @@ $(BUILD_DIR)/public/css/autofill-host-styles.css: $(AUTOFILL_DIR)/autofill-host-
 .PHONY: copy-autofill
 copy-autofill: $(BUILD_DIR)/public/js/content-scripts/autofill.js $(BUILD_DIR)/public/css/autofill.css $(BUILD_DIR)/public/css/autofill-host-styles.css
 
-copy: $(BUILD_DIR)/manifest.json $(BUILD_DIR)/_locales $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/data/surrogates.txt $(BUILD_DIR)/public/font copy-autofill
+copy: $(COPY_DIRS) $(BUILD_DIR)/_locales $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/data/surrogates.txt $(BUILD_DIR)/public/font copy-autofill
 
 # JS Build steps
 BACKGROUND_JS = shared/js/background/background.js
