@@ -116,6 +116,9 @@ $(BUILD_DIR)/dashboard: $(DASHBOARD_DIR)/
 $(BUILD_DIR)/web_accessible_resources: $(SURROGATES_DIR)/
 	cp -r $< $@
 
+$(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources
+	node scripts/generateListOfSurrogates.js -i $</ >> $@
+
 $(BUILD_DIR)/public/font: shared/font
 	cp -r $< $@
 
@@ -131,7 +134,7 @@ $(BUILD_DIR)/public/css/autofill-host-styles.css: $(AUTOFILL_DIR)/autofill-host-
 .PHONY: copy-autofill
 copy-autofill: $(BUILD_DIR)/public/js/content-scripts/autofill.js $(BUILD_DIR)/public/css/autofill.css $(BUILD_DIR)/public/css/autofill-host-styles.css
 
-copy: $(BUILD_DIR)/manifest.json $(BUILD_DIR)/_locales $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/public/font copy-autofill
+copy: $(BUILD_DIR)/manifest.json $(BUILD_DIR)/_locales $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/data/surrogates.txt $(BUILD_DIR)/public/font copy-autofill
 
 # JS Build steps
 BACKGROUND_JS = shared/js/background/background.js
