@@ -1,9 +1,8 @@
 ITEMS   := shared/html shared/data shared/img
 
 ###--- Binaries ---###
-ESBUILD = node_modules/.bin/esbuild
 SASS = node_modules/.bin/sass
-BROWSERIFY = node_modules/.bin/browserify
+BROWSERIFY = node_modules/.bin/browserify -t babelify
 KARMA = node_modules/.bin/karma
 
 ###--- Variables ---###
@@ -37,13 +36,13 @@ shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts
 ## Build unit-tests with browserify
 UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js 
 build/test/background.js: $(UNIT_TEST_SRC) unit-test/data/reference-tests shared/content-scope-scripts
-	$(BROWSERIFY) -t babelify -d $(UNIT_TEST_SRC) -o $@
+	$(BROWSERIFY) -d $(UNIT_TEST_SRC) -o $@
 
 build/test/ui.js: unit-test/ui/**/*.js
-	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -t babelify -o $@
+	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
 
 build/test/shared-utils.js: unit-test/shared-utils/*.js
-	$(BROWSERIFY) unit-test/shared-utils/*.js -t babelify -o $@
+	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
 
 ###--- Legacy Integration tests ---###
 ## test-int: Run integration tests for the chrome MV2 extension
@@ -182,20 +181,35 @@ ifeq ($(type), dev)
 	BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
 endif
 
-js: $(BUILD_DIR)/public/js/background.js $(BUILD_DIR)/public/js/base.js $(BUILD_DIR)/public/js/inject.js $(BUILD_DIR)/public/js/content-scripts/content-scope-messaging.js
+JS_BUNDLES = background.js base.js inject.js content-scripts/content-scope-messaging.js feedback.js options.js devtools-panel.js list-editor.js newtab.js
+js: $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Extension background/serviceworker script
 $(BUILD_DIR)/public/js/background.js: shared/js/**/*.js
-	$(BROWSERIFY) -t babelify $(BACKGROUND_JS) -o $@
+	$(BROWSERIFY) $(BACKGROUND_JS) -o $@
 
 $(BUILD_DIR)/public/js/content-scripts/content-scope-messaging.js: shared/js/content-scripts/content-scope-messaging.js
-	$(ESBUILD) $< --bundle --outdir=`dirname $@` --target=esnext
+	cp $< $@
 
 ## Extension UI/Devtools scripts
 $(BUILD_DIR)/public/js/base.js: shared/js/**/*.js
 	mkdir -p `dirname $@`
-	$(ESBUILD) shared/js/bundles/*.js \
-	--bundle --outdir=`dirname $@` --target=esnext
+	$(BROWSERIFY) shared/js/ui/base/index.js > $@
+
+$(BUILD_DIR)/public/js/feedback.js: shared/js/**/*.js
+	$(BROWSERIFY) shared/js/ui/pages/feedback.js > $@
+
+$(BUILD_DIR)/public/js/options.js: shared/js/**/*.js
+	$(BROWSERIFY) shared/js/ui/pages/options.js > $@
+
+$(BUILD_DIR)/public/js/devtools-panel.js: shared/js/**/*.js
+	$(BROWSERIFY) shared/js/devtools/panel.js > $@
+
+$(BUILD_DIR)/public/js/list-editor.js: shared/js/**/*.js
+	$(BROWSERIFY) shared/js/devtools/list-editor.js > $@
+
+$(BUILD_DIR)/public/js/newtab.js: shared/js/**/*.js
+	$(BROWSERIFY) shared/js/newtab/newtab.js > $@
 
 # Content Scope Scripts
 shared/data/bundled/tracker-lookup.json:
