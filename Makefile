@@ -6,6 +6,12 @@ SASS = node_modules/.bin/sass
 BROWSERIFY = node_modules/.bin/browserify
 KARMA = node_modules/.bin/karma
 
+###--- Variables ---###
+BUILD_DIR = build/$(browser)/$(type)
+ifeq ($(browser),test)
+	BUILD_DIR := build/test
+endif
+
 ###--- Top level targets ---###
 ## release: create a release build for a platform in build/$BROWSER/release
 ## specify browser=(chrome|chrome-mv3|firefox)
@@ -28,6 +34,7 @@ unit-test/data/reference-tests: node_modules/@duckduckgo/privacy-reference-tests
 shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts
 	cp -r node_modules/@duckduckgo/content-scope-scripts shared/
 
+## Build unit-tests with browserify
 UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js 
 build/test/background.js: $(UNIT_TEST_SRC) unit-test/data/reference-tests shared/content-scope-scripts
 	$(BROWSERIFY) -t babelify -d $(UNIT_TEST_SRC) -o $@
@@ -35,7 +42,7 @@ build/test/background.js: $(UNIT_TEST_SRC) unit-test/data/reference-tests shared
 build/test/ui.js: unit-test/ui/**/*.js
 	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -t babelify -o $@
 
-build/test/shared-utils.js: unit-test/shared-utils/**/*.js
+build/test/shared-utils.js: unit-test/shared-utils/*.js
 	$(BROWSERIFY) unit-test/shared-utils/*.js -t babelify -o $@
 
 ###--- Legacy Integration tests ---###
@@ -56,28 +63,6 @@ npm:
 	npm ci --ignore-scripts
 	npm rebuild puppeteer
 
-grunt:
-	grunt build --browser=$(browser) --type=$(type)
-
-grunt-dev:
-	mkdir -p build/$(browser)/dev/test/html
-	cp -r shared/img build/$(browser)/dev/test/html
-	cp -r shared/data build/$(browser)/dev/test/html
-	grunt dev --browser=$(browser) --type=$(type) --monitor=$(watch)
-
-setup-artifacts-dir:
-	rm -rf integration-test/artifacts
-	mkdir -p integration-test/artifacts/screenshots
-	mkdir -p integration-test/artifacts/api_schemas
-
-ifeq ('$(browser)','chrome-mv3')
-setup-build-dir: shared/data/bundled/smarter-encryption-rules.json
-else
-setup-build-dir:
-endif
-	mkdir -p build/$(browser)/$(type)/public/js/
-	mkdir -p $(BUILD_FOLDERS)
-
 ###--- Packaging ---###
 chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
@@ -95,29 +80,6 @@ prepare-chrome-beta:
 
 chrome-mv3-beta: release chrome-mv3-beta-zip
 
-fonts:
-	mkdir -p build/$(browser)/$(type)/public
-	cp -r shared/font build/$(browser)/$(type)/public/
-
-web-resources:
-	mkdir -p build/$(browser)/$(type)/web_accessible_resources
-	cp shared/tracker-surrogates/surrogates/*.js build/$(browser)/$(type)/web_accessible_resources/
-	mkdir -p build/$(browser)/$(type)/data
-	node scripts/generateListOfSurrogates.js -i build/$(browser)/$(type)/web_accessible_resources/ >> build/$(browser)/$(type)/data/surrogates.txt
-
-moveout: $(ITEMS)
-	@echo '** Making build directory: $(type) **'
-	cp -r $(ITEMS) build/$(browser)/$(type)
-	cp -r shared/js/content-scripts build/$(browser)/$(type)/public/js/
-# While transitioning from Chrome MV2 to Chrome MV3, copy the Chrome MV2
-# files first. That way they don't have to be duplicated in the
-# repository. Once the transition is complete, this clause should be
-# removed.
-ifeq ('$(browser)','chrome-mv3')
-	cp -r browsers/chrome/* build/$(browser)/$(type)/
-endif
-	cp -r browsers/$(browser)/* build/$(browser)/$(type)/
-
 beta-firefox: release beta-firefox-zip
 
 remove-firefox-id:
@@ -126,30 +88,47 @@ remove-firefox-id:
 beta-firefox-zip: remove-firefox-id
 	cd build/firefox/release/ && web-ext build
 
+###--- Build dir preparation ---###
+## artifacts for integration-tests
+setup-artifacts-dir:
+	rm -rf integration-test/artifacts
+	mkdir -p integration-test/artifacts/screenshots
+	mkdir -p integration-test/artifacts/api_schemas
+
+# create build dir ready for source
+ifeq ('$(browser)','chrome-mv3')
+setup-build-dir: shared/data/bundled/smarter-encryption-rules.json
+else
+setup-build-dir:
+endif
+	mkdir -p build/$(browser)/$(type)/public/js/
+	mkdir -p $(BUILD_FOLDERS)
+
+# fetch SE data for bundled SE rules
 shared/data/smarter_encryption.txt:
 	curl https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz | gunzip -c > shared/data/smarter_encryption.txt
 
+# build SE rules for MV3
+shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryption.txt
+	npm run bundle-se
+
+# fetch integration test data
 integration-test/artifacts/attribution.json: setup-artifacts-dir
 	mkdir -p integration-test/artifacts
 	node scripts/attributionTestCases.mjs
-
-shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryption.txt
-	npm run bundle-se
 
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
 	rm -rf $(BUILD_DIR)
 	rm -rf unit-test/data/reference-tests shared/content-scope-scripts
 
-AUTOFILL_DIR = node_modules/@duckduckgo/autofill/dist
-BUILD_DIR = build/$(browser)/$(type)
-ifeq ($(browser),test)
-	BUILD_DIR := build/test
-endif
 
-BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
+###--- Copy targets ---###
+## Targets to copy artifacts to the extension build dir
+AUTOFILL_DIR = node_modules/@duckduckgo/autofill/dist
 DASHBOARD_DIR = node_modules/@duckduckgo/privacy-dashboard/build/app
 SURROGATES_DIR = node_modules/@duckduckgo/tracker-surrogates/surrogates
+BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
 BROWSER_TYPE = $(browser)
 COPY_DIRS = $(BUILD_DIR)/manifest.json
 ifeq ($(browser),chrome-mv3)
@@ -157,7 +136,7 @@ ifeq ($(browser),chrome-mv3)
 	COPY_DIRS += $(BUILD_DIR)/managed-schema.json
 endif
 
-# Copy tasks
+## Copy tasks: Copying resources that don't need and compiling
 $(BUILD_DIR)/manifest.json: browsers/$(browser)/*
 	cp -r browsers/$(browser)/* $(BUILD_DIR)
 
@@ -196,7 +175,8 @@ copy-autofill: $(BUILD_DIR)/public/js/content-scripts/autofill.js $(BUILD_DIR)/p
 
 copy: $(COPY_DIRS) $(BUILD_DIR)/_locales $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/data/surrogates.txt $(BUILD_DIR)/public/font copy-autofill
 
-# JS Build steps
+##--- Build targets ---#
+# Specify the set of scripts for the extension background
 BACKGROUND_JS = shared/js/background/background.js
 ifeq ($(type), dev)
 	BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
@@ -204,9 +184,11 @@ endif
 
 js: $(BUILD_DIR)/public/js/background.js $(BUILD_DIR)/public/js/base.js $(BUILD_DIR)/public/js/inject.js
 
+## Extension background/serviceworker script
 $(BUILD_DIR)/public/js/background.js: shared/js/**/*.js
 	$(BROWSERIFY) -t babelify $(BACKGROUND_JS) -o $@
 
+## Extension UI/Devtools scripts
 $(BUILD_DIR)/public/js/base.js: shared/js/**/*.js
 	mkdir -p `dirname $@`
 	$(ESBUILD) shared/js/bundles/*.js \
@@ -228,6 +210,3 @@ $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss shared/scss/* shared/scss/**/*
 
 .PHONY: sass
 sass: $(BUILD_DIR)/public/css/base.css $(CSS_FILES)
-
-.PHONY: esbuild
-esbuild: prepare-build-dir copy sass js
