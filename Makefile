@@ -182,11 +182,14 @@ ifeq ($(type), dev)
 	BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
 endif
 
-js: $(BUILD_DIR)/public/js/background.js $(BUILD_DIR)/public/js/base.js $(BUILD_DIR)/public/js/inject.js
+js: $(BUILD_DIR)/public/js/background.js $(BUILD_DIR)/public/js/base.js $(BUILD_DIR)/public/js/inject.js $(BUILD_DIR)/public/js/content-scripts/content-scope-messaging.js
 
 ## Extension background/serviceworker script
 $(BUILD_DIR)/public/js/background.js: shared/js/**/*.js
 	$(BROWSERIFY) -t babelify $(BACKGROUND_JS) -o $@
+
+$(BUILD_DIR)/public/js/content-scripts/content-scope-messaging.js: shared/js/content-scripts/content-scope-messaging.js
+	$(ESBUILD) $< --bundle --outdir=`dirname $@` --target=esnext
 
 ## Extension UI/Devtools scripts
 $(BUILD_DIR)/public/js/base.js: shared/js/**/*.js
