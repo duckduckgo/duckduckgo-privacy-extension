@@ -1,18 +1,57 @@
 ITEMS   := shared/html shared/data shared/img
 
+###--- Binaries ---###
+ESBUILD = node_modules/.bin/esbuild
+SASS = node_modules/.bin/sass
+BROWSERIFY = node_modules/.bin/browserify
+KARMA = node_modules/.bin/karma
+
+###--- Top level targets ---###
+## release: create a release build for a platform in build/$BROWSER/release
+## specify browser=(chrome|chrome-mv3|firefox)
 release: clean npm setup-build-dir copy sass js
 
+## dev: create a debug build for a platform in build/$BROWSER/dev
+## specify browser=(chrome|chrome-mv3|firefox) type=dev
 dev: setup-build-dir copy sass js
 
-.PHONY: test-int
+.PHONY: release dev
+
+###--- Unit tests ---###
+unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
+	$(KARMA) start karma.conf.js
+
+unit-test/data/reference-tests: node_modules/@duckduckgo/privacy-reference-tests/
+	mkdir -p $@
+	rsync -av --exclude='.git/' $< $@/
+
+shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts
+	cp -r node_modules/@duckduckgo/content-scope-scripts shared/
+
+UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js 
+build/test/background.js: $(UNIT_TEST_SRC) unit-test/data/reference-tests shared/content-scope-scripts
+	$(BROWSERIFY) -t babelify -d $(UNIT_TEST_SRC) -o $@
+
+build/test/ui.js: unit-test/ui/**/*.js
+	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -t babelify -o $@
+
+build/test/shared-utils.js: unit-test/shared-utils/**/*.js
+	$(BROWSERIFY) unit-test/shared-utils/*.js -t babelify -o $@
+
+###--- Legacy Integration tests ---###
+## test-int: Run integration tests for the chrome MV2 extension
 test-int: integration-test/artifacts/attribution.json
 	make dev browser=chrome type=dev
 	jasmine --config=integration-test/config.json
 
+## test-int-mv3: Run integration tests for the chrome MV3 extension
 test-int-mv3: integration-test/artifacts/attribution.json
 	make dev browser=chrome-mv3 type=dev
 	jasmine --config=integration-test/config-mv3.json
 
+.PHONY: test-int test-int-mv3
+
+###--- External dependencies ---###
 npm:
 	npm ci --ignore-scripts
 	npm rebuild puppeteer
@@ -39,6 +78,7 @@ endif
 	mkdir -p build/$(browser)/$(type)/public/js/
 	mkdir -p $(BUILD_FOLDERS)
 
+###--- Packaging ---###
 chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
 	cd build/chrome/release/ && zip -rq chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip *
@@ -99,13 +139,15 @@ shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryptio
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
 	rm -rf $(BUILD_DIR)
+	rm -rf unit-test/data/reference-tests shared/content-scope-scripts
 
 AUTOFILL_DIR = node_modules/@duckduckgo/autofill/dist
 BUILD_DIR = build/$(browser)/$(type)
-ESBUILD = node_modules/.bin/esbuild
-SASS = node_modules/.bin/sass
+ifeq ($(browser),test)
+	BUILD_DIR := build/test
+endif
+
 BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
-BROWSERIFY = node_modules/.bin/browserify
 DASHBOARD_DIR = node_modules/@duckduckgo/privacy-dashboard/build/app
 SURROGATES_DIR = node_modules/@duckduckgo/tracker-surrogates/surrogates
 BROWSER_TYPE = $(browser)
