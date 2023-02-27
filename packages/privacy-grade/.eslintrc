@@ -1,0 +1,10 @@
+{
+    "extends": "standard",
+    "rules": {
+        "indent": ["error", 4],
+        "object-shorthand": 0
+    },
+    "env": {
+        "jasmine": true
+    }
+}
