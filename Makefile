@@ -2,7 +2,8 @@ ITEMS   := shared/html shared/data shared/img
 
 ###--- Binaries ---###
 SASS = node_modules/.bin/sass
-BROWSERIFY = node_modules/.bin/browserify -t babelify
+BROWSERIFY_BIN = node_modules/.bin/browserify
+BROWSERIFY = $(BROWSERIFY_BIN) -t babelify
 KARMA = node_modules/.bin/karma
 
 ###--- Variables ---###
@@ -14,11 +15,16 @@ endif
 ###--- Top level targets ---###
 ## release: create a release build for a platform in build/$BROWSER/release
 ## specify browser=(chrome|chrome-mv3|firefox)
-release: clean npm setup-build-dir copy sass js
+release: clean npm $(BUILD_DIR)/public/js copy sass js
 
 ## dev: create a debug build for a platform in build/$BROWSER/dev
 ## specify browser=(chrome|chrome-mv3|firefox) type=dev
-dev: setup-build-dir copy sass js
+dev: $(BUILD_DIR)/public/js copy sass js
+
+## watch: rebuild when changes are made
+MAKE = make $(type) browser=$(browser) type=$(type)
+watch:
+	while true; do $(MAKE) -q || $(MAKE); sleep 1; done
 
 .PHONY: release dev
 
@@ -33,10 +39,12 @@ unit-test/data/reference-tests: node_modules/@duckduckgo/privacy-reference-tests
 shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts
 	cp -r node_modules/@duckduckgo/content-scope-scripts shared/
 
+.PHONY: unit-test
+
 ## Build unit-tests with browserify
-UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js 
+UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
 build/test/background.js: $(UNIT_TEST_SRC) unit-test/data/reference-tests shared/content-scope-scripts
-	$(BROWSERIFY) -d $(UNIT_TEST_SRC) -o $@
+	$(BROWSERIFY_BIN) -t ./scripts/browserifyFileMapTransform.js -t babelify -d $(UNIT_TEST_SRC) -o $@
 
 build/test/ui.js: unit-test/ui/**/*.js
 	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
@@ -96,11 +104,11 @@ setup-artifacts-dir:
 
 # create build dir ready for source
 ifeq ('$(browser)','chrome-mv3')
-setup-build-dir: shared/data/bundled/smarter-encryption-rules.json
+$(BUILD_DIR)/public/js: shared/data/bundled/smarter-encryption-rules.json
 else
-setup-build-dir:
+$(BUILD_DIR)/public/js:
 endif
-	mkdir -p build/$(browser)/$(type)/public/js/
+	mkdir -p $(BUILD_DIR)/public/js/
 	mkdir -p $(BUILD_FOLDERS)
 
 # fetch SE data for bundled SE rules
