@@ -221,3 +221,46 @@ describe('utils.satisfiesMinVersion', () => {
         })
     }
 })
+
+describe('utils.getInstallTimestamp()', () => {
+    it('should return correct date for end of week', () => {
+        const result = utils.getInstallTimestamp('v35-7')
+        expect(result).toEqual(1477353600000) // Tue Oct 25 2016
+    })
+
+    it('should return correct date for beginning of week', () => {
+        const result = utils.getInstallTimestamp('v36-1')
+        expect(result).toEqual(1477440000000) // Wed Oct 26 2016
+    })
+
+    it('should return null for invalid atb value', () => {
+        const result = utils.getInstallTimestamp('123')
+        expect(result).toEqual(null)
+    })
+})
+
+describe('utils.isInstalledWithinDays()', () => {
+    it('should return true as installed within 3 days', () => {
+        const date = 1477609200000 // Fri Oct 28 2016
+        const result = utils.isInstalledWithinDays(3, date, 'v35-7')
+        expect(result).toEqual(true)
+    })
+
+    it('should return false as not installed within 3 days', () => {
+        const date = 1477695600000 // Sat Oct 29 2016
+        const result = utils.isInstalledWithinDays(3, date, 'v35-7')
+        expect(result).toEqual(false)
+    })
+
+    it('should return true as installed within 4 days', () => {
+        const date = 1477695600000 // Sat Oct 29 2016
+        const result = utils.isInstalledWithinDays(4, date, 'v35-7')
+        expect(result).toEqual(true)
+    })
+
+    it('should return false for missing atb value', () => {
+        const date = 1477695600000 // Sat Oct 29 2016
+        const result = utils.isInstalledWithinDays(4, date, null)
+        expect(result).toEqual(false)
+    })
+})
