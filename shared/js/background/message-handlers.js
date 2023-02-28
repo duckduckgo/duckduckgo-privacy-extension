@@ -280,13 +280,8 @@ export function getEmailProtectionCapabilities (_, sender) {
 }
 
 export function getIncontextSignupDismissedAt () {
-    const initiallyDismissedAt = settings.getSetting('incontextSignupInitiallyDismissedAt')
     const permanentlyDismissedAt = settings.getSetting('incontextSignupPermanentlyDismissedAt')
-    return { success: { initiallyDismissedAt, permanentlyDismissedAt } }
-}
-
-export function setIncontextSignupInitiallyDismissedAt ({ value }) {
-    settings.updateSetting('incontextSignupInitiallyDismissedAt', value)
+    return { success: { permanentlyDismissedAt } }
 }
 
 export function setIncontextSignupPermanentlyDismissedAt ({ value }) {
