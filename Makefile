@@ -11,6 +11,8 @@ BUILD_DIR = build/$(browser)/$(type)
 ifeq ($(browser),test)
 	BUILD_DIR := build/test
 endif
+SOURCE_FILES = $(shell find shared/ -type f)
+TEST_FILES = $(shell find unit-test/ -type f)
 
 ###--- Top level targets ---###
 ## release: create a release build for a platform in build/$BROWSER/release
@@ -43,15 +45,15 @@ shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts
 
 ## Build unit-tests with browserify
 UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
-build/test/background.js: $(UNIT_TEST_SRC) unit-test/data/reference-tests shared/content-scope-scripts
+build/test/background.js: $(TEST_FILES) $(SOURCE_FILES) unit-test/data/reference-tests shared/content-scope-scripts
 	mkdir -p `dirname $@`
 	node ./scripts/buildTests.js > $@
 #	$(BROWSERIFY_BIN) -t ./scripts/browserifyFileMapTransform.js -t babelify -t brfs -d $(UNIT_TEST_SRC) -o $@
 
-build/test/ui.js: unit-test/ui/**/*.js
+build/test/ui.js: $(TEST_FILES)
 	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
 
-build/test/shared-utils.js: unit-test/shared-utils/*.js
+build/test/shared-utils.js: $(TEST_FILES)
 	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
 
 ###--- Legacy Integration tests ---###
@@ -195,30 +197,30 @@ JS_BUNDLES = background.js base.js inject.js content-scripts/content-scope-messa
 js: $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Extension background/serviceworker script
-$(BUILD_DIR)/public/js/background.js: shared/js/**/*.js
+$(BUILD_DIR)/public/js/background.js: $(SOURCE_FILES)
 	$(BROWSERIFY) $(BACKGROUND_JS) -o $@
 
 $(BUILD_DIR)/public/js/content-scripts/content-scope-messaging.js: shared/js/content-scripts/content-scope-messaging.js
 	cp $< $@
 
 ## Extension UI/Devtools scripts
-$(BUILD_DIR)/public/js/base.js: shared/js/**/*.js
+$(BUILD_DIR)/public/js/base.js: $(SOURCE_FILES)
 	mkdir -p `dirname $@`
 	$(BROWSERIFY) shared/js/ui/base/index.js > $@
 
-$(BUILD_DIR)/public/js/feedback.js: shared/js/**/*.js
+$(BUILD_DIR)/public/js/feedback.js: $(SOURCE_FILES)
 	$(BROWSERIFY) shared/js/ui/pages/feedback.js > $@
 
-$(BUILD_DIR)/public/js/options.js: shared/js/**/*.js
+$(BUILD_DIR)/public/js/options.js: $(SOURCE_FILES)
 	$(BROWSERIFY) shared/js/ui/pages/options.js > $@
 
-$(BUILD_DIR)/public/js/devtools-panel.js: shared/js/**/*.js
+$(BUILD_DIR)/public/js/devtools-panel.js: $(SOURCE_FILES)
 	$(BROWSERIFY) shared/js/devtools/panel.js > $@
 
-$(BUILD_DIR)/public/js/list-editor.js: shared/js/**/*.js
+$(BUILD_DIR)/public/js/list-editor.js: $(SOURCE_FILES)
 	$(BROWSERIFY) shared/js/devtools/list-editor.js > $@
 
-$(BUILD_DIR)/public/js/newtab.js: shared/js/**/*.js
+$(BUILD_DIR)/public/js/newtab.js: $(SOURCE_FILES)
 	$(BROWSERIFY) shared/js/newtab/newtab.js > $@
 
 # Content Scope Scripts
@@ -229,11 +231,12 @@ $(BUILD_DIR)/public/js/inject.js: node_modules/@duckduckgo/content-scope-scripts
 	node scripts/bundleContentScopeScripts.mjs $@ $^
 
 # SASS
-CSS_FILES = $(BUILD_DIR)/public/css/noatb.css $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
-$(BUILD_DIR)/public/css/base.css: shared/scss/base/base.scss shared/scss/* shared/scss/**/*
+SCSS_SOURCE = $(shell find shared/scss/ -type f)
+OUTPUT_CSS_FILES = $(BUILD_DIR)/public/css/noatb.css $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
+$(BUILD_DIR)/public/css/base.css: shared/scss/base/base.scss $(SCSS_SOURCE)
 	$(SASS) $< $@
-$(BUILD_DIR)/public/css/%.css: shared/scss/%.scss shared/scss/* shared/scss/**/*
+$(BUILD_DIR)/public/css/%.css: shared/scss/%.scss $(SCSS_SOURCE)
 	$(SASS) $< $@
 
 .PHONY: sass
-sass: $(BUILD_DIR)/public/css/base.css $(CSS_FILES)
+sass: $(BUILD_DIR)/public/css/base.css $(OUTPUT_CSS_FILES)
