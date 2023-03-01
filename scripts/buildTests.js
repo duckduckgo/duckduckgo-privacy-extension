@@ -3,6 +3,8 @@ const path = require('path')
 const browserify = require('browserify')
 const fileMapTransform = require('./browserifyFileMapTransform')
 
+const outputFile = process.argv[2]
+
 function listSourceFiles (dir) {
     return fs.readdirSync(dir).filter(f => f.endsWith('.js')).map(f => path.join(dir, f))
 }
@@ -13,7 +15,7 @@ const input = listSourceFiles(path.join('unit-test', 'background'))
     .concat(listSourceFiles(path.join('unit-test', 'background', 'storage')))
 const b = browserify(input, {
     transform: [
-        // fileMapTransform,
+        fileMapTransform,
         ['babelify', {
             presets: [['@babel/preset-env', {
                 exclude: [
@@ -25,4 +27,11 @@ const b = browserify(input, {
     ]
 })
 
-b.bundle().pipe(process.stdout)
+// fs.writeFile(outputFile, b.bundle())
+b.bundle((err, bundle) => {
+    if (err) {
+        console.error(err)
+        process.exit(1)
+    }
+    fs.writeFileSync(outputFile, bundle)
+})
