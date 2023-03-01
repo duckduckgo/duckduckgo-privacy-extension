@@ -48,7 +48,6 @@ UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit
 build/test/background.js: $(TEST_FILES) $(SOURCE_FILES) unit-test/data/reference-tests shared/content-scope-scripts
 	mkdir -p `dirname $@`
 	node ./scripts/buildTests.js $@
-#	$(BROWSERIFY_BIN) -t ./scripts/browserifyFileMapTransform.js -t babelify -t brfs -d $(UNIT_TEST_SRC) -o $@
 
 build/test/ui.js: $(TEST_FILES)
 	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
