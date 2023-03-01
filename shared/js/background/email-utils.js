@@ -151,14 +151,14 @@ export const sendJSPixel = (options) => {
     case 'incontext_show':
         fireIncontextSignupPixel('incontext_show_extension')
         break
-    case 'incontext_get_email_protection':
-        fireIncontextSignupPixel('incontext_get_email_protection_extension')
+    case 'incontext_primary_cta':
+        fireIncontextSignupPixel('incontext_primary_cta_extension')
         break
     case 'incontext_dismiss_persisted':
         fireIncontextSignupPixel('incontext_dismiss_persisted_extension')
         break
-    case 'incontext_dismiss_initial':
-        fireIncontextSignupPixel('incontext_dismiss_initial_extension')
+    case 'incontext_close_x':
+        fireIncontextSignupPixel('incontext_close_x_extension')
         break
     default:
         console.error('Unknown pixel name', pixelName)
