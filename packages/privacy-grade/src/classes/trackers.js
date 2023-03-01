@@ -258,6 +258,7 @@ class Trackers {
             'data:',
             'blob:',
             'view-source:',
+            'vbscript:',
 
             // Safelisted protocol handler schemes (https://html.spec.whatwg.org/#safelisted-scheme)
             'bitcoin:',
