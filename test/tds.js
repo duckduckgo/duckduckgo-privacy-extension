@@ -1,6 +1,9 @@
 const assert = require('assert')
 
 const {
+    emptyBlockList
+} = require('./utils/helpers')
+const {
     BASELINE_PRIORITY,
     SUBDOMAIN_PRIORITY_INCREMENT,
     TRACKER_RULE_PRIORITY_INCREMENT,
@@ -16,15 +19,6 @@ const MAXIMUM_RULES_PER_DOMAIN = Math.floor(
 )
 
 const supportedSurrogateScripts = new Set(['supported.js', 'supported2.js'])
-
-function emptyBlockList () {
-    return {
-        cnames: {},
-        domains: {},
-        entities: {},
-        trackers: {}
-    }
-}
 
 async function isRegexSupportedTrue ({ regex, isCaseSensitive }) {
     return { isSupported: true }
