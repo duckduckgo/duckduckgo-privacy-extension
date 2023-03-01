@@ -72,7 +72,7 @@ async function loadTestConfig (bgPage, testConfigFilename) {
     )
     const testConfig = JSON.parse(fs.readFileSync(filePath).toString())
 
-    await bgPage.evaluate((pageTestConfig, parsePathString) => {
+    await bgPage.evaluate(({ pageTestConfig, parsePathString }) => {
         globalThis.configBackup = globalThis.configBackup || {}
         // eslint-disable-next-line no-eval
         eval(parsePathString)
@@ -82,7 +82,10 @@ async function loadTestConfig (bgPage, testConfigFilename) {
             globalThis.configBackup[pathString] = target[lastPathPart]
             target[lastPathPart] = pageTestConfig[pathString]
         }
-    }, testConfig, parsePath.toString())
+    }, {
+        pageTestConfig: testConfig,
+        parsePathString: parsePath.toString()
+    })
 }
 
 /**
