@@ -358,7 +358,7 @@ class Trackers {
                 displayName: requestOwner || requestData.urlToCheckDomain || 'Unknown'
             }
             /** @type {TrackerObj} */
-            const tracker = {
+            const trackerObj = {
                 domain: fullTrackerDomain,
                 owner: owner,
                 prevalence: 0,
@@ -369,7 +369,7 @@ class Trackers {
                 rules: []
             }
             return {
-                action: tracker.default,
+                action: trackerObj.default,
                 reason: '',
                 sameEntity,
                 sameBaseDomain,
