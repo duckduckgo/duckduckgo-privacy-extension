@@ -24,7 +24,7 @@ release: clean npm $(BUILD_DIR)/public/js copy sass js
 dev: $(BUILD_DIR)/public/js copy sass js
 
 ## watch: rebuild when changes are made
-MAKE = make $(type) browser=$(browser) type=$(type)
+MAKE = make -j4 $(type) browser=$(browser) type=$(type)
 watch:
 	while true; do $(MAKE) -q || $(MAKE); sleep 1; done
 
