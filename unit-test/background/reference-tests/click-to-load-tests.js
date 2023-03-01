@@ -6,15 +6,15 @@ const tdsStorage = require('../../../shared/js/background/storage/tds')
 const tdsStorageStub = require('../../helpers/tds')
 
 const configReference =
-      require('../../data/reference-tests/click-to-load/config_reference.json')
+      require('@duckduckgo/privacy-reference-tests/click-to-load/config_reference.json')
 const tdsReference =
-      require('../../data/reference-tests/click-to-load/tds_reference.json')
+      require('@duckduckgo/privacy-reference-tests/click-to-load/tds_reference.json')
 const surrogatesReference =
       fs.readFileSync(path.join(
-          __dirname, '../../data/reference-tests/click-to-load/surrogates_reference.txt'
+          __dirname, '../../../node_modules/@duckduckgo/privacy-reference-tests/click-to-load/surrogates_reference.txt'
       ), 'utf8')
 const { clickToLoadRequestBlocking: { tests } } =
-      require('../../data/reference-tests/click-to-load/tests.json')
+      require('@duckduckgo/privacy-reference-tests/click-to-load/tests.json')
 
 const { blockHandleResponse } = require('../../../shared/js/background/before-request')
 const Tab = require('../../../shared/js/background/classes/tab')

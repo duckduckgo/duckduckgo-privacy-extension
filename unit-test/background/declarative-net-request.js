@@ -1,5 +1,5 @@
 import '../helpers/mock-browser-api'
-import * as allowlistedTrackers from '../data/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json'
+import * as allowlistedTrackers from '@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json'
 import * as tds from '../data/tds.json'
 import * as browserWrapper from '../../shared/js/background/wrapper'
 import * as testConfig from '../data/extension-config.json'

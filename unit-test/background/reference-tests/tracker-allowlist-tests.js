@@ -2,7 +2,7 @@ const tdsStorageStub = require('../../helpers/tds')
 const tds = require('../../../shared/js/background/trackers')
 const tdsStorage = require('../../../shared/js/background/storage/tds')
 
-const refTests = require('../../data/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_matching_tests.json')
+const refTests = require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_matching_tests.json')
 const allowList = require('../../../shared/js/background/allowlisted-trackers')
 const config = require('../../../shared/data/bundled/extension-config.json')
 
@@ -11,7 +11,7 @@ describe('Tracker allowlist tests:', () => {
         config.features.trackerAllowlist = {
             state: 'enabled',
             settings: {
-                allowlistedTrackers: require('../../data/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json')
+                allowlistedTrackers: require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json')
             }
         }
 

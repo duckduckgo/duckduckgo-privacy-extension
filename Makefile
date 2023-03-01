@@ -34,10 +34,6 @@ watch:
 unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
 	$(KARMA) start karma.conf.js
 
-unit-test/data/reference-tests: node_modules/@duckduckgo/privacy-reference-tests/
-	mkdir -p $@
-	rsync -av --exclude='.git/' $< $@/
-
 shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts
 	cp -r node_modules/@duckduckgo/content-scope-scripts shared/
 
@@ -45,7 +41,7 @@ shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts
 
 ## Build unit-tests with browserify
 UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
-build/test/background.js: $(TEST_FILES) $(SOURCE_FILES) unit-test/data/reference-tests shared/content-scope-scripts
+build/test/background.js: $(TEST_FILES) $(SOURCE_FILES) shared/content-scope-scripts
 	mkdir -p `dirname $@`
 	node ./scripts/buildTests.js $@
 

@@ -9,9 +9,9 @@ const browserWrapper = require('../../../shared/js/background/wrapper')
 
 const contentScriptUtils = require('../../../shared/content-scope-scripts/src/utils.js')
 
-const testSets = require('../../data/reference-tests/privacy-configuration/tests.json')
+const testSets = require('@duckduckgo/privacy-reference-tests/privacy-configuration/tests.json')
 const configs = {
-    // FILE_MAP ../../data/reference-tests/privacy-configuration/config*_reference.json
+    // FILE_MAP ../../../node_modules/@duckduckgo/privacy-reference-tests/privacy-configuration/config*_reference.json
 }
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
