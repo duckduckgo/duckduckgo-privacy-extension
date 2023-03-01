@@ -3,6 +3,6 @@
     "spec_files": [
         "legacy/*.js",
         "content-scripts/gpc.js",
-        "!background/click-to-load-youtube.js"
+        "!legacy/click-to-load-youtube.js"
     ]
 }
