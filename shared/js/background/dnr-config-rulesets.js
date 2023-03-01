@@ -3,6 +3,7 @@ import settings from './settings'
 import tdsStorage from './storage/tds'
 import trackers from './trackers'
 import * as startup from './startup'
+import { isFeatureEnabled } from './utils'
 import {
     ensureServiceWorkerInitiatedRequestExceptions
 } from './dnr-service-worker-initiated'
@@ -97,6 +98,27 @@ async function configRulesNeedUpdate (configName, expectedState) {
 }
 
 /**
+ * Utility function that takes the extension config, and returns a minimal
+ * config Object with disabled/unsupported features + unnecessary metadata
+ * removed.
+ * Note: Does not mutate the original config Object, but the returned config is
+ *       equally not safe to mutate as it shares some Object references.
+ * @param {Object} config
+ * @returns {Object}
+ */
+function minimalConfig ({ unprotectedTemporary, features }) {
+    const result = { features: { }, unprotectedTemporary }
+
+    for (const featureName of Object.keys(features)) {
+        if (isFeatureEnabled(featureName)) {
+            result.features[featureName] = features[featureName]
+        }
+    }
+
+    return result
+}
+
+/**
  * Update the declarativeNetRequest rules and corresponding state in settings
  * for a configuration.
  * @param {string} configName
@@ -182,7 +204,7 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
 
     if (!configValue) {
         await tdsStorage.ready('config')
-        configValue = await tdsStorage.config
+        configValue = tdsStorage.config
     }
 
     if (!etag) {
@@ -206,7 +228,7 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
     const {
         ruleset, matchDetailsByRuleId
     } = await generateExtensionConfigurationRuleset(
-        configValue,
+        minimalConfig(configValue),
         denylistedDomains,
         chrome.declarativeNetRequest.isRegexSupported,
         ruleIdStart + 1
@@ -228,7 +250,14 @@ export async function updateCombinedConfigBlocklistRules () {
     }
     // require a blocklist before generating rules - config is optional
     if (tdsEtag && await configRulesNeedUpdate('combined', combinedState)) {
-        const { ruleset, matchDetailsByRuleId } = generateCombinedConfigBlocklistRuleset(tdsStorage.tds, tdsStorage.config, denylistedDomains, ruleIdRangeByConfigName.combined[0] + 1)
+        const {
+            ruleset, matchDetailsByRuleId
+        } = generateCombinedConfigBlocklistRuleset(
+            tdsStorage.tds,
+            minimalConfig(tdsStorage.config),
+            denylistedDomains,
+            ruleIdRangeByConfigName.combined[0] + 1
+        )
         await updateConfigRules('combined', combinedState, ruleset, matchDetailsByRuleId)
     }
 }
