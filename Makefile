@@ -44,7 +44,9 @@ shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts
 ## Build unit-tests with browserify
 UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
 build/test/background.js: $(UNIT_TEST_SRC) unit-test/data/reference-tests shared/content-scope-scripts
-	$(BROWSERIFY_BIN) -t ./scripts/browserifyFileMapTransform.js -t babelify -d $(UNIT_TEST_SRC) -o $@
+	mkdir -p `dirname $@`
+	node ./scripts/buildTests.js > $@
+#	$(BROWSERIFY_BIN) -t ./scripts/browserifyFileMapTransform.js -t babelify -t brfs -d $(UNIT_TEST_SRC) -o $@
 
 build/test/ui.js: unit-test/ui/**/*.js
 	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
