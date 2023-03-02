@@ -31,7 +31,7 @@ import {
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
-const TEST_EXTENION_VERSIONS = ['0.1', '0.2', '0.3']
+const TEST_EXTENION_VERSIONS = ['2023.1.1', '2023.2.1', '2023.3.1']
 
 let onUpdateListeners
 
