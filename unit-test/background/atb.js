@@ -99,7 +99,7 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
         { url: 'https://duckduckgo.com/?q=something', expected: 'https://duckduckgo.com/?q=something&atb=v123-4ab' },
         { url: 'https://duckduckgo.com/about#newsletter', expected: 'https://duckduckgo.com/about?atb=v123-4ab#newsletter' },
         { url: 'https://duckduckgo.com/chrome_newtab', expected: 'https://duckduckgo.com/chrome_newtab?atb=v123-4ab' },
-        { url: 'https://duckduckgo.com/chrome_newtab?ntp_test=true', expected: 'https://duckduckgo.com/chrome_newtab?ntp_test=true&atb=v123-4ab' },
+        { url: 'https://duckduckgo.com/chrome_newtab?ntp_test=true', expected: 'https://duckduckgo.com/chrome_newtab?ntp_test=true&atb=v123-4ab' }
     ]
 
     correctUrlTests.forEach((test) => {
