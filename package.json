@@ -81,7 +81,7 @@
         "timekeeper": "^2.1.1",
         "typescript": "^4.9.5",
         "webextension-polyfill": "^0.10.0",
-        "yargs": "^17.6.2"
+        "yargs": "^17.7.1"
     },
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#6.3.0",
