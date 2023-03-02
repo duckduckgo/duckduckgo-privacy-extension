@@ -1,6 +1,7 @@
-import { test, expect, mockAtb} from './helpers/playwrightHarness'
+import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { loadTestConfig, loadTestTds } from './helpers/testConfig'
+import { routeFromLocalhost } from './helpers/testPages'
 
 const testPageDomain = 'privacy-test-pages.glitch.me'
 const thirdPartyDomain = 'good.third-party.site'
@@ -18,6 +19,7 @@ test.describe('Storage blocking Tests', () => {
         await backgroundWait.forAllConfiguration(backgroundPage)
         await loadTestConfig(backgroundPage, 'storage-blocking.json')
         await loadTestTds(backgroundPage, 'mock-tds.json')
+        await routeFromLocalhost(page)
         await page.bringToFront()
         await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle' })
         await waitForAllResults(page)
