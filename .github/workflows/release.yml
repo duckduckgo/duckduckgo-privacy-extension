@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - 'develop'
+      - 'main'
     paths:
       - 'browsers/chrome/manifest.json'
 

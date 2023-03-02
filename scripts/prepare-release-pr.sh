@@ -20,4 +20,4 @@ git commit -S -m "Release $VERSION [ci release]"
 git push --set-upstream origin release/$1 -f
 
 # Open Github PR
-gh pr create -B develop --title "Prepare release $VERSION" --body "Updated version and bundled config."
+gh pr create -B main --title "Prepare release $VERSION" --body "Updated version and bundled config."

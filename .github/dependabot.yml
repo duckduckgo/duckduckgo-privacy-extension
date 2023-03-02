@@ -4,13 +4,13 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    target-branch: "develop"
+    target-branch: "main"
     labels:
       - "dependencies"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    target-branch: "develop"
+    target-branch: "main"
     labels:
       - "dependencies"
