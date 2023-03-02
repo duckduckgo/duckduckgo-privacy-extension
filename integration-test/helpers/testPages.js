@@ -17,11 +17,29 @@ export function routeFromLocalhost (page) {
             console.log('skipped localhost routing for', url.href)
             return route.continue()
         }
-        const localhostURL = `http://localhost:3000${url.pathname}`
-        const request = await fetch(localhostURL)
+        const requestData = new Request(`http://localhost:3000${url.pathname}${url.search}${url.hash}`, {
+            method: route.request().method(),
+            body: route.request().postDataBuffer(),
+            headers: await route.request().allHeaders()
+        })
+        const response = await fetch(requestData)
+        if (!response.ok) {
+            console.log(url.href, requestData.url, response.ok)
+        }
+        const responseHeaders = {}
+        for (const [key, value] of response.headers.entries()) {
+            responseHeaders[key] = value
+        }
+        if (url.hostname === 'broken.third-party.site' && url.pathname === '/set-cookie') {
+            // There is an issue that proxying somehow bypasses extension cookie protection,
+            // so we have to route this request to the real server.
+            return route.continue()
+        }
+        await new Promise(resolve => setTimeout(resolve, 500))
         return route.fulfill({
-            status: request.status,
-            body: await request.text()
+            status: response.status,
+            body: await response.text(),
+            headers: responseHeaders
         })
     })
 }

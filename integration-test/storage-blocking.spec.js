@@ -58,4 +58,142 @@ test.describe('Storage blocking Tests', () => {
             }
         }
     })
+
+    test.describe('Cookie blocking tests', () => {
+        async function runStorageTest (page, domain) {
+            await page.bringToFront()
+            await page.goto(`https://${domain}/privacy-protections/storage-blocking/?store`)
+            await waitForAllResults(page)
+            await page.click('#retrive')
+            await waitForAllResults(page)
+            await page.click('details > summary')
+            const results = JSON.parse(await page.evaluate('JSON.stringify(results)'))
+            return results
+        }
+
+        function assertCookieAllowed (results, testName) {
+            const savedResult = results.results.find(({ id }) => id === 'memory').value
+            const checkResult = results.results.find(({ id }) => id === testName)?.value
+            expect(checkResult).toBeTruthy()
+            expect(checkResult).toEqual(savedResult)
+        }
+
+        function assertCookieBlocked (results, testName) {
+            expect(results.results.find(({ id }) => id === testName).value).toBeNull()
+        }
+
+        test.beforeEach(async ({ context, backgroundPage, page }) => {
+            await backgroundWait.forExtensionLoaded(context)
+            await backgroundWait.forAllConfiguration(backgroundPage)
+            await loadTestConfig(backgroundPage, 'storage-blocking.json')
+            await loadTestTds(backgroundPage, 'mock-tds.json')
+            // await routeFromLocalhost(page)
+
+            // reset allowlists
+            await backgroundPage.evaluate(async (domain) => {
+                /* global dbg */
+                await dbg.tabManager.setList({
+                    list: 'allowlisted',
+                    domain,
+                    value: false
+                })
+                await dbg.tabManager.setList({
+                    list: 'denylisted',
+                    domain,
+                    value: false
+                })
+            }, testPageDomain)
+        })
+
+        test(`On ${thirdPartyTracker} does not block iFrame tracker cookies from same entity`, async ({ page }) => {
+            const results = await runStorageTest(page, thirdPartyTracker)
+            assertCookieAllowed(results, 'tracking third party iframe - JS cookie')
+        })
+
+        test('does not block safe third party iframe JS cookies when protections are disabled', async ({ page, backgroundPage }) => {
+            // https://app.asana.com/0/1201614831475344/1203336793368587
+            // add testPageDomain to the allowlist
+            await backgroundPage.evaluate(async (domain) => {
+                return await dbg.tabManager.setList({
+                    list: 'allowlisted',
+                    domain,
+                    value: true
+                })
+            }, testPageDomain)
+            const results = await runStorageTest(page, testPageDomain)
+            assertCookieAllowed(results, 'safe third party iframe - JS cookie')
+            assertCookieAllowed(results, 'tracking third party header cookie')
+        })
+
+        test('excludedCookieDomains disables cookie blocking for that domain', async ({ page, backgroundPage }) => {
+            await backgroundPage.evaluate(async (domain) => {
+                const { data: config } = dbg.getListContents('config')
+                config.features.cookie.settings.excludedCookieDomains.push({
+                    domain,
+                    reason: 'test'
+                })
+                await dbg.setListContents({
+                    name: 'config',
+                    value: config
+                })
+            }, thirdPartyTracker)
+            const results = await runStorageTest(page, testPageDomain)
+            assertCookieAllowed(results, 'tracking third party header cookie')
+        })
+
+        test('feature exception disables all cookie blocking for the site', async ({ page, backgroundPage }) => {
+            await backgroundPage.evaluate(async (domain) => {
+                const { data: config } = dbg.getListContents('config')
+                config.features.cookie.exceptions.push({
+                    domain,
+                    reason: 'test'
+                })
+                await dbg.setListContents({
+                    name: 'config',
+                    value: config
+                })
+            }, testPageDomain)
+            const results = await runStorageTest(page, testPageDomain)
+            assertCookieAllowed(results, 'tracking third party header cookie')
+        })
+
+        test('unprotected temporary disables all cookie blocking for the site', async ({ page, backgroundPage }) => {
+            await backgroundPage.evaluate(async (domain) => {
+                const { data: config } = dbg.getListContents('config')
+                config.unprotectedTemporary.push({
+                    domain,
+                    reason: 'test'
+                })
+                await dbg.setListContents({
+                    name: 'config',
+                    value: config
+                })
+            }, testPageDomain)
+            const results = await runStorageTest(page, testPageDomain)
+            assertCookieAllowed(results, 'tracking third party header cookie')
+        })
+
+        test('denylisting reenables cookie blocking for the site', async ({ page, backgroundPage }) => {
+            await backgroundPage.evaluate(async (domain) => {
+                await dbg.tabManager.setList({
+                    list: 'denylisted',
+                    domain,
+                    value: true
+                })
+                const { data: config } = dbg.getListContents('config')
+                config.unprotectedTemporary.push({
+                    domain,
+                    reason: 'test'
+                })
+                await dbg.setListContents({
+                    name: 'config',
+                    value: config
+                })
+            }, testPageDomain)
+            // await page.waitForTimeout(500)
+            const results = await runStorageTest(page, testPageDomain)
+            // await page.waitForTimeout(50000)
+            assertCookieBlocked(results, 'tracking third party header cookie')
+        })
+    })
 })
