@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1676546521995,
+    "version": 1677839118579,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -158,6 +158,10 @@
                 {
                     "domain": "corporatefinanceinstitute.com",
                     "reason": "CMP gets incorrectly handled / repeatedly opens tabs"
+                },
+                {
+                    "domain": "kicker.de",
+                    "reason": "https://github.com/duckduckgo/autoconsent/issues/66"
                 }
             ],
             "settings": {
@@ -166,17 +170,21 @@
                 ]
             },
             "state": "disabled",
-            "hash": "a097d7ccd20814348d1b3b89ef31e089"
+            "hash": "ffb4c255daefd46d2ae948b440ea2579"
         },
         "autofill": {
             "exceptions": [
                 {
                     "domain": "containerstore.com",
                     "reason": "Generally poor UX - no username saved on signup, prompts for Duck address on 'forgot password'."
+                },
+                {
+                    "domain": "roll20.net",
+                    "reason": "Performance issue for too many fields."
                 }
             ],
             "state": "enabled",
-            "hash": "cdb6aeccec0eb59ae554f3fd75d336cc"
+            "hash": "59c4bd9b8cee343c81da98bfe5d77928"
         },
         "clickToPlay": {
             "exceptions": [],
@@ -298,6 +306,10 @@
                     "reason": "main content hidden"
                 },
                 {
+                    "domain": "mangaread.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
+                },
+                {
                     "domain": "manhwascan.net",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
                 },
@@ -329,6 +341,10 @@
                         "type": "hide-empty"
                     },
                     {
+                        "selector": "[id*='dfp-']",
+                        "type": "hide-empty"
+                    },
+                    {
                         "selector": "[id*='dfp_']",
                         "type": "closest-empty"
                     },
@@ -346,10 +362,14 @@
                     },
                     {
                         "selector": "[id*='taboola-']",
-                        "type": "closest-empty"
+                        "type": "hide"
                     },
                     {
                         "selector": ".taboolaHeight",
+                        "type": "hide"
+                    },
+                    {
+                        "selector": ".taboola-placeholder",
                         "type": "hide"
                     },
                     {
@@ -369,7 +389,19 @@
                         "type": "closest-empty"
                     },
                     {
+                        "selector": ".column-ad",
+                        "type": "hide-empty"
+                    },
+                    {
+                        "selector": ".wide-ad",
+                        "type": "hide-empty"
+                    },
+                    {
                         "selector": ".ad",
+                        "type": "hide-empty"
+                    },
+                    {
+                        "selector": ".AD",
                         "type": "hide-empty"
                     },
                     {
@@ -381,6 +413,10 @@
                         "type": "hide-empty"
                     },
                     {
+                        "selector": "[class*='_ad-slot']",
+                        "type": "hide-empty"
+                    },
+                    {
                         "selector": ".ad-block",
                         "type": "hide-empty"
                     },
@@ -389,7 +425,7 @@
                         "type": "hide-empty"
                     },
                     {
-                        "selector": ".adunitContainer",
+                        "selector": "[class^='adunit']",
                         "type": "hide-empty"
                     },
                     {
@@ -413,6 +449,10 @@
                         "type": "hide-empty"
                     },
                     {
+                        "selector": ".banner-leaderboard",
+                        "type": "hide-empty"
+                    },
+                    {
                         "selector": ".ad-banner-container",
                         "type": "hide-empty"
                     },
@@ -422,6 +462,10 @@
                     },
                     {
                         "selector": ".banner-placeholder",
+                        "type": "hide-empty"
+                    },
+                    {
+                        "selector": ".header-ads",
                         "type": "hide-empty"
                     },
                     {
@@ -449,7 +493,11 @@
                         "type": "closest-empty"
                     },
                     {
-                        "selector": ".ad-container",
+                        "selector": "[class^='ad-container']",
+                        "type": "hide-empty"
+                    },
+                    {
+                        "selector": "[class*='-ad-container']",
                         "type": "hide-empty"
                     },
                     {
@@ -471,6 +519,14 @@
                     {
                         "selector": "[id*='advert-']",
                         "type": "hide-empty"
+                    },
+                    {
+                        "selector": ".ads__inline",
+                        "type": "closest-empty"
+                    },
+                    {
+                        "selector": ".ads__native",
+                        "type": "closest-empty"
                     },
                     {
                         "selector": ".ad-slot",
@@ -521,6 +577,10 @@
                         "type": "closest-empty"
                     },
                     {
+                        "selector": ".bordeaux-anchored-container",
+                        "type": "hide-empty"
+                    },
+                    {
                         "selector": ".rightAd",
                         "type": "hide-empty"
                     },
@@ -545,6 +605,7 @@
                     "advertising\nskip ad\nskip ad\nskip ad",
                     "ad feedback",
                     "anzeige",
+                    "close this ad",
                     "sponsored",
                     "sponsorisé",
                     "story continues below advertisement",
@@ -707,6 +768,19 @@
                         ]
                     },
                     {
+                        "domain": "express.co.uk",
+                        "rules": [
+                            {
+                                "selector": ".superbanner",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "#ad-vip-article",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "fandom.com",
                         "rules": [
                             {
@@ -746,6 +820,36 @@
                         "rules": [
                             {
                                 "selector": ".vendor-unit",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "ghacks.net",
+                        "rules": [
+                            {
+                                "selector": ".box-banner",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[id^='ghacks_ad_code']",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "hindustantimes.com",
+                        "rules": [
+                            {
+                                "selector": ".desktopAd",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[class^='adHeight']",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[class^='adMinHeight']",
                                 "type": "hide-empty"
                             }
                         ]
@@ -843,6 +947,19 @@
                         ]
                     },
                     {
+                        "domain": "nasdaq.com",
+                        "rules": [
+                            {
+                                "selector": "[class^='ads__midpage']",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[class^='ads__right-rail']",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "nbcsports.com",
                         "rules": [
                             {
@@ -851,6 +968,15 @@
                             },
                             {
                                 "selector": "#nbcsports-leaderboard",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "newsmax.com",
+                        "rules": [
+                            {
+                                "selector": ".DFPad",
                                 "type": "hide-empty"
                             }
                         ]
@@ -893,6 +1019,15 @@
                         ]
                     },
                     {
+                        "domain": "observador.pt",
+                        "rules": [
+                            {
+                                "selector": ".obs-ad-placeholder",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "orange.fr",
                         "rules": [
                             {
@@ -929,10 +1064,43 @@
                         ]
                     },
                     {
+                        "domain": "rumble.com",
+                        "rules": [
+                            {
+                                "selector": "[id^='rumble-ad']",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "scmp.com",
                         "rules": [
                             {
                                 "selector": "[class*='ad-slot-container']",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".top-ad",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".advertisement--mobile",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".bottom-ad",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".article-list__inline-ad",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".page-container__mobile-native-ad",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".ad-area",
                                 "type": "hide-empty"
                             }
                         ]
@@ -969,6 +1137,15 @@
                         ]
                     },
                     {
+                        "domain": "target.com",
+                        "rules": [
+                            {
+                                "selector": "[class^='styles__PubAdWrapper']",
+                                "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "thingiverse.com",
                         "rules": [
                             {
@@ -992,6 +1169,15 @@
                             {
                                 "selector": ".model-base-bnr",
                                 "type": "hide"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "wunderground.com",
+                        "rules": [
+                            {
+                                "selector": ".pane-wu-fullscreenweather-ad-box-atf",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -1132,7 +1318,7 @@
                                 "type": "closest-empty"
                             },
                             {
-                                "selector": ".ad-container",
+                                "selector": "[class^='ad-container']",
                                 "type": "override"
                             }
                         ]
@@ -1153,7 +1339,7 @@
                                 "type": "closest-empty"
                             },
                             {
-                                "selector": ".ad-container",
+                                "selector": "[class^='ad-container']",
                                 "type": "override"
                             }
                         ]
@@ -1161,7 +1347,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "d719a498422990f19674a5a450d300b4"
+            "hash": "636cbf0b3e45a59768a126ab9e73a9f0"
         },
         "fingerprintingAudio": {
             "state": "disabled",
@@ -1323,6 +1509,10 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/644"
                 },
                 {
+                    "domain": "duluthtrading.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/700"
+                },
+                {
                     "domain": "web.whatsapp.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/620"
                 }
@@ -1336,7 +1526,7 @@
                     "privacy-test-pages.glitch.me"
                 ]
             },
-            "hash": "4d1b636f1a6bc56bdaf40e3d71ffd583"
+            "hash": "470c77b05c99b8f0986cc40422a59c91"
         },
         "https": {
             "state": "enabled",
@@ -1345,8 +1535,8 @@
         },
         "incontextSignup": {
             "exceptions": [],
-            "state": "enabled",
-            "hash": "52857469413a66e8b0c7b00de5589162"
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
         },
         "navigatorInterface": {
             "exceptions": [],
@@ -1378,6 +1568,33 @@
                 "windowInMs": 0
             },
             "hash": "9439c856372a09f0cfdc9e2e0fd086fd"
+        },
+        "runtimeChecks": {
+            "state": "disabled",
+            "exceptions": [],
+            "settings": {
+                "taintCheck": "enabled",
+                "matchAllDomains": "disabled",
+                "matchAllStackDomains": "enabled",
+                "overloadInstanceOf": "enabled",
+                "elementRemovalTimeout": 1000,
+                "domains": [
+                    {
+                        "domain": "preactjs.com"
+                    },
+                    {
+                        "domain": "reactjs.org"
+                    },
+                    {
+                        "domain": "browserbench.org"
+                    },
+                    {
+                        "domain": "good.third-party.site"
+                    }
+                ],
+                "stackDomains": []
+            },
+            "hash": "32be9e17c1e346de2f37bed896eb0231"
         },
         "serviceworkerInitiatedRequests": {
             "exceptions": [],
@@ -1906,6 +2123,13 @@
                                     "wunderground.com"
                                 ],
                                 "reason": "ah.nl - 'Bonus offer' elements do not render and are not clickable.,wunderground.com - Video element does not display."
+                            },
+                            {
+                                "rule": "securepubads.g.doubleclick.net/pagead/ppub_config",
+                                "domains": [
+                                    "weather.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/415"
                             }
                         ]
                     },
@@ -2213,14 +2437,14 @@
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/475"
                             },
                             {
-                                "rule": "cse.google.com/cse/cse.js",
+                                "rule": "cse.google.com/cse/element/",
                                 "domains": [
                                     "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/475"
                             },
                             {
-                                "rule": "cse.google.com/cse/element/",
+                                "rule": "google.com/cse/cse.js",
                                 "domains": [
                                     "<all>"
                                 ],
@@ -2859,6 +3083,17 @@
                             }
                         ]
                     },
+                    "shortpixel.ai": {
+                        "rules": [
+                            {
+                                "rule": "cdn.shortpixel.ai/assets/js/bundles/spai-lib-bg",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/712"
+                            }
+                        ]
+                    },
                     "sky.com": {
                         "rules": [
                             {
@@ -2953,12 +3188,11 @@
                     "twitter.com": {
                         "rules": [
                             {
-                                "rule": "platform.twitter.com/embed/embed.modules",
+                                "rule": "platform.twitter.com/embed/embed",
                                 "domains": [
-                                    "notthebee.com",
-                                    "upworthy.com"
+                                    "<all>"
                                 ],
-                                "reason": "notthebee.com - Tweets (as main article content) don't render - instead there are loading spinners for a while before errors are displayed.,upworthy.com - Tweets (as main article content) don't render - instead there are loading spinners which overlap some text content."
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/717"
                             },
                             {
                                 "rule": "platform.twitter.com/widgets/tweet_button",
@@ -4845,7 +5079,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "47b616a5bd23e2bb09050ba7193f9ff2"
+            "hash": "c6cded53b518a104bd5f4f8e7800f94d"
         },
         "trackingCookies1p": {
             "settings": {
