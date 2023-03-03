@@ -41,6 +41,9 @@ export async function getFromStorage (key, cb) {
 
 // @ts-ignore
 export async function getFromManagedStorage (keys, cb) {
+    if (!browser.storage.managed) {
+        return {}
+    }
     try {
         return await browser.storage.managed.get(keys)
     } catch (e) {

@@ -28,6 +28,9 @@ MAKE = make -j4 $(type) browser=$(browser) type=$(type)
 watch:
 	while true; do $(MAKE) -q || $(MAKE); sleep 1; done
 
+safari: dev
+	rm -rf browsers/safari/Shared\ \(Extension\)/Resources/*
+	cp -r $(BUILD_DIR)/ browsers/safari/Shared\ \(Extension\)/Resources/
 .PHONY: release dev
 
 ###--- Unit tests ---###
@@ -137,14 +140,25 @@ SURROGATES_DIR = node_modules/@duckduckgo/tracker-surrogates/surrogates
 BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
 BROWSER_TYPE = $(browser)
 COPY_DIRS = $(BUILD_DIR)/manifest.json
+# Specify the set of scripts for the extension background
+BACKGROUND_JS = shared/js/background/background.js
+CSS_SCRIPT = $(browser)
+ifeq ($(type), dev)
+	BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
+endif
+ifeq ($(browser), safari)
+	BACKGROUND_JS := shared/js/background/safari.js
+	BROWSER_TYPE := chrome
+	CSS_SCRIPT := chrome-mv3
+endif
 ifeq ($(browser),chrome-mv3)
 	BROWSER_TYPE := chrome
 	COPY_DIRS += $(BUILD_DIR)/managed-schema.json
 endif
 
 ## Copy tasks: Copying resources that don't need and compiling
-$(BUILD_DIR)/manifest.json: browsers/$(browser)/*
-	cp -r browsers/$(browser)/* $(BUILD_DIR)
+$(BUILD_DIR)/manifest.json: browsers/$(browser)/manifest.json
+	cp -r $< $@
 
 build/chrome-mv3/$(type)/managed-schema.json: browsers/chrome/managed-schema.json
 	cp $< $@
@@ -182,11 +196,6 @@ copy-autofill: $(BUILD_DIR)/public/js/content-scripts/autofill.js $(BUILD_DIR)/p
 copy: $(COPY_DIRS) $(BUILD_DIR)/_locales $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/data/surrogates.txt $(BUILD_DIR)/public/font copy-autofill
 
 ##--- Build targets ---#
-# Specify the set of scripts for the extension background
-BACKGROUND_JS = shared/js/background/background.js
-ifeq ($(type), dev)
-	BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
-endif
 
 JS_BUNDLES = background.js base.js inject.js content-scripts/content-scope-messaging.js feedback.js options.js devtools-panel.js list-editor.js newtab.js
 js: $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
@@ -222,7 +231,7 @@ $(BUILD_DIR)/public/js/newtab.js: $(SOURCE_FILES)
 shared/data/bundled/tracker-lookup.json:
 	node scripts/bundleTrackers.mjs
 
-$(BUILD_DIR)/public/js/inject.js: node_modules/@duckduckgo/content-scope-scripts/build/$(browser)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
+$(BUILD_DIR)/public/js/inject.js: node_modules/@duckduckgo/content-scope-scripts/build/$(CSS_SCRIPT)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
 	node scripts/bundleContentScopeScripts.mjs $@ $^
 
 # SASS
