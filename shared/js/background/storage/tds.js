@@ -88,7 +88,11 @@ class TDSStorage {
                     const listeners = this._onUpdatedListeners.get(configName)
                     if (listeners) {
                         for (const listener of listeners.slice()) {
-                            await listener(configName, etag, configValue)
+                            try {
+                                await listener(configName, etag, configValue)
+                            } catch (e) {
+                                console.error(e)
+                            }
                         }
                     }
                     resolve(null)

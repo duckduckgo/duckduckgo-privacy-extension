@@ -7,6 +7,8 @@ import remoteTds from './features/remote-tds'
 import tabTracking from './features/tab-tracking'
 import atb from './features/atb'
 
+import { init as dnrConfigInit } from './dnr-config-rulesets'
+
 browser.runtime.onInstalled.addListener(async (details) => {
     remoteTds.onInstalled()
     if (details.reason.match(/install/)) {
@@ -28,6 +30,7 @@ export async function startup () {
     ])
     // tds init runs after settings
     const tds = await remoteTds.init()
+    dnrConfigInit()
     return {
         settings,
         tds,
