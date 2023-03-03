@@ -1,4 +1,4 @@
-export default {
+module.exports = {
     httpsEverywhereEnabled: true,
     embeddedTweetsEnabled: false,
     GPC: true,

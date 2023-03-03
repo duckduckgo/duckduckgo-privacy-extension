@@ -7,7 +7,7 @@ module.exports = (uaString) => {
     let version
 
     try {
-        let parsedUaParts = uaString.match(/(Firefox|Chrome|Edg)\/([0-9]+)/)
+        let parsedUaParts = uaString.match(/(Firefox|Chrome|Edg|Safari)\/([0-9]+)/)
         const isEdge = /(Edge?)\/([0-9]+)/
         const isOpera = /(OPR)\/([0-9]+)/
         // Above regex matches on Chrome first, so check if this is really Edge

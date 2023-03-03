@@ -1,14 +1,12 @@
-import browser from 'webextension-polyfill'
 import { NewTabTrackerStats } from './newtab-tracker-stats'
 import { TrackerStats } from './classes/tracker-stats'
+import * as tabTracking from './features/tab-tracking'
 const utils = require('./utils')
 const browserWrapper = require('./wrapper')
-const Companies = require('./companies')
 const experiment = require('./experiments')
 const https = require('./https')
 const httpsStorage = require('./storage/https')
 const settings = require('./settings')
-const tabManager = require('./tab-manager')
 const tdsStorage = require('./storage/tds')
 const trackers = require('./trackers')
 const dnrSessionId = require('./dnr-session-rule-id')
@@ -40,8 +38,6 @@ export async function onStartup () {
         console.warn('Error loading tds lists', e)
     }
 
-    Companies.buildFromStorage()
-
     /**
      * in Chrome only, try to initiate the `NewTabTrackerStats` feature
      */
@@ -68,15 +64,7 @@ export async function onStartup () {
         showContextMenuAction()
     }
 
-    const savedTabs = await browser.tabs.query({ status: 'complete' })
-    for (let i = 0; i < savedTabs.length; i++) {
-        const tab = savedTabs[i]
-
-        if (tab.url) {
-            // On reinstall we wish to create the tab again
-            await tabManager.restoreOrCreate(tab)
-        }
-    }
+    await tabTracking.init()
 
     if (resolveReadyPromise) {
         resolveReadyPromise()

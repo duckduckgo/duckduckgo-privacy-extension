@@ -237,7 +237,10 @@ const ATB = (() => {
                 requestDomains: ['duckduckgo.com'],
                 regexFilter: regExpAboutPage.source
             })
-
+            const browserName = parseUserAgentString()
+            if (browserName?.browser === 'Safari') {
+                delete atbRule.condition.requestDomains
+            }
             chrome.declarativeNetRequest.updateDynamicRules({
                 removeRuleIds: [atbRule.id],
                 addRules: [atbRule]
@@ -267,10 +270,5 @@ const ATB = (() => {
         }
     }
 })()
-
-settings.ready().then(async () => {
-    // set initial uninstall url
-    browserWrapper.setUninstallURL(await ATB.getSurveyURL())
-})
 
 module.exports = ATB

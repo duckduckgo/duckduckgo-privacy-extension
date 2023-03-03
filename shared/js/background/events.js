@@ -334,28 +334,6 @@ browser.webNavigation.onBeforeNavigate.addListener(details => {
  * TABS
  */
 
-const Companies = require('./companies')
-
-browser.tabs.onCreated.addListener((info) => {
-    if (info.id) {
-        tabManager.createOrUpdateTab(info.id, info)
-    }
-})
-
-browser.tabs.onUpdated.addListener((id, info) => {
-    // sync company data to storage when a tab finishes loading
-    if (info.status === 'complete') {
-        Companies.syncToStorage()
-    }
-
-    tabManager.createOrUpdateTab(id, info)
-})
-
-browser.tabs.onRemoved.addListener((id, info) => {
-    // remove the tab object
-    tabManager.delete(id)
-})
-
 // message popup to close when the active tab changes.
 browser.tabs.onActivated.addListener(() => {
     browserWrapper.notifyPopup({ closePopup: true })

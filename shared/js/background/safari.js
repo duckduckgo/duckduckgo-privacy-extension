@@ -1,9 +1,12 @@
-import * as settings from './settings'
+import { startup } from './startup-mv3'
 
 (async () => {
-    await settings.ready()
+    globalThis.dbg = await startup()
 })()
 
-globalThis.dbg = {
-    settings,
+// show rule counter badge
+if (chrome.declarativeNetRequest.setExtensionActionOptions) {
+    chrome.declarativeNetRequest.setExtensionActionOptions({
+        displayActionCountAsBadgeText: true
+    })
 }

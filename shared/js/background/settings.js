@@ -1,5 +1,5 @@
-import defaultSettings from '../../data/defaultSettings'
-import * as browserWrapper from './wrapper'
+const defaultSettings = require('../../data/defaultSettings')
+const browserWrapper = require('./wrapper')
 
 /**
  * Settings whose defaults can by managed by the system administrator
@@ -143,7 +143,7 @@ function logSettings () {
     })
 }
 
-export {
+module.exports = {
     getSetting,
     updateSetting,
     removeSetting,
