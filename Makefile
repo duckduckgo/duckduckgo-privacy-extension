@@ -119,9 +119,9 @@ shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryptio
 	npm run bundle-se
 
 # fetch integration test data
-integration-test/artifacts/attribution.json: setup-artifacts-dir
+integration-test/artifacts/attribution.json: node_modules/privacy-test-pages/adClickFlow/shared/testCases.json setup-artifacts-dir
 	mkdir -p integration-test/artifacts
-	node scripts/attributionTestCases.mjs
+	cp $< $@
 
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
