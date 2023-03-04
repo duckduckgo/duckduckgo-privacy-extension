@@ -1,8 +1,8 @@
 import * as browserWrapper from './wrapper'
 import settings from './settings'
-import tdsStorage from './storage/tds'
+// import tdsStorage from './storage/tds'
 import trackers from './trackers'
-import { isFeatureEnabled } from './utils'
+import { isFeatureEnabled, getBrowserName } from './utils'
 import {
     ensureServiceWorkerInitiatedRequestExceptions
 } from './dnr-service-worker-initiated'
@@ -20,8 +20,10 @@ import {
 import {
     generateCombinedConfigBlocklistRuleset
 } from '@duckduckgo/ddg2dnr/lib/combined'
+import { convertDNRRuleset } from './safai-compat'
 
 export const SETTING_PREFIX = 'declarative_net_request-'
+const isRegexSupported = getBrowserName() !== 'safari' ? chrome.declarativeNetRequest.isRegexSupported : () => ({ isSupported: false })
 
 // Allocate blocks of rule IDs for the different configurations. That way, the
 // rules associated with a configuration can be safely cleared without the risk
@@ -107,6 +109,7 @@ async function configRulesNeedUpdate (configName, expectedState) {
  */
 function minimalConfig ({ unprotectedTemporary, features }) {
     const result = { features: { }, unprotectedTemporary }
+    console.log('minimal config', features)
 
     for (const featureName of Object.keys(features)) {
         if (isFeatureEnabled(featureName)) {
@@ -162,9 +165,12 @@ async function updateConfigRules (
     }
 
     // Install the updated rules.
+    console.log('update rules', convertDNRRuleset(rules))
     await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds, addRules: rules
+        addRules: convertDNRRuleset(rules),
+        removeRuleIds,
     })
+    console.log('dynmaic rules', await chrome.declarativeNetRequest.getDynamicRules())
 
     // Then update the setting entry.
     const settingName = SETTING_PREFIX + configName
@@ -202,14 +208,15 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
     }
 
     if (!configValue) {
-        await tdsStorage.ready('config')
-        configValue = tdsStorage.config
+        // await tdsStorage.ready('config')
+        // configValue = tdsStorage.config
+        return
     }
 
     if (!etag) {
         const settingName = SETTING_PREFIX + 'config'
         await settings.ready()
-        await tdsStorage.ready('config')
+        // await tdsStorage.ready('config')
         const settingValue = settings.getSetting(settingName)
         if (!settingValue?.etag) {
             // Should not be possible, but if the etag is unknown at this point
@@ -229,7 +236,7 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
     } = await generateExtensionConfigurationRuleset(
         minimalConfig(configValue),
         denylistedDomains,
-        chrome.declarativeNetRequest.isRegexSupported,
+        isRegexSupported,
         ruleIdStart + 1
     )
 
@@ -238,7 +245,7 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
     )
 }
 
-export async function updateCombinedConfigBlocklistRules () {
+export async function updateCombinedConfigBlocklistRules (tdsStorage) {
     const extensionVersion = browserWrapper.getExtensionVersion()
     const denylistedDomains = await getDenylistedDomains()
     const tdsEtag = settings.getSetting('tds-etag')
@@ -271,13 +278,15 @@ let ruleUpdateLock = Promise.resolve()
  * @param {object} configValue
  * @returns {Promise}
  */
-export async function onConfigUpdate (configName, etag, configValue) {
+export async function onConfigUpdate (configName, etag, configValue, tdsStorage) {
     const extensionVersion = browserWrapper.getExtensionVersion()
     // Run an async lock on all blocklist updates so the latest update is always processed last
     ruleUpdateLock = ruleUpdateLock.then(async () => {
     // TDS (aka the block list).
         console.log('onConfigUpdate', configName)
         if (configName === 'tds') {
+            console.log('skip tds')
+            return
             const [ruleIdStart] = ruleIdRangeByConfigName[configName]
             const latestState = { etag, extensionVersion }
             if (!(await configRulesNeedUpdate(configName, latestState))) {
@@ -295,7 +304,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
                 configValue,
                 supportedSurrogates,
                 '/web_accessible_resources/',
-                chrome.declarativeNetRequest.isRegexSupported,
+                isRegexSupported,
                 ruleIdStart + 1
             )
 
@@ -306,14 +315,17 @@ export async function onConfigUpdate (configName, etag, configValue) {
             await ensureServiceWorkerInitiatedRequestExceptions(configValue)
         }
         // combined rules (cookie blocking)
-        await updateCombinedConfigBlocklistRules()
+        await updateCombinedConfigBlocklistRules(tdsStorage)
     })
     await ruleUpdateLock
 }
 
-export function init () {
+export function init (tdsStorage) {
     if (browserWrapper.getManifestVersion() === 3) {
-        tdsStorage.onUpdate('config', onConfigUpdate)
-        tdsStorage.onUpdate('tds', onConfigUpdate)
+        console.log('register dnr listeners')
+        // tdsStorage.onUpdate('config', onConfigUpdate)
+        // tdsStorage.onUpdate('tds', onConfigUpdate)
+        onConfigUpdate('config', 'a', tdsStorage.config, tdsStorage)
+        onConfigUpdate('tds', 'a', tdsStorage.tds, tdsStorage)
     }
 }

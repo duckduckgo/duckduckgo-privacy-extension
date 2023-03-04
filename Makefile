@@ -28,10 +28,16 @@ MAKE = make -j4 $(type) browser=$(browser) type=$(type)
 watch:
 	while true; do $(MAKE) -q || $(MAKE); sleep 1; done
 
-safari: dev
+safari: dev $(BUILD_DIR)/data/bundled/tds-rules.json
 	rm -rf browsers/safari/Shared\ \(Extension\)/Resources/*
 	cp -r $(BUILD_DIR)/ browsers/safari/Shared\ \(Extension\)/Resources/
 .PHONY: release dev
+
+$(BUILD_DIR)/data/bundled/tds-rules.json: $(BUILD_DIR)/data/bundled/tds.json $(BUILD_DIR)/data/surrogates.txt
+	node scripts/buildSafariBlocklist.mjs $< $(SURROGATES_DIR) $@
+
+$(BUILD_DIR)/data/bundled/tds.json:
+	curl https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json > $@
 
 ###--- Unit tests ---###
 unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js

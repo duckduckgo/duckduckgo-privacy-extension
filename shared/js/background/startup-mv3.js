@@ -3,11 +3,11 @@ import experiment from './experiments'
 import * as settings from './settings'
 import * as dnrSessionId from './dnr-session-rule-id'
 
-import remoteTds from './features/remote-tds'
+import remoteTds from './features/local-tds'
 import tabTracking from './features/tab-tracking'
 import atb from './features/atb'
 
-import { init as dnrConfigInit } from './dnr-config-rulesets'
+import * as dnr from './dnr-config-rulesets'
 
 browser.runtime.onInstalled.addListener(async (details) => {
     remoteTds.onInstalled()
@@ -30,10 +30,11 @@ export async function startup () {
     ])
     // tds init runs after settings
     const tds = await remoteTds.init()
-    dnrConfigInit()
+    dnr.init(tds)
     return {
         settings,
         tds,
-        tabManager
+        tabManager,
+        dnr
     }
 }

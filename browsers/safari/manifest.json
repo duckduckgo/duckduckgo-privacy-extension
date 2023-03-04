@@ -73,5 +73,14 @@
                 "<all_urls>"
             ]
         }
-    ]
+    ],
+    "declarative_net_request": {
+        "rule_resources": [
+            {
+                "id": "tds2",
+                "enabled": true,
+                "path": "data/bundled/tds-rules.json"
+            }
+        ]
+    }
 }

@@ -16,7 +16,7 @@ async function onInstalled () {
 async function onUpdated () {
     if (getManifestVersion() === 3) {
         // create ATB rule if there is a stored value in settings
-        ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'))
+        // ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'))
     }
 }
 
