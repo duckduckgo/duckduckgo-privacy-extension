@@ -124,6 +124,32 @@ async function getTab (tabId) {
  */
 export async function getPrivacyDashboardData (options) {
     let { tabId } = options
+    console.log('getPrivacyDashboardData', browserName)
+    if (browserName === 'safari') {
+        const matched = await chrome.declarativeNetRequest.getMatchedRules()
+        console.log('matched', matched)
+        try {
+            matched.rulesMatchedInfo.forEach(({ request, tabId, timeStamp }) => {
+                const tab = tabManager.get({ tabId })
+                if (!tab || tab.lastTrackerUpdate >= timeStamp) {
+                    return
+                }
+                const url = request.url
+                const match = trackers.getTrackerData(url, tab.url || '', {})
+                if (match) {
+                    console.log('addTracker', tab.id, match.fullTrackerDomain, match.reason)
+                    const baseDomain = utils.getBaseDomain(url)
+                    tab.site.addTracker(match)
+                    if (baseDomain) {
+                        tab.addToTrackers(match, baseDomain, url)
+                    }
+                    tab.lastTrackerUpdate = timeStamp
+                }
+            })
+        } catch (e) {
+            console.warn(e)
+        }
+    }
     if (tabId === null) {
         const currentTab = await utils.getCurrentTab()
         if (!currentTab?.id) {

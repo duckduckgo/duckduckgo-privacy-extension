@@ -1,6 +1,22 @@
 
 function convertDnrRule (accumulator, rule) {
     let { ruleset, nextId } = accumulator
+    if (rule.action.type === 'allowAllRequests') {
+        // fix for allowAllRequests
+        for (const domain of rule.condition.requestDomains) {
+            ruleset.push({
+                id: nextId++,
+                action: {
+                    type: 'allowAllRequests'
+                },
+                condition: {
+                    urlFilter: `https://${domain}/*`,
+                    resourceTypes: rule.condition.resourceTypes
+                }
+            })
+        }
+        return { ruleset, nextId }
+    }
     if (rule.condition.excludedInitiatorDomains) {
         // subdomain matching prefix
         rule.condition.excludedDomains = rule.condition.excludedInitiatorDomains.map(d => `*${d}`)

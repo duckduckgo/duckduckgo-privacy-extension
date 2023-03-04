@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill'
 import experiment from './experiments'
 import * as settings from './settings'
 import * as dnrSessionId from './dnr-session-rule-id'
+import * as messageHandlers from './message-handlers'
 
 import remoteTds from './features/local-tds'
 import tabTracking from './features/tab-tracking'
@@ -17,6 +18,13 @@ browser.runtime.onInstalled.addListener(async (details) => {
         atb.onInstalled()
     } else if (details.reason.match(/update/)) {
         atb.onUpdated()
+    }
+})
+
+browser.runtime.onMessage.addListener((req, sender) => {
+    console.log('msg', req)
+    if (req.messageType && req.messageType in messageHandlers) {
+        return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req))
     }
 })
 
