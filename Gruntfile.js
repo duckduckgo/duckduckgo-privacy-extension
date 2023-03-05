@@ -249,6 +249,34 @@ module.exports = function (grunt) {
             }
         },
 
+        instrument: {
+            files: 'shared/js/**/*.js',
+            options: {
+              lazy: true,
+              basePath: 'test/coverage/instrument/'
+            }
+        },
+
+        jasmine: {
+            coverage: {
+                src: ['build/test/*.js'],
+                options: {
+                    specs: ['unit-test/*.js'],
+                    template: require('grunt-template-jasmine-istanbul'),
+                    templateOptions: {
+                        coverage: 'bin/coverage/coverage.json',
+                        report: 'bin/coverage',
+                        thresholds: {
+                            lines: 75,
+                            statements: 75,
+                            branches: 75,
+                            functions: 90
+                        }
+                    }
+                }
+            }
+        },
+
         copy: {
             contentScope: {
                 src: [`${ddgContentScope}/build/${browser}/inject.js`],

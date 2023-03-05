@@ -10,8 +10,14 @@ module.exports = function (config) {
         browserConsoleLogOptions: {
             level: 'warn'
         },
+        preprocessors: {
+            // source files, that you wanna generate coverage for
+            // do not include tests or libraries
+            // (these files will be instrumented by Istanbul)
+            '**/*.js': ['coverage']
+        },
         browsers: ['ChromeHeadless'],
-        reporters: ['dots'],
+        reporters: ['dots', 'coverage'],
         customLaunchers: {
             Chrome_travis_ci: {
                 base: 'ChromeHeadless',
