@@ -13,7 +13,7 @@ const input = listSourceFiles(path.join('unit-test', 'background'))
     .concat(listSourceFiles(path.join('unit-test', 'background', 'events')))
     .concat(listSourceFiles(path.join('unit-test', 'background', 'reference-tests')))
     .concat(listSourceFiles(path.join('unit-test', 'background', 'storage')))
-const b = browserify(input, {
+browserify(input, {
     transform: [
         fileMapTransform,
         ['babelify', {
@@ -25,10 +25,7 @@ const b = browserify(input, {
         }],
         ['brfs']
     ]
-})
-
-// fs.writeFile(outputFile, b.bundle())
-b.bundle((err, bundle) => {
+}).bundle((err, bundle) => {
     if (err) {
         console.error(err)
         process.exit(1)
