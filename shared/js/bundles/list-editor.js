@@ -1,1 +1,0 @@
-import '../devtools/list-editor'

@@ -186,7 +186,7 @@ export const isValidUsername = (userName) => /^[a-z0-9_]+$/.test(userName)
  */
 export const isValidToken = (token) => /^[a-z0-9]+$/.test(token)
 
-export default {
+module.exports = {
     REFETCH_ALIAS_ALARM,
     fetchAlias,
     showContextMenuAction,
