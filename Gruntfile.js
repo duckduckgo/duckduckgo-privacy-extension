@@ -172,7 +172,11 @@ module.exports = function (grunt) {
                                 ]
                             }]]
                         }],
-                        ['brfs']
+                        ['brfs'],
+                        ['browserify-istanbul', {
+                            ignore: ['**/node_modules/**', '**/unit-test/**', '**/build/test/**'], // ignore third party libs
+                            defaultIgnore: true
+                        }]
                     ]
                 },
                 files: baseFileMap.unitTest
@@ -262,17 +266,6 @@ module.exports = function (grunt) {
                 src: ['build/test/*.js'],
                 options: {
                     specs: ['unit-test/*.js'],
-                    template: require('grunt-template-jasmine-istanbul'),
-                    templateOptions: {
-                        coverage: 'bin/coverage/coverage.json',
-                        report: 'bin/coverage',
-                        thresholds: {
-                            lines: 75,
-                            statements: 75,
-                            branches: 75,
-                            functions: 90
-                        }
-                    }
                 }
             }
         },
