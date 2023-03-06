@@ -20,7 +20,7 @@ import {
 import {
     generateCombinedConfigBlocklistRuleset
 } from '@duckduckgo/ddg2dnr/lib/combined'
-import { convertDNRRuleset } from './safai-compat'
+import { convertDNRRuleset } from './safai-compat.mjs'
 
 export const SETTING_PREFIX = 'declarative_net_request-'
 const isRegexSupported = getBrowserName() !== 'safari' ? chrome.declarativeNetRequest.isRegexSupported : () => ({ isSupported: false })

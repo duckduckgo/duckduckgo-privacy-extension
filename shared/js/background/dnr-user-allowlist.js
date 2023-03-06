@@ -16,6 +16,7 @@ import {
 import {
     generateDNRRule
 } from '@duckduckgo/ddg2dnr/lib/utils'
+import { convertDNRRuleset } from './safai-compat.mjs'
 
 /**
  * Normalize and validate the given untrusted domain (e.g. from user input).
@@ -51,9 +52,10 @@ async function updateUserAllowlistRule (allowlistedDomains) {
             requestDomains: allowlistedDomains
         }))
     }
+    console.log('updateUserAllowlistRule', allowlistedDomains, addRules)
 
     await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds, addRules
+        removeRuleIds, addRules: convertDNRRuleset(addRules)
     })
 }
 

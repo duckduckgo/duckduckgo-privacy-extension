@@ -17,6 +17,9 @@ function convertDnrRule (accumulator, rule) {
         }
         return { ruleset, nextId }
     }
+    if (rule.action.type === 'redirect' || rule.condition.urlFilter?.startsWith('||')) {
+        rule.condition.urlFilter = rule.condition.urlFilter.slice(2)
+    }
     if (rule.condition.excludedInitiatorDomains) {
         // subdomain matching prefix
         rule.condition.excludedDomains = rule.condition.excludedInitiatorDomains.map(d => `*${d}`)
@@ -54,6 +57,6 @@ function convertDnrRule (accumulator, rule) {
 }
 
 export function convertDNRRuleset (ruleset) {
-    const conversionResult = ruleset.reduce(convertDnrRule, { ruleset: [], nextId: ruleset[0].id })
+    const conversionResult = ruleset.reduce(convertDnrRule, { ruleset: [], nextId: ruleset.length > 0 ? ruleset[0].id : 1 })
     return conversionResult.ruleset
 }
