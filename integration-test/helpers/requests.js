@@ -87,8 +87,9 @@ async function logPageRequests (page, requests, filter) {
         requestId, blockedReason, errorText
     }) => {
         saveRequestOutcome(requestId, details => {
-            if (blockedReason === 'other' &&
-                errorText === 'net::ERR_BLOCKED_BY_CLIENT') {
+            if ((blockedReason === 'other' &&
+                 errorText === 'net::ERR_BLOCKED_BY_CLIENT') ||
+                (!blockedReason && errorText === 'net::ERR_ABORTED')) {
                 details.status = 'blocked'
             } else {
                 details.status = 'failed'
