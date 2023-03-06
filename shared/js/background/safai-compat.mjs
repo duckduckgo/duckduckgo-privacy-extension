@@ -17,7 +17,7 @@ function convertDnrRule (accumulator, rule) {
         }
         return { ruleset, nextId }
     }
-    if (rule.action.type === 'redirect' || rule.condition.urlFilter?.startsWith('||')) {
+    if (rule.action.type === 'redirect' && rule.condition.urlFilter?.startsWith('||')) {
         rule.condition.urlFilter = rule.condition.urlFilter.slice(2)
     }
     if (rule.condition.excludedInitiatorDomains) {

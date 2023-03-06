@@ -175,7 +175,7 @@
                     "reason": "Generally poor UX - no username saved on signup, prompts for Duck address on 'forgot password'."
                 }
             ],
-            "state": "disabled",
+            "state": "enabled",
             "hash": "cdb6aeccec0eb59ae554f3fd75d336cc"
         },
         "clickToPlay": {
@@ -1160,7 +1160,7 @@
                     }
                 ]
             },
-            "state": "disabled",
+            "state": "enabled",
             "hash": "d719a498422990f19674a5a450d300b4"
         },
         "fingerprintingAudio": {
@@ -1345,12 +1345,12 @@
         },
         "incontextSignup": {
             "exceptions": [],
-            "state": "disabled",
+            "state": "enabled",
             "hash": "52857469413a66e8b0c7b00de5589162"
         },
         "navigatorInterface": {
             "exceptions": [],
-            "state": "disabled",
+            "state": "enabled",
             "hash": "52857469413a66e8b0c7b00de5589162"
         },
         "nonTracking3pCookies": {
@@ -1447,7 +1447,7 @@
                     "hmb_medium"
                 ]
             },
-            "state": "disabled",
+            "state": "enabled",
             "hash": "4eb7caeea36d5a0d96fe06386d403d54"
         },
         "userAgentRotation": {

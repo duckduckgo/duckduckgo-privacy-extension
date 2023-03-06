@@ -23,6 +23,9 @@ browser.runtime.onInstalled.addListener(async (details) => {
 
 browser.runtime.onMessage.addListener((req, sender) => {
     console.log('msg', req)
+    if (req.registeredTempAutofillContentScript) {
+        req.messageType = 'registeredContentScript'
+    }
     if (req.messageType && req.messageType in messageHandlers) {
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req))
     }
