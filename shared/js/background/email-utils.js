@@ -53,31 +53,33 @@ export const fetchAlias = () => {
 
 const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
 // Create the contextual menu hidden by default
-browser.contextMenus.create({
-    id: MENU_ITEM_ID,
-    title: 'Generate Private Duck Address',
-    contexts: ['editable'],
-    documentUrlPatterns: ['https://*/*'],
-    visible: false
-}, () => {
-    // It's fine if this context menu already exists, suppress that error.
-    // Note: Since webextension-polyfill does not wrap the contextMenus.create
-    //       API, the old callback + runtime.lastError approach must be used.
-    const { lastError } = browser.runtime
-    if (lastError && lastError.message &&
-        !lastError.message.startsWith('Cannot create item with duplicate id')) {
-        throw lastError
-    }
-})
-browser.contextMenus.onClicked.addListener((info, tab) => {
-    const userData = getSetting('userData')
-    if (tab?.id && userData.nextAlias) {
-        browser.tabs.sendMessage(tab.id, {
-            type: 'contextualAutofill',
-            alias: userData.nextAlias
-        })
-    }
-})
+if (browser.contextMenus) {
+    browser.contextMenus.create({
+        id: MENU_ITEM_ID,
+        title: 'Generate Private Duck Address',
+        contexts: ['editable'],
+        documentUrlPatterns: ['https://*/*'],
+        visible: false
+    }, () => {
+        // It's fine if this context menu already exists, suppress that error.
+        // Note: Since webextension-polyfill does not wrap the contextMenus.create
+        //       API, the old callback + runtime.lastError approach must be used.
+        const { lastError } = browser.runtime
+        if (lastError && lastError.message &&
+            !lastError.message.startsWith('Cannot create item with duplicate id')) {
+            throw lastError
+        }
+    })
+    browser.contextMenus.onClicked.addListener((info, tab) => {
+        const userData = getSetting('userData')
+        if (tab?.id && userData.nextAlias) {
+            browser.tabs.sendMessage(tab.id, {
+                type: 'contextualAutofill',
+                alias: userData.nextAlias
+            })
+        }
+    })
+}
 
 export const showContextMenuAction = () => browser.contextMenus.update(MENU_ITEM_ID, { visible: true })
 

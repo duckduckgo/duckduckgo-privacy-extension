@@ -211,7 +211,7 @@ $(BUILD_DIR)/public/js/background.js: $(SOURCE_FILES)
 	$(BROWSERIFY) $(BACKGROUND_JS) -o $@
 
 $(BUILD_DIR)/public/js/content-scripts/content-scope-messaging.js: shared/js/content-scripts/content-scope-messaging.js
-	cp $< $@
+	$(BROWSERIFY) $< > $@
 
 ## Extension UI/Devtools scripts
 $(BUILD_DIR)/public/js/base.js: $(SOURCE_FILES)

@@ -1,5 +1,11 @@
 import tdsStorage from '../storage/tds'
 import trackers from '../trackers'
+import { tdsLists } from '../../../data/constants'
+
+const bundledConfig = {
+    url: '/data/bundled/extension-config.json'
+}
+const configList = tdsLists.find(l => l.name === 'config') || bundledConfig
 
 class TDS {
     constructor () {
@@ -26,7 +32,14 @@ class TDS {
     }
 
     async _loadConfig () {
-        this.config = await (await fetch('/data/bundled/extension-config.json')).json()
+        let response
+        console.log('fetch', configList.url)
+        response = await fetch(configList.url)
+        if (!response.ok) {
+            console.warn('Config fetch error', response)
+            response = await fetch(bundledConfig.url)
+        }
+        this.config = await response.json()
         tdsStorage.config = this.config
     }
 
