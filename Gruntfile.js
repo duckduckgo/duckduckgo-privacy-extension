@@ -5,7 +5,9 @@ module.exports = function (grunt) {
     const { join } = require('path')
     const dashboardDir = join(__dirname, 'node_modules', '@duckduckgo', 'privacy-dashboard')
 
-    require('load-grunt-tasks')(grunt)
+    require('load-grunt-tasks')(grunt, {
+        pattern: ['grunt-*', '!grunt-template-jasmine-istanbul']
+      });
     grunt.loadNpmTasks('grunt-karma')
     grunt.loadNpmTasks('grunt-contrib-copy')
 
@@ -266,6 +268,13 @@ module.exports = function (grunt) {
                 src: ['build/test/*.js'],
                 options: {
                     specs: ['unit-test/*.js'],
+                    template: require('grunt-template-jasmine-istanbul'),
+                    templateOptions: {
+                        replace: true,
+                        coverage: 'coverage_json',
+                        report: 'coverage_html',
+                        files: 'test/shared/**'
+                    }
                 }
             }
         },
