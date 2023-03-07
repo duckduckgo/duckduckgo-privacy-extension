@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1677839118579,
+    "version": 1678115771047,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -185,6 +185,25 @@
             ],
             "state": "enabled",
             "hash": "59c4bd9b8cee343c81da98bfe5d77928"
+        },
+        "clickToLoad": {
+            "exceptions": [],
+            "settings": {
+                "Facebook, Inc.": {
+                    "ruleActions": [
+                        "block-ctl-fb"
+                    ],
+                    "state": "enabled"
+                },
+                "Youtube": {
+                    "ruleActions": [
+                        "block-ctl-yt"
+                    ],
+                    "state": "disabled"
+                }
+            },
+            "state": "enabled",
+            "hash": "13f0b3ad67d6e300e17c52191ed4b963"
         },
         "clickToPlay": {
             "exceptions": [],
@@ -1580,6 +1599,15 @@
                 "elementRemovalTimeout": 1000,
                 "domains": [
                     {
+                        "domain": "bbc.co.uk"
+                    },
+                    {
+                        "domain": "cnn.com"
+                    },
+                    {
+                        "domain": "github.com"
+                    },
+                    {
                         "domain": "preactjs.com"
                     },
                     {
@@ -1594,7 +1622,7 @@
                 ],
                 "stackDomains": []
             },
-            "hash": "32be9e17c1e346de2f37bed896eb0231"
+            "hash": "6ea919f310b93fec1d2ef445678d84e9"
         },
         "serviceworkerInitiatedRequests": {
             "exceptions": [],
