@@ -13,9 +13,9 @@ const jsdom = require('jsdom')
 
 const trackingJsCookieProtection = require('../../../shared/content-scope-scripts/src/features/cookie')
 
-const trackingConfigReference = require('../../data/reference-tests/block-third-party-tracking-cookies/config_reference.json')
-const trackingBlocklistReference = require('../../data/reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
-const trackingTestSets = require('../../data/reference-tests/block-third-party-tracking-cookies/tests.json')
+const trackingConfigReference = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/config_reference.json')
+const trackingBlocklistReference = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
+const trackingTestSets = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/tests.json')
 const constants = require('../../../shared/data/constants')
 
 const { JSDOM } = jsdom

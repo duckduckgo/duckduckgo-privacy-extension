@@ -11,8 +11,8 @@ const settings = require('../../../shared/js/background/settings')
 
 const contentScriptUtils = require('../../../shared/content-scope-scripts/src/utils.js')
 
-const testSets = require('../../data/reference-tests/global-privacy-control/tests.json')
-const config = require('../../data/reference-tests/global-privacy-control/config_reference.json')
+const testSets = require('@duckduckgo/privacy-reference-tests/global-privacy-control/tests.json')
+const config = require('@duckduckgo/privacy-reference-tests/global-privacy-control/config_reference.json')
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 

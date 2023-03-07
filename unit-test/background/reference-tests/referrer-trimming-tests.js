@@ -10,9 +10,9 @@ const jsReferrerProtection = require('../../../shared/content-scope-scripts/src/
 
 const limitReferrerData = require('../../../shared/js/background/events/referrer-trimming')
 
-const configReference = require('../../data/reference-tests/referrer-trimming/config_reference.json')
-const blocklistReference = require('../../data/reference-tests/referrer-trimming/tracker_radar_reference.json')
-const testSets = require('../../data/reference-tests/referrer-trimming/tests.json')
+const configReference = require('@duckduckgo/privacy-reference-tests/referrer-trimming/config_reference.json')
+const blocklistReference = require('@duckduckgo/privacy-reference-tests/referrer-trimming/tracker_radar_reference.json')
+const testSets = require('@duckduckgo/privacy-reference-tests/referrer-trimming/tests.json')
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 
