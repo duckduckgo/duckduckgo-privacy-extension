@@ -8,9 +8,14 @@ const testPageHosts = new Set([
 /**
  * Route requests to the local test service (privacy-test-pages)
  * @param {import("@playwright/test").Page} page
+ * @param {(route: import("@playwright/test").Route) => boolean} [overrideHandler] Optional handler to
+ * intercept additional requests before this route applies.
  */
-export function routeFromLocalhost (page) {
+export function routeFromLocalhost (page, overrideHandler) {
     return page.route('**/*', async (route) => {
+        if (overrideHandler && overrideHandler(route)) {
+            return
+        }
         const url = new URL(route.request().url())
         if (!testPageHosts.has(url.hostname)) {
             // skip requests for other hosts
