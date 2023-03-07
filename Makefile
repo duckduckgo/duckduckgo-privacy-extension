@@ -30,7 +30,7 @@ watch:
 
 safari: dev $(BUILD_DIR)/data/bundled/tds-rules.json
 	rm -rf browsers/safari/Shared\ \(Extension\)/Resources/*
-	cp -r $(BUILD_DIR)/ browsers/safari/Shared\ \(Extension\)/Resources/
+	cp -r $(BUILD_DIR)/ browsers/safari/safari-mv3/Shared\ \(Extension\)/Resources/
 .PHONY: release dev
 
 $(BUILD_DIR)/data/bundled/tds-rules.json: $(BUILD_DIR)/data/bundled/tds.json $(BUILD_DIR)/data/surrogates.txt

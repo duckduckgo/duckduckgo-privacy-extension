@@ -2,7 +2,7 @@
 //  ViewController.swift
 //  Shared (App)
 //
-//  Created by Sam Macbeth on 07.02.23.
+//  Created by Sam Macbeth on 07.03.23.
 //
 
 import WebKit
@@ -16,7 +16,7 @@ import SafariServices
 typealias PlatformViewController = NSViewController
 #endif
 
-let extensionBundleIdentifier = "com.duckduckgo.duckduckgo-safari-extension.Extension"
+let extensionBundleIdentifier = "com.duckduckgo.safari-mv3.Extension"
 
 class ViewController: PlatformViewController, WKNavigationDelegate, WKScriptMessageHandler {
 
