@@ -10,12 +10,12 @@ import { sendTabMessage } from './utils'
  */
 export function getDefaultEnabledClickToLoadRuleActionsForTab (tab) {
     // Click to Load feature isn't supported or is disabled for the tab.
-    if (!tab?.site?.isFeatureEnabled('clickToPlay')) {
+    if (!tab?.site?.isFeatureEnabled('clickToLoad')) {
         return []
     }
 
     const clickToLoadSettings =
-        tdsStorage?.config?.features?.clickToPlay?.settings
+        tdsStorage?.config?.features?.clickToLoad?.settings
 
     // Click to Load configuration isn't ready yet.
     if (!clickToLoadSettings) {
@@ -26,15 +26,11 @@ export function getDefaultEnabledClickToLoadRuleActionsForTab (tab) {
     const enabledRuleActions = []
     const { parentEntity } = tab.site
 
-    for (let [entity, { ruleActions, state }] of Object.entries(clickToLoadSettings)) {
+    for (const [entity, { ruleActions, state }] of Object.entries(clickToLoadSettings)) {
         // No rule actions, or entity is disabled.
         if (!ruleActions || ruleActions.length === 0 || state !== 'enabled') {
             continue
         }
-
-        // TODO: Remove this workaround once the content-scope-scripts and
-        //       privacy-configuration repositories have been updated.
-        if (entity === 'Facebook') entity = 'Facebook, Inc.'
 
         // Enabled Click to Load entity is third-party for this tab, note its
         // rule actions.

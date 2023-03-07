@@ -107,11 +107,11 @@
             },
             "exceptions": []
         },
-        "clickToPlay": {
+        "clickToLoad": {
             "state": "enabled",
             "exceptions": [],
             "settings": {
-                "Facebook": {
+                "Facebook, Inc.": {
                     "state": "enabled",
                     "ruleActions": ["block-ctl-fb"]
                 }
