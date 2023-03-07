@@ -30,7 +30,6 @@ async function logPageRequests (page, requests, filter) {
      */
     const saveRequestOutcome = (requestId, updateDetails) => {
         if (!requestDetailsByRequestId.has(requestId)) {
-            console.log('missing request', requestId)
             return
         }
 
@@ -49,7 +48,6 @@ async function logPageRequests (page, requests, filter) {
 
     page.on('request', (request) => {
         const url = request.url()
-        // console.log('xxx', url, request.url(), request.redirectedFrom())
         const requestDetails = {
             url,
             method: request.method(),
@@ -206,7 +204,6 @@ test.describe('Test Facebook Click To Load', () => {
             expect(requestCount).toBeGreaterThan(0)
             expect(blockCount).toEqual(0)
             expect(allowCount).toEqual(requestCount)
-            console.log(pageRequests)
         }
 
         // When the page is reloaded, requests should be blocked again.
