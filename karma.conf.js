@@ -14,7 +14,7 @@ module.exports = function (config) {
             // source files, that you wanna generate coverage for
             // do not include tests or libraries
             // (these files will be instrumented by Istanbul)
-            '**/*.js': ['coverage']
+            'shared/js/**/*.js': ['coverage']
         },
         browsers: ['ChromeHeadless'],
         reporters: ['dots', 'coverage'],
