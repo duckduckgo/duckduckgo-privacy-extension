@@ -46,7 +46,7 @@ shared/content-scope-scripts/src/%: shared/content-scope-scripts
 UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
 build/test/background.js: $(TEST_FILES) $(SOURCE_FILES) shared/content-scope-scripts
 	mkdir -p `dirname $@`
-	node ./scripts/buildTests.js $@
+	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
 
 build/test/ui.js: $(TEST_FILES)
 	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
