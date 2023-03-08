@@ -1,5 +1,5 @@
 {
-    "globalThis.dbg.tds.config.features.clickToPlay": {
+    "globalThis.dbg.tds.config.features.clickToLoad": {
         "state": "enabled",
         "exceptions": [ ],
         "settings": {
@@ -10,5 +10,10 @@
                 ]
             }
         }
+    },
+    "globalThis.dbg.tds.config.features.clickToPlay": {
+        "state": "disabled",
+        "exceptions": [],
+        "settings": { }
     }
 }
