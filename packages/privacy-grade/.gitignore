@@ -1,0 +1,13 @@
+.DS_Store
+*.pem
+jshint_log.txt
+node_modules
+npm-debug.log
+.cache
+*.map
+build/
+*-sites/
+*-grades/
+*-trackers/
+*.csv
+*.txt

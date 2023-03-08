@@ -15,7 +15,7 @@
     "maxNodeModuleJsDepth": 0
   },
   "include": [
-      "node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js",
+      "packages/privacy-grade/src/classes/trackers.js",
       "node_modules/@duckduckgo/privacy-dashboard/schema/__generated__/schema.types.ts",
       "shared/js/background/**/*.js",
       "shared/js/devtools/**/*.js",
