@@ -3,10 +3,10 @@ const tds = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds')
 
-const config = require('../../data/reference-tests/url-parameters/config_reference.json')
+const config = require('@duckduckgo/privacy-reference-tests/url-parameters/config_reference.json')
 const {
     trackingParameters: { name: featureDescription, tests }
-} = require('../../data/reference-tests/url-parameters/tests.json')
+} = require('@duckduckgo/privacy-reference-tests/url-parameters/tests.json')
 
 const {
     stripTrackingParameters,

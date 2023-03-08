@@ -14,9 +14,9 @@ const screenProtection = require('../../../shared/content-scope-scripts/src/feat
 const tempStorageProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-temporary-storage')
 const { isFeatureBroken } = require('../../../shared/content-scope-scripts/src/utils')
 
-const configReference = require('../../data/reference-tests/fingerprinting-protections/config_reference.json')
-const testSets = require('../../data/reference-tests/fingerprinting-protections/tests.json')
-const apiMocksInit = require('../../data/reference-tests/fingerprinting-protections/init')
+const configReference = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/config_reference.json')
+const testSets = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/tests.json')
+const apiMocksInit = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/init')
 
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom

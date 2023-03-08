@@ -22,8 +22,8 @@ const manifestVersion = browserWrapper.getManifestVersion()
 
 const ATB = (() => {
     // regex to match ddg urls to add atb params to.
-    // Matching subdomains, searches, and newsletter page
-    const regExpAboutPage = /^https?:\/\/([\w-]+\.)?duckduckgo\.com\/(\?.*|about#newsletter)/
+    // Matching subdomains, searches, newsletter page and chrome new tab page
+    const regExpAboutPage = /^https?:\/\/([\w-]+\.)?duckduckgo\.com\/(\?.*|about#newsletter|chrome_newtab)/
     const matchPage = /^https:\/\/([\w-]+\.)?duckduckgo.com\/\?/
     const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 

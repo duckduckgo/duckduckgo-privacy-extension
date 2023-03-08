@@ -1,5 +1,5 @@
 import '../helpers/mock-browser-api'
-import * as allowlistedTrackers from '../data/reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json'
+import * as allowlistedTrackers from '@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json'
 import * as tds from '../data/tds.json'
 import * as browserWrapper from '../../shared/js/background/wrapper'
 import * as testConfig from '../data/extension-config.json'
@@ -31,7 +31,7 @@ import {
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
-const TEST_EXTENION_VERSIONS = ['0.1', '0.2', '0.3']
+const TEST_EXTENION_VERSIONS = ['2023.1.1', '2023.2.1', '2023.3.1']
 
 let onUpdateListeners
 

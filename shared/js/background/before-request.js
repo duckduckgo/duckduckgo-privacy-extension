@@ -18,8 +18,9 @@ const {
 } = require('./url-parameters')
 const ampProtection = require('./amp-protection')
 const {
+    displayClickToLoadPlaceholders,
     getDefaultEnabledClickToLoadRuleActionsForTab
-} = require('./dnr-click-to-load')
+} = require('./click-to-load')
 
 function buildResponse (url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -255,6 +256,10 @@ function blockHandleResponse (thisTab, requestData) {
     const serviceWorkerInitiated = requestData.tabId === -1
 
     if (tracker) {
+        if (tracker?.matchedRule?.action?.startsWith('block-ctl-')) {
+            displayClickToLoadPlaceholders(thisTab, tracker.matchedRule.action)
+        }
+
         // temp allowlisted trackers to fix site breakage
         if (thisTab.site.isFeatureEnabled('trackerAllowlist')) {
             const allowListed = trackerAllowlist(thisTab.site.url, requestData.url)

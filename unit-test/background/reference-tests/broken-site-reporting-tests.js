@@ -4,7 +4,7 @@ import { breakageReportForTab } from '../../../shared/js/background/broken-site-
 require('../../helpers/mock-browser-api')
 
 const loadPixel = require('../../../shared/js/background/load')
-const testSets = require('../../data/reference-tests/broken-site-reporting/tests.json')
+const testSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/tests.json')
 
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]

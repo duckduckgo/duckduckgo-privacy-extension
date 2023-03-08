@@ -1,3 +1,4 @@
+import { getDefaultEnabledClickToLoadRuleActionsForTab } from './click-to-load'
 import { getNextSessionRuleId } from './dnr-session-rule-id'
 import settings from './settings'
 import tdsStorage from './storage/tds'
@@ -66,51 +67,6 @@ async function generateDnrAllowingRules (tab, ruleAction) {
     }
 
     return allowingRules
-}
-
-/**
- * Find the enabled Click to Load rule actions for the given tab.
- * Note: Take care to ensure wait for the extension configuration to be ready
- *       first.
- * @param {import('./classes/tab')} tab
- * @return {string[]}
- */
-export function getDefaultEnabledClickToLoadRuleActionsForTab (tab) {
-    // Click to Load feature isn't supported or is disabled for the tab.
-    if (!tab?.site?.isFeatureEnabled('clickToPlay')) {
-        return []
-    }
-
-    const clickToLoadSettings =
-        tdsStorage?.config?.features?.clickToPlay?.settings
-
-    // Click to Load configuration isn't ready yet.
-    if (!clickToLoadSettings) {
-        console.warn('Click to Load configuration not ready yet, skipped.')
-        return []
-    }
-
-    const enabledRuleActions = []
-    const { parentEntity } = tab.site
-
-    for (let [entity, { ruleActions, state }] of Object.entries(clickToLoadSettings)) {
-        // No rule actions, or entity is disabled.
-        if (!ruleActions || ruleActions.length === 0 || state !== 'enabled') {
-            continue
-        }
-
-        // TODO: Remove this workaround once the content-scope-scripts and
-        //       privacy-configuration repositories have been updated.
-        if (entity === 'Facebook') entity = 'Facebook, Inc.'
-
-        // Enabled Click to Load entity is third-party for this tab, note its
-        // rule actions.
-        if (parentEntity !== entity) {
-            enabledRuleActions.push(...ruleActions)
-        }
-    }
-
-    return enabledRuleActions
 }
 
 /**

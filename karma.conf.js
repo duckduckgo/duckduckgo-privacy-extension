@@ -2,10 +2,10 @@ module.exports = function (config) {
     process.env.CHROME_BIN = require('puppeteer').executablePath()
 
     const configuration = {
-        basePath: '',
+        basePath: 'build/test/',
         frameworks: ['jasmine', 'source-map-support'],
         singleRun: true,
-        files: [],
+        files: ['background.js', 'ui.js', 'shared-utils.js'],
         logLevel: config.LOG_ERROR,
         browserConsoleLogOptions: {
             level: 'warn'
