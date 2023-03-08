@@ -34,8 +34,11 @@ watch:
 unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
 	$(KARMA) start karma.conf.js
 
-shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts
-	cp -r node_modules/@duckduckgo/content-scope-scripts shared/
+shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts $(shell find node_modules/@duckduckgo/content-scope-scripts/src -type f)
+	rsync -a node_modules/@duckduckgo/content-scope-scripts/ shared/content-scope-scripts --include="lib/***" --include="src/***" --exclude="*"
+
+shared/content-scope-scripts/lib/%: shared/content-scope-scripts
+shared/content-scope-scripts/src/%: shared/content-scope-scripts
 
 .PHONY: unit-test
 
