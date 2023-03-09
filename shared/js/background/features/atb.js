@@ -8,9 +8,9 @@ async function init () {
 }
 
 async function onInstalled () {
-    await ATB.updateATBValues()
-    await ATB.openPostInstallPage()
-    onUpdated()
+    // await ATB.updateATBValues()
+    // await ATB.openPostInstallPage()
+    // onUpdated()
 }
 
 async function onUpdated () {
