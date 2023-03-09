@@ -3,7 +3,7 @@ ITEMS   := shared/html shared/data shared/img
 ###--- Binaries ---###
 SASS = node_modules/.bin/sass
 BROWSERIFY_BIN = node_modules/.bin/browserify
-BROWSERIFY = $(BROWSERIFY_BIN) -t babelify
+BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ ./node_modules/@duckduckgo ] --presets [ @babel/preset-env ] ]
 ifeq ($(type),dev)
 	BROWSERIFY += -d
 endif
@@ -37,17 +37,11 @@ watch:
 unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
 	$(KARMA) start karma.conf.js
 
-shared/content-scope-scripts: node_modules/@duckduckgo/content-scope-scripts $(shell find node_modules/@duckduckgo/content-scope-scripts/src -type f)
-	rsync -a node_modules/@duckduckgo/content-scope-scripts/ shared/content-scope-scripts --include="lib/***" --include="src/***" --exclude="*"
-
-shared/content-scope-scripts/lib/%: shared/content-scope-scripts
-shared/content-scope-scripts/src/%: shared/content-scope-scripts
-
 .PHONY: unit-test
 
 ## Build unit-tests with browserify
 UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
-build/test/background.js: $(TEST_FILES) $(SOURCE_FILES) shared/content-scope-scripts
+build/test/background.js: $(TEST_FILES) $(SOURCE_FILES)
 	mkdir -p `dirname $@`
 	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
 
@@ -132,7 +126,6 @@ integration-test/artifacts/attribution.json: node_modules/privacy-test-pages/adC
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
 	rm -rf $(BUILD_DIR)
-	rm -rf unit-test/data/reference-tests shared/content-scope-scripts
 
 
 ###--- Copy targets ---###

@@ -7,7 +7,7 @@ const Site = require('../../../shared/js/background/classes/site')
 const utils = require('../../../shared/js/background/utils')
 const browserWrapper = require('../../../shared/js/background/wrapper')
 
-const contentScriptUtils = require('../../../shared/content-scope-scripts/src/utils.js')
+const contentScriptUtils = require('@duckduckgo/content-scope-scripts/src/utils.js')
 
 const testSets = require('@duckduckgo/privacy-reference-tests/privacy-configuration/tests.json')
 const configs = {
