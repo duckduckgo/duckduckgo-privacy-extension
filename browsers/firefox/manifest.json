@@ -6,6 +6,7 @@
             "strict_min_version": "91.0"
         }
     },
+    "default_locale": "en",
     "version": "2023.3.3",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
