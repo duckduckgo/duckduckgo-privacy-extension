@@ -4,6 +4,9 @@ ITEMS   := shared/html shared/data shared/img
 SASS = node_modules/.bin/sass
 BROWSERIFY_BIN = node_modules/.bin/browserify
 BROWSERIFY = $(BROWSERIFY_BIN) -t babelify
+ifeq ($(type),dev)
+	BROWSERIFY += -d
+endif
 KARMA = node_modules/.bin/karma
 
 ###--- Variables ---###
