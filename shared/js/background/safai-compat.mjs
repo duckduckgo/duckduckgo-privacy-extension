@@ -32,11 +32,11 @@ function convertDnrRule (accumulator, rule) {
         }
         delete rule.condition.initiatorDomains
     }
+    if (rule.condition.regexFilter) {
+        // this only happens for facebook rules, for which it's safe to drop the requestDomains part
+        delete rule.condition.requestDomains
+    }
     if (rule.condition.requestDomains) {
-        if (rule.condition.regexFilter) {
-            // skip regex rules for the moment
-            return
-        }
         for (const domain of rule.condition.requestDomains) {
             const urlFilter = rule.condition.urlFilter || `||${domain}/`
             if (rule.condition.urlFilter && !rule.condition.urlFilter.includes(domain)) {

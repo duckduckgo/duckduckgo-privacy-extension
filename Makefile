@@ -34,7 +34,7 @@ safari: dev $(BUILD_DIR)/data/bundled/tds-rules.json
 .PHONY: release dev
 
 $(BUILD_DIR)/data/bundled/tds-rules.json: $(BUILD_DIR)/data/bundled/tds.json $(BUILD_DIR)/data/surrogates.txt
-	node scripts/buildSafariBlocklist.mjs $< $(SURROGATES_DIR) $@
+	node scripts/buildSafariBlocklist.mjs $< $(SURROGATES_DIR) `dirname $@`
 
 $(BUILD_DIR)/data/bundled/tds.json:
 	curl https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json > $@
