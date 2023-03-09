@@ -36,8 +36,7 @@ module.exports = function () {
             </p>
         </li>
     </ul>
-    <!-- TODO: Remove content when YouTube CTL is live
-    <ul class="default-list">
+    <ul class="default-list${this.model.youtubeClickToLoadEnabled ? '' : ' is-hidden'}">
         <li>
             <h2 class="menu-title">
                 ${t('options:enableYoutubePreviews.title')}
@@ -49,6 +48,5 @@ module.exports = function () {
             </p>
         </li>
     </ul>
-    -->
 </section>`
 }

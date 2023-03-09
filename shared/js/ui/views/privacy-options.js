@@ -7,7 +7,7 @@ function PrivacyOptions (ops) {
 
     Parent.call(this, ops)
 
-    this.model.getSettings().then(() => {
+    this.model.getState().then(() => {
         this.rerender()
     })
 }
