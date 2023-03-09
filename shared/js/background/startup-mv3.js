@@ -7,6 +7,7 @@ import * as messageHandlers from './message-handlers'
 import remoteTds from './features/local-tds'
 import tabTracking from './features/tab-tracking'
 import atb from './features/atb'
+import * as email from './email-utils'
 
 import * as dnr from './dnr-config-rulesets'
 
@@ -22,6 +23,21 @@ browser.runtime.onInstalled.addListener(async (details) => {
 })
 
 browser.runtime.onMessage.addListener((req, sender) => {
+    const legacyMessageTypes = [
+        'addUserData',
+        'getUserData',
+        'removeUserData',
+        'getEmailProtectionCapabilities',
+        'getAddresses',
+        'refreshAlias',
+        'debuggerMessage'
+    ]
+    for (const legacyMessageType of legacyMessageTypes) {
+        if (legacyMessageType in req) {
+            req.messageType = legacyMessageType
+            req.options = req[legacyMessageType]
+        }
+    }
     if (req.registeredTempAutofillContentScript) {
         req.messageType = 'registeredContentScript'
     }
@@ -36,7 +52,8 @@ export async function startup () {
         dnrSessionId.setSessionRuleOffsetFromStorage(),
         tabTracking.init(),
         settings.ready(),
-        experiment.setActiveExperiment()
+        experiment.setActiveExperiment(),
+        email.fetchAlias()
     ])
     // tds init runs after settings
     const tds = await remoteTds.init()
@@ -45,6 +62,7 @@ export async function startup () {
         settings,
         tds,
         tabManager,
-        dnr
+        dnr,
+        email
     }
 }
