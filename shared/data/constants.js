@@ -10,7 +10,8 @@ function getConfigFileName () {
     } else {
         browserName = '-' + browserName + (chrome?.runtime.getManifest().manifest_version === 3 ? 'mv3' : '')
     }
-    return `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName}-config.json`
+    // return `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName}-config.json`
+    return `https://pyrite-scarce-agenda.glitch.me/staticcdn/trackerblocking/config/v2/extension${browserName}-config.json`
 }
 
 module.exports = {

@@ -33,14 +33,24 @@ class TDS {
 
     async _loadConfig () {
         let response
+        let remoteFailed = false
         console.log('fetch', configList.url)
-        response = await fetch(configList.url)
-        if (!response.ok) {
-            console.warn('Config fetch error', response)
+        try {
+            response = await fetch(configList.url)
+            if (!response.ok) {
+                remoteFailed = true
+            }
+        } catch (e) {
+            remoteFailed = true
+        }
+        if (remoteFailed) {
+            console.warn('Config fetch error')
             response = await fetch(bundledConfig.url)
         }
-        this.config = await response.json()
-        tdsStorage.config = this.config
+        if (response) {
+            this.config = await response.json()
+            tdsStorage.config = this.config
+        }
     }
 
     async _loadSurrogates () {

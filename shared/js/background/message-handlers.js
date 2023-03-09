@@ -115,6 +115,22 @@ async function getTab (tabId) {
     return tabManager.getOrRestoreTab(tabId)
 }
 
+function processBlockedRequests(url, tabId, timeStamp) {
+    const tab = tabManager.get({ tabId })
+    if (!tab || tab.lastTrackerUpdate >= timeStamp) {
+        return
+    }
+    const match = trackers.getTrackerData(url, tab.url || '', {})
+    if (match) {
+        console.log('addTracker', tab.id, match.fullTrackerDomain, match.reason)
+        const baseDomain = utils.getBaseDomain(url)
+        tab.site.addTracker(match)
+        if (baseDomain) {
+            tab.addToTrackers(match, baseDomain, url)
+        }
+        tab.lastTrackerUpdate = timeStamp
+    }
+}
 /**
  * This message is here to ensure the privacy dashboard can render
  * from a single call to the extension.
@@ -128,24 +144,17 @@ export async function getPrivacyDashboardData (options) {
     if (browserName === 'safari') {
         const matched = await chrome.declarativeNetRequest.getMatchedRules()
         console.log('matched', matched)
+
         try {
-            matched.rulesMatchedInfo.forEach(({ request, tabId, timeStamp }) => {
-                const tab = tabManager.get({ tabId })
-                if (!tab || tab.lastTrackerUpdate >= timeStamp) {
-                    return
-                }
-                const url = request.url
-                const match = trackers.getTrackerData(url, tab.url || '', {})
-                if (match) {
-                    console.log('addTracker', tab.id, match.fullTrackerDomain, match.reason)
-                    const baseDomain = utils.getBaseDomain(url)
-                    tab.site.addTracker(match)
-                    if (baseDomain) {
-                        tab.addToTrackers(match, baseDomain, url)
-                    }
-                    tab.lastTrackerUpdate = timeStamp
-                }
-            })
+            // After Safari 16.3 match data is stored in `rulesMatchedInfo`
+            if (matched.rulesMatchedInfo) {
+                matched.rulesMatchedInfo.forEach(({ request, tabId, timeStamp }) => {
+                    processBlockedRequests(request.url, tabId, timeStamp)
+                })
+            } else if (matched.forEach) {
+                // Safari 16.3 legacy match info format
+                matched.forEach(({ request }) => processBlockedRequests(request.url, request.tabId, request.timeStamp))
+            }
         } catch (e) {
             console.warn(e)
         }

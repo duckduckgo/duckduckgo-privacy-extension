@@ -21,7 +21,8 @@ export default {
             })
         }
         browser.webNavigation.onBeforeNavigate.addListener((details) => {
-        // ignore navigation on iframes
+            console.log('navigation', details.tabId, details.frameId, details.url)
+            // ignore navigation on iframes
             if (details.frameId !== 0) return
 
             const currentTab = tabManager.get({ tabId: details.tabId })
@@ -54,16 +55,20 @@ export default {
 
         browser.tabs.onCreated.addListener((info) => {
             if (info.id) {
+                console.log('tabs.onCreated', info.id, info.url)
                 tabManager.createOrUpdateTab(info.id, info)
             }
         })
 
         browser.tabs.onUpdated.addListener((id, info) => {
-        // sync company data to storage when a tab finishes loading
+            // sync company data to storage when a tab finishes loading
             if (info.status === 'complete') {
                 Companies.syncToStorage()
             }
-            tabManager.createOrUpdateTab(id, info)
+            if (info.url) {
+                console.log('tabs.onUpdated', id, info.url)
+                tabManager.createOrUpdateTab(id, info)
+            }
         })
 
         browser.tabs.onRemoved.addListener((id, info) => {
