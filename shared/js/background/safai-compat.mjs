@@ -3,18 +3,16 @@ function convertDnrRule (accumulator, rule) {
     let { ruleset, nextId } = accumulator
     if (rule.action.type === 'allowAllRequests') {
         // fix for allowAllRequests
-        for (const domain of rule.condition.requestDomains) {
-            ruleset.push({
-                id: nextId++,
-                action: {
-                    type: 'allowAllRequests'
-                },
-                condition: {
-                    urlFilter: `https://${domain}/*`,
-                    resourceTypes: rule.condition.resourceTypes
-                }
-            })
-        }
+        ruleset.push({
+            id: nextId++,
+            priority: rule.priority,
+            action: {
+                type: 'allow'
+            },
+            condition: {
+                domains: rule.condition.requestDomains.map(d => `*${d}`)
+            }
+        })
         return { ruleset, nextId }
     }
     if (rule.action.type === 'redirect' && rule.condition.urlFilter?.startsWith('||')) {

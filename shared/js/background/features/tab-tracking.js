@@ -67,7 +67,7 @@ export default {
             }
             if (info.url) {
                 console.log('tabs.onUpdated', id, info.url)
-                tabManager.createOrUpdateTab(id, info)
+                tabManager.createOrUpdateTab(id, info).updateSite(info.url)
             }
         })
 
