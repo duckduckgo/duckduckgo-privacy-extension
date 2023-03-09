@@ -66,10 +66,10 @@ for (const setName of Object.keys(testSets)) {
                 // eslint-disable-next-line no-global-assign
                 globalThis = jsdomWindow
 
-                const utils = require('../../../shared/content-scope-scripts/src/utils')
+                const utils = require('@duckduckgo/content-scope-scripts/src/utils')
                 utils.setGlobal(jsdomWindow)
 
-                const jsCookieProtection = require('../../../shared/content-scope-scripts/src/features/cookie')
+                const jsCookieProtection = require('@duckduckgo/content-scope-scripts/src/features/cookie')
 
                 jsCookieProtection.load({
                     platform: constants.platform
