@@ -1,5 +1,5 @@
 import { getDomain } from 'tldts'
-import { EventEmitter } from 'node:events';
+import { EventEmitter } from 'node:events'
 
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
@@ -78,7 +78,7 @@ test.describe('Test Facebook Click To Load', () => {
             return false
         })
         const pageRequests = []
-        const clearRequests = await logPageRequests(page, pageRequests, undefined, true)
+        const clearRequests = await logPageRequests(page, pageRequests)
         let blockingFailed
 
         await page.goto(testSite, { waitUntil: 'networkidle' })
