@@ -19,18 +19,20 @@ jobs:
       - run: npm run lint
 
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         version: [18, 19]
-        target: ['release-firefox', 'release-chrome', 'release-chrome-mv3']
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.version }}
           cache: 'npm'
-      - run: npm run ${{ matrix.target }}  
+      - run: npm run release-firefox
+      - run: npm run release-chrome
+      - run: npm run release-chrome-mv3
 
   unit-tests:
     runs-on: ubuntu-latest
