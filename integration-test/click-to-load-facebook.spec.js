@@ -1,4 +1,6 @@
 import { getDomain } from 'tldts'
+import { EventEmitter } from 'node:events';
+
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { loadTestConfig, loadTestTds } from './helpers/testConfig'
@@ -60,12 +62,16 @@ test.describe('Test Facebook Click To Load', () => {
     })
 
     test('CTL: Facebook request blocking/redirecting', async ({ page }) => {
+        const facebookRequests = new EventEmitter()
         await routeFromLocalhost(page, (route) => {
             const url = route.request().url()
             if (facebookDomains.has(getDomain(url))) {
                 // blocking facebook requests at this layer reports these requests as 'failed' to
                 // the page request logger, allowing us to differentiate between 'blocked' requests
                 // and ones which would be allowed without this route.
+                if (url.includes('sdk.js')) {
+                    facebookRequests.emit('sdk', url)
+                }
                 route.abort()
                 return true
             }
@@ -84,8 +90,8 @@ test.describe('Test Facebook Click To Load', () => {
             expect(facebookSDKRedirect.checked).toBe(true)
             expect(facebookSDKRedirect.alwaysRedirected).toBe(true)
             expect(requestCount).toBeGreaterThan(3)
-            expect(blockCount).toEqual(requestCount)
             expect(allowCount).toEqual(0)
+            expect(blockCount).toEqual(requestCount)
 
             // Note a failure, so that it's not ignored as pending later.
             blockingFailed = allowCount > 0 || blockCount < requestCount ||
@@ -95,6 +101,9 @@ test.describe('Test Facebook Click To Load', () => {
         // Once the user clicks to load the Facebook content, the SDK should be
         // loaded and the content should be unblocked.
         clearRequests()
+        const facebookSDKRequestHappened = new Promise((resolve) => {
+            facebookRequests.once('sdk', resolve)
+        })
         const buttonCount = await page.evaluate(() => {
             globalThis.buttons =
                 Array.from(document.querySelectorAll('body > div'))
@@ -110,8 +119,8 @@ test.describe('Test Facebook Click To Load', () => {
                 await button.click()
             } catch (e) { }
         }
-
-        await page.waitForTimeout(1000)
+        // wait for a facebook SDK request to happen
+        await facebookSDKRequestHappened
         {
             const {
                 requestCount, blockCount, allowCount, facebookSDKRedirect
@@ -131,10 +140,11 @@ test.describe('Test Facebook Click To Load', () => {
             expect(blockCount).toEqual(0)
             expect(allowCount).toEqual(requestCount)
         }
-
+        // navigate away to allow all requests to complete before we clear request data
+        await page.goto('https://privacy-test-pages.glitch.me/')
         // When the page is reloaded, requests should be blocked again.
         clearRequests()
-        await page.reload({ waitUntil: 'networkidle', timeout: 15000 })
+        await page.goto(testSite, { waitUntil: 'networkidle', timeout: 15000 })
         {
             const {
                 requestCount, blockCount, allowCount, facebookSDKRedirect
@@ -143,8 +153,8 @@ test.describe('Test Facebook Click To Load', () => {
             expect(facebookSDKRedirect.checked).toBe(true)
             expect(facebookSDKRedirect.alwaysRedirected).toBe(true)
             expect(requestCount).toBeGreaterThan(3)
-            expect(blockCount).toEqual(requestCount)
             expect(allowCount).toEqual(0)
+            expect(blockCount).toEqual(requestCount)
         }
     })
 })
