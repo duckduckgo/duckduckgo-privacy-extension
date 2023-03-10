@@ -14,7 +14,7 @@ BUILD_DIR = build/$(browser)/$(type)
 ifeq ($(browser),test)
 	BUILD_DIR := build/test
 endif
-SOURCE_FILES = $(shell find shared/ -type f)
+SOURCE_FILES = $(shell find shared/ packages/ node_modules/@duckduckgo/ -type f)
 TEST_FILES = $(shell find unit-test/ -type f)
 
 ###--- Top level targets ---###
