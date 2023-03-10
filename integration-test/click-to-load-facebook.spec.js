@@ -141,8 +141,6 @@ test.describe('Test Facebook Click To Load', () => {
             } = summariseFacebookRequests(pageRequests)
 
             expect(facebookSDKRedirect.checked).toBe(true)
-            // FIXME - It seems that requests to the SDK are not reliably
-            //         redirected after the page is reloaded.
             expect(facebookSDKRedirect.alwaysRedirected).toBe(true)
             expect(requestCount).toBeGreaterThan(3)
             expect(blockCount).toEqual(requestCount)
