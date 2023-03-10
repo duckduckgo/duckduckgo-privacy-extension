@@ -31,7 +31,6 @@ async function logPageRequests (page, requests, filter) {
     const requestDetailsByRequestId = new Map()
 
     const isPlaywright = !(page instanceof Page)
-    console.log('isPlaywright', isPlaywright)
 
     /**
    * @param {number} requestId
