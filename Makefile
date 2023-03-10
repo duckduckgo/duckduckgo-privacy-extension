@@ -29,7 +29,9 @@ dev: $(BUILD_DIR)/public/js copy sass js
 ## watch: rebuild when changes are made
 MAKE = make -j4 $(type) browser=$(browser) type=$(type)
 watch:
-	while true; do $(MAKE) -q || $(MAKE); sleep 1; done
+	$(MAKE)
+	@echo "\n** Build ready -  Watching for changes **\n"
+	while true; do $(MAKE) -q --silent || $(MAKE); sleep 1; done
 
 .PHONY: release dev
 
