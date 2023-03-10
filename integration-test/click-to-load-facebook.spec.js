@@ -1,86 +1,12 @@
+import { getDomain } from 'tldts'
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { loadTestConfig, loadTestTds } from './helpers/testConfig'
 import { routeFromLocalhost } from './helpers/testPages'
-import { getDomain } from 'tldts'
+import { logPageRequests } from './helpers/requests'
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
 const facebookDomains = new Set(['facebook.com', 'facebook.net', 'fbcdn.net'])
-
-/**
- * Start logging requests for the given Puppeteer Page.
- * @param {import('@playwright/test').Page} page
- *   The Puppeteer page to log requests for.
- * @param {LoggedRequestDetails[]} requests
- *   Array of request details, appended to as requests happen.
- *   Note: The requests array is mutated by this function.
- * @param {function} [filter]
- *   Optional filter function that (if given) should return falsey for requests
- *   that should be ignored.
- * @returns {Promise<function>}
- *   Function that clears logged requests (and in progress requests).
- */
-async function logPageRequests (page, requests, filter) {
-    const requestDetailsByRequestId = new Map()
-
-    /**
-     * @param {number} requestId
-     * @param {(details: LoggedRequestDetails) => void} updateDetails
-     * @returns {void}
-     */
-    const saveRequestOutcome = (requestId, updateDetails) => {
-        if (!requestDetailsByRequestId.has(requestId)) {
-            return
-        }
-
-        const details = requestDetailsByRequestId.get(requestId)
-        requestDetailsByRequestId.delete(requestId)
-        if (!details) {
-            return
-        }
-
-        updateDetails(details)
-
-        if (!filter || filter(details)) {
-            requests.push(details)
-        }
-    }
-
-    page.on('request', (request) => {
-        const url = request.url()
-        const requestDetails = {
-            url,
-            method: request.method(),
-            type: request.resourceType()
-        }
-        if (request.redirectedFrom()) {
-            requestDetails.redirectUrl = request.url()
-        }
-        requestDetails.url = new URL(requestDetails.url)
-        requestDetailsByRequestId.set(url, requestDetails)
-    })
-    page.on('requestfinished', (request) => {
-        saveRequestOutcome(request.url(), details => {
-            details.status = details.redirectUrl ? 'redirected' : 'allowed'
-        })
-    })
-    page.on('requestfailed', (request) => {
-        saveRequestOutcome(request.url(), details => {
-            const { errorText } = request.failure()
-            if (errorText === 'net::ERR_BLOCKED_BY_CLIENT' || errorText === 'net::ERR_ABORTED') {
-                details.status = 'blocked'
-                details.reason = errorText
-            } else {
-                details.status = 'failed'
-                details.reason = errorText
-            }
-        })
-    })
-    return () => {
-        requests.length = 0
-        requestDetailsByRequestId.clear()
-    }
-}
 
 function summariseFacebookRequests (requests) {
     const facebookSDKRedirect = { checked: false, alwaysRedirected: true }
