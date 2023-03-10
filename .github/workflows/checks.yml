@@ -19,11 +19,12 @@ jobs:
       - run: npm run lint
 
   build:
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: [18, 19]
+        version: [18]
+        os: [ubuntu-latest, macos-latest]
         target: ['release-firefox', 'release-chrome', 'release-chrome-mv3']
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
