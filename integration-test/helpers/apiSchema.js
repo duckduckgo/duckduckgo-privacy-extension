@@ -117,6 +117,7 @@ async function setupAPISchemaTest (page, schemaFilename, targetObjectNames) {
         }
     }
 
+    fs.mkdirSync(path.dirname(actualSchemaPath), { recursive: true })
     // Write the actual schema to a file as a test artifact.
     fs.writeFileSync(actualSchemaPath, JSON.stringify(actualSchema, null, 4))
 
