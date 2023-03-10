@@ -72,7 +72,7 @@ test.describe('Test Facebook Click To Load', () => {
             return false
         })
         const pageRequests = []
-        const clearRequests = await logPageRequests(page, pageRequests)
+        const clearRequests = await logPageRequests(page, pageRequests, undefined, true)
         let blockingFailed
 
         await page.goto(testSite, { waitUntil: 'networkidle' })

@@ -25,10 +25,9 @@
  * @returns {Promise<function>}
  *   Function that clears logged requests (and in progress requests).
  */
-async function logPageRequests (page, requests, filter) {
+async function logPageRequests (page, requests, filter, isPlaywright = false) {
     /** @type {Map<number, LoggedRequestDetails>} */
     const requestDetailsByRequestId = new Map()
-    const isPlaywright = typeof page.routeFromHAR === 'function'
 
     /**
    * @param {number} requestId
