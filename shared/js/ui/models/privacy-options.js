@@ -5,6 +5,7 @@ function PrivacyOptions (attrs) {
     attrs.httpsEverywhereEnabled = true
     attrs.embeddedTweetsEnabled = false
     attrs.GPC = false
+    attrs.youtubeClickToLoadEnabled = false
     attrs.youtubePreviewsEnabled = false
 
     Parent.call(this, attrs)
@@ -24,18 +25,17 @@ PrivacyOptions.prototype = window.$.extend({},
             }
         },
 
-        getSettings: function () {
-            const self = this
-            return new Promise((resolve, reject) => {
-                self.sendMessage('getSetting', 'all').then((settings) => {
-                    self.httpsEverywhereEnabled = settings.httpsEverywhereEnabled
-                    self.embeddedTweetsEnabled = settings.embeddedTweetsEnabled
-                    self.GPC = settings.GPC
-                    self.youtubePreviewsEnabled = settings.youtubePreviewsEnabled
+        async getState () {
+            const [settings, youtubeClickToLoadEnabled] = await Promise.all([
+                this.sendMessage('getSetting', 'all'),
+                this.sendMessage('isClickToLoadYoutubeEnabled')
+            ])
 
-                    resolve()
-                })
-            })
+            this.httpsEverywhereEnabled = settings.httpsEverywhereEnabled
+            this.embeddedTweetsEnabled = settings.embeddedTweetsEnabled
+            this.GPC = settings.GPC
+            this.youtubeClickToLoadEnabled = youtubeClickToLoadEnabled
+            this.youtubePreviewsEnabled = settings.youtubePreviewsEnabled
         }
     }
 )

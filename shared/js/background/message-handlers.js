@@ -3,7 +3,7 @@ import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
 import { breakageReportForTab } from './broken-site-report'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string'
 import { getExtensionURL, notifyPopup } from './wrapper'
-import { reloadCurrentTab } from './utils'
+import { isFeatureEnabled, reloadCurrentTab } from './utils'
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 const { getDomain } = require('tldts')
 const utils = require('./utils')
@@ -412,4 +412,13 @@ export function search ({ term }) {
 
 export function openShareFeedbackPage () {
     return browserWrapper.openExtensionPage('/html/feedback.html')
+}
+
+export async function isClickToLoadYoutubeEnabled () {
+    await tdsStorage.ready('config')
+
+    return (
+        isFeatureEnabled('clickToLoad') &&
+        tdsStorage?.config?.features?.clickToLoad?.settings?.Youtube?.state === 'enabled'
+    )
 }
