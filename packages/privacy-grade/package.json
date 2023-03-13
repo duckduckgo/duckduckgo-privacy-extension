@@ -18,7 +18,7 @@
   },
   "devDependencies": {
     "chalk": "2.4.0",
-    "commander": "2.15.1",
+    "commander": "10.0.0",
     "grunt": "1.6.1",
     "grunt-browserify": "6.0.0",
     "grunt-cli": "1.4.3",
