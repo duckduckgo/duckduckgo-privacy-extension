@@ -156,16 +156,20 @@ ifeq ($(browser),chrome-mv3)
 endif
 
 ## Copy tasks: Copying resources that don't need and compiling
-$(BUILD_DIR)/manifest.json: browsers/$(browser)/*
-	cp -r browsers/$(browser)/* $(BUILD_DIR)
+$(BUILD_DIR)/manifest.json: browsers/$(browser)/*.json
+	mkdir -p `dirname $@`
+	cp browsers/$(browser)/*.json $(BUILD_DIR)
 
 build/chrome-mv3/$(type)/managed-schema.json: browsers/chrome/managed-schema.json
+	mkdir -p `dirname $@`
 	cp $< $@
 
 $(BUILD_DIR)/_locales: browsers/chrome/_locales
+	mkdir -p `dirname $@`
 	cp -r $< $@
 
 $(BUILD_DIR)/data: $(ITEMS)
+	mkdir -p `dirname $@`
 	cp -r $(ITEMS) $(BUILD_DIR)
 
 $(BUILD_DIR)/dashboard: $(DASHBOARD_DIR)/
@@ -178,13 +182,16 @@ $(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources
 	node scripts/generateListOfSurrogates.js -i $</ > $@
 
 $(BUILD_DIR)/public/font: shared/font
+	mkdir -p `dirname $@`
 	cp -r $< $@
 
 # Copy autofill scripts and assets
 $(BUILD_DIR)/public/js/content-scripts/autofill.js: $(AUTOFILL_DIR)/autofill.js
+	mkdir -p `dirname $@`
 	cp $(AUTOFILL_DIR)/*.js `dirname $@`
 
 $(BUILD_DIR)/public/css/autofill.css: $(AUTOFILL_DIR)/autofill.css
+	mkdir -p `dirname $@`
 	cp $< $@
 
 $(BUILD_DIR)/public/css/autofill-host-styles.css: $(AUTOFILL_DIR)/autofill-host-styles_$(BROWSER_TYPE).css
