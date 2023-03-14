@@ -1,9 +1,14 @@
 ITEMS   := shared/html shared/data shared/img
 
+# Workaround Browserify not following symlinks in --only.
+# TODO: Remove this once Browserify has been replaced with a different bundler.
+BROWSERIFY_GLOBAL_TARGETS = ./node_modules/@duckduckgo
+BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 -type l | xargs -n1 readlink -f)
+
 ###--- Binaries ---###
 SASS = node_modules/.bin/sass
 BROWSERIFY_BIN = node_modules/.bin/browserify
-BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ ./node_modules/@duckduckgo ] --presets [ @babel/preset-env ] ]
+BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --presets [ @babel/preset-env ] ]
 ifeq ($(type),dev)
 	BROWSERIFY += -d
 endif
