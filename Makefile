@@ -14,8 +14,15 @@ BUILD_DIR = build/$(browser)/$(type)
 ifeq ($(browser),test)
 	BUILD_DIR := build/test
 endif
-SOURCE_FILES = $(shell find shared/ packages/ node_modules/@duckduckgo/ -type f -not -path "packages/*/node_modules/*")
-TEST_FILES = $(shell find unit-test/ -type f)
+
+SOURCE_FILES = $(shell find -L shared/ packages/ -type f -not -path "packages/*/node_modules/*" -not -name "*~")
+# If the node_modules/@duckduckgo/ directory exists, include those source files
+# in the list too.
+ifneq ("$(wildcard node_modules/@duckduckgo/)","")
+	SOURCE_FILES += $(shell find -L node_modules/@duckduckgo/ -type f -not -path "node_modules/@duckduckgo/*/.git/*" -not -path "node_modules/@duckduckgo/*/node_modules/*" -not -name "*~")
+endif
+
+TEST_FILES = $(shell find unit-test/ -type f -not -name "*~")
 
 ###--- Top level targets ---###
 ## release: create a release build for a platform in build/$BROWSER/release
@@ -222,6 +229,21 @@ $(BUILD_DIR)/public/js/newtab.js: $(SOURCE_FILES)
 # Content Scope Scripts
 shared/data/bundled/tracker-lookup.json:
 	node scripts/bundleTrackers.mjs
+
+# Rebuild content-scope-scripts if it's a local checkout (.git is present), but
+# not otherwise. That is important, since content-scope-scripts releases often
+# have newer source files than build files.
+CONTENT_SCOPE_SCRIPTS_DEPS =
+ifneq ("$(wildcard node_modules/@duckduckgo/content-scope-scripts/.git/)","")
+	CONTENT_SCOPE_SCRIPTS_DEPS += $(shell find node_modules/@duckduckgo/content-scope-scripts/src/ node_modules/@duckduckgo/content-scope-scripts/inject/ node_modules/@duckduckgo/content-scope-scripts/package.json -type f -not -name "*~")
+	CONTENT_SCOPE_SCRIPTS_DEPS += node_modules/@duckduckgo/content-scope-scripts/node_modules
+endif
+
+node_modules/@duckduckgo/content-scope-scripts/node_modules:
+	cd node_modules/@duckduckgo/content-scope-scripts; npm install
+
+node_modules/@duckduckgo/content-scope-scripts/build/$(browser)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
+	cd node_modules/@duckduckgo/content-scope-scripts; npm run build-$(browser)
 
 $(BUILD_DIR)/public/js/inject.js: node_modules/@duckduckgo/content-scope-scripts/build/$(browser)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
 	node scripts/bundleContentScopeScripts.mjs $@ $^
