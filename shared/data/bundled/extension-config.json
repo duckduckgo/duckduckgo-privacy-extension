@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1678837804712,
+    "version": 1678882289123,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -1440,10 +1440,14 @@
                 {
                     "domain": "walgreens.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/499"
+                },
+                {
+                    "domain": "godaddy.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/499"
                 }
             ],
             "state": "enabled",
-            "hash": "d748016ca8d0cfcb1b86ff428b4e4e46"
+            "hash": "06756b6634deaeb0f50c9cbbdb591b3c"
         },
         "fingerprintingHardware": {
             "settings": {
