@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1677839118579,
+    "version": 1678837804712,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -162,6 +162,10 @@
                 {
                     "domain": "kicker.de",
                     "reason": "https://github.com/duckduckgo/autoconsent/issues/66"
+                },
+                {
+                    "domain": "epojisteni.cz",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/326"
                 }
             ],
             "settings": {
@@ -170,7 +174,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "ffb4c255daefd46d2ae948b440ea2579"
+            "hash": "27ece5bf5ca17ee88ce16d37df8c3092"
         },
         "autofill": {
             "exceptions": [
@@ -185,6 +189,25 @@
             ],
             "state": "enabled",
             "hash": "59c4bd9b8cee343c81da98bfe5d77928"
+        },
+        "clickToLoad": {
+            "exceptions": [],
+            "settings": {
+                "Facebook, Inc.": {
+                    "ruleActions": [
+                        "block-ctl-fb"
+                    ],
+                    "state": "enabled"
+                },
+                "Youtube": {
+                    "ruleActions": [
+                        "block-ctl-yt"
+                    ],
+                    "state": "disabled"
+                }
+            },
+            "state": "enabled",
+            "hash": "13f0b3ad67d6e300e17c52191ed4b963"
         },
         "clickToPlay": {
             "exceptions": [],
@@ -264,6 +287,10 @@
                         "reason": "https://github.com/duckduckgo/privacy-configuration/issues/602"
                     },
                     {
+                        "domain": "sme.sk",
+                        "reason": "https://github.com/duckduckgo/privacy-configuration/issues/667"
+                    },
+                    {
                         "domain": "tiktok.com",
                         "reason": "https://github.com/duckduckgo/privacy-configuration/issues/667"
                     }
@@ -272,7 +299,7 @@
             },
             "exceptions": [],
             "state": "disabled",
-            "hash": "ba20b99be18138bbd3c6008bd154735d"
+            "hash": "b1a30e9afcf663d1ad99590c14a5b5be"
         },
         "duckPlayer": {
             "exceptions": [],
@@ -304,10 +331,6 @@
                 {
                     "domain": "tvlistings.zap2it.com",
                     "reason": "main content hidden"
-                },
-                {
-                    "domain": "mangaread.org",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
                 },
                 {
                     "domain": "manhwascan.net",
@@ -591,6 +614,7 @@
                 ],
                 "useStrictHideStyleTag": true,
                 "styleTagExceptions": [],
+                "mediaAndFormSelectors": "video,canvas,embed,object,audio,map,form,input,textarea,select,option,button",
                 "adLabelStrings": [
                     "advertisement",
                     "advertisment",
@@ -728,6 +752,15 @@
                             {
                                 "selector": "[data-block-name='ads']",
                                 "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "dallasnews.com",
+                        "rules": [
+                            {
+                                "selector": "[data-targeting]",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -1347,7 +1380,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "636cbf0b3e45a59768a126ab9e73a9f0"
+            "hash": "93cf2d0418e646cf2fc18832ad15da10"
         },
         "fingerprintingAudio": {
             "state": "disabled",
@@ -1389,6 +1422,10 @@
                     "reason": "When creating an account, after filling out details and going to e-mail confirmation, there is an error 'Something went wrong', and the e-mail may not be received. Clicking 'Send new code' appears successful, but after entering the code there is often another account creation error."
                 },
                 {
+                    "domain": "manulife.ca",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/499"
+                },
+                {
                     "domain": "northernrailway.co.uk",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/350"
                 },
@@ -1406,7 +1443,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "6c686d0cfa0451c69db18621438b1b0a"
+            "hash": "d748016ca8d0cfcb1b86ff428b4e4e46"
         },
         "fingerprintingHardware": {
             "settings": {
@@ -1573,12 +1610,18 @@
             "state": "disabled",
             "exceptions": [],
             "settings": {
-                "taintCheck": "enabled",
+                "taintCheck": "disabled",
                 "matchAllDomains": "disabled",
-                "matchAllStackDomains": "enabled",
+                "matchAllStackDomains": "disabled",
                 "overloadInstanceOf": "enabled",
                 "elementRemovalTimeout": 1000,
                 "domains": [
+                    {
+                        "domain": "bbc.co.uk"
+                    },
+                    {
+                        "domain": "cnn.com"
+                    },
                     {
                         "domain": "preactjs.com"
                     },
@@ -1592,9 +1635,226 @@
                         "domain": "good.third-party.site"
                     }
                 ],
-                "stackDomains": []
+                "stackDomains": [
+                    {
+                        "domain": "6b34f18ccd.com"
+                    },
+                    {
+                        "domain": "ad-delivery.net"
+                    },
+                    {
+                        "domain": "adobe.com"
+                    },
+                    {
+                        "domain": "afcdn.net"
+                    },
+                    {
+                        "domain": "akamaihd.net"
+                    },
+                    {
+                        "domain": "amazonaws.com"
+                    },
+                    {
+                        "domain": "beemray.com"
+                    },
+                    {
+                        "domain": "behave.com"
+                    },
+                    {
+                        "domain": "bookmsg.com"
+                    },
+                    {
+                        "domain": "boomtrain.com"
+                    },
+                    {
+                        "domain": "bouncex.net"
+                    },
+                    {
+                        "domain": "cdnbasket.net"
+                    },
+                    {
+                        "domain": "chartbeat.net"
+                    },
+                    {
+                        "domain": "clean.gg"
+                    },
+                    {
+                        "domain": "co5n3nerm6arapo7ny.com"
+                    },
+                    {
+                        "domain": "consensu.org"
+                    },
+                    {
+                        "domain": "consumertrack.com"
+                    },
+                    {
+                        "domain": "cookielaw.org"
+                    },
+                    {
+                        "domain": "d1xfq2052q7thw.cloudfront.net"
+                    },
+                    {
+                        "domain": "d20kffh39acpue.cloudfront.net"
+                    },
+                    {
+                        "dont_check_domain": "d2uap9jskdzp2.cloudfront.net",
+                        "reason": "stack breakage due to prototype pollution (https://app.asana.com/0/0/1204129430483496/f)"
+                    },
+                    {
+                        "domain": "d3h2kq7so8dggb.cloudfront.net"
+                    },
+                    {
+                        "domain": "d9esmwyn3ffr1.cloudfront.net"
+                    },
+                    {
+                        "domain": "dianomi.com"
+                    },
+                    {
+                        "domain": "dogvlw4b46a0r.cloudfront.net"
+                    },
+                    {
+                        "domain": "ed0066af9c.com"
+                    },
+                    {
+                        "domain": "edigitalsurvey.com"
+                    },
+                    {
+                        "domain": "effectivemeasure.net"
+                    },
+                    {
+                        "domain": "eu-1-id5-sync.com"
+                    },
+                    {
+                        "domain": "fonts.googleapis.com"
+                    },
+                    {
+                        "domain": "gobankingrates.com"
+                    },
+                    {
+                        "domain": "gscontxt.net"
+                    },
+                    {
+                        "domain": "hotjar.io"
+                    },
+                    {
+                        "domain": "imasdk.googleapis.com"
+                    },
+                    {
+                        "domain": "iperceptions.com"
+                    },
+                    {
+                        "domain": "ixiaa.com"
+                    },
+                    {
+                        "domain": "keywee.co"
+                    },
+                    {
+                        "domain": "mapbox.com"
+                    },
+                    {
+                        "domain": "mobtrakk.com"
+                    },
+                    {
+                        "domain": "navdmp.com"
+                    },
+                    {
+                        "domain": "nawpush.com"
+                    },
+                    {
+                        "domain": "nereserv.com"
+                    },
+                    {
+                        "domain": "nexac.com"
+                    },
+                    {
+                        "domain": "ngtv.io"
+                    },
+                    {
+                        "domain": "onaudience.com"
+                    },
+                    {
+                        "domain": "optimizely.com"
+                    },
+                    {
+                        "domain": "outbrainimg.com"
+                    },
+                    {
+                        "domain": "outturner.com"
+                    },
+                    {
+                        "domain": "quantcount.com"
+                    },
+                    {
+                        "domain": "revjet.com"
+                    },
+                    {
+                        "domain": "schwab.com"
+                    },
+                    {
+                        "domain": "summerhamster.com"
+                    },
+                    {
+                        "domain": "trustx.org"
+                    },
+                    {
+                        "domain": "tubecup.net"
+                    },
+                    {
+                        "domain": "turner.com"
+                    },
+                    {
+                        "domain": "ugdturner.com"
+                    },
+                    {
+                        "domain": "usbrowserspeed.com"
+                    },
+                    {
+                        "domain": "vercel-analytics.com"
+                    },
+                    {
+                        "domain": "vercel-insights.com"
+                    },
+                    {
+                        "domain": "w.org"
+                    },
+                    {
+                        "domain": "warnermediacdn.com"
+                    },
+                    {
+                        "domain": "webstats1.com"
+                    },
+                    {
+                        "domain": "wmcdp.io"
+                    },
+                    {
+                        "domain": "wp.com"
+                    },
+                    {
+                        "domain": "wunderkind.co"
+                    },
+                    {
+                        "domain": "zetaglobal.net"
+                    },
+                    {
+                        "domain": "zqtk.net"
+                    }
+                ],
+                "tagModifiers": {
+                    "script": {
+                        "filters": {
+                            "property": [
+                                "blocking",
+                                "fetchPriority"
+                            ],
+                            "attribute": [
+                                "blocking",
+                                "fetchpriority"
+                            ]
+                        }
+                    }
+                }
             },
-            "hash": "32be9e17c1e346de2f37bed896eb0231"
+            "hash": "f053ef20a12888a423fe0771789f19d3"
         },
         "serviceworkerInitiatedRequests": {
             "exceptions": [],
@@ -2139,6 +2399,7 @@
                                 "rule": "cdn.dynamicyield.com/api/",
                                 "domains": [
                                     "brooklinen.com",
+                                    "carters.com",
                                     "seatosummit.com"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/535"
@@ -2168,6 +2429,17 @@
                                     "nintendo.com"
                                 ],
                                 "reason": "CNAME version of nintendo.com exception"
+                            }
+                        ]
+                    },
+                    "edgesuite.net": {
+                        "rules": [
+                            {
+                                "rule": "sky.com.edgesuite.net/assets/sky_common.js",
+                                "domains": [
+                                    "sky.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/342"
                             }
                         ]
                     },
@@ -3091,17 +3363,6 @@
                                     "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/712"
-                            }
-                        ]
-                    },
-                    "sky.com": {
-                        "rules": [
-                            {
-                                "rule": "accounts.sky.com/assets/sky_common.js",
-                                "domains": [
-                                    "sky.com"
-                                ],
-                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/342"
                             }
                         ]
                     },
@@ -4086,6 +4347,24 @@
                                     "aliexpress.us"
                                 ],
                                 "reason": "CNAME ENTRY GENERATED FROM: alicdn.com.edgekey.net"
+                            }
+                        ]
+                    },
+                    "sky.com": {
+                        "rules": [
+                            {
+                                "rule": "accounts.sky.com/assets/sky_common.js",
+                                "domains": [
+                                    "sky.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: sky.com.edgesuite.net"
+                            },
+                            {
+                                "rule": "skyid.sky.com/assets/sky_common.js",
+                                "domains": [
+                                    "sky.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: sky.com.edgesuite.net"
                             }
                         ]
                     },
@@ -5079,7 +5358,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "c6cded53b518a104bd5f4f8e7800f94d"
+            "hash": "93b1b32e6356b80661a9d109d69d0168"
         },
         "trackingCookies1p": {
             "settings": {
