@@ -25,7 +25,7 @@
     "grunt-exec": "3.0.0",
     "grunt-karma": "4.0.2",
     "load-grunt-tasks": "3.5.2",
-    "puppeteer": "12.0.0",
+    "puppeteer": "19.7.5",
     "request": "2.88.2",
     "url-parse-lax": "^3.0.0"
   }
