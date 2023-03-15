@@ -40,7 +40,7 @@
         "@babel/preset-env": "^7.20.2",
         "@fingerprintjs/fingerprintjs": "^3.4.0",
         "@playwright/test": "^1.31.2",
-        "@types/chrome": "0.0.219",
+        "@types/chrome": "0.0.224",
         "@types/jasmine": "^4.3.1",
         "@types/puppeteer": "^7.0.4",
         "@types/webextension-polyfill": "^0.10.0",
