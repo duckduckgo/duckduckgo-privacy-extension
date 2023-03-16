@@ -1,89 +1,98 @@
-ITEMS   := shared/html shared/data shared/img
-
-# Workaround Browserify not following symlinks in --only.
-# TODO: Remove this once Browserify has been replaced with a different bundler.
-BROWSERIFY_GLOBAL_TARGETS = ./node_modules/@duckduckgo
-BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 -type l | xargs -n1 readlink -f)
-
-###--- Binaries ---###
-SASS = node_modules/.bin/sass
-BROWSERIFY_BIN = node_modules/.bin/browserify
-BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --presets [ @babel/preset-env ] ]
-ifeq ($(type),dev)
-	BROWSERIFY += -d
+###--- Shared variables ---###
+# Browser type (browser, but "chrome-mv3" becomes "chrome").
+BROWSER_TYPE = $(browser)
+ifeq ('$(browser)','chrome-mv3')
+  BROWSER_TYPE = chrome
 endif
-KARMA = node_modules/.bin/karma
 
-###--- Variables ---###
+# Output directory for builds.
 BUILD_DIR = build/$(browser)/$(type)
 ifeq ($(browser),test)
-	BUILD_DIR := build/test
+  BUILD_DIR := build/test
 endif
 
-SOURCE_FILES = $(shell find -L shared/ packages/ -type f -not -path "packages/*/node_modules/*" -not -name "*~")
+## All source files that potentially need to be bundled or copied.
+# TODO: Use automatic dependency generation (e.g. `browserify --list`) for
+#       the bundling targets instead?
+WATCHED_FILES = $(shell find -L browsers/ shared/ packages/ unit-test/ -type f -not -path "packages/*/node_modules/*" -not -name "*~")
 # If the node_modules/@duckduckgo/ directory exists, include those source files
 # in the list too.
 ifneq ("$(wildcard node_modules/@duckduckgo/)","")
-	SOURCE_FILES += $(shell find -L node_modules/@duckduckgo/ -type f -not -path "node_modules/@duckduckgo/*/.git/*" -not -path "node_modules/@duckduckgo/*/node_modules/*" -not -name "*~")
+  WATCHED_FILES += $(shell find -L node_modules/@duckduckgo/ -type f -not -path "node_modules/@duckduckgo/*/.git/*" -not -path "node_modules/@duckduckgo/*/node_modules/*" -not -name "*~")
 endif
 
-TEST_FILES = $(shell find unit-test/ -type f -not -name "*~")
 
 ###--- Top level targets ---###
-## release: create a release build for a platform in build/$BROWSER/release
+## release: Create a release build for a platform in build/$(browser)/release
 ## specify browser=(chrome|chrome-mv3|firefox)
-release: clean npm $(BUILD_DIR)/public/js copy sass js
+release: clean npm copy build
 
-## dev: create a debug build for a platform in build/$BROWSER/dev
+.PHONY: release
+
+## chrome-mv3-beta: Create a beta Chrome MV3 build in build/$(browser)/release
+## specify browser=chrome-mv3 type=release
+chrome-mv3-beta: release chrome-mv3-beta-zip
+
+.PHONY: chrome-mv3-beta
+
+## beta-firefox: Create a beta Firefox build in build/$(browser)/release
+## specify browser=firefox type=release
+beta-firefox: release beta-firefox-zip
+
+.PHONY: beta-firefox
+
+## dev: Create a debug build for a platform in build/$(browser)/dev.
 ## specify browser=(chrome|chrome-mv3|firefox) type=dev
-dev: $(BUILD_DIR)/public/js copy sass js
+dev: copy build
 
-## watch: rebuild when changes are made
+.PHONY: dev
+
+## watch: Create a debug build for a platform in build/$(browser)/dev, and keep
+##        it up to date as files are changed.
+## specify browser=(chrome|chrome-mv3|firefox) type=dev
 MAKE = make -j4 $(type) browser=$(browser) type=$(type)
 watch:
 	$(MAKE)
 	@echo "\n** Build ready -  Watching for changes **\n"
 	while true; do $(MAKE) -q --silent || $(MAKE); sleep 1; done
 
-.PHONY: release dev
+.PHONY: watch
 
-###--- Unit tests ---###
 unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
-	$(KARMA) start karma.conf.js
+	node_modules/.bin/karma start karma.conf.js
 
 .PHONY: unit-test
 
-## Build unit-tests with browserify
-UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
-build/test/background.js: $(TEST_FILES) $(SOURCE_FILES)
-	mkdir -p `dirname $@`
-	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
-
-build/test/ui.js: $(TEST_FILES)
-	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
-
-build/test/shared-utils.js: $(TEST_FILES)
-	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
-
-###--- Legacy Integration tests ---###
-## test-int: Run integration tests for the chrome MV2 extension
+## test-int: Run legacy integration tests against the Chrome MV2 extension.
 test-int: integration-test/artifacts/attribution.json
 	make dev browser=chrome type=dev
 	jasmine --config=integration-test/config.json
 
-## test-int-mv3: Run integration tests for the chrome MV3 extension
+.PHONY: test-int
+
+## test-int: Run legacy integration tests against the Chrome MV3 extension.
 test-int-mv3: integration-test/artifacts/attribution.json
 	make dev browser=chrome-mv3 type=dev
 	jasmine --config=integration-test/config-mv3.json
 
-.PHONY: test-int test-int-mv3
+.PHONY: test-int-mv3
 
-###--- External dependencies ---###
+## npm: Pull in the external dependencies (npm install).
 npm:
 	npm ci --ignore-scripts
 	npm rebuild puppeteer
 
-###--- Packaging ---###
+.PHONY: npm
+
+## clean: Clear the builds and temporary files.
+clean:
+	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
+	rm -rf $(BUILD_DIR)
+
+.PHONY: clean
+
+
+###--- Release packaging ---###
 chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
 	cd build/chrome/release/ && zip -rq chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip *
@@ -98,147 +107,127 @@ prepare-chrome-beta:
 	sed 's/__MSG_appName__/DuckDuckGo Privacy Essentials MV3 Beta/' ./browsers/chrome-mv3/manifest.json > build/chrome-mv3/release/manifest.json
 	cp -r build/chrome-mv3/release/img/beta/* build/chrome-mv3/release/img/
 
-chrome-mv3-beta: release chrome-mv3-beta-zip
-
-beta-firefox: release beta-firefox-zip
+.PHONY: prepare-chrome-beta
 
 remove-firefox-id:
 	sed '/jid1-ZAdIEUB7XOzOJw@jetpack/d' ./browsers/firefox/manifest.json > build/firefox/release/manifest.json
 
+.PHONY: remove-firefox-id
+
 beta-firefox-zip: remove-firefox-id
 	cd build/firefox/release/ && web-ext build
 
-###--- Build dir preparation ---###
-## artifacts for integration-tests
+.PHONY: beta-firefox-zip
+
+
+###--- Integration test setup ---###
+# Artifacts produced by the integration tests.
 setup-artifacts-dir:
 	rm -rf integration-test/artifacts
 	mkdir -p integration-test/artifacts/screenshots
 	mkdir -p integration-test/artifacts/api_schemas
 
-# create build dir ready for source
-ifeq ('$(browser)','chrome-mv3')
-$(BUILD_DIR)/public/js: shared/data/bundled/smarter-encryption-rules.json
-else
-$(BUILD_DIR)/public/js:
-endif
-	mkdir -p $(BUILD_DIR)/public/js/
-	mkdir -p $(BUILD_FOLDERS)
-
-# fetch SE data for bundled SE rules
-shared/data/smarter_encryption.txt:
-	curl https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz | gunzip -c > shared/data/smarter_encryption.txt
-
-# build SE rules for MV3
-shared/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryption.txt
-	npm run bundle-se
-
-# fetch integration test data
+# Fetch integration test data.
 integration-test/artifacts/attribution.json: node_modules/privacy-test-pages/adClickFlow/shared/testCases.json setup-artifacts-dir
 	mkdir -p integration-test/artifacts
 	cp $< $@
 
-clean:
-	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
-	rm -rf $(BUILD_DIR)
+
+###--- Mkdir targets ---#
+# Note: Intermediate directories can be omitted.
+MKDIR_TARGETS = $(BUILD_DIR)/_locales $(BUILD_DIR)/data/bundled $(BUILD_DIR)/html \
+                $(BUILD_DIR)/img $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources \
+                $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css \
+                $(BUILD_DIR)/public/font
+
+$(MKDIR_TARGETS):
+	mkdir -p $@
 
 
 ###--- Copy targets ---###
-## Targets to copy artifacts to the extension build dir
-AUTOFILL_DIR = node_modules/@duckduckgo/autofill/dist
-DASHBOARD_DIR = node_modules/@duckduckgo/privacy-dashboard/build/app
-SURROGATES_DIR = node_modules/@duckduckgo/tracker-surrogates/surrogates
-BUILD_FOLDERS = $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css
-BROWSER_TYPE = $(browser)
-COPY_DIRS = $(BUILD_DIR)/manifest.json
-ifeq ($(browser),chrome-mv3)
-	BROWSER_TYPE := chrome
-	COPY_DIRS += $(BUILD_DIR)/managed-schema.json
+# The empty $(LAST_COPY) file is used to keep track of file copying, since translating the necessary
+# copying to proper Makefile targets is problematic.
+# See https://www.gnu.org/software/make/manual/html_node/Empty-Targets.html
+LAST_COPY = build/.last-copy-$(browser)-$(type)
+
+RSYNC = rsync -ra --delete --exclude="*~"
+
+$(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
+	$(RSYNC) --exclude="smarter_encryption.txt" browsers/$(browser)/* browsers/chrome/_locales shared/data shared/html shared/img $(BUILD_DIR)
+	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
+	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill.css $(BUILD_DIR)/public/css/autofill.css
+	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill-host-styles_$(BROWSER_TYPE).css $(BUILD_DIR)/public/css/autofill-host-styles.css
+	$(RSYNC) shared/font $(BUILD_DIR)/public
+	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js shared/js/content-scripts/content-scope-messaging.js $(BUILD_DIR)/public/js/content-scripts
+	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
+	touch $@
+
+copy: $(LAST_COPY)
+
+.PHONY: copy
+
+
+###--- Build targets ---###
+## Figure out the correct Browserify command for bundling.
+# TODO: Switch to a better bundler.
+# Workaround Browserify not following symlinks in --only.
+BROWSERIFY_GLOBAL_TARGETS = ./node_modules/@duckduckgo
+BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 -type l | xargs -n1 readlink -f)
+
+BROWSERIFY_BIN = node_modules/.bin/browserify
+BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --presets [ @babel/preset-env ] ]
+# Ensure sourcemaps are included for the bundles during development.
+ifeq ($(type),dev)
+  BROWSERIFY += -d
 endif
 
-## Copy tasks: Copying resources that don't need and compiling
-$(BUILD_DIR)/manifest.json: browsers/$(browser)/*.json
-	mkdir -p `dirname $@`
-	cp browsers/$(browser)/*.json $(BUILD_DIR)
-
-build/chrome-mv3/$(type)/managed-schema.json: browsers/chrome/managed-schema.json
-	mkdir -p `dirname $@`
-	cp $< $@
-
-$(BUILD_DIR)/_locales: browsers/chrome/_locales
-	mkdir -p `dirname $@`
-	cp -r $< $@
-
-$(BUILD_DIR)/data: $(ITEMS)
-	mkdir -p `dirname $@`
-	cp -r $(ITEMS) $(BUILD_DIR)
-
-$(BUILD_DIR)/dashboard: $(DASHBOARD_DIR)/
-	cp -r $< $@
-
-$(BUILD_DIR)/web_accessible_resources: $(SURROGATES_DIR)/
-	cp -r $< $@
-
-$(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources
-	node scripts/generateListOfSurrogates.js -i $</ > $@
-
-$(BUILD_DIR)/public/font: shared/font
-	mkdir -p `dirname $@`
-	cp -r $< $@
-
-# Copy autofill scripts and assets
-$(BUILD_DIR)/public/js/content-scripts/autofill.js: $(AUTOFILL_DIR)/autofill.js
-	mkdir -p `dirname $@`
-	cp $(AUTOFILL_DIR)/*.js `dirname $@`
-
-$(BUILD_DIR)/public/css/autofill.css: $(AUTOFILL_DIR)/autofill.css
-	mkdir -p `dirname $@`
-	cp $< $@
-
-$(BUILD_DIR)/public/css/autofill-host-styles.css: $(AUTOFILL_DIR)/autofill-host-styles_$(BROWSER_TYPE).css
-	cp $< $@
-.PHONY: copy-autofill
-copy-autofill: $(BUILD_DIR)/public/js/content-scripts/autofill.js $(BUILD_DIR)/public/css/autofill.css $(BUILD_DIR)/public/css/autofill-host-styles.css
-
-copy: $(COPY_DIRS) $(BUILD_DIR)/_locales $(BUILD_DIR)/data $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources $(BUILD_DIR)/data/surrogates.txt $(BUILD_DIR)/public/font copy-autofill
-
-##--- Build targets ---#
-# Specify the set of scripts for the extension background
+## Extension background/serviceworker script.
 BACKGROUND_JS = shared/js/background/background.js
 ifeq ($(type), dev)
-	BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
+  BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
 endif
-
-JS_BUNDLES = background.js base.js inject.js content-scripts/content-scope-messaging.js feedback.js options.js devtools-panel.js list-editor.js newtab.js
-js: $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
-
-## Extension background/serviceworker script
-$(BUILD_DIR)/public/js/background.js: $(SOURCE_FILES)
+$(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 	$(BROWSERIFY) $(BACKGROUND_JS) -o $@
 
-$(BUILD_DIR)/public/js/content-scripts/content-scope-messaging.js: shared/js/content-scripts/content-scope-messaging.js
-	cp $< $@
-
-## Extension UI/Devtools scripts
-$(BUILD_DIR)/public/js/base.js: $(SOURCE_FILES)
+## Extension UI/Devtools scripts.
+$(BUILD_DIR)/public/js/base.js: $(WATCHED_FILES)
 	mkdir -p `dirname $@`
 	$(BROWSERIFY) shared/js/ui/base/index.js > $@
 
-$(BUILD_DIR)/public/js/feedback.js: $(SOURCE_FILES)
+$(BUILD_DIR)/public/js/feedback.js: $(WATCHED_FILES)
 	$(BROWSERIFY) shared/js/ui/pages/feedback.js > $@
 
-$(BUILD_DIR)/public/js/options.js: $(SOURCE_FILES)
+$(BUILD_DIR)/public/js/options.js: $(WATCHED_FILES)
 	$(BROWSERIFY) shared/js/ui/pages/options.js > $@
 
-$(BUILD_DIR)/public/js/devtools-panel.js: $(SOURCE_FILES)
+$(BUILD_DIR)/public/js/devtools-panel.js: $(WATCHED_FILES)
 	$(BROWSERIFY) shared/js/devtools/panel.js > $@
 
-$(BUILD_DIR)/public/js/list-editor.js: $(SOURCE_FILES)
+$(BUILD_DIR)/public/js/list-editor.js: $(WATCHED_FILES)
 	$(BROWSERIFY) shared/js/devtools/list-editor.js > $@
 
-$(BUILD_DIR)/public/js/newtab.js: $(SOURCE_FILES)
+$(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
 	$(BROWSERIFY) shared/js/newtab/newtab.js > $@
 
-# Content Scope Scripts
+JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js
+
+BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
+
+## Unit tests scripts.
+UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
+build/test:
+	mkdir -p $@
+
+build/test/background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
+	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
+
+build/test/ui.js: $(TEST_FILES) | build/test
+	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
+
+build/test/shared-utils.js: $(TEST_FILES) | build/test
+	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
+
+## Content Scope Scripts
 shared/data/bundled/tracker-lookup.json:
 	node scripts/bundleTrackers.mjs
 
@@ -247,8 +236,8 @@ shared/data/bundled/tracker-lookup.json:
 # have newer source files than build files.
 CONTENT_SCOPE_SCRIPTS_DEPS =
 ifneq ("$(wildcard node_modules/@duckduckgo/content-scope-scripts/.git/)","")
-	CONTENT_SCOPE_SCRIPTS_DEPS += $(shell find node_modules/@duckduckgo/content-scope-scripts/src/ node_modules/@duckduckgo/content-scope-scripts/inject/ node_modules/@duckduckgo/content-scope-scripts/package.json -type f -not -name "*~")
-	CONTENT_SCOPE_SCRIPTS_DEPS += node_modules/@duckduckgo/content-scope-scripts/node_modules
+  CONTENT_SCOPE_SCRIPTS_DEPS += $(shell find node_modules/@duckduckgo/content-scope-scripts/src/ node_modules/@duckduckgo/content-scope-scripts/inject/ node_modules/@duckduckgo/content-scope-scripts/package.json -type f -not -name "*~")
+  CONTENT_SCOPE_SCRIPTS_DEPS += node_modules/@duckduckgo/content-scope-scripts/node_modules
 endif
 
 node_modules/@duckduckgo/content-scope-scripts/node_modules:
@@ -260,7 +249,10 @@ node_modules/@duckduckgo/content-scope-scripts/build/$(browser)/inject.js: $(CON
 $(BUILD_DIR)/public/js/inject.js: node_modules/@duckduckgo/content-scope-scripts/build/$(browser)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
 	node scripts/bundleContentScopeScripts.mjs $@ $^
 
-# SASS
+BUILD_TARGETS += $(BUILD_DIR)/public/js/inject.js
+
+## SASS
+SASS = node_modules/.bin/sass
 SCSS_SOURCE = $(shell find shared/scss/ -type f)
 OUTPUT_CSS_FILES = $(BUILD_DIR)/public/css/noatb.css $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
 $(BUILD_DIR)/public/css/base.css: shared/scss/base/base.scss $(SCSS_SOURCE)
@@ -268,5 +260,32 @@ $(BUILD_DIR)/public/css/base.css: shared/scss/base/base.scss $(SCSS_SOURCE)
 $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss $(SCSS_SOURCE)
 	$(SASS) $< $@
 
-.PHONY: sass
-sass: $(BUILD_DIR)/public/css/base.css $(OUTPUT_CSS_FILES)
+BUILD_TARGETS += $(BUILD_DIR)/public/css/base.css $(OUTPUT_CSS_FILES)
+
+## Other
+
+# Fetch Smarter Encryption data for bundled Smarter Encryption
+# declarativeNetRequest rules.
+shared/data/smarter_encryption.txt:
+	curl https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz | gunzip -c > shared/data/smarter_encryption.txt
+
+# Generate Smarter Encryption declarativeNetRequest rules for MV3 builds.
+$(BUILD_DIR)/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryption.txt
+	npx ddg2dnr smarter-encryption $< $@
+
+ifeq ('$(browser)','chrome-mv3')
+  BUILD_TARGETS += $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json
+endif
+
+# Note: surrogates.txt has an implicit dependency on $(BUILD_DIR)/data.
+$(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources
+	node scripts/generateListOfSurrogates.js -i $</ > $@
+
+BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
+
+# Ensure directories exist before build targets are created.
+$(BUILD_TARGETS): | $(MKDIR_TARGETS)
+
+build: $(BUILD_TARGETS)
+
+.PHONY: build

@@ -9,7 +9,6 @@
     "scripts": {
         "install-ci": "make npm",
         "bundle-config": "node scripts/bundleConfig.mjs && node scripts/bundleTrackers.mjs",
-        "bundle-se": "ddg2dnr smarter-encryption shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "eslint": "eslint '*.js' shared/js shared/data unit-test integration-test scripts",
