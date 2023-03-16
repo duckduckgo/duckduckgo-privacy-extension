@@ -142,6 +142,9 @@ const fireIncontextSignupPixel = (pixel) => {
 export const sendJSPixel = (options) => {
     const { pixelName } = options
     switch (pixelName) {
+    case 'autofill_show':
+        fireAddressUsedPixel('email_tooltip_show_extension')
+        break
     case 'autofill_private_address':
         fireAddressUsedPixel('email_filled_random_extension')
         break
