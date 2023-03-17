@@ -23,8 +23,13 @@ endif
 
 
 ###--- Top level targets ---###
+# TODO:
+#  - Add default `help` target.
+#  - Set browser/type automatically where possible.
+#  - Add check that browser+type are set when necessary.
+
 ## release: Create a release build for a platform in build/$(browser)/release
-## specify browser=(chrome|chrome-mv3|firefox)
+## specify browser=(chrome|chrome-mv3|firefox) type=release
 release: clean npm copy build
 
 .PHONY: release
@@ -58,6 +63,7 @@ watch:
 
 .PHONY: watch
 
+## unit-test: Run the unit tests.
 unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
 	node_modules/.bin/karma start karma.conf.js
 
@@ -70,7 +76,7 @@ test-int: integration-test/artifacts/attribution.json
 
 .PHONY: test-int
 
-## test-int: Run legacy integration tests against the Chrome MV3 extension.
+## test-int-mv3: Run legacy integration tests against the Chrome MV3 extension.
 test-int-mv3: integration-test/artifacts/attribution.json
 	make dev browser=chrome-mv3 type=dev
 	jasmine --config=integration-test/config-mv3.json
@@ -97,12 +103,19 @@ chrome-release-zip:
 	rm -f build/chrome/release/chrome-release-*.zip
 	cd build/chrome/release/ && zip -rq chrome-release-$(shell date +"%Y%m%d_%H%M%S").zip *
 
+.PHONY: chrome-release-zip
+
 chrome-mv3-release-zip:
 	rm -f build/chrome-mv3/release/chrome-mv3-release-*.zip
 	cd build/chrome-mv3/release/ && zip -rq chrome-mv3-release-$(shell date +"%Y%m%d_%H%M%S").zip *
 
+.PHONY: chrome-mv3-release-zip
+
 chrome-mv3-beta-zip: prepare-chrome-beta chrome-mv3-release-zip
 	
+
+.PHONY: chrome-mv3-beta-zip
+
 prepare-chrome-beta:
 	sed 's/__MSG_appName__/DuckDuckGo Privacy Essentials MV3 Beta/' ./browsers/chrome-mv3/manifest.json > build/chrome-mv3/release/manifest.json
 	cp -r build/chrome-mv3/release/img/beta/* build/chrome-mv3/release/img/
@@ -127,6 +140,8 @@ setup-artifacts-dir:
 	mkdir -p integration-test/artifacts/screenshots
 	mkdir -p integration-test/artifacts/api_schemas
 
+.PHONY: setup-artifacts-dir
+
 # Fetch integration test data.
 integration-test/artifacts/attribution.json: node_modules/privacy-test-pages/adClickFlow/shared/testCases.json setup-artifacts-dir
 	mkdir -p integration-test/artifacts
@@ -150,7 +165,7 @@ $(MKDIR_TARGETS):
 # See https://www.gnu.org/software/make/manual/html_node/Empty-Targets.html
 LAST_COPY = build/.last-copy-$(browser)-$(type)
 
-RSYNC = rsync -ra --delete --exclude="*~"
+RSYNC = rsync -ra --exclude="*~"
 
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 	$(RSYNC) --exclude="smarter_encryption.txt" browsers/$(browser)/* browsers/chrome/_locales shared/data shared/html shared/img $(BUILD_DIR)
@@ -277,7 +292,6 @@ ifeq ('$(browser)','chrome-mv3')
   BUILD_TARGETS += $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json
 endif
 
-# Note: surrogates.txt has an implicit dependency on $(BUILD_DIR)/data.
 $(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources
 	node scripts/generateListOfSurrogates.js -i $</ > $@
 
