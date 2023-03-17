@@ -166,10 +166,8 @@ async function updateConfigRules (
 
     // Install the updated rules.
     console.log('update rules', convertDNRRuleset(rules))
-    await chrome.declarativeNetRequest.updateDynamicRules({
-        addRules: convertDNRRuleset(rules),
-        removeRuleIds,
-    })
+    await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds })
+    await chrome.declarativeNetRequest.updateDynamicRules({ addRules: convertDNRRuleset(rules) })
     console.log('dynmaic rules', await chrome.declarativeNetRequest.getDynamicRules())
 
     // Then update the setting entry.

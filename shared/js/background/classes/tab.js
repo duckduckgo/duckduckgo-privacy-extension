@@ -41,7 +41,7 @@ class Tab {
         this.httpsRedirects = new HttpsRedirects()
         this.webResourceAccess = []
         this.surrogates = {}
-        this.lastTrackerUpdate = 0
+        this.lastTrackerUpdate = Date.now()
     }
 
     /**

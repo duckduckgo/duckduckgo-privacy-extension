@@ -54,8 +54,9 @@ async function updateUserAllowlistRule (allowlistedDomains) {
     }
     console.log('updateUserAllowlistRule', allowlistedDomains, addRules)
 
+    await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds })
     await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds, addRules: convertDNRRuleset(addRules)
+        addRules: convertDNRRuleset(addRules)
     })
 }
 

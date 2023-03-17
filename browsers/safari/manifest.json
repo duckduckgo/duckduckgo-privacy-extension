@@ -68,7 +68,6 @@
                 "/public/font/*",
                 "/html/tracker-stats.html"
             ],
-            "use_dynamic_url": true,
             "matches": [
                 "<all_urls>"
             ]

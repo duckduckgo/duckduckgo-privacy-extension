@@ -242,8 +242,11 @@ const ATB = (() => {
                 delete atbRule.condition.requestDomains
             }
             chrome.declarativeNetRequest.updateDynamicRules({
-                removeRuleIds: [atbRule.id],
-                addRules: [atbRule]
+                removeRuleIds: [atbRule.id]
+            }).then(() => {
+                chrome.declarativeNetRequest.updateDynamicRules({
+                    addRules: [atbRule]
+                })
             })
         },
 
