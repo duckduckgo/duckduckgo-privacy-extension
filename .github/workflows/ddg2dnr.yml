@@ -1,4 +1,4 @@
-name: Test
+name: ddg2dnr
 
 on: [push, pull_request]
 
@@ -8,7 +8,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        node: [16.x, 18.x]
+        node: [18.x]
         os: [ubuntu-latest] # FIXME - macos-latest runner keeps failing
     steps:
       - uses: actions/checkout@v2
@@ -17,5 +17,5 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm install
-      - run: cd packages/ddg2dnr && npm run lint
-      - run: cd packages/ddg2dnr && npm test
+      - run: npm run lint --workspace=packages/ddg2dnr
+      - run: npm test --workspace=packages/ddg2dnr
