@@ -1,5 +1,5 @@
 require('../helpers/mock-browser-api')
-const atb = require('../../shared/js/background/atb')
+const atb = require('../../shared/js/background/atb').default
 const settings = require('../../shared/js/background/settings')
 const load = require('../../shared/js/background/load')
 const browserWrapper = require('../../shared/js/background/wrapper')

@@ -1,6 +1,6 @@
 const tdsTests = require('./../data/tdsTestDomains.json')
 const tds = require('../../shared/js/background/trackers')
-const tdsStorage = require('../../shared/js/background/storage/tds')
+const tdsStorage = require('../../shared/js/background/storage/tds').default
 const tdsStorageStub = require('./../helpers/tds')
 
 describe('tracker blocking', () => {

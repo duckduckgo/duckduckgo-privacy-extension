@@ -1,6 +1,6 @@
 const trackerutils = require('../../shared/js/background/tracker-utils')
 const tds = require('../../shared/js/background/trackers')
-const tdsStorage = require('../../shared/js/background/storage/tds')
+const tdsStorage = require('../../shared/js/background/storage/tds').default
 const tdsStorageStub = require('./../helpers/tds')
 const settings = require('../../shared/js/background/settings')
 

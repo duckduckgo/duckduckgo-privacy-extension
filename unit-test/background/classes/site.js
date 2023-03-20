@@ -2,7 +2,7 @@ const Site = require('../../../shared/js/background/classes/site')
 const browserWrapper = require('../../../shared/js/background/wrapper')
 const load = require('./../../helpers/utils')
 const config = require('./../../../shared/data/bundled/extension-config.json')
-const tdsStorage = require('../../../shared/js/background/storage/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds').default
 const tdsStorageStub = require('./../../helpers/tds')
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'

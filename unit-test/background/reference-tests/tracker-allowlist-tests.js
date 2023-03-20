@@ -1,6 +1,6 @@
 const tdsStorageStub = require('../../helpers/tds')
 const tds = require('../../../shared/js/background/trackers')
-const tdsStorage = require('../../../shared/js/background/storage/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const refTests = require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_matching_tests.json')
 const allowList = require('../../../shared/js/background/allowlisted-trackers')
