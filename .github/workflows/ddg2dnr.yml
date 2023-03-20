@@ -3,8 +3,7 @@ name: ddg2dnr
 on: [push, pull_request]
 
 jobs:
-  lint-test:
-    name: "${{ matrix.os }} (Node.js ${{ matrix.node }})"
+  lint:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
@@ -18,4 +17,17 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm install
       - run: npm run lint --workspace=packages/ddg2dnr
+  test:
+    runs-on: "${{ matrix.os }}"
+    strategy:
+      matrix:
+        node: [18.x]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
       - run: npm test --workspace=packages/ddg2dnr
