@@ -1,0 +1,21 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  lint-test:
+    name: "${{ matrix.os }} (Node.js ${{ matrix.node }})"
+    runs-on: "${{ matrix.os }}"
+    strategy:
+      matrix:
+        node: [16.x, 18.x]
+        os: [ubuntu-latest] # FIXME - macos-latest runner keeps failing
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install
+      - run: npm run lint
+      - run: npm test
