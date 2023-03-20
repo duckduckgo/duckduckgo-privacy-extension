@@ -1,11 +1,8 @@
 {
     "spec_dir": "integration-test",
     "spec_files": [
-        "background/onboarding.js",
-        "background/request-blocking.js",
-        "background/test-fingerprint.js",
-        "background/storage.js",
-        "background/click-attribution.js",
-        "content-scripts/gpc.js"
+        "legacy/*.js",
+        "content-scripts/gpc.js",
+        "!legacy/click-to-load-youtube.js"
     ]
 }

@@ -4,6 +4,8 @@ const path = require('path')
 const puppeteer = require('puppeteer')
 const spawnSync = require('child_process').spawnSync
 
+const backgroundWait = require('../helpers/backgroundWait')
+
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000
 if (process.env.KEEP_OPEN) {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 20000 * 1000
@@ -25,8 +27,7 @@ const setup = async (ops) => {
         `--user-data-dir=${dataDir}`
     ]
 
-    const manifestVersion =
-        process.env.npm_lifecycle_event === 'test-int-mv3' ? 3 : 2
+    const manifestVersion = getManifestVersion()
 
     if (loadExtension) {
         let extensionPath = 'build/chrome/dev'
@@ -56,7 +57,7 @@ const setup = async (ops) => {
                     target.type() === 'background_page' ||
                     target.type() === 'service_worker'
                 ),
-                { timeout: 2000 }
+                { timeout: 4000 }
             )
             bgPage = backgroundPageTarget.type() === 'background_page'
                 ? await backgroundPageTarget.page()
@@ -68,6 +69,15 @@ const setup = async (ops) => {
         if (!bgPage) {
             throw new Error('Couldn\'t find background page.')
         }
+
+        // Set a flag to mark this as an integration test session.
+        await backgroundWait.forFunction(
+            bgPage, async () => globalThis?.dbg?.browserWrapper
+        )
+        await bgPage.evaluate(
+            () => globalThis.dbg.browserWrapper
+                .setToSessionStorage('integrationTest', true)
+        )
 
         bgPage.on('request', (req) => { requests.push(req.url()) })
     }
@@ -93,9 +103,14 @@ const setup = async (ops) => {
         spawnSync('rm', ['-rf', dataDir])
     }
 
-    return { browser, bgPage, requests, teardown, manifestVersion }
+    return { browser, bgPage, requests, teardown }
+}
+
+function getManifestVersion () {
+    return process.env.npm_lifecycle_event === 'test-int-mv3' ? 3 : 2
 }
 
 module.exports = {
-    setup
+    setup,
+    getManifestVersion
 }

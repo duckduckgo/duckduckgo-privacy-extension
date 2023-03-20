@@ -2,7 +2,7 @@
  * For managing dynamically created MV3 session rules
  * getNextSessionRuleId will return the next unique session rule id to use when creating new session rules
  **/
-import * as browserWrapper from './wrapper.es6'
+import * as browserWrapper from './wrapper'
 const SESSION_RULE_ID_START = 100000
 const SESSION_RULE_STORAGE_KEY = 'sessionRuleOffset'
 let sessionRuleOffset = 0
@@ -17,7 +17,7 @@ export async function setSessionRuleOffsetFromStorage () {
 }
 
 /**
- * Get the next unique session rule id to use when craeting session DNR rules
+ * Get the next unique session rule id to use when creating session DNR rules
  * @returns {number | null} nextRuleId
  */
 export function getNextSessionRuleId () {
@@ -30,4 +30,25 @@ export function getNextSessionRuleId () {
     sessionRuleOffset += 1
     browserWrapper.setToSessionStorage(SESSION_RULE_STORAGE_KEY, sessionRuleOffset)
     return nextRuleId
+}
+
+function isValidSessionId (id) {
+    return id >= SESSION_RULE_ID_START
+}
+
+/**
+* Remove orphaned session ids
+* We increment the rule IDs for some session rules, starting at STARTING_RULE_ID and
+* keep a note of the next rule ID in session storage. During extesion update/restarts
+* session storage is cleared, while session rules are not, which causes errors due to
+* session rule ID conflicts
+ * @return {Promise}
+ */
+export function flushSessionRules () {
+    return chrome.declarativeNetRequest.getSessionRules().then(rules => {
+        const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId)
+        if (ruleIds.length) {
+            return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })
+        }
+    })
 }

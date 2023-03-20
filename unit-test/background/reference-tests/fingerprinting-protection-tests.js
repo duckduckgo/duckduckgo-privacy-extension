@@ -1,22 +1,22 @@
 require('../../helpers/mock-browser-api')
 
-const tds = require('../../../shared/js/background/trackers.es6')
-const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
+const tds = require('../../../shared/js/background/trackers')
+const tdsStorageStub = require('../../helpers/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds')
 
-const tabManager = require('../../../shared/js/background/tab-manager.es6')
-const browserWrapper = require('../../../shared/js/background/wrapper.es6')
+const tabManager = require('../../../shared/js/background/tab-manager')
+const browserWrapper = require('../../../shared/js/background/wrapper')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 
-const batteryProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-battery')
-const hardwareProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-hardware')
-const screenProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-screen-size')
-const tempStorageProtection = require('../../../shared/content-scope-scripts/src/features/fingerprinting-temporary-storage')
-const { isFeatureBroken } = require('../../../shared/content-scope-scripts/src/utils')
+const batteryProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-battery')
+const hardwareProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-hardware')
+const screenProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-screen-size')
+const tempStorageProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-temporary-storage')
+const { isFeatureBroken } = require('@duckduckgo/content-scope-scripts/src/utils')
 
-const configReference = require('../../data/reference-tests/fingerprinting-protections/config_reference.json')
-const testSets = require('../../data/reference-tests/fingerprinting-protections/tests.json')
-const apiMocksInit = require('../../data/reference-tests/fingerprinting-protections/init')
+const configReference = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/config_reference.json')
+const testSets = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/tests.json')
+const apiMocksInit = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/init')
 
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom

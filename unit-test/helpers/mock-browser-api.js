@@ -29,7 +29,9 @@ globalThis.browser = {
     declarativeNetRequest: {
         isRegexSupported () { return { isSupported: true } },
         getDynamicRules () { },
-        updateDynamicRules () { }
+        getSessionRules () { },
+        updateDynamicRules () { },
+        updateSessionRules () { }
     }
 }
 globalThis.chrome = globalThis.browser

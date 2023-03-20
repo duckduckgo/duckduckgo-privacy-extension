@@ -1,17 +1,17 @@
 require('../../helpers/mock-browser-api')
 
-const tds = require('../../../shared/js/background/trackers.es6')
-const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
+const tds = require('../../../shared/js/background/trackers')
+const tdsStorageStub = require('../../helpers/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds')
 
-const { handleRequest } = require('../../../shared/js/background/before-request.es6')
-const tabManager = require('../../../shared/js/background/tab-manager.es6')
-const browserWrapper = require('../../../shared/js/background/wrapper.es6')
+const { handleRequest } = require('../../../shared/js/background/before-request')
+const tabManager = require('../../../shared/js/background/tab-manager')
+const browserWrapper = require('../../../shared/js/background/wrapper')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 
-const configReference = require('../../data/reference-tests/expire-first-party-js-cookies/config_reference.json')
-const blocklistReference = require('../../data/reference-tests/expire-first-party-js-cookies/tracker_radar_reference.json')
-const testSets = require('../../data/reference-tests/expire-first-party-js-cookies/tests.json')
+const configReference = require('@duckduckgo/privacy-reference-tests/expire-first-party-js-cookies/config_reference.json')
+const blocklistReference = require('@duckduckgo/privacy-reference-tests/expire-first-party-js-cookies/tracker_radar_reference.json')
+const testSets = require('@duckduckgo/privacy-reference-tests/expire-first-party-js-cookies/tests.json')
 
 const jsdom = require('jsdom')
 const constants = require('../../../shared/data/constants')
@@ -66,10 +66,10 @@ for (const setName of Object.keys(testSets)) {
                 // eslint-disable-next-line no-global-assign
                 globalThis = jsdomWindow
 
-                const utils = require('../../../shared/content-scope-scripts/src/utils')
+                const utils = require('@duckduckgo/content-scope-scripts/src/utils')
                 utils.setGlobal(jsdomWindow)
 
-                const jsCookieProtection = require('../../../shared/content-scope-scripts/src/features/cookie')
+                const jsCookieProtection = require('@duckduckgo/content-scope-scripts/src/features/cookie')
 
                 jsCookieProtection.load({
                     platform: constants.platform

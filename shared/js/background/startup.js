@@ -1,15 +1,18 @@
 import browser from 'webextension-polyfill'
-const browserWrapper = require('./wrapper.es6')
-const Companies = require('./companies.es6')
-const experiment = require('./experiments.es6')
-const https = require('./https.es6')
-const httpsStorage = require('./storage/https.es6')
-const settings = require('./settings.es6')
-const tabManager = require('./tab-manager.es6')
-const tdsStorage = require('./storage/tds.es6')
-const trackers = require('./trackers.es6')
+import { NewTabTrackerStats } from './newtab-tracker-stats'
+import { TrackerStats } from './classes/tracker-stats'
+const utils = require('./utils')
+const browserWrapper = require('./wrapper')
+const Companies = require('./companies')
+const experiment = require('./experiments')
+const https = require('./https')
+const httpsStorage = require('./storage/https')
+const settings = require('./settings')
+const tabManager = require('./tab-manager')
+const tdsStorage = require('./storage/tds')
+const trackers = require('./trackers')
 const dnrSessionId = require('./dnr-session-rule-id')
-const { fetchAlias, showContextMenuAction } = require('./email-utils.es6')
+const { fetchAlias, showContextMenuAction } = require('./email-utils')
 const manifestVersion = browserWrapper.getManifestVersion()
 /** @module */
 
@@ -27,14 +30,36 @@ export async function onStartup () {
     try {
         const httpsLists = await httpsStorage.getLists(/* preferLocal= */true)
         https.setLists(httpsLists)
-
+    } catch (e) {
+        console.warn('Error loading https lists', e)
+    }
+    try {
         const tdsLists = await tdsStorage.getLists(/* preferLocal= */true)
         trackers.setLists(tdsLists)
     } catch (e) {
-        console.log(e)
+        console.warn('Error loading tds lists', e)
     }
 
     Companies.buildFromStorage()
+
+    /**
+     * in Chrome only, try to initiate the `NewTabTrackerStats` feature
+     */
+    if (utils.getBrowserName() === 'chrome') {
+        try {
+            // build up dependencies
+            const trackerStats = new TrackerStats()
+            const newTabTrackerStats = new NewTabTrackerStats(trackerStats)
+
+            // restore from storage first
+            await newTabTrackerStats.restoreFromStorage()
+
+            // now setup extension listeners
+            newTabTrackerStats.register()
+        } catch (e) {
+            console.warn('an error occurred setting up TrackerStats', e)
+        }
+    }
 
     // fetch alias if needed
     const userData = settings.getSetting('userData')
@@ -43,7 +68,7 @@ export async function onStartup () {
         showContextMenuAction()
     }
 
-    const savedTabs = await browser.tabs.query({ currentWindow: true, status: 'complete' })
+    const savedTabs = await browser.tabs.query({ status: 'complete' })
     for (let i = 0; i < savedTabs.length; i++) {
         const tab = savedTabs[i]
 

@@ -1,5 +1,4 @@
-const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string.es6')
-const browserWrapper = require('../js/background/wrapper.es6')
+const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string')
 const browserInfo = parseUserAgentString()
 
 function getConfigFileName () {
@@ -9,9 +8,8 @@ function getConfigFileName () {
     if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
         browserName = ''
     } else {
-        browserName = '-' + browserName + (browserWrapper.getManifestVersion() === 3 ? 'mv3' : '')
+        browserName = '-' + browserName + (chrome?.runtime.getManifest().manifest_version === 3 ? 'mv3' : '')
     }
-
     return `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName}-config.json`
 }
 
@@ -101,20 +99,14 @@ module.exports = {
         },
         {
             name: 'tds',
-            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v3/tds.json',
+            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json',
             format: 'json',
             source: 'external',
             channels: {
-                live: 'https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds.json',
-                next: 'https://staticcdn.duckduckgo.com/trackerblocking/v2.1/tds-next.json',
+                live: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json',
+                next: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds-next.json',
                 beta: 'https://staticcdn.duckduckgo.com/trackerblocking/beta/tds.json'
             }
-        },
-        {
-            name: 'ClickToLoadConfig',
-            url: 'https://staticcdn.duckduckgo.com/useragents/social_ctp_configuration.json',
-            format: 'json',
-            source: 'external'
         },
         {
             name: 'config',
@@ -138,7 +130,29 @@ module.exports = {
         'The certificate is not trusted because it is self-signed.': 12,
         downgrade_redirect_loop: 13
     },
+    iconPaths: /** @type {const} */ ({
+        regular: '/img/icon_browser_action.png',
+        withSpecialState: '/img/icon_browser_action_special.png'
+    }),
     platform: {
         name: 'extension'
-    }
+    },
+    supportedLocales: ['cimode', 'en'], // cimode is for testing
+    trackerStats: /** @type {const} */({
+        allowedOrigin: 'https://duckduckgo.com',
+        allowedPathname: 'ntp-tracker-stats.html',
+        redirectTarget: 'html/tracker-stats.html',
+        clientPortName: 'newtab-tracker-stats',
+        /** @type {ReadonlyArray<string>} */
+        excludedCompanies: ['ExoClick'],
+        events: {
+            incoming: {
+                newTabPage_heartbeat: 'newTabPage_heartbeat'
+            },
+            outgoing: {
+                newTabPage_data: 'newTabPage_data',
+                newTabPage_disconnect: 'newTabPage_disconnect'
+            }
+        }
+    })
 }

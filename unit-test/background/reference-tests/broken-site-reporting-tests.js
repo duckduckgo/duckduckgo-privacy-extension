@@ -1,11 +1,10 @@
-import Tab from '../../../shared/js/background/classes/tab.es6'
+import Tab from '../../../shared/js/background/classes/tab'
+import { breakageReportForTab } from '../../../shared/js/background/broken-site-report'
 
 require('../../helpers/mock-browser-api')
 
-const submitBreakageForm = require('../../../shared/js/ui/models/submit-breakage-form.es6')
-const submitBrokenSiteReport = require('../../../shared/js/background/broken-site-report')
-const loadPixel = require('../../../shared/js/background/load.es6')
-const testSets = require('../../data/reference-tests/broken-site-reporting/tests.json')
+const loadPixel = require('../../../shared/js/background/load')
+const testSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/tests.json')
 
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
@@ -58,15 +57,7 @@ for (const setName of Object.keys(testSets)) {
                         fullTrackerDomain: domain
                     })
                 })
-                submitBreakageForm.call({
-                    tds: test.blocklistVersion,
-                    tab,
-                    // normally report params are passed from popup to background script via messaging,
-                    // we are making a shortcut here
-                    submitBrokenSiteReport: params => submitBrokenSiteReport.fire.apply(null, [params]),
-                    set: () => {},
-                    sendMessage: () => {}
-                }, test.category)
+                breakageReportForTab(tab, test.blocklistVersion, test.category, 'foo bar')
 
                 expect(loadPixelSpy.calls.count()).toEqual(1)
 

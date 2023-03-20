@@ -1,21 +1,21 @@
 require('../../helpers/mock-browser-api')
 
-const trackers = require('../../../shared/js/background/trackers.es6')
-const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
+const trackers = require('../../../shared/js/background/trackers')
+const tdsStorageStub = require('../../helpers/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds')
 
-const tabManager = require('../../../shared/js/background/tab-manager.es6')
-const browserWrapper = require('../../../shared/js/background/wrapper.es6')
+const tabManager = require('../../../shared/js/background/tab-manager')
+const browserWrapper = require('../../../shared/js/background/wrapper')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('../../../shared/js/background/events/3p-tracking-cookie-blocking')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 
 const jsdom = require('jsdom')
 
-const trackingJsCookieProtection = require('../../../shared/content-scope-scripts/src/features/cookie')
+const trackingJsCookieProtection = require('@duckduckgo/content-scope-scripts/src/features/cookie')
 
-const trackingConfigReference = require('../../data/reference-tests/block-third-party-tracking-cookies/config_reference.json')
-const trackingBlocklistReference = require('../../data/reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
-const trackingTestSets = require('../../data/reference-tests/block-third-party-tracking-cookies/tests.json')
+const trackingConfigReference = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/config_reference.json')
+const trackingBlocklistReference = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json')
+const trackingTestSets = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/tests.json')
 const constants = require('../../../shared/data/constants')
 
 const { JSDOM } = jsdom
@@ -59,9 +59,12 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                             type: 'script'
                         })
 
-                        const headersAreRemoved = outputRequest.responseHeaders.find(h => h.name.toLocaleLowerCase() === 'set-cookie') === undefined
-
-                        expect(headersAreRemoved).toBe(test.expectSetCookieHeadersRemoved)
+                        if (test.expectCookieHeadersRemoved) {
+                            const headersAreRemoved = outputRequest?.responseHeaders.find(h => h.name.toLocaleLowerCase() === 'set-cookie') === undefined
+                            expect(headersAreRemoved).toBe(test.expectSetCookieHeadersRemoved)
+                        } else {
+                            expect(outputRequest).toBeFalsy()
+                        }
                     } else if ('expectCookieHeadersRemoved' in test) {
                         const outputRequest = dropTracking3pCookiesFromRequest({
                             tabId: 1,
@@ -71,9 +74,12 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                             type: 'script'
                         })
 
-                        const headersAreRemoved = outputRequest.requestHeaders.find(h => h.name.toLocaleLowerCase() === 'cookie') === undefined
-
-                        expect(headersAreRemoved).toBe(test.expectCookieHeadersRemoved)
+                        if (test.expectCookieHeadersRemoved) {
+                            const headersAreRemoved = outputRequest?.requestHeaders.find(h => h.name.toLocaleLowerCase() === 'cookie') === undefined
+                            expect(headersAreRemoved).toBe(test.expectCookieHeadersRemoved)
+                        } else {
+                            expect(outputRequest).toBeFalsy()
+                        }
                     }
                 })
             } else if ('expectDocumentCookieSet' in test) {

@@ -31,8 +31,6 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 
 ### Pre-Requisites
 - [Node.js](https://nodejs.org) installation
-- [grunt-cli](https://gruntjs.com/getting-started)
-- grunt-cli can be installed by running `npm install -g grunt-cli`
 
 ### Building the extension
 
@@ -80,9 +78,13 @@ npm run bundle-config
 
 ### Development flow
 
-The `shared` directory contains JS, CSS, and images that are shared by all browsers.
+The `shared` directory contains JS, CSS, and images that are shared by all browsers for things like the options
+page and the dev-tools panel. 
 
-The popup UI is in `shared/js/ui`
+The popup UI comes from [`@duckduckgo/privacy-dashboard`](https://github.com/duckduckgo/privacy-dashboard) - we use `npm`
+to install this package. At build time we copy the pre-built assets from the Dashboard into the extensions output folder. 
+To make changes to the dashboard, see the section below [Locally testing changes to modules](#locally-testing-changes-to-modules).
+The Dashboard also publishes extension-specific [documentation](https://duckduckgo.github.io/privacy-dashboard/example/docs/modules/Browser_Extensions_integration.html)   
 
 The background JS is in `shared/js/`
 
@@ -90,7 +92,11 @@ Browser specific files, including manifest files, are located in `browsers/<brow
 
 Run the dev build task for your browser from the 'Build' section above. The generated build files are located in `/build/<browser>/dev`.
 
-After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you.
+After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you. If a dev build is running in a browser, it should also automatically reload itself after being rebuilt.
+
+Notes:
+  - If you want to create a developer build once _without_ watching for future changes, use the Makefile directly (e.g. `make dev browser=chrome type=dev`).
+  - If you want to disable automatic extension reloading, pass the `reloader=0` build parameter. (e.g. `npm run dev-chrome reloader=0` or `make dev browser=chrome type=dev reloader=0`).
 
 ### Locally testing changes to modules
 
@@ -112,5 +118,6 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 
 ### Testing
 - Unit tests: `npm test`
-- Integration tests: `npm run test-int`
+- Integration tests: `npm run playwright` (full docs [here](./integration-test/README.md))
+- Legacy integration tests: `npm run test-int`
     - You can filter to one test with: `KEEP_OPEN=1 npm run test-int -- -f integration-test/background/test-fp-fingerprint.js`

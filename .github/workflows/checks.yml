@@ -1,0 +1,117 @@
+name: Check
+
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm run install-ci
+      - run: npm run lint
+
+  build:
+    strategy:
+      matrix:
+        version: [18]
+        os: [ubuntu-latest, macos-latest]
+        target: ['release-firefox', 'release-chrome', 'release-chrome-mv3']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.version }}
+          cache: 'npm'
+      - run: npm run ${{ matrix.target }}  
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm run install-ci
+      - run: npm test
+
+  integration-tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm run install-ci
+      - run: npm run test-int
+      - name: Store test artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: integration-test-artifacts
+          path: integration-test/artifacts
+
+  integration-mv3-tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm run install-ci
+      - run: npm run test-int-mv3
+
+  playwright-tests:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm run install-ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+      - name: Run tests
+        run: xvfb-run --auto-servernum -- npm run playwright
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+  playwright-tests-mv3:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+      - run: npm run install-ci
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+      - name: Run tests
+        run: xvfb-run --auto-servernum -- npm run playwright-mv3
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: playwright-report-mv3
+          path: playwright-report/
+          retention-days: 30

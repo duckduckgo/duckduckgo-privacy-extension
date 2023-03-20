@@ -1,18 +1,18 @@
 require('../../helpers/mock-browser-api')
 
-const tdsStorageStub = require('../../helpers/tds.es6')
-const tdsStorage = require('../../../shared/js/background/storage/tds.es6')
+const tdsStorageStub = require('../../helpers/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds')
 
-const Site = require('../../../shared/js/background/classes/site.es6')
-const GPC = require('../../../shared/js/background/GPC.es6')
-const gpcContentScript = require('../../../shared/content-scope-scripts/src/features/gpc')
-const browserWrapper = require('../../../shared/js/background/wrapper.es6')
-const settings = require('../../../shared/js/background/settings.es6')
+const Site = require('../../../shared/js/background/classes/site')
+const GPC = require('../../../shared/js/background/GPC')
+const gpcContentScript = require('@duckduckgo/content-scope-scripts/src/features/gpc')
+const browserWrapper = require('../../../shared/js/background/wrapper')
+const settings = require('../../../shared/js/background/settings')
 
-const contentScriptUtils = require('../../../shared/content-scope-scripts/src/utils.js')
+const contentScriptUtils = require('@duckduckgo/content-scope-scripts/src/utils.js')
 
-const testSets = require('../../data/reference-tests/global-privacy-control/tests.json')
-const config = require('../../data/reference-tests/global-privacy-control/config_reference.json')
+const testSets = require('@duckduckgo/privacy-reference-tests/global-privacy-control/tests.json')
+const config = require('@duckduckgo/privacy-reference-tests/global-privacy-control/config_reference.json')
 
 const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 

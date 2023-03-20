@@ -1,6 +1,6 @@
-const tabManager = require('../tab-manager.es6')
+const tabManager = require('../tab-manager')
 const trackerutils = require('../tracker-utils')
-const utils = require('../utils.es6')
+const utils = require('../utils')
 const browserName = utils.getBrowserName()
 
 /**
@@ -22,7 +22,7 @@ module.exports = function limitReferrerData (e) {
     const referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')?.value
     if (!referrer) return
 
-    const tab = tabManager.get({ tabId: e.tabId })
+    const tab = tabManager.get(e)
 
     // Firefox only - Check if this tab had a surrogate redirect request and if it will
     // likely be blocked by CORS (Origin header). Chrome surrogate redirects happen in onBeforeRequest.

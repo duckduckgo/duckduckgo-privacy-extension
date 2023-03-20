@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2022.10.26",
+    "version": "2023.3.15.1",
     "minimum_chrome_version": "92.0",
     "icons": {
         "16": "img/icon_16.png",
@@ -11,8 +11,8 @@
     },
     "manifest_version": 2,
     "browser_action": {
-        "default_icon": "img/icon_48.png",
-        "default_popup": "html/popup.html"
+        "default_icon": "img/icon_browser_action.png",
+        "default_popup": "dashboard/html/browser.html"
     },
     "omnibox": {
         "keyword": "ddg"
@@ -35,6 +35,7 @@
             "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
         }
     },
+    "content_security_policy": "script-src 'self'; object-src 'self'; frame-ancestors https://*.duckduckgo.com",
     "content_scripts": [
         {
             "matches": [
@@ -80,7 +81,8 @@
         "/web_accessible_resources/*",
         "/img/logo-small.svg",
         "/public/css/autofill.css",
-        "/public/font/*"
+        "/public/font/*",
+        "/html/tracker-stats.html"
     ],
     "storage": {
         "managed_schema": "managed-schema.json"

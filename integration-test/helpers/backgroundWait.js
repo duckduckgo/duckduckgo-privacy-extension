@@ -56,6 +56,10 @@ function manuallyWaitForFunction (bgPage, func, { polling, timeout }, ...args) {
 //     (rather than the default of 30 seconds) to improve the error output on
 //     timeout.
 function forFunction (bgPage, func, ...args) {
+    if (bgPage.waitForFunction && bgPage.routeFromHAR) {
+        // In Playwright, the waitForFunction signature differs from the puppeteer one
+        return bgPage.waitForFunction(func, ...args)
+    }
     const waitForFunction = bgPage.waitForFunction
         ? bgPage.waitForFunction.bind(bgPage)
         : manuallyWaitForFunction.bind(null, bgPage)
@@ -101,9 +105,22 @@ async function forAllConfiguration (bgPage) {
     }
 }
 
+async function forExtensionLoaded (context) {
+    return /** @type {Promise<string>} */(new Promise((resolve) => {
+        const listenForPostinstall = (page) => {
+            if (page.url().startsWith('https://duckduckgo.com/extension-success')) {
+                resolve(page.url())
+                context.off('page', listenForPostinstall)
+            }
+        }
+        context.on('page', listenForPostinstall)
+    }))
+}
+
 module.exports = {
     forTimeout,
     forFunction,
     forSetting,
-    forAllConfiguration
+    forAllConfiguration,
+    forExtensionLoaded
 }

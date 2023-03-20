@@ -1,10 +1,10 @@
-import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } from '../wrapper.es6'
+import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } from '../wrapper'
 import { Tracker } from './tracker'
 import { AdClick } from './ad-click-attribution-policy'
 
 export class TabState {
     /**
-     * @param {import('./tab.es6').TabData} tabData
+     * @param {import('./tab').TabData} tabData
      */
     constructor (tabData, restoring = false) {
         this.tabId = tabData.tabId
@@ -32,6 +32,12 @@ export class TabState {
         this.trackers = {}
         /** @type {null | import('../events/referrer-trimming').Referrer} */
         this.referrer = null
+        /** @type {string[]} */
+        this.disabledClickToLoadRuleActions = []
+        /** @type {Record<string, number[]>} */
+        this.dnrRuleIdsByDisabledClickToLoadRuleAction = {}
+        /** @type {boolean} */
+        this.ctlYouTube = false // True when at least one YouTube Click to Load placeholder was displayed in the tab.
 
         /** @type {boolean} */
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features

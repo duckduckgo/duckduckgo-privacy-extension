@@ -1,8 +1,8 @@
 // Utility functions for dealing with tracker information
-import * as utils from './utils.es6'
-import trackers from './trackers.es6'
+import * as utils from './utils'
+import trackers from './trackers'
 import * as tldts from 'tldts'
-import tdsStorage from './storage/tds.es6'
+import tdsStorage from './storage/tds'
 
 export function hasTrackerListLoaded () {
     return !!trackers.trackerList
@@ -32,77 +32,6 @@ export function isTracker (url) {
     }
     const tracker = trackers.findTracker(data)
     return !!tracker
-}
-
-/**
- * Determine if the social entity should be blocked on this URL. returns True if so.
- */
-export function shouldBlockSocialNetwork (entity, url) {
-    const domain = tldts.parse(url).domain
-    const excludeData = getDomainsToExludeByNetwork()
-    return excludeData.filter(e => e.domain === domain && e.entity === entity).length === 0
-}
-
-/*
- * Parse the social config to find excluded domains by social tracker. This then returns a list of objects
- * that include the exlcuded domain and network, for use in other exception list handling.
- */
-const socialExcludeCache = {
-    /** @type {{entity: string, domain: string}[]} */
-    excludes: [],
-    expireTime: 0,
-    refreshTimeMS: 1000 * 60 * 30 // 30 minutes
-}
-export function getDomainsToExludeByNetwork () {
-    if (Date.now() < socialExcludeCache.expireTime) {
-        return socialExcludeCache.excludes
-    }
-    socialExcludeCache.excludes = []
-    for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
-        if (data.excludedDomains) {
-            const excludedDomains = data.excludedDomains.map(e => e.domain)
-            for (const domain of excludedDomains) {
-                socialExcludeCache.excludes.push({
-                    entity,
-                    domain
-                })
-            }
-        }
-    }
-    socialExcludeCache.expireTime = Date.now() + socialExcludeCache.refreshTimeMS
-    return socialExcludeCache.excludes
-}
-
-// Return true if URL is in our click to load tracker list
-export function getSocialTracker (url) {
-    const parsedDomain = tldts.parse(url)
-    for (const [entity, data] of Object.entries(tdsStorage.ClickToLoadConfig)) {
-        if (data.domains.includes(parsedDomain.domain) && !data.excludedSubdomains.includes(parsedDomain.hostname)) {
-            let redirect
-            if (data.surrogates) {
-                for (const surrogate of data.surrogates) {
-                    if (url.match(surrogate.rule)) {
-                        redirect = surrogate.surrogate
-                        break
-                    }
-                }
-            }
-            return {
-                entity,
-                data,
-                redirectUrl: redirect
-            }
-        }
-    }
-}
-
-// Ensure we allow logged in sites to access facebook
-const logins = []
-export function allowSocialLogin (url) {
-    const domain = utils.extractHostFromURL(url)
-    if (!logins.includes(domain)) {
-        logins.push(domain)
-    }
 }
 
 /*
