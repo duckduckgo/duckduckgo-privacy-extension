@@ -15,8 +15,12 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
         return
     }
 
-    const response = await fetch('/buildtime.txt', { cache: 'no-store' })
-    const buildTime = await response.text()
+    let buildTime = null
+
+    try {
+        const response = await fetch('/buildtime.txt', { cache: 'no-store' })
+        buildTime = await response.text()
+    } catch (e) { }
 
     if (buildTime) {
         const previousBuildTime = await browserWrapper.getFromSessionStorage('buildTime')

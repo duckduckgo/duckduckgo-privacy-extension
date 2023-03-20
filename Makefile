@@ -95,7 +95,7 @@ npm:
 ## clean: Clear the builds and temporary files.
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
-	rm -rf $(BUILD_DIR)
+	rm -rf build
 
 .PHONY: clean
 
@@ -253,22 +253,35 @@ build/test/shared-utils.js: $(TEST_FILES) | build/test
 shared/data/bundled/tracker-lookup.json:
 	node scripts/bundleTrackers.mjs
 
+CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts
+
 # Rebuild content-scope-scripts if it's a local checkout (.git is present), but
 # not otherwise. That is important, since content-scope-scripts releases often
 # have newer source files than build files.
 CONTENT_SCOPE_SCRIPTS_DEPS =
-ifneq ("$(wildcard node_modules/@duckduckgo/content-scope-scripts/.git/)","")
-  CONTENT_SCOPE_SCRIPTS_DEPS += $(shell find node_modules/@duckduckgo/content-scope-scripts/src/ node_modules/@duckduckgo/content-scope-scripts/inject/ node_modules/@duckduckgo/content-scope-scripts/package.json -type f -not -name "*~")
-  CONTENT_SCOPE_SCRIPTS_DEPS += node_modules/@duckduckgo/content-scope-scripts/node_modules
+CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS =
+ifneq ("$(wildcard $(CONTENT_SCOPE_SCRIPTS)/.git/)","")
+  CONTENT_SCOPE_SCRIPTS_DEPS += $(shell find $(CONTENT_SCOPE_SCRIPTS)/src $(CONTENT_SCOPE_SCRIPTS)/inject $(CONTENT_SCOPE_SCRIPTS)/scripts -type f -not -name "*~")
+  CONTENT_SCOPE_SCRIPTS_DEPS += $(CONTENT_SCOPE_SCRIPTS)/package.json
+  CONTENT_SCOPE_SCRIPTS_DEPS += $(CONTENT_SCOPE_SCRIPTS)/node_modules
+  CONTENT_SCOPE_SCRIPTS_DEPS += $(CONTENT_SCOPE_SCRIPTS)/build/locales
+
+  CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS += $(shell find $(CONTENT_SCOPE_SCRIPTS)/src/locales $(CONTENT_SCOPE_SCRIPTS)/scripts)
+  CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS += $(CONTENT_SCOPE_SCRIPTS)/package.json
+  CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS += $(CONTENT_SCOPE_SCRIPTS)/node_modules
 endif
 
-node_modules/@duckduckgo/content-scope-scripts/node_modules:
-	cd node_modules/@duckduckgo/content-scope-scripts; npm install
+$(CONTENT_SCOPE_SCRIPTS)/node_modules:
+	cd $(CONTENT_SCOPE_SCRIPTS); npm install
 
-node_modules/@duckduckgo/content-scope-scripts/build/$(browser)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
-	cd node_modules/@duckduckgo/content-scope-scripts; npm run build-$(browser)
+$(CONTENT_SCOPE_SCRIPTS)/build/locales: $(CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS)
+	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-locales
+	touch $(CONTENT_SCOPE_SCRIPTS)/build/locales
 
-$(BUILD_DIR)/public/js/inject.js: node_modules/@duckduckgo/content-scope-scripts/build/$(browser)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
+$(CONTENT_SCOPE_SCRIPTS)/build/$(browser)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
+	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-$(browser)
+
+$(BUILD_DIR)/public/js/inject.js: $(CONTENT_SCOPE_SCRIPTS)/build/$(browser)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
 	node scripts/bundleContentScopeScripts.mjs $@ $^
 
 BUILD_TARGETS += $(BUILD_DIR)/public/js/inject.js
