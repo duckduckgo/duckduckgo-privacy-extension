@@ -17,5 +17,5 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm install
-      - run: npm run lint
-      - run: npm test
+      - run: cd packages/ddg2dnr && npm run lint
+      - run: cd packages/ddg2dnr && npm test
