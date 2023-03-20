@@ -1,5 +1,5 @@
+import Dexie from 'dexie'
 const load = require('./../load')
-const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings')
 const browserWrapper = require('./../wrapper')
@@ -18,11 +18,11 @@ const configNames = constants.tdsLists.map(({ name }) => name)
 
 class TDSStorage {
     constructor () {
-        // @ts-ignore - TypeScript is not following the Dexie import property.
         this.dbc = new Dexie('tdsStorage')
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
         })
+        this.table = this.dbc.table('tdsStorage')
 
         this.tds = { entities: {}, trackers: {}, domains: {}, cnames: {} }
         this.surrogates = ''
@@ -239,7 +239,7 @@ class TDSStorage {
     }
 
     storeInLocalDB (name, data) {
-        return this.dbc.tdsStorage.put({ name, data }).catch(e => {
+        return this.table.put({ name, data }).catch(e => {
             console.warn(`storeInLocalDB failed for ${name}: resetting stored etag`, e)
             settings.updateSetting(`${name}-etag`, '')
             settings.updateSetting(`${name}-lastUpdate`, '')
@@ -308,9 +308,9 @@ class TDSStorage {
     }
 
     removeLegacyLists () {
-        this.dbc.tdsStorage.delete('ReferrerExcludeList')
-        this.dbc.tdsStorage.delete('brokenSiteList')
-        this.dbc.tdsStorage.delete('protections')
+        this.table.delete('ReferrerExcludeList')
+        this.table.delete('brokenSiteList')
+        this.table.delete('protections')
     }
 
     onUpdate (name, listener) {
@@ -334,4 +334,4 @@ class TDSStorage {
         return readyPromise
     }
 }
-module.exports = new TDSStorage()
+export default new TDSStorage()

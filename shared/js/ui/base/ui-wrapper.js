@@ -15,17 +15,10 @@ export const backgroundMessage = (thisModel) => {
     })
 }
 
-const getExtensionURL = (path) => {
+export const getExtensionURL = (path) => {
     return browser.runtime.getURL(path)
 }
 
 export const openExtensionPage = (path) => {
     browser.tabs.create({ url: getExtensionURL(path) })
-}
-
-module.exports = {
-    sendMessage,
-    backgroundMessage,
-    openExtensionPage,
-    getExtensionURL
 }

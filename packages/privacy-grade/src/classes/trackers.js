@@ -162,7 +162,7 @@ class Trackers {
 
             // take identifier from first line
             const pattern = firstLine.split(' ')[0].split('/')[1]
-            const b64surrogate = Buffer.from(lines.join('\n').toString(), 'binary').toString('base64')
+            const b64surrogate = btoa(lines.join('\n').toString())
             surrogateList[pattern] = b64dataheader + b64surrogate
         })
         return surrogateList

@@ -1,5 +1,5 @@
+import Dexie from 'dexie'
 const load = require('./../load')
-const Dexie = require('dexie')
 const constants = require('../../../data/constants')
 const settings = require('./../settings')
 
@@ -117,7 +117,7 @@ class HTTPSStorage {
     }
 
     storeInLocalDB (name, type, data) {
-        return this.dbc.httpsStorage.put({ name, type, data }).catch(e => {
+        return this.dbc.table('httpsStorage').put({ name, type, data }).catch(e => {
             console.warn(`storeInLocalDB failed for ${name}: resetting stored etag`, e)
             settings.updateSetting(`${name}-etag`, '')
             settings.updateSetting(`${name}-lastUpdate`, '')
@@ -127,6 +127,11 @@ class HTTPSStorage {
     hasCorrectChecksum (data) {
         // not everything has a checksum
         if (!data.checksum) return Promise.resolve(true)
+
+        // TODO: rewrite this check without needing a Buffer polyfill
+        if (typeof Buffer === 'undefined') {
+            return Promise.resolve(true)
+        }
 
         // need a buffer to send to crypto.subtle
         const buffer = Buffer.from(data.data, 'base64')
@@ -141,4 +146,4 @@ class HTTPSStorage {
         })
     }
 }
-module.exports = new HTTPSStorage()
+export default new HTTPSStorage()

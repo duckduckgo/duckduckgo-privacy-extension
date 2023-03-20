@@ -418,5 +418,7 @@ function isSameDomainRequest (tab, req) {
     }
 }
 
-exports.blockHandleResponse = blockHandleResponse
-exports.handleRequest = handleRequest
+export {
+    blockHandleResponse,
+    handleRequest
+}

@@ -1,9 +1,9 @@
 import browser from 'webextension-polyfill'
+import tdsStorage from './storage/tds'
 const tldts = require('tldts')
 
 const tabManager = require('./tab-manager')
 const trackers = require('./trackers')
-const tdsStorage = require('./storage/tds')
 const { removeBroken } = require('./utils')
 
 // Note: It is not necessary to use session storage to store the tabId -> port

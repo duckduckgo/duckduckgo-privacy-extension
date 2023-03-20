@@ -1,5 +1,5 @@
 const Site = require('./classes/site')
-const tdsStorage = require('./storage/tds')
+const tdsStorage = require('./storage/tds').default
 const utils = require('./utils')
 
 let ampSettings = null
