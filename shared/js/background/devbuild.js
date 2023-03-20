@@ -17,6 +17,9 @@ const { TabState } = require('./classes/tab-state')
 const Wrapper = require('./wrapper.js')
 const { setListContents, getListContents } = require('./message-handlers')
 
+// @ts-ignore
+// RELOADER && require('./devbuild-reloader')
+
 // @ts-ignore - dbg is not a standard property of self.
 self.dbg = {
     settings,

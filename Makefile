@@ -172,9 +172,11 @@ BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 
 
 BROWSERIFY_BIN = node_modules/.bin/browserify
 BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --plugins [ "./scripts/rewrite-meta" ] --presets [ @babel/preset-env ] ]
+ESBUILD = node_modules/.bin/esbuild --bundle --target=firefox91
 # Ensure sourcemaps are included for the bundles during development.
 ifeq ($(type),dev)
   BROWSERIFY += -d
+  ESBUILD += --sourcemap
 endif
 
 ## Extension background/serviceworker script.
@@ -184,11 +186,14 @@ ifeq ($(type), dev)
   BACKGROUND_JS += shared/js/background/devbuild.js
   # Unless reloader=0 is passed, they also contain an auto-reload module.
   ifneq ($(reloader),0)
-    BACKGROUND_JS += shared/js/background/devbuild-reloader.js
+  	BACKGROUND_JS += shared/js/background/devbuild-reloader.js
+  #  ESBUILD += --define:RELOADER=true
+  #else
+  #  ESBUILD += --define:RELOADER=false
   endif
 endif
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
-	$(BROWSERIFY) $(BACKGROUND_JS) -o $@
+	$(BROWSERIFY) $(BACKGROUND_JS) > $@
 
 ## Locale resources for UI
 shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
@@ -197,22 +202,22 @@ shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
 ## Extension UI/Devtools scripts.
 $(BUILD_DIR)/public/js/base.js: $(WATCHED_FILES) shared/js/ui/base/locale-resources.js
 	mkdir -p `dirname $@`
-	$(BROWSERIFY) shared/js/ui/base/index.js > $@
+	$(ESBUILD) shared/js/ui/base/index.js > $@
 
 $(BUILD_DIR)/public/js/feedback.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/ui/pages/feedback.js > $@
+	$(ESBUILD) shared/js/ui/pages/feedback.js > $@
 
 $(BUILD_DIR)/public/js/options.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/ui/pages/options.js > $@
+	$(ESBUILD) shared/js/ui/pages/options.js > $@
 
 $(BUILD_DIR)/public/js/devtools-panel.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/devtools/panel.js > $@
+	$(ESBUILD) shared/js/devtools/panel.js > $@
 
 $(BUILD_DIR)/public/js/list-editor.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/devtools/list-editor.js > $@
+	$(ESBUILD) shared/js/devtools/list-editor.js > $@
 
 $(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/newtab/newtab.js > $@
+	$(ESBUILD) shared/js/newtab/newtab.js > $@
 
 JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js
 
