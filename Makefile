@@ -47,14 +47,16 @@ beta-firefox: release beta-firefox-zip
 .PHONY: beta-firefox
 
 ## dev: Create a debug build for a platform in build/$(browser)/dev.
-## specify browser=(chrome|chrome-mv3|firefox) type=dev
-dev: copy build
+##      Pass reloader=0 to disable automatic extension reloading.
+## specify browser=(chrome|chrome-mv3|firefox) type=dev [reloader=1]
+dev: copy build $(BUILD_DIR)/buildtime.txt
 
 .PHONY: dev
 
 ## watch: Create a debug build for a platform in build/$(browser)/dev, and keep
 ##        it up to date as files are changed.
-## specify browser=(chrome|chrome-mv3|firefox) type=dev
+##        Pass reloader=0 to disable automatic extension reloading.
+## specify browser=(chrome|chrome-mv3|firefox) type=dev [reloader=1]
 MAKE = make -j4 $(type) browser=$(browser) type=$(type)
 watch:
 	$(MAKE)
@@ -199,7 +201,12 @@ endif
 ## Extension background/serviceworker script.
 BACKGROUND_JS = shared/js/background/background.js
 ifeq ($(type), dev)
-  BACKGROUND_JS := shared/js/background/debug.js $(BACKGROUND_JS)
+  # Developer builds include the devbuilds module for debugging.
+  BACKGROUND_JS += shared/js/background/devbuild.js
+  # Unless reloader=0 is passed, they also contain an auto-reload module.
+  ifneq ($(reloader),0)
+    BACKGROUND_JS += shared/js/background/devbuild-reloader.js
+  endif
 endif
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 	$(BROWSERIFY) $(BACKGROUND_JS) -o $@
@@ -278,6 +285,10 @@ $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss $(SCSS_SOURCE)
 BUILD_TARGETS += $(BUILD_DIR)/public/css/base.css $(OUTPUT_CSS_FILES)
 
 ## Other
+
+# Update buildtime.txt for development builds, for auto-reloading.
+$(BUILD_DIR)/buildtime.txt: $(BUILD_TARGETS) $(LAST_COPY)
+	echo $(shell date +"%Y%m%d_%H%M%S") > $(BUILD_DIR)/buildtime.txt
 
 # Fetch Smarter Encryption data for bundled Smarter Encryption
 # declarativeNetRequest rules.

@@ -31,8 +31,6 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
 
 ### Pre-Requisites
 - [Node.js](https://nodejs.org) installation
-- [grunt-cli](https://gruntjs.com/getting-started)
-- grunt-cli can be installed by running `npm install -g grunt-cli`
 
 ### Building the extension
 
@@ -94,9 +92,11 @@ Browser specific files, including manifest files, are located in `browsers/<brow
 
 Run the dev build task for your browser from the 'Build' section above. The generated build files are located in `/build/<browser>/dev`.
 
-After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you.
+After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you. If a dev build is running in a browser, it should also automatically reload itself after being rebuilt.
 
-Note: If you wish to *not* monitor for changes please add watch=0 to your command such as `npm run dev-chrome -- watch=0`. This will require you to build other module changes yourself listed below.
+Notes:
+  - If you want to create a developer build once _without_ watching for future changes, use the Makefile directly (e.g. `make dev browser=chrome type=dev`).
+  - If you want to disable automatic extension reloading, pass the `reloader=0` build parameter. (e.g. `npm run dev-chrome reloader=0` or `make dev browser=chrome type=dev reloader=0`).
 
 ### Locally testing changes to modules
 
