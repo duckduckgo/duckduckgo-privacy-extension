@@ -86,7 +86,7 @@
         "i18next": "^22.4.10",
         "i18next-icu": "^2.1.0",
         "is-plain-object": "5.0.0",
-        "jquery": "3.6.3",
+        "jquery": "3.6.4",
         "normalize.scss": "0.1.0",
         "privacy-test-pages": "github:duckduckgo/privacy-test-pages#1.0.0",
         "punycode": "2.3.0",
