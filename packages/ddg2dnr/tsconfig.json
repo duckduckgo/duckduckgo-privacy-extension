@@ -1,25 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "es2021",
-    "moduleResolution": "node",
-    "alwaysStrict": true,
-    "allowJs": true,
-    "checkJs": true,
-    "noEmit": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "declaration": true,
-    "strict": true,
-    "noImplicitAny": false,
-    "strictNullChecks": true,
-    "maxNodeModuleJsDepth": 0
-  },
+  "extends": "../../tsconfig.json",
   "include": [
       "*.js",
       "**/*.js",
       "node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js"
   ],
-  "types": [
-      "chrome"
-  ]
 }

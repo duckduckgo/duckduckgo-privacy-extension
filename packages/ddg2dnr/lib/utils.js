@@ -1,7 +1,7 @@
 /** @module utils */
 
 /**
- * @typedef {import('../node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js').TrackerObj} TrackerObj
+ * @typedef {import('@duckduckgo/privacy-grade/src/classes/trackers.js').TrackerObj} TrackerObj
  * @typedef {{
  *  domains: string[];
  *  prevalence: number;

@@ -143,7 +143,11 @@ class PuppeteerInterface {
      * @property {string} [method]
      *   The request method. Defaults to 'get' for HTTP requests and
      *   is ignored for non-HTTP requests.
-     * See https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#type-RequestMethod
+     *   See https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#type-RequestMethod
+     * @property {number} [tabId]
+     *   The ID of the tab in which the hypothetical request takes place.
+     *   Does not need to correspond to a real tab ID. Default is -1,
+     *   meaning that the request isn't related to a tab.
      */
 
     /**
@@ -158,10 +162,10 @@ class PuppeteerInterface {
         await this.ready
         if (!this.backgroundWorker) return []
         return await this.backgroundWorker.evaluate(
-            async requestDetails =>
+            async testRequestDetails =>
                 new Promise(resolve =>
                     chrome.declarativeNetRequest.testMatchOutcome(
-                        requestDetails,
+                        testRequestDetails,
                         ({ matchedRules }) => {
                             resolve(
                                 matchedRules.map(

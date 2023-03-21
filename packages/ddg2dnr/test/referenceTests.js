@@ -11,24 +11,20 @@ const {
 const { generateCookieBlockingRuleset } = require('../lib/cookies')
 
 function referenceTestPath (...args) {
-    return path.join(
-        __dirname, '..', 'node_modules', '@duckduckgo/privacy-reference-tests',
-        ...args
-    )
+    return require.resolve(path.join('@duckduckgo/privacy-reference-tests', ...args))
 }
 
-function loadJSONFile (prefix, file) {
-    return JSON.parse(fs.readFileSync(
-        path.join(prefix, file),
+function loadReferenceTestJSONFile (...pathParts) {
+    return JSON.parse(fs.readFileSync(referenceTestPath(...pathParts),
         { encoding: 'utf8', flag: 'r' }
     ))
 }
 
 function* testCases (referenceTests) {
     for (const {
-        name: testGroup, tests: testCasesGroup
+        name: testGroup, tests: testGroupTestCases
     } of Object.values(referenceTests)) {
-        for (const testCase of testCasesGroup) {
+        for (const testCase of testGroupTestCases) {
             const { exceptPlatforms } = testCase
             if (exceptPlatforms?.includes('web-extension-mv3')) {
                 continue
@@ -40,15 +36,18 @@ function* testCases (referenceTests) {
     }
 }
 
-describe('Reference Tests', () => {
-    it('TR-domain-matching', async function () {
-        const referenceTestsPath = referenceTestPath(
-            'tracker-radar-tests', 'TR-domain-matching'
-        )
+/**
+ * @typedef {{
+ *  beforeAll: (fn: () => Promise<any>) => Void;
+ *  beforeEach: (fn: () => Promise<any>) => Void;
+ *  browser: import('../puppeteerInterface').PuppeteerInterface;
+ * }} testFunction
+ */
 
-        const blockList = loadJSONFile(referenceTestsPath, 'tracker_radar_reference.json')
-
-        const referenceTests = loadJSONFile(referenceTestsPath, 'domain_matching_tests.json')
+describe('Reference Tests', /** @this {testFunction} */ () => {
+    it('TR-domain-matching', /** @this {testFunction} */ async function () {
+        const blockList = loadReferenceTestJSONFile('tracker-radar-tests', 'TR-domain-matching', 'tracker_radar_reference.json')
+        const referenceTests = loadReferenceTestJSONFile('tracker-radar-tests', 'TR-domain-matching', 'domain_matching_tests.json')
 
         // Note - This should be taken from surrogates.txt, not hardcoded.
         const supportedSurrogateScripts = new Set(['tracker', 'script.js'])
@@ -100,15 +99,13 @@ describe('Reference Tests', () => {
         }
     })
 
-    it('http-upgrades', async function () {
-        const referenceTestsPath = referenceTestPath('https-upgrades')
-
+    it('http-upgrades', /** @this {testFunction} */ async function () {
         const domains = fs.readFileSync(
-            path.join(referenceTestsPath, 'https_upgrade_hostnames.txt'),
+            referenceTestPath('https-upgrades', 'https_upgrade_hostnames.txt'),
             { encoding: 'utf8', flag: 'r' }
         ).split('\n')
 
-        const referenceTests = loadJSONFile(referenceTestsPath, 'tests.json')
+        const referenceTests = loadReferenceTestJSONFile('https-upgrades', 'tests.json')
 
         await this.browser.addRules(generateSmarterEncryptionRuleset(domains))
 
@@ -144,16 +141,14 @@ describe('Reference Tests', () => {
         }
     })
 
-    describe('cookie blocking', async function () {
-        const referenceTestsPath = referenceTestPath(
-            'block-third-party-tracking-cookies'
-        )
-        const referenceTests = loadJSONFile(referenceTestsPath, 'tests.json')
+    describe('cookie blocking', /** @this {testFunction} */ async function () {
+        const referenceTestsBase = 'block-third-party-tracking-cookies'
+        const referenceTests = loadReferenceTestJSONFile(referenceTestsBase, 'tests.json')
         let cookieRules = []
 
         this.beforeAll(async function () {
-            const tds = loadJSONFile(referenceTestsPath, 'tracker_radar_reference.json')
-            const config = loadJSONFile(referenceTestsPath, 'config_reference.json')
+            const tds = loadReferenceTestJSONFile(referenceTestsBase, 'tracker_radar_reference.json')
+            const config = loadReferenceTestJSONFile(referenceTestsBase, 'config_reference.json')
 
             // TODO: legacy feature name in test config. Should be changed to 'cookies'
             const excludedCookieDomains = config.features.trackingCookies3p.settings.excludedCookieDomains.map(e => e.domain)
@@ -163,7 +158,7 @@ describe('Reference Tests', () => {
             cookieRules = generateCookieBlockingRuleset(tds, excludedCookieDomains, [...siteAllowlist, ...unprotectedTemporary], 1000).ruleset
         })
 
-        this.beforeEach(async function () {
+        this.beforeEach(/** @this {testFunction} */ async function () {
             await this.browser.addRules(cookieRules)
         })
 
@@ -174,7 +169,7 @@ describe('Reference Tests', () => {
         } of testCases(referenceTests)) {
             // exclude document.cookie specs (DNR only does header cookies)
             if (!testDescription.startsWith('document.cookie')) {
-                it(testDescription, async function () {
+                it(testDescription, /** @this {testFunction} */ async function () {
                     const actualMatchedRules = await this.browser.testMatchOutcome({
                         url: initialUrl,
                         initiator: initiatorUrl,

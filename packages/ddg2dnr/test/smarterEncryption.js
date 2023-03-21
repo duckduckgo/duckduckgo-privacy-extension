@@ -6,6 +6,10 @@ const {
     createSmarterEncryptionTemporaryRule
 } = require('../lib/smarterEncryption')
 
+/**
+ * @typedef {{ browser: import('../puppeteerInterface').PuppeteerInterface}} testFunction
+ */
+
 describe('generateSmarterEncryptionRuleset', () => {
     it('should return an empty list of rules if there are no domains', () => {
         assert.equal(generateSmarterEncryptionRuleset([]).length, 0)
@@ -265,7 +269,7 @@ describe('generateSmarterEncryptionRuleset', () => {
         ], 4321).map(rule => rule.id), [4321, 4322, 4323])
     })
 
-    it('should upgrade insecure requests from provided domains', async function () {
+    it('should upgrade insecure requests from provided domains', /** @this {testFunction} */ async function () {
         const ruleset = generateSmarterEncryptionRuleset(['privacy-test-pages.glitch.me'])
         await this.browser.addRules(ruleset)
         const matchedRules = await this.browser.testMatchOutcome({
@@ -277,7 +281,7 @@ describe('generateSmarterEncryptionRuleset', () => {
         assert.equal(matchedRules[0].action.type, 'upgradeScheme')
     })
 
-    it('createSmarterEncryptionExceptionRule should prevent https upgrade for domain', async function () {
+    it('createSmarterEncryptionExceptionRule should prevent https upgrade for domain', /** @this {testFunction} */ async function () {
         const testDomains = ['privacy-test-pages.glitch.me', 'glitch.me']
         await this.browser.addRules(generateSmarterEncryptionRuleset(testDomains, 2))
         await this.browser.addRules([createSmarterEncryptionTemporaryRule([testDomains[0]], 'allow', 1).rule])
