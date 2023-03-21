@@ -240,6 +240,7 @@ async function generateDNRRulesForTrackerEntry (
             action: ruleAction,
             rule: trackerRule,
             exceptions: ruleExceptions,
+            options: ruleOptions,
             surrogate
         } = trackerEntryRules[i]
 
@@ -291,9 +292,9 @@ async function generateDNRRulesForTrackerEntry (
         // Handle "surrogate script" redirections.
         let redirectAction = null
         /** @type {import('./utils.js').ResourceType[]|null} */
-        let resourceTypes = null
+        let ruleResourceTypes = null
         if (surrogate) {
-            resourceTypes = ['script']
+            ruleResourceTypes = ['script']
             if (!supportedSurrogateScripts.has(surrogate)) {
                 // Block requests if an unsupported surrogate script rule
                 // matches.
@@ -308,6 +309,14 @@ async function generateDNRRulesForTrackerEntry (
 
         priority += TRACKER_RULE_PRIORITY_INCREMENT
 
+        // Handle tracker entry rules with 'options'. These rules turn blocking on
+        // only for listed domains and types.
+        let initiatorDomains = null
+        if (ruleOptions &&
+            (ruleAction === 'block' || ruleAction === 'redirect')) {
+            ruleResourceTypes = normalizeTypesCondition(ruleOptions.types)
+            initiatorDomains = ruleOptions.domains
+        }
         {
             const newRule = generateDNRRule({
                 priority,
@@ -318,7 +327,8 @@ async function generateDNRRulesForTrackerEntry (
                 matchCase,
                 requestDomains,
                 excludedInitiatorDomains,
-                resourceTypes
+                initiatorDomains,
+                resourceTypes: ruleResourceTypes
             })
 
             if (clickToLoadAction) {

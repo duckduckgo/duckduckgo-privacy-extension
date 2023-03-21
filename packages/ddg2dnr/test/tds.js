@@ -958,6 +958,114 @@ describe('generateTdsRuleset', () => {
         })
     })
 
+    it('should handle block rules with options', async () => {
+        const blockList = emptyBlockList()
+        addDomain(blockList, 'block.invalid', 'Example entity', 'ignore', [
+            {
+                rule: 'block\\.invalid\\/image',
+                options: { types: ['image'] }
+            },
+            {
+                rule: 'block\\.invalid\\/scripts',
+                options: {
+                    domains: ['block-this-domain.invalid'],
+                    types: ['script']
+                }
+            },
+            {
+                rule: 'block\\.invalid\\/with-surrogate',
+                options: {
+                    domains: ['block-this-domain.invalid']
+                },
+                surrogate: 'supported.js'
+            },
+            {
+                rule: 'block\\.invalid\\/with-type-exception',
+                options: {
+                    domains: ['block-this-domain.invalid', 'also-block-this-one.invalid']
+                },
+                exceptions: {
+                    types: ['image']
+                }
+            }
+        ].reverse())
+
+        await rulesetEqual(blockList, isRegexSupportedTrue, null, {
+            expectedRuleset: [
+                {
+                    id: 1,
+                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT),
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        resourceTypes: [
+                            'image'
+                        ],
+                        domainType: 'thirdParty',
+                        isUrlFilterCaseSensitive: false,
+                        urlFilter: '||block.invalid/image'
+                    }
+                },
+                {
+                    id: 2,
+                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        resourceTypes: [
+                            'script'
+                        ],
+                        domainType: 'thirdParty',
+                        isUrlFilterCaseSensitive: false,
+                        initiatorDomains: ['block-this-domain.invalid'],
+                        urlFilter: '||block.invalid/scripts'
+                    }
+                },
+                {
+                    id: 3,
+                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                    action: {
+                        type: 'redirect',
+                        redirect: { extensionPath: '/supported.js' }
+                    },
+                    condition: {
+                        domainType: 'thirdParty',
+                        isUrlFilterCaseSensitive: false,
+                        initiatorDomains: ['block-this-domain.invalid'],
+                        urlFilter: '||block.invalid/with-surrogate'
+                    }
+                },
+                {
+                    id: 4,
+                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                    action: {
+                        type: 'block'
+                    },
+                    condition: {
+                        domainType: 'thirdParty',
+                        isUrlFilterCaseSensitive: false,
+                        initiatorDomains: ['block-this-domain.invalid', 'also-block-this-one.invalid'],
+                        urlFilter: '||block.invalid/with-type-exception'
+                    }
+                },
+                {
+                    id: 5,
+                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                    action: {
+                        type: 'allow'
+                    },
+                    condition: {
+                        isUrlFilterCaseSensitive: false,
+                        resourceTypes: ['image'],
+                        urlFilter: '||block.invalid/with-type-exception'
+                    }
+                }
+            ]
+        })
+    })
+
     it('should normalize resourceTypes correctly', async () => {
         const blockList = emptyBlockList()
         addDomain(blockList, 'domain.invalid', 'Example entity', 'ignore', [
