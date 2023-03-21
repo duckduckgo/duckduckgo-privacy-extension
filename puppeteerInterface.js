@@ -56,11 +56,11 @@ class PuppeteerInterface {
      */
     async isRegexSupported (regexOptions) {
         await this.ready
-        return await this.backgroundWorker?.evaluate(regexOptions =>
+        return await this.backgroundWorker?.evaluate(options =>
             new Promise(
                 resolve => {
                     chrome.declarativeNetRequest.isRegexSupported(
-                        regexOptions, resolve
+                        options, resolve
                     )
                 }
             )
@@ -75,15 +75,15 @@ class PuppeteerInterface {
      */
     async addRules (rules) {
         await this.ready
-        await this.backgroundWorker?.evaluate(async rules => {
+        await this.backgroundWorker?.evaluate(async addRules => {
             await chrome.declarativeNetRequest.updateDynamicRules({
-                addRules: rules
+                addRules
             })
 
             if (typeof self.ruleById === 'undefined') {
                 self.ruleById = new Map()
             }
-            for (const rule of rules) {
+            for (const rule of addRules) {
                 self.ruleById.set(rule.id, rule)
             }
         }, rules)
@@ -98,9 +98,9 @@ class PuppeteerInterface {
      */
     async removeRules (rules) {
         await this.ready
-        await this.backgroundWorker?.evaluate(async rules => {
+        await this.backgroundWorker?.evaluate(async removeRules => {
             const ruleIds = []
-            for (const rule of rules) {
+            for (const rule of removeRules) {
                 if (typeof self.ruleById !== 'undefined') {
                     self.ruleById.delete(rule.id)
                 }
@@ -158,10 +158,10 @@ class PuppeteerInterface {
         await this.ready
         if (!this.backgroundWorker) return []
         return await this.backgroundWorker.evaluate(
-            async testRequest =>
+            async requestDetails =>
                 new Promise(resolve =>
                     chrome.declarativeNetRequest.testMatchOutcome(
-                        testRequest,
+                        requestDetails,
                         ({ matchedRules }) => {
                             resolve(
                                 matchedRules.map(

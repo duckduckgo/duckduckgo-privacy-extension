@@ -26,9 +26,9 @@ function loadJSONFile (prefix, file) {
 
 function* testCases (referenceTests) {
     for (const {
-        name: testGroup, tests: testCases
+        name: testGroup, tests: testCasesGroup
     } of Object.values(referenceTests)) {
-        for (const testCase of testCases) {
+        for (const testCase of testCasesGroup) {
             const { exceptPlatforms } = testCase
             if (exceptPlatforms?.includes('web-extension-mv3')) {
                 continue
