@@ -1,0 +1,89 @@
+{
+    "smartling": {
+        "string_format" : "icu",
+        "translate_paths": [{
+            "path": "*/title",
+            "key": "{*}/title",
+            "instruction": "*/note"
+        }]
+    },
+    "optionsHeader": {
+        "title": "Options DuckDuckGo",
+        "note": "En-tête des options (paramètres)"
+    },
+    "optionsSubHeader": {
+        "title": "Recherchez et naviguez sur le Web sans être suivi",
+        "note": "Nous permettons à l'utilisateur de naviguer sur le Web sans être suivi par des traqueurs"
+    },
+    "optionsDesc": {
+        "title": "DuckDuckGo protège votre vie privée en ligne avec une\nrecherche privée,\nun blocage de traqueurs,\net le chiffrement de site.",
+        "note": "Cela décrit comment nous protégeons l'utilisateur contre le suivi en ligne."
+    },
+    "shareFeedback": {
+        "title": "Partager vos commentaires",
+        "note": "Cliquez ici pour partager vos opinions sur ce produit"
+    },
+    "reportBrokenSite": {
+        "title": "Signaler un site défectueux",
+        "note": "Cliquez ici pour signaler un problème avec un site spécifique que vous essayez d'utiliser"
+    },
+    "showEmbeddedTweets": {
+        "title": "Afficher les tweets intégrés",
+        "note": "Détermine si l'utilisateur souhaite voir les tweets intégrés dans diverses pages web ou s'ils doivent être masqués lorsque l'on clique dessus."
+    },
+    "globalPrivacyControlAbbr": {
+        "title": "Contrôle de confidentialité mondial (GPC)",
+        "note": "Global Privacy Control est le nom de la fonctionnalité qui permet aux utilisateurs de définir une préférence pour ne pas avoir leurs donnés vendues."
+    },
+    "globalPrivacyControlDesc": {
+        "title": "Vos données ne devraient pas être vendues. Chez DuckDuckGo, nous sommes du même avis.\nActivez les paramètres du 'Global Privacy Control' (GPC) et nous signalerons aux sites web votre préférence pour :",
+        "note": "Cela décrit la fonctionnalité GPC, qui permet à l'utilisateur de définir une préférence pour ne pas avoir leurs informations personnelles vendues par les sites web à d'autres parties. La chaîne est suivie d'une liste d'actions telles que 'Ne pas vendre vos données personnelles'. Ces éléments sont traduits séparément."
+    },
+    "notSellYourPersonalData": {
+        "title": "Ne pas vendre vos données personnelles.",
+        "note": "Partie de la description du GPC, cela signifie que l'utilisateur signalera de ne pas vendre leurs données personnelles."
+    },
+    "limitSharingOfPersonalData": {
+        "title": "Limiter le partage de vos données personnelles avec d'autres entreprises.",
+        "note": "Partie de la description du GPC, cela signifie que l'utilisateur signalera de ne pas partager leurs données personnelles."
+    },
+    "globalPrivacyControlDisclaimer": {
+        "title": "<b>Étant donné que le Global Privacy Controle (GPC) est une nouvelle norme, la plupart des sites web ne le reconnaîtront pas encore, mais nous travaillons dur pour qu'il soit accepté dans le monde entier.</b> Cependant, les sites web ne sont tenus d'agir sur le signal que dans la mesure où les lois applicables les y obligent. ",
+        "note": "Explique à l'utilisateur que nous pouvons communiquer leur choix au site web, mais que le site doit choisir de prendre en charge ce signal."
+    },
+    "emailProtection": {
+        "title": "Protection de l'e-mail",
+        "note": "La protection de l'e-mail est une fonctionnalité qui permet à l'utilisateur de choisir des adresses e-mail privées pour différents sites web."
+    },
+    "autofillDisabled": {
+        "title": "Autoremplissage désactivé",
+        "note": "Lorsque nous n'aidons pas automatiquement à remplir les champs e-mail avec une adresse privée."
+    },
+    "autofillEnabled": {
+        "title": "Autoremplissage activé pour <strong class='js-userdata-container'>{userName}</strong>",
+        "note": "Lorsque nous aidons à remplir automatiquement les adresses e-mail pour (votre adresse e-mail ici)."
+    },
+    "noUnprotectedSitesAdded": {
+        "title": "Aucun site non protégé ajouté",
+        "note": "Il n'y a actuellement aucun site web dans la liste des sites web où nos protections de confidentialité sont désactivées."
+    },
+    "unprotectedSites": {
+        "title": "Sites non protégés",
+        "note": "En-tête de la liste des sites web où nos protections de confidentialité sont désactivées."
+    },
+    "enterURL": {
+        "title": "Saisissez l'URL",
+        "note": "Invite à saisir l'adresse du site Web ici"
+        },
+        "invalidURL": {
+        "title": "URL invalide",
+        "note": "L'adresse Web saisie par l'utilisateur n'est pas une adresse Web valide"
+        },
+        "enableYoutubePreviews": {
+        "title": "Activer les aperçus YouTube",
+        "note": "Indique si l'utilisateur veut voir les aperçus YouTube sur les vidéos intégrées ou si toutes les vidéos intégrées de YouTube sont complètement bloquées par défaut"
+        },
+        "enableYoutubePreviewsDesc": {
+        "title": "DuckDuckGo bloque automatiquement les vidéos intégrées de YouTube, ainsi que leur titre et leur aperçu, pour améliorer votre vie privée. Vous pouvez choisir d'activer les aperçus, mais cela permettra à Google de voir certaines informations de votre appareil lorsque vous visiterez une page avec une vidéo intégrée. ",
+        "note": "Explique que DDG bloque automatiquement les vidéos intégrées de YouTube pour améliorer la vie privée, mais que les utilisateurs peuvent choisir de voir l'aperçu de la vidéo et cela permettra à Google de voir certaines informations de l'appareil"
+        }}

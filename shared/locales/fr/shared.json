@@ -1,0 +1,30 @@
+{
+    "smartling": {
+        "string_format" : "icu",
+        "translate_paths": [{
+            "path": "*/title",
+            "key": "{*}/title",
+            "instruction": "*/note"
+        }]
+    },
+    "options": {
+        "title": "Options",
+        "note": "En-tête de l'interface où l'utilisateur peut configurer diverses options"
+    },
+    "learnMore": {
+        "title": "En savoir plus",
+        "note": "Cliquez ici pour en savoir plus sur le fonctionnement de nos services"
+    },
+    "enable": {
+        "title": "Activer",
+        "note": "Bouton permettant d'activer quelque chose, c'est-à-dire de cliquer sur ce bouton pour activer la fonction."
+    },
+    "disable": {
+        "title": "Désactiver",
+        "note": "Bouton invitant à désactiver quelque chose, c'est-à-dire cliquer sur ce bouton pour désactiver la fonction."
+    },
+    "add": {
+        "title": "Ajouter",
+        "note": "Ajouter quelque chose à une liste"
+    }
+}
