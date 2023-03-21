@@ -1,5 +1,5 @@
-const tdsStorage = require('./storage/tds').default
-const tldts = require('tldts')
+import tdsStorage from './storage/tds'
+import tldts from 'tldts'
 const { getURLWithoutQueryString } = require('./utils')
 
 function isTrackerAllowlisted (site, request) {
