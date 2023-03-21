@@ -14,7 +14,7 @@ test.describe('Loop protection', () => {
         await page.click('#start')
         await page.waitForFunction(
             () => results.date !== null && results.results[0].value !== null,
-            { polling: 100, timeout: 60000 }
+            { polling: 100, timeout: 20000 }
         )
         const results = await page.evaluate(() => {
             return results
