@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": [
+      "*.js",
+      "**/*.js",
+      "node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js"
+  ],
+}
