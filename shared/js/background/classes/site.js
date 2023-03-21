@@ -6,9 +6,9 @@
  * The Grade attributes are then used generate a site
  * privacy grade used in the popup.
  */
-import tdsStorage from '../storage/tds'
 const settings = require('../settings')
 const utils = require('../utils')
+const tdsStorage = require('./../storage/tds').default
 const privacyPractices = require('../privacy-practices')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper')
