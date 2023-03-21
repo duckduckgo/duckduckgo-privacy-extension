@@ -1,8 +1,9 @@
 {
-    "extends": "standard",
+    "extends": ["standard", "eslint:recommended"],
     "rules": {
         "indent": ["error", 4],
-        "generator-star-spacing": ["error", {"before": false, "after": true}]
+        "generator-star-spacing": ["error", {"before": false, "after": true}],
+        "no-shadow": "error"
     },
     "env": {
         "webextensions": true,
