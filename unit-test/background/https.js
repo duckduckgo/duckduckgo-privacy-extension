@@ -1,7 +1,7 @@
 require('../helpers/mock-browser-api')
 const testDomains = require('./../data/httpsTestDomains.json')
 const https = require('../../shared/js/background/https')
-const httpsStorage = require('../../shared/js/background/storage/https')
+const httpsStorage = require('../../shared/js/background/storage/https').default
 const httpsBloom = require('./../data/httpsBloom.json')
 const httpsAllowlist = require('./../data/httpsAllowlist.json')
 const httpsNegativeBloom = require('./../data/httpsNegativeBloom.json')

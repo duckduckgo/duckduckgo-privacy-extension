@@ -17,6 +17,6 @@ function init () {
     }, ['blocking', 'requestBody'])
 }
 
-module.exports = {
+export {
     init
 }

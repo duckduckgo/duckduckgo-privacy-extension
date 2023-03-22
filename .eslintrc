@@ -2,7 +2,14 @@
     "extends": ["standard", "eslint:recommended"],
     "rules": {
         "indent": ["error", 4],
-        "no-shadow": ["error"]
+        "no-shadow": ["error"],
+        "no-restricted-syntax": [
+            "warn",
+            {
+              "selector": ":matches(ImportNamespaceSpecifier, ExportAllDeclaration, ExportNamespaceSpecifier)",
+              "message": "Prefer explicit named imports over wildcard (import * as x)"
+            }
+          ]
     },
     "env": {
         "webextensions": true,

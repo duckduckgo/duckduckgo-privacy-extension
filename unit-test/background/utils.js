@@ -1,5 +1,5 @@
 const utils = require('../../shared/js/background/utils')
-const tdsStorage = require('../../shared/js/background/storage/tds')
+const tdsStorage = require('../../shared/js/background/storage/tds').default
 const tds = require('./../data/tds')
 const load = require('./../helpers/utils.js')
 const config = require('./../data/extension-config.json')

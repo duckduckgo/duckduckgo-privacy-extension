@@ -2,7 +2,7 @@ require('../../helpers/mock-browser-api')
 
 const tds = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds')
-const tdsStorage = require('../../../shared/js/background/storage/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const tabManager = require('../../../shared/js/background/tab-manager')
 const browserWrapper = require('../../../shared/js/background/wrapper')

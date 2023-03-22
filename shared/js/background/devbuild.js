@@ -4,11 +4,11 @@
  */
 import * as startup from './startup'
 import Companies from './companies'
+import atb from './atb'
+import tds from './storage/tds'
 const settings = require('./settings')
 const tabManager = require('./tab-manager')
-const atb = require('./atb')
 const https = require('./https')
-const tds = require('./storage/tds')
 const browserWrapper = require('./wrapper')
 const utils = require('./utils')
 const Tab = require('./classes/tab')

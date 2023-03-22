@@ -1,15 +1,15 @@
 import browser from 'webextension-polyfill'
 import { NewTabTrackerStats } from './newtab-tracker-stats'
 import { TrackerStats } from './classes/tracker-stats'
+import httpsStorage from './storage/https'
+import tdsStorage from './storage/tds'
 const utils = require('./utils')
 const browserWrapper = require('./wrapper')
 const Companies = require('./companies')
 const experiment = require('./experiments')
 const https = require('./https')
-const httpsStorage = require('./storage/https')
 const settings = require('./settings')
 const tabManager = require('./tab-manager')
-const tdsStorage = require('./storage/tds')
 const trackers = require('./trackers')
 const dnrSessionId = require('./dnr-session-rule-id')
 const { fetchAlias, showContextMenuAction } = require('./email-utils')

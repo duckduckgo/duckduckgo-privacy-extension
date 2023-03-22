@@ -4,7 +4,8 @@
  */
 
 import browser from 'webextension-polyfill'
-const browserWrapper = require('./wrapper')
+// TODO: Only import `createAlarm`, `getFromSessionStorage` and `setToSessionStorage` here
+import * as browserWrapper from './wrapper'
 
 function createAlarm () {
     browserWrapper.createAlarm('checkBuildTime', { when: Date.now() + 5000 })

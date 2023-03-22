@@ -1,7 +1,7 @@
 require('../../helpers/mock-browser-api')
 
 const tdsStorageStub = require('../../helpers/tds')
-const tdsStorage = require('../../../shared/js/background/storage/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const browserWrapper = require('../../../shared/js/background/wrapper')
 
@@ -14,7 +14,7 @@ const negativeBloomFilter = require('@duckduckgo/privacy-reference-tests/https-u
 const negativeBloomFilterAllowlist = require('@duckduckgo/privacy-reference-tests/https-upgrades/https_negative_allowlist_reference.json')
 
 const https = require('../../../shared/js/background/https')
-const httpsStorage = require('../../../shared/js/background/storage/https')
+const httpsStorage = require('../../../shared/js/background/storage/https').default
 const load = require('./../../helpers/https')
 const Tab = require('../../../shared/js/background/classes/tab')
 const httpsService = require('../../../shared/js/background/https-service')

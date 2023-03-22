@@ -7,7 +7,7 @@ const { TabState } = require('../../../shared/js/background/classes/tab-state')
 const { AdClickAttributionPolicy } = require('../../../shared/js/background/classes/ad-click-attribution-policy')
 
 const tdsStorageStub = require('../../helpers/tds')
-const tdsStorage = require('../../../shared/js/background/storage/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds').default
 const config = require('../../data/extension-config.json')
 
 let tab

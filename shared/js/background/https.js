@@ -11,6 +11,16 @@ const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test']
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
+function base64ToUint8Array (base64) {
+    const binaryString = globalThis.atob(base64)
+    const len = binaryString.length
+    const bytes = new Uint8Array(len)
+    for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i)
+    }
+    return bytes
+}
+
 class HTTPS {
     constructor () {
         // Store multiple upgrade / don't upgrade bloom filters
@@ -59,7 +69,7 @@ class HTTPS {
     // filterData is assumed to be base64 encoded 8 bit typed array
     createBloomFilter (filterData) {
         const bloom = new BloomFilter(filterData.totalEntries, filterData.errorRate)
-        const buffer = Buffer.from(filterData.data, 'base64')
+        const buffer = base64ToUint8Array(filterData.data)
         bloom.importData(buffer)
         return bloom
     }

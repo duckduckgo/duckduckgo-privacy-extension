@@ -1,5 +1,5 @@
 const Site = require('./classes/site')
-const tdsStorage = require('./storage/tds')
+const tdsStorage = require('./storage/tds').default
 
 /** @module */
 

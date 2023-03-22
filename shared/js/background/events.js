@@ -15,7 +15,9 @@ import {
 import {
     refreshUserAllowlistRules
 } from './dnr-user-allowlist'
-const ATB = require('./atb')
+import tdsStorage from './storage/tds'
+import httpsStorage from './storage/https'
+import ATB from './atb'
 const utils = require('./utils')
 const experiment = require('./experiments')
 const settings = require('./settings')
@@ -24,7 +26,6 @@ const onboarding = require('./onboarding')
 const cspProtection = require('./csp-blocking')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools')
-const tdsStorage = require('./storage/tds')
 const browserWrapper = require('./wrapper')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest, validateSetCookieBlock } = require('./events/3p-tracking-cookie-blocking')
@@ -508,7 +509,6 @@ browser.webNavigation.onCompleted.addListener(details => {
  * ALARMS
  */
 
-const httpsStorage = require('./storage/https')
 const httpsService = require('./https-service')
 const trackers = require('./trackers')
 

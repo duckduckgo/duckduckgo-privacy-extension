@@ -1,4 +1,4 @@
-const tdsStorage = require('./storage/tds')
+const tdsStorage = require('./storage/tds').default
 const tldts = require('tldts')
 const { getURLWithoutQueryString } = require('./utils')
 

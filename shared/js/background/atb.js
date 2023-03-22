@@ -273,4 +273,4 @@ settings.ready().then(async () => {
     browserWrapper.setUninstallURL(await ATB.getSurveyURL())
 })
 
-module.exports = ATB
+export default ATB

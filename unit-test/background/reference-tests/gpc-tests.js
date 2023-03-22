@@ -1,7 +1,7 @@
 require('../../helpers/mock-browser-api')
 
 const tdsStorageStub = require('../../helpers/tds')
-const tdsStorage = require('../../../shared/js/background/storage/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const Site = require('../../../shared/js/background/classes/site')
 const GPC = require('../../../shared/js/background/GPC')

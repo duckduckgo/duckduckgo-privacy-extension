@@ -2,7 +2,7 @@
  * We don't have indexedDB for tds storage so we can
  * stub out the get and fallback functions
  */
-const tdsStorage = require('../../shared/js/background/storage/tds')
+const tdsStorage = require('../../shared/js/background/storage/tds').default
 
 const stub = (arg) => {
     const onUpdateListeners = new Map()

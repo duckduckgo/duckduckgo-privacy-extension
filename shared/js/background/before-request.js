@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill'
 import EventEmitter2 from 'eventemitter2'
+import ATB from './atb'
 const tldts = require('tldts')
 
 const utils = require('./utils')
@@ -7,7 +8,6 @@ const trackers = require('./trackers')
 const https = require('./https')
 const Companies = require('./companies')
 const tabManager = require('./tab-manager')
-const ATB = require('./atb')
 const browserWrapper = require('./wrapper')
 const settings = require('./settings')
 const devtools = require('./devtools')
@@ -146,7 +146,6 @@ function handleRequest (requestData) {
         }
 
         // add atb params only to main_frame
-        // @ts-ignore addParametersMainFrameRequestUrl is exported but TS doesn't know about it
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL)
 
         if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded) {
@@ -418,5 +417,7 @@ function isSameDomainRequest (tab, req) {
     }
 }
 
-exports.blockHandleResponse = blockHandleResponse
-exports.handleRequest = handleRequest
+export {
+    blockHandleResponse,
+    handleRequest
+}

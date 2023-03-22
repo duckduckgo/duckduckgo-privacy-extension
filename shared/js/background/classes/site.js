@@ -8,7 +8,7 @@
  */
 const settings = require('../settings')
 const utils = require('../utils')
-const tdsStorage = require('./../storage/tds')
+const tdsStorage = require('./../storage/tds').default
 const privacyPractices = require('../privacy-practices')
 const Grade = require('@duckduckgo/privacy-grade').Grade
 const browserWrapper = require('../wrapper')

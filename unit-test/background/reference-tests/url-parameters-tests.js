@@ -1,7 +1,7 @@
 const Site = require('../../../shared/js/background/classes/site')
 const tds = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds')
-const tdsStorage = require('../../../shared/js/background/storage/tds')
+const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const config = require('@duckduckgo/privacy-reference-tests/url-parameters/config_reference.json')
 const {

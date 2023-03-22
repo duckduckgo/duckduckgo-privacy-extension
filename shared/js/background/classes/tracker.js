@@ -1,8 +1,8 @@
 import constants from '../../../data/constants'
 import { convertState } from './privacy-dashboard-data'
+import tdsStorage from '../storage/tds'
 
 const Companies = require('../companies')
-const tdsStorage = require('../storage/tds')
 
 /**
  * @typedef {import('../trackers').ActionName} ActionName
