@@ -299,10 +299,6 @@ BUILD_TARGETS += $(BUILD_DIR)/public/css/base.css $(OUTPUT_CSS_FILES)
 
 ## Other
 
-# Update buildtime.txt for development builds, for auto-reloading.
-$(BUILD_DIR)/buildtime.txt: $(BUILD_TARGETS) $(LAST_COPY)
-	echo $(shell date +"%Y%m%d_%H%M%S") > $(BUILD_DIR)/buildtime.txt
-
 # Fetch Smarter Encryption data for bundled Smarter Encryption
 # declarativeNetRequest rules.
 shared/data/smarter_encryption.txt:
@@ -316,10 +312,16 @@ ifeq ('$(browser)','chrome-mv3')
   BUILD_TARGETS += $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json
 endif
 
-$(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources
+$(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources $(wildcard node_modules/@duckduckgo/tracker-surrogates/surrogates/*.js)
 	node scripts/generateListOfSurrogates.js -i $</ > $@
 
 BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
+
+# Update buildtime.txt for development builds, for auto-reloading.
+# Note: Keep this below the other build targets, since it depends on the
+#       $(BUILD_TARGETS) variable.
+$(BUILD_DIR)/buildtime.txt: $(BUILD_TARGETS) $(LAST_COPY)
+	echo $(shell date +"%Y%m%d_%H%M%S") > $(BUILD_DIR)/buildtime.txt
 
 # Ensure directories exist before build targets are created.
 $(BUILD_TARGETS): | $(MKDIR_TARGETS)
