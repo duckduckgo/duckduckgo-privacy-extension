@@ -17,15 +17,12 @@
     "tldts": "^5.7.84"
   },
   "devDependencies": {
-    "chalk": "2.4.0",
-    "commander": "10.0.0",
     "grunt": "1.6.1",
     "grunt-browserify": "6.0.0",
     "grunt-cli": "1.4.3",
     "grunt-exec": "3.0.0",
     "grunt-karma": "4.0.2",
     "load-grunt-tasks": "3.5.2",
-    "request": "2.88.2",
     "url-parse-lax": "^3.0.0"
   }
 }
