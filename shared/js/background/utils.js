@@ -413,3 +413,39 @@ export async function reloadCurrentTab () {
         browser.tabs.reload(tab.id)
     }
 }
+
+const dayMultiplier = 24 * 60 * 60 * 1000
+
+/**
+ * Converts ATB value into date
+ * @param {string} atb
+ * @returns {number|null}
+ */
+export function getInstallTimestamp (atb) {
+    const match = atb.match(/^v?(\d+)-(\d)(.+)?$/i)
+    if (!match) return null
+
+    const startDate = 1456272000000
+    const weeksSince = (parseInt(match[1], 10) - 1) * 7 * dayMultiplier
+    const daysSince = (parseInt(match[2], 10) - 1) * dayMultiplier
+    const installTimestamp = new Date(startDate + weeksSince + daysSince).getTime()
+    return isNaN(installTimestamp) ? null : installTimestamp
+}
+
+/**
+ * Checks if the extension was installed within days of the from date
+ * @param {number} numberOfDays
+ * @param {number} [fromDate]
+ * @param {string} [atb]
+ * @returns {boolean}
+ */
+export function isInstalledWithinDays (numberOfDays, fromDate = Date.now(), atb = settings.getSetting('atb')) {
+    if (!atb) return false
+
+    const installTimestamp = getInstallTimestamp(atb)
+    // If we can't get the install date, assume it wasn't installed in time period
+    if (!installTimestamp) return false
+
+    const daysInstalled = (fromDate - installTimestamp) / dayMultiplier
+    return daysInstalled <= numberOfDays
+}

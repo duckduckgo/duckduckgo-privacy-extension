@@ -91,7 +91,7 @@ export const getAddresses = () => {
     }
 }
 
-function sendPixelRequest (pixelName, params) {
+function sendPixelRequest (pixelName, params = {}) {
     const randomNum = Math.ceil(Math.random() * 1e7)
     const searchParams = new URLSearchParams(Object.entries(params))
     const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
@@ -142,6 +142,9 @@ const fireIncontextSignupPixel = (pixel) => {
 export const sendJSPixel = (options) => {
     const { pixelName } = options
     switch (pixelName) {
+    case 'autofill_show':
+        fireAddressUsedPixel('email_tooltip_show_extension')
+        break
     case 'autofill_private_address':
         fireAddressUsedPixel('email_filled_random_extension')
         break
@@ -151,14 +154,14 @@ export const sendJSPixel = (options) => {
     case 'incontext_show':
         fireIncontextSignupPixel('incontext_show_extension')
         break
-    case 'incontext_get_email_protection':
-        fireIncontextSignupPixel('incontext_get_email_protection_extension')
+    case 'incontext_primary_cta':
+        fireIncontextSignupPixel('incontext_primary_cta_extension')
         break
     case 'incontext_dismiss_persisted':
         fireIncontextSignupPixel('incontext_dismiss_persisted_extension')
         break
-    case 'incontext_dismiss_initial':
-        fireIncontextSignupPixel('incontext_dismiss_initial_extension')
+    case 'incontext_close_x':
+        fireIncontextSignupPixel('incontext_close_x_extension')
         break
     default:
         console.error('Unknown pixel name', pixelName)

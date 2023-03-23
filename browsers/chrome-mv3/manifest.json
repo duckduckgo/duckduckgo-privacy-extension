@@ -83,6 +83,7 @@
             "resources": [
                 "/web_accessible_resources/*",
                 "/img/logo-small.svg",
+                "/img/logo-small-grayscale.svg",
                 "/public/css/autofill.css",
                 "/public/font/*",
                 "/html/tracker-stats.html"
