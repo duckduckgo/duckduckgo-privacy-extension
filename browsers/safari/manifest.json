@@ -49,6 +49,7 @@
         "contextMenus",
         "declarativeNetRequest",
         "declarativeNetRequestFeedback",
+        "declarativeNetRequestWithHostAccess",
         "scripting",
         "storage",
         "tabs",
