@@ -22,6 +22,7 @@ const extensionTemplateTaskGid = '1201192367380462'
 const extensionProjectGid = '312629933896096'
 const releaseSectionGid = '1138897367672278'
 const extensionReleaseSectionGid = '1201759129227683'
+const extensionVersionCustomFieldGid = '1204270899747122'
 
 let asana
 
@@ -147,6 +148,15 @@ const run = async () => {
             duplicateTestingTask.gid,
             { assignee: taskAssignee }
         )
+    }
+
+    console.info('Setting release version field for PR tasks...')
+    for (const task of releaseTasks) {
+        await asana.tasks.updateTask(task.gid, {
+            custom_fields: {
+                [extensionVersionCustomFieldGid]: version
+            }
+        })
     }
 
     console.info('All done. Enjoy! 🎉')
