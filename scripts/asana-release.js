@@ -21,6 +21,7 @@ const artifacts = platforms.map((platform) => {
 const extensionTemplateTaskGid = '1201192367380462'
 const extensionProjectGid = '312629933896096'
 const releaseSectionGid = '1138897367672278'
+const extensionReleaseSectionGid = '1201759129227683'
 
 let asana
 
@@ -96,7 +97,7 @@ const run = async () => {
 
     await asana.tasks.addProjectForTask(new_task.gid, {
         project: extensionProjectGid,
-        insert_before: releaseTasks[0].gid
+        section: extensionReleaseSectionGid
     })
 
     console.info('Uploading files...')
