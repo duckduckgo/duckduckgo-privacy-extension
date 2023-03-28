@@ -95,7 +95,7 @@ npm:
 ## clean: Clear the builds and temporary files.
 clean:
 	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
-	rm -rf build
+	rm -rf $(BUILD_DIR)
 
 .PHONY: clean
 
