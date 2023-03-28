@@ -21,13 +21,15 @@ const artifacts = platforms.map((platform) => {
 const extensionTemplateTaskGid = '1201192367380462'
 const extensionProjectGid = '312629933896096'
 const releaseSectionGid = '1138897367672278'
+const extensionReleaseSectionGid = '1201759129227683'
+const extensionVersionCustomFieldGid = '1204270899747122'
 
 let asana
 
 function setupAsana () {
     asana = Asana.Client.create({
         defaultHeaders: {
-            'Asana-Enable': 'new_user_task_lists,new_project_templates'
+            'Asana-Enable': 'new_user_task_lists,new_project_templates,new_goal_memberships'
         }
     }).useAccessToken(ASANA_ACCESS_TOKEN)
 }
@@ -96,7 +98,7 @@ const run = async () => {
 
     await asana.tasks.addProjectForTask(new_task.gid, {
         project: extensionProjectGid,
-        insert_before: releaseTasks[0].gid
+        section: extensionReleaseSectionGid
     })
 
     console.info('Uploading files...')
@@ -146,6 +148,15 @@ const run = async () => {
             duplicateTestingTask.gid,
             { assignee: taskAssignee }
         )
+    }
+
+    console.info('Setting release version field for PR tasks...')
+    for (const task of releaseTasks) {
+        await asana.tasks.updateTask(task.gid, {
+            custom_fields: {
+                [extensionVersionCustomFieldGid]: version
+            }
+        })
     }
 
     console.info('All done. Enjoy! 🎉')
