@@ -79,11 +79,11 @@ const requestCategoryMapping = {
  *
  * @param {import("./classes/tab")} tab
  * @param {string} tds - tds-etag from settings
- * @param {string} config - tds-config from settings
+ * @param {string} remoteConfig - tds-config from settings
  * @param {string | undefined} category - optional category
  * @param {string | undefined} description - optional description
  */
-export function breakageReportForTab (tab, tds, config, category, description) {
+export function breakageReportForTab (tab, tds, remoteConfig, category, description) {
     if (!tab.url) {
         return
     }
@@ -91,7 +91,7 @@ export function breakageReportForTab (tab, tds, config, category, description) {
     const requestCategories = {}
 
     // This is to satisfy the privacy reference tests expecting these keys to be present
-    for (const requiredRequestCategory of Object.keys(requestCategoryMapping)) {
+    for (const requiredRequestCategory of Object.values(requestCategoryMapping)) {
         requestCategories[requiredRequestCategory] = []
     }
 
@@ -113,7 +113,7 @@ export function breakageReportForTab (tab, tds, config, category, description) {
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
         tds,
-        config,
+        remoteConfig,
         upgradedHttps: upgradedHttps.toString(),
         urlParametersRemoved,
         ctlYouTube
