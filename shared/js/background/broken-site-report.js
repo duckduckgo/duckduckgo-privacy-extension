@@ -10,6 +10,7 @@ const settings = require('./settings')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string')
 const { getURLWithoutQueryString } = require('./utils')
 const { getURL } = require('./pixels')
+const maxPixelLength = 7000
 
 /**
  *
@@ -19,6 +20,18 @@ const { getURL } = require('./pixels')
  *
  */
 export function fire (querystring) {
+    let url = constructUrl(querystring, false)
+
+    // If we're over the max pixel length, truncate the less important params
+    if (url.length > maxPixelLength) {
+        url = constructUrl(querystring, true)
+    }
+
+    // Send the request
+    load.url(url)
+}
+
+function constructUrl (querystring, truncate) {
     const randomNum = Math.ceil(Math.random() * 1e7)
     const pixelName = 'epbf'
     const browserInfo = parseUserAgentString()
@@ -37,6 +50,9 @@ export function fire (querystring) {
     if (searchParams.get('category') === 'null') {
         searchParams.delete('category')
     }
+    if (truncate) {
+        searchParams.append('truncated', '1')
+    }
     // build url string
     let url = getURL(pixelName)
     if (browser) {
@@ -47,16 +63,18 @@ export function fire (querystring) {
     // some params should be not urlencoded
     let extraParams = '';
     ['tds', ...Object.values(requestCategoryMapping)].forEach((key) => {
+        // if we're truncating, don't include the truncatable fields
+        if (truncate && truncatableFields.includes(key)) return
         if (searchParams.has(key)) {
             extraParams += `&${key}=${decodeURIComponent(searchParams.get(key) || '')}`
             searchParams.delete(key)
         }
     })
     url += `${searchParams.toString()}${extraParams}`
-
-    // Send the request
-    load.url(url)
+    return url
 }
+
+const truncatableFields = ['ignoreRequests', 'noActionRequests', 'adAttributionRequests', 'ignoredByUserRequests']
 
 /**
  * @type {Object<import('../../../packages/privacy-grade/src/classes/trackers').ActionName, string>}
@@ -79,11 +97,12 @@ const requestCategoryMapping = {
  *
  * @param {import("./classes/tab")} tab
  * @param {string} tds - tds-etag from settings
- * @param {string} remoteConfig - tds-config from settings
+ * @param {string} remoteConfigEtag - config-etag from settings
+ * @param {string} remoteConfigVersion - config version
  * @param {string | undefined} category - optional category
  * @param {string | undefined} description - optional description
  */
-export function breakageReportForTab (tab, tds, remoteConfig, category, description) {
+export function breakageReportForTab (tab, tds, remoteConfigEtag, remoteConfigVersion, category, description) {
     if (!tab.url) {
         return
     }
@@ -113,7 +132,8 @@ export function breakageReportForTab (tab, tds, remoteConfig, category, descript
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
         tds,
-        remoteConfig,
+        remoteConfigEtag,
+        remoteConfigVersion,
         upgradedHttps: upgradedHttps.toString(),
         urlParametersRemoved,
         ctlYouTube

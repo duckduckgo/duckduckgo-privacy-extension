@@ -101,8 +101,9 @@ export async function submitBrokenSiteReport (breakageReport) {
         return
     }
     const tsd = settings.getSetting('tds-etag')
-    const config = settings.getSetting('config-etag')
-    return breakageReportForTab(tab, tsd, config, category, description)
+    const configEtag = settings.getSetting('config-etag')
+    const configVersion = tdsStorage.config.version
+    return breakageReportForTab(tab, tsd, configEtag, configVersion, category, description)
 }
 
 /**
