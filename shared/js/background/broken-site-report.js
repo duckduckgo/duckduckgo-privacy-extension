@@ -46,7 +46,7 @@ export function fire (querystring) {
     url += `?${randomNum}&`
     // some params should be not urlencoded
     let extraParams = '';
-    ['tds', 'blockedTrackers', 'surrogates'].forEach((key) => {
+    ['tds', ...Object.values(requestCategoryMapping)].forEach((key) => {
         if (searchParams.has(key)) {
             extraParams += `&${key}=${decodeURIComponent(searchParams.get(key) || '')}`
             searchParams.delete(key)
@@ -59,6 +59,18 @@ export function fire (querystring) {
 }
 
 /**
+ * @type {Object<import('../../../packages/privacy-grade/src/classes/trackers').ActionName, string>}
+ */
+const requestCategoryMapping = {
+    ignore: 'ignoreRequests',
+    block: 'blockedTrackers',
+    redirect: 'surrogates',
+    none: 'noActionRequests',
+    'ad-attribution': 'adAttributionRequests',
+    'ignore-user': 'ignoredByUserRequests'
+}
+
+/**
  * Given an optional category and description, create a report for a given Tab instance.
  *
  * This code previously lived within the UI section of the dashboard,
@@ -67,25 +79,28 @@ export function fire (querystring) {
  *
  * @param {import("./classes/tab")} tab
  * @param {string} tds - tds-etag from settings
+ * @param {string} config - tds-config from settings
  * @param {string | undefined} category - optional category
  * @param {string | undefined} description - optional description
  */
-export function breakageReportForTab (tab, tds, category, description) {
+export function breakageReportForTab (tab, tds, config, category, description) {
     if (!tab.url) {
         return
     }
     const siteUrl = getURLWithoutQueryString(tab.url).split('#')[0]
-    const blocked = []
-    const surrogates = []
+    const requestCategories = {}
+
+    // This is to satisfy the privacy reference tests expecting these keys to be present
+    for (const requiredRequestCategory of Object.keys(requestCategoryMapping)) {
+        requestCategories[requiredRequestCategory] = []
+    }
 
     for (const tracker of Object.values(tab.trackers)) {
         for (const [key, entry] of Object.entries(tracker.urls)) {
             const [fullDomain] = key.split(':')
-            if (entry.action === 'block') {
-                blocked.push(fullDomain)
-            }
-            if (entry.action === 'redirect') {
-                surrogates.push(fullDomain)
+            const requestCategory = requestCategoryMapping[entry.action]
+            if (requestCategory) {
+                requestCategories[requestCategory].push(fullDomain)
             }
         }
     }
@@ -98,12 +113,15 @@ export function breakageReportForTab (tab, tds, category, description) {
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
         tds,
+        config,
         upgradedHttps: upgradedHttps.toString(),
         urlParametersRemoved,
-        ctlYouTube,
-        blockedTrackers: blocked.join(','),
-        surrogates: surrogates.join(',')
+        ctlYouTube
     })
+
+    for (const [key, value] of Object.entries(requestCategories)) {
+        brokenSiteParams.append(key, value.join(','))
+    }
 
     if (ampUrl) brokenSiteParams.set('ampUrl', ampUrl)
     if (category) brokenSiteParams.set('category', category)
