@@ -49,7 +49,7 @@ jobs:
           echo "BUILT_WITH=Built with node $(node --version) and npm $(npm --version)" >> $GITHUB_ENV
 
       - name: Create Release
-        uses: softprops/action-gh-release@d4e8205d7e959a9107da6396278b2f1f07af0f9b
+        uses: softprops/action-gh-release@c9b46fe7aad9f02afd89b12450b780f52dacfb2d
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
