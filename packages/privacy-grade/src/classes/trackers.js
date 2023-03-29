@@ -7,7 +7,7 @@
  * @property {string | false} redirectUrl
  * @property {TrackerRule | null} matchedRule
  * @property {boolean} matchedRuleException
- * @property {TrackerObj} [tracker]
+ * @property {TrackerObj} tracker
  * @property {string} fullTrackerDomain
  * @property {string} [fromCname]
  */
@@ -377,7 +377,7 @@ class Trackers {
                 redirectUrl: '',
                 matchedRule: null,
                 matchedRuleException: false,
-                tracker,
+                tracker: trackerObj,
                 fullTrackerDomain,
                 fromCname
             }
