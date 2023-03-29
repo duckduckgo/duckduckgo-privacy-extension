@@ -705,27 +705,45 @@ describe('declarativeNetRequest', () => {
 
         // if there are no serviceworker exceptions, no rule should be created
         config.features.serviceworkerInitiatedRequests = {
-            enabled: true,
+            state: 'enabled',
             exceptions: []
         }
         await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(1)
         expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
 
-        // Once ensureServiceWorkerInitiatedRequestException an exception is added
-        // it should be though
-        config.features.serviceworkerInitiatedRequests.exceptions.push({ domain: 'example.com' })
-        ensureServiceWorkerInitiatedRequestExceptions(config)
+        // If completely disabled, a rule should be created with no domain
+        // exceptions.
+        config.features.serviceworkerInitiatedRequests = {
+            state: 'disabled',
+            exceptions: [{ domain: 'example.com', reason: '' }]
+        }
+        await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(2)
         expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
-        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
+        expect(sessionRulesByRuleId.get(ruleId)?.condition?.initiatorDomains).toBeUndefined()
 
-        // If ensureServiceWorkerInitiatedRequestException is called again, the
-        // rule should just be recreated.
-        ensureServiceWorkerInitiatedRequestExceptions(config)
+        // But if enabled, domain exceptions should be used.
+        config.features.serviceworkerInitiatedRequests.state = 'enabled'
+        await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(3)
         expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
         expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
+        expect(sessionRulesByRuleId.get(ruleId)?.condition?.initiatorDomains[0]).toEqual('example.com')
+
+        // If ensureServiceWorkerInitiatedRequestException is called again, the
+        // rule should just be recreated.
+        await ensureServiceWorkerInitiatedRequestExceptions(config)
+        expect(updateSessionRulesObserver.calls.count()).toEqual(4)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
+
+        // If enabled and there are no domain exceptions, the rule should be
+        // removed.
+        config.features.serviceworkerInitiatedRequests.exceptions = []
+        await ensureServiceWorkerInitiatedRequestExceptions(config)
+        expect(updateSessionRulesObserver.calls.count()).toEqual(5)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
     })
 
     it('getMatchDetails', async () => {
