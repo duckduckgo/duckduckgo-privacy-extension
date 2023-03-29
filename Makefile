@@ -94,7 +94,7 @@ npm:
 
 ## clean: Clear the builds and temporary files.
 clean:
-	rm -f shared/data/smarter_encryption.txt shared/data/bundled/smarter-encryption-rules.json integration-test/artifacts/attribution.json:
+	rm -f build/.smarter_encryption.txt integration-test/artifacts/attribution.json:
 	rm -rf $(BUILD_DIR)
 
 .PHONY: clean
@@ -170,7 +170,7 @@ LAST_COPY = build/.last-copy-$(browser)-$(type)
 RSYNC = rsync -ra --exclude="*~"
 
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
-	$(RSYNC) --exclude="smarter_encryption.txt" browsers/$(browser)/* browsers/chrome/_locales shared/data shared/html shared/img $(BUILD_DIR)
+	$(RSYNC) browsers/$(browser)/* browsers/chrome/_locales shared/data shared/html shared/img $(BUILD_DIR)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill.css $(BUILD_DIR)/public/css/autofill.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill-host-styles_$(BROWSER_TYPE).css $(BUILD_DIR)/public/css/autofill-host-styles.css
@@ -301,11 +301,11 @@ BUILD_TARGETS += $(BUILD_DIR)/public/css/base.css $(OUTPUT_CSS_FILES)
 
 # Fetch Smarter Encryption data for bundled Smarter Encryption
 # declarativeNetRequest rules.
-shared/data/smarter_encryption.txt:
-	curl https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz | gunzip -c > shared/data/smarter_encryption.txt
+build/.smarter_encryption.txt:
+	curl https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz | gunzip -c > $@
 
 # Generate Smarter Encryption declarativeNetRequest rules for MV3 builds.
-$(BUILD_DIR)/data/bundled/smarter-encryption-rules.json: shared/data/smarter_encryption.txt
+$(BUILD_DIR)/data/bundled/smarter-encryption-rules.json: build/.smarter_encryption.txt
 	npx ddg2dnr smarter-encryption $< $@
 
 ifeq ('$(browser)','chrome-mv3')
