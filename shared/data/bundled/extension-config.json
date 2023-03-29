@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1679992058904,
+    "version": 1680026131932,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -350,6 +350,10 @@
                 },
                 {
                     "domain": "blick.ch",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
+                },
+                {
+                    "domain": "thechive.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
                 }
             ],
@@ -1388,7 +1392,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "c13b227c89c72e4d75065edf9e8849b4"
+            "hash": "9bd021d10cf6a8f0c0bf40994b00c4fd"
         },
         "fingerprintingAudio": {
             "state": "disabled",
@@ -2507,6 +2511,13 @@
                                     "hoyolab.com"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/754"
+                            },
+                            {
+                                "rule": "d2s6j0ghajv79z.cloudfront.net",
+                                "domains": [
+                                    "sigalert.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/774"
                             }
                         ]
                     },
@@ -4016,6 +4027,17 @@
                                     "hoyolab.com"
                                 ],
                                 "reason": "CNAME ENTRY GENERATED FROM: d9k0w0y3delq8.cloudfront.net"
+                            }
+                        ]
+                    },
+                    "sigalert.com": {
+                        "rules": [
+                            {
+                                "rule": "cdn-static.sigalert.com",
+                                "domains": [
+                                    "sigalert.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: d2s6j0ghajv79z.cloudfront.net"
                             }
                         ]
                     },
@@ -5781,7 +5803,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "4de0531b3d89d4e97d654b1e93ea963a"
+            "hash": "d7bb4c9b2f3abdad157bf0e7f37e0110"
         },
         "trackingCookies1p": {
             "settings": {
