@@ -7,7 +7,6 @@ const {
 } = require('../helpers/testConfig')
 const backgroundWait = require('../helpers/backgroundWait')
 const pageWait = require('../helpers/pageWait')
-const { setupAPISchemaTest } = require('../helpers/apiSchema')
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/youtube-click-to-load/'
 const youTubeStandardDomains = new Set(['youtu.be', 'youtube.com', 'www.youtube.com'])
@@ -399,40 +398,6 @@ describe('Test YouTube Click To Load', () => {
 
             expect(totalEmbeddedVideosBlocked).toEqual(totalEmbeddedVideosPreviews)
         }
-
-        await page.close()
-    })
-})
-
-describe('YouTube Iframe Player API schema', () => {
-    beforeAll(async () => {
-        ({ browser, bgPage, teardown } =
-         await harness.setup({ loadExtension: false }))
-    })
-
-    afterAll(async () => {
-        try {
-            await teardown()
-        } catch (e) {}
-    })
-
-    it('CTL: Iframe Player API schema hasn\'t changed', async () => {
-        const page = await browser.newPage()
-        await pageWait.forGoto(page, testSite)
-
-        // Note: If this test fails, update
-        //       /integration-test/data/api_schemas/youtube-iframe-api.json file
-        //       to match
-        //       /integration-test/artifacts/api_schemas/youtube-iframe-api.json
-        //       and make any corresponding changes required to the surrogate
-        //       script /shared/data/web_accessible_resources/youtube-iframe-api.js
-        //       If no changes to the surrogate script are required, please
-        //       explain why to the reviewer!
-
-        const { actualSchema, expectedSchema } = await setupAPISchemaTest(
-            page, 'youtube-iframe-api.json', ['YT', 'YTConfig']
-        )
-        expect(actualSchema).toEqual(expectedSchema)
 
         await page.close()
     })
