@@ -312,7 +312,7 @@ ifeq ('$(browser)','chrome-mv3')
   BUILD_TARGETS += $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json
 endif
 
-$(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources $(wildcard node_modules/@duckduckgo/tracker-surrogates/surrogates/*.js)
+$(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources $(LAST_COPY)
 	node scripts/generateListOfSurrogates.js -i $</ > $@
 
 BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
