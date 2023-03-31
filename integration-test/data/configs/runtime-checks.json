@@ -1,0 +1,19 @@
+{
+    "globalThis.dbg.tds.config.features.runtimeChecks": {
+        "state": "enabled",
+        "exceptions": [],
+        "settings": {
+            "taintCheck": "enabled",
+            "matchAllDomains": "enabled",
+            "matchAllStackDomains": "enabled",
+            "overloadInstanceOf": "enabled",
+            "elementRemovalTimeout": 1000,
+            "injectGlobalStyles": "enabled",
+            "ignoreMonitorList": ["dobetter"],
+            "domains": [
+            ],
+            "stackDomains": [
+            ]
+        }
+    }
+}
