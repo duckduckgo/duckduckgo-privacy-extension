@@ -1,7 +1,6 @@
 import browser from 'webextension-polyfill'
 import EventEmitter2 from 'eventemitter2'
 import ATB from './atb'
-const tldts = require('tldts')
 
 const utils = require('./utils')
 const trackers = require('./trackers')
@@ -374,17 +373,6 @@ function blockHandleResponse (thisTab, requestData) {
         console.log('temporarily skip tracker blocking for site: ' +
             utils.extractHostFromURL(thisTab.url) + '\n' +
             'more info: https://github.com/duckduckgo/privacy-configuration')
-    }
-
-    // If we didn't block this script and it's a tracker, notify the content script.
-    if (requestData.type === 'script' && tracker && !tracker.sameEntity) {
-        utils.sendTabMessage(requestData.tabId, {
-            type: 'update',
-            trackerDefinition: true,
-            hostname: tldts.parse(requestData.url).hostname
-        }, {
-            frameId: requestData.frameId
-        })
     }
 }
 
