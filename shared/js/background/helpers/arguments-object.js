@@ -68,6 +68,7 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         site,
         referrer,
         platform: constants.platform,
+        locale: chrome.i18n.getUILanguage(),
         assets: {
             regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),
             boldFontUrl: getExtensionURL('/public/font/ProximaNova-Bold-webfont.woff')
