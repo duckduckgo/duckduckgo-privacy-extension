@@ -56,7 +56,7 @@ export function dashboardDataFromTab (tab, userData) {
              * Explicitly setting this to 'en' for now. When ready we can send 2-character codes such
              * as 'pl' or 'de' etc. Please see https://duckduckgo.github.io/privacy-dashboard/interfaces/Generated_Schema_Definitions.LocaleSettings.html
              */
-            localeSettings: { locale: 'en' }
+            localeSettings: { locale: chrome.i18n.getUILanguage() }
         },
         requestData: {
             requests
