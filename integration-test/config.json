@@ -2,7 +2,6 @@
     "spec_dir": "integration-test",
     "spec_files": [
         "legacy/*.js",
-        "content-scripts/gpc.js",
-        "!legacy/click-to-load-youtube.js"
+        "content-scripts/gpc.js"
     ]
 }
