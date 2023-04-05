@@ -57,7 +57,7 @@ for (const setName of Object.keys(testSets)) {
                         fullTrackerDomain: domain
                     })
                 })
-                breakageReportForTab(tab, test.blocklistVersion, test.configEtag, test.configVersion, test.category, 'foo bar')
+                breakageReportForTab(tab, test.blocklistVersion, test.configEtag, test.configVersion, test.category, test.providedDescription)
 
                 expect(loadPixelSpy.calls.count()).toEqual(1)
 
