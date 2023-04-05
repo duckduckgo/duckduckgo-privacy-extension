@@ -62,7 +62,7 @@ function constructUrl (querystring, truncate) {
     url += `?${randomNum}&`
     // some params should be not urlencoded
     let extraParams = '';
-    ['tds', ...Object.values(requestCategoryMapping)].forEach((key) => {
+    [...Object.values(requestCategoryMapping)].forEach((key) => {
         // if we're truncating, don't include the truncatable fields
         if (truncate && truncatableFields.includes(key)) return
         if (searchParams.has(key)) {
