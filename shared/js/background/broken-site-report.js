@@ -102,7 +102,10 @@ const requestCategoryMapping = {
  * @param {string | undefined} category - optional category
  * @param {string | undefined} description - optional description
  */
-export function breakageReportForTab (tab, tds, remoteConfigEtag, remoteConfigVersion, category, description) {
+export function breakageReportForTab ({
+    tab, tds, remoteConfigEtag, remoteConfigVersion,
+    category, description
+}) {
     if (!tab.url) {
         return
     }
