@@ -62,7 +62,7 @@ function constructUrl (querystring, truncate) {
     url += `?${randomNum}&`
     // some params should be not urlencoded
     let extraParams = '';
-    ['tds', ...Object.values(requestCategoryMapping)].forEach((key) => {
+    [...Object.values(requestCategoryMapping)].forEach((key) => {
         // if we're truncating, don't include the truncatable fields
         if (truncate && truncatableFields.includes(key)) return
         if (searchParams.has(key)) {
@@ -95,14 +95,18 @@ const requestCategoryMapping = {
  * but has been moved here since there's no longer a relationship to 'where' this request
  * came from.
  *
- * @param {import("./classes/tab")} tab
- * @param {string} tds - tds-etag from settings
- * @param {string} remoteConfigEtag - config-etag from settings
- * @param {string} remoteConfigVersion - config version
- * @param {string | undefined} category - optional category
- * @param {string | undefined} description - optional description
+ * @param {Object} arg
+ * @prop {import("./classes/tab")} arg.tab
+ * @prop {string} arg.tds - tds-etag from settings
+ * @prop {string} arg.remoteConfigEtag - config-etag from settings
+ * @prop {string} arg.remoteConfigVersion - config version
+ * @prop {string | undefined} arg.category - optional category
+ * @prop {string | undefined} arg.description - optional description
  */
-export function breakageReportForTab (tab, tds, remoteConfigEtag, remoteConfigVersion, category, description) {
+export function breakageReportForTab ({
+    tab, tds, remoteConfigEtag, remoteConfigVersion,
+    category, description
+}) {
     if (!tab.url) {
         return
     }

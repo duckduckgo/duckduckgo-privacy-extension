@@ -30,34 +30,48 @@ for (const setName of Object.keys(testSets)) {
                 })
                 tab.upgradedHttps = test.wasUpgraded
 
-                test.blockedTrackers.forEach(domain => {
+                const addRequest = (hostname, action, opts = {}) => {
                     tab.addToTrackers({
-                        action: 'block',
-                        reason: 'matched rule - block',
+                        action,
+                        reason: 'reference tests',
                         sameEntity: false,
                         sameBaseDomain: false,
                         redirectUrl: false,
-                        matchedRule: 'block',
+                        matchedRule: 'reference tests',
                         matchedRuleException: false,
                         tracker: trackerObj,
-                        fullTrackerDomain: domain
+                        fullTrackerDomain: hostname,
+                        ...opts
                     })
-                })
+                }
 
-                test.surrogates.forEach(domain => {
-                    tab.addToTrackers({
-                        action: 'redirect',
-                        reason: 'matched rule - surrogate',
-                        sameEntity: false,
-                        sameBaseDomain: false,
-                        redirectUrl: 'something.org/track.js',
-                        matchedRule: 'block',
-                        matchedRuleException: false,
-                        tracker: trackerObj,
-                        fullTrackerDomain: domain
+                const addRequests = (trackers, f) => {
+                    (trackers || []).forEach(hostname => {
+                        const opts = f(hostname)
+                        const { action } = opts
+                        addRequest(hostname, action, opts)
                     })
+                }
+
+                const addActionRequests = (trackers, action) => {
+                    addRequests(trackers, _ => ({ action }))
+                }
+
+                addActionRequests(test.blockedTrackers, 'block')
+                addActionRequests(test.surrogates, 'redirect')
+                addActionRequests(test.ignoreRequests, 'ignore')
+                addActionRequests(test.ignoredByUserRequests, 'ignore-user')
+                addActionRequests(test.adAttributionRequests, 'ad-attribution')
+                addActionRequests(test.noActionRequests, 'none')
+
+                breakageReportForTab({
+                    tab,
+                    tds: test.blocklistVersion,
+                    remoteConfigEtag: test.remoteConfigEtag,
+                    remoteConfigVersion: test.remoteConfigVersion,
+                    category: test.category,
+                    description: test.providedDescription
                 })
-                breakageReportForTab(tab, test.blocklistVersion, test.configEtag, test.configVersion, test.category, 'foo bar')
 
                 expect(loadPixelSpy.calls.count()).toEqual(1)
 
