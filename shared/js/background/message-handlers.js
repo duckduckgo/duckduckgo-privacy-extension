@@ -100,10 +100,10 @@ export async function submitBrokenSiteReport (breakageReport) {
         console.error('cannot access current tab with ID ' + currentTab.id)
         return
     }
-    const tsd = settings.getSetting('tds-etag')
-    const configEtag = settings.getSetting('config-etag')
-    const configVersion = tdsStorage.config.version
-    return breakageReportForTab(tab, tsd, configEtag, configVersion, category, description)
+    const tds = settings.getSetting('tds-etag')
+    const remoteConfigEtag = settings.getSetting('config-etag')
+    const remoteConfigVersion = tdsStorage.config.version
+    return breakageReportForTab({ tab, tds, remoteConfigEtag, remoteConfigVersion, category, description })
 }
 
 /**
