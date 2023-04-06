@@ -6,6 +6,7 @@ const settings = require('../settings')
 const { isActive } = require('../devtools')
 const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
+const browserWrapper = require('../wrapper')
 
 function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
@@ -70,6 +71,7 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         sessionKey,
         site,
         referrer,
+        versionString: browserWrapper.getExtensionVersion(),
         platform: constants.platform
     }
 }
