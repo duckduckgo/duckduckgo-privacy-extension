@@ -271,12 +271,13 @@ ifneq ("$(wildcard $(CONTENT_SCOPE_SCRIPTS)/.git/)","")
   CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS += $(CONTENT_SCOPE_SCRIPTS)/node_modules
 endif
 
-$(CONTENT_SCOPE_SCRIPTS)/node_modules:
+$(CONTENT_SCOPE_SCRIPTS)/node_modules: $(CONTENT_SCOPE_SCRIPTS)/package.json
 	cd $(CONTENT_SCOPE_SCRIPTS); npm install
+	touch $@
 
 $(CONTENT_SCOPE_SCRIPTS)/build/locales: $(CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS)
 	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-locales
-	touch $(CONTENT_SCOPE_SCRIPTS)/build/locales
+	touch $@
 
 $(CONTENT_SCOPE_SCRIPTS)/build/$(browser)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
 	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-$(browser)
