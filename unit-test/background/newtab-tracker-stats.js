@@ -234,6 +234,6 @@ describe('CSP for new tab page', () => {
     })
     it('should contain a valid CSP entry for MV3', () => {
         const mv2 = require('../../browsers/chrome-mv3/manifest.json')
-        expect(mv2.content_security_policy.extension_pages).toBe("script-src 'self'; object-src 'self'; frame-ancestors frame-ancestors https://duckduckgo.com https://*.duckduckgo.com")
+        expect(mv2.content_security_policy.extension_pages).toBe("script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com")
     })
 })
