@@ -93,7 +93,7 @@
         "seedrandom": "^3.0.5",
         "tldts": "^5.7.110",
         "underscore": "1.13.6",
-        "web-ext": "^7.5.0",
+        "web-ext": "^7.6.0",
         "zod": "^3.21.4"
     },
     "babel": {
