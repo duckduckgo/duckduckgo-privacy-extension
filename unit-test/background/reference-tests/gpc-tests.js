@@ -5,7 +5,8 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const Site = require('../../../shared/js/background/classes/site')
 const GPC = require('../../../shared/js/background/GPC')
-const gpcContentScript = require('@duckduckgo/content-scope-scripts/src/features/gpc')
+const GpcContentScript = require('@duckduckgo/content-scope-scripts/src/features/gpc').default
+const gpcContentScript = new GpcContentScript('gpc')
 const browserWrapper = require('../../../shared/js/background/wrapper')
 const settings = require('../../../shared/js/background/settings')
 

@@ -8,10 +8,14 @@ const tabManager = require('../../../shared/js/background/tab-manager')
 const browserWrapper = require('../../../shared/js/background/wrapper')
 const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
 
-const batteryProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-battery')
-const hardwareProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-hardware')
-const screenProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-screen-size')
-const tempStorageProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-temporary-storage')
+const BatteryProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-battery').default
+const batteryProtection = new BatteryProtection('fingerprintingBattery')
+const HardwareProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-hardware').default
+const hardwareProtection = new HardwareProtection('fingerprintingHardware')
+const ScreenProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-screen-size').default
+const screenProtection = new ScreenProtection('fingerprintingScreenSize')
+const TempStorageProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-temporary-storage').default
+const tempStorageProtection = new TempStorageProtection('fingerprintingTemporaryStorage')
 const { isFeatureBroken } = require('@duckduckgo/content-scope-scripts/src/utils')
 
 const configReference = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/config_reference.json')
@@ -66,16 +70,16 @@ for (const setName of Object.keys(testSets)) {
 
                 // init protections
                 if (!isFeatureBroken(args, 'fingerprintingBattery')) {
-                    batteryProtection.init(args)
+                    batteryProtection.callInit(args)
                 }
                 if (!isFeatureBroken(args, 'fingerprintingHardware')) {
-                    hardwareProtection.init(args)
+                    hardwareProtection.callInit(args)
                 }
                 if (!isFeatureBroken(args, 'fingerprintingScreenSize')) {
-                    screenProtection.init(args)
+                    screenProtection.callInit(args)
                 }
                 if (!isFeatureBroken(args, 'fingerprintingTemporaryStorage')) {
-                    tempStorageProtection.init(args)
+                    tempStorageProtection.callInit(args)
                 }
 
                 // validate result

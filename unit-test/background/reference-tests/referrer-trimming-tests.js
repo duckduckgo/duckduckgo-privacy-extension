@@ -6,7 +6,8 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const tabManager = require('../../../shared/js/background/tab-manager')
 const browserWrapper = require('../../../shared/js/background/wrapper')
-const jsReferrerProtection = require('@duckduckgo/content-scope-scripts/src/features/referrer')
+const JsReferrerProtection = require('@duckduckgo/content-scope-scripts/src/features/referrer').default
+const jsReferrerProtection = new JsReferrerProtection('jsReferrer')
 
 const limitReferrerData = require('../../../shared/js/background/events/referrer-trimming')
 
