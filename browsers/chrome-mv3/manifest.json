@@ -34,7 +34,7 @@
         }
     },
     "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self'; frame-ancestors https://*.duckduckgo.com"
+        "extension_pages": "script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com"
     },
     "content_scripts": [
         {
