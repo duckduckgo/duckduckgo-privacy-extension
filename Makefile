@@ -272,7 +272,7 @@ ifneq ("$(wildcard $(CONTENT_SCOPE_SCRIPTS)/.git/)","")
 endif
 
 $(CONTENT_SCOPE_SCRIPTS)/node_modules: $(CONTENT_SCOPE_SCRIPTS)/package.json
-	cd $(CONTENT_SCOPE_SCRIPTS); npm install
+	cd $(CONTENT_SCOPE_SCRIPTS); npm ci
 	touch $@
 
 $(CONTENT_SCOPE_SCRIPTS)/build/locales: $(CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS)
