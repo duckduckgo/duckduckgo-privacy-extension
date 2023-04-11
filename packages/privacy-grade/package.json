@@ -14,7 +14,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "tldts": "^5.7.84"
+    "tldts": "^6.0.3"
   },
   "devDependencies": {
     "grunt": "1.6.1",
