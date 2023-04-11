@@ -28,14 +28,14 @@ async function forNetworkIdle (page) {
     }
 }
 
-async function forGoto (page, url) {
+async function forGoto (page, url, permitTimeout = true) {
     try {
         await page.goto(
             url, { waitUntil: 'networkidle0', timeout: 15000 }
         )
         await waitForNetworkIdleInternal(page)
     } catch (e) {
-        if (e instanceof puppeteer.errors.TimeoutError) {
+        if (permitTimeout && e instanceof puppeteer.errors.TimeoutError) {
             pending('Timed out loading URL: ' + url)
         } else {
             throw e
