@@ -69,12 +69,13 @@ for (const setName of Object.keys(testSets)) {
                 const utils = require('@duckduckgo/content-scope-scripts/src/utils')
                 utils.setGlobal(jsdomWindow)
 
-                const jsCookieProtection = require('@duckduckgo/content-scope-scripts/src/features/cookie')
+                const JsCookieProtection = require('@duckduckgo/content-scope-scripts/src/features/cookie').default
+                const jsCookieProtection = new JsCookieProtection('cookie')
 
-                jsCookieProtection.load({
+                jsCookieProtection.callLoad({
                     platform: constants.platform
                 })
-                jsCookieProtection.init(args)
+                jsCookieProtection.callInit(args)
 
                 spyOn(browser.tabs, 'sendMessage').and.callFake((tabId, msg) => {
                     if (tabId === 1) {
