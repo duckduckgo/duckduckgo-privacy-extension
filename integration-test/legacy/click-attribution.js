@@ -71,6 +71,8 @@ describe('Ad click blocking', () => {
         return page
     }
 
+    it('has test cases', () => expect(testCases.length).toBeGreaterThan(0))
+
     for (const test of testCases) {
         // Allow to filter to one test case
         const itMethod = test.only ? fit : it
@@ -78,7 +80,7 @@ describe('Ad click blocking', () => {
             let page = await browser.newPage()
             for (const step of test.steps) {
                 if (step.action.type === 'navigate') {
-                    await pageWait.forGoto(page, step.action.url)
+                    await pageWait.forGoto(page, step.action.url, false)
                 } else if (step.action.type === 'click' || step.action.type === 'click-new-tab') {
                     const clickSelector = `#${step.action.id}`
                     const newTab = !!step.expected.newTab
