@@ -148,12 +148,35 @@ describe('Temporary Allowlist', () => {
         )
     })
 
-    it('shouldn\'t generate contentBlocking rules if disabled', async () => {
+    it('should allowlist all domains if contentBlocking is disabled', async () => {
         const extensionConfig = JSON.parse(baseExtensionConfigStringifed)
         extensionConfig.features.contentBlocking.state = 'disabled'
         delete extensionConfig.unprotectedTemporary
 
-        await rulesetEqual(extensionConfig, [], [], {})
+        await rulesetEqual(
+            extensionConfig,
+            [],
+            [
+                {
+                    id: 1,
+                    priority: CONTENT_BLOCKING_ALLOWLIST_PRIORITY,
+                    condition: {
+                        resourceTypes: [
+                            'main_frame'
+                        ]
+                    },
+                    action: {
+                        type: 'allowAllRequests'
+                    }
+                }
+            ],
+            {
+                1: {
+                    type: 'contentBlocking',
+                    reason: 'contentBlocking disabled for all domains.'
+                }
+            }
+        )
     })
 
     it('shouldn\'t generate rules for denylisted domains', async () => {

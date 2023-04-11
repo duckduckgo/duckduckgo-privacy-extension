@@ -59,7 +59,8 @@ describe('Tracker Allowlist', () => {
         assert.deepEqual(
             await generateExtensionConfigurationRuleset({
                 features: {
-                    trackerAllowlist: {}
+                    trackerAllowlist: {},
+                    contentBlocking: { state: 'enabled' }
                 }
             }, [], isRegexSupportedTrue),
             { ruleset: [], matchDetailsByRuleId: {} }
@@ -81,7 +82,8 @@ describe('Tracker Allowlist', () => {
                                 }
                             }
                         }
-                    }
+                    },
+                    contentBlocking: { state: 'enabled' }
                 }
             }, [], isRegexSupportedTrue),
             { ruleset: [], matchDetailsByRuleId: {} }
@@ -95,7 +97,8 @@ describe('Tracker Allowlist', () => {
                         settings: {
                             allowlistedTrackers: { }
                         }
-                    }
+                    },
+                    contentBlocking: { state: 'enabled' }
                 }
             }, [], isRegexSupportedTrue),
             { ruleset: [], matchDetailsByRuleId: {} }
@@ -151,7 +154,8 @@ describe('Tracker Allowlist', () => {
                             }
                         }
                     }
-                }
+                },
+                contentBlocking: { state: 'enabled' }
             }
         }
 
