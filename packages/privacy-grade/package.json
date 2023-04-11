@@ -23,6 +23,6 @@
     "grunt-exec": "3.0.0",
     "grunt-karma": "4.0.2",
     "load-grunt-tasks": "5.1.0",
-    "url-parse-lax": "^3.0.0"
+    "url-parse-lax": "^5.0.0"
   }
 }
