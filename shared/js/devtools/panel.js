@@ -172,7 +172,7 @@ const actionHandlers = {
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
-        cells[2].textContent = `JS🪲 ${message}`
+        cells[2].querySelector('.request-action').textContent = `JS🪲 ${message}`
         cells[3].textContent = scriptOrigins.join(',')
         if (stack) appendCallStack(cells[3], stack, 0)
         cells[4].textContent = `${filename}:${lineno}:${colno}`
