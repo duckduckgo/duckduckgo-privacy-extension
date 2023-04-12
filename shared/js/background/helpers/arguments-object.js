@@ -9,7 +9,7 @@ const { isActive } = require('../devtools')
 const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
 
-function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
+export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
     if (!tab || !tab.url) {
         return null
@@ -77,5 +77,3 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         }
     }
 }
-
-module.exports = getArgumentsObject
