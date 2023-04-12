@@ -177,7 +177,7 @@ const actionHandlers = {
         if (stack) appendCallStack(cells[3], stack, 0)
         cells[4].textContent = `${filename}:${lineno}:${colno}`
         row.classList.add('jsexception')
-        table.appendChild(row)
+        addRequestRow(row)
     },
     jscookie: (m) => {
         const { documentUrl, action, reason, value, stack, scriptOrigins } = m.message
