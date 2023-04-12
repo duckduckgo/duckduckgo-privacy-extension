@@ -1,5 +1,6 @@
 import i18next from 'i18next'
 import ICU from 'i18next-icu'
+import { getUserLocale } from '../../background/i18n'
 
 const localeResources = require('../../../locales/*/*.json', { mode: 'list' })
 
@@ -10,21 +11,16 @@ const resources = localeResources.reduce((mapping, { name, module }) => {
     return mapping
 }, {})
 
-function getBrowserLocale () {
-    const browserLocale = chrome.i18n ? chrome.i18n.getUILanguage() : navigator.language
-    return browserLocale.split('-')[0] // drop country suffix
-}
-
 i18next
     .use(ICU)
     .init({
         debug: true,
         initImmediate: false,
         fallbackLng: 'en',
-        lng: getBrowserLocale(),
+        lng: getUserLocale(),
         ns: ['shared', 'options'],
         defaultNS: 'shared',
-        resources: resources
+        resources
     })
 
 module.exports = i18next

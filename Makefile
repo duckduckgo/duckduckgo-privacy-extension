@@ -207,7 +207,7 @@ $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 ## Extension UI/Devtools scripts.
 $(BUILD_DIR)/public/js/base.js: $(WATCHED_FILES)
 	mkdir -p `dirname $@`
-	$(BROWSERIFY) shared/js/ui/base/index.js > $@
+	$(BROWSERIFY) -t require-globify shared/js/ui/base/index.js > $@
 
 $(BUILD_DIR)/public/js/feedback.js: $(WATCHED_FILES)
 	$(BROWSERIFY) shared/js/ui/pages/feedback.js > $@
