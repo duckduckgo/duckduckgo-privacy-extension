@@ -109,7 +109,7 @@ const getFullPixelName = (name, browserName) => {
     return `${name}_${browserName.toLowerCase()}`
 }
 
-const fireAutofillPixel = (pixel, shouldUpdateLastUsed = true) => {
+const fireAutofillPixel = (pixel, shouldUpdateLastUsed = false) => {
     const browserName = utils.getBrowserName() ?? 'unknown'
     if (!pixelsEnabled) return
 
@@ -145,13 +145,13 @@ export const sendJSPixel = (options) => {
     const { pixelName } = options
     switch (pixelName) {
     case 'autofill_show':
-        fireAutofillPixel('email_tooltip_show_extension', false)
+        fireAutofillPixel('email_tooltip_show_extension')
         break
     case 'autofill_private_address':
-        fireAutofillPixel('email_filled_random_extension')
+        fireAutofillPixel('email_filled_random_extension', true)
         break
     case 'autofill_personal_address':
-        fireAutofillPixel('email_filled_main_extension')
+        fireAutofillPixel('email_filled_main_extension', true)
         break
     case 'incontext_show':
         fireIncontextSignupPixel('incontext_show_extension')
