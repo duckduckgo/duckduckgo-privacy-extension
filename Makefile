@@ -237,7 +237,7 @@ build/test/background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
 	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
 
 build/test/ui.js: $(TEST_FILES) | build/test
-	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
+	$(BROWSERIFY) -t require-globify shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
 
 build/test/shared-utils.js: $(TEST_FILES) | build/test
 	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
