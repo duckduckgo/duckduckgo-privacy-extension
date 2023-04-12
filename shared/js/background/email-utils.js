@@ -109,7 +109,7 @@ const getFullPixelName = (name, browserName) => {
     return `${name}_${browserName.toLowerCase()}`
 }
 
-const fireAddressUsedPixel = (pixel) => {
+const fireAutofillPixel = (pixel, shouldUpdateLastUsed = true) => {
     const browserName = utils.getBrowserName() ?? 'unknown'
     if (!pixelsEnabled) return
 
@@ -119,7 +119,9 @@ const fireAddressUsedPixel = (pixel) => {
     const lastAddressUsedAt = getSetting('lastAddressUsedAt') ?? ''
 
     sendPixelRequest(getFullPixelName(pixel, browserName), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
-    updateSetting('lastAddressUsedAt', currentDate())
+    if (shouldUpdateLastUsed) {
+        updateSetting('lastAddressUsedAt', currentDate())
+    }
 }
 
 const fireIncontextSignupPixel = (pixel) => {
@@ -143,13 +145,13 @@ export const sendJSPixel = (options) => {
     const { pixelName } = options
     switch (pixelName) {
     case 'autofill_show':
-        fireAddressUsedPixel('email_tooltip_show_extension')
+        fireAutofillPixel('email_tooltip_show_extension', false)
         break
     case 'autofill_private_address':
-        fireAddressUsedPixel('email_filled_random_extension')
+        fireAutofillPixel('email_filled_random_extension')
         break
     case 'autofill_personal_address':
-        fireAddressUsedPixel('email_filled_main_extension')
+        fireAutofillPixel('email_filled_main_extension')
         break
     case 'incontext_show':
         fireIncontextSignupPixel('incontext_show_extension')
