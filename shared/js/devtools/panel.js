@@ -167,7 +167,7 @@ const actionHandlers = {
             addRequestRow(row)
         }
     },
-    error: (m) => {
+    jsException: (m) => {
         const { documentUrl, message, filename, lineno, colno, stack, scriptOrigins } = m.message
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
