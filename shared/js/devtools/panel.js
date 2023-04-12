@@ -167,6 +167,18 @@ const actionHandlers = {
             addRequestRow(row)
         }
     },
+    jsException: (m) => {
+        const { documentUrl, message, filename, lineno, colno, stack, scriptOrigins } = m.message
+        const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+        const cells = row.querySelectorAll('td')
+        cells[1].textContent = documentUrl
+        cells[2].querySelector('.request-action').textContent = `JS🪲 ${message}`
+        cells[3].textContent = scriptOrigins.join(',')
+        if (stack) appendCallStack(cells[3], stack, 0)
+        cells[4].textContent = `${filename}:${lineno}:${colno}`
+        row.classList.add('jsexception')
+        addRequestRow(row)
+    },
     jscookie: (m) => {
         const { documentUrl, action, reason, value, stack, scriptOrigins } = m.message
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
@@ -197,12 +209,11 @@ const actionHandlers = {
     }
 }
 
-function appendCallStack (cell, stack) {
+function appendCallStack (cell, stack, drop = 2) {
     if (stack) {
-        // Shift off the first two of the stack as will be us.
         const lines = stack.split('\n')
-        lines.shift()
-        lines.shift()
+        // Shift off the first lines of the stack as will be us.
+        for (let i = 0; i < drop; i++) lines.shift()
 
         const details = document.createElement('details')
         const summary = document.createElement('summary')
