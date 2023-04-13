@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1681124797200,
+    "version": 1681311085834,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -562,6 +562,10 @@
                         "type": "hide"
                     },
                     {
+                        "selector": "#google-one-tap-popup-container",
+                        "type": "hide"
+                    },
+                    {
                         "selector": ".google-one-tap-modal-div",
                         "type": "hide"
                     },
@@ -571,6 +575,10 @@
                     },
                     {
                         "selector": ".ad_container",
+                        "type": "closest-empty"
+                    },
+                    {
+                        "selector": ".ad__container",
                         "type": "closest-empty"
                     },
                     {
@@ -608,6 +616,10 @@
                     {
                         "selector": ".ads__native",
                         "type": "closest-empty"
+                    },
+                    {
+                        "selector": ".fixed-slots",
+                        "type": "hide-empty"
                     },
                     {
                         "selector": ".ad-slot",
@@ -694,7 +706,10 @@
                     "publicidade",
                     "reklama",
                     "skip ad",
-                    "continue reading the main story"
+                    "sponsored news",
+                    "continue reading the main story",
+                    "this advertisement has not loaded yet, but your article continues below.",
+                    "story continues below\nthis advertisement has not loaded yet, but your article continues below."
                 ],
                 "domains": [
                     {
@@ -1040,6 +1055,15 @@
                         ]
                     },
                     {
+                        "domain": "mail.com",
+                        "rules": [
+                            {
+                                "selector": ".primis",
+                                "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "marketwatch.com",
                         "rules": [
                             {
@@ -1093,6 +1117,19 @@
                         ]
                     },
                     {
+                        "domain": "nottinghampost.com",
+                        "rules": [
+                            {
+                                "selector": "#auth-ui_one-tap-container",
+                                "type": "hide"
+                            },
+                            {
+                                "selector": "#comments-standalone-mpu",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "nytimes.com",
                         "rules": [
                             {
@@ -1126,6 +1163,10 @@
                             {
                                 "selector": "[id*='story-ad']",
                                 "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[data-testid='StandardAd']",
+                                "type": "closest-empty"
                             }
                         ]
                     },
@@ -1484,7 +1525,12 @@
                 ]
             },
             "state": "enabled",
-            "hash": "2fd06e6e38a8abf29ca9273ca28f9b9c"
+            "hash": "fbf699fbc88972809fe7bc17aeb7eb8f"
+        },
+        "exceptionHandler": {
+            "exceptions": [],
+            "state": "enabled",
+            "hash": "52857469413a66e8b0c7b00de5589162"
         },
         "fingerprintingAudio": {
             "state": "disabled",
@@ -2474,38 +2520,6 @@
                     "alicdn.com": {
                         "rules": [
                             {
-                                "rule": "aeis.alicdn.com/",
-                                "domains": [
-                                    "aliexpress.com",
-                                    "aliexpress.us"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: alicdn.com.edgekey.net"
-                            },
-                            {
-                                "rule": "aeproductsourcesite.alicdn.com/",
-                                "domains": [
-                                    "aliexpress.com",
-                                    "aliexpress.us"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: alicdn.com.edgekey.net"
-                            },
-                            {
-                                "rule": "assets.alicdn.com/",
-                                "domains": [
-                                    "aliexpress.com",
-                                    "aliexpress.us"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: alicdn.com.edgekey.net"
-                            },
-                            {
-                                "rule": "is.alicdn.com/",
-                                "domains": [
-                                    "aliexpress.com",
-                                    "aliexpress.us"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: alicdn.com.edgekey.net"
-                            },
-                            {
                                 "rule": "alicdn.com",
                                 "domains": [
                                     "aliexpress.us"
@@ -2524,6 +2538,17 @@
                                     "seattletimes.com"
                                 ],
                                 "reason": "corriere.it - ,Example URL: https://www.corriere.it/video-articoli/2022/07/13/missione-wwf-liberare-mare-plastica/9abb64de-029d-11ed-a0cc-ad3c68cacbae.shtml;,Clicking on the video to play causes a still frame to show and the video does not continue.,eurogamer.net, seattletimes.com - An unskippable adwall appears which prevents interaction with the page."
+                            }
+                        ]
+                    },
+                    "amazonaws.com": {
+                        "rules": [
+                            {
+                                "rule": "elb.amazonaws.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/820"
                             }
                         ]
                     },
@@ -3514,6 +3539,17 @@
                             }
                         ]
                     },
+                    "nc0.co": {
+                        "rules": [
+                            {
+                                "rule": "nc0.co/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/826"
+                            }
+                        ]
+                    },
                     "nextdoor.com": {
                         "rules": [
                             {
@@ -3532,21 +3568,7 @@
                                 "domains": [
                                     "nintendo.com"
                                 ],
-                                "reason": "Accounts page renders blank. Download buttons show loading stars and never finish loading. Pricing information doesn't load. Note that cdn.accounts.nintendo.com CNAMEs to star.accounts.nintendo.com.edgekey.net at the time of mitigation.; CNAME ENTRY GENERATED FROM: nintendo.com.edgekey.net"
-                            },
-                            {
-                                "rule": "api.ec.nintendo.com/account/js/common.js",
-                                "domains": [
-                                    "nintendo.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: nintendo.com.edgekey.net"
-                            },
-                            {
-                                "rule": "cdn.my.nintendo.com/account/js/common.js",
-                                "domains": [
-                                    "nintendo.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: nintendo.com.edgekey.net"
+                                "reason": "Accounts page renders blank. Download buttons show loading stars and never finish loading. Pricing information doesn't load. Note that cdn.accounts.nintendo.com CNAMEs to star.accounts.nintendo.com.edgekey.net at the time of mitigation."
                             }
                         ]
                     },
@@ -3868,6 +3890,17 @@
                                     "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/631"
+                            }
+                        ]
+                    },
+                    "sail-horizon.com": {
+                        "rules": [
+                            {
+                                "rule": "ak.sail-horizon.com/spm/spm.v1.min.js",
+                                "domains": [
+                                    "financialpost.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/785"
                             }
                         ]
                     },
@@ -4248,6 +4281,13 @@
                                     "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/492"
+                            },
+                            {
+                                "rule": "cdn.yottaa.com/rapid.security.min.",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/830"
                             }
                         ]
                     },
@@ -4262,14 +4302,141 @@
                             }
                         ]
                     },
-                    "fidelity.com": {
+                    "poferries.com": {
                         "rules": [
                             {
-                                "rule": "login.fidelity.com",
+                                "rule": "analytics.poferries.com/public/digital-experience/js/common.js",
                                 "domains": [
-                                    "fidelity.com"
+                                    "cigna.com"
                                 ],
-                                "reason": "CNAME ENTRY GENERATED FROM: login.fidelity.com.febsec-fidelity.com.akadns.net"
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            }
+                        ]
+                    },
+                    "allstate.com": {
+                        "rules": [
+                            {
+                                "rule": "data.allstate.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            },
+                            {
+                                "rule": "smetrics.allstate.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "gsma.com": {
+                        "rules": [
+                            {
+                                "rule": "matomo.gsma.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            }
+                        ]
+                    },
+                    "ohio.gov": {
+                        "rules": [
+                            {
+                                "rule": "analytics.dx.ohio.gov/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            }
+                        ]
+                    },
+                    "betfred.com": {
+                        "rules": [
+                            {
+                                "rule": "content.betfred.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            }
+                        ]
+                    },
+                    "boursorama.com": {
+                        "rules": [
+                            {
+                                "rule": "ist3.boursorama.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            },
+                            {
+                                "rule": "ist2.boursorama.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            }
+                        ]
+                    },
+                    "fultonbank.com": {
+                        "rules": [
+                            {
+                                "rule": "ww7.fultonbank.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            }
+                        ]
+                    },
+                    "velomotion.de": {
+                        "rules": [
+                            {
+                                "rule": "analytics.velomotion.de/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            }
+                        ]
+                    },
+                    "cigna.com": {
+                        "rules": [
+                            {
+                                "rule": "p.login.my.cigna.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            }
+                        ]
+                    },
+                    "pnc.com": {
+                        "rules": [
+                            {
+                                "rule": "www.u45.pnc.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            },
+                            {
+                                "rule": "www.u46.pnc.com/public/digital-experience/js/common.js",
+                                "domains": [
+                                    "cigna.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: elb.amazonaws.com"
+                            },
+                            {
+                                "rule": "analytics.pnc.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
                             }
                         ]
                     },
@@ -4344,863 +4511,6 @@
                                     "thetrainline.com"
                                 ],
                                 "reason": "CNAME ENTRY GENERATED FROM: datadome.co"
-                            }
-                        ]
-                    },
-                    "marksandspencer.com": {
-                        "rules": [
-                            {
-                                "rule": "asset1.marksandspencer.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "smetrics.marksandspencer.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "bareminerals.com": {
-                        "rules": [
-                            {
-                                "rule": "assets.bareminerals.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "biglots.com": {
-                        "rules": [
-                            {
-                                "rule": "assets.biglots.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "cox.com": {
-                        "rules": [
-                            {
-                                "rule": "assets.cox.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "smetrics.cox.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            },
-                            {
-                                "rule": "target.cox.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "deloitte.com": {
-                        "rules": [
-                            {
-                                "rule": "assets.deloitte.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "sstats.deloitte.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "hpe.com": {
-                        "rules": [
-                            {
-                                "rule": "assets.ext.hpe.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "smetrics.hpe.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "hdsupplysolutions.com": {
-                        "rules": [
-                            {
-                                "rule": "assets.hdsupplysolutions.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "langhamhotels.com": {
-                        "rules": [
-                            {
-                                "rule": "assets.langhamhotels.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "lumen.com": {
-                        "rules": [
-                            {
-                                "rule": "assets.lumen.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "spectrumenterprise.com": {
-                        "rules": [
-                            {
-                                "rule": "assets.spectrumenterprise.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "microsoft.com": {
-                        "rules": [
-                            {
-                                "rule": "cdn-dynmedia-1.microsoft.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "target.microsoft.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "bajajfinserv.in": {
-                        "rules": [
-                            {
-                                "rule": "cms-assets.bajajfinserv.in/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "hunterdouglas.com": {
-                        "rules": [
-                            {
-                                "rule": "content.hunterdouglas.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "ihg.com": {
-                        "rules": [
-                            {
-                                "rule": "digital.ihg.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "secure.analytics.ihg.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "accenture.com": {
-                        "rules": [
-                            {
-                                "rule": "dynamicmedia.accenture.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "somni.accenture.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            },
-                            {
-                                "rule": "target.accenture.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "assaabloy.com": {
-                        "rules": [
-                            {
-                                "rule": "gw-assets.assaabloy.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "acer.com": {
-                        "rules": [
-                            {
-                                "rule": "images.acer.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "altrarunning.com": {
-                        "rules": [
-                            {
-                                "rule": "images.altrarunning.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "ansys.com": {
-                        "rules": [
-                            {
-                                "rule": "images.ansys.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "target.ansys.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "asics.com": {
-                        "rules": [
-                            {
-                                "rule": "images.asics.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "blackberry.com": {
-                        "rules": [
-                            {
-                                "rule": "images.blackberry.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "blue-tomato.com": {
-                        "rules": [
-                            {
-                                "rule": "images.blue-tomato.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "heb.com": {
-                        "rules": [
-                            {
-                                "rule": "images.heb.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "hugoboss.com": {
-                        "rules": [
-                            {
-                                "rule": "images.hugoboss.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "jansport.com": {
-                        "rules": [
-                            {
-                                "rule": "images.jansport.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "keurig.com": {
-                        "rules": [
-                            {
-                                "rule": "images.keurig.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "kirklands.com": {
-                        "rules": [
-                            {
-                                "rule": "images.kirklands.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "kwikset.com": {
-                        "rules": [
-                            {
-                                "rule": "images.kwikset.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "lee.com": {
-                        "rules": [
-                            {
-                                "rule": "images.lee.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "lennoxpros.com": {
-                        "rules": [
-                            {
-                                "rule": "images.lennoxpros.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "lululemon.com": {
-                        "rules": [
-                            {
-                                "rule": "images.lululemon.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "pfisterfaucets.com": {
-                        "rules": [
-                            {
-                                "rule": "images.pfisterfaucets.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "philips.com": {
-                        "rules": [
-                            {
-                                "rule": "images.philips.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "www.assets.lighting.philips.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "selfridges.com": {
-                        "rules": [
-                            {
-                                "rule": "images.selfridges.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "shaneco.com": {
-                        "rules": [
-                            {
-                                "rule": "images.shaneco.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "shophq.com": {
-                        "rules": [
-                            {
-                                "rule": "images.shophq.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "tervis.com": {
-                        "rules": [
-                            {
-                                "rule": "images.tervis.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "thenorthface.com": {
-                        "rules": [
-                            {
-                                "rule": "images.thenorthface.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "timberland.com": {
-                        "rules": [
-                            {
-                                "rule": "images.timberland.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "trex.com": {
-                        "rules": [
-                            {
-                                "rule": "images.trex.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "vans.com": {
-                        "rules": [
-                            {
-                                "rule": "images.vans.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "wacoal-america.com": {
-                        "rules": [
-                            {
-                                "rule": "images.wacoal-america.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "wrangler.com": {
-                        "rules": [
-                            {
-                                "rule": "images.wrangler.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "imageseu.wrangler.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "uline.com": {
-                        "rules": [
-                            {
-                                "rule": "img.uline.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "stryker.com": {
-                        "rules": [
-                            {
-                                "rule": "media-assets.stryker.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "castorama.fr": {
-                        "rules": [
-                            {
-                                "rule": "media.castorama.fr/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "chainreactioncycles.com": {
-                        "rules": [
-                            {
-                                "rule": "media.chainreactioncycles.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "playstation.com": {
-                        "rules": [
-                            {
-                                "rule": "media.direct.playstation.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "smetrics.aem.playstation.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "diy.com": {
-                        "rules": [
-                            {
-                                "rule": "media.diy.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "guitarcenter.com": {
-                        "rules": [
-                            {
-                                "rule": "media.guitarcenter.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "kohlsimg.com": {
-                        "rules": [
-                            {
-                                "rule": "media.kohlsimg.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "schaefer-shop.de": {
-                        "rules": [
-                            {
-                                "rule": "media.schaefer-shop.de/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "screwfix.com": {
-                        "rules": [
-                            {
-                                "rule": "media.screwfix.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "screwfix.ie": {
-                        "rules": [
-                            {
-                                "rule": "media.screwfix.ie/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "sunbeltrentals.com": {
-                        "rules": [
-                            {
-                                "rule": "media.sunbeltrentals.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "bakerdist.com": {
-                        "rules": [
-                            {
-                                "rule": "resource.bakerdist.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "gemaire.com": {
-                        "rules": [
-                            {
-                                "rule": "resource.gemaire.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "armstrongceilings.com": {
-                        "rules": [
-                            {
-                                "rule": "s7-images.armstrongceilings.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            },
-                            {
-                                "rule": "metrics.armstrongceilings.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "bluegreenvacations.com": {
-                        "rules": [
-                            {
-                                "rule": "s7.bluegreenvacations.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "italia.it": {
-                        "rules": [
-                            {
-                                "rule": "tourismmedia.italia.it/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "signify.com": {
-                        "rules": [
-                            {
-                                "rule": "www.assets.signify.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "hitachienergy.com": {
-                        "rules": [
-                            {
-                                "rule": "dynamic-assets.hitachienergy.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: scene7.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "aliexpress.com": {
-                        "rules": [
-                            {
-                                "rule": "login.aliexpress.com/",
-                                "domains": [
-                                    "aliexpress.com",
-                                    "aliexpress.us"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: alicdn.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "aliexpress.us": {
-                        "rules": [
-                            {
-                                "rule": "login.aliexpress.us/",
-                                "domains": [
-                                    "aliexpress.com",
-                                    "aliexpress.us"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: alicdn.com.edgekey.net"
-                            }
-                        ]
-                    },
-                    "agoda.net": {
-                        "rules": [
-                            {
-                                "rule": "cdn0.agoda.net/",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: cdn.agoda.net.edgekey.net"
-                            },
-                            {
-                                "rule": "cdn6.agoda.net/",
-                                "domains": [
-                                    "<all>"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: cdn.agoda.net.edgekey.net"
-                            }
-                        ]
-                    },
-                    "sky.com": {
-                        "rules": [
-                            {
-                                "rule": "accounts.sky.com/assets/sky_common.js",
-                                "domains": [
-                                    "sky.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: sky.com.edgesuite.net"
-                            },
-                            {
-                                "rule": "smetrics.sky.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "espncdn.com": {
-                        "rules": [
-                            {
-                                "rule": "a.espncdn.com/",
-                                "domains": [
-                                    "espn.co.uk",
-                                    "espn.com",
-                                    "espn.com.au",
-                                    "espn.com.br",
-                                    "espn.com.mx",
-                                    "espn.in",
-                                    "espnfc.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: a.espncdn.com.stls.edgesuite.net"
                             }
                         ]
                     },
@@ -5396,6 +4706,13 @@
                                 "reason": "CNAME ENTRY GENERATED FROM: lpsnmedia.net"
                             },
                             {
+                                "rule": "tagmanager1.citi.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
                                 "rule": "metrics1.citi.com",
                                 "domains": [
                                     "pizzahut.com"
@@ -5439,11 +4756,771 @@
                                 "reason": "CNAME ENTRY GENERATED FROM: lpsnmedia.net"
                             },
                             {
+                                "rule": "tms.americanexpress.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
                                 "rule": "omns.americanexpress.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
                                 "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "academy.com": {
+                        "rules": [
+                            {
+                                "rule": "activate.academy.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "latimes.com": {
+                        "rules": [
+                            {
+                                "rule": "activate.latimes.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "sandiegouniontribune.com": {
+                        "rules": [
+                            {
+                                "rule": "activate.sandiegouniontribune.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "amica.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.amica.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.amica.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            },
+                            {
+                                "rule": "target.amica.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "athome.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.athome.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "belk.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.belk.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.belk.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "carecredit.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.carecredit.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "coach.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.coach.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "coachoutlet.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.coachoutlet.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "duluthtrading.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.duluthtrading.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "metrics.duluthtrading.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "gnc.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.gnc.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "katespade.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.katespade.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "michiganlottery.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.michiganlottery.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "mysynchrony.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.mysynchrony.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "northerntool.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.northerntool.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "polaris.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.polaris.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "synchrony.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.synchrony.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "synchronybank.com": {
+                        "rules": [
+                            {
+                                "rule": "analytics.synchronybank.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "aami.com.au": {
+                        "rules": [
+                            {
+                                "rule": "assets1.aami.com.au/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "assets2.aami.com.au",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            },
+                            {
+                                "rule": "smetrics.aami.com.au",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "shannons.com.au": {
+                        "rules": [
+                            {
+                                "rule": "assets1.shannons.com.au/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "assets2.shannons.com.au",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            },
+                            {
+                                "rule": "smetrics.shannons.com.au",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "suncorp.com.au": {
+                        "rules": [
+                            {
+                                "rule": "assets1.suncorp.com.au/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "assets2.suncorp.com.au",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            },
+                            {
+                                "rule": "smetrics.suncorp.com.au",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "theworks.co.uk": {
+                        "rules": [
+                            {
+                                "rule": "attribution.theworks.co.uk/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "espn.com": {
+                        "rules": [
+                            {
+                                "rule": "dcf.espn.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "dcfdata.espn.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "sw88.espn.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "statefarm.com": {
+                        "rules": [
+                            {
+                                "rule": "ddc.statefarm.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.statefarm.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "luzernerzeitung.ch": {
+                        "rules": [
+                            {
+                                "rule": "ens.luzernerzeitung.ch/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "nzz.ch": {
+                        "rules": [
+                            {
+                                "rule": "ens.nzz.ch/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "tagblatt.ch": {
+                        "rules": [
+                            {
+                                "rule": "ens.tagblatt.ch/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "bhphoto.com": {
+                        "rules": [
+                            {
+                                "rule": "ensighten.bhphoto.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "norton.com": {
+                        "rules": [
+                            {
+                                "rule": "ensighten.norton.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "oms.norton.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "postoffice.co.uk": {
+                        "rules": [
+                            {
+                                "rule": "ensighten.postoffice.co.uk/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "metrics.postoffice.co.uk",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "syf.com": {
+                        "rules": [
+                            {
+                                "rule": "metrics.syf.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "tiaa.org": {
+                        "rules": [
+                            {
+                                "rule": "nexus.ensighten.tiaa.org/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.tiaa.org",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "toyota.com": {
+                        "rules": [
+                            {
+                                "rule": "nexus.toyota.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "p.pulse.toyota.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.toyota.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "virginholidays.co.uk": {
+                        "rules": [
+                            {
+                                "rule": "nexus.virginholidays.co.uk/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "lexus.com": {
+                        "rules": [
+                            {
+                                "rule": "p.pulse.lexus.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "delta.com": {
+                        "rules": [
+                            {
+                                "rule": "pulse.delta.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "tms.delta.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.delta.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "rac.co.uk": {
+                        "rules": [
+                            {
+                                "rule": "pulse.rac.co.uk/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.rac.co.uk",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "sleepnumber.com": {
+                        "rules": [
+                            {
+                                "rule": "pulse.sleepnumber.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "synchronycredit.com": {
+                        "rules": [
+                            {
+                                "rule": "secureanalytics.synchronycredit.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "dell.com": {
+                        "rules": [
+                            {
+                                "rule": "sst.dell.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "sm.dell.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            },
+                            {
+                                "rule": "stt.dell.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "janieandjack.com": {
+                        "rules": [
+                            {
+                                "rule": "t.janieandjack.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "virginatlantic.com": {
+                        "rules": [
+                            {
+                                "rule": "tagman.virginatlantic.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "tms.virginatlantic.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.virginatlantic.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "citibankonline.com": {
+                        "rules": [
+                            {
+                                "rule": "tagmanager1.citibankonline.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "metrics1.citibankonline.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "experian.co.uk": {
+                        "rules": [
+                            {
+                                "rule": "tags.experian.co.uk/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "betway.com": {
+                        "rules": [
+                            {
+                                "rule": "tms.betway.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetric.betway.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "capitalone.com": {
+                        "rules": [
+                            {
+                                "rule": "tms.capitalone.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.capitalone.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "nab.com.au": {
+                        "rules": [
+                            {
+                                "rule": "tms.nab.com.au/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            },
+                            {
+                                "rule": "smetrics.nab.com.au",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "fivebelow.com": {
+                        "rules": [
+                            {
+                                "rule": "tog.fivebelow.com/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "gio.com.au": {
+                        "rules": [
+                            {
+                                "rule": "assets1.gio.com.au/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
+                            }
+                        ]
+                    },
+                    "pru.co.uk": {
+                        "rules": [
+                            {
+                                "rule": "privacy-digital.pru.co.uk/vaa/Bootstrap.js",
+                                "domains": [
+                                    "virginatlantic.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: nc0.co"
                             }
                         ]
                     },
@@ -5713,17 +5790,6 @@
                             }
                         ]
                     },
-                    "pnc.com": {
-                        "rules": [
-                            {
-                                "rule": "analytics.pnc.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
                     "ubs.com": {
                         "rules": [
                             {
@@ -5889,60 +5955,6 @@
                         "rules": [
                             {
                                 "rule": "as.welt.de",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "aami.com.au": {
-                        "rules": [
-                            {
-                                "rule": "assets2.aami.com.au",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            },
-                            {
-                                "rule": "smetrics.aami.com.au",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "shannons.com.au": {
-                        "rules": [
-                            {
-                                "rule": "assets2.shannons.com.au",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            },
-                            {
-                                "rule": "smetrics.shannons.com.au",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "suncorp.com.au": {
-                        "rules": [
-                            {
-                                "rule": "assets2.suncorp.com.au",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            },
-                            {
-                                "rule": "smetrics.suncorp.com.au",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -6295,6 +6307,17 @@
                             }
                         ]
                     },
+                    "armstrongceilings.com": {
+                        "rules": [
+                            {
+                                "rule": "metrics.armstrongceilings.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
                     "asos.com": {
                         "rules": [
                             {
@@ -6387,17 +6410,6 @@
                         "rules": [
                             {
                                 "rule": "metrics.dailytelegraph.com.au",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "duluthtrading.com": {
-                        "rules": [
-                            {
-                                "rule": "metrics.duluthtrading.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -6537,17 +6549,6 @@
                         "rules": [
                             {
                                 "rule": "metrics.ntnews.com.au",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "postoffice.co.uk": {
-                        "rules": [
-                            {
-                                "rule": "metrics.postoffice.co.uk",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -6730,17 +6731,6 @@
                             }
                         ]
                     },
-                    "citibankonline.com": {
-                        "rules": [
-                            {
-                                "rule": "metrics1.citibankonline.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
                     "houselogic.com": {
                         "rules": [
                             {
@@ -6877,17 +6867,6 @@
                         "rules": [
                             {
                                 "rule": "oms.neimanmarcus.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "norton.com": {
-                        "rules": [
-                            {
-                                "rule": "oms.norton.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -7738,6 +7717,17 @@
                             }
                         ]
                     },
+                    "ihg.com": {
+                        "rules": [
+                            {
+                                "rule": "secure.analytics.ihg.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
                     "unsw.edu.au": {
                         "rules": [
                             {
@@ -7836,39 +7826,10 @@
                             }
                         ]
                     },
-                    "dell.com": {
-                        "rules": [
-                            {
-                                "rule": "sm.dell.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            },
-                            {
-                                "rule": "stt.dell.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
                     "stjude.org": {
                         "rules": [
                             {
                                 "rule": "sm.stjude.org",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "betway.com": {
-                        "rules": [
-                            {
-                                "rule": "smetric.betway.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -7997,6 +7958,17 @@
                             }
                         ]
                     },
+                    "playstation.com": {
+                        "rules": [
+                            {
+                                "rule": "smetrics.aem.playstation.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
                     "aetn.com": {
                         "rules": [
                             {
@@ -8048,17 +8020,6 @@
                             }
                         ]
                     },
-                    "allstate.com": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.allstate.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
                     "ally.com": {
                         "rules": [
                             {
@@ -8085,24 +8046,6 @@
                         "rules": [
                             {
                                 "rule": "smetrics.amfam.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "amica.com": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.amica.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            },
-                            {
-                                "rule": "target.amica.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -8268,17 +8211,6 @@
                         "rules": [
                             {
                                 "rule": "smetrics.beefeater.co.uk",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "belk.com": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.belk.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -8455,17 +8387,6 @@
                         "rules": [
                             {
                                 "rule": "smetrics.calvinklein.us",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "capitalone.com": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.capitalone.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -8740,6 +8661,24 @@
                             }
                         ]
                     },
+                    "cox.com": {
+                        "rules": [
+                            {
+                                "rule": "smetrics.cox.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            },
+                            {
+                                "rule": "target.cox.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
                     "crainsdetroit.com": {
                         "rules": [
                             {
@@ -8773,17 +8712,6 @@
                             },
                             {
                                 "rule": "stt.deakin.edu.au",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "delta.com": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.delta.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -9205,6 +9133,17 @@
                             }
                         ]
                     },
+                    "hpe.com": {
+                        "rules": [
+                            {
+                                "rule": "smetrics.hpe.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
                     "hrblock.com": {
                         "rules": [
                             {
@@ -9516,6 +9455,17 @@
                             }
                         ]
                     },
+                    "marksandspencer.com": {
+                        "rules": [
+                            {
+                                "rule": "smetrics.marksandspencer.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
                     "marriott.com": {
                         "rules": [
                             {
@@ -9721,17 +9671,6 @@
                         "rules": [
                             {
                                 "rule": "smetrics.myoccu.org",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "nab.com.au": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.nab.com.au",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -10116,17 +10055,6 @@
                             }
                         ]
                     },
-                    "rac.co.uk": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.rac.co.uk",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
                     "rackroomshoes.com": {
                         "rules": [
                             {
@@ -10464,6 +10392,17 @@
                             }
                         ]
                     },
+                    "sky.com": {
+                        "rules": [
+                            {
+                                "rule": "smetrics.sky.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
                     "sky.it": {
                         "rules": [
                             {
@@ -10530,17 +10469,6 @@
                         "rules": [
                             {
                                 "rule": "smetrics.startribune.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "statefarm.com": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.statefarm.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -10727,17 +10655,6 @@
                             }
                         ]
                     },
-                    "tiaa.org": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.tiaa.org",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
                     "time.com": {
                         "rules": [
                             {
@@ -10782,17 +10699,6 @@
                             }
                         ]
                     },
-                    "toyota.com": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.toyota.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
                     "tudorwatch.com": {
                         "rules": [
                             {
@@ -10830,17 +10736,6 @@
                         "rules": [
                             {
                                 "rule": "smetrics.usopen.org",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "virginatlantic.com": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.virginatlantic.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -11177,6 +11072,24 @@
                             },
                             {
                                 "rule": "target.netapp.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "accenture.com": {
+                        "rules": [
+                            {
+                                "rule": "somni.accenture.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            },
+                            {
+                                "rule": "target.accenture.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -11697,6 +11610,17 @@
                             }
                         ]
                     },
+                    "deloitte.com": {
+                        "rules": [
+                            {
+                                "rule": "sstats.deloitte.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
                     "fairmont.com": {
                         "rules": [
                             {
@@ -12038,17 +11962,6 @@
                             }
                         ]
                     },
-                    "espn.com": {
-                        "rules": [
-                            {
-                                "rule": "sw88.espn.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
                     "fxnetworks.com": {
                         "rules": [
                             {
@@ -12214,6 +12127,17 @@
                             }
                         ]
                     },
+                    "ansys.com": {
+                        "rules": [
+                            {
+                                "rule": "target.ansys.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
                     "bankwest.com.au": {
                         "rules": [
                             {
@@ -12317,6 +12241,17 @@
                         "rules": [
                             {
                                 "rule": "target.key.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            }
+                        ]
+                    },
+                    "microsoft.com": {
+                        "rules": [
+                            {
+                                "rule": "target.microsoft.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -13372,7 +13307,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "511b764a9dd1243e3433866602c04040"
+            "hash": "2e91cfa77b1366fa0ab84829c8bdb178"
         },
         "trackingCookies1p": {
             "settings": {
