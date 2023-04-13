@@ -7,7 +7,7 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default
 const { handleRequest } = require('../../../shared/js/background/before-request')
 const tabManager = require('../../../shared/js/background/tab-manager')
 const browserWrapper = require('../../../shared/js/background/wrapper')
-const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
+const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object')
 
 const configReference = require('@duckduckgo/privacy-reference-tests/expire-first-party-js-cookies/config_reference.json')
 const blocklistReference = require('@duckduckgo/privacy-reference-tests/expire-first-party-js-cookies/tracker_radar_reference.json')

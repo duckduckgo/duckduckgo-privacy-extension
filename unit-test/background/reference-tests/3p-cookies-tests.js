@@ -7,7 +7,7 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default
 const tabManager = require('../../../shared/js/background/tab-manager')
 const browserWrapper = require('../../../shared/js/background/wrapper')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('../../../shared/js/background/events/3p-tracking-cookie-blocking')
-const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
+const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object')
 
 const jsdom = require('jsdom')
 
