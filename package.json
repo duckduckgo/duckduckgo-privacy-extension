@@ -52,7 +52,7 @@
         "eslint-config-standard": "^17.0.0",
         "eslint-plugin-import": "^2.27.5",
         "eslint-plugin-node": "^11.1.0",
-        "glob": "^10.0.0",
+        "glob": "^10.1.0",
         "jasmine": "4.6.0",
         "jasmine-core": "3.5.0",
         "jsdom": "^21.1.1",
