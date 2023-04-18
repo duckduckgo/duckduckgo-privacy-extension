@@ -167,6 +167,24 @@ const actionHandlers = {
             addRequestRow(row)
         }
     },
+    runtimeChecks: (m) => {
+        const { documentUrl, matchType, matchedStackDomain, stack, scriptOrigins } = m.message
+        if (!matchType) return displayProxyRow(m)
+        console.log('runtimeChecks', { documentUrl, matchType, matchedStackDomain, stack, scriptOrigins })
+        const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+        const cells = row.querySelectorAll('td')
+        cells[1].textContent = documentUrl
+        cells[2].querySelector('.request-action').textContent = `Runtime Checks📨 ${matchType}`
+        if (scriptOrigins) {
+            cells[3].textContent = scriptOrigins.join(',')
+        }
+        if (stack) appendCallStack(cells[3], stack, 0)
+        if (matchedStackDomain) {
+            cells[4].textContent += `Matched: ${matchedStackDomain}`
+        }
+        row.classList.add('runtimeChecks')
+        addRequestRow(row)
+    },
     jsException: (m) => {
         const { documentUrl, message, filename, lineno, colno, stack, scriptOrigins } = m.message
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
@@ -192,21 +210,31 @@ const actionHandlers = {
         addRequestRow(row)
     },
     fingerprintingCanvas: (m) => {
-        const { documentUrl, action, kind, stack, args } = m.message
-        const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
-        const cells = row.querySelectorAll('td')
-        cells[1].textContent = documentUrl
-        cells[2].querySelector('.request-action').textContent = `Canvas ${action}`
-        const argsOut = JSON.parse(args).join(', ')
-        cells[3].setAttribute('colspan', 2)
-        cells[4].remove()
-
-        cells[3].textContent = `${kind}(${argsOut})`
-        appendCallStack(cells[3], stack)
-
-        row.classList.add('canvas')
-        addRequestRow(row)
+        displayProxyRow(m)
     }
+}
+
+/**
+ * Data that comes from DDG proxy calls
+ * @param {*} m message from background
+ * @param {*} actionName nice name to display for the action
+ */
+function displayProxyRow (m) {
+    const { documentUrl, action, kind, stack, args } = m.message
+    const featureAction = m.action
+    const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+    const cells = row.querySelectorAll('td')
+    cells[1].textContent = documentUrl
+    cells[2].querySelector('.request-action').textContent = `${featureAction} proxy ${action}`
+    const argsOut = JSON.parse(args).join(', ')
+    cells[3].setAttribute('colspan', 2)
+    cells[4].remove()
+
+    cells[3].textContent = `${kind}(${argsOut})`
+    appendCallStack(cells[3], stack)
+
+    row.classList.add('proxyCall', featureAction)
+    addRequestRow(row)
 }
 
 function appendCallStack (cell, stack, drop = 2) {
@@ -237,7 +265,8 @@ const panelConfig = {
         redirected: true,
         cookieHTTP: true,
         cookieJS: true,
-        apiCanvas: true,
+        runtimeChecks: true,
+        proxyCalls: false,
         noneRequest: true,
         ignoreUser: true
     },
@@ -269,8 +298,10 @@ function shouldShowRow (row) {
         return panelConfig.rowVisibility.cookieHTTP
     case 'jscookie':
         return panelConfig.rowVisibility.cookieJS
-    case 'canvas':
-        return panelConfig.rowVisibility.apiCanvas
+    case 'runtimeChecks':
+        return panelConfig.rowVisibility.runtimeChecks
+    case 'proxyCall':
+        return panelConfig.rowVisibility.proxyCalls
     case 'none':
         return panelConfig.rowVisibility.noneRequest
     case 'ignore-user':
