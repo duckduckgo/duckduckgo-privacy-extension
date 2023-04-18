@@ -170,7 +170,6 @@ const actionHandlers = {
     runtimeChecks: (m) => {
         const { documentUrl, matchType, matchedStackDomain, stack, scriptOrigins } = m.message
         if (!matchType) return displayProxyRow(m)
-        console.log('runtimeChecks', { documentUrl, matchType, matchedStackDomain, stack, scriptOrigins })
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
@@ -208,9 +207,6 @@ const actionHandlers = {
         cells[4].textContent = value.split(';')[0]
         row.classList.add('jscookie')
         addRequestRow(row)
-    },
-    fingerprintingCanvas: (m) => {
-        displayProxyRow(m)
     }
 }
 
@@ -320,6 +316,8 @@ port.onMessage.addListener((message) => {
     if (m.tabId === tabId) {
         if (actionHandlers[m.action]) {
             actionHandlers[m.action](m)
+        } else if (m?.message?.isProxy) {
+            displayProxyRow(m)
         }
         if (document.querySelector('tbody').lastChild) {
             setRowVisible(document.querySelector('tbody').lastChild)
