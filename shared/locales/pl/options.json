@@ -37,7 +37,7 @@
     "note" : "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
   "globalPrivacyControlDesc" : {
-    "title" : "Twoje dane nie są na sprzedaż. W DuckDuckGo w pełni się z tym zgadzamy.Aktywuj ustawienie „Globalna kontrola prywatności” (GPC), a my przekażemy witrynom Twoje preferencje:",
+    "title" : "Twoje dane nie są na sprzedaż. W DuckDuckGo w pełni się z tym zgadzamy. Aktywuj ustawienie „Globalna kontrola prywatności” (GPC), a my przekażemy witrynom Twoje preferencje:",
     "note" : "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
   "notSellYourPersonalData" : {
