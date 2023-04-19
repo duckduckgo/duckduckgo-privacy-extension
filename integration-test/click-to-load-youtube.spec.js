@@ -163,7 +163,7 @@ test.describe('Test YouTube Click To Load', () => {
         }
     })
 
-    test.skip('CTL: YouTube interacting with iframe API', async ({ page }) => {
+    test('CTL: YouTube interacting with iframe API', async ({ page }) => {
         await page.goto(testSite, { waitUntil: 'networkidle' })
 
         // Test the Iframe API controls and events function correctly, even when
