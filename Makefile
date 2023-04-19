@@ -157,7 +157,7 @@ MKDIR_TARGETS = $(BUILD_DIR)/_locales $(BUILD_DIR)/data/bundled $(BUILD_DIR)/htm
                 $(BUILD_DIR)/img $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources \
                 $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css \
                 $(BUILD_DIR)/public/font \
-				$(INTERMEDIATES_DIR)
+                $(INTERMEDIATES_DIR)
 
 $(MKDIR_TARGETS):
 	mkdir -p $@
