@@ -27,6 +27,8 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
 
     const featureSettings = {}
     for (const feature of site.enabledFeatures) {
+        // Prune out the tracker allowlist feature setting as it's not needed and is large
+        if (feature === 'trackerAllowlist') continue
         const featureSetting = utils.getFeatureSettings(feature)
         if (Object.keys(featureSetting).length) {
             featureSettings[feature] = featureSetting
