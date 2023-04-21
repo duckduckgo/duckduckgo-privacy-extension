@@ -190,7 +190,7 @@ const actionHandlers = {
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
         cells[2].querySelector('.request-action').textContent = `JS🪲 ${message}`
-        cells[3].textContent = scriptOrigins.join(',')
+        if (scriptOrigins) cells[3].textContent = scriptOrigins.join(',')
         if (stack) appendCallStack(cells[3], stack, 0)
         cells[4].textContent = `${filename}:${lineno}:${colno}`
         row.classList.add('jsexception')
@@ -261,6 +261,7 @@ const panelConfig = {
         redirected: true,
         cookieHTTP: true,
         cookieJS: true,
+        jsException: true,
         runtimeChecks: true,
         proxyCalls: false,
         noneRequest: true,
@@ -294,6 +295,8 @@ function shouldShowRow (row) {
         return panelConfig.rowVisibility.cookieHTTP
     case 'jscookie':
         return panelConfig.rowVisibility.cookieJS
+    case 'jsException':
+        return panelConfig.rowVisibility.jsException
     case 'runtimeChecks':
         return panelConfig.rowVisibility.runtimeChecks
     case 'proxyCall':
