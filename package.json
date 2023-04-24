@@ -83,7 +83,7 @@
         "deep-freeze": "0.0.1",
         "dexie": "3.2.3",
         "eventemitter2": "6.4.9",
-        "i18next": "^22.4.14",
+        "i18next": "^22.4.15",
         "i18next-icu": "^2.3.0",
         "is-plain-object": "5.0.0",
         "jquery": "3.6.4",
