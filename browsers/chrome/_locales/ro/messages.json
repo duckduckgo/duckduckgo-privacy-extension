@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Confidențialitate simplificată. Protejați-vă datele în timp ce căutați și navigați: blocarea modulelor de urmărire, criptare mai inteligentă, căutare privată și multe altele."}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "Titlul extensiei, afișat în magazinul web"
+  },
+  "appDesc" : {
+    "message" : "O protecție simplă, fără sincope, pentru browserul tău.",
+    "description" : "Scurtă descriere a extensiei, afișată în magazinul web"
+  }
+}

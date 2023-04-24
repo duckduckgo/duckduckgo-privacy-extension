@@ -1,0 +1,10 @@
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "Naslov proširenja, prikazan u web trgovini"
+  },
+  "appDesc" : {
+    "message" : "Jednostavna i besprijekorna zaštita privatnosti za vaš preglednik.",
+    "description" : "Kratki opis proširenja, prikazan u web trgovini"
+  }
+}

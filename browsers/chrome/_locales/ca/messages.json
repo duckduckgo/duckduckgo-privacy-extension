@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Privacitat sense complicacions. ***Els permisos són per bloquejar els rastrejadors amagats a l'aguait per atacar.***"}}
+{
+  "appName" : {
+    "message" : "Privacy Essentials de DuckDuckGo ",
+    "description" : "El títol de l'extensió, que es mostra a la botiga web"
+  },
+  "appDesc" : {
+    "message" : "Protecció de la privadesa de manera senzilla i continuada per al teu navegador.",
+    "description" : "La breu descripció de l'extensió, que es mostra a la botiga web"
+  }
+}

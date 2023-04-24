@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Privasi, disederhanakan. ***Izin adalah untuk memblokir pelacak tersembunyi yang mengintai di mana-mana.***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "Judul ekstensi, ditampilkan di web store"
+  },
+  "appDesc" : {
+    "message" : "Perlindungan privasi yang sederhana dan mulus untuk browser Anda.",
+    "description" : "Deskripsi singkat ekstensi, ditampilkan di web store"
+  }
+}

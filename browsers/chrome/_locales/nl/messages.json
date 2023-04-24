@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Privacy, vereenvoudigd. ***Permissies zijn voor het blokkeren van verborgen trackers die overal op de loer liggen.***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "De titel van de extensie, weergegeven in de webwinkel"
+  },
+  "appDesc" : {
+    "message" : "Eenvoudige en naadloze bescherming van je privacy voor in je browser.",
+    "description" : "De korte beschrijving van de extensie, weergegeven in de webwinkel"
+  }
+}

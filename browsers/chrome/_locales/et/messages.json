@@ -1,0 +1,10 @@
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "Laienduse nimetus, mis kuvatakse veebipoes"
+  },
+  "appDesc" : {
+    "message" : "Lihtne ja sujuv eraelu puutumatuse kaitse sinu brauserile.",
+    "description" : "Laienduse lühikirjeldus, mis kuvatakse veebipoes"
+  }
+}

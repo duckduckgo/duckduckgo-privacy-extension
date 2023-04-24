@@ -1,0 +1,10 @@
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "Titlen på udvidelsen, som den vises i webbutikken"
+  },
+  "appDesc" : {
+    "message" : "Enkel og problemfri beskyttelse af privatlivets fred i din browser.",
+    "description" : "Den korte beskrivelse af udvidelsen, som den vises i webbutikken"
+  }
+}
