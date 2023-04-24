@@ -10,6 +10,7 @@ BUILD_DIR = build/$(browser)/$(type)
 ifeq ($(browser),test)
   BUILD_DIR := build/test
 endif
+INTERMEDIATES_DIR = build/.intermediates
 
 ## All source files that potentially need to be bundled or copied.
 # TODO: Use automatic dependency generation (e.g. `browserify --list`) for
@@ -94,7 +95,7 @@ npm:
 
 ## clean: Clear the builds and temporary files.
 clean:
-	rm -f build/.smarter_encryption.txt integration-test/artifacts/attribution.json:
+	rm -f build/.smarter_encryption.txt integration-test/artifacts/attribution.json
 	rm -rf $(BUILD_DIR)
 
 .PHONY: clean
@@ -155,7 +156,8 @@ integration-test/artifacts/attribution.json: node_modules/privacy-test-pages/adC
 MKDIR_TARGETS = $(BUILD_DIR)/_locales $(BUILD_DIR)/data/bundled $(BUILD_DIR)/html \
                 $(BUILD_DIR)/img $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources \
                 $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css \
-                $(BUILD_DIR)/public/font
+                $(BUILD_DIR)/public/font \
+                $(INTERMEDIATES_DIR)
 
 $(MKDIR_TARGETS):
 	mkdir -p $@
@@ -174,7 +176,6 @@ $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill.css $(BUILD_DIR)/public/css/autofill.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill-host-styles_$(BROWSER_TYPE).css $(BUILD_DIR)/public/css/autofill-host-styles.css
-	$(RSYNC) shared/font $(BUILD_DIR)/public
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js shared/js/content-scripts/content-scope-messaging.js $(BUILD_DIR)/public/js/content-scripts
 	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
 	touch $@
@@ -182,7 +183,6 @@ $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 copy: $(LAST_COPY)
 
 .PHONY: copy
-
 
 ###--- Build targets ---###
 ## Figure out the correct Browserify command for bundling.
@@ -297,6 +297,18 @@ $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss $(SCSS_SOURCE)
 	$(SASS) $< $@
 
 BUILD_TARGETS += $(BUILD_DIR)/public/css/base.css $(OUTPUT_CSS_FILES)
+
+## Fonts
+FONT_FILES = ProximaNova-Reg-webfont.woff ProximaNova-Sbold-webfont.woff ProximaNova-Bold-webfont.woff
+BUILD_TARGETS += $(addprefix $(BUILD_DIR)/public/font/, $(FONT_FILES))
+
+$(BUILD_DIR)/public/font/%: $(INTERMEDIATES_DIR)/%
+	cp $< $@
+
+# Fetch fonts from the webserver to be included in the generated build
+.SECONDARY:
+$(INTERMEDIATES_DIR)/%: 
+	curl -s -o $@ https://duckduckgo.com/font/`basename $@`
 
 ## Other
 

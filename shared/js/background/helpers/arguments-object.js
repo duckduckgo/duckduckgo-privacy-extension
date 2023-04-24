@@ -6,6 +6,7 @@ const settings = require('../settings')
 const { isActive } = require('../devtools')
 const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
+const { getExtensionURL } = require('../wrapper')
 
 function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
@@ -72,7 +73,11 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         sessionKey,
         site,
         referrer,
-        platform: constants.platform
+        platform: constants.platform,
+        assets: {
+            regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),
+            boldFontUrl: getExtensionURL('/public/font/ProximaNova-Bold-webfont.woff')
+        }
     }
 }
 
