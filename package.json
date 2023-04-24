@@ -8,7 +8,7 @@
     "repository": "duckduckgo/duckduckgo-privacy-extension",
     "scripts": {
         "install-ci": "make npm",
-        "bundle-config": "node scripts/bundleConfig.mjs && node scripts/bundleTrackers.mjs",
+        "bundle-config": "node scripts/bundleConfig.mjs && make shared/data/bundled/tracker-lookup.json",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "eslint": "eslint '*.js' shared/js shared/data unit-test integration-test scripts",

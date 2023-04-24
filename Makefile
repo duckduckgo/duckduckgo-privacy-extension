@@ -95,6 +95,7 @@ npm:
 
 ## clean: Clear the builds and temporary files.
 clean:
+	rm -rf shared/data/bundled/tracker-lookup.json
 	rm -f build/.smarter_encryption.txt integration-test/artifacts/attribution.json
 	rm -rf $(BUILD_DIR)
 
@@ -134,7 +135,6 @@ beta-firefox-zip: remove-firefox-id
 	cd build/firefox/release/ && web-ext build
 
 .PHONY: beta-firefox-zip
-
 
 ###--- Integration test setup ---###
 # Artifacts produced by the integration tests.
@@ -251,7 +251,7 @@ build/test/shared-utils.js: $(TEST_FILES) | build/test
 
 ## Content Scope Scripts
 shared/data/bundled/tracker-lookup.json:
-	node scripts/bundleTrackers.mjs
+	node $(CONTENT_SCOPE_SCRIPTS)/scripts/bundleTrackers.mjs > $@
 
 CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts
 
