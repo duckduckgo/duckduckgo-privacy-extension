@@ -298,7 +298,7 @@ $(BUILD_DIR)/public/font/%: $(INTERMEDIATES_DIR)/%
 # Fetch fonts from the webserver to be included in the generated build
 .SECONDARY:
 $(INTERMEDIATES_DIR)/%: 
-	curl -s -o $@ https://duckduckgo.com/font/`basename $@`
+	curl -s -o $@ https://duckduckgo.com/font/all/`basename $@`
 
 ## Other
 
