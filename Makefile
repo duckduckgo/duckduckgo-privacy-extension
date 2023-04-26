@@ -249,9 +249,6 @@ build/test/shared-utils.js: $(TEST_FILES) | build/test
 	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
 
 ## Content Scope Scripts
-shared/data/bundled/tracker-lookup.json:
-	node $(CONTENT_SCOPE_SCRIPTS)/scripts/bundleTrackers.mjs > $@
-
 CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts
 
 # Rebuild content-scope-scripts if it's a local checkout (.git is present), but
