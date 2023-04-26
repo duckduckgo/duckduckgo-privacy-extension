@@ -39,16 +39,11 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     // Extra contextual data required for cookie protection only send if is enabled here
     if (tab.site.isFeatureEnabled('cookie')) {
         cookie = {
-            isThirdParty: false,
+            isThirdPartyFrame: false,
             shouldBlock: false,
-            tabRegisteredDomain: null,
             isTracker: false,
             isFrame: false
         }
-
-        // determine the register domain of the sending tab
-        const parsed = tldts.parse(tab.url)
-        cookie.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
 
         if (sender.frameId !== 0) {
             cookie.isFrame = true
@@ -59,7 +54,7 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
                 trackerutils.isTracker(documentUrl)) {
                 cookie.isTracker = true
             }
-            cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
+            cookie.isThirdPartyFrame = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
         }
 
         cookie.shouldBlock = !utils.isCookieExcluded(documentUrl)
