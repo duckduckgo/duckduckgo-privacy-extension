@@ -1,0 +1,54 @@
+{
+    "smartling": {
+        "string_format" : "icu",
+        "translate_paths": [{
+            "path": "*/title",
+            "key": "{*}/title",
+            "instruction": "*/note"
+        }]
+    },
+    "brokenSiteLabel": {
+        "title": "Which website is broken?",
+        "note": "We're asking feedback from users. Here they are reporting a website url that is not working correctly."
+    },
+    "brokenSitePlaceholder": {
+        "title": "Copy and paste your URL",
+        "note": "Instructions to fill an input field with a URL. Here \"your URL\" doesn't mean that they own the website, just that they're reporting it."
+    },
+    "feedbackHeaderLabel": {
+        "title": "What do you love? What isn't working? How could the extension be improved?",
+        "note": "Label over a feedback text area where the user can tell us about their experience with our browser extension."
+    },
+    "feedbackPlaceholder": {
+        "title": "Which features or functionality does your feedback refer to? Please be as specific as possible.",
+        "note": "Placeholder text on feedback form input."
+    },
+    "submittingFeedbackHelps": {
+        "title": "Submitting anonymous feedback helps us improve DuckDuckGo Privacy Essentials.",
+        "note": "Description at top of feedback form."
+    },
+    "reportBrokenSite": {
+        "title": "I want to report a broken site",
+        "note": "This opens a feedback form to report a broken site. Broken here means 'not working as expected'."
+    },
+    "submit": {
+        "title": "Submit",
+        "note": "To submit the feedback form."
+    },
+    "describeTheIssue": {
+        "title": "Describe the issue you encountered:",
+        "note": "Label on broken site feedback textarea where users can describe in what way a site is not working as expected."
+    },
+    "describeBreakagePlaceholder": {
+        "title": "Which website content or functionality is broken? Please be as specific as possible.",
+        "note": "Placeholder text on the broken site form."
+    },
+    "thankYou": {
+        "title": "Thank you for your feedback!",
+        "note": "Thank you note displayed after submitting feedback"
+    },
+    "thankYouBrokenSite": {
+        "title": "Your broken site reports help our development team fix these breakages.",
+        "note": "Additional note when submitting a broken site."
+    }
+}

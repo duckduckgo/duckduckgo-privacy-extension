@@ -18,7 +18,7 @@ i18next
         initImmediate: false,
         fallbackLng: 'en',
         lng: getUserLocale(),
-        ns: ['shared', 'options'],
+        ns: ['shared', 'options', 'feedback'],
         defaultNS: 'shared',
         resources
     })
