@@ -95,7 +95,6 @@ npm:
 
 ## clean: Clear the builds and temporary files.
 clean:
-	rm -rf shared/data/bundled/tracker-lookup.json
 	rm -f build/.smarter_encryption.txt integration-test/artifacts/attribution.json
 	rm -rf $(BUILD_DIR)
 
