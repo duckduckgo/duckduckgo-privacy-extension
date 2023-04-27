@@ -1,22 +1,14 @@
-const harness = require('../helpers/harness')
-const backgroundWait = require('../helpers/backgroundWait')
-const pageWait = require('../helpers/pageWait')
+import { test, expect } from './helpers/playwrightHarness'
+import backgroundWait from './helpers/backgroundWait'
+import testCases from 'privacy-test-pages/adClickFlow/shared/testCases.json'
 
-let browser
-let bgPage
-let teardown
-const testCases = require('../artifacts/attribution.json')
+if (testCases.length === 0) {
+    throw new Error('No test cases found')
+}
 
-describe('Ad click blocking', () => {
-    beforeAll(async () => {
-        ({ browser, bgPage, teardown } = await harness.setup())
-        await backgroundWait.forAllConfiguration(bgPage)
-    })
-
-    afterAll(async () => {
-        try {
-            await teardown()
-        } catch (e) {}
+test.describe('Ad click blocking', () => {
+    test.beforeEach(async ({ context }) => {
+        await backgroundWait.forExtensionLoaded(context)
     })
 
     /**
@@ -39,48 +31,41 @@ describe('Ad click blocking', () => {
      */
     async function waitForVariable (page, variableName) {
         const callback = (variableNameInstance) => globalThis[variableNameInstance]
-        await expectAsync(page.waitForFunction(callback, { timeout: 2000 }, variableName))
-            .withContext(`waitForVariable for '${variableName}'`)
-            .not.toBeRejected()
+        await page.waitForFunction(callback, variableName, { timeout: 2000 })
         return page.evaluate(callback, variableName)
     }
 
     /**
      * Clicks on an item and awaits a new tab to load.
      * https://github.com/puppeteer/puppeteer/issues/3667 without this intercepting new tab requests is too late
-     * @param {Puppeteer.page} existingPage
+     * @param {import('@playwright/test').Page}} existingPage
      * @param {string} selector
      * @returns {Promise<*>}
      */
     async function clickAndNewTab (existingPage, selector, options, expectedURL) {
-        const [newTarget] = await Promise.all([
-            browser.waitForTarget(target => {
-                if (expectedURL && target.url() === expectedURL) {
-                    return true
-                }
-                // Opener isn't always set for new tabs.
-                return target.opener() === existingPage.target()
-            }),
-            existingPage.click(selector, options)
-        ])
-        const page = await newTarget.page()
+        const newTarget = new Promise((resolve) => {
+            existingPage.context().once('page', (page) => {
+                resolve(page)
+            })
+        })
+        existingPage.click(selector, options)
+        const page = await newTarget
         await page.bringToFront()
-        await expectAsync(page.waitForFunction(() => {
+        const checkPageNavigatedProperly = await page.waitForFunction(() => {
             return window.location.href !== 'about:blank' && document.readyState === 'complete'
-        })).withContext('clickAndNewTab to load a non about:blank page').not.toBeRejected()
+        })
+        expect(checkPageNavigatedProperly, 'clickAndNewTab to load a non about:blank page').toBeTruthy()
         return page
     }
 
-    it('has test cases', () => expect(testCases.length).toBeGreaterThan(0))
-
-    for (const test of testCases) {
+    for (const testCase of testCases) {
         // Allow to filter to one test case
-        const itMethod = test.only ? fit : it
-        itMethod(test.name, async () => {
-            let page = await browser.newPage()
-            for (const step of test.steps) {
+        const itMethod = testCase.only ? test.only : test
+        itMethod(testCase.name, async ({ context }) => {
+            let page = await context.newPage()
+            for (const step of testCase.steps) {
                 if (step.action.type === 'navigate') {
-                    await pageWait.forGoto(page, step.action.url, false)
+                    await page.goto(step.action.url, { waitUntil: 'networkidle' })
                 } else if (step.action.type === 'click' || step.action.type === 'click-new-tab') {
                     const clickSelector = `#${step.action.id}`
                     const newTab = !!step.expected.newTab
@@ -96,8 +81,7 @@ describe('Ad click blocking', () => {
                         await clickAndNavigate(page, clickSelector)
                     }
                 }
-                expect(page.url())
-                    .withContext(`${step.name} expects ${step.expected.url}`)
+                expect(page.url(), `${step.name} expects ${step.expected.url}`)
                     .toBe(step.expected.url)
 
                 if (step.expected.requests) {
@@ -105,11 +89,9 @@ describe('Ad click blocking', () => {
                     expect(resources.length).toBe(step.expected.requests.length)
                     for (const request of step.expected.requests) {
                         const expectedResource = resources.find(resource => resource.url === request.url)
-                        expect(expectedResource)
-                            .withContext(`${step.name} expects ${request.url} to have be detected in the page`)
+                        expect(expectedResource, `${step.name} expects ${request.url} to have be detected in the page`)
                             .toBeDefined()
-                        expect(expectedResource.status)
-                            .withContext(`${step.name} expects ${request.url} to be '${request.status}'`)
+                        expect(expectedResource.status, `${step.name} expects ${request.url} to be '${request.status}'`)
                             .toBe(request.status)
                     }
                 }
