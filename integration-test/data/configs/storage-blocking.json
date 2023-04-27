@@ -29,6 +29,10 @@
                 "threshold": 604800,
                 "maxAge": 604800
             },
+            "firstPartyTrackerCookiePolicy": {
+                "threshold": 86400,
+                "maxAge": 86400
+            },
             "excludedCookieDomains": [ ],
             "trackerCookie": "enabled",
             "nonTrackerCookie": "disabled"
