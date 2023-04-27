@@ -1,4 +1,23 @@
 {
+    "globalThis.dbg.tds.config.features.trackerAllowlist": {
+        "state": "enabled",
+        "exceptions": [ ],
+        "settings": {
+            "allowlistedTrackers": {
+                "ad-company.site": {
+                    "rules": [
+                        {
+                            "rule": "convert.ad-company.site",
+                            "domains": [
+                                "<all>"
+                            ],
+                            "reason": "Validation of the cookie rules and not blocking"
+                        }
+                    ]
+                }
+            }
+        }
+    },
     "globalThis.dbg.tds.config.features.trackingCookies3p": {
         "state": "enabled",
         "exceptions": [ ],
