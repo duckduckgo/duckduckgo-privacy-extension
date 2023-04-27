@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1682507979124,
+    "version": 1682582741449,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -1833,6 +1833,14 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/851"
                 },
                 {
+                    "domain": "costco.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/878"
+                },
+                {
+                    "domain": "adobe.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/880"
+                },
+                {
                     "domain": "app.pandadoc.com",
                     "reason": "https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/1913"
                 }
@@ -2338,7 +2346,7 @@
                 }
             },
             "minSupportedVersion": "2023.4.11",
-            "hash": "7780562c84a5ff43771d053dc5328ee2"
+            "hash": "5b5cbd4acb604a7bd3f7b8ce9ecf2532"
         },
         "serviceworkerInitiatedRequests": {
             "exceptions": [],
@@ -3525,6 +3533,17 @@
                             }
                         ]
                     },
+                    "medallia.com": {
+                        "rules": [
+                            {
+                                "rule": "medallia.com/",
+                                "domains": [
+                                    "walmart.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/882"
+                            }
+                        ]
+                    },
                     "medicare.gov": {
                         "rules": [
                             {
@@ -4299,7 +4318,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "8045643a6bd4bbca5f72b1392feb817a"
+            "hash": "1c9509278d219411e80a2f990f2ccd2b"
         },
         "trackingCookies1p": {
             "settings": {
