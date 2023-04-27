@@ -1,14 +1,5 @@
-/**
- *  Tests for fingerprint defenses. Ensure that fingerprinting is actually being blocked.
- */
-
-const harness = require('../helpers/harness')
-const backgroundWait = require('../helpers/backgroundWait')
-const pageWait = require('../helpers/pageWait')
-
-let browser
-let bgPage
-let teardown
+import { test, expect, getHARPath } from './helpers/playwrightHarness'
+import backgroundWait from './helpers/backgroundWait'
 
 const expectedFingerprintValues = {
     availTop: 0,
@@ -22,32 +13,25 @@ const expectedFingerprintValues = {
 }
 
 const tests = [
-    { url: 'duckduckgo.com' },
-    { url: 'example.com' }
+    { url: 'duckduckgo.com', har: getHARPath('duckduckgo.com/homepage.har') },
+    { url: 'example.com', har: getHARPath('example.com/example.har') }
 ]
 
 function testFPValues (values) {
     for (const [name, prop] of Object.entries(values)) {
-        expect(prop).withContext(`${name}`).toEqual(expectedFingerprintValues[name])
+        expect(prop, `${name}`).toEqual(expectedFingerprintValues[name])
     }
 }
 
-describe('Fingerprint Defense Tests', () => {
-    beforeAll(async () => {
-        ({ browser, bgPage, teardown } = await harness.setup())
-        await backgroundWait.forAllConfiguration(bgPage)
-    })
-    afterAll(async () => {
-        await teardown()
+test.describe('Fingerprint Defense Tests', () => {
+    test.beforeEach(async ({ context }) => {
+        await backgroundWait.forExtensionLoaded(context)
     })
 
-    tests.forEach(test => {
-        it(`${test.url} should include anti-fingerprinting code`, async () => {
-            const page = await browser.newPage()
-            const ua = await browser.userAgent()
-            await page.setUserAgent(ua.replace(/Headless /, ''))
-
-            await pageWait.forGoto(page, `https://${test.url}`)
+    tests.forEach(testCase => {
+        test(`${testCase.url} should include anti-fingerprinting code`, async ({ context, page }) => {
+            await page.routeFromHAR(testCase.har)
+            await page.goto(`https://${testCase.url}`, { waitUntil: 'networkidle' })
             const values = await page.evaluate(() => {
                 return {
                     availTop: screen.availTop,
@@ -61,26 +45,18 @@ describe('Fingerprint Defense Tests', () => {
                 }
             })
             testFPValues(values)
-
-            await page.close()
         })
     })
 })
 
-describe('First Party Fingerprint Randomization', () => {
-    beforeAll(async () => {
-        ({ browser, bgPage, teardown } = await harness.setup())
-        await backgroundWait.forAllConfiguration(bgPage)
-    })
-    afterAll(async () => {
-        await teardown()
+test.describe('First Party Fingerprint Randomization', () => {
+    test.beforeEach(async ({ context }) => {
+        await backgroundWait.forExtensionLoaded(context)
     })
 
-    async function runTest (test) {
-        const page = await browser.newPage()
-
-        await pageWait.forGoto(page, `https://${test.url}`)
-
+    async function runTest (testCase, page) {
+        await page.routeFromHAR(testCase.har)
+        await page.goto(`https://${testCase.url}`)
         await page.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' })
 
         const fingerprint = await page.evaluate(() => {
@@ -90,9 +66,6 @@ describe('First Party Fingerprint Randomization', () => {
                 return fp.get()
             })()
         })
-
-        await page.close()
-
         return {
             canvas: fingerprint.components.canvas.value,
             plugin: fingerprint.components.plugins.value
@@ -100,21 +73,21 @@ describe('First Party Fingerprint Randomization', () => {
     }
 
     for (const testCase of tests) {
-        it('Fingerprints should not change amongst page loads', async () => {
-            const result = await runTest(testCase)
+        test(`Fingerprints should not change amongst page loads: ${testCase.url}`, async ({ page }) => {
+            const result = await runTest(testCase, page)
 
-            const result2 = await runTest(testCase)
+            const result2 = await runTest(testCase, page)
             expect(result.canvas).toEqual(result2.canvas)
             expect(result.plugin).toEqual(result2.plugin)
         })
     }
 
-    it('Fingerprints should not match across first parties', async () => {
+    test('Fingerprints should not match across first parties', async ({ page }) => {
         const canvas = new Set()
         const plugin = new Set()
 
         for (const testCase of tests) {
-            const result = await runTest(testCase)
+            const result = await runTest(testCase, page)
 
             // Add the fingerprints to a set, if the result doesn't match it won't be added
             canvas.add(JSON.stringify(result.canvas))
@@ -127,20 +100,15 @@ describe('First Party Fingerprint Randomization', () => {
     })
 })
 
-describe('Verify injected script is not visible to the page', () => {
-    beforeAll(async () => {
-        ({ browser, bgPage, teardown } = await harness.setup())
-        await backgroundWait.forAllConfiguration(bgPage)
-    })
-    afterAll(async () => {
-        await teardown()
+test.describe('Verify injected script is not visible to the page', () => {
+    test.beforeEach(async ({ context }) => {
+        await backgroundWait.forExtensionLoaded(context)
     })
 
-    tests.forEach(test => {
-        it('Fingerprints should not match across first parties', async () => {
-            const page = await browser.newPage()
-
-            await pageWait.forGoto(page, `https://${test.url}`)
+    tests.forEach(testCase => {
+        test(`sjcl is not exposed to page scope: ${testCase.url}`, async ({ page }) => {
+            await page.routeFromHAR(testCase.har)
+            await page.goto(`https://${testCase.url}`)
 
             const sjclVal = await page.evaluate(() => {
                 if ('sjcl' in globalThis) {
@@ -149,9 +117,6 @@ describe('Verify injected script is not visible to the page', () => {
                     return 'invisible'
                 }
             })
-
-            await page.close()
-
             expect(sjclVal).toEqual('invisible')
         })
     })
