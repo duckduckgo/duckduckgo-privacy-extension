@@ -8,7 +8,7 @@
     "repository": "duckduckgo/duckduckgo-privacy-extension",
     "scripts": {
         "install-ci": "make npm",
-        "bundle-config": "node scripts/bundleConfig.mjs && node scripts/bundleTrackers.mjs",
+        "bundle-config": "node scripts/bundleConfig.mjs && node node_modules/@duckduckgo/content-scope-scripts/scripts/bundleTrackers.mjs > shared/data/bundled/tracker-lookup.json",
         "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "eslint": "eslint '*.js' shared/js shared/data unit-test integration-test scripts",
@@ -72,7 +72,7 @@
     },
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#6.4.3",
-        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#4.12.0",
+        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#4.13.0",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#1.5.0",

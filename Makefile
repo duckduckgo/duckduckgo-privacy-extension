@@ -135,7 +135,6 @@ beta-firefox-zip: remove-firefox-id
 
 .PHONY: beta-firefox-zip
 
-
 ###--- Integration test setup ---###
 # Artifacts produced by the integration tests.
 setup-artifacts-dir:
@@ -192,7 +191,7 @@ BROWSERIFY_GLOBAL_TARGETS = ./node_modules/@duckduckgo
 BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 -type l | xargs -n1 readlink -f)
 
 BROWSERIFY_BIN = node_modules/.bin/browserify
-BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --presets [ @babel/preset-env ] ]
+BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --plugins [ "./scripts/rewrite-meta" ] --presets [ @babel/preset-env ] ]
 # Ensure sourcemaps are included for the bundles during development.
 ifeq ($(type),dev)
   BROWSERIFY += -d
@@ -250,9 +249,6 @@ build/test/shared-utils.js: $(TEST_FILES) | build/test
 	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
 
 ## Content Scope Scripts
-shared/data/bundled/tracker-lookup.json:
-	node scripts/bundleTrackers.mjs
-
 CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts
 
 # Rebuild content-scope-scripts if it's a local checkout (.git is present), but
