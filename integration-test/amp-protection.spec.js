@@ -1,37 +1,19 @@
-const puppeteer = require('puppeteer')
-const harness = require('../helpers/harness')
-const { loadTestConfig, unloadTestConfig } = require('../helpers/testConfig')
-const backgroundWait = require('../helpers/backgroundWait')
-const pageWait = require('../helpers/pageWait')
+import { test, expect } from './helpers/playwrightHarness'
+import backgroundWait from './helpers/backgroundWait'
+import { routeFromLocalhost } from './helpers/testPages'
+import { loadTestConfig } from './helpers/testConfig'
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/amp/'
 
-describe('Test AMP link protection', () => {
-    let browser
-    let bgPage
-    let teardown
+test.describe('Test AMP link protection', () => {
+    test('Redirects AMP URLs correctly', async ({ context, backgroundPage, page }) => {
+        await backgroundWait.forExtensionLoaded(context)
+        await backgroundWait.forAllConfiguration(backgroundPage)
+        await loadTestConfig(backgroundPage, 'amp-protection.json')
+        await routeFromLocalhost(page)
 
-    beforeAll(async () => {
-        ({ browser, bgPage, teardown } = await harness.setup())
-        await backgroundWait.forAllConfiguration(bgPage)
-
-        // Overwrite the parts of the configuration needed for our tests.
-        await loadTestConfig(bgPage, 'amp-protection.json')
-    })
-
-    afterAll(async () => {
-        // Restore the original configuration.
-        await unloadTestConfig(bgPage)
-
-        try {
-            await teardown()
-        } catch (e) {}
-    })
-
-    it('Strips tracking parameters correctly', async () => {
-        // Load the test page.
-        const page = await browser.newPage()
-        await pageWait.forGoto(page, testSite)
+        await page.goto(testSite, { waitUntil: 'networkidle' })
+        await page.bringToFront()
 
         // Scrape the list of test cases.
         const testCases = []
@@ -49,7 +31,7 @@ describe('Test AMP link protection', () => {
 
             for (const li of await testGroups[i].$$('li')) {
                 // eslint-disable-next-line no-shadow
-                testCases.push(await page.evaluate((li, groupTitle) => {
+                testCases.push(await page.evaluate(({ li, groupTitle }) => {
                     const {
                         innerText: testTitle,
                         href: initialUrl
@@ -63,7 +45,7 @@ describe('Test AMP link protection', () => {
                     expectedUrl = expectedUrl.split(' ')[1]
 
                     return { initialUrl, expectedUrl, description }
-                }, li, groupTitle))
+                }, { li, groupTitle }))
             }
         }
 
@@ -74,19 +56,10 @@ describe('Test AMP link protection', () => {
             //       instead, but some of the test cases are very slow to load.
             //       Since only the redirected main_frame URL is required for
             //       these tests, just wait for load rather than network idle.
-            try {
-                await await page.goto(
-                    initialUrl, { waitUntil: 'load', timeout: 15000 }
-                )
-            } catch (e) {
-                if (e instanceof puppeteer.errors.TimeoutError) {
-                    pending('Timed out loading URL: ' + initialUrl)
-                } else {
-                    throw e
-                }
-            }
-
-            expect(await page.url()).withContext(description).toEqual(expectedUrl)
+            await page.goto(
+                initialUrl, { waitUntil: 'networkidle' }
+            )
+            expect(page.url(), description).toEqual(expectedUrl)
         }
     })
 })

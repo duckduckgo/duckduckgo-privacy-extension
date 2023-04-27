@@ -1,23 +1,11 @@
-const harness = require('../helpers/harness')
-const backgroundWait = require('../helpers/backgroundWait')
-const pageWait = require('../helpers/pageWait')
+import { test, expect } from './helpers/playwrightHarness'
+import backgroundWait from './helpers/backgroundWait'
 
-let browser, bgPage, teardown
+test.describe('onboarding', () => {
+    test('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async ({ context, backgroundPage, page }) => {
+        await backgroundWait.forExtensionLoaded(context)
 
-describe('onboarding', () => {
-    beforeEach(async () => {
-        ({ browser, bgPage, teardown } = await harness.setup())
-        await backgroundWait.forAllConfiguration(bgPage)
-    })
-
-    afterEach(async () => {
-        try {
-            await teardown()
-        } catch (e) {}
-    })
-
-    it('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async () => {
-        const params = await bgPage.evaluate(() => {
+        const params = await backgroundPage.evaluate(() => {
             return {
                 showWelcomeBanner: globalThis.dbg.settings.getSetting('showWelcomeBanner'),
                 showCounterMessaging: globalThis.dbg.settings.getSetting('showCounterMessaging')
@@ -27,9 +15,8 @@ describe('onboarding', () => {
         expect(params.showWelcomeBanner).toBe(true)
         expect(params.showCounterMessaging).toBe(true)
 
-        const page = await browser.newPage()
-
-        await pageWait.forGoto(page, 'https://duckduckgo.com/?q=hello')
+        await page.bringToFront()
+        await page.goto('https://duckduckgo.com/?q=hello')
 
         const hasScriptHandle = await page.waitForFunction(() => {
             const scripts = document.querySelectorAll('script:not([src])')
@@ -37,7 +24,7 @@ describe('onboarding', () => {
         }, { polling: 'mutation' })
         expect(hasScriptHandle).toBeTruthy()
 
-        const nextParams = await bgPage.evaluate(() => {
+        const nextParams = await backgroundPage.evaluate(() => {
             return {
                 showWelcomeBanner: globalThis.dbg.settings.getSetting('showWelcomeBanner'),
                 showCounterMessaging: globalThis.dbg.settings.getSetting('showCounterMessaging')
@@ -46,14 +33,13 @@ describe('onboarding', () => {
 
         expect(nextParams.showWelcomeBanner).toBeFalsy()
         expect(nextParams.showCounterMessaging).toBe(true)
-
-        await page.close()
     })
 
-    it('should allow the site to perform extension health checks (Chrome only)', async () => {
-        const page = await browser.newPage()
+    test('should allow the site to perform extension health checks (Chrome only)', async ({ context, page }) => {
+        await backgroundWait.forExtensionLoaded(context)
 
-        await pageWait.forGoto(page, 'https://duckduckgo.com/?q=hello')
+        await page.bringToFront()
+        await page.goto('https://duckduckgo.com/?q=hello')
 
         // we wait that the onboarding content script is injected
         await page.waitForFunction(() => {
@@ -77,13 +63,12 @@ describe('onboarding', () => {
 
         expect(data.type).toBe('healthCheckResponse')
         expect(data.isAlive).toBe(true)
-
-        await page.close()
     })
 
-    it('should allow the site to reschedule the counter messaging (Chrome only)', async () => {
-        const page = await browser.newPage()
-        await pageWait.forGoto(page, 'https://duckduckgo.com/?q=hello')
+    test('should allow the site to reschedule the counter messaging (Chrome only)', async ({ context, backgroundPage, page }) => {
+        await backgroundWait.forExtensionLoaded(context)
+
+        await page.goto('https://duckduckgo.com/?q=hello')
 
         // we wait that the onboarding content script is injected
         await page.waitForFunction(() => {
@@ -95,12 +80,10 @@ describe('onboarding', () => {
             globalThis.postMessage({ type: 'rescheduleCounterMessagingRequest' }, globalThis.location.origin)
         })
 
-        await backgroundWait.forSetting(bgPage, 'rescheduleCounterMessagingOnStart')
-        const rescheduleCounterMessagingOnStart = await bgPage.evaluate(() => {
+        await backgroundWait.forSetting(backgroundPage, 'rescheduleCounterMessagingOnStart')
+        const rescheduleCounterMessagingOnStart = await backgroundPage.evaluate(() => {
             return globalThis.dbg.settings.getSetting('rescheduleCounterMessagingOnStart')
         })
         expect(rescheduleCounterMessagingOnStart).toBe(true)
-
-        await page.close()
     })
 })
