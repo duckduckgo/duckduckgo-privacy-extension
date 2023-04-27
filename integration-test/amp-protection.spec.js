@@ -6,7 +6,7 @@ import { loadTestConfig } from './helpers/testConfig'
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/amp/'
 
 test.describe('Test AMP link protection', () => {
-    test('Strips tracking parameters correctly', async ({ context, backgroundPage, page }) => {
+    test('Redirects AMP URLs correctly', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context)
         await backgroundWait.forAllConfiguration(backgroundPage)
         await loadTestConfig(backgroundPage, 'amp-protection.json')
@@ -57,7 +57,7 @@ test.describe('Test AMP link protection', () => {
             //       Since only the redirected main_frame URL is required for
             //       these tests, just wait for load rather than network idle.
             await page.goto(
-                initialUrl, { waitUntil: 'load', timeout: 15000 }
+                initialUrl, { waitUntil: 'networkidle' }
             )
             expect(page.url(), description).toEqual(expectedUrl)
         }
