@@ -295,7 +295,7 @@ $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss $(SCSS_SOURCE)
 BUILD_TARGETS += $(BUILD_DIR)/public/css/base.css $(OUTPUT_CSS_FILES)
 
 ## Fonts
-FONT_FILES = ProximaNova-Reg-webfont.woff ProximaNova-Sbold-webfont.woff ProximaNova-Bold-webfont.woff
+FONT_FILES = ProximaNova-Reg-webfont.woff ProximaNova-Sbold-webfont.woff ProximaNova-Bold-webfont.woff ProximaNova-Reg-webfont.woff2 ProximaNova-Bold-webfont.woff2
 BUILD_TARGETS += $(addprefix $(BUILD_DIR)/public/font/, $(FONT_FILES))
 
 $(BUILD_DIR)/public/font/%: $(INTERMEDIATES_DIR)/%
