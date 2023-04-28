@@ -1,6 +1,5 @@
 import { getUserLocale } from '../i18n'
 import { getExtensionURL } from '../wrapper'
-const tldts = require('tldts')
 const utils = require('../utils')
 const tabManager = require('../tab-manager')
 const trackerutils = require('../tracker-utils')
