@@ -1,0 +1,55 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "brokenSiteLabel" : {
+    "title" : "Ktorá webová lokalita je nefunkčná?",
+    "note" : "We're asking feedback from users. Here they are reporting a website url that is not working correctly."
+  },
+  "brokenSitePlaceholder" : {
+    "title" : "Skopírujte a prilepte URL adresu",
+    "note" : "Instructions to fill an input field with a URL. Here \"your URL\" doesn't mean that they own the website, just that they're reporting it."
+  },
+  "feedbackHeaderLabel" : {
+    "title" : "Čo sa vám páči? Čo nefunguje? Ako by sa dalo rozšírenie zlepšiť?",
+    "note" : "Label over a feedback text area where the user can tell us about their experience with our browser extension."
+  },
+  "feedbackPlaceholder" : {
+    "title" : "Ktorých vlastností alebo funkcií sa týka vaša spätná väzba? Buďte čo najkonkrétnejší.",
+    "note" : "Placeholder text on feedback form input."
+  },
+  "submittingFeedbackHelps" : {
+    "title" : "Odosielanie anonymnej spätnej väzby nám pomáha zlepšovať DuckDuckGo Privacy Essentials.",
+    "note" : "Description at top of feedback form."
+  },
+  "reportBrokenSite" : {
+    "title" : "Chcem nahlásiť nefunkčnú lokalitu",
+    "note" : "This opens a feedback form to report a broken site. Broken here means 'not working as expected'."
+  },
+  "submit" : {
+    "title" : "Odoslať",
+    "note" : "To submit the feedback form."
+  },
+  "describeTheIssue" : {
+    "title" : "Opíšte problém, s ktorým ste sa stretli:",
+    "note" : "Label on broken site feedback textarea where users can describe in what way a site is not working as expected."
+  },
+  "describeBreakagePlaceholder" : {
+    "title" : "Aký obsah alebo aká funkčnosť webovej lokality je nefunkčná? Buďte čo najkonkrétnejší.",
+    "note" : "Placeholder text on the broken site form."
+  },
+  "thankYou" : {
+    "title" : "Ďakujeme za vašu spätnú väzbu!",
+    "note" : "Thank you note displayed after submitting feedback"
+  },
+  "thankYouBrokenSite" : {
+    "title" : "Vaše hlásenia o nefunkčných lokalitách pomáhajú nášmu vývojovému tímu tieto chyby opraviť.",
+    "note" : "Additional note when submitting a broken site."
+  }
+}

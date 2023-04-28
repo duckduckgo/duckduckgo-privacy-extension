@@ -1,0 +1,55 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "brokenSiteLabel" : {
+    "title" : "Kura vietne ir bojāta?",
+    "note" : "We're asking feedback from users. Here they are reporting a website url that is not working correctly."
+  },
+  "brokenSitePlaceholder" : {
+    "title" : "Kopē un ielīmē URL",
+    "note" : "Instructions to fill an input field with a URL. Here \"your URL\" doesn't mean that they own the website, just that they're reporting it."
+  },
+  "feedbackHeaderLabel" : {
+    "title" : "Kas tev patīk? Kas nedarbojas? Kā šo paplašinājumu varētu uzlabot?",
+    "note" : "Label over a feedback text area where the user can tell us about their experience with our browser extension."
+  },
+  "feedbackPlaceholder" : {
+    "title" : "Uz kurām iespējām vai funkcionalitāti attiecas tavas atsauksmes? Lūdzu, norādi pēc iespējas precīzāk.",
+    "note" : "Placeholder text on feedback form input."
+  },
+  "submittingFeedbackHelps" : {
+    "title" : "Anonīmu atsauksmju sniegšana palīdz mums uzlabot DuckDuckGo Privacy Essentials.",
+    "note" : "Description at top of feedback form."
+  },
+  "reportBrokenSite" : {
+    "title" : "Vēlos ziņot par vietni, kas nedarbojas pareizi",
+    "note" : "This opens a feedback form to report a broken site. Broken here means 'not working as expected'."
+  },
+  "submit" : {
+    "title" : "Iesniegt",
+    "note" : "To submit the feedback form."
+  },
+  "describeTheIssue" : {
+    "title" : "Apraksti problēmu, ar kuru saskāries:",
+    "note" : "Label on broken site feedback textarea where users can describe in what way a site is not working as expected."
+  },
+  "describeBreakagePlaceholder" : {
+    "title" : "Kāds vietnes saturs vai funkcionalitāte ir nedarbojas? Lūdzu, norādi pēc iespējas precīzāk.",
+    "note" : "Placeholder text on the broken site form."
+  },
+  "thankYou" : {
+    "title" : "Paldies par atsauksmi!",
+    "note" : "Thank you note displayed after submitting feedback"
+  },
+  "thankYouBrokenSite" : {
+    "title" : "Tavi ziņojumi par vietnēm, kas nedarbojas pareizi, palīdz mūsu izstrādātāju komandai novērst šos darbības traucējumus.",
+    "note" : "Additional note when submitting a broken site."
+  }
+}
