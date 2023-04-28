@@ -6,6 +6,7 @@ import { routeFromLocalhost } from './helpers/testPages'
 const testPageDomain = 'privacy-test-pages.glitch.me'
 const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
+const thirdPartyAd = 'convert.ad-company.site'
 
 async function waitForAllResults (page) {
     while ((await page.$$('#tests-details > li > span > ul')).length < 2) {
@@ -40,6 +41,11 @@ test.describe('Storage blocking Tests', () => {
                 thirdparty_firstparty_headerdata: expectUnmodified('allows 1st party HTTP cookies from non-tracker frames'),
                 jsdata: expectUnmodified('does not block 3rd party JS cookies not on block list')
             },
+            [thirdPartyAd]: {
+                top_thirdparty_headerdata: expectUnmodified('allows 3rd party HTTP cookies not on block list'),
+                thirdparty_firstparty_headerdata: expectUnmodified('allows 1st party HTTP cookies from non-tracker frames'),
+                jsdata: expectUnmodified('does not block 3rd party JS cookies not on block list')
+            },
             [thirdPartyTracker]: {
                 thirdpartytracker_thirdparty_headerdata: expectUnmodified('allows 3rd party tracker HTTP cookies from tracker frames'),
                 top_tracker_headerdata: expectBlocked('blocks 3rd party HTTP cookies for trackers'),
@@ -55,6 +61,11 @@ test.describe('Storage blocking Tests', () => {
             if (jsCookies.has(cookie.name)) {
                 expect(cookie.expires - nowSeconds).toBeGreaterThan(0)
                 expect(cookie.expires - nowSeconds).toBeLessThan(604800)
+                if (cookie.domain === thirdPartyTracker) {
+                    expect(cookie.expires - nowSeconds, `cookie expires for ${cookie.domain}`).toBeLessThan(86400)
+                } else if (cookie.domain === thirdPartyAd) {
+                    expect(cookie.expires - nowSeconds, `cookie expires for ${cookie.domain}`).toBeGreaterThan(86400)
+                }
             }
         }
     })
