@@ -40,6 +40,7 @@ async function onInstalled (details) {
         settings.updateSetting('showWelcomeBanner', true)
         if (browserName === 'chrome') {
             settings.updateSetting('showCounterMessaging', true)
+            settings.updateSetting('shouldFireIncontextEligibilityPixel', true)
         }
         await ATB.updateATBValues()
         await ATB.openPostInstallPage()
