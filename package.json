@@ -33,7 +33,7 @@
     },
     "devDependencies": {
         "@babel/cli": "^7.21.0",
-        "@babel/core": "^7.21.4",
+        "@babel/core": "^7.21.5",
         "@babel/node": "^7.20.7",
         "@babel/polyfill": "^7.10.4",
         "@babel/preset-env": "^7.21.4",
