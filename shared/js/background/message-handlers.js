@@ -283,7 +283,8 @@ export function getEmailProtectionCapabilities (_, sender) {
 
 export function getIncontextSignupDismissedAt () {
     const permanentlyDismissedAt = settings.getSetting('incontextSignupPermanentlyDismissedAt')
-    const isInstalledRecently = utils.isInstalledWithinDays(3)
+    const installedDays = tdsStorage.config.features.incontextSignup?.settings?.installedDays ?? 3
+    const isInstalledRecently = utils.isInstalledWithinDays(installedDays)
     return { success: { permanentlyDismissedAt, isInstalledRecently } }
 }
 
