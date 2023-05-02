@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1682582741449,
+    "version": 1683025593929,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -358,32 +358,12 @@
         "elementHiding": {
             "exceptions": [
                 {
-                    "domain": "politico.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
-                },
-                {
                     "domain": "bild.de",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/589"
                 },
                 {
                     "domain": "kbb.com",
                     "reason": "Adblocker wall"
-                },
-                {
-                    "domain": "medium.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
-                },
-                {
-                    "domain": "speedtest.net",
-                    "reason": "main content hidden"
-                },
-                {
-                    "domain": "tvlistings.zap2it.com",
-                    "reason": "main content hidden"
-                },
-                {
-                    "domain": "manhwascan.net",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/592"
                 },
                 {
                     "domain": "wiwo.de",
@@ -534,6 +514,14 @@
                         "type": "hide-empty"
                     },
                     {
+                        "selector": ".top-banner",
+                        "type": "hide-empty"
+                    },
+                    {
+                        "selector": "#topBanner",
+                        "type": "hide-empty"
+                    },
+                    {
                         "selector": ".ad-banner-container",
                         "type": "hide-empty"
                     },
@@ -674,6 +662,10 @@
                         "type": "hide-empty"
                     },
                     {
+                        "selector": ".dmpu-ad",
+                        "type": "hide-empty"
+                    },
+                    {
                         "selector": ".bordeaux-slot",
                         "type": "closest-empty"
                     },
@@ -691,14 +683,17 @@
                     }
                 ],
                 "styleTagExceptions": [],
-                "mediaAndFormSelectors": "video,canvas,embed,object,audio,map,form,input,textarea,select,option,button",
+                "mediaAndFormSelectors": "video,canvas,embed,object,audio,map,form,input,textarea,select,option",
                 "adLabelStrings": [
+                    "ad",
                     "advertisement",
                     "advertisment",
                     "advertisementclose",
                     "advertisementcontinue reading the main story",
                     "advertisement\ncontinue reading the main story",
                     "advertisement\n\ncontinue reading the main story",
+                    "advertisement\n\nhide ad",
+                    "advertisementhide ad",
                     "advertisement - scroll to continue",
                     "advertisement · scroll to continue",
                     "advertising",
@@ -706,6 +701,7 @@
                     "advertising\nskip ad\nskip ad\nskip ad",
                     "ad feedback",
                     "anzeige",
+                    "close ad",
                     "close this ad",
                     "sponsored",
                     "sponsorisé",
@@ -766,6 +762,10 @@
                             {
                                 "selector": ".unsupported-browser-notification-container",
                                 "type": "hide"
+                            },
+                            {
+                                "selector": "[class^='FullWidthAd']",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -899,6 +899,15 @@
                             {
                                 "selector": ".top-ads-container",
                                 "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "football365.com",
+                        "rules": [
+                            {
+                                "selector": ".bs-block",
+                                "type": "closest-empty"
                             }
                         ]
                     },
@@ -1099,6 +1108,23 @@
                         ]
                     },
                     {
+                        "domain": "motortrend.com",
+                        "rules": [
+                            {
+                                "selector": "[id*='AboveNavAd']",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "._11KmK",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".AtFxB",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "nasdaq.com",
                         "rules": [
                             {
@@ -1206,6 +1232,19 @@
                         ]
                     },
                     {
+                        "domain": "peterboroughtoday.co.uk",
+                        "rules": [
+                            {
+                                "selector": ".mpu-item",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[class*='AdContainer']",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "psypost.com",
                         "rules": [
                             {
@@ -1231,7 +1270,11 @@
                                 "type": "hide"
                             },
                             {
-                                "selector": "[data*='\"isNsfw\":false'] ~ shreddit-experience-tree",
+                                "selector": "._2vPrb00OnreVznxQ-SNql9",
+                                "type": "hide"
+                            },
+                            {
+                                "selector": "[devicetype=\"desktop\"] [data*='\"isNsfw\":false'] ~ shreddit-experience-tree",
                                 "type": "hide"
                             }
                         ]
@@ -1546,7 +1589,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "fe67991ef48716db1ef7358966ecb8fe"
+            "hash": "44b062de239cab73e7eb0aca751ed262"
         },
         "exceptionHandler": {
             "exceptions": [],
@@ -3536,11 +3579,18 @@
                     "medallia.com": {
                         "rules": [
                             {
-                                "rule": "medallia.com/",
+                                "rule": "cdn.medallia.com/react-surveys/",
                                 "domains": [
-                                    "walmart.com"
+                                    "<all>"
                                 ],
-                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/882"
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/884"
+                            },
+                            {
+                                "rule": "survey.medallia.com/",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/884"
                             }
                         ]
                     },
@@ -4318,7 +4368,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "1c9509278d219411e80a2f990f2ccd2b"
+            "hash": "75297092166bc8c9625f1d64b84675fd"
         },
         "trackingCookies1p": {
             "settings": {
@@ -4690,5 +4740,18 @@
             "hash": "728493ef7a1488e4781656d3f9db84aa"
         }
     },
-    "unprotectedTemporary": []
+    "unprotectedTemporary": [
+        {
+            "domain": "localhost",
+            "reason": "Protections are disabled on localhost pages"
+        },
+        {
+            "domain": "127.0.0.1",
+            "reason": "Protections are disabled on localhost pages"
+        },
+        {
+            "domain": "::1",
+            "reason": "Protections are disabled on localhost pages"
+        }
+    ]
 }
