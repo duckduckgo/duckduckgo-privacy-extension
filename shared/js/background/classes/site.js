@@ -85,6 +85,10 @@ class Site {
     }
 
     get enabledFeatures () {
+        // all features disabled for 'special' domains like localhost
+        if (this.specialDomainName && this.specialDomainName !== 'new tab') {
+            return []
+        }
         return utils.getEnabledFeatures(this.domainWWW) // site issues reported to github repo
     }
 
