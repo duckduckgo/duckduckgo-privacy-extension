@@ -21,7 +21,13 @@ async function routeLocalResources (route) {
     try {
         const body = await fs.readFile(localPath)
         // console.log('request served from disk', route.request().url())
-        route.fulfill({ status: 200, body })
+        route.fulfill({
+            status: 200,
+            body,
+            headers: {
+                etag: 'test'
+            }
+        })
     } catch (e) {
         // console.log('request served from network', route.request().url())
         route.continue()

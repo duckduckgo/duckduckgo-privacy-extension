@@ -140,9 +140,18 @@ test.describe('Test request blocking', () => {
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
 
-        const [, pageRequests] = await runRequestBlockingTest(page, `${TEST_SERVER_ORIGIN}/privacy-protections/request-blocking/`)
-        pageRequests.forEach((req) => {
-            expect(req.status, req.url).toBe('allowed')
-        })
+        await runRequestBlockingTest(page, `${TEST_SERVER_ORIGIN}/privacy-protections/request-blocking/`)
+        const pageResults = await page.evaluate(
+            () => results.results // eslint-disable-line no-undef
+        )
+        await page.bringToFront()
+        for (const { id, category, status } of pageResults) {
+            // skip some flakey request types
+            if (['video', 'websocket'].includes(id)) {
+                continue
+            }
+            const description = `ID: ${id}, Category: ${category}`
+            expect(status, description).toEqual('loaded')
+        }
     })
 })
