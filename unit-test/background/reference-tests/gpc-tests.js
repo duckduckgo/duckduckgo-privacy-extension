@@ -3,7 +3,7 @@ require('../../helpers/mock-browser-api')
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
-const Site = require('../../../shared/js/background/classes/site')
+const Site = require('../../../shared/js/background/classes/site').default
 const GPC = require('../../../shared/js/background/GPC')
 const GpcContentScript = require('@duckduckgo/content-scope-scripts/src/features/gpc').default
 const gpcContentScript = new GpcContentScript('gpc')

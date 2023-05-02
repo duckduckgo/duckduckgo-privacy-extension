@@ -7,7 +7,7 @@ import { setActionIcon } from '../wrapper'
  * 1) Our regular Dax Icon
  * 2) Greyed-out Dax Icon (special state)
  *
- * @param {import("../classes/site")} site
+ * @param {import("../classes/site").default} site
  * @param {number} tabId
  * @returns {Promise<void>}
  */

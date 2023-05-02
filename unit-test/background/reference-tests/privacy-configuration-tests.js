@@ -3,7 +3,7 @@ require('../../helpers/mock-browser-api')
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
-const Site = require('../../../shared/js/background/classes/site')
+const Site = require('../../../shared/js/background/classes/site').default
 const utils = require('../../../shared/js/background/utils')
 const browserWrapper = require('../../../shared/js/background/wrapper')
 

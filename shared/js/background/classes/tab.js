@@ -14,7 +14,7 @@
  *      }
  */
 
-const Site = require('./site')
+const Site = require('./site').default
 const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects')
 const Companies = require('../companies')

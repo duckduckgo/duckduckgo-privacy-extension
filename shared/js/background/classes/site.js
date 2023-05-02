@@ -19,7 +19,7 @@ const { TabState } = require('./tab-state')
  * @typedef {'allowlisted' | 'allowlistOptIn' | 'denylisted'} allowlistName
  */
 
-class Site {
+export default class Site {
     constructor (url, tabState) {
         // If no tabState is passed in then we create a new one to simulate a new tab
         if (!tabState) {
@@ -269,5 +269,3 @@ class Site {
         return null
     }
 }
-
-module.exports = Site
