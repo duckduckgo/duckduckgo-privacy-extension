@@ -1,11 +1,12 @@
 import { test, expect } from './helpers/playwrightHarness'
 import { forAllConfiguration, forExtensionLoaded } from './helpers/backgroundWait'
 import { loadTestConfig } from './helpers/testConfig'
+import { TEST_SERVER_ORIGIN } from './helpers/testPages'
 
 const testHost = 'privacy-test-pages.glitch.me'
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`
 
-async function runRequestBlockingTest (page) {
+async function runRequestBlockingTest (page, url = testSite) {
     const pageRequests = []
     page.on('request', async (req) => {
         if (!req.url().startsWith('https://bad.third-party.site/')) {
@@ -20,14 +21,14 @@ async function runRequestBlockingTest (page) {
         }
         pageRequests.push({
             url: req.url(),
-            mathod: req.method(),
+            method: req.method(),
             type: req.resourceType(),
             status
         })
     })
 
     await page.bringToFront()
-    await page.goto(testSite, { waitUntil: 'networkidle' })
+    await page.goto(url, { waitUntil: 'networkidle' })
     await page.click('#start')
     const testCount = await page.evaluate(
         // eslint-disable-next-line no-undef
@@ -133,5 +134,15 @@ test.describe('Test request blocking', () => {
                 expect(status, description).not.toEqual('loaded')
             }
         }
+    })
+
+    test('Blocking should not run on localhost', async ({ page, backgroundPage, context }) => {
+        await forExtensionLoaded(context)
+        await forAllConfiguration(backgroundPage)
+
+        const [, pageRequests] = await runRequestBlockingTest(page, `${TEST_SERVER_ORIGIN}/privacy-protections/request-blocking/`)
+        pageRequests.forEach((req) => {
+            expect(req.status, req.url).toBe('allowed')
+        })
     })
 })
