@@ -167,4 +167,38 @@ test.describe('Test request blocking', () => {
             expect(status, description).toEqual('loaded')
         }
     })
+
+    test('protection toggle disables blocking', async ({ page, backgroundPage, context}) => {
+        await forExtensionLoaded(context)
+        await forAllConfiguration(backgroundPage)
+        await loadTestConfig(backgroundPage, 'serviceworker-blocking.json')
+
+        // load with protection enabled
+        await runRequestBlockingTest(page)
+        // Verify that no logged requests were allowed.
+        let pageResults = await page.evaluate(
+            () => results.results // eslint-disable-line no-undef
+        )
+        for (const { id, category, status } of pageResults) {
+            const description = `ID: ${id}, Category: ${category}`
+            expect(status, description).not.toEqual('loaded')
+        }
+
+        // disable protection on the page and rerun the test
+        await backgroundPage.evaluate(async (domain) => {
+            dbg.tabManager.setList({ list: 'allowlisted', domain, value: true})
+        }, testHost)
+        await runRequestBlockingTest(page)
+        pageResults = await page.evaluate(
+            () => results.results // eslint-disable-line no-undef
+        )
+        for (const { id, category, status } of pageResults) {
+            // skip some flakey request types
+            if (['video', 'websocket'].includes(id)) {
+                continue
+            }
+            const description = `ID: ${id}, Category: ${category}`
+            expect(status, description).toEqual('loaded')
+        }
+    })
 })
