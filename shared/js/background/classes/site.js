@@ -6,6 +6,7 @@
  * The Grade attributes are then used generate a site
  * privacy grade used in the popup.
  */
+import { parse } from 'tldts'
 const settings = require('../settings')
 const utils = require('../utils')
 const tdsStorage = require('./../storage/tds').default
@@ -209,7 +210,8 @@ class Site {
     getSpecialDomain () {
         const extensionId = browserWrapper.getExtensionId()
         const localhostName = 'localhost'
-        const { domain, protocol, url } = this
+        const { protocol, url, domain } = this
+        const { publicSuffix } = parse(this.url)
 
         if (url === '') {
             return 'new tab'
@@ -217,7 +219,7 @@ class Site {
 
         // Both 'localhost' and the loopback IP have to be specified
         // since they're treated as different domains.
-        if (domain === localhostName || domain.match(/^127\.0\.0\.1/)) {
+        if (domain === localhostName || domain.match(/^127\.0\.0\.1/) || publicSuffix === localhostName) {
             return localhostName
         }
 
