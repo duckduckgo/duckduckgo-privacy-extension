@@ -1,7 +1,7 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { loadTestConfig, loadTestTds } from './helpers/testConfig'
-import { routeFromLocalhost } from './helpers/testPages'
+import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages'
 
 const testPageDomain = 'privacy-test-pages.glitch.me'
 const thirdPartyDomain = 'good.third-party.site'
@@ -71,9 +71,9 @@ test.describe('Storage blocking Tests', () => {
     })
 
     test.describe('Cookie blocking tests', () => {
-        async function runStorageTest (page, domain) {
+        async function runStorageTest (page, origin) {
             await page.bringToFront()
-            await page.goto(`https://${domain}/privacy-protections/storage-blocking/?store`)
+            await page.goto(`${origin}/privacy-protections/storage-blocking/?store`)
             await waitForAllResults(page)
             await page.click('#retrive')
             await waitForAllResults(page)
@@ -117,7 +117,7 @@ test.describe('Storage blocking Tests', () => {
         })
 
         test(`On ${thirdPartyTracker} does not block iFrame tracker cookies from same entity`, async ({ page }) => {
-            const results = await runStorageTest(page, thirdPartyTracker)
+            const results = await runStorageTest(page, `https://${thirdPartyTracker}`)
             assertCookieAllowed(results, 'tracking third party iframe - JS cookie')
         })
 
@@ -131,7 +131,7 @@ test.describe('Storage blocking Tests', () => {
                     value: true
                 })
             }, testPageDomain)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             assertCookieAllowed(results, 'safe third party iframe - JS cookie')
             assertCookieAllowed(results, 'tracking third party header cookie')
         })
@@ -148,7 +148,7 @@ test.describe('Storage blocking Tests', () => {
                     value: config
                 })
             }, thirdPartyTracker)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             assertCookieAllowed(results, 'tracking third party header cookie')
         })
 
@@ -164,7 +164,7 @@ test.describe('Storage blocking Tests', () => {
                     value: config
                 })
             }, testPageDomain)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             assertCookieAllowed(results, 'tracking third party header cookie')
         })
 
@@ -180,7 +180,7 @@ test.describe('Storage blocking Tests', () => {
                     value: config
                 })
             }, testPageDomain)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             assertCookieAllowed(results, 'tracking third party header cookie')
         })
 
@@ -202,9 +202,14 @@ test.describe('Storage blocking Tests', () => {
                 })
             }, testPageDomain)
             // await page.waitForTimeout(500)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             // await page.waitForTimeout(50000)
             assertCookieBlocked(results, 'tracking third party header cookie')
+        })
+
+        test('protections are not active on localhost', async ({ page }) => {
+            const results = await runStorageTest(page, TEST_SERVER_ORIGIN)
+            assertCookieAllowed(results, 'tracking third party header cookie')
         })
     })
 })
