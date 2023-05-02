@@ -3,7 +3,11 @@ const testPageHosts = new Set([
     'privacy-test-pages.glitch.me',
     'broken.third-party.site',
     'good.third-party.site',
-    'bad.third-party.site'
+    'bad.third-party.site',
+    'www.search-company.site',
+    'convert.ad-company.site',
+    'www.publisher-company.site',
+    'www.payment-company.site'
 ])
 /**
  * Route requests to the local test service (privacy-test-pages)
