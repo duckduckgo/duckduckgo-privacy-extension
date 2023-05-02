@@ -168,7 +168,7 @@ test.describe('Test request blocking', () => {
         }
     })
 
-    test('protection toggle disables blocking', async ({ page, backgroundPage, context}) => {
+    test('protection toggle disables blocking', async ({ page, backgroundPage, context }) => {
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
         await loadTestConfig(backgroundPage, 'serviceworker-blocking.json')
@@ -186,7 +186,7 @@ test.describe('Test request blocking', () => {
 
         // disable protection on the page and rerun the test
         await backgroundPage.evaluate(async (domain) => {
-            dbg.tabManager.setList({ list: 'allowlisted', domain, value: true})
+            dbg.tabManager.setList({ list: 'allowlisted', domain, value: true })
         }, testHost)
         await runRequestBlockingTest(page)
         pageResults = await page.evaluate(
