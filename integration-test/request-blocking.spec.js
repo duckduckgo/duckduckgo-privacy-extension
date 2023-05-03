@@ -136,9 +136,22 @@ test.describe('Test request blocking', () => {
         }
     })
 
-    test('Blocking should not run on localhost', async ({ page, backgroundPage, context }) => {
+    test('Blocking should not run on localhost', async ({ page, backgroundPage, context, manifestVersion }) => {
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
+        // On MV3 config rules are only created some time after the config is loaded. We can query
+        // declarativeNetRequest rules periodically until we see the expected rule.
+        if (manifestVersion === 3) {
+            while (true) {
+                const localhostRules = await backgroundPage.evaluate(async () => {
+                    const rules = await chrome.declarativeNetRequest.getDynamicRules()
+                    return rules.filter(r => r.condition.requestDomains?.includes('localhost'))
+                })
+                if (localhostRules.length > 0) {
+                    break
+                }
+            }
+        }
 
         await runRequestBlockingTest(page, `${TEST_SERVER_ORIGIN}/privacy-protections/request-blocking/`)
         const pageResults = await page.evaluate(
