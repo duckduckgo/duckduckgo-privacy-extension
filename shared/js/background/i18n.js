@@ -5,5 +5,10 @@ export function getUserLocale () {
         return 'en'
     }
     // returns browser locale with country suffix removed
-    return browser.i18n.getUILanguage().slice(0, 2)
+    const lang = browser.i18n.getUILanguage().slice(0, 2)
+    // handle Norwegian locales
+    if (['nn', 'no'].includes(lang)) {
+        return 'nb'
+    }
+    return lang
 }
