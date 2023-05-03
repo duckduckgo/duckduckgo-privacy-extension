@@ -44,36 +44,6 @@ jobs:
       - run: npm run install-ci
       - run: npm test
 
-  integration-tests:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
-      - run: npm run install-ci
-      - run: npm run test-int
-      - name: Store test artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: integration-test-artifacts
-          path: integration-test/artifacts
-
-  integration-mv3-tests:
-    timeout-minutes: 10
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
-      - run: npm run install-ci
-      - run: npm run test-int-mv3
-
   playwright-tests:
     timeout-minutes: 10
     runs-on: ubuntu-latest
