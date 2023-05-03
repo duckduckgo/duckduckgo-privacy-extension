@@ -26,10 +26,13 @@ export function routeFromLocalhost (page, overrideHandler) {
             console.log('skipped localhost routing for', url.href)
             return route.continue()
         }
+        const headers = await route.request().allHeaders()
+        // set host header so that the test server knows which content to serve
+        headers.host = url.host
         const requestData = new Request(`http://localhost:3000${url.pathname}${url.search}${url.hash}`, {
             method: route.request().method(),
             body: route.request().postDataBuffer(),
-            headers: await route.request().allHeaders()
+            headers
         })
         const response = await fetch(requestData)
         if (!response.ok) {
