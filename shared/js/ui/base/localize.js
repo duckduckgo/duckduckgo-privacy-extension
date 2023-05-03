@@ -14,7 +14,6 @@ const resources = localeResources.reduce((mapping, { name, module }) => {
 i18next
     .use(ICU)
     .init({
-        debug: true,
         initImmediate: false,
         fallbackLng: 'en',
         lng: getUserLocale(),
