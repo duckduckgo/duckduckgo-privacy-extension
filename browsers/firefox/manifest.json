@@ -42,6 +42,10 @@
             "matches": [
                 "<all_urls>"
             ],
+            "exclude_matches": [
+                "*://localhost/*",
+                "*://*.localhost/*"
+            ],
             "match_about_blank": true,
             "all_frames": true,
             "css": [
@@ -61,6 +65,10 @@
             ],
             "matches": [
                 "<all_urls>"
+            ],
+            "exclude_matches": [
+                "*://localhost/*",
+                "*://*.localhost/*"
             ],
             "all_frames": true,
             "run_at": "document_start",

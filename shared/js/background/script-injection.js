@@ -18,13 +18,21 @@ if (browserWrapper.getManifestVersion() === 3) {
         js: ['public/js/content-scripts/content-scope-messaging.js'],
         runAt: 'document_start',
         world: 'ISOLATED',
-        matches: ['<all_urls>']
+        matches: ['<all_urls>'],
+        excludeMatches: [
+            '*://localhost/*',
+            '*://*.localhost/'
+        ]
     }, {
         id: '2-script-injection-main-world',
         allFrames: true,
         js: ['public/js/inject.js'],
         runAt: 'document_start',
         world: 'MAIN',
-        matches: ['<all_urls>']
+        matches: ['<all_urls>'],
+        excludeMatches: [
+            '*://localhost/*',
+            '*://*.localhost/'
+        ]
     }])
 }

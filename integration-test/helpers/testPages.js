@@ -10,6 +10,9 @@ const testPageHosts = new Set([
     'www.publisher-company.site',
     'www.payment-company.site'
 ])
+
+export const TEST_SERVER_ORIGIN = 'http://localhost:3000'
+
 /**
  * Route requests to the local test service (privacy-test-pages)
  * @param {import("@playwright/test").Page} page
@@ -30,7 +33,7 @@ export function routeFromLocalhost (page, overrideHandler) {
         const headers = await route.request().allHeaders()
         // set host header so that the test server knows which content to serve
         headers.host = url.host
-        const requestData = new Request(`http://localhost:3000${url.pathname}${url.search}${url.hash}`, {
+        const requestData = new Request(`${TEST_SERVER_ORIGIN}${url.pathname}${url.search}${url.hash}`, {
             method: route.request().method(),
             body: route.request().postDataBuffer(),
             headers,
