@@ -56,7 +56,7 @@ export const test = base.extend({
         })
         // intercept extension install page and use HAR
         context.on('page', (page) => {
-            console.log('page', page.url())
+            // console.log('page', page.url())
             if (page.url().includes('duckduckgo.com/extension-success')) {
                 // HAR file generated with the following command:
                 // npx playwright open --save-har=data/har/duckduckgo.com/extension-success.har https://duckduckgo.com/extension-success

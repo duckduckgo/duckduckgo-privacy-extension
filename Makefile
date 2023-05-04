@@ -73,14 +73,14 @@ unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
 .PHONY: unit-test
 
 ## test-int: Run legacy integration tests against the Chrome MV2 extension.
-test-int: integration-test/artifacts/attribution.json
+test-int:
 	make dev browser=chrome type=dev
 	jasmine --config=integration-test/config.json
 
 .PHONY: test-int
 
 ## test-int-mv3: Run legacy integration tests against the Chrome MV3 extension.
-test-int-mv3: integration-test/artifacts/attribution.json
+test-int-mv3:
 	make dev browser=chrome-mv3 type=dev
 	jasmine --config=integration-test/config-mv3.json
 
@@ -143,12 +143,6 @@ setup-artifacts-dir:
 	mkdir -p integration-test/artifacts/api_schemas
 
 .PHONY: setup-artifacts-dir
-
-# Fetch integration test data.
-integration-test/artifacts/attribution.json: node_modules/privacy-test-pages/adClickFlow/shared/testCases.json setup-artifacts-dir
-	mkdir -p integration-test/artifacts
-	cp $< $@
-
 
 ###--- Mkdir targets ---#
 # Note: Intermediate directories can be omitted.
