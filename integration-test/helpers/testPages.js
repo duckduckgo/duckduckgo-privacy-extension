@@ -24,7 +24,7 @@ export function routeFromLocalhost (page, overrideHandler) {
         const url = new URL(route.request().url())
         if (!testPageHosts.has(url.hostname)) {
             // skip requests for other hosts
-            console.log('skipped localhost routing for', url.href)
+            // console.log('skipped localhost routing for', url.href)
             return route.continue()
         }
         const headers = await route.request().allHeaders()
