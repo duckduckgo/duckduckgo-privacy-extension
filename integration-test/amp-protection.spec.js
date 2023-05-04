@@ -57,7 +57,7 @@ test.describe('Test AMP link protection', () => {
             //       Since only the redirected main_frame URL is required for
             //       these tests, just wait for load rather than network idle.
             await page.goto(
-                initialUrl, { waitUntil: 'networkidle' }
+                initialUrl, { waitUntil: 'commit' }
             )
             expect(page.url(), description).toEqual(expectedUrl)
         }
