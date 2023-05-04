@@ -4,9 +4,9 @@ const testPageHosts = new Set([
     'broken.third-party.site',
     'good.third-party.site',
     'bad.third-party.site',
-    'www.search-company.site',
     'convert.ad-company.site',
-    // 'www.ad-company.site', - redirects to this domain via route overriding seem to hang, so this one has to hit the real server
+    // 'www.search-company.site',
+    // 'www.ad-company.site', - redirects to these domains via route overriding seem to hang, so this one has to hit the real server
     'www.publisher-company.site',
     'www.payment-company.site'
 ])

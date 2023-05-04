@@ -26,19 +26,7 @@ test.describe('Ad click blocking', () => {
     }
 
     /**
-     * @param {Puppeteer.page} page
-     * @param {string} variableName
-     * @returns {Promise<*>}
-     */
-    async function waitForVariable (page, variableName) {
-        const callback = (variableNameInstance) => globalThis[variableNameInstance]
-        await page.waitForFunction(callback, variableName, { timeout: 2000 })
-        return page.evaluate(callback, variableName)
-    }
-
-    /**
      * Clicks on an item and awaits a new tab to load.
-     * https://github.com/puppeteer/puppeteer/issues/3667 without this intercepting new tab requests is too late
      * @param {import('@playwright/test').Page}} existingPage
      * @param {string} selector
      * @returns {Promise<*>}
@@ -88,7 +76,7 @@ test.describe('Ad click blocking', () => {
                     .toBe(step.expected.url)
 
                 if (step.expected.requests) {
-                    const resources = await waitForVariable(page, 'resources')
+                    const resources = await page.evaluate(() => globalThis.resources)
                     expect(resources.length).toBe(step.expected.requests.length)
                     for (const request of step.expected.requests) {
                         const expectedResource = resources.find(resource => resource.url === request.url)
