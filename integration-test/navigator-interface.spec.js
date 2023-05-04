@@ -3,8 +3,9 @@ import backgroundWait from './helpers/backgroundWait'
 import { TEST_SERVER_ORIGIN } from './helpers/testPages'
 
 test.describe('navigatorInterface', () => {
-    test('injects navigator.duckduckgo interface into pages', async ({ page, context }) => {
+    test('injects navigator.duckduckgo interface into pages', async ({ backgroundPage, page, context }) => {
         await backgroundWait.forExtensionLoaded(context)
+        await backgroundWait.forAllConfiguration(backgroundPage)
         await page.goto('https://privacy-test-pages.glitch.me/features/navigator-interface.html')
         expect(await page.locator('#interface').innerText()).toBe('interface: true')
         expect(await page.locator('#isDuckDuckGo').innerText()).toBe('isDuckDuckGo: true')
