@@ -168,7 +168,7 @@ test.describe('Test request blocking', () => {
         }
     })
 
-    test('protection toggle disables blocking', async ({ page, backgroundPage, context }) => {
+    test('protection toggle disables blocking', async ({ page, backgroundPage, context, manifestVersion }) => {
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
         await loadTestConfig(backgroundPage, 'serviceworker-blocking.json')
@@ -195,6 +195,11 @@ test.describe('Test request blocking', () => {
         for (const { id, category, status } of pageResults) {
             // skip some flakey request types
             if (['video', 'websocket'].includes(id)) {
+                continue
+            }
+            // serviceworker-fetch: allowlist does not work in MV3
+            // https://app.asana.com/0/892838074342800/1204515863331825/f
+            if (manifestVersion === 3 && id === 'serviceworker-fetch') {
                 continue
             }
             const description = `ID: ${id}, Category: ${category}`

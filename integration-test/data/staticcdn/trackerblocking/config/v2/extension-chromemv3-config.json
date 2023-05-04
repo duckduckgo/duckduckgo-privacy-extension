@@ -1176,7 +1176,7 @@
         },
         "serviceworkerInitiatedRequests": {
             "exceptions": [],
-            "state": "disabled",
+            "state": "enabled",
             "hash": "e25bc15aae118274e8d4481baf2033dd"
         },
         "trackerAllowlist": {
