@@ -1,10 +1,8 @@
-const fs = require('fs')
-const path = require('path')
-
-const puppeteer = require('puppeteer')
+import fs from 'fs'
+import path from 'path'
 
 /**
- * @typedef {import('puppeteer').Page} Page - Puppeteer Page
+ * @typedef {import('@playwright/test').Page} Page - Playwright Page
  */
 
 /**
@@ -19,14 +17,14 @@ const puppeteer = require('puppeteer')
  *  - Object values are handled recursively.
  *  - Cyclic Object values are represented as the string "CYCLIC OBJECT VALUE".
  * @param {Page} page
- *   The Puppeteer page to inspect.
+ *   The Playwright page to inspect.
  * @param {string} targetObjectName
  *   The name of the Object to inspect. A string which when eval'd in the page
  *   returns the target Object. For example, "globalThis.someApi".
  * @returns {Promise<Object>}
  *   The target Object's schema.
  */
-async function getObjectSchema (page, targetObjectName) {
+export async function getObjectSchema (page, targetObjectName) {
     // eslint-disable-next-line no-eval
     const targetObjectHandle = await page.evaluateHandle(name => eval(name), targetObjectName)
 
@@ -85,7 +83,7 @@ async function getObjectSchema (page, targetObjectName) {
  * schema test. As a side-effect, the actual API schema is written to disk as a
  * JSON file as a test artifact.
  * @param {Page} page
- *   The Puppeteer page to inspect.
+ *   The Playwright page to inspect.
  * @param {string} schemaFilename
  *   The file name of the expected schema JSON. Also used when writing the
  *   actual schema test artifact.
@@ -96,7 +94,7 @@ async function getObjectSchema (page, targetObjectName) {
  * @returns {Promise<Object>}
  *   The target Object's schema.
  */
-async function setupAPISchemaTest (page, schemaFilename, targetObjectNames) {
+export async function setupAPISchemaTest (page, schemaFilename, targetObjectNames) {
     const actualSchemaPath = path.resolve(
         __dirname, '..', 'artifacts', 'api_schemas', schemaFilename
     )
@@ -106,15 +104,7 @@ async function setupAPISchemaTest (page, schemaFilename, targetObjectNames) {
 
     const actualSchema = Object.create(null)
     for (const objectName of targetObjectNames) {
-        try {
-            actualSchema[objectName] = await getObjectSchema(page, objectName)
-        } catch (e) {
-            if (e instanceof puppeteer.errors.TimeoutError) {
-                pending('Timed out setting up API schema test.')
-            } else {
-                throw e
-            }
-        }
+        actualSchema[objectName] = await getObjectSchema(page, objectName)
     }
 
     fs.mkdirSync(path.dirname(actualSchemaPath), { recursive: true })
@@ -126,6 +116,7 @@ async function setupAPISchemaTest (page, schemaFilename, targetObjectNames) {
     return { actualSchemaPath, expectedSchemaPath, actualSchema, expectedSchema }
 }
 
-module.exports = {
-    getObjectSchema, setupAPISchemaTest
+export default {
+    getObjectSchema,
+    setupAPISchemaTest
 }
