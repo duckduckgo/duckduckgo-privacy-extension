@@ -440,12 +440,21 @@ export function getInstallTimestamp (atb) {
  * @returns {boolean}
  */
 export function isInstalledWithinDays (numberOfDays, fromDate = Date.now(), atb = settings.getSetting('atb')) {
-    if (!atb) return false
+    return daysInstalled(fromDate, atb) <= numberOfDays
+}
+
+/**
+ * Returns the days since installed using atb
+ * @param {number} [fromDate]
+ * @param {string} [atb]
+ * @returns {number}
+ */
+export function daysInstalled (fromDate = Date.now(), atb = settings.getSetting('atb')) {
+    if (!atb) return NaN
 
     const installTimestamp = getInstallTimestamp(atb)
     // If we can't get the install date, assume it wasn't installed in time period
-    if (!installTimestamp) return false
+    if (!installTimestamp) return NaN
 
-    const daysInstalled = (fromDate - installTimestamp) / dayMultiplier
-    return daysInstalled <= numberOfDays
+    return (fromDate - installTimestamp) / dayMultiplier
 }
