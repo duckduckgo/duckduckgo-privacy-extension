@@ -32,7 +32,7 @@
         "beta-chrome-mv3": "make chrome-mv3-beta browser=chrome-mv3 type=release"
     },
     "devDependencies": {
-        "@babel/cli": "^7.21.0",
+        "@babel/cli": "^7.21.5",
         "@babel/core": "^7.21.4",
         "@babel/node": "^7.20.7",
         "@babel/polyfill": "^7.10.4",
