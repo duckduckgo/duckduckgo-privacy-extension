@@ -72,20 +72,6 @@ unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
 
 .PHONY: unit-test
 
-## test-int: Run legacy integration tests against the Chrome MV2 extension.
-test-int:
-	make dev browser=chrome type=dev
-	jasmine --config=integration-test/config.json
-
-.PHONY: test-int
-
-## test-int-mv3: Run legacy integration tests against the Chrome MV3 extension.
-test-int-mv3:
-	make dev browser=chrome-mv3 type=dev
-	jasmine --config=integration-test/config-mv3.json
-
-.PHONY: test-int-mv3
-
 ## npm: Pull in the external dependencies (npm install).
 npm:
 	npm ci --ignore-scripts

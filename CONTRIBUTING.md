@@ -119,5 +119,3 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 ### Testing
 - Unit tests: `npm test`
 - Integration tests: `npm run playwright` (full docs [here](./integration-test/README.md))
-- Legacy integration tests: `npm run test-int`
-    - You can filter to one test with: `KEEP_OPEN=1 npm run test-int -- -f integration-test/background/test-fp-fingerprint.js`
