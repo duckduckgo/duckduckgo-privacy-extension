@@ -166,12 +166,12 @@ export const sendJSPixel = (options) => {
     case 'incontext_close_x':
         fireIncontextSignupPixel('incontext_close_x_extension')
         break
-    case 'incontext_eligible': {
+    case 'email_incontext_eligible': {
         const shouldFireIncontextEligibilityPixel = getSetting('shouldFireIncontextEligibilityPixel')
         if (!shouldFireIncontextEligibilityPixel) return
 
         const daysSinceInstallation = Math.ceil(daysInstalled())
-        fireIncontextSignupPixel('incontext_eligible_extension', { days_since_installation: daysSinceInstallation })
+        fireIncontextSignupPixel('email_incontext_eligible_extension', { days_since_installation: daysSinceInstallation })
         updateSetting('shouldFireIncontextEligibilityPixel', false)
         break
     }
