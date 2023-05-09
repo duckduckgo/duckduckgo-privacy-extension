@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1683025593929,
+    "version": 1683569384216,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -206,6 +206,10 @@
                 {
                     "domain": "gfds.de",
                     "reason": "https://github.com/duckduckgo/autoconsent/issues/130"
+                },
+                {
+                    "domain": "upstart.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/897"
                 }
             ],
             "settings": {
@@ -215,7 +219,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "3bb9ac641ec3c4c8857d1b260420dc88"
+            "hash": "03d0e218623dd818ed3a273b039bbf84"
         },
         "autofill": {
             "exceptions": [
@@ -284,14 +288,6 @@
             "hash": "8d35648bb7862913ed30243074e6b6f1"
         },
         "cookie": {
-            "exceptions": [
-                {
-                    "domain": "nespresso.com",
-                    "reason": "Clicking 'Continue' after filling out details for account creation yields an error."
-                }
-            ],
-            "state": "enabled",
-            "minSupportedVersion": "2022.6.1",
             "settings": {
                 "trackerCookie": "enabled",
                 "nonTrackerCookie": "disabled",
@@ -318,7 +314,15 @@
                     "maxAge": 604800
                 }
             },
-            "hash": "ed67d917a63931f518ae9303bc9f612c"
+            "exceptions": [
+                {
+                    "domain": "nespresso.com",
+                    "reason": "Clicking 'Continue' after filling out details for account creation yields an error."
+                }
+            ],
+            "state": "enabled",
+            "minSupportedVersion": "2022.6.1",
+            "hash": "838d425360c712fbbf3d5608a7231e12"
         },
         "customUserAgent": {
             "settings": {
@@ -1828,7 +1832,10 @@
             "exceptions": [],
             "state": "enabled",
             "minSupportedVersion": "2023.3.28.1",
-            "hash": "ffd79270f37d3f1e5888d20b152c6d53"
+            "settings": {
+                "installedDays": 30
+            },
+            "hash": "6feff8626fa79a1313d162c81b829533"
         },
         "navigatorInterface": {
             "exceptions": [],
@@ -1884,6 +1891,10 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/880"
                 },
                 {
+                    "domain": "rbs.co.uk",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/902"
+                },
+                {
                     "domain": "app.pandadoc.com",
                     "reason": "https://github.com/duckduckgo/duckduckgo-privacy-extension/issues/1913"
                 }
@@ -1933,6 +1944,16 @@
                                         "value": 2
                                     }
                                 }
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "github.com",
+                        "patchSettings": [
+                            {
+                                "op": "replace",
+                                "path": "/injectGlobalStyles",
+                                "value": "disabled"
                             }
                         ]
                     }
@@ -2389,7 +2410,7 @@
                 }
             },
             "minSupportedVersion": "2023.4.11",
-            "hash": "5b5cbd4acb604a7bd3f7b8ce9ecf2532"
+            "hash": "8959a0f36fa6bec5c1072fbeabff9a6f"
         },
         "serviceworkerInitiatedRequests": {
             "exceptions": [],
