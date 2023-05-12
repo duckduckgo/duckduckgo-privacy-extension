@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Gizlilik, basitleştirildi. ***İzinler, her an her yerden çıkabilecek gizli takip programlarının engellenmesi içindir.***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "Uzantının web mağazasında görüntülenen başlığı"
+  },
+  "appDesc" : {
+    "message" : "Tarayıcınız için basit ve sorunsuz gizlilik koruması.",
+    "description" : "Uzantının web mağazasında görüntülenen kısa açıklaması"
+  }
+}

@@ -65,7 +65,6 @@ FeedbackForm.prototype = window.$.extend({},
             this.model.submit()
 
             this.$submit.addClass('is-disabled')
-            this.$submit.val('Sending...')
         }
     }
 )

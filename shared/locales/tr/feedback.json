@@ -1,0 +1,55 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "brokenSiteLabel" : {
+    "title" : "Hangi web sitesi hatalı?",
+    "note" : "We're asking feedback from users. Here they are reporting a website url that is not working correctly."
+  },
+  "brokenSitePlaceholder" : {
+    "title" : "URL'nizi kopyalayıp yapıştırın",
+    "note" : "Instructions to fill an input field with a URL. Here \"your URL\" doesn't mean that they own the website, just that they're reporting it."
+  },
+  "feedbackHeaderLabel" : {
+    "title" : "Neyi seviyorsunuz? Neler işe yaramıyor? Eklenti nasıl geliştirilebilir?",
+    "note" : "Label over a feedback text area where the user can tell us about their experience with our browser extension."
+  },
+  "feedbackPlaceholder" : {
+    "title" : "Geri bildiriminiz hangi özellikler veya işlevlerle ilgili? Lütfen mümkün olduğunca spesifik bir şekilde belirtin.",
+    "note" : "Placeholder text on feedback form input."
+  },
+  "submittingFeedbackHelps" : {
+    "title" : "Anonim geri bildirim göndermek, DuckDuckGo Privacy Essentials'ı geliştirmemize yardımcı olur.",
+    "note" : "Description at top of feedback form."
+  },
+  "reportBrokenSite" : {
+    "title" : "Bozuk bir siteyi bildirmek istiyorum",
+    "note" : "This opens a feedback form to report a broken site. Broken here means 'not working as expected'."
+  },
+  "submit" : {
+    "title" : "Gönder",
+    "note" : "To submit the feedback form."
+  },
+  "describeTheIssue" : {
+    "title" : "Karşılaştığınız sorunu açıklayın:",
+    "note" : "Label on broken site feedback textarea where users can describe in what way a site is not working as expected."
+  },
+  "describeBreakagePlaceholder" : {
+    "title" : "Hangi web sitesi içeriği veya işlevi bozuk? Lütfen mümkün olduğunca spesifik bir şekilde belirtin.",
+    "note" : "Placeholder text on the broken site form."
+  },
+  "thankYou" : {
+    "title" : "Geri bildiriminiz için teşekkür ederiz!",
+    "note" : "Thank you note displayed after submitting feedback"
+  },
+  "thankYouBrokenSite" : {
+    "title" : "Bozuk sitelerle ilgili bildirimleriniz, geliştirme ekibimizin bu arızaları gidermesine yardımcı olur.",
+    "note" : "Additional note when submitting a broken site."
+  }
+}

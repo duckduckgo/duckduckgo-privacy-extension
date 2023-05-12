@@ -6,6 +6,7 @@ import { getExtensionURL, notifyPopup } from './wrapper'
 import { isFeatureEnabled, reloadCurrentTab } from './utils'
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 import tdsStorage from './storage/tds'
+import { getArgumentsObject } from './helpers/arguments-object'
 const { getDomain } = require('tldts')
 const utils = require('./utils')
 const settings = require('./settings')
@@ -16,7 +17,6 @@ const Companies = require('./companies')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools')
 const browserWrapper = require('./wrapper')
-const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
     const sessionKey = await utils.getSessionKey()

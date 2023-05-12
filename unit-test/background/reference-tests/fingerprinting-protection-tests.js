@@ -6,7 +6,7 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const tabManager = require('../../../shared/js/background/tab-manager')
 const browserWrapper = require('../../../shared/js/background/wrapper')
-const getArgumentsObject = require('../../../shared/js/background/helpers/arguments-object')
+const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object')
 
 const BatteryProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-battery').default
 const batteryProtection = new BatteryProtection('fingerprintingBattery')

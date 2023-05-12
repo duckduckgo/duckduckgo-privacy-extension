@@ -207,7 +207,7 @@ $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 ## Extension UI/Devtools scripts.
 $(BUILD_DIR)/public/js/base.js: $(WATCHED_FILES)
 	mkdir -p `dirname $@`
-	$(BROWSERIFY) shared/js/ui/base/index.js > $@
+	$(BROWSERIFY) -t require-globify shared/js/ui/base/index.js > $@
 
 $(BUILD_DIR)/public/js/feedback.js: $(WATCHED_FILES)
 	$(BROWSERIFY) shared/js/ui/pages/feedback.js > $@
@@ -237,7 +237,7 @@ build/test/background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
 	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
 
 build/test/ui.js: $(TEST_FILES) | build/test
-	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
+	$(BROWSERIFY) -t require-globify shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
 
 build/test/shared-utils.js: $(TEST_FILES) | build/test
 	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
@@ -298,7 +298,7 @@ $(BUILD_DIR)/public/font/%: $(INTERMEDIATES_DIR)/%
 # Fetch fonts from the webserver to be included in the generated build
 .SECONDARY:
 $(INTERMEDIATES_DIR)/%: 
-	curl -s -o $@ https://duckduckgo.com/font/`basename $@`
+	curl -s -o $@ https://duckduckgo.com/font/all/`basename $@`
 
 ## Other
 

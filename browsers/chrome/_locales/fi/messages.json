@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Tietosuojaa, yksinkertaisesti. ***Käyttöoikeuksilla estetään kaikkialla vaanivat seurantaohjelmat.***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "Laajennuksen nimi, joka näytetään verkkokaupassa"
+  },
+  "appDesc" : {
+    "message" : "Yksinkertainen ja saumaton tietosuoja selaimeesi.",
+    "description" : "Laajennuksen lyhyt kuvaus, joka näytetään verkkokaupassa"
+  }
+}

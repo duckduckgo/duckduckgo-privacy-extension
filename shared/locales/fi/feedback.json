@@ -1,0 +1,55 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "brokenSiteLabel" : {
+    "title" : "Mikä verkkosivusto on viallinen?",
+    "note" : "We're asking feedback from users. Here they are reporting a website url that is not working correctly."
+  },
+  "brokenSitePlaceholder" : {
+    "title" : "Kopioi ja liitä URL",
+    "note" : "Instructions to fill an input field with a URL. Here \"your URL\" doesn't mean that they own the website, just that they're reporting it."
+  },
+  "feedbackHeaderLabel" : {
+    "title" : "Mitä sinä rakastat? Mikä ei toimi? Miten laajennusta voitaisiin parantaa?",
+    "note" : "Label over a feedback text area where the user can tell us about their experience with our browser extension."
+  },
+  "feedbackPlaceholder" : {
+    "title" : "Mihin ominaisuuksiin tai toimintoon palautteesi viitta? Kerro mahdollisimman tarkasti.",
+    "note" : "Placeholder text on feedback form input."
+  },
+  "submittingFeedbackHelps" : {
+    "title" : "Lähettämällä nimetöntä palautetta autat meitä parantamaan DuckDuckGo Privacy Essentialsia.",
+    "note" : "Description at top of feedback form."
+  },
+  "reportBrokenSite" : {
+    "title" : "Haluan ilmoittaa toimimattomasta sivustosta",
+    "note" : "This opens a feedback form to report a broken site. Broken here means 'not working as expected'."
+  },
+  "submit" : {
+    "title" : "Lähetä",
+    "note" : "To submit the feedback form."
+  },
+  "describeTheIssue" : {
+    "title" : "Kuvaile kohtaamasi ongelmaa:",
+    "note" : "Label on broken site feedback textarea where users can describe in what way a site is not working as expected."
+  },
+  "describeBreakagePlaceholder" : {
+    "title" : "Mikä sivuston sisältö tai toiminto ei toimi? Kerro mahdollisimman tarkasti.",
+    "note" : "Placeholder text on the broken site form."
+  },
+  "thankYou" : {
+    "title" : "Kiitos palautteesta!",
+    "note" : "Thank you note displayed after submitting feedback"
+  },
+  "thankYouBrokenSite" : {
+    "title" : "Ilmoittamalla toimimattomista sivustoista autat kehitystiimiämme korjaamaan viat.",
+    "note" : "Additional note when submitting a broken site."
+  }
+}

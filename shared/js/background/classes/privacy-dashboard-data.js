@@ -1,3 +1,4 @@
+import { getUserLocale } from '../i18n'
 /**
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').GetPrivacyDashboardData} ExtensionGetPrivacyDashboardData
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').DetectedRequest} DetectedRequest
@@ -56,7 +57,7 @@ export function dashboardDataFromTab (tab, userData) {
              * Explicitly setting this to 'en' for now. When ready we can send 2-character codes such
              * as 'pl' or 'de' etc. Please see https://duckduckgo.github.io/privacy-dashboard/interfaces/Generated_Schema_Definitions.LocaleSettings.html
              */
-            localeSettings: { locale: 'en' }
+            localeSettings: { locale: getUserLocale() }
         },
         requestData: {
             requests

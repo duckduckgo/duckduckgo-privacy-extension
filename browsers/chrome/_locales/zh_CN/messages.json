@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"保護私隱、簡化程序。***允許阻截四處潛伏的隱藏追蹤程式。***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "在网络商店显示的扩展插件标题"
+  },
+  "appDesc" : {
+    "message" : "为浏览器提供简单无缝的隐私保护。",
+    "description" : "在网络商店显示的扩展插件简短说明"
+  }
+}

@@ -1,3 +1,5 @@
+import { getUserLocale } from '../i18n'
+import { getExtensionURL } from '../wrapper'
 const utils = require('../utils')
 const tabManager = require('../tab-manager')
 const trackerutils = require('../tracker-utils')
@@ -5,9 +7,8 @@ const settings = require('../settings')
 const { isActive } = require('../devtools')
 const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
-const { getExtensionURL } = require('../wrapper')
 
-function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
+export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
     if (!tab || !tab.url) {
         return null
@@ -68,11 +69,10 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         site,
         referrer,
         platform: constants.platform,
+        locale: getUserLocale(),
         assets: {
             regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),
             boldFontUrl: getExtensionURL('/public/font/ProximaNova-Bold-webfont.woff')
         }
     }
 }
-
-module.exports = getArgumentsObject

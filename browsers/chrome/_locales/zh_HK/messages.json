@@ -1,0 +1,10 @@
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "在網上商店顯示的擴充功能標題"
+  },
+  "appDesc" : {
+    "message" : "為瀏覽器提供簡單順暢的私隱保護。",
+    "description" : "在網上商店顯示的擴充功能的簡短描述"
+  }
+}

@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"الخصوصية، مبسّطة.***مهمة الأذونات هي حظر المتتبعين المختفين المتربصين في كل مكان.***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "عنوان الإضافة، المعروض في المتجر الإلكتروني"
+  },
+  "appDesc" : {
+    "message" : "حماية خصوصية بسيطة وسلسة لمتصفحك.",
+    "description" : "الوصف المختصر للإضافة، المعروض في المتجر الإلكتروني"
+  }
+}
