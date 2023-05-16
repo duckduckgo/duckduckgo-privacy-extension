@@ -15,8 +15,6 @@
         "eslint-fix": "npm run eslint -- --fix",
         "lint": "npm run eslint && npm run tsc",
         "test": "make unit-test",
-        "test-int": "make test-int",
-        "test-int-mv3": "make test-int-mv3",
         "playwright": "make dev browser=chrome type=dev && playwright test",
         "playwright-mv3": "make dev browser=chrome-mv3 type=dev && PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test",
         "tsc": "tsc",
