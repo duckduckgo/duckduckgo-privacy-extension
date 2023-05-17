@@ -21,25 +21,27 @@ const { setListContents, getListContents } = require('./message-handlers')
 // RELOADER && require('./devbuild-reloader')
 
 // @ts-ignore - dbg is not a standard property of self.
-self.dbg = {
-    settings,
-    startup,
-    tabManager,
-    Tab,
-    TabState,
-    Wrapper,
-    atb,
-    https,
-    tds,
-    browserWrapper,
-    utils,
-    setListContents,
-    getListContents,
-    companies: Companies,
-    ntts: createNewtabTrackerStatsDebugApi()
-}
+export default function setUpDevbuild() {
+    self.dbg = {
+        settings,
+        startup,
+        tabManager,
+        Tab,
+        TabState,
+        Wrapper,
+        atb,
+        https,
+        tds,
+        browserWrapper,
+        utils,
+        setListContents,
+        getListContents,
+        companies: Companies,
+        ntts: createNewtabTrackerStatsDebugApi()
+    }
 
-// mark this as a dev build
-// when we request certain resources, this flag will prevent any
-// metrics from being thrown off
-browserWrapper.setToSessionStorage('dev', true)
+    // mark this as a dev build
+    // when we request certain resources, this flag will prevent any
+    // metrics from being thrown off
+    browserWrapper.setToSessionStorage('dev', true)
+}

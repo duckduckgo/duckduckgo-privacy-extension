@@ -172,7 +172,7 @@ BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 
 
 BROWSERIFY_BIN = node_modules/.bin/browserify
 BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --plugins [ "./scripts/rewrite-meta" ] --presets [ @babel/preset-env ] ]
-ESBUILD = node_modules/.bin/esbuild --bundle --target=firefox91
+ESBUILD = node_modules/.bin/esbuild --bundle --target=firefox91 --tree-shaking=true
 # Ensure sourcemaps are included for the bundles during development.
 ifeq ($(type),dev)
   BROWSERIFY += -d
@@ -180,20 +180,20 @@ ifeq ($(type),dev)
 endif
 
 ## Extension background/serviceworker script.
-BACKGROUND_JS = shared/js/background/background.js
 ifeq ($(type), dev)
   # Developer builds include the devbuilds module for debugging.
-  BACKGROUND_JS += shared/js/background/devbuild.js
+  ESBUILD += --define:DEBUG=true
   # Unless reloader=0 is passed, they also contain an auto-reload module.
   ifneq ($(reloader),0)
-  	BACKGROUND_JS += shared/js/background/devbuild-reloader.js
-  #  ESBUILD += --define:RELOADER=true
-  #else
-  #  ESBUILD += --define:RELOADER=false
+    ESBUILD += --define:RELOADER=true
+  else
+    ESBUILD += --define:RELOADER=false
   endif
+else
+  ESBUILD += --define:DEBUG=false
 endif
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
-	$(BROWSERIFY) $(BACKGROUND_JS) > $@
+	$(ESBUILD) shared/js/background/background.js > $@
 
 ## Locale resources for UI
 shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
