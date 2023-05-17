@@ -105,7 +105,7 @@ module.exports = {
             channels: {
                 live: 'https://staticcdn.duckduckgo.com/trackerblocking/v6/current/extension-tds.json',
                 next: 'https://staticcdn.duckduckgo.com/trackerblocking/v6/next/extension-tds.json',
-                beta: 'https://staticcdn.duckduckgo.com/trackerblocking/v6/beta/extension-tds.json'
+                beta: 'https://staticcdn.duckduckgo.com/trackerblocking/beta/extension-tds.json'
             }
         },
         {
