@@ -1,5 +1,3 @@
-const { t } = require('i18next')
-
 const Site = require('./classes/site').default
 const tdsStorage = require('./storage/tds').default
 
