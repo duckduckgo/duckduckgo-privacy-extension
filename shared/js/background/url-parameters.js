@@ -1,3 +1,5 @@
+const { t } = require('i18next')
+
 const Site = require('./classes/site').default
 const tdsStorage = require('./storage/tds').default
 
@@ -50,28 +52,17 @@ function stripTrackingParameters (url) {
     }
 
     // Remove tracking parameters
-    var searchString = url.search
-    for (const key of trackingParameters) {
-        const keyRegex = new RegExp(`[?&]${key}(=[^&]*)?(?=&|$)`)
-        while (keyRegex.test(searchString)) {
-            // Remove the parameter from the search string.
-            searchString = searchString.replace(keyRegex, '')
-
+    const params = url.search.slice(1).split('&')
+    var paramsToKeep = []
+    for (const param of params) {
+        if (trackingParameters.includes(param.split('=')[0])) {
             parametersRemoved = true
-        }
-    }
-    if (parametersRemoved) {
-        // Remove the leading '&' if necessary.
-        if (searchString[0] === '&') {
-            searchString = searchString.slice(1)
-        }
-        // Ensure that the search string starts with a '?'.
-        if (searchString.length > 0 && searchString[0] !== '?') {
-            searchString = `?${searchString}`
+            continue
         }
 
-        url.search = searchString
+        paramsToKeep.push(param)
     }
+    url.search = paramsToKeep.length > 0 ? '?' + paramsToKeep.join('&') : ''
 
     return parametersRemoved
 }
