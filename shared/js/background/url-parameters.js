@@ -52,9 +52,10 @@ function stripTrackingParameters (url) {
     // Remove tracking parameters
     var searchString = url.search
     for (const key of trackingParameters) {
-        if (searchString.includes(`${key}=`)) {
+        const keyRegex = new RegExp(`[?&]${key}(=[^&]*)?(?=&|$)`)
+        while (keyRegex.test(searchString)) {
             // Remove the parameter from the search string.
-            searchString = searchString.replace(new RegExp(`[?&]${key}=[^&]*`), '')
+            searchString = searchString.replace(keyRegex, '')
 
             parametersRemoved = true
         }
