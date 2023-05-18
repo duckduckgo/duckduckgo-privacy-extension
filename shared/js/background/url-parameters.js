@@ -3,20 +3,13 @@ const tdsStorage = require('./storage/tds').default
 
 /** @module */
 
-// Tracking parameters listed in the configuration are sometimes to be treated
-// as plain-text, but sometimes as regular expressions. The implementation guide
-// dictates that tracking parameter should be treated as plain-text unless they
-// contain one of the following characters: * + ? { } [ ]
-const regexpParameterTest = /[*+?{}[\]]/
-
 // Note: These lists of parameters would need to be stored in session storage if
 //       this code was used by MV3 builds of the extension.
 //       See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#state
-let plainTextTrackingParameters = null
-let regexpTrackingParameters = null
+let trackingParameters = null
 
 function ensureTrackingParametersConfig () {
-    if (plainTextTrackingParameters && regexpTrackingParameters) {
+    if (trackingParameters) {
         return true
     }
 
@@ -28,16 +21,7 @@ function ensureTrackingParametersConfig () {
         return false
     }
 
-    plainTextTrackingParameters = []
-    regexpTrackingParameters = []
-    for (const key of
-        tdsStorage.config.features.trackingParameters.settings.parameters) {
-        if (regexpParameterTest.test(key)) {
-            regexpTrackingParameters.push(new RegExp(key))
-        } else {
-            plainTextTrackingParameters.push(key)
-        }
-    }
+    trackingParameters = tdsStorage.config.features.trackingParameters.settings.parameters
 
     return true
 }
@@ -65,33 +49,27 @@ function stripTrackingParameters (url) {
         return parametersRemoved
     }
 
-    // Remove any plain-text tracking parameters first, since they are cheaper
-    // to remove.
-    for (const key of plainTextTrackingParameters) {
-        if (url.searchParams.has(key)) {
-            url.searchParams.delete(key)
+    // Remove tracking parameters
+    var searchString = url.search
+    for (const key of trackingParameters) {
+        if (searchString.includes(`${key}=`)) {
+            // Remove the parameter from the search string.
+            searchString = searchString.replace(new RegExp(`[?&]${key}=[^&]*`), '')
+            
             parametersRemoved = true
         }
     }
-
-    // No parameters left, nothing further to remove.
-    if (url.search.length <= 1) {
-        return parametersRemoved
-    }
-
-    // Remove any regular expression tracking parameters.
-    // Note: This is potentially slow, in the future it might be worth
-    //       optimising. For example, perhaps the minimum match lengths could
-    //       be stored with the regular expression tracking parameters. That
-    //       way, shorter keys could be skipped cheaply.
-    for (const key of Array.from(url.searchParams.keys())) {
-        for (const regexp of regexpTrackingParameters) {
-            if (regexp.test(key)) {
-                url.searchParams.delete(key)
-                parametersRemoved = true
-                break
-            }
+    if (parametersRemoved) {
+        // Remove the leading '&' if necessary.
+        if (searchString[0] === '&') {
+            searchString = searchString.slice(1)
         }
+        // Ensure that the search string starts with a '?'.
+        if (searchString.length > 0 && searchString[0] !== '?') {
+            searchString = `?${searchString}`
+        }
+
+        url.search = searchString
     }
 
     return parametersRemoved
@@ -128,8 +106,7 @@ function trackingParametersStrippingEnabled (site, initiatorUrl) {
 }
 
 tdsStorage.onUpdate('config', () => {
-    plainTextTrackingParameters = null
-    regexpTrackingParameters = null
+    trackingParameters = null
 })
 
 module.exports = {
