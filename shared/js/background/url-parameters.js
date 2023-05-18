@@ -55,7 +55,7 @@ function stripTrackingParameters (url) {
         if (searchString.includes(`${key}=`)) {
             // Remove the parameter from the search string.
             searchString = searchString.replace(new RegExp(`[?&]${key}=[^&]*`), '')
-            
+
             parametersRemoved = true
         }
     }
