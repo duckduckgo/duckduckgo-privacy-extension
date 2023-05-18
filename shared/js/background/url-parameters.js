@@ -1,3 +1,4 @@
+const Tab = require('./classes/tab').default
 const Site = require('./classes/site').default
 const tdsStorage = require('./storage/tds').default
 
@@ -100,17 +101,23 @@ function stripTrackingParameters (url) {
 /**
  * Returns true if the 'trackingParameters' feature is active for the given site
  * and initiator URL.
- * @param {Site} site
+ * @param {Tab} tab
  *   The Site Object for the request URL in question.
  * @param {string} [initiatorUrl]
  *   The initiator URL of the request (if any).
  * @returns {boolean}
  *   True if the 'trackingParameters' feature is active, false otherwise.
  */
-function trackingParametersStrippingEnabled (site, initiatorUrl) {
+function trackingParametersStrippingEnabled (tab, initiatorUrl) {
     // Only strip tracking parameters if the feature is enabled for the
     // request URL (URL that the user is navigating to).
+    const site = tab.site
     if (site.specialDomainName || !site.isFeatureEnabled('trackingParameters')) {
+        return false
+    }
+
+    // Don't apply tracking parameter stripping to ad click attribution flow.
+    if (tab.adClick) {
         return false
     }
 

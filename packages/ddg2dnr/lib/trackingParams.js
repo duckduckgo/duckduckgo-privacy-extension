@@ -3,7 +3,7 @@ const {
     generateDNRRule
 } = require('./utils')
 
-const TRACKING_PARAM_PRIORITY = 40000
+const TRACKING_PARAM_PRIORITY = 35000
 
 function generateTrackingParameterRules (config) {
     if (config.features?.trackingParameters?.state !== 'enabled') {
