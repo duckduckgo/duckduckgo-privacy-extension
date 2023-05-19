@@ -49,10 +49,10 @@ function stripTrackingParameters (url) {
     // Note: We can't use url.searchParams here because adding/removing parameters
     //            with URLSearchParams adjusts the encoding of the other parameters.
     //            See https://url.spec.whatwg.org/#urlsearchparams
-    // 
+    //
     // percent encoded parameters.
     const params = url.search.slice(1).split('&')
-    let paramsToKeep = []
+    const paramsToKeep = []
     for (const param of params) {
         if (trackingParameters.has(param.split('=')[0])) {
             parametersRemoved = true
