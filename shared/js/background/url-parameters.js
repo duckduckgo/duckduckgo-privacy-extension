@@ -46,7 +46,10 @@ function stripTrackingParameters (url) {
     }
 
     // Remove tracking parameters
-    // Note: We can't use URLSearchParams here because of issues with
+    // Note: We can't use url.searchParams here because adding/removing parameters
+    //            with URLSearchParams adjusts the encoding of the other parameters.
+    //            See https://url.spec.whatwg.org/#urlsearchparams
+    // 
     // percent encoded parameters.
     const params = url.search.slice(1).split('&')
     let paramsToKeep = []
