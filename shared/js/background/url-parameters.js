@@ -13,15 +13,11 @@ function ensureTrackingParametersConfig () {
         return true
     }
 
-    if (!tdsStorage.config ||
-        !tdsStorage.config.features ||
-        !tdsStorage.config.features.trackingParameters ||
-        !tdsStorage.config.features.trackingParameters.settings ||
-        !tdsStorage.config.features.trackingParameters.settings.parameters) {
+    if (!tdsStorage?.config?.features?.trackingParameters?.settings?.parameters) {
         return false
     }
 
-    trackingParameters = tdsStorage.config.features.trackingParameters.settings.parameters
+    trackingParameters = new Set(tdsStorage.config.features.trackingParameters.settings.parameters)
 
     return true
 }
@@ -50,17 +46,19 @@ function stripTrackingParameters (url) {
     }
 
     // Remove tracking parameters
+    // Note: We can't use URLSearchParams here because of issues with
+    // percent encoded parameters.
     const params = url.search.slice(1).split('&')
-    var paramsToKeep = []
+    let paramsToKeep = []
     for (const param of params) {
-        if (trackingParameters.includes(param.split('=')[0])) {
+        if (trackingParameters.has(param.split('=')[0])) {
             parametersRemoved = true
             continue
         }
 
         paramsToKeep.push(param)
     }
-    url.search = paramsToKeep.length > 0 ? '?' + paramsToKeep.join('&') : ''
+    url.search = paramsToKeep.length === 0 ? '' : '?' + paramsToKeep.join('&')
 
     return parametersRemoved
 }
