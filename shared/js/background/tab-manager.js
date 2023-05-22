@@ -122,12 +122,15 @@ class TabManager {
     async setList (data) {
         this.setGlobalAllowlist(data.list, data.domain, data.value)
 
-        for (const tabId in this.tabContainer) {
-            const tab = this.tabContainer[tabId]
-            if (tab.site && tab.site.domain === data.domain) {
+        // collect all tabs (both normal and SW) tracked by this object
+        const allTabs = [...Object.keys(this.tabContainer).map(tabId => this.tabContainer[tabId]),
+            ...Object.keys(this.swContainer).map(origin => this.swContainer[origin])]
+        // propegate the list change to all tabs with the same site
+        allTabs
+            .filter(tab => tab.site && tab.site.domain === data.domain)
+            .forEach((tab) => {
                 tab.site.setListValue(data.list, data.value)
-            }
-        }
+            })
 
         // Ensure that user allowlisting/denylisting is honoured for manifest v3
         // builds of the extension, by adding/removing the necessary

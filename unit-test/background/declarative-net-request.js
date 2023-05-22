@@ -696,18 +696,20 @@ describe('declarativeNetRequest', () => {
             id: ruleId,
             priority: rulePriority,
             action: { type: 'allow' },
-            condition: { tabIds: [-1], initiatorDomains: ['example.com'] }
+            condition: { tabIds: [-1], initiatorDomains: ['example.com', 'google.com', 'suntrust.com'] }
         }
+        const tempUnprotected = config.unprotectedTemporary
 
         // The rule won't exist initially.
         expect(updateSessionRulesObserver.calls.count()).toEqual(0)
         expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
 
-        // if there are no serviceworker exceptions, no rule should be created
+        // if there are no serviceworker exceptions, or unprotected sites, no rule should be created
         config.features.serviceworkerInitiatedRequests = {
             state: 'enabled',
             exceptions: []
         }
+        config.unprotectedTemporary = []
         await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(1)
         expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
@@ -718,6 +720,7 @@ describe('declarativeNetRequest', () => {
             state: 'disabled',
             exceptions: [{ domain: 'example.com', reason: '' }]
         }
+        config.unprotectedTemporary = tempUnprotected
         await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(2)
         expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
@@ -741,9 +744,12 @@ describe('declarativeNetRequest', () => {
         // If enabled and there are no domain exceptions, the rule should be
         // removed.
         config.features.serviceworkerInitiatedRequests.exceptions = []
+        config.unprotectedTemporary = []
         await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(5)
         expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
+
+        config.unprotectedTemporary = tempUnprotected
     })
 
     it('getMatchDetails', async () => {

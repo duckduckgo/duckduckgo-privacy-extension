@@ -29,9 +29,10 @@ export async function ensureServiceWorkerInitiatedRequestExceptions (config) {
             actionType: 'allow',
             tabIds: [-1]
         }))
-    } else if (config.features.serviceworkerInitiatedRequests?.exceptions?.length) {
+    } else if (config.features.serviceworkerInitiatedRequests?.exceptions?.length > 0 || config.unprotectedTemporary?.length > 0) {
         // ServiceWorker initiated request blocking is disabled for some domains.
-        const exceptionDomains = config.features.serviceworkerInitiatedRequests.exceptions.map(entry => entry.domain)
+        const exceptionDomains = (config.features.serviceworkerInitiatedRequests?.exceptions || []).concat(config.unprotectedTemporary || [])
+            .map(entry => entry.domain)
         addRules.push(generateDNRRule({
             id: SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
             priority: SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
