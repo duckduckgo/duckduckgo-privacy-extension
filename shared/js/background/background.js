@@ -16,6 +16,7 @@
 /* global DEBUG, RELOADER, BUILD_TARGET */
 
 import { onStartup } from './startup'
+import FireButton from './features/fire-button'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
@@ -31,6 +32,9 @@ settings.ready().then(() => {
     onStartup()
 })
 
+const features = [
+    new FireButton()
+]
 // Optional features controlled by build flags.
 // If these flags are set to false, the whole function is tree-shaked from the build.
 DEBUG && initDebugBuild()
