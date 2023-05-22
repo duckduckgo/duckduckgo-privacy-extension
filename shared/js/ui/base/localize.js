@@ -1,15 +1,7 @@
 import i18next from 'i18next'
 import ICU from 'i18next-icu'
 import { getUserLocale } from '../../background/i18n'
-
-const localeResources = require('../../../locales/*/*.json', { mode: 'list' })
-
-const resources = localeResources.reduce((mapping, { name, module }) => {
-    const [locale, namespace] = name.split('/')
-    mapping[locale] = mapping[locale] || {}
-    mapping[locale][namespace] = module
-    return mapping
-}, {})
+import resources from './locale-resources'
 
 i18next
     .use(ICU)
