@@ -15,6 +15,7 @@
  */
 
 import { onStartup } from './startup'
+import FireButton from './features/fire-button'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events')
@@ -25,3 +26,7 @@ require('./script-injection')
 settings.ready().then(() => {
     onStartup()
 })
+
+const features = [
+    new FireButton()
+]
