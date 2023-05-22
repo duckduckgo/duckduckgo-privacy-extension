@@ -86,6 +86,9 @@
         "<all_urls>",
         "alarms"
     ],
+    "optional_permissions": [
+        "browsingData"
+    ],
     "web_accessible_resources": [
         "/web_accessible_resources/*",
         "/img/logo-small.svg",
