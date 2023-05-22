@@ -4,7 +4,10 @@ const browserInfo = parseUserAgentString()
 const trackerBlockingEndpointBase = 'https://staticcdn.duckduckgo.com/trackerblocking'
 
 function isMV3 () {
-    return chrome?.runtime.getManifest().manifest_version === 3
+    if (typeof chrome !== 'undefined') {
+        return chrome?.runtime.getManifest().manifest_version === 3
+    }
+    return false
 }
 
 function getConfigFileName () {
