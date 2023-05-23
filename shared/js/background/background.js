@@ -16,6 +16,7 @@
 
 import { onStartup } from './startup'
 import FireButton from './features/fire-button'
+import { getBrowserName } from './utils'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events')
@@ -27,6 +28,8 @@ settings.ready().then(() => {
     onStartup()
 })
 
-const features = [
-    new FireButton()
-]
+const features = []
+
+if (getBrowserName() !== 'moz') {
+    features.push(new FireButton())
+}

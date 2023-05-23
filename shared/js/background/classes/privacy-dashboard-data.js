@@ -62,7 +62,10 @@ export function dashboardDataFromTab (tab, userData) {
         requestData: {
             requests
         },
-        emailProtectionUserData
+        emailProtectionUserData,
+        fireButton: {
+            enabled: true
+        }
     }
 }
 
