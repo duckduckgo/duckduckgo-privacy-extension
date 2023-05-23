@@ -435,7 +435,10 @@ export function registerMessageHandler (name, func) {
 }
 
 /**
- * Default set of message handler functions used by the background message handler
+ * Default set of message handler functions used by the background message handler.
+ *
+ * Don't add new listeners to this list, instead import and call registerMessageHandler in your
+ * feature's initialization code!
  */
 const messageHandlers = {
     registeredContentScript,
