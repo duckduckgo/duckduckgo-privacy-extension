@@ -16,16 +16,16 @@ export default class FireButton {
     /**
      * @returns {Promise<boolean>}
      */
-    async burn () {
+    async burn (options) {
         const config = {
             closeTabs: true,
             clearHistory: true,
-            newTabPage: 'https://duckduckgo.com/chrome_newtab',
+            newTabUrl: 'https://duckduckgo.com/chrome_newtab',
             since: Date.now() - (3600 * 1000)
         }
-        console.log('🔥', config)
+        console.log('🔥', config, options)
         if (config.closeTabs) {
-            await this.closeAllTabs(config.newTabPage)
+            await this.closeAllTabs(config.newTabUrl)
         }
         // 1/ Clear downloads and history
         const clearCache = browser.browsingData.remove({
