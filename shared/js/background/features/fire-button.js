@@ -17,15 +17,15 @@ export default class FireButton {
      * @returns {Promise<boolean>}
      */
     async burn (options) {
-        const config = {
-            closeTabs: true,
+        const config = Object.assign({
+            closeTabs: false,
             clearHistory: true,
-            newTabUrl: 'https://duckduckgo.com/chrome_newtab',
-            since: Date.now() - (3600 * 1000)
-        }
-        console.log('🔥', config, options)
+            since: undefined
+        }, options)
+
+        console.log('🔥', config)
         if (config.closeTabs) {
-            await this.closeAllTabs(config.newTabUrl)
+            await this.closeAllTabs()
         }
         // 1/ Clear downloads and history
         const clearCache = browser.browsingData.remove({
@@ -65,7 +65,7 @@ export default class FireButton {
         }
     }
 
-    async closeAllTabs (newTabUrl) {
+    async closeAllTabs () {
         // gather all non-pinned tabs
         const openTabs = await browser.tabs.query({
             pinned: false
@@ -73,8 +73,7 @@ export default class FireButton {
         const removeTabIds = openTabs.map(t => t.id || 0)
         // create a new tab which will be open after the burn
         await browser.tabs.create({
-            active: true,
-            url: newTabUrl
+            active: true
         })
         // remove the rest of the open tabs
         await browser.tabs.remove(removeTabIds)
