@@ -84,7 +84,8 @@
         "tabs",
         "storage",
         "<all_urls>",
-        "alarms"
+        "alarms",
+        "cookies"
     ],
     "optional_permissions": [
         "browsingData"

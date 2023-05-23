@@ -15,7 +15,7 @@ import { getUserLocale } from '../i18n'
  * @param {EmailProtectionUserData | undefined | {}} userData
  * @returns {ExtensionGetPrivacyDashboardData}
  */
-export function dashboardDataFromTab (tab, userData) {
+export function dashboardDataFromTab (tab, userData, fireButtonData) {
     const protectionsEnabled = !tab.site.allowlisted && !tab.site.isBroken && tab.site.enabledFeatures.includes('contentBlocking')
 
     // parent entity, if available
@@ -63,9 +63,7 @@ export function dashboardDataFromTab (tab, userData) {
             requests
         },
         emailProtectionUserData,
-        fireButton: {
-            enabled: true
-        }
+        fireButton: fireButtonData
     }
 }
 
