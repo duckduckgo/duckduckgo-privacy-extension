@@ -136,7 +136,18 @@ export async function getPrivacyDashboardData (options) {
     const tab = await getTab(tabId)
     if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
-    return dashboardDataFromTab(tab, userData)
+    const fireButtonData = {
+        enabled: true,
+        clearStats: {
+            tabs: (await browser.tabs.query({ pinned: false })).length,
+            cookies: (await browser.cookies.getAll({})).reduce((sites, curr) => {
+                sites.add(curr.domain)
+                return sites
+            }, new Set()).size
+        }
+    }
+    console.log('xxx', fireButtonData)
+    return dashboardDataFromTab(tab, userData, fireButtonData)
 }
 
 export function getTopBlockedByPages (options) {
