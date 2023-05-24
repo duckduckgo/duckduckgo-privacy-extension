@@ -421,3 +421,64 @@ export async function isClickToLoadYoutubeEnabled () {
         tdsStorage?.config?.features?.clickToLoad?.settings?.Youtube?.state === 'enabled'
     )
 }
+
+/**
+ * Add a new message handler.
+ * @param {string} name
+ * @param {(options: any, sender: any, req: any) => any} func
+ */
+export function registerMessageHandler (name, func) {
+    if (messageHandlers[name]) {
+        throw new Error(`Attempt to re-register existing message handler ${name}`)
+    }
+    messageHandlers[name] = func
+}
+
+/**
+ * Default set of message handler functions used by the background message handler.
+ *
+ * Don't add new listeners to this list, instead import and call registerMessageHandler in your
+ * feature's initialization code!
+ */
+const messageHandlers = {
+    registeredContentScript,
+    resetTrackersData,
+    getExtensionVersion,
+    setList,
+    setLists,
+    allowlistOptIn,
+    getBrowser,
+    openOptions,
+    submitBrokenSiteReport,
+    getTab,
+    getPrivacyDashboardData,
+    getTopBlockedByPages,
+    getClickToLoadState,
+    getYouTubeVideoDetails,
+    getCurrentTab,
+    unblockClickToLoadContent,
+    updateYouTubeCTLAddedFlag,
+    setYoutubePreviewsEnabled,
+    updateSetting,
+    getSetting,
+    getAddresses,
+    sendJSPixel,
+    getAlias,
+    refreshAlias,
+    getTopBlocked,
+    getEmailProtectionCapabilities,
+    getIncontextSignupDismissedAt,
+    setIncontextSignupPermanentlyDismissedAt,
+    getUserData,
+    addUserData,
+    removeUserData,
+    logout,
+    getListContents,
+    setListContents,
+    reloadList,
+    debuggerMessage,
+    search,
+    openShareFeedbackPage,
+    isClickToLoadYoutubeEnabled
+}
+export default messageHandlers
