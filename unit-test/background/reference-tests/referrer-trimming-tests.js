@@ -91,7 +91,12 @@ for (const setName of Object.keys(testSets)) {
                     const tab = tabManager.get({ tabId: 1 })
 
                     const FakeDocument = function () {}
-                    FakeDocument.prototype.referrer = test.referrerValue
+                    Object.defineProperty(FakeDocument.prototype, 'referrer', {
+                        get: () => test.referrerValue,
+                        configurable: true,
+                        enumerable: true,
+                        writeable: true
+                    })
                     FakeDocument.prototype.location = {
                         url: test.frameURL || test.siteURL
                     }
