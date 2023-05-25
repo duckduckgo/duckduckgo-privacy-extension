@@ -36,7 +36,7 @@ settings.ready().then(() => {
 const features = []
 
 if (getBrowserName() !== 'moz') {
-    features.push(new FireButton())
+    features.push(new FireButton({ settings }))
 }
 
 // Optional features controlled by build flags.

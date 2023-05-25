@@ -48,5 +48,38 @@ module.exports = function () {
             </p>
         </li>
     </ul>
+    <ul class="default-list">
+        <li>
+            <h2 class="menu-title">
+                Fire Button
+            </h2>
+            <p class="menu-paragraph">
+                DuckDuckGo will remove all traces of your browsing history, clear all login data and remove locally stored caches. These data will be removed based on the time period you select when you choose to clear.
+            </p>
+
+        </li>
+        <li>
+            Clear all browsing history
+            ${toggleButton(this.model.fireButtonHistoryEnabled,
+        'js-options-firebutton-history-enabled',
+        'fireButtonHistoryEnabled')}
+        </li>
+        <li>
+            <p class="menu-paragraph">
+            DuckDuckGo will remove all traces of your browsing history.
+            </p>
+        </li>
+        <li>
+        Enable tab/window closure
+            ${toggleButton(this.model.fireButtonTabClearEnabled,
+        'js-options-firebutton-tabclear-enabled',
+        'fireButtonTabClearEnabled')}
+        </li>
+        <li>
+            <p class="menu-paragraph">
+            When using the Fire Button, DuckDuckGo can also close your tabs and/or windows so you start fresh next time you open your browser.
+            </p>
+        </li>
+    </ul>
 </section>`
 }
