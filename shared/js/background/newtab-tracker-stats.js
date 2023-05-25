@@ -55,7 +55,15 @@ export class NewTabTrackerStats {
     ports = []
 
     /**
-     * @param {import('./classes/tracker-stats').TrackerStats} stats
+     * @param {{
+     *     increment(key: string, now?: number): void;
+     *     evictExpired(now?: number): void;
+     *     totalCount: number;
+     *     sorted(now?: number): {key: string, count: number}[];
+     *     deserialize(data: any): void;
+     *     serialize(): any;
+     *     clear(): any;
+     * }} stats - the interface for the stats data.
      */
     constructor (stats) {
         this.stats = stats
@@ -102,10 +110,10 @@ export class NewTabTrackerStats {
 
         /**
          * Register an alarm and handle when it fires.
-         * For now, we're pruning data every 5 min
+         * For now, we're pruning data every 10 min
          */
         const pruneAlarmName = 'pruneNewTabData'
-        browserWrapper.createAlarm(pruneAlarmName, { periodInMinutes: 5 })
+        browserWrapper.createAlarm(pruneAlarmName, { periodInMinutes: 10 })
         browser.alarms.onAlarm.addListener(async alarmEvent => {
             if (alarmEvent.name === pruneAlarmName) {
                 this._handlePruneAlarm()
@@ -284,7 +292,7 @@ export class NewTabTrackerStats {
      * @param {number} [now] - optional timestamp to use in comparisons
      */
     _handlePruneAlarm (now = Date.now()) {
-        this.stats.evictExpired()
+        this.stats.evictExpired(now)
         this.syncToStorage()
         this.sendToNewTab('following a evictExpired alarm')
     }
@@ -295,33 +303,18 @@ export class NewTabTrackerStats {
      * First, we group & sort the data, and then we increase the count of "Other" to account
      * for overflows or for trackers where the owner was not in the top 100 list
      *
-     * @param {number} maxCount
      * @param {number} [now] - optional timestamp to use in comparisons
      * @returns {import('zod').infer<typeof import('../newtab/schema').dataFormatSchema>}
      */
-    toDisplayData (maxCount = 10, now = Date.now()) {
+    toDisplayData (now = Date.now()) {
         // access the entries once they are sorted and grouped
-        const stats = this.stats.sorted(maxCount, now)
+        const stats = this.stats.sorted(now)
+        const index = stats.findIndex(result => result.key === NewTabTrackerStats.otherCompaniesKey)
 
-        // is there an entry for 'otherCompaniesKey'? (meaning an entry where the company name was skipped)
-        const index = stats.results.findIndex(result => result.key === NewTabTrackerStats.otherCompaniesKey)
-
-        // if there is an entry, add the 'overflow' count and move it to the end of the list
+        // ensure 'other' is pushed to the end of the list
         if (index > -1) {
-            const element = stats.results[index]
-            if (stats.overflow) {
-                element.count += stats.overflow
-            }
-            const spliced = stats.results.splice(index, 1)
-            stats.results.push(...spliced)
-        } else {
-            // if we get here, there was no entry for `otherCompaniesKey`, so we need to add one to cover the overflow
-            if (stats.overflow) {
-                stats.results.push({
-                    key: NewTabTrackerStats.otherCompaniesKey,
-                    count: stats.overflow
-                })
-            }
+            const spliced = stats.splice(index, 1)
+            stats.push(...spliced)
         }
 
         // now produce the data in the shape consumers require for rendering their UI
@@ -330,7 +323,7 @@ export class NewTabTrackerStats {
             totalCount: this.stats.totalCount,
             totalPeriod: 'install-time',
             trackerCompaniesPeriod: 'last-hour',
-            trackerCompanies: stats.results.map(item => {
+            trackerCompanies: stats.map(item => {
                 // convert our known key into the 'Other'
                 const displayName = item.key === NewTabTrackerStats.otherCompaniesKey
                     ? 'Other'
