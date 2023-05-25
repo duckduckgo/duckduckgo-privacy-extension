@@ -11,9 +11,23 @@ import { getCurrentTab } from '../utils'
  */
 
 export default class FireButton {
-    constructor () {
+    /**
+     * @param {{
+     *  settings: { getSetting(name: string): boolean }
+     * }}
+     */
+    constructor ({ settings }) {
+        this.settings = settings
         registerMessageHandler('doBurn', this.burn.bind(this))
         registerMessageHandler('getBurnOptions', this.getBurnOptions.bind(this))
+    }
+
+    getDefaultSettings () {
+        return {
+            closeTabs: this.settings.getSetting('fireButtonTabClearEnabled'),
+            clearHistory: this.settings.getSetting('fireButtonHistoryEnabled'),
+            since: undefined
+        }
     }
 
     /**
@@ -22,11 +36,7 @@ export default class FireButton {
      */
     async burn (options) {
         /** @type {BurnConfig} config */
-        const config = Object.assign({
-            closeTabs: true,
-            clearHistory: true,
-            since: undefined
-        }, options)
+        const config = Object.assign(this.getDefaultSettings(), options)
 
         console.log('🔥', config)
         if (config.closeTabs) {
@@ -182,6 +192,17 @@ export default class FireButton {
                 history: 'all',
                 openTabs,
                 cookies
+            }
+        })
+
+        // Apply defaults for history and tab clearing
+        const { closeTabs, clearHistory } = this.getDefaultSettings()
+        options.forEach((opt) => {
+            if (!closeTabs) {
+                opt.descriptionStats.openTabs = undefined
+            }
+            if (!clearHistory) {
+                opt.descriptionStats.history = undefined
             }
         })
 
