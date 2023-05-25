@@ -55,7 +55,7 @@
         "jasmine-core": "3.5.0",
         "jsdom": "^21.1.1",
         "karma": "6.4.2",
-        "karma-chrome-launcher": "3.1.1",
+        "karma-chrome-launcher": "3.2.0",
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
         "load-grunt-tasks": "5.1.0",
