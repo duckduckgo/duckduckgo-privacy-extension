@@ -137,16 +137,8 @@ export async function getPrivacyDashboardData (options) {
     if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
     const fireButtonData = {
-        enabled: true,
-        clearStats: {
-            tabs: (await browser.tabs.query({ pinned: false })).length,
-            cookies: (await browser.cookies.getAll({})).reduce((sites, curr) => {
-                sites.add(curr.domain)
-                return sites
-            }, new Set()).size
-        }
+        enabled: true
     }
-    console.log('xxx', fireButtonData)
     return dashboardDataFromTab(tab, userData, fireButtonData)
 }
 
