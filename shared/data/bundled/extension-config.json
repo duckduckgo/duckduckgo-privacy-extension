@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1684763820272,
+    "version": 1684920414877,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -4306,6 +4306,18 @@
                             }
                         ]
                     },
+                    "impervadns.net": {
+                        "rules": [
+                            {
+                                "rule": "e9pkvlf.impervadns.net",
+                                "domains": [
+                                    "cox.com",
+                                    "cox.net"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/948"
+                            }
+                        ]
+                    },
                     "inq.com": {
                         "rules": [
                             {
@@ -5361,6 +5373,32 @@
                                     "thetrainline.com"
                                 ],
                                 "reason": "CNAME ENTRY GENERATED FROM: datadome.co"
+                            }
+                        ]
+                    },
+                    "cox.com": {
+                        "rules": [
+                            {
+                                "rule": "webcdn.cox.com",
+                                "domains": [
+                                    "cox.com",
+                                    "cox.net"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: e9pkvlf.impervadns.net"
+                            },
+                            {
+                                "rule": "smetrics.cox.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
+                            },
+                            {
+                                "rule": "target.cox.com",
+                                "domains": [
+                                    "pizzahut.com"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
                             }
                         ]
                     },
@@ -8907,24 +8945,6 @@
                         "rules": [
                             {
                                 "rule": "smetrics.countryfinancial.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            }
-                        ]
-                    },
-                    "cox.com": {
-                        "rules": [
-                            {
-                                "rule": "smetrics.cox.com",
-                                "domains": [
-                                    "pizzahut.com"
-                                ],
-                                "reason": "CNAME ENTRY GENERATED FROM: omtrdc.net"
-                            },
-                            {
-                                "rule": "target.cox.com",
                                 "domains": [
                                     "pizzahut.com"
                                 ],
@@ -13545,7 +13565,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "d57a73e163f1e84a5476c9f9858846a4"
+            "hash": "7de483968b14d042bc25e3a543fa8a31"
         },
         "trackingCookies1p": {
             "settings": {
