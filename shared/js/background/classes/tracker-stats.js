@@ -163,9 +163,7 @@ export class TrackerStats {
 
         // if any errors occur, bail and don't use this data at all (essentially starting a fresh)
         if (!result.success) {
-            console.log(params)
             console.warn('could not accept the incoming data because of schema errors', result.error.errors.length)
-            console.warn('could not accept the incoming data because of schema errors', result.error.errors)
         } else {
             // but if we get here, we can use the data internally, we 'trust' it at this point.
             this.totalCount = result.data.totalCount
@@ -186,7 +184,7 @@ export class TrackerStats {
      * Produce a JSON-compatible object that can be stored in `chrome.storage.local`
      * NewTabTrackerStats will call this when it's time to save the data
      *
-     * @return {{current: Pack, totalCount: number, packs: Pack[]}}
+     * @return {{current: Pack, totalCount: number, packs: Pack[], entries: null}}
      */
     serialize () {
         const output = {
@@ -195,7 +193,13 @@ export class TrackerStats {
                 ...this.current,
                 entries: Object.fromEntries(this.current.entries)
             },
-            packs: this.packs
+            packs: this.packs,
+            /**
+             * This was the key used in the first implementation. To avoid
+             * confusion with the different data types we are no longer using this key name.
+             * To ensure no lingering data, setting this to `null` deletes any unused data
+             */
+            entries: null,
         }
         return output
     }
