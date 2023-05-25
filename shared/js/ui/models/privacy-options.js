@@ -7,6 +7,8 @@ function PrivacyOptions (attrs) {
     attrs.GPC = false
     attrs.youtubeClickToLoadEnabled = false
     attrs.youtubePreviewsEnabled = false
+    attrs.fireButtonHistoryEnabled = true
+    attrs.fireButtonTabClearEnabled = true
 
     Parent.call(this, attrs)
 }
@@ -36,6 +38,8 @@ PrivacyOptions.prototype = window.$.extend({},
             this.GPC = settings.GPC
             this.youtubeClickToLoadEnabled = youtubeClickToLoadEnabled
             this.youtubePreviewsEnabled = settings.youtubePreviewsEnabled
+            this.fireButtonHistoryEnabled = settings.fireButtonHistoryEnabled
+            this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled
         }
     }
 )
