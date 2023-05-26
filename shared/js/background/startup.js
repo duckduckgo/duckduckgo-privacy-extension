@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 import { NewTabTrackerStats } from './newtab-tracker-stats'
-import { TrackerStats } from './classes/tracker-stats'
+import { TrackerStats } from './classes/tracker-stats.js'
 import httpsStorage from './storage/https'
 import tdsStorage from './storage/tds'
 const utils = require('./utils')
@@ -56,6 +56,12 @@ export async function onStartup () {
 
             // now setup extension listeners
             newTabTrackerStats.register()
+
+            // install debugging tools in devMode
+            const devMode = (await browserWrapper.getFromSessionStorage('dev')) || false
+            if (devMode) {
+                require('./newtab-tracker-stats-debug.js').installDebug(newTabTrackerStats, trackerStats)
+            }
         } catch (e) {
             console.warn('an error occurred setting up TrackerStats', e)
         }

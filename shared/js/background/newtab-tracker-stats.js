@@ -55,15 +55,7 @@ export class NewTabTrackerStats {
     ports = []
 
     /**
-     * @param {{
-     *     increment(key: string, now?: number): void;
-     *     evictExpired(now?: number): void;
-     *     totalCount: number;
-     *     sorted(now?: number): {key: string, count: number}[];
-     *     deserialize(data: any): void;
-     *     serialize(): any;
-     *     clear(): any;
-     * }} stats - the interface for the stats data.
+     * @param {import("../background/classes/tracker-stats").TrackerStats} stats - the interface for the stats data.
      */
     constructor (stats) {
         this.stats = stats

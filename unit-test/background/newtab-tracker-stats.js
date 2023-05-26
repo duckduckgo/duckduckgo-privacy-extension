@@ -157,7 +157,8 @@ describe('sending data', () => {
                         }
                     },
                     packs: [],
-                    totalCount: 6
+                    totalCount: 6,
+                    entries: null
                 }
             }
         })

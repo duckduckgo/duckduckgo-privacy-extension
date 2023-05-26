@@ -1,4 +1,4 @@
-import { TrackerStats } from '../../../shared/js/background/classes/tracker-stats'
+import { TrackerStats } from '../../../shared/js/background/classes/tracker-stats.js'
 
 const SEC = 1000
 const MIN = SEC * 60
@@ -64,6 +64,41 @@ describe('TrackerStats alternative storage implementation', () => {
         expect(ts.packs.length)
             .withContext('should have 2 packs because both times were outside the time window')
             .toEqual(2)
+    })
+
+    it('handles clock adjustments for current', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+
+        // eg : 8:00
+        ts.increment('a', now)
+        ts.increment('a', now - MIN)
+
+        expect(ts.current.entries.size)
+            .withContext('the first current entry should have been cleared as a safety measure')
+            .toEqual(1)
+
+        expect(ts.totalCount)
+            .withContext('total count should still contain both entries')
+            .toEqual(2)
+    })
+
+    it('handles clock adjustments for packing', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+
+        // eg : 8:00
+        ts.increment('a', now)
+        ts.pack(now - MIN) // pack at 7:59, should be ignored for packing
+        ts.pack(now + HOUR + MIN) // at 9:01, should be accepted
+
+        expect(ts.current.entries.size)
+            .withContext('the first current entry should have been cleared as a safety measure')
+            .toEqual(0)
+
+        expect(ts.packs.length)
+            .withContext('should have 1 pack because the first pack was ignored')
+            .toEqual(1)
     })
 
     it('Produces data from current only', () => {

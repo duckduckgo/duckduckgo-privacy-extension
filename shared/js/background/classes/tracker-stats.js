@@ -45,9 +45,21 @@ export class TrackerStats {
      */
     increment (key, now = Date.now()) {
         this.totalCount += 1
+
+        // if current is empty, start it
         if (this.current.start === 0) {
             this.current.start = now
+        } else {
+            // if 'now' was *less* than the previous start time
+            // it means the user could have changed their system clock
+            // so we just should clear any current values to be sure
+            // and re-set the start time
+            if (now < this.current.start) {
+                this.clearCurrent()
+                this.current.start = now
+            }
         }
+
         const count = this.current.entries.get(key) ?? 0
         this.current.entries.set(key, count + 1)
     }
@@ -57,14 +69,15 @@ export class TrackerStats {
      * @param {number} [now] optional timestamp to use as the current time
      */
     pack (now = Date.now()) {
-        const currentIsOverAnHourOld = (now - this.current.start) >= HOUR
-        const currentIsOverADayOld = (now - this.current.start) >= DAY
+        const delta = now - this.current.start
+        const currentIsUnsetOrOverAnHourOld = this.current.start === 0 || (delta) >= HOUR
+        const currentIsUnsetOrOverADayOld = this.current.start === 0 || (delta) >= DAY
 
         // if current is over a day old, just clear it
-        if (currentIsOverADayOld) {
+        if (currentIsUnsetOrOverADayOld) {
             // clear current
             this.clearCurrent()
-        } else if (currentIsOverAnHourOld && this.current.entries.size > 0) {
+        } else if (currentIsUnsetOrOverAnHourOld && this.current.entries.size > 0) {
             // when 'current' is over an hour old, pack it
             /** @type {Pack} */
             const next = {
@@ -81,8 +94,8 @@ export class TrackerStats {
             // but instead we allow it to keep collecting data
         }
 
-        // prune expired packs and ensure this.totalCount is accurate
-        this.packs = this.packs.filter(pack => {
+        // prune expired packs, only accepting the last 23 to account for clock drift/adjustments
+        this.packs = this.packs.slice(-23).filter(pack => {
             const packIsYoungerThanADay = (now - pack.end) <= DAY
             return packIsYoungerThanADay
         })
@@ -199,7 +212,7 @@ export class TrackerStats {
              * confusion with the different data types we are no longer using this key name.
              * To ensure no lingering data, setting this to `null` deletes any unused data
              */
-            entries: null,
+            entries: null
         }
         return output
     }
@@ -224,5 +237,11 @@ export class TrackerStats {
     clear () {
         this.clearCurrent()
         this.packs = []
+    }
+
+    clearAll () {
+        this.clearCurrent()
+        this.packs = []
+        this.totalCount = 0
     }
 }
