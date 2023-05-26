@@ -43,6 +43,12 @@ export class NewTabTrackerStats {
     static eventPrefix = 'newTabPage_'
 
     /**
+     * A place to store a singleton instance of this class
+     * @type {NewTabTrackerStats | null}
+     */
+    static shared = null
+
+    /**
      * @type {Map<string, number> | null}
      */
     top100Companies = null

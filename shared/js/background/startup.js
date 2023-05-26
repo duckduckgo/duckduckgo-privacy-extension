@@ -51,17 +51,15 @@ export async function onStartup () {
             const trackerStats = new TrackerStats()
             const newTabTrackerStats = new NewTabTrackerStats(trackerStats)
 
+            // Assign the singleton instance to the class for re-use in things like debugging
+            // this is an alternative to instantiating the class in the module scope where it lives
+            NewTabTrackerStats.shared = newTabTrackerStats
+
             // restore from storage first
             await newTabTrackerStats.restoreFromStorage()
 
             // now setup extension listeners
             newTabTrackerStats.register()
-
-            // install debugging tools in devMode
-            const devMode = (await browserWrapper.getFromSessionStorage('dev')) || false
-            if (devMode) {
-                require('./newtab-tracker-stats-debug.js').installDebug(newTabTrackerStats, trackerStats)
-            }
         } catch (e) {
             console.warn('an error occurred setting up TrackerStats', e)
         }
