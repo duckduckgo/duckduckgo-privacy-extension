@@ -2,7 +2,6 @@ import browser from 'webextension-polyfill'
 
 import { getURL } from './pixels'
 import load from './load'
-import { daysInstalled } from './utils'
 const { getSetting, updateSetting } = require('./settings')
 const browserWrapper = require('./wrapper')
 const utils = require('./utils')
@@ -166,15 +165,6 @@ export const sendJSPixel = (options) => {
     case 'incontext_close_x':
         fireIncontextSignupPixel('incontext_close_x_extension')
         break
-    case 'email_incontext_eligible': {
-        const shouldFireIncontextEligibilityPixel = getSetting('shouldFireIncontextEligibilityPixel')
-        if (!shouldFireIncontextEligibilityPixel) return
-
-        const daysSinceInstallation = Math.ceil(daysInstalled())
-        fireIncontextSignupPixel('email_incontext_eligible_extension', { days_since_installation: daysSinceInstallation })
-        updateSetting('shouldFireIncontextEligibilityPixel', false)
-        break
-    }
     default:
         console.error('Unknown pixel name', pixelName)
     }
