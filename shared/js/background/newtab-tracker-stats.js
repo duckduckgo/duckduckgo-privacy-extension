@@ -320,7 +320,7 @@ export class NewTabTrackerStats {
         return {
             totalCount: this.stats.totalCount,
             totalPeriod: 'install-time',
-            trackerCompaniesPeriod: 'last-day',
+            trackerCompaniesPeriod: 'last-hour',
             trackerCompanies: stats.map(item => {
                 // convert our known key into the 'Other'
                 const displayName = item.key === NewTabTrackerStats.otherCompaniesKey

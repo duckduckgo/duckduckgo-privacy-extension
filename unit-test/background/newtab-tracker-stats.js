@@ -92,7 +92,7 @@ describe('NewTabTrackerStats', () => {
         expect(output).toEqual({
             totalCount: 7,
             totalPeriod: 'install-time',
-            trackerCompaniesPeriod: 'last-day',
+            trackerCompaniesPeriod: 'last-hour',
             trackerCompanies: [{
                 displayName: 'Facebook',
                 count: 1
@@ -245,7 +245,7 @@ describe('alarms', () => {
         expect(display).toEqual({
             totalCount: 6,
             totalPeriod: 'install-time',
-            trackerCompaniesPeriod: 'last-day',
+            trackerCompaniesPeriod: 'last-hour',
             trackerCompanies: []
         })
     })
