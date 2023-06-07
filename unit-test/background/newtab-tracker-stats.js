@@ -7,7 +7,6 @@ const { dataFormatSchema } = require('../../shared/js/newtab/schema')
 
 const SEC = 1000
 const MIN = SEC * 60
-const HOUR = MIN * 60
 
 describe('NewTabTrackerStats', () => {
     it('produces a filtered output for multiple companies', () => {
@@ -24,7 +23,7 @@ describe('NewTabTrackerStats', () => {
         newtab.record('Facebook', now + MIN * 2)
 
         // produce the data as consumers would
-        const output = newtab.toDisplayData(now)
+        const output = newtab.toDisplayData(10, now)
 
         // this will throw (and cause the test to fail) if the
         // data has deviated from the schema defined here
@@ -34,7 +33,7 @@ describe('NewTabTrackerStats', () => {
         expect(output.totalCount).toEqual(4)
         expect(output.trackerCompanies.length).toEqual(2)
     })
-    it('only lists the names of entries in the top 100 list', () => {
+    it('only lists the names of entries in the top100 list', () => {
         const stats = new TrackerStats()
         const newtab = new NewTabTrackerStats(stats)
         // @ts-ignore
@@ -47,7 +46,7 @@ describe('NewTabTrackerStats', () => {
         newtab.record('B', now)
 
         // produce the data as consumers would
-        const output = newtab.toDisplayData(now)
+        const output = newtab.toDisplayData(10, now)
         dataFormatSchema.parse(output)
 
         expect(output.totalCount).toEqual(3)
@@ -85,7 +84,7 @@ describe('NewTabTrackerStats', () => {
         newtab.record('B', now)
 
         // produce the data as consumers would
-        const output = newtab.toDisplayData(now)
+        const output = newtab.toDisplayData(5, now)
         dataFormatSchema.parse(output)
 
         // The `A` and `B` should be grouped into the `Other` category
@@ -149,16 +148,10 @@ describe('sending data', () => {
         expect(syncSpy).toHaveBeenCalledWith({
             [NewTabTrackerStats.storageKey]: {
                 stats: {
-                    current: {
-                        start: now,
-                        end: 0,
-                        entries: {
-                            Google: 6
-                        }
+                    entries: {
+                        Google: [1673473220560, 1673473220560, 1673473220560, 1673473220560, 1673473220560, 1673473220560]
                     },
-                    packs: [],
-                    totalCount: 6,
-                    entries: null
+                    totalCount: 6
                 }
             }
         })
@@ -169,16 +162,10 @@ describe('incoming events', () => {
     let newtab, sendSpy
     beforeEach(() => {
         const stats = new TrackerStats()
-        const now = 1673473220560
         stats.deserialize({
-            current: {
-                start: now,
-                end: 0,
-                entries: {
-                    Google: 6
-                }
+            entries: {
+                Google: [1673473220560, 1673473220560, 1673473220560, 1673473220560, 1673473220560, 1673473220560]
             },
-            packs: [],
             totalCount: 6
         })
 
@@ -204,23 +191,12 @@ describe('incoming events', () => {
 describe('alarms', () => {
     let newtab, sendSpy
     const now = 1673473220560
-    const oneHourAgo = now - HOUR
-    const twoHourAgo = now - (HOUR * 2)
     beforeEach(() => {
         const stats = new TrackerStats()
         stats.deserialize({
-            current: {
-                start: 0,
-                end: 0,
-                entries: {}
+            entries: {
+                Google: [now, now, now, now, now, now]
             },
-            packs: [{
-                start: twoHourAgo,
-                end: oneHourAgo,
-                entries: {
-                    Google: 6
-                }
-            }],
             totalCount: 6
         })
 

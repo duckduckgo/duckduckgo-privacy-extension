@@ -6,7 +6,6 @@ import * as startup from './startup'
 import Companies from './companies'
 import atb from './atb'
 import tds from './storage/tds'
-import { createNewtabTrackerStatsDebugApi } from './newtab-tracker-stats-debug'
 const settings = require('./settings')
 const tabManager = require('./tab-manager')
 const https = require('./https')
@@ -32,8 +31,7 @@ self.dbg = {
     utils,
     setListContents,
     getListContents,
-    companies: Companies,
-    ntts: createNewtabTrackerStatsDebugApi()
+    companies: Companies
 }
 
 // mark this as a dev build
