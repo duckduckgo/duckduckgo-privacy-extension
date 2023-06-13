@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill'
 import { registerMessageHandler } from '../message-handlers'
 import { getCurrentTab } from '../utils'
 import { getExtensionURL } from '../wrapper'
+import { getDomain, parse } from 'tldts'
 
 /**
  * @typedef {object} BurnConfig
@@ -99,7 +100,7 @@ export default class FireButton {
         // gather all non-pinned tabs
         const openTabs = (await browser.tabs.query({
             pinned: false
-        })).filter(tab => (!origins || origins.length === 0) || origins.some(o => tab.url.startsWith(o)))
+        })).filter(tabMatchesOriginFilter(origins))
         const removeTabIds = openTabs.map(t => t.id || 0)
         // create a new tab which will be open after the burn
         await browser.tabs.create({
@@ -124,21 +125,20 @@ export default class FireButton {
         /** @type {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').FireOption[]} */
         const options = []
         try {
-            const origin = new URL(currentTab?.url || '').origin
-            if (origin.startsWith('http')) {
-                const tabsMatchingOrigin = allTabs.filter((t) => t.url?.startsWith(origin)).length
-                options.push({
-                    name: 'Current site only',
-                    options: {
-                        origins: [origin]
-                    },
-                    descriptionStats: {
-                        history: 'current site',
-                        openTabs: tabsMatchingOrigin,
-                        cookies: 1
-                    }
-                })
-            }
+            const origins = getOriginsForUrl(currentTab?.url)
+            console.log('xxx', origins)
+            const tabsMatchingOrigin = allTabs.filter(tabMatchesOriginFilter(origins)).length
+            options.push({
+                name: 'Current site only',
+                options: {
+                    origins
+                },
+                descriptionStats: {
+                    history: 'current site',
+                    openTabs: tabsMatchingOrigin,
+                    cookies: 1
+                }
+            })
         } catch (e) {
             // not a valid URL, skip 'current site' option
         }
@@ -224,4 +224,26 @@ export default class FireButton {
             url: 'chrome://newtab'
         })
     }
+}
+
+function getOriginsForUrl (url) {
+    const origins = []
+    const { subdomain, domain } = parse(url, { allowPrivateDomains: true })
+    origins.push(`https://${domain}`)
+    origins.push(`http://${domain}`)
+    if (subdomain) {
+        const subParts = subdomain.split('.').reverse()
+        for (let i = 1; i <= subParts.length; i++) {
+            const sd = subParts.slice(0, i).reverse().join('.') + '.' + domain
+            origins.push(`https://${sd}`)
+            origins.push(`http://${sd}`)
+        }
+    }
+    return origins
+}
+
+function tabMatchesOriginFilter (origins) {
+    const etldPlusOnes = new Set()
+    origins.forEach(o => etldPlusOnes.add(getDomain(o, { allowPrivateDomains: true })))
+    return tab => etldPlusOnes.has(getDomain(tab.url, { allowPrivateDomains: true }))
 }
