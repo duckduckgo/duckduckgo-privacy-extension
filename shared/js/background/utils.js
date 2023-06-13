@@ -342,21 +342,24 @@ export function isSameTopLevelDomain (url1, url2) {
 }
 
 export function parseVersionString (versionString) {
-    const [major = 0, minor = 0, patch = 0] = versionString.split('.').map(Number)
-    return {
-        major,
-        minor,
-        patch
-    }
+    return versionString.split('.').map(Number)
 }
 
 export function satisfiesMinVersion (minVersionString, extensionVersionString) {
-    const { major: minMajor, minor: minMinor, patch: minPatch } = parseVersionString(minVersionString)
-    const { major, minor, patch } = parseVersionString(extensionVersionString)
-
-    return (major > minMajor ||
-            (major >= minMajor && minor > minMinor) ||
-            (major >= minMajor && minor >= minMinor && patch >= minPatch))
+    const minVersions = parseVersionString(minVersionString)
+    const currentVersions = parseVersionString(extensionVersionString)
+    const maxLength = Math.max(minVersions.length, currentVersions.length)
+    for (let i = 0; i < maxLength; i++) {
+        const minNumberPart = minVersions[i] || 0
+        const currentVersionPart = currentVersions[i] || 0
+        if (currentVersionPart > minNumberPart) {
+            return true
+        }
+        if (currentVersionPart < minNumberPart) {
+            return false
+        }
+    }
+    return true
 }
 
 /**
