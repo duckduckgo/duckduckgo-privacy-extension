@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1685790396992,
+    "version": 1686657988736,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -1375,7 +1375,7 @@
                         "type": "hide"
                     },
                     {
-                        "selector": "#google-one-tap-iframe",
+                        "selector": "[id*='google-one-tap-iframe']",
                         "type": "hide"
                     },
                     {
@@ -2410,7 +2410,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "76420b514cf25d19b3374512eeabbe2a"
+            "hash": "30b93021834ac73f695f7050ac863166"
         },
         "exceptionHandler": {
             "exceptions": [],
@@ -2732,6 +2732,18 @@
         "runtimeChecks": {
             "state": "enabled",
             "exceptions": [
+                {
+                    "domain": "amazon.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/995"
+                },
+                {
+                    "domain": "amazon.co.uk",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/995"
+                },
+                {
+                    "domain": "chase.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/988"
+                },
                 {
                     "domain": "natwest.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/851"
@@ -3272,7 +3284,7 @@
                 }
             },
             "minSupportedVersion": "2023.4.11",
-            "hash": "7d20ed58a8a4f1b5c4108b608f0d6788"
+            "hash": "98f01e95d883cecd3ebce5bfff063807"
         },
         "serviceworkerInitiatedRequests": {
             "exceptions": [],
