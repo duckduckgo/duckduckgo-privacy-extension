@@ -214,7 +214,10 @@ $(BUILD_DIR)/public/js/list-editor.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
 	$(BROWSERIFY) shared/js/newtab/newtab.js > $@
 
-JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js
+$(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
+	$(BROWSERIFY) shared/js/fire/index.js > $@
+
+JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js
 
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
