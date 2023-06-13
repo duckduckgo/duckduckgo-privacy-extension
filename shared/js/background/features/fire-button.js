@@ -45,13 +45,17 @@ export default class FireButton {
             await this.closeAllTabs(config.origins)
         }
         // 1/ Clear downloads and history
-        const clearCache = chrome.browsingData.remove({
-            origins: config.origins,
-            since: config.since
-        }, {
-            downloads: true,
-            history: config.clearHistory
-        })
+        const clearing = []
+        if (!config.origins || config.origins.length === 0) {
+            clearing.push(chrome.browsingData.remove({
+                since: config.since
+            }, {
+                downloads: true,
+                history: config.clearHistory
+            }))
+        }
+        // TODO: handle clearing downloads and history for specific origins
+
         // 2/ Clear cookies, except on SERP
         const cookieOptions = {
             since: config.since
@@ -61,11 +65,11 @@ export default class FireButton {
         } else {
             cookieOptions.excludeOrigins = ['https://duckduckgo.com']
         }
-        const clearCookies = chrome.browsingData.remove(cookieOptions, {
+        clearing.push(chrome.browsingData.remove(cookieOptions, {
             cookies: true
-        })
+        }))
         // 3/ Clear origin-keyed storage
-        const clearOriginKeyed = chrome.browsingData.remove({
+        clearing.push(chrome.browsingData.remove({
             origins: config.origins,
             since: config.since
         }, {
@@ -77,9 +81,9 @@ export default class FireButton {
             localStorage: true,
             serviceWorkers: true,
             webSQL: true
-        })
+        }))
         try {
-            const results = await Promise.all([clearCache, clearCookies, clearOriginKeyed])
+            const results = await Promise.all(clearing)
             console.log('🔥 result', results)
             return true
         } catch (e) {
