@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill'
 import { registerMessageHandler } from '../message-handlers'
 import { getCurrentTab } from '../utils'
+import { getExtensionURL } from '../wrapper'
 
 /**
  * @typedef {object} BurnConfig
@@ -20,6 +21,7 @@ export default class FireButton {
         this.settings = settings
         registerMessageHandler('doBurn', this.burn.bind(this))
         registerMessageHandler('getBurnOptions', this.getBurnOptions.bind(this))
+        registerMessageHandler('fireAnimationComplete', this.onFireAnimationComplete.bind(this))
     }
 
     getDefaultSettings () {
@@ -97,7 +99,8 @@ export default class FireButton {
         const removeTabIds = openTabs.map(t => t.id || 0)
         // create a new tab which will be open after the burn
         await browser.tabs.create({
-            active: true
+            active: true,
+            url: getExtensionURL('/html/fire.html')
         })
         // remove the rest of the open tabs
         await browser.tabs.remove(removeTabIds)
@@ -209,5 +212,12 @@ export default class FireButton {
         return {
             options
         }
+    }
+
+    async onFireAnimationComplete (msg, sender) {
+        const fireTabId = sender.tab.id
+        chrome.tabs.update(fireTabId, {
+            url: 'chrome://newtab'
+        })
     }
 }
