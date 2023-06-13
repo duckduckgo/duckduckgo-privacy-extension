@@ -184,11 +184,11 @@ describe('utils.getBaseDomain()', () => {
 
 describe('utils.parseVersionString', () => {
     const cases = [
-        ['12', { major: 12, minor: 0, patch: 0 }],
-        ['12.1', { major: 12, minor: 1, patch: 0 }],
-        ['12.1.1', { major: 12, minor: 1, patch: 1 }],
-        ['100002.1.1', { major: 100002, minor: 1, patch: 1 }],
-        ['broken.string.parse', { major: NaN, minor: NaN, patch: NaN }]
+        ['12', [12]],
+        ['12.1', [12, 1]],
+        ['12.1.1', [12, 1, 1]],
+        ['100002.1.1', [100002, 1, 1]],
+        ['broken.string.parse', [NaN, NaN, NaN]]
     ]
     for (const testCase of cases) {
         const [versionString, expectedOutcome] = testCase
@@ -212,7 +212,21 @@ describe('utils.satisfiesMinVersion', () => {
         ['12.12.13', '12.12.12', false],
         ['102.12.12', '102.12.11', false],
         ['102.12.12', '102.12.12', true],
-        ['102.12.12', '102.12.13', true]
+        ['102.12.12', '102.12.13', true],
+        ['102.12.12.1', '101', false],
+        ['102.12.12.1', '103', true],
+        ['102.12.12.1', '104', true],
+        ['103', '102.12.12.1', false],
+        ['101', '102.12.12.1', true],
+        ['102.12.12.1', '102.13.12', true],
+        ['102.12.12.1', '102.12.12', false],
+        ['102.12.12.2', '102.12.12.1', false],
+        ['102.12.12.1', '102.12.12.2', true],
+        ['102.12.12.1', '102.12.12.1', true],
+        ['102.12.12.1', '102.12.12.3', true],
+        ['102.12.12.1', '102.12.12.1.1', true],
+        ['102.12.12.1', '102.12.12.2.1', true],
+        ['102.12.12.1', '102.12.12.1.1.1.1.1.1.1', true]
     ]
     for (const testCase of cases) {
         const [versionString, extensionVersionString, expectedOutcome] = testCase
