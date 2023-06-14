@@ -67,15 +67,9 @@ export function truncateReferrer (referrer, target) {
         return undefined
     }
 
-    let modifiedReferrer = referrer
-    if (isTracker(target) || (fromCname && isTracker(finalURL))) {
-        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: false })
-    } else {
-        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: true })
-    }
     // If extractLimitedDomainFromURL fails (for instance, invalid referrer URL), it
     // returns undefined, (in practice, don't modify the referrer), so sometimes this value could be undefined.
-    return modifiedReferrer
+    return utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: true })
 }
 
 /**
