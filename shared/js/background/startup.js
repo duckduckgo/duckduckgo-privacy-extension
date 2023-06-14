@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 import { NewTabTrackerStats } from './newtab-tracker-stats'
-import { TrackerStats } from './classes/tracker-stats'
+import { TrackerStats } from './classes/tracker-stats.js'
 import httpsStorage from './storage/https'
 import tdsStorage from './storage/tds'
 const utils = require('./utils')
@@ -50,6 +50,10 @@ export async function onStartup () {
             // build up dependencies
             const trackerStats = new TrackerStats()
             const newTabTrackerStats = new NewTabTrackerStats(trackerStats)
+
+            // Assign the singleton instance to the class for re-use in things like debugging
+            // this is an alternative to instantiating the class in the module scope where it lives
+            NewTabTrackerStats.shared = newTabTrackerStats
 
             // restore from storage first
             await newTabTrackerStats.restoreFromStorage()

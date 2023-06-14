@@ -1,219 +1,410 @@
-import { TrackerStats } from '../../../shared/js/background/classes/tracker-stats'
+import { TrackerStats } from '../../../shared/js/background/classes/tracker-stats.js'
 
 const SEC = 1000
 const MIN = SEC * 60
+const HOUR = MIN * 60
+const DAY = HOUR * 24
 
-describe('TrackerStats', () => {
-    it('produces aggregated + sorted data', () => {
-        const tc = new TrackerStats()
-        const now = Date.now()
-        tc.increment('Google', now)
-        tc.increment('Google', now)
-        tc.increment('Google', now)
-
-        tc.increment('Facebook', now)
-        tc.increment('Facebook', now)
-
-        tc.increment('Company 3', now)
-        tc.increment('Company 4', now)
-        tc.increment('Company 5', now)
-        tc.increment('Company 6', now)
-        tc.increment('Company 7', now)
-        tc.increment('Company 8', now)
-        tc.increment('Company 9', now)
-        tc.increment('Company 10', now)
-        tc.increment('Company 11', now)
-        tc.increment('Company 12', now)
-
-        // viewing immediately, should produce all values
-        const { results, overflow } = tc.sorted(10, now)
-        expect(overflow).toEqual(2)
-        expect(results).toEqual([
-            {
-                key: 'Google',
-                count: 3
-            },
-            {
-                key: 'Facebook',
-                count: 2
-            },
-            {
-                key: 'Company 3',
-                count: 1
-            },
-            {
-                key: 'Company 4',
-                count: 1
-            },
-            {
-                key: 'Company 5',
-                count: 1
-            },
-            {
-                key: 'Company 6',
-                count: 1
-            },
-            {
-                key: 'Company 7',
-                count: 1
-            },
-            {
-                key: 'Company 8',
-                count: 1
-            },
-            {
-                key: 'Company 9',
-                count: 1
-            },
-            {
-                key: 'Company 10',
-                count: 1
-            }
-        ]
-        )
-    })
-    it('combines `Other` entries ', () => {
-        const tc = new TrackerStats()
-        const now = Date.now()
-        tc.increment('Google', now)
-        tc.increment('Google', now)
-        tc.increment('Google', now)
-
-        tc.increment('Other', now)
-        tc.increment('Other', now)
-
-        tc.increment('Facebook', now)
-
-        tc.increment('Company 4', now)
-        tc.increment('Company 5', now)
-
-        tc.increment('Company 6', now)
-        tc.increment('Company 7', now)
-        tc.increment('Company 8', now)
-        tc.increment('Company 9', now)
-        tc.increment('Company 10', now)
-
-        // viewing immediately, should produce all values
-        const { results, overflow } = tc.sorted(5, now)
-        expect(overflow).toEqual(5)
-        expect(results).toEqual([
-            { key: 'Google', count: 3 },
-            { key: 'Other', count: 2 },
-            { key: 'Facebook', count: 1 },
-            { key: 'Company 4', count: 1 },
-            { key: 'Company 5', count: 1 }
-        ])
-    })
-    it('prunes stale entries when producing a sorted view', () => {
-        const trackerStats = new TrackerStats()
+describe('TrackerStats alternative storage implementation', () => {
+    it('doesnt pack within time window', () => {
+        const ts = new TrackerStats()
         const now = Date.now()
 
-        // 8.00am, for example
-        trackerStats.increment('Google', now)
+        ts.increment('a', now)
+        ts.increment('a', now)
+        ts.increment('a', now)
 
-        // 8.02am
-        trackerStats.increment('Facebook', now + MIN * 2)
-        trackerStats.increment('Facebook', now + MIN * 2)
-        trackerStats.increment('Facebook', now + MIN * 2)
+        // pack after 5 min
+        ts.pack(now + (MIN * 5))
 
-        // sorted time is 1 minute over `maxAgeMs`, eg: 9.01
-        const { results, overflow } = trackerStats.sorted(10, now + MIN * 61)
-
-        // so we expect there to only be the most recent entry
-        expect(overflow).toEqual(0)
-        expect(results).toEqual([{
-            key: 'Facebook',
-            count: 3
-        }])
+        expect(ts.current.entries.get('a')).toEqual(3)
+        expect(ts.current.entries.size)
+            .withContext('current entries should be size:1 because we packed after 5 min')
+            .toEqual(1)
+        expect(ts.packs.length === 0)
     })
-    it('prunes stale entries manually', () => {
-        const trackerStats = new TrackerStats()
-        const now = 1673473220560
+    it('packs when outside time window', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
 
-        // 8.00am, for example
-        trackerStats.increment('Google', now)
+        // eg : 8:00
+        ts.increment('a', now)
 
-        // 8.02am
-        trackerStats.increment('Facebook', now)
-        trackerStats.increment('Facebook', now + MIN * 2)
-        trackerStats.increment('Facebook', now + MIN * 2)
+        // eg : 9:05
+        ts.pack(now + HOUR + (MIN * 5))
 
-        // evictExpired time is 1 minute over `maxAgeMs`, eg: 9.01
-        trackerStats.evictExpired(now + MIN * 61)
-
-        // we expect Google, and the first Facebook entry to be both be absent
-        expect(Object.fromEntries(trackerStats.entries)).toEqual({
-            Facebook: [1673473340560, 1673473340560]
-        })
-
-        // but the count should remain
-        expect(trackerStats.totalCount).toEqual(4)
+        expect(ts.current.entries.size)
+            .withContext('current should be empty now because we packed after 1hr 5m')
+            .toEqual(0)
     })
-    it('serializes into plain objects/arrays/numbers', () => {
-        const trackerStats = new TrackerStats()
-        const now = 1673473220560
-        trackerStats.increment('Google', now)
-        trackerStats.increment('Facebook', now)
 
-        const serialized = trackerStats.serialize()
-        expect(serialized).toEqual({
-            totalCount: 2,
-            entries: {
-                Google: [1673473220560],
-                Facebook: [1673473220560]
-            }
+    it('packs twice', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+
+        // eg : 8:00
+        ts.increment('a', now)
+
+        // eg : 9:05
+        ts.pack(now + HOUR + (MIN * 5))
+
+        // eg : 9:06
+        ts.increment('a', now + HOUR + (MIN * 6))
+        ts.increment('a', now + HOUR + (MIN * 6))
+        ts.increment('a', now + HOUR + (MIN * 6))
+        ts.increment('a', now + HOUR + (MIN * 6))
+
+        // 10:05
+        ts.pack(now + (HOUR * 2) + (MIN * 6))
+
+        expect(ts.current.entries.size)
+            .withContext('current should be empty because we packed twice')
+            .toEqual(0)
+
+        expect(ts.packs.length)
+            .withContext('should have 2 packs because both times were outside the time window')
+            .toEqual(2)
+    })
+
+    it('handles clock adjustments for current', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+
+        // eg : 8:00
+        ts.increment('a', now)
+        ts.increment('a', now - MIN)
+
+        expect(ts.current.entries.size)
+            .withContext('the first current entry should have been cleared as a safety measure')
+            .toEqual(1)
+
+        expect(ts.totalCount)
+            .withContext('total count should still contain both entries')
+            .toEqual(2)
+    })
+
+    it('handles clock adjustments for packing', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+
+        // eg : 8:00
+        ts.increment('a', now)
+        ts.pack(now - MIN) // pack at 7:59, should be ignored for packing
+        ts.pack(now + HOUR + MIN) // at 9:01, should be accepted
+
+        expect(ts.current.entries.size)
+            .withContext('the first current entry should have been cleared as a safety measure')
+            .toEqual(0)
+
+        expect(ts.packs.length)
+            .withContext('should have 1 pack because the first pack was ignored')
+            .toEqual(1)
+    })
+
+    it('Produces data from current only', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+
+        // eg : 8:00
+        ts.increment('a', now)
+        ts.increment('a', now)
+
+        // eg : 8:00
+        ts.increment('b', now)
+        ts.increment('b', now)
+        ts.increment('b', now)
+
+        const data = ts.data(now)
+
+        expect(data.a).toEqual(2)
+        expect(data.b).toEqual(3)
+    })
+
+    it('Produce data from current + packs', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+
+        // time: 8:00
+        ts.increment('a', now)
+        ts.increment('a', now)
+
+        // time: 9:00
+        ts.pack(now + HOUR)
+
+        // time: 9:01
+        ts.increment('a', now + HOUR + MIN)
+
+        // time: 9:01
+        const data = ts.data(now + HOUR + MIN)
+
+        expect(data.a)
+            .withContext("should have 3 a's - 2 from the pack and 1 from current")
+            .toEqual(3)
+    })
+
+    it('ignores expired packs', () => {
+        const ts = new TrackerStats()
+
+        // time: Monday 8:00
+        const now = Date.now()
+
+        // time: Monday 8:00
+        ts.increment('a', now)
+        ts.increment('a', now)
+
+        // time: Monday 9:00
+        ts.pack(now + HOUR)
+
+        // time: Tuesday 9:10
+        ts.increment('b', now + DAY + (MIN * 10))
+        ts.increment('b', now + DAY + (MIN * 10))
+        ts.increment('b', now + DAY + (MIN * 10))
+
+        // time: Tuesday 9:01
+        const data = ts.data(now + DAY + HOUR + MIN)
+
+        expect(data)
+            .withContext('should only have tuesdays data because the monday pack is expired')
+            .toEqual({
+                b: 3
+            })
+    })
+
+    it('evicts expired packs', () => {
+        const ts = new TrackerStats()
+
+        // time: Monday 8:00
+        const now = Date.now()
+
+        // time: Monday 8:00
+        ts.increment('a', now)
+        ts.increment('a', now)
+
+        // time: Monday 9:00
+        const mon9am = now + HOUR
+        ts.pack(mon9am)
+        expect(ts.packs.length).toEqual(1)
+
+        // time: Tuesday 9:01
+        ts.pack(mon9am + DAY + MIN)
+        expect(ts.packs.length)
+            .withContext('The monday 9am pack should be evicted')
+            .toEqual(0)
+    })
+
+    it('ignore expired current', () => {
+        const ts = new TrackerStats()
+
+        // time: Monday 8:00
+        const now = Date.now()
+
+        // time: Monday 8:00
+        ts.increment('a', now)
+        ts.increment('a', now)
+
+        const data = ts.data(now + DAY + MIN)
+        expect(data)
+            .withContext('should be empty, because the current is expired')
+            .toEqual({})
+    })
+
+    it('sorts by count', () => {
+        const ts = new TrackerStats()
+
+        // time: Monday 8:00
+        const now = Date.now()
+
+        // time: Monday 8:00
+        ts.increment('a', now)
+        ts.increment('a', now)
+        ts.increment('b', now)
+        ts.increment('b', now)
+        ts.increment('b', now)
+
+        const data = ts.sorted(now + MIN)
+
+        expect(data).toEqual([{ key: 'b', count: 3 }, { key: 'a', count: 2 }])
+    })
+
+    it('deserialize - all expired', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+        const overOneDayAgo = now - (DAY + MIN)
+
+        ts.deserialize({
+            current: {
+                start: overOneDayAgo,
+                end: overOneDayAgo,
+                entries: {
+                    a: 2,
+                    b: 3
+                }
+            },
+            packs: [
+                {
+                    start: overOneDayAgo,
+                    end: overOneDayAgo,
+                    entries: {
+                        a: 1,
+                        b: 1
+                    }
+                },
+                {
+                    start: overOneDayAgo,
+                    end: overOneDayAgo,
+                    entries: {
+                        a: 1,
+                        b: 1
+                    }
+                }
+            ],
+            totalCount: 9
+        })
+
+        expect(ts.packs.length).toEqual(0)
+    })
+
+    it('deserialize current only', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+        const overOneDayAgo = now - (DAY + MIN)
+        const lessThan1DayAgo = now - (DAY - (2 * MIN))
+
+        ts.deserialize({
+            current: {
+                start: lessThan1DayAgo,
+                end: lessThan1DayAgo,
+                entries: {
+                    a: 2,
+                    b: 3
+                }
+            },
+            packs: [
+                {
+                    start: overOneDayAgo,
+                    end: overOneDayAgo,
+                    entries: {
+                        a: 1,
+                        b: 1
+                    }
+                }
+            ],
+            totalCount: 9
+        })
+
+        const data = ts.data(now)
+
+        expect(data).toEqual({
+            a: 2,
+            b: 3
         })
     })
-    it('deserializes from valid data', () => {
-        const trackerStats = new TrackerStats()
-        const now = 1673473220560
 
-        trackerStats.deserialize({
-            totalCount: 2,
-            entries: {
-                Google: [now],
-                Facebook: [now]
-            }
+    it('deserialize current + 1 valid pack only', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+        const overOneDayAgo = now - (DAY + MIN)
+        const lessThan1DayAgo = now - (DAY - (2 * MIN))
+
+        ts.deserialize({
+            current: {
+                start: lessThan1DayAgo,
+                end: lessThan1DayAgo,
+                entries: {
+                    a: 2,
+                    b: 3
+                }
+            },
+            packs: [
+                {
+                    start: overOneDayAgo,
+                    end: overOneDayAgo,
+                    entries: {
+                        a: 1,
+                        b: 1
+                    }
+                },
+                {
+                    start: lessThan1DayAgo,
+                    end: lessThan1DayAgo,
+                    entries: {
+                        a: 10,
+                        b: 10
+                    }
+                }
+            ],
+            totalCount: 9
         })
 
-        // add a new entry
-        trackerStats.increment('Google', now + MIN)
+        const data = ts.data(now)
 
-        // now verify we can produce data which is a combination
-        // of both old + new
-        const serialized = trackerStats.serialize()
-        expect(serialized).toEqual({
-            totalCount: 3,
-            entries: {
-                Google: [1673473220560, 1673473280560],
-                Facebook: [1673473220560]
-            }
+        expect(data).toEqual({
+            a: 12,
+            b: 13
         })
     })
-    it('does not populate from invalid input data', () => {
-        const trackerStats = new TrackerStats()
-        const now = 1673473220560
 
-        // this is incorrect, should be `totalCount`
-        trackerStats.deserialize({
-            // @ts-expect-error
-            total_count: 2,
-            entries: {
-                Google: [now],
-                Facebook: [now]
-            }
+    it('deserialize corrupted data', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+
+        ts.deserialize({
+            current: {
+                // @ts-expect-error
+                start: 'lessThan1DayAgo',
+                // @ts-expect-error
+                end: () => {},
+                entries: {
+                    a: 2,
+                    b: 3
+                }
+            },
+            packs: [
+                // @ts-expect-error
+                2, '23'
+            ],
+            totalCount: 9
         })
 
-        // now add a new entry
-        trackerStats.increment('Google', now + MIN)
+        const data = ts.data(now)
+        expect(data)
+            .withContext('defaults to empty when it cannot deserialize')
+            .toEqual({})
+    })
 
-        // now we expect the original data to be absent, only the new entry should be present
-        const serialized = trackerStats.serialize()
-        expect(serialized).toEqual({
-            totalCount: 1,
-            entries: {
-                Google: [1673473280560]
-            }
+    it('deserialize partially bad data', () => {
+        const ts = new TrackerStats()
+        const now = Date.now()
+        const oneHourAgo = now - HOUR
+        const twoHoursAgo = now - (HOUR * 2)
+
+        ts.deserialize({
+            current: {
+                start: 12,
+                end: 1243,
+                entries: {
+                    a: 2,
+                    b: 3
+                }
+            },
+            packs: [{
+                start: twoHoursAgo,
+                end: oneHourAgo,
+                entries: {
+                    a: 200,
+                    b: 300
+                }
+            }],
+            totalCount: 9
         })
+
+        const data = ts.data(now)
+
+        expect(data).toEqual({
+            a: 200,
+            b: 300
+        })
+
+        expect(ts.totalCount).toEqual(9)
     })
 })
