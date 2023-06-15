@@ -193,7 +193,7 @@ const actionHandlers = {
         if (scriptOrigins) cells[3].textContent = scriptOrigins.join(',')
         if (stack) appendCallStack(cells[3], stack, 0)
         cells[4].textContent = `${filename}:${lineno}:${colno}`
-        row.classList.add('jsexception')
+        row.classList.add('jsException')
         addRequestRow(row)
     },
     jscookie: (m) => {
@@ -273,8 +273,8 @@ const panelConfig = {
 function shouldShowRow (row) {
     // empty search box is considered to be no filter
     if (panelConfig.rowFilter !== '') {
-        // when a filter is in effect, fail now if the URL does not match the filter
-        if (!row.cells[1].textContent.match(panelConfig.rowFilter)) {
+        // when a filter is in effect, match against the whole rows text content
+        if (!row.textContent.match(panelConfig.rowFilter)) {
             return false
         }
     }
