@@ -166,7 +166,9 @@ export const sendJSPixel = (options) => {
         fireIncontextSignupPixel('incontext_close_x_extension')
         break
     default:
-        console.error('Unknown pixel name', pixelName)
+        browserWrapper.getFromSessionStorage('dev').then(isDev => {
+            if (isDev) console.error('Unknown pixel name', pixelName)
+        })
     }
 }
 
