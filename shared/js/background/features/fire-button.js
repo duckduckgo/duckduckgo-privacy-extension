@@ -44,6 +44,8 @@ export default class FireButton {
         console.log('🔥', config)
         if (config.closeTabs) {
             await this.closeAllTabs(config.origins)
+        } else {
+            await this.showBurnAnimation()
         }
         // 1/ Clear downloads and history
         const clearing = []
@@ -103,12 +105,16 @@ export default class FireButton {
         })).filter(tabMatchesOriginFilter(origins))
         const removeTabIds = openTabs.map(t => t.id || 0)
         // create a new tab which will be open after the burn
+        this.showBurnAnimation()
+        // remove the rest of the open tabs
+        await browser.tabs.remove(removeTabIds)
+    }
+
+    async showBurnAnimation () {
         await browser.tabs.create({
             active: true,
             url: getExtensionURL('/html/fire.html')
         })
-        // remove the rest of the open tabs
-        await browser.tabs.remove(removeTabIds)
     }
 
     /**
@@ -122,88 +128,93 @@ export default class FireButton {
             browser.tabs.query({}),
             browser.cookies.getAll({})
         ])
-        /** @type {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').FireOption[]} */
-        const options = []
-        try {
-            const origins = getOriginsForUrl(currentTab?.url)
-            console.log('xxx', origins)
-            const tabsMatchingOrigin = allTabs.filter(tabMatchesOriginFilter(origins)).length
-            options.push({
-                name: 'Current site only',
-                options: {
-                    origins
-                },
-                descriptionStats: {
-                    history: 'current site',
-                    openTabs: tabsMatchingOrigin,
-                    cookies: 1
-                }
-            })
-        } catch (e) {
-            // not a valid URL, skip 'current site' option
-        }
         const openTabs = allTabs.filter(t => !t.pinned).length
         const cookies = allCookies.reduce((sites, curr) => {
             sites.add(curr.domain)
             return sites
         }, new Set()).size
+        const pinnedTabs = allTabs.filter(t => t.pinned).length
+        // Apply defaults for history and tab clearing
+        const { closeTabs, clearHistory } = this.getDefaultSettings()
+
+        const defaultStats = {
+            openTabs,
+            cookies,
+            pinnedTabs,
+            clearHistory
+        }
+
+        /** @type {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').FireOption[]} */
+        const options = []
+        const currentTabUrl = currentTab?.url || ''
+        // only show the current site option if this an origin we can clear
+        if (currentTabUrl.startsWith('http:') || currentTabUrl.startsWith('https:')) {
+            const origins = getOriginsForUrl(currentTabUrl)
+            const tabsMatchingOrigin = allTabs.filter(tabMatchesOriginFilter(origins)).length
+            options.push({
+                name: 'CurrentSite',
+                options: {
+                    origins
+                },
+                descriptionStats: {
+                    ...defaultStats,
+                    openTabs: tabsMatchingOrigin,
+                    cookies: 1,
+                    duration: 'all',
+                    site: getDomain(origins[0]) || ''
+                }
+            })
+        }
 
         options.push({
-            name: 'Last hour',
+            name: 'LastHour',
             options: {
                 since: Date.now() - ONE_HOUR
             },
             descriptionStats: {
-                history: 'last hour',
-                openTabs,
-                cookies
+                ...defaultStats,
+                duration: 'hour'
             }
         })
         options.push({
-            name: 'Last day',
+            name: 'Last24Hour',
             options: {
                 since: Date.now() - (24 * ONE_HOUR)
             },
             descriptionStats: {
-                history: 'last day',
-                openTabs,
-                cookies
+                ...defaultStats,
+                duration: 'day'
             }
         })
         options.push({
-            name: 'Last 7 day',
+            name: 'Last7days',
             options: {
                 since: Date.now() - (7 * 24 * ONE_HOUR)
             },
             descriptionStats: {
-                history: 'last 7 days',
-                openTabs,
-                cookies
+                ...defaultStats,
+                duration: 'week'
             }
         })
         options.push({
-            name: 'Last 4 weeks',
+            name: 'Last4Weeks',
             options: {
                 since: Date.now() - (4 * 7 * 24 * ONE_HOUR)
             },
             descriptionStats: {
-                history: 'last 4 weeks',
-                openTabs,
-                cookies
+                ...defaultStats,
+                duration: 'month'
             }
         })
         options.push({
-            name: 'All time',
+            name: 'AllTime',
             options: {},
             descriptionStats: {
-                history: 'all',
-                openTabs,
-                cookies
+                ...defaultStats,
+                duration: 'all'
             }
         })
 
-        // Apply defaults for history and tab clearing
-        const { closeTabs, clearHistory } = this.getDefaultSettings()
         options.forEach((opt) => {
             if (!closeTabs) {
                 opt.descriptionStats.openTabs = undefined
