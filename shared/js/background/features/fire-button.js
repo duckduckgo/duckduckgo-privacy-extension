@@ -42,55 +42,55 @@ export default class FireButton {
         const config = Object.assign(this.getDefaultSettings(), options)
 
         console.log('🔥', config)
-        if (config.closeTabs) {
-            await this.closeAllTabs(config.origins)
-        } else {
-            await this.showBurnAnimation()
-        }
-        // 1/ Clear downloads and history
-        const clearing = []
-        if (!config.origins || config.origins.length === 0) {
+        try {
+            if (config.closeTabs) {
+                await this.closeAllTabs(config.origins)
+            } else {
+                await this.showBurnAnimation()
+            }
+            // 1/ Clear downloads and history
+            const clearing = []
+            if (!config.origins || config.origins.length === 0) {
+                clearing.push(chrome.browsingData.remove({
+                    since: config.since
+                }, {
+                    downloads: true,
+                    history: config.clearHistory
+                }))
+            }
+            // TODO: handle clearing downloads and history for specific origins
+
+            // 2/ Clear cookies, except on SERP
+            const cookieOptions = {
+                since: config.since
+            }
+            if (config.origins) {
+                cookieOptions.origins = config.origins
+            } else {
+                cookieOptions.excludeOrigins = ['https://duckduckgo.com']
+            }
+            clearing.push(chrome.browsingData.remove(cookieOptions, {
+                cookies: true
+            }))
+            // 3/ Clear origin-keyed storage
             clearing.push(chrome.browsingData.remove({
+                origins: config.origins,
                 since: config.since
             }, {
-                downloads: true,
-                history: config.clearHistory
+                appcache: true,
+                cache: true,
+                cacheStorage: true,
+                indexedDB: true,
+                fileSystems: true,
+                localStorage: true,
+                serviceWorkers: true,
+                webSQL: true
             }))
-        }
-        // TODO: handle clearing downloads and history for specific origins
-
-        // 2/ Clear cookies, except on SERP
-        const cookieOptions = {
-            since: config.since
-        }
-        if (config.origins) {
-            cookieOptions.origins = config.origins
-        } else {
-            cookieOptions.excludeOrigins = ['https://duckduckgo.com']
-        }
-        clearing.push(chrome.browsingData.remove(cookieOptions, {
-            cookies: true
-        }))
-        // 3/ Clear origin-keyed storage
-        clearing.push(chrome.browsingData.remove({
-            origins: config.origins,
-            since: config.since
-        }, {
-            appcache: true,
-            cache: true,
-            cacheStorage: true,
-            indexedDB: true,
-            fileSystems: true,
-            localStorage: true,
-            serviceWorkers: true,
-            webSQL: true
-        }))
-        try {
             const results = await Promise.all(clearing)
             console.log('🔥 result', results)
             return true
         } catch (e) {
-            console.warn('🔥 error', e)
+            console.error('🔥 error', e)
             return false
         }
     }
@@ -253,7 +253,14 @@ function getOriginsForUrl (url) {
     return origins
 }
 
+/**
+ * @param {string[]} [origins]
+ * @returns {(tab: { url: string }) => boolean}
+ */
 function tabMatchesOriginFilter (origins) {
+    if (!origins) {
+        return () => true
+    }
     const etldPlusOnes = new Set()
     origins.forEach(o => etldPlusOnes.add(getDomain(o, { allowPrivateDomains: true })))
     return tab => etldPlusOnes.has(getDomain(tab.url, { allowPrivateDomains: true }))
