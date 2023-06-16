@@ -20,7 +20,7 @@ const { setListContents, getListContents } = require('./message-handlers')
 // @ts-ignore
 // RELOADER && require('./devbuild-reloader')
 
-export default function setUpDevbuild () {
+export default function initDebugBuild () {
     // @ts-ignore - dbg is not a standard property of self.
     self.dbg = {
         settings,
