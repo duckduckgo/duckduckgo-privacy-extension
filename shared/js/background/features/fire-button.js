@@ -12,14 +12,20 @@ import { getDomain, parse } from 'tldts'
  * @property {string[]} [origins]
  */
 
+/**
+ * @typedef {import('../tab-manager.js')} TabManager
+ */
+
 export default class FireButton {
     /**
      * @param {{
-     *  settings: { getSetting(name: string): boolean }
+     *  settings: { getSetting(name: string): boolean };
+     *  tabManager: TabManager;
      * }}
      */
-    constructor ({ settings }) {
+    constructor ({ settings, tabManager }) {
         this.settings = settings
+        this.tabManager = tabManager
         registerMessageHandler('doBurn', this.burn.bind(this))
         registerMessageHandler('getBurnOptions', this.getBurnOptions.bind(this))
         registerMessageHandler('fireAnimationComplete', this.onFireAnimationComplete.bind(this))
@@ -43,11 +49,7 @@ export default class FireButton {
 
         console.log('🔥', config)
         try {
-            if (config.closeTabs) {
-                await this.closeAllTabs(config.origins)
-            } else {
-                await this.showBurnAnimation()
-            }
+            await this.clearTabs(config.closeTabs, config.origins)
             // 1/ Clear downloads and history
             const clearing = []
             if (!config.origins || config.origins.length === 0) {
@@ -96,18 +98,28 @@ export default class FireButton {
     }
 
     /**
+     * @param {boolean} closeTabs If true, tabs are also closed
      * @param {string[]} [origins] Only close tabs for these origins
      */
-    async closeAllTabs (origins) {
+    async clearTabs (closeTabs = true, origins) {
         // gather all non-pinned tabs
         const openTabs = (await browser.tabs.query({
             pinned: false
         })).filter(tabMatchesOriginFilter(origins))
         const removeTabIds = openTabs.map(t => t.id || 0)
+        // clear adclick attribution data
+        removeTabIds.forEach((tabId) => {
+            const tab = this.tabManager.tabContainer[tabId]
+            if (tab && tab.adClick !== null) {
+                tab.adClick = null
+            }
+        })
         // create a new tab which will be open after the burn
         this.showBurnAnimation()
-        // remove the rest of the open tabs
-        await browser.tabs.remove(removeTabIds)
+        if (closeTabs) {
+            // remove the rest of the open tabs
+            await browser.tabs.remove(removeTabIds)
+        }
     }
 
     async showBurnAnimation () {
@@ -138,7 +150,7 @@ export default class FireButton {
         const { closeTabs, clearHistory } = this.getDefaultSettings()
 
         const defaultStats = {
-            openTabs,
+            openTabs: closeTabs ? openTabs : undefined,
             cookies,
             pinnedTabs,
             clearHistory
@@ -158,7 +170,7 @@ export default class FireButton {
                 },
                 descriptionStats: {
                     ...defaultStats,
-                    openTabs: tabsMatchingOrigin,
+                    openTabs: closeTabs ? tabsMatchingOrigin : 0,
                     cookies: 1,
                     duration: 'all',
                     site: getDomain(origins[0]) || ''
@@ -215,15 +227,6 @@ export default class FireButton {
             }
         })
 
-        options.forEach((opt) => {
-            if (!closeTabs) {
-                opt.descriptionStats.openTabs = undefined
-            }
-            if (!clearHistory) {
-                opt.descriptionStats.history = undefined
-            }
-        })
-
         return {
             options
         }
@@ -255,7 +258,7 @@ function getOriginsForUrl (url) {
 
 /**
  * @param {string[]} [origins]
- * @returns {(tab: { url: string }) => boolean}
+ * @returns {(tab: { url?: string | undefined }) => boolean}
  */
 function tabMatchesOriginFilter (origins) {
     if (!origins) {
