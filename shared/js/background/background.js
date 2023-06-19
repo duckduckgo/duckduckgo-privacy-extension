@@ -20,6 +20,7 @@ import FireButton from './features/fire-button'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import { getBrowserName } from './utils'
+import tabManager from './tab-manager'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events')
@@ -36,8 +37,9 @@ settings.ready().then(() => {
 const features = []
 
 if (getBrowserName() !== 'moz') {
-    features.push(new FireButton({ settings }))
+    features.push(new FireButton({ settings, tabManager }))
 }
+console.log('Loaded features:', features)
 
 // Optional features controlled by build flags.
 // If these flags are set to false, the whole function is tree-shaked from the build.
