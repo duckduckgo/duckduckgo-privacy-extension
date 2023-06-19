@@ -8,7 +8,7 @@ import {
     ensureServiceWorkerInitiatedRequestExceptions
 } from './dnr-service-worker-initiated'
 import { getDenylistedDomains } from './dnr-user-allowlist'
-import { findExistingDynamicRule } from './dnr-utils'
+import { findExistingDynamicRule, SETTING_PREFIX, ruleIdRangeByConfigName } from './dnr-utils'
 import {
     generateExtensionConfigurationRuleset
 } from '@duckduckgo/ddg2dnr/lib/extensionConfiguration'
@@ -21,18 +21,6 @@ import {
 import {
     generateCombinedConfigBlocklistRuleset
 } from '@duckduckgo/ddg2dnr/lib/combined'
-
-export const SETTING_PREFIX = 'declarative_net_request-'
-
-// Allocate blocks of rule IDs for the different configurations. That way, the
-// rules associated with a configuration can be safely cleared without the risk
-// of removing rules associated with different configurations.
-export const ruleIdRangeByConfigName = {
-    tds: [1, 10000],
-    config: [10001, 20000],
-    _RESERVED: [20001, 21000],
-    combined: [21001, 31000]
-}
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
