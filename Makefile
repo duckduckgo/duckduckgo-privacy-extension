@@ -67,7 +67,9 @@ watch:
 .PHONY: watch
 
 ## unit-test: Run the unit tests.
-unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
+ESBUILD_TESTS = unit-test/shared-utils/*.js unit-test/ui/**/*.js unit-test/background/*.js unit-test/background/**/*.js
+unit-test: build/test/legacy-background.js build/test/legacy-ui.js
+	$(ESBUILD) --outdir=build/test --inject:./unit-test/inject-chrome-shim.js $(ESBUILD_TESTS)
 	node_modules/.bin/karma start karma.conf.js
 
 .PHONY: unit-test
@@ -224,18 +226,15 @@ JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Unit tests scripts.
-UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
+UNIT_TEST_SRC = unit-test/legacy/*.js unit-test/legacy/reference-tests/*.js unit-test/legacy/storage/*.js
 build/test:
 	mkdir -p $@
 
-build/test/background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
+build/test/legacy-background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
 	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
 
-build/test/ui.js: $(TEST_FILES) | build/test
-	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
-
-build/test/shared-utils.js: $(TEST_FILES) | build/test
-	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
+build/test/legacy-ui.js: $(TEST_FILES) | build/test
+	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/legacy/ui/*.js -o $@
 
 ## Content Scope Scripts
 CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts

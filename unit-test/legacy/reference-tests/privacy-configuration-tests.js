@@ -5,7 +5,6 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const Site = require('../../../shared/js/background/classes/site').default
 const utils = require('../../../shared/js/background/utils')
-const browserWrapper = require('../../../shared/js/background/wrapper')
 
 const contentScriptUtils = require('@duckduckgo/content-scope-scripts/src/utils.js')
 
@@ -14,8 +13,6 @@ const configs = {
     // FILE_MAP ../../../node_modules/@duckduckgo/privacy-reference-tests/privacy-configuration/config*_reference.json
 }
 
-const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
-
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
 
@@ -23,7 +20,6 @@ for (const setName of Object.keys(testSets)) {
         beforeAll(() => {
             const config = configs[testSet.referenceConfig]
 
-            spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config })
 
             return tdsStorage.getLists()

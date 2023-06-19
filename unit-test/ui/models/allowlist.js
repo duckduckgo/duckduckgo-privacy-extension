@@ -1,3 +1,4 @@
+import '../../../shared/js/ui/base/index'
 const Allowlist = require('../../../shared/js/ui/models/allowlist')
 
 let allowlist
