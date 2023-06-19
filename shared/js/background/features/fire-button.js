@@ -14,12 +14,13 @@ import { getDomain, parse } from 'tldts'
 
 /**
  * @typedef {import('../tab-manager.js')} TabManager
+ * @typedef {import('../settings.js')} Settings
  */
 
 export default class FireButton {
     /**
      * @param {{
-     *  settings: { getSetting(name: string): boolean };
+     *  settings: Settings;
      *  tabManager: TabManager;
      * }}
      */
@@ -29,12 +30,16 @@ export default class FireButton {
         registerMessageHandler('doBurn', this.burn.bind(this))
         registerMessageHandler('getBurnOptions', this.getBurnOptions.bind(this))
         registerMessageHandler('fireAnimationComplete', this.onFireAnimationComplete.bind(this))
+        registerMessageHandler('setBurnDefaultOption', (msg) => {
+            this.settings.updateSetting('fireButtonDefaultOption', msg.defaultOption)
+        })
     }
 
     getDefaultSettings () {
         return {
             closeTabs: this.settings.getSetting('fireButtonTabClearEnabled'),
             clearHistory: this.settings.getSetting('fireButtonHistoryEnabled'),
+            selectedOption: this.settings.getSetting('fireButtonDefaultOption') || 'CurrentSite',
             since: undefined
         }
     }
@@ -147,7 +152,7 @@ export default class FireButton {
         }, new Set()).size
         const pinnedTabs = allTabs.filter(t => t.pinned).length
         // Apply defaults for history and tab clearing
-        const { closeTabs, clearHistory } = this.getDefaultSettings()
+        const { closeTabs, clearHistory, selectedOption } = this.getDefaultSettings()
 
         const defaultStats = {
             openTabs: closeTabs ? openTabs : undefined,
@@ -224,6 +229,13 @@ export default class FireButton {
             descriptionStats: {
                 ...defaultStats,
                 duration: 'all'
+            }
+        })
+
+        // mark selected site
+        options.forEach((option) => {
+            if (option.name === selectedOption) {
+                option.selected = true
             }
         })
 
