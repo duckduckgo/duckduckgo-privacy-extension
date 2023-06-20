@@ -29,8 +29,11 @@ const manifestVersion = browserWrapper.getManifestVersion()
  */
 
 export class AdClickAttributionPolicy {
-    constructor () {
-        const policy = getFeatureSettings('adClickAttribution')
+    /**
+     * @param {import("../storage/tds").TDSStorage} tds
+     */
+    constructor (tds) {
+        const policy = getFeatureSettings(tds, 'adClickAttribution')
 
         /** @type {AdClickAttributionLinkFormat[]} */
         this.linkFormats = policy.linkFormats || []

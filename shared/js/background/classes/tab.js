@@ -17,7 +17,6 @@
 const Site = require('./site').default
 const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects')
-const Companies = require('../companies')
 const webResourceKeyRegex = /.*\?key=(.*)/
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy')
 const { TabState } = require('./tab-state')
@@ -27,8 +26,9 @@ const { TabState } = require('./tab-state')
 class Tab {
     /**
      * @param {TabData|TabState} tabData
+     * @param {import("../storage/tds").TDSStorage} tds
      */
-    constructor (tabData) {
+    constructor (tabData, tds) {
         if (tabData instanceof TabState) {
             /** @type {TabState} */
             this._tabState = tabData
@@ -41,17 +41,19 @@ class Tab {
         this.httpsRedirects = new HttpsRedirects()
         this.webResourceAccess = []
         this.surrogates = {}
+        this.tds = tds
     }
 
     /**
+     * @param {import("../storage/tds").TDSStorage} tds
      * @param {number} tabId
      */
-    static async restore (tabId) {
+    static async restore (tabId, tds) {
         const state = await TabState.restore(tabId)
         if (!state) {
             return null
         }
-        return new Tab(state)
+        return new Tab(state, tds)
     }
 
     set referrer (value) {
@@ -210,7 +212,7 @@ class Tab {
      * @returns {AdClickAttributionPolicy}
      */
     getAdClickAttributionPolicy () {
-        this._adClickAttributionPolicy = this._adClickAttributionPolicy || new AdClickAttributionPolicy()
+        this._adClickAttributionPolicy = this._adClickAttributionPolicy || new AdClickAttributionPolicy(this.tds)
         return this._adClickAttributionPolicy
     }
 
@@ -237,9 +239,10 @@ class Tab {
      * @param t
      * @param {string} baseDomain
      * @param {string} url
+     * @param {import("../companies").Companies} companies
      * @returns {Tracker}
      */
-    addToTrackers (t, baseDomain, url) {
+    addToTrackers (t, baseDomain, url, companies) {
         const trackers = this.trackers
         const tracker = this.trackers[t.tracker.owner.name]
 
@@ -251,7 +254,7 @@ class Tab {
             this.trackers[t.tracker.owner.name] = newTracker
 
             // first time we have seen this network tracker on the page
-            if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner)
+            if (t.tracker.owner.name !== 'unknown') companies.countCompanyOnPage(t.tracker.owner)
         }
         // Set the trackers on the tab which will trigger a state update
         this.trackers = trackers

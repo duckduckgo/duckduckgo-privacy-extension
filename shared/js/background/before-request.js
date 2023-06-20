@@ -4,9 +4,6 @@ import ATB from './atb'
 
 const utils = require('./utils')
 const trackers = require('./trackers')
-const https = require('./https')
-const Companies = require('./companies')
-const tabManager = require('./tab-manager')
 const browserWrapper = require('./wrapper')
 const settings = require('./settings')
 const devtools = require('./devtools')
@@ -45,7 +42,12 @@ function updateTabCleanAmpUrl (currentTab, canonicalUrl, url) {
     }
 }
 
-async function handleAmpAsyncRedirect (thisTab, url) {
+/**
+ * @param {import("./tab-manager").TabManager} tabManager
+ * @param thisTab
+ * @param url
+ */
+async function handleAmpAsyncRedirect (tabManager, thisTab, url) {
     const canonicalUrl = await ampProtection.fetchAMPURL(thisTab.site, url)
     const currentTab = tabManager.get({ tabId: thisTab.id })
     updateTabCleanAmpUrl(currentTab, canonicalUrl, url)
@@ -54,7 +56,13 @@ async function handleAmpAsyncRedirect (thisTab, url) {
     }
 }
 
-async function handleAmpDelayedUpdate (thisTab, url) {
+/**
+ * @param {import("./tab-manager").TabManager} tabManager
+ * @param thisTab
+ * @param url
+ * @return {Promise<void>}
+ */
+async function handleAmpDelayedUpdate (tabManager, thisTab, url) {
     const canonicalUrl = await ampProtection.fetchAMPURL(thisTab.site, url)
     const currentTab = tabManager.get({ tabId: thisTab.id })
     const newUrl = canonicalUrl || url
@@ -63,13 +71,18 @@ async function handleAmpDelayedUpdate (thisTab, url) {
     browser.tabs.update(thisTab.id, { url: newUrl })
 }
 
-function handleAmpRedirect (thisTab, url) {
+/**
+ * @param {import("./tab-manager").TabManager} tabManager
+ * @param thisTab
+ * @param url
+ */
+function handleAmpRedirect (tabManager, thisTab, url) {
     if (!thisTab) { return }
     if (utils.getBrowserName() === 'moz') {
-        return handleAmpAsyncRedirect(thisTab, url)
+        return handleAmpAsyncRedirect(tabManager, thisTab, url)
     }
 
-    handleAmpDelayedUpdate(thisTab, url)
+    handleAmpDelayedUpdate(tabManager, thisTab, url)
     return { redirectUrl: 'about:blank' }
 }
 
@@ -80,9 +93,12 @@ function handleAmpRedirect (thisTab, url) {
  * - Add ATB param
  * - Block tracker requests
  * - Upgrade http -> https where possible
+ * @param {import("./companies").Companies} companies
+ * @param {import("./https").HTTPS} https
+ * @param {import("./tab-manager").TabManager} tabManager
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  */
-function handleRequest (requestData) {
+function handleRequest (companies, https, tabManager, requestData) {
     const thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
@@ -109,7 +125,7 @@ function handleRequest (requestData) {
             mainFrameRequestURL = new URL(canonUrl)
         } else if (ampProtection.tabNeedsDeepExtraction(requestData, thisTab, mainFrameRequestURL)) {
             thisTab.setAmpUrl(mainFrameRequestURL.href)
-            return handleAmpRedirect(thisTab, mainFrameRequestURL.href)
+            return handleAmpRedirect(tabManager, thisTab, mainFrameRequestURL.href)
         } else if (thisTab.cleanAmpUrl && mainFrameRequestURL.host !== new URL(thisTab.cleanAmpUrl).host) {
             thisTab.ampUrl = null
             thisTab.cleanAmpUrl = null
@@ -163,7 +179,7 @@ function handleRequest (requestData) {
             return
         }
 
-        const handleResponse = blockHandleResponse(thisTab, requestData)
+        const handleResponse = blockHandleResponse(thisTab, requestData, companies)
         if (handleResponse) {
             return handleResponse
         }
@@ -237,7 +253,7 @@ export class TrackerBlockedEvent {
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  * @returns {browser.WebRequest.BlockingResponseOrPromise | undefined}
  */
-function blockHandleResponse (thisTab, requestData) {
+function blockHandleResponse (thisTab, requestData, companies) {
     const blockingEnabled = thisTab.site.isContentBlockingEnabled()
 
     // Find the supported and enabled Click to Load rule actions for this tab.
@@ -327,7 +343,7 @@ function blockHandleResponse (thisTab, requestData) {
             // without a baseDomain, it wouldn't make sense to record this
             if (baseDomain) {
                 const url = utils.getURLWithoutQueryString(requestData.url)
-                thisTab.addToTrackers(tracker, baseDomain, url)
+                thisTab.addToTrackers(tracker, baseDomain, url, companies)
             }
         }
         // the tab has finished loading

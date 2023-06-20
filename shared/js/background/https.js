@@ -2,14 +2,11 @@ const settings = require('./settings')
 const utils = require('./utils')
 const BloomFilter = require('@duckduckgo/jsbloom').filter
 const httpsService = require('./https-service')
-const tabManager = require('./tab-manager')
 const browserWrapper = require('./wrapper')
 const tldts = require('tldts')
 const { addSmarterEncryptionSessionRule } = require('./dnr-smarter-encryption')
 // as defined in https://tools.ietf.org/html/rfc6761
 const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test']
-
-const manifestVersion = browserWrapper.getManifestVersion()
 
 function base64ToUint8Array (base64) {
     const binaryString = globalThis.atob(base64)
@@ -21,8 +18,11 @@ function base64ToUint8Array (base64) {
     return bytes
 }
 
-class HTTPS {
-    constructor () {
+export class HTTPS {
+    /**
+     * @param {import("./tab-manager").TabManager} tabManager
+     */
+    constructor (tabManager) {
         // Store multiple upgrade / don't upgrade bloom filters
         this.upgradeBloomFilters = new Map()
         this.dontUpgradeBloomFilters = new Map()
@@ -31,6 +31,7 @@ class HTTPS {
         this.upgradeList = []
 
         this.isReady = false
+        this.tabManager = tabManager
     }
 
     // Sets a list by type and name. This is data that
@@ -128,6 +129,7 @@ class HTTPS {
         }
 
         const foundInServiceCache = httpsService.checkInCache(host)
+        const manifestVersion = browserWrapper.getManifestVersion()
 
         if (foundInServiceCache === true && manifestVersion === 3) {
             // This domain should be upgraded and is not in the bloom filter.
@@ -153,7 +155,7 @@ class HTTPS {
 
     downgradeTab ({ tabId, expectedUrl, targetUrl }) {
         // make sure that tab still has expected url (user could have navigated away or been redirected)
-        const tab = tabManager.get({ tabId })
+        const tab = this.tabManager.get({ tabId })
 
         if (tab.url !== expectedUrl && tab.url !== targetUrl) {
             console.warn(`HTTPS: Not downgrading, expected and actual tab URLs don't match: ${expectedUrl} vs ${tab.url}`)
@@ -269,6 +271,7 @@ class HTTPS {
 
             tab.mainFrameUpgraded = true
             this.incrementUpgradeCount('totalUpgrades')
+            const manifestVersion = browserWrapper.getManifestVersion()
             if (manifestVersion === 3) {
                 // returning from webRequest won't cause the upgrade, so we have to do it manually with webNavigation
                 browserWrapper.changeTabURL(tab.id, upgradedUrl)
@@ -285,5 +288,3 @@ class HTTPS {
         settings.updateSetting(setting, value)
     }
 }
-
-module.exports = new HTTPS()

@@ -4,6 +4,9 @@ const browserWrapper = require('../../shared/js/background/wrapper')
 const constants = require('../../shared/data/constants')
 const testTDS = require('../data/tds.json')
 const { dataFormatSchema } = require('../../shared/js/newtab/schema')
+const { TDSStorage } = require('../../shared/js/background/storage/tds')
+const { BrowserWrapper } = require('../../shared/js/background/wrapper')
+const { Settings } = require('../../shared/js/background/settings')
 
 const SEC = 1000
 const MIN = SEC * 60
@@ -12,7 +15,10 @@ const HOUR = MIN * 60
 describe('NewTabTrackerStats', () => {
     it('produces a filtered output for multiple companies', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats)
+        const browser = new BrowserWrapper()
+        const settings = new Settings(browser)
+        const storage = new TDSStorage(browser, settings);
+        const newtab = new NewTabTrackerStats(stats, browser, storage)
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
 
@@ -36,7 +42,10 @@ describe('NewTabTrackerStats', () => {
     })
     it('only lists the names of entries in the top 100 list', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats)
+        const browser = new BrowserWrapper()
+        const settings = new Settings(browser)
+        const storage = new TDSStorage(browser, settings);
+        const newtab = new NewTabTrackerStats(stats, browser, storage)
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
 
@@ -66,7 +75,10 @@ describe('NewTabTrackerStats', () => {
     })
     it('combines none-top entries', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats)
+        const browser = new BrowserWrapper()
+        const settings = new Settings(browser)
+        const storage = new TDSStorage(browser, settings);
+        const newtab = new NewTabTrackerStats(stats, browser, storage)
 
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities, 5)
@@ -122,12 +134,16 @@ describe('sending data', () => {
     })
     it('should debounce sending data after recording tracker events', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats)
+        const browser = new BrowserWrapper()
+        const settings = new Settings(browser)
+        const storage = new TDSStorage(browser, settings);
+
+        const newtab = new NewTabTrackerStats(stats, browser, storage);
 
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
         const sendSpy = spyOn(newtab, '_publish')
-        const syncSpy = spyOn(browserWrapper, 'syncToStorage')
+        const syncSpy = spyOn(browser, 'syncToStorage')
 
         const now = 1673473220560
 
@@ -169,6 +185,9 @@ describe('incoming events', () => {
     let newtab, sendSpy
     beforeEach(() => {
         const stats = new TrackerStats()
+        const browser = new BrowserWrapper()
+        const settings = new Settings(browser)
+        const storage = new TDSStorage(browser, settings);
         const now = 1673473220560
         stats.deserialize({
             current: {
@@ -182,7 +201,7 @@ describe('incoming events', () => {
             totalCount: 6
         })
 
-        newtab = new NewTabTrackerStats(stats)
+        newtab = new NewTabTrackerStats(stats, browser, storage)
         sendSpy = spyOn(newtab, '_publish')
         jasmine.clock().install()
     })
@@ -208,6 +227,9 @@ describe('alarms', () => {
     const twoHourAgo = now - (HOUR * 2)
     beforeEach(() => {
         const stats = new TrackerStats()
+        const browser = new BrowserWrapper()
+        const settings = new Settings(browser)
+        const storage = new TDSStorage(browser, settings);
         stats.deserialize({
             current: {
                 start: 0,
@@ -224,7 +246,7 @@ describe('alarms', () => {
             totalCount: 6
         })
 
-        newtab = new NewTabTrackerStats(stats)
+        newtab = new NewTabTrackerStats(stats, browser, storage)
         sendSpy = spyOn(newtab, '_publish')
         jasmine.clock().install()
     })

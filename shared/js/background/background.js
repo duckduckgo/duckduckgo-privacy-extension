@@ -21,7 +21,12 @@ require('./events')
 const settings = require('./settings')
 require('./dnr-config-rulesets')
 require('./script-injection')
+import {TabManager} from "./tab-manager.js";
+import Companies from './companies.js'
+
+const companies = new Companies();
+const tabmanager = new TabManager(companies);
 
 settings.ready().then(() => {
-    onStartup()
+    onStartup({ tabManager, companies })
 })

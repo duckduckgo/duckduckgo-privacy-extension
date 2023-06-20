@@ -1,8 +1,6 @@
 import Dexie from 'dexie'
 const load = require('./../load')
 const constants = require('../../../data/constants')
-const settings = require('./../settings')
-const browserWrapper = require('./../wrapper')
 const extensionConfig = require('./../../../data/bundled/extension-config.json')
 const etags = require('../../../data/etags.json')
 
@@ -16,8 +14,12 @@ const configNames = constants.tdsLists.map(({ name }) => name)
  * @property {Record<string,string>} [channels]
  */
 
-class TDSStorage {
-    constructor () {
+export class TDSStorage {
+    /**
+     * @param {import('./../wrapper').BrowserWrapper} browser
+     * @param {import("../settings").Settings} settings
+     */
+    constructor (browser, settings) {
         this.dbc = new Dexie('tdsStorage')
         this.dbc.version(1).stores({
             tdsStorage: 'name,data'
@@ -49,6 +51,8 @@ class TDSStorage {
         this.updatePeriodInMinutes = 30
 
         this.removeLegacyLists()
+        this.browser = browser;
+        this.settings = settings;
     }
 
     async initOnInstall () {
@@ -58,12 +62,12 @@ class TDSStorage {
     }
 
     async _internalInitOnInstall () {
-        await settings.ready()
+        await this.settings.ready()
         const etagKey = 'config-etag'
-        const etagValue = settings.getSetting(etagKey)
+        const etagValue = this.settings.getSetting(etagKey)
         // If there's an existing value ignore the bundled values
         if (!etagValue) {
-            settings.updateSetting(etagKey, etags[etagKey])
+            this.settings.updateSetting(etagKey, etags[etagKey])
             this.config = extensionConfig
             await this.storeInLocalDB('config', extensionConfig)
         }
@@ -82,7 +86,7 @@ class TDSStorage {
 
                     // Check the current etag for this configuration, so that can be
                     // passed to the listeners.
-                    const etag = settings.getSetting(`${configName}-etag`) || ''
+                    const etag = this.settings.getSetting(`${configName}-etag`) || ''
 
                     // Notify any listeners that this list has updated.
                     const listeners = this._onUpdatedListeners.get(configName)
@@ -105,7 +109,7 @@ class TDSStorage {
                 // Skip fetching the lists on extension startup if a new enough
                 // local copy exists.
                 if (preferLocal) {
-                    const lastUpdate = settings.getSetting(`${list.name}-lastUpdate`) || 0
+                    const lastUpdate = this.settings.getSetting(`${list.name}-lastUpdate`) || 0
                     const millisecondsSinceUpdate = Date.now() - lastUpdate
                     if (millisecondsSinceUpdate < this.updatePeriodInMinutes * 60 * 1000) {
                         const localList = await this.getListFromLocalDB(list.name)
@@ -130,14 +134,14 @@ class TDSStorage {
         }
         /** @type {TDSList} */
         const listCopy = JSON.parse(JSON.stringify(list))
-        const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
+        const etag = this.settings.getSetting(`${listCopy.name}-etag`) || ''
         const version = this.getVersionParam()
-        const activeExperiment = settings.getSetting('activeExperiment')
-        const channel = settings.getSetting(`${listCopy.name}-channel`) || ''
+        const activeExperiment = this.settings.getSetting('activeExperiment')
+        const channel = this.settings.getSetting(`${listCopy.name}-channel`) || ''
 
         let experiment = ''
         if (activeExperiment) {
-            experiment = settings.getSetting('experimentData')
+            experiment = this.settings.getSetting('experimentData')
         }
 
         // select custom version of the list from the config
@@ -170,12 +174,12 @@ class TDSStorage {
             const localTime = Date.now()
             const serverTime = Date.parse(response.date)
             const updateTime = Math.min(localTime, serverTime || localTime)
-            settings.updateSetting(`${listCopy.name}-lastUpdate`, updateTime)
+            this.settings.updateSetting(`${listCopy.name}-lastUpdate`, updateTime)
 
             // for 200 response we update etags
             if (response && response.status === 200) {
                 const newEtag = response.etag || ''
-                settings.updateSetting(`${listCopy.name}-etag`, newEtag)
+                this.settings.updateSetting(`${listCopy.name}-etag`, newEtag)
             }
 
             // We try to process both 200 and 304 responses. 200s will validate
@@ -201,8 +205,8 @@ class TDSStorage {
 
             // Reset the etag and lastUpdate time to force us to get
             // fresh server data in case of an error.
-            settings.updateSetting(`${listCopy.name}-etag`, '')
-            settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
+            this.settings.updateSetting(`${listCopy.name}-etag`, '')
+            this.settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
             throw new Error('TDS: data update failed')
         })
     }
@@ -241,8 +245,8 @@ class TDSStorage {
     storeInLocalDB (name, data) {
         return this.table.put({ name, data }).catch(e => {
             console.warn(`storeInLocalDB failed for ${name}: resetting stored etag`, e)
-            settings.updateSetting(`${name}-etag`, '')
-            settings.updateSetting(`${name}-lastUpdate`, '')
+            this.settings.updateSetting(`${name}-etag`, '')
+            this.settings.updateSetting(`${name}-lastUpdate`, '')
         })
     }
 
@@ -263,8 +267,8 @@ class TDSStorage {
     // add version param to url on the first install and only once a day after that
     getVersionParam () {
         const ONEDAY = 1000 * 60 * 60 * 24
-        const version = browserWrapper.getExtensionVersion()
-        const lastTdsUpdate = settings.getSetting('lastTdsUpdate')
+        const version = this.browser.getExtensionVersion()
+        const lastTdsUpdate = this.settings.getSetting('lastTdsUpdate')
         const now = Date.now()
         let versionParam
 
@@ -280,7 +284,7 @@ class TDSStorage {
             versionParam = `&v=${version}`
         }
 
-        if (versionParam) settings.updateSetting('lastTdsUpdate', now)
+        if (versionParam) this.settings.updateSetting('lastTdsUpdate', now)
 
         return versionParam
     }
@@ -334,4 +338,3 @@ class TDSStorage {
         return readyPromise
     }
 }
-export default new TDSStorage()

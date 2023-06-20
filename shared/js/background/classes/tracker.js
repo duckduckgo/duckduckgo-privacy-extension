@@ -2,8 +2,6 @@ import constants from '../../../data/constants'
 import { convertState } from './privacy-dashboard-data'
 import tdsStorage from '../storage/tds'
 
-const Companies = require('../companies')
-
 /**
  * @typedef {import('../trackers').ActionName} ActionName
  * @typedef {import('../trackers').TrackerData} TrackerData
@@ -14,6 +12,7 @@ const Companies = require('../companies')
 export class Tracker {
     /**
      * @param {TrackerData | null} t
+     * @param parentCompany
      */
     constructor (t) {
         /** @type {Record<string, DetectedRequestWithAction>} */
@@ -26,7 +25,9 @@ export class Tracker {
         if (!t.tracker) {
             throw new Error('Tracker object required for Tracker constructor')
         }
-        this.parentCompany = Companies.get(t.tracker.owner.ownedBy || t.tracker.owner.name)
+        // todo: prevent the need for this state
+        /** @type {any} */
+        this.parentCompany = null;
         this.displayName = this.parentCompany?.displayName || t.tracker.owner.displayName
         this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
     }

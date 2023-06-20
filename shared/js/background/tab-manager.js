@@ -1,9 +1,6 @@
-const Companies = require('./companies')
-const settings = require('./settings')
 const Tab = require('./classes/tab')
 const ServiceWorkerTab = require('./classes/sw-tab')
 const { TabState } = require('./classes/tab-state')
-const browserWrapper = require('./wrapper')
 const {
     toggleUserAllowlistDomain,
     updateUserDenylist
@@ -22,12 +19,22 @@ const persistentTabProperties = [
     'ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction'
 ]
 
-class TabManager {
-    constructor () {
+export class TabManager {
+    /**
+     * @param {import("./companies").Companies} companies
+     * @param {import("./wrapper").BrowserWrapper} browser
+     * @param {import("./storage/tds").TDSStorage} tdsStorage
+     * @param {import("./settings").Settings} settings
+     */
+    constructor (companies, browser, tdsStorage, settings) {
         /** @type {Record<number, Tab>} */
         this.tabContainer = {}
         /** @type {Record<string, Tab>} */
         this.swContainer = {}
+        this.companies = companies
+        this.browser = browser
+        this.tdsStorage = tdsStorage
+        this.settings = settings
     }
 
     /* This overwrites the current tab data for a given
@@ -36,8 +43,8 @@ class TabManager {
      * 2. When we get a new main_frame request
      */
     create (tabData) {
-        const normalizedData = browserWrapper.normalizeTabData(tabData)
-        const newTab = new Tab(normalizedData)
+        const normalizedData = this.browser.normalizeTabData(tabData)
+        const newTab = new Tab(normalizedData, this.tdsStorage)
 
         const oldTab = this.tabContainer[newTab.id]
         if (oldTab) {
@@ -61,7 +68,7 @@ class TabManager {
     }
 
     async restore (tabId) {
-        const restoredState = await Tab.restore(tabId)
+        const restoredState = await Tab.restore(tabId, this.tdsStorage)
         if (restoredState) {
             this.tabContainer[tabId] = restoredState
         }
@@ -73,7 +80,7 @@ class TabManager {
         if (tabToRemove) {
             tabToRemove?.adClick?.removeDNR()
 
-            if (browserWrapper.getManifestVersion() === 3) {
+            if (this.browser.getManifestVersion() === 3) {
                 clearClickToLoadDnrRulesForTab(tabToRemove)
             }
         }
@@ -96,7 +103,7 @@ class TabManager {
             const swUrl = tabData.initiator || tabData.documentUrl
             const swOrigin = new URL(swUrl).origin
             if (!this.swContainer[swOrigin]) {
-                this.swContainer[swOrigin] = new ServiceWorkerTab(swUrl, this.tabContainer)
+                this.swContainer[swOrigin] = new ServiceWorkerTab(swUrl, this.tabContainer, this.companies)
             }
             return this.swContainer[swOrigin]
         }
@@ -104,10 +111,10 @@ class TabManager {
     }
 
     async getOrRestoreTab (tabId) {
-        if (!tabManager.has(tabId)) {
-            await tabManager.restore(tabId)
+        if (!this.has(tabId)) {
+            await this.restore(tabId)
         }
-        return tabManager.get({ tabId })
+        return this.get({ tabId })
     }
 
     /**
@@ -135,7 +142,7 @@ class TabManager {
         // Ensure that user allowlisting/denylisting is honoured for manifest v3
         // builds of the extension, by adding/removing the necessary
         // declarativeNetRequest rules.
-        if (browserWrapper.getManifestVersion() === 3) {
+        if (this.browser.getManifestVersion() === 3) {
             if (data.list === 'allowlisted') {
                 await toggleUserAllowlistDomain(data.domain, data.value)
             } else if (data.list === 'denylisted') {
@@ -152,7 +159,7 @@ class TabManager {
      * @param {boolean} value
      */
     setGlobalAllowlist (list, domain, value) {
-        const globalallowlist = settings.getSetting(list) || {}
+        const globalallowlist = this.settings.getSetting(list) || {}
 
         if (value) {
             globalallowlist[domain] = true
@@ -160,7 +167,7 @@ class TabManager {
             delete globalallowlist[domain]
         }
 
-        settings.updateSetting(list, globalallowlist)
+        this.settings.updateSetting(list, globalallowlist)
     }
 
     /* This handles the new tab case. You have clicked to
@@ -170,11 +177,11 @@ class TabManager {
      * later on when webrequests start coming in.
      */
     createOrUpdateTab (id, info) {
-        if (!tabManager.get({ tabId: id })) {
+        if (!this.get({ tabId: id })) {
             info.id = id
-            return tabManager.create(info)
+            return this.create(info)
         } else {
-            const tab = tabManager.get({ tabId: id })
+            const tab = this.get({ tabId: id })
             if (tab && info.status) {
                 tab.status = info.status
 
@@ -195,10 +202,10 @@ class TabManager {
                     if (tab.statusCode === 200 &&
                         !tab.site.didIncrementCompaniesData) {
                         if (tab.trackers && Object.keys(tab.trackers).length > 0) {
-                            Companies.incrementTotalPagesWithTrackers()
+                            this.companies.incrementTotalPagesWithTrackers()
                         }
 
-                        Companies.incrementTotalPages()
+                        this.companies.incrementTotalPages()
                         tab.site.didIncrementCompaniesData = true
                     }
                 }
@@ -210,7 +217,7 @@ class TabManager {
     updateTabUrl (request) {
         // Update tab data. This makes
         // sure we have the correct url after any https rewrites
-        const tab = tabManager.get({ tabId: request.tabId })
+        const tab = this.get({ tabId: request.tabId })
 
         if (tab) {
             tab.statusCode = request.statusCode
@@ -220,7 +227,3 @@ class TabManager {
         }
     }
 }
-
-const tabManager = new TabManager()
-
-module.exports = tabManager

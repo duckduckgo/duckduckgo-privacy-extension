@@ -1,8 +1,7 @@
 // Utility functions for dealing with tracker information
-import * as utils from './utils'
 import trackers from './trackers'
 import * as tldts from 'tldts'
-import tdsStorage from './storage/tds'
+import { extractHostFromURL, extractLimitedDomainFromURL, isSameTopLevelDomain } from './utils'
 
 export function hasTrackerListLoaded () {
     return !!trackers.trackerList
@@ -15,8 +14,8 @@ export function isSameEntity (url1, url2) {
         const domain2 = tldts.parse(url2).domain
         if (domain1 === domain2) return true
 
-        const entity1 = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(url1).split('.') })
-        const entity2 = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(url2).split('.') })
+        const entity1 = trackers.findWebsiteOwner({ siteUrlSplit: extractHostFromURL(url1).split('.') })
+        const entity2 = trackers.findWebsiteOwner({ siteUrlSplit: extractHostFromURL(url2).split('.') })
         if (entity1 === undefined && entity2 === undefined) return false
         return entity1 === entity2
     } catch (e) {
@@ -28,13 +27,13 @@ export function isSameEntity (url1, url2) {
 // return true if URL is in our tracker list
 export function isTracker (url) {
     const data = {
-        urlToCheckSplit: utils.extractHostFromURL(url).split('.')
+        urlToCheckSplit: extractHostFromURL(url).split('.')
     }
     const tracker = trackers.findTracker(data)
     return !!tracker
 }
 
-/*
+/**
  * Truncate the referrer header/API value according to the following rules:
  *   Don't modify the value when:
  *   - If the referrer is blank, it will not be modified.
@@ -45,8 +44,11 @@ export function isTracker (url) {
  *   Modify the referrer when:
  *   - If the destination is in our tracker list, we will trim it to eTLD+1 (remove path and subdomain information)
  *   - In all other cases (the general case), the referrer will be modified to only the referrer origin (includes subdomain).
+ *
+ * @param {import("./utils").Utils} utils
+ * @param {import("./storage/tds").TDSStorage} tdsStorage
  */
-export function truncateReferrer (referrer, target) {
+export function truncateReferrer (utils, tdsStorage, referrer, target) {
     if (!referrer || referrer === '') {
         return undefined
     }
@@ -69,9 +71,9 @@ export function truncateReferrer (referrer, target) {
 
     let modifiedReferrer = referrer
     if (isTracker(target) || (fromCname && isTracker(finalURL))) {
-        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: false })
+        modifiedReferrer = extractLimitedDomainFromURL(referrer, { keepSubdomains: false })
     } else {
-        modifiedReferrer = utils.extractLimitedDomainFromURL(referrer, { keepSubdomains: true })
+        modifiedReferrer = extractLimitedDomainFromURL(referrer, { keepSubdomains: true })
     }
     // If extractLimitedDomainFromURL fails (for instance, invalid referrer URL), it
     // returns undefined, (in practice, don't modify the referrer), so sometimes this value could be undefined.
@@ -88,14 +90,14 @@ export function isFirstPartyByEntity (trackerUrl, siteUrl) {
     const cnameResolution = trackers.resolveCname(trackerUrl)
     trackerUrl = cnameResolution.finalURL
 
-    if (utils.isSameTopLevelDomain(trackerUrl, siteUrl)) {
+    if (isSameTopLevelDomain(trackerUrl, siteUrl)) {
         return true
     }
 
     const trackerDomain = tldts.parse(trackerUrl).domain
     if (!trackerDomain) return false
     const trackerOwner = trackers.findTrackerOwner(trackerDomain)
-    const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit: utils.extractHostFromURL(siteUrl).split('.') })
+    const websiteOwner = trackers.findWebsiteOwner({ siteUrlSplit: extractHostFromURL(siteUrl).split('.') })
 
     return (trackerOwner && websiteOwner) ? trackerOwner === websiteOwner : false
 }

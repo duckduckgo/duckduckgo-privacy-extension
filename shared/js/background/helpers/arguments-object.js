@@ -1,14 +1,20 @@
 import { getUserLocale } from '../i18n'
 import { getExtensionURL } from '../wrapper'
 const utils = require('../utils')
-const tabManager = require('../tab-manager')
 const trackerutils = require('../tracker-utils')
 const settings = require('../settings')
-const { isActive } = require('../devtools')
 const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
 
-export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
+/**
+ * @param tabId
+ * @param sender
+ * @param documentUrl
+ * @param sessionKey
+ * @param {import("../tab-manager").TabManager} tabManager
+ * @param {import("../devtools").DevTools} devTools
+ */
+export function getArgumentsObject (tabId, sender, documentUrl, sessionKey, tabManager, devTools) {
     const tab = tabManager.get({ tabId })
     if (!tab || !tab.url) {
         return null
@@ -61,7 +67,7 @@ export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     }
     return {
         featureSettings,
-        debug: isActive(tabId),
+        debug: devTools.isActive(tabId),
         cookie,
         globalPrivacyControlValue: settings.getSetting('GPC'),
         stringExemptionLists: utils.getBrokenScriptLists(),

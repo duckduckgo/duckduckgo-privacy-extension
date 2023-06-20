@@ -10,8 +10,9 @@ class ServiceWorkerTab extends Tab {
     /**
      * @param {string} swUrl
      * @param {Record<number, Tab>} tabContainer
+     * @param {import("../companies").Companies} companies
      */
-    constructor (swUrl, tabContainer) {
+    constructor (swUrl, tabContainer, companies) {
         super({
             tabId: -1,
             url: swUrl,
@@ -19,6 +20,7 @@ class ServiceWorkerTab extends Tab {
         })
         this.origin = new URL(swUrl).origin
         this.tabContainer = tabContainer
+        this.companies = companies
     }
 
     /**
@@ -46,7 +48,7 @@ class ServiceWorkerTab extends Tab {
      * @returns {import('./tracker').Tracker}
      */
     addToTrackers (tracker, baseDomain, url) {
-        const results = this._findMatchingTabs().map(tab => tab.addToTrackers(tracker, baseDomain, url))
+        const results = this._findMatchingTabs().map(tab => tab.addToTrackers(tracker, baseDomain, url, this.companies))
         return results[0]
     }
 

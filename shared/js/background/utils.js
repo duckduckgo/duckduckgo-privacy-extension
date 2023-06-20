@@ -1,12 +1,289 @@
-import browser from 'webextension-polyfill'
-import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from './wrapper'
-import tdsStorage from './storage/tds'
-import settings from './settings'
 import * as tldts from 'tldts'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string'
 import sha1 from '../shared-utils/sha1'
 const browserInfo = parseUserAgentString()
 
+export class Utils {
+    /**
+     * @param {import("./storage/tds").TDSStorage} tdsStorage
+     * @param {import("./wrapper").BrowserWrapper} browser
+     * @param {import("./settings").Settings} settings
+     */
+    constructor (tdsStorage, browser, settings) {
+        this.tdsStorage = tdsStorage
+        this.browser = browser
+        this.settings = settings
+    }
+    /**
+     */
+    async getSessionKey () {
+        let sessionKey = await this.browser.getFromSessionStorage('sessionKey')
+        if (!sessionKey) {
+            sessionKey = await this.resetSessionKey(this.browser)
+        }
+        return sessionKey
+    }
+    /**
+     * @param {import("./wrapper").BrowserWrapper} browser
+     * @return {Promise<*>}
+     */
+    async resetSessionKey (browser) {
+        const sessionKey = sha1(getRandomFloat().toString())
+        await browser.setToSessionStorage('sessionKey', sessionKey)
+        return sessionKey
+    }
+    async sendTabMessage (id, message, details) {
+        try {
+            await this.browser.tabs.sendMessage(id, message, details)
+        } catch {
+            // Ignore errors
+        }
+    }
+
+    async sendAllTabsMessage (message, details) {
+        try {
+            for (const { id: tabId } of await this.browser.tabs.query({})) {
+                this.sendTabMessage(tabId, message, details)
+            }
+        } catch {
+            // Ignore errors
+        }
+    }
+
+    // pull off subdomains and look for parent companies
+    findParent (url) {
+        const parts = extractHostFromURL(url).split('.')
+
+        while (parts.length > 1) {
+            const joinURL = parts.join('.')
+
+            // check if tracker owner has 'ownedBy' to indicate a parent.
+            if (this.tdsStorage.tds.trackers[joinURL]?.owner?.ownedBy) {
+                return this.tdsStorage.tds.trackers[joinURL].owner.ownedBy
+            } else if (this.tdsStorage.tds.domains[joinURL]) {
+                return this.tdsStorage.tds.domains[joinURL]
+            }
+            parts.shift()
+        }
+    }
+
+    /**
+     * There are situations where we want to access the parent's displayName
+     * only - for instance in the NewtabTrackerStats feature.
+     * @param {string} url
+     * @returns {string}
+     */
+    findParentDisplayName (url) {
+        const parent = this.findParent(url)
+        const entity = this.tdsStorage.tds.entities[parent]
+
+        if (entity && entity.displayName) {
+            return entity.displayName
+        }
+
+        return 'unknown'
+    }
+    /*
+ * check to see if this is a broken site reported on github
+*/
+    isBroken (url) {
+        if (!this.tdsStorage?.config.unprotectedTemporary) return
+        return this.brokenListIndex(url, this.tdsStorage?.config.unprotectedTemporary) !== -1
+    }
+
+    removeBroken (domain) {
+        const index = this.brokenListIndex(domain, this.tdsStorage.config.unprotectedTemporary)
+        if (index !== -1) {
+            console.log('remove', this.tdsStorage.config.unprotectedTemporary.splice(index, 1))
+        }
+    }
+
+    getEnabledFeaturesAboutBlank (url) {
+        if (!this.tdsStorage.config.features) return []
+        const enabledFeatures = []
+        for (const feature in this.tdsStorage.config.features) {
+            const featureSettings = this.getFeatureSettings(feature)
+
+            if (featureSettings.aboutBlankEnabled !== 'disabled' && this.brokenListIndex(url, featureSettings.aboutBlankSites || []) === -1) {
+                enabledFeatures.push(feature)
+            }
+        }
+        return enabledFeatures
+    }
+
+    /**
+     * @param {import("./wrapper").BrowserWrapper} browser
+     * @param url
+     * @return {*[]}
+     */
+    getEnabledFeatures (browser, url) {
+        if (!this.tdsStorage.config.features) return []
+        const enabledFeatures = []
+        for (const feature in this.tdsStorage.config.features) {
+            if (this.isFeatureEnabled(feature) && this.brokenListIndex(url, this.tdsStorage.config.features[feature].exceptions || []) === -1) {
+                enabledFeatures.push(feature)
+            }
+        }
+        return enabledFeatures
+    }
+
+    brokenListIndex (url, list) {
+        const parsedDomain = tldts.parse(url)
+        const hostname = parsedDomain.hostname || url
+
+        // If root domain in temp unprotected list, return true
+        return list.findIndex((brokenSiteDomain) => {
+            if (brokenSiteDomain.domain) {
+                return hostname === brokenSiteDomain.domain ||
+                    hostname.endsWith(`.${brokenSiteDomain.domain}`)
+            }
+            return false
+        })
+    }
+
+// We inject this into content scripts
+    getBrokenScriptLists () {
+        const brokenScripts = {}
+        for (const key in this.tdsStorage.config.features) {
+            const featureSettings = this.getFeatureSettings(key)
+            brokenScripts[key] = featureSettings.scripts?.map(obj => obj.domain) || []
+        }
+        return brokenScripts
+    }
+
+    /**
+     * Checks the config to see if a feature is enabled. You can optionally pass a second "customState"
+     * parameter to check if the state is equeal to other states (i.e. state === 'beta').
+     *
+     * @param {String} featureName - the name of the feature
+     * @returns {boolean} - if feature is enabled
+     */
+    isFeatureEnabled (featureName) {
+        const feature = this.tdsStorage.tds.config.features[featureName]
+        if (!feature) {
+            return false
+        }
+
+        // If we have a supplied min version for the feature ensure the extension meets it
+        if ('minSupportedVersion' in feature) {
+            const extensionVersionString = this.browser.getExtensionVersion()
+            if (!satisfiesMinVersion(feature.minSupportedVersion, extensionVersionString)) {
+                return false
+            }
+        }
+
+        return feature.state === 'enabled'
+    }
+
+    /**
+     * Returns the settings object associated with featureName in the config
+     *
+     * @param {String} featureName - the name of the feature
+     * @returns {Object} - Settings associated in the config with featureName
+     */
+    getFeatureSettings (featureName) {
+        const feature = this.tdsStorage.tds.config.features[featureName]
+        if (typeof feature !== 'object' || feature === null || !feature.settings) {
+            return {}
+        }
+
+        return feature.settings
+    }
+    // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
+// tabManager.site.isProtectionEnabled() is the preferred method.
+    isSafeListed (url) {
+        const hostname = extractHostFromURL(url)
+        const safeList = this.settings.getSetting('allowlisted')
+        const subdomains = hostname.split('.')
+        // Check user safe list
+        // TODO make the same as brokenListIndex matching
+        while (subdomains.length > 1) {
+            if (safeList && safeList[subdomains.join('.')]) {
+                return true
+            }
+            subdomains.shift()
+        }
+
+        // Check broken sites
+        if (this.isBroken(hostname)) {
+            return true
+        }
+
+        return false
+    }
+
+    isCookieExcluded (url) {
+        const domain = (new URL(url)).host
+        return this.isDomainCookieExcluded(domain)
+    }
+
+    isDomainCookieExcluded (domain) {
+        const cookieSettings = this.getFeatureSettings('cookie')
+        if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
+            return false
+        }
+
+        if (cookieSettings.excludedCookieDomains.find(elem => elem.domain === domain)) {
+            return true
+        }
+
+        const comps = domain.split('.')
+        if (comps.length > 2) {
+            comps.shift()
+            return this.isDomainCookieExcluded(comps.join('.'))
+        }
+
+        return false
+    }
+    /**
+     * Checks if the extension was installed within days of the from date
+     * @param {number} numberOfDays
+     * @param {number} [fromDate]
+     * @param {string} [atb]
+     * @returns {boolean}
+     */
+    isInstalledWithinDays (numberOfDays, fromDate = Date.now(), atb = this.settings.getSetting('atb')) {
+        return this.daysInstalled(fromDate, atb) <= numberOfDays
+    }
+
+    /**
+     * Returns the days since installed using atb
+     * @param {number} [fromDate]
+     * @param {string} [atb]
+     * @returns {number}
+     */
+    daysInstalled (fromDate = Date.now(), atb = this.settings.getSetting('atb')) {
+        if (!atb) return NaN
+
+        const installTimestamp = getInstallTimestamp(atb)
+        // If we can't get the install date, assume it wasn't installed in time period
+        if (!installTimestamp) return NaN
+
+        return (fromDate - installTimestamp) / dayMultiplier
+    }
+
+    getCurrentURL (callback) {
+        this.browser.tabs.query({ active: true, lastFocusedWindow: true }).then((tabData) => {
+            if (tabData.length) {
+                callback(tabData[0].url)
+            }
+        })
+    }
+
+    async getCurrentTab (callback) {
+        const tabData = await this.browser.tabs.query({ active: true, lastFocusedWindow: true })
+        if (tabData.length) {
+            return tabData[0]
+        }
+    }
+
+    async reloadCurrentTab () {
+        const tab = await this.getCurrentTab()
+        if (tab && tab.id) {
+            this.browser.tabs.reload(tab.id)
+        }
+    }
+}
 /**
  * Produce a random float, matches the output of Math.random() but much more cryptographically psudo-random.
  * @returns {number}
@@ -15,37 +292,6 @@ function getRandomFloat () {
     return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
 }
 
-export async function getSessionKey () {
-    let sessionKey = await getFromSessionStorage('sessionKey')
-    if (!sessionKey) {
-        sessionKey = await resetSessionKey()
-    }
-    return sessionKey
-}
-
-export async function resetSessionKey () {
-    const sessionKey = sha1(getRandomFloat().toString())
-    await setToSessionStorage('sessionKey', sessionKey)
-    return sessionKey
-}
-
-export async function sendTabMessage (id, message, details) {
-    try {
-        await browser.tabs.sendMessage(id, message, details)
-    } catch {
-        // Ignore errors
-    }
-}
-
-export async function sendAllTabsMessage (message, details) {
-    try {
-        for (const { id: tabId } of await browser.tabs.query({})) {
-            sendTabMessage(tabId, message, details)
-        }
-    } catch {
-        // Ignore errors
-    }
-}
 
 /**
  * @param {string} urlString
@@ -105,6 +351,7 @@ export function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
         // tried to parse invalid URL, such as an extension URL. In this case, don't modify anything
         return undefined
     }
+
 }
 
 export function extractTopSubdomainFromHost (host) {
@@ -117,54 +364,7 @@ export function extractTopSubdomainFromHost (host) {
     return false
 }
 
-// pull off subdomains and look for parent companies
-export function findParent (url) {
-    const parts = extractHostFromURL(url).split('.')
 
-    while (parts.length > 1) {
-        const joinURL = parts.join('.')
-
-        // check if tracker owner has 'ownedBy' to indicate a parent.
-        if (tdsStorage.tds.trackers[joinURL]?.owner?.ownedBy) {
-            return tdsStorage.tds.trackers[joinURL].owner.ownedBy
-        } else if (tdsStorage.tds.domains[joinURL]) {
-            return tdsStorage.tds.domains[joinURL]
-        }
-        parts.shift()
-    }
-}
-
-/**
- * There are situations where we want to access the parent's displayName
- * only - for instance in the NewtabTrackerStats feature.
- * @param {string} url
- * @returns {string}
- */
-export function findParentDisplayName (url) {
-    const parent = findParent(url)
-    const entity = tdsStorage.tds.entities[parent]
-
-    if (entity && entity.displayName) {
-        return entity.displayName
-    }
-
-    return 'unknown'
-}
-
-export function getCurrentURL (callback) {
-    browser.tabs.query({ active: true, lastFocusedWindow: true }).then((tabData) => {
-        if (tabData.length) {
-            callback(tabData[0].url)
-        }
-    })
-}
-
-export async function getCurrentTab (callback) {
-    const tabData = await browser.tabs.query({ active: true, lastFocusedWindow: true })
-    if (tabData.length) {
-        return tabData[0]
-    }
-}
 
 // Browser / Version detection
 // Get correct name for fetching UI assets
@@ -216,115 +416,6 @@ export function isRedirect (statusCode) {
     return (statusCode >= 300 && statusCode <= 399)
 }
 
-/*
- * check to see if this is a broken site reported on github
-*/
-export function isBroken (url) {
-    if (!tdsStorage?.config.unprotectedTemporary) return
-    return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1
-}
-
-export function removeBroken (domain) {
-    const index = brokenListIndex(domain, tdsStorage.config.unprotectedTemporary)
-    if (index !== -1) {
-        console.log('remove', tdsStorage.config.unprotectedTemporary.splice(index, 1))
-    }
-}
-
-export function getEnabledFeaturesAboutBlank (url) {
-    if (!tdsStorage.config.features) return []
-    const enabledFeatures = []
-    for (const feature in tdsStorage.config.features) {
-        const featureSettings = getFeatureSettings(feature)
-
-        if (featureSettings.aboutBlankEnabled !== 'disabled' && brokenListIndex(url, featureSettings.aboutBlankSites || []) === -1) {
-            enabledFeatures.push(feature)
-        }
-    }
-    return enabledFeatures
-}
-
-export function getEnabledFeatures (url) {
-    if (!tdsStorage.config.features) return []
-    const enabledFeatures = []
-    for (const feature in tdsStorage.config.features) {
-        if (isFeatureEnabled(feature) && brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) === -1) {
-            enabledFeatures.push(feature)
-        }
-    }
-    return enabledFeatures
-}
-
-export function brokenListIndex (url, list) {
-    const parsedDomain = tldts.parse(url)
-    const hostname = parsedDomain.hostname || url
-
-    // If root domain in temp unprotected list, return true
-    return list.findIndex((brokenSiteDomain) => {
-        if (brokenSiteDomain.domain) {
-            return hostname === brokenSiteDomain.domain ||
-                   hostname.endsWith(`.${brokenSiteDomain.domain}`)
-        }
-        return false
-    })
-}
-
-// We inject this into content scripts
-export function getBrokenScriptLists () {
-    const brokenScripts = {}
-    for (const key in tdsStorage.config.features) {
-        const featureSettings = getFeatureSettings(key)
-        brokenScripts[key] = featureSettings.scripts?.map(obj => obj.domain) || []
-    }
-    return brokenScripts
-}
-
-// return true if the given url is in the safelist. For checking if the current tab is in the safelist,
-// tabManager.site.isProtectionEnabled() is the preferred method.
-export function isSafeListed (url) {
-    const hostname = extractHostFromURL(url)
-    const safeList = settings.getSetting('allowlisted')
-    const subdomains = hostname.split('.')
-    // Check user safe list
-    // TODO make the same as brokenListIndex matching
-    while (subdomains.length > 1) {
-        if (safeList && safeList[subdomains.join('.')]) {
-            return true
-        }
-        subdomains.shift()
-    }
-
-    // Check broken sites
-    if (isBroken(hostname)) {
-        return true
-    }
-
-    return false
-}
-
-export function isCookieExcluded (url) {
-    const domain = (new URL(url)).host
-    return isDomainCookieExcluded(domain)
-}
-
-function isDomainCookieExcluded (domain) {
-    const cookieSettings = getFeatureSettings('cookie')
-    if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
-        return false
-    }
-
-    if (cookieSettings.excludedCookieDomains.find(elem => elem.domain === domain)) {
-        return true
-    }
-
-    const comps = domain.split('.')
-    if (comps.length > 2) {
-        comps.shift()
-        return isDomainCookieExcluded(comps.join('.'))
-    }
-
-    return false
-}
 
 /**
  * Tests whether the two URL's belong to the same
@@ -363,45 +454,6 @@ export function satisfiesMinVersion (minVersionString, extensionVersionString) {
 }
 
 /**
- * Checks the config to see if a feature is enabled. You can optionally pass a second "customState"
- * parameter to check if the state is equeal to other states (i.e. state === 'beta').
- *
- * @param {String} featureName - the name of the feature
- * @returns {boolean} - if feature is enabled
- */
-export function isFeatureEnabled (featureName) {
-    const feature = tdsStorage.config.features[featureName]
-    if (!feature) {
-        return false
-    }
-
-    // If we have a supplied min version for the feature ensure the extension meets it
-    if ('minSupportedVersion' in feature) {
-        const extensionVersionString = getExtensionVersion()
-        if (!satisfiesMinVersion(feature.minSupportedVersion, extensionVersionString)) {
-            return false
-        }
-    }
-
-    return feature.state === 'enabled'
-}
-
-/**
- * Returns the settings object associated with featureName in the config
- *
- * @param {String} featureName - the name of the feature
- * @returns {Object} - Settings associated in the config with featureName
- */
-export function getFeatureSettings (featureName) {
-    const feature = tdsStorage.config.features[featureName]
-    if (typeof feature !== 'object' || feature === null || !feature.settings) {
-        return {}
-    }
-
-    return feature.settings
-}
-
-/**
  * Strips off a query string from the URL
  * @param {string} urlString
  * @returns {string}
@@ -410,12 +462,7 @@ export function getURLWithoutQueryString (urlString) {
     return urlString?.split('?')[0]
 }
 
-export async function reloadCurrentTab () {
-    const tab = await getCurrentTab()
-    if (tab && tab.id) {
-        browser.tabs.reload(tab.id)
-    }
-}
+
 
 const dayMultiplier = 24 * 60 * 60 * 1000
 
@@ -435,29 +482,3 @@ export function getInstallTimestamp (atb) {
     return isNaN(installTimestamp) ? null : installTimestamp
 }
 
-/**
- * Checks if the extension was installed within days of the from date
- * @param {number} numberOfDays
- * @param {number} [fromDate]
- * @param {string} [atb]
- * @returns {boolean}
- */
-export function isInstalledWithinDays (numberOfDays, fromDate = Date.now(), atb = settings.getSetting('atb')) {
-    return daysInstalled(fromDate, atb) <= numberOfDays
-}
-
-/**
- * Returns the days since installed using atb
- * @param {number} [fromDate]
- * @param {string} [atb]
- * @returns {number}
- */
-export function daysInstalled (fromDate = Date.now(), atb = settings.getSetting('atb')) {
-    if (!atb) return NaN
-
-    const installTimestamp = getInstallTimestamp(atb)
-    // If we can't get the install date, assume it wasn't installed in time period
-    if (!installTimestamp) return NaN
-
-    return (fromDate - installTimestamp) / dayMultiplier
-}

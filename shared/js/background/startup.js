@@ -1,26 +1,32 @@
-import browser from 'webextension-polyfill'
 import { NewTabTrackerStats } from './newtab-tracker-stats'
 import { TrackerStats } from './classes/tracker-stats.js'
-import httpsStorage from './storage/https'
-import tdsStorage from './storage/tds'
+import { BrowserWrapper } from './wrapper'
+import { Settings } from './settings'
+import { TDSStorage } from './storage/tds'
 const utils = require('./utils')
-const browserWrapper = require('./wrapper')
-const Companies = require('./companies')
 const experiment = require('./experiments')
-const https = require('./https')
-const settings = require('./settings')
-const tabManager = require('./tab-manager')
 const trackers = require('./trackers')
 const dnrSessionId = require('./dnr-session-rule-id')
 const { fetchAlias, showContextMenuAction } = require('./email-utils')
-const manifestVersion = browserWrapper.getManifestVersion()
 /** @module */
 
 let resolveReadyPromise
 const readyPromise = new Promise(resolve => { resolveReadyPromise = resolve })
 
-export async function onStartup () {
-    if (manifestVersion === 3) {
+/**
+ * @param {object} params
+ * @param {import("./companies").Companies} params.companies
+ * @param {import("./tab-manager").TabManager} params.tabManager
+ * @param {import("./https").HTTPS} params.https
+ * @param {import("./storage/https").HTTPSStorage} params.httpsStorage
+ * @param {import("./wrapper").BrowserWrapper} params.browser
+ * @param {import("./storage/tds").TDSStorage} params.tdsStorage
+ * @param {import("./settings").Settings} params.settings
+ */
+export async function onStartup (params) {
+    const { companies, tabManager, https, httpsStorage, browser, tdsStorage, settings } = params;
+
+    if (browser.getManifestVersion() === 3) {
         await dnrSessionId.setSessionRuleOffsetFromStorage()
     }
 
@@ -40,7 +46,7 @@ export async function onStartup () {
         console.warn('Error loading tds lists', e)
     }
 
-    Companies.buildFromStorage()
+    companies.buildFromStorage()
 
     /**
      * in Chrome only, try to initiate the `NewTabTrackerStats` feature
@@ -49,7 +55,7 @@ export async function onStartup () {
         try {
             // build up dependencies
             const trackerStats = new TrackerStats()
-            const newTabTrackerStats = new NewTabTrackerStats(trackerStats)
+            const newTabTrackerStats = new NewTabTrackerStats(trackerStats, browser, tdsStorage)
 
             // Assign the singleton instance to the class for re-use in things like debugging
             // this is an alternative to instantiating the class in the module scope where it lives

@@ -1,10 +1,12 @@
 import Dexie from 'dexie'
 const load = require('./../load')
 const constants = require('../../../data/constants')
-const settings = require('./../settings')
 
-class HTTPSStorage {
-    constructor () {
+export class HTTPSStorage {
+    /**
+     * @param {import("../settings").Settings} settings
+     */
+    constructor (settings) {
         // @ts-ignore - TypeScript is not following the Dexie import property.
         this.dbc = new Dexie(constants.httpsDBName)
         this.dbc.version(1).stores({
@@ -13,6 +15,7 @@ class HTTPSStorage {
 
         // Update the lists every 12 hours.
         this.updatePeriodInMinutes = 12 * 60
+        this.settings = settings;
     }
 
     // Load https data defined in constants.httpsLists.
@@ -23,10 +26,10 @@ class HTTPSStorage {
     getLists (preferLocal = false) {
         return Promise.all(constants.httpsLists.map(async list => {
             const listCopy = JSON.parse(JSON.stringify(list))
-            const etag = settings.getSetting(`${listCopy.name}-etag`) || ''
+            const etag = this.settings.getSetting(`${listCopy.name}-etag`) || ''
 
             if (preferLocal) {
-                const lastUpdate = settings.getSetting(`${listCopy.name}-lastUpdate`) || 0
+                const lastUpdate = this.settings.getSetting(`${listCopy.name}-lastUpdate`) || 0
                 const millisecondsSinceUpdate = Date.now() - lastUpdate
                 if (millisecondsSinceUpdate < this.updatePeriodInMinutes * 60 * 1000) {
                     const result = await this.getListFromLocalDB(listCopy)
@@ -49,12 +52,12 @@ class HTTPSStorage {
                 const localTime = Date.now()
                 const serverTime = Date.parse(response.date)
                 const updateTime = Math.min(localTime, serverTime || localTime)
-                settings.updateSetting(`${listCopy.name}-lastUpdate`, updateTime)
+                this.settings.updateSetting(`${listCopy.name}-lastUpdate`, updateTime)
 
                 // for 200 response we update etags
                 if (response && response.status === 200) {
                     const newEtag = response.etag || ''
-                    settings.updateSetting(`${listCopy.name}-etag`, newEtag)
+                    this.settings.updateSetting(`${listCopy.name}-etag`, newEtag)
                 }
 
                 // We try to process both 200 and 304 responses. 200s will validate
@@ -75,8 +78,8 @@ class HTTPSStorage {
 
                 // Reset etag and lastUpdate time to force us to get
                 // fresh server data in case of an error.
-                settings.updateSetting(`${listCopy.name}-etag`, '')
-                settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
+                this.settings.updateSetting(`${listCopy.name}-etag`, '')
+                this.settings.updateSetting(`${listCopy.name}-lastUpdate`, '')
                 throw new Error(`HTTPS: data update for ${listCopy.name} failed`)
             })
         }))
@@ -119,8 +122,8 @@ class HTTPSStorage {
     storeInLocalDB (name, type, data) {
         return this.dbc.table('httpsStorage').put({ name, type, data }).catch(e => {
             console.warn(`storeInLocalDB failed for ${name}: resetting stored etag`, e)
-            settings.updateSetting(`${name}-etag`, '')
-            settings.updateSetting(`${name}-lastUpdate`, '')
+            this.settings.updateSetting(`${name}-etag`, '')
+            this.settings.updateSetting(`${name}-lastUpdate`, '')
         })
     }
 
@@ -146,4 +149,3 @@ class HTTPSStorage {
         })
     }
 }
-export default new HTTPSStorage()

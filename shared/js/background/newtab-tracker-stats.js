@@ -1,7 +1,5 @@
 import browser from 'webextension-polyfill'
 import constants from '../../data/constants'
-import * as browserWrapper from './wrapper.js'
-import tdsStorage from './storage/tds'
 import { emitter, TrackerBlockedEvent } from './before-request.js'
 import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
 import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
@@ -62,9 +60,13 @@ export class NewTabTrackerStats {
 
     /**
      * @param {import("../background/classes/tracker-stats").TrackerStats} stats - the interface for the stats data.
+     * @param {import("./wrapper").BrowserWrapper} browser
+     * @param {import("./storage/tds").TDSStorage} tdsStorage
      */
-    constructor (stats) {
+    constructor (stats, browser, tdsStorage) {
         this.stats = stats
+        this.browser = browser
+        this.tdsStorage = tdsStorage
     }
 
     /**
@@ -74,7 +76,7 @@ export class NewTabTrackerStats {
      * place for this module.
      */
     register () {
-        const manifestVersion = browserWrapper.getManifestVersion()
+        const manifestVersion = this.browser.getManifestVersion()
         if (manifestVersion === 3) {
             mv3Redirect()
         } else {
@@ -111,7 +113,7 @@ export class NewTabTrackerStats {
          * For now, we're pruning data every 10 min
          */
         const pruneAlarmName = 'pruneNewTabData'
-        browserWrapper.createAlarm(pruneAlarmName, { periodInMinutes: 10 })
+        this.browser.createAlarm(pruneAlarmName, { periodInMinutes: 10 })
         browser.alarms.onAlarm.addListener(async alarmEvent => {
             if (alarmEvent.name === pruneAlarmName) {
                 this._handlePruneAlarm()
@@ -130,12 +132,12 @@ export class NewTabTrackerStats {
         /**
          * Assign the entities from the initial `tds` data
          */
-        this.assignTopCompanies(tdsStorage.tds.entities)
+        this.assignTopCompanies(this.tdsStorage.tds.entities)
 
         /**
          * Observe changes to the 'tds' data and update the topCompanies
          */
-        tdsStorage.onUpdate('tds', (name, etag, updatedValue) => {
+        this.tdsStorage.onUpdate('tds', (name, etag, updatedValue) => {
             // just double-checking, is this incoming data validated anywhere else?
             if (updatedValue?.tds?.entities) {
                 this.assignTopCompanies(updatedValue.tds.entities)
@@ -206,7 +208,7 @@ export class NewTabTrackerStats {
                 stats: serializedData
             }
         }
-        browserWrapper.syncToStorage(toSync)
+        this.browser.syncToStorage(toSync)
     }
 
     /**
@@ -215,7 +217,7 @@ export class NewTabTrackerStats {
      */
     async restoreFromStorage () {
         try {
-            const prev = await browserWrapper.getFromStorage(NewTabTrackerStats.storageKey)
+            const prev = await this.browser.getFromStorage(NewTabTrackerStats.storageKey)
             if (prev) {
                 this.stats.deserialize(prev.stats)
             }
