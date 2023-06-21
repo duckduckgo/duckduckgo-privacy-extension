@@ -17,6 +17,8 @@ import { getDomain, parse } from 'tldts'
  * @typedef {import('../settings.js')} Settings
  */
 
+const tldtsOptions = { allowPrivateDomains: true }
+
 export default class FireButton {
     /**
      * @param {{
@@ -25,6 +27,7 @@ export default class FireButton {
      * }}
      */
     constructor ({ settings, tabManager }) {
+        this.featureName = 'FireButton'
         this.settings = settings
         this.tabManager = tabManager
         registerMessageHandler('doBurn', this.burn.bind(this))
@@ -77,7 +80,8 @@ export default class FireButton {
                 cookieOptions.excludeOrigins = ['https://duckduckgo.com']
             }
             clearing.push(chrome.browsingData.remove(cookieOptions, {
-                cookies: true
+                cookies: true,
+                localStorage: true
             }))
             // 3/ Clear origin-keyed storage
             clearing.push(chrome.browsingData.remove({
@@ -89,7 +93,6 @@ export default class FireButton {
                 cacheStorage: true,
                 indexedDB: true,
                 fileSystems: true,
-                localStorage: true,
                 serviceWorkers: true,
                 webSQL: true
             }))
@@ -120,7 +123,7 @@ export default class FireButton {
             }
         })
         // create a new tab which will be open after the burn
-        this.showBurnAnimation()
+        await this.showBurnAnimation()
         if (closeTabs) {
             // remove the rest of the open tabs
             await browser.tabs.remove(removeTabIds)
@@ -147,17 +150,17 @@ export default class FireButton {
         ])
         const openTabs = allTabs.filter(t => !t.pinned).length
         const cookies = allCookies.reduce((sites, curr) => {
-            sites.add(curr.domain)
+            sites.add(getDomain(curr.domain, tldtsOptions))
             return sites
         }, new Set()).size
-        const pinnedTabs = allTabs.filter(t => t.pinned).length
+        const pinnedTabs = allTabs.filter(t => t.pinned)
         // Apply defaults for history and tab clearing
         const { closeTabs, clearHistory, selectedOption } = this.getDefaultSettings()
 
         const defaultStats = {
-            openTabs: closeTabs ? openTabs : undefined,
+            openTabs: closeTabs ? openTabs : 0,
             cookies,
-            pinnedTabs,
+            pinnedTabs: closeTabs ? pinnedTabs.length : 0,
             clearHistory
         }
 
@@ -168,6 +171,7 @@ export default class FireButton {
         if (currentTabUrl.startsWith('http:') || currentTabUrl.startsWith('https:')) {
             const origins = getOriginsForUrl(currentTabUrl)
             const tabsMatchingOrigin = allTabs.filter(tabMatchesHostFilter(origins)).length
+            const pinnedMatchingOrigin = pinnedTabs.filter(tabMatchesHostFilter(origins)).length
             options.push({
                 name: 'CurrentSite',
                 options: {
@@ -176,9 +180,10 @@ export default class FireButton {
                 descriptionStats: {
                     ...defaultStats,
                     openTabs: closeTabs ? tabsMatchingOrigin : 0,
+                    pinnedTabs: closeTabs ? pinnedMatchingOrigin : 0,
                     cookies: 1,
                     duration: 'all',
-                    site: getDomain(origins[0]) || ''
+                    site: getDomain(origins[0], tldtsOptions) || ''
                 }
             })
         }
@@ -277,6 +282,6 @@ export function tabMatchesHostFilter (origins) {
         return () => true
     }
     const etldPlusOnes = new Set()
-    origins.forEach(o => etldPlusOnes.add(getDomain(o, { allowPrivateDomains: true })))
-    return tab => !!tab.url && etldPlusOnes.has(getDomain(tab.url, { allowPrivateDomains: true }))
+    origins.forEach(o => etldPlusOnes.add(getDomain(o, tldtsOptions)))
+    return tab => !!tab.url && etldPlusOnes.has(getDomain(tab.url,tldtsOptions))
 }

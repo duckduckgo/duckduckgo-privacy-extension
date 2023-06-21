@@ -40,6 +40,7 @@ if (getBrowserName() !== 'moz') {
     features.push(new FireButton({ settings, tabManager }))
 }
 console.log('Loaded features:', features)
+self.features = features
 
 // Optional features controlled by build flags.
 // If these flags are set to false, the whole function is tree-shaked from the build.
