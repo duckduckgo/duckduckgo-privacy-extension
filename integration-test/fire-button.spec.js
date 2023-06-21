@@ -1,0 +1,187 @@
+import { forExtensionLoaded } from './helpers/backgroundWait'
+import { test, expect } from './helpers/playwrightHarness'
+import { routeFromLocalhost } from './helpers/testPages';
+
+const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/
+
+async function loadPageInNewTab (context, url) {
+    const page = await context.newPage()
+    routeFromLocalhost(page)
+    await page.goto(url)
+    return page
+}
+
+/**
+ * @param {import('@playwright/test').BrowserContext} context 
+ * @returns {Promise<import('@playwright/test').Page[]>}
+ */
+async function openTabs (context) {
+    return await Promise.all([
+        loadPageInNewTab(context, 'https://duckduckgo.com/'),
+        loadPageInNewTab(context, 'https://privacy-test-pages.glitch.me/'),
+        loadPageInNewTab(context, 'https://good.third-party.site/privacy-protections/storage-blocking/?store'),
+        loadPageInNewTab(context, 'https://privacy-test-pages.glitch.me/privacy-protections/storage-blocking/?store')
+    ])
+}
+
+async function getOpenTabs (backgroundPage) {
+    return backgroundPage.evaluate(() => {
+        return new Promise(resolve => chrome.tabs.query({}, resolve))
+    })
+}
+
+/**
+ * @param {*} backgroundPage
+ * @returns {Promise<import('@playwright/test').JSHandle>}
+ */
+function getFireButtonHandle (backgroundPage) {
+    return backgroundPage.evaluateHandle(() => globalThis.features.find(f => f.featureName === 'FireButton'))
+}
+
+test.describe('Fire Button', () => {
+    test('Fire animation', async ({ context, backgroundPage }) => {
+        await forExtensionLoaded(context)
+        const fireButton = await getFireButtonHandle(backgroundPage)
+        // detect the burn animation extension page being opened, and return the page object
+        const animationLoaded = new Promise((resolve) => {
+            context.once('page', (page) => {
+                if (page.url().match(burnAnimationRegex)) {
+                    resolve(page)
+                }
+            })
+        })
+        // trigger the animation
+        await fireButton.evaluate(f => f.showBurnAnimation())
+        const burnAnimationPage = await animationLoaded
+        // wait for the animation to complete
+        await new Promise(resolve => setTimeout(resolve, 3000))
+        // check that we're redirected to the newtab page after the animation completes
+        expect(burnAnimationPage.url()).toMatch('https://duckduckgo.com/chrome_newtab')
+    })
+
+    test.describe('Tab clearing', () => {
+        const testCases = [{
+            desc: 'clearing all tabs',
+            args: [true],
+            expectedTabs: 1
+        }, {
+            desc: 'clearing no tabs',
+            args: [false],
+            expectedTabs: 7
+        }, {
+            desc: 'clearing specific origins',
+            args: [true, ['https://privacy-test-pages.glitch.me/', 'https://duckduckgo.com/']],
+            expectedTabs: 3
+        }]
+
+        testCases.forEach(({ desc, args, expectedTabs }) => {
+            test(desc, async ({ context, backgroundPage }) => {
+                await forExtensionLoaded(context)
+                // get the firebutton feature
+                const fireButton = await getFireButtonHandle(backgroundPage)
+                await openTabs(context)
+                await Promise.all([
+                    fireButton.evaluate((f, argsInner) => f.clearTabs(...argsInner), args),
+                    context.waitForEvent('page')
+                ])
+                // expect((await getOpenTabs(backgroundPage)).map(t => t.url)).toEqual([])
+                expect(context.pages()).toHaveLength(expectedTabs)
+                expect((await getOpenTabs(backgroundPage)).find(({ active }) => active).url).toMatch(burnAnimationRegex)
+            })
+        })
+    })
+
+    test('getBurnOptions', async ({ context, backgroundPage }) => {
+        await forExtensionLoaded(context)
+        const fireButton = await getFireButtonHandle(backgroundPage)
+        const pages = await openTabs(context)
+        await pages[1].bringToFront()
+        await pages[1].waitForTimeout(500)
+
+        {
+            // default options on an clearable site
+            const { options } = await fireButton.evaluate(f => f.getBurnOptions())
+            expect(options).toHaveLength(6) // current site, plus 5 time frames
+            expect(options[0]).toMatchObject({
+                name: 'CurrentSite',
+                options: {
+                    origins: ['https://privacy-test-pages.glitch.me', 'http://privacy-test-pages.glitch.me']
+                },
+                descriptionStats: {
+                    clearHistory: true,
+                    cookies: 1,
+                    duration: 'all',
+                    openTabs: 2, // gets the number of tabs matching this origin
+                    pinnedTabs: 0,
+                    site: 'privacy-test-pages.glitch.me'
+                },
+                selected: true
+            })
+            expect(options[3]).toMatchObject({
+                name: 'Last7days',
+                descriptionStats: {
+                    clearHistory: true,
+                    cookies: 3, // gets the number of domains with cookies set
+                    duration: 'week',
+                    openTabs: 6, // gets all open tabs that will be cleared
+                    pinnedTabs: 0
+                }
+            })
+            expect(options[3].options.since).toBeGreaterThan(Date.now() - (8 * 24 * 60 * 60 * 1000))
+        }
+
+        // default options on a non-clearable site
+        await context.pages()[0].bringToFront()
+        {
+            const { options } = await fireButton.evaluate(f => f.getBurnOptions())
+            expect(options).toHaveLength(5) // only 5 time frames
+        }
+        await pages[0].bringToFront()
+
+        // with pinned tabs
+        const tabs = await getOpenTabs(backgroundPage)
+        await backgroundPage.evaluate((tabIds) => {
+            tabIds.forEach(id => chrome.tabs.update(id, { pinned: true }))
+        }, tabs.filter(t => t.url.startsWith('https://duckduckgo.com/')).map(t => t.id))
+        {
+            const { options } = await fireButton.evaluate(f => f.getBurnOptions())
+            expect(options.every(o => o.descriptionStats.pinnedTabs === 2)).toBeTruthy()
+        }
+        // if we select a non-pinned tab, that will not have the pinnedTabs option
+        await pages[1].bringToFront()
+        {
+            const { options } = await fireButton.evaluate(f => f.getBurnOptions())
+            expect(options[0]).toMatchObject({
+                descriptionStats: {
+                    pinnedTabs: 0
+                }
+            })
+            expect(options[1]).toMatchObject({
+                descriptionStats: {
+                    pinnedTabs: 2
+                }
+            })
+        }
+
+        // if clearHistory setting is disabled
+        await backgroundPage.evaluate(() => {
+            /* global dbg */
+            dbg.settings.updateSetting('fireButtonHistoryEnabled', false)
+        })
+        {
+            const { options } = await fireButton.evaluate(f => f.getBurnOptions())
+            expect(options.every(o => o.descriptionStats.clearHistory === false)).toBeTruthy()
+        }
+
+        // if clearTabs setting is disabled
+        await backgroundPage.evaluate(() => {
+            dbg.settings.updateSetting('fireButtonHistoryEnabled', true)
+            dbg.settings.updateSetting('fireButtonTabClearEnabled', false)
+        })
+        {
+            const { options } = await fireButton.evaluate(f => f.getBurnOptions())
+            expect(options.every(o => o.descriptionStats.openTabs === 0)).toBeTruthy()
+            expect(options.every(o => o.descriptionStats.pinnedTabs === 0)).toBeTruthy()
+        }
+    })
+})
