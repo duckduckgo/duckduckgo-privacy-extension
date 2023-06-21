@@ -35,3 +35,4 @@ if (getBrowserName() !== 'moz') {
     features.push(new FireButton({ settings, tabManager }))
 }
 console.log('Loaded features:', features)
+self.features = features
