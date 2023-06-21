@@ -110,7 +110,7 @@ export default class FireButton {
         // gather all non-pinned tabs
         const openTabs = (await browser.tabs.query({
             pinned: false
-        })).filter(tabMatchesOriginFilter(origins))
+        })).filter(tabMatchesHostFilter(origins))
         const removeTabIds = openTabs.map(t => t.id || 0)
         // clear adclick attribution data
         removeTabIds.forEach((tabId) => {
@@ -167,7 +167,7 @@ export default class FireButton {
         // only show the current site option if this an origin we can clear
         if (currentTabUrl.startsWith('http:') || currentTabUrl.startsWith('https:')) {
             const origins = getOriginsForUrl(currentTabUrl)
-            const tabsMatchingOrigin = allTabs.filter(tabMatchesOriginFilter(origins)).length
+            const tabsMatchingOrigin = allTabs.filter(tabMatchesHostFilter(origins)).length
             options.push({
                 name: 'CurrentSite',
                 options: {
@@ -252,7 +252,7 @@ export default class FireButton {
     }
 }
 
-function getOriginsForUrl (url) {
+export function getOriginsForUrl (url) {
     const origins = []
     const { subdomain, domain } = parse(url, { allowPrivateDomains: true })
     origins.push(`https://${domain}`)
@@ -272,11 +272,11 @@ function getOriginsForUrl (url) {
  * @param {string[]} [origins]
  * @returns {(tab: { url?: string | undefined }) => boolean}
  */
-function tabMatchesOriginFilter (origins) {
+export function tabMatchesHostFilter (origins) {
     if (!origins) {
         return () => true
     }
     const etldPlusOnes = new Set()
     origins.forEach(o => etldPlusOnes.add(getDomain(o, { allowPrivateDomains: true })))
-    return tab => etldPlusOnes.has(getDomain(tab.url, { allowPrivateDomains: true }))
+    return tab => !!tab.url && etldPlusOnes.has(getDomain(tab.url, { allowPrivateDomains: true }))
 }
