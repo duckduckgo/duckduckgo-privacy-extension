@@ -30,6 +30,13 @@ async function getOpenTabs (backgroundPage) {
     })
 }
 
+async function requestBrowsingDataPermissions (backgroundPage) {
+    const permissionGranted = await backgroundPage.evaluate(() => {
+        return new Promise(resolve => chrome.permissions.request({ permissions: ['browsingData'] }, resolve))
+    })
+    expect(permissionGranted).toBeTruthy()
+}
+
 /**
  * @param {*} backgroundPage
  * @returns {Promise<import('@playwright/test').JSHandle>}
@@ -183,5 +190,23 @@ test.describe('Fire Button', () => {
             expect(options.every(o => o.descriptionStats.openTabs === 0)).toBeTruthy()
             expect(options.every(o => o.descriptionStats.pinnedTabs === 0)).toBeTruthy()
         }
+    })
+
+    test.describe('burn', () => {
+        test('clears tabs and storage', async ({ context, backgroundPage }) => {
+            await forExtensionLoaded(context)
+            await requestBrowsingDataPermissions(backgroundPage)
+            const fireButton = await getFireButtonHandle(backgroundPage)
+            await openTabs(context)
+
+            expect((await context.cookies()).length).toBeGreaterThan(0)
+            await fireButton.evaluate(f => f.burn({}))
+            expect((await getOpenTabs(backgroundPage)).length).toBe(1)
+            const cookies = await backgroundPage.evaluate(async () => {
+                return new Promise(resolve => chrome.cookies.getAll({}, resolve))
+            })
+            expect(cookies).toEqual([])
+            expect(await context.cookies()).toEqual([])
+        })
     })
 })
