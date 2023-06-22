@@ -1,7 +1,5 @@
 import browser from 'webextension-polyfill'
-
-import { getURL } from './pixels'
-import load from './load'
+import { sendPixelRequest } from './pixels'
 const { getSetting, updateSetting } = require('./settings')
 const browserWrapper = require('./wrapper')
 const utils = require('./utils')
@@ -89,13 +87,6 @@ export const getAddresses = () => {
         personalAddress: userData?.userName,
         privateAddress: userData?.nextAlias
     }
-}
-
-function sendPixelRequest (pixelName, params = {}) {
-    const randomNum = Math.ceil(Math.random() * 1e7)
-    const searchParams = new URLSearchParams(Object.entries(params))
-    const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
-    load.url(url)
 }
 
 function currentDate () {
