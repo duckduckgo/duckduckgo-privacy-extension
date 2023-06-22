@@ -99,7 +99,7 @@ export default class FireButton {
             }))
             const results = await Promise.all(clearing)
             console.log('🔥 result', results)
-            sendPixelRequest('e_firebutton_burn', {})
+            sendPixelRequest('e_firebutton_click', {})
             return true
         } catch (e) {
             console.error('🔥 error', e)
