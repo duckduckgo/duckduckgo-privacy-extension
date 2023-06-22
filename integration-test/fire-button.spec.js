@@ -7,12 +7,12 @@ const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/
 async function loadPageInNewTab (context, url) {
     const page = await context.newPage()
     routeFromLocalhost(page)
-    await page.goto(url)
+    await page.goto(url, { waitUntil: 'networkidle' })
     return page
 }
 
 /**
- * @param {import('@playwright/test').BrowserContext} context 
+ * @param {import('@playwright/test').BrowserContext} context
  * @returns {Promise<import('@playwright/test').Page[]>}
  */
 async function openTabs (context) {
@@ -202,10 +202,79 @@ test.describe('Fire Button', () => {
             expect((await context.cookies()).length).toBeGreaterThan(0)
             await fireButton.evaluate(f => f.burn({}))
             expect((await getOpenTabs(backgroundPage)).length).toBe(1)
-            const cookies = await backgroundPage.evaluate(async () => {
-                return new Promise(resolve => chrome.cookies.getAll({}, resolve))
-            })
-            expect(cookies).toEqual([])
+            expect(await context.cookies()).toEqual([])
+        })
+
+        test('exempts duckduckgo.com cookies', async ({ context, backgroundPage }) => {
+            await forExtensionLoaded(context)
+            await requestBrowsingDataPermissions(backgroundPage)
+            const fireButton = await getFireButtonHandle(backgroundPage)
+            const ddgCookie = {
+                name: 'ae',
+                value: 'd',
+                domain: 'duckduckgo.com',
+                httpOnly: false,
+                path: '/',
+                sameSite: 'Lax',
+                secure: true
+            }
+            await context.addCookies([ddgCookie])
+            await openTabs(context)
+
+            expect((await context.cookies()).length).toBeGreaterThan(0)
+            await fireButton.evaluate(f => f.burn({}))
+            expect((await getOpenTabs(backgroundPage)).length).toBe(1)
+            expect(await context.cookies()).toMatchObject([ddgCookie])
+        })
+
+        test('clearing for a specific site', async ({ context, backgroundPage }) => {
+            await forExtensionLoaded(context)
+            await requestBrowsingDataPermissions(backgroundPage)
+            const fireButton = await getFireButtonHandle(backgroundPage)
+            await openTabs(context)
+
+            await fireButton.evaluate(f => f.burn({
+                origins: ['https://privacy-test-pages.glitch.me', 'http://privacy-test-pages.glitch.me']
+            }))
+
+            const tabs = await getOpenTabs(backgroundPage)
+            expect(tabs.every(t => !t.url.includes('privacy-test-pages.glitch.me'))).toBeTruthy()
+            const cookieDomains = (await context.cookies()).map(c => c.domain)
+            expect(cookieDomains).not.toContain('privacy-test-pages.glitch.me')
+            expect(cookieDomains).toContain('good.third-party.site')
+        })
+
+        test('clears all browser storage', async ({ context, backgroundPage, page }) => {
+            await forExtensionLoaded(context)
+            await requestBrowsingDataPermissions(backgroundPage)
+            await routeFromLocalhost(page)
+            await page.goto('https://privacy-test-pages.glitch.me/privacy-protections/storage-blocking/?store', { waitUntil: 'networkidle' })
+            const storedValue = new URL(page.url()).hash.slice(1)
+            await (await getFireButtonHandle(backgroundPage)).evaluate(f => f.burn({}))
+
+            const newPage = await context.newPage()
+            await routeFromLocalhost(newPage)
+            await newPage.goto('https://privacy-test-pages.glitch.me/privacy-protections/storage-blocking/?retrive', { waitUntil: 'networkidle' })
+            const { results } = await JSON.parse(await newPage.evaluate('JSON.stringify(results)'))
+            const apis = [
+                'JS cookie', 'localStorage', 'Cache API', 'WebSQL', 'service worker', 'first party header cookie', 'IndexedDB', 'browser cache'
+            ]
+            for (const api of apis) {
+                expect(results.find(r => r.id === api).value, `${api} data should be cleared`).not.toBe(storedValue)
+            }
+        })
+
+        test('clear data without clearing tabs', async ({ context, backgroundPage, page }) => {
+            await forExtensionLoaded(context)
+            await requestBrowsingDataPermissions(backgroundPage)
+            const fireButton = await getFireButtonHandle(backgroundPage)
+            await openTabs(context)
+
+            await fireButton.evaluate(f => f.burn({
+                closeTabs: false
+            }))
+
+            expect((await getOpenTabs(backgroundPage)).length).toBe(8)
             expect(await context.cookies()).toEqual([])
         })
     })
