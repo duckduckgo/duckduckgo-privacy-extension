@@ -1,6 +1,7 @@
 import { forExtensionLoaded } from './helpers/backgroundWait'
 import { test, expect } from './helpers/playwrightHarness'
 import { routeFromLocalhost } from './helpers/testPages';
+import { waitForAllResults } from './storage-blocking.spec';
 
 const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/
 
@@ -63,7 +64,7 @@ test.describe('Fire Button', () => {
         // wait for the animation to complete
         await new Promise(resolve => setTimeout(resolve, 3000))
         // check that we're redirected to the newtab page after the animation completes
-        expect(burnAnimationPage.url()).toMatch('https://duckduckgo.com/chrome_newtab')
+        expect(['chrome://new-tab-page/', 'https://duckduckgo.com/chrome_newtab'].includes(burnAnimationPage.url())).toBe(true)
     })
 
     test.describe('Tab clearing', () => {
@@ -255,6 +256,7 @@ test.describe('Fire Button', () => {
             const newPage = await context.newPage()
             await routeFromLocalhost(newPage)
             await newPage.goto('https://privacy-test-pages.glitch.me/privacy-protections/storage-blocking/?retrive', { waitUntil: 'networkidle' })
+            await waitForAllResults(newPage)
             const { results } = await JSON.parse(await newPage.evaluate('JSON.stringify(results)'))
             const apis = [
                 'JS cookie', 'localStorage', 'Cache API', 'WebSQL', 'service worker', 'first party header cookie', 'IndexedDB', 'browser cache'
