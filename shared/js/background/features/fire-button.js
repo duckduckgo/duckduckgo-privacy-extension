@@ -3,6 +3,7 @@ import { registerMessageHandler } from '../message-handlers'
 import { getCurrentTab } from '../utils'
 import { getExtensionURL } from '../wrapper'
 import { getDomain, parse } from 'tldts'
+import { sendPixelRequest } from '../pixels'
 
 /**
  * @typedef {object} BurnConfig
@@ -98,6 +99,7 @@ export default class FireButton {
             }))
             const results = await Promise.all(clearing)
             console.log('🔥 result', results)
+            sendPixelRequest('e_firebutton_burn', {})
             return true
         } catch (e) {
             console.error('🔥 error', e)
