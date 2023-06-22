@@ -1,7 +1,3 @@
-import {
-    ruleIdRangeByConfigName,
-    SETTING_PREFIX
-} from './dnr-config-rulesets'
 import settings from './settings'
 
 // Rule IDs notes:
@@ -30,6 +26,18 @@ export const NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID = 20006
 export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
 export const HTTPS_SESSION_ALLOWLIST_RULE_ID = 20004
 export const HTTPS_SESSION_UPGRADE_RULE_ID = 20005
+
+export const SETTING_PREFIX = 'declarative_net_request-'
+
+// Allocate blocks of rule IDs for the different configurations. That way, the
+// rules associated with a configuration can be safely cleared without the risk
+// of removing rules associated with different configurations.
+export const ruleIdRangeByConfigName = {
+    tds: [1, 10000],
+    config: [10001, 20000],
+    _RESERVED: [20001, 21000],
+    combined: [21001, 31000]
+}
 
 // Valid dynamic rule IDs - others will be removed on extension start
 const RESERVED_DYNAMIC_RULE_IDS = [

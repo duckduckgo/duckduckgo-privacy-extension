@@ -13,8 +13,7 @@ import {
     ensureServiceWorkerInitiatedRequestExceptions
 } from '../../shared/js/background/dnr-service-worker-initiated'
 import {
-    onConfigUpdate,
-    SETTING_PREFIX
+    onConfigUpdate
 } from '../../shared/js/background/dnr-config-rulesets'
 import {
     refreshUserAllowlistRules,
@@ -23,7 +22,8 @@ import {
 import {
     getMatchDetails,
     SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
-    USER_ALLOWLIST_RULE_ID
+    USER_ALLOWLIST_RULE_ID,
+    SETTING_PREFIX
 } from '../../shared/js/background/dnr-utils'
 import {
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
