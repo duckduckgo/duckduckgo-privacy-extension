@@ -51,34 +51,32 @@ module.exports = function () {
     <ul class="default-list">
         <li>
             <h2 class="menu-title">
-                Fire Button
+                ${t('options:fireButtonHeading.title')}
             </h2>
             <p class="menu-paragraph">
-                DuckDuckGo will remove all traces of your browsing history, clear all login data and remove locally stored caches. These data will be removed based on the time period you select when you choose to clear.
+                ${t('options:fireButtonDesc.title')}
             </p>
-
+            <p class="options-info">
+                <a href="https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#the-fire-button">${t('shared:learnMore.title')}</a>
+            </p>
         </li>
-        <li>
-            Clear all browsing history
+        <li class="fire-button-toggle">
+            ${t('options:fireButtonClearHistoryTitle.title')}
             ${toggleButton(this.model.fireButtonHistoryEnabled,
         'js-options-firebutton-history-enabled',
         'fireButtonHistoryEnabled')}
         </li>
         <li>
-            <p class="menu-paragraph">
-            DuckDuckGo will remove all traces of your browsing history.
-            </p>
+            <p class="menu-paragraph">${t('options:fireButtonClearHistoryDesc.title')}</p>
         </li>
-        <li>
-        Enable tab/window closure
+        <li class="fire-button-toggle">
+            ${t('options:fireButtonTabClosureTitle.title')}
             ${toggleButton(this.model.fireButtonTabClearEnabled,
         'js-options-firebutton-tabclear-enabled',
         'fireButtonTabClearEnabled')}
         </li>
         <li>
-            <p class="menu-paragraph">
-            When using the Fire Button, DuckDuckGo can also close your tabs and/or windows so you start fresh next time you open your browser.
-            </p>
+            <p class="menu-paragraph">${t('options:fireButtonTabClosureDesc.title')}</p>
         </li>
     </ul>
 </section>`
