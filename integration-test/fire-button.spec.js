@@ -1,7 +1,6 @@
 import { forExtensionLoaded } from './helpers/backgroundWait'
 import { test, expect } from './helpers/playwrightHarness'
-import { routeFromLocalhost } from './helpers/testPages';
-import { waitForAllResults } from './storage-blocking.spec';
+import { routeFromLocalhost } from './helpers/testPages'
 
 const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/
 
@@ -44,6 +43,12 @@ async function requestBrowsingDataPermissions (backgroundPage) {
  */
 function getFireButtonHandle (backgroundPage) {
     return backgroundPage.evaluateHandle(() => globalThis.features.find(f => f.featureName === 'FireButton'))
+}
+
+async function waitForAllResults (page) {
+    while ((await page.$$('#tests-details > li > span > ul')).length < 2) {
+        await new Promise(resolve => setTimeout(resolve, 100))
+    }
 }
 
 test.describe('Fire Button', () => {

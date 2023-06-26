@@ -8,7 +8,7 @@ const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
 const thirdPartyAd = 'convert.ad-company.site'
 
-export async function waitForAllResults (page) {
+async function waitForAllResults (page) {
     while ((await page.$$('#tests-details > li > span > ul')).length < 2) {
         await new Promise(resolve => setTimeout(resolve, 100))
     }
