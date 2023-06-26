@@ -287,5 +287,5 @@ export function tabMatchesHostFilter (origins) {
     }
     const etldPlusOnes = new Set()
     origins.forEach(o => etldPlusOnes.add(getDomain(o, tldtsOptions)))
-    return tab => !!tab.url && etldPlusOnes.has(getDomain(tab.url,tldtsOptions))
+    return tab => !!tab.url && etldPlusOnes.has(getDomain(tab.url, tldtsOptions))
 }
