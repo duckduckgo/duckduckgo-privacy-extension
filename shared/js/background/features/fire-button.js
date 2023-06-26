@@ -39,6 +39,9 @@ export default class FireButton {
         })
     }
 
+    /**
+     * Get the user's preferred default settings from the extension settings store.
+     */
     getDefaultSettings () {
         return {
             closeTabs: this.settings.getSetting('fireButtonTabClearEnabled'),
@@ -49,6 +52,7 @@ export default class FireButton {
     }
 
     /**
+     * Burn browser storage as per the config options passed to the function.
      * @param {Partial<BurnConfig>} options
      * @returns {Promise<boolean>}
      */
@@ -261,6 +265,12 @@ export default class FireButton {
     }
 }
 
+/**
+ * Given a URL, return a list of origins for that URL, including both secure and insecure contexts,
+ * and using all subdomains up to eTLD+1.
+ * @param {string} url
+ * @returns {string[]} List of origins
+ */
 export function getOriginsForUrl (url) {
     const origins = []
     const { subdomain, domain } = parse(url, { allowPrivateDomains: true })
@@ -278,7 +288,11 @@ export function getOriginsForUrl (url) {
 }
 
 /**
- * @param {string[]} [origins]
+ * Returns a function that can be used for filtering a list of tab objects so that only those with
+ * an origin in origins are included.
+ *
+ * If origins is undefined, the filter function always returns true.
+ * @param {string[]} [origins] Origins to filter by
  * @returns {(tab: { url?: string | undefined }) => boolean}
  */
 export function tabMatchesHostFilter (origins) {
