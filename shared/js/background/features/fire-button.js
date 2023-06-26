@@ -25,7 +25,7 @@ export default class FireButton {
      * @param {{
      *  settings: Settings;
      *  tabManager: TabManager;
-     * }}
+     * }} options
      */
     constructor ({ settings, tabManager }) {
         this.featureName = 'FireButton'
