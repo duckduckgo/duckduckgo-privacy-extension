@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1687434481633,
+    "version": 1687698593770,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -1347,6 +1347,10 @@
                         "type": "hide-empty"
                     },
                     {
+                        "selector": "#top-banner",
+                        "type": "hide-empty"
+                    },
+                    {
                         "selector": "#topBanner",
                         "type": "hide-empty"
                     },
@@ -1727,6 +1731,31 @@
                         "rules": [
                             {
                                 "selector": ".top-ads-container",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "focus.de",
+                        "rules": [
+                            {
+                                "selector": "[id*='M_CONTENTAD']",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[id*='M_TRSCT_hor']",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[id*='M_FLYCPT_hor']",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "#tfm_admanagerTeaser",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": ".cls_slot_xxoutstreamxx",
                                 "type": "hide-empty"
                             }
                         ]
@@ -2292,6 +2321,15 @@
                         ]
                     },
                     {
+                        "domain": "spankbang.com",
+                        "rules": [
+                            {
+                                "selector": ".ptgncdn_holder",
+                                "type": "hide"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "target.com",
                         "rules": [
                             {
@@ -2519,7 +2557,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "ad85c152fd6e1adde2be35930f14454f"
+            "hash": "1e24ee9040beb9017e0c1511797a7df5"
         },
         "exceptionHandler": {
             "exceptions": [],
@@ -2630,6 +2668,10 @@
                     "reason": "After filling out travel info and clicking 'Get times & tickets', there is an error warning that 'Something went wrong', which prevents further interaction."
                 },
                 {
+                    "domain": "usps.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
+                },
+                {
                     "domain": "walgreens.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/499"
                 },
@@ -2647,7 +2689,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "3b8cd34edd138e29c251289b3024558d"
+            "hash": "2f880f7ca6db5218c28eb6c421bfa6cb"
         },
         "fingerprintingHardware": {
             "settings": {
@@ -3671,11 +3713,12 @@
                                 "rule": "securepubads.g.doubleclick.net/tag/js/gpt.js",
                                 "domains": [
                                     "ah.nl",
+                                    "nytimes.com",
                                     "rocketnews24.com",
                                     "wunderground.com",
                                     "youmath.it"
                                 ],
-                                "reason": "ah.nl - 'Bonus offer' elements do not render and are not clickable.,wunderground.com - Video element does not display.,youmath.it - Adwall displays which prevents page interaction and resets the page view when clicked.,rocketnews24.com - https://github.com/duckduckgo/privacy-configuration/issues/846"
+                                "reason": "ah.nl - 'Bonus offer' elements do not render and are not clickable.,nytimes.com - https://github.com/duckduckgo/privacy-configuration/issues/1045,wunderground.com - Video element does not display.,youmath.it - Adwall displays which prevents page interaction and resets the page view when clicked.,rocketnews24.com - https://github.com/duckduckgo/privacy-configuration/issues/846"
                             },
                             {
                                 "rule": "securepubads.g.doubleclick.net/gpt/pubads_impl_",
@@ -4154,6 +4197,13 @@
                                     "asics.com"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/379"
+                            },
+                            {
+                                "rule": "tags.focus.de.greylabeldelivery.com/focus-web/prod/utag.js",
+                                "domains": [
+                                    "focus.de"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1043"
                             }
                         ]
                     },
@@ -4842,7 +4892,7 @@
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/356"
                             },
                             {
-                                "rule": "scene7.com/s7viewersdk/3.11/MixedMediaViewer/js/s7sdk/utils/Utils.js",
+                                "rule": "scene7.com/s7viewersdk",
                                 "domains": [
                                     "<all>"
                                 ],
@@ -5344,6 +5394,17 @@
                                     "asics.com"
                                 ],
                                 "reason": "CNAME ENTRY GENERATED FROM: tags.asics.com.greylabeldelivery.com"
+                            }
+                        ]
+                    },
+                    "focus.de": {
+                        "rules": [
+                            {
+                                "rule": "tags.focus.de/focus-web/prod/utag.js",
+                                "domains": [
+                                    "focus.de"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: tags.focus.de.greylabeldelivery.com"
                             }
                         ]
                     },
@@ -13536,7 +13597,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "5985fdda05199b6741082b8f84169d07"
+            "hash": "fdf10533e5e607ca47c3a838507094b1"
         },
         "trackingCookies1p": {
             "settings": {
