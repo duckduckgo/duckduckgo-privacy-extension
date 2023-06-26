@@ -11,7 +11,7 @@ export function getHARPath (harFile) {
     return path.join(testRoot, 'data', 'har', harFile)
 }
 
-function getManifestVersion () {
+export function getManifestVersion () {
     return process.env.npm_lifecycle_event === 'playwright-mv3' ? 3 : 2
 }
 

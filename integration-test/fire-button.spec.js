@@ -1,5 +1,5 @@
 import { forExtensionLoaded } from './helpers/backgroundWait'
-import { test, expect } from './helpers/playwrightHarness'
+import { test, expect, getManifestVersion } from './helpers/playwrightHarness'
 import { routeFromLocalhost } from './helpers/testPages'
 
 const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/
@@ -69,7 +69,7 @@ test.describe('Fire Button', () => {
         // wait for the animation to complete
         await new Promise(resolve => setTimeout(resolve, 3000))
         // check that we're redirected to the newtab page after the animation completes
-        expect(['chrome://new-tab-page/', 'https://duckduckgo.com/chrome_newtab'].includes(burnAnimationPage.url())).toBe(true)
+        expect(burnAnimationPage.url()).toMatch(/^(https:\/\/duckduckgo.com\/chrome_newtab|chrome:\/\/new-tab-page\/$)/)
     })
 
     test.describe('Tab clearing', () => {
@@ -199,6 +199,10 @@ test.describe('Fire Button', () => {
     })
 
     test.describe('burn', () => {
+        // Skip these tests on MV3, as we don't get browsingData permissions automatically granted.
+        if (getManifestVersion() === 3) {
+            return
+        }
         test('clears tabs and storage', async ({ context, backgroundPage }) => {
             await forExtensionLoaded(context)
             await requestBrowsingDataPermissions(backgroundPage)
