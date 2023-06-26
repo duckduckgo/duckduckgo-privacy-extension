@@ -34,10 +34,15 @@ settings.ready().then(() => {
     onStartup()
 })
 
-const features = []
+/**
+ * @type {{
+ *  fireButton?: FireButton;
+ * }}
+ */
+const features = {}
 
 if (getBrowserName() !== 'moz') {
-    features.push(new FireButton({ settings, tabManager }))
+    features.fireButton = new FireButton({ settings, tabManager })
 }
 console.log('Loaded features:', features)
 self.features = features
