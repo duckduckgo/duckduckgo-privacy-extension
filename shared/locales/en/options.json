@@ -100,14 +100,14 @@
         "note": ""
     },
     "fireButtonDesc": {
-        "title": "DuckDuckGo will remove all traces of your browsing history, clear all login data and remove locally stored caches. These data will be removed based on the time period you select when you choose to clear.",
+        "title": "DuckDuckGo will remove your browsing history, clear all login data and remove locally stored caches. These data will be removed based on the time period you select when you choose to clear.",
         "note": "Describes the Fire button features"
     },
     "fireButtonClearHistoryTitle": {
         "title": "Clear all browsing history"
     },
     "fireButtonClearHistoryDesc": {
-        "title": "DuckDuckGo will remove all traces of your browsing history."
+        "title": "When active, DuckDuckGo will erase your browsing history."
     },
     "fireButtonTabClosureTitle": {
         "title": "Enable tab/window closure"
