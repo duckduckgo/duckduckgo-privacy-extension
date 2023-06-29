@@ -1,5 +1,4 @@
-require('../helpers/mock-browser-api')
-
+import browser from 'webextension-polyfill'
 const atb = require('../../shared/js/background/atb').default
 const settings = require('../../shared/js/background/settings')
 const load = require('../../shared/js/background/load')
@@ -251,7 +250,7 @@ describe('complex install workflow cases', () => {
     })
 
     it('should handle the install process correctly if there\'s no DDG pages open', () => {
-        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([]))
+        spyOn(browser.tabs, 'query').and.returnValue(Promise.resolve([]))
 
         return atb.updateATBValues()
             .then(() => {
@@ -262,10 +261,10 @@ describe('complex install workflow cases', () => {
     })
     it('should handle the install process correctly if there\'s DDG pages open that pass an ATB param', () => {
         // pretend one of the pages has an ATB to pass
-        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
-            'https://duckduckgo.com/about',
-            'https://duckduckgo.com/?natb=v112-2ab'
-        ]))
+        spyOn(browser.tabs, 'query').and.returnValue([
+            { url: 'https://duckduckgo.com/about' },
+            { url: 'https://duckduckgo.com/?natb=v112-2ab' }
+        ])
 
         return atb.updateATBValues()
             .then(() => {
@@ -276,10 +275,10 @@ describe('complex install workflow cases', () => {
     })
     it('should handle the install process correctly if there\'s DDG pages open that do not pass an ATB param', () => {
         // pretend no pages have ATB to pass
-        spyOn(browserWrapper, 'getDDGTabUrls').and.returnValue(Promise.resolve([
-            'https://duckduckgo.com/about',
-            'https://duckduckgo.com/?q=test'
-        ]))
+        spyOn(browser.tabs, 'query').and.returnValue([
+            { url: 'https://duckduckgo.com/about' },
+            { url: 'https://duckduckgo.com/?q=test' }
+        ])
 
         return atb.updateATBValues()
             .then(() => {
