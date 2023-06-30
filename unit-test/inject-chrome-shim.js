@@ -25,7 +25,8 @@ const chrome = {
         getURL: path => path
     },
     tabs: {
-        sendMessage: () => {}
+        sendMessage: () => {},
+        query: () => Promise.resolve([])
     },
     declarativeNetRequest: {
         isRegexSupported () { return { isSupported: true } },
