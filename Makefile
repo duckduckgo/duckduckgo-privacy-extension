@@ -68,7 +68,7 @@ watch:
 
 ## unit-test: Run the unit tests.
 ESBUILD_TESTS = unit-test/shared-utils/*.js unit-test/ui/**/*.js unit-test/background/*.js unit-test/background/**/*.js
-unit-test: build/test/legacy-background.js build/test/legacy-ui.js
+unit-test: build/test/legacy-background.js
 	$(ESBUILD) --outdir=build/test --inject:./unit-test/inject-chrome-shim.js $(ESBUILD_TESTS)
 	node_modules/.bin/karma start karma.conf.js
 
@@ -232,9 +232,6 @@ build/test:
 
 build/test/legacy-background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
 	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
-
-build/test/legacy-ui.js: $(TEST_FILES) | build/test
-	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/legacy/ui/*.js -o $@
 
 ## Content Scope Scripts
 CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts
