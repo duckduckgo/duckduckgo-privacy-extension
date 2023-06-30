@@ -2,7 +2,6 @@ import browser from 'webextension-polyfill'
 const atb = require('../../shared/js/background/atb').default
 const settings = require('../../shared/js/background/settings')
 const load = require('../../shared/js/background/load')
-const browserWrapper = require('../../shared/js/background/wrapper')
 
 const settingHelper = require('../helpers/settings')
 
