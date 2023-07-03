@@ -100,19 +100,19 @@
         "note": ""
     },
     "fireButtonDesc": {
-        "title": "DuckDuckGo will remove your browsing history, clear all login data and remove locally stored caches. These data will be removed based on the time period you select when you choose to clear.",
+        "title": "The Fire Button makes it easy to clear your tabs, browsing history, and data. You can control whether it clears browsing history as well as data, and whether or not it closes your current tabs.",
         "note": "Describes the Fire button features"
     },
     "fireButtonClearHistoryTitle": {
-        "title": "Clear all browsing history"
+        "title": "Clear History"
     },
     "fireButtonClearHistoryDesc": {
-        "title": "When active, DuckDuckGo will erase your browsing history."
+        "title": "Please note: browsing history can be cleared only for a specified time range (e.g. \"last hour\", or \"all time\"), and not on a per-site basis."
     },
     "fireButtonTabClosureTitle": {
-        "title": "Enable tab/window closure"
+        "title": "Close Tabs"
     },
     "fireButtonTabClosureDesc": {
-        "title": "When using the Fire Button, DuckDuckGo can also close your tabs and/or windows so you start fresh next time you open your browser."
+        "title": ""
     }
 }
