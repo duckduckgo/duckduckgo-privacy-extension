@@ -64,7 +64,7 @@
         "sass": "^1.63.6",
         "standard": "17.0.0",
         "timekeeper": "^2.1.1",
-        "typescript": "^5.0.4",
+        "typescript": "^5.1.6",
         "webextension-polyfill": "^0.10.0",
         "yargs": "^17.7.2"
     },
