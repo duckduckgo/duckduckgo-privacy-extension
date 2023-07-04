@@ -114,5 +114,9 @@
     },
     "fireButtonTabClosureDesc": {
         "title": ""
+    },
+    "burnPageTitle": {
+        "title": "Burn in progress...",
+        "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
     }
 }

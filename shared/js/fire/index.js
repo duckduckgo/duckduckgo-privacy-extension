@@ -1,4 +1,5 @@
 import lottie from 'lottie-web'
+import i18n from '../ui/base/localize'
 
 const animation = lottie.loadAnimation({
     container: document.getElementById('fire'),
@@ -13,3 +14,5 @@ animation.addEventListener('complete', () => {
         messageType: 'fireAnimationComplete'
     })
 })
+
+document.title = i18n.t('options:burnPageTitle.title')
