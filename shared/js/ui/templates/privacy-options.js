@@ -62,9 +62,9 @@ module.exports = function () {
         </li>
         <li class="fire-button-toggle">
             ${t('options:fireButtonClearHistoryTitle.title')}
-            ${toggleButton(this.model.fireButtonHistoryEnabled,
-        'js-options-firebutton-history-enabled',
-        'fireButtonHistoryEnabled')}
+            ${toggleButton(this.model.fireButtonClearHistoryEnabled,
+        'js-options-firebutton-clear-history-enabled',
+        'fireButtonClearHistoryEnabled')}
         </li>
         <li>
             <p class="menu-paragraph">${t('options:fireButtonClearHistoryDesc.title')}</p>
