@@ -15,8 +15,8 @@ async function loadPageInNewTab (context, url) {
  * @param {import('@playwright/test').BrowserContext} context
  * @returns {Promise<import('@playwright/test').Page[]>}
  */
-async function openTabs (context) {
-    return await Promise.all([
+function openTabs (context) {
+    return Promise.all([
         loadPageInNewTab(context, 'https://duckduckgo.com/'),
         loadPageInNewTab(context, 'https://privacy-test-pages.glitch.me/'),
         loadPageInNewTab(context, 'https://good.third-party.site/privacy-protections/storage-blocking/?store'),
@@ -24,16 +24,16 @@ async function openTabs (context) {
     ])
 }
 
-async function getOpenTabs (backgroundPage) {
+function getOpenTabs (backgroundPage) {
     return backgroundPage.evaluate(() => {
         return new Promise(resolve => chrome.tabs.query({}, resolve))
     })
 }
 
 async function requestBrowsingDataPermissions (backgroundPage) {
-    const permissionGranted = await backgroundPage.evaluate(() => {
-        return new Promise(resolve => chrome.permissions.request({ permissions: ['browsingData'] }, resolve))
-    })
+    const permissionGranted = await backgroundPage.evaluate(() =>
+        new Promise(resolve => chrome.permissions.request({ permissions: ['browsingData'] }, resolve))
+    )
     expect(permissionGranted).toBeTruthy()
 }
 
@@ -179,7 +179,7 @@ test.describe('Fire Button', () => {
         // if clearHistory setting is disabled
         await backgroundPage.evaluate(() => {
             /* global dbg */
-            dbg.settings.updateSetting('fireButtonHistoryEnabled', false)
+            dbg.settings.updateSetting('fireButtonClearHistoryEnabled', false)
         })
         {
             const { options } = await fireButton.evaluate(f => f.getBurnOptions())
@@ -188,7 +188,7 @@ test.describe('Fire Button', () => {
 
         // if clearTabs setting is disabled
         await backgroundPage.evaluate(() => {
-            dbg.settings.updateSetting('fireButtonHistoryEnabled', true)
+            dbg.settings.updateSetting('fireButtonClearHistoryEnabled', true)
             dbg.settings.updateSetting('fireButtonTabClearEnabled', false)
         })
         {
@@ -199,7 +199,10 @@ test.describe('Fire Button', () => {
     })
 
     test.describe('burn', () => {
-        // Skip these tests on MV3, as we don't get browsingData permissions automatically granted.
+        // Skip these tests on MV3.
+        // For these tests to work, we need to be able to successfully request the optional `browsingData`
+        // permission at runtime (`requestBrowsingDataPermissions`). When running these tests in Playwright,
+        // this works without issue with the MV2 extension, however in MV3 the permission is rejected.
         if (getManifestVersion() === 3) {
             return
         }

@@ -7,10 +7,10 @@ import { sendPixelRequest } from '../pixels'
 
 /**
  * @typedef {object} BurnConfig
- * @property {boolean} closeTabs
- * @property {boolean} clearHistory
- * @property {number} [since]
- * @property {string[]} [origins]
+ * @property {boolean} closeTabs If tabs should be closed when burning.
+ * @property {boolean} clearHistory If history should be cleared when burning.
+ * @property {number} [since] Clear only data created after this timestamp (ms)
+ * @property {string[]} [origins] Clear only data for a given list of origins
  */
 
 /**
@@ -45,7 +45,7 @@ export default class FireButton {
     getDefaultSettings () {
         return {
             closeTabs: this.settings.getSetting('fireButtonTabClearEnabled'),
-            clearHistory: this.settings.getSetting('fireButtonHistoryEnabled'),
+            clearHistory: this.settings.getSetting('fireButtonClearHistoryEnabled'),
             selectedOption: this.settings.getSetting('fireButtonDefaultOption') || 'CurrentSite',
             since: undefined
         }
@@ -150,7 +150,11 @@ export default class FireButton {
      * @returns {Promise<import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').FireButtonData>}
      */
     async getBurnOptions () {
-        const ONE_HOUR = 60 * 60 * 1000
+        // time durations for 'since' parameters
+        const ONE_HOUR_MS = 60 * 60 * 1000
+        const ONE_DAY_MS = 24 * ONE_HOUR_MS
+        const SEVEN_DAYS_MS = 7 * ONE_DAY_MS
+        const FOUR_WEEKS_MS = 4 * SEVEN_DAYS_MS
         const [currentTab, allTabs, allCookies] = await Promise.all([
             getCurrentTab(),
             browser.tabs.query({}),
@@ -199,7 +203,7 @@ export default class FireButton {
         options.push({
             name: 'LastHour',
             options: {
-                since: Date.now() - ONE_HOUR
+                since: Date.now() - ONE_HOUR_MS
             },
             descriptionStats: {
                 ...defaultStats,
@@ -209,7 +213,7 @@ export default class FireButton {
         options.push({
             name: 'Last24Hour',
             options: {
-                since: Date.now() - (24 * ONE_HOUR)
+                since: Date.now() - ONE_DAY_MS
             },
             descriptionStats: {
                 ...defaultStats,
@@ -219,7 +223,7 @@ export default class FireButton {
         options.push({
             name: 'Last7days',
             options: {
-                since: Date.now() - (7 * 24 * ONE_HOUR)
+                since: Date.now() - SEVEN_DAYS_MS
             },
             descriptionStats: {
                 ...defaultStats,
@@ -229,7 +233,7 @@ export default class FireButton {
         options.push({
             name: 'Last4Weeks',
             options: {
-                since: Date.now() - (4 * 7 * 24 * ONE_HOUR)
+                since: Date.now() - FOUR_WEEKS_MS
             },
             descriptionStats: {
                 ...defaultStats,
