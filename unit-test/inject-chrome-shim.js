@@ -36,4 +36,7 @@ const chrome = {
         updateSessionRules () { }
     }
 }
-export { chrome as 'globalThis.chrome', chrome }
+export {
+    chrome as 'globalThis.chrome',
+    chrome
+}

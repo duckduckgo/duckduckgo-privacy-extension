@@ -67,7 +67,7 @@ watch:
 .PHONY: watch
 
 ## unit-test: Run the unit tests.
-ESBUILD_TESTS = unit-test/shared-utils/*.js unit-test/ui/**/*.js unit-test/background/*.js unit-test/background/**/*.js
+ESBUILD_TESTS = unit-test/background/*.js unit-test/background/**/*.js unit-test/ui/**/*.js unit-test/shared-utils/*.js
 unit-test: build/test/legacy-background.js
 	$(ESBUILD) --outdir=build/test --inject:./unit-test/inject-chrome-shim.js $(ESBUILD_TESTS)
 	node_modules/.bin/karma start karma.conf.js
