@@ -14,8 +14,6 @@ let tab
 describe('Tab', () => {
     describe('updateSite()', () => {
         beforeEach(() => {
-            // spyOn(browserWrapper, 'getExtensionId').and.returnValue('sdf')
-
             tab = new Tab({
                 id: 123,
                 requestId: 123,
