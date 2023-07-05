@@ -1,8 +1,6 @@
 import Tab from '../../../shared/js/background/classes/tab'
 import { breakageReportForTab } from '../../../shared/js/background/broken-site-report'
 
-require('../../helpers/mock-browser-api')
-
 const loadPixel = require('../../../shared/js/background/load')
 const testSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/tests.json')
 

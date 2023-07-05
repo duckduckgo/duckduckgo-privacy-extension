@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global DEBUG, RELOADER */
 
 import { onStartup } from './startup'
+import initDebugBuild from './devbuild'
+import initReloader from './devbuild-reloader'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events')
@@ -25,3 +28,8 @@ require('./script-injection')
 settings.ready().then(() => {
     onStartup()
 })
+
+// Optional features controlled by build flags.
+// If these flags are set to false, the whole function is tree-shaked from the build.
+DEBUG && initDebugBuild()
+RELOADER && initReloader()

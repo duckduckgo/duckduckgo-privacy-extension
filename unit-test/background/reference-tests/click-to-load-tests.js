@@ -1,5 +1,4 @@
-const fs = require('fs')
-const path = require('path')
+import surrogatesReference from '@duckduckgo/privacy-reference-tests/click-to-load/surrogates_reference.txt'
 
 const tds = require('../../../shared/js/background/trackers')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
@@ -9,10 +8,6 @@ const configReference =
       require('@duckduckgo/privacy-reference-tests/click-to-load/config_reference.json')
 const tdsReference =
       require('@duckduckgo/privacy-reference-tests/click-to-load/tds_reference.json')
-const surrogatesReference =
-      fs.readFileSync(path.join(
-          __dirname, '../../../node_modules/@duckduckgo/privacy-reference-tests/click-to-load/surrogates_reference.txt'
-      ), 'utf8')
 const { clickToLoadRequestBlocking: { tests } } =
       require('@duckduckgo/privacy-reference-tests/click-to-load/tests.json')
 

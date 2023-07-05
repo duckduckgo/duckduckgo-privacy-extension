@@ -1,4 +1,3 @@
-require('../helpers/mock-browser-api')
 const config = require('../../shared/data/bundled/extension-config.json')
 
 describe('check policy', () => {

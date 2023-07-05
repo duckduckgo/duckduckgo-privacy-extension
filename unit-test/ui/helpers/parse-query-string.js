@@ -1,4 +1,4 @@
-let parseQueryString = require('../../../../shared/js/ui/pages/mixins/parse-query-string')
+let parseQueryString = require('../../../shared/js/ui/pages/mixins/parse-query-string')
 parseQueryString = parseQueryString.parseQueryString
 
 const tests = [

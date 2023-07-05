@@ -58,7 +58,7 @@ dev: copy build $(BUILD_DIR)/buildtime.txt
 ##        it up to date as files are changed.
 ##        Pass reloader=0 to disable automatic extension reloading.
 ## specify browser=(chrome|chrome-mv3|firefox) type=dev [reloader=1]
-MAKE = make -j4 $(type) browser=$(browser) type=$(type)
+MAKE = make $(type) browser=$(browser) type=$(type)
 watch:
 	$(MAKE)
 	@echo "\n** Build ready -  Watching for changes **\n"
@@ -67,7 +67,9 @@ watch:
 .PHONY: watch
 
 ## unit-test: Run the unit tests.
-unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
+ESBUILD_TESTS = unit-test/background/*.js unit-test/background/**/*.js unit-test/ui/**/*.js unit-test/shared-utils/*.js
+unit-test: build/test/legacy-background.js
+	$(ESBUILD) --outdir=build/test --inject:./unit-test/inject-chrome-shim.js $(ESBUILD_TESTS)
 	node_modules/.bin/karma start karma.conf.js
 
 .PHONY: unit-test
@@ -172,23 +174,28 @@ BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 
 
 BROWSERIFY_BIN = node_modules/.bin/browserify
 BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --plugins [ "./scripts/rewrite-meta" ] --presets [ @babel/preset-env ] ]
+ESBUILD = node_modules/.bin/esbuild --bundle --target=firefox91,chrome92
 # Ensure sourcemaps are included for the bundles during development.
 ifeq ($(type),dev)
   BROWSERIFY += -d
+  ESBUILD += --sourcemap
 endif
 
 ## Extension background/serviceworker script.
-BACKGROUND_JS = shared/js/background/background.js
 ifeq ($(type), dev)
   # Developer builds include the devbuilds module for debugging.
-  BACKGROUND_JS += shared/js/background/devbuild.js
+  ESBUILD += --define:DEBUG=true
   # Unless reloader=0 is passed, they also contain an auto-reload module.
   ifneq ($(reloader),0)
-    BACKGROUND_JS += shared/js/background/devbuild-reloader.js
+    ESBUILD += --define:RELOADER=true
+  else
+    ESBUILD += --define:RELOADER=false
   endif
+else
+  ESBUILD += --define:DEBUG=false
 endif
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
-	$(BROWSERIFY) $(BACKGROUND_JS) -o $@
+	$(ESBUILD) shared/js/background/background.js > $@
 
 ## Locale resources for UI
 shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
@@ -197,40 +204,34 @@ shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
 ## Extension UI/Devtools scripts.
 $(BUILD_DIR)/public/js/base.js: $(WATCHED_FILES) shared/js/ui/base/locale-resources.js
 	mkdir -p `dirname $@`
-	$(BROWSERIFY) shared/js/ui/base/index.js > $@
+	$(ESBUILD) shared/js/ui/base/index.js > $@
 
 $(BUILD_DIR)/public/js/feedback.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/ui/pages/feedback.js > $@
+	$(ESBUILD) shared/js/ui/pages/feedback.js > $@
 
 $(BUILD_DIR)/public/js/options.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/ui/pages/options.js > $@
+	$(ESBUILD) shared/js/ui/pages/options.js > $@
 
 $(BUILD_DIR)/public/js/devtools-panel.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/devtools/panel.js > $@
+	$(ESBUILD) shared/js/devtools/panel.js > $@
 
 $(BUILD_DIR)/public/js/list-editor.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/devtools/list-editor.js > $@
+	$(ESBUILD) shared/js/devtools/list-editor.js > $@
 
 $(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/newtab/newtab.js > $@
+	$(ESBUILD) shared/js/newtab/newtab.js > $@
 
 JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js
 
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Unit tests scripts.
-UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
+UNIT_TEST_SRC = unit-test/legacy/*.js unit-test/legacy/reference-tests/*.js unit-test/legacy/storage/*.js
 build/test:
 	mkdir -p $@
 
-build/test/background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
+build/test/legacy-background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
 	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
-
-build/test/ui.js: $(TEST_FILES) | build/test
-	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
-
-build/test/shared-utils.js: $(TEST_FILES) | build/test
-	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
 
 ## Content Scope Scripts
 CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts

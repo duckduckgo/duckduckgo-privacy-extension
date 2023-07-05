@@ -5,7 +5,7 @@ module.exports = function (config) {
         basePath: 'build/test/',
         frameworks: ['jasmine', 'source-map-support'],
         singleRun: true,
-        files: ['background.js', 'ui.js', 'shared-utils.js'],
+        files: ['background/*.js', 'background/**/*.js', 'shared-utils/*.js', 'ui/**/*.js', 'legacy-background.js'],
         logLevel: config.LOG_ERROR,
         browserConsoleLogOptions: {
             level: 'warn'
