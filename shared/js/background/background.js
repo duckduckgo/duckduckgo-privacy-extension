@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global DEBUG, RELOADER */
+/* global DEBUG, RELOADER, BUILD_TARGET */
 
 import { onStartup } from './startup'
 import initDebugBuild from './devbuild'
@@ -22,8 +22,10 @@ import initReloader from './devbuild-reloader'
 // otherwise FF might miss the onInstalled event
 require('./events')
 const settings = require('./settings')
-require('./dnr-config-rulesets')
-require('./script-injection')
+if (BUILD_TARGET === 'chrome-mv3') {
+    require('./dnr-config-rulesets')
+    require('./script-injection')
+}
 
 settings.ready().then(() => {
     onStartup()
