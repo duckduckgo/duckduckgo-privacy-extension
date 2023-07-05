@@ -58,7 +58,7 @@ dev: copy build $(BUILD_DIR)/buildtime.txt
 ##        it up to date as files are changed.
 ##        Pass reloader=0 to disable automatic extension reloading.
 ## specify browser=(chrome|chrome-mv3|firefox) type=dev [reloader=1]
-MAKE = make -j4 $(type) browser=$(browser) type=$(type)
+MAKE = make $(type) browser=$(browser) type=$(type)
 watch:
 	$(MAKE)
 	@echo "\n** Build ready -  Watching for changes **\n"
