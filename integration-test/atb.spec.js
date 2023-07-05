@@ -1,5 +1,5 @@
 import { test, expect, mockAtb } from './helpers/playwrightHarness'
-import backgroundWait from './helpers/backgroundWait'
+import backgroundWait, { forSetting } from './helpers/backgroundWait'
 
 test.describe('install workflow', () => {
     test('postinstall page: should open the postinstall page correctly', async ({
@@ -127,7 +127,7 @@ test.describe('search workflow', () => {
     let lastWeeksAtb
     let twoWeeksAgoAtb
 
-    test.beforeAll(async ({ context, routeExtensionRequests }) => {
+    test.beforeAll(async ({ context }) => {
         // grab current atb data
         let data = await fetch('https://duckduckgo.com/atb.js')
         data = await data.json()
@@ -138,11 +138,11 @@ test.describe('search workflow', () => {
         mockAtb.version = data.version
         mockAtb.majorVersion = data.majorVersion
         mockAtb.minorVersion = data.minorVersion
-
-        await backgroundWait.forExtensionLoaded(context)
     })
 
     test.beforeEach(async ({ backgroundPage, context }) => {
+        await backgroundWait.forExtensionLoaded(context)
+        await forSetting(backgroundPage, 'atb')
         await backgroundPage.evaluate((atb) => globalThis.dbg.settings.updateSetting('atb', atb), twoWeeksAgoAtb)
     })
 
@@ -165,6 +165,7 @@ test.describe('search workflow', () => {
         // run a search
         await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' })
 
+        await forSetting(backgroundPage, 'set_atb')
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
         const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
         expect(newSetAtb).toEqual(todaysAtb)
@@ -179,6 +180,7 @@ test.describe('search workflow', () => {
         // run a search
         await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' })
 
+        await forSetting(backgroundPage, 'set_atb')
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
         const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
         expect(newSetAtb).toEqual(todaysAtb)
