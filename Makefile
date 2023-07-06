@@ -194,8 +194,9 @@ ifeq ($(type), dev)
     ESBUILD += --define:RELOADER=false
   endif
 else
-  ESBUILD += --define:DEBUG=false
+  ESBUILD += --define:DEBUG=false --define:RELOADER=false
 endif
+
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/background/background.js > $@
 
