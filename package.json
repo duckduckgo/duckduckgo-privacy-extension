@@ -38,7 +38,7 @@
         "@fingerprintjs/fingerprintjs": "^3.4.1",
         "@playwright/test": "^1.33.0",
         "@types/chrome": "0.0.239",
-        "@types/jasmine": "^4.3.4",
+        "@types/jasmine": "^4.3.5",
         "@types/puppeteer": "^7.0.4",
         "@types/webextension-polyfill": "^0.10.1",
         "asana": "github:Asana/node-asana",
