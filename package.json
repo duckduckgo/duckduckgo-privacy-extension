@@ -40,7 +40,7 @@
         "@types/chrome": "0.0.237",
         "@types/jasmine": "^4.3.4",
         "@types/puppeteer": "^7.0.4",
-        "@types/webextension-polyfill": "^0.10.0",
+        "@types/webextension-polyfill": "^0.10.1",
         "asana": "github:Asana/node-asana",
         "babelify": "10.0.0",
         "brfs": "^2.0.2",
