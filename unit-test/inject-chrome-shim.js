@@ -1,4 +1,3 @@
-
 const chrome = {
     storage: {
         local: {
