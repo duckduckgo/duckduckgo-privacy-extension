@@ -1,4 +1,3 @@
-
 const atbUtils = require('../../shared/js/background/atb-utils')
 
 describe('utils.getCurrentATB', () => {
