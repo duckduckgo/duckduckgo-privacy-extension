@@ -38,7 +38,10 @@ export class TabState {
         this.dnrRuleIdsByDisabledClickToLoadRuleAction = {}
         /** @type {boolean} */
         this.ctlYouTube = false // True when at least one YouTube Click to Load placeholder was displayed in the tab.
-
+        /** @type {boolean} */
+        this.ctlFacebookPlaceholderShown = false
+        /** @type {boolean} */
+        this.ctlFacebookLogin = false
         /** @type {boolean} */
         this.allowlisted = false // user-allowlisted sites; applies to all privacy features
         /** @type {boolean} */

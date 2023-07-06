@@ -216,6 +216,44 @@ export function updateYouTubeCTLAddedFlag (value, sender) {
     tab.ctlYouTube = Boolean(value)
 }
 
+/**
+ * @typedef updateFacebookCTLBreakageFlagsRequest
+ * @property {boolean} [ctlFacebookPlaceholderShown=false]
+ *   True if at least one Facebook Click to Load placeholder was shown on the
+ *   page.
+ * @property {boolean} [ctlFacebookLogin=false]
+ *   True if the user clicked to use a Facebook Click to Load login button.
+ */
+
+/**
+ * Sets the Facebook Click to Load breakage flag(s) to true for the page, which
+ * are then included should the user report the webpage as broken.
+ * Note: False values are ignored, the flags are only updated if value is true.
+ *       The flags are reset automatically when the user navigates away from
+ *       the page.
+ * @param {updateFacebookCTLBreakageFlagsRequest} flags
+ * @param {browser.Runtime.MessageSender} sender
+ */
+export function updateFacebookCTLBreakageFlags (
+    { ctlFacebookPlaceholderShown = false, ctlFacebookLogin = false },
+    sender
+) {
+    const tabId = sender?.tab?.id
+    if (typeof tabId === 'undefined') {
+        return
+    }
+
+    const tab = tabManager.get({ tabId })
+
+    if (ctlFacebookPlaceholderShown) {
+        tab.ctlFacebookPlaceholderShown = true
+    }
+
+    if (ctlFacebookLogin) {
+        tab.ctlFacebookLogin = true
+    }
+}
+
 export function setYoutubePreviewsEnabled (value, sender) {
     return updateSetting({ name: 'youtubePreviewsEnabled', value })
 }
@@ -458,6 +496,7 @@ const messageHandlers = {
     getCurrentTab,
     unblockClickToLoadContent,
     updateYouTubeCTLAddedFlag,
+    updateFacebookCTLBreakageFlags,
     setYoutubePreviewsEnabled,
     updateSetting,
     getSetting,

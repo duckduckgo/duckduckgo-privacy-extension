@@ -130,6 +130,8 @@ export function breakageReportForTab ({
 
     const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
     const ctlYouTube = tab.ctlYouTube ? 'true' : 'false'
+    const ctlFacebookPlaceholderShown = tab.ctlFacebookPlaceholderShown ? 'true' : 'false'
+    const ctlFacebookLogin = tab.ctlFacebookLogin ? 'true' : 'false'
     const ampUrl = tab.ampUrl || undefined
     const upgradedHttps = tab.upgradedHttps
 
@@ -140,7 +142,9 @@ export function breakageReportForTab ({
         remoteConfigVersion,
         upgradedHttps: upgradedHttps.toString(),
         urlParametersRemoved,
-        ctlYouTube
+        ctlYouTube,
+        ctlFacebookPlaceholderShown,
+        ctlFacebookLogin
     })
 
     for (const [key, value] of Object.entries(requestCategories)) {
