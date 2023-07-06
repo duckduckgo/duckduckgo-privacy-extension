@@ -174,11 +174,10 @@ BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 
 
 BROWSERIFY_BIN = node_modules/.bin/browserify
 BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --plugins [ "./scripts/rewrite-meta" ] --presets [ @babel/preset-env ] ]
-ESBUILD = node_modules/.bin/esbuild --bundle --target=firefox91,chrome92 --define:BUILD_TARGET=\"$(browser)\"
+ESBUILD = node_modules/.bin/esbuild --bundle --target=firefox91,chrome92 --define:BUILD_TARGET=\"$(browser)\" --sourcemap
 # Ensure sourcemaps are included for the bundles during development.
 ifeq ($(type),dev)
   BROWSERIFY += -d
-  ESBUILD += --sourcemap
 else
   # This option removes if(false) statements (for extended tree-shaking)
   ESBUILD += --minify-syntax
