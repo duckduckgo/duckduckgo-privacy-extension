@@ -21,6 +21,7 @@
  * }} PrivacyConfigDomainEntry
  */
 /**
+ * @template {object} S
  * @typedef {object} PrivacyConfigFeature
  * @property {string} state
  * @property {string | undefined} minSupportedVersion
