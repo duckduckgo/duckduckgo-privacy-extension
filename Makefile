@@ -178,9 +178,6 @@ ESBUILD = node_modules/.bin/esbuild --bundle --target=firefox91,chrome92 --defin
 # Ensure sourcemaps are included for the bundles during development.
 ifeq ($(type),dev)
   BROWSERIFY += -d
-else
-  # This option removes if(false) statements (for extended tree-shaking)
-  ESBUILD += --minify-syntax
 endif
 
 ## Extension background/serviceworker script.
