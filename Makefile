@@ -231,7 +231,7 @@ build/test:
 	mkdir -p $@
 
 build/test/legacy-background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
-	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
+	$(BROWSERIFY) -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
 
 ## Content Scope Scripts
 CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts
