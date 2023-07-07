@@ -1,5 +1,5 @@
-const bel = require('bel')
-const raw = require('bel/raw')
+const bel = require('nanohtml')
+const raw = require('nanohtml/raw')
 const toggleButton = require('./shared/toggle-button.js')
 const t = window.DDG.base.i18n.t
 

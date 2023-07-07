@@ -1,4 +1,4 @@
-const bel = require('bel')
+const bel = require('nanohtml')
 const allowlistItems = require('./allowlist-items.js')
 const t = window.DDG.base.i18n.t
 

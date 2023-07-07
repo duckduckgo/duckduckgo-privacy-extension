@@ -1,5 +1,5 @@
-const bel = require('bel')
-const raw = require('bel/raw')
+const bel = require('nanohtml')
+const raw = require('nanohtml/raw')
 const { formatAddress } = require('../../background/email-utils')
 const t = window.DDG.base.i18n.t
 
