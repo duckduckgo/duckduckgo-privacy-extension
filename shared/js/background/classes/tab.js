@@ -194,6 +194,22 @@ class Tab {
         this._tabState.setValue('ctlYouTube', value)
     }
 
+    get ctlFacebookPlaceholderShown () {
+        return this._tabState.ctlFacebookPlaceholderShown
+    }
+
+    set ctlFacebookPlaceholderShown (value) {
+        this._tabState.setValue('ctlFacebookPlaceholderShown', value)
+    }
+
+    get ctlFacebookLogin () {
+        return this._tabState.ctlFacebookLogin
+    }
+
+    set ctlFacebookLogin (value) {
+        this._tabState.setValue('ctlFacebookLogin', value)
+    }
+
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
      * @param {string} requestURL
