@@ -1,4 +1,4 @@
-const bel = require('bel')
+const bel = require('nanohtml')
 const t = window.DDG.base.i18n.t
 
 module.exports = function (list) {
