@@ -12,7 +12,11 @@
     "strict": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
-    "maxNodeModuleJsDepth": 0
+    "maxNodeModuleJsDepth": 0,
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ]
   },
   "include": [
       "packages/privacy-grade/src/classes/trackers.js",
