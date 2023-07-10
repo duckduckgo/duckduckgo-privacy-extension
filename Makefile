@@ -222,7 +222,7 @@ $(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/newtab/newtab.js > $@
 
 $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/fire/index.js > $@
+	$(ESBUILD) shared/js/fire/index.js > $@
 
 JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js
 
