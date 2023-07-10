@@ -179,26 +179,6 @@ export default class FireButton {
         /** @type {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').FireOption[]} */
         const options = []
         const currentTabUrl = currentTab?.url || ''
-        // only show the current site option if this an origin we can clear
-        if (currentTabUrl.startsWith('http:') || currentTabUrl.startsWith('https:')) {
-            const origins = getOriginsForUrl(currentTabUrl)
-            const tabsMatchingOrigin = allTabs.filter(tabMatchesHostFilter(origins)).length
-            const pinnedMatchingOrigin = pinnedTabs.filter(tabMatchesHostFilter(origins)).length
-            options.push({
-                name: 'CurrentSite',
-                options: {
-                    origins
-                },
-                descriptionStats: {
-                    ...defaultStats,
-                    openTabs: closeTabs ? tabsMatchingOrigin : 0,
-                    pinnedTabs: closeTabs ? pinnedMatchingOrigin : 0,
-                    cookies: 1,
-                    duration: 'all',
-                    site: getDomain(origins[0], tldtsOptions) || ''
-                }
-            })
-        }
 
         options.push({
             name: 'LastHour',
@@ -248,6 +228,27 @@ export default class FireButton {
                 duration: 'all'
             }
         })
+
+        // only show the current site option if this an origin we can clear
+        if (currentTabUrl.startsWith('http:') || currentTabUrl.startsWith('https:')) {
+            const origins = getOriginsForUrl(currentTabUrl)
+            const tabsMatchingOrigin = allTabs.filter(tabMatchesHostFilter(origins)).length
+            const pinnedMatchingOrigin = pinnedTabs.filter(tabMatchesHostFilter(origins)).length
+            options.push({
+                name: 'CurrentSite',
+                options: {
+                    origins
+                },
+                descriptionStats: {
+                    ...defaultStats,
+                    openTabs: closeTabs ? tabsMatchingOrigin : 0,
+                    pinnedTabs: closeTabs ? pinnedMatchingOrigin : 0,
+                    cookies: 1,
+                    duration: 'all',
+                    site: getDomain(origins[0], tldtsOptions) || ''
+                }
+            })
+        }
 
         // mark selected site
         options.forEach((option) => {
