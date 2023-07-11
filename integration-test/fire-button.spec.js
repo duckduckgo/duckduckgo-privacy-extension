@@ -115,7 +115,7 @@ test.describe('Fire Button', () => {
             // default options on an clearable site
             const { options } = await fireButton.evaluate(f => f.getBurnOptions())
             expect(options).toHaveLength(6) // current site, plus 5 time frames
-            expect(options[0]).toMatchObject({
+            expect(options[5]).toMatchObject({
                 name: 'CurrentSite',
                 options: {
                     origins: ['https://privacy-test-pages.glitch.me', 'http://privacy-test-pages.glitch.me']
@@ -130,7 +130,7 @@ test.describe('Fire Button', () => {
                 },
                 selected: true
             })
-            expect(options[3]).toMatchObject({
+            expect(options[2]).toMatchObject({
                 name: 'Last7days',
                 descriptionStats: {
                     clearHistory: true,
@@ -140,7 +140,7 @@ test.describe('Fire Button', () => {
                     pinnedTabs: 0
                 }
             })
-            expect(options[3].options.since).toBeGreaterThan(Date.now() - (8 * 24 * 60 * 60 * 1000))
+            expect(options[2].options.since).toBeGreaterThan(Date.now() - (8 * 24 * 60 * 60 * 1000))
         }
 
         // default options on a non-clearable site
@@ -164,12 +164,12 @@ test.describe('Fire Button', () => {
         await pages[1].bringToFront()
         {
             const { options } = await fireButton.evaluate(f => f.getBurnOptions())
-            expect(options[0]).toMatchObject({
+            expect(options[5]).toMatchObject({
                 descriptionStats: {
                     pinnedTabs: 0
                 }
             })
-            expect(options[1]).toMatchObject({
+            expect(options[0]).toMatchObject({
                 descriptionStats: {
                     pinnedTabs: 2
                 }
