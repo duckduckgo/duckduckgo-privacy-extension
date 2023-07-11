@@ -16,6 +16,8 @@ const ScreenProtection = require('@duckduckgo/content-scope-scripts/src/features
 const screenProtection = new ScreenProtection('fingerprintingScreenSize')
 const TempStorageProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-temporary-storage').default
 const tempStorageProtection = new TempStorageProtection('fingerprintingTemporaryStorage')
+const HarmfulApisProtection = require('@duckduckgo/content-scope-scripts/src/features/harmful-apis').default
+const harmfulApisProtection = new HarmfulApisProtection('harmfulApis')
 const { isFeatureBroken } = require('@duckduckgo/content-scope-scripts/src/utils')
 
 const configReference = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/config_reference.json')
@@ -80,6 +82,9 @@ for (const setName of Object.keys(testSets)) {
                 }
                 if (!isFeatureBroken(args, 'fingerprintingTemporaryStorage')) {
                     tempStorageProtection.callInit(args)
+                }
+                if (!isFeatureBroken(args, 'harmfulApis')) {
+                    harmfulApisProtection.callInit(args)
                 }
 
                 // validate result
