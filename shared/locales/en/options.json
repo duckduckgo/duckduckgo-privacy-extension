@@ -97,23 +97,23 @@
     },
     "fireButtonHeading": {
         "title": "Fire Button",
-        "note": ""
+        "note": "Header for the settings for the Fire button feature"
     },
     "fireButtonDesc": {
         "title": "The Fire Button makes it easy to clear your tabs, browsing history, and data. You can control whether it clears browsing history as well as data, and whether or not it closes your current tabs.",
         "note": "Describes the Fire button features"
     },
     "fireButtonClearHistoryTitle": {
-        "title": "Clear History"
+        "title": "Clear History",
+        "note": "Title for option toggle"
     },
     "fireButtonClearHistoryDesc": {
-        "title": "Please note: browsing history can be cleared only for a specified time range (e.g. \"last hour\", or \"all time\"), and not on a per-site basis."
+        "title": "Please note: browsing history can be cleared only for a specified time range (e.g. \"last hour\", or \"all time\"), and not on a per-site basis.",
+        "note": "Extra information about the clear history option toggle."
     },
     "fireButtonTabClosureTitle": {
-        "title": "Close Tabs"
-    },
-    "fireButtonTabClosureDesc": {
-        "title": ""
+        "title": "Close Tabs",
+        "note": "Title for option toggle."
     },
     "burnPageTitle": {
         "title": "Burn in progress...",

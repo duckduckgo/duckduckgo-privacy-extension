@@ -48,7 +48,7 @@ module.exports = function () {
             </p>
         </li>
     </ul>
-    <ul class="default-list">
+    <ul class="default-list${this.model.fireButtonEnabled ? '' : ' is-hidden'}">
         <li>
             <h2 class="menu-title">
                 ${t('options:fireButtonHeading.title')}
@@ -74,9 +74,6 @@ module.exports = function () {
             ${toggleButton(this.model.fireButtonTabClearEnabled,
         'js-options-firebutton-tabclear-enabled',
         'fireButtonTabClearEnabled')}
-        </li>
-        <li>
-            <p class="menu-paragraph">${t('options:fireButtonTabClosureDesc.title')}</p>
         </li>
     </ul>
 </section>`

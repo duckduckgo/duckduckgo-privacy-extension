@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* global DEBUG, RELOADER, BUILD_TARGET */
+/* global DEBUG, RELOADER, BUILD_TARGET, FIREBUTTON_ENABLED */
 
 import { onStartup } from './startup'
 import FireButton from './features/fire-button'
@@ -40,7 +40,7 @@ settings.ready().then(() => {
  */
 const features = {}
 
-if (DEBUG && (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3')) {
+if (FIREBUTTON_ENABLED) {
     features.fireButton = new FireButton({ settings, tabManager })
 }
 console.log('Loaded features:', features)
