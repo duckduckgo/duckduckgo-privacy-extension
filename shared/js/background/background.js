@@ -40,7 +40,7 @@ settings.ready().then(() => {
  */
 const features = {}
 
-if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3') {
+if (DEBUG && (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3')) {
     features.fireButton = new FireButton({ settings, tabManager })
 }
 console.log('Loaded features:', features)

@@ -7,6 +7,7 @@ import { isFeatureEnabled, reloadCurrentTab } from './utils'
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 import tdsStorage from './storage/tds'
 import { getArgumentsObject } from './helpers/arguments-object'
+import { isFireButtonEnabled } from './features/fire-button'
 const { getDomain } = require('tldts')
 const utils = require('./utils')
 const settings = require('./settings')
@@ -137,7 +138,7 @@ export async function getPrivacyDashboardData (options) {
     if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
     const fireButtonData = {
-        enabled: true
+        enabled: isFireButtonEnabled
     }
     return dashboardDataFromTab(tab, userData, fireButtonData)
 }

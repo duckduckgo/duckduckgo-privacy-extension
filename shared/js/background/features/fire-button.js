@@ -1,3 +1,4 @@
+/* global DEBUG, BUILD_TARGET */
 import browser from 'webextension-polyfill'
 import { registerMessageHandler } from '../message-handlers'
 import { getCurrentTab } from '../utils'
@@ -19,6 +20,8 @@ import { sendPixelRequest } from '../pixels'
  */
 
 const tldtsOptions = { allowPrivateDomains: true }
+
+export const isFireButtonEnabled = DEBUG && (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3')
 
 export default class FireButton {
     /**
