@@ -84,7 +84,11 @@
         "tabs",
         "storage",
         "<all_urls>",
-        "alarms"
+        "alarms",
+        "cookies"
+    ],
+    "optional_permissions": [
+        "browsingData"
     ],
     "web_accessible_resources": [
         "/web_accessible_resources/*",

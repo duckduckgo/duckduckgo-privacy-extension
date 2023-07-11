@@ -1,3 +1,4 @@
+/* global FIREBUTTON_ENABLED */
 const Parent = window.DDG.base.Model
 
 function PrivacyOptions (attrs) {
@@ -7,6 +8,8 @@ function PrivacyOptions (attrs) {
     attrs.GPC = false
     attrs.youtubeClickToLoadEnabled = false
     attrs.youtubePreviewsEnabled = false
+    attrs.fireButtonClearHistoryEnabled = true
+    attrs.fireButtonTabClearEnabled = true
 
     Parent.call(this, attrs)
 }
@@ -36,6 +39,9 @@ PrivacyOptions.prototype = window.$.extend({},
             this.GPC = settings.GPC
             this.youtubeClickToLoadEnabled = youtubeClickToLoadEnabled
             this.youtubePreviewsEnabled = settings.youtubePreviewsEnabled
+            this.fireButtonEnabled = FIREBUTTON_ENABLED
+            this.fireButtonClearHistoryEnabled = settings.fireButtonClearHistoryEnabled
+            this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled
         }
     }
 )

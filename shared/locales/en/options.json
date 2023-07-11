@@ -94,5 +94,29 @@
     "enableYoutubePreviewsDesc": {
         "title": "DuckDuckGo automatically blocks embedded YouTube videos, along with their title and preview, from being loaded to improve your privacy. You can choose to enable previews, but doing so will allow Google to see some of your device’s information when you visit any page with an embedded video.&nbsp;",
         "note": "Describes that DDG automatically blocks embedded YouTube videos to improve privacy, but users can choose to see the video preview and this will cause Google to see some device information"
+    },
+    "fireButtonHeading": {
+        "title": "Fire Button",
+        "note": "Header for the settings for the Fire button feature"
+    },
+    "fireButtonDesc": {
+        "title": "The Fire Button makes it easy to clear your tabs, browsing history, and data. You can control whether it clears browsing history as well as data, and whether or not it closes your current tabs.",
+        "note": "Describes the Fire button features"
+    },
+    "fireButtonClearHistoryTitle": {
+        "title": "Clear History",
+        "note": "Title for option toggle"
+    },
+    "fireButtonClearHistoryDesc": {
+        "title": "Please note: browsing history can be cleared only for a specified time range (e.g. \"last hour\", or \"all time\"), and not on a per-site basis.",
+        "note": "Extra information about the clear history option toggle."
+    },
+    "fireButtonTabClosureTitle": {
+        "title": "Close Tabs",
+        "note": "Title for option toggle."
+    },
+    "burnPageTitle": {
+        "title": "Burn in progress...",
+        "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
     }
 }

@@ -38,7 +38,8 @@ describe('Tab -> Privacy Dashboard conversion', () => {
             requestData: {
                 requests: []
             },
-            emailProtectionUserData: undefined
+            emailProtectionUserData: undefined,
+            fireButton: undefined
         })
     })
     it('converts basic tab without trackers & protections off', async () => {
@@ -64,7 +65,8 @@ describe('Tab -> Privacy Dashboard conversion', () => {
             requestData: {
                 requests: []
             },
-            emailProtectionUserData: undefined
+            emailProtectionUserData: undefined,
+            fireButton: undefined
         })
     })
     it('converts tab with a tracker', async () => {
