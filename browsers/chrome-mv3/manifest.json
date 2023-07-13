@@ -85,9 +85,6 @@
         "webNavigation",
         "cookies"
     ],
-    "optional_permissions": [
-        "browsingData"
-    ],
     "host_permissions": [
         "*://*/*"
     ],
