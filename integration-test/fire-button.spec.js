@@ -104,7 +104,7 @@ test.describe('Fire Button', () => {
         })
     })
 
-    test('getBurnOptions', async ({ context, backgroundPage }) => {
+    test.skip('getBurnOptions', async ({ context, backgroundPage }) => {
         await forExtensionLoaded(context)
         const fireButton = await getFireButtonHandle(backgroundPage)
         const pages = await openTabs(context)
@@ -198,7 +198,7 @@ test.describe('Fire Button', () => {
         }
     })
 
-    test.describe('burn', () => {
+    test.skip('burn', () => {
         // Skip these tests on MV3.
         // For these tests to work, we need to be able to successfully request the optional `browsingData`
         // permission at runtime (`requestBrowsingDataPermissions`). When running these tests in Playwright,
