@@ -1,8 +1,8 @@
-import * as browserWrapper from './wrapper'
+import { getExtensionVersion, getManifestVersion } from './wrapper'
 import settings from './settings'
 import tdsStorage from './storage/tds'
 import trackers from './trackers'
-import * as startup from './startup'
+import { ready as startupReady } from './startup'
 import { isFeatureEnabled } from './utils'
 import {
     ensureServiceWorkerInitiatedRequestExceptions
@@ -181,7 +181,7 @@ async function updateConfigRules (
  * @returns {Promise<>}
  */
 export async function updateExtensionConfigRules (etag = null, configValue = null) {
-    const extensionVersion = browserWrapper.getExtensionVersion()
+    const extensionVersion = getExtensionVersion()
     const denylistedDomains = await getDenylistedDomains()
 
     const latestState = {
@@ -228,7 +228,7 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
 }
 
 export async function updateCombinedConfigBlocklistRules () {
-    const extensionVersion = browserWrapper.getExtensionVersion()
+    const extensionVersion = getExtensionVersion()
     const denylistedDomains = await getDenylistedDomains()
     const tdsEtag = settings.getSetting('tds-etag')
     const combinedState = {
@@ -261,7 +261,7 @@ let ruleUpdateLock = Promise.resolve()
  * @returns {Promise}
  */
 export async function onConfigUpdate (configName, etag, configValue) {
-    const extensionVersion = browserWrapper.getExtensionVersion()
+    const extensionVersion = getExtensionVersion()
     // Run an async lock on all blocklist updates so the latest update is always processed last
     ruleUpdateLock = ruleUpdateLock.then(async () => {
     // TDS (aka the block list).
@@ -272,8 +272,8 @@ export async function onConfigUpdate (configName, etag, configValue) {
                 return
             }
 
-            await startup.ready()
-            // @ts-ignore: Once startup.ready() has finished, surrogateList will be
+            await startupReady()
+            // @ts-ignore: Once startupReady() has finished, surrogateList will be
             //             assigned.
             const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
@@ -299,7 +299,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
     await ruleUpdateLock
 }
 
-if (browserWrapper.getManifestVersion() === 3) {
+if (getManifestVersion() === 3) {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)
 }

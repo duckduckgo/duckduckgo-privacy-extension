@@ -2,7 +2,7 @@
  * This exposes some modules we use for testing via the background page console.
  * NOTE this is not added to the release version of the extension
  */
-import * as startup from './startup'
+import { onStartup, ready } from './startup'
 import Companies from './companies'
 import atb from './atb'
 import tds from './storage/tds'
@@ -21,7 +21,10 @@ export default function initDebugBuild () {
     // @ts-ignore - dbg is not a standard property of self.
     self.dbg = {
         settings,
-        startup,
+        startup: {
+            ready,
+            onStartup
+        },
         tabManager,
         Tab,
         TabState,

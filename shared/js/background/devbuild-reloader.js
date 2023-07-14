@@ -4,12 +4,11 @@
  */
 
 import browser from 'webextension-polyfill'
-// TODO: Only import `createAlarm`, `getFromSessionStorage` and `setToSessionStorage` here
-import * as browserWrapper from './wrapper'
+import { createAlarm, getFromSessionStorage, setToSessionStorage } from './wrapper'
 
 export default function initReloader () {
-    function createAlarm () {
-        browserWrapper.createAlarm('checkBuildTime', { when: Date.now() + 5000 })
+    function createAlarmTimer () {
+        createAlarm('checkBuildTime', { when: Date.now() + 5000 })
     }
 
     browser.alarms.onAlarm.addListener(async alarmEvent => {
@@ -25,16 +24,16 @@ export default function initReloader () {
         } catch (e) { }
 
         if (buildTime) {
-            const previousBuildTime = await browserWrapper.getFromSessionStorage('buildTime')
+            const previousBuildTime = await getFromSessionStorage('buildTime')
             if (!previousBuildTime) {
-                await browserWrapper.setToSessionStorage('buildTime', buildTime)
+                await setToSessionStorage('buildTime', buildTime)
             } else if (buildTime !== previousBuildTime) {
                 browser.runtime.reload()
             }
         }
 
-        createAlarm()
+        createAlarmTimer()
     })
 
-    createAlarm()
+    createAlarmTimer()
 }
