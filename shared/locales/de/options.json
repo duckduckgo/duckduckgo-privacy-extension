@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Ungültige URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Mit dem Fire Button können Sie ganz einfach Ihre Tabs, Ihren Browserverlauf und Ihre Daten löschen. Sie können festlegen, ob der Browserverlauf und die Daten gelöscht werden sollen und ob die aktuellen Tabs geschlossen werden sollen oder nicht.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Verlauf löschen",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Hinweis: Der Browserverlauf kann nur für einen bestimmten Zeitraum gelöscht werden (z. B. „letzte Stunde“ oder „alle Zeiten“) und nicht pro Website.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Tabs schließen",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Löschvorgang in Bearbeitung...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "URL non valide",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Le Fire Button permet de supprimer facilement vos onglets, votre historique de navigation et vos données. Vous pouvez contrôler s'il efface l'historique de navigation ainsi que les données, et s'il ferme ou non vos onglets en cours.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Effacer l'historique",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Remarque : l'historique de navigation ne peut être effacé que sur une période spécifiée (par exemple, « dernière heure », ou « depuis le début ») et non par site.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Fermer les onglets",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Ça brûle : effacement en cours...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

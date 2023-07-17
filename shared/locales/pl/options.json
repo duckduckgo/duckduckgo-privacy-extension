@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Nieprawidłowy adres URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Przycisk zabezpieczenia",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Przycisk Fire Button ułatwia czyszczenie kart, historii przeglądania i danych. Możesz wybrać, czy przycisk czyści historię przeglądania i dane i czy zamyka bieżące karty.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Wyczyść historię",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Uwaga: historię przeglądania można wyczyścić tylko dla określonego zakresu czasu (np. „ostatnia godzina”, lub „cały czas”), a nie dla poszczególnych witryn.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Zamknij karty",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Trwa czyszczenie...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

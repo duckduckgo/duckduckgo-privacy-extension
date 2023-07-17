@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Ugyldig URL-adresse",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Fire Button gjør det enkelt å fjerne faner, nettleserhistorikk og data. Du kan kontrollere om den skal fjerne både nettleserhistorikk og data, og hvorvidt den skal lukke åpne faner.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Fjern historikk",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Merk: Nettleserhistorikk kan bare fjernes for en angitt tidsperiode (f.eks. «den siste timen» eller «all tid»), og ikke per nettsted.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Lukk faner",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Brenning pågår…",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

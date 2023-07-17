@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Érvénytelen URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Tűz gomb",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "A Tűz gombbal könnyen törölheted a lapokat, a böngészési előzményeket és az adatokat. Beállíthatod, hogy a böngészési előzményeket és az adatokat is törölje-e, illetve hogy bezárja-e a jelenlegi lapokat is.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Előzmények törlése",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Megjegyzés: a böngészési előzmények csak meghatározott időtartamra vonatkozóan törölhetők (pl. „előző 1 óra” vagy „minden időpont”), webhelyre vonatkozóan azonban nem.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Lapok bezárása",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Elégetés folyamatban…",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

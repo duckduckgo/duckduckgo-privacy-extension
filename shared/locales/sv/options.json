@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Ogiltig URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Med Fire Button är det enkelt att rensa dina flikar, din surfhistorik och dina data. Du kan själv bestämma om såväl surfhistorik som data ska rensas, och om dina nuvarande flikar ska stängs.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Rensa historik",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Obs! Surfhistorik kan endast rensas för en specifik tidsperiod (t.ex. ”senaste timmen” eller ”för all tid”) och inte per webbplats.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Stäng flikar",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Rensning pågår...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

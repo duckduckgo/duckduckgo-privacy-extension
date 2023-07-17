@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Ongeldige URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Met de Fire Button kun je eenvoudig tabbladen, browsegeschiedenis en gegevens wissen. Je kunt bepalen of zowel de browsegeschiedenis als de gegevens worden gewist en of je huidige tabbladen worden gesloten of niet.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Geschiedenis wissen",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Let op: de browsegeschiedenis kan alleen worden gewist voor een bepaald tijdsbereik (bijv. 'afgelopen uur' of 'altijd') en niet per website.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Tabbladen sluiten",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Bezig met verbranden...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

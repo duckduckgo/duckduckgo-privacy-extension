@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Netinkamas URL adresas",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Mygtukas „Fire“",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Mygtukas „Fire“ leidžia lengvai išvalyti skirtukus, naršymo istoriją ir duomenis. Galite nustatyti, ar jis ištrina naršymo istoriją ir duomenis ir ar uždaro esamus skirtukus.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Išvalyti istoriją",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Atkreipkite dėmesį: naršymo istoriją galima ištrinti tik nurodytam laiko intervalui (pvz., „paskutinė valanda“ arba „viso laiko“), o ne pagal kiekvieną svetainę.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Uždaryti skirtukus",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Vyksta valymas...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Невалиден URL адрес",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "С Fire Button можете лесно да изчистите разделите, историята на сърфиране и данните. Можете да контролирате дали историята на сърфиране и данните да се изчистват, както и дали текущите раздели да се затварят.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Изчистване на историята",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Имайте предвид: Историята на сърфиране може да бъде изчистена само за определен период от време (напр. за „последния час“ или за „цялото време“), а не за всеки отделен сайт.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Затваряне на разделите",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Извършва се изгаряне...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

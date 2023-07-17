@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Неправильный URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Кнопка «Тревога»",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Кнопка Fire Button («Тревога») позволяет моментально закрыть вкладки и очистить историю просмотров и данные браузера. Предусмотрена настройка действий при нажатии кнопки: очистка истории просмотров, данных и закрытие текущих вкладок.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Очистить историю",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Примите во внимание. что историю просмотров можно удалить только за определенный период (например, «за последний час» или «за все время»), а не в отношении конкретного сайта.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Закрыть вкладки",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Сжигаем данные...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Virheellinen URL-osoite",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire-painike",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Fire Button -painikkeen avulla välilehtien, selaushistorian ja tietojen tyhjentäminen on helppoa. Voit hallita, tyhjennetäänkö selaushistoria ja tiedot, ja suljetaanko nykyiset välilehdet.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Tyhjennä historia",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Huomaa: selaushistoria voidaan tyhjentää vain tietyltä ajanjaksolta (esim. \"viime tunti\" tai \"kaikki\"), eikä sivustokohtaisesti.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Sulje välilehdet",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Poltto käynnissä...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

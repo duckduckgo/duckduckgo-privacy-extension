@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Neplatná adresa URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Pomocí tlačítka Fire Button můžeš snadno vymazat karty, historii procházení a data. Je jen na tobě, jestli se má vymazat historie procházení i data a jestli se mají zavřít aktuální karty.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Vymazat historii",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Upozorňujeme, že historie procházení se dá vymazat jen pro konkrétní časové období (např. za poslední hodinu nebo za celou dobu), nikoli pro jednotlivé weby.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Zavřít karty",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Probíhá mazání...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

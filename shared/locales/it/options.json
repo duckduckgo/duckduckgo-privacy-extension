@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "URL non valido",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Il Fire button semplifica l'eliminazione delle schede, della cronologia di navigazione e dei dati. Puoi controllare se eliminare la cronologia di navigazione e i dati e se chiudere le schede correnti.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Elimina cronologia",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Nota: la cronologia di navigazione può essere eliminata solo per un intervallo di tempo specificato (ad es. \"ultima ora\" o \"sempre\") e non in base al sito.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Chiudi schede",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Eliminazione in corso...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

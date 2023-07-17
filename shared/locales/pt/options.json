@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "URL inválido",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Botão de proteção",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "O Fire Button facilita a limpeza de separadores, histórico de navegação e dados. Pode decidir se limpa ou não o histórico de navegação e os dados, e se fecha ou não os separadores atuais.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Limpar histórico",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Nota: precisa de especificar um intervalo de tempo para limpar o histórico de navegação (por exemplo, \"última hora\" ou \"sempre\"), e não é possível limpar só para um site.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Fechar separadores",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Apagamento em curso...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

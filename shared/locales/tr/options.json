@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Geçersiz URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Fire Button, sekmelerinizi, tarama geçmişinizi ve verilerinizi temizlemenizi kolaylaştırır. Tarama geçmişinin yanı sıra verileri de temizleyip temizlemeyeceğini ve mevcut sekmelerinizi kapatıp kapatmayacağını kontrol edebilirsiniz.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Geçmişi Temizle",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Lütfen unutmayın: Tarama geçmişi yalnızca belirli bir zaman aralığı için temizlenebilir (ör. \"son 1 saat\", veya \"her zaman\") ve site bazında temizlenemez.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Sekmeleri Kapat",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Temizlik devam ediyor...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

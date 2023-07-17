@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Nederīgs URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Nospiežot Fire Button, vari viegli notīrīt cilnes, pārlūkošanas vēsturi un datus. Vari izvēlēties, vai notīrīt gan pārlūkošanas vēsturi, gan datus, kā arī to, vai aizvērt pašreizējās cilnes.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Notīrīt vēsturi",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Lūdzu, ņem vērā: pārlūkošanas vēsturi var dzēst tikai par noteiktu laika periodu (piem., \"pēdējā stunda\" vai \"visu laiku\"), nevis katrai vietnei atsevišķi.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Aizvērt cilnes",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Notiek tīrīšana...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

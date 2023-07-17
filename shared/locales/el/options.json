@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Μη έγκυρη διεύθυνση URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Κουμπί Φωτιά",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Το κουμπί Fire Button διευκολύνει τη διαδικασία εκκαθάρισης των καρτελών, του ιστορικού περιήγησης και των δεδομένων σας. Μπορείτε να ελέγξετε αν θα διαγράψει το ιστορικό περιήγησης καθώς και τα δεδομένα και αν θα κλείσει ή όχι τις τρέχουσες καρτέλες σας.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Εκκαθάριση ιστορικού",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Σημείωση: το ιστορικό περιήγησης μπορεί να διαγραφεί μόνο για ένα συγκεκριμένο χρονικό διάστημα (π.χ.  «τελευταία ώρα», ή «όλο») και όχι ανά τοποθεσία.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Κλείσιμο καρτελών",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Κάψιμο σε εξέλιξη...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

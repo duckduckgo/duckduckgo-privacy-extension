@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "URL no válida",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "El Fire Button facilita el borrado de tus pestañas, historial de navegación y datos. Puedes controlar si se borra el historial de navegación además de los datos y si se cierran o no tus pestañas actuales.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Borrar historial",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Ten en cuenta que el historial de navegación solo se puede borrar para un intervalo de tiempo especificado (por ejemplo, «última hora», o «siempre») y no en función del sitio web.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Cerrar pestañas",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Quema en curso...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

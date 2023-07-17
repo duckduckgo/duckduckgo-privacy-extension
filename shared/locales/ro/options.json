@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "URL nevalid",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Butonul Foc",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Fire Button facilitează ștergerea filelor, a istoricului de navigare și a datelor. Poți controla dacă șterge istoricul de navigare, precum și datele și dacă închide sau nu filele curente.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Șterge istoricul",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Reține: istoricul de navigare poate fi șters numai pentru un interval specificat (de ex., „ultima oră” sau „totdeauna”) și nu în funcție de site.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Închide filele",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Ardere în curs...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

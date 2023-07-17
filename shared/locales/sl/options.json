@@ -87,5 +87,29 @@
   "invalidURL" : {
     "title" : "Neveljaven URL",
     "note" : "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading" : {
+    "title" : "Gumb Fire Button",
+    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc" : {
+    "title" : "Z gumbom Fire lahko preprosto zaprete zavihke, počistite zgodovino brskanja in podatke. Določite lahko, ali želite počistiti zgodovino brskanja in podatke ter ali naj se zaprejo trenutni zavihki.",
+    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle" : {
+    "title" : "Izbriši zgodovino",
+    "note" : "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc" : {
+    "title" : "Upoštevajte: Zgodovino brskanja lahko počistite le za določeno časovno obdobje (npr.  »zadnjo uro« ali »od začetka«), in ne na podlagi posameznega spletnega mesta.",
+    "note" : "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle" : {
+    "title" : "Zapri zavihke",
+    "note" : "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle" : {
+    "title" : "Poteka brisanje ...",
+    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }
