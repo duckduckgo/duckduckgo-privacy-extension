@@ -9,5 +9,3 @@ declare const DEBUG: boolean;
 declare const RELOADER: boolean;
 /** Platform the script is being built for */
 declare const BUILD_TARGET: 'chrome' | 'firefox' | 'chrome-mv3'
-/** True iff the Firebutton feature should be included in the build */
-declare const FIREBUTTON_ENABLED: boolean;

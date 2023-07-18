@@ -195,17 +195,6 @@ else
   ESBUILD += --define:DEBUG=false --define:RELOADER=false
 endif
 
-## Feature build flags
-ifeq ($(type), dev)
-  ifeq ($(BROWSER_TYPE), chrome)
-  	ESBUILD += --define:FIREBUTTON_ENABLED=true
-  else
-    ESBUILD += --define:FIREBUTTON_ENABLED=false
-  endif
-else
-  ESBUILD += --define:FIREBUTTON_ENABLED=false
-endif
-
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/background/background.js > $@
 
