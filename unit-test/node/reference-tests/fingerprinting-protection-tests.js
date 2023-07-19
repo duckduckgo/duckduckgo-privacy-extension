@@ -1,11 +1,10 @@
-require('../../helpers/mock-browser-api')
+import 'fake-indexeddb/auto'
 
 const tds = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const tabManager = require('../../../shared/js/background/tab-manager')
-const browserWrapper = require('../../../shared/js/background/wrapper')
 const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object')
 
 const BatteryProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-battery').default
@@ -25,7 +24,6 @@ const apiMocksInit = require('@duckduckgo/privacy-reference-tests/fingerprinting
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
 
-const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 const orgGlobalThis = globalThis
 
 for (const setName of Object.keys(testSets)) {
@@ -33,7 +31,6 @@ for (const setName of Object.keys(testSets)) {
 
     describe(`Fingerprinting protection tests / ${testSet.name} /`, () => {
         beforeAll(() => {
-            spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config: configReference })
 
             return tdsStorage.getLists().then(lists => tds.setLists(lists))
@@ -49,7 +46,7 @@ for (const setName of Object.keys(testSets)) {
                 return
             }
 
-            it(`${test.name}`, (done) => {
+            it(`${test.name}`, async () => {
                 tabManager.delete(1)
                 tabManager.create({
                     tabId: 1,
@@ -67,6 +64,7 @@ for (const setName of Object.keys(testSets)) {
 
                 // eslint-disable-next-line no-global-assign
                 globalThis = dom.window
+                globalThis.window = dom.window
 
                 // init protections
                 if (!isFeatureBroken(args, 'fingerprintingBattery')) {
@@ -83,19 +81,14 @@ for (const setName of Object.keys(testSets)) {
                 }
 
                 // validate result
-                const result = dom.window.eval(test.property)
+                const result = await dom.window.eval(test.property)
 
                 function check (resultValue) {
                     const resultString = resultValue === undefined ? 'undefined' : resultValue.toString()
                     expect(resultString).toBe(test.expectPropertyValue)
-                    done()
                 }
 
-                if (result instanceof Promise) {
-                    result.then(check)
-                } else {
-                    check(result)
-                }
+                check(result)
             })
         })
     })
