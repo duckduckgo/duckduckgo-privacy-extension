@@ -1,4 +1,4 @@
-require('../../helpers/mock-browser-api')
+import 'fake-indexeddb/auto'
 
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
@@ -10,7 +10,9 @@ const contentScriptUtils = require('@duckduckgo/content-scope-scripts/src/utils.
 
 const testSets = require('@duckduckgo/privacy-reference-tests/privacy-configuration/tests.json')
 const configs = {
-    // FILE_MAP ../../../node_modules/@duckduckgo/privacy-reference-tests/privacy-configuration/config*_reference.json
+    'config1_reference.json': require('@duckduckgo/privacy-reference-tests/privacy-configuration/config1_reference.json'),
+    'config2_reference.json': require('@duckduckgo/privacy-reference-tests/privacy-configuration/config2_reference.json'),
+    'config3_reference.json': require('@duckduckgo/privacy-reference-tests/privacy-configuration/config3_reference.json')
 }
 
 for (const setName of Object.keys(testSets)) {
