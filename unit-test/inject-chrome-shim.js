@@ -1,10 +1,16 @@
 const chrome = {
     storage: {
         local: {
-            set: () => {},
+            set: (value) => {
+                chrome.storage.local._setCalls.push(value)
+            },
             get: () => {
                 return {}
-            }
+            },
+            _setCalls: []
+        },
+        managed: {
+            get: () => {}
         }
     },
     browserAction: {
