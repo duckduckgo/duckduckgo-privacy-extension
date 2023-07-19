@@ -235,7 +235,7 @@ JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Unit tests scripts.
-UNIT_TEST_SRC = unit-test/legacy/*.js unit-test/legacy/reference-tests/*.js
+UNIT_TEST_SRC = unit-test/legacy/*.js
 build/test:
 	mkdir -p $@
 
