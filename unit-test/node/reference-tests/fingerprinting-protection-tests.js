@@ -64,7 +64,6 @@ for (const setName of Object.keys(testSets)) {
 
                 // eslint-disable-next-line no-global-assign
                 globalThis = dom.window
-                globalThis.window = dom.window
 
                 // init protections
                 if (!isFeatureBroken(args, 'fingerprintingBattery')) {
