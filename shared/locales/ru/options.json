@@ -1,91 +1,116 @@
 {
-  "smartling" : {
-    "string_format" : "icu",
-    "translate_paths" : [
-    {
-      "path" : "*/title",
-      "key" : "{*}/title",
-      "instruction" : "*/note"
-    }]
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
   },
-  "optionsHeader" : {
-    "title" : "Параметры DuckDuckGo",
-    "note" : "Header for options (settings) page"
+  "optionsHeader": {
+    "title": "Параметры DuckDuckGo",
+    "note": "Header for options (settings) page"
   },
-  "optionsSubHeader" : {
-    "title" : "Поиск и просмотр Интернета без отслеживания.",
-    "note" : "We allow the user to browse the web without being followed by trackers"
+  "optionsSubHeader": {
+    "title": "Поиск и просмотр Интернета без отслеживания.",
+    "note": "We allow the user to browse the web without being followed by trackers"
   },
-  "optionsDesc" : {
-    "title" : "Чтобы защитить ваши данные в Интернете, DuckDuckGo предлагает конфиденциальный поиск, блокировку трекеров и шифрование соединения с сайтами.",
-    "note" : "This describes how we protect the user from being tracked online"
+  "optionsDesc": {
+    "title": "Чтобы защитить ваши данные в Интернете, DuckDuckGo предлагает конфиденциальный поиск, блокировку трекеров и шифрование соединения с сайтами.",
+    "note": "This describes how we protect the user from being tracked online"
   },
-  "shareFeedback" : {
-    "title" : "Отправить отзыв",
-    "note" : "Click here to share your opinions about this product"
+  "shareFeedback": {
+    "title": "Отправить отзыв",
+    "note": "Click here to share your opinions about this product"
   },
-  "reportBrokenSite" : {
-    "title" : "Сообщить о неработающем сайте",
-    "note" : "Click here to report an issue with a specific site you are trying to use"
+  "reportBrokenSite": {
+    "title": "Сообщить о неработающем сайте",
+    "note": "Click here to report an issue with a specific site you are trying to use"
   },
-  "showEmbeddedTweets" : {
-    "title" : "Показывать встроенные твиты",
-    "note" : "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  "showEmbeddedTweets": {
+    "title": "Показывать встроенные твиты",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
   },
-  "globalPrivacyControlAbbr" : {
-    "title" : "Глобальный контроль конфиденциальности (GPC)",
-    "note" : "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  "globalPrivacyControlAbbr": {
+    "title": "Глобальный контроль конфиденциальности (GPC)",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
-  "globalPrivacyControlDesc" : {
-    "title" : "Личные данные не должны продаваться. Мы, сотрудники DuckDuckGo, с этим полностью согласны.\nАктивируйте настройку «Глобальный контроль конфиденциальности» (Global Privacy Control или GPC), и мы передадим сайтам ваши предпочтения:",
-    "note" : "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  "globalPrivacyControlDesc": {
+    "title": "Личные данные не должны продаваться. Мы, сотрудники DuckDuckGo, с этим полностью согласны.\nАктивируйте настройку «Глобальный контроль конфиденциальности» (Global Privacy Control или GPC), и мы передадим сайтам ваши предпочтения:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
-  "notSellYourPersonalData" : {
-    "title" : "Не продавать ваши личные данные.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  "notSellYourPersonalData": {
+    "title": "Не продавать ваши личные данные.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
   },
-  "limitSharingOfPersonalData" : {
-    "title" : "ограничить передачу ваших личных данных другим компаниям",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  "limitSharingOfPersonalData": {
+    "title": "ограничить передачу ваших личных данных другим компаниям",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
-  "globalPrivacyControlDisclaimer" : {
-    "title" : "<b>Поскольку глобальный контроль конфиденциальности (GPC) — новый стандарт, пока что он не признается на большинстве сайтов, но мы прилагаем все усилия, чтобы он был принят во всем мире.</b> Также хотим подчеркнуть, что сайты обязаны реагировать на сигнал только в той мере, в какой это требует применимое законодательство.",
-    "note" : "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>Поскольку глобальный контроль конфиденциальности (GPC) — новый стандарт, пока что он не признается на большинстве сайтов, но мы прилагаем все усилия, чтобы он был принят во всем мире.</b> Также хотим подчеркнуть, что сайты обязаны реагировать на сигнал только в той мере, в какой это требует применимое законодательство.",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
   },
-  "emailProtection" : {
-    "title" : "Защита электронной почты",
-    "note" : "Email protection is a feature that lets the user pick private email addresses for different websites"
+  "emailProtection": {
+    "title": "Защита электронной почты",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
   },
-  "autofillDisabled" : {
-    "title" : "Автозаполнение отключено",
-    "note" : "When we don't automatically help populate email fields with a private address"
+  "autofillDisabled": {
+    "title": "Автозаполнение отключено",
+    "note": "When we don't automatically help populate email fields with a private address"
   },
-  "autofillEnabled" : {
-    "title" : "Включено автозаполнение для <strong class=\"js-userdata-container\">{userName}</strong>",
-    "note" : "When we do help populate email addresses for (your email address here)"
+  "autofillEnabled": {
+    "title": "Включено автозаполнение для <strong class=\"js-userdata-container\">{userName}</strong>",
+    "note": "When we do help populate email addresses for (your email address here)"
   },
-  "noUnprotectedSitesAdded" : {
-    "title" : "Незащищенные сайты не добавлены",
-    "note" : "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  "noUnprotectedSitesAdded": {
+    "title": "Незащищенные сайты не добавлены",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSites" : {
-    "title" : "Незащищенные сайты",
-    "note" : "Header for the list of websites where our privacy protections are disabled"
+  "unprotectedSites": {
+    "title": "Незащищенные сайты",
+    "note": "Header for the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSitesDesc" : {
-    "title" : "Сайты без защиты конфиденциальности.",
-    "note" : "Describes that the user will not be protected by our privacy features when visiting these websites"
+  "unprotectedSitesDesc": {
+    "title": "Сайты без защиты конфиденциальности.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
-  "addUnprotectedSite" : {
-    "title" : "Добавить незащищенный сайт",
-    "note" : "Header for the user to add a site to the uprotected list"
+  "addUnprotectedSite": {
+    "title": "Добавить незащищенный сайт",
+    "note": "Header for the user to add a site to the uprotected list"
   },
-  "enterURL" : {
-    "title" : "Введите URL",
-    "note" : "Promopt to enter the website URL here"
+  "enterURL": {
+    "title": "Введите URL",
+    "note": "Promopt to enter the website URL here"
   },
-  "invalidURL" : {
-    "title" : "Неправильный URL",
-    "note" : "The URL the user entered is not a valid website address"
+  "invalidURL": {
+    "title": "Неправильный URL",
+    "note": "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc": {
+    "title": "Кнопка Fire Button («Тревога») позволяет моментально закрыть вкладки и очистить историю просмотров и данные браузера. Предусмотрена настройка действий при нажатии кнопки: очистка истории просмотров, данных и закрытие текущих вкладок.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle": {
+    "title": "Очистить историю",
+    "note": "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc": {
+    "title": "Примите во внимание. что историю просмотров можно удалить только за определенный период (например, «за последний час» или «за все время»), а не в отношении конкретного сайта.",
+    "note": "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle": {
+    "title": "Закрыть вкладки",
+    "note": "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle": {
+    "title": "Сжигаем данные...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

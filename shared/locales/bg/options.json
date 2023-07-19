@@ -1,91 +1,116 @@
 {
-  "smartling" : {
-    "string_format" : "icu",
-    "translate_paths" : [
-    {
-      "path" : "*/title",
-      "key" : "{*}/title",
-      "instruction" : "*/note"
-    }]
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
   },
-  "optionsHeader" : {
-    "title" : "Опции за DuckDuckGo",
-    "note" : "Header for options (settings) page"
+  "optionsHeader": {
+    "title": "Опции за DuckDuckGo",
+    "note": "Header for options (settings) page"
   },
-  "optionsSubHeader" : {
-    "title" : "Можете да търсите и да сърфирате в мрежата, без да Ви следят.",
-    "note" : "We allow the user to browse the web without being followed by trackers"
+  "optionsSubHeader": {
+    "title": "Можете да търсите и да сърфирате в мрежата, без да Ви следят.",
+    "note": "We allow the user to browse the web without being followed by trackers"
   },
-  "optionsDesc" : {
-    "title" : "DuckDuckGo защитава поверителността на данните Ви онлайн с\nповерително търсене,\nблокиране на тракери\nи криптиране на сайтове.",
-    "note" : "This describes how we protect the user from being tracked online"
+  "optionsDesc": {
+    "title": "DuckDuckGo защитава поверителността на данните Ви онлайн с\nповерително търсене,\nблокиране на тракери\nи криптиране на сайтове.",
+    "note": "This describes how we protect the user from being tracked online"
   },
-  "shareFeedback" : {
-    "title" : "Споделяне на отзив",
-    "note" : "Click here to share your opinions about this product"
+  "shareFeedback": {
+    "title": "Споделяне на отзив",
+    "note": "Click here to share your opinions about this product"
   },
-  "reportBrokenSite" : {
-    "title" : "Подаване на сигнал за повреден сайт",
-    "note" : "Click here to report an issue with a specific site you are trying to use"
+  "reportBrokenSite": {
+    "title": "Подаване на сигнал за повреден сайт",
+    "note": "Click here to report an issue with a specific site you are trying to use"
   },
-  "showEmbeddedTweets" : {
-    "title" : "Показване на вградени туитове",
-    "note" : "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  "showEmbeddedTweets": {
+    "title": "Показване на вградени туитове",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
   },
-  "globalPrivacyControlAbbr" : {
-    "title" : "Глобален контрол на поверителността (GPC)",
-    "note" : "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  "globalPrivacyControlAbbr": {
+    "title": "Глобален контрол на поверителността (GPC)",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
-  "globalPrivacyControlDesc" : {
-    "title" : "Вашите лични данни не са за продажба. Ние в DuckDuckGo сме съгласни с това.\nАктивирайте настройката „Глобален контрол на поверителността“ (GPC) и ние ще\nуведомяваме уебсайтовете за Вашето предпочитание:",
-    "note" : "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  "globalPrivacyControlDesc": {
+    "title": "Вашите лични данни не са за продажба. Ние в DuckDuckGo сме съгласни с това.\nАктивирайте настройката „Глобален контрол на поверителността“ (GPC) и ние ще\nуведомяваме уебсайтовете за Вашето предпочитание:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
-  "notSellYourPersonalData" : {
-    "title" : "Да не продават Вашите лични данни.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  "notSellYourPersonalData": {
+    "title": "Да не продават Вашите лични данни.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
   },
-  "limitSharingOfPersonalData" : {
-    "title" : "Да ограничат споделянето на личните Ви данни с други компании.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  "limitSharingOfPersonalData": {
+    "title": "Да ограничат споделянето на личните Ви данни с други компании.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
-  "globalPrivacyControlDisclaimer" : {
-    "title" : "<b>Тъй като Глобалният контрол на поверителността (GPC) е нов стандарт,\nповечето уебсайтове все още не го признават, но ние полагаме усилия\nстандартът да бъде приет по целия свят.</b> Въпреки това от уеб сайтовете се изисква да предприемат действия по даден сигнал\nдо степента, до която приложимото законодателство им налага това. ",
-    "note" : "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>Тъй като Глобалният контрол на поверителността (GPC) е нов стандарт,\nповечето уебсайтове все още не го признават, но ние полагаме усилия\nстандартът да бъде приет по целия свят.</b> Въпреки това от уеб сайтовете се изисква да предприемат действия по даден сигнал\nдо степента, до която приложимото законодателство им налага това. ",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
   },
-  "emailProtection" : {
-    "title" : "Защита на имейл",
-    "note" : "Email protection is a feature that lets the user pick private email addresses for different websites"
+  "emailProtection": {
+    "title": "Защита на имейл",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
   },
-  "autofillDisabled" : {
-    "title" : "Автоматичното попълване е деактивирано",
-    "note" : "When we don't automatically help populate email fields with a private address"
+  "autofillDisabled": {
+    "title": "Автоматичното попълване е деактивирано",
+    "note": "When we don't automatically help populate email fields with a private address"
   },
-  "autofillEnabled" : {
-    "title" : "Активирано е автоматично попълване за <strong class=\"js-userdata-container\">{userName}</strong>",
-    "note" : "When we do help populate email addresses for (your email address here)"
+  "autofillEnabled": {
+    "title": "Активирано е автоматично попълване за <strong class=\"js-userdata-container\">{userName}</strong>",
+    "note": "When we do help populate email addresses for (your email address here)"
   },
-  "noUnprotectedSitesAdded" : {
-    "title" : "Няма добавени незащитени сайтове",
-    "note" : "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  "noUnprotectedSitesAdded": {
+    "title": "Няма добавени незащитени сайтове",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSites" : {
-    "title" : "Незащитени сайтове",
-    "note" : "Header for the list of websites where our privacy protections are disabled"
+  "unprotectedSites": {
+    "title": "Незащитени сайтове",
+    "note": "Header for the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSitesDesc" : {
-    "title" : "Към тези сайтове няма да бъде приложена защита на поверителността.",
-    "note" : "Describes that the user will not be protected by our privacy features when visiting these websites"
+  "unprotectedSitesDesc": {
+    "title": "Към тези сайтове няма да бъде приложена защита на поверителността.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
-  "addUnprotectedSite" : {
-    "title" : "Добавяне на незащитен сайт",
-    "note" : "Header for the user to add a site to the uprotected list"
+  "addUnprotectedSite": {
+    "title": "Добавяне на незащитен сайт",
+    "note": "Header for the user to add a site to the uprotected list"
   },
-  "enterURL" : {
-    "title" : "Въведете URL адрес",
-    "note" : "Promopt to enter the website URL here"
+  "enterURL": {
+    "title": "Въведете URL адрес",
+    "note": "Promopt to enter the website URL here"
   },
-  "invalidURL" : {
-    "title" : "Невалиден URL адрес",
-    "note" : "The URL the user entered is not a valid website address"
+  "invalidURL": {
+    "title": "Невалиден URL адрес",
+    "note": "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc": {
+    "title": "С Fire Button можете лесно да изчистите разделите, историята на сърфиране и данните. Можете да контролирате дали историята на сърфиране и данните да се изчистват, както и дали текущите раздели да се затварят.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle": {
+    "title": "Изчистване на историята",
+    "note": "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc": {
+    "title": "Имайте предвид: Историята на сърфиране може да бъде изчистена само за определен период от време (напр. за „последния час“ или за „цялото време“), а не за всеки отделен сайт.",
+    "note": "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle": {
+    "title": "Затваряне на разделите",
+    "note": "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle": {
+    "title": "Извършва се изгаряне...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

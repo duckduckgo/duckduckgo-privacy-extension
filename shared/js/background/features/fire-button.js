@@ -1,4 +1,4 @@
-/* global FIREBUTTON_ENABLED */
+/* global BUILD_TARGET */
 import browser from 'webextension-polyfill'
 import { registerMessageHandler } from '../message-handlers'
 import { getCurrentTab } from '../utils'
@@ -21,7 +21,7 @@ import { sendPixelRequest } from '../pixels'
 
 const tldtsOptions = { allowPrivateDomains: true }
 
-export const isFireButtonEnabled = FIREBUTTON_ENABLED
+export const isFireButtonEnabled = BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3'
 
 export default class FireButton {
     /**
