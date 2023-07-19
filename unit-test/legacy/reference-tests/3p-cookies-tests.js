@@ -1,5 +1,3 @@
-require('../../helpers/mock-browser-api')
-
 const trackers = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default

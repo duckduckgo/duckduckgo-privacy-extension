@@ -74,6 +74,10 @@ unit-test: build/test/legacy-background.js
 
 .PHONY: unit-test
 
+node-test:
+	$(ESBUILD) --platform=node --outdir=build/node --inject:./unit-test/inject-chrome-shim.js --external:jsdom unit-test/legacy/reference-tests/3p-cookies-tests.js
+	node_modules/.bin/jasmine build/node/*.js
+
 ## npm: Pull in the external dependencies (npm install).
 npm:
 	npm ci --ignore-scripts
