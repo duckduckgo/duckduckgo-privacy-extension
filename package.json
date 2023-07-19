@@ -49,6 +49,7 @@
         "eslint-config-standard": "^17.1.0",
         "eslint-plugin-import": "^2.27.5",
         "eslint-plugin-node": "^11.1.0",
+        "fake-indexeddb": "^4.0.2",
         "glob": "^10.3.3",
         "jasmine": "5.0.2",
         "jsdom": "^21.1.1",

@@ -1,4 +1,4 @@
-require('../../helpers/mock-browser-api')
+import 'fake-indexeddb/auto'
 
 const tds = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds')
@@ -6,7 +6,6 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const { handleRequest } = require('../../../shared/js/background/before-request')
 const tabManager = require('../../../shared/js/background/tab-manager')
-const browserWrapper = require('../../../shared/js/background/wrapper')
 const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object')
 
 const configReference = require('@duckduckgo/privacy-reference-tests/expire-first-party-js-cookies/config_reference.json')
@@ -17,7 +16,6 @@ const jsdom = require('jsdom')
 const constants = require('../../../shared/data/constants')
 const { JSDOM } = jsdom
 
-const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 const orgGlobalThis = globalThis
 
 for (const setName of Object.keys(testSets)) {
@@ -25,7 +23,6 @@ for (const setName of Object.keys(testSets)) {
 
     describe(`Expire tracking 1p cookies / ${testSet.name} /`, () => {
         beforeAll(() => {
-            spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
             return tdsStorage.getLists().then(lists => tds.setLists(lists))
@@ -77,7 +74,7 @@ for (const setName of Object.keys(testSets)) {
                 })
                 jsCookieProtection.callInit(args)
 
-                spyOn(browser.tabs, 'sendMessage').and.callFake((tabId, msg) => {
+                spyOn(chrome.tabs, 'sendMessage').and.callFake((tabId, msg) => {
                     if (tabId === 1) {
                         jsCookieProtection.update(msg)
                     }

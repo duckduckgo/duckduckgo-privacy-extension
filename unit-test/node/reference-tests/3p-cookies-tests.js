@@ -1,9 +1,10 @@
+import 'fake-indexeddb/auto'
+
 const trackers = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const tabManager = require('../../../shared/js/background/tab-manager')
-const browserWrapper = require('../../../shared/js/background/wrapper')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('../../../shared/js/background/events/3p-tracking-cookie-blocking')
 const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object')
 
@@ -19,13 +20,12 @@ const constants = require('../../../shared/data/constants')
 
 const { JSDOM } = jsdom
 
-const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
 const orgGlobalThis = globalThis
 
 function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, blocklistReference) {
     describe(`Third party ${suiteType} cookies blocking tests / ${testSet.name} /`, () => {
         beforeAll(() => {
-            spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
+            // spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
             return tdsStorage.getLists().then(lists => trackers.setLists(lists))
