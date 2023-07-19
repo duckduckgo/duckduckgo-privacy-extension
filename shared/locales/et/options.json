@@ -1,115 +1,116 @@
 {
-  "smartling" : {
-    "string_format" : "icu",
-    "translate_paths" : [
-    {
-      "path" : "*/title",
-      "key" : "{*}/title",
-      "instruction" : "*/note"
-    }]
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
   },
-  "optionsHeader" : {
-    "title" : "DuckDuckGo valikud",
-    "note" : "Header for options (settings) page"
+  "optionsHeader": {
+    "title": "DuckDuckGo valikud",
+    "note": "Header for options (settings) page"
   },
-  "optionsSubHeader" : {
-    "title" : "Otsi ja sirvi veebis ilma jälgimiseta.",
-    "note" : "We allow the user to browse the web without being followed by trackers"
+  "optionsSubHeader": {
+    "title": "Otsi ja sirvi veebis ilma jälgimiseta.",
+    "note": "We allow the user to browse the web without being followed by trackers"
   },
-  "optionsDesc" : {
-    "title" : "DuckDuckGo kaitseb sinu privaatsust veebis\nprivaatse otsingu,\njälgimise blokeerimise,\nja saidi krüptimise abil.",
-    "note" : "This describes how we protect the user from being tracked online"
+  "optionsDesc": {
+    "title": "DuckDuckGo kaitseb sinu privaatsust veebis\nprivaatse otsingu,\njälgimise blokeerimise,\nja saidi krüptimise abil.",
+    "note": "This describes how we protect the user from being tracked online"
   },
-  "shareFeedback" : {
-    "title" : "Jaga tagasisidet",
-    "note" : "Click here to share your opinions about this product"
+  "shareFeedback": {
+    "title": "Jaga tagasisidet",
+    "note": "Click here to share your opinions about this product"
   },
-  "reportBrokenSite" : {
-    "title" : "Teata mittetoimivast saidist",
-    "note" : "Click here to report an issue with a specific site you are trying to use"
+  "reportBrokenSite": {
+    "title": "Teata mittetoimivast saidist",
+    "note": "Click here to report an issue with a specific site you are trying to use"
   },
-  "showEmbeddedTweets" : {
-    "title" : "Näita manustatud säutse",
-    "note" : "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  "showEmbeddedTweets": {
+    "title": "Näita manustatud säutse",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
   },
-  "globalPrivacyControlAbbr" : {
-    "title" : "Üleilmne privaatsuskontroll (Global Privacy Control (GPC))",
-    "note" : "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  "globalPrivacyControlAbbr": {
+    "title": "Üleilmne privaatsuskontroll (Global Privacy Control (GPC))",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
-  "globalPrivacyControlDesc" : {
-    "title" : "Sinu andmeid ei ole müügiks DuckDuckGo nõustub sellega.Aktiveeri seadistus „Üleilmne privaatsuskontroll“ (GPC) ja me anname veebisaitidele märku sinu eelistusest:",
-    "note" : "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  "globalPrivacyControlDesc": {
+    "title": "Sinu andmeid ei ole müügiks DuckDuckGo nõustub sellega.Aktiveeri seadistus „Üleilmne privaatsuskontroll“ (GPC) ja me anname veebisaitidele märku sinu eelistusest:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
-  "notSellYourPersonalData" : {
-    "title" : "Sinu andmed ei ole müügiks.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  "notSellYourPersonalData": {
+    "title": "Sinu andmed ei ole müügiks.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
   },
-  "limitSharingOfPersonalData" : {
-    "title" : "piirata sinu isikuandmete jagamist teiste ettevõtetega.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  "limitSharingOfPersonalData": {
+    "title": "piirata sinu isikuandmete jagamist teiste ettevõtetega.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
-  "globalPrivacyControlDisclaimer" : {
-    "title" : "<b>Kuna ülemaailmne privaatsuskontroll (GPC) on uus standard,\n ei tunne enamik veebisaite seda veel ära, kuid me töötame selle nimel, et seda aktsepteeritaks üleilmselt.</b> Kuid veebisaidid peavad reageerima signaalile ainult niivõrd,\nkuivõrd kehtivad seadused neid selleks sunnivad. ",
-    "note" : "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>Kuna ülemaailmne privaatsuskontroll (GPC) on uus standard,\n ei tunne enamik veebisaite seda veel ära, kuid me töötame selle nimel, et seda aktsepteeritaks üleilmselt.</b> Kuid veebisaidid peavad reageerima signaalile ainult niivõrd,\nkuivõrd kehtivad seadused neid selleks sunnivad. ",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
   },
-  "emailProtection" : {
-    "title" : "E-posti kaitse",
-    "note" : "Email protection is a feature that lets the user pick private email addresses for different websites"
+  "emailProtection": {
+    "title": "E-posti kaitse",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
   },
-  "autofillDisabled" : {
-    "title" : "Automaatne täitmine keelatud",
-    "note" : "When we don't automatically help populate email fields with a private address"
+  "autofillDisabled": {
+    "title": "Automaatne täitmine keelatud",
+    "note": "When we don't automatically help populate email fields with a private address"
   },
-  "autofillEnabled" : {
-    "title" : "Automaatne täitmine on <strong class=\"js-userdata-container\">{userName}</strong> jaoks lubatud",
-    "note" : "When we do help populate email addresses for (your email address here)"
+  "autofillEnabled": {
+    "title": "Automaatne täitmine on <strong class=\"js-userdata-container\">{userName}</strong> jaoks lubatud",
+    "note": "When we do help populate email addresses for (your email address here)"
   },
-  "noUnprotectedSitesAdded" : {
-    "title" : "Kaitseta saite ei ole lisatud",
-    "note" : "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  "noUnprotectedSitesAdded": {
+    "title": "Kaitseta saite ei ole lisatud",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSites" : {
-    "title" : "Kaitseta saidid",
-    "note" : "Header for the list of websites where our privacy protections are disabled"
+  "unprotectedSites": {
+    "title": "Kaitseta saidid",
+    "note": "Header for the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSitesDesc" : {
-    "title" : "Nendele saitidele ei laienePrivaatsuse kaitse.",
-    "note" : "Describes that the user will not be protected by our privacy features when visiting these websites"
+  "unprotectedSitesDesc": {
+    "title": "Nendele saitidele ei laienePrivaatsuse kaitse.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
-  "addUnprotectedSite" : {
-    "title" : "Kaitseta saidi lisamine",
-    "note" : "Header for the user to add a site to the uprotected list"
+  "addUnprotectedSite": {
+    "title": "Kaitseta saidi lisamine",
+    "note": "Header for the user to add a site to the uprotected list"
   },
-  "enterURL" : {
-    "title" : "Sisestage URL",
-    "note" : "Promopt to enter the website URL here"
+  "enterURL": {
+    "title": "Sisestage URL",
+    "note": "Promopt to enter the website URL here"
   },
-  "invalidURL" : {
-    "title" : "Vale URL",
-    "note" : "The URL the user entered is not a valid website address"
+  "invalidURL": {
+    "title": "Vale URL",
+    "note": "The URL the user entered is not a valid website address"
   },
-  "fireButtonHeading" : {
-    "title" : "Fire Button",
-    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonDesc" : {
-    "title" : "Fire Button teeb vahekaartide, sirvimisajaloo ja andmete kustutamise lihtsaks. Saad määrata, kas see kustutab nii sirvimisajaloo kui ka andmed ja kas see sulgeb sinu praegused vahekaardid või mitte.",
-    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  "fireButtonDesc": {
+    "title": "Fire Button teeb vahekaartide, sirvimisajaloo ja andmete kustutamise lihtsaks. Saad määrata, kas see kustutab nii sirvimisajaloo kui ka andmed ja kas see sulgeb sinu praegused vahekaardid või mitte.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonClearHistoryTitle" : {
-    "title" : "Kustuta ajalugu",
-    "note" : "Title for option toggle"
+  "fireButtonClearHistoryTitle": {
+    "title": "Kustuta ajalugu",
+    "note": "Title for option toggle"
   },
-  "fireButtonClearHistoryDesc" : {
-    "title" : "Pane tähele: kustutada saab ainult määratud ajavahemiku sirvimisajaloo (nt viimane tund või kogu aeg) ning seda ei saa teha saidi kaupa.",
-    "note" : "Extra information about the clear history option toggle."
+  "fireButtonClearHistoryDesc": {
+    "title": "Pane tähele: kustutada saab ainult määratud ajavahemiku sirvimisajaloo (nt viimane tund või kogu aeg) ning seda ei saa teha saidi kaupa.",
+    "note": "Extra information about the clear history option toggle."
   },
-  "fireButtonTabClosureTitle" : {
-    "title" : "Sule vahekaardid",
-    "note" : "Title for option toggle. Close is a verb."
+  "fireButtonTabClosureTitle": {
+    "title": "Sule vahekaardid",
+    "note": "Title for option toggle. Close is a verb."
   },
-  "burnPageTitle" : {
-    "title" : "Tühjendamine on käimas ...",
-    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+  "burnPageTitle": {
+    "title": "Tühjendamine on käimas ...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

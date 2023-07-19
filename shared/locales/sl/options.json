@@ -1,115 +1,116 @@
 {
-  "smartling" : {
-    "string_format" : "icu",
-    "translate_paths" : [
-    {
-      "path" : "*/title",
-      "key" : "{*}/title",
-      "instruction" : "*/note"
-    }]
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
   },
-  "optionsHeader" : {
-    "title" : "Možnosti DuckDuckGo",
-    "note" : "Header for options (settings) page"
+  "optionsHeader": {
+    "title": "Možnosti DuckDuckGo",
+    "note": "Header for options (settings) page"
   },
-  "optionsSubHeader" : {
-    "title" : "Iščite in brskajte po spletu brez sledenja.",
-    "note" : "We allow the user to browse the web without being followed by trackers"
+  "optionsSubHeader": {
+    "title": "Iščite in brskajte po spletu brez sledenja.",
+    "note": "We allow the user to browse the web without being followed by trackers"
   },
-  "optionsDesc" : {
-    "title" : "DuckDuckGo varuje vašo zasebnost na spletu z\nzasebnim iskanjem,\nblokiranjem sledilnikov\nin šifriranjem spletnih mest.",
-    "note" : "This describes how we protect the user from being tracked online"
+  "optionsDesc": {
+    "title": "DuckDuckGo varuje vašo zasebnost na spletu z\nzasebnim iskanjem,\nblokiranjem sledilnikov\nin šifriranjem spletnih mest.",
+    "note": "This describes how we protect the user from being tracked online"
   },
-  "shareFeedback" : {
-    "title" : "Deli povratne informacije",
-    "note" : "Click here to share your opinions about this product"
+  "shareFeedback": {
+    "title": "Deli povratne informacije",
+    "note": "Click here to share your opinions about this product"
   },
-  "reportBrokenSite" : {
-    "title" : "Prijavite poškodovano spletno mesto",
-    "note" : "Click here to report an issue with a specific site you are trying to use"
+  "reportBrokenSite": {
+    "title": "Prijavite poškodovano spletno mesto",
+    "note": "Click here to report an issue with a specific site you are trying to use"
   },
-  "showEmbeddedTweets" : {
-    "title" : "Prikaži vdelane tvite",
-    "note" : "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  "showEmbeddedTweets": {
+    "title": "Prikaži vdelane tvite",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
   },
-  "globalPrivacyControlAbbr" : {
-    "title" : "Globalni nadzor zasebnosti (GPC)",
-    "note" : "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  "globalPrivacyControlAbbr": {
+    "title": "Globalni nadzor zasebnosti (GPC)",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
-  "globalPrivacyControlDesc" : {
-    "title" : "Vaši podatki ne bi smeli biti naprodaj. Pri DuckDuckGo se strinjamo.\nAktivirajte nastavitve »Global Privacy Control« (GPC) in spletnim mestom bomo\nsporočili vaše želje:",
-    "note" : "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  "globalPrivacyControlDesc": {
+    "title": "Vaši podatki ne bi smeli biti naprodaj. Pri DuckDuckGo se strinjamo.\nAktivirajte nastavitve »Global Privacy Control« (GPC) in spletnim mestom bomo\nsporočili vaše želje:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
-  "notSellYourPersonalData" : {
-    "title" : "Ne prodajajte svojih osebnih podatkov.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  "notSellYourPersonalData": {
+    "title": "Ne prodajajte svojih osebnih podatkov.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
   },
-  "limitSharingOfPersonalData" : {
-    "title" : "• Omejite skupno rabo svojih osebnih podatkov z drugimi podjetji.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  "limitSharingOfPersonalData": {
+    "title": "• Omejite skupno rabo svojih osebnih podatkov z drugimi podjetji.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
-  "globalPrivacyControlDisclaimer" : {
-    "title" : "<b>Ker je globalni nadzor zasebnosti (Global Privacy Control (GPC)) nov standard, ga \n\nvečina spletnih mest še ne prepozna, vendar si močno \nprizadevamo, da bi bil sprejet po vsem svetu.</b> Vendar morajo spletna mesta na podlagi signala ukrepati le v \nskladu z veljavnimi zakoni. ",
-    "note" : "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>Ker je globalni nadzor zasebnosti (Global Privacy Control (GPC)) nov standard, ga \n\nvečina spletnih mest še ne prepozna, vendar si močno \nprizadevamo, da bi bil sprejet po vsem svetu.</b> Vendar morajo spletna mesta na podlagi signala ukrepati le v \nskladu z veljavnimi zakoni. ",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
   },
-  "emailProtection" : {
-    "title" : "Zaščita e-pošte",
-    "note" : "Email protection is a feature that lets the user pick private email addresses for different websites"
+  "emailProtection": {
+    "title": "Zaščita e-pošte",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
   },
-  "autofillDisabled" : {
-    "title" : "Samodejno izpolnjevanje je onemogočeno",
-    "note" : "When we don't automatically help populate email fields with a private address"
+  "autofillDisabled": {
+    "title": "Samodejno izpolnjevanje je onemogočeno",
+    "note": "When we don't automatically help populate email fields with a private address"
   },
-  "autofillEnabled" : {
-    "title" : "Omogočeno samodejno izpolnjevanje za uporabnika <strong class=\"js-userdata-container\">{userName}</strong>",
-    "note" : "When we do help populate email addresses for (your email address here)"
+  "autofillEnabled": {
+    "title": "Omogočeno samodejno izpolnjevanje za uporabnika <strong class=\"js-userdata-container\">{userName}</strong>",
+    "note": "When we do help populate email addresses for (your email address here)"
   },
-  "noUnprotectedSitesAdded" : {
-    "title" : "Ni dodanih nezaščitenih spletnih mest",
-    "note" : "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  "noUnprotectedSitesAdded": {
+    "title": "Ni dodanih nezaščitenih spletnih mest",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSites" : {
-    "title" : "Nezaščitene strani",
-    "note" : "Header for the list of websites where our privacy protections are disabled"
+  "unprotectedSites": {
+    "title": "Nezaščitene strani",
+    "note": "Header for the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSitesDesc" : {
-    "title" : "Varnost teh strani se z zaščito zasebnosti ne bo izboljšala.",
-    "note" : "Describes that the user will not be protected by our privacy features when visiting these websites"
+  "unprotectedSitesDesc": {
+    "title": "Varnost teh strani se z zaščito zasebnosti ne bo izboljšala.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
-  "addUnprotectedSite" : {
-    "title" : "Dodajte nezaščiteno spletno mesto",
-    "note" : "Header for the user to add a site to the uprotected list"
+  "addUnprotectedSite": {
+    "title": "Dodajte nezaščiteno spletno mesto",
+    "note": "Header for the user to add a site to the uprotected list"
   },
-  "enterURL" : {
-    "title" : "Vnesite URL",
-    "note" : "Promopt to enter the website URL here"
+  "enterURL": {
+    "title": "Vnesite URL",
+    "note": "Promopt to enter the website URL here"
   },
-  "invalidURL" : {
-    "title" : "Neveljaven URL",
-    "note" : "The URL the user entered is not a valid website address"
+  "invalidURL": {
+    "title": "Neveljaven URL",
+    "note": "The URL the user entered is not a valid website address"
   },
-  "fireButtonHeading" : {
-    "title" : "Gumb Fire Button",
-    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonDesc" : {
-    "title" : "Z gumbom Fire lahko preprosto zaprete zavihke, počistite zgodovino brskanja in podatke. Določite lahko, ali želite počistiti zgodovino brskanja in podatke ter ali naj se zaprejo trenutni zavihki.",
-    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  "fireButtonDesc": {
+    "title": "Z gumbom Fire Button lahko preprosto zaprete zavihke, počistite zgodovino brskanja in podatke. Določite lahko, ali želite počistiti zgodovino brskanja in podatke ter ali naj se zaprejo trenutni zavihki.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonClearHistoryTitle" : {
-    "title" : "Izbriši zgodovino",
-    "note" : "Title for option toggle"
+  "fireButtonClearHistoryTitle": {
+    "title": "Izbriši zgodovino",
+    "note": "Title for option toggle"
   },
-  "fireButtonClearHistoryDesc" : {
-    "title" : "Upoštevajte: Zgodovino brskanja lahko počistite le za določeno časovno obdobje (npr.  »zadnjo uro« ali »od začetka«), in ne na podlagi posameznega spletnega mesta.",
-    "note" : "Extra information about the clear history option toggle."
+  "fireButtonClearHistoryDesc": {
+    "title": "Upoštevajte: Zgodovino brskanja lahko počistite le za določeno časovno obdobje (npr.  »zadnjo uro« ali »od začetka«), in ne na podlagi posameznega spletnega mesta.",
+    "note": "Extra information about the clear history option toggle."
   },
-  "fireButtonTabClosureTitle" : {
-    "title" : "Zapri zavihke",
-    "note" : "Title for option toggle. Close is a verb."
+  "fireButtonTabClosureTitle": {
+    "title": "Zapri zavihke",
+    "note": "Title for option toggle. Close is a verb."
   },
-  "burnPageTitle" : {
-    "title" : "Poteka brisanje ...",
-    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+  "burnPageTitle": {
+    "title": "Poteka brisanje ...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

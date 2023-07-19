@@ -1,115 +1,116 @@
 {
-  "smartling" : {
-    "string_format" : "icu",
-    "translate_paths" : [
-    {
-      "path" : "*/title",
-      "key" : "{*}/title",
-      "instruction" : "*/note"
-    }]
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
   },
-  "optionsHeader" : {
-    "title" : "DuckDuckGo-opties",
-    "note" : "Header for options (settings) page"
+  "optionsHeader": {
+    "title": "DuckDuckGo-opties",
+    "note": "Header for options (settings) page"
   },
-  "optionsSubHeader" : {
-    "title" : "Zoek en surf op internet zonder te worden gevolgd.",
-    "note" : "We allow the user to browse the web without being followed by trackers"
+  "optionsSubHeader": {
+    "title": "Zoek en surf op internet zonder te worden gevolgd.",
+    "note": "We allow the user to browse the web without being followed by trackers"
   },
-  "optionsDesc" : {
-    "title" : "DuckDuckGo beschermt je privacy online met \n privézoekopdrachten, \n trackerblokkering \n en websiteversleuteling.",
-    "note" : "This describes how we protect the user from being tracked online"
+  "optionsDesc": {
+    "title": "DuckDuckGo beschermt je privacy online met \n privézoekopdrachten, \n trackerblokkering \n en websiteversleuteling.",
+    "note": "This describes how we protect the user from being tracked online"
   },
-  "shareFeedback" : {
-    "title" : "Feedback delen",
-    "note" : "Click here to share your opinions about this product"
+  "shareFeedback": {
+    "title": "Feedback delen",
+    "note": "Click here to share your opinions about this product"
   },
-  "reportBrokenSite" : {
-    "title" : "Defecte website melden",
-    "note" : "Click here to report an issue with a specific site you are trying to use"
+  "reportBrokenSite": {
+    "title": "Defecte website melden",
+    "note": "Click here to report an issue with a specific site you are trying to use"
   },
-  "showEmbeddedTweets" : {
-    "title" : "Ingesloten tweets weergeven",
-    "note" : "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  "showEmbeddedTweets": {
+    "title": "Ingesloten tweets weergeven",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
   },
-  "globalPrivacyControlAbbr" : {
-    "title" : "Global Privacy Control (GPC)",
-    "note" : "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  "globalPrivacyControlAbbr": {
+    "title": "Global Privacy Control (GPC)",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
-  "globalPrivacyControlDesc" : {
-    "title" : "Je gegevens zouden niet mogen worden verhandeld. Bij DuckDuckGo zijn we het daarmee eens.Activeer de instellingen voor 'Global Privacy Control' (GPC). We zullen\n vervolgens aan websites je voorkeuren doorgeven om:",
-    "note" : "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  "globalPrivacyControlDesc": {
+    "title": "Je gegevens zouden niet mogen worden verhandeld. Bij DuckDuckGo zijn we het daarmee eens.Activeer de instellingen voor 'Global Privacy Control' (GPC). We zullen\n vervolgens aan websites je voorkeuren doorgeven om:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
-  "notSellYourPersonalData" : {
-    "title" : "Verkoop je persoonlijke gegevens niet.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  "notSellYourPersonalData": {
+    "title": "Verkoop je persoonlijke gegevens niet.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
   },
-  "limitSharingOfPersonalData" : {
-    "title" : "• Het delen van je persoonsgegevens met andere bedrijven te beperken.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  "limitSharingOfPersonalData": {
+    "title": "• Het delen van je persoonsgegevens met andere bedrijven te beperken.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
-  "globalPrivacyControlDisclaimer" : {
-    "title" : "<b>Global Privacy Control (GPC) is een nieuwe standaard.\n Daarom herkennen de meeste websites deze nog niet. We werken er hard aan om ervoor te zorgen dat GCP wereldwijd wordt geaccepteerd.</b> Maar websites zijn alleen verplicht om op dit signaal te reageren voor zover de toepasselijke wetgeving dat vereist.&nbsp;",
-    "note" : "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>Global Privacy Control (GPC) is een nieuwe standaard.\n Daarom herkennen de meeste websites deze nog niet. We werken er hard aan om ervoor te zorgen dat GCP wereldwijd wordt geaccepteerd.</b> Maar websites zijn alleen verplicht om op dit signaal te reageren voor zover de toepasselijke wetgeving dat vereist.&nbsp;",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
   },
-  "emailProtection" : {
-    "title" : "E-mailbescherming",
-    "note" : "Email protection is a feature that lets the user pick private email addresses for different websites"
+  "emailProtection": {
+    "title": "E-mailbescherming",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
   },
-  "autofillDisabled" : {
-    "title" : "Automatisch invullen uitgeschakeld",
-    "note" : "When we don't automatically help populate email fields with a private address"
+  "autofillDisabled": {
+    "title": "Automatisch invullen uitgeschakeld",
+    "note": "When we don't automatically help populate email fields with a private address"
   },
-  "autofillEnabled" : {
-    "title" : "Automatisch invullen ingeschakeld voor <strong class=\"js-userdata-container\">{userName}</strong>",
-    "note" : "When we do help populate email addresses for (your email address here)"
+  "autofillEnabled": {
+    "title": "Automatisch invullen ingeschakeld voor <strong class=\"js-userdata-container\">{userName}</strong>",
+    "note": "When we do help populate email addresses for (your email address here)"
   },
-  "noUnprotectedSitesAdded" : {
-    "title" : "Geen onbeveiligde sites toegevoegd",
-    "note" : "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  "noUnprotectedSitesAdded": {
+    "title": "Geen onbeveiligde sites toegevoegd",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSites" : {
-    "title" : "Onbeschermde sites",
-    "note" : "Header for the list of websites where our privacy protections are disabled"
+  "unprotectedSites": {
+    "title": "Onbeschermde sites",
+    "note": "Header for the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSitesDesc" : {
-    "title" : "Deze sites worden niet beschermd met Privacybescherming.",
-    "note" : "Describes that the user will not be protected by our privacy features when visiting these websites"
+  "unprotectedSitesDesc": {
+    "title": "Deze sites worden niet beschermd met Privacybescherming.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
-  "addUnprotectedSite" : {
-    "title" : "Onbeveiligde site toevoegen",
-    "note" : "Header for the user to add a site to the uprotected list"
+  "addUnprotectedSite": {
+    "title": "Onbeveiligde site toevoegen",
+    "note": "Header for the user to add a site to the uprotected list"
   },
-  "enterURL" : {
-    "title" : "URL invoeren",
-    "note" : "Promopt to enter the website URL here"
+  "enterURL": {
+    "title": "URL invoeren",
+    "note": "Promopt to enter the website URL here"
   },
-  "invalidURL" : {
-    "title" : "Ongeldige URL",
-    "note" : "The URL the user entered is not a valid website address"
+  "invalidURL": {
+    "title": "Ongeldige URL",
+    "note": "The URL the user entered is not a valid website address"
   },
-  "fireButtonHeading" : {
-    "title" : "Fire Button",
-    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonDesc" : {
-    "title" : "Met de Fire Button kun je eenvoudig tabbladen, browsegeschiedenis en gegevens wissen. Je kunt bepalen of zowel de browsegeschiedenis als de gegevens worden gewist en of je huidige tabbladen worden gesloten of niet.",
-    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  "fireButtonDesc": {
+    "title": "Met de Fire Button kun je eenvoudig tabbladen, browsegeschiedenis en gegevens wissen. Je kunt bepalen of zowel de browsegeschiedenis als de gegevens worden gewist en of je huidige tabbladen worden gesloten of niet.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonClearHistoryTitle" : {
-    "title" : "Geschiedenis wissen",
-    "note" : "Title for option toggle"
+  "fireButtonClearHistoryTitle": {
+    "title": "Geschiedenis wissen",
+    "note": "Title for option toggle"
   },
-  "fireButtonClearHistoryDesc" : {
-    "title" : "Let op: de browsegeschiedenis kan alleen worden gewist voor een bepaald tijdsbereik (bijv. 'afgelopen uur' of 'altijd') en niet per website.",
-    "note" : "Extra information about the clear history option toggle."
+  "fireButtonClearHistoryDesc": {
+    "title": "Let op: de browsegeschiedenis kan alleen worden gewist voor een bepaald tijdsbereik (bijv. 'afgelopen uur' of 'altijd') en niet per website.",
+    "note": "Extra information about the clear history option toggle."
   },
-  "fireButtonTabClosureTitle" : {
-    "title" : "Tabbladen sluiten",
-    "note" : "Title for option toggle. Close is a verb."
+  "fireButtonTabClosureTitle": {
+    "title": "Tabbladen sluiten",
+    "note": "Title for option toggle. Close is a verb."
   },
-  "burnPageTitle" : {
-    "title" : "Bezig met verbranden...",
-    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+  "burnPageTitle": {
+    "title": "Bezig met verbranden...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

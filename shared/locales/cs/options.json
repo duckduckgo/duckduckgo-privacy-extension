@@ -1,115 +1,116 @@
 {
-  "smartling" : {
-    "string_format" : "icu",
-    "translate_paths" : [
-    {
-      "path" : "*/title",
-      "key" : "{*}/title",
-      "instruction" : "*/note"
-    }]
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
   },
-  "optionsHeader" : {
-    "title" : "Možnosti DuckDuckGo",
-    "note" : "Header for options (settings) page"
+  "optionsHeader": {
+    "title": "Možnosti DuckDuckGo",
+    "note": "Header for options (settings) page"
   },
-  "optionsSubHeader" : {
-    "title" : "Nenech se sledovat při vyhledávání a prohlížení webu.",
-    "note" : "We allow the user to browse the web without being followed by trackers"
+  "optionsSubHeader": {
+    "title": "Nenech se sledovat při vyhledávání a prohlížení webu.",
+    "note": "We allow the user to browse the web without being followed by trackers"
   },
-  "optionsDesc" : {
-    "title" : "DuckDuckGo chrání tvoje soukromí na webu soukromým vyhledáváním\n,blokováním trackerů\na šifrováním stránek.",
-    "note" : "This describes how we protect the user from being tracked online"
+  "optionsDesc": {
+    "title": "DuckDuckGo chrání tvoje soukromí na webu soukromým vyhledáváním\n,blokováním trackerů\na šifrováním stránek.",
+    "note": "This describes how we protect the user from being tracked online"
   },
-  "shareFeedback" : {
-    "title" : "Poděl se o zpětnou vazbu",
-    "note" : "Click here to share your opinions about this product"
+  "shareFeedback": {
+    "title": "Poděl se o zpětnou vazbu",
+    "note": "Click here to share your opinions about this product"
   },
-  "reportBrokenSite" : {
-    "title" : "Nahlásit nefunkční web",
-    "note" : "Click here to report an issue with a specific site you are trying to use"
+  "reportBrokenSite": {
+    "title": "Nahlásit nefunkční web",
+    "note": "Click here to report an issue with a specific site you are trying to use"
   },
-  "showEmbeddedTweets" : {
-    "title" : "Zobrazit vložené tweety",
-    "note" : "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  "showEmbeddedTweets": {
+    "title": "Zobrazit vložené tweety",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
   },
-  "globalPrivacyControlAbbr" : {
-    "title" : "Globální kontrola ochrany osobních údajů (GPC)",
-    "note" : "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  "globalPrivacyControlAbbr": {
+    "title": "Globální kontrola ochrany osobních údajů (GPC)",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
-  "globalPrivacyControlDesc" : {
-    "title" : "Tvoje data nesmí být na prodej. Přesně tak to v DuckDuckGo vidíme.\nAktivuj nastavení „Global Privacy Control“ (GPC) a my dáme webovým stránkám signál, že preferuješ:",
-    "note" : "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  "globalPrivacyControlDesc": {
+    "title": "Tvoje data nesmí být na prodej. Přesně tak to v DuckDuckGo vidíme.\nAktivuj nastavení „Global Privacy Control“ (GPC) a my dáme webovým stránkám signál, že preferuješ:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
-  "notSellYourPersonalData" : {
-    "title" : "Neprodávat osobní údaje.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  "notSellYourPersonalData": {
+    "title": "Neprodávat osobní údaje.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
   },
-  "limitSharingOfPersonalData" : {
-    "title" : "Omezit sdílení vašich osobních údajů s jinými společnosti.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  "limitSharingOfPersonalData": {
+    "title": "Omezit sdílení vašich osobních údajů s jinými společnosti.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
-  "globalPrivacyControlDisclaimer" : {
-    "title" : "<b>I když je Globální kontrola ochrany osobních údajů (GPC)\n nový standard, většina webových stránek ho zatím nerozpozná, nicméně tvrdě pracujeme\n na tom, abychom zajistili, že bude akceptována po celém světě.</b> Webové stránky jsou nicméně povinny řešit podněty pouze v rozsahu, v jakém je k tomu donutí příslušné zákony.",
-    "note" : "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>I když je Globální kontrola ochrany osobních údajů (GPC)\n nový standard, většina webových stránek ho zatím nerozpozná, nicméně tvrdě pracujeme\n na tom, abychom zajistili, že bude akceptována po celém světě.</b> Webové stránky jsou nicméně povinny řešit podněty pouze v rozsahu, v jakém je k tomu donutí příslušné zákony.",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
   },
-  "emailProtection" : {
-    "title" : "Ochrana e-mailu",
-    "note" : "Email protection is a feature that lets the user pick private email addresses for different websites"
+  "emailProtection": {
+    "title": "Ochrana e-mailu",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
   },
-  "autofillDisabled" : {
-    "title" : "Vypnuté automatické vyplňování",
-    "note" : "When we don't automatically help populate email fields with a private address"
+  "autofillDisabled": {
+    "title": "Vypnuté automatické vyplňování",
+    "note": "When we don't automatically help populate email fields with a private address"
   },
-  "autofillEnabled" : {
-    "title" : "Je zapnuté automatické vyplňování pro uživatele <strong class=\"js-userdata-container\">{userName}</strong>",
-    "note" : "When we do help populate email addresses for (your email address here)"
+  "autofillEnabled": {
+    "title": "Je zapnuté automatické vyplňování pro uživatele <strong class=\"js-userdata-container\">{userName}</strong>",
+    "note": "When we do help populate email addresses for (your email address here)"
   },
-  "noUnprotectedSitesAdded" : {
-    "title" : "Nebyly přidány žádné nechráněné weby",
-    "note" : "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  "noUnprotectedSitesAdded": {
+    "title": "Nebyly přidány žádné nechráněné weby",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSites" : {
-    "title" : "Nechráněné stránky",
-    "note" : "Header for the list of websites where our privacy protections are disabled"
+  "unprotectedSites": {
+    "title": "Nechráněné stránky",
+    "note": "Header for the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSitesDesc" : {
-    "title" : "Tyto stránky nebudou vylepšeny ochranou soukromí.",
-    "note" : "Describes that the user will not be protected by our privacy features when visiting these websites"
+  "unprotectedSitesDesc": {
+    "title": "Tyto stránky nebudou vylepšeny ochranou soukromí.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
-  "addUnprotectedSite" : {
-    "title" : "Přidat nechráněný web",
-    "note" : "Header for the user to add a site to the uprotected list"
+  "addUnprotectedSite": {
+    "title": "Přidat nechráněný web",
+    "note": "Header for the user to add a site to the uprotected list"
   },
-  "enterURL" : {
-    "title" : "Zadej adresu URL",
-    "note" : "Promopt to enter the website URL here"
+  "enterURL": {
+    "title": "Zadej adresu URL",
+    "note": "Promopt to enter the website URL here"
   },
-  "invalidURL" : {
-    "title" : "Neplatná adresa URL",
-    "note" : "The URL the user entered is not a valid website address"
+  "invalidURL": {
+    "title": "Neplatná adresa URL",
+    "note": "The URL the user entered is not a valid website address"
   },
-  "fireButtonHeading" : {
-    "title" : "Fire Button",
-    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonDesc" : {
-    "title" : "Pomocí tlačítka Fire Button můžeš snadno vymazat karty, historii procházení a data. Je jen na tobě, jestli se má vymazat historie procházení i data a jestli se mají zavřít aktuální karty.",
-    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  "fireButtonDesc": {
+    "title": "Pomocí tlačítka Fire Button můžeš snadno vymazat karty, historii procházení a data. Je jen na tobě, jestli se má vymazat historie procházení i data a jestli se mají zavřít aktuální karty.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonClearHistoryTitle" : {
-    "title" : "Vymazat historii",
-    "note" : "Title for option toggle"
+  "fireButtonClearHistoryTitle": {
+    "title": "Vymazat historii",
+    "note": "Title for option toggle"
   },
-  "fireButtonClearHistoryDesc" : {
-    "title" : "Upozorňujeme, že historie procházení se dá vymazat jen pro konkrétní časové období (např. za poslední hodinu nebo za celou dobu), nikoli pro jednotlivé weby.",
-    "note" : "Extra information about the clear history option toggle."
+  "fireButtonClearHistoryDesc": {
+    "title": "Upozorňujeme, že historie procházení se dá vymazat jen pro konkrétní časové období (např. za poslední hodinu nebo za celou dobu), nikoli pro jednotlivé weby.",
+    "note": "Extra information about the clear history option toggle."
   },
-  "fireButtonTabClosureTitle" : {
-    "title" : "Zavřít karty",
-    "note" : "Title for option toggle. Close is a verb."
+  "fireButtonTabClosureTitle": {
+    "title": "Zavřít karty",
+    "note": "Title for option toggle. Close is a verb."
   },
-  "burnPageTitle" : {
-    "title" : "Probíhá mazání...",
-    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+  "burnPageTitle": {
+    "title": "Probíhá mazání...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

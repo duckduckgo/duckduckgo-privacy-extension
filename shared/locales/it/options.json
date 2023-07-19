@@ -1,115 +1,116 @@
 {
-  "smartling" : {
-    "string_format" : "icu",
-    "translate_paths" : [
-    {
-      "path" : "*/title",
-      "key" : "{*}/title",
-      "instruction" : "*/note"
-    }]
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
   },
-  "optionsHeader" : {
-    "title" : "Opzioni di DuckDuckGo",
-    "note" : "Header for options (settings) page"
+  "optionsHeader": {
+    "title": "Opzioni di DuckDuckGo",
+    "note": "Header for options (settings) page"
   },
-  "optionsSubHeader" : {
-    "title" : "Cerca e naviga sul Web senza che altri ti traccino.",
-    "note" : "We allow the user to browse the web without being followed by trackers"
+  "optionsSubHeader": {
+    "title": "Cerca e naviga sul Web senza che altri ti traccino.",
+    "note": "We allow the user to browse the web without being followed by trackers"
   },
-  "optionsDesc" : {
-    "title" : "DuckDuckGo protegge la tua privacy online con\nnavigazione in incognito, \nblocco dei sistemi di tracciamento\ne crittografia del sito.",
-    "note" : "This describes how we protect the user from being tracked online"
+  "optionsDesc": {
+    "title": "DuckDuckGo protegge la tua privacy online con\nnavigazione in incognito, \nblocco dei sistemi di tracciamento\ne crittografia del sito.",
+    "note": "This describes how we protect the user from being tracked online"
   },
-  "shareFeedback" : {
-    "title" : "Condividi feedback",
-    "note" : "Click here to share your opinions about this product"
+  "shareFeedback": {
+    "title": "Condividi feedback",
+    "note": "Click here to share your opinions about this product"
   },
-  "reportBrokenSite" : {
-    "title" : "Segnala sito danneggiato",
-    "note" : "Click here to report an issue with a specific site you are trying to use"
+  "reportBrokenSite": {
+    "title": "Segnala sito danneggiato",
+    "note": "Click here to report an issue with a specific site you are trying to use"
   },
-  "showEmbeddedTweets" : {
-    "title" : "Mostra tweet incorporati",
-    "note" : "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  "showEmbeddedTweets": {
+    "title": "Mostra tweet incorporati",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
   },
-  "globalPrivacyControlAbbr" : {
-    "title" : "Global Privacy Control (GPC)",
-    "note" : "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  "globalPrivacyControlAbbr": {
+    "title": "Global Privacy Control (GPC)",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
-  "globalPrivacyControlDesc" : {
-    "title" : "I tuoi dati non dovrebbero mai essere messi in vendita. Noi di DuckDuckGo ne siamo convinti.\nAttiva l'impostazione \"Global Privacy Control\" (GPC) e\nsegnaleremo ai siti web di:",
-    "note" : "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  "globalPrivacyControlDesc": {
+    "title": "I tuoi dati non dovrebbero mai essere messi in vendita. Noi di DuckDuckGo ne siamo convinti.\nAttiva l'impostazione \"Global Privacy Control\" (GPC) e\nsegnaleremo ai siti web di:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
-  "notSellYourPersonalData" : {
-    "title" : "Non vendere i tuoi dati personali.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  "notSellYourPersonalData": {
+    "title": "Non vendere i tuoi dati personali.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
   },
-  "limitSharingOfPersonalData" : {
-    "title" : "Limitare la condivisione dei tuoi dati personali con altre aziende.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  "limitSharingOfPersonalData": {
+    "title": "Limitare la condivisione dei tuoi dati personali con altre aziende.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
-  "globalPrivacyControlDisclaimer" : {
-    "title" : "<b>Dal momento che il Global Privacy Control (GPC) rappresenta un nuovo standard,\nla maggior parte dei siti web ancora non lo riconosce, ma ci stiamo impegnando al massimo per assicurarci che venga accettato in tutto il mondo.</b> Tuttavia, i siti web sono tenuti a rispondere alla segnalazione esclusivamente nei limiti delle leggi pertinenti che li obbligano ad agire in tal senso. ",
-    "note" : "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>Dal momento che il Global Privacy Control (GPC) rappresenta un nuovo standard,\nla maggior parte dei siti web ancora non lo riconosce, ma ci stiamo impegnando al massimo per assicurarci che venga accettato in tutto il mondo.</b> Tuttavia, i siti web sono tenuti a rispondere alla segnalazione esclusivamente nei limiti delle leggi pertinenti che li obbligano ad agire in tal senso. ",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
   },
-  "emailProtection" : {
-    "title" : "Protezione email",
-    "note" : "Email protection is a feature that lets the user pick private email addresses for different websites"
+  "emailProtection": {
+    "title": "Protezione email",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
   },
-  "autofillDisabled" : {
-    "title" : "Compilazione automatica disabilitata",
-    "note" : "When we don't automatically help populate email fields with a private address"
+  "autofillDisabled": {
+    "title": "Compilazione automatica disabilitata",
+    "note": "When we don't automatically help populate email fields with a private address"
   },
-  "autofillEnabled" : {
-    "title" : "Compilazione automatica abilitata per <strong class=\"js-userdata-container\">{userName}</strong>",
-    "note" : "When we do help populate email addresses for (your email address here)"
+  "autofillEnabled": {
+    "title": "Compilazione automatica abilitata per <strong class=\"js-userdata-container\">{userName}</strong>",
+    "note": "When we do help populate email addresses for (your email address here)"
   },
-  "noUnprotectedSitesAdded" : {
-    "title" : "Non è stato aggiunto nessun sito non protetto",
-    "note" : "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  "noUnprotectedSitesAdded": {
+    "title": "Non è stato aggiunto nessun sito non protetto",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSites" : {
-    "title" : "Siti non protetti",
-    "note" : "Header for the list of websites where our privacy protections are disabled"
+  "unprotectedSites": {
+    "title": "Siti non protetti",
+    "note": "Header for the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSitesDesc" : {
-    "title" : "Questi siti non saranno ottimizzati dalla tutela della privacy.",
-    "note" : "Describes that the user will not be protected by our privacy features when visiting these websites"
+  "unprotectedSitesDesc": {
+    "title": "Questi siti non saranno ottimizzati dalla tutela della privacy.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
-  "addUnprotectedSite" : {
-    "title" : "Aggiungi sito non protetto",
-    "note" : "Header for the user to add a site to the uprotected list"
+  "addUnprotectedSite": {
+    "title": "Aggiungi sito non protetto",
+    "note": "Header for the user to add a site to the uprotected list"
   },
-  "enterURL" : {
-    "title" : "Inserisci URL",
-    "note" : "Promopt to enter the website URL here"
+  "enterURL": {
+    "title": "Inserisci URL",
+    "note": "Promopt to enter the website URL here"
   },
-  "invalidURL" : {
-    "title" : "URL non valido",
-    "note" : "The URL the user entered is not a valid website address"
+  "invalidURL": {
+    "title": "URL non valido",
+    "note": "The URL the user entered is not a valid website address"
   },
-  "fireButtonHeading" : {
-    "title" : "Fire Button",
-    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonDesc" : {
-    "title" : "Il Fire button semplifica l'eliminazione delle schede, della cronologia di navigazione e dei dati. Puoi controllare se eliminare la cronologia di navigazione e i dati e se chiudere le schede correnti.",
-    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  "fireButtonDesc": {
+    "title": "Il Fire button semplifica l'eliminazione delle schede, della cronologia di navigazione e dei dati. Puoi controllare se eliminare la cronologia di navigazione e i dati e se chiudere le schede correnti.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonClearHistoryTitle" : {
-    "title" : "Elimina cronologia",
-    "note" : "Title for option toggle"
+  "fireButtonClearHistoryTitle": {
+    "title": "Elimina cronologia",
+    "note": "Title for option toggle"
   },
-  "fireButtonClearHistoryDesc" : {
-    "title" : "Nota: la cronologia di navigazione può essere eliminata solo per un intervallo di tempo specificato (ad es. \"ultima ora\" o \"sempre\") e non in base al sito.",
-    "note" : "Extra information about the clear history option toggle."
+  "fireButtonClearHistoryDesc": {
+    "title": "Nota: la cronologia di navigazione può essere eliminata solo per un intervallo di tempo specificato (ad es. \"ultima ora\" o \"sempre\") e non in base al sito.",
+    "note": "Extra information about the clear history option toggle."
   },
-  "fireButtonTabClosureTitle" : {
-    "title" : "Chiudi schede",
-    "note" : "Title for option toggle. Close is a verb."
+  "fireButtonTabClosureTitle": {
+    "title": "Chiudi schede",
+    "note": "Title for option toggle. Close is a verb."
   },
-  "burnPageTitle" : {
-    "title" : "Eliminazione in corso...",
-    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+  "burnPageTitle": {
+    "title": "Eliminazione in corso...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }

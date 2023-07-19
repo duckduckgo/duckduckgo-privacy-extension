@@ -1,115 +1,116 @@
 {
-  "smartling" : {
-    "string_format" : "icu",
-    "translate_paths" : [
-    {
-      "path" : "*/title",
-      "key" : "{*}/title",
-      "instruction" : "*/note"
-    }]
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
   },
-  "optionsHeader" : {
-    "title" : "DuckDuckGo opcijas",
-    "note" : "Header for options (settings) page"
+  "optionsHeader": {
+    "title": "DuckDuckGo opcijas",
+    "note": "Header for options (settings) page"
   },
-  "optionsSubHeader" : {
-    "title" : "Meklē un pārlūko tīmekli bez izsekošanas.",
-    "note" : "We allow the user to browse the web without being followed by trackers"
+  "optionsSubHeader": {
+    "title": "Meklē un pārlūko tīmekli bez izsekošanas.",
+    "note": "We allow the user to browse the web without being followed by trackers"
   },
-  "optionsDesc" : {
-    "title" : "DuckDuckGo aizsargā tavu privātumu tiešsaistē ar\nprivāto meklēšanu,\nizsekotāju bloķēšanu,\nun vietņu šifrēšanu.",
-    "note" : "This describes how we protect the user from being tracked online"
+  "optionsDesc": {
+    "title": "DuckDuckGo aizsargā tavu privātumu tiešsaistē ar\nprivāto meklēšanu,\nizsekotāju bloķēšanu,\nun vietņu šifrēšanu.",
+    "note": "This describes how we protect the user from being tracked online"
   },
-  "shareFeedback" : {
-    "title" : "Sniegt atsauksmes",
-    "note" : "Click here to share your opinions about this product"
+  "shareFeedback": {
+    "title": "Sniegt atsauksmes",
+    "note": "Click here to share your opinions about this product"
   },
-  "reportBrokenSite" : {
-    "title" : "Ziņot par bojātu vietni",
-    "note" : "Click here to report an issue with a specific site you are trying to use"
+  "reportBrokenSite": {
+    "title": "Ziņot par bojātu vietni",
+    "note": "Click here to report an issue with a specific site you are trying to use"
   },
-  "showEmbeddedTweets" : {
-    "title" : "Rādīt iegultos tvītus",
-    "note" : "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  "showEmbeddedTweets": {
+    "title": "Rādīt iegultos tvītus",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
   },
-  "globalPrivacyControlAbbr" : {
-    "title" : "Globālā privātuma kontrole (GPC)",
-    "note" : "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  "globalPrivacyControlAbbr": {
+    "title": "Globālā privātuma kontrole (GPC)",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
-  "globalPrivacyControlDesc" : {
-    "title" : "Taviem datiem nav jākļūst par preci. DuckDuckGo tam piekrīt.\nAktivizē \"Globālās privātuma parvaldīšanas\" (GPC) iestatījumus, un mēs\npaziņosim tīmekļa vietnēm tavu izvēli:",
-    "note" : "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  "globalPrivacyControlDesc": {
+    "title": "Taviem datiem nav jākļūst par preci. DuckDuckGo tam piekrīt.\nAktivizē \"Globālās privātuma parvaldīšanas\" (GPC) iestatījumus, un mēs\npaziņosim tīmekļa vietnēm tavu izvēli:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
-  "notSellYourPersonalData" : {
-    "title" : "Nepārdot personas datus.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  "notSellYourPersonalData": {
+    "title": "Nepārdot personas datus.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
   },
-  "limitSharingOfPersonalData" : {
-    "title" : "Ierobežot tavu personas datu kopīgošanu ar citiem uzņēmumiem.",
-    "note" : "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  "limitSharingOfPersonalData": {
+    "title": "Ierobežot tavu personas datu kopīgošanu ar citiem uzņēmumiem.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
-  "globalPrivacyControlDisclaimer" : {
-    "title" : "<b>Tā kā Globālā privātuma pārvaldīšana (GPC) ir jauns standarts,\nvairums vietņu to vēl neatpazīs, taču mēs strādājam,\nlai nodrošinātu, ka tas tiek pieņemts visā pasaulē.</b> Tomēr vietnēm ir obligāti jārīkojas tikai uz tām attiecināmo piemērojamo tiesību aktu ietvaros. ",
-    "note" : "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>Tā kā Globālā privātuma pārvaldīšana (GPC) ir jauns standarts,\nvairums vietņu to vēl neatpazīs, taču mēs strādājam,\nlai nodrošinātu, ka tas tiek pieņemts visā pasaulē.</b> Tomēr vietnēm ir obligāti jārīkojas tikai uz tām attiecināmo piemērojamo tiesību aktu ietvaros. ",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
   },
-  "emailProtection" : {
-    "title" : "E-pasta aizsardzība",
-    "note" : "Email protection is a feature that lets the user pick private email addresses for different websites"
+  "emailProtection": {
+    "title": "E-pasta aizsardzība",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
   },
-  "autofillDisabled" : {
-    "title" : "Automātiskā aizpildīšana atspējota",
-    "note" : "When we don't automatically help populate email fields with a private address"
+  "autofillDisabled": {
+    "title": "Automātiskā aizpildīšana atspējota",
+    "note": "When we don't automatically help populate email fields with a private address"
   },
-  "autofillEnabled" : {
-    "title" : "Ieslēgta automātiskā aizpildīšana lietotājam <strong class=\"js-userdata-container\">{userName}</strong>",
-    "note" : "When we do help populate email addresses for (your email address here)"
+  "autofillEnabled": {
+    "title": "Ieslēgta automātiskā aizpildīšana lietotājam <strong class=\"js-userdata-container\">{userName}</strong>",
+    "note": "When we do help populate email addresses for (your email address here)"
   },
-  "noUnprotectedSitesAdded" : {
-    "title" : "Nav pievienota neviena neaizsargāta vietne",
-    "note" : "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  "noUnprotectedSitesAdded": {
+    "title": "Nav pievienota neviena neaizsargāta vietne",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSites" : {
-    "title" : "Neaizsargātas vietnes",
-    "note" : "Header for the list of websites where our privacy protections are disabled"
+  "unprotectedSites": {
+    "title": "Neaizsargātas vietnes",
+    "note": "Header for the list of websites where our privacy protections are disabled"
   },
-  "unprotectedSitesDesc" : {
-    "title" : "Šīs vietnes netiks uzlabotas ar privātuma aizsardzību.",
-    "note" : "Describes that the user will not be protected by our privacy features when visiting these websites"
+  "unprotectedSitesDesc": {
+    "title": "Šīs vietnes netiks uzlabotas ar privātuma aizsardzību.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
-  "addUnprotectedSite" : {
-    "title" : "Pievienot neaizsargātu vietni",
-    "note" : "Header for the user to add a site to the uprotected list"
+  "addUnprotectedSite": {
+    "title": "Pievienot neaizsargātu vietni",
+    "note": "Header for the user to add a site to the uprotected list"
   },
-  "enterURL" : {
-    "title" : "Ievadi URL",
-    "note" : "Promopt to enter the website URL here"
+  "enterURL": {
+    "title": "Ievadi URL",
+    "note": "Promopt to enter the website URL here"
   },
-  "invalidURL" : {
-    "title" : "Nederīgs URL",
-    "note" : "The URL the user entered is not a valid website address"
+  "invalidURL": {
+    "title": "Nederīgs URL",
+    "note": "The URL the user entered is not a valid website address"
   },
-  "fireButtonHeading" : {
-    "title" : "Fire Button",
-    "note" : "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonDesc" : {
-    "title" : "Nospiežot Fire Button, vari viegli notīrīt cilnes, pārlūkošanas vēsturi un datus. Vari izvēlēties, vai notīrīt gan pārlūkošanas vēsturi, gan datus, kā arī to, vai aizvērt pašreizējās cilnes.",
-    "note" : "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  "fireButtonDesc": {
+    "title": "Nospiežot Fire Button, vari viegli notīrīt cilnes, pārlūkošanas vēsturi un datus. Vari izvēlēties, vai notīrīt gan pārlūkošanas vēsturi, gan datus, kā arī to, vai aizvērt pašreizējās cilnes.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
   },
-  "fireButtonClearHistoryTitle" : {
-    "title" : "Notīrīt vēsturi",
-    "note" : "Title for option toggle"
+  "fireButtonClearHistoryTitle": {
+    "title": "Notīrīt vēsturi",
+    "note": "Title for option toggle"
   },
-  "fireButtonClearHistoryDesc" : {
-    "title" : "Lūdzu, ņem vērā: pārlūkošanas vēsturi var dzēst tikai par noteiktu laika periodu (piem., \"pēdējā stunda\" vai \"visu laiku\"), nevis katrai vietnei atsevišķi.",
-    "note" : "Extra information about the clear history option toggle."
+  "fireButtonClearHistoryDesc": {
+    "title": "Lūdzu, ņem vērā: pārlūkošanas vēsturi var dzēst tikai par noteiktu laika periodu (piem., \"pēdējā stunda\" vai \"visu laiku\"), nevis katrai vietnei atsevišķi.",
+    "note": "Extra information about the clear history option toggle."
   },
-  "fireButtonTabClosureTitle" : {
-    "title" : "Aizvērt cilnes",
-    "note" : "Title for option toggle. Close is a verb."
+  "fireButtonTabClosureTitle": {
+    "title": "Aizvērt cilnes",
+    "note": "Title for option toggle. Close is a verb."
   },
-  "burnPageTitle" : {
-    "title" : "Notiek tīrīšana...",
-    "note" : "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+  "burnPageTitle": {
+    "title": "Notiek tīrīšana...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
   }
 }
