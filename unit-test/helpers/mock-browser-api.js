@@ -1,10 +1,16 @@
 globalThis.browser = {
     storage: {
         local: {
-            set: () => {},
+            set: (value) => {
+                browser.storage.local._setCalls.push(value)
+            },
             get: () => {
                 return {}
-            }
+            },
+            _setCalls: []
+        },
+        managed: {
+            get: () => {}
         }
     },
     browserAction: {

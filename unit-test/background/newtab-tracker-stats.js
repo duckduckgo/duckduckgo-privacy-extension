@@ -1,6 +1,5 @@
 const { NewTabTrackerStats } = require('../../shared/js/background/newtab-tracker-stats')
 const { TrackerStats } = require('../../shared/js/background/classes/tracker-stats')
-const browserWrapper = require('../../shared/js/background/wrapper')
 const constants = require('../../shared/data/constants')
 const testTDS = require('../data/tds.json')
 const { dataFormatSchema } = require('../../shared/js/newtab/schema')
@@ -116,6 +115,11 @@ describe('NewTabTrackerStats', () => {
 describe('sending data', () => {
     beforeEach(() => {
         jasmine.clock().install()
+        // @ts-ignore
+        while (chrome.storage.local._setCalls.length > 0) {
+            // @ts-ignore
+            chrome.storage.local._setCalls.pop()
+        }
     })
     afterEach(() => {
         jasmine.clock().uninstall()
@@ -127,7 +131,8 @@ describe('sending data', () => {
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
         const sendSpy = spyOn(newtab, '_publish')
-        const syncSpy = spyOn(browserWrapper, 'syncToStorage')
+        // @ts-ignore
+        const syncSpy = chrome.storage.local._setCalls
 
         const now = 1673473220560
 
@@ -145,8 +150,8 @@ describe('sending data', () => {
         expect(sendSpy).toHaveBeenCalledTimes(1)
 
         // assert that values were synced to storage
-        expect(syncSpy).toHaveBeenCalledTimes(1)
-        expect(syncSpy).toHaveBeenCalledWith({
+        expect(syncSpy.length).toBe(1)
+        expect(syncSpy[0]).toEqual({
             [NewTabTrackerStats.storageKey]: {
                 stats: {
                     current: {
