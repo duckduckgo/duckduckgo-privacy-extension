@@ -1,4 +1,4 @@
-import { checksum } from "../../../shared/js/background/storage/https";
+import { checksum } from '../../../shared/js/background/storage/https'
 import httpsBloom from './../../data/httpsBloom.json'
 
 describe('legacy checksum', () => {

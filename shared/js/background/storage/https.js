@@ -5,9 +5,9 @@ const settings = require('./../settings')
 
 /**
  * Calculate an sha256 checksum (in base64) of the provided base64 string
- * @param {string} data 
+ * @param {string} data
  */
-export async function checksum(data) {
+export async function checksum (data) {
     // Convert base64 string into a Uint8Array
     const binaryString = atob(data)
     const buffer = new Uint8Array(binaryString.length)
