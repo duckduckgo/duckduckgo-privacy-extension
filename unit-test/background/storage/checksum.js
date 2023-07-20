@@ -1,7 +1,7 @@
-import { checksum } from "../../shared/js/background/storage/https";
-import httpsBloom from './../data/httpsBloom.json'
+import { checksum } from "../../../shared/js/background/storage/https";
+import httpsBloom from './../../data/httpsBloom.json'
 
-describe('checksum', () => {
+describe('legacy checksum', () => {
     it('calculates the sha256 checksum of data', async () => {
         expect(await checksum('test')).toEqual('ZheqiKcua1JriMvO2jiKe1Kg6FYUihLZuEKc0qU6PqQ=')
     })
