@@ -3,6 +3,27 @@ const load = require('./../load')
 const constants = require('../../../data/constants')
 const settings = require('./../settings')
 
+/**
+ * Calculate an sha256 checksum (in base64) of the provided base64 string
+ * @param {string} data
+ */
+export async function checksum (data) {
+    // Convert base64 string into a Uint8Array
+    const binaryString = atob(data)
+    const buffer = new Uint8Array(binaryString.length)
+    for (let i = 0; i < binaryString.length; i++) {
+        buffer[i] = binaryString.charCodeAt(i)
+    }
+    // Calculate SHA-256 of the buffer
+    const sha256Buffer = new Uint8Array(await crypto.subtle.digest('SHA-256', buffer))
+    // Convert the buffer back into base64
+    let binary = ''
+    for (let i = 0; i < sha256Buffer.byteLength; i++) {
+        binary += String.fromCharCode(sha256Buffer[i])
+    }
+    return btoa(binary)
+}
+
 class HTTPSStorage {
     constructor () {
         // @ts-ignore - TypeScript is not following the Dexie import property.
@@ -124,26 +145,12 @@ class HTTPSStorage {
         })
     }
 
-    hasCorrectChecksum (data) {
+    async hasCorrectChecksum (data) {
         // not everything has a checksum
-        if (!data.checksum) return Promise.resolve(true)
+        if (!data.checksum) return true
 
-        // TODO: rewrite this check without needing a Buffer polyfill
-        if (typeof Buffer === 'undefined') {
-            return Promise.resolve(true)
-        }
-
-        // need a buffer to send to crypto.subtle
-        const buffer = Buffer.from(data.data, 'base64')
-
-        return crypto.subtle.digest('SHA-256', buffer).then(arrayBuffer => {
-            const sha256 = Buffer.from(arrayBuffer).toString('base64')
-            if (data.checksum.sha256 && data.checksum.sha256 === sha256) {
-                return true
-            } else {
-                return false
-            }
-        })
+        const sha256 = await checksum(data.data)
+        return data.checksum.sha256 && data.checksum.sha256 === sha256
     }
 }
 export default new HTTPSStorage()
