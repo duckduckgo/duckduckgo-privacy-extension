@@ -25,7 +25,6 @@ const orgGlobalThis = globalThis
 function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, blocklistReference) {
     describe(`Third party ${suiteType} cookies blocking tests / ${testSet.name} /`, () => {
         beforeAll(() => {
-            // spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
             return tdsStorage.getLists().then(lists => trackers.setLists(lists))
