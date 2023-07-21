@@ -28,7 +28,7 @@ Generate the TDS ruleset:
 
 ```bash
 npm run tds ../tds-input.json ../supported-surrogates-input.json ../tds-ruleset-output.json \
-        [../match-details-by-rule-id-output.json]
+        [../allowing-rules-by-ctl-action-output.json] [../match-details-by-rule-id-output.json]
 ```
 
 Note:

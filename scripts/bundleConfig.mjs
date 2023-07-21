@@ -2,12 +2,13 @@ import fetch from 'node-fetch'
 import fs from 'fs'
 import config from '../shared/data/constants.js'
 
-const outputEtagFile = './shared/data/etags.json'
+import { writeEtags } from './utils.mjs'
+
 const bundlePath = './shared/data/bundled/'
 const configProps = config.tdsLists.find((c) => c.name === 'config')
-const etags = {}
 
 async function getConfig (name, url) {
+    const etags = {}
     const response = await fetch(url)
     if (!response.ok) {
         throw new Error(`Failed to load tds list ${name}: ${url}`)
@@ -19,11 +20,12 @@ async function getConfig (name, url) {
     const urlObject = new URL(url)
     const fileName = urlObject.pathname.split('/').pop()
     fs.writeFileSync(`${bundlePath}/${fileName}`, fileText)
+    return etags
 }
 
 async function fetchConfigs () {
-    await getConfig('config', configProps.url)
-    fs.writeFileSync(outputEtagFile, JSON.stringify(etags))
+    const etags = await getConfig('config', configProps.url)
+    writeEtags(etags)
     console.log('Config imported successfully')
 }
 
