@@ -17,6 +17,7 @@
 
 import { onStartup } from './startup'
 import FireButton from './components/fire-button'
+import TabTracker from './components/tab-tracking'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
@@ -38,7 +39,9 @@ settings.ready().then(() => {
  *  fireButton?: FireButton;
  * }}
  */
-const components = {}
+const components = {
+    tabTracking: new TabTracker({ tabManager })
+}
 
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3') {
     components.fireButton = new FireButton({ settings, tabManager })
