@@ -17,7 +17,6 @@ export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     // Clone site so we don't retain any site changes
     // @ts-ignore
     const site = tabClone.site
-    const referrer = tab?.referrer || ''
     let cookie = {}
 
     // Special case for iframes that are blank we check if it's also enabled
@@ -67,7 +66,6 @@ export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,
         site,
-        referrer,
         platform: constants.platform,
         locale: getUserLocale(),
         assets: {
