@@ -262,7 +262,7 @@ export default class Site {
 
         // Our new tab page URL that is hard-coded in the Chromium source.
         // See https://source.chromium.org/chromium/chromium/src/+/main:components/search_engines/prepopulated_engines.json
-        if (url === 'https://duckduckgo.com/chrome_newtab') {
+        if (url.startsWith('https://duckduckgo.com/chrome_newtab')) {
             return 'new tab'
         }
 
