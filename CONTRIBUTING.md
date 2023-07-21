@@ -84,7 +84,7 @@ page and the dev-tools panel.
 The popup UI comes from [`@duckduckgo/privacy-dashboard`](https://github.com/duckduckgo/privacy-dashboard) - we use `npm`
 to install this package. At build time we copy the pre-built assets from the Dashboard into the extensions output folder. 
 To make changes to the dashboard, see the section below [Locally testing changes to modules](#locally-testing-changes-to-modules).
-The Dashboard also publishes extension-specific [documentation](https://duckduckgo.github.io/privacy-dashboard/example/docs/modules/Browser_Extensions_integration.html)   
+The Dashboard also publishes extension-specific [documentation](https://duckduckgo.github.io/privacy-dashboard/modules/Browser_Extensions_integration.html)   
 
 The background JS is in `shared/js/`
 
