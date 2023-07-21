@@ -117,5 +117,5 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 - TypeScript Linting: `npm run tsc`
 
 ### Testing
-- Unit tests: `npm test`
+- Unit tests: `npm test` (full docs [here](./unit-test/README.md))
 - Integration tests: `npm run playwright` (full docs [here](./integration-test/README.md))
