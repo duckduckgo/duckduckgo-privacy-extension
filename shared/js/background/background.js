@@ -16,7 +16,7 @@
 /* global DEBUG, RELOADER, BUILD_TARGET */
 
 import { onStartup } from './startup'
-import FireButton from './features/fire-button'
+import FireButton from './components/fire-button'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
@@ -38,14 +38,14 @@ settings.ready().then(() => {
  *  fireButton?: FireButton;
  * }}
  */
-const features = {}
+const components = {}
 
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3') {
-    features.fireButton = new FireButton({ settings, tabManager })
+    components.fireButton = new FireButton({ settings, tabManager })
 }
-console.log('Loaded features:', features)
+console.log('Loaded components:', components)
 // @ts-ignore
-self.features = features
+self.components = components
 
 // Optional features controlled by build flags.
 // If these flags are set to false, the whole function is tree-shaked from the build.
