@@ -1,5 +1,3 @@
-import 'fake-indexeddb/auto'
-
 const settings = require('../../../shared/js/background/settings')
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default

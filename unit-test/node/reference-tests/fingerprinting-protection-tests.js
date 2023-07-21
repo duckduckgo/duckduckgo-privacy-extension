@@ -28,6 +28,11 @@ const orgGlobalThis = globalThis
 
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
+    const testsToRun = testSet.tests.filter((test) => !(test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')))
+    if (testsToRun.length === 0) {
+        // all tests are being skipped
+        continue
+    }
 
     describe(`Fingerprinting protection tests / ${testSet.name} /`, () => {
         beforeAll(() => {
@@ -41,7 +46,7 @@ for (const setName of Object.keys(testSets)) {
             globalThis = orgGlobalThis
         })
 
-        testSet.tests.forEach(test => {
+        testsToRun.forEach(test => {
             if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                 return
             }
