@@ -45,7 +45,7 @@
         "browserify": "^17.0.0",
         "duckduckgo-colors": "0.0.1",
         "esbuild": "^0.18.11",
-        "eslint": "^8.44.0",
+        "eslint": "^8.45.0",
         "eslint-config-standard": "^17.1.0",
         "eslint-plugin-import": "^2.27.5",
         "eslint-plugin-node": "^11.1.0",
