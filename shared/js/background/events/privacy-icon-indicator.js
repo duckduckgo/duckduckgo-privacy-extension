@@ -1,4 +1,4 @@
-import * as constants from '../../../data/constants'
+import { iconPaths } from '../../../data/constants'
 import { setActionIcon } from '../wrapper'
 
 /**
@@ -20,8 +20,8 @@ export function updateActionIcon (site, tabId) {
     // Enabled: regular icon
     // Disabled: special state, greyed-out Dax
     const nextIcon = protectionsEnabled
-        ? constants.iconPaths.regular
-        : constants.iconPaths.withSpecialState
+        ? iconPaths.regular
+        : iconPaths.withSpecialState
 
     // now call out to the browser wrapper to actually change the icon
     return setActionIcon(nextIcon, tabId)

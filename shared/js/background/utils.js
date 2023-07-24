@@ -2,7 +2,7 @@ import browser from 'webextension-polyfill'
 import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from './wrapper'
 import tdsStorage from './storage/tds'
 import settings from './settings'
-import * as tldts from 'tldts'
+import { parse as tldtsParse } from 'tldts'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string'
 import sha1 from '../shared-utils/sha1'
 const browserInfo = parseUserAgentString()
@@ -52,7 +52,7 @@ export async function sendAllTabsMessage (message, details) {
  * @returns {string | null} etld plus one of the URL
  */
 export function getBaseDomain (urlString) {
-    const parsedUrl = tldts.parse(urlString, { allowPrivateDomains: true })
+    const parsedUrl = tldtsParse(urlString, { allowPrivateDomains: true })
     if (parsedUrl.hostname === 'localhost' || parsedUrl.hostname?.endsWith('.localhost') || parsedUrl.isIp) {
         return parsedUrl.hostname
     }
@@ -68,7 +68,7 @@ export function extractHostFromURL (url, shouldKeepWWW) {
         url = 'about://' + url.substr(6)
     }
 
-    const urlObj = tldts.parse(url)
+    const urlObj = tldtsParse(url)
     let hostname = urlObj.hostname || ''
 
     if (!shouldKeepWWW) {
@@ -84,7 +84,7 @@ export function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
     if (!url) return undefined
     try {
         const parsedURL = new URL(url)
-        const tld = tldts.parse(url)
+        const tld = tldtsParse(url)
         if (!parsedURL || !tld) return ''
         // tld.domain is null if this is an IP or the domain does not use a known TLD (e.g. localhost)
         // in that case use the hostname (no truncation)
@@ -256,7 +256,7 @@ export function getEnabledFeatures (url) {
 }
 
 export function brokenListIndex (url, list) {
-    const parsedDomain = tldts.parse(url)
+    const parsedDomain = tldtsParse(url)
     const hostname = parsedDomain.hostname || url
 
     // If root domain in temp unprotected list, return true

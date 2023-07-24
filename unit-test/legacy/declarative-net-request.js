@@ -1,9 +1,16 @@
 import '../helpers/mock-browser-api'
+// TODO remove the * imports
+// eslint-disable-next-line no-restricted-syntax
 import * as allowlistedTrackers from '@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json'
+// eslint-disable-next-line no-restricted-syntax
 import * as tds from '../data/tds.json'
+// eslint-disable-next-line no-restricted-syntax
 import * as browserWrapper from '../../shared/js/background/wrapper'
+// eslint-disable-next-line no-restricted-syntax
 import * as testConfig from '../data/extension-config.json'
+// eslint-disable-next-line no-restricted-syntax
 import * as tdsStorageStub from '../helpers/tds'
+// eslint-disable-next-line no-restricted-syntax
 import * as startup from '../../shared/js/background/startup'
 import settings from '../../shared/js/background/settings'
 import tabManager from '../../shared/js/background/tab-manager'

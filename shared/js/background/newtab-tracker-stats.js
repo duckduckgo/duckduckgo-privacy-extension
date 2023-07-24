@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 import constants from '../../data/constants'
-import * as browserWrapper from './wrapper.js'
+import { getManifestVersion, createAlarm, syncToStorage, getFromStorage } from './wrapper.js'
 import tdsStorage from './storage/tds'
 import { emitter, TrackerBlockedEvent } from './before-request.js'
 import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
@@ -74,7 +74,7 @@ export class NewTabTrackerStats {
      * place for this module.
      */
     register () {
-        const manifestVersion = browserWrapper.getManifestVersion()
+        const manifestVersion = getManifestVersion()
         if (manifestVersion === 3) {
             mv3Redirect()
         } else {
@@ -111,7 +111,7 @@ export class NewTabTrackerStats {
          * For now, we're pruning data every 10 min
          */
         const pruneAlarmName = 'pruneNewTabData'
-        browserWrapper.createAlarm(pruneAlarmName, { periodInMinutes: 10 })
+        createAlarm(pruneAlarmName, { periodInMinutes: 10 })
         browser.alarms.onAlarm.addListener(async alarmEvent => {
             if (alarmEvent.name === pruneAlarmName) {
                 this._handlePruneAlarm()
@@ -206,7 +206,7 @@ export class NewTabTrackerStats {
                 stats: serializedData
             }
         }
-        browserWrapper.syncToStorage(toSync)
+        syncToStorage(toSync)
     }
 
     /**
@@ -215,7 +215,7 @@ export class NewTabTrackerStats {
      */
     async restoreFromStorage () {
         try {
-            const prev = await browserWrapper.getFromStorage(NewTabTrackerStats.storageKey)
+            const prev = await getFromStorage(NewTabTrackerStats.storageKey)
             if (prev) {
                 this.stats.deserialize(prev.stats)
             }
