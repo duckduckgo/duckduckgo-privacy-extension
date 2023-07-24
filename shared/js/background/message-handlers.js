@@ -464,6 +464,13 @@ export async function isClickToLoadYoutubeEnabled () {
     )
 }
 
+export function addDebugFlag (message, sender, req) {
+    const tab = tabManager.get({ tabId: sender.tab.id })
+    const flags = new Set(tab.debugFlags)
+    flags.add(message.flag)
+    tab.debugFlags = [...flags]
+}
+
 /**
  * Add a new message handler.
  * @param {string} name
@@ -522,6 +529,7 @@ const messageHandlers = {
     debuggerMessage,
     search,
     openShareFeedbackPage,
-    isClickToLoadYoutubeEnabled
+    isClickToLoadYoutubeEnabled,
+    addDebugFlag
 }
 export default messageHandlers

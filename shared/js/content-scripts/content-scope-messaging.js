@@ -2,6 +2,7 @@ const allowedMessages = [
     'getClickToLoadState',
     'getYouTubeVideoDetails',
     'openShareFeedbackPage',
+    'addDebugFlag',
     'setYoutubePreviewsEnabled',
     'unblockClickToLoadContent',
     'updateYouTubeCTLAddedFlag',
