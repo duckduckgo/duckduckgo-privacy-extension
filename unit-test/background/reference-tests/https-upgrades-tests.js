@@ -1,9 +1,6 @@
-require('../../helpers/mock-browser-api')
-
+const settings = require('../../../shared/js/background/settings')
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
-
-const browserWrapper = require('../../../shared/js/background/wrapper')
 
 const testSets = require('@duckduckgo/privacy-reference-tests/https-upgrades/tests.json')
 const config = require('@duckduckgo/privacy-reference-tests/https-upgrades/config_reference.json')
@@ -19,17 +16,16 @@ const load = require('./../../helpers/https')
 const Tab = require('../../../shared/js/background/classes/tab')
 const httpsService = require('../../../shared/js/background/https-service')
 
-const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
-
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
 
     describe(`HTTPS upgrades tests / ${testSet.name} /`, () => {
         beforeAll(() => {
-            spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
-
             // disable https upgrade service
             spyOn(httpsService, 'checkInCache').and.returnValue(false)
+            const settingsSpy = spyOn(settings, 'getSetting')
+            settingsSpy.withArgs('httpsEverywhereEnabled').and.returnValue(true)
+            settingsSpy.and.returnValue(undefined)
 
             // load mock config
             tdsStorageStub.stub({ config })

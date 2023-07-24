@@ -71,7 +71,7 @@ class TDSStorage {
 
     _internalOnListUpdate (configName, configValue) {
         return new Promise((resolve, reject) => {
-            self.setTimeout(async () => {
+            setTimeout(async () => {
                 // Ensure the onReady promise for this configuration is resolved.
                 try {
                     const readyResolve = this._onReadyResolvers.get(configName)
