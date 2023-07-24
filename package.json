@@ -34,7 +34,7 @@
         "@babel/core": "^7.22.9",
         "@babel/node": "^7.22.5",
         "@babel/polyfill": "^7.10.4",
-        "@babel/preset-env": "^7.22.5",
+        "@babel/preset-env": "^7.22.9",
         "@fingerprintjs/fingerprintjs": "^3.4.1",
         "@playwright/test": "^1.36.1",
         "@types/chrome": "0.0.241",
