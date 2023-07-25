@@ -272,8 +272,8 @@ export async function onConfigUpdate (configName, etag, configValue) {
                 return
             }
 
-            // In case surrogates are loaded after tds, wait for them,
-            await tdsStorage.ready('surrogates')
+            // All tds storage must have loaded before we can be sure that the surrogates are set
+            await tdsStorage.ready()
             const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
             const {
