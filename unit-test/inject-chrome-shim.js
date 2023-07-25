@@ -5,12 +5,14 @@ const chrome = {
                 chrome.storage.local._setCalls.push(value)
             },
             get: (args, cb) => {
+                // eslint-disable-next-line n/no-callback-literal
                 cb({})
             },
             _setCalls: []
         },
         managed: {
             get: (args, cb) => {
+                // eslint-disable-next-line n/no-callback-literal
                 cb({})
             }
         }

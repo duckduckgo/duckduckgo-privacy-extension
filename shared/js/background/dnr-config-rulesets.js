@@ -1,4 +1,4 @@
-/** global BUILD_TARGET */
+/* global BUILD_TARGET */
 import { getExtensionVersion } from './wrapper'
 import settings from './settings'
 import tdsStorage from './storage/tds'
