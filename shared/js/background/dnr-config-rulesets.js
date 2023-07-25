@@ -1,4 +1,5 @@
-import { getExtensionVersion, getManifestVersion } from './wrapper'
+/** global BUILD_TARGET */
+import { getExtensionVersion } from './wrapper'
 import settings from './settings'
 import tdsStorage from './storage/tds'
 import trackers from './trackers'
@@ -299,7 +300,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
     await ruleUpdateLock
 }
 
-if (getManifestVersion() === 3) {
+if (BUILD_TARGET === 'chrome-mv3') {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)
 }
