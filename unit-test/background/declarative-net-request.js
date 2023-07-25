@@ -179,10 +179,6 @@ describe('declarativeNetRequest', () => {
         onUpdateListeners.set('tds', [onConfigUpdate])
         tdsStorage.getLists().then(lists => trackers.setLists(lists))
 
-        // spyOn(startup, 'ready').and.callFake(
-        //     () => Promise.resolve()
-        // )
-
         spyOn(settings, 'getSetting').and.callFake(
             name => settingsStorage.get(name)
         )

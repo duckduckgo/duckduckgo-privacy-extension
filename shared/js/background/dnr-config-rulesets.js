@@ -1,5 +1,4 @@
-/* global BUILD_TARGET */
-import { getExtensionVersion } from './wrapper'
+import { getExtensionVersion, getManifestVersion } from './wrapper'
 import settings from './settings'
 import tdsStorage from './storage/tds'
 import trackers from './trackers'
@@ -262,6 +261,7 @@ let ruleUpdateLock = Promise.resolve()
  */
 export async function onConfigUpdate (configName, etag, configValue) {
     const extensionVersion = getExtensionVersion()
+    console.log('update', configName, etag, configValue)
     // Run an async lock on all blocklist updates so the latest update is always processed last
     ruleUpdateLock = ruleUpdateLock.then(async () => {
     // TDS (aka the block list).
@@ -298,7 +298,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
     await ruleUpdateLock
 }
 
-if (BUILD_TARGET === 'chrome-mv3') {
+if (getManifestVersion() === 3) {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)
 }
