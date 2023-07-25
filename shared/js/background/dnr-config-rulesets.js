@@ -3,7 +3,6 @@ import { getExtensionVersion } from './wrapper'
 import settings from './settings'
 import tdsStorage from './storage/tds'
 import trackers from './trackers'
-import { ready as startupReady } from './startup'
 import { isFeatureEnabled } from './utils'
 import {
     ensureServiceWorkerInitiatedRequestExceptions
@@ -273,9 +272,8 @@ export async function onConfigUpdate (configName, etag, configValue) {
                 return
             }
 
-            await startupReady()
-            // @ts-ignore: Once startupReady() has finished, surrogateList will be
-            //             assigned.
+            // In case surrogates are loaded after tds, wait for them,
+            await tdsStorage.ready('surrogates')
             const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
             const {
