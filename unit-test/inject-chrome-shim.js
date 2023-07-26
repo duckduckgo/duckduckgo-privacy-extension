@@ -4,13 +4,17 @@ const chrome = {
             set: (value) => {
                 chrome.storage.local._setCalls.push(value)
             },
-            get: () => {
-                return {}
+            get: (args, cb) => {
+                // eslint-disable-next-line n/no-callback-literal
+                cb({})
             },
             _setCalls: []
         },
         managed: {
-            get: () => {}
+            get: (args, cb) => {
+                // eslint-disable-next-line n/no-callback-literal
+                cb({})
+            }
         }
     },
     browserAction: {
@@ -25,7 +29,9 @@ const chrome = {
     runtime: {
         id: '577dc9b9-c381-115a-2246-3f95fe0e6ffe',
         sendMessage: () => {},
-        getManifest: () => ({ version: '1234.56' }),
+        getManifest: () => {
+            return { version: '1234.56' }
+        },
         setUninstallURL: () => {},
         getURL: path => path
     },

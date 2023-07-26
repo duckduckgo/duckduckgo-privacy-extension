@@ -32,19 +32,12 @@
         "beta-chrome-mv3": "make chrome-mv3-beta browser=chrome-mv3 type=release"
     },
     "devDependencies": {
-        "@babel/cli": "^7.22.9",
-        "@babel/core": "^7.22.9",
-        "@babel/node": "^7.22.5",
-        "@babel/polyfill": "^7.10.4",
-        "@babel/preset-env": "^7.22.9",
         "@fingerprintjs/fingerprintjs": "^3.4.2",
         "@playwright/test": "^1.36.1",
         "@types/chrome": "0.0.241",
         "@types/jasmine": "^4.3.5",
         "@types/webextension-polyfill": "^0.10.1",
         "asana": "github:Asana/node-asana",
-        "babelify": "10.0.0",
-        "browserify": "^17.0.0",
         "duckduckgo-colors": "0.0.1",
         "esbuild": "^0.18.16",
         "eslint": "^8.45.0",
@@ -92,18 +85,6 @@
         "tldts": "^6.0.12",
         "web-ext": "^7.6.2",
         "zod": "^3.21.4"
-    },
-    "babel": {
-        "presets": [
-            [
-                "@babel/preset-env",
-                {
-                    "exclude": [
-                        "transform-regenerator"
-                    ]
-                }
-            ]
-        ]
     },
     "workspaces": [
         "packages/privacy-grade",

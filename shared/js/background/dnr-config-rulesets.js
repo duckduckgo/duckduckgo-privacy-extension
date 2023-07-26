@@ -2,7 +2,6 @@ import { getExtensionVersion, getManifestVersion } from './wrapper'
 import settings from './settings'
 import tdsStorage from './storage/tds'
 import trackers from './trackers'
-import { ready as startupReady } from './startup'
 import { isFeatureEnabled } from './utils'
 import {
     ensureServiceWorkerInitiatedRequestExceptions
@@ -262,6 +261,7 @@ let ruleUpdateLock = Promise.resolve()
  */
 export async function onConfigUpdate (configName, etag, configValue) {
     const extensionVersion = getExtensionVersion()
+    console.log('update', configName, etag, configValue)
     // Run an async lock on all blocklist updates so the latest update is always processed last
     ruleUpdateLock = ruleUpdateLock.then(async () => {
     // TDS (aka the block list).
@@ -272,9 +272,8 @@ export async function onConfigUpdate (configName, etag, configValue) {
                 return
             }
 
-            await startupReady()
-            // @ts-ignore: Once startupReady() has finished, surrogateList will be
-            //             assigned.
+            // All tds storage must have loaded before we can be sure that the surrogates are set
+            await tdsStorage.ready()
             const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
             const {

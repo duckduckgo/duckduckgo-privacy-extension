@@ -1,17 +1,13 @@
-import '../helpers/mock-browser-api'
 // TODO remove the * imports
+import browser from 'webextension-polyfill'
 // eslint-disable-next-line no-restricted-syntax
 import * as allowlistedTrackers from '@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json'
 // eslint-disable-next-line no-restricted-syntax
 import * as tds from '../data/tds.json'
 // eslint-disable-next-line no-restricted-syntax
-import * as browserWrapper from '../../shared/js/background/wrapper'
-// eslint-disable-next-line no-restricted-syntax
 import * as testConfig from '../data/extension-config.json'
 // eslint-disable-next-line no-restricted-syntax
 import * as tdsStorageStub from '../helpers/tds'
-// eslint-disable-next-line no-restricted-syntax
-import * as startup from '../../shared/js/background/startup'
 import settings from '../../shared/js/background/settings'
 import tabManager from '../../shared/js/background/tab-manager'
 import tdsStorage from '../../shared/js/background/storage/tds'
@@ -183,10 +179,6 @@ describe('declarativeNetRequest', () => {
         onUpdateListeners.set('tds', [onConfigUpdate])
         tdsStorage.getLists().then(lists => trackers.setLists(lists))
 
-        spyOn(startup, 'ready').and.callFake(
-            () => Promise.resolve()
-        )
-
         spyOn(settings, 'getSetting').and.callFake(
             name => settingsStorage.get(name)
         )
@@ -249,12 +241,10 @@ describe('declarativeNetRequest', () => {
             () => Array.from(sessionRulesByRuleId.values())
         )
 
-        spyOn(browserWrapper, 'getExtensionVersion').and.callFake(
-            () => extensionVersion
-        )
-        spyOn(browserWrapper, 'getManifestVersion').and.callFake(
-            () => 3
-        )
+        spyOn(browser.runtime, 'getManifest').and.callFake(() => ({
+            version: extensionVersion,
+            manifest_version: 3
+        }))
     })
 
     beforeEach(() => {
