@@ -13,8 +13,6 @@ endif
 INTERMEDIATES_DIR = build/.intermediates
 
 ## All source files that potentially need to be bundled or copied.
-# TODO: Use automatic dependency generation (e.g. `browserify --list`) for
-#       the bundling targets instead?
 WATCHED_FILES = $(shell find -L browsers/ shared/ packages/ unit-test/ -type f -not -path "packages/*/node_modules/*" -not -name "*~")
 # If the node_modules/@duckduckgo/ directory exists, include those source files
 # in the list too.
@@ -171,18 +169,9 @@ copy: $(LAST_COPY)
 .PHONY: copy
 
 ###--- Build targets ---###
-## Figure out the correct Browserify command for bundling.
-# TODO: Switch to a better bundler.
-# Workaround Browserify not following symlinks in --only.
-BROWSERIFY_GLOBAL_TARGETS = ./node_modules/@duckduckgo
-BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 -type l | xargs -n1 readlink -f)
-
-BROWSERIFY_BIN = node_modules/.bin/browserify
-BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --plugins [ "./scripts/rewrite-meta" ] --presets [ @babel/preset-env ] ]
 ESBUILD = node_modules/.bin/esbuild --bundle --target=firefox91,chrome92 --define:BUILD_TARGET=\"$(browser)\"
 # Ensure sourcemaps are included for the bundles during development.
 ifeq ($(type),dev)
-  BROWSERIFY += -d
   ESBUILD += --sourcemap
 endif
 
