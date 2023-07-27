@@ -70,10 +70,6 @@ function constructUrl (querystring, truncate) {
             searchParams.delete(key)
         }
     })
-    if (searchParams.has('debugFlags')) {
-        extraParams += `&debugFlags=${searchParams.get('debugFlags')}`
-        searchParams.delete('debugFlags')
-    }
     url += `${searchParams.toString()}${extraParams}`
     return url
 }
@@ -138,7 +134,7 @@ export function breakageReportForTab ({
     const ctlFacebookLogin = tab.ctlFacebookLogin ? 'true' : 'false'
     const ampUrl = tab.ampUrl || undefined
     const upgradedHttps = tab.upgradedHttps
-    const debugFlags = tab.debugFlags.map(encodeURIComponent).join(',')
+    const debugFlags = tab.debugFlags.join(',')
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
