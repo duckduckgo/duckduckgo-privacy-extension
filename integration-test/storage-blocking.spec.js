@@ -98,7 +98,7 @@ test.describe('Storage blocking Tests', () => {
             await backgroundWait.forAllConfiguration(backgroundPage)
             await loadTestConfig(backgroundPage, 'storage-blocking.json')
             await loadTestTds(backgroundPage, 'mock-tds.json')
-            // await routeFromLocalhost(page)
+            await routeFromLocalhost(page)
 
             // reset allowlists
             await backgroundPage.evaluate(async (domain) => {
