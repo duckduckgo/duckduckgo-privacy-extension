@@ -29,7 +29,8 @@
         "beta-firefox": "make beta-firefox browser=firefox type=release",
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip",
         "release-chrome-mv3": "make browser=chrome-mv3 type=release && make chrome-mv3-release-zip",
-        "beta-chrome-mv3": "make chrome-mv3-beta browser=chrome-mv3 type=release"
+        "beta-chrome-mv3": "make chrome-mv3-beta browser=chrome-mv3 type=release",
+        "update-mv3-blocklists": "node scripts/updateMV3Blocklists.mjs"
     },
     "devDependencies": {
         "@fingerprintjs/fingerprintjs": "^3.4.2",

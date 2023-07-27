@@ -12,6 +12,11 @@ if (!fs.existsSync(argv.i)) {
 
 const files = fs.readdirSync(argv.i)
 
-files.forEach(file => {
-    console.log(`domain.com/${file} application/javascript\n`)
-})
+if (argv.json) {
+    console.log(JSON.stringify(files, null, 2))
+} else {
+    // Legacy format used by the extension at runtime.
+    files.forEach(file => {
+        console.log(`domain.com/${file} application/javascript\n`)
+    })
+}
