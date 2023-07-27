@@ -16,7 +16,6 @@
     "tldts": "^6.0.12"
   },
   "devDependencies": {
-    "esbuild": "^0.18.16",
-    "url-parse-lax": "^3.0.0"
+    "esbuild": "^0.18.16"
   }
 }
