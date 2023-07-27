@@ -48,6 +48,8 @@ export class TabState {
         this.allowlistOptIn = false
         /** @type {boolean} */
         this.denylisted = false
+        /** @type {string[]} */
+        this.debugFlags = []
         // Whilst restoring, prevent the tab data being stored
         if (!restoring) {
             Storage.backup(this)

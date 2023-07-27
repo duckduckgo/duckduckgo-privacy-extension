@@ -210,6 +210,14 @@ class Tab {
         this._tabState.setValue('ctlFacebookLogin', value)
     }
 
+    get debugFlags () {
+        return this._tabState.debugFlags
+    }
+
+    set debugFlags (value) {
+        this._tabState.setValue('debugFlags', value)
+    }
+
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
      * @param {string} requestURL

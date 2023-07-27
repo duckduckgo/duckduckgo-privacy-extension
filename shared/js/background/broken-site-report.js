@@ -134,6 +134,7 @@ export function breakageReportForTab ({
     const ctlFacebookLogin = tab.ctlFacebookLogin ? 'true' : 'false'
     const ampUrl = tab.ampUrl || undefined
     const upgradedHttps = tab.upgradedHttps
+    const debugFlags = tab.debugFlags.join(',')
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
@@ -153,6 +154,7 @@ export function breakageReportForTab ({
 
     if (ampUrl) brokenSiteParams.set('ampUrl', ampUrl)
     if (category) brokenSiteParams.set('category', category)
+    if (debugFlags) brokenSiteParams.set('debugFlags', debugFlags)
     if (description) brokenSiteParams.set('description', description)
 
     return fire(brokenSiteParams.toString())
