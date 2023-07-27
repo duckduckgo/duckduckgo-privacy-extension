@@ -54,7 +54,7 @@
         "karma-source-map-support": "1.4.0",
         "node-fetch": "^3.3.1",
         "puppeteer": "^19.3.0",
-        "sass": "^1.63.6",
+        "sass": "^1.64.1",
         "standard": "17.1.0",
         "timekeeper": "^2.1.1",
         "typescript": "^5.1.6",
