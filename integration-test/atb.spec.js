@@ -63,7 +63,7 @@ test.describe('install workflow', () => {
             const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'))
             const setAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'))
             const extiSent = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('extiSent'))
-            const atbPattern = new RegExp("^" + mockAtb.version + "(vk|vj)$");
+            const atbPattern = new RegExp('^' + mockAtb.version + '(vk|vj)$')
 
             // check the extension's internal state is correct
             expect(atb).toMatch(atbPattern)
