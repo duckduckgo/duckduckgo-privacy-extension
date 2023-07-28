@@ -5,6 +5,7 @@
 import browser from 'webextension-polyfill'
 
 const settings = require('./settings')
+const utils = require('./utils')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string')
 const load = require('./load')
 const browserWrapper = require('./wrapper')
@@ -168,65 +169,10 @@ const ATB = (() => {
             return new URLSearchParams()
         },
 
-        /**
-         * Takes an optional date object and returns an object with ATB majorVersion, minorVersion, and version string
-         * The majorVersion rolls over every Wed at 00:00:00 ET
-         * The minorVersion rolls over every night at midnight ET
-         *
-         * @typedef {Object} AtbVersionInfo
-         * @property {number} majorVersion - # of weeks since noon EST on 2/24/16
-         * @property {number} minorVersion - # of days into the current week
-         * @property {string} version - the version string combining both major and minor version. Format: `v${majorVersion}-${minorVersion}`
-         *
-         * @return {AtbVersionInfo}
-         */
-        getATBVersionInfo: () => {
-            const date = new Date()
-            const localTime = date.getTime()
-
-            // convert local to UTC:
-            const utcTime = localTime + date.getTimezoneOffset() * ONE_MINUTE
-
-            // convert to approximation of est using 5 hour offset so we
-            // can compare to the DST start/stop date in eastern time and
-            // determine whether it's DST or not.
-            const est = new Date(utcTime + ONE_HOUR * -5)
-
-            // First determine DST start/end day for Eastern Timezone.
-            // It's always the 2nd Sunday in March. In 2016 it's 3/13/16 and 11/6/16, In 2017 it's 3/12/17 and 11/5/17, etc.
-            const dstStartDay = 13 - ((est.getFullYear() - 2016) % 6)
-            const dstStopDay = 6 - ((est.getFullYear() - 2016) % 6)
-
-            // Once we have start/stop day for the current year, we can check whether the current day (based on est) is
-            // within the EDT window:
-            const isDST =
-              (est.getMonth() > 2 ||
-                (est.getMonth() === 2 && est.getDate() >= dstStartDay)) &&
-              (est.getMonth() < 10 ||
-                (est.getMonth() === 10 && est.getDate() < dstStopDay))
-
-            // finally we need to adjust the epoch based on whether we're in EST or EDT, since
-            // the constant ATB_EPOCH is in EST, when we're in EDT we need to subtract an
-            // hour otherwise we'll be off by 1 hour when we try to calc the major/minor version #'s:
-            const epoch = isDST ? ATB_EPOCH - ONE_HOUR : ATB_EPOCH
-
-            // time in ms since DST adjusted epoch:
-            const timeSinceATBEpoch = localTime - epoch
-
-            const majorVersion = Math.ceil(timeSinceATBEpoch / ONE_WEEK)
-            const minorVersion = Math.ceil((timeSinceATBEpoch % ONE_WEEK) / ONE_DAY)
-
-            return {
-                minorVersion,
-                majorVersion,
-                version: 'v' + majorVersion + '-' + minorVersion
-            }
-        },
-
-        getChromeCounteractExpATB: (atbString) => {
+        getChromeCounteractExpATB: (atb) => {
             const variant = 'v'
             const atbVariant = Math.random() < 0.5 ? 'k' : 'j'
-            return `${atbString}${variant}${atbVariant}`
+            return `${atb}${variant}${atbVariant}`
         },
 
         updateATBValues: () => {
@@ -243,9 +189,9 @@ const ATB = (() => {
                         return !!atb
                     })
 
-                    // in case there is no assigned atb, enroll into Chrome Counteract experiment
-                    if (!atb) {
-                        atb = ATB.getChromeCounteractExpATB(ATB.getATBVersionInfo().version)
+                    // in case there is no assigned atb variant, enroll into Chrome Counteract experiment
+                    if (!atb && settings.getSetting(atb) && settings.getSetting(atb).atb && utils.getBrowserName() === 'chrome') {
+                        atb = ATB.getChromeCounteractExpATB(settings.getSetting(atb).atb)
                     }
 
                     if (atb) {
