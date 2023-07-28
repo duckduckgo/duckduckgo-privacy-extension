@@ -183,8 +183,8 @@ const ATB = (() => {
                     })
 
                     // in case there is no assigned atb variant, enroll into Chrome Counteract experiment
-                    if (!atb && settings.getSetting(atb) && settings.getSetting(atb).atb && utils.getBrowserName() === 'chrome') {
-                        atb = ATB.getChromeCounteractExpATB(settings.getSetting(atb).atb)
+                    if (!atb && settings.getSetting('atb') && utils.getBrowserName() === 'chrome') {
+                        atb = ATB.getChromeCounteractExpATB(settings.getSetting('atb'))
                     }
 
                     if (atb) {
