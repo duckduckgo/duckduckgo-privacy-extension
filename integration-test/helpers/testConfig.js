@@ -82,6 +82,7 @@ export async function loadTestConfig (bgPage, testConfigFilename) {
             globalThis.configBackup[pathString] = target[lastPathPart]
             target[lastPathPart] = pageTestConfig[pathString]
         }
+        return globalThis.dbg.tds._internalOnListUpdate('config', globalThis.dbg.tds.config)
     }, {
         pageTestConfig: testConfig,
         parsePathString: parsePath.toString()
