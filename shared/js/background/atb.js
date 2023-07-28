@@ -217,15 +217,15 @@ const ATB = (() => {
             const minorVersion = Math.ceil((timeSinceATBEpoch % ONE_WEEK) / ONE_DAY)
 
             return {
-                minorVersion: minorVersion,
-                majorVersion: majorVersion,
+                minorVersion,
+                majorVersion,
                 version: 'v' + majorVersion + '-' + minorVersion
             }
         },
 
         getChromeCounteractExpATB: (atbString) => {
             const variant = 'v'
-            const atbVariant = Math.random() < 0.5 ? 'k' : 'k'
+            const atbVariant = Math.random() < 0.5 ? 'k' : 'j'
             return `${atbString}${variant}${atbVariant}`
         },
 
