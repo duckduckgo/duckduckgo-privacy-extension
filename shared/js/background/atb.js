@@ -16,13 +16,6 @@ const { generateDNRRule } = require('@duckduckgo/ddg2dnr/lib/utils')
 const ATB_ERROR_COHORT = 'v1-1'
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 
-// 00:00:00 EST on 2/24/16
-const ATB_EPOCH = 1456290000000
-const ONE_WEEK = 604800000
-const ONE_DAY = 86400000
-const ONE_HOUR = 3600000
-const ONE_MINUTE = 60000
-
 // list of accepted params in ATB url
 const ACCEPTED_URL_PARAMS = ['natb', 'cp', 'npi']
 
