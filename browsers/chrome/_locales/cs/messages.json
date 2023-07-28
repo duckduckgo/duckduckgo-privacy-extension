@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Ochrana soukromí, zjednodušená. ***Oprávnění slouží k zablokování skrytých sledovacích nástrojů, které dnes číhají na každém kroku.***"}}
+{
+  "appName" : {
+    "message" : "Privacy Essentials – DuckDuckGo",
+    "description" : "Název rozšíření zobrazený ve webovém obchodě"
+  },
+  "appDesc" : {
+    "message" : "Snadná a bezproblémová ochrana soukromí pro tvůj prohlížeč.",
+    "description" : "Krátký popis rozšíření zobrazený ve webovém obchodě"
+  }
+}

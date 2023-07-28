@@ -1,14 +1,13 @@
-import * as browserWrapper from './wrapper'
+import { getExtensionVersion, getManifestVersion } from './wrapper'
 import settings from './settings'
 import tdsStorage from './storage/tds'
 import trackers from './trackers'
-import * as startup from './startup'
 import { isFeatureEnabled } from './utils'
 import {
     ensureServiceWorkerInitiatedRequestExceptions
 } from './dnr-service-worker-initiated'
 import { getDenylistedDomains } from './dnr-user-allowlist'
-import { findExistingDynamicRule } from './dnr-utils'
+import { findExistingDynamicRule, SETTING_PREFIX, ruleIdRangeByConfigName } from './dnr-utils'
 import {
     generateExtensionConfigurationRuleset
 } from '@duckduckgo/ddg2dnr/lib/extensionConfiguration'
@@ -21,18 +20,6 @@ import {
 import {
     generateCombinedConfigBlocklistRuleset
 } from '@duckduckgo/ddg2dnr/lib/combined'
-
-export const SETTING_PREFIX = 'declarative_net_request-'
-
-// Allocate blocks of rule IDs for the different configurations. That way, the
-// rules associated with a configuration can be safely cleared without the risk
-// of removing rules associated with different configurations.
-export const ruleIdRangeByConfigName = {
-    tds: [1, 10000],
-    config: [10001, 20000],
-    _RESERVED: [20001, 21000],
-    combined: [21001, 31000]
-}
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
@@ -193,7 +180,7 @@ async function updateConfigRules (
  * @returns {Promise<>}
  */
 export async function updateExtensionConfigRules (etag = null, configValue = null) {
-    const extensionVersion = browserWrapper.getExtensionVersion()
+    const extensionVersion = getExtensionVersion()
     const denylistedDomains = await getDenylistedDomains()
 
     const latestState = {
@@ -240,7 +227,7 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
 }
 
 export async function updateCombinedConfigBlocklistRules () {
-    const extensionVersion = browserWrapper.getExtensionVersion()
+    const extensionVersion = getExtensionVersion()
     const denylistedDomains = await getDenylistedDomains()
     const tdsEtag = settings.getSetting('tds-etag')
     const combinedState = {
@@ -273,7 +260,8 @@ let ruleUpdateLock = Promise.resolve()
  * @returns {Promise}
  */
 export async function onConfigUpdate (configName, etag, configValue) {
-    const extensionVersion = browserWrapper.getExtensionVersion()
+    const extensionVersion = getExtensionVersion()
+    console.log('update', configName, etag, configValue)
     // Run an async lock on all blocklist updates so the latest update is always processed last
     ruleUpdateLock = ruleUpdateLock.then(async () => {
     // TDS (aka the block list).
@@ -284,9 +272,8 @@ export async function onConfigUpdate (configName, etag, configValue) {
                 return
             }
 
-            await startup.ready()
-            // @ts-ignore: Once startup.ready() has finished, surrogateList will be
-            //             assigned.
+            // All tds storage must have loaded before we can be sure that the surrogates are set
+            await tdsStorage.ready()
             const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
             const {
@@ -311,7 +298,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
     await ruleUpdateLock
 }
 
-if (browserWrapper.getManifestVersion() === 3) {
+if (getManifestVersion() === 3) {
     tdsStorage.onUpdate('config', onConfigUpdate)
     tdsStorage.onUpdate('tds', onConfigUpdate)
 }

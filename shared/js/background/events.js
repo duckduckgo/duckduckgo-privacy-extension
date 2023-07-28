@@ -5,7 +5,7 @@
  * if we do too much before adding it
  */
 import browser from 'webextension-polyfill'
-import * as messageHandlers from './message-handlers'
+import messageHandlers from './message-handlers'
 import { updateActionIcon } from './events/privacy-icon-indicator'
 import { flushSessionRules } from './dnr-session-rule-id'
 import { restoreDefaultClickToLoadRuleActions } from './dnr-click-to-load'
@@ -40,6 +40,7 @@ async function onInstalled (details) {
         settings.updateSetting('showWelcomeBanner', true)
         if (browserName === 'chrome') {
             settings.updateSetting('showCounterMessaging', true)
+            settings.updateSetting('shouldFireIncontextEligibilityPixel', true)
         }
         await ATB.updateATBValues()
         await ATB.openPostInstallPage()

@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"개인정보 보호, 간편해지다. ***사용 권한의 목적은 모든 곳에 도사리고 있는 숨은 트래커를 차단하는 것입니다.***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "웹 스토어에 표시되는 확장 프로그램 제목"
+  },
+  "appDesc" : {
+    "message" : "간단하고 간편한 브라우저용 개인 정보 보호 서비스.",
+    "description" : "웹 스토어에 표시되는 확장에 대한 간단 설명"
+  }
+}

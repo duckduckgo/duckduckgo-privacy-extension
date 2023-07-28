@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Prywatność – jeszcze prostsza. ***Zgody spowodują zablokowanie ukrytych narzędzi śledzących, które czają się wszędzie.***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "Tytuł rozszerzenia wyświetlany w sklepie internetowym"
+  },
+  "appDesc" : {
+    "message" : "Łatwa i bezproblemowa ochrona prywatności w przeglądarce.",
+    "description" : "Krótki opis rozszerzenia wyświetlany w sklepie internetowym"
+  }
+}

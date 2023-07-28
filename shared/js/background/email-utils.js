@@ -1,7 +1,5 @@
 import browser from 'webextension-polyfill'
-
-import { getURL } from './pixels'
-import load from './load'
+import { sendPixelRequest } from './pixels'
 const { getSetting, updateSetting } = require('./settings')
 const browserWrapper = require('./wrapper')
 const utils = require('./utils')
@@ -91,13 +89,6 @@ export const getAddresses = () => {
     }
 }
 
-function sendPixelRequest (pixelName, params = {}) {
-    const randomNum = Math.ceil(Math.random() * 1e7)
-    const searchParams = new URLSearchParams(Object.entries(params))
-    const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
-    load.url(url)
-}
-
 function currentDate () {
     return new Date().toLocaleString('en-CA', {
         timeZone: 'America/New_York',
@@ -109,7 +100,7 @@ const getFullPixelName = (name, browserName) => {
     return `${name}_${browserName.toLowerCase()}`
 }
 
-const fireAddressUsedPixel = (pixel) => {
+const fireAutofillPixel = (pixel, shouldUpdateLastUsed = false) => {
     const browserName = utils.getBrowserName() ?? 'unknown'
     if (!pixelsEnabled) return
 
@@ -119,14 +110,16 @@ const fireAddressUsedPixel = (pixel) => {
     const lastAddressUsedAt = getSetting('lastAddressUsedAt') ?? ''
 
     sendPixelRequest(getFullPixelName(pixel, browserName), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
-    updateSetting('lastAddressUsedAt', currentDate())
+    if (shouldUpdateLastUsed) {
+        updateSetting('lastAddressUsedAt', currentDate())
+    }
 }
 
-const fireIncontextSignupPixel = (pixel) => {
+const fireIncontextSignupPixel = (pixel, params) => {
     const browserName = utils.getBrowserName() ?? 'unknown'
     if (!pixelsEnabled) return
 
-    sendPixelRequest(getFullPixelName(pixel, browserName))
+    sendPixelRequest(getFullPixelName(pixel, browserName), params)
 }
 
 /**
@@ -143,13 +136,13 @@ export const sendJSPixel = (options) => {
     const { pixelName } = options
     switch (pixelName) {
     case 'autofill_show':
-        fireAddressUsedPixel('email_tooltip_show_extension')
+        fireAutofillPixel('email_tooltip_show_extension')
         break
     case 'autofill_private_address':
-        fireAddressUsedPixel('email_filled_random_extension')
+        fireAutofillPixel('email_filled_random_extension', true)
         break
     case 'autofill_personal_address':
-        fireAddressUsedPixel('email_filled_main_extension')
+        fireAutofillPixel('email_filled_main_extension', true)
         break
     case 'incontext_show':
         fireIncontextSignupPixel('incontext_show_extension')
@@ -164,7 +157,9 @@ export const sendJSPixel = (options) => {
         fireIncontextSignupPixel('incontext_close_x_extension')
         break
     default:
-        console.error('Unknown pixel name', pixelName)
+        browserWrapper.getFromSessionStorage('dev').then(isDev => {
+            if (isDev) console.error('Unknown pixel name', pixelName)
+        })
     }
 }
 

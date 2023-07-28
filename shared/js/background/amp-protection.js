@@ -1,4 +1,4 @@
-const Site = require('./classes/site')
+const Site = require('./classes/site').default
 const tdsStorage = require('./storage/tds').default
 const utils = require('./utils')
 

@@ -1,6 +1,7 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { routeFromLocalhost } from './helpers/testPages'
+import { loadTestConfig } from './helpers/testConfig'
 
 const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/query-parameters/'
 
@@ -35,6 +36,7 @@ test.describe('Test URL tracking parameters protection', () => {
     test('Strips tracking parameters correctly', async ({ context, backgroundPage, page, manifestVersion }) => {
         await backgroundWait.forExtensionLoaded(context)
         await backgroundWait.forAllConfiguration(backgroundPage)
+        await loadTestConfig(backgroundPage, 'url-parameters.json')
         await routeFromLocalhost(page)
 
         await page.goto(testSite, { waitUntil: 'networkidle' })

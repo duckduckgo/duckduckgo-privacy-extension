@@ -1,11 +1,11 @@
 module.exports = function(config) {
     process.env.CHROME_BIN = require('puppeteer').executablePath()
 
-    let configuration = {
-        basePath: '',
-        frameworks: ['jasmine','source-map-support'],
+    const configuration = {
+        basePath: 'build/',
+        frameworks: ['jasmine', 'source-map-support'],
         singleRun: true,
-        files: [],
+        files: ['*.js', '**/*.js'],
         logLevel: config.LOG_ERROR,
         browsers: ['ChromeNoSandbox'],
         reporters: ['dots'],
@@ -18,4 +18,4 @@ module.exports = function(config) {
     }
 
     config.set(configuration)
-};
+}

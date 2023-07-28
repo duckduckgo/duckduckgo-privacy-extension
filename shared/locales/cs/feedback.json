@@ -1,0 +1,55 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "brokenSiteLabel" : {
+    "title" : "Který web je poškozený?",
+    "note" : "We're asking feedback from users. Here they are reporting a website url that is not working correctly."
+  },
+  "brokenSitePlaceholder" : {
+    "title" : "Sem zkopíruj adresu URL",
+    "note" : "Instructions to fill an input field with a URL. Here \"your URL\" doesn't mean that they own the website, just that they're reporting it."
+  },
+  "feedbackHeaderLabel" : {
+    "title" : "Co se ti líbí? Co moc nefunguje? Jak by se dalo rozšíření zlepšit?",
+    "note" : "Label over a feedback text area where the user can tell us about their experience with our browser extension."
+  },
+  "feedbackPlaceholder" : {
+    "title" : "Kterých vlastností nebo funkcí se tvoje zpětná vazba týká? Buď co nejkonkrétnější.",
+    "note" : "Placeholder text on feedback form input."
+  },
+  "submittingFeedbackHelps" : {
+    "title" : "Odeslání anonymní zpětné vazby nám pomáhá zlepšovat Privacy Essentials od DuckDuckGo.",
+    "note" : "Description at top of feedback form."
+  },
+  "reportBrokenSite" : {
+    "title" : "Chci nahlásit nefunkční web",
+    "note" : "This opens a feedback form to report a broken site. Broken here means 'not working as expected'."
+  },
+  "submit" : {
+    "title" : "Odeslat",
+    "note" : "To submit the feedback form."
+  },
+  "describeTheIssue" : {
+    "title" : "Popiš zjištěný problém:",
+    "note" : "Label on broken site feedback textarea where users can describe in what way a site is not working as expected."
+  },
+  "describeBreakagePlaceholder" : {
+    "title" : "Jaký obsah nebo funkce webu je nefunkční? Buď co nejkonkrétnější.",
+    "note" : "Placeholder text on the broken site form."
+  },
+  "thankYou" : {
+    "title" : "Děkujeme za zpětnou vazbu!",
+    "note" : "Thank you note displayed after submitting feedback"
+  },
+  "thankYouBrokenSite" : {
+    "title" : "Tvoje hlášení o nefunkčních stránkách pomáhají týmu našich vývojářů tyhle chyby opravovat.",
+    "note" : "Additional note when submitting a broken site."
+  }
+}

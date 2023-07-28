@@ -2,7 +2,6 @@ const Tab = require('../../../shared/js/background/classes/tab')
 const { LegacyTabTransfer } = require('../../../shared/js/background/classes/legacy-tab-transfer')
 const tabManager = require('../../../shared/js/background/tab-manager')
 const utils = require('../../../shared/js/background/utils')
-const browserWrapper = require('../../../shared/js/background/wrapper')
 const { TabState } = require('../../../shared/js/background/classes/tab-state')
 const { AdClickAttributionPolicy } = require('../../../shared/js/background/classes/ad-click-attribution-policy')
 
@@ -15,8 +14,6 @@ let tab
 describe('Tab', () => {
     describe('updateSite()', () => {
         beforeEach(() => {
-            spyOn(browserWrapper, 'getExtensionId').and.returnValue('sdf')
-
             tab = new Tab({
                 id: 123,
                 requestId: 123,
@@ -115,7 +112,10 @@ describe('Tab', () => {
                 requestId: 123,
                 status: 200,
                 statusCode: null,
-                ctlYouTube: false
+                ctlYouTube: false,
+                ctlFacebookPlaceholderShown: false,
+                ctlFacebookLogin: false,
+                debugFlags: []
             }
             expect(tabClone.site.enabledFeatures.length).toBe(14)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))

@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2023.3.28.1",
+    "version": "2023.7.19",
     "minimum_chrome_version": "92.0",
     "icons": {
         "16": "img/icon_16.png",
@@ -35,11 +35,15 @@
             "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
         }
     },
-    "content_security_policy": "script-src 'self'; object-src 'self'; frame-ancestors https://*.duckduckgo.com",
+    "content_security_policy": "script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com",
     "content_scripts": [
         {
             "matches": [
                 "<all_urls>"
+            ],
+            "exclude_matches": [
+                "*://localhost/*",
+                "*://*.localhost/*"
             ],
             "match_about_blank": true,
             "all_frames": true,
@@ -61,6 +65,10 @@
             "matches": [
                 "<all_urls>"
             ],
+            "exclude_matches": [
+                "*://localhost/*",
+                "*://*.localhost/*"
+            ],
             "all_frames": true,
             "run_at": "document_start",
             "match_about_blank": true
@@ -76,7 +84,11 @@
         "tabs",
         "storage",
         "<all_urls>",
-        "alarms"
+        "alarms",
+        "cookies"
+    ],
+    "optional_permissions": [
+        "browsingData"
     ],
     "web_accessible_resources": [
         "/web_accessible_resources/*",

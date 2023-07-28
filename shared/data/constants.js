@@ -1,6 +1,15 @@
 const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string')
 const browserInfo = parseUserAgentString()
 
+const trackerBlockingEndpointBase = 'https://staticcdn.duckduckgo.com/trackerblocking'
+
+function isMV3 () {
+    if (typeof chrome !== 'undefined') {
+        return chrome?.runtime.getManifest().manifest_version === 3
+    }
+    return false
+}
+
 function getConfigFileName () {
     let browserName = browserInfo?.browser?.toLowerCase() || ''
 
@@ -8,9 +17,20 @@ function getConfigFileName () {
     if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
         browserName = ''
     } else {
-        browserName = '-' + browserName + (chrome?.runtime.getManifest().manifest_version === 3 ? 'mv3' : '')
+        browserName = '-' + browserName + (isMV3() ? 'mv3' : '')
     }
-    return `https://staticcdn.duckduckgo.com/trackerblocking/config/v2/extension${browserName}-config.json`
+    return `${trackerBlockingEndpointBase}/config/v2/extension${browserName}-config.json`
+}
+
+/**
+ * Get the TDS endpoint associated with the current extension and given version.
+ *
+ * @param {`v6/${'current' | 'previous' | 'next'}` | 'beta'} version
+ * @returns {string}
+ */
+function getTDSEndpoint (version) {
+    const thisPlatform = `extension${isMV3() ? '-mv3' : ''}`
+    return `${trackerBlockingEndpointBase}/${version}/${thisPlatform}-tds.json`
 }
 
 module.exports = {
@@ -99,13 +119,13 @@ module.exports = {
         },
         {
             name: 'tds',
-            url: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json',
+            url: getTDSEndpoint('v6/current'),
             format: 'json',
             source: 'external',
             channels: {
-                live: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds.json',
-                next: 'https://staticcdn.duckduckgo.com/trackerblocking/v4/tds-next.json',
-                beta: 'https://staticcdn.duckduckgo.com/trackerblocking/beta/tds.json'
+                live: getTDSEndpoint('v6/current'),
+                next: getTDSEndpoint('v6/next'),
+                beta: getTDSEndpoint('beta')
             }
         },
         {
@@ -137,7 +157,6 @@ module.exports = {
     platform: {
         name: 'extension'
     },
-    supportedLocales: ['cimode', 'en'], // cimode is for testing
     trackerStats: /** @type {const} */({
         allowedOrigin: 'https://duckduckgo.com',
         allowedPathname: 'ntp-tracker-stats.html',

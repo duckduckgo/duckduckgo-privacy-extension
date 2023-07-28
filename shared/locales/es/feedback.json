@@ -1,0 +1,55 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "brokenSiteLabel" : {
+    "title" : "¿Qué sitio web no funciona?",
+    "note" : "We're asking feedback from users. Here they are reporting a website url that is not working correctly."
+  },
+  "brokenSitePlaceholder" : {
+    "title" : "Copia y pega tu URL",
+    "note" : "Instructions to fill an input field with a URL. Here \"your URL\" doesn't mean that they own the website, just that they're reporting it."
+  },
+  "feedbackHeaderLabel" : {
+    "title" : "¿Qué te encanta? ¿Qué no funciona? ¿Cómo se podría mejorar la extensión?",
+    "note" : "Label over a feedback text area where the user can tell us about their experience with our browser extension."
+  },
+  "feedbackPlaceholder" : {
+    "title" : "¿A qué características o funcionalidades se refieren tus comentarios? Concreta lo máximo posible.",
+    "note" : "Placeholder text on feedback form input."
+  },
+  "submittingFeedbackHelps" : {
+    "title" : "Enviar comentarios anónimos nos ayuda a mejorar los esenciales de privacidad de DuckDuckGo.",
+    "note" : "Description at top of feedback form."
+  },
+  "reportBrokenSite" : {
+    "title" : "Quiero informar de un sitio dañado",
+    "note" : "This opens a feedback form to report a broken site. Broken here means 'not working as expected'."
+  },
+  "submit" : {
+    "title" : "Enviar",
+    "note" : "To submit the feedback form."
+  },
+  "describeTheIssue" : {
+    "title" : "Describe el problema que has encontrado:",
+    "note" : "Label on broken site feedback textarea where users can describe in what way a site is not working as expected."
+  },
+  "describeBreakagePlaceholder" : {
+    "title" : "¿Qué contenido o funcionalidad del sitio web no funciona? Concreta lo máximo posible.",
+    "note" : "Placeholder text on the broken site form."
+  },
+  "thankYou" : {
+    "title" : "¡Gracias por tus comentarios!",
+    "note" : "Thank you note displayed after submitting feedback"
+  },
+  "thankYouBrokenSite" : {
+    "title" : "Los informes de sitios dañados ayudan a nuestro equipo de desarrollo a solucionar estas averías.",
+    "note" : "Additional note when submitting a broken site."
+  }
+}

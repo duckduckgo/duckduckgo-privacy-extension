@@ -6,6 +6,7 @@
  * The Grade attributes are then used generate a site
  * privacy grade used in the popup.
  */
+import { parse } from 'tldts'
 const settings = require('../settings')
 const utils = require('../utils')
 const tdsStorage = require('./../storage/tds').default
@@ -18,7 +19,7 @@ const { TabState } = require('./tab-state')
  * @typedef {'allowlisted' | 'allowlistOptIn' | 'denylisted'} allowlistName
  */
 
-class Site {
+export default class Site {
     constructor (url, tabState) {
         // If no tabState is passed in then we create a new one to simulate a new tab
         if (!tabState) {
@@ -85,6 +86,10 @@ class Site {
     }
 
     get enabledFeatures () {
+        // all features disabled for 'special' domains like localhost
+        if (this.specialDomainName && this.specialDomainName !== 'new tab') {
+            return []
+        }
         return utils.getEnabledFeatures(this.domainWWW) // site issues reported to github repo
     }
 
@@ -205,7 +210,8 @@ class Site {
     getSpecialDomain () {
         const extensionId = browserWrapper.getExtensionId()
         const localhostName = 'localhost'
-        const { domain, protocol, url } = this
+        const { protocol, url, domain } = this
+        const { publicSuffix } = parse(this.url)
 
         if (url === '') {
             return 'new tab'
@@ -213,7 +219,7 @@ class Site {
 
         // Both 'localhost' and the loopback IP have to be specified
         // since they're treated as different domains.
-        if (domain === localhostName || domain.match(/^127\.0\.0\.1/)) {
+        if (domain === localhostName || domain.match(/^127\.0\.0\.1/) || publicSuffix === localhostName) {
             return localhostName
         }
 
@@ -256,12 +262,10 @@ class Site {
 
         // Our new tab page URL that is hard-coded in the Chromium source.
         // See https://source.chromium.org/chromium/chromium/src/+/main:components/search_engines/prepopulated_engines.json
-        if (url === 'https://duckduckgo.com/chrome_newtab') {
+        if (url.startsWith('https://duckduckgo.com/chrome_newtab')) {
             return 'new tab'
         }
 
         return null
     }
 }
-
-module.exports = Site

@@ -1,11 +1,12 @@
 import { test, expect } from './helpers/playwrightHarness'
 import { forAllConfiguration, forExtensionLoaded } from './helpers/backgroundWait'
 import { loadTestConfig } from './helpers/testConfig'
+import { TEST_SERVER_ORIGIN } from './helpers/testPages'
 
 const testHost = 'privacy-test-pages.glitch.me'
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`
 
-async function runRequestBlockingTest (page) {
+async function runRequestBlockingTest (page, url = testSite) {
     const pageRequests = []
     page.on('request', async (req) => {
         if (!req.url().startsWith('https://bad.third-party.site/')) {
@@ -20,14 +21,14 @@ async function runRequestBlockingTest (page) {
         }
         pageRequests.push({
             url: req.url(),
-            mathod: req.method(),
+            method: req.method(),
             type: req.resourceType(),
             status
         })
     })
 
     await page.bringToFront()
-    await page.goto(testSite, { waitUntil: 'networkidle' })
+    await page.goto(url, { waitUntil: 'networkidle' })
     await page.click('#start')
     const testCount = await page.evaluate(
         // eslint-disable-next-line no-undef
@@ -132,6 +133,77 @@ test.describe('Test request blocking', () => {
             } else {
                 expect(status, description).not.toEqual('loaded')
             }
+        }
+    })
+
+    test('Blocking should not run on localhost', async ({ page, backgroundPage, context, manifestVersion }) => {
+        await forExtensionLoaded(context)
+        await forAllConfiguration(backgroundPage)
+        // On MV3 config rules are only created some time after the config is loaded. We can query
+        // declarativeNetRequest rules periodically until we see the expected rule.
+        if (manifestVersion === 3) {
+            while (true) {
+                const localhostRules = await backgroundPage.evaluate(async () => {
+                    const rules = await chrome.declarativeNetRequest.getDynamicRules()
+                    return rules.filter(r => r.condition.requestDomains?.includes('localhost'))
+                })
+                if (localhostRules.length > 0) {
+                    break
+                }
+            }
+        }
+
+        await runRequestBlockingTest(page, `${TEST_SERVER_ORIGIN}/privacy-protections/request-blocking/`)
+        const pageResults = await page.evaluate(
+            () => results.results // eslint-disable-line no-undef
+        )
+        await page.bringToFront()
+        for (const { id, category, status } of pageResults) {
+            // skip some flakey request types
+            if (['video', 'websocket'].includes(id)) {
+                continue
+            }
+            const description = `ID: ${id}, Category: ${category}`
+            expect(status, description).toEqual('loaded')
+        }
+    })
+
+    test('protection toggle disables blocking', async ({ page, backgroundPage, context, manifestVersion }) => {
+        await forExtensionLoaded(context)
+        await forAllConfiguration(backgroundPage)
+        await loadTestConfig(backgroundPage, 'serviceworker-blocking.json')
+
+        // load with protection enabled
+        await runRequestBlockingTest(page)
+        // Verify that no logged requests were allowed.
+        let pageResults = await page.evaluate(
+            () => results.results // eslint-disable-line no-undef
+        )
+        for (const { id, category, status } of pageResults) {
+            const description = `ID: ${id}, Category: ${category}`
+            expect(status, description).not.toEqual('loaded')
+        }
+
+        // disable protection on the page and rerun the test
+        await backgroundPage.evaluate(async (domain) => {
+            dbg.tabManager.setList({ list: 'allowlisted', domain, value: true })
+        }, testHost)
+        await runRequestBlockingTest(page)
+        pageResults = await page.evaluate(
+            () => results.results // eslint-disable-line no-undef
+        )
+        for (const { id, category, status } of pageResults) {
+            // skip some flakey request types
+            if (['video', 'websocket'].includes(id)) {
+                continue
+            }
+            // serviceworker-fetch: allowlist does not work in MV3
+            // https://app.asana.com/0/892838074342800/1204515863331825/f
+            if (manifestVersion === 3 && id === 'serviceworker-fetch') {
+                continue
+            }
+            const description = `ID: ${id}, Category: ${category}`
+            expect(status, description).toEqual('loaded')
         }
     })
 })

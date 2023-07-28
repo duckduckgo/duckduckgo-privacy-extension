@@ -62,7 +62,7 @@ function constructUrl (querystring, truncate) {
     url += `?${randomNum}&`
     // some params should be not urlencoded
     let extraParams = '';
-    ['tds', ...Object.values(requestCategoryMapping)].forEach((key) => {
+    [...Object.values(requestCategoryMapping)].forEach((key) => {
         // if we're truncating, don't include the truncatable fields
         if (truncate && truncatableFields.includes(key)) return
         if (searchParams.has(key)) {
@@ -95,14 +95,18 @@ const requestCategoryMapping = {
  * but has been moved here since there's no longer a relationship to 'where' this request
  * came from.
  *
- * @param {import("./classes/tab")} tab
- * @param {string} tds - tds-etag from settings
- * @param {string} remoteConfigEtag - config-etag from settings
- * @param {string} remoteConfigVersion - config version
- * @param {string | undefined} category - optional category
- * @param {string | undefined} description - optional description
+ * @param {Object} arg
+ * @prop {import("./classes/tab")} arg.tab
+ * @prop {string} arg.tds - tds-etag from settings
+ * @prop {string} arg.remoteConfigEtag - config-etag from settings
+ * @prop {string} arg.remoteConfigVersion - config version
+ * @prop {string | undefined} arg.category - optional category
+ * @prop {string | undefined} arg.description - optional description
  */
-export function breakageReportForTab (tab, tds, remoteConfigEtag, remoteConfigVersion, category, description) {
+export function breakageReportForTab ({
+    tab, tds, remoteConfigEtag, remoteConfigVersion,
+    category, description
+}) {
     if (!tab.url) {
         return
     }
@@ -126,8 +130,11 @@ export function breakageReportForTab (tab, tds, remoteConfigEtag, remoteConfigVe
 
     const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
     const ctlYouTube = tab.ctlYouTube ? 'true' : 'false'
+    const ctlFacebookPlaceholderShown = tab.ctlFacebookPlaceholderShown ? 'true' : 'false'
+    const ctlFacebookLogin = tab.ctlFacebookLogin ? 'true' : 'false'
     const ampUrl = tab.ampUrl || undefined
     const upgradedHttps = tab.upgradedHttps
+    const debugFlags = tab.debugFlags.join(',')
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
@@ -136,7 +143,9 @@ export function breakageReportForTab (tab, tds, remoteConfigEtag, remoteConfigVe
         remoteConfigVersion,
         upgradedHttps: upgradedHttps.toString(),
         urlParametersRemoved,
-        ctlYouTube
+        ctlYouTube,
+        ctlFacebookPlaceholderShown,
+        ctlFacebookLogin
     })
 
     for (const [key, value] of Object.entries(requestCategories)) {
@@ -145,6 +154,7 @@ export function breakageReportForTab (tab, tds, remoteConfigEtag, remoteConfigVe
 
     if (ampUrl) brokenSiteParams.set('ampUrl', ampUrl)
     if (category) brokenSiteParams.set('category', category)
+    if (debugFlags) brokenSiteParams.set('debugFlags', debugFlags)
     if (description) brokenSiteParams.set('description', description)
 
     return fire(brokenSiteParams.toString())

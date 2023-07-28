@@ -5,7 +5,7 @@ const { events } = constants.trackerStats
 export const dataFormatSchema = z.object({
     totalCount: z.number(),
     totalPeriod: z.enum(['install-time']),
-    trackerCompaniesPeriod: z.enum(['last-hour']),
+    trackerCompaniesPeriod: z.enum(['last-hour', 'last-day']),
     trackerCompanies: z.array(
         z.object({
             displayName: z.string(),

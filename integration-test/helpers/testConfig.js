@@ -1,9 +1,9 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 
 /**
- * @typedef {import('puppeteer').Page} Page - Puppeteer Page
- * @typedef {import('puppeteer').WebWorker} WebWorker - Puppeteer WebWorker
+ * @typedef {import('@playwright/test').Page} Page - Puppeteer Page
+ * @typedef {import('@playwright/test').Worker} WebWorker - Puppeteer WebWorker
  */
 
 function parsePath (pathString) {
@@ -66,7 +66,7 @@ function parsePath (pathString) {
  *    - Make sure to include the 'globalThis.' (or similar global Object) prefix.
  *    - There's no need to escape whitespace in paths.
  */
-async function loadTestConfig (bgPage, testConfigFilename) {
+export async function loadTestConfig (bgPage, testConfigFilename) {
     const filePath = path.resolve(
         __dirname, '..', 'data', 'configs', testConfigFilename
     )
@@ -82,6 +82,7 @@ async function loadTestConfig (bgPage, testConfigFilename) {
             globalThis.configBackup[pathString] = target[lastPathPart]
             target[lastPathPart] = pageTestConfig[pathString]
         }
+        return globalThis.dbg.tds._internalOnListUpdate('config', globalThis.dbg.tds.config)
     }, {
         pageTestConfig: testConfig,
         parsePathString: parsePath.toString()
@@ -89,34 +90,11 @@ async function loadTestConfig (bgPage, testConfigFilename) {
 }
 
 /**
- * Undoes the configuration changes made by loadTestConfig.
- * @param {Page} bgPage
- *   The extension's background page.
- */
-async function unloadTestConfig (bgPage) {
-    await bgPage.evaluate(parsePathString => {
-        // @ts-ignore
-        const { configBackup } = globalThis
-        if (!configBackup) {
-            return
-        }
-
-        // eslint-disable-next-line no-eval
-        eval(parsePathString)
-
-        for (const pathString of Object.keys(configBackup)) {
-            const [target, lastPathPart] = parsePath(pathString)
-            target[lastPathPart] = configBackup[pathString]
-        }
-    }, parsePath.toString())
-}
-
-/**
  * Load a given TDS file in the extension
  * @param {Page | WebWorker} bgPage
  * @param {string} tdsFilePath path to TDS file to load (from integration-test/data)
  */
-async function loadTestTds (bgPage, tdsFilePath) {
+export async function loadTestTds (bgPage, tdsFilePath) {
     await bgPage.evaluate(async tds => {
         // Wait until the default list is loaded.
         await globalThis.dbg.tds.ready('tds')
@@ -131,10 +109,4 @@ async function loadTestTds (bgPage, tdsFilePath) {
             })
         })
     }, JSON.parse(await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8')))
-}
-
-module.exports = {
-    loadTestConfig,
-    unloadTestConfig,
-    loadTestTds
 }

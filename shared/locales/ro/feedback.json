@@ -1,0 +1,55 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "brokenSiteLabel" : {
+    "title" : "Ce site este defect?",
+    "note" : "We're asking feedback from users. Here they are reporting a website url that is not working correctly."
+  },
+  "brokenSitePlaceholder" : {
+    "title" : "Copiază și lipește URL-ul",
+    "note" : "Instructions to fill an input field with a URL. Here \"your URL\" doesn't mean that they own the website, just that they're reporting it."
+  },
+  "feedbackHeaderLabel" : {
+    "title" : "Ce îți place? Ce nu funcționează? Cum ar putea fi îmbunătățită extensia?",
+    "note" : "Label over a feedback text area where the user can tell us about their experience with our browser extension."
+  },
+  "feedbackPlaceholder" : {
+    "title" : "La ce caracteristici sau funcții se referă feedbackul tău? Furnizează detalii cât mai specifice.",
+    "note" : "Placeholder text on feedback form input."
+  },
+  "submittingFeedbackHelps" : {
+    "title" : "Trimiterea de feedback anonim ne ajută să îmbunătățim DuckDuckGo Privacy Essentials.",
+    "note" : "Description at top of feedback form."
+  },
+  "reportBrokenSite" : {
+    "title" : "Vreau să raportez un site care nu funcționează adecvat",
+    "note" : "This opens a feedback form to report a broken site. Broken here means 'not working as expected'."
+  },
+  "submit" : {
+    "title" : "Trimite",
+    "note" : "To submit the feedback form."
+  },
+  "describeTheIssue" : {
+    "title" : "Descrie problema pe care ai întâlnit-o:",
+    "note" : "Label on broken site feedback textarea where users can describe in what way a site is not working as expected."
+  },
+  "describeBreakagePlaceholder" : {
+    "title" : "Ce conținut sau funcție a site-ului nu funcționează adecvat? Furnizează detalii cât mai specifice.",
+    "note" : "Placeholder text on the broken site form."
+  },
+  "thankYou" : {
+    "title" : "Îți mulțumim pentru feedback!",
+    "note" : "Thank you note displayed after submitting feedback"
+  },
+  "thankYouBrokenSite" : {
+    "title" : "Rapoartele tale privind site-urile care nu funcționează adecvat ajută echipa noastră de dezvoltare să remedieze aceste probleme.",
+    "note" : "Additional note when submitting a broken site."
+  }
+}

@@ -11,7 +11,7 @@ export function getHARPath (harFile) {
     return path.join(testRoot, 'data', 'har', harFile)
 }
 
-function getManifestVersion () {
+export function getManifestVersion () {
     return process.env.npm_lifecycle_event === 'playwright-mv3' ? 3 : 2
 }
 
@@ -21,7 +21,13 @@ async function routeLocalResources (route) {
     try {
         const body = await fs.readFile(localPath)
         // console.log('request served from disk', route.request().url())
-        route.fulfill({ status: 200, body })
+        route.fulfill({
+            status: 200,
+            body,
+            headers: {
+                etag: 'test'
+            }
+        })
     } catch (e) {
         // console.log('request served from network', route.request().url())
         route.continue()
@@ -56,7 +62,7 @@ export const test = base.extend({
         })
         // intercept extension install page and use HAR
         context.on('page', (page) => {
-            console.log('page', page.url())
+            // console.log('page', page.url())
             if (page.url().includes('duckduckgo.com/extension-success')) {
                 // HAR file generated with the following command:
                 // npx playwright open --save-har=data/har/duckduckgo.com/extension-success.har https://duckduckgo.com/extension-success

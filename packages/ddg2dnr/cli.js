@@ -38,11 +38,12 @@ async function main () {
         }
         break
     case 'tds':
-        if (args.length < 3 || args.length > 4) {
+        if (args.length < 3 || args.length > 5) {
             console.error(
                 'Usage: npm run tds',
                 './tds-input.json ./supported-surrogates-input.json ',
                 './tds-ruleset-output.json ',
+                '[./allowing-rules-by-ctl-action-output.json]',
                 '[./match-details-by-rule-id-output.json]'
             )
         } else {
@@ -50,27 +51,29 @@ async function main () {
                 tdsFilePath,
                 supportedSurrogatesPath,
                 rulesetFilePath,
+                allowingRulesByCtlActionFilePath,
                 mappingFilePath
             ] = args
 
             const browser = new PuppeteerInterface()
             const isRegexSupported = browser.isRegexSupported.bind(browser)
 
-            const { ruleset, matchDetailsByRuleId } =
-                  await generateTdsRuleset(
-                      JSON.parse(
-                          fs.readFileSync(tdsFilePath, { encoding: 'utf8' })
-                      ),
-                      new Set(
-                          JSON.parse(
-                              fs.readFileSync(
-                                  supportedSurrogatesPath, { encoding: 'utf8' }
-                              )
-                          )
-                      ),
-                      '/web_accessible_resources/',
-                      isRegexSupported
-                  )
+            const {
+                allowingRulesByClickToLoadAction, ruleset, matchDetailsByRuleId
+            } = await generateTdsRuleset(
+                JSON.parse(
+                    fs.readFileSync(tdsFilePath, { encoding: 'utf8' })
+                ),
+                new Set(
+                    JSON.parse(
+                        fs.readFileSync(
+                            supportedSurrogatesPath, { encoding: 'utf8' }
+                        )
+                    )
+                ),
+                '/web_accessible_resources/',
+                isRegexSupported
+            )
 
             browser.closeBrowser()
 
@@ -78,6 +81,13 @@ async function main () {
                 rulesetFilePath,
                 JSON.stringify(ruleset, null, '\t')
             )
+
+            if (allowingRulesByCtlActionFilePath) {
+                fs.writeFileSync(
+                    allowingRulesByCtlActionFilePath,
+                    JSON.stringify(allowingRulesByClickToLoadAction, null, '\t')
+                )
+            }
 
             if (mappingFilePath) {
                 fs.writeFileSync(

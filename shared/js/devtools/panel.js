@@ -9,6 +9,47 @@ function sendMessage (messageType, options, callback) {
     chrome.runtime.sendMessage({ messageType, options }, callback)
 }
 
+/**
+ * Add a new request row to the panel table without checking for duplicates.
+ *
+ * @param {HTMLTableRowElement} row
+ */
+function addNewRequestRow (row) {
+    const counter = row.querySelector('.action-count')
+    panelConfig.currentCounter = counter
+    panelConfig.lastRowTemplate = row.cloneNode(true)
+    table.appendChild(row)
+}
+
+/**
+ * Add a new request row to the panel table, checking for duplicates.
+ *
+ * @param {HTMLTableRowElement} row
+ */
+function addRequestRow (row) {
+    const prevRowTemplate = panelConfig.lastRowTemplate
+    if (prevRowTemplate) {
+        // if duplicate request lines would be printed, we instead show a
+        // counter increment
+        if (prevRowTemplate.innerHTML === row.innerHTML) {
+            incrementCurrentRequestCounter()
+        } else {
+            addNewRequestRow(row)
+        }
+    } else {
+        addNewRequestRow(row)
+    }
+}
+
+/**
+ * Increment the counter for the current request type.
+ */
+function incrementCurrentRequestCounter () {
+    const counter = panelConfig.currentCounter
+    const prevCount = parseInt(counter.textContent.replaceAll(/[ [\]]/g, '') || '1')
+    counter.textContent = ` [${prevCount + 1}]`
+}
+
 let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
 
 // Open the messaging port and re-open if disconnected. The connection will
@@ -83,12 +124,13 @@ const actionHandlers = {
             })
             row.classList.remove(tracker.action)
             row.classList.add(toggleLink.innerText === 'I' ? 'ignore' : 'block')
-        });
-        [`${serviceWorkerInitiated ? '⚙️ ' : ''}${url}`, `${actionIcons[tracker.action]} ${tracker.action} (${tracker.reason})`, tracker.fullTrackerDomain, requestData.type].forEach((text, i) => {
-            cells[i + 1].innerText = text
         })
+        cells[1].textContent = `${serviceWorkerInitiated ? '⚙️ ' : ''}${url}`
+        cells[2].querySelector('.request-action').textContent = `${actionIcons[tracker.action]} ${tracker.action} (${tracker.reason})`
+        cells[3].textContent = tracker.fullTrackerDomain
+        cells[4].textContent = requestData.type
         row.classList.add(tracker.action)
-        table.appendChild(row)
+        addRequestRow(row)
     },
     tabChange: (m) => {
         const tab = m.message
@@ -118,49 +160,84 @@ const actionHandlers = {
             cleanUrl.search = ''
             cleanUrl.hash = ''
             cells[1].textContent = cleanUrl.href
-            cells[2].textContent = `🍪 ${action}`
+            cells[2].querySelector('.request-action').textContent = `🍪 ${action}`
             cells[3].textContent = kind
             cells[4].textContent = type
             row.classList.add(kind)
-            table.appendChild(row)
+            addRequestRow(row)
         }
+    },
+    runtimeChecks: (m) => {
+        const { documentUrl, matchType, matchedStackDomain, stack, scriptOrigins } = m.message
+        if (!matchType) return displayProxyRow(m)
+        const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+        const cells = row.querySelectorAll('td')
+        cells[1].textContent = documentUrl
+        cells[2].querySelector('.request-action').textContent = `Runtime Checks📨 ${matchType}`
+        if (scriptOrigins) {
+            cells[3].textContent = scriptOrigins.join(',')
+        }
+        if (stack) appendCallStack(cells[3], stack, 0)
+        if (matchedStackDomain) {
+            cells[4].textContent += `Matched: ${matchedStackDomain}`
+        }
+        row.classList.add('runtimeChecks')
+        addRequestRow(row)
+    },
+    jsException: (m) => {
+        const { documentUrl, message, filename, lineno, colno, stack, scriptOrigins } = m.message
+        const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+        const cells = row.querySelectorAll('td')
+        cells[1].textContent = documentUrl
+        cells[2].querySelector('.request-action').textContent = `JS🪲 ${message}`
+        if (scriptOrigins) cells[3].textContent = scriptOrigins.join(',')
+        if (stack) appendCallStack(cells[3], stack, 0)
+        cells[4].textContent = `${filename}:${lineno}:${colno}`
+        row.classList.add('jsException')
+        addRequestRow(row)
     },
     jscookie: (m) => {
         const { documentUrl, action, reason, value, stack, scriptOrigins } = m.message
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
-        cells[2].textContent = `JS🍪 ${action} (${reason})`
+        cells[2].querySelector('.request-action').textContent = `JS🍪 ${action} (${reason})`
         cells[3].textContent = scriptOrigins.join(',')
         appendCallStack(cells[3], stack)
         cells[4].textContent = value.split(';')[0]
         row.classList.add('jscookie')
-        table.appendChild(row)
-    },
-    fingerprintingCanvas: (m) => {
-        const { documentUrl, action, kind, stack, args } = m.message
-        const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
-        const cells = row.querySelectorAll('td')
-        cells[1].textContent = documentUrl
-        cells[2].textContent = `Canvas ${action}`
-        const argsOut = JSON.parse(args).join(', ')
-        cells[3].setAttribute('colspan', 2)
-        cells[4].remove()
-
-        cells[3].textContent = `${kind}(${argsOut})`
-        appendCallStack(cells[3], stack)
-
-        row.classList.add('canvas')
-        table.appendChild(row)
+        addRequestRow(row)
     }
 }
 
-function appendCallStack (cell, stack) {
+/**
+ * Data that comes from DDG proxy calls
+ * @param {*} m message from background
+ * @param {*} actionName nice name to display for the action
+ */
+function displayProxyRow (m) {
+    const { documentUrl, action, kind, stack, args } = m.message
+    const featureAction = m.action
+    const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
+    const cells = row.querySelectorAll('td')
+    cells[1].textContent = documentUrl
+    cells[2].querySelector('.request-action').textContent = `${featureAction} proxy ${action}`
+    const argsOut = JSON.parse(args).join(', ')
+    cells[3].setAttribute('colspan', 2)
+    cells[4].remove()
+
+    cells[3].textContent = `${kind}(${argsOut})`
+    appendCallStack(cells[3], stack)
+
+    row.classList.add('proxyCall', featureAction)
+    addRequestRow(row)
+}
+
+function appendCallStack (cell, stack, drop = 2) {
     if (stack) {
-        // Shift off the first two of the stack as will be us.
         const lines = stack.split('\n')
-        lines.shift()
-        lines.shift()
+        // Shift off the first lines of the stack as will be us.
+        for (let i = 0; i < drop; i++) lines.shift()
 
         const details = document.createElement('details')
         const summary = document.createElement('summary')
@@ -184,7 +261,9 @@ const panelConfig = {
         redirected: true,
         cookieHTTP: true,
         cookieJS: true,
-        apiCanvas: true,
+        jsException: true,
+        runtimeChecks: true,
+        proxyCalls: false,
         noneRequest: true,
         ignoreUser: true
     },
@@ -194,8 +273,8 @@ const panelConfig = {
 function shouldShowRow (row) {
     // empty search box is considered to be no filter
     if (panelConfig.rowFilter !== '') {
-        // when a filter is in effect, fail now if the URL does not match the filter
-        if (!row.cells[1].textContent.match(panelConfig.rowFilter)) {
+        // when a filter is in effect, match against the whole rows text content
+        if (!row.textContent.match(panelConfig.rowFilter)) {
             return false
         }
     }
@@ -216,8 +295,12 @@ function shouldShowRow (row) {
         return panelConfig.rowVisibility.cookieHTTP
     case 'jscookie':
         return panelConfig.rowVisibility.cookieJS
-    case 'canvas':
-        return panelConfig.rowVisibility.apiCanvas
+    case 'jsException':
+        return panelConfig.rowVisibility.jsException
+    case 'runtimeChecks':
+        return panelConfig.rowVisibility.runtimeChecks
+    case 'proxyCall':
+        return panelConfig.rowVisibility.proxyCalls
     case 'none':
         return panelConfig.rowVisibility.noneRequest
     case 'ignore-user':
@@ -236,6 +319,8 @@ port.onMessage.addListener((message) => {
     if (m.tabId === tabId) {
         if (actionHandlers[m.action]) {
             actionHandlers[m.action](m)
+        } else if (m?.message?.isProxy) {
+            displayProxyRow(m)
         }
         if (document.querySelector('tbody').lastChild) {
             setRowVisible(document.querySelector('tbody').lastChild)
@@ -286,6 +371,8 @@ function clear () {
     while (table.lastChild) {
         table.removeChild(table.lastChild)
     }
+    panelConfig.lastRowTemplate = undefined
+    panelConfig.currentCounter = undefined
 }
 
 // listeners for buttons and toggles

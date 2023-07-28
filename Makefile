@@ -10,10 +10,9 @@ BUILD_DIR = build/$(browser)/$(type)
 ifeq ($(browser),test)
   BUILD_DIR := build/test
 endif
+INTERMEDIATES_DIR = build/.intermediates
 
 ## All source files that potentially need to be bundled or copied.
-# TODO: Use automatic dependency generation (e.g. `browserify --list`) for
-#       the bundling targets instead?
 WATCHED_FILES = $(shell find -L browsers/ shared/ packages/ unit-test/ -type f -not -path "packages/*/node_modules/*" -not -name "*~")
 # If the node_modules/@duckduckgo/ directory exists, include those source files
 # in the list too.
@@ -57,7 +56,7 @@ dev: copy build $(BUILD_DIR)/buildtime.txt
 ##        it up to date as files are changed.
 ##        Pass reloader=0 to disable automatic extension reloading.
 ## specify browser=(chrome|chrome-mv3|firefox) type=dev [reloader=1]
-MAKE = make -j4 $(type) browser=$(browser) type=$(type)
+MAKE = make $(type) browser=$(browser) type=$(type)
 watch:
 	$(MAKE)
 	@echo "\n** Build ready -  Watching for changes **\n"
@@ -66,24 +65,17 @@ watch:
 .PHONY: watch
 
 ## unit-test: Run the unit tests.
-unit-test: build/test/background.js build/test/ui.js build/test/shared-utils.js
+ESBUILD_TESTS = unit-test/background/*.js unit-test/background/**/*.js unit-test/ui/**/*.js unit-test/shared-utils/*.js
+unit-test:
+	$(ESBUILD) --outdir=build/test --inject:./unit-test/inject-chrome-shim.js $(ESBUILD_TESTS)
 	node_modules/.bin/karma start karma.conf.js
 
 .PHONY: unit-test
 
-## test-int: Run legacy integration tests against the Chrome MV2 extension.
-test-int: integration-test/artifacts/attribution.json
-	make dev browser=chrome type=dev
-	jasmine --config=integration-test/config.json
-
-.PHONY: test-int
-
-## test-int-mv3: Run legacy integration tests against the Chrome MV3 extension.
-test-int-mv3: integration-test/artifacts/attribution.json
-	make dev browser=chrome-mv3 type=dev
-	jasmine --config=integration-test/config-mv3.json
-
-.PHONY: test-int-mv3
+NODE_TESTS = unit-test/node/**/*.js
+node-test:
+	$(ESBUILD) --platform=node --outdir=build/node --inject:./unit-test/inject-chrome-shim.js --external:jsdom $(NODE_TESTS)
+	node_modules/.bin/jasmine build/node/*.js
 
 ## npm: Pull in the external dependencies (npm install).
 npm:
@@ -94,7 +86,7 @@ npm:
 
 ## clean: Clear the builds and temporary files.
 clean:
-	rm -f build/.smarter_encryption.txt integration-test/artifacts/attribution.json:
+	rm -f build/.smarter_encryption.txt integration-test/artifacts/attribution.json
 	rm -rf $(BUILD_DIR)
 
 .PHONY: clean
@@ -134,7 +126,6 @@ beta-firefox-zip: remove-firefox-id
 
 .PHONY: beta-firefox-zip
 
-
 ###--- Integration test setup ---###
 # Artifacts produced by the integration tests.
 setup-artifacts-dir:
@@ -144,18 +135,13 @@ setup-artifacts-dir:
 
 .PHONY: setup-artifacts-dir
 
-# Fetch integration test data.
-integration-test/artifacts/attribution.json: node_modules/privacy-test-pages/adClickFlow/shared/testCases.json setup-artifacts-dir
-	mkdir -p integration-test/artifacts
-	cp $< $@
-
-
 ###--- Mkdir targets ---#
 # Note: Intermediate directories can be omitted.
 MKDIR_TARGETS = $(BUILD_DIR)/_locales $(BUILD_DIR)/data/bundled $(BUILD_DIR)/html \
                 $(BUILD_DIR)/img $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources \
                 $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css \
-                $(BUILD_DIR)/public/font
+                $(BUILD_DIR)/public/font \
+                $(INTERMEDIATES_DIR)
 
 $(MKDIR_TARGETS):
 	mkdir -p $@
@@ -174,7 +160,6 @@ $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill.css $(BUILD_DIR)/public/css/autofill.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill-host-styles_$(BROWSER_TYPE).css $(BUILD_DIR)/public/css/autofill-host-styles.css
-	$(RSYNC) shared/font $(BUILD_DIR)/public
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js shared/js/content-scripts/content-scope-messaging.js $(BUILD_DIR)/public/js/content-scripts
 	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
 	touch $@
@@ -183,76 +168,62 @@ copy: $(LAST_COPY)
 
 .PHONY: copy
 
-
 ###--- Build targets ---###
-## Figure out the correct Browserify command for bundling.
-# TODO: Switch to a better bundler.
-# Workaround Browserify not following symlinks in --only.
-BROWSERIFY_GLOBAL_TARGETS = ./node_modules/@duckduckgo
-BROWSERIFY_GLOBAL_TARGETS += $(shell find node_modules/@duckduckgo/ -maxdepth 1 -type l | xargs -n1 readlink -f)
-
-BROWSERIFY_BIN = node_modules/.bin/browserify
-BROWSERIFY = $(BROWSERIFY_BIN) -t babelify -t [ babelify --global  --only [ $(BROWSERIFY_GLOBAL_TARGETS) ] --presets [ @babel/preset-env ] ]
+ESBUILD = node_modules/.bin/esbuild --bundle --target=firefox91,chrome92 --define:BUILD_TARGET=\"$(browser)\"
 # Ensure sourcemaps are included for the bundles during development.
 ifeq ($(type),dev)
-  BROWSERIFY += -d
+  ESBUILD += --sourcemap
 endif
 
 ## Extension background/serviceworker script.
-BACKGROUND_JS = shared/js/background/background.js
 ifeq ($(type), dev)
   # Developer builds include the devbuilds module for debugging.
-  BACKGROUND_JS += shared/js/background/devbuild.js
+  ESBUILD += --define:DEBUG=true
   # Unless reloader=0 is passed, they also contain an auto-reload module.
   ifneq ($(reloader),0)
-    BACKGROUND_JS += shared/js/background/devbuild-reloader.js
+    ESBUILD += --define:RELOADER=true
+  else
+    ESBUILD += --define:RELOADER=false
   endif
+else
+  ESBUILD += --define:DEBUG=false --define:RELOADER=false
 endif
+
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
-	$(BROWSERIFY) $(BACKGROUND_JS) -o $@
+	$(ESBUILD) shared/js/background/background.js > $@
+
+## Locale resources for UI
+shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
+	node scripts/bundleLocales.mjs > $@
 
 ## Extension UI/Devtools scripts.
-$(BUILD_DIR)/public/js/base.js: $(WATCHED_FILES)
+$(BUILD_DIR)/public/js/base.js: $(WATCHED_FILES) shared/js/ui/base/locale-resources.js
 	mkdir -p `dirname $@`
-	$(BROWSERIFY) shared/js/ui/base/index.js > $@
+	$(ESBUILD) shared/js/ui/base/index.js > $@
 
 $(BUILD_DIR)/public/js/feedback.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/ui/pages/feedback.js > $@
+	$(ESBUILD) shared/js/ui/pages/feedback.js > $@
 
 $(BUILD_DIR)/public/js/options.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/ui/pages/options.js > $@
+	$(ESBUILD) shared/js/ui/pages/options.js > $@
 
 $(BUILD_DIR)/public/js/devtools-panel.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/devtools/panel.js > $@
+	$(ESBUILD) shared/js/devtools/panel.js > $@
 
 $(BUILD_DIR)/public/js/list-editor.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/devtools/list-editor.js > $@
+	$(ESBUILD) shared/js/devtools/list-editor.js > $@
 
 $(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
-	$(BROWSERIFY) shared/js/newtab/newtab.js > $@
+	$(ESBUILD) shared/js/newtab/newtab.js > $@
 
-JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js
+$(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/fire/index.js > $@
+
+JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js
 
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
-## Unit tests scripts.
-UNIT_TEST_SRC = unit-test/background/*.js unit-test/background/classes/*.js unit-test/background/events/*.js unit-test/background/storage/*.js unit-test/background/reference-tests/*.js
-build/test:
-	mkdir -p $@
-
-build/test/background.js: $(TEST_FILES) $(WATCHED_FILES) | build/test
-	$(BROWSERIFY) -t brfs -t ./scripts/browserifyFileMapTransform $(UNIT_TEST_SRC) -o $@
-
-build/test/ui.js: $(TEST_FILES) | build/test
-	$(BROWSERIFY) shared/js/ui/base/index.js unit-test/ui/**/*.js -o $@
-
-build/test/shared-utils.js: $(TEST_FILES) | build/test
-	$(BROWSERIFY) unit-test/shared-utils/*.js -o $@
-
 ## Content Scope Scripts
-shared/data/bundled/tracker-lookup.json:
-	node scripts/bundleTrackers.mjs
-
 CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts
 
 # Rebuild content-scope-scripts if it's a local checkout (.git is present), but
@@ -271,12 +242,13 @@ ifneq ("$(wildcard $(CONTENT_SCOPE_SCRIPTS)/.git/)","")
   CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS += $(CONTENT_SCOPE_SCRIPTS)/node_modules
 endif
 
-$(CONTENT_SCOPE_SCRIPTS)/node_modules:
+$(CONTENT_SCOPE_SCRIPTS)/node_modules: $(CONTENT_SCOPE_SCRIPTS)/package.json
 	cd $(CONTENT_SCOPE_SCRIPTS); npm install
+	touch $@
 
 $(CONTENT_SCOPE_SCRIPTS)/build/locales: $(CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS)
 	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-locales
-	touch $(CONTENT_SCOPE_SCRIPTS)/build/locales
+	touch $@
 
 $(CONTENT_SCOPE_SCRIPTS)/build/$(browser)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
 	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-$(browser)
@@ -297,6 +269,18 @@ $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss $(SCSS_SOURCE)
 
 BUILD_TARGETS += $(BUILD_DIR)/public/css/base.css $(OUTPUT_CSS_FILES)
 
+## Fonts
+FONT_FILES = ProximaNova-Reg-webfont.woff ProximaNova-Sbold-webfont.woff ProximaNova-Bold-webfont.woff ProximaNova-Reg-webfont.woff2 ProximaNova-Bold-webfont.woff2
+BUILD_TARGETS += $(addprefix $(BUILD_DIR)/public/font/, $(FONT_FILES))
+
+$(BUILD_DIR)/public/font/%: $(INTERMEDIATES_DIR)/%
+	cp $< $@
+
+# Fetch fonts from the webserver to be included in the generated build
+.SECONDARY:
+$(INTERMEDIATES_DIR)/%: 
+	curl -s -o $@ https://duckduckgo.com/font/all/`basename $@`
+
 ## Other
 
 # Fetch Smarter Encryption data for bundled Smarter Encryption
@@ -312,8 +296,48 @@ ifeq ('$(browser)','chrome-mv3')
   BUILD_TARGETS += $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json
 endif
 
+## Generate Tracker Blocking declarativeNetRequest rulesets for MV3 builds.
+
+# Necessary since "&:" grouped target syntax is not supported currently with
+# versions (< 4.3) of Make shipped with macOS. See $(LAST_COPY) comment above
+# for more context.
+LAST_MV3_BLOCKLIST_FETCH = build/.last-mv3-blocklist-fetch
+LAST_MV3_RULESET_BUILD = build/.last-mv3-ruleset-build-$(browser)-$(type)
+
+$(LAST_MV3_BLOCKLIST_FETCH): shared/data/etags.json
+	node scripts/fetchMV3Blocklists.mjs
+	touch $@
+
+.SECONDARY:
+$(INTERMEDIATES_DIR)/current-mv3-tds.json $(INTERMEDIATES_DIR)/fallback-mv3-tds.json: $(LAST_MV3_BLOCKLIST_FETCH)
+	touch $@
+
+$(BUILD_DIR)/data/bundled/current-mv3-tds.json: $(INTERMEDIATES_DIR)/current-mv3-tds.json
+	cp $< $@
+
+$(BUILD_DIR)/data/bundled/fallback-mv3-tds.json: $(INTERMEDIATES_DIR)/fallback-mv3-tds.json
+	cp $< $@
+
+$(LAST_MV3_RULESET_BUILD): $(INTERMEDIATES_DIR)/current-mv3-tds.json $(INTERMEDIATES_DIR)/fallback-mv3-tds.json $(INTERMEDIATES_DIR)/surrogates.json
+	npx ddg2dnr tds $(INTERMEDIATES_DIR)/current-mv3-tds.json $(INTERMEDIATES_DIR)/surrogates.json \
+	  $(BUILD_DIR)/data/bundled/current-tds-rules.json $(BUILD_DIR)/data/bundled/current-ctl-allowing-rules.json
+	npx ddg2dnr tds $(INTERMEDIATES_DIR)/fallback-mv3-tds.json $(INTERMEDIATES_DIR)/surrogates.json \
+	  $(BUILD_DIR)/data/bundled/fallback-tds-rules.json $(BUILD_DIR)/data/bundled/fallback-ctl-allowing-rules.json
+	touch $@
+
+# TODO: Uncomment this for the switch to static tracker blocking declarativeNetRequest rulesets.
+# ifeq ('$(browser)','chrome-mv3')
+#   BUILD_TARGETS += $(LAST_MV3_RULESET_BUILD)
+#   BUILD_TARGETS += $(BUILD_DIR)/data/bundled/current-mv3-tds.json $(BUILD_DIR)/data/bundled/fallback-mv3-tds.json
+# endif
+
+# Generate the list of "surrogate" (stub) scripts.
 $(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources $(LAST_COPY)
 	node scripts/generateListOfSurrogates.js -i $</ > $@
+
+.SECONDARY:
+$(INTERMEDIATES_DIR)/surrogates.json: $(BUILD_DIR)/web_accessible_resources $(LAST_COPY)
+	node scripts/generateListOfSurrogates.js --json -i $</ > $@
 
 BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
 

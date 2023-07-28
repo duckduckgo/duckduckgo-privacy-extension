@@ -1,12 +1,12 @@
 const { NewTabTrackerStats } = require('../../shared/js/background/newtab-tracker-stats')
 const { TrackerStats } = require('../../shared/js/background/classes/tracker-stats')
-const browserWrapper = require('../../shared/js/background/wrapper')
 const constants = require('../../shared/data/constants')
 const testTDS = require('../data/tds.json')
 const { dataFormatSchema } = require('../../shared/js/newtab/schema')
 
 const SEC = 1000
 const MIN = SEC * 60
+const HOUR = MIN * 60
 
 describe('NewTabTrackerStats', () => {
     it('produces a filtered output for multiple companies', () => {
@@ -23,7 +23,7 @@ describe('NewTabTrackerStats', () => {
         newtab.record('Facebook', now + MIN * 2)
 
         // produce the data as consumers would
-        const output = newtab.toDisplayData(10, now)
+        const output = newtab.toDisplayData(now)
 
         // this will throw (and cause the test to fail) if the
         // data has deviated from the schema defined here
@@ -33,7 +33,7 @@ describe('NewTabTrackerStats', () => {
         expect(output.totalCount).toEqual(4)
         expect(output.trackerCompanies.length).toEqual(2)
     })
-    it('only lists the names of entries in the top100 list', () => {
+    it('only lists the names of entries in the top 100 list', () => {
         const stats = new TrackerStats()
         const newtab = new NewTabTrackerStats(stats)
         // @ts-ignore
@@ -46,7 +46,7 @@ describe('NewTabTrackerStats', () => {
         newtab.record('B', now)
 
         // produce the data as consumers would
-        const output = newtab.toDisplayData(10, now)
+        const output = newtab.toDisplayData(now)
         dataFormatSchema.parse(output)
 
         expect(output.totalCount).toEqual(3)
@@ -84,14 +84,14 @@ describe('NewTabTrackerStats', () => {
         newtab.record('B', now)
 
         // produce the data as consumers would
-        const output = newtab.toDisplayData(5, now)
+        const output = newtab.toDisplayData(now)
         dataFormatSchema.parse(output)
 
         // The `A` and `B` should be grouped into the `Other` category
         expect(output).toEqual({
             totalCount: 7,
             totalPeriod: 'install-time',
-            trackerCompaniesPeriod: 'last-hour',
+            trackerCompaniesPeriod: 'last-day',
             trackerCompanies: [{
                 displayName: 'Facebook',
                 count: 1
@@ -115,6 +115,11 @@ describe('NewTabTrackerStats', () => {
 describe('sending data', () => {
     beforeEach(() => {
         jasmine.clock().install()
+        // @ts-ignore
+        while (chrome.storage.local._setCalls.length > 0) {
+            // @ts-ignore
+            chrome.storage.local._setCalls.pop()
+        }
     })
     afterEach(() => {
         jasmine.clock().uninstall()
@@ -126,7 +131,8 @@ describe('sending data', () => {
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
         const sendSpy = spyOn(newtab, '_publish')
-        const syncSpy = spyOn(browserWrapper, 'syncToStorage')
+        // @ts-ignore
+        const syncSpy = chrome.storage.local._setCalls
 
         const now = 1673473220560
 
@@ -144,14 +150,20 @@ describe('sending data', () => {
         expect(sendSpy).toHaveBeenCalledTimes(1)
 
         // assert that values were synced to storage
-        expect(syncSpy).toHaveBeenCalledTimes(1)
-        expect(syncSpy).toHaveBeenCalledWith({
+        expect(syncSpy.length).toBe(1)
+        expect(syncSpy[0]).toEqual({
             [NewTabTrackerStats.storageKey]: {
                 stats: {
-                    entries: {
-                        Google: [1673473220560, 1673473220560, 1673473220560, 1673473220560, 1673473220560, 1673473220560]
+                    current: {
+                        start: now,
+                        end: 0,
+                        entries: {
+                            Google: 6
+                        }
                     },
-                    totalCount: 6
+                    packs: [],
+                    totalCount: 6,
+                    entries: null
                 }
             }
         })
@@ -162,10 +174,16 @@ describe('incoming events', () => {
     let newtab, sendSpy
     beforeEach(() => {
         const stats = new TrackerStats()
+        const now = 1673473220560
         stats.deserialize({
-            entries: {
-                Google: [1673473220560, 1673473220560, 1673473220560, 1673473220560, 1673473220560, 1673473220560]
+            current: {
+                start: now,
+                end: 0,
+                entries: {
+                    Google: 6
+                }
             },
+            packs: [],
             totalCount: 6
         })
 
@@ -191,12 +209,23 @@ describe('incoming events', () => {
 describe('alarms', () => {
     let newtab, sendSpy
     const now = 1673473220560
+    const oneHourAgo = now - HOUR
+    const twoHourAgo = now - (HOUR * 2)
     beforeEach(() => {
         const stats = new TrackerStats()
         stats.deserialize({
-            entries: {
-                Google: [now, now, now, now, now, now]
+            current: {
+                start: 0,
+                end: 0,
+                entries: {}
             },
+            packs: [{
+                start: twoHourAgo,
+                end: oneHourAgo,
+                entries: {
+                    Google: 6
+                }
+            }],
             totalCount: 6
         })
 
@@ -221,7 +250,7 @@ describe('alarms', () => {
         expect(display).toEqual({
             totalCount: 6,
             totalPeriod: 'install-time',
-            trackerCompaniesPeriod: 'last-hour',
+            trackerCompaniesPeriod: 'last-day',
             trackerCompanies: []
         })
     })
@@ -230,10 +259,10 @@ describe('alarms', () => {
 describe('CSP for new tab page', () => {
     it('should contain a valid CSP entry for MV2', () => {
         const mv2 = require('../../browsers/chrome/manifest.json')
-        expect(mv2.content_security_policy).toBe("script-src 'self'; object-src 'self'; frame-ancestors https://*.duckduckgo.com")
+        expect(mv2.content_security_policy).toBe("script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com")
     })
     it('should contain a valid CSP entry for MV3', () => {
         const mv2 = require('../../browsers/chrome-mv3/manifest.json')
-        expect(mv2.content_security_policy.extension_pages).toBe("script-src 'self'; object-src 'self'; frame-ancestors https://*.duckduckgo.com")
+        expect(mv2.content_security_policy.extension_pages).toBe("script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com")
     })
 })

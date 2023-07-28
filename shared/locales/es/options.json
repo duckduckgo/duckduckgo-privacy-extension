@@ -1,0 +1,116 @@
+{
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
+  },
+  "optionsHeader": {
+    "title": "Opciones de DuckDuckGo",
+    "note": "Header for options (settings) page"
+  },
+  "optionsSubHeader": {
+    "title": "Busca y navega por la web sin que te rastreen.",
+    "note": "We allow the user to browse the web without being followed by trackers"
+  },
+  "optionsDesc": {
+    "title": "DuckDuckGo protege tu privacidad en línea con\nbúsquedas privadas, \nbloqueo de rastreadores\ny cifrado de sitios.",
+    "note": "This describes how we protect the user from being tracked online"
+  },
+  "shareFeedback": {
+    "title": "Compartir opiniones",
+    "note": "Click here to share your opinions about this product"
+  },
+  "reportBrokenSite": {
+    "title": "Informar de sitio web dañado",
+    "note": "Click here to report an issue with a specific site you are trying to use"
+  },
+  "showEmbeddedTweets": {
+    "title": "Mostrar tuits incrustados",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  },
+  "globalPrivacyControlAbbr": {
+    "title": "Control Global de Privacidad (GPC)",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  },
+  "globalPrivacyControlDesc": {
+    "title": "Tus datos no deberían estar a la venta. En DuckDuckGo, estamos de acuerdo.Activa la configuración de «Control Global de Privacidad» (GPC) e\ninformaremos a los sitios web de que prefieres:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  },
+  "notSellYourPersonalData": {
+    "title": "No vender tus datos personales.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  },
+  "limitSharingOfPersonalData": {
+    "title": "Limitar el uso compartido de tus datos personales con otras empresas.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  },
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>Dado que el Control Global de Privacidad (GPC) es un nuevo estándar,\nla mayoría de los sitios web no lo reconoce todavía, pero estamos trabajando\npara garantizar que se acepte en todo el mundo.</b> Sin embargo, solo se exige a los sitios web que actúen conforme a esta indicación en la\nmedida en que lo dictamine la legislación aplicable. ",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  },
+  "emailProtection": {
+    "title": "Protección del correo electrónico",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
+  },
+  "autofillDisabled": {
+    "title": "Autocompletar desactivado",
+    "note": "When we don't automatically help populate email fields with a private address"
+  },
+  "autofillEnabled": {
+    "title": "Autocompletar habilitado para <strong class=\"js-userdata-container\">{userName}</strong>",
+    "note": "When we do help populate email addresses for (your email address here)"
+  },
+  "noUnprotectedSitesAdded": {
+    "title": "No se han añadido sitios no protegidos",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  },
+  "unprotectedSites": {
+    "title": "Sitios no protegidos",
+    "note": "Header for the list of websites where our privacy protections are disabled"
+  },
+  "unprotectedSitesDesc": {
+    "title": "La protección de privacidad está deshabilitada para estos sitios.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
+  },
+  "addUnprotectedSite": {
+    "title": "Añadir sitio no protegido",
+    "note": "Header for the user to add a site to the uprotected list"
+  },
+  "enterURL": {
+    "title": "Introducir URL",
+    "note": "Promopt to enter the website URL here"
+  },
+  "invalidURL": {
+    "title": "URL no válida",
+    "note": "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc": {
+    "title": "El Fire Button facilita el borrado de tus pestañas, historial de navegación y datos. Puedes controlar si se borra el historial de navegación además de los datos y si se cierran o no tus pestañas actuales.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle": {
+    "title": "Borrar historial",
+    "note": "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc": {
+    "title": "Ten en cuenta que el historial de navegación solo se puede borrar para un intervalo de tiempo especificado (por ejemplo, «última hora», o «siempre») y no en función del sitio web.",
+    "note": "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle": {
+    "title": "Cerrar pestañas",
+    "note": "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle": {
+    "title": "Quema en curso...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+  }
+}

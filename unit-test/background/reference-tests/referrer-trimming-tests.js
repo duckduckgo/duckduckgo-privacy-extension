@@ -1,12 +1,10 @@
-require('../../helpers/mock-browser-api')
-
 const tds = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const tabManager = require('../../../shared/js/background/tab-manager')
-const browserWrapper = require('../../../shared/js/background/wrapper')
-const jsReferrerProtection = require('@duckduckgo/content-scope-scripts/src/features/referrer')
+const JsReferrerProtection = require('@duckduckgo/content-scope-scripts/src/features/referrer').default
+const jsReferrerProtection = new JsReferrerProtection('jsReferrer')
 
 const limitReferrerData = require('../../../shared/js/background/events/referrer-trimming')
 
@@ -14,14 +12,11 @@ const configReference = require('@duckduckgo/privacy-reference-tests/referrer-tr
 const blocklistReference = require('@duckduckgo/privacy-reference-tests/referrer-trimming/tracker_radar_reference.json')
 const testSets = require('@duckduckgo/privacy-reference-tests/referrer-trimming/tests.json')
 
-const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
-
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
 
     describe(`Referrer Trimming tests / ${testSet.name} /`, () => {
         beforeAll(() => {
-            spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
             return tdsStorage.getLists().then(lists => tds.setLists(lists))
@@ -90,7 +85,12 @@ for (const setName of Object.keys(testSets)) {
                     const tab = tabManager.get({ tabId: 1 })
 
                     const FakeDocument = function () {}
-                    FakeDocument.prototype.referrer = test.referrerValue
+                    Object.defineProperty(FakeDocument.prototype, 'referrer', {
+                        get: () => test.referrerValue,
+                        configurable: true,
+                        enumerable: true,
+                        writeable: true
+                    })
                     FakeDocument.prototype.location = {
                         url: test.frameURL || test.siteURL
                     }

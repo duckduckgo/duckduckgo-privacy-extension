@@ -6,6 +6,8 @@ import { getExtensionURL, notifyPopup } from './wrapper'
 import { isFeatureEnabled, reloadCurrentTab } from './utils'
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 import tdsStorage from './storage/tds'
+import { getArgumentsObject } from './helpers/arguments-object'
+import { isFireButtonEnabled } from './features/fire-button'
 const { getDomain } = require('tldts')
 const utils = require('./utils')
 const settings = require('./settings')
@@ -16,7 +18,6 @@ const Companies = require('./companies')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools')
 const browserWrapper = require('./wrapper')
-const getArgumentsObject = require('./helpers/arguments-object')
 
 export async function registeredContentScript (options, sender, req) {
     const sessionKey = await utils.getSessionKey()
@@ -100,10 +101,10 @@ export async function submitBrokenSiteReport (breakageReport) {
         console.error('cannot access current tab with ID ' + currentTab.id)
         return
     }
-    const tsd = settings.getSetting('tds-etag')
-    const configEtag = settings.getSetting('config-etag')
-    const configVersion = tdsStorage.config.version
-    return breakageReportForTab(tab, tsd, configEtag, configVersion, category, description)
+    const tds = settings.getSetting('tds-etag')
+    const remoteConfigEtag = settings.getSetting('config-etag')
+    const remoteConfigVersion = tdsStorage.config.version
+    return breakageReportForTab({ tab, tds, remoteConfigEtag, remoteConfigVersion, category, description })
 }
 
 /**
@@ -136,7 +137,10 @@ export async function getPrivacyDashboardData (options) {
     const tab = await getTab(tabId)
     if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
-    return dashboardDataFromTab(tab, userData)
+    const fireButtonData = {
+        enabled: isFireButtonEnabled
+    }
+    return dashboardDataFromTab(tab, userData, fireButtonData)
 }
 
 export function getTopBlockedByPages (options) {
@@ -216,6 +220,44 @@ export function updateYouTubeCTLAddedFlag (value, sender) {
     tab.ctlYouTube = Boolean(value)
 }
 
+/**
+ * @typedef updateFacebookCTLBreakageFlagsRequest
+ * @property {boolean} [ctlFacebookPlaceholderShown=false]
+ *   True if at least one Facebook Click to Load placeholder was shown on the
+ *   page.
+ * @property {boolean} [ctlFacebookLogin=false]
+ *   True if the user clicked to use a Facebook Click to Load login button.
+ */
+
+/**
+ * Sets the Facebook Click to Load breakage flag(s) to true for the page, which
+ * are then included should the user report the webpage as broken.
+ * Note: False values are ignored, the flags are only updated if value is true.
+ *       The flags are reset automatically when the user navigates away from
+ *       the page.
+ * @param {updateFacebookCTLBreakageFlagsRequest} flags
+ * @param {browser.Runtime.MessageSender} sender
+ */
+export function updateFacebookCTLBreakageFlags (
+    { ctlFacebookPlaceholderShown = false, ctlFacebookLogin = false },
+    sender
+) {
+    const tabId = sender?.tab?.id
+    if (typeof tabId === 'undefined') {
+        return
+    }
+
+    const tab = tabManager.get({ tabId })
+
+    if (ctlFacebookPlaceholderShown) {
+        tab.ctlFacebookPlaceholderShown = true
+    }
+
+    if (ctlFacebookLogin) {
+        tab.ctlFacebookLogin = true
+    }
+}
+
 export function setYoutubePreviewsEnabled (value, sender) {
     return updateSetting({ name: 'youtubePreviewsEnabled', value })
 }
@@ -283,7 +325,8 @@ export function getEmailProtectionCapabilities (_, sender) {
 
 export function getIncontextSignupDismissedAt () {
     const permanentlyDismissedAt = settings.getSetting('incontextSignupPermanentlyDismissedAt')
-    const isInstalledRecently = utils.isInstalledWithinDays(3)
+    const installedDays = tdsStorage.config.features.incontextSignup?.settings?.installedDays ?? 3
+    const isInstalledRecently = utils.isInstalledWithinDays(installedDays)
     return { success: { permanentlyDismissedAt, isInstalledRecently } }
 }
 
@@ -420,3 +463,73 @@ export async function isClickToLoadYoutubeEnabled () {
         tdsStorage?.config?.features?.clickToLoad?.settings?.Youtube?.state === 'enabled'
     )
 }
+
+export function addDebugFlag (message, sender, req) {
+    const tab = tabManager.get({ tabId: sender.tab.id })
+    const flags = new Set(tab.debugFlags)
+    flags.add(message.flag)
+    tab.debugFlags = [...flags]
+}
+
+/**
+ * Add a new message handler.
+ * @param {string} name
+ * @param {(options: any, sender: any, req: any) => any} func
+ */
+export function registerMessageHandler (name, func) {
+    if (messageHandlers[name]) {
+        throw new Error(`Attempt to re-register existing message handler ${name}`)
+    }
+    messageHandlers[name] = func
+}
+
+/**
+ * Default set of message handler functions used by the background message handler.
+ *
+ * Don't add new listeners to this list, instead import and call registerMessageHandler in your
+ * feature's initialization code!
+ */
+const messageHandlers = {
+    registeredContentScript,
+    resetTrackersData,
+    getExtensionVersion,
+    setList,
+    setLists,
+    allowlistOptIn,
+    getBrowser,
+    openOptions,
+    submitBrokenSiteReport,
+    getTab,
+    getPrivacyDashboardData,
+    getTopBlockedByPages,
+    getClickToLoadState,
+    getYouTubeVideoDetails,
+    getCurrentTab,
+    unblockClickToLoadContent,
+    updateYouTubeCTLAddedFlag,
+    updateFacebookCTLBreakageFlags,
+    setYoutubePreviewsEnabled,
+    updateSetting,
+    getSetting,
+    getAddresses,
+    sendJSPixel,
+    getAlias,
+    refreshAlias,
+    getTopBlocked,
+    getEmailProtectionCapabilities,
+    getIncontextSignupDismissedAt,
+    setIncontextSignupPermanentlyDismissedAt,
+    getUserData,
+    addUserData,
+    removeUserData,
+    logout,
+    getListContents,
+    setListContents,
+    reloadList,
+    debuggerMessage,
+    search,
+    openShareFeedbackPage,
+    isClickToLoadYoutubeEnabled,
+    addDebugFlag
+}
+export default messageHandlers

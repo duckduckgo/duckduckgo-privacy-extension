@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2023.3.28.1",
+    "version": "2023.7.19",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
@@ -34,12 +34,16 @@
         }
     },
     "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self'; frame-ancestors https://*.duckduckgo.com"
+        "extension_pages": "script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com"
     },
     "content_scripts": [
         {
             "matches": [
                 "<all_urls>"
+            ],
+            "exclude_matches": [
+                "*://localhost/*",
+                "*://*.localhost/*"
             ],
             "match_about_blank": true,
             "all_frames": true,
@@ -57,6 +61,10 @@
             ],
             "matches": [
                 "<all_urls>"
+            ],
+            "exclude_matches": [
+                "*://localhost/*",
+                "*://*.localhost/*"
             ],
             "all_frames": true,
             "run_at": "document_start",
@@ -76,6 +84,9 @@
         "webRequest",
         "webNavigation",
         "cookies"
+    ],
+    "optional_permissions": [
+        "browsingData"
     ],
     "host_permissions": [
         "*://*/*"

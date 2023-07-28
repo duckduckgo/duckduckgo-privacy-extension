@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"個人情報保護をシンプルに。***至る所でユーザー追跡を試みる隠しトラッカーをオプションでブロックできます。***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "ウェブストアに表示される拡張機能名"
+  },
+  "appDesc" : {
+    "message" : "シンプルかつシームレスにプライバシーを保護するブラウザ向け拡張機能。",
+    "description" : "ウェブストアに表示される拡張機能の簡単な説明"
+  }
+}

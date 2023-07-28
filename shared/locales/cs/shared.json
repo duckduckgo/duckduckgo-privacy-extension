@@ -1,0 +1,31 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "options" : {
+    "title" : "Možnosti",
+    "note" : "Header for the interface where user can configure various options"
+  },
+  "learnMore" : {
+    "title" : "Více informací",
+    "note" : "Click here to learn more about how our services work"
+  },
+  "enable" : {
+    "title" : "Povolit",
+    "note" : "Button prompt to turn something on, i.e. click on this to enable"
+  },
+  "disable" : {
+    "title" : "Vypnout",
+    "note" : "Button prompt to turn something off, i.e. click on this to disable"
+  },
+  "add" : {
+    "title" : "Přidat",
+    "note" : "To add something to a list"
+  }
+}

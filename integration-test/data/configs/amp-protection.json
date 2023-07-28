@@ -1,5 +1,5 @@
 {
-    "globalThis.dbg.tds.config.features.trackingParameters": {
+    "globalThis.dbg.tds.config.features.ampLinks": {
         "state": "enabled",
         "exceptions": [ ],
         "settings": {

@@ -1,1 +1,10 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"La privacy, semplificata. ***I permessi servono a bloccare i tracker nascosti in agguato ovunque.***"}}
+{
+  "appName" : {
+    "message" : "DuckDuckGo Privacy Essentials",
+    "description" : "Titolo dell'estensione, visualizzato nel web store"
+  },
+  "appDesc" : {
+    "message" : "Tutela della privacy semplice e costante per il tuo browser.",
+    "description" : "Breve descrizione dell'estensione, visualizzata nel web store"
+  }
+}

@@ -1,4 +1,4 @@
-import * as constants from '../../../data/constants'
+import { iconPaths } from '../../../data/constants'
 import { setActionIcon } from '../wrapper'
 
 /**
@@ -7,7 +7,7 @@ import { setActionIcon } from '../wrapper'
  * 1) Our regular Dax Icon
  * 2) Greyed-out Dax Icon (special state)
  *
- * @param {import("../classes/site")} site
+ * @param {import("../classes/site").default} site
  * @param {number} tabId
  * @returns {Promise<void>}
  */
@@ -20,8 +20,8 @@ export function updateActionIcon (site, tabId) {
     // Enabled: regular icon
     // Disabled: special state, greyed-out Dax
     const nextIcon = protectionsEnabled
-        ? constants.iconPaths.regular
-        : constants.iconPaths.withSpecialState
+        ? iconPaths.regular
+        : iconPaths.withSpecialState
 
     // now call out to the browser wrapper to actually change the icon
     return setActionIcon(nextIcon, tabId)

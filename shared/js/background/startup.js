@@ -1,10 +1,10 @@
+/* global BUILD_TARGET */
 import browser from 'webextension-polyfill'
 import { NewTabTrackerStats } from './newtab-tracker-stats'
-import { TrackerStats } from './classes/tracker-stats'
+import { TrackerStats } from './classes/tracker-stats.js'
 import httpsStorage from './storage/https'
 import tdsStorage from './storage/tds'
 const utils = require('./utils')
-const browserWrapper = require('./wrapper')
 const Companies = require('./companies')
 const experiment = require('./experiments')
 const https = require('./https')
@@ -13,14 +13,13 @@ const tabManager = require('./tab-manager')
 const trackers = require('./trackers')
 const dnrSessionId = require('./dnr-session-rule-id')
 const { fetchAlias, showContextMenuAction } = require('./email-utils')
-const manifestVersion = browserWrapper.getManifestVersion()
 /** @module */
 
 let resolveReadyPromise
 const readyPromise = new Promise(resolve => { resolveReadyPromise = resolve })
 
 export async function onStartup () {
-    if (manifestVersion === 3) {
+    if (BUILD_TARGET === 'chrome-mv3') {
         await dnrSessionId.setSessionRuleOffsetFromStorage()
     }
 
@@ -45,11 +44,15 @@ export async function onStartup () {
     /**
      * in Chrome only, try to initiate the `NewTabTrackerStats` feature
      */
-    if (utils.getBrowserName() === 'chrome') {
+    if (BUILD_TARGET !== 'firefox' && utils.getBrowserName() === 'chrome') {
         try {
             // build up dependencies
             const trackerStats = new TrackerStats()
             const newTabTrackerStats = new NewTabTrackerStats(trackerStats)
+
+            // Assign the singleton instance to the class for re-use in things like debugging
+            // this is an alternative to instantiating the class in the module scope where it lives
+            NewTabTrackerStats.shared = newTabTrackerStats
 
             // restore from storage first
             await newTabTrackerStats.restoreFromStorage()

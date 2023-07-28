@@ -46,7 +46,8 @@ const baseExtensionConfigStringified = JSON.stringify({
                     '?amp'
                 ]
             }
-        }
+        },
+        contentBlocking: { state: 'enabled' }
     }
 })
 

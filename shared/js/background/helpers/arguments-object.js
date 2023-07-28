@@ -1,4 +1,5 @@
-const tldts = require('tldts')
+import { getUserLocale } from '../i18n'
+import { getExtensionURL } from '../wrapper'
 const utils = require('../utils')
 const tabManager = require('../tab-manager')
 const trackerutils = require('../tracker-utils')
@@ -8,7 +9,7 @@ const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
 const browserWrapper = require('../wrapper')
 
-function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
+export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
     if (!tab || !tab.url) {
         return null
@@ -28,6 +29,8 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
 
     const featureSettings = {}
     for (const feature of site.enabledFeatures) {
+        // Prune out the tracker allowlist feature setting as it's not needed and is large
+        if (feature === 'trackerAllowlist') continue
         const featureSetting = utils.getFeatureSettings(feature)
         if (Object.keys(featureSetting).length) {
             featureSettings[feature] = featureSetting
@@ -37,16 +40,11 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     // Extra contextual data required for cookie protection only send if is enabled here
     if (tab.site.isFeatureEnabled('cookie')) {
         cookie = {
-            isThirdParty: false,
+            isThirdPartyFrame: false,
             shouldBlock: false,
-            tabRegisteredDomain: null,
             isTracker: false,
             isFrame: false
         }
-
-        // determine the register domain of the sending tab
-        const parsed = tldts.parse(tab.url)
-        cookie.tabRegisteredDomain = parsed.domain === null ? parsed.hostname : parsed.domain
 
         if (sender.frameId !== 0) {
             cookie.isFrame = true
@@ -57,7 +55,7 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
                 trackerutils.isTracker(documentUrl)) {
                 cookie.isTracker = true
             }
-            cookie.isThirdParty = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
+            cookie.isThirdPartyFrame = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
         }
 
         cookie.shouldBlock = !utils.isCookieExcluded(documentUrl)
@@ -71,9 +69,12 @@ function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         sessionKey,
         site,
         referrer,
+        platform: constants.platform,
         versionString: browserWrapper.getExtensionVersion(),
-        platform: constants.platform
+        locale: getUserLocale(),
+        assets: {
+            regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),
+            boldFontUrl: getExtensionURL('/public/font/ProximaNova-Bold-webfont.woff')
+        }
     }
 }
-
-module.exports = getArgumentsObject

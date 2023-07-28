@@ -4,9 +4,7 @@ These integration tests verify extension features by running a full copy of the 
 browser. Most tests work by loading a [test page](https://privacy-test-pages.glitch.me/) which will check
 that a protection is active.
 
-We currently have two test runners for integration tests:
- 1. [Playwright](https://playwright.dev/) - recommended for new tests. These tests are defined in the `.spec.js` files in this folder.
- 2. Jasmime + puppeteer - legacy tests. Jasmine config is in `config.json` and `config-mv3.json`, and the tests are in the `background` folder.
+We use [Playwright](https://playwright.dev/) as a test runner. Tests are defined in the `.spec.js` files in the `integration-tests` folder.
 
 ## Running tests
 
@@ -19,12 +17,6 @@ Playwright tests can be run with the following npm commands:
 If you want to re-run tests without rebuilding the extension, you can subsequently run:
  - `npx playwright test` to run all tests
  - `npx playright test integration-test/<file>.spec.js` to just run tests in a single file.
-
-### Legacy
-
-Legacy integration tests can be run with the following npm commands:
- - `npm run test-int`
- - `npm run test-int-mv3`
 
 ## Writing tests
 

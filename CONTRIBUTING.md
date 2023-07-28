@@ -76,6 +76,16 @@ cd -
 npm run bundle-config
 ```
 
+### Updating the MV3 blocklists
+
+Manifest v3 (MV3) builds of the extension contain bundled static declarativeNetRequest rulesets and corresponding block lists for Tracker Blocking. Both the default (aka current)
+and a fallback blocklist are included. The fallback blocklist serves as a backup in case the current blocklist is catastrophically broken. To ensure that builds are reproducible,
+the current and fallback blocklist versions are defined in `shared/data/etags.json`. The blocklists are fetched and rulesets generated automatically when the extension is built.
+
+To update the blocklist versions, use the `npm run update-mv3-blocklists` command. Remember to then commit the changes to `shared/data/etags.json` and rebuild the extension.
+
+**Note: The migration to static Tracker Blocking rulesets is in progress. They are not created or used, but will be soon.**
+
 ### Development flow
 
 The `shared` directory contains JS, CSS, and images that are shared by all browsers for things like the options
@@ -84,7 +94,7 @@ page and the dev-tools panel.
 The popup UI comes from [`@duckduckgo/privacy-dashboard`](https://github.com/duckduckgo/privacy-dashboard) - we use `npm`
 to install this package. At build time we copy the pre-built assets from the Dashboard into the extensions output folder. 
 To make changes to the dashboard, see the section below [Locally testing changes to modules](#locally-testing-changes-to-modules).
-The Dashboard also publishes extension-specific [documentation](https://duckduckgo.github.io/privacy-dashboard/example/docs/modules/Browser_Extensions_integration.html)   
+The Dashboard also publishes extension-specific [documentation](https://duckduckgo.github.io/privacy-dashboard/modules/Browser_Extensions_integration.html)   
 
 The background JS is in `shared/js/`
 
@@ -117,7 +127,5 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 - TypeScript Linting: `npm run tsc`
 
 ### Testing
-- Unit tests: `npm test`
+- Unit tests: `npm test` (full docs [here](./unit-test/README.md))
 - Integration tests: `npm run playwright` (full docs [here](./integration-test/README.md))
-- Legacy integration tests: `npm run test-int`
-    - You can filter to one test with: `KEEP_OPEN=1 npm run test-int -- -f integration-test/background/test-fp-fingerprint.js`

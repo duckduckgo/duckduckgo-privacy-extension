@@ -1,4 +1,4 @@
-const bel = require('bel')
+const bel = require('nanohtml')
 
 module.exports = function (isActiveBoolean, klass, dataKey) {
     // make `klass` and `dataKey` optional:

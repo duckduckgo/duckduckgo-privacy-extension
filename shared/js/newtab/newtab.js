@@ -1,5 +1,5 @@
 import constants from '../../data/constants'
-import * as schema from './schema'
+import { incoming, outgoing } from './schema'
 const { events, allowedOrigin, clientPortName } = constants.trackerStats
 
 /**
@@ -74,11 +74,11 @@ window.addEventListener('message', (e) => {
  * This allows developers to come here and read the schemas to figure out what data
  * will be sent.
  *
- * @param {import("zod").infer<schema.outgoing>} msg
+ * @param {import("zod").infer<outgoing>} msg
  */
 function sendToNewTabPage (msg) {
     // try to validate the message
-    const parsed = schema.outgoing.safeParse(msg)
+    const parsed = outgoing.safeParse(msg)
     if (!parsed.success) {
         console.warn('not forwarding as validation failed on', msg)
         return console.error(parsed.error)
@@ -100,7 +100,7 @@ function sendToNewTabPage (msg) {
  * so we take a straight-forward approach to errors. Any communication error found here
  * will result in the NTP receiving a 'disconnect' message so that it can remove its UI
  *
- * @param {import("zod").infer<schema.incoming>} msg
+ * @param {import("zod").infer<incoming>} msg
  */
 let port = null
 function sendToChromeRuntime (msg) {
@@ -113,7 +113,7 @@ function sendToChromeRuntime (msg) {
         }
 
         // now ensure the event is valid
-        const parsed = schema.incoming.safeParse(msg)
+        const parsed = incoming.safeParse(msg)
         if (!parsed.success) {
             console.warn('not forwarding to the chrome runtime because validation failed for:', msg)
             return console.error(parsed.error)

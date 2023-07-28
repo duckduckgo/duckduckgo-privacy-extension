@@ -1,4 +1,3 @@
-require('../../helpers/mock-browser-api')
 const httpsStorage = require('../../../shared/js/background/storage/https').default
 const httpsBloom = require('./../../data/httpsBloom.json')
 const httpsAllowlist = require('./../../data/httpsAllowlist.json')

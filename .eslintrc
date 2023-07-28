@@ -4,7 +4,7 @@
         "indent": ["error", 4],
         "no-shadow": ["error"],
         "no-restricted-syntax": [
-            "warn",
+            "error",
             {
               "selector": ":matches(ImportNamespaceSpecifier, ExportAllDeclaration, ExportNamespaceSpecifier)",
               "message": "Prefer explicit named imports over wildcard (import * as x)"

@@ -13,5 +13,7 @@ module.exports = {
     hasSeenPostInstall: false,
     extiSent: false,
     'tds-etag': null,
-    lastTdsUpdate: 0
+    lastTdsUpdate: 0,
+    fireButtonClearHistoryEnabled: true,
+    fireButtonTabClearEnabled: true
 }

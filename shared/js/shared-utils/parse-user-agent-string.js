@@ -1,5 +1,5 @@
 module.exports = (uaString) => {
-    if (!globalThis.navigator) return
+    if (!globalThis.navigator) return {}
 
     if (!uaString) uaString = globalThis.navigator.userAgent
 

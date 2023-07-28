@@ -1,12 +1,10 @@
-require('../../helpers/mock-browser-api')
-
 const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
-const Site = require('../../../shared/js/background/classes/site')
+const Site = require('../../../shared/js/background/classes/site').default
 const GPC = require('../../../shared/js/background/GPC')
-const gpcContentScript = require('@duckduckgo/content-scope-scripts/src/features/gpc')
-const browserWrapper = require('../../../shared/js/background/wrapper')
+const GpcContentScript = require('@duckduckgo/content-scope-scripts/src/features/gpc').default
+const gpcContentScript = new GpcContentScript('gpc')
 const settings = require('../../../shared/js/background/settings')
 
 const contentScriptUtils = require('@duckduckgo/content-scope-scripts/src/utils.js')
@@ -14,14 +12,11 @@ const contentScriptUtils = require('@duckduckgo/content-scope-scripts/src/utils.
 const testSets = require('@duckduckgo/privacy-reference-tests/global-privacy-control/tests.json')
 const config = require('@duckduckgo/privacy-reference-tests/global-privacy-control/config_reference.json')
 
-const EXT_ID = 'ogigmfedpbpnnbcpgjloacccaibkaoip'
-
 for (const setName of Object.keys(testSets)) {
     const testSet = testSets[setName]
 
     describe(`GPC tests / ${testSet.name} /`, () => {
         beforeAll(() => {
-            spyOn(browserWrapper, 'getExtensionId').and.returnValue(EXT_ID)
             tdsStorageStub.stub({ config })
 
             return tdsStorage.getLists()

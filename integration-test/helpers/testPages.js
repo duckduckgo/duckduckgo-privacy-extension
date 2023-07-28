@@ -1,10 +1,17 @@
-
 const testPageHosts = new Set([
     'privacy-test-pages.glitch.me',
     'broken.third-party.site',
     'good.third-party.site',
-    'bad.third-party.site'
+    'bad.third-party.site',
+    'convert.ad-company.site',
+    // 'www.search-company.site',
+    // 'www.ad-company.site', - redirects to these domains via route overriding seem to hang, so this one has to hit the real server
+    'www.publisher-company.site',
+    'www.payment-company.site'
 ])
+
+export const TEST_SERVER_ORIGIN = 'http://localhost:3000'
+
 /**
  * Route requests to the local test service (privacy-test-pages)
  * @param {import("@playwright/test").Page} page
@@ -19,18 +26,19 @@ export function routeFromLocalhost (page, overrideHandler) {
         const url = new URL(route.request().url())
         if (!testPageHosts.has(url.hostname)) {
             // skip requests for other hosts
-            console.log('skipped localhost routing for', url.href)
+            // console.log('skipped localhost routing for', url.href)
             return route.continue()
         }
-        const requestData = new Request(`http://localhost:3000${url.pathname}${url.search}${url.hash}`, {
+        const headers = await route.request().allHeaders()
+        // set host header so that the test server knows which content to serve
+        headers.host = url.host
+        const requestData = new Request(`${TEST_SERVER_ORIGIN}${url.pathname}${url.search}${url.hash}`, {
             method: route.request().method(),
             body: route.request().postDataBuffer(),
-            headers: await route.request().allHeaders()
+            headers,
+            redirect: 'manual'
         })
         const response = await fetch(requestData)
-        if (!response.ok) {
-            console.log(url.href, requestData.url, response.ok)
-        }
         const responseHeaders = {}
         for (const [key, value] of response.headers.entries()) {
             responseHeaders[key] = value
@@ -40,7 +48,6 @@ export function routeFromLocalhost (page, overrideHandler) {
             // so we have to route this request to the real server.
             return route.continue()
         }
-        await new Promise(resolve => setTimeout(resolve, 500))
         return route.fulfill({
             status: response.status,
             body: await response.text(),

@@ -1,0 +1,116 @@
+{
+  "smartling": {
+    "string_format": "icu",
+    "translate_paths": [
+      {
+        "path": "*/title",
+        "key": "{*}/title",
+        "instruction": "*/note"
+      }
+    ]
+  },
+  "optionsHeader": {
+    "title": "Indstillinger for DuckDuckGo",
+    "note": "Header for options (settings) page"
+  },
+  "optionsSubHeader": {
+    "title": "Søg og browse på nettet uden at blive sporet.",
+    "note": "We allow the user to browse the web without being followed by trackers"
+  },
+  "optionsDesc": {
+    "title": "DuckDuckGo beskytter dit privatliv online med\nprivat søgning,\ntracker-blokering,\nog kryptering af websteder.",
+    "note": "This describes how we protect the user from being tracked online"
+  },
+  "shareFeedback": {
+    "title": "Del feedback",
+    "note": "Click here to share your opinions about this product"
+  },
+  "reportBrokenSite": {
+    "title": "Rapportér ødelagt websted",
+    "note": "Click here to report an issue with a specific site you are trying to use"
+  },
+  "showEmbeddedTweets": {
+    "title": "Vis indlejrede tweets",
+    "note": "Whether the user wants to see Tweets embedded in various webpages or should they be hidden util clicked on"
+  },
+  "globalPrivacyControlAbbr": {
+    "title": "Global Privacy Control (GPC)",
+    "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
+  },
+  "globalPrivacyControlDesc": {
+    "title": "Dine data burde ikke være til salg. Det er vi enige i hos DuckDuckGo.Aktivér indstillingen \"Global Privacy Control\" (GPC), så\nsignalerer vi til websteder, at du foretrækker:",
+    "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
+  },
+  "notSellYourPersonalData": {
+    "title": "Ikke at sælge dine personlige data.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SELL their personal data"
+  },
+  "limitSharingOfPersonalData": {
+    "title": "At begrænse deling af dine personlige data til andre virksomheder.",
+    "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
+  },
+  "globalPrivacyControlDisclaimer": {
+    "title": "<b>Da Global Privacy Control (GPC) er en ny standard,\ngenkender de fleste websteder det endnu ikke, men vi arbejder hårdt\npå at sikre, at det bliver accepteret over hele verden.</b> Websteder er dog kun forpligtet til at reagere på signalet i det omfang, de er forpligtede ifølge loven til at gøre det. ",
+    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+  },
+  "emailProtection": {
+    "title": "E-mailbeskyttelse",
+    "note": "Email protection is a feature that lets the user pick private email addresses for different websites"
+  },
+  "autofillDisabled": {
+    "title": "Automatisk udfyldning er deaktiveret",
+    "note": "When we don't automatically help populate email fields with a private address"
+  },
+  "autofillEnabled": {
+    "title": "Automatisk udfyldning aktiveret for <strong class=\"js-userdata-container\">{userName}</strong>",
+    "note": "When we do help populate email addresses for (your email address here)"
+  },
+  "noUnprotectedSitesAdded": {
+    "title": "Ingen ubeskyttede websteder tilføjet",
+    "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
+  },
+  "unprotectedSites": {
+    "title": "Ubeskyttede websteder",
+    "note": "Header for the list of websites where our privacy protections are disabled"
+  },
+  "unprotectedSitesDesc": {
+    "title": "Disse websteder vil ikke blive forbedret ved Beskyttelse af privatlivet.",
+    "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
+  },
+  "addUnprotectedSite": {
+    "title": "Tilføj ubeskyttet websted",
+    "note": "Header for the user to add a site to the uprotected list"
+  },
+  "enterURL": {
+    "title": "Indtast URL",
+    "note": "Promopt to enter the website URL here"
+  },
+  "invalidURL": {
+    "title": "Ugyldig URL",
+    "note": "The URL the user entered is not a valid website address"
+  },
+  "fireButtonHeading": {
+    "title": "Fire Button",
+    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonDesc": {
+    "title": "Fire Button gør det nemt at rydde dine faner, browserhistorik og data. Du kan kontrollere, om den skal rydde browserhistorik og data, og om den skal lukke dine aktuelle faner eller ej.",
+    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+  },
+  "fireButtonClearHistoryTitle": {
+    "title": "Ryd historik",
+    "note": "Title for option toggle"
+  },
+  "fireButtonClearHistoryDesc": {
+    "title": "Bemærk: Browserhistorikken kan kun slettes for et bestemt tidsrum (f.eks. \"sidste time\", eller \"altid\"), og ikke for hvert websted.",
+    "note": "Extra information about the clear history option toggle."
+  },
+  "fireButtonTabClosureTitle": {
+    "title": "Luk fane",
+    "note": "Title for option toggle. Close is a verb."
+  },
+  "burnPageTitle": {
+    "title": "Afbrænding er i gang ...",
+    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+  }
+}

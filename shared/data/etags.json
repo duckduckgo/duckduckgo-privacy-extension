@@ -1,1 +1,5 @@
-{"config-etag":"W/\"908619556a78f118d1c2190d7d45433b\""}
+{
+  "config-etag": "W/\"cc137ac829435e649d6132e9c87cfffe\"",
+  "current-mv3-tds-etag": "3c222272c0e8376cded30b095e62ea51",
+  "fallback-mv3-tds-etag": "da18c835eadd0a76dbe9b09b7c4e8608"
+}

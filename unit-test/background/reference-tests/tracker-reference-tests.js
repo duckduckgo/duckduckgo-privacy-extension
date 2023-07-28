@@ -1,12 +1,10 @@
-const fs = require('fs')
-const path = require('path')
+import refSurrogates from '@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/surrogates.txt'
 
 const tds = require('../../../shared/js/background/trackers')
 const tdsStorageStub = require('../../helpers/tds')
 
 const refTrackers = require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_radar_reference.json')
 const refTests = require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/domain_matching_tests.json')
-const refSurrogates = fs.readFileSync(path.join(__dirname, '../../../node_modules/@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/surrogates.txt'), 'utf8')
 
 describe('Tracker reference tests:', () => {
     beforeAll(() => {

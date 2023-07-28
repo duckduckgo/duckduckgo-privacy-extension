@@ -1,10 +1,13 @@
-import '../helpers/mock-browser-api'
+// TODO remove the * imports
+import browser from 'webextension-polyfill'
+// eslint-disable-next-line no-restricted-syntax
 import * as allowlistedTrackers from '@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json'
+// eslint-disable-next-line no-restricted-syntax
 import * as tds from '../data/tds.json'
-import * as browserWrapper from '../../shared/js/background/wrapper'
+// eslint-disable-next-line no-restricted-syntax
 import * as testConfig from '../data/extension-config.json'
+// eslint-disable-next-line no-restricted-syntax
 import * as tdsStorageStub from '../helpers/tds'
-import * as startup from '../../shared/js/background/startup'
 import settings from '../../shared/js/background/settings'
 import tabManager from '../../shared/js/background/tab-manager'
 import tdsStorage from '../../shared/js/background/storage/tds'
@@ -13,8 +16,7 @@ import {
     ensureServiceWorkerInitiatedRequestExceptions
 } from '../../shared/js/background/dnr-service-worker-initiated'
 import {
-    onConfigUpdate,
-    SETTING_PREFIX
+    onConfigUpdate
 } from '../../shared/js/background/dnr-config-rulesets'
 import {
     refreshUserAllowlistRules,
@@ -23,7 +25,8 @@ import {
 import {
     getMatchDetails,
     SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
-    USER_ALLOWLIST_RULE_ID
+    USER_ALLOWLIST_RULE_ID,
+    SETTING_PREFIX
 } from '../../shared/js/background/dnr-utils'
 import {
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
@@ -176,10 +179,6 @@ describe('declarativeNetRequest', () => {
         onUpdateListeners.set('tds', [onConfigUpdate])
         tdsStorage.getLists().then(lists => trackers.setLists(lists))
 
-        spyOn(startup, 'ready').and.callFake(
-            () => Promise.resolve()
-        )
-
         spyOn(settings, 'getSetting').and.callFake(
             name => settingsStorage.get(name)
         )
@@ -242,12 +241,10 @@ describe('declarativeNetRequest', () => {
             () => Array.from(sessionRulesByRuleId.values())
         )
 
-        spyOn(browserWrapper, 'getExtensionVersion').and.callFake(
-            () => extensionVersion
-        )
-        spyOn(browserWrapper, 'getManifestVersion').and.callFake(
-            () => 3
-        )
+        spyOn(browser.runtime, 'getManifest').and.callFake(() => ({
+            version: extensionVersion,
+            manifest_version: 3
+        }))
     })
 
     beforeEach(() => {
@@ -696,18 +693,20 @@ describe('declarativeNetRequest', () => {
             id: ruleId,
             priority: rulePriority,
             action: { type: 'allow' },
-            condition: { tabIds: [-1], initiatorDomains: ['example.com'] }
+            condition: { tabIds: [-1], initiatorDomains: ['example.com', 'google.com', 'suntrust.com'] }
         }
+        const tempUnprotected = config.unprotectedTemporary
 
         // The rule won't exist initially.
         expect(updateSessionRulesObserver.calls.count()).toEqual(0)
         expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
 
-        // if there are no serviceworker exceptions, no rule should be created
+        // if there are no serviceworker exceptions, or unprotected sites, no rule should be created
         config.features.serviceworkerInitiatedRequests = {
             state: 'enabled',
             exceptions: []
         }
+        config.unprotectedTemporary = []
         await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(1)
         expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
@@ -718,6 +717,7 @@ describe('declarativeNetRequest', () => {
             state: 'disabled',
             exceptions: [{ domain: 'example.com', reason: '' }]
         }
+        config.unprotectedTemporary = tempUnprotected
         await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(2)
         expect(sessionRulesByRuleId.has(ruleId)).toBeTrue()
@@ -741,9 +741,12 @@ describe('declarativeNetRequest', () => {
         // If enabled and there are no domain exceptions, the rule should be
         // removed.
         config.features.serviceworkerInitiatedRequests.exceptions = []
+        config.unprotectedTemporary = []
         await ensureServiceWorkerInitiatedRequestExceptions(config)
         expect(updateSessionRulesObserver.calls.count()).toEqual(5)
         expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
+
+        config.unprotectedTemporary = tempUnprotected
     })
 
     it('getMatchDetails', async () => {

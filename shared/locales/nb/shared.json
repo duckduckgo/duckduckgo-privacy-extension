@@ -1,0 +1,31 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "options" : {
+    "title" : "Alternativer",
+    "note" : "Header for the interface where user can configure various options"
+  },
+  "learnMore" : {
+    "title" : "Finn ut mer",
+    "note" : "Click here to learn more about how our services work"
+  },
+  "enable" : {
+    "title" : "Aktiver",
+    "note" : "Button prompt to turn something on, i.e. click on this to enable"
+  },
+  "disable" : {
+    "title" : "Slå av",
+    "note" : "Button prompt to turn something off, i.e. click on this to disable"
+  },
+  "add" : {
+    "title" : "Legg til",
+    "note" : "To add something to a list"
+  }
+}

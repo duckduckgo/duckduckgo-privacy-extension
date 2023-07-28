@@ -1,11 +1,12 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { loadTestConfig, loadTestTds } from './helpers/testConfig'
-import { routeFromLocalhost } from './helpers/testPages'
+import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages'
 
 const testPageDomain = 'privacy-test-pages.glitch.me'
 const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
+const thirdPartyAd = 'convert.ad-company.site'
 
 async function waitForAllResults (page) {
     while ((await page.$$('#tests-details > li > span > ul')).length < 2) {
@@ -40,6 +41,11 @@ test.describe('Storage blocking Tests', () => {
                 thirdparty_firstparty_headerdata: expectUnmodified('allows 1st party HTTP cookies from non-tracker frames'),
                 jsdata: expectUnmodified('does not block 3rd party JS cookies not on block list')
             },
+            [thirdPartyAd]: {
+                top_thirdparty_headerdata: expectUnmodified('allows 3rd party HTTP cookies not on block list'),
+                thirdparty_firstparty_headerdata: expectUnmodified('allows 1st party HTTP cookies from non-tracker frames'),
+                jsdata: expectUnmodified('does not block 3rd party JS cookies not on block list')
+            },
             [thirdPartyTracker]: {
                 thirdpartytracker_thirdparty_headerdata: expectUnmodified('allows 3rd party tracker HTTP cookies from tracker frames'),
                 top_tracker_headerdata: expectBlocked('blocks 3rd party HTTP cookies for trackers'),
@@ -55,14 +61,19 @@ test.describe('Storage blocking Tests', () => {
             if (jsCookies.has(cookie.name)) {
                 expect(cookie.expires - nowSeconds).toBeGreaterThan(0)
                 expect(cookie.expires - nowSeconds).toBeLessThan(604800)
+                if (cookie.domain === thirdPartyTracker) {
+                    expect(cookie.expires - nowSeconds, `cookie expires for ${cookie.domain}`).toBeLessThan(86400)
+                } else if (cookie.domain === thirdPartyAd) {
+                    expect(cookie.expires - nowSeconds, `cookie expires for ${cookie.domain}`).toBeGreaterThan(86400)
+                }
             }
         }
     })
 
     test.describe('Cookie blocking tests', () => {
-        async function runStorageTest (page, domain) {
+        async function runStorageTest (page, origin) {
             await page.bringToFront()
-            await page.goto(`https://${domain}/privacy-protections/storage-blocking/?store`)
+            await page.goto(`${origin}/privacy-protections/storage-blocking/?store`)
             await waitForAllResults(page)
             await page.click('#retrive')
             await waitForAllResults(page)
@@ -87,7 +98,7 @@ test.describe('Storage blocking Tests', () => {
             await backgroundWait.forAllConfiguration(backgroundPage)
             await loadTestConfig(backgroundPage, 'storage-blocking.json')
             await loadTestTds(backgroundPage, 'mock-tds.json')
-            // await routeFromLocalhost(page)
+            await routeFromLocalhost(page)
 
             // reset allowlists
             await backgroundPage.evaluate(async (domain) => {
@@ -106,7 +117,7 @@ test.describe('Storage blocking Tests', () => {
         })
 
         test(`On ${thirdPartyTracker} does not block iFrame tracker cookies from same entity`, async ({ page }) => {
-            const results = await runStorageTest(page, thirdPartyTracker)
+            const results = await runStorageTest(page, `https://${thirdPartyTracker}`)
             assertCookieAllowed(results, 'tracking third party iframe - JS cookie')
         })
 
@@ -120,7 +131,7 @@ test.describe('Storage blocking Tests', () => {
                     value: true
                 })
             }, testPageDomain)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             assertCookieAllowed(results, 'safe third party iframe - JS cookie')
             assertCookieAllowed(results, 'tracking third party header cookie')
         })
@@ -137,7 +148,7 @@ test.describe('Storage blocking Tests', () => {
                     value: config
                 })
             }, thirdPartyTracker)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             assertCookieAllowed(results, 'tracking third party header cookie')
         })
 
@@ -153,7 +164,7 @@ test.describe('Storage blocking Tests', () => {
                     value: config
                 })
             }, testPageDomain)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             assertCookieAllowed(results, 'tracking third party header cookie')
         })
 
@@ -169,7 +180,7 @@ test.describe('Storage blocking Tests', () => {
                     value: config
                 })
             }, testPageDomain)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             assertCookieAllowed(results, 'tracking third party header cookie')
         })
 
@@ -191,9 +202,14 @@ test.describe('Storage blocking Tests', () => {
                 })
             }, testPageDomain)
             // await page.waitForTimeout(500)
-            const results = await runStorageTest(page, testPageDomain)
+            const results = await runStorageTest(page, `https://${testPageDomain}`)
             // await page.waitForTimeout(50000)
             assertCookieBlocked(results, 'tracking third party header cookie')
+        })
+
+        test('protections are not active on localhost', async ({ page }) => {
+            const results = await runStorageTest(page, TEST_SERVER_ORIGIN)
+            assertCookieAllowed(results, 'tracking third party header cookie')
         })
     })
 })

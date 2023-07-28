@@ -13,15 +13,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/* global DEBUG, RELOADER, BUILD_TARGET */
 
 import { onStartup } from './startup'
+import FireButton from './features/fire-button'
+import initDebugBuild from './devbuild'
+import initReloader from './devbuild-reloader'
+import tabManager from './tab-manager'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events')
 const settings = require('./settings')
-require('./dnr-config-rulesets')
-require('./script-injection')
+if (BUILD_TARGET === 'chrome-mv3') {
+    require('./dnr-config-rulesets')
+    require('./script-injection')
+}
 
 settings.ready().then(() => {
     onStartup()
 })
+
+/**
+ * @type {{
+ *  fireButton?: FireButton;
+ * }}
+ */
+const features = {}
+
+if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3') {
+    features.fireButton = new FireButton({ settings, tabManager })
+}
+console.log('Loaded features:', features)
+// @ts-ignore
+self.features = features
+
+// Optional features controlled by build flags.
+// If these flags are set to false, the whole function is tree-shaked from the build.
+DEBUG && initDebugBuild()
+RELOADER && initReloader()

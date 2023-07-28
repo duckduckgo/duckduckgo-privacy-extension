@@ -196,7 +196,7 @@ describe('Tracker Utilities', () => {
             name: 'target is a tracker, and referrer has a subdomain',
             referrer: 'http://subdomain.siteA.com/article/1',
             target: 'https://google-analytics.com/some/path',
-            expectedReferrer: 'http://sitea.com/'
+            expectedReferrer: 'http://subdomain.sitea.com/'
         },
         {
             name: 'target is not a tracker, referrer should keep subdomain',
@@ -244,7 +244,7 @@ describe('Tracker Utilities', () => {
             name: 'target is a tracker, referrer contains port',
             referrer: 'http://subdomain.siteA.com:4000/article/1',
             target: 'https://google-analytics.com/some/path',
-            expectedReferrer: 'http://sitea.com:4000/'
+            expectedReferrer: 'http://subdomain.sitea.com:4000/'
         },
         {
             name: 'target is a tracker, referrer is localhost',

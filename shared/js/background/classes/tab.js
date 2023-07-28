@@ -14,7 +14,7 @@
  *      }
  */
 
-const Site = require('./site')
+const Site = require('./site').default
 const { Tracker } = require('./tracker')
 const HttpsRedirects = require('./https-redirects')
 const Companies = require('../companies')
@@ -192,6 +192,30 @@ class Tab {
 
     set ctlYouTube (value) {
         this._tabState.setValue('ctlYouTube', value)
+    }
+
+    get ctlFacebookPlaceholderShown () {
+        return this._tabState.ctlFacebookPlaceholderShown
+    }
+
+    set ctlFacebookPlaceholderShown (value) {
+        this._tabState.setValue('ctlFacebookPlaceholderShown', value)
+    }
+
+    get ctlFacebookLogin () {
+        return this._tabState.ctlFacebookLogin
+    }
+
+    set ctlFacebookLogin (value) {
+        this._tabState.setValue('ctlFacebookLogin', value)
+    }
+
+    get debugFlags () {
+        return this._tabState.debugFlags
+    }
+
+    set debugFlags (value) {
+        this._tabState.setValue('debugFlags', value)
     }
 
     /**
