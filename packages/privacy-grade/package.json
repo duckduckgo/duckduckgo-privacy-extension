@@ -4,12 +4,11 @@
   "description": "DuckDuckGo's privacy grade algorithm",
   "main": "index.js",
   "scripts": {
-    "test": "grunt test",
-    "test-debug": "grunt test --type=dev --test-debug",
+    "pretest": "esbuild --bundle --target=chrome92 --outdir=build/ test/*.js test/**/*.js",
+    "test": "karma start karma.conf.js",
     "tsc": "tsc",
     "lint": "eslint src test && npm run tsc",
-    "lint-fix": "eslint src test --fix",
-    "updateLists": "grunt updateLists"
+    "lint-fix": "eslint src test --fix"
   },
   "author": "",
   "license": "Apache-2.0",
@@ -17,12 +16,6 @@
     "tldts": "^6.0.12"
   },
   "devDependencies": {
-    "grunt": "1.6.1",
-    "grunt-browserify": "6.0.0",
-    "grunt-cli": "1.4.3",
-    "grunt-exec": "3.0.0",
-    "grunt-karma": "4.0.2",
-    "load-grunt-tasks": "5.1.0",
-    "url-parse-lax": "^3.0.0"
+    "esbuild": "^0.18.16"
   }
 }
