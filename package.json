@@ -35,7 +35,7 @@
     "devDependencies": {
         "@fingerprintjs/fingerprintjs": "^4.0.0",
         "@playwright/test": "^1.36.1",
-        "@types/chrome": "0.0.241",
+        "@types/chrome": "0.0.242",
         "@types/jasmine": "^4.3.5",
         "@types/webextension-polyfill": "^0.10.1",
         "asana": "github:Asana/node-asana",
