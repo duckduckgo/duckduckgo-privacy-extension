@@ -53,7 +53,7 @@
         "karma-chrome-launcher": "3.2.0",
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
-        "node-fetch": "^3.3.1",
+        "node-fetch": "^3.3.2",
         "puppeteer": "^19.3.0",
         "sass": "^1.64.1",
         "standard": "17.1.0",
