@@ -1,6 +1,11 @@
 const defaultSettings = require('../../data/defaultSettings')
 const browserWrapper = require('./wrapper')
 
+const onSettingUpdate = new EventTarget()
+
+// @ts-expect-error Workaround for the tests in unit-tests/node/reference-tests.
+if (typeof CustomEvent === 'undefined') globalThis.CustomEvent = Event
+
 /**
  * Settings whose defaults can by managed by the system administrator
  */
@@ -97,7 +102,7 @@ function buildSettingsFromDefaults () {
 }
 
 function syncSettingTolocalStorage () {
-    browserWrapper.syncToStorage({ settings })
+    return browserWrapper.syncToStorage({ settings })
 }
 
 function getSetting (name) {
@@ -123,7 +128,9 @@ function updateSetting (name, value) {
     }
 
     settings[name] = value
-    syncSettingTolocalStorage()
+    syncSettingTolocalStorage().then(() => {
+        onSettingUpdate.dispatchEvent(new CustomEvent(name, { detail: value }))
+    })
 }
 
 function removeSetting (name) {
@@ -148,5 +155,6 @@ module.exports = {
     updateSetting,
     removeSetting,
     logSettings,
-    ready
+    ready,
+    onSettingUpdate
 }

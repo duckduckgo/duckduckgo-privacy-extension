@@ -287,3 +287,63 @@ describe('complex install workflow cases', () => {
             })
     })
 })
+
+describe('atb.getUninstallURL()', () => {
+    it('should update the uninstall URL correctly as the ATB values are updated', async () => {
+        settingHelper.stub({ atb: null })
+
+        let uninstallUrl = null
+        const setUninstallURLSpy = spyOn(browser.runtime, 'setUninstallURL').and.callFake(url => {
+            uninstallUrl = url
+        })
+
+        const checkUninstallUrl = (expectedAtb, expectedSetAtb) => {
+            const { origin, pathname, searchParams } = new URL(uninstallUrl)
+
+            expect(origin).toEqual('https://duckduckgo.com')
+            expect(pathname).toEqual('/atb.js')
+            expect(searchParams.get('uninstall')).toEqual('1')
+            expect(searchParams.get('action')).toEqual('survey')
+            expect(searchParams.get('atb')).toEqual(expectedAtb)
+            expect(searchParams.get('set_atb')).toEqual(expectedSetAtb)
+            expect(searchParams.get('browser')).toEqual('Chrome')
+            expect(searchParams.get('bv')).toEqual('108')
+            expect(searchParams.get('v')).toEqual('1234.56')
+        }
+
+        // Initial state.
+        expect(settings.getSetting('atb')).toEqual(null)
+        expect(setUninstallURLSpy).not.toHaveBeenCalled()
+        expect(uninstallUrl).toEqual(null)
+
+        // Before the atb is set.
+        uninstallUrl = await atb.getSurveyURL()
+        checkUninstallUrl(null, null)
+
+        // After the atb is set.
+        stubLoadJSON({ returnedAtb: 'v119-8' })
+        await atb.setInitialVersions()
+        await new Promise(resolve => setTimeout(resolve, 0))
+        expect(settings.getSetting('atb')).toEqual('v119-8')
+        expect(setUninstallURLSpy).toHaveBeenCalledTimes(1)
+        checkUninstallUrl('v119-8', null)
+
+        // After set_atb is set.
+        await atb.updateSetAtb()
+        await new Promise(resolve => setTimeout(resolve, 0))
+        expect(setUninstallURLSpy).toHaveBeenCalledTimes(2)
+        checkUninstallUrl('v119-8', 'v119-8')
+
+        // After atb is updated.
+        settings.updateSetting('atb', 'v119-8a')
+        await new Promise(resolve => setTimeout(resolve, 0))
+        expect(setUninstallURLSpy).toHaveBeenCalledTimes(3)
+        checkUninstallUrl('v119-8a', 'v119-8')
+
+        // After set_atb is updated.
+        settings.updateSetting('set_atb', 'v119-8b')
+        await new Promise(resolve => setTimeout(resolve, 0))
+        expect(setUninstallURLSpy).toHaveBeenCalledTimes(4)
+        checkUninstallUrl('v119-8a', 'v119-8b')
+    })
+})

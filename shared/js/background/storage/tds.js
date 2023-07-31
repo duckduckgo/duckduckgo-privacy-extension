@@ -30,6 +30,7 @@ class TDSStorage {
 
         this.isInstalling = false
 
+        // TODO: Use an EventTarget instead.
         this._onUpdatedListeners = new Map()
 
         this._onReadyResolvers = new Map()

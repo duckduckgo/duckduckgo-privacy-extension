@@ -13,7 +13,12 @@ const stub = (startingVals) => {
         .and.callFake(key => settingObj[key])
 
     const update = spyOn(origSettings, 'updateSetting')
-        .and.callFake((key, val) => { settingObj[key] = val })
+        .and.callFake((key, val) => {
+            settingObj[key] = val
+            origSettings.onSettingUpdate.dispatchEvent(
+                new CustomEvent(key, { detail: val })
+            )
+        })
 
     const remove = spyOn(origSettings, 'removeSetting')
         .and.callFake(key => { delete settingObj[key] })
