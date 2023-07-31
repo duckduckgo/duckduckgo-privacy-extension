@@ -57,7 +57,7 @@
         "puppeteer": "^19.3.0",
         "sass": "^1.64.1",
         "standard": "17.1.0",
-        "timekeeper": "^2.1.1",
+        "timekeeper": "^2.3.1",
         "typescript": "^5.1.6",
         "webextension-polyfill": "^0.10.0",
         "yargs": "^17.7.2"
