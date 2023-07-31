@@ -33,7 +33,7 @@
         "update-mv3-blocklists": "node scripts/updateMV3Blocklists.mjs"
     },
     "devDependencies": {
-        "@fingerprintjs/fingerprintjs": "^3.4.2",
+        "@fingerprintjs/fingerprintjs": "^4.0.0",
         "@playwright/test": "^1.36.1",
         "@types/chrome": "0.0.241",
         "@types/jasmine": "^4.3.5",
