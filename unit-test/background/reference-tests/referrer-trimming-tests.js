@@ -3,8 +3,10 @@ const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const tabManager = require('../../../shared/js/background/tab-manager')
+const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object')
 const JsReferrerProtection = require('@duckduckgo/content-scope-scripts/src/features/referrer').default
 const jsReferrerProtection = new JsReferrerProtection('jsReferrer')
+const { isFeatureBroken } = require('@duckduckgo/content-scope-scripts/src/utils')
 
 const limitReferrerData = require('../../../shared/js/background/events/referrer-trimming')
 
@@ -82,8 +84,6 @@ for (const setName of Object.keys(testSets)) {
                         })
                     }
 
-                    const tab = tabManager.get({ tabId: 1 })
-
                     const FakeDocument = function () {}
                     Object.defineProperty(FakeDocument.prototype, 'referrer', {
                         get: () => test.referrerValue,
@@ -91,16 +91,17 @@ for (const setName of Object.keys(testSets)) {
                         enumerable: true,
                         writeable: true
                     })
-                    FakeDocument.prototype.location = {
-                        url: test.frameURL || test.siteURL
-                    }
                     const orgDocument = globalThis.Document
 
                     // replacing real document and Document with fake ones
                     globalThis.Document = FakeDocument
                     spyOnProperty(document, 'referrer', 'get').and.returnValue(test.referrerValue)
+                    spyOnProperty(document, 'URL', 'get').and.returnValue(test.frameURL || test.siteURL)
 
-                    jsReferrerProtection.init({ referrer: tab.referrer })
+                    const args = getArgumentsObject(1, { url: test.siteURL, frameId: 0 }, test.siteURL, 'abc123')
+                    if (!isFeatureBroken(args, 'referrer')) {
+                        jsReferrerProtection.callInit(args)
+                    }
 
                     // clean up
                     globalThis.Document = orgDocument
