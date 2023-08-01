@@ -25,10 +25,17 @@ export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         site.enabledFeatures = site.enabledFeatures.filter(feature => aboutBlankEnabled.includes(feature))
     }
 
+    site.enabledFeatures = site.enabledFeatures.filter((feature) => {
+        // Prune out the tracker allowlist feature setting as it's not needed and is large
+        if (feature === 'trackerAllowlist') return false
+
+        // Disable referrer trimming when we're not changing the referrer for the tab
+        if (feature === 'referrer' && !tab.referrer?.referrer) return false
+        return true
+    })
+
     const featureSettings = {}
     for (const feature of site.enabledFeatures) {
-        // Prune out the tracker allowlist feature setting as it's not needed and is large
-        if (feature === 'trackerAllowlist') continue
         const featureSetting = utils.getFeatureSettings(feature)
         if (Object.keys(featureSetting).length) {
             featureSettings[feature] = featureSetting
