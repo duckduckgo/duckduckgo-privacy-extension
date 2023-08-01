@@ -91,14 +91,12 @@ for (const setName of Object.keys(testSets)) {
                         enumerable: true,
                         writeable: true
                     })
-                    FakeDocument.prototype.location = {
-                        url: test.frameURL || test.siteURL
-                    }
                     const orgDocument = globalThis.Document
 
                     // replacing real document and Document with fake ones
                     globalThis.Document = FakeDocument
                     spyOnProperty(document, 'referrer', 'get').and.returnValue(test.referrerValue)
+                    spyOnProperty(document, 'URL', 'get').and.returnValue(test.frameURL || test.siteURL)
 
                     jsReferrerProtection.init({ referrer: tab.referrer })
 
