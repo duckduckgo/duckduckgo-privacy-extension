@@ -166,6 +166,7 @@ const ATB = (() => {
         },
 
         updateATBValues: () => {
+            const browserInfo = parseUserAgentString()
             // wait until settings is ready to try and get atb from the page
             return settings.ready()
                 .then(ATB.setInitialVersions)
@@ -183,7 +184,8 @@ const ATB = (() => {
                     if (!atb &&
                         settings.getSetting('atb') &&
                         utils.getBrowserName() === 'chrome' &&
-                        getUserLocale() === 'en') {
+                        getUserLocale() === 'en' &&
+                        browserInfo.os !== 'l') {
                         atb = ATB.getChromeCounteractExpATB(settings.getSetting('atb'))
                     }
 
