@@ -84,8 +84,6 @@ for (const setName of Object.keys(testSets)) {
                         })
                     }
 
-                    const tab = tabManager.get({ tabId: 1 })
-
                     const FakeDocument = function () {}
                     Object.defineProperty(FakeDocument.prototype, 'referrer', {
                         get: () => test.referrerValue,
