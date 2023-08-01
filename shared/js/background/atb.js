@@ -47,7 +47,6 @@ const ATB = (() => {
             if (!atbSetting) {
                 atbSetting = ATB_ERROR_COHORT
                 settings.updateSetting('atb', ATB_ERROR_COHORT)
-                ATB.setOrUpdateATBdnrRule(ATB_ERROR_COHORT)
                 errorParam = '&e=1'
             }
 
@@ -63,10 +62,8 @@ const ATB = (() => {
 
                 if (res.data.updateVersion) {
                     settings.updateSetting('atb', res.data.updateVersion)
-                    ATB.setOrUpdateATBdnrRule(res.data.updateVersion)
                 } else if (atbSetting === ATB_ERROR_COHORT) {
                     settings.updateSetting('atb', res.data.version)
-                    ATB.setOrUpdateATBdnrRule(res.data.version)
                 }
             })
         },
@@ -105,7 +102,6 @@ const ATB = (() => {
             const url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
             return load.JSONfromExternalFile(url).then((res) => {
                 settings.updateSetting('atb', res.data.version)
-                ATB.setOrUpdateATBdnrRule(res.data.version)
             }, () => {
                 console.log('couldn\'t reach atb.js for initial server call, trying again')
                 numTries += 1
@@ -189,7 +185,6 @@ const ATB = (() => {
 
                     if (atb) {
                         settings.updateSetting('atb', atb)
-                        ATB.setOrUpdateATBdnrRule(atb)
                     }
 
                     ATB.finalizeATB(params)
@@ -280,9 +275,23 @@ const ATB = (() => {
     }
 })()
 
-settings.ready().then(async () => {
+settings.ready().then(() => {
+    const updateUninstallURL =
+        async () => { browserWrapper.setUninstallURL(await ATB.getSurveyURL()) }
+
     // set initial uninstall url
-    browserWrapper.setUninstallURL(await ATB.getSurveyURL())
+    updateUninstallURL()
+
+    // Ensure the uninstall URL and the ATB declarativeNetRequest rules are also
+    // kept up to date as the ATB values are updated.
+    settings.onSettingUpdate.addEventListener(
+        'atb', event => {
+            const atb = event instanceof CustomEvent ? event.detail : undefined
+            updateUninstallURL()
+            ATB.setOrUpdateATBdnrRule(atb)
+        }
+    )
+    settings.onSettingUpdate.addEventListener('set_atb', updateUninstallURL)
 })
 
 export default ATB

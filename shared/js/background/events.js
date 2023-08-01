@@ -519,8 +519,6 @@ browserWrapper.createAlarm('updateHTTPSLists', {
 browserWrapper.createAlarm('updateLists', {
     periodInMinutes: tdsStorage.updatePeriodInMinutes
 })
-// update uninstall URL every 10 minutes
-browserWrapper.createAlarm('updateUninstallURL', { periodInMinutes: 10 })
 // remove expired HTTPS service entries
 browserWrapper.createAlarm('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
 // Rotate the user agent spoofed
@@ -538,8 +536,6 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
         } catch (e) {
             console.log(e)
         }
-    } else if (alarmEvent.name === 'updateUninstallURL') {
-        browser.runtime.setUninstallURL(await ATB.getSurveyURL())
     } else if (alarmEvent.name === 'updateLists') {
         await settings.ready()
 

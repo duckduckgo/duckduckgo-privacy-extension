@@ -30,7 +30,7 @@ export function getManifestVersion () {
 }
 
 export function syncToStorage (data) {
-    browser.storage.local.set(data)
+    return browser.storage.local.set(data)
 }
 
 // @ts-ignore
