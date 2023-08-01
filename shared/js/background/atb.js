@@ -185,7 +185,7 @@ const ATB = (() => {
                         settings.getSetting('atb') &&
                         utils.getBrowserName() === 'chrome' &&
                         getUserLocale() === 'en' &&
-                        browserInfo.os !== 'l') {
+                        browserInfo.os === 'w') {
                         atb = ATB.getChromeCounteractExpATB(settings.getSetting('atb'))
                     }
 
