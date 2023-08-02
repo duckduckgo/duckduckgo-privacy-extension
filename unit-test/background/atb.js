@@ -254,8 +254,8 @@ describe('complex install workflow cases', () => {
         return atb.updateATBValues()
             .then(() => {
                 validateExtiWasHit('v112-2')
-                expect(settings.getSetting('atb')).toMatch(/v112-2v[jk]/)
-                expect(settings.getSetting('set_atb')).toMatch(/v112-2v[jk]/)
+                expect(settings.getSetting('atb')).toMatch(/v112-2(v[jk])?/)
+                expect(settings.getSetting('set_atb')).toMatch(/v112-2(v[jk])?/)
             })
     })
     it('should handle the install process correctly if there\'s DDG pages open that pass an ATB param', () => {
@@ -282,8 +282,8 @@ describe('complex install workflow cases', () => {
         return atb.updateATBValues()
             .then(() => {
                 validateExtiWasHit('v112-2')
-                expect(settings.getSetting('atb')).toMatch(/v112-2v[jk]/)
-                expect(settings.getSetting('set_atb')).toMatch(/v112-2v[jk]/)
+                expect(settings.getSetting('atb')).toMatch(/v112-2(v[jk])?/)
+                expect(settings.getSetting('set_atb')).toMatch(/v112-2(v[jk])?/)
             })
     })
 })
