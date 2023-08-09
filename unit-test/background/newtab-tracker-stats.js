@@ -90,6 +90,7 @@ describe('NewTabTrackerStats', () => {
 
         // The `A` and `B` should be grouped into the `Other` category
         expect(output).toEqual({
+            atb: undefined,
             totalCount: 7,
             totalPeriod: 'install-time',
             trackerCompaniesPeriod: 'last-day',
