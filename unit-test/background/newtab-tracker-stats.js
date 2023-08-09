@@ -1,4 +1,5 @@
 const { NewTabTrackerStats } = require('../../shared/js/background/newtab-tracker-stats')
+const settings = require('../../shared/js/background/settings')
 const { TrackerStats } = require('../../shared/js/background/classes/tracker-stats')
 const constants = require('../../shared/data/constants')
 const testTDS = require('../data/tds.json')
@@ -11,7 +12,7 @@ const HOUR = MIN * 60
 describe('NewTabTrackerStats', () => {
     it('produces a filtered output for multiple companies', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats)
+        const newtab = new NewTabTrackerStats(stats, settings)
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
 
@@ -35,7 +36,7 @@ describe('NewTabTrackerStats', () => {
     })
     it('only lists the names of entries in the top 100 list', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats)
+        const newtab = new NewTabTrackerStats(stats, settings)
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
 
@@ -65,7 +66,7 @@ describe('NewTabTrackerStats', () => {
     })
     it('combines none-top entries', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats)
+        const newtab = new NewTabTrackerStats(stats, settings)
 
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities, 5)
@@ -126,7 +127,7 @@ describe('sending data', () => {
     })
     it('should debounce sending data after recording tracker events', () => {
         const stats = new TrackerStats()
-        const newtab = new NewTabTrackerStats(stats)
+        const newtab = new NewTabTrackerStats(stats, settings)
 
         // @ts-ignore
         newtab.assignTopCompanies(testTDS.entities)
@@ -187,7 +188,7 @@ describe('incoming events', () => {
             totalCount: 6
         })
 
-        newtab = new NewTabTrackerStats(stats)
+        newtab = new NewTabTrackerStats(stats, settings)
         sendSpy = spyOn(newtab, '_publish')
         jasmine.clock().install()
     })
@@ -228,8 +229,8 @@ describe('alarms', () => {
             }],
             totalCount: 6
         })
-
-        newtab = new NewTabTrackerStats(stats)
+        spyOn(settings, 'getSetting').and.returnValue('v374')
+        newtab = new NewTabTrackerStats(stats, settings)
         sendSpy = spyOn(newtab, '_publish')
         jasmine.clock().install()
     })
@@ -248,6 +249,7 @@ describe('alarms', () => {
 
         const display = newtab.toDisplayData(10, callTime)
         expect(display).toEqual({
+            atb: 'v374',
             totalCount: 6,
             totalPeriod: 'install-time',
             trackerCompaniesPeriod: 'last-day',

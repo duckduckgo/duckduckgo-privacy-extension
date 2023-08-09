@@ -3,6 +3,7 @@ import constants from '../../data/constants'
 const { events } = constants.trackerStats
 
 export const dataFormatSchema = z.object({
+    atb: z.string().optional(),
     totalCount: z.number(),
     totalPeriod: z.enum(['install-time']),
     trackerCompaniesPeriod: z.enum(['last-hour', 'last-day']),

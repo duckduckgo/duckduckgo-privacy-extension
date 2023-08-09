@@ -7,6 +7,11 @@ import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
 import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils'
 
+/**
+ * @typedef {import('./settings.js')} Settings
+ * @typedef {import("../background/classes/tracker-stats").TrackerStats} TrackerStats
+ */
+
 const {
     incoming,
     outgoing
@@ -61,10 +66,12 @@ export class NewTabTrackerStats {
     ports = []
 
     /**
-     * @param {import("../background/classes/tracker-stats").TrackerStats} stats - the interface for the stats data.
+     * @param {TrackerStats} stats - the interface for the stats data.
+     * @param {Settings} extensionSettings
      */
-    constructor (stats) {
+    constructor (stats, extensionSettings) {
         this.stats = stats
+        this.settings = extensionSettings
     }
 
     /**
@@ -315,9 +322,12 @@ export class NewTabTrackerStats {
             stats.push(...spliced)
         }
 
+        const atbValue = this.settings.getSetting('atb')
+
         // now produce the data in the shape consumers require for rendering their UI
         // see 'dataFormatSchema' for the required format, it's in the `../newtab/schema` file
         return {
+            atb: atbValue || undefined,
             totalCount: this.stats.totalCount,
             totalPeriod: 'install-time',
             trackerCompaniesPeriod: 'last-day',
