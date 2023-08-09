@@ -32,6 +32,8 @@ module.exports = function () {
         'GPC')}
             <p class="gpc-disclaimer">
                 ${raw(t('options:globalPrivacyControlDisclaimer.title'))}
+            </p>
+            <p class="gpc-disclaimer">
                 <a href="https://duckduckgo.com/global-privacy-control-learn-more">${t('shared:learnMore.title')}</a>
             </p>
         </li>
