@@ -2,10 +2,16 @@ import browser from 'webextension-polyfill'
 import constants from '../../data/constants'
 import { getManifestVersion, createAlarm, syncToStorage, getFromStorage } from './wrapper.js'
 import tdsStorage from './storage/tds'
+import settings from './settings'
 import { emitter, TrackerBlockedEvent } from './before-request.js'
 import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
 import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils'
+
+/**
+ * @typedef {import('./settings.js')} Settings
+ * @typedef {import("../background/classes/tracker-stats").TrackerStats} TrackerStats
+ */
 
 const {
     incoming,
@@ -61,7 +67,7 @@ export class NewTabTrackerStats {
     ports = []
 
     /**
-     * @param {import("../background/classes/tracker-stats").TrackerStats} stats - the interface for the stats data.
+     * @param {TrackerStats} stats - the interface for the stats data.
      */
     constructor (stats) {
         this.stats = stats
@@ -296,7 +302,7 @@ export class NewTabTrackerStats {
     }
 
     /**
-     * Convert the internal data into a format that can be used in the New Tab Page UI
+     * Produce a data format that can be used in the New Tab Page UI
      *
      * First, we group & sort the data, and then we increase the count of "Other" to account
      * for overflows or for trackers where the owner was not in the top 100 list
@@ -315,9 +321,12 @@ export class NewTabTrackerStats {
             stats.push(...spliced)
         }
 
+        const atbValue = settings.getSetting('atb')
+
         // now produce the data in the shape consumers require for rendering their UI
         // see 'dataFormatSchema' for the required format, it's in the `../newtab/schema` file
         return {
+            atb: atbValue || undefined,
             totalCount: this.stats.totalCount,
             totalPeriod: 'install-time',
             trackerCompaniesPeriod: 'last-day',
