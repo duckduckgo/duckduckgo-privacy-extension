@@ -48,7 +48,7 @@ export async function onStartup () {
         try {
             // build up dependencies
             const trackerStats = new TrackerStats()
-            const newTabTrackerStats = new NewTabTrackerStats(trackerStats, settings)
+            const newTabTrackerStats = new NewTabTrackerStats(trackerStats)
 
             // Assign the singleton instance to the class for re-use in things like debugging
             // this is an alternative to instantiating the class in the module scope where it lives
