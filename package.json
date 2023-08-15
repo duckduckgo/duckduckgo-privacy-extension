@@ -40,7 +40,7 @@
         "@types/webextension-polyfill": "^0.10.1",
         "asana": "github:Asana/node-asana",
         "duckduckgo-colors": "0.0.1",
-        "esbuild": "^0.18.16",
+        "esbuild": "^0.19.2",
         "eslint": "^8.47.0",
         "eslint-config-standard": "^17.1.0",
         "eslint-plugin-import": "^2.28.0",
