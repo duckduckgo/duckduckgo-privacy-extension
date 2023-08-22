@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1692137362701,
+    "version": 1692659899657,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -3515,6 +3515,16 @@
             },
             "hash": "5ba6a8cee3d3b216cd864ab5a1441dc3"
         },
+        "incrementalRolloutTest": {
+            "state": "disabled",
+            "features": {
+                "rollout": {
+                    "state": "disabled"
+                }
+            },
+            "exceptions": [],
+            "hash": "c1293c7b2687c8a2f7c5433a4d7a330d"
+        },
         "navigatorInterface": {
             "exceptions": [],
             "settings": {
@@ -3778,12 +3788,13 @@
                             {
                                 "rule": "c.amazon-adsystem.com/aax2/apstag.js",
                                 "domains": [
+                                    "cnn.com",
                                     "corriere.it",
                                     "eurogamer.net",
                                     "seattletimes.com",
                                     "wcvb.com"
                                 ],
-                                "reason": "corriere.it - ,Example URL: https://www.corriere.it/video-articoli/2022/07/13/missione-wwf-liberare-mare-plastica/9abb64de-029d-11ed-a0cc-ad3c68cacbae.shtml;,Clicking on the video to play causes a still frame to show and the video does not continue.,eurogamer.net, seattletimes.com - An unskippable adwall appears which prevents interaction with the page.,wcvb.com - https://github.com/duckduckgo/privacy-configuration/issues/1088"
+                                "reason": "corriere.it - ,Example URL: https://www.corriere.it/video-articoli/2022/07/13/missione-wwf-liberare-mare-plastica/9abb64de-029d-11ed-a0cc-ad3c68cacbae.shtml;,Clicking on the video to play causes a still frame to show and the video does not continue.,eurogamer.net, seattletimes.com - An unskippable adwall appears which prevents interaction with the page.,cnn.com - https://github.com/duckduckgo/privacy-configuration/issues/1220,wcvb.com - https://github.com/duckduckgo/privacy-configuration/issues/1088"
                             }
                         ]
                     },
@@ -3936,6 +3947,17 @@
                                     "<all>"
                                 ],
                                 "reason": "See https://github.com/duckduckgo/privacy-configuration/issues/321.,These requests are associated with map/location functionality on websites."
+                            }
+                        ]
+                    },
+                    "boldapps.net": {
+                        "rules": [
+                            {
+                                "rule": "option.boldapps.net/js/options.js",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1222"
                             }
                         ]
                     },
@@ -6272,7 +6294,7 @@
                 }
             },
             "exceptions": [],
-            "hash": "ef2a533117e1ddc3d92137dbe98031d7"
+            "hash": "5d7616edddab9dca8bc8deec28a5ed92"
         },
         "trackingCookies1p": {
             "settings": {
