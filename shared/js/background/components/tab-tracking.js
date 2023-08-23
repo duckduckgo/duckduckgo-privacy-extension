@@ -3,6 +3,7 @@ import browser from 'webextension-polyfill'
 import { restoreDefaultClickToLoadRuleActions } from '../dnr-click-to-load'
 import Companies from '../companies'
 import { isRedirect } from '../utils'
+// eslint-disable-next-line no-restricted-syntax
 import * as devtools from '../devtools'
 
 /**
