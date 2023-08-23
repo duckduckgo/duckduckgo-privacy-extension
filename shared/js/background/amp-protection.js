@@ -49,9 +49,9 @@ function extractAMPURL (site, url) {
     for (const regexPattern of ampSettings.linkFormats) {
         const match = url.match(regexPattern)
         if (match && match.length > 1) {
-            let newUrl = match[1]
-            if (newUrl.match(/^.+\:\/\//) && !newUrl.startsWith('http')) {
-                return null    
+            const newUrl = match[1]
+            if (newUrl.match(/^.+:\/\//) && !newUrl.startsWith('http')) {
+                return null
             }
             const newSite = new Site(newUrl.startsWith('http') ? newUrl : `https://${newUrl}`)
 
