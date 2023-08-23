@@ -49,22 +49,26 @@ function extractAMPURL (site, url) {
     for (const regexPattern of ampSettings.linkFormats) {
         const match = url.match(regexPattern)
 
-        let newUrl
+        let needsScheme = false
         if (match && match.length > 1) {
             try {
-                newUrl = new URL(match[1])
+                const newUrl = new URL(match[1])
                 if (!newUrl.protocol.startsWith('http')) {
                     return null
                 }
             } catch {
                 try {
-                    newUrl = new URL(`https://${match[1]}`)
+                    // eslint-disable-next-line no-unused-vars
+                    const newUrl = new URL(`https://${match[1]}`)
+                    // Avoid using the direct result of the URL constructor
+                    // to prevent encoding issues causing unwanted redirects
+                    needsScheme = true
                 } catch {
                     return null
                 }
             }
 
-            const newSite = new Site(newUrl.href)
+            const newSite = new Site(needsScheme ? `https://${match[1]}` : match[1])
 
             if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
                 return null
@@ -169,9 +173,8 @@ async function fetchAMPURL (site, url) {
 
     if (firstCanonicalLink && firstCanonicalLink instanceof HTMLLinkElement) {
         // Only follow http(s) links
-        let newUrl
         try {
-            newUrl = new URL(firstCanonicalLink.href)
+            const newUrl = new URL(firstCanonicalLink.href)
             if (!newUrl.protocol.startsWith('http')) {
                 return null
             }
@@ -179,7 +182,7 @@ async function fetchAMPURL (site, url) {
             return null
         }
 
-        const newSite = new Site(newUrl.href)
+        const newSite = new Site(firstCanonicalLink.href)
 
         if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
             return null
