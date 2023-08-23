@@ -49,7 +49,11 @@ function extractAMPURL (site, url) {
     for (const regexPattern of ampSettings.linkFormats) {
         const match = url.match(regexPattern)
         if (match && match.length > 1) {
-            const newSite = new Site(match[1].startsWith('http') ? match[1] : `https://${match[1]}`)
+            let newUrl = match[1]
+            if (newUrl.match(/^.+\:\/\//) && !newUrl.startsWith('http')) {
+                return null    
+            }
+            const newSite = new Site(newUrl.startsWith('http') ? newUrl : `https://${newUrl}`)
 
             if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
                 return null
@@ -153,6 +157,11 @@ async function fetchAMPURL (site, url) {
     const firstCanonicalLink = doc.querySelector('[rel="canonical"]')
 
     if (firstCanonicalLink && firstCanonicalLink instanceof HTMLLinkElement) {
+        // Only follow http(s) links
+        if (!firstCanonicalLink.href.startsWith('http')) {
+            return null
+        }
+
         const newSite = new Site(firstCanonicalLink.href)
 
         if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
