@@ -200,7 +200,7 @@ async function fetchAMPURL (site, url) {
             return null
         }
 
-        const newSite = new Site(firstCanonicalLink.href)
+        const newSite = new Site(newUrl.href)
 
         if (isSiteExcluded(newSite)) {
             return null
