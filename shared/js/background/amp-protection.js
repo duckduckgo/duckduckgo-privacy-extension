@@ -77,7 +77,6 @@ function extractAMPURL (site, url) {
 
     for (const regexPattern of ampSettings.linkFormats) {
         const match = url.match(regexPattern)
-
         let needsScheme = false
         if (match && match.length > 1) {
             if (!isHttpUrl(url)) {
