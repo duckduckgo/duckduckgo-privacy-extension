@@ -56,10 +56,10 @@ function extractAMPURL (site, url) {
                 if (!newUrl.protocol.startsWith('http')) {
                     return null
                 }
-            } catch (e) {
+            } catch {
                 try {
                     newUrl = new URL(`https://${match[1]}`)
-                } catch (e) {
+                } catch {
                     return null
                 }
             }
@@ -169,14 +169,14 @@ async function fetchAMPURL (site, url) {
 
     if (firstCanonicalLink && firstCanonicalLink instanceof HTMLLinkElement) {
         // Only follow http(s) links
-        let newUrl;
+        let newUrl
         try {
             newUrl = new URL(firstCanonicalLink.href)
             if (!newUrl.protocol.startsWith('http')) {
                 return null
             }
         } catch {
-            return null;
+            return null
         }
 
         const newSite = new Site(newUrl.href)
