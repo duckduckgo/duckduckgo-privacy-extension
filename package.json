@@ -47,7 +47,7 @@
         "eslint-plugin-node": "^11.1.0",
         "fake-indexeddb": "^4.0.2",
         "glob": "^10.3.3",
-        "jasmine": "5.0.2",
+        "jasmine": "5.1.0",
         "jsdom": "^21.1.1",
         "karma": "6.4.2",
         "karma-chrome-launcher": "3.2.0",
