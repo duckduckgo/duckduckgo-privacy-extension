@@ -130,7 +130,7 @@ export default class Site {
         const globalLists = ['allowlisted', 'allowlistOptIn', 'denylisted']
         globalLists.forEach((name) => {
             const list = settings.getSetting(name) || {}
-            this.setListValue(name, list[this.domain])
+            this.setListValue(name, list[this.domain] || false)
         })
     }
 
