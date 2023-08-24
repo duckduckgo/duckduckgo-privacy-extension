@@ -82,7 +82,6 @@ function extractAMPURL (site, url) {
         let needsScheme = false
         if (match && match.length > 1) {
             const targetUrl = match[1]
-            console.log(targetUrl)
             if (!isHttpUrl(targetUrl)) {
                 try {
                     // eslint-disable-next-line no-unused-vars
