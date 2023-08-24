@@ -55,8 +55,10 @@ function isHttpUrl (url) {
  */
 function isSiteExcluded (site) {
     if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
-        return null
+        return true
     }
+
+    return false
 }
 
 /**
@@ -79,10 +81,12 @@ function extractAMPURL (site, url) {
         const match = url.match(regexPattern)
         let needsScheme = false
         if (match && match.length > 1) {
-            if (!isHttpUrl(url)) {
+            const targetUrl = match[1]
+            console.log(targetUrl)
+            if (!isHttpUrl(targetUrl)) {
                 try {
                     // eslint-disable-next-line no-unused-vars
-                    const newUrl = new URL(`https://${match[1]}`)
+                    const newUrl = new URL(`https://${targetUrl}`)
                     // Avoid using the direct result of the URL constructor
                     // to prevent encoding issues causing unwanted redirects
                     needsScheme = true
@@ -91,9 +95,9 @@ function extractAMPURL (site, url) {
                 }
             }
 
-            const newSite = new Site(needsScheme ? `https://${match[1]}` : match[1])
+            const newSite = new Site(needsScheme ? `https://${targetUrl}` : targetUrl)
 
-            if (!isSiteExcluded(newSite)) {
+            if (isSiteExcluded(newSite)) {
                 return null
             }
 
