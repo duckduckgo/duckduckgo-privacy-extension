@@ -263,12 +263,6 @@ browser.webRequest.onHeadersReceived.addListener(
     extraInfoSpec
 )
 
-// Store the created tab id for when onBeforeNavigate is called so data can be copied across from the source tab
-const createdTargets = new Map()
-browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
-    createdTargets.set(details.tabId, details.sourceTabId)
-})
-
 /**
  * TABS
  */
