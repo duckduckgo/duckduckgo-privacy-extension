@@ -91,6 +91,7 @@ function extractAMPURL (site, url) {
                     // to prevent encoding issues causing unwanted redirects
                     needsScheme = true
                 } catch {
+                    // If the URL constructor throws an error, then the URL is invalid
                     return null
                 }
             }
