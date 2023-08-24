@@ -31,6 +31,35 @@ function ensureConfig () {
 }
 
 /**
+ * This function checks if the given url has an http(s) scheme
+ * @param {string} url - the url to check
+ * @returns true if the url is a valid http(s) url
+ */
+function isHttpUrl (url) {
+    try {
+        const newUrl = new URL(url)
+        if (newUrl.protocol.startsWith('http')) {
+            return true
+        }
+    } catch {
+        return false
+    }
+
+    return false
+}
+
+/**
+ * This function checks if the given site is excluded from AMP protection
+ * @param {Site} site - the site to check
+ * @returns true if the site is excluded from AMP protection
+ */
+function isSiteExcluded (site) {
+    if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
+        return null
+    }
+}
+
+/**
  * This method checks if the given url is a Google hosted AMP url and resturns the canonical url if it is.
  *
  * @param {Site} site - the initiating site
@@ -51,12 +80,7 @@ function extractAMPURL (site, url) {
 
         let needsScheme = false
         if (match && match.length > 1) {
-            try {
-                const newUrl = new URL(match[1])
-                if (!newUrl.protocol.startsWith('http')) {
-                    return null
-                }
-            } catch {
+            if (!isHttpUrl(url)) {
                 try {
                     // eslint-disable-next-line no-unused-vars
                     const newUrl = new URL(`https://${match[1]}`)
@@ -70,7 +94,7 @@ function extractAMPURL (site, url) {
 
             const newSite = new Site(needsScheme ? `https://${match[1]}` : match[1])
 
-            if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
+            if (!isSiteExcluded(newSite)) {
                 return null
             }
 
@@ -173,18 +197,13 @@ async function fetchAMPURL (site, url) {
 
     if (firstCanonicalLink && firstCanonicalLink instanceof HTMLLinkElement) {
         // Only follow http(s) links
-        try {
-            const newUrl = new URL(firstCanonicalLink.href)
-            if (!newUrl.protocol.startsWith('http')) {
-                return null
-            }
-        } catch {
+        if (!isHttpUrl(firstCanonicalLink.href)) {
             return null
         }
 
         const newSite = new Site(firstCanonicalLink.href)
 
-        if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
+        if (isSiteExcluded(newSite)) {
             return null
         }
 
