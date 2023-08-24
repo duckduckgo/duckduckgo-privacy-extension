@@ -31,6 +31,37 @@ function ensureConfig () {
 }
 
 /**
+ * This function checks if the given url has an http(s) scheme
+ * @param {string} url - the url to check
+ * @returns true if the url is a valid http(s) url
+ */
+function isHttpUrl (url) {
+    try {
+        const newUrl = new URL(url)
+        if (newUrl.protocol.startsWith('http')) {
+            return true
+        }
+    } catch {
+        return false
+    }
+
+    return false
+}
+
+/**
+ * This function checks if the given site is excluded from AMP protection
+ * @param {Site} site - the site to check
+ * @returns true if the site is excluded from AMP protection
+ */
+function isSiteExcluded (site) {
+    if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
+        return true
+    }
+
+    return false
+}
+
+/**
  * This method checks if the given url is a Google hosted AMP url and resturns the canonical url if it is.
  *
  * @param {Site} site - the initiating site
@@ -48,10 +79,25 @@ function extractAMPURL (site, url) {
 
     for (const regexPattern of ampSettings.linkFormats) {
         const match = url.match(regexPattern)
+        let needsScheme = false
         if (match && match.length > 1) {
-            const newSite = new Site(match[1].startsWith('http') ? match[1] : `https://${match[1]}`)
+            const targetUrl = match[1]
+            if (!isHttpUrl(targetUrl)) {
+                try {
+                    // eslint-disable-next-line no-unused-vars
+                    const newUrl = new URL(`https://${targetUrl}`)
+                    // Avoid using the direct result of the URL constructor
+                    // to prevent encoding issues causing unwanted redirects
+                    needsScheme = true
+                } catch {
+                    // If the URL constructor throws an error, then the URL is invalid
+                    return null
+                }
+            }
 
-            if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
+            const newSite = new Site(needsScheme ? `https://${targetUrl}` : targetUrl)
+
+            if (isSiteExcluded(newSite)) {
                 return null
             }
 
@@ -153,9 +199,14 @@ async function fetchAMPURL (site, url) {
     const firstCanonicalLink = doc.querySelector('[rel="canonical"]')
 
     if (firstCanonicalLink && firstCanonicalLink instanceof HTMLLinkElement) {
+        // Only follow http(s) links
+        if (!isHttpUrl(firstCanonicalLink.href)) {
+            return null
+        }
+
         const newSite = new Site(firstCanonicalLink.href)
 
-        if (newSite.specialDomainName || !newSite.isFeatureEnabled(featureName)) {
+        if (isSiteExcluded(newSite)) {
             return null
         }
 
