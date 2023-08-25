@@ -48,7 +48,7 @@
         "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
     },
     "globalPrivacyControlDisclaimer": {
-        "title": "<b>Since Global Privacy Control (GPC) is a new standard,\nmost websites won't recognize it yet, but we're working hard\nto ensure it becomes accepted worldwide.</b> However, websites are only required to act on the signal to the\nextent applicable laws compel them to do so.&nbsp;",
+        "title": "<b>Since Global Privacy Control (GPC) is a new standard,\nmost websites won't recognize it yet, but we're working hard\nto ensure it becomes accepted worldwide.</b> However, websites are only required to act on the signal to the\nextent applicable laws compel them to do so.",
         "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
     },
     "emailProtection": {
