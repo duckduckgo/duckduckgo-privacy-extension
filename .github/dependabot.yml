@@ -8,6 +8,14 @@ updates:
     target-branch: "main"
     labels:
       - "dependencies"
+    groups:
+      external-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "puppeteer"
+          - "@duckduckgo/*"
+          - "privacy-test-pages"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
