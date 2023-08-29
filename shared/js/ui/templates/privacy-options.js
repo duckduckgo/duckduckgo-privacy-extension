@@ -32,6 +32,8 @@ module.exports = function () {
         'GPC')}
             <p class="gpc-disclaimer">
                 ${raw(t('options:globalPrivacyControlDisclaimer.title'))}
+            </p>
+            <p class="options-info">
                 <a href="https://duckduckgo.com/global-privacy-control-learn-more">${t('shared:learnMore.title')}</a>
             </p>
         </li>
@@ -50,7 +52,7 @@ module.exports = function () {
     </ul>
     <ul class="default-list${this.model.fireButtonEnabled ? '' : ' is-hidden'}">
         <li>
-            <h2 class="menu-title">
+            <h2 class="menu-title fire-title">
                 ${t('options:fireButtonHeading.title')}
             </h2>
             <p class="menu-paragraph">
