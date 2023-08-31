@@ -42,7 +42,7 @@ async function requestBrowsingDataPermissions (backgroundPage) {
  * @returns {Promise<import('@playwright/test').JSHandle>}
  */
 function getFireButtonHandle (backgroundPage) {
-    return backgroundPage.evaluateHandle(() => globalThis.features.fireButton)
+    return backgroundPage.evaluateHandle(() => globalThis.components.fireButton)
 }
 
 async function waitForAllResults (page) {

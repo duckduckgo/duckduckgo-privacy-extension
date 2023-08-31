@@ -1,5 +1,4 @@
 /* global BUILD_TARGET */
-import browser from 'webextension-polyfill'
 import { NewTabTrackerStats } from './newtab-tracker-stats'
 import { TrackerStats } from './classes/tracker-stats.js'
 import httpsStorage from './storage/https'
@@ -9,7 +8,6 @@ const Companies = require('./companies')
 const experiment = require('./experiments')
 const https = require('./https')
 const settings = require('./settings')
-const tabManager = require('./tab-manager')
 const trackers = require('./trackers')
 const dnrSessionId = require('./dnr-session-rule-id')
 const { fetchAlias, showContextMenuAction } = require('./email-utils')
@@ -69,16 +67,6 @@ export async function onStartup () {
     if (userData && userData.token) {
         if (!userData.nextAlias) await fetchAlias()
         showContextMenuAction()
-    }
-
-    const savedTabs = await browser.tabs.query({ status: 'complete' })
-    for (let i = 0; i < savedTabs.length; i++) {
-        const tab = savedTabs[i]
-
-        if (tab.url) {
-            // On reinstall we wish to create the tab again
-            await tabManager.restoreOrCreate(tab)
-        }
     }
 
     if (resolveReadyPromise) {

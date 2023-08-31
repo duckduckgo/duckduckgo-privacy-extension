@@ -8,7 +8,6 @@ import browser from 'webextension-polyfill'
 import messageHandlers from './message-handlers'
 import { updateActionIcon } from './events/privacy-icon-indicator'
 import { flushSessionRules } from './dnr-session-rule-id'
-import { restoreDefaultClickToLoadRuleActions } from './dnr-click-to-load'
 import {
     clearInvalidDynamicRules
 } from './dnr-utils'
@@ -244,20 +243,6 @@ const isTopicsEnabled = manifestVersion === 2 && 'browsingTopics' in document &&
 
 browser.webRequest.onHeadersReceived.addListener(
     request => {
-        if (request.type === 'main_frame') {
-            tabManager.updateTabUrl(request)
-
-            const tab = tabManager.get({ tabId: request.tabId })
-            // SERP ad click detection
-            if (
-                utils.isRedirect(request.statusCode)
-            ) {
-                tab.setAdClickIfValidRedirect(request.url)
-            } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !utils.isRedirect(request.statusCode)) {
-                tab.adClick.setAdBaseDomain(tab.site.baseDomain)
-            }
-        }
-
         if (ATB.shouldUpdateSetAtb(request)) {
             // returns a promise
             return ATB.updateSetAtb()
@@ -278,86 +263,9 @@ browser.webRequest.onHeadersReceived.addListener(
     extraInfoSpec
 )
 
-// Store the created tab id for when onBeforeNavigate is called so data can be copied across from the source tab
-const createdTargets = new Map()
-browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
-    createdTargets.set(details.tabId, details.sourceTabId)
-})
-
-/**
- * Web Navigation
- */
-// keep track of URLs that the browser navigates to.
-//
-// this is supplemented by tabManager.updateTabUrl() on headersReceived:
-// tabManager.updateTabUrl only fires when a tab has finished loading with a 200,
-// which misses a couple of edge cases like browser special pages
-// and Gmail's weird redirect which returns a 200 via a service worker
-browser.webNavigation.onBeforeNavigate.addListener(details => {
-    // ignore navigation on iframes
-    if (details.frameId !== 0) return
-
-    const currentTab = tabManager.get({ tabId: details.tabId })
-    const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
-
-    if (manifestVersion === 3) {
-        // Ensure that the correct declarativeNetRequest allowing rules are
-        // added for this tab.
-        // Note: The webNavigation.onBeforeCommitted event would be better,
-        //       since onBeforeNavigate can be fired for a navigation that is
-        //       not later committed. But since there is a race-condition
-        //       between the page loading and the rules being added, let's use
-        //       onBeforeNavigate for now as it fires sooner.
-        restoreDefaultClickToLoadRuleActions(newTab)
-    }
-
-    // persist the last URL the tab was trying to upgrade to HTTPS
-    if (currentTab && currentTab.httpsRedirects) {
-        newTab.httpsRedirects.persistMainFrameRedirect(currentTab.httpsRedirects.getMainFrameRedirect())
-    }
-    if (createdTargets.has(details.tabId)) {
-        const sourceTabId = createdTargets.get(details.tabId)
-        createdTargets.delete(details.tabId)
-
-        const sourceTab = tabManager.get({ tabId: sourceTabId })
-        if (sourceTab && sourceTab.adClick) {
-            createdTargets.set(details.tabId, sourceTabId)
-            if (sourceTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-                newTab.adClick = sourceTab.adClick.propagate(newTab.id)
-            }
-        }
-    }
-
-    newTab.updateSite(details.url)
-    devtools.postMessage(details.tabId, 'tabChange', devtools.serializeTab(newTab))
-})
-
 /**
  * TABS
  */
-
-const Companies = require('./companies')
-
-browser.tabs.onCreated.addListener((info) => {
-    if (info.id) {
-        tabManager.createOrUpdateTab(info.id, info)
-    }
-})
-
-browser.tabs.onUpdated.addListener((id, info) => {
-    // sync company data to storage when a tab finishes loading
-    if (info.status === 'complete') {
-        Companies.syncToStorage()
-    }
-
-    tabManager.createOrUpdateTab(id, info)
-})
-
-browser.tabs.onRemoved.addListener((id, info) => {
-    // remove the tab object
-    tabManager.delete(id)
-})
-
 // message popup to close when the active tab changes.
 browser.tabs.onActivated.addListener(() => {
     browserWrapper.notifyPopup({ closePopup: true })

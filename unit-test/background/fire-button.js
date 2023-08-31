@@ -1,4 +1,4 @@
-import { getOriginsForUrl, tabMatchesHostFilter } from '../../shared/js/background/features/fire-button'
+import { getOriginsForUrl, tabMatchesHostFilter } from '../../shared/js/background/components/fire-button'
 
 describe('fire button utils', () => {
     describe('tabMatchesOriginFilter', () => {

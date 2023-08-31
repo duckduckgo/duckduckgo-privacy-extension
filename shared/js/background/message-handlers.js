@@ -7,7 +7,7 @@ import { isFeatureEnabled, reloadCurrentTab } from './utils'
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 import tdsStorage from './storage/tds'
 import { getArgumentsObject } from './helpers/arguments-object'
-import { isFireButtonEnabled } from './features/fire-button'
+import { isFireButtonEnabled } from './components/fire-button'
 const { getDomain } = require('tldts')
 const utils = require('./utils')
 const settings = require('./settings')
