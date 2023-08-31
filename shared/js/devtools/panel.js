@@ -1,3 +1,4 @@
+import { getStackTraceOrigins } from '@duckduckgo/content-scope-scripts/src/utils'
 const table = document.querySelector('#request-table')
 const clearButton = document.getElementById('clear')
 const refreshButton = document.getElementById('refresh')
@@ -197,7 +198,8 @@ const actionHandlers = {
         addRequestRow(row)
     },
     jscookie: (m) => {
-        const { documentUrl, action, reason, value, stack, scriptOrigins } = m.message
+        const { documentUrl, action, reason, value, stack } = m.message
+        const scriptOrigins = [...getStackTraceOrigins(stack)]
         const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
         const cells = row.querySelectorAll('td')
         cells[1].textContent = documentUrl
