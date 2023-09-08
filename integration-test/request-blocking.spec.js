@@ -3,7 +3,7 @@ import { forAllConfiguration, forExtensionLoaded } from './helpers/backgroundWai
 import { loadTestConfig } from './helpers/testConfig'
 import { TEST_SERVER_ORIGIN } from './helpers/testPages'
 
-const testHost = 'privacy-test-pages.glitch.me'
+const testHost = 'privacy-test-pages.site'
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`
 
 async function runRequestBlockingTest (page, url = testSite) {
@@ -84,7 +84,7 @@ test.describe('Test request blocking', () => {
                         action: 'block',
                         url: 'https://bad.third-party.site/privacy-protections/request-blocking/block-me/script.js',
                         eTLDplus1: 'third-party.site',
-                        pageUrl: 'https://privacy-test-pages.glitch.me/privacy-protections/request-blocking/',
+                        pageUrl: 'https://privacy-test-pages.site/privacy-protections/request-blocking/',
                         entityName: 'Bad Third Party Site',
                         prevalence: 0.1,
                         state: { blocked: {} }

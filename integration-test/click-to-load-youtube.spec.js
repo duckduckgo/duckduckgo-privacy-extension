@@ -5,7 +5,7 @@ import { routeFromLocalhost } from './helpers/testPages'
 import { logPageRequests } from './helpers/requests'
 import { waitForNetworkIdle } from './helpers/pageWait'
 
-const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/youtube-click-to-load/'
+const testSite = 'https://privacy-test-pages.site/privacy-protections/youtube-click-to-load/'
 const youTubeStandardDomains = new Set(['youtu.be', 'youtube.com', 'www.youtube.com'])
 const youTubeNocookieDomains = new Set(['youtube-nocookie.com', 'www.youtube-nocookie.com'])
 const youTubeImageDomains = new Set(['i.ytimg.com'])

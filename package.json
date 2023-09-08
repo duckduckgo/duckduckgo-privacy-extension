@@ -22,7 +22,7 @@
         "tsc": "tsc",
         "tsc-watch": "tsc --watch",
         "dev-firefox": "make watch browser=firefox type=dev",
-        "open-dev-firefox": "web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.glitch.me/ -u https://www.search-company.site -u about:debugging",
+        "open-dev-firefox": "web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.site/ -u https://www.search-company.site -u about:debugging",
         "release-firefox": "make browser=firefox type=release",
         "dev-chrome": "make watch browser=chrome type=dev",
         "dev-chrome-mv3": "make watch browser=chrome-mv3 type=dev",

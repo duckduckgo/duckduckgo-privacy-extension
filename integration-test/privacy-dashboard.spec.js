@@ -3,7 +3,7 @@ import backgroundWait from './helpers/backgroundWait'
 import { routeFromLocalhost } from './helpers/testPages'
 import { loadTestConfig } from './helpers/testConfig'
 
-const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/request-blocking/'
+const testSite = 'https://privacy-test-pages.site/privacy-protections/request-blocking/'
 
 test.describe('Test privacy dashboard', () => {
     test('Should load the dashboard with correct link text', async ({ context, backgroundPage, page }) => {

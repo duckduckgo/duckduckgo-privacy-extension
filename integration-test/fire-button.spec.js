@@ -18,9 +18,9 @@ async function loadPageInNewTab (context, url) {
 function openTabs (context) {
     return Promise.all([
         loadPageInNewTab(context, 'https://duckduckgo.com/'),
-        loadPageInNewTab(context, 'https://privacy-test-pages.glitch.me/'),
+        loadPageInNewTab(context, 'https://privacy-test-pages.site/'),
         loadPageInNewTab(context, 'https://good.third-party.site/privacy-protections/storage-blocking/?store'),
-        loadPageInNewTab(context, 'https://privacy-test-pages.glitch.me/privacy-protections/storage-blocking/?store')
+        loadPageInNewTab(context, 'https://privacy-test-pages.site/privacy-protections/storage-blocking/?store')
     ])
 }
 
@@ -83,7 +83,7 @@ test.describe('Fire Button', () => {
             expectedTabs: 7
         }, {
             desc: 'clearing specific origins',
-            args: [true, ['https://privacy-test-pages.glitch.me/', 'https://duckduckgo.com/']],
+            args: [true, ['https://privacy-test-pages.site/', 'https://duckduckgo.com/']],
             expectedTabs: 3
         }]
 
@@ -118,7 +118,7 @@ test.describe('Fire Button', () => {
             expect(options[5]).toMatchObject({
                 name: 'CurrentSite',
                 options: {
-                    origins: ['https://privacy-test-pages.glitch.me', 'http://privacy-test-pages.glitch.me']
+                    origins: ['https://privacy-test-pages.site', 'http://privacy-test-pages.site']
                 },
                 descriptionStats: {
                     clearHistory: true,
@@ -126,7 +126,7 @@ test.describe('Fire Button', () => {
                     duration: 'all',
                     openTabs: 2, // gets the number of tabs matching this origin
                     pinnedTabs: 0,
-                    site: 'privacy-test-pages.glitch.me'
+                    site: 'privacy-test-pages.site'
                 },
                 selected: true
             })
@@ -247,13 +247,13 @@ test.describe('Fire Button', () => {
             await openTabs(context)
 
             await fireButton.evaluate(f => f.burn({
-                origins: ['https://privacy-test-pages.glitch.me', 'http://privacy-test-pages.glitch.me']
+                origins: ['https://privacy-test-pages.site', 'http://privacy-test-pages.site']
             }))
 
             const tabs = await getOpenTabs(backgroundPage)
-            expect(tabs.every(t => !t.url.includes('privacy-test-pages.glitch.me'))).toBeTruthy()
+            expect(tabs.every(t => !t.url.includes('privacy-test-pages.site'))).toBeTruthy()
             const cookieDomains = (await context.cookies()).map(c => c.domain)
-            expect(cookieDomains).not.toContain('privacy-test-pages.glitch.me')
+            expect(cookieDomains).not.toContain('privacy-test-pages.site')
             expect(cookieDomains).toContain('good.third-party.site')
         })
 
@@ -261,13 +261,13 @@ test.describe('Fire Button', () => {
             await forExtensionLoaded(context)
             await requestBrowsingDataPermissions(backgroundPage)
             await routeFromLocalhost(page)
-            await page.goto('https://privacy-test-pages.glitch.me/privacy-protections/storage-blocking/?store', { waitUntil: 'networkidle' })
+            await page.goto('https://privacy-test-pages.site/privacy-protections/storage-blocking/?store', { waitUntil: 'networkidle' })
             const storedValue = new URL(page.url()).hash.slice(1)
             await (await getFireButtonHandle(backgroundPage)).evaluate(f => f.burn({}))
 
             const newPage = await context.newPage()
             await routeFromLocalhost(newPage)
-            await newPage.goto('https://privacy-test-pages.glitch.me/privacy-protections/storage-blocking/?retrive', { waitUntil: 'networkidle' })
+            await newPage.goto('https://privacy-test-pages.site/privacy-protections/storage-blocking/?retrive', { waitUntil: 'networkidle' })
             await waitForAllResults(newPage)
             const { results } = await JSON.parse(await newPage.evaluate('JSON.stringify(results)'))
             const apis = [

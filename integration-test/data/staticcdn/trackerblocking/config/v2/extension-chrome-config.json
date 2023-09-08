@@ -1030,7 +1030,7 @@
                         ]
                     },
                     {
-                        "domain": "privacy-test-pages.glitch.me",
+                        "domain": "privacy-test-pages.site",
                         "rules": [
                             {
                                 "selector": ".hide-test",
@@ -1133,7 +1133,7 @@
                     "globalprivacycontrol.org",
                     "washingtonpost.com",
                     "nytimes.com",
-                    "privacy-test-pages.glitch.me"
+                    "privacy-test-pages.site"
                 ]
             },
             "hash": "5912c223c67fc320fcee0a0dcbf4cd91"
