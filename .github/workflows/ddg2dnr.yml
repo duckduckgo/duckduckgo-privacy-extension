@@ -10,7 +10,7 @@ jobs:
         node: [18.x]
         os: [ubuntu-latest] # FIXME - macos-latest runner keeps failing
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v3
         with:
@@ -25,7 +25,7 @@ jobs:
         node: [18.x]
         os: [ubuntu-latest]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node }}
         uses: actions/setup-node@v3
         with:
