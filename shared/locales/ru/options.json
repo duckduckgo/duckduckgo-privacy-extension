@@ -38,7 +38,7 @@
     "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
   "globalPrivacyControlDesc": {
-    "title": "Личные данные не должны продаваться. Мы, сотрудники DuckDuckGo, с этим полностью согласны.\nАктивируйте настройку «Глобальный контроль конфиденциальности» (Global Privacy Control или GPC), и мы передадим сайтам ваши предпочтения:",
+    "title": "Личные данные не должны продаваться. Мы, сотрудники DuckDuckGo, с этим полностью согласны.\nВключите настройку «Глобальный контроль конфиденциальности» (Global Privacy Control или GPC), и мы передадим сайтам ваши предпочтения:",
     "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
   "notSellYourPersonalData": {
@@ -50,7 +50,7 @@
     "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
   "globalPrivacyControlDisclaimer": {
-    "title": "<b>Поскольку глобальный контроль конфиденциальности (GPC) — новый стандарт, пока что он не признается на большинстве сайтов, но мы прилагаем все усилия, чтобы он был принят во всем мире.</b> Также хотим подчеркнуть, что сайты обязаны реагировать на сигнал только в той мере, в какой это требует применимое законодательство.",
+    "title": "<b>Поскольку глобальный контроль конфиденциальности (GPC) — новый стандарт, пока что он не признаётся на большинстве сайтов, но мы прилагаем все усилия, чтобы он был принят во всём мире.</b> Также хотим подчеркнуть, что сайты обязаны реагировать на сигнал только в той мере, в какой это требует применимое законодательство.",
     "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
@@ -66,11 +66,11 @@
     "note": "When we do help populate email addresses for (your email address here)"
   },
   "noUnprotectedSitesAdded": {
-    "title": "Незащищенные сайты не добавлены",
+    "title": "Незащищённые сайты не добавлены",
     "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
   "unprotectedSites": {
-    "title": "Незащищенные сайты",
+    "title": "Незащищённые сайты",
     "note": "Header for the list of websites where our privacy protections are disabled"
   },
   "unprotectedSitesDesc": {
@@ -78,7 +78,7 @@
     "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
   "addUnprotectedSite": {
-    "title": "Добавить незащищенный сайт",
+    "title": "Добавить незащищённый сайт",
     "note": "Header for the user to add a site to the uprotected list"
   },
   "enterURL": {
@@ -102,7 +102,7 @@
     "note": "Title for option toggle"
   },
   "fireButtonClearHistoryDesc": {
-    "title": "Примите во внимание. что историю просмотров можно удалить только за определенный период (например, «за последний час» или «за все время»), а не в отношении конкретного сайта.",
+    "title": "Примите во внимание. что историю просмотров можно удалить только за определённый период (например, «за последний час» или «за всё время»), а не в отношении конкретного сайта.",
     "note": "Extra information about the clear history option toggle."
   },
   "fireButtonTabClosureTitle": {
