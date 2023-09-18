@@ -16,6 +16,6 @@
     "tldts": "^6.0.14"
   },
   "devDependencies": {
-    "esbuild": "^0.19.2"
+    "esbuild": "^0.19.3"
   }
 }
