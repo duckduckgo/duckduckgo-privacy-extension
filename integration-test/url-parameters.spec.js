@@ -3,7 +3,7 @@ import backgroundWait from './helpers/backgroundWait'
 import { routeFromLocalhost } from './helpers/testPages'
 import { loadTestConfig } from './helpers/testConfig'
 
-const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/query-parameters/'
+const testSite = 'https://privacy-test-pages.site/privacy-protections/query-parameters/'
 
 /**
  * Returns the value of the `urlParametersRemoved` breakage flag for the current

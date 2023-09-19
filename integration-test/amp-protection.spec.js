@@ -3,7 +3,7 @@ import backgroundWait from './helpers/backgroundWait'
 import { routeFromLocalhost } from './helpers/testPages'
 import { loadTestConfig } from './helpers/testConfig'
 
-const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/amp/'
+const testSite = 'https://privacy-test-pages.site/privacy-protections/amp/'
 
 test.describe('Test AMP link protection', () => {
     test('Redirects AMP URLs correctly', async ({ context, backgroundPage, page }) => {

@@ -1,5 +1,5 @@
 const testPageHosts = new Set([
-    'privacy-test-pages.glitch.me',
+    'privacy-test-pages.site',
     'broken.third-party.site',
     'good.third-party.site',
     'bad.third-party.site',

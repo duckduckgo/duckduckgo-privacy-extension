@@ -3,7 +3,7 @@ import backgroundWait from './helpers/backgroundWait'
 import { loadTestConfig, loadTestTds } from './helpers/testConfig'
 import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages'
 
-const testPageDomain = 'privacy-test-pages.glitch.me'
+const testPageDomain = 'privacy-test-pages.site'
 const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
 const thirdPartyAd = 'convert.ad-company.site'

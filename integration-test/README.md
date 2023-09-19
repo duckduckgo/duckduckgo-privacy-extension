@@ -1,7 +1,7 @@
 # Integration tests
 
 These integration tests verify extension features by running a full copy of the extension in an instrumented
-browser. Most tests work by loading a [test page](https://privacy-test-pages.glitch.me/) which will check
+browser. Most tests work by loading a [test page](https://privacy-test-pages.site/) which will check
 that a protection is active.
 
 We use [Playwright](https://playwright.dev/) as a test runner. Tests are defined in the `.spec.js` files in the `integration-tests` folder.

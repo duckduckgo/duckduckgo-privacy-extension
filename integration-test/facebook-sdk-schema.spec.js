@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 import apiSchema from './helpers/apiSchema'
 import { routeFromLocalhost } from './helpers/testPages'
 
-const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
+const testSite = 'https://privacy-test-pages.site/privacy-protections/click-to-load/'
 
 // We're using the original playwright test function which does not load the extension
 test.describe('Facebook SDK schema', () => {

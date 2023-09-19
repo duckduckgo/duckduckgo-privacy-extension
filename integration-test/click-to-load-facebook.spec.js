@@ -7,7 +7,7 @@ import { loadTestConfig, loadTestTds } from './helpers/testConfig'
 import { routeFromLocalhost } from './helpers/testPages'
 import { logPageRequests } from './helpers/requests'
 
-const testSite = 'https://privacy-test-pages.glitch.me/privacy-protections/click-to-load/'
+const testSite = 'https://privacy-test-pages.site/privacy-protections/click-to-load/'
 const facebookDomains = new Set(['facebook.com', 'facebook.net', 'fbcdn.net'])
 
 function summariseFacebookRequests (requests) {
@@ -141,7 +141,7 @@ test.describe('Test Facebook Click To Load', () => {
             expect(allowCount).toEqual(requestCount)
         }
         // navigate away to allow all requests to complete before we clear request data
-        await page.goto('https://privacy-test-pages.glitch.me/')
+        await page.goto('https://privacy-test-pages.site/')
         // When the page is reloaded, requests should be blocked again.
         clearRequests()
         await page.goto(testSite, { waitUntil: 'networkidle', timeout: 15000 })
