@@ -21,7 +21,7 @@
     "note" : "Button prompt to turn something on, i.e. click on this to enable"
   },
   "disable" : {
-    "title" : "Выключить",
+    "title" : "Отключить",
     "note" : "Button prompt to turn something off, i.e. click on this to disable"
   },
   "add" : {
