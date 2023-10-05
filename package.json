@@ -70,7 +70,7 @@
         "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#1.6.1",
         "@duckduckgo/privacy-grade": "file:packages/privacy-grade",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#main",
-        "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.2.5",
+        "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.2.6",
         "deep-freeze": "0.0.1",
         "dexie": "3.2.4",
         "eventemitter2": "6.4.9",
