@@ -10,7 +10,7 @@ const testPageHosts = new Set([
     'www.payment-company.site'
 ])
 
-export const TEST_SERVER_ORIGIN = 'http://localhost:3000'
+export const TEST_SERVER_ORIGIN = 'http://127.0.0.1:3000'
 
 /**
  * Route requests to the local test service (privacy-test-pages)

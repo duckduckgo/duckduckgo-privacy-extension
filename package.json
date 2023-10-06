@@ -81,7 +81,7 @@
         "lottie-web": "^5.12.2",
         "nanohtml": "^1.10.0",
         "normalize.scss": "0.1.0",
-        "privacy-test-pages": "github:duckduckgo/privacy-test-pages#1.2.1",
+        "privacy-test-pages": "github:duckduckgo/privacy-test-pages#1.2.2",
         "punycode": "2.3.0",
         "tldts": "^6.0.14",
         "web-ext": "^7.7.0",
