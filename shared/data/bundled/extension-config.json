@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1694791154730,
+    "version": 1697058000288,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -89,6 +89,26 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "settings": {
@@ -115,7 +135,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "87198c8b0bc8c044f0773599845fa371"
+            "hash": "e6485e0c2ebb1c844782a694fee7915d"
         },
         "autoconsent": {
             "exceptions": [
@@ -276,6 +296,10 @@
                     "reason": "https://github.com/duckduckgo/autoconsent/issues/254"
                 },
                 {
+                    "domain": "yum.com",
+                    "reason": "https://github.com/duckduckgo/autoconsent/issues/259"
+                },
+                {
                     "domain": "earth.google.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1099"
                 },
@@ -298,7 +322,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "3103f6571c6db6e7ba836f9d10177659"
+            "hash": "190da720de7d1267081f4fff64f493d7"
         },
         "autofill": {
             "exceptions": [
@@ -1113,6 +1137,10 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1247"
                 },
                 {
+                    "domain": "pocketbook.digital",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1368"
+                },
+                {
                     "domain": "earth.google.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1099"
                 },
@@ -1127,6 +1155,26 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "settings": {
@@ -1145,7 +1193,7 @@
             },
             "state": "enabled",
             "minSupportedVersion": "2023.7.7.2",
-            "hash": "2c5b7609ef0873de426b92a9df0d9c13"
+            "hash": "f7bd5c9552ecd0110ab3dab83a6c3f59"
         },
         "clickToPlay": {
             "exceptions": [
@@ -1164,6 +1212,26 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "settings": {
@@ -1176,7 +1244,7 @@
                 }
             },
             "state": "enabled",
-            "hash": "c039d6dcde32fc30a31cbdcc519ba9a9"
+            "hash": "646bf52bafd5b07b0ba30b64bf8920e0"
         },
         "contentBlocking": {
             "state": "enabled",
@@ -1188,6 +1256,14 @@
                 {
                     "domain": "welt.de",
                     "reason": "Video pauses at about 13-15 seconds in. Playing the video again results in a single frame rendering without progressing to the next frame."
+                },
+                {
+                    "domain": "optout.aboutads.info",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1377"
+                },
+                {
+                    "domain": "optout.networkadvertising.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1377"
                 },
                 {
                     "domain": "earth.google.com",
@@ -1206,7 +1282,7 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
                 }
             ],
-            "hash": "acdaea57d6585b8b4c15750545c477ff"
+            "hash": "f43e0ec67d1177139fe5cfc603cbd8a3"
         },
         "cookie": {
             "settings": {
@@ -1241,6 +1317,14 @@
                     "reason": "Clicking 'Continue' after filling out details for account creation yields an error."
                 },
                 {
+                    "domain": "optout.aboutads.info",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1377"
+                },
+                {
+                    "domain": "optout.networkadvertising.org",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1377"
+                },
+                {
                     "domain": "earth.google.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1099"
                 },
@@ -1255,11 +1339,31 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
             "minSupportedVersion": "2022.6.1",
-            "hash": "797471d968057b5819fc17677cc02e09"
+            "hash": "ccccc289e5602e5271e3172e54adab46"
         },
         "customUserAgent": {
             "settings": {
@@ -1511,10 +1615,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "settings": {
-                "useStrictHideStyleTag": true,
+                "useStrictHideStyleTag": false,
                 "rules": [
                     {
                         "selector": "[id*='gpt-']",
@@ -1662,6 +1786,10 @@
                     },
                     {
                         "selector": "#topBanner",
+                        "type": "hide-empty"
+                    },
+                    {
+                        "selector": ".top-ad",
                         "type": "hide-empty"
                     },
                     {
@@ -1885,6 +2013,10 @@
                     {
                         "domain": "github.com",
                         "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1058"
+                    },
+                    {
+                        "domain": "pocketbook.digital",
+                        "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1365"
                     }
                 ],
                 "hideTimeouts": [
@@ -1910,6 +2042,7 @@
                     "advertisements",
                     "advertisment",
                     "advertisementclose",
+                    "advertisementadvertisement",
                     "advertisementcontinue reading the main story",
                     "advertisement\ncontinue reading the main story",
                     "advertisement\n\ncontinue reading the main story",
@@ -1928,6 +2061,7 @@
                     "sponsored",
                     "sponsorisé",
                     "story continues below advertisement",
+                    "story continues below advertisementadvertisement",
                     "publicité",
                     "publicidade",
                     "reklama",
@@ -2848,6 +2982,15 @@
                         ]
                     },
                     {
+                        "domain": "refinery29.com",
+                        "rules": [
+                            {
+                                "selector": ".section-ad",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "reuters.com",
                         "rules": [
                             {
@@ -2929,6 +3072,15 @@
                         "rules": [
                             {
                                 "selector": "[data-format='leaderboard']",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "slate.com",
+                        "rules": [
+                            {
+                                "selector": ".slate-ad",
                                 "type": "hide-empty"
                             }
                         ]
@@ -3156,6 +3308,10 @@
                             {
                                 "selector": "#cx-what-to-read-next",
                                 "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[class*='WSJTheme--adWrapper']",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -3183,6 +3339,10 @@
                             {
                                 "selector": ".darla",
                                 "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[data-content='Advertisement']",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -3296,11 +3456,32 @@
                                 "type": "override"
                             }
                         ]
+                    },
+                    {
+                        "domain": "privacy-test-pages.site",
+                        "rules": [
+                            {
+                                "selector": ".hide-test",
+                                "type": "hide"
+                            },
+                            {
+                                "selector": ".hide-empty-test",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".closest-empty-test",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[class^='ad-container']",
+                                "type": "override"
+                            }
+                        ]
                     }
                 ]
             },
             "state": "enabled",
-            "hash": "32323481fe1e33412ae1671360a8ff50"
+            "hash": "4056ea9c8a66dd9e84b9fa950a72878e"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -3319,10 +3500,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "0f48731cc79a1d8d063df9f955f6acd4"
+            "hash": "8bdd471e30ff0779c75b56fd1ff1bf67"
         },
         "fingerprintingAudio": {
             "state": "disabled",
@@ -3342,9 +3543,29 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
-            "hash": "47ea2125485511e0d94a8e767b246068"
+            "hash": "5e1b1eb63a1832938e067d9f50a60bcd"
         },
         "fingerprintingBattery": {
             "exceptions": [
@@ -3363,10 +3584,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "0f48731cc79a1d8d063df9f955f6acd4"
+            "hash": "8bdd471e30ff0779c75b56fd1ff1bf67"
         },
         "fingerprintingCanvas": {
             "settings": {
@@ -3496,10 +3737,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "disabled",
-            "hash": "3b3d0307a60663097a8efad33af4fd08"
+            "hash": "f3225a60704043ef98991fbb904ce5ae"
         },
         "fingerprintingHardware": {
             "settings": {
@@ -3545,190 +3806,6 @@
                     "reason": "Site loads blank and does not proceed."
                 },
                 {
-                    "domain": "bank.marksandspencer.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
-                },
-                {
-                    "domain": "www7.marksandspencer.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
-                },
-                {
-                    "domain": "fidelity.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
-                },
-                {
-                    "domain": "citi.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
-                },
-                {
-                    "domain": "americanexpress.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "capitalone.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "marcus.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bankofamerica.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "wellsfargo.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "usbank.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "citizensbankonline.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "sofi.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "regions.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "usaa.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "boh.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "santander.com.br",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "pnc.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "edwardjones.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "ally.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "metrobank.com.ph",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "key.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "synchronybank.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "oldglorybank.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "santander.com.mx",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "secureinternetbank.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bankfirst.com.au",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "fnbo.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "salliemae.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bnc.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "kanza.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "prosperity.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "firstwestern.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "penncrest.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "northwest.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bell.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "dollar.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "dellsbank.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "rcbbank.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "ebt.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "mybct.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "wells.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "365.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "atom.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "ibanking-services.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bmo.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "tsb.co.uk",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
                     "domain": "earth.google.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1099"
                 },
@@ -3743,10 +3820,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "1538e748acefb11108d8583146f6b906"
+            "hash": "54913505a2d85f6edd609f46cb37bd67"
         },
         "fingerprintingScreenSize": {
             "settings": {
@@ -3789,190 +3886,6 @@
                     "reason": "After entering login details and clicking to log in, the site shows an adwall and prevents login."
                 },
                 {
-                    "domain": "bank.marksandspencer.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
-                },
-                {
-                    "domain": "www7.marksandspencer.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
-                },
-                {
-                    "domain": "fidelity.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
-                },
-                {
-                    "domain": "citi.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
-                },
-                {
-                    "domain": "americanexpress.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "capitalone.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "marcus.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bankofamerica.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "wellsfargo.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "usbank.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "citizensbankonline.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "sofi.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "regions.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "usaa.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "boh.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "santander.com.br",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "pnc.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "edwardjones.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "ally.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "metrobank.com.ph",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "key.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "synchronybank.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "oldglorybank.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "santander.com.mx",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "secureinternetbank.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bankfirst.com.au",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "fnbo.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "salliemae.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bnc.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "kanza.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "prosperity.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "firstwestern.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "penncrest.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "northwest.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bell.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "dollar.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "dellsbank.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "rcbbank.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "ebt.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "mybct.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "wells.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "365.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "atom.bank",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "ibanking-services.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "bmo.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
-                    "domain": "tsb.co.uk",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1265"
-                },
-                {
                     "domain": "earth.google.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1099"
                 },
@@ -3987,10 +3900,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "702a26f39577785255f35af7fc7f2578"
+            "hash": "82bc1f331b555f425caea2e18612c723"
         },
         "fingerprintingTemporaryStorage": {
             "exceptions": [
@@ -4013,10 +3946,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "4d9f5564b76c44f76b90692d98230d78"
+            "hash": "eaea6731ab1739306d0f43504cdbea8c"
         },
         "googleRejected": {
             "exceptions": [
@@ -4035,10 +3988,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "0f48731cc79a1d8d063df9f955f6acd4"
+            "hash": "8bdd471e30ff0779c75b56fd1ff1bf67"
         },
         "gpc": {
             "state": "enabled",
@@ -4094,10 +4067,11 @@
                     "globalprivacycontrol.org",
                     "washingtonpost.com",
                     "nytimes.com",
-                    "privacy-test-pages.glitch.me"
+                    "privacy-test-pages.glitch.me",
+                    "privacy-test-pages.site"
                 ]
             },
-            "hash": "8bbdafd961fcd054b37c6367c472f387"
+            "hash": "9962dbae2a6a668fbdae3b20f02bcbad"
         },
         "harmfulApis": {
             "settings": {
@@ -4227,6 +4201,10 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1158"
                 },
                 {
+                    "domain": "amica.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1336"
+                },
+                {
                     "domain": "earth.google.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1099"
                 },
@@ -4243,7 +4221,7 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
                 }
             ],
-            "hash": "8de33b0e54940edad6504523c8db58ff"
+            "hash": "22b055005a4ea3a5f5d387000c4b838b"
         },
         "incontextSignup": {
             "exceptions": [],
@@ -4281,6 +4259,26 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "settings": {
@@ -4291,17 +4289,20 @@
                 ]
             },
             "state": "enabled",
-            "hash": "002c32fcc15897c2ffae8045ac0bdcb3"
+            "hash": "38dceceb0c00de1a352a63e8ef039cbb"
         },
         "networkProtection": {
             "state": "disabled",
             "features": {
                 "waitlist": {
                     "state": "disabled"
+                },
+                "waitlistBetaActive": {
+                    "state": "disabled"
                 }
             },
             "exceptions": [],
-            "hash": "bf4c9cd751a7626bd89136f6cc98ccf1"
+            "hash": "ba52a36920a4a76343fc3c44d98936f9"
         },
         "newTabContinueSetUp": {
             "exceptions": [],
@@ -4374,10 +4375,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "b3ae340e95ffb663509c48505ddad990"
+            "hash": "b2872f71e06e60ba9a6be456707a20b2"
         },
         "requestFilterer": {
             "state": "disabled",
@@ -4444,10 +4465,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "0f48731cc79a1d8d063df9f955f6acd4"
+            "hash": "8bdd471e30ff0779c75b56fd1ff1bf67"
         },
         "trackerAllowlist": {
             "state": "enabled",
@@ -4970,6 +5011,48 @@
                     "connatix.com": {
                         "rules": [
                             {
+                                "rule": "cd.connatix.com",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/768"
+                            },
+                            {
+                                "rule": "cds.connatix.com",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/768"
+                            },
+                            {
+                                "rule": "cdn.connatix.com",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/768"
+                            },
+                            {
+                                "rule": "capi.connatix.com",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/768"
+                            },
+                            {
+                                "rule": "vid.connatix.com",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/768"
+                            },
+                            {
+                                "rule": "img.connatix.com",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/768"
+                            },
+                            {
                                 "rule": "connatix.com",
                                 "domains": [
                                     "accuweather.com",
@@ -5243,6 +5326,17 @@
                                     "seatosummit.com"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/535"
+                            }
+                        ]
+                    },
+                    "eccmp.com": {
+                        "rules": [
+                            {
+                                "rule": "eccmp.com/sts/scripts/conversen-SDK.js",
+                                "domains": [
+                                    "pch.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1344"
                             }
                         ]
                     },
@@ -5562,9 +5656,10 @@
                                 "rule": "google-analytics.com/analytics.js",
                                 "domains": [
                                     "doterra.com",
-                                    "easyjet.com"
+                                    "easyjet.com",
+                                    "worlddutyfree.com"
                                 ],
-                                "reason": "doterra.com - For doterra.com/login/loading, the page shows a loading indicator and never redirects.,easyjet.com - Clicking 'Show Worldwide flights' after entering parameters for a worldwide flight in the flight viewing form does nothing."
+                                "reason": "doterra.com - For doterra.com/login/loading, the page shows a loading indicator and never redirects.,easyjet.com - Clicking 'Show Worldwide flights' after entering parameters for a worldwide flight in the flight viewing form does nothing.,worlddutyfree.com - https://github.com/duckduckgo/privacy-configuration/issues/1380"
                             },
                             {
                                 "rule": "www.google-analytics.com/plugins/ua/ecommerce.js",
@@ -6088,7 +6183,8 @@
                             {
                                 "rule": "static.klaviyo.com/onsite/js/klaviyo.js",
                                 "domains": [
-                                    "kidsguide.com"
+                                    "kidsguide.com",
+                                    "urbanebikes.com"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1277"
                             },
@@ -6111,6 +6207,13 @@
                                     "andieswim.com"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1285"
+                            },
+                            {
+                                "rule": "lightboxcdn.com/vendor/.*/user.js",
+                                "domains": [
+                                    "nascar.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1373"
                             }
                         ]
                     },
@@ -6670,6 +6773,17 @@
                             }
                         ]
                     },
+                    "rokt.com": {
+                        "rules": [
+                            {
+                                "rule": "rokt.com/wsdk/integrations/snippet.js",
+                                "domains": [
+                                    "pch.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1344"
+                            }
+                        ]
+                    },
                     "rumble.com": {
                         "rules": [
                             {
@@ -6904,6 +7018,34 @@
                                     "royalcaribbean.com"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1255"
+                            },
+                            {
+                                "rule": "tags.tiqcdn.com/utag/lbg/",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1334"
+                            },
+                            {
+                                "rule": "tags.tiqcdn.com/utag/pch/",
+                                "domains": [
+                                    "pch.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1344"
+                            },
+                            {
+                                "rule": "tags.tiqcdn.com/utag/tiqapp/utag.v.js",
+                                "domains": [
+                                    "oracle.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1353"
+                            },
+                            {
+                                "rule": "tags.tiqcdn.com/utag/politico/main/prod/utag.js",
+                                "domains": [
+                                    "politico.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1382"
                             }
                         ]
                     },
@@ -7080,6 +7222,13 @@
                                     "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/366"
+                            },
+                            {
+                                "rule": "yandex.ru/map-widget/",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1384"
                             }
                         ]
                     },
@@ -7152,6 +7301,17 @@
                             }
                         ]
                     },
+                    "zopim.com": {
+                        "rules": [
+                            {
+                                "rule": "widget-mediator.zopim.com",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1360"
+                            }
+                        ]
+                    },
                     "citi.com": {
                         "rules": [
                             {
@@ -7213,6 +7373,17 @@
                                 "reason": "CNAME ENTRY GENERATED FROM: qualtrics.com"
                             }
                         ]
+                    },
+                    "yandex.tm": {
+                        "rules": [
+                            {
+                                "rule": "mc.yandex.tm/map-widget/",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "CNAME ENTRY GENERATED FROM: yandex.ru"
+                            }
+                        ]
                     }
                 }
             },
@@ -7232,9 +7403,29 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
-            "hash": "f37c474742fcfb0452908e995f62ff2a"
+            "hash": "46dea388c47ba25cebd83c39937e0d6a"
         },
         "trackingCookies1p": {
             "settings": {
@@ -7259,10 +7450,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "b7a8debe2d9b8dfae76d09d54027d131"
+            "hash": "81f0ad37e03fc0e441ebd5dc635194d3"
         },
         "trackingCookies3p": {
             "settings": {
@@ -7284,10 +7495,30 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "state": "enabled",
-            "hash": "60e94026ce50c88c22cf24a3ccf747bf"
+            "hash": "9aa99b3a9efbe597b7ae89af26cfa9ee"
         },
         "trackingParameters": {
             "exceptions": [
@@ -7306,6 +7537,26 @@
                 {
                     "domain": "paramountplus.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
+                },
+                {
+                    "domain": "localhost",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "127.0.0.1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "::1",
+                    "reason": "Protections are disabled on localhost pages"
+                },
+                {
+                    "domain": "livenation.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
+                },
+                {
+                    "domain": "ticketmaster.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
             "settings": {
@@ -7339,7 +7590,7 @@
             },
             "state": "enabled",
             "minSupportedVersion": "2023.5.23",
-            "hash": "5223c785e8c98078992617672f1cd417"
+            "hash": "f742daef8803c9c18fd3726ab36353a7"
         },
         "userAgentRotation": {
             "settings": {
@@ -7409,26 +7660,5 @@
             "hash": "728493ef7a1488e4781656d3f9db84aa"
         }
     },
-    "unprotectedTemporary": [
-        {
-            "domain": "localhost",
-            "reason": "Protections are disabled on localhost pages"
-        },
-        {
-            "domain": "127.0.0.1",
-            "reason": "Protections are disabled on localhost pages"
-        },
-        {
-            "domain": "::1",
-            "reason": "Protections are disabled on localhost pages"
-        },
-        {
-            "domain": "livenation.com",
-            "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1053"
-        },
-        {
-            "domain": "ticketmaster.com",
-            "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
-        }
-    ]
+    "unprotectedTemporary": []
 }
