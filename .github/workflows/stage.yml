@@ -26,7 +26,7 @@ jobs:
           node scripts/bumpVersion.js ${{ github.event.inputs.version }}
 
       - name: Commit config and version updates
-        uses: stefanzweifel/git-auto-commit-action@3ea6ae190baf489ba007f7c92608f33ce20ef04a
+        uses: stefanzweifel/git-auto-commit-action@8756aa072ef5b4a080af5dc8fef36c5d586e521d
         with:
           commit_message: "Release ${{ github.event.inputs.version }} [ci release]"
           create_branch: true
