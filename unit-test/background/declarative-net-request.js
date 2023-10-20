@@ -49,7 +49,7 @@ config.features.trackerAllowlist = {
 const expectedRuleIdsByConfigName = {
     tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 21001, 21002, 21003, 21004],
     config: [
-        10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010
+        10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011
     ]
 }
 
@@ -104,44 +104,49 @@ const expectedLookupByConfigName = {
         10002: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-1.com',
-            reason: 'match single resource on single site'
+            reason: 'match on subdomain'
         },
         10003: {
             type: 'trackerAllowlist',
-            domain: 'allowlist-tracker-2.com',
-            reason: 'match single resource on all sites'
+            domain: 'allowlist-tracker-1.com',
+            reason: 'match single resource on single site'
         },
         10004: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-2.com',
-            reason: 'match all sites and all paths'
+            reason: 'match single resource on all sites'
         },
         10005: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-2.com',
-            reason: 'specific subdomain rule'
+            reason: 'match all sites and all paths'
         },
         10006: {
+            type: 'trackerAllowlist',
+            domain: 'allowlist-tracker-2.com',
+            reason: 'specific subdomain rule'
+        },
+        10007: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-3.com',
             reason: 'match all requests'
         },
-        10007: {
+        10008: {
             type: 'unprotectedTemporary',
             domain: 'google.com',
             reason: 'site breakage'
         },
-        10008: {
+        10009: {
             type: 'unprotectedTemporary',
             domain: 'suntrust.com',
             reason: 'site breakage'
         },
-        10009: {
+        10010: {
             type: 'contentBlocking',
             domain: 'content-blocking.example',
             reason: 'site breakage'
         },
-        10010: {
+        10011: {
             type: 'gpc'
         }
     }
