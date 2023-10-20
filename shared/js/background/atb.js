@@ -3,10 +3,8 @@
  * Please see https://duck.co/help/privacy/atb for more information.
  */
 import browser from 'webextension-polyfill'
-import { getUserLocale } from './i18n.js'
 
 const settings = require('./settings')
-const utils = require('./utils')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string')
 const load = require('./load')
 const browserWrapper = require('./wrapper')
@@ -159,14 +157,7 @@ const ATB = (() => {
             return new URLSearchParams()
         },
 
-        getChromeCounteractExpATB: (atb) => {
-            const variant = 'v'
-            const atbVariant = Math.random() < 0.5 ? 'k' : 'j'
-            return `${atb}${variant}${atbVariant}`
-        },
-
         updateATBValues: () => {
-            const browserInfo = parseUserAgentString()
             // wait until settings is ready to try and get atb from the page
             return settings.ready()
                 .then(ATB.setInitialVersions)
@@ -179,15 +170,6 @@ const ATB = (() => {
                         atb = params.has('atb') && params.get('atb')
                         return !!atb
                     })
-
-                    // in case there is no assigned atb variant, enroll into Chrome Counteract experiment
-                    if (!atb &&
-                        settings.getSetting('atb') &&
-                        utils.getBrowserName() === 'chrome' &&
-                        getUserLocale() === 'en' &&
-                        browserInfo.os !== 'l') {
-                        atb = ATB.getChromeCounteractExpATB(settings.getSetting('atb'))
-                    }
 
                     if (atb) {
                         settings.updateSetting('atb', atb)
