@@ -218,6 +218,22 @@ class Tab {
         this._tabState.setValue('debugFlags', value)
     }
 
+    get errorDescriptions () {
+        return this._tabState.errorDescriptions
+    }
+
+    set errorDescriptions (value) {
+        this._tabState.setValue('errorDescriptions', value)
+    }
+
+    get httpErrorCodes () {
+        return this._tabState.httpErrorCodes
+    }
+
+    set httpErrorCodes (value) {
+        this._tabState.setValue('httpErrorCodes', value)
+    }
+
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
      * @param {string} requestURL

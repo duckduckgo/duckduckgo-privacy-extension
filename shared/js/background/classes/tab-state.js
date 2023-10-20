@@ -50,6 +50,10 @@ export class TabState {
         this.denylisted = false
         /** @type {string[]} */
         this.debugFlags = []
+        /** @type {string[]} */
+        this.errorDescriptions = []
+        /** @type {number[]} */
+        this.httpErrorCodes = []
         // Whilst restoring, prevent the tab data being stored
         if (!restoring) {
             Storage.backup(this)

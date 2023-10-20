@@ -468,6 +468,8 @@ browser.webRequest.onErrorOccurred.addListener(e => {
 
     const tab = tabManager.get({ tabId: e.tabId })
 
+    tab.errorDescriptions.push(e.error)
+
     // We're only looking at failed main_frame upgrades. A tab can send multiple
     // main_frame request errors so we will only look at the first one then set tab.hasHttpsError.
     if (!tab || !tab.mainFrameUpgraded || tab.hasHttpsError) {
