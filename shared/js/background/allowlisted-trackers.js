@@ -2,6 +2,24 @@ const tdsStorage = require('./storage/tds').default
 const tldts = require('tldts')
 const { getURLWithoutQueryString } = require('./utils')
 
+/**
+ * @typedef {Object} TrackerAllowlistRule
+ * @property {string} rule
+ * @property {string[]} domains
+ * @property {string} [reason]
+ *
+ * @typedef {Object} TrackerAllowlistDomainEntry
+ * @property {TrackerAllowlistRule[]} rules
+ *
+ * @typedef {Record<string, TrackerAllowlistDomainEntry>} TrackerAllowlist
+ */
+
+/**
+ * Check a request against the tracker allowlist.
+ * @param {string} site URL of the site
+ * @param {string} request URL to be checked against the allowlist
+ * @returns {TrackerAllowlistRule | false}
+ */
 function isTrackerAllowlisted (site, request) {
     // check that allowlist exists and is not disabled
     if (!tdsStorage.config.features.trackerAllowlist || tdsStorage.config.features.trackerAllowlist.state === 'disabled') {
@@ -18,7 +36,9 @@ function isTrackerAllowlisted (site, request) {
     if (!parsedRequest.domain) {
         return false
     }
-    const allowListEntry = tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers[parsedRequest.domain]
+    /** @type {TrackerAllowlist} */
+    const trackerAllowlist = tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers
+    const allowListEntry = trackerAllowlist[parsedRequest.domain]
 
     if (allowListEntry) {
         return _matchesRule(site, request, allowListEntry)
@@ -27,6 +47,12 @@ function isTrackerAllowlisted (site, request) {
     }
 }
 
+/**
+ * @param {string} site
+ * @param {string} request
+ * @param {TrackerAllowlistDomainEntry} allowListEntry
+ * @returns {TrackerAllowlistRule | false}
+ */
 function _matchesRule (site, request, allowListEntry) {
     let matchedRule = null
     request = getURLWithoutQueryString(request).split(';')[0]
@@ -48,7 +74,16 @@ function _matchesRule (site, request, allowListEntry) {
     }
 
     if (matchedRule) {
-        if (matchedRule.domains.includes('<all>') || matchedRule.domains.includes(tldts.parse(site).domain)) {
+        if (matchedRule.domains.includes('<all>')) {
+            return matchedRule
+        }
+        const { domain, hostname } = tldts.parse(site)
+        // eTLD+1 match
+        if (domain && matchedRule.domains.includes(domain)) {
+            return matchedRule
+        }
+        // hostname, or hostname-suffix match
+        if (hostname && matchedRule.domains.find((d) => d === hostname || hostname.endsWith(`.${d}`))) {
             return matchedRule
         }
     } else {
