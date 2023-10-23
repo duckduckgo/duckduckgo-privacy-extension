@@ -18,6 +18,7 @@
 import { onStartup } from './startup'
 import FireButton from './components/fire-button'
 import TabTracker from './components/tab-tracking'
+import MV3ContentScriptInjection from './components/mv3-content-script-injection'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
@@ -27,7 +28,6 @@ require('./events')
 const settings = require('./settings')
 if (BUILD_TARGET === 'chrome-mv3') {
     require('./dnr-config-rulesets')
-    require('./script-injection')
 }
 
 settings.ready().then(() => {
@@ -43,8 +43,13 @@ const components = {
     tabTracking: new TabTracker({ tabManager })
 }
 
+// Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3') {
     components.fireButton = new FireButton({ settings, tabManager })
+}
+// MV3-only components
+if (BUILD_TARGET === 'chrome-mv3') {
+    components.scriptInjection = new MV3ContentScriptInjection()
 }
 console.log('Loaded components:', components)
 // @ts-ignore
