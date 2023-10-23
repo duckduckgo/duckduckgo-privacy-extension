@@ -83,7 +83,7 @@
         "normalize.scss": "0.1.0",
         "privacy-test-pages": "github:duckduckgo/privacy-test-pages#1.2.2",
         "punycode": "2.3.0",
-        "tldts": "^6.0.16",
+        "tldts": "^6.0.17",
         "web-ext": "^7.8.0",
         "zod": "^3.22.4"
     },
