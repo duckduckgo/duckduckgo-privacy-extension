@@ -21,14 +21,6 @@ const stub = (arg) => {
         }
     }
 
-    spyOn(tdsStorage, 'getVersionParam').and.returnValue('')
-
-    spyOn(tdsStorage, 'getListFromLocalDB')
-        .and.callFake(key => Promise.resolve(tdsData[key]))
-
-    spyOn(tdsStorage, 'getDataXHR')
-        .and.callFake((list, etag, source) => Promise.resolve({ response: 200, data: tdsData[list.name] }))
-
     spyOn(tdsStorage, 'onUpdate')
         .and.callFake((configName, listener) => {
             let listeners = onUpdateListeners.get(configName)
@@ -38,6 +30,22 @@ const stub = (arg) => {
             }
             listeners.push(listener)
         })
+
+    spyOn(tdsStorage, 'getLists').and.callFake(() => {
+        return Promise.resolve([{
+            name: 'tds',
+            data: tdsData.tds
+        }, {
+            name: 'config',
+            data: tdsData.config
+        }, {
+            name: 'surrogates',
+            data: tdsData.surrogates
+        }])
+    })
+
+    spyOn(tdsStorage, 'ready').and.callFake(() => Promise.resolve())
+    Object.assign(tdsStorage, tdsData)
 
     return { onUpdateListeners, tdsData }
 }

@@ -6,6 +6,21 @@ import { TEST_SERVER_ORIGIN } from './helpers/testPages'
 const testHost = 'privacy-test-pages.site'
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`
 
+async function forDynamicRulesLoaded (backgroundPage) {
+    // We don't have anything we can listen to to know we've finished loading all rules, so just
+    // poll the dynamic rules until it looks like they've been added.
+    while (true) {
+        const ruleCount = await backgroundPage.evaluate(async () => {
+            const rules = await chrome.declarativeNetRequest.getDynamicRules()
+            return rules.length
+        })
+        if (ruleCount > 10) {
+            break
+        }
+        await new Promise(resolve => setTimeout(resolve, 100))
+    }
+}
+
 async function runRequestBlockingTest (page, url = testSite) {
     const pageRequests = []
     page.on('request', async (req) => {
@@ -43,10 +58,13 @@ async function runRequestBlockingTest (page, url = testSite) {
 }
 
 test.describe('Test request blocking', () => {
-    test('Should block all the test tracking requests', async ({ page, backgroundPage, context, backgroundNetworkContext }) => {
+    test('Should block all the test tracking requests', async ({ page, backgroundPage, context, backgroundNetworkContext, manifestVersion }) => {
         await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
+        if (manifestVersion === 3) {
+            await forDynamicRulesLoaded(backgroundPage)
+        }
         const [testCount, pageRequests] = await runRequestBlockingTest(page)
 
         // Verify that no logged requests were allowed.
@@ -97,20 +115,22 @@ test.describe('Test request blocking', () => {
         await page.close()
     })
 
-    test('serviceworkerInitiatedRequests exceptions should disable service worker blocking', async ({ page, backgroundPage, context, backgroundNetworkContext }) => {
+    test('serviceworkerInitiatedRequests exceptions should disable service worker blocking', async ({ page, backgroundPage, context, backgroundNetworkContext, manifestVersion }) => {
         await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
+        if (manifestVersion === 3) {
+            await forDynamicRulesLoaded(backgroundPage)
+        }
         await backgroundPage.evaluate(async (domain) => {
-            /* global dbg */
-            const { data: config } = dbg.getListContents('config')
-            config.features.serviceworkerInitiatedRequests.exceptions.push({
-                domain,
-                reason: 'test'
-            })
-            await dbg.setListContents({
-                name: 'config',
-                value: config
+            /** @type {import('../shared/js/background/components/resource-loader').default} */
+            const configLoader = globalThis.components.tds.config
+            await configLoader.modify((config) => {
+                config.features.serviceworkerInitiatedRequests.exceptions.push({
+                    domain,
+                    reason: 'test'
+                })
+                return config
             })
         }, testHost)
         const [, pageRequests] = await runRequestBlockingTest(page)
@@ -151,6 +171,7 @@ test.describe('Test request blocking', () => {
                 if (localhostRules.length > 0) {
                     break
                 }
+                await new Promise(resolve => setTimeout(resolve, 100))
             }
         }
 
@@ -173,6 +194,9 @@ test.describe('Test request blocking', () => {
         await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
+        if (manifestVersion === 3) {
+            await forDynamicRulesLoaded(backgroundPage)
+        }
 
         // load with protection enabled
         await runRequestBlockingTest(page)
@@ -187,6 +211,7 @@ test.describe('Test request blocking', () => {
 
         // disable protection on the page and rerun the test
         await backgroundPage.evaluate(async (domain) => {
+            /* global dbg */
             dbg.tabManager.setList({ list: 'allowlisted', domain, value: true })
         }, testHost)
         await runRequestBlockingTest(page)

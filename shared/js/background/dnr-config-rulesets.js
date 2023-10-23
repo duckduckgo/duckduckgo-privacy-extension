@@ -254,7 +254,7 @@ let ruleUpdateLock = Promise.resolve()
  * tdsStorage.onUpdate listener which is called when the configurations are
  * updated and when the background ServiceWorker is restarted.
  * Note: Only exported for use by unit tests, do not call manually.
- * @param {'config'|'tds'} configName
+ * @param {import('./components/resource-loader').ResourceName} configName
  * @param {string} etag
  * @param {object} configValue
  * @returns {Promise}

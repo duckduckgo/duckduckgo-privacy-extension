@@ -2,14 +2,12 @@
 import { NewTabTrackerStats } from './newtab-tracker-stats'
 import { TrackerStats } from './classes/tracker-stats.js'
 import httpsStorage from './storage/https'
-import tdsStorage from './storage/tds'
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report'
 const utils = require('./utils')
 const Companies = require('./companies')
 const experiment = require('./experiments')
 const https = require('./https')
 const settings = require('./settings')
-const trackers = require('./trackers')
 const dnrSessionId = require('./dnr-session-rule-id')
 /** @module */
 
@@ -29,12 +27,6 @@ export async function onStartup () {
         https.setLists(httpsLists)
     } catch (e) {
         console.warn('Error loading https lists', e)
-    }
-    try {
-        const tdsLists = await tdsStorage.getLists(/* preferLocal= */true)
-        trackers.setLists(tdsLists)
-    } catch (e) {
-        console.warn('Error loading tds lists', e)
     }
 
     Companies.buildFromStorage()

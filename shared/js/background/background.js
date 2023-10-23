@@ -22,6 +22,8 @@ import MV3ContentScriptInjection from './components/mv3-content-script-injection
 import EmailAutofill from './components/email-autofill'
 import OmniboxSearch from './components/omnibox-search'
 import InternalUserDetector from './components/internal-user-detector'
+import TDSStorage from './components/tds'
+import TrackersGlobal from './components/trackers'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
@@ -37,16 +39,22 @@ settings.ready().then(() => {
     onStartup()
 })
 
+const tds = new TDSStorage({ settings })
 /**
  * @type {{
  *  fireButton?: FireButton;
+ *  tds: TDSStorage;
+ *  tabTracking: TabTracker;
+ *  trackers: TrackersGlobal;
  * }}
  */
 const components = {
     tabTracking: new TabTracker({ tabManager }),
     autofill: new EmailAutofill({ settings }),
     omnibox: new OmniboxSearch(),
-    internalUser: new InternalUserDetector({ settings })
+    internalUser: new InternalUserDetector({ settings }),
+    tds,
+    trackers: new TrackersGlobal({ tds })
 }
 
 // Chrome-only components
