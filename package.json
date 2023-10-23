@@ -64,7 +64,7 @@
     },
     "dependencies": {
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#8.4.2",
-        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#4.39.0",
+        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#4.40.0",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#1.6.1",
