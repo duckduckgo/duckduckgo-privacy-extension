@@ -224,8 +224,11 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
         })
 
         for (const {
-            description, site, request, isAllowlisted
+            description, site, request, isAllowlisted, exceptPlatforms
         } of referenceTests) {
+            if (exceptPlatforms && exceptPlatforms.includes('web-extension-mv3')) {
+                continue
+            }
             it(description, /** @this {testFunction} */ async function () {
                 const actualMatchedRules = await this.browser.testMatchOutcome({
                     url: request,
