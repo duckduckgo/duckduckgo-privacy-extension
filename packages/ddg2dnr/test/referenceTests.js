@@ -9,6 +9,7 @@ const {
     generateTdsRuleset
 } = require('../lib/tds')
 const { generateCookieBlockingRuleset } = require('../lib/cookies')
+const { generateTrackerAllowlistRules } = require('../lib/trackerAllowlist')
 
 function referenceTestPath (...args) {
     return require.resolve(path.join('@duckduckgo/privacy-reference-tests', ...args))
@@ -187,6 +188,78 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
                     }
                 })
             }
+        }
+    })
+
+    describe('Tracker Allowlist', /** @this {testFunction} */ async function () {
+        const referenceTests = loadReferenceTestJSONFile('tracker-radar-tests', 'TR-domain-matching', 'tracker_allowlist_matching_tests.json')
+        let blockAndAllowRules = []
+
+        this.beforeAll(/** @this {testFunction} */ async function () {
+            const blockList = loadReferenceTestJSONFile('tracker-radar-tests', 'TR-domain-matching', 'tracker_allowlist_tds_reference.json')
+            const allowlistedTrackers = loadReferenceTestJSONFile('tracker-radar-tests', 'TR-domain-matching', 'tracker_allowlist_reference.json')
+            const mockConfig = {
+                features: {
+                    trackerAllowlist: {
+                        state: 'enabled',
+                        settings: {
+                            allowlistedTrackers
+                        }
+                    }
+                }
+            }
+            const isRegexSupported = this.browser.isRegexSupported.bind(this.browser)
+            const { ruleset } = await generateTdsRuleset(
+                blockList, new Set(), '/', isRegexSupported
+            )
+            let ruleId = 10000
+            blockAndAllowRules = ruleset
+            for (const { rule } of generateTrackerAllowlistRules(mockConfig)) {
+                rule.id = ruleId++
+                blockAndAllowRules.push(rule)
+            }
+        })
+        this.beforeEach(/** @this {testFunction} */ async function () {
+            await this.browser.addRules(blockAndAllowRules)
+        })
+
+        for (const {
+            description, site, request, isAllowlisted, exceptPlatforms
+        } of referenceTests) {
+            if (exceptPlatforms && exceptPlatforms.includes('web-extension-mv3')) {
+                continue
+            }
+            it(description, /** @this {testFunction} */ async function () {
+                const actualMatchedRules = await this.browser.testMatchOutcome({
+                    url: request,
+                    initiator: site,
+                    type: 'script'
+                })
+                // console.log('xxx', actualMatchedRules)
+
+                let actualAction = 'ignore'
+                const actualRedirects = []
+                for (const rule of actualMatchedRules) {
+                    if (rule.action.type === 'block') {
+                        actualAction = 'block'
+                        continue
+                    }
+                }
+
+                if (actualAction === 'ignore' && actualRedirects.length > 0) {
+                    actualAction = 'redirect'
+
+                    // Note - Check the redirection path is correct. Not possible
+                    //        currently, since the expected redirect path is a data
+                    //        URI instead of the script filename/path.
+                }
+
+                assert.equal(
+                    actualAction,
+                    isAllowlisted ? 'ignore' : 'block',
+                    description
+                )
+            })
         }
     })
 })
