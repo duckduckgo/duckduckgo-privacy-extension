@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1697058000288,
+    "version": 1698100617802,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -120,7 +120,6 @@
                 ],
                 "keywords": [
                     "=amp",
-                    "amp=",
                     "&amp",
                     "amp&",
                     "/amp",
@@ -135,7 +134,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "e6485e0c2ebb1c844782a694fee7915d"
+            "hash": "0e1fe795462dda3b03f22cd098d2dac2"
         },
         "autoconsent": {
             "exceptions": [
@@ -1266,6 +1265,14 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1377"
                 },
                 {
+                    "domain": "ads.google.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1401"
+                },
+                {
+                    "domain": "sundancecatalog.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1420"
+                },
+                {
                     "domain": "earth.google.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1099"
                 },
@@ -1282,7 +1289,7 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
                 }
             ],
-            "hash": "f43e0ec67d1177139fe5cfc603cbd8a3"
+            "hash": "bcbf6e90364d12b5869195d075789627"
         },
         "cookie": {
             "settings": {
@@ -1405,10 +1412,6 @@
                         "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1201"
                     },
                     {
-                        "domain": "hulu.com",
-                        "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1145"
-                    },
-                    {
                         "domain": "vsp.com",
                         "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1292"
                     },
@@ -1454,7 +1457,7 @@
             },
             "exceptions": [],
             "state": "disabled",
-            "hash": "3ea317fb3b4ed90009e6a94c30b4f7aa"
+            "hash": "8c2c7936a2eee26a6a45c0e76c99bc7a"
         },
         "duckPlayer": {
             "exceptions": [],
@@ -1638,7 +1641,7 @@
                 }
             ],
             "settings": {
-                "useStrictHideStyleTag": false,
+                "useStrictHideStyleTag": true,
                 "rules": [
                     {
                         "selector": "[id*='gpt-']",
@@ -2025,13 +2028,16 @@
                     300,
                     500,
                     1000,
+                    1500,
                     2000,
-                    3000
+                    3000,
+                    5000
                 ],
                 "unhideTimeouts": [
                     1250,
                     2250,
-                    3000
+                    3250,
+                    5250
                 ],
                 "mediaAndFormSelectors": "video,canvas,embed,object,audio,map,form,input,textarea,select,option",
                 "adLabelStrings": [
@@ -2087,6 +2093,15 @@
                             {
                                 "selector": ".proper-dynamic-insertion",
                                 "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "avito.ru",
+                        "rules": [
+                            {
+                                "selector": "[class*='advert-mimicry-block']",
+                                "type": "hide"
                             }
                         ]
                     },
@@ -2235,15 +2250,6 @@
                         "domain": "dallasnews.com",
                         "rules": [
                             {
-                                "selector": "[data-targeting]",
-                                "type": "hide-empty"
-                            }
-                        ]
-                    },
-                    {
-                        "domain": "dallasnews.com",
-                        "rules": [
-                            {
                                 "selector": ".adhesiveAdWrapper",
                                 "type": "hide-empty"
                             },
@@ -2258,6 +2264,15 @@
                             {
                                 "selector": ".bg-neutral-grey-4.items-center",
                                 "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "deseret.com",
+                        "rules": [
+                            {
+                                "selector": "[data-targeting]",
+                                "type": "override"
                             }
                         ]
                     },
@@ -3095,6 +3110,23 @@
                         ]
                     },
                     {
+                        "domain": "spanishdict.com",
+                        "rules": [
+                            {
+                                "selector": "[id*='adSide']",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[id*='adTop']",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[id*='adMiddle']",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "spankbang.com",
                         "rules": [
                             {
@@ -3294,6 +3326,15 @@
                         ]
                     },
                     {
+                        "domain": "whitakerfuneralhome.com",
+                        "rules": [
+                            {
+                                "selector": ".top-banner",
+                                "type": "override"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "winnipegfreepress.com",
                         "rules": [
                             {
@@ -3437,27 +3478,6 @@
                         ]
                     },
                     {
-                        "domain": "privacy-test-pages.glitch.me",
-                        "rules": [
-                            {
-                                "selector": ".hide-test",
-                                "type": "hide"
-                            },
-                            {
-                                "selector": ".hide-empty-test",
-                                "type": "hide-empty"
-                            },
-                            {
-                                "selector": ".closest-empty-test",
-                                "type": "closest-empty"
-                            },
-                            {
-                                "selector": "[class^='ad-container']",
-                                "type": "override"
-                            }
-                        ]
-                    },
-                    {
                         "domain": "privacy-test-pages.site",
                         "rules": [
                             {
@@ -3481,7 +3501,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "4056ea9c8a66dd9e84b9fa950a72878e"
+            "hash": "d475aaceba80f50ecdcd435a2b70b907"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -3529,6 +3549,10 @@
             "state": "disabled",
             "exceptions": [
                 {
+                    "domain": "litebluesso.usps.gov",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1424"
+                },
+                {
                     "domain": "earth.google.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1099"
                 },
@@ -3565,10 +3589,14 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
-            "hash": "5e1b1eb63a1832938e067d9f50a60bcd"
+            "hash": "d26b3e1cb3c12194150561184f0a559b"
         },
         "fingerprintingBattery": {
             "exceptions": [
+                {
+                    "domain": "litebluesso.usps.gov",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1424"
+                },
                 {
                     "domain": "earth.google.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1099"
@@ -3607,7 +3635,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "8bdd471e30ff0779c75b56fd1ff1bf67"
+            "hash": "8dc5fcd0ffa45b700115940f96fe9d18"
         },
         "fingerprintingCanvas": {
             "settings": {
@@ -3669,6 +3697,10 @@
                 {
                     "domain": "ikea.com",
                     "reason": "When creating an account, after filling out details and going to e-mail confirmation, there is an error 'Something went wrong', and the e-mail may not be received. Clicking 'Send new code' appears successful, but after entering the code there is often another account creation error."
+                },
+                {
+                    "domain": "litebluesso.usps.gov",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1424"
                 },
                 {
                     "domain": "manulife.ca",
@@ -3760,7 +3792,7 @@
                 }
             ],
             "state": "disabled",
-            "hash": "f3225a60704043ef98991fbb904ce5ae"
+            "hash": "784f909545f9692814ca7b7236864a00"
         },
         "fingerprintingHardware": {
             "settings": {
@@ -3792,6 +3824,10 @@
                 {
                     "domain": "fedex.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/927"
+                },
+                {
+                    "domain": "litebluesso.usps.gov",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1424"
                 },
                 {
                     "domain": "realestate.com.au",
@@ -3843,7 +3879,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "54913505a2d85f6edd609f46cb37bd67"
+            "hash": "9f880b88fd98d4f2461698d6fb7ae12c"
         },
         "fingerprintingScreenSize": {
             "settings": {
@@ -3880,6 +3916,10 @@
                 {
                     "domain": "hyatt.com",
                     "reason": "Site loads blank and does not proceed."
+                },
+                {
+                    "domain": "litebluesso.usps.gov",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1424"
                 },
                 {
                     "domain": "secureserver.net",
@@ -3923,13 +3963,17 @@
                 }
             ],
             "state": "enabled",
-            "hash": "82bc1f331b555f425caea2e18612c723"
+            "hash": "8a5936df1cb398cb5eae5c5648a68f19"
         },
         "fingerprintingTemporaryStorage": {
             "exceptions": [
                 {
                     "domain": "fedex.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/927"
+                },
+                {
+                    "domain": "litebluesso.usps.gov",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1424"
                 },
                 {
                     "domain": "earth.google.com",
@@ -3969,7 +4013,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "eaea6731ab1739306d0f43504cdbea8c"
+            "hash": "5d00648ae0f43a265efee430b9de9d08"
         },
         "googleRejected": {
             "exceptions": [
@@ -4029,6 +4073,10 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/644"
                 },
                 {
+                    "domain": "crunchyroll.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1422"
+                },
+                {
                     "domain": "eventbrite.com",
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/700"
                 },
@@ -4067,11 +4115,10 @@
                     "globalprivacycontrol.org",
                     "washingtonpost.com",
                     "nytimes.com",
-                    "privacy-test-pages.glitch.me",
                     "privacy-test-pages.site"
                 ]
             },
-            "hash": "9962dbae2a6a668fbdae3b20f02bcbad"
+            "hash": "5c43f4f38bad7596fa34ac88305f444a"
         },
         "harmfulApis": {
             "settings": {
@@ -4198,11 +4245,15 @@
             "exceptions": [
                 {
                     "domain": "act.alz.org",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1158"
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1392"
                 },
                 {
                     "domain": "amica.com",
-                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1336"
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1392"
+                },
+                {
+                    "domain": "jp.square-enix.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1392"
                 },
                 {
                     "domain": "earth.google.com",
@@ -4221,7 +4272,7 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1085"
                 }
             ],
-            "hash": "22b055005a4ea3a5f5d387000c4b838b"
+            "hash": "2b7a26bbc23127a7ce24cc992066ad14"
         },
         "incontextSignup": {
             "exceptions": [],
@@ -4333,6 +4384,16 @@
             ],
             "state": "disabled",
             "hash": "81f357de4bfc7abeddf1a3a3fb1fc7a9"
+        },
+        "privacyDashboard": {
+            "exceptions": [],
+            "features": {
+                "highlightedProtectionsToggle": {
+                    "state": "disabled"
+                }
+            },
+            "state": "disabled",
+            "hash": "3e002160446aaede7c1239c5f5b3a53c"
         },
         "referrer": {
             "exceptions": [
@@ -5626,7 +5687,7 @@
                             {
                                 "rule": "geoip-js.com/js/apis/geoip2/v2.1/geoip2.js",
                                 "domains": [
-                                    "yourrewardcard.com"
+                                    "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1288"
                             }
@@ -5977,6 +6038,17 @@
                                     "focus.de"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1043"
+                            }
+                        ]
+                    },
+                    "groovehq.com": {
+                        "rules": [
+                            {
+                                "rule": "widget.cluster.groovehq.com/_next/static/chunks/",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1416"
                             }
                         ]
                     },
@@ -6479,6 +6551,13 @@
                                     "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/529"
+                            },
+                            {
+                                "rule": "cmp.osano.com",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1398"
                             }
                         ]
                     },
@@ -6508,6 +6587,17 @@
                                     "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1107"
+                            }
+                        ]
+                    },
+                    "permutive.app": {
+                        "rules": [
+                            {
+                                "rule": "edge.permutive.app",
+                                "domains": [
+                                    "globaltv.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1418"
                             }
                         ]
                     },
@@ -6952,6 +7042,17 @@
                             }
                         ]
                     },
+                    "succeedscene.com": {
+                        "rules": [
+                            {
+                                "rule": "succeedscene.com",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1396"
+                            }
+                        ]
+                    },
                     "tealiumiq.com": {
                         "rules": [
                             {
@@ -6996,56 +7097,32 @@
                             }
                         ]
                     },
-                    "tiqcdn.com": {
+                    "tiktok.com": {
                         "rules": [
                             {
-                                "rule": "tags.tiqcdn.com/utag/bofa/main/prod/utag.sync.js",
-                                "domains": [
-                                    "bankofamerica.com"
-                                ],
-                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/798"
-                            },
-                            {
-                                "rule": "tags.tiqcdn.com/utag/lgi/vm-uk/prod/utag.77.js",
-                                "domains": [
-                                    "virginmedia.com"
-                                ],
-                                "reason": "Chat button appears faded and cannot be interacted with."
-                            },
-                            {
-                                "rule": "tags.tiqcdn.com/utag/rccl/gdp/prod/utag.js",
-                                "domains": [
-                                    "royalcaribbean.com"
-                                ],
-                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1255"
-                            },
-                            {
-                                "rule": "tags.tiqcdn.com/utag/lbg/",
+                                "rule": "www.tiktok.com/embed",
                                 "domains": [
                                     "<all>"
                                 ],
-                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1334"
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1412"
+                            }
+                        ]
+                    },
+                    "tiqcdn.com": {
+                        "rules": [
+                            {
+                                "rule": "tags.tiqcdn.com/utag/.*/utag.js",
+                                "domains": [
+                                    "<all>"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/379"
                             },
                             {
-                                "rule": "tags.tiqcdn.com/utag/pch/",
+                                "rule": "tags.tiqcdn.com/utag/.*/utag..*.js",
                                 "domains": [
-                                    "pch.com"
+                                    "<all>"
                                 ],
-                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1344"
-                            },
-                            {
-                                "rule": "tags.tiqcdn.com/utag/tiqapp/utag.v.js",
-                                "domains": [
-                                    "oracle.com"
-                                ],
-                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1353"
-                            },
-                            {
-                                "rule": "tags.tiqcdn.com/utag/politico/main/prod/utag.js",
-                                "domains": [
-                                    "politico.com"
-                                ],
-                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1382"
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/379"
                             }
                         ]
                     },
@@ -7304,7 +7381,7 @@
                     "zopim.com": {
                         "rules": [
                             {
-                                "rule": "widget-mediator.zopim.com",
+                                "rule": "zopim.com",
                                 "domains": [
                                     "<all>"
                                 ],
@@ -7425,7 +7502,7 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
-            "hash": "46dea388c47ba25cebd83c39937e0d6a"
+            "hash": "8d948ac63ca9c9db7ee7ae692e0936dc"
         },
         "trackingCookies1p": {
             "settings": {
