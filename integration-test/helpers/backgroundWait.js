@@ -70,13 +70,20 @@ export async function forAllConfiguration (bgPage) {
     })
 }
 
+/**
+ * @param {import('@playwright/test').BrowserContext} context
+ */
 export async function forExtensionLoaded (context) {
     return /** @type {Promise<string>} */(new Promise((resolve) => {
+        const postInstallPage = 'https://duckduckgo.com/extension-success'
         const listenForPostinstall = (page) => {
-            if (page.url().startsWith('https://duckduckgo.com/extension-success')) {
+            if (page.url().startsWith(postInstallPage)) {
                 resolve(page.url())
                 context.off('page', listenForPostinstall)
             }
+        }
+        if (context.pages().find(p => p.url().startsWith(postInstallPage))) {
+            return resolve()
         }
         context.on('page', listenForPostinstall)
     }))
