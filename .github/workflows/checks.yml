@@ -46,6 +46,10 @@ jobs:
   playwright-tests:
     timeout-minutes: 14
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1/4, 2/4, 3/4, 4/4]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
@@ -56,7 +60,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run tests
-        run: xvfb-run --auto-servernum -- npm run playwright
+        run: xvfb-run --auto-servernum -- npm run playwright -- --shard ${{ matrix.shard }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -67,6 +71,10 @@ jobs:
   playwright-tests-mv3:
     timeout-minutes: 14
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1/4, 2/4, 3/4, 4/4]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
@@ -77,7 +85,7 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run tests
-        run: xvfb-run --auto-servernum -- npm run playwright-mv3
+        run: xvfb-run --auto-servernum -- npm run playwright-mv3 -- --shard ${{ matrix.shard }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
