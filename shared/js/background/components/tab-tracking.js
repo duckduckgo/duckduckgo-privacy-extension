@@ -24,6 +24,9 @@ export default class TabTracker {
         browser.webRequest.onHeadersReceived.addListener((request) => {
             this.tabManager.updateTabUrl(request)
             const tab = tabManager.get({ tabId: request.tabId })
+
+            tab.httpErrorCodes.push(request.statusCode)
+
             // SERP ad click detection
             if (
                 isRedirect(request.statusCode)

@@ -2,12 +2,7 @@ const testPageHosts = new Set([
     'privacy-test-pages.site',
     'broken.third-party.site',
     'good.third-party.site',
-    'bad.third-party.site',
-    'convert.ad-company.site',
-    // 'www.search-company.site',
-    // 'www.ad-company.site', - redirects to these domains via route overriding seem to hang, so this one has to hit the real server
-    'www.publisher-company.site',
-    'www.payment-company.site'
+    'bad.third-party.site'
 ])
 
 export const TEST_SERVER_ORIGIN = 'http://127.0.0.1:3000'
