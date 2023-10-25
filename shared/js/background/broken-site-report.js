@@ -135,8 +135,6 @@ export function breakageReportForTab ({
     const ampUrl = tab.ampUrl || undefined
     const upgradedHttps = tab.upgradedHttps
     const debugFlags = tab.debugFlags.join(',')
-    const errorDescriptions = JSON.stringify(tab.errorDescriptions)
-    const httpErrorCodes = tab.httpErrorCodes.join(',')
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
@@ -158,8 +156,8 @@ export function breakageReportForTab ({
     if (category) brokenSiteParams.set('category', category)
     if (debugFlags) brokenSiteParams.set('debugFlags', debugFlags)
     if (description) brokenSiteParams.set('description', description)
-    if (errorDescriptions) brokenSiteParams.set('errorDescriptions', errorDescriptions)
-    if (httpErrorCodes) brokenSiteParams.set('httpErrorCodes', httpErrorCodes)
+    if (tab.errorDescriptions.length) brokenSiteParams.set('errorDescriptions', JSON.stringify(tab.errorDescriptions))
+    if (tab.httpErrorCodes.length) brokenSiteParams.set('httpErrorCodes', tab.httpErrorCodes.join(','))
 
     return fire(brokenSiteParams.toString())
 }
