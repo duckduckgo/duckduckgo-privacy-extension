@@ -88,7 +88,7 @@ const requestCategoryMapping = {
     'ignore-user': 'ignoredByUserRequests'
 }
 
-function computeSeenBeforeDay (urlString) {
+function computeLastSentDay (urlString) {
     const url = new URL(urlString)
     const time = new Date()
     // Round time to nearest day
@@ -97,13 +97,13 @@ function computeSeenBeforeDay (urlString) {
     const dayOutput = time.toISOString().split('T')[0]
 
     const reportTimes = settings.getSetting('brokenSiteReportTimes') || {}
-    const seenBeforeTime = reportTimes[url.hostname]
+    const lastSentDay = reportTimes[url.hostname]
 
     // Update existing time
     reportTimes[url.hostname] = dayOutput
     settings.updateSetting('brokenSiteReportTimes', reportTimes)
 
-    return seenBeforeTime
+    return lastSentDay
 }
 
 /**
@@ -155,7 +155,7 @@ export function breakageReportForTab ({
     const debugFlags = tab.debugFlags.join(',')
     const errorDescriptions = JSON.stringify(tab.errorDescriptions)
     const httpErrorCodes = tab.httpErrorCodes.join(',')
-    const seenBeforeDay = computeSeenBeforeDay(tab.url)
+    const lastSentDay = computeLastSentDay(tab.url)
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
@@ -173,7 +173,7 @@ export function breakageReportForTab ({
         brokenSiteParams.append(key, value.join(','))
     }
 
-    if (seenBeforeDay) brokenSiteParams.set('seenBeforeDay', seenBeforeDay)
+    if (lastSentDay) brokenSiteParams.set('lastSentDay', lastSentDay)
     if (ampUrl) brokenSiteParams.set('ampUrl', ampUrl)
     if (category) brokenSiteParams.set('category', category)
     if (debugFlags) brokenSiteParams.set('debugFlags', debugFlags)
