@@ -88,6 +88,24 @@ const requestCategoryMapping = {
     'ignore-user': 'ignoredByUserRequests'
 }
 
+function computeSeenBeforeDay (urlString) {
+    const url = new URL(urlString)
+    const time = new Date()
+    // Round time to nearest day
+    time.setHours(0, 0, 0, 0)
+    // Output time as a string in the format YYYY-MM-DD
+    const dayOutput = time.toISOString().split('T')[0]
+
+    const reportTimes = settings.getSetting('brokenSiteReportTimes') || {}
+    const seenBeforeTime = reportTimes[url.hostname]
+
+    // Update existing time
+    reportTimes[url.hostname] = dayOutput
+    settings.updateSetting('brokenSiteReportTimes', reportTimes)
+
+    return seenBeforeTime
+}
+
 /**
  * Given an optional category and description, create a report for a given Tab instance.
  *
@@ -137,6 +155,7 @@ export function breakageReportForTab ({
     const debugFlags = tab.debugFlags.join(',')
     const errorDescriptions = JSON.stringify(tab.errorDescriptions)
     const httpErrorCodes = tab.httpErrorCodes.join(',')
+    const seenBeforeDay = computeSeenBeforeDay(tab.url)
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
@@ -154,6 +173,7 @@ export function breakageReportForTab ({
         brokenSiteParams.append(key, value.join(','))
     }
 
+    if (seenBeforeDay) brokenSiteParams.set('seenBeforeDay', seenBeforeDay)
     if (ampUrl) brokenSiteParams.set('ampUrl', ampUrl)
     if (category) brokenSiteParams.set('category', category)
     if (debugFlags) brokenSiteParams.set('debugFlags', debugFlags)
