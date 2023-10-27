@@ -17,6 +17,7 @@ import {
 import tdsStorage from './storage/tds'
 import httpsStorage from './storage/https'
 import ATB from './atb'
+import { clearExpiredBrokenSiteReportTimes } from './broken-site-report'
 const utils = require('./utils')
 const experiment = require('./experiments')
 const settings = require('./settings')
@@ -433,6 +434,8 @@ browserWrapper.createAlarm('clearExpiredHTTPSServiceCache', { periodInMinutes: 6
 browserWrapper.createAlarm('rotateUserAgent', { periodInMinutes: 24 * 60 })
 // Rotate the sessionKey
 browserWrapper.createAlarm('rotateSessionKey', { periodInMinutes: 24 * 60 })
+// Expire site breakage reports
+browserWrapper.createAlarm('clearExpiredBrokenSiteReportTimes', { periodInMinutes: 24 * 60 })
 
 browser.alarms.onAlarm.addListener(async alarmEvent => {
     // Warning: Awaiting in this function doesn't actually wait for the promise to resolve before unblocking the main thread.
@@ -459,6 +462,8 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
         await utils.resetSessionKey()
     } else if (alarmEvent.name === REFETCH_ALIAS_ALARM) {
         fetchAlias()
+    } else if (alarmEvent.name === 'clearExpiredBrokenSiteReportTimes') {
+        await clearExpiredBrokenSiteReportTimes()
     }
 })
 

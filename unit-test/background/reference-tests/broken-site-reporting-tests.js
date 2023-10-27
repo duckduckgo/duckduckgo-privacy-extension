@@ -13,7 +13,7 @@ for (const setName of Object.keys(testSets)) {
                 return
             }
 
-            it(test.name, () => {
+            it(test.name, async () => {
                 const loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
 
                 const trackerName = 'Ad Company'
@@ -62,7 +62,7 @@ for (const setName of Object.keys(testSets)) {
                 addActionRequests(test.adAttributionRequests, 'ad-attribution')
                 addActionRequests(test.noActionRequests, 'none')
 
-                breakageReportForTab({
+                await breakageReportForTab({
                     tab,
                     tds: test.blocklistVersion,
                     remoteConfigEtag: test.remoteConfigEtag,
