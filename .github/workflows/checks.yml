@@ -46,6 +46,11 @@ jobs:
   playwright-tests:
     timeout-minutes: 14
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test: [playwright, playwright-mv3]
+        shard: [1/4, 2/4, 3/4, 4/4]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
@@ -56,31 +61,10 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps chromium
       - name: Run tests
-        run: xvfb-run --auto-servernum -- npm run playwright
+        run: xvfb-run --auto-servernum -- npm run ${{ matrix.test }} -- --shard ${{ matrix.shard }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: playwright-report
+          name: ${{ matrix.test }}-report
           path: playwright-report/
-          retention-days: 30
-
-  playwright-tests-mv3:
-    timeout-minutes: 14
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: 'npm'
-      - run: npm run install-ci
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps chromium
-      - name: Run tests
-        run: xvfb-run --auto-servernum -- npm run playwright-mv3
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: playwright-report-mv3
-          path: playwright-report/
-          retention-days: 30
+          retention-days: 1
