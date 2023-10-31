@@ -433,9 +433,9 @@ browserWrapper.createAlarm('clearExpiredHTTPSServiceCache', { periodInMinutes: 6
 // Rotate the user agent spoofed
 browserWrapper.createAlarm('rotateUserAgent', { periodInMinutes: 24 * 60 })
 // Rotate the sessionKey
-browserWrapper.createAlarm('rotateSessionKey', { periodInMinutes: 24 * 60 })
+browserWrapper.createAlarm('rotateSessionKey', { periodInMinutes: 60 })
 // Expire site breakage reports
-browserWrapper.createAlarm('clearExpiredBrokenSiteReportTimes', { periodInMinutes: 24 * 60 })
+browserWrapper.createAlarm('clearExpiredBrokenSiteReportTimes', { periodInMinutes: 60 })
 
 browser.alarms.onAlarm.addListener(async alarmEvent => {
     // Warning: Awaiting in this function doesn't actually wait for the promise to resolve before unblocking the main thread.
