@@ -249,9 +249,7 @@ describe('complex install workflow cases', () => {
     })
 
     it('should handle the install process correctly if there\'s no DDG pages open', () => {
-        spyOn(browser.tabs, 'query').and.returnValue(Promise.resolve([]))
-
-        return atb.updateATBValues()
+        return atb.updateATBValues([])
             .then(() => {
                 validateExtiWasHit('v112-2')
                 expect(settings.getSetting('atb')).toEqual('v112-2')
@@ -259,13 +257,7 @@ describe('complex install workflow cases', () => {
             })
     })
     it('should handle the install process correctly if there\'s DDG pages open that pass an ATB param', () => {
-        // pretend one of the pages has an ATB to pass
-        spyOn(browser.tabs, 'query').and.returnValue([
-            { url: 'https://duckduckgo.com/about' },
-            { url: 'https://duckduckgo.com/?natb=v112-2ab' }
-        ])
-
-        return atb.updateATBValues()
+        return atb.updateATBValues(['https://duckduckgo.com/about', 'https://duckduckgo.com/?natb=v112-2ab'])
             .then(() => {
                 validateExtiWasHit('v112-2ab')
                 expect(settings.getSetting('atb')).toEqual('v112-2ab')
@@ -273,13 +265,7 @@ describe('complex install workflow cases', () => {
             })
     })
     it('should handle the install process correctly if there\'s DDG pages open that do not pass an ATB param', () => {
-        // pretend no pages have ATB to pass
-        spyOn(browser.tabs, 'query').and.returnValue([
-            { url: 'https://duckduckgo.com/about' },
-            { url: 'https://duckduckgo.com/?q=test' }
-        ])
-
-        return atb.updateATBValues()
+        return atb.updateATBValues(['https://duckduckgo.com/about', 'https://duckduckgo.com/?q=test'])
             .then(() => {
                 validateExtiWasHit('v112-2')
                 expect(settings.getSetting('atb')).toEqual('v112-2')

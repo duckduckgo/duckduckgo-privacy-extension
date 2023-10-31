@@ -52,7 +52,7 @@ test.describe('install workflow', () => {
             })
 
             // try get ATB params
-            await backgroundPage.evaluate(() => globalThis.dbg.atb.updateATBValues())
+            await backgroundPage.evaluate(async () => globalThis.dbg.atb.updateATBValues(await globalThis.dbg.Wrapper.getDDGTabUrls()))
 
             // wait for an exti call
             // eslint-disable-next-line no-unmodified-loop-condition
@@ -87,7 +87,7 @@ test.describe('install workflow', () => {
             await page.goto('https://duckduckgo.com/?natb=v123-4ab&cp=atbhc', { waitUntil: 'networkidle' })
 
             // try get ATB params again
-            await backgroundPage.evaluate(() => globalThis.dbg.atb.updateATBValues())
+            await backgroundPage.evaluate(async () => globalThis.dbg.atb.updateATBValues(await globalThis.dbg.Wrapper.getDDGTabUrls()))
             // eslint-disable-next-line no-unmodified-loop-condition
             while (numExtiCalled < 0) {
                 page.waitForTimeout(100)
