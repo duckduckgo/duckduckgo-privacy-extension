@@ -1,6 +1,7 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import testCases from 'privacy-test-pages/adClickFlow/shared/testCases.json'
+import { routeFromLocalhost } from './helpers/testPages'
 
 if (testCases.length === 0) {
     throw new Error('No test cases found')
@@ -50,6 +51,8 @@ test.describe('Ad click blocking', () => {
         // Allow to filter to one test case
         const itMethod = testCase.only ? test.only : test
         itMethod(testCase.name, async ({ context }) => {
+            // route requests from all pages in this test to our local test server
+            await routeFromLocalhost(context)
             let page = await context.newPage()
             for (const step of testCase.steps) {
                 if (step.action.type === 'navigate') {
