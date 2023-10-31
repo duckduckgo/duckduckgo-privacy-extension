@@ -261,7 +261,7 @@ BUILD_TARGETS += $(BUILD_DIR)/public/js/inject.js
 ## SASS
 SASS = node_modules/.bin/sass
 SCSS_SOURCE = $(shell find shared/scss/ -type f)
-OUTPUT_CSS_FILES = $(BUILD_DIR)/public/css/noatb.css $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
+OUTPUT_CSS_FILES = $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
 $(BUILD_DIR)/public/css/base.css: shared/scss/base/base.scss $(SCSS_SOURCE)
 	$(SASS) $< $@
 $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss $(SCSS_SOURCE)

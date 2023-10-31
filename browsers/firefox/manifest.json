@@ -48,9 +48,6 @@
             ],
             "match_about_blank": true,
             "all_frames": true,
-            "css": [
-                "public/css/noatb.css"
-            ],
             "js": [
                 "public/js/inject.js"
             ],
