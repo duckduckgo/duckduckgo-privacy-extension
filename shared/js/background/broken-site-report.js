@@ -147,7 +147,8 @@ export function breakageReportForTab ({
         urlParametersRemoved,
         ctlYouTube,
         ctlFacebookPlaceholderShown,
-        ctlFacebookLogin
+        ctlFacebookLogin,
+        protectionsState: tab.site.isFeatureEnabled('contentBlocking') ? '1' : '0'
     })
 
     for (const [key, value] of Object.entries(requestCategories)) {
