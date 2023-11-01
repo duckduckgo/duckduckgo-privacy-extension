@@ -138,6 +138,10 @@ export async function clearExpiredBrokenSiteReportTimes () {
     settings.updateSetting('brokenSiteReportTimes', brokenSiteReports)
 }
 
+export async function clearAllBrokenSiteReportTimes () {
+    settings.updateSetting('brokenSiteReportTimes', {})
+}
+
 /**
  * Given an optional category and description, create a report for a given Tab instance.
  *
