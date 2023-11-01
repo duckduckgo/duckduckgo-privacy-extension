@@ -80,6 +80,23 @@ async function submitAndValidateReport (report) {
             if ('value' in param) {
                 expect(searchItems).toContain(`${param.name}=${param.value}`)
             }
+            if ('matchesCurrentDay' in param) {
+                const date = new Date()
+                const day = String(date.getDate()).padStart(2, '0')
+                const month = String(date.getMonth() + 1).padStart(2, '0')
+                const year = date.getFullYear()
+                const dateString = `${year}-${month}-${day}`
+                expect(searchItems).toContain(`${param.name}=${dateString}`)
+            }
+            if ('matches' in param) {
+                const regex = new RegExp(param.matches)
+                const fields = searchItems.map(item => item.split('='))
+                for (const [key, value] of fields) {
+                    if (key === param.name) {
+                        expect(value).toMatch(regex)
+                    }
+                }
+            }
             if ('present' in param) {
                 const fields = searchItems.map(item => item.split('=')[0])
                 if (param.present) {
