@@ -3,7 +3,7 @@ import { breakageReportForTab, clearAllBrokenSiteReportTimes } from '../../../sh
 
 const loadPixel = require('../../../shared/js/background/load')
 const singleTestSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/tests.json')
-const multipleTestSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/multiple_reports_tests.json')
+const multipleTestSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/multiple_report_tests.json')
 
 let loadPixelSpy
 
