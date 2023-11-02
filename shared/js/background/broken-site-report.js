@@ -100,11 +100,8 @@ async function digestMessage (message) {
 
 async function computeLastSentDay (urlString) {
     const url = new URL(urlString)
-    const time = new Date()
-    // Round time to nearest day
-    time.setHours(0, 0, 0, 0)
     // Output time as a string in the format YYYY-MM-DD
-    const dayOutput = time.toISOString().split('T')[0]
+    const dayOutput = new Date().toISOString().split('T')[0]
 
     // Use a sha256 hash prefix of the hostname so that we don't store the full hostname
     const hash = await digestMessage(url.hostname)
