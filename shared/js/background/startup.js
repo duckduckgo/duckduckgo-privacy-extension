@@ -3,6 +3,7 @@ import { NewTabTrackerStats } from './newtab-tracker-stats'
 import { TrackerStats } from './classes/tracker-stats.js'
 import httpsStorage from './storage/https'
 import tdsStorage from './storage/tds'
+import { clearExpiredBrokenSiteReportTimes } from './broken-site-report'
 const utils = require('./utils')
 const Companies = require('./companies')
 const experiment = require('./experiments')
@@ -68,6 +69,8 @@ export async function onStartup () {
         if (!userData.nextAlias) await fetchAlias()
         showContextMenuAction()
     }
+
+    await clearExpiredBrokenSiteReportTimes()
 
     if (resolveReadyPromise) {
         resolveReadyPromise()

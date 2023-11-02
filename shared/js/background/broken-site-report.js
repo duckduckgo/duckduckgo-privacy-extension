@@ -88,6 +88,57 @@ const requestCategoryMapping = {
     'ignore-user': 'ignoredByUserRequests'
 }
 
+async function digestMessage (message) {
+    const msgUint8 = new TextEncoder().encode(message)
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    const hashHex = hashArray
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('')
+    return hashHex
+}
+
+async function computeLastSentDay (urlString) {
+    const url = new URL(urlString)
+    // Output time as a string in the format YYYY-MM-DD
+    const dayOutput = new Date().toISOString().split('T')[0]
+
+    // Use a sha256 hash prefix of the hostname so that we don't store the full hostname
+    const hash = await digestMessage(url.hostname)
+    const hostnameHashPrefix = hash.slice(0, 6)
+
+    const reportTimes = settings.getSetting('brokenSiteReportTimes') || {}
+    const lastSentDay = reportTimes[hostnameHashPrefix]
+
+    // Update existing time
+    reportTimes[hostnameHashPrefix] = dayOutput
+    settings.updateSetting('brokenSiteReportTimes', reportTimes)
+
+    return lastSentDay
+}
+
+/**
+ * Clears any expired broken site report times
+ * Called by an alarm every hour to remove entries older than 30 days
+ */
+export async function clearExpiredBrokenSiteReportTimes () {
+    await settings.ready()
+    const brokenSiteReports = settings.getSetting('brokenSiteReportTimes') || {}
+    // Expiry of 30 days
+    const expiryTime = new Date().getTime() - 30 * 24 * 60 * 60 * 1000
+    for (const hashPrefix in brokenSiteReports) {
+        const reportTime = new Date(brokenSiteReports[hashPrefix])
+        if (reportTime.getTime() < expiryTime) {
+            delete brokenSiteReports[hashPrefix]
+        }
+    }
+    settings.updateSetting('brokenSiteReportTimes', brokenSiteReports)
+}
+
+export async function clearAllBrokenSiteReportTimes () {
+    settings.updateSetting('brokenSiteReportTimes', {})
+}
+
 /**
  * Given an optional category and description, create a report for a given Tab instance.
  *
@@ -103,7 +154,7 @@ const requestCategoryMapping = {
  * @prop {string | undefined} arg.category - optional category
  * @prop {string | undefined} arg.description - optional description
  */
-export function breakageReportForTab ({
+export async function breakageReportForTab ({
     tab, tds, remoteConfigEtag, remoteConfigVersion,
     category, description
 }) {
@@ -137,6 +188,7 @@ export function breakageReportForTab ({
     const debugFlags = tab.debugFlags.join(',')
     const errorDescriptions = JSON.stringify(tab.errorDescriptions)
     const httpErrorCodes = tab.httpErrorCodes.join(',')
+    const lastSentDay = await computeLastSentDay(tab.url)
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
@@ -155,6 +207,7 @@ export function breakageReportForTab ({
         brokenSiteParams.append(key, value.join(','))
     }
 
+    if (lastSentDay) brokenSiteParams.set('lastSentDay', lastSentDay)
     if (ampUrl) brokenSiteParams.set('ampUrl', ampUrl)
     if (category) brokenSiteParams.set('category', category)
     if (debugFlags) brokenSiteParams.set('debugFlags', debugFlags)
