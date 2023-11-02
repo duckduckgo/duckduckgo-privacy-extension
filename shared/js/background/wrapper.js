@@ -85,14 +85,6 @@ export function mergeSavedSettings (settings, results) {
 
 export async function getDDGTabUrls () {
     const tabs = await browser.tabs.query({ url: 'https://*.duckduckgo.com/*' }) || []
-
-    tabs.forEach(tab => {
-        insertCSS({
-            target: { tabId: tab.id },
-            files: ['/public/css/noatb.css']
-        })
-    })
-
     return tabs.map(tab => tab.url)
 }
 

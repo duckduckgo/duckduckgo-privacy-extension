@@ -36,13 +36,15 @@ async function onInstalled (details) {
     tdsStorage.initOnInstall()
 
     if (details.reason.match(/install/)) {
+        // get tab URLs immediately to prevent race with install page
+        const ddgTabUrls = await browserWrapper.getDDGTabUrls()
         await settings.ready()
         settings.updateSetting('showWelcomeBanner', true)
         if (browserName === 'chrome') {
             settings.updateSetting('showCounterMessaging', true)
             settings.updateSetting('shouldFireIncontextEligibilityPixel', true)
         }
-        await ATB.updateATBValues()
+        await ATB.updateATBValues(ddgTabUrls)
         await ATB.openPostInstallPage()
 
         if (browserName === 'chrome') {

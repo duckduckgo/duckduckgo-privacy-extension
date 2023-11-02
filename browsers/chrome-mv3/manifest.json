@@ -38,21 +38,6 @@
     },
     "content_scripts": [
         {
-            "matches": [
-                "<all_urls>"
-            ],
-            "exclude_matches": [
-                "*://localhost/*",
-                "*://*.localhost/*"
-            ],
-            "match_about_blank": true,
-            "all_frames": true,
-            "css": [
-                "public/css/noatb.css"
-            ],
-            "run_at": "document_start"
-        },
-        {
             "js": [
                 "public/js/content-scripts/autofill.js"
             ],

@@ -157,15 +157,14 @@ const ATB = (() => {
             return new URLSearchParams()
         },
 
-        updateATBValues: () => {
+        updateATBValues: (ddgTabUrls) => {
             // wait until settings is ready to try and get atb from the page
             return settings.ready()
                 .then(ATB.setInitialVersions)
-                .then(browserWrapper.getDDGTabUrls)
-                .then((urls) => {
+                .then(() => {
                     let atb
                     let params
-                    urls.some(url => {
+                    ddgTabUrls.some(url => {
                         params = ATB.getAcceptedParamsFromURL(url)
                         atb = params.has('atb') && params.get('atb')
                         return !!atb
