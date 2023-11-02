@@ -138,9 +138,9 @@ runTests(singleTestSets)
 runTests(multipleTestSets, true)
 
 describe('Broken Site Reporting tests / protections state', () => {
-    function submit (tab) {
+    async function submit (tab) {
         loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
-        breakageReportForTab({
+        await breakageReportForTab({
             tab,
             tds: 'abc123',
             remoteConfigEtag: 'abd142',
@@ -151,46 +151,46 @@ describe('Broken Site Reporting tests / protections state', () => {
         const requestURLString = loadPixelSpy.calls.argsFor(0)[0]
         return new URL(requestURLString).searchParams
     }
-    it('sends 1 when protections are enabled', () => {
+    it('sends 1 when protections are enabled', async () => {
         const tab = new Tab({ url: 'https://example.com' })
         spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
 
-        const params = submit(tab)
+        const params = await submit(tab)
         expect(params.get('protectionsState')).toEqual('1')
     })
-    it('sends 1 when site is denylisted', () => {
+    it('sends 1 when site is denylisted', async () => {
         const tab = new Tab({ url: 'https://example.com' })
 
         spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([])
         spyOnProperty(tab.site, 'denylisted').and.returnValue(true)
 
-        const params = submit(tab)
+        const params = await submit(tab)
         expect(params.get('protectionsState')).toEqual('1')
     })
-    it('sends 0 when site is allowlisted', () => {
+    it('sends 0 when site is allowlisted', async () => {
         const tab = new Tab({ url: 'https://example.com' })
         spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
         spyOnProperty(tab.site, 'allowlisted').and.returnValue(true)
 
-        const params = submit(tab)
+        const params = await submit(tab)
         expect(params.get('protectionsState')).toEqual('0')
     })
-    it('sends 0 when contentBlocking is not enabled', () => {
+    it('sends 0 when contentBlocking is not enabled', async () => {
         const tab = new Tab({ url: 'https://example.com' })
 
         // missing `contentBlocking`
         spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([])
 
-        const params = submit(tab)
+        const params = await submit(tab)
         expect(params.get('protectionsState')).toEqual('0')
     })
-    it('sends 0 when domain is in unprotectedTemporary', () => {
+    it('sends 0 when domain is in unprotectedTemporary', async () => {
         const tab = new Tab({ url: 'https://example.com' })
 
         spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
         spyOnProperty(tab.site, 'isBroken').and.returnValue(true)
 
-        const params = submit(tab)
+        const params = await submit(tab)
         expect(params.get('protectionsState')).toEqual('0')
     })
 })
