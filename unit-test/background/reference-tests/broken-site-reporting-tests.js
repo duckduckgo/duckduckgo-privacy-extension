@@ -139,7 +139,7 @@ runTests(multipleTestSets, true)
 
 describe('Broken Site Reporting tests / protections state', () => {
     function submit (tab) {
-        const loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
+        loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
         breakageReportForTab({
             tab,
             tds: 'abc123',
