@@ -1,15 +1,15 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { routeFromLocalhost } from './helpers/testPages'
-import { loadTestConfig } from './helpers/testConfig'
+import { overridePrivacyConfig } from './helpers/testConfig'
 
 const testSite = 'https://privacy-test-pages.site/privacy-protections/amp/'
 
 test.describe('Test AMP link protection', () => {
-    test('Redirects AMP URLs correctly', async ({ context, backgroundPage, page }) => {
+    test('Redirects AMP URLs correctly', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
+        await overridePrivacyConfig(backgroundNetworkContext, 'amp-protection.json')
         await backgroundWait.forExtensionLoaded(context)
         await backgroundWait.forAllConfiguration(backgroundPage)
-        await loadTestConfig(backgroundPage, 'amp-protection.json')
         await routeFromLocalhost(page)
 
         await page.goto(testSite, { waitUntil: 'networkidle' })
