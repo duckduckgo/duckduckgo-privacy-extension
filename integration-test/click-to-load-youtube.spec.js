@@ -1,6 +1,6 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
-import { loadTestConfig, loadTestTds } from './helpers/testConfig'
+import { overridePrivacyConfig, overrideTds } from './helpers/testConfig'
 import { routeFromLocalhost } from './helpers/testPages'
 import { logPageRequests } from './helpers/requests'
 import { waitForNetworkIdle } from './helpers/pageWait'
@@ -75,13 +75,12 @@ function overrideHandler (route) {
 }
 
 test.describe('Test YouTube Click To Load', () => {
-    test.beforeEach(async ({ context, backgroundPage }) => {
+    test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
+        // Overwrite the parts of the configuration needed for our tests.
+        await overridePrivacyConfig(backgroundNetworkContext, 'click-to-load-youtube.json')
+        await overrideTds(backgroundNetworkContext, 'click-to-load-tds.json')
         await backgroundWait.forExtensionLoaded(context)
         await backgroundWait.forAllConfiguration(backgroundPage)
-
-        // Overwrite the parts of the configuration needed for our tests.
-        await loadTestConfig(backgroundPage, 'click-to-load-youtube.json')
-        await loadTestTds(backgroundPage, 'click-to-load-tds.json')
     })
 
     test('CTL: YouTube request blocking/redirecting', async ({ page }) => {

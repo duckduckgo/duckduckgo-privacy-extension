@@ -1,7 +1,7 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { routeFromLocalhost } from './helpers/testPages'
-import { loadTestConfig } from './helpers/testConfig'
+import { overridePrivacyConfig } from './helpers/testConfig'
 
 const testSite = 'https://privacy-test-pages.site/privacy-protections/query-parameters/'
 
@@ -33,10 +33,10 @@ function getUrlParametersRemoved (bgPage) {
 }
 
 test.describe('Test URL tracking parameters protection', () => {
-    test('Strips tracking parameters correctly', async ({ context, backgroundPage, page, manifestVersion }) => {
+    test('Strips tracking parameters correctly', async ({ context, backgroundPage, page, manifestVersion, backgroundNetworkContext }) => {
+        await overridePrivacyConfig(backgroundNetworkContext, 'url-parameters.json')
         await backgroundWait.forExtensionLoaded(context)
         await backgroundWait.forAllConfiguration(backgroundPage)
-        await loadTestConfig(backgroundPage, 'url-parameters.json')
         await routeFromLocalhost(page)
 
         await page.goto(testSite, { waitUntil: 'networkidle' })

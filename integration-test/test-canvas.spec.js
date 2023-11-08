@@ -1,12 +1,12 @@
 import { test, expect } from './helpers/playwrightHarness'
 import { forExtensionLoaded } from './helpers/backgroundWait'
 import { routeFromLocalhost } from './helpers/testPages'
-import { loadTestConfig } from './helpers/testConfig'
+import { overridePrivacyConfig } from './helpers/testConfig'
 
 test.describe('Canvas verification', () => {
-    test.beforeEach(async ({ context, backgroundPage }) => {
+    test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
+        await overridePrivacyConfig(backgroundNetworkContext, 'fingerprint-protection.json')
         await forExtensionLoaded(context)
-        await loadTestConfig(backgroundPage, 'fingerprint-protection.json')
     })
 
     test('Canvas drawing should be different per hostname', async ({ page }) => {

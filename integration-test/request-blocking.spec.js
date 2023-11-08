@@ -1,6 +1,6 @@
 import { test, expect } from './helpers/playwrightHarness'
 import { forAllConfiguration, forExtensionLoaded } from './helpers/backgroundWait'
-import { loadTestConfig } from './helpers/testConfig'
+import { overridePrivacyConfig } from './helpers/testConfig'
 import { TEST_SERVER_ORIGIN } from './helpers/testPages'
 
 const testHost = 'privacy-test-pages.site'
@@ -43,10 +43,10 @@ async function runRequestBlockingTest (page, url = testSite) {
 }
 
 test.describe('Test request blocking', () => {
-    test('Should block all the test tracking requests', async ({ page, backgroundPage, context }) => {
+    test('Should block all the test tracking requests', async ({ page, backgroundPage, context, backgroundNetworkContext }) => {
+        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
-        await loadTestConfig(backgroundPage, 'serviceworker-blocking.json')
         const [testCount, pageRequests] = await runRequestBlockingTest(page)
 
         // Verify that no logged requests were allowed.
@@ -97,10 +97,10 @@ test.describe('Test request blocking', () => {
         await page.close()
     })
 
-    test('serviceworkerInitiatedRequests exceptions should disable service worker blocking', async ({ page, backgroundPage, context }) => {
+    test('serviceworkerInitiatedRequests exceptions should disable service worker blocking', async ({ page, backgroundPage, context, backgroundNetworkContext }) => {
+        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
-        await loadTestConfig(backgroundPage, 'serviceworker-blocking.json')
         await backgroundPage.evaluate(async (domain) => {
             /* global dbg */
             const { data: config } = dbg.getListContents('config')
@@ -136,7 +136,8 @@ test.describe('Test request blocking', () => {
         }
     })
 
-    test('Blocking should not run on localhost', async ({ page, backgroundPage, context, manifestVersion }) => {
+    test('Blocking should not run on localhost', async ({ page, backgroundPage, context, manifestVersion, backgroundNetworkContext }) => {
+        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
         // On MV3 config rules are only created some time after the config is loaded. We can query
@@ -168,10 +169,10 @@ test.describe('Test request blocking', () => {
         }
     })
 
-    test('protection toggle disables blocking', async ({ page, backgroundPage, context, manifestVersion }) => {
+    test('protection toggle disables blocking', async ({ page, backgroundPage, context, manifestVersion, backgroundNetworkContext }) => {
+        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
-        await loadTestConfig(backgroundPage, 'serviceworker-blocking.json')
 
         // load with protection enabled
         await runRequestBlockingTest(page)

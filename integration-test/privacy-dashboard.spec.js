@@ -1,15 +1,15 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { routeFromLocalhost } from './helpers/testPages'
-import { loadTestConfig } from './helpers/testConfig'
+import { overridePrivacyConfig } from './helpers/testConfig'
 
 const testSite = 'https://privacy-test-pages.site/privacy-protections/request-blocking/'
 
 test.describe('Test privacy dashboard', () => {
-    test('Should load the dashboard with correct link text', async ({ context, backgroundPage, page }) => {
+    test('Should load the dashboard with correct link text', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
+        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await backgroundWait.forExtensionLoaded(context)
         await backgroundWait.forAllConfiguration(backgroundPage)
-        await loadTestConfig(backgroundPage, 'serviceworker-blocking.json')
         await routeFromLocalhost(page)
 
         await page.goto(testSite, { waitUntil: 'networkidle' })
