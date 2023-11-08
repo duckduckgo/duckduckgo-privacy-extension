@@ -14,7 +14,6 @@ export async function overridePrivacyConfig (networkContext, testConfigFilename)
 
     await networkContext.route('https://staticcdn.duckduckgo.com/trackerblocking/config/**/*', async (route) => {
         const url = new URL(route.request().url())
-        console.log('serve overriden config', url.href)
         const localPath = path.join(__dirname, '..', 'data', 'staticcdn', url.pathname)
         const localConfig = JSON.parse(fs.readFileSync(localPath))
         for (const pathString of Object.keys(testConfig)) {
@@ -46,7 +45,6 @@ export async function overridePrivacyConfig (networkContext, testConfigFilename)
  */
 export async function overrideTds (networkContext, tdsFilePath) {
     await networkContext.route('https://staticcdn.duckduckgo.com/trackerblocking/v6/**/*', async (route) => {
-        console.log('serve overriden TDS', route.request().url())
         const tds = await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8')
         route.fulfill({
             status: 200,
