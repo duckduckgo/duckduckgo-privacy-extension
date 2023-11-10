@@ -200,7 +200,7 @@ export async function breakageReportForTab ({
         ctlYouTube,
         ctlFacebookPlaceholderShown,
         ctlFacebookLogin,
-        protectionsState: tab.site.isFeatureEnabled('contentBlocking') ? '1' : '0'
+        protectionsState: tab.site.isFeatureEnabled('contentBlocking')
     })
 
     for (const [key, value] of Object.entries(requestCategories)) {

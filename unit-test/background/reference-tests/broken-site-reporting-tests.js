@@ -156,7 +156,7 @@ describe('Broken Site Reporting tests / protections state', () => {
         spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
 
         const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('1')
+        expect(params.get('protectionsState')).toEqual('true')
     })
     it('sends 1 when site is denylisted', async () => {
         const tab = new Tab({ url: 'https://example.com' })
@@ -165,7 +165,7 @@ describe('Broken Site Reporting tests / protections state', () => {
         spyOnProperty(tab.site, 'denylisted').and.returnValue(true)
 
         const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('1')
+        expect(params.get('protectionsState')).toEqual('true')
     })
     it('sends 0 when site is allowlisted', async () => {
         const tab = new Tab({ url: 'https://example.com' })
@@ -173,7 +173,7 @@ describe('Broken Site Reporting tests / protections state', () => {
         spyOnProperty(tab.site, 'allowlisted').and.returnValue(true)
 
         const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('0')
+        expect(params.get('protectionsState')).toEqual('false')
     })
     it('sends 0 when contentBlocking is not enabled', async () => {
         const tab = new Tab({ url: 'https://example.com' })
@@ -182,7 +182,7 @@ describe('Broken Site Reporting tests / protections state', () => {
         spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([])
 
         const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('0')
+        expect(params.get('protectionsState')).toEqual('false')
     })
     it('sends 0 when domain is in unprotectedTemporary', async () => {
         const tab = new Tab({ url: 'https://example.com' })
@@ -191,6 +191,6 @@ describe('Broken Site Reporting tests / protections state', () => {
         spyOnProperty(tab.site, 'isBroken').and.returnValue(true)
 
         const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('0')
+        expect(params.get('protectionsState')).toEqual('false')
     })
 })
