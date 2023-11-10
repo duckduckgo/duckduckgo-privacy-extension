@@ -4410,6 +4410,9 @@
                 "privilegedDomains": [
                     {
                         "domain": "duckduckgo.com"
+                    },
+                    {
+                        "domains": "privacy-test-pages.site"
                     }
                 ]
             },
