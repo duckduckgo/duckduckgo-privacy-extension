@@ -20,6 +20,13 @@ async function submitAndValidateReport (report) {
     })
     tab.upgradedHttps = report.wasUpgraded
 
+    if (report.protectionsEnabled === true) {
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
+    } else if (report.denylisted === true) {
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([])
+        spyOnProperty(tab.site, 'denylisted').and.returnValue(true)
+    }
+
     const addRequest = (hostname, action, opts = {}) => {
         tab.addToTrackers({
             action,
