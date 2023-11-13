@@ -33,11 +33,11 @@
         "update-mv3-blocklists": "node scripts/updateMV3Blocklists.mjs"
     },
     "devDependencies": {
-        "@fingerprintjs/fingerprintjs": "^4.1.0",
+        "@fingerprintjs/fingerprintjs": "^4.2.0",
         "@playwright/test": "^1.39.0",
-        "@types/chrome": "0.0.249",
+        "@types/chrome": "0.0.251",
         "@types/jasmine": "^4.3.5",
-        "@types/webextension-polyfill": "^0.10.5",
+        "@types/webextension-polyfill": "^0.10.6",
         "asana": "github:Asana/node-asana",
         "duckduckgo-colors": "0.0.1",
         "esbuild": "^0.19.5",
@@ -74,7 +74,7 @@
         "deep-freeze": "0.0.1",
         "dexie": "3.2.4",
         "eventemitter2": "6.4.9",
-        "i18next": "^23.6.0",
+        "i18next": "^23.7.3",
         "i18next-icu": "^2.3.0",
         "is-plain-object": "5.0.0",
         "jquery": "3.7.1",
