@@ -5,6 +5,7 @@ const Site = require('../../../shared/js/background/classes/site').default
 const GPC = require('../../../shared/js/background/GPC')
 const GpcContentScript = require('@duckduckgo/content-scope-scripts/src/features/gpc').default
 const gpcContentScript = new GpcContentScript('gpc')
+const constants = require('../../../shared/data/constants')
 const settings = require('../../../shared/js/background/settings')
 
 const contentScriptUtils = require('@duckduckgo/content-scope-scripts/src/utils.js')
@@ -46,7 +47,8 @@ for (const setName of Object.keys(testSets)) {
                 it(`${test.name}`, () => {
                     const args = {
                         site: new Site(test.siteURL),
-                        globalPrivacyControlValue: test.gpcUserSettingOn
+                        globalPrivacyControlValue: test.gpcUserSettingOn,
+                        platform: constants.platform
                     }
                     const isEnabled = !contentScriptUtils.isFeatureBroken(args, 'gpc')
 
@@ -62,7 +64,7 @@ for (const setName of Object.keys(testSets)) {
                         spyOnProperty(globalThis, 'navigator', 'get').and.returnValue(fakeNavigator)
 
                         if (isEnabled) {
-                            gpcContentScript.init(args)
+                            gpcContentScript.callInit(args)
                         }
 
                         // clean up
