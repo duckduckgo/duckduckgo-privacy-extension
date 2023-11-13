@@ -54,7 +54,7 @@
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
         "node-fetch": "^3.3.2",
-        "puppeteer": "^19.3.0",
+        "puppeteer": "^21.5.1",
         "sass": "^1.69.5",
         "standard": "17.1.0",
         "timekeeper": "^2.3.1",
