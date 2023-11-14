@@ -1,6 +1,6 @@
 import { test, expect, getHARPath } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
-import { loadTestConfig } from './helpers/testConfig'
+import { overridePrivacyConfig } from './helpers/testConfig'
 
 const expectedFingerprintValues = {
     availTop: 0,
@@ -51,11 +51,11 @@ test.describe('Fingerprint Defense Tests', () => {
 })
 
 test.describe('First Party Fingerprint Randomization', () => {
-    test.beforeEach(async ({ context, backgroundPage }) => {
-        await backgroundWait.forExtensionLoaded(context)
+    test.beforeEach(async ({ context, backgroundNetworkContext }) => {
         // Override config to remove unprotected sites. This is because fingerprint.js is loaded
         // from localhost by the test runner, so would normally be excluded from protections.
-        await loadTestConfig(backgroundPage, 'fingerprint-protection.json')
+        await overridePrivacyConfig(backgroundNetworkContext, 'fingerprint-protection.json')
+        await backgroundWait.forExtensionLoaded(context)
     })
 
     async function runTest (testCase, page) {

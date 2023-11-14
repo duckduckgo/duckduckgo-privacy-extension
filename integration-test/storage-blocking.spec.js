@@ -1,6 +1,6 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
-import { loadTestConfig, loadTestTds } from './helpers/testConfig'
+import { overridePrivacyConfig, overrideTds } from './helpers/testConfig'
 import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages'
 
 const testPageDomain = 'privacy-test-pages.site'
@@ -15,11 +15,11 @@ async function waitForAllResults (page) {
 }
 
 test.describe('Storage blocking Tests', () => {
-    test(`Blocks storage correctly on https://${testPageDomain}/privacy-protections/storage-blocking/`, async ({ page, backgroundPage, context }) => {
+    test(`Blocks storage correctly on https://${testPageDomain}/privacy-protections/storage-blocking/`, async ({ page, backgroundPage, context, backgroundNetworkContext }) => {
+        await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json')
+        await overrideTds(backgroundNetworkContext, 'mock-tds.json')
         await backgroundWait.forExtensionLoaded(context)
         await backgroundWait.forAllConfiguration(backgroundPage)
-        await loadTestConfig(backgroundPage, 'storage-blocking.json')
-        await loadTestTds(backgroundPage, 'mock-tds.json')
         await routeFromLocalhost(page)
         await page.bringToFront()
         await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle' })
@@ -93,11 +93,11 @@ test.describe('Storage blocking Tests', () => {
             expect(results.results.find(({ id }) => id === testName).value).toBeNull()
         }
 
-        test.beforeEach(async ({ context, backgroundPage, page }) => {
+        test.beforeEach(async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
+            await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json')
+            await overrideTds(backgroundNetworkContext, 'mock-tds.json')
             await backgroundWait.forExtensionLoaded(context)
             await backgroundWait.forAllConfiguration(backgroundPage)
-            await loadTestConfig(backgroundPage, 'storage-blocking.json')
-            await loadTestTds(backgroundPage, 'mock-tds.json')
             await routeFromLocalhost(page)
 
             // reset allowlists
