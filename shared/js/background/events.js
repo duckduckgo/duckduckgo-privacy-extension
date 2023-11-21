@@ -469,12 +469,17 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
     }
 })
 
-// Count https upgrade failures to allow bad data to be removed from lists
+browser.webNavigation.onErrorOccurred.addListener(e => {
+    // If not main frame ignore
+    if (e.frameId !== 0) return
+    const tab = tabManager.get({ tabId: e.tabId })
+    tab.errorDescriptions.push(e.error)
+})
+
 browser.webRequest.onErrorOccurred.addListener(e => {
     if (!(e.type === 'main_frame')) return
 
     const tab = tabManager.get({ tabId: e.tabId })
-
     tab.errorDescriptions.push(e.error)
 
     // We're only looking at failed main_frame upgrades. A tab can send multiple
@@ -483,6 +488,7 @@ browser.webRequest.onErrorOccurred.addListener(e => {
         return
     }
 
+    // Count https upgrade failures to allow bad data to be removed from lists
     if (e.error && e.url.match(/^https/)) {
         const errCode = constants.httpsErrorCodes[e.error]
         tab.hasHttpsError = true
