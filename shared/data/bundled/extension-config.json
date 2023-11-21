@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1700209925539,
+    "version": 1700485869914,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -3411,6 +3411,15 @@
                         ]
                     },
                     {
+                        "domain": "takealot.com",
+                        "rules": [
+                            {
+                                "selector": "[class*='ad-slot_']",
+                                "type": "override"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "target.com",
                         "rules": [
                             {
@@ -3851,7 +3860,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "060b4718ebfea6f73d316b0aab22fb39"
+            "hash": "ec212dcc240ba2e30639584e4ce45656"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -4411,6 +4420,10 @@
             "state": "enabled",
             "exceptions": [
                 {
+                    "domain": "abcnews.go.com",
+                    "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1539"
+                },
+                {
                     "domain": "allegiantair.com",
                     "reason": "Example URL: https://www.allegiantair.com/seating-checking-boarding; Clicking the 'show details' button in the FAQ sections does nothing."
                 },
@@ -4472,7 +4485,7 @@
                     "privacy-test-pages.site"
                 ]
             },
-            "hash": "ec35f72481a72b1a4f131c7cf2e122b6"
+            "hash": "2d03e20c23031d12281dfaf62fd91e04"
         },
         "harmfulApis": {
             "settings": {
@@ -5365,17 +5378,6 @@
                                     "aternos.org"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/328"
-                            }
-                        ]
-                    },
-                    "cdn.trackjs.com": {
-                        "rules": [
-                            {
-                                "rule": "cdn.trackjs.com/agent/v3/latest/t.js",
-                                "domains": [
-                                    "delta.com"
-                                ],
-                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1445"
                             }
                         ]
                     },
@@ -7623,6 +7625,17 @@
                             }
                         ]
                     },
+                    "taboola.com": {
+                        "rules": [
+                            {
+                                "rule": "cdn.taboola.com/libtrc/tipranks-tipranks/loader.js",
+                                "domains": [
+                                    "tipranks.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1537"
+                            }
+                        ]
+                    },
                     "tealiumiq.com": {
                         "rules": [
                             {
@@ -7693,6 +7706,17 @@
                                     "<all>"
                                 ],
                                 "reason": "https://github.com/duckduckgo/privacy-configuration/issues/379"
+                            }
+                        ]
+                    },
+                    "trackjs.com": {
+                        "rules": [
+                            {
+                                "rule": "cdn.trackjs.com/agent/v3/latest/t.js",
+                                "domains": [
+                                    "delta.com"
+                                ],
+                                "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1445"
                             }
                         ]
                     },
@@ -8079,7 +8103,7 @@
                     "reason": "https://github.com/duckduckgo/privacy-configuration/issues/794"
                 }
             ],
-            "hash": "7de271c84e591affe3a9045ec2481184"
+            "hash": "6937bef27bbf8dff26bd195294e00dfc"
         },
         "trackingCookies1p": {
             "settings": {
