@@ -3,9 +3,15 @@ import backgroundWait from './helpers/backgroundWait'
 import { TEST_SERVER_ORIGIN } from './helpers/testPages'
 
 test.describe('navigatorInterface', () => {
-    test('injects navigator.duckduckgo interface into pages', async ({ backgroundPage, page, context }) => {
+    test('injects navigator.duckduckgo interface into pages', async ({ backgroundPage, page, context, manifestVersion }) => {
         await backgroundWait.forExtensionLoaded(context)
         await backgroundWait.forAllConfiguration(backgroundPage)
+        if (manifestVersion === 3) {
+            // wait for content-script registration to complete
+            await backgroundPage.evaluate(() => {
+                return globalThis.components.scriptInjection.ready
+            })
+        }
         await page.goto('https://privacy-test-pages.site/features/navigator-interface.html')
         expect(await page.locator('#interface').innerText()).toBe('interface: true')
         expect(await page.locator('#isDuckDuckGo').innerText()).toBe('isDuckDuckGo: true')

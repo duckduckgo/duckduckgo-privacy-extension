@@ -1146,7 +1146,14 @@
         "navigatorInterface": {
             "exceptions": [],
             "state": "enabled",
-            "hash": "e25bc15aae118274e8d4481baf2033dd"
+            "hash": "e25bc15aae118274e8d4481baf2033dd",
+            "settings": {
+                "privilegedDomains": [
+                    {
+                        "domain": "duckduckgo.com"
+                    }
+                ]
+            }
         },
         "nonTracking3pCookies": {
             "settings": {
