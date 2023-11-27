@@ -37,7 +37,7 @@
         "@playwright/test": "^1.39.0",
         "@types/chrome": "0.0.251",
         "@types/jasmine": "^4.3.5",
-        "@types/webextension-polyfill": "^0.10.6",
+        "@types/webextension-polyfill": "^0.10.7",
         "asana": "github:Asana/node-asana",
         "duckduckgo-colors": "0.0.1",
         "esbuild": "^0.19.5",
