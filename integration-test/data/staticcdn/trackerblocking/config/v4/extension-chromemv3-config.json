@@ -998,6 +998,12 @@
                 },
                 {
                     "domain": "paramountplus.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
                 }
             ],
             "hash": "0bb9961a3c70d769b2c26e89018e8289"
