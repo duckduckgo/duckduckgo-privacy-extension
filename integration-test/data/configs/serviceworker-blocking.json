@@ -1,6 +1,13 @@
 {
     "globalThis.dbg.tds.config.features.serviceworkerInitiatedRequests": {
         "state": "enabled",
-        "exceptions": [ ]
+        "exceptions": [
+            {
+                "domain": "localhost"
+            },
+            {
+                "domain": "127.0.0.1"
+            }
+        ]
     }
 }

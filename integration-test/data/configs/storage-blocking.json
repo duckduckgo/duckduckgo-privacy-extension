@@ -56,7 +56,14 @@
             "trackerCookie": "enabled",
             "nonTrackerCookie": "disabled"
         },
-        "exceptions": [ ],
+        "exceptions": [
+            {
+                "domain": "localhost"
+            },
+            {
+                "domain": "127.0.0.1"
+            }
+        ],
         "state": "enabled"
     }
 }
