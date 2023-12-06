@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1700244435491,
+    "version": 1701873376184,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -271,6 +271,21 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
             "settings": {
@@ -279,7 +294,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "5645f4cbf3f64d11827a0d1ab0587825"
+            "hash": "ea5120d5f805be49ae1f13e59ed84b59"
         },
         "autofill": {
             "exceptions": [
@@ -1009,9 +1024,24 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "71ad0f38f9ce2bbacae5ff7db05511ec"
+            "hash": "87175a35f0c4873e8047f4465fbce805"
         },
         "cookie": {
             "settings": {
@@ -1129,6 +1159,21 @@
                     },
                     {
                         "domain": "sundancecatalog.com"
+                    },
+                    {
+                        "domain": "localhost"
+                    },
+                    {
+                        "domain": "127.0.0.1"
+                    },
+                    {
+                        "domain": "::1"
+                    },
+                    {
+                        "domain": "livenation.com"
+                    },
+                    {
+                        "domain": "ticketmaster.com"
                     }
                 ],
                 "omitVersionSites": [
@@ -1146,12 +1191,40 @@
                     },
                     {
                         "domain": "sundancecatalog.com"
+                    },
+                    {
+                        "domain": "localhost"
+                    },
+                    {
+                        "domain": "127.0.0.1"
+                    },
+                    {
+                        "domain": "::1"
+                    },
+                    {
+                        "domain": "livenation.com"
+                    },
+                    {
+                        "domain": "ticketmaster.com"
                     }
                 ]
             },
             "exceptions": [],
             "state": "disabled",
-            "hash": "98534b0f66a69f924c10e982ccd796fd"
+            "hash": "4bc6e2c1c3a844da2a462eac6b020d0c"
+        },
+        "dbp": {
+            "state": "disabled",
+            "features": {
+                "waitlist": {
+                    "state": "disabled"
+                },
+                "waitlistBetaActive": {
+                    "state": "disabled"
+                }
+            },
+            "exceptions": [],
+            "hash": "ba52a36920a4a76343fc3c44d98936f9"
         },
         "duckPlayer": {
             "exceptions": [],
@@ -1544,10 +1617,6 @@
                         "type": "hide-empty"
                     },
                     {
-                        "selector": "[class*='l-ad']",
-                        "type": "hide-empty"
-                    },
-                    {
                         "selector": "[class*='page-ad']",
                         "type": "hide-empty"
                     },
@@ -1751,6 +1820,22 @@
                     "upgrade to flickr pro to hide these ads"
                 ],
                 "domains": [
+                    {
+                        "domain": "3bmeteo.com",
+                        "rules": [
+                            {
+                                "type": "disable-default"
+                            },
+                            {
+                                "selector": "#admasthead",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "#ads_container",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
                     {
                         "domain": "abc.es",
                         "rules": [
@@ -2051,6 +2136,15 @@
                         ]
                     },
                     {
+                        "domain": "dpreview.com",
+                        "rules": [
+                            {
+                                "selector": ".ad-wrapper",
+                                "type": "override"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "ebay.com",
                         "rules": [
                             {
@@ -2245,8 +2339,45 @@
                         "domain": "foxnews.com",
                         "rules": [
                             {
+                                "type": "disable-default"
+                            },
+                            {
                                 "selector": ".vendor-unit",
                                 "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".pre-content",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[class*='rr-ad-']",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".ad-h-250",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".sticky-pre-header",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".adhesion-ad",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".sticky-pre-header-inner",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".site-header",
+                                "type": "modify-style",
+                                "values": [
+                                    {
+                                        "property": "min-height",
+                                        "value": "50px"
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -2358,6 +2489,23 @@
                             {
                                 "selector": "#leaderboard",
                                 "type": "override"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "healthline.com",
+                        "rules": [
+                            {
+                                "selector": "[data-testid='header-leaderboard']",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[data-testid='sticky-inline-ad']",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[data-ad='true']",
+                                "type": "closest-empty"
                             }
                         ]
                     },
@@ -2488,6 +2636,22 @@
                             {
                                 "selector": "#contentFor_kbbAdsSimplifiedNativeAd",
                                 "type": "hide"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "kentonline.co.uk",
+                        "rules": [
+                            {
+                                "type": "disable-default"
+                            },
+                            {
+                                "selector": "[id*='p_mpu']",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[id*='p_dmp']",
+                                "type": "closest-empty"
                             }
                         ]
                     },
@@ -2788,6 +2952,15 @@
                         ]
                     },
                     {
+                        "domain": "paypal.com",
+                        "rules": [
+                            {
+                                "selector": "#gslFrame",
+                                "type": "hide"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "petapixel.com",
                         "rules": [
                             {
@@ -3078,6 +3251,18 @@
                             {
                                 "selector": "[class*='Advert']",
                                 "type": "hide"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "startpagina.nl",
+                        "rules": [
+                            {
+                                "type": "disable-default"
+                            },
+                            {
+                                "selector": ".ad-widget",
+                                "type": "closest-empty"
                             }
                         ]
                     },
@@ -3531,7 +3716,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "2e105ba71e4674cf6e6499262e345d6a"
+            "hash": "dbcdfcea415b7c71b57275a3c6e63187"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -3973,9 +4158,6 @@
             "state": "enabled",
             "exceptions": [
                 {
-                    "domain": "abcnews.go.com"
-                },
-                {
                     "domain": "allegiantair.com"
                 },
                 {
@@ -4013,6 +4195,21 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
             "settings": {
@@ -4024,7 +4221,7 @@
                     "privacy-test-pages.site"
                 ]
             },
-            "hash": "010134a983618c70ffdf4862af8d532b"
+            "hash": "400b8187a85a25199cddf1f67eeaa111"
         },
         "harmfulApis": {
             "settings": {
@@ -4137,10 +4334,25 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
             "state": "disabled",
-            "hash": "44d3e707cba3ee0a3578f52dc2ce2aa4"
+            "hash": "c8e60da301ddebe387cf05cf84f79bec"
         },
         "https": {
             "state": "enabled",
@@ -4165,9 +4377,24 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "f772808ed34cc9ea8cbcbb7cdaf74429"
+            "hash": "e940590357742e105c70d398c2ef71b9"
         },
         "incontextSignup": {
             "exceptions": [],
@@ -4269,10 +4496,25 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
             "state": "disabled",
-            "hash": "841fa92b9728c9754f050662678f82c7"
+            "hash": "59853660774b501f095e537f5c59bd69"
         },
         "privacyDashboard": {
             "exceptions": [],
@@ -4352,12 +4594,27 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
             "settings": {
                 "windowInMs": 0
             },
-            "hash": "0fff8017d8ea4b5609b8f5c110be1401"
+            "hash": "777e86de6c97f1ed9542b46c1eed73c0"
         },
         "runtimeChecks": {
             "state": "disabled",
@@ -4373,10 +4630,25 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
             "settings": {},
-            "hash": "800a19533c728bbec7e31e466f898268"
+            "hash": "2e06efb9937cc1343de9da9afe5341e1"
         },
         "serviceworkerInitiatedRequests": {
             "exceptions": [
@@ -4536,16 +4808,6 @@
                             }
                         ]
                     },
-                    "adserver.adtech.advertising.com": {
-                        "rules": [
-                            {
-                                "rule": "adserver.adtech.advertising.com/pubapi/3.0/1/54669.7/0/0/ADTECH;v=2;cmd=bid;cors=yes",
-                                "domains": [
-                                    "collider.com"
-                                ]
-                            }
-                        ]
-                    },
                     "adswizz.com": {
                         "rules": [
                             {
@@ -4570,6 +4832,16 @@
                                     "adamtheautomator.com",
                                     "gardeningknowhow.com",
                                     "packhacker.com"
+                                ]
+                            }
+                        ]
+                    },
+                    "advertising.com": {
+                        "rules": [
+                            {
+                                "rule": "adserver.adtech.advertising.com/pubapi/3.0/1/54669.7/0/0/ADTECH;v=2;cmd=bid;cors=yes",
+                                "domains": [
+                                    "collider.com"
                                 ]
                             }
                         ]
@@ -4634,6 +4906,7 @@
                                     "cnn.com",
                                     "corriere.it",
                                     "eurogamer.net",
+                                    "foxweather.com",
                                     "kcci.com",
                                     "kcra.com",
                                     "ketv.com",
@@ -5111,6 +5384,16 @@
                             }
                         ]
                     },
+                    "datadoghq-browser-agent.com": {
+                        "rules": [
+                            {
+                                "rule": "www.datadoghq-browser-agent.com/datadog-logs-v4.js",
+                                "domains": [
+                                    "shapermint.com"
+                                ]
+                            }
+                        ]
+                    },
                     "datadome.co": {
                         "rules": [
                             {
@@ -5181,6 +5464,12 @@
                                 "domains": [
                                     "cbssports.com",
                                     "rocketnews24.com"
+                                ]
+                            },
+                            {
+                                "rule": "pubads.g.doubleclick.net/ssai/pods/",
+                                "domains": [
+                                    "foxweather.com"
                                 ]
                             },
                             {
@@ -5634,6 +5923,7 @@
                             {
                                 "rule": "imasdk.googleapis.com/js/sdkloader/ima3.js",
                                 "domains": [
+                                    "gamak.tv",
                                     "metro.co.uk",
                                     "paper-io.com",
                                     "rawstory.com"
@@ -5695,7 +5985,8 @@
                             {
                                 "rule": "googletagmanager.com/gtag/js",
                                 "domains": [
-                                    "abril.com.br"
+                                    "abril.com.br",
+                                    "cosmicbook.news"
                                 ]
                             }
                         ]
@@ -5848,6 +6139,22 @@
                                     "wutv29.com",
                                     "wvah.com",
                                     "wwmt.com"
+                                ]
+                            }
+                        ]
+                    },
+                    "gorgias.chat": {
+                        "rules": [
+                            {
+                                "rule": "config.gorgias.chat",
+                                "domains": [
+                                    "help.athleticbrewing.com"
+                                ]
+                            },
+                            {
+                                "rule": "assets.gorgias.chat",
+                                "domains": [
+                                    "help.athleticbrewing.com"
                                 ]
                             }
                         ]
@@ -6139,17 +6446,6 @@
                             }
                         ]
                     },
-                    "live.primis.tech": {
-                        "rules": [
-                            {
-                                "rule": "live.primis.tech/live/liveView.php",
-                                "domains": [
-                                    "belfastlive.co.uk",
-                                    "cornwalllive.com"
-                                ]
-                            }
-                        ]
-                    },
                     "livechatinc.com": {
                         "rules": [
                             {
@@ -6223,6 +6519,16 @@
                                 "rule": "survey.medallia.com/",
                                 "domains": [
                                     "<all>"
+                                ]
+                            }
+                        ]
+                    },
+                    "mediavine.com": {
+                        "rules": [
+                            {
+                                "rule": "scripts.mediavine.com/tags/cosmic-book-news.js",
+                                "domains": [
+                                    "cosmicbook.news"
                                 ]
                             }
                         ]
@@ -6349,6 +6655,16 @@
                             }
                         ]
                     },
+                    "onesignal.com": {
+                        "rules": [
+                            {
+                                "rule": "cdn.onesignal.com/sdks/OneSignalSDK.js",
+                                "domains": [
+                                    "cosmicbook.news"
+                                ]
+                            }
+                        ]
+                    },
                     "onlyfans.com": {
                         "rules": [
                             {
@@ -6465,6 +6781,17 @@
                                 "rule": "images.primaryarms.com/f00000000191638/www.primaryarms.com/core/media/media.nl",
                                 "domains": [
                                     "primaryarms.com"
+                                ]
+                            }
+                        ]
+                    },
+                    "primis.tech": {
+                        "rules": [
+                            {
+                                "rule": "live.primis.tech/live/liveView.php",
+                                "domains": [
+                                    "belfastlive.co.uk",
+                                    "cornwalllive.com"
                                 ]
                             }
                         ]
@@ -6593,16 +6920,6 @@
                             }
                         ]
                     },
-                    "protection-widget.route.com": {
-                        "rules": [
-                            {
-                                "rule": "protection-widget.route.com/protect.core.js",
-                                "domains": [
-                                    "littleunicorn.com"
-                                ]
-                            }
-                        ]
-                    },
                     "pubmatic.com": {
                         "rules": [
                             {
@@ -6691,6 +7008,16 @@
                                 "rule": "rokt.com/wsdk/integrations/snippet.js",
                                 "domains": [
                                     "pch.com"
+                                ]
+                            }
+                        ]
+                    },
+                    "route.com": {
+                        "rules": [
+                            {
+                                "rule": "protection-widget.route.com/protect.core.js",
+                                "domains": [
+                                    "<all>"
                                 ]
                             }
                         ]
@@ -6797,6 +7124,16 @@
                             }
                         ]
                     },
+                    "slickstream.com": {
+                        "rules": [
+                            {
+                                "rule": "app.slickstream.com",
+                                "domains": [
+                                    "<all>"
+                                ]
+                            }
+                        ]
+                    },
                     "snapkit.com": {
                         "rules": [
                             {
@@ -6887,6 +7224,16 @@
                             }
                         ]
                     },
+                    "tfaforms.net": {
+                        "rules": [
+                            {
+                                "rule": "tfaforms.net",
+                                "domains": [
+                                    "<all>"
+                                ]
+                            }
+                        ]
+                    },
                     "theplatform.com": {
                         "rules": [
                             {
@@ -6948,7 +7295,15 @@
                             {
                                 "rule": "widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js",
                                 "domains": [
-                                    "domesticandgeneral.com"
+                                    "azurestandard.com",
+                                    "domesticandgeneral.com",
+                                    "www.hotpoint.co.uk"
+                                ]
+                            },
+                            {
+                                "rule": "widget.trustpilot.com/bootstrap/v5/tp.widget.sync.bootstrap.min.js",
+                                "domains": [
+                                    "www.hotpoint.co.uk"
                                 ]
                             }
                         ]
@@ -7063,6 +7418,16 @@
                                 "rule": "voxmedia.com/sso/unison_request",
                                 "domains": [
                                     "<all>"
+                                ]
+                            }
+                        ]
+                    },
+                    "wovn.io": {
+                        "rules": [
+                            {
+                                "rule": "j.wovn.io/1",
+                                "domains": [
+                                    "tamashiiweb.com"
                                 ]
                             }
                         ]
@@ -7280,7 +7645,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "1ee07c339b2d2618f04e2f5ac147aca2"
+            "hash": "b3ee534a1ad20f0eeeb62c7e015ccff5"
         },
         "trackingCookies1p": {
             "settings": {
@@ -7436,10 +7801,25 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
             "state": "disabled",
-            "hash": "f65d10dfdf6739feab99a08d42734747"
+            "hash": "08c23312ab5ce02ed4a4e56e2f176517"
         },
         "voiceSearch": {
             "exceptions": [],
@@ -7459,10 +7839,25 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
             "state": "disabled",
-            "hash": "5e792dd491428702bc0104240fbce0ce"
+            "hash": "f38902347ef4b5046416b093e79dca6a"
         },
         "windowsPermissionUsage": {
             "exceptions": [],
@@ -7482,10 +7877,25 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
                 }
             ],
             "state": "disabled",
-            "hash": "5e792dd491428702bc0104240fbce0ce"
+            "hash": "f38902347ef4b5046416b093e79dca6a"
         },
         "windowsWaitlist": {
             "exceptions": [],
