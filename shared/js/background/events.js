@@ -288,11 +288,6 @@ browser.omnibox.onInputEntered.addListener(async function (text) {
 /**
  * MESSAGES
  */
-const {
-    REFETCH_ALIAS_ALARM,
-    fetchAlias
-} = require('./email-utils')
-
 // Handle any messages that come from content/UI scripts
 browser.runtime.onMessage.addListener((req, sender) => {
     if (sender.id !== browserWrapper.getExtensionId()) return
@@ -462,8 +457,6 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
         httpsService.clearExpiredCache()
     } else if (alarmEvent.name === 'rotateSessionKey') {
         await utils.resetSessionKey()
-    } else if (alarmEvent.name === REFETCH_ALIAS_ALARM) {
-        fetchAlias()
     } else if (alarmEvent.name === 'clearExpiredBrokenSiteReportTimes') {
         await clearExpiredBrokenSiteReportTimes()
     }

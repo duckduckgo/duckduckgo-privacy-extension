@@ -19,6 +19,7 @@ import { onStartup } from './startup'
 import FireButton from './components/fire-button'
 import TabTracker from './components/tab-tracking'
 import MV3ContentScriptInjection from './components/mv3-content-script-injection'
+import EmailAutofill from './components/email-autofill'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
@@ -40,7 +41,8 @@ settings.ready().then(() => {
  * }}
  */
 const components = {
-    tabTracking: new TabTracker({ tabManager })
+    tabTracking: new TabTracker({ tabManager }),
+    autofill: new EmailAutofill({ settings })
 }
 
 // Chrome-only components

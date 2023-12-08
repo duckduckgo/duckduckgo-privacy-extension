@@ -8,7 +8,6 @@ import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 import tdsStorage from './storage/tds'
 import { getArgumentsObject } from './helpers/arguments-object'
 import { isFireButtonEnabled } from './components/fire-button'
-const { getDomain } = require('tldts')
 const utils = require('./utils')
 const settings = require('./settings')
 const tabManager = require('./tab-manager')
@@ -274,131 +273,8 @@ export async function getSetting ({ name }) {
     return settings.getSetting(name)
 }
 
-const {
-    isValidToken,
-    isValidUsername,
-    getAddresses,
-    sendJSPixel,
-    fetchAlias,
-    showContextMenuAction,
-    hideContextMenuAction
-} = require('./email-utils')
-
-export { getAddresses, sendJSPixel }
-
-export function getAlias () {
-    const userData = settings.getSetting('userData')
-    return { alias: userData?.nextAlias }
-}
-
-/**
- * @returns {Promise<import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').RefreshAliasResponse>}
- */
-export async function refreshAlias () {
-    await fetchAlias()
-    return getAddresses()
-}
-
 export function getTopBlocked (options) {
     return Companies.getTopBlocked(options)
-}
-
-function isExpectedSender (sender) {
-    try {
-        const domain = getDomain(sender.url)
-        const { pathname } = new URL(sender.url)
-        return domain === 'duckduckgo.com' && pathname.startsWith('/email')
-    } catch {
-        return false
-    }
-}
-
-export function getEmailProtectionCapabilities (_, sender) {
-    if (!isExpectedSender(sender)) return
-
-    return {
-        addUserData: true,
-        getUserData: true,
-        removeUserData: true
-    }
-}
-
-export function getIncontextSignupDismissedAt () {
-    const permanentlyDismissedAt = settings.getSetting('incontextSignupPermanentlyDismissedAt')
-    const installedDays = tdsStorage.config.features.incontextSignup?.settings?.installedDays ?? 3
-    const isInstalledRecently = utils.isInstalledWithinDays(installedDays)
-    return { success: { permanentlyDismissedAt, isInstalledRecently } }
-}
-
-export function setIncontextSignupPermanentlyDismissedAt ({ value }) {
-    settings.updateSetting('incontextSignupPermanentlyDismissedAt', value)
-}
-
-// Get user data to be used by the email web app settings page. This includes
-// username, last alias, and a token for generating additional aliases.
-export async function getUserData (_, sender) {
-    if (!isExpectedSender(sender)) return
-
-    await settings.ready()
-    const userData = settings.getSetting('userData')
-    if (userData) {
-        return userData
-    } else {
-        return { error: 'Something seems wrong with the user data' }
-    }
-}
-
-export async function addUserData (userData, sender) {
-    const { userName, token } = userData
-    if (!isExpectedSender(sender)) return
-
-    const sendDdgUserReady = async () => {
-        const tabs = await browser.tabs.query({})
-        tabs.forEach((tab) =>
-            utils.sendTabMessage(tab.id, { type: 'ddgUserReady' })
-        )
-    }
-
-    await settings.ready()
-    const { existingToken } = settings.getSetting('userData') || {}
-
-    // If the user is already registered, just notify tabs that we're ready
-    if (existingToken === token) {
-        sendDdgUserReady()
-        return { success: true }
-    }
-
-    // Check general data validity
-    if (isValidUsername(userName) && isValidToken(token)) {
-        settings.updateSetting('userData', userData)
-        // Once user is set, fetch the alias and notify all tabs
-        const response = await fetchAlias()
-        if (response && 'error' in response) {
-            return { error: response.error.message }
-        }
-
-        sendDdgUserReady()
-        showContextMenuAction()
-        return { success: true }
-    } else {
-        return { error: 'Something seems wrong with the user data' }
-    }
-}
-
-export async function removeUserData (_, sender) {
-    if (!isExpectedSender(sender)) return
-    await logout()
-}
-
-export async function logout () {
-    settings.updateSetting('userData', {})
-    settings.updateSetting('lastAddressUsedAt', '')
-    // Broadcast the logout to all tabs
-    const tabs = await browser.tabs.query({})
-    tabs.forEach((tab) => {
-        utils.sendTabMessage(tab.id, { type: 'logout' })
-    })
-    hideContextMenuAction()
 }
 
 export function getListContents (list) {
@@ -511,18 +387,7 @@ const messageHandlers = {
     setYoutubePreviewsEnabled,
     updateSetting,
     getSetting,
-    getAddresses,
-    sendJSPixel,
-    getAlias,
-    refreshAlias,
     getTopBlocked,
-    getEmailProtectionCapabilities,
-    getIncontextSignupDismissedAt,
-    setIncontextSignupPermanentlyDismissedAt,
-    getUserData,
-    addUserData,
-    removeUserData,
-    logout,
     getListContents,
     setListContents,
     reloadList,
