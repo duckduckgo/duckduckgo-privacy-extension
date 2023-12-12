@@ -5,8 +5,7 @@
     "repository": "duckduckgo/ddg2dnr",
     "bin": "cli.js",
     "devDependencies": {
-        "mocha": "10.2.0",
-        "privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#c179445"
+        "mocha": "10.2.0"
     },
     "scripts": {
         "extension-configuration": "node cli.js extension-configuration",
