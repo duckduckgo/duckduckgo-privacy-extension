@@ -274,17 +274,6 @@ browser.tabs.onActivated.addListener(() => {
     browserWrapper.notifyPopup({ closePopup: true })
 })
 
-// search via omnibox
-browser.omnibox.onInputEntered.addListener(async function (text) {
-    const tabs = await browser.tabs.query({
-        currentWindow: true,
-        active: true
-    })
-    browser.tabs.update(tabs[0].id, {
-        url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + utils.getOsName() + 'cl'
-    })
-})
-
 /**
  * MESSAGES
  */

@@ -19,6 +19,7 @@ import { onStartup } from './startup'
 import FireButton from './components/fire-button'
 import TabTracker from './components/tab-tracking'
 import MV3ContentScriptInjection from './components/mv3-content-script-injection'
+import OmniboxSearch from './components/omnibox-search'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
@@ -40,7 +41,8 @@ settings.ready().then(() => {
  * }}
  */
 const components = {
-    tabTracking: new TabTracker({ tabManager })
+    tabTracking: new TabTracker({ tabManager }),
+    omnibox: new OmniboxSearch()
 }
 
 // Chrome-only components
