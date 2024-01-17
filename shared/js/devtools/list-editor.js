@@ -13,19 +13,24 @@ function getListFormat (name) {
 
 // build switcher options
 lists.forEach(({ name }) => {
-    const option = document.createElement('option')
-    option.value = name
-    option.innerText = name
-    listPicker.appendChild(option)
+    const button = document.createElement('button')
+    button.innerText = name
+    button.classList.add('silver-bg')
+    button.addEventListener('click', listSwitcher)
+    listPicker.appendChild(button)
 })
 
-function listSwitcher () {
-    selected = listPicker.selectedOptions[0].value
+function listSwitcher (event) {
+    document.querySelectorAll('#list-picker button').forEach((btn) => {
+        btn.classList.remove('selected')
+    })
+    event.target.classList.add('selected')
+    selected = event.target.innerText.toLowerCase()
     loadList(selected)
     saveButton.removeAttribute('disabled')
 }
-listPicker.addEventListener('change', listSwitcher)
-listSwitcher()
+
+document.querySelector('#list-picker button').click()
 
 function sendMessage (messageType, options, callback) {
     chrome.runtime.sendMessage({ messageType, options }, callback)

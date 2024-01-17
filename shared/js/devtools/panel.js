@@ -76,6 +76,7 @@ const loadConfigurableFeatures = new Promise((resolve) => {
                     action: `toggle${feature}`,
                     tabId
                 })
+                reloadPage()
             })
         })
         resolve(features)
@@ -377,21 +378,24 @@ function clear () {
     panelConfig.currentCounter = undefined
 }
 
-// listeners for buttons and toggles
-clearButton.addEventListener('click', clear)
-refreshButton.addEventListener('click', () => {
+function reloadPage () {
     clear()
     if (chrome.devtools) {
         chrome.devtools.inspectedWindow.eval('window.location.reload();')
     } else {
         chrome.tabs.reload(tabId)
     }
-})
+}
+
+// listeners for buttons and toggles
+clearButton.addEventListener('click', clear)
+refreshButton.addEventListener('click', reloadPage)
 protectionButton.addEventListener('click', () => {
     port.postMessage({
         action: 'toggleProtection',
         tabId
     })
+    reloadPage()
 })
 
 sendMessage('getSetting', { name: 'tds-channel' }, (result) => {
