@@ -19,6 +19,7 @@ import { onStartup } from './startup'
 import FireButton from './components/fire-button'
 import TabTracker from './components/tab-tracking'
 import MV3ContentScriptInjection from './components/mv3-content-script-injection'
+import EmailAutofill from './components/email-autofill'
 import OmniboxSearch from './components/omnibox-search'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
@@ -42,6 +43,7 @@ settings.ready().then(() => {
  */
 const components = {
     tabTracking: new TabTracker({ tabManager }),
+    autofill: new EmailAutofill({ settings }),
     omnibox: new OmniboxSearch()
 }
 

@@ -11,7 +11,6 @@ const https = require('./https')
 const settings = require('./settings')
 const trackers = require('./trackers')
 const dnrSessionId = require('./dnr-session-rule-id')
-const { fetchAlias, showContextMenuAction } = require('./email-utils')
 /** @module */
 
 let resolveReadyPromise
@@ -61,13 +60,6 @@ export async function onStartup () {
         } catch (e) {
             console.warn('an error occurred setting up TrackerStats', e)
         }
-    }
-
-    // fetch alias if needed
-    const userData = settings.getSetting('userData')
-    if (userData && userData.token) {
-        if (!userData.nextAlias) await fetchAlias()
-        showContextMenuAction()
     }
 
     await clearExpiredBrokenSiteReportTimes()

@@ -1,6 +1,6 @@
 const bel = require('nanohtml')
 const raw = require('nanohtml/raw')
-const { formatAddress } = require('../../background/email-utils')
+const { formatAddress } = require('../../background/components/email-autofill')
 const t = window.DDG.base.i18n.t
 
 module.exports = function () {
