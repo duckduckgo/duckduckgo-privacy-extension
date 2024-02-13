@@ -20,3 +20,4 @@ jobs:
           ASANA_PROJECT_ID: '312629933896096'
           move_to_section_id: '1138897367676525'
           USER_MAP: ${{ vars.USER_MAP }}
+          NO_AUTOCLOSE_PROJECTS: '312629933896096'
