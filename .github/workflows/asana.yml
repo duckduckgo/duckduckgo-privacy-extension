@@ -13,7 +13,6 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     environment: development
-    concurrency: 'asana-${{ github.repository }}'
     steps:
       - uses: actions/checkout@v4
       - uses: sammacbeth/action-asana-sync@v4
