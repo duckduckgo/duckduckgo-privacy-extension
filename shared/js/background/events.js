@@ -274,6 +274,18 @@ browser.tabs.onActivated.addListener(() => {
     browserWrapper.notifyPopup({ closePopup: true })
 })
 
+// Include the performanceWarning flag in breakage reports.
+if (browser.runtime.onPerformanceWarning) {
+    browser.runtime.onPerformanceWarning.addListener(({ tabId }) => {
+        if (tabId && tabId > 0) {
+            const tab = tabManager.get({ tabId })
+            if (tab) {
+                tab.performanceWarning = true
+            }
+        }
+    })
+}
+
 /**
  * MESSAGES
  */

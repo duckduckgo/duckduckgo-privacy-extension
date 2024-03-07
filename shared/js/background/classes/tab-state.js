@@ -54,6 +54,8 @@ export class TabState {
         this.errorDescriptions = []
         /** @type {number[]} */
         this.httpErrorCodes = []
+        /** @type {boolean} */
+        this.performanceWarning = false // True when the runtime.onPerformanceWarning event fired for the tab.
         // Whilst restoring, prevent the tab data being stored
         if (!restoring) {
             Storage.backup(this)

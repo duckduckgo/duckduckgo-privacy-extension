@@ -183,6 +183,7 @@ export async function breakageReportForTab ({
     const ctlYouTube = tab.ctlYouTube ? 'true' : 'false'
     const ctlFacebookPlaceholderShown = tab.ctlFacebookPlaceholderShown ? 'true' : 'false'
     const ctlFacebookLogin = tab.ctlFacebookLogin ? 'true' : 'false'
+    const performanceWarning = tab.performanceWarning ? 'true' : 'false'
     const ampUrl = tab.ampUrl ? getURLWithoutQueryString(tab.ampUrl).split('#')[0] : undefined
     const upgradedHttps = tab.upgradedHttps
     const debugFlags = tab.debugFlags.join(',')
@@ -200,6 +201,7 @@ export async function breakageReportForTab ({
         ctlYouTube,
         ctlFacebookPlaceholderShown,
         ctlFacebookLogin,
+        performanceWarning,
         protectionsState: tab.site.isFeatureEnabled('contentBlocking')
     })
 
