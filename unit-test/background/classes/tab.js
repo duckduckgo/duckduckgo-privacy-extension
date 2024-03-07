@@ -117,7 +117,8 @@ describe('Tab', () => {
                 ctlFacebookLogin: false,
                 debugFlags: [],
                 errorDescriptions: [],
-                httpErrorCodes: []
+                httpErrorCodes: [],
+                performanceWarning: false
             }
             expect(tabClone.site.enabledFeatures.length).toBe(14)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))

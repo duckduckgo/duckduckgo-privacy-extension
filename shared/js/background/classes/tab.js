@@ -234,6 +234,14 @@ class Tab {
         this._tabState.setValue('httpErrorCodes', value)
     }
 
+    get performanceWarning () {
+        return this._tabState.performanceWarning
+    }
+
+    set performanceWarning (value) {
+        this._tabState.setValue('performanceWarning', value)
+    }
+
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
      * @param {string} requestURL
