@@ -1,5 +1,6 @@
 name: 'Asana Sync'
 on:
+  pull_request_review:
   pull_request_target:
     types:
       - opened
@@ -12,10 +13,9 @@ on:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    environment: development
     steps:
       - uses: actions/checkout@v4
-      - uses: sammacbeth/action-asana-sync@v4
+      - uses: sammacbeth/action-asana-sync@v5
         with:
           ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
           ASANA_WORKSPACE_ID: ${{ secrets.ASANA_WORKSPACE_ID }}
