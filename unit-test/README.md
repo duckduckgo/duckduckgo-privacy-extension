@@ -12,3 +12,10 @@ Tests can be run as follows:
  - `npm test`: Run all tests (both node and browser).
  - `npm run test.unit`: Run only browser-based unit tests.
  - `npm run test.node`: Run only node-based unit tests.
+
+## Notes
+
+- To reduce the amount of noise when running the tests, `console.log()` and
+  `console.debug()` output is suppressed. If you need to log something to the
+  console while working on the tests use `console.warn()` or `console.error()`
+  instead.
