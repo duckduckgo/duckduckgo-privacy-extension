@@ -24,6 +24,7 @@ import OmniboxSearch from './components/omnibox-search'
 import InternalUserDetector from './components/internal-user-detector'
 import TDSStorage from './components/tds'
 import TrackersGlobal from './components/trackers'
+import DebuggerConnection from './components/debugger-connection'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
@@ -57,7 +58,8 @@ const components = {
     internalUser: new InternalUserDetector({ settings }),
     tabTracking: new TabTracker({ tabManager }),
     tds,
-    trackers: new TrackersGlobal({ tds })
+    trackers: new TrackersGlobal({ tds }),
+    debugger: new DebuggerConnection({ tds })
 }
 
 // Chrome-only components

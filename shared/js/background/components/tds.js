@@ -1,9 +1,21 @@
 import ResourceLoader from './resource-loader.js'
 import constants from '../../../data/constants'
+import { getFromSessionStorage } from '../wrapper.js'
 
 /**
  * @typedef {import('../settings.js')} Settings
  */
+
+/**
+ * @returns {Promise<string>}
+ */
+async function getConfigUrl () {
+    const override = await getFromSessionStorage('configURLOverride')
+    if (override) {
+        return override
+    }
+    return constants.tdsLists[2].url
+}
 
 export default class TDSStorage {
     /**
@@ -24,9 +36,9 @@ export default class TDSStorage {
         }, { settings })
         this.config = new ResourceLoader({
             name: 'config',
-            remoteUrl: constants.tdsLists[2].url,
+            remoteUrl: getConfigUrl,
             localUrl: '/data/bundled/extension-config.json',
-            updateIntervalMinutes: 15
+            updateIntervalMinutes: 1
         }, { settings })
     }
 

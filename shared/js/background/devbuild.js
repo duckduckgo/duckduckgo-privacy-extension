@@ -37,7 +37,8 @@ export default function initDebugBuild () {
         setListContents,
         getListContents,
         companies: Companies,
-        ntts: createNewtabTrackerStatsDebugApi()
+        ntts: createNewtabTrackerStatsDebugApi(),
+        setToSessionStorage: browserWrapper.setToSessionStorage
     }
 
     // mark this as a dev build
