@@ -11,6 +11,7 @@ const UserDataModel = require('./../models/user-data.js')
 const userDataTemplate = require('./../templates/user-data.js')
 const BackgroundMessageModel = require('./../models/background-message.js')
 const browserUIWrapper = require('./../base/ui-wrapper.js')
+const InternalOptionsView = require('./../views/internal-options.js').default
 const t = window.DDG.base.i18n.t
 
 function Options (ops) {
@@ -54,6 +55,11 @@ Options.prototype = window.$.extend({},
                 model: new UserDataModel({}),
                 appendTo: $parent,
                 template: userDataTemplate
+            })
+
+            this.views.internal = new InternalOptionsView({
+                pageView: this,
+                appendTo: $parent
             })
 
             this.views.allowlist = new AllowlistView({
