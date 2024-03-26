@@ -68,7 +68,7 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3') {
 if (BUILD_TARGET === 'chrome-mv3') {
     components.scriptInjection = new MV3ContentScriptInjection()
 }
-console.log('Loaded components:', components)
+console.log(new Date(), 'Loaded components:', components)
 // @ts-ignore
 self.components = components
 
