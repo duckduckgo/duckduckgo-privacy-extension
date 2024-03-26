@@ -42,17 +42,20 @@ settings.ready().then(() => {
 const tds = new TDSStorage({ settings })
 /**
  * @type {{
+ *  autofill: EmailAutofill;
+ *  omnibox: OmniboxSearch;
  *  fireButton?: FireButton;
+ *  internalUser: InternalUserDetector;
  *  tds: TDSStorage;
  *  tabTracking: TabTracker;
  *  trackers: TrackersGlobal;
  * }}
  */
 const components = {
-    tabTracking: new TabTracker({ tabManager }),
     autofill: new EmailAutofill({ settings }),
     omnibox: new OmniboxSearch(),
     internalUser: new InternalUserDetector({ settings }),
+    tabTracking: new TabTracker({ tabManager }),
     tds,
     trackers: new TrackersGlobal({ tds })
 }
