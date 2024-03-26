@@ -89,8 +89,24 @@ export async function forExtensionLoaded (context) {
     }))
 }
 
+export async function forDynamicDNRRulesLoaded (backgroundPage) {
+    // We don't have anything we can listen to to know we've finished loading all rules, so just
+    // poll the dynamic rules until it looks like they've been added.
+    while (true) {
+        const ruleCount = await backgroundPage.evaluate(async () => {
+            const rules = await chrome.declarativeNetRequest.getDynamicRules()
+            return rules.length
+        })
+        if (ruleCount > 10) {
+            break
+        }
+        await new Promise(resolve => setTimeout(resolve, 100))
+    }
+}
+
 export default {
     forSetting,
     forAllConfiguration,
-    forExtensionLoaded
+    forExtensionLoaded,
+    forDynamicDNRRulesLoaded
 }

@@ -1,25 +1,10 @@
 import { test, expect } from './helpers/playwrightHarness'
-import { forAllConfiguration, forExtensionLoaded } from './helpers/backgroundWait'
+import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait'
 import { overridePrivacyConfig } from './helpers/testConfig'
 import { TEST_SERVER_ORIGIN } from './helpers/testPages'
 
 const testHost = 'privacy-test-pages.site'
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`
-
-async function forDynamicRulesLoaded (backgroundPage) {
-    // We don't have anything we can listen to to know we've finished loading all rules, so just
-    // poll the dynamic rules until it looks like they've been added.
-    while (true) {
-        const ruleCount = await backgroundPage.evaluate(async () => {
-            const rules = await chrome.declarativeNetRequest.getDynamicRules()
-            return rules.length
-        })
-        if (ruleCount > 10) {
-            break
-        }
-        await new Promise(resolve => setTimeout(resolve, 100))
-    }
-}
 
 async function runRequestBlockingTest (page, url = testSite) {
     const pageRequests = []
@@ -63,7 +48,7 @@ test.describe('Test request blocking', () => {
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
         if (manifestVersion === 3) {
-            await forDynamicRulesLoaded(backgroundPage)
+            await forDynamicDNRRulesLoaded(backgroundPage)
         }
         const [testCount, pageRequests] = await runRequestBlockingTest(page)
 
@@ -120,7 +105,7 @@ test.describe('Test request blocking', () => {
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
         if (manifestVersion === 3) {
-            await forDynamicRulesLoaded(backgroundPage)
+            await forDynamicDNRRulesLoaded(backgroundPage)
         }
         await backgroundPage.evaluate(async (domain) => {
             /** @type {import('../shared/js/background/components/resource-loader').default} */
@@ -195,7 +180,7 @@ test.describe('Test request blocking', () => {
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
         if (manifestVersion === 3) {
-            await forDynamicRulesLoaded(backgroundPage)
+            await forDynamicDNRRulesLoaded(backgroundPage)
         }
 
         // load with protection enabled
