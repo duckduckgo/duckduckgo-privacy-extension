@@ -35,3 +35,11 @@
     height: 30px;
     padding: 0px 0px 1px 0px;
 }
+
+button:disabled {
+    background-color: $color--light-slate;
+}
+
+.js-options-set-config-url {
+    height: 36px !important;
+}

@@ -1,8 +1,20 @@
+import { registerMessageHandler } from '../message-handlers'
 import { getFromSessionStorage, removeFromSessionStorage, setToSessionStorage } from '../wrapper'
 
 /**
  * @typedef {import('./tds').default} TDSStorage
  */
+
+export async function getDebuggerSettings () {
+    const [configURLOverride, debuggerConnection] = await Promise.all([
+        getFromSessionStorage('configURLOverride'),
+        getFromSessionStorage('debuggerConnection')
+    ])
+    return {
+        configURLOverride,
+        debuggerConnection
+    }
+}
 
 export default class DebuggerConnection {
     /**
@@ -13,13 +25,15 @@ export default class DebuggerConnection {
     constructor ({ tds }) {
         this.init()
         this.tds = tds
+        registerMessageHandler('getDebuggingSettings', getDebuggerSettings)
+        registerMessageHandler('enableDebugging', ({ configURLOverride, debuggerConnection }) => {
+            return this.enableDebugging(configURLOverride, debuggerConnection)
+        })
+        registerMessageHandler('disableDebugging', this.disableDebugging.bind(this))
     }
 
     async init () {
-        const [configURLOverride, debuggerConnection] = await Promise.all([
-            getFromSessionStorage('configURLOverride'),
-            getFromSessionStorage('debuggerConnection')
-        ])
+        const { configURLOverride, debuggerConnection } = await getDebuggerSettings()
         this.configURLOverride = configURLOverride
         this.debuggerConnectionEnabled = debuggerConnection
         if (this.configURLOverride && this.debuggerConnectionEnabled) {
