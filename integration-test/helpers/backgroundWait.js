@@ -90,18 +90,14 @@ export async function forExtensionLoaded (context) {
 }
 
 export async function forDynamicDNRRulesLoaded (backgroundPage) {
-    // We don't have anything we can listen to to know we've finished loading all rules, so just
-    // poll the dynamic rules until it looks like they've been added.
-    while (true) {
-        const ruleCount = await backgroundPage.evaluate(async () => {
-            const rules = await chrome.declarativeNetRequest.getDynamicRules()
-            return rules.length
-        })
-        if (ruleCount > 10) {
-            break
-        }
-        await new Promise(resolve => setTimeout(resolve, 100))
-    }
+    // The 'allLoadingFinished' promise on a ResourceLoader signifies that the resource was loaded
+    // at least once, and all subscribed listeners received and processed that resource.
+    await backgroundPage.evaluate(async () => {
+        await Promise.all([
+            globalThis.components.tds.config.allLoadingFinished,
+            globalThis.components.tds.tds.allLoadingFinished
+        ])
+    })
 }
 
 export default {

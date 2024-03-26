@@ -12,9 +12,11 @@ import { createAlarm } from '../wrapper'
  * @property {number} [updateIntervalMinutes]
  * @property {'json'|'text'} [format]
  *
- * @typedef {(resourceName: ResourceName, etag: string, value: any) => void} OnUpdatedCallback
+ * @typedef {(resourceName: ResourceName, etag: string, value: any) => Promise<any> | void} OnUpdatedCallback
  * @typedef {import('../settings.js')} Settings
  */
+
+const AFTER_UPDATE_EVENT_NAME = 'afterUpdate'
 
 export default class ResourceLoader extends EventTarget {
     /** @type {Dexie?} */
@@ -35,12 +37,16 @@ export default class ResourceLoader extends EventTarget {
         this.updateIntervalMinutes = config.updateIntervalMinutes || 0
         this.format = config.format || 'json'
         this.data = null
+        this._onUpdateProcessing = []
 
         if (!this.remoteUrl && !this.localUrl) {
             throw new Error('invalid config: need a remote or local URL (or both)')
         }
 
         this.ready = this.checkForUpdates()
+        this.allLoadingFinished = new Promise((resolve) => {
+            this.addEventListener(AFTER_UPDATE_EVENT_NAME, resolve)
+        })
 
         if (this.updateIntervalMinutes) {
             const alarmName = `updateResource: ${this.name}`
@@ -164,6 +170,12 @@ export default class ResourceLoader extends EventTarget {
                     data: this.data
                 }
             }))
+            // After dispatchEvent, the return values of all onUpdate listeners will have been
+            // added to this._onUpdateProcessing, so we can wait for those promises to resolve.
+            Promise.all(this._onUpdateProcessing).then(() => {
+                this._onUpdateProcessing = []
+                this.dispatchEvent(new Event(AFTER_UPDATE_EVENT_NAME))
+            })
         }
     }
 
@@ -174,7 +186,10 @@ export default class ResourceLoader extends EventTarget {
         this.addEventListener('update', (ev) => {
             if (ev instanceof CustomEvent) {
                 const { name, etag, data } = ev.detail
-                cb(name, etag, data)
+                const result = cb(name, etag, data)
+                if (result instanceof Promise) {
+                    this._onUpdateProcessing.push(result)
+                }
             }
         })
     }
