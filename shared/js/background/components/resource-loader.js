@@ -43,7 +43,15 @@ export default class ResourceLoader extends EventTarget {
             throw new Error('invalid config: need a remote or local URL (or both)')
         }
 
+        /**
+         * @type {Promise<void>} Promise that resolves once this resouce has been loaded
+         * (i.e. `this.data` contains the resource contents)
+         */
         this.ready = this.checkForUpdates()
+        /**
+         * @type {Promise} Promise that resolves after resource is loaded, and all `onUpdate`
+         * callbacks have resolved.
+         */
         this.allLoadingFinished = new Promise((resolve) => {
             this.addEventListener(AFTER_UPDATE_EVENT_NAME, resolve)
         })
