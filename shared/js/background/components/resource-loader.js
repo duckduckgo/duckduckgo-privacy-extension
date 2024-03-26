@@ -1,6 +1,7 @@
 import Dexie from 'dexie'
-import bundledEtags from '../../../data/etags.json'
 import { alarms } from 'webextension-polyfill'
+import bundledEtags from '../../../data/etags.json'
+import { createAlarm } from '../wrapper'
 /**
  * @typedef {'tds' | 'surrogates' | 'config'} ResourceName
  *
@@ -44,7 +45,7 @@ export default class ResourceLoader {
 
         if (this.updateIntervalMinutes) {
             const alarmName = `updateResource: ${this.name}`
-            alarms.create(alarmName, { periodInMinutes: this.updateIntervalMinutes })
+            createAlarm(alarmName, { periodInMinutes: this.updateIntervalMinutes })
             alarms.onAlarm.addListener((alarmEvent) => {
                 if (alarmEvent.name === alarmName) {
                     this.checkForUpdates()
