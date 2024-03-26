@@ -16,7 +16,7 @@ import { createAlarm } from '../wrapper'
  * @typedef {import('../settings.js')} Settings
  */
 
-export default class ResourceLoader {
+export default class ResourceLoader extends EventTarget {
     /** @type {Dexie?} */
     static dbc = null
 
@@ -27,6 +27,7 @@ export default class ResourceLoader {
      * }} opts
      */
     constructor (config, { settings }) {
+        super()
         this.settings = settings
         this.name = config.name
         this.remoteUrl = config.remoteUrl
@@ -34,8 +35,6 @@ export default class ResourceLoader {
         this.updateIntervalMinutes = config.updateIntervalMinutes || 0
         this.format = config.format || 'json'
         this.data = null
-        /** @type {OnUpdatedCallback[]} */
-        this._onUpdatedListeners = []
 
         if (!this.remoteUrl && !this.localUrl) {
             throw new Error('invalid config: need a remote or local URL (or both)')
@@ -158,9 +157,13 @@ export default class ResourceLoader {
             this.lastUpdate = Date.now()
         }
         if (updated) {
-            for (const listener of this._onUpdatedListeners.slice()) {
-                listener(this.name, this.etag, this.data)
-            }
+            this.dispatchEvent(new CustomEvent('update', {
+                detail: {
+                    name: this.name,
+                    etag: this.etag,
+                    data: this.data
+                }
+            }))
         }
     }
 
@@ -168,7 +171,12 @@ export default class ResourceLoader {
      * @param {OnUpdatedCallback} cb
      */
     onUpdate (cb) {
-        this._onUpdatedListeners.push(cb)
+        this.addEventListener('update', (ev) => {
+            if (ev instanceof CustomEvent) {
+                const { name, etag, data } = ev.detail
+                cb(name, etag, data)
+            }
+        })
     }
 
     /**
