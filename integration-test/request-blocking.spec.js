@@ -1,5 +1,5 @@
 import { test, expect } from './helpers/playwrightHarness'
-import { forAllConfiguration, forExtensionLoaded } from './helpers/backgroundWait'
+import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait'
 import { overridePrivacyConfig } from './helpers/testConfig'
 import { TEST_SERVER_ORIGIN } from './helpers/testPages'
 
@@ -43,10 +43,13 @@ async function runRequestBlockingTest (page, url = testSite) {
 }
 
 test.describe('Test request blocking', () => {
-    test('Should block all the test tracking requests', async ({ page, backgroundPage, context, backgroundNetworkContext }) => {
+    test('Should block all the test tracking requests', async ({ page, backgroundPage, context, backgroundNetworkContext, manifestVersion }) => {
         await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
+        if (manifestVersion === 3) {
+            await forDynamicDNRRulesLoaded(backgroundPage)
+        }
         const [testCount, pageRequests] = await runRequestBlockingTest(page)
 
         // Verify that no logged requests were allowed.
@@ -97,20 +100,22 @@ test.describe('Test request blocking', () => {
         await page.close()
     })
 
-    test('serviceworkerInitiatedRequests exceptions should disable service worker blocking', async ({ page, backgroundPage, context, backgroundNetworkContext }) => {
+    test('serviceworkerInitiatedRequests exceptions should disable service worker blocking', async ({ page, backgroundPage, context, backgroundNetworkContext, manifestVersion }) => {
         await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
+        if (manifestVersion === 3) {
+            await forDynamicDNRRulesLoaded(backgroundPage)
+        }
         await backgroundPage.evaluate(async (domain) => {
-            /* global dbg */
-            const { data: config } = dbg.getListContents('config')
-            config.features.serviceworkerInitiatedRequests.exceptions.push({
-                domain,
-                reason: 'test'
-            })
-            await dbg.setListContents({
-                name: 'config',
-                value: config
+            /** @type {import('../shared/js/background/components/resource-loader').default} */
+            const configLoader = globalThis.components.tds.config
+            await configLoader.modify((config) => {
+                config.features.serviceworkerInitiatedRequests.exceptions.push({
+                    domain,
+                    reason: 'test'
+                })
+                return config
             })
         }, testHost)
         const [, pageRequests] = await runRequestBlockingTest(page)
@@ -151,6 +156,7 @@ test.describe('Test request blocking', () => {
                 if (localhostRules.length > 0) {
                     break
                 }
+                await new Promise(resolve => setTimeout(resolve, 100))
             }
         }
 
@@ -173,6 +179,9 @@ test.describe('Test request blocking', () => {
         await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json')
         await forExtensionLoaded(context)
         await forAllConfiguration(backgroundPage)
+        if (manifestVersion === 3) {
+            await forDynamicDNRRulesLoaded(backgroundPage)
+        }
 
         // load with protection enabled
         await runRequestBlockingTest(page)
@@ -187,6 +196,7 @@ test.describe('Test request blocking', () => {
 
         // disable protection on the page and rerun the test
         await backgroundPage.evaluate(async (domain) => {
+            /* global dbg */
             dbg.tabManager.setList({ list: 'allowlisted', domain, value: true })
         }, testHost)
         await runRequestBlockingTest(page)

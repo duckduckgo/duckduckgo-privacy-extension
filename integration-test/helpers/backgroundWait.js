@@ -89,8 +89,20 @@ export async function forExtensionLoaded (context) {
     }))
 }
 
+export async function forDynamicDNRRulesLoaded (backgroundPage) {
+    // The 'allLoadingFinished' promise on a ResourceLoader signifies that the resource was loaded
+    // at least once, and all subscribed listeners received and processed that resource.
+    await backgroundPage.evaluate(async () => {
+        await Promise.all([
+            globalThis.components.tds.config.allLoadingFinished,
+            globalThis.components.tds.tds.allLoadingFinished
+        ])
+    })
+}
+
 export default {
     forSetting,
     forAllConfiguration,
-    forExtensionLoaded
+    forExtensionLoaded,
+    forDynamicDNRRulesLoaded
 }

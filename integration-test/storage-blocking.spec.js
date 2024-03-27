@@ -138,14 +138,14 @@ test.describe('Storage blocking Tests', () => {
 
         test('excludedCookieDomains disables cookie blocking for that domain', async ({ page, backgroundPage }) => {
             await backgroundPage.evaluate(async (domain) => {
-                const { data: config } = dbg.getListContents('config')
-                config.features.cookie.settings.excludedCookieDomains.push({
-                    domain,
-                    reason: 'test'
-                })
-                await dbg.setListContents({
-                    name: 'config',
-                    value: config
+                /** @type {import('../shared/js/background/components/resource-loader').default} */
+                const configLoader = globalThis.components.tds.config
+                await configLoader.modify((config) => {
+                    config.features.cookie.settings.excludedCookieDomains.push({
+                        domain,
+                        reason: 'test'
+                    })
+                    return config
                 })
             }, thirdPartyTracker)
             const results = await runStorageTest(page, `https://${testPageDomain}`)
@@ -154,14 +154,14 @@ test.describe('Storage blocking Tests', () => {
 
         test('feature exception disables all cookie blocking for the site', async ({ page, backgroundPage }) => {
             await backgroundPage.evaluate(async (domain) => {
-                const { data: config } = dbg.getListContents('config')
-                config.features.cookie.exceptions.push({
-                    domain,
-                    reason: 'test'
-                })
-                await dbg.setListContents({
-                    name: 'config',
-                    value: config
+                /** @type {import('../shared/js/background/components/resource-loader').default} */
+                const configLoader = globalThis.components.tds.config
+                await configLoader.modify((config) => {
+                    config.features.cookie.exceptions.push({
+                        domain,
+                        reason: 'test'
+                    })
+                    return config
                 })
             }, testPageDomain)
             const results = await runStorageTest(page, `https://${testPageDomain}`)
@@ -170,14 +170,14 @@ test.describe('Storage blocking Tests', () => {
 
         test('unprotected temporary disables all cookie blocking for the site', async ({ page, backgroundPage }) => {
             await backgroundPage.evaluate(async (domain) => {
-                const { data: config } = dbg.getListContents('config')
-                config.unprotectedTemporary.push({
-                    domain,
-                    reason: 'test'
-                })
-                await dbg.setListContents({
-                    name: 'config',
-                    value: config
+                /** @type {import('../shared/js/background/components/resource-loader').default} */
+                const configLoader = globalThis.components.tds.config
+                await configLoader.modify((config) => {
+                    config.unprotectedTemporary.push({
+                        domain,
+                        reason: 'test'
+                    })
+                    return config
                 })
             }, testPageDomain)
             const results = await runStorageTest(page, `https://${testPageDomain}`)
@@ -191,14 +191,14 @@ test.describe('Storage blocking Tests', () => {
                     domain,
                     value: true
                 })
-                const { data: config } = dbg.getListContents('config')
-                config.unprotectedTemporary.push({
-                    domain,
-                    reason: 'test'
-                })
-                await dbg.setListContents({
-                    name: 'config',
-                    value: config
+                /** @type {import('../shared/js/background/components/resource-loader').default} */
+                const configLoader = globalThis.components.tds.config
+                await configLoader.modify((config) => {
+                    config.unprotectedTemporary.push({
+                        domain,
+                        reason: 'test'
+                    })
+                    return config
                 })
             }, testPageDomain)
             // await page.waitForTimeout(500)

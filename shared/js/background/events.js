@@ -14,7 +14,6 @@ import {
 import {
     refreshUserAllowlistRules
 } from './dnr-user-allowlist'
-import tdsStorage from './storage/tds'
 import httpsStorage from './storage/https'
 import ATB from './atb'
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report'
@@ -33,8 +32,6 @@ const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest, val
 const manifestVersion = browserWrapper.getManifestVersion()
 
 async function onInstalled (details) {
-    tdsStorage.initOnInstall()
-
     if (details.reason.match(/install/)) {
         // get tab URLs immediately to prevent race with install page
         const ddgTabUrls = await browserWrapper.getDDGTabUrls()
@@ -418,13 +415,9 @@ browser.webNavigation.onCompleted.addListener(details => {
  */
 
 const httpsService = require('./https-service')
-const trackers = require('./trackers')
 
 browserWrapper.createAlarm('updateHTTPSLists', {
     periodInMinutes: httpsStorage.updatePeriodInMinutes
-})
-browserWrapper.createAlarm('updateLists', {
-    periodInMinutes: tdsStorage.updatePeriodInMinutes
 })
 // remove expired HTTPS service entries
 browserWrapper.createAlarm('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
@@ -442,15 +435,6 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
         try {
             const lists = await httpsStorage.getLists()
             https.setLists(lists)
-        } catch (e) {
-            console.log(e)
-        }
-    } else if (alarmEvent.name === 'updateLists') {
-        await settings.ready()
-
-        try {
-            const lists = await tdsStorage.getLists()
-            trackers.setLists(lists)
         } catch (e) {
             console.log(e)
         }

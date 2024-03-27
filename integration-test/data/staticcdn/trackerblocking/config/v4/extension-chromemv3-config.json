@@ -6854,5 +6854,12 @@
             "hash": "728493ef7a1488e4781656d3f9db84aa"
         }
     },
-    "unprotectedTemporary": []
+    "unprotectedTemporary": [
+        {
+            "domain": "localhost"
+        },
+        {
+            "domain": "127.0.0.1"
+        }
+    ]
 }

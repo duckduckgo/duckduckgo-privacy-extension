@@ -11,8 +11,6 @@ import { isFireButtonEnabled } from './components/fire-button'
 const utils = require('./utils')
 const settings = require('./settings')
 const tabManager = require('./tab-manager')
-const trackers = require('./trackers')
-const constants = require('../../data/constants')
 const Companies = require('./companies')
 const browserName = utils.getBrowserName()
 const devtools = require('./devtools')
@@ -278,9 +276,10 @@ export function getTopBlocked (options) {
 }
 
 export function getListContents (list) {
+    const loader = globalThis.components.tds[list]
     return {
         data: tdsStorage.getSerializableList(list),
-        etag: settings.getSetting(`${list}-etag`) || ''
+        etag: loader.etag
     }
 }
 
@@ -289,28 +288,13 @@ export function getListContents (list) {
  * @param {{ name: string, value: object}} list value
  */
 export async function setListContents ({ name, value }) {
-    const parsed = tdsStorage.parsedata(name, value)
-    tdsStorage[name] = parsed
-    trackers.setLists([{
-        name,
-        data: parsed
-    }])
-    // create an etag hash based on the content
-    const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(parsed)))
-    const etag = [...new Uint8Array(hash)]
-        .map(x => x.toString(16).padStart(2, '0'))
-        .join('')
-    settings.updateSetting(`${name}-lastUpdate`, Date.now())
-    settings.updateSetting(`${name}-etag`, etag)
-    await tdsStorage._internalOnListUpdate(name, value)
-    return etag
+    const loader = globalThis.components.tds[name]
+    await loader.overrideDataValue(value)
+    return loader.etag
 }
 
 export async function reloadList (listName) {
-    const list = constants.tdsLists.find(l => l.name === listName)
-    if (list) {
-        trackers.setLists([await tdsStorage.getList(list)])
-    }
+    await globalThis.components.tds[listName].checkForUpdates(true)
 }
 
 export function debuggerMessage (message, sender) {
