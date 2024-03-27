@@ -38,7 +38,7 @@ export default class TDSStorage {
             name: 'config',
             remoteUrl: getConfigUrl,
             localUrl: '/data/bundled/extension-config.json',
-            updateIntervalMinutes: 1
+            updateIntervalMinutes: 15
         }, { settings })
     }
 
