@@ -43,3 +43,15 @@ button:disabled {
 .js-options-set-config-url {
     height: 36px !important;
 }
+
+.custom-config-button {
+    width: 120px;
+    height: 30px;
+    border-radius: 4px;
+    background-color: $blue;
+    line-height: 1.5;
+    text-align: center;
+    color: $white;
+    margin-left: 7px;
+    cursor: pointer;
+}

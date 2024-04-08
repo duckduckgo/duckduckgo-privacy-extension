@@ -32,7 +32,7 @@ function template () {
                 <li>
                     <p class="options-info">Custom config URL</p>
                     <input class="allowlist-url js-options-config-url" type="text" placeholder="Privacy Configuration URL" value="${this.model.debuggingSettings?.configURLOverride}" />
-                    <button class="allowlist-add float-right js-options-set-config-url" ${buttonDisabled ? 'disabled' : ''}>${buttonText}</button>
+                    <button class="custom-config-button float-right js-options-set-config-url" ${buttonDisabled ? 'disabled' : ''}>${buttonText}</button>
                 </li>
             </ul>
         </section>`
