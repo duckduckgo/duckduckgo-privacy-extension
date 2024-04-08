@@ -19,8 +19,8 @@ class Model extends ModelParent {
 function template () {
     if (this.model.isInternalUser) {
         const buttonState = this._buttonState()
-        const buttonText = buttonState.split(' ')[0]
         const buttonDisabled = buttonState.endsWith('disabled')
+        const buttonText = buttonDisabled ? buttonState.slice(0, buttonState.length - 9) : buttonState
         return bel`<section class="options-content__allowlist divider-bottom">
             <h2 class="menu-title">Internal settings</h2>
             <ul class="default-list">
@@ -66,8 +66,11 @@ InternalOptionsView.prototype = window.$.extend({}, ViewParent.prototype, {
         if (!currentValue) {
             return inputIsValidUrl ? 'Set' : 'Set disabled'
         }
-        if (inputValue === currentValue) {
+        if (!this.$configurl?.val()) {
             return 'Clear'
+        }
+        if (inputValue === currentValue) {
+            return 'Reload now'
         }
         return inputIsValidUrl ? 'Update' : 'Update disabled'
     },
@@ -82,6 +85,8 @@ InternalOptionsView.prototype = window.$.extend({}, ViewParent.prototype, {
             })
         } else if (buttonState === 'Clear') {
             await this.model.sendMessage('disableDebugging')
+        } else if (buttonState === 'Reload now') {
+            await this.model.sendMessage('forceReloadConfig')
         }
         this.reload()
     },

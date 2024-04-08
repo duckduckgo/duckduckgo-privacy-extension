@@ -30,6 +30,7 @@ export default class DebuggerConnection {
             return this.enableDebugging(configURLOverride, debuggerConnection)
         })
         registerMessageHandler('disableDebugging', this.disableDebugging.bind(this))
+        registerMessageHandler('forceReloadConfig', this.forceReloadConfig.bind(this))
     }
 
     async init () {
@@ -57,6 +58,10 @@ export default class DebuggerConnection {
             setToSessionStorage('debuggerConnection', debuggerConnection)
         ])
         this.init()
+        this.forceReloadConfig()
+    }
+
+    async forceReloadConfig () {
         this.tds.config.checkForUpdates(true)
     }
 
