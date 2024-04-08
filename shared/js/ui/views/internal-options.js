@@ -55,6 +55,7 @@ InternalOptionsView.prototype = window.$.extend({}, ViewParent.prototype, {
             [this.$setconfigurl, 'click', this._clickSetting],
             [this.$configurl, 'input', this._onURLChange]
         ])
+        this._onURLChange()
     },
     _buttonState: function () {
         const currentValue = this.model.debuggingSettings?.configURLOverride
