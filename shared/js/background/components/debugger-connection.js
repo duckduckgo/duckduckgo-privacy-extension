@@ -38,7 +38,7 @@ export default class DebuggerConnection {
         this.configURLOverride = configURLOverride
         this.debuggerConnectionEnabled = debuggerConnection
         if (this.configURLOverride && this.debuggerConnectionEnabled) {
-            const url = new URL('/status', this.configURLOverride)
+            const url = new URL('./status', this.configURLOverride)
             let lastUpdate = 0
             this.eventSource = new EventSource(url.href)
             this.eventSource.onmessage = event => {
