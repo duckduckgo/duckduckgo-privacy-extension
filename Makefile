@@ -296,41 +296,6 @@ ifeq ('$(browser)','chrome-mv3')
   BUILD_TARGETS += $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json
 endif
 
-## Generate Tracker Blocking declarativeNetRequest rulesets for MV3 builds.
-
-# Necessary since "&:" grouped target syntax is not supported currently with
-# versions (< 4.3) of Make shipped with macOS. See $(LAST_COPY) comment above
-# for more context.
-LAST_MV3_BLOCKLIST_FETCH = build/.last-mv3-blocklist-fetch
-LAST_MV3_RULESET_BUILD = build/.last-mv3-ruleset-build-$(browser)-$(type)
-
-$(LAST_MV3_BLOCKLIST_FETCH): shared/data/etags.json
-	node scripts/fetchMV3Blocklists.mjs
-	touch $@
-
-.SECONDARY:
-$(INTERMEDIATES_DIR)/current-mv3-tds.json $(INTERMEDIATES_DIR)/fallback-mv3-tds.json: $(LAST_MV3_BLOCKLIST_FETCH)
-	touch $@
-
-$(BUILD_DIR)/data/bundled/current-mv3-tds.json: $(INTERMEDIATES_DIR)/current-mv3-tds.json
-	cp $< $@
-
-$(BUILD_DIR)/data/bundled/fallback-mv3-tds.json: $(INTERMEDIATES_DIR)/fallback-mv3-tds.json
-	cp $< $@
-
-$(LAST_MV3_RULESET_BUILD): $(INTERMEDIATES_DIR)/current-mv3-tds.json $(INTERMEDIATES_DIR)/fallback-mv3-tds.json $(INTERMEDIATES_DIR)/surrogates.json
-	npx ddg2dnr tds $(INTERMEDIATES_DIR)/current-mv3-tds.json $(INTERMEDIATES_DIR)/surrogates.json \
-	  $(BUILD_DIR)/data/bundled/current-tds-rules.json $(BUILD_DIR)/data/bundled/current-ctl-allowing-rules.json
-	npx ddg2dnr tds $(INTERMEDIATES_DIR)/fallback-mv3-tds.json $(INTERMEDIATES_DIR)/surrogates.json \
-	  $(BUILD_DIR)/data/bundled/fallback-tds-rules.json $(BUILD_DIR)/data/bundled/fallback-ctl-allowing-rules.json
-	touch $@
-
-# TODO: Uncomment this for the switch to static tracker blocking declarativeNetRequest rulesets.
-# ifeq ('$(browser)','chrome-mv3')
-#   BUILD_TARGETS += $(LAST_MV3_RULESET_BUILD)
-#   BUILD_TARGETS += $(BUILD_DIR)/data/bundled/current-mv3-tds.json $(BUILD_DIR)/data/bundled/fallback-mv3-tds.json
-# endif
-
 # Generate the list of "surrogate" (stub) scripts.
 $(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources $(LAST_COPY)
 	node scripts/generateListOfSurrogates.js -i $</ > $@

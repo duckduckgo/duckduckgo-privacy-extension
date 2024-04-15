@@ -76,16 +76,6 @@ cd -
 npm run bundle-config
 ```
 
-### Updating the MV3 blocklists
-
-Manifest v3 (MV3) builds of the extension contain bundled static declarativeNetRequest rulesets and corresponding block lists for Tracker Blocking. Both the default (aka current)
-and a fallback blocklist are included. The fallback blocklist serves as a backup in case the current blocklist is catastrophically broken. To ensure that builds are reproducible,
-the current and fallback blocklist versions are defined in `shared/data/etags.json`. The blocklists are fetched and rulesets generated automatically when the extension is built.
-
-To update the blocklist versions, use the `npm run update-mv3-blocklists` command. Remember to then commit the changes to `shared/data/etags.json` and rebuild the extension.
-
-**Note: The migration to static Tracker Blocking rulesets is in progress. They are not created or used, but will be soon.**
-
 ### Development flow
 
 The `shared` directory contains JS, CSS, and images that are shared by all browsers for things like the options
