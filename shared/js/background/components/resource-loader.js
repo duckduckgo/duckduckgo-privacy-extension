@@ -7,7 +7,7 @@ import { createAlarm } from '../wrapper'
  *
  * @typedef {object} ResourceConfig
  * @property {ResourceName} name
- * @property {string} [remoteUrl]
+ * @property {string | (() => Promise<string>)} [remoteUrl]
  * @property {string} [localUrl]
  * @property {number} [updateIntervalMinutes]
  * @property {'json'|'text'} [format]
@@ -85,9 +85,10 @@ export default class ResourceLoader extends EventTarget {
 
     async checkForUpdates (force) {
         await this.settings.ready()
+        const remoteUrl = this.remoteUrl instanceof Function ? await this.remoteUrl() : this.remoteUrl
         const loadFromDb = this._loadFromDB.bind(this)
-        const loadFromRemote = this._loadFromURL.bind(this, this.remoteUrl)
-        const loadFromRemoteNoCache = this._loadFromURL.bind(this, this.remoteUrl, false, true)
+        const loadFromRemote = this._loadFromURL.bind(this, remoteUrl)
+        const loadFromRemoteNoCache = this._loadFromURL.bind(this, remoteUrl, false, true)
         const loadFromLocal = this._loadFromURL.bind(this, this.localUrl, true)
         let loadOrder = []
         if (this.remoteUrl && Date.now() - this.lastUpdate < this.updateIntervalMinutes * 1000 * 60 && !force) {
