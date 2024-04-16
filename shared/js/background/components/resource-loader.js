@@ -88,13 +88,14 @@ export default class ResourceLoader extends EventTarget {
         const remoteUrl = this.remoteUrl instanceof Function ? await this.remoteUrl() : this.remoteUrl
         const loadFromDb = this._loadFromDB.bind(this)
         const loadFromRemote = this._loadFromURL.bind(this, remoteUrl)
+        const loadFromRemoteNoCache = this._loadFromURL.bind(this, remoteUrl, false, true)
         const loadFromLocal = this._loadFromURL.bind(this, this.localUrl, true)
         let loadOrder = []
         if (this.remoteUrl && Date.now() - this.lastUpdate < this.updateIntervalMinutes * 1000 * 60 && !force) {
             // load from DB first as it should be fresh
             loadOrder = [
                 loadFromDb,
-                loadFromRemote
+                loadFromRemoteNoCache
             ]
         } else if (this.remoteUrl) {
             loadOrder = [
@@ -128,10 +129,18 @@ export default class ResourceLoader extends EventTarget {
         }
     }
 
-    async _loadFromURL (url, local = false) {
+    async _loadFromURL (url, local = false, nocache = false) {
         console.log(`Load ${this.name} from url`)
         const request = new Request(url)
-        const response = await fetch(request)
+        /** @type {HeadersInit} */
+        const headers = {}
+        if (!local && !nocache && this.etag) {
+            headers['If-None-Match'] = this.etag
+        }
+        const response = await fetch(request, { headers })
+        if (response.status === 304) {
+            throw new Error('304: Not modified')
+        }
         if (!response.ok) {
             throw new Error(response.statusText)
         }
