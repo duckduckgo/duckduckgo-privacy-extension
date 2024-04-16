@@ -142,6 +142,20 @@ async function onboardingMessaging ({ transitionQualifiers, tabId }) {
         })
     }
 
+    if (manifestVersion === 3) {
+        browserWrapper.executeScript({
+            target: { tabId },
+            func: onboarding.onDocumentEndMainWorld,
+            args: [{
+                isAddressBarQuery,
+                showWelcomeBanner,
+                showCounterMessaging
+            }],
+            injectImmediately: false,
+            world: 'MAIN'
+        })
+    }
+
     browserWrapper.executeScript({
         target: { tabId },
         func: onboarding.onDocumentEnd,
@@ -151,7 +165,8 @@ async function onboardingMessaging ({ transitionQualifiers, tabId }) {
             showCounterMessaging,
             browserName,
             duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
-            extensionId: browserWrapper.getExtensionId()
+            extensionId: browserWrapper.getExtensionId(),
+            manifestVersion
         }],
         injectImmediately: false
     })

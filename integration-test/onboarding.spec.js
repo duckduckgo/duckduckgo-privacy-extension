@@ -2,7 +2,7 @@ import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 
 test.describe('onboarding', () => {
-    test('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async ({ context, backgroundPage, page }) => {
+    test('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async ({ manifestVersion, context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context)
 
         const params = await backgroundPage.evaluate(() => {
@@ -18,11 +18,13 @@ test.describe('onboarding', () => {
         await page.bringToFront()
         await page.goto('https://duckduckgo.com/?q=hello')
 
-        const hasScriptHandle = await page.waitForFunction(() => {
-            const scripts = document.querySelectorAll('script:not([src])')
-            return Array.from(scripts).some((s) => s.textContent.includes('window.onFirstSearchPostExtensionInstall'))
-        }, { polling: 'mutation' })
-        expect(hasScriptHandle).toBeTruthy()
+        if (manifestVersion === 2) {
+            const hasScriptHandle = await page.waitForFunction(() => {
+                const scripts = document.querySelectorAll('script:not([src])')
+                return Array.from(scripts).some((s) => s.textContent.includes('window.onFirstSearchPostExtensionInstall'))
+            }, { polling: 'mutation' })
+            expect(hasScriptHandle).toBeTruthy()
+        }
 
         const nextParams = await backgroundPage.evaluate(() => {
             return {
@@ -40,12 +42,6 @@ test.describe('onboarding', () => {
 
         await page.bringToFront()
         await page.goto('https://duckduckgo.com/?q=hello')
-
-        // we wait that the onboarding content script is injected
-        await page.waitForFunction(() => {
-            const scripts = document.querySelectorAll('script:not([src])')
-            return Array.from(scripts).some((s) => s.textContent.includes('window.onFirstSearchPostExtensionInstall'))
-        }, { polling: 'mutation' })
 
         const data = await page.evaluate(() => {
             return new Promise((resolve) => {
@@ -69,12 +65,6 @@ test.describe('onboarding', () => {
         await backgroundWait.forExtensionLoaded(context)
 
         await page.goto('https://duckduckgo.com/?q=hello')
-
-        // we wait that the onboarding content script is injected
-        await page.waitForFunction(() => {
-            const scripts = document.querySelectorAll('script:not([src])')
-            return Array.from(scripts).some((s) => s.textContent.includes('window.onFirstSearchPostExtensionInstall'))
-        }, { polling: 'mutation' })
 
         await page.evaluate(() => {
             globalThis.postMessage({ type: 'rescheduleCounterMessagingRequest' }, globalThis.location.origin)

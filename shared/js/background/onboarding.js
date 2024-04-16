@@ -15,7 +15,8 @@ function onDocumentEnd ({
     showCounterMessaging,
     extensionId,
     duckDuckGoSerpHostname,
-    browserName
+    browserName,
+    manifestVersion
 }) {
     const origin = `https://${duckDuckGoSerpHostname}`
 
@@ -76,12 +77,22 @@ function onDocumentEnd ({
                 })
             }
 
-            // The content script do not share the same `window` as the page
-            // so we inject a `<script>` to be able to access the page `window`
+            // This content script in the "isolated world" does not share the
+            // same `window` Object as the website itself (in the "main world").
+            // Call onFirstSearchPostExtensionInstall in the "main world"
+            // instead.
             //
             // Note that this is not done through messaging in order to prevent
             // setting up an event listner on the SERP (this would be wasteful)
             // as this is only needed on the _first_ search post extension install
+
+            // For MV3 builds, send a message to the "main world" content script.
+            if (manifestVersion === 3) {
+                window.postMessage({ type: 'onFirstSearch', documentStartData })
+                return
+            }
+
+            // For MV2 builds, inject a `<script>` element.
             const script = document.createElement('script')
             script.textContent = `
                     if (window.onFirstSearchPostExtensionInstall) {
@@ -99,6 +110,26 @@ function onDocumentEnd ({
     }
 }
 
+function onDocumentEndMainWorld ({
+    isAddressBarQuery,
+    showWelcomeBanner,
+    showCounterMessaging
+}) {
+    window.addEventListener('message', function handleFirstSearchMessage (e) {
+        if (e.origin === origin && e.data.type === 'onFirstSearch') {
+            window.removeEventListener('message', handleFirstSearchMessage)
+
+            if (window.onFirstSearchPostExtensionInstall) {
+                const { documentStartData } = e.data
+                window.onFirstSearchPostExtensionInstall(
+                    { isAddressBarQuery, showWelcomeBanner, showCounterMessaging },
+                    documentStartData
+                )
+            }
+        }
+    })
+}
+
 function onDocumentStart ({ duckDuckGoSerpHostname }) {
     const hadFocusOnStart = document.hasFocus()
 
@@ -112,5 +143,6 @@ function onDocumentStart ({ duckDuckGoSerpHostname }) {
 
 module.exports = {
     onDocumentEnd,
+    onDocumentEndMainWorld,
     onDocumentStart
 }
