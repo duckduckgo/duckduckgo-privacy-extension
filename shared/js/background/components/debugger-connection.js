@@ -1,5 +1,8 @@
+import browser from 'webextension-polyfill'
 import { registerMessageHandler } from '../message-handlers'
-import { getFromSessionStorage, removeFromSessionStorage, setToSessionStorage } from '../wrapper'
+import { getBrowserName } from '../utils'
+import { getExtensionVersion, getFromSessionStorage, removeFromSessionStorage, setToSessionStorage } from '../wrapper'
+import { registerDebugHandler } from '../devtools'
 
 /**
  * @typedef {import('./tds').default} TDSStorage
@@ -25,6 +28,8 @@ export default class DebuggerConnection {
     constructor ({ tds }) {
         this.init()
         this.tds = tds
+        this.socket = null
+        this.subscribedTabs = new Set()
         registerMessageHandler('getDebuggingSettings', getDebuggerSettings)
         registerMessageHandler('enableDebugging', ({ configURLOverride, debuggerConnection }) => {
             return this.enableDebugging(configURLOverride, debuggerConnection)
@@ -38,18 +43,48 @@ export default class DebuggerConnection {
         this.configURLOverride = configURLOverride
         this.debuggerConnectionEnabled = debuggerConnection
         if (this.configURLOverride && this.debuggerConnectionEnabled) {
-            const url = new URL('./status', this.configURLOverride)
+            const url = new URL('./debugger/extension', this.configURLOverride.replace(/https?:/, 'ws:'))
+            url.searchParams.append('browserName', getBrowserName())
+            url.searchParams.append('version', getExtensionVersion())
             let lastUpdate = 0
-            this.eventSource = new EventSource(url.href)
-            this.eventSource.onmessage = event => {
-                const status = JSON.parse(event.data)
-                console.log('debugger message', status)
-                if (status.lastBuild > lastUpdate) {
-                    lastUpdate = status.lastBuild
-                    this.tds.config.checkForUpdates(true)
+            this.socket = new WebSocket(url.href)
+            this.socket.addEventListener('message', (event) => {
+                const { messageType, payload } = JSON.parse(event.data)
+                console.log('debugger message', event.data)
+                if (messageType === 'status') {
+                    if (payload.lastBuild > lastUpdate) {
+                        lastUpdate = payload.lastBuild
+                        this.tds.config.checkForUpdates(true)
+                    }
+                } else if (messageType === 'subscribe') {
+                    const { tabId } = payload
+                    if (!this.subscribedTabs.has(tabId)) {
+                        this.subscribedTabs.add(tabId)
+                        this.forwardDebugMessagesForTab(tabId)
+                    }
                 }
-            }
+            })
+            this.socket.addEventListener('close', () => {
+                this.socket = null
+                setTimeout(() => this.init(), 5000)
+            })
+            this.socket.addEventListener('open', async () => {
+                // send initial batch of data.
+                const tabs = await browser.tabs.query({})
+                this.socket?.send(JSON.stringify({
+                    messageType: 'tabs',
+                    payload: tabs.sort((a, b) => (a.lastAccessed || 0) - (b.lastAccessed || 0))
+                }))
+
+                this.subscribedTabs.forEach((tabId) => {
+                    this.forwardDebugMessagesForTab(tabId)
+                })
+            })
         }
+    }
+
+    async isActive () {
+        return this.socket !== null
     }
 
     async enableDebugging (url, debuggerConnection = false) {
@@ -70,6 +105,17 @@ export default class DebuggerConnection {
             removeFromSessionStorage('configURLOverride'),
             removeFromSessionStorage('debuggerConnection')
         ])
-        this.eventSource?.close()
+        this.socket?.close()
+    }
+
+    forwardDebugMessagesForTab (tabId) {
+        registerDebugHandler(tabId, (payload) => {
+            if (this.socket) {
+                this.socket.send(JSON.stringify({
+                    messageType: 'devtools',
+                    payload
+                }))
+            }
+        })
     }
 }
