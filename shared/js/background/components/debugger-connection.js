@@ -68,13 +68,35 @@ export default class DebuggerConnection {
                 this.socket = null
                 setTimeout(() => this.init(), 5000)
             })
-            this.socket.addEventListener('open', async () => {
-                // send initial batch of data.
+
+            // rate limit sending tabs to 1 message per second
+            let lastTabSend = 0
+            let nextTabSend = null
+            const sendTabs = async () => {
+                if (nextTabSend) {
+                    return
+                }
+                if (Date.now() - lastTabSend < 1000) {
+                    nextTabSend = setTimeout(() => {
+                        nextTabSend = null
+                        sendTabs()
+                    }, 1000)
+                    return
+                }
+                lastTabSend = Date.now()
                 const tabs = await browser.tabs.query({})
                 this.socket?.send(JSON.stringify({
                     messageType: 'tabs',
                     payload: tabs.sort((a, b) => (a.lastAccessed || 0) - (b.lastAccessed || 0))
                 }))
+            }
+
+            this.socket.addEventListener('open', async () => {
+                sendTabs()
+
+                browser.tabs.onUpdated.addListener(() => {
+                    sendTabs()
+                })
 
                 this.subscribedTabs.forEach((tabId) => {
                     this.forwardDebugMessagesForTab(tabId)

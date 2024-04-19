@@ -133,7 +133,6 @@ function connected (port) {
 }
 
 export function postMessage (tabId, action, message) {
-    console.log('postmessage', action, debugHandlers)
     if (ports.has(tabId)) {
         ports.get(tabId).postMessage(JSON.stringify({ tabId, action, message }))
     }
