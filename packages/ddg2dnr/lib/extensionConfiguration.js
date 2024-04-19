@@ -3,7 +3,6 @@
 const { generateAmpProtectionRules } = require('./ampProtection')
 const { generateTrackerAllowlistRules } = require('./trackerAllowlist')
 const { generateTemporaryAllowlistRules } = require('./temporaryAllowlist')
-const { generateGPCheaderRules } = require('./gpc')
 const { generateTrackingParameterRules } = require('./trackingParams')
 const { createSmarterEncryptionTemporaryRule } = require('./smarterEncryption')
 
@@ -57,10 +56,6 @@ async function generateExtensionConfigurationRuleset (
 
     // Content Blocking and Unprotected Temporary allowlists.
     for (const result of generateTemporaryAllowlistRules(extensionConfig, denylistedDomains)) {
-        appendRuleResult(result)
-    }
-
-    for (const result of generateGPCheaderRules(extensionConfig)) {
         appendRuleResult(result)
     }
 

@@ -6,15 +6,18 @@ const {
 
 const GPC_HEADER_PRIORITY = 40000
 
-function generateGPCheaderRules (config) {
-    if (config.features?.gpc?.state !== 'enabled') {
-        return []
-    }
-
-    const allowedDomains = config.features.gpc.exceptions?.map(e => e.domain)
-
-    // const rule = Object.assign({}, baseHeaderRule)
-    const rule = generateDNRRule({
+/**
+ * Generate a declarativeNetRequest rule to add Global Privacy Control (GPC)
+ * request headers.
+ * @param {number} ruleId
+ * @param {string[]=} allowedDomains
+ *   Request domains not to add the header for. Note this also applies to
+ *   initiator domains.
+ * @return {import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule}
+ */
+function generateGPCheaderRule (ruleId, allowedDomains) {
+    return generateDNRRule({
+        id: ruleId,
         priority: GPC_HEADER_PRIORITY,
         actionType: 'modifyHeaders',
         requestHeaders: [
@@ -24,9 +27,7 @@ function generateGPCheaderRules (config) {
         excludedInitiatorDomains: allowedDomains,
         excludedRequestDomains: allowedDomains
     })
-
-    return [{ matchDetails: { type: 'gpc' }, rule }]
 }
 
 exports.GPC_HEADER_PRIORITY = GPC_HEADER_PRIORITY
-exports.generateGPCheaderRules = generateGPCheaderRules
+exports.generateGPCheaderRule = generateGPCheaderRule
