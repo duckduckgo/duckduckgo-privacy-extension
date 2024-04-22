@@ -16,7 +16,6 @@ integration-test/artifacts/
 shared/tracker-surrogates/
 shared/content-scope-scripts/
 unit-test/data/reference-tests/
-shared/data/smarter_encryption.txt
 shared/data/bundled/smarter-encryption-rules.json
 /test-results/
 /playwright-report/
