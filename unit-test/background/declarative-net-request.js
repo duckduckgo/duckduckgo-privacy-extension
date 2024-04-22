@@ -12,6 +12,7 @@ import settings from '../../shared/js/background/settings'
 import tabManager from '../../shared/js/background/tab-manager'
 import tdsStorage from '../../shared/js/background/storage/tds'
 import trackers from '../../shared/js/background/trackers'
+import { ensureGPCHeaderRule } from '../../shared/js/background/dnr-gpc'
 import {
     ensureServiceWorkerInitiatedRequestExceptions
 } from '../../shared/js/background/dnr-service-worker-initiated'
@@ -24,6 +25,7 @@ import {
 } from '../../shared/js/background/dnr-user-allowlist'
 import {
     getMatchDetails,
+    GPC_HEADER_RULE_ID,
     SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
     USER_ALLOWLIST_RULE_ID,
     SETTING_PREFIX
@@ -32,6 +34,7 @@ import {
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
+import { GPC_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/gpc'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
 const TEST_EXTENION_VERSIONS = ['2023.1.1', '2023.2.1', '2023.3.1']
@@ -49,7 +52,7 @@ config.features.trackerAllowlist = {
 const expectedRuleIdsByConfigName = {
     tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 21001, 21002, 21003, 21004],
     config: [
-        10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010, 10011
+        10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010
     ]
 }
 
@@ -145,9 +148,6 @@ const expectedLookupByConfigName = {
             type: 'contentBlocking',
             domain: 'content-blocking.example',
             reason: 'site breakage'
-        },
-        10011: {
-            type: 'gpc'
         }
     }
 }
@@ -754,6 +754,94 @@ describe('declarativeNetRequest', () => {
         config.unprotectedTemporary = tempUnprotected
     })
 
+    it('GPC header redirection', async () => {
+        const ruleId = GPC_HEADER_RULE_ID
+        const rulePriority = GPC_HEADER_PRIORITY
+        const rule = {
+            id: ruleId,
+            priority: rulePriority,
+            action: {
+                type: 'modifyHeaders',
+                requestHeaders: [
+                    { header: 'Sec-GPC', operation: 'set', value: '1' }
+                ]
+            },
+            condition: {
+                resourceTypes: [
+                    'main_frame', 'sub_frame', 'stylesheet', 'script', 'image',
+                    'font', 'object', 'xmlhttprequest', 'ping', 'csp_report',
+                    'media', 'websocket', 'webtransport', 'webbundle', 'other'
+                ],
+                excludedInitiatorDomains: [
+                    'exception1.example',
+                    'exception2.example'
+                ],
+                excludedRequestDomains: [
+                    'exception1.example',
+                    'exception2.example'
+                ]
+            }
+        }
+
+        // The rule won't exist initially.
+        expect(updateSessionRulesObserver.calls.count()).toEqual(0)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
+
+        await ensureGPCHeaderRule(config)
+
+        expect(updateSessionRulesObserver.calls.count()).toEqual(1)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
+
+        // But should once the feature is enabled.
+        settings.updateSetting('GPC', true)
+        config.features.gpc = {
+            state: 'enabled',
+            exceptions: [{
+                domain: 'exception1.example',
+                reason: '1st GPC header reason'
+            }, {
+                domain: 'exception2.example',
+                reason: '2nd GPC header reason'
+            }]
+        }
+
+        await ensureGPCHeaderRule(config)
+
+        expect(updateSessionRulesObserver.calls.count()).toEqual(2)
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
+
+        // Rule should be removed when setting is disabled.
+        settings.updateSetting('GPC', false)
+
+        await ensureGPCHeaderRule(config)
+
+        expect(updateSessionRulesObserver.calls.count()).toEqual(3)
+        expect(sessionRulesByRuleId.has(ruleId)).toBeFalse()
+
+        // Rule should be added again when setting is enabled.
+        settings.updateSetting('GPC', true)
+
+        await ensureGPCHeaderRule(config)
+
+        expect(updateSessionRulesObserver.calls.count()).toEqual(4)
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
+
+        // If ensureGPCHeaderRedirectRule is called again unnecessarily, rule
+        // should just be recreated.
+        await ensureGPCHeaderRule(config)
+
+        expect(updateSessionRulesObserver.calls.count()).toEqual(5)
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule)
+
+        // Rule should be removed when feature is disabled
+        config.features.gpc.state = 'disabled'
+
+        await ensureGPCHeaderRule(config)
+
+        expect(updateSessionRulesObserver.calls.count()).toEqual(6)
+        expect(sessionRulesByRuleId.has(ruleId)).toEqual(false)
+    })
+
     it('getMatchDetails', async () => {
         // No rules, so no match details.
         // - Tracker blocking:
@@ -817,5 +905,10 @@ describe('declarativeNetRequest', () => {
         expect(
             await getMatchDetails(SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID)
         ).toEqual({ type: 'serviceWorkerInitiatedAllowing' })
+
+        // And GPC header redirections.
+        expect(
+            await getMatchDetails(GPC_HEADER_RULE_ID)
+        ).toEqual({ type: 'gpc' })
     })
 })

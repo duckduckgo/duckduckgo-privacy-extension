@@ -16,8 +16,8 @@ import settings from './settings'
 //   rule IDs together here. Otherwise it's easy to miss clashing rule
 //   IDs.
 
-// User allowlisting and the ServicerWorker initiated request exception both
-// only require one declarativeNetRequest rule, so hardcode the rule IDs here.
+// Some features only require one declarativeNetRequest rule, so hardcode those
+// rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001
 export const ATB_PARAM_RULE_ID = 20003
 export const NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID = 20006
@@ -26,6 +26,7 @@ export const NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID = 20006
 export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002
 export const HTTPS_SESSION_ALLOWLIST_RULE_ID = 20004
 export const HTTPS_SESSION_UPGRADE_RULE_ID = 20005
+export const GPC_HEADER_RULE_ID = 20007
 
 export const SETTING_PREFIX = 'declarative_net_request-'
 
@@ -102,6 +103,12 @@ export async function getMatchDetails (ruleId) {
     if (ruleId === USER_ALLOWLIST_RULE_ID) {
         return {
             type: 'userAllowlist'
+        }
+    }
+
+    if (ruleId === GPC_HEADER_RULE_ID) {
+        return {
+            type: 'gpc'
         }
     }
 

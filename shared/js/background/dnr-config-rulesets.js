@@ -3,6 +3,7 @@ import settings from './settings'
 import tdsStorage from './storage/tds'
 import trackers from './trackers'
 import { isFeatureEnabled } from './utils'
+import { ensureGPCHeaderRule } from './dnr-gpc'
 import {
     ensureServiceWorkerInitiatedRequestExceptions
 } from './dnr-service-worker-initiated'
@@ -290,6 +291,7 @@ export async function onConfigUpdate (configName, etag, configValue) {
         // Extension configuration.
         } else if (configName === 'config') {
             await updateExtensionConfigRules(etag, configValue)
+            await ensureGPCHeaderRule(configValue)
             await ensureServiceWorkerInitiatedRequestExceptions(configValue)
         }
         // combined rules (cookie blocking)
