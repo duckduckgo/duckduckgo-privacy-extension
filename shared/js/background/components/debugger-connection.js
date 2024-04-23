@@ -62,6 +62,9 @@ export default class DebuggerConnection {
                         this.subscribedTabs.add(tabId)
                         this.forwardDebugMessagesForTab(tabId)
                     }
+                } else if (messageType === 'reloadTab') {
+                    const { tabId } = payload
+                    browser.tabs.reload(tabId)
                 }
             })
             this.socket.addEventListener('close', () => {
