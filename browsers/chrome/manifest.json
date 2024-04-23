@@ -2,7 +2,7 @@
     "name": "__MSG_appName__",
     "description": "__MSG_appDesc__",
     "default_locale": "en",
-    "version": "2024.3.11",
+    "version": "2024.04.23",
     "minimum_chrome_version": "92.0",
     "icons": {
         "16": "img/icon_16.png",
