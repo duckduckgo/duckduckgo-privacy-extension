@@ -1,6 +1,22 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 
+function stubOnFirstSearchPostExtensionInstallOnInit (page) {
+    return page.addInitScript(() => {
+        window.afterInitCall = new Promise(resolve => {
+            Object.defineProperty(
+                window,
+                'onFirstSearchPostExtensionInstall',
+                {
+                    value (...args) {
+                        resolve(JSON.stringify(args))
+                    }
+                }
+            )
+        })
+    })
+}
+
 test.describe('onboarding', () => {
     test('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async ({ manifestVersion, context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context)
@@ -15,6 +31,7 @@ test.describe('onboarding', () => {
         expect(params.showWelcomeBanner).toBe(true)
         expect(params.showCounterMessaging).toBe(true)
 
+        await stubOnFirstSearchPostExtensionInstallOnInit(page)
         await page.bringToFront()
         await page.goto('https://duckduckgo.com/?q=hello')
 
@@ -25,6 +42,15 @@ test.describe('onboarding', () => {
             }, { polling: 'mutation' })
             expect(hasScriptHandle).toBeTruthy()
         }
+
+        expect(
+            JSON.parse(await page.evaluate(() => window.afterInitCall))
+        ).toEqual([{
+            hadFocusOnStart: true,
+            isAddressBarQuery: false,
+            showCounterMessaging: true,
+            showWelcomeBanner: true
+        }])
 
         const nextParams = await backgroundPage.evaluate(() => {
             return {
@@ -64,6 +90,7 @@ test.describe('onboarding', () => {
     test('should allow the site to reschedule the counter messaging (Chrome only)', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context)
 
+        await stubOnFirstSearchPostExtensionInstallOnInit(page)
         await page.goto('https://duckduckgo.com/?q=hello')
 
         await page.evaluate(() => {
@@ -75,5 +102,14 @@ test.describe('onboarding', () => {
             return globalThis.dbg.settings.getSetting('rescheduleCounterMessagingOnStart')
         })
         expect(rescheduleCounterMessagingOnStart).toBe(true)
+
+        expect(
+            JSON.parse(await page.evaluate(() => window.afterInitCall))
+        ).toEqual([{
+            hadFocusOnStart: true,
+            isAddressBarQuery: false,
+            showCounterMessaging: true,
+            showWelcomeBanner: true
+        }])
     })
 })

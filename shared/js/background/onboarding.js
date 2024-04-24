@@ -121,10 +121,12 @@ function onDocumentEndMainWorld ({
 
             if (window.onFirstSearchPostExtensionInstall) {
                 const { documentStartData } = e.data
-                window.onFirstSearchPostExtensionInstall(
-                    { isAddressBarQuery, showWelcomeBanner, showCounterMessaging },
-                    documentStartData
-                )
+                window.onFirstSearchPostExtensionInstall({
+                    isAddressBarQuery,
+                    showWelcomeBanner,
+                    showCounterMessaging,
+                    ...documentStartData
+                })
             }
         }
     })
