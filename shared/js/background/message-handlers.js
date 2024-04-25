@@ -50,8 +50,11 @@ export function setList (options) {
  * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').SetListOptions} options
  */
 export async function setLists (options) {
+    // TODO: Consider making these tabManager.setList calls concurrently with
+    //       Promise.all, but first verify that works in practice (e.g. with
+    //       simultaneous DNR rule updates).
     for (const listItem of options.lists) {
-        tabManager.setList(listItem)
+        await tabManager.setList(listItem)
     }
 
     try {
