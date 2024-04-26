@@ -1,0 +1,54 @@
+{
+    "smartling": {
+        "string_format" : "icu",
+        "translate_paths": [{
+            "path": "*/title",
+            "key": "{*}/title",
+            "instruction": "*/note"
+        }]
+    },
+    "brokenSiteLabel": {
+      "title": "どの Web サイトが壊れていますか?",
+      "note": "ユーザーからのフィードバックを求めています。"
+    },
+    "brokenSitePlaceholder": {
+      "title": "URLをコピーして貼り付けます",
+      "note": "入力フィールドに URL を入力する手順。"
+    },
+    "feedbackHeaderLabel": {
+      "title": "何が好きですか？",
+      "note": "フィードバック テキスト領域にラベルを付けて、ユーザーがブラウザ拡張機能の使用体験について教えてください。"
+    },
+    "feedbackPlaceholder": {
+      "title": "フィードバックはどの機能について言及していますか?",
+      "note": "フィードバック フォーム入力のプレースホルダー テキスト。"
+    },
+    "submittingFeedbackHelps": {
+      "title": "匿名のフィードバックを送信することは、DuckDuckGo Privacy Essentials の改善に役立ちます。",
+      "note": "フィードバック フォームの上部にある説明。"
+    },
+    "reportBrokenSite": {
+      "title": "壊れたサイトを報告したい",
+      "note": "これにより、壊れたサイトを報告するためのフィードバック フォームが開きます。"
+    },
+    "submit": {
+      "title": "提出する",
+      "note": "フィードバックフォームを送信するには。"
+    },
+    "describeTheIssue": {
+      "title": "発生した問題について説明してください:",
+      "note": "壊れたサイトのフィードバックのテキストエリアにラベルを付けます。ユーザーは、サイトがどのような形で期待どおりに機能していないのかを説明できます。"
+    },
+    "describeBreakagePlaceholder": {
+      "title": "どの Web サイトのコンテンツまたは機能が壊れていますか?",
+      "note": "壊れたサイト フォーム上のプレースホルダー テキスト。"
+    },
+    "thankYou": {
+      "title": "ご意見ありがとうございます！",
+      "note": "フィードバックの送信後に表示されるお礼状"
+    },
+    "thankYouBrokenSite": {
+      "title": "破損したサイトのレポートは、開発チームがこれらの破損を修正するのに役立ちます。",
+      "note": "壊れたサイトを送信する場合の追加の注意事項。"
+    }
+  }

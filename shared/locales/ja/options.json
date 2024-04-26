@@ -1,0 +1,122 @@
+{
+    "smartling": {
+        "string_format" : "icu",
+        "translate_paths": [{
+            "path": "*/title",
+            "key": "{*}/title",
+            "instruction": "*/note"
+        }]
+    },
+    "optionsHeader": {
+      "title": "DuckDuckGoのオプション",
+      "note": "オプション（設定）ページのヘッダー"
+    },
+    "optionsSubHeader": {
+      "title": "追跡されることなくウェブを検索および閲覧できます。",
+      "note": "ユーザーがトラッカーに追跡されずにウェブを閲覧できるようにします"
+    },
+    "optionsDesc": {
+      "title": "DuckDuckGoはオンラインであなたのプライバシーを保護します\n",
+      "note": "これは、オンラインでの追跡からユーザーを保護する方法について説明します"
+    },
+    "shareFeedback": {
+      "title": "フィードバックを共有する",
+      "note": "この製品についてのご意見を共有するにはここをクリックしてください"
+    },
+    "reportBrokenSite": {
+      "title": "壊れたサイトを報告する",
+      "note": "使用しようとしている特定のサイトの問題を報告するには、ここをクリックしてください"
+    },
+    "showEmbeddedTweets": {
+      "title": "埋め込まれたツイートを表示",
+      "note": "ユーザーがさまざまなウェブページに埋め込まれたツイートを見たいのか、それともクリックするまでツイートを非表示にするべきなのか"
+    },
+    "globalPrivacyControlAbbr": {
+      "title": "グローバル プライバシー コントロール (GPC)",
+      "note": "グローバル プライバシー コントロールは、ユーザーが自分の情報を販売されないように設定できる機能の名前です。"
+    },
+    "globalPrivacyControlDesc": {
+      "title": "あなたのデータは販売されるべきではありません。 ",
+      "note": "ここでは、GPC 機能について説明します。この機能により、ユーザーは自分の個人情報が Web サイトによって他者に販売されないように設定できます。"
+    },
+    "notSellYourPersonalData": {
+      "title": "個人データを販売しないでください。",
+      "note": "GPC の説明の一部。これは、ユーザーが自分の個人データを販売しないように指示することを伝えます。"
+    },
+    "limitSharingOfPersonalData": {
+      "title": "他の企業との個人データの共有を制限します。",
+      "note": "GPC の説明の一部。これは、ユーザーが個人データを共有しないように通知することを伝えます。"
+    },
+    "globalPrivacyControlDisclaimer": {
+      "title": "<b>Global Privacy Control (GPC) は新しい標準であるため、\n</b> ただし、Web サイトは、\n",
+      "note": "ユーザーの選択を Web サイトに伝えることができますが、Web サイトはこのシグナルをサポートするかどうかを選択する必要があることをユーザーに説明します。"
+    },
+    "emailProtection": {
+      "title": "電子メール保護",
+      "note": "電子メール保護は、ユーザーがさまざまな Web サイトのプライベート電子メール アドレスを選択できる機能です。"
+    },
+    "autofillDisabled": {
+      "title": "自動入力が無効になっています",
+      "note": "電子メールフィールドにプライベートアドレスを自動的に入力しない場合"
+    },
+    "autofillEnabled": {
+      "title": "自動入力が有効になっている <strong class=\"js-userdata-container\">{ユーザー名}</strong>",
+      "note": "私たちが電子メール アドレスの入力を支援する場合 (あなたの電子メール アドレスはここにあります)"
+    },
+    "noUnprotectedSitesAdded": {
+      "title": "保護されていないサイトは追加されません",
+      "note": "現在、Web サイトのリストにプライバシー保護が無効になっている Web サイトはありません"
+    },
+    "unprotectedSites": {
+      "title": "保護されていないサイト",
+      "note": "プライバシー保護が無効になっている Web サイトのリストのヘッダー"
+    },
+    "unprotectedSitesDesc": {
+      "title": "これらのサイトはプライバシー保護によって強化されません。",
+      "note": "ユーザーがこれらの Web サイトにアクセスする際に当社のプライバシー機能によって保護されないことについて説明します"
+    },
+    "addUnprotectedSite": {
+      "title": "保護されていないサイトを追加する",
+      "note": "ユーザーがサイトを保護されていないリストに追加するためのヘッダー"
+    },
+    "enterURL": {
+      "title": "URLを入力",
+      "note": "ここに Web サイトの URL を入力するように求めるプロンプトが表示されます"
+    },
+    "invalidURL": {
+      "title": "無効なURL",
+      "note": "ユーザーが入力した URL は有効な Web サイトのアドレスではありません"
+    },
+    "enableYoutubePreviews": {
+      "title": "YouTube プレビューを有効にする",
+      "note": "ユーザーが埋め込みビデオの YouTube プレビューを表示したいかどうか、またはすべての YouTube 埋め込みビデオがデフォルトで完全にブロックされているかどうか"
+    },
+    "enableYoutubePreviewsDesc": {
+      "title": "DuckDuckGo は、プライバシーを向上させるために、埋め込まれた YouTube ビデオとそのタイトルとプレビューの読み込みを自動的にブロックします。",
+      "note": "DDG はプライバシーを向上させるために埋め込まれた YouTube ビデオを自動的にブロックしますが、ユーザーはビデオのプレビューを表示することを選択でき、これにより Google が一部のデバイス情報を参照することになると説明します。"
+    },
+    "fireButtonHeading": {
+      "title": "ファイアボタン",
+      "note": "Fire ボタン機能の設定のヘッダー"
+    },
+    "fireButtonDesc": {
+      "title": "Fire ボタンを使用すると、タブ、閲覧履歴、データを簡単に消去できます。",
+      "note": "Fire ボタンの機能について説明します"
+    },
+    "fireButtonClearHistoryTitle": {
+      "title": "履歴をクリア",
+      "note": "オプション切り替えのタイトル"
+    },
+    "fireButtonClearHistoryDesc": {
+      "title": "注: 閲覧履歴は、サイトごとではなく、指定された時間範囲 (例: 「過去 1 時間」または「すべての時間」) に対してのみクリアできます。",
+      "note": "履歴のクリア オプションの切り替えに関する追加情報。"
+    },
+    "fireButtonTabClosureTitle": {
+      "title": "タブを閉じる",
+      "note": "オプション切り替えのタイトル。"
+    },
+    "burnPageTitle": {
+      "title": "書き込み中...",
+      "note": "データ消去プロセスの開始後に開かれたページのタイトル。 "
+    }
+  }
