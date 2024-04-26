@@ -1,0 +1,122 @@
+{
+    "smartling": {
+        "string_format" : "icu",
+        "translate_paths": [{
+            "path": "*/title",
+            "key": "{*}/title",
+            "instruction": "*/note"
+        }]
+    },
+    "optionsHeader": {
+      "title": "DuckDuckGo Tùy Chọn",
+      "note": "Tiêu đề cho trang tùy chọn (cài đặt)"
+    },
+    "optionsSubHeader": {
+      "title": "Tìm kiếm và duyệt web mà không bị theo dõi.",
+      "note": "Chúng tôi cho phép người dùng duyệt web mà không bị theo dõi bởi người theo dõi"
+    },
+    "optionsDesc": {
+      "title": "DuckDuckGo bảo vệ quyền riêng tư trực tuyến của bạn với\n",
+      "note": "Điều này mô tả cách chúng tôi bảo vệ người dùng khỏi bị theo dõi trực tuyến"
+    },
+    "shareFeedback": {
+      "title": "Chia sẻ phản hồi",
+      "note": "Nhấn vào đây để chia sẻ ý kiến ​​của bạn về sản phẩm này"
+    },
+    "reportBrokenSite": {
+      "title": "Báo cáo trang web bị hỏng",
+      "note": "Bấm vào đây để báo cáo sự cố với một trang web cụ thể mà bạn đang cố gắng sử dụng"
+    },
+    "showEmbeddedTweets": {
+      "title": "Hiển thị Tweet được nhúng",
+      "note": "Người dùng muốn xem các Tweet được nhúng trong các trang web khác nhau hay chúng sẽ bị ẩn khi nhấp vào"
+    },
+    "globalPrivacyControlAbbr": {
+      "title": "Kiểm soát quyền riêng tư toàn cầu (GPC)",
+      "note": "Kiểm soát quyền riêng tư toàn cầu là tên của tính năng cho phép người dùng đặt tùy chọn để không bán thông tin của họ"
+    },
+    "globalPrivacyControlDesc": {
+      "title": "Dữ liệu của bạn không nên được bán. ",
+      "note": "Điều này mô tả tính năng GPC, cho phép người dùng đặt tùy chọn để không để các trang web bán thông tin cá nhân của họ cho các bên khác. "
+    },
+    "notSellYourPersonalData": {
+      "title": "Không bán dữ liệu cá nhân của bạn.",
+      "note": "Một phần của mô tả GPC, thông báo này cho biết người dùng sẽ ra hiệu không BÁN dữ liệu cá nhân của họ"
+    },
+    "limitSharingOfPersonalData": {
+      "title": "Hạn chế chia sẻ dữ liệu cá nhân của bạn với các công ty khác.",
+      "note": "Một phần của mô tả GPC, thông báo này cho biết người dùng sẽ ra hiệu không CHIA SẺ dữ liệu cá nhân của họ"
+    },
+    "globalPrivacyControlDisclaimer": {
+      "title": "<b>Vì Kiểm soát quyền riêng tư toàn cầu (GPC) là một tiêu chuẩn mới,\n</b> Tuy nhiên, các trang web chỉ được yêu cầu hành động theo tín hiệu đến\n",
+      "note": "Giải thích cho người dùng rằng chúng tôi có thể truyền đạt lựa chọn của họ tới trang web, nhưng trang web cần chọn để hỗ trợ tín hiệu này"
+    },
+    "emailProtection": {
+      "title": "Bảo vệ email",
+      "note": "Bảo vệ email là tính năng cho phép người dùng chọn địa chỉ email riêng tư cho các trang web khác nhau"
+    },
+    "autofillDisabled": {
+      "title": "Tính năng tự động điền đã bị tắt",
+      "note": "Khi chúng tôi không tự động giúp điền địa chỉ riêng vào các trường email"
+    },
+    "autofillEnabled": {
+      "title": "Đã bật tính năng tự động điền cho <strong class=\"js-userdata-container\">{tên tài khoản}</strong>",
+      "note": "Khi chúng tôi giúp điền địa chỉ email cho (địa chỉ email của bạn ở đây)"
+    },
+    "noUnprotectedSitesAdded": {
+      "title": "Không có trang web không được bảo vệ nào được thêm vào",
+      "note": "Hiện tại không có trang web nào trong danh sách các trang web mà tính năng bảo vệ quyền riêng tư của chúng tôi bị vô hiệu hóa"
+    },
+    "unprotectedSites": {
+      "title": "Trang web không được bảo vệ",
+      "note": "Tiêu đề cho danh sách các trang web nơi các biện pháp bảo vệ quyền riêng tư của chúng tôi bị vô hiệu hóa"
+    },
+    "unprotectedSitesDesc": {
+      "title": "Những trang web này sẽ không được tăng cường bởi Bảo vệ quyền riêng tư.",
+      "note": "Mô tả rằng người dùng sẽ không được bảo vệ bởi các tính năng bảo mật của chúng tôi khi truy cập các trang web này"
+    },
+    "addUnprotectedSite": {
+      "title": "Thêm trang web không được bảo vệ",
+      "note": "Tiêu đề để người dùng thêm trang web vào danh sách không được bảo vệ"
+    },
+    "enterURL": {
+      "title": "Nhập URL",
+      "note": "Nhắc nhập URL trang web tại đây"
+    },
+    "invalidURL": {
+      "title": "URL không hợp lệ",
+      "note": "URL người dùng đã nhập không phải là địa chỉ trang web hợp lệ"
+    },
+    "enableYoutubePreviews": {
+      "title": "Bật xem trước YouTube",
+      "note": "Liệu người dùng có muốn xem Bản xem trước YouTube trên video được nhúng hay tất cả video được nhúng trên YouTube bị chặn hoàn toàn theo mặc định"
+    },
+    "enableYoutubePreviewsDesc": {
+      "title": "DuckDuckGo tự động chặn tải các video YouTube được nhúng cùng với tiêu đề và bản xem trước của chúng để cải thiện quyền riêng tư của bạn. ",
+      "note": "Mô tả rằng DDG tự động chặn các video YouTube được nhúng để cải thiện quyền riêng tư nhưng người dùng có thể chọn xem bản xem trước video và điều này sẽ khiến Google xem một số thông tin thiết bị"
+    },
+    "fireButtonHeading": {
+      "title": "Nút bắn",
+      "note": "Tiêu đề cho cài đặt cho tính năng nút Bắn"
+    },
+    "fireButtonDesc": {
+      "title": "Nút Fire giúp bạn dễ dàng xóa các tab, lịch sử duyệt web và dữ liệu. ",
+      "note": "Mô tả các tính năng của nút Fire"
+    },
+    "fireButtonClearHistoryTitle": {
+      "title": "Xóa lịch sử",
+      "note": "Tiêu đề cho chuyển đổi tùy chọn"
+    },
+    "fireButtonClearHistoryDesc": {
+      "title": "Xin lưu ý: lịch sử duyệt web chỉ có thể bị xóa trong một khoảng thời gian nhất định (ví dụ: \"giờ trước\" hoặc \"mọi lúc\") chứ không phải trên cơ sở từng trang web.",
+      "note": "Thông tin bổ sung về chuyển đổi tùy chọn xóa lịch sử."
+    },
+    "fireButtonTabClosureTitle": {
+      "title": "Đóng tab",
+      "note": "Tiêu đề cho tùy chọn chuyển đổi."
+    },
+    "burnPageTitle": {
+      "title": "Đang trong quá trình ghi...",
+      "note": "Tiêu đề của trang được mở sau khi bắt đầu quá trình xóa dữ liệu. "
+    }
+  }

@@ -1,0 +1,30 @@
+{
+    "smartling": {
+        "string_format" : "icu",
+        "translate_paths": [{
+            "path": "*/title",
+            "key": "{*}/title",
+            "instruction": "*/note"
+        }]
+    },
+    "options": {
+      "title": "Tùy chọn",
+      "note": "Tiêu đề cho giao diện nơi người dùng có thể định cấu hình các tùy chọn khác nhau"
+    },
+    "learnMore": {
+      "title": "Tìm hiểu thêm",
+      "note": "Nhấn vào đây để tìm hiểu thêm về cách dịch vụ của chúng tôi hoạt động"
+    },
+    "enable": {
+      "title": "Cho phép",
+      "note": "Nút nhắc để bật thứ gì đó, tức là nhấp vào nút này để bật"
+    },
+    "disable": {
+      "title": "Vô hiệu hóa",
+      "note": "Nút nhắc để tắt thứ gì đó, tức là nhấp vào đây để tắt"
+    },
+    "add": {
+      "title": "Thêm vào",
+      "note": "Để thêm một cái gì đó vào danh sách"
+    }
+  }

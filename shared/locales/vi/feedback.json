@@ -1,0 +1,54 @@
+{
+    "smartling": {
+        "string_format" : "icu",
+        "translate_paths": [{
+            "path": "*/title",
+            "key": "{*}/title",
+            "instruction": "*/note"
+        }]
+    },
+    "brokenSiteLabel": {
+      "title": "Trang web nào bị hỏng?",
+      "note": "Chúng tôi đang yêu cầu phản hồi từ người dùng. "
+    },
+    "brokenSitePlaceholder": {
+      "title": "Sao chép và dán URL của bạn",
+      "note": "Hướng dẫn điền URL vào trường nhập. "
+    },
+    "feedbackHeaderLabel": {
+      "title": "Bạn yêu thích điều gì? ",
+      "note": "Gắn nhãn cho vùng văn bản phản hồi nơi người dùng có thể cho chúng tôi biết về trải nghiệm của họ với tiện ích mở rộng trình duyệt của chúng tôi."
+    },
+    "feedbackPlaceholder": {
+      "title": "Phản hồi của bạn đề cập đến những tính năng hoặc chức năng nào? ",
+      "note": "Văn bản giữ chỗ khi nhập biểu mẫu phản hồi."
+    },
+    "submittingFeedbackHelps": {
+      "title": "Việc gửi phản hồi ẩn danh giúp chúng tôi cải thiện Các yếu tố cần thiết về quyền riêng tư của DuckDuckGo.",
+      "note": "Mô tả ở đầu mẫu phản hồi."
+    },
+    "reportBrokenSite": {
+      "title": "Tôi muốn báo cáo một trang web bị hỏng",
+      "note": "Thao tác này sẽ mở ra một biểu mẫu phản hồi để báo cáo một trang web bị hỏng. "
+    },
+    "submit": {
+      "title": "Nộp",
+      "note": "Để gửi mẫu phản hồi."
+    },
+    "describeTheIssue": {
+      "title": "Mô tả vấn đề bạn gặp phải:",
+      "note": "Dán nhãn trên vùng văn bản phản hồi về trang web bị hỏng nơi người dùng có thể mô tả lý do khiến trang web không hoạt động như mong đợi."
+    },
+    "describeBreakagePlaceholder": {
+      "title": "Nội dung hoặc chức năng trang web nào bị hỏng? ",
+      "note": "Văn bản giữ chỗ trên biểu mẫu trang web bị hỏng."
+    },
+    "thankYou": {
+      "title": "Cảm ơn phản hôi của bạn!",
+      "note": "Lời cảm ơn được hiển thị sau khi gửi phản hồi"
+    },
+    "thankYouBrokenSite": {
+      "title": "Báo cáo trang web bị hỏng của bạn giúp nhóm phát triển của chúng tôi khắc phục những sự cố này.",
+      "note": "Lưu ý bổ sung khi gửi một trang web bị hỏng."
+    }
+  }
