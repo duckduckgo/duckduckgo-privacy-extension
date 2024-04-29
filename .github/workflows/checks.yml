@@ -22,7 +22,7 @@ jobs:
       matrix:
         version: [18]
         os: [ubuntu-latest, macos-latest]
-        target: ['release-firefox', 'release-chrome', 'release-chrome-mv3']
+        target: ['release-firefox', 'release-chrome']
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -49,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [playwright, playwright-mv3]
+        test: [playwright, playwright-mv2]
         shard: [1/4, 2/4, 3/4, 4/4]
     steps:
       - uses: actions/checkout@v4

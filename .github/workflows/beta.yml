@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  chrome_mv3_beta:
+  chrome_beta:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,7 +22,7 @@ jobs:
         run: |
           npm run bundle-config
           node scripts/bumpVersion.js $(date "+%Y.%m.%d")
-          echo "VERSION=$(jq -r .version ./browsers/chrome-mv3/manifest.json)" >> $GITHUB_ENV
+          echo "VERSION=$(jq -r .version ./browsers/chrome/manifest.json)" >> $GITHUB_ENV
 
       - name: Commit config and version updates
         uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842
@@ -31,9 +31,9 @@ jobs:
           create_branch: true
           branch: "release/beta/${{ env.VERSION }}"
 
-      - name: Build Chrome MV3 Beta
+      - name: Build Chrome Beta
         run: |
-          npm run beta-chrome-mv3
+          npm run beta-chrome
 
       - name: Publish to Chrome Store
         env:
@@ -41,4 +41,4 @@ jobs:
           CWS_CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
           CWS_REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
         run: |
-          bash ./scripts/chrome-store-publish.sh ${{ secrets.CWS_BETA_EXTENSION_ID }} ./build/chrome-mv3/release/chrome-mv3-release-*.zip
+          bash ./scripts/chrome-store-publish.sh ${{ secrets.CWS_BETA_EXTENSION_ID }} ./build/chrome/release/chrome-release-*.zip

@@ -15,7 +15,7 @@ let resolveReadyPromise
 const readyPromise = new Promise(resolve => { resolveReadyPromise = resolve })
 
 export async function onStartup () {
-    if (BUILD_TARGET === 'chrome-mv3') {
+    if (BUILD_TARGET === 'chrome') {
         await dnrSessionId.setSessionRuleOffsetFromStorage()
     }
 

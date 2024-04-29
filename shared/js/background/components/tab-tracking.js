@@ -55,7 +55,7 @@ export default class TabTracker {
             const currentTab = tabManager.get({ tabId: details.tabId })
             const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
 
-            if (BUILD_TARGET === 'chrome-mv3') {
+            if (BUILD_TARGET === 'chrome') {
                 // Ensure that the correct declarativeNetRequest allowing rules are
                 // added for this tab.
                 // Note: The webNavigation.onBeforeCommitted event would be better,

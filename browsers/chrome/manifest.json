@@ -3,14 +3,14 @@
     "description": "__MSG_appDesc__",
     "default_locale": "en",
     "version": "2024.4.26",
-    "minimum_chrome_version": "92.0",
+    "minimum_chrome_version": "121.0",
     "icons": {
         "16": "img/icon_16.png",
         "48": "img/icon_48.png",
         "128": "img/icon_128.png"
     },
-    "manifest_version": 2,
-    "browser_action": {
+    "manifest_version": 3,
+    "action": {
         "default_icon": "img/icon_browser_action.png",
         "default_popup": "dashboard/html/browser.html"
     },
@@ -19,9 +19,7 @@
     },
     "options_page": "html/options.html",
     "background": {
-        "scripts": [
-            "public/js/background.js"
-        ]
+        "service_worker": "public/js/background.js"
     },
     "chrome_settings_overrides": {
         "search_provider": {
@@ -35,23 +33,10 @@
             "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
         }
     },
-    "content_security_policy": "script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com",
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com"
+    },
     "content_scripts": [
-        {
-            "matches": [
-                "<all_urls>"
-            ],
-            "exclude_matches": [
-                "*://localhost/*",
-                "*://*.localhost/*"
-            ],
-            "match_about_blank": true,
-            "all_frames": true,
-            "js": [
-                "public/js/inject.js"
-            ],
-            "run_at": "document_start"
-        },
         {
             "js": [
                 "public/js/content-scripts/autofill.js"
@@ -68,34 +53,55 @@
             ],
             "all_frames": true,
             "run_at": "document_start",
+            "match_origin_as_fallback": true,
             "match_about_blank": true
         }
     ],
     "permissions": [
-        "contextMenus",
-        "webRequest",
-        "webRequestBlocking",
-        "*://*/*",
-        "webNavigation",
         "activeTab",
-        "tabs",
-        "storage",
-        "<all_urls>",
         "alarms",
+        "contextMenus",
+        "declarativeNetRequest",
+        "declarativeNetRequestFeedback",
+        "scripting",
+        "storage",
+        "tabs",
+        "webRequest",
+        "webNavigation",
         "cookies"
     ],
     "optional_permissions": [
         "browsingData"
     ],
+    "host_permissions": [
+        "*://*/*"
+    ],
     "web_accessible_resources": [
-        "/web_accessible_resources/*",
-        "/img/logo-small.svg",
-        "/img/logo-small-grayscale.svg",
-        "/public/css/autofill.css",
-        "/public/font/*",
-        "/html/tracker-stats.html"
+        {
+            "resources": [
+                "/web_accessible_resources/*",
+                "/img/logo-small.svg",
+                "/img/logo-small-grayscale.svg",
+                "/public/css/autofill.css",
+                "/public/font/*",
+                "/html/tracker-stats.html"
+            ],
+            "use_dynamic_url": true,
+            "matches": [
+                "<all_urls>"
+            ]
+        }
     ],
     "storage": {
         "managed_schema": "managed-schema.json"
+    },
+    "declarative_net_request": {
+        "rule_resources": [
+            {
+                "id": "smarter_encryption",
+                "enabled": true,
+                "path": "data/bundled/smarter-encryption-rules.json"
+            }
+        ]
     }
 }

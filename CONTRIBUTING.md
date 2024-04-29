@@ -48,10 +48,6 @@ Most bug fixes are handled internally, but we will except pull requests for bug 
  2. Load the extension in Chrome from the `build/chrome/dev` directory
 [Getting Started: Building a Chrome Extension - Google Chrome](https://developer.chrome.com/extensions/getstarted#unpacked)
 
-- Chrome MV3 (Work in progress, not working yet.)
- 1. Run `npm run dev-chrome-mv3`
- 2. Load the extension in Chrome from the `build/chrome-mv3/dev` directory
-
 Note: Development builds of the extension have a few differences from the release builds and are more convenient to use during development:
  - The background page/ServiceWorker has an `dbg` Object that provides access to some of the extension's internal configuration and other state.
  - Click to Load placeholders are created with an open shadowRoot, instead of a closed shadowRoot. This allows the integration tests to click the placeholder's buttons reliably.
@@ -118,4 +114,4 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 
 ### Testing
 - Unit tests: `npm test` (full docs [here](./unit-test/README.md))
-- Integration tests: `npm run playwright` (full docs [here](./integration-test/README.md))
+- Integration tests: `npm run playwright` and `npm run playwright-mv2` (full docs [here](./integration-test/README.md))
