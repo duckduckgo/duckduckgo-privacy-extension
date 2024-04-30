@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1714119302984,
+    "version": 1714414615330,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -3565,6 +3565,15 @@
                         ]
                     },
                     {
+                        "domain": "realtor.com",
+                        "rules": [
+                            {
+                                "selector": ".ads_container",
+                                "type": "hide"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "reddit.com",
                         "rules": [
                             {
@@ -4301,11 +4310,20 @@
                                 "type": "override"
                             }
                         ]
+                    },
+                    {
+                        "domain": "wideopencountry.com",
+                        "rules": [
+                            {
+                                "selector": ".entry-ad",
+                                "type": "hide-empty"
+                            }
+                        ]
                     }
                 ]
             },
             "state": "enabled",
-            "hash": "17c35228a637c78dc5896d4fe6f61995"
+            "hash": "98c12c40aff272e8bf6dac96a2cced71"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -6822,6 +6840,16 @@
                             }
                         ]
                     },
+                    "grow.me": {
+                        "rules": [
+                            {
+                                "rule": "grow.me/main.js",
+                                "domains": [
+                                    "budgetbytes.com"
+                                ]
+                            }
+                        ]
+                    },
                     "gstatic.com": {
                         "rules": [
                             {
@@ -7251,7 +7279,8 @@
                             {
                                 "rule": "connect.nosto.com/script/shopify/nosto.js",
                                 "domains": [
-                                    "oneill.com"
+                                    "oneill.com",
+                                    "thefryecompany.com"
                                 ]
                             }
                         ]
@@ -7455,10 +7484,23 @@
                     "primis.tech": {
                         "rules": [
                             {
-                                "rule": "live.primis.tech/live/liveView.php",
+                                "rule": "video.primis.tech/",
+                                "domains": [
+                                    "wideopencountry.com"
+                                ]
+                            },
+                            {
+                                "rule": "live.primis.tech/content/omid/static/",
+                                "domains": [
+                                    "wideopencountry.com"
+                                ]
+                            },
+                            {
+                                "rule": "live.primis.tech/live/",
                                 "domains": [
                                     "belfastlive.co.uk",
-                                    "cornwalllive.com"
+                                    "cornwalllive.com",
+                                    "wideopencountry.com"
                                 ]
                             }
                         ]
@@ -8365,7 +8407,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "2ba4c20f6ded5f548724384e0a5545de"
+            "hash": "6d93852b5507194547b233f8045f38d0"
         },
         "trackingCookies1p": {
             "settings": {
