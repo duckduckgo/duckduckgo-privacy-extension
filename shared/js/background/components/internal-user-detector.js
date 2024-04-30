@@ -1,3 +1,4 @@
+/* global DEBUG */
 import browser from 'webextension-polyfill'
 import { registerMessageHandler } from '../message-handlers'
 
@@ -9,7 +10,7 @@ const SETTINGS_KEY = 'isInternalUser'
  * @param {import('../settings.js')} settings
  */
 export function isInternalUser (settings) {
-    return settings.getSetting(SETTINGS_KEY) || false
+    return settings.getSetting(SETTINGS_KEY) || DEBUG
 }
 
 export default class InternalUserDetector {

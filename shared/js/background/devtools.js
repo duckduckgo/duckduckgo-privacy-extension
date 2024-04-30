@@ -13,9 +13,14 @@ const { removeBroken } = require('./utils')
 //       background ServiceWorker will become active again and the onConnect
 //       event will fire again.
 const ports = new Map()
+const debugHandlers = new Map()
 
 export function init () {
     browser.runtime.onConnect.addListener(connected)
+}
+
+export function registerDebugHandler (tabId, fn) {
+    debugHandlers.set(tabId, fn)
 }
 
 /**
@@ -131,8 +136,11 @@ export function postMessage (tabId, action, message) {
     if (ports.has(tabId)) {
         ports.get(tabId).postMessage(JSON.stringify({ tabId, action, message }))
     }
+    if (debugHandlers.has(tabId)) {
+        debugHandlers.get(tabId)({ tabId, action, message })
+    }
 }
 
 export function isActive (tabId) {
-    return ports.has(tabId)
+    return ports.has(tabId) || debugHandlers.has(tabId)
 }
