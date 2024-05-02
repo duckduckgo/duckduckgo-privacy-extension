@@ -43,14 +43,13 @@ export default class DebuggerConnection {
         this.configURLOverride = configURLOverride
         this.debuggerConnectionEnabled = debuggerConnection
         if (this.configURLOverride && this.debuggerConnectionEnabled) {
-            const url = new URL('./debugger/extension', this.configURLOverride.replace(/https?:/, 'ws:'))
+            const url = new URL('./debugger/extension', this.configURLOverride.replace(/http:/, 'ws:').replace(/https:/, 'wss:'))
             url.searchParams.append('browserName', getBrowserName())
             url.searchParams.append('version', getExtensionVersion())
             let lastUpdate = 0
             this.socket = new WebSocket(url.href)
             this.socket.addEventListener('message', (event) => {
                 const { messageType, payload } = JSON.parse(event.data)
-                console.log('debugger message', event.data)
                 if (messageType === 'status') {
                     if (payload.lastBuild > lastUpdate) {
                         lastUpdate = payload.lastBuild
@@ -60,7 +59,7 @@ export default class DebuggerConnection {
                     const { tabId } = payload
                     if (!this.subscribedTabs.has(tabId)) {
                         this.subscribedTabs.add(tabId)
-                        this.forwardDebugMessagesForTab(tabId)
+                        this.forwardDebugMessagesForTab(parseInt(tabId, 10))
                     }
                 } else if (messageType === 'reloadTab') {
                     const { tabId } = payload
