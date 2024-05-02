@@ -32,7 +32,7 @@ import tabManager from './tab-manager'
 // otherwise FF might miss the onInstalled event
 require('./events')
 const settings = require('./settings')
-if (BUILD_TARGET === 'chrome-mv3') {
+if (BUILD_TARGET === 'chrome') {
     require('./dnr-config-rulesets')
 }
 
@@ -63,11 +63,11 @@ const components = {
 }
 
 // Chrome-only components
-if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv3') {
+if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
     components.fireButton = new FireButton({ settings, tabManager })
 }
 // MV3-only components
-if (BUILD_TARGET === 'chrome-mv3') {
+if (BUILD_TARGET === 'chrome') {
     components.scriptInjection = new MV3ContentScriptInjection()
 }
 console.log(new Date(), 'Loaded components:', components)

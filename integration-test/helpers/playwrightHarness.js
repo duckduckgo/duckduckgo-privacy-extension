@@ -12,7 +12,7 @@ export function getHARPath (harFile) {
 }
 
 export function getManifestVersion () {
-    return process.env.npm_lifecycle_event === 'playwright-mv3' ? 3 : 2
+    return process.env.npm_lifecycle_event === 'playwright-mv2' ? 2 : 3
 }
 
 async function routeLocalResources (route) {
@@ -51,7 +51,7 @@ export const test = base.extend({
      */
     async context ({ manifestVersion }, use) {
         const extensionPath =
-            manifestVersion === 3 ? 'build/chrome-mv3/dev' : 'build/chrome/dev'
+            manifestVersion === 3 ? 'build/chrome/dev' : 'build/chrome-mv2/dev'
         const pathToExtension = path.join(projectRoot, extensionPath)
         const context = await chromium.launchPersistentContext('', {
             headless: false,

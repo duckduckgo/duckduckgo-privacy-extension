@@ -1,8 +1,13 @@
 ###--- Shared variables ---###
-# Browser type (browser, but "chrome-mv3" becomes "chrome").
+# Browser types (browser, but "chrome" adjusted as required)
 BROWSER_TYPE = $(browser)
-ifeq ('$(browser)','chrome-mv3')
+LEGACY_BROWSER = $(browser)
+ifeq ('$(browser)','chrome')
+  LEGACY_BROWSER = chrome-mv3
+endif
+ifeq ('$(browser)','chrome-mv2')
   BROWSER_TYPE = chrome
+  LEGACY_BROWSER = chrome
 endif
 
 # Output directory for builds.
@@ -28,16 +33,16 @@ endif
 #  - Add check that browser+type are set when necessary.
 
 ## release: Create a release build for a platform in build/$(browser)/release
-## specify browser=(chrome|chrome-mv3|firefox) type=release
+## specify browser=(chrome|chrome-mv2|firefox) type=release
 release: clean npm copy build
 
 .PHONY: release
 
-## chrome-mv3-beta: Create a beta Chrome MV3 build in build/$(browser)/release
-## specify browser=chrome-mv3 type=release
-chrome-mv3-beta: release chrome-mv3-beta-zip
+## chrome-beta: Create a beta Chrome build in build/$(browser)/release
+## specify browser=chrome type=release
+chrome-beta: release chrome-beta-zip
 
-.PHONY: chrome-mv3-beta
+.PHONY: chrome-beta
 
 ## beta-firefox: Create a beta Firefox build in build/$(browser)/release
 ## specify browser=firefox type=release
@@ -47,7 +52,7 @@ beta-firefox: release beta-firefox-zip
 
 ## dev: Create a debug build for a platform in build/$(browser)/dev.
 ##      Pass reloader=0 to disable automatic extension reloading.
-## specify browser=(chrome|chrome-mv3|firefox) type=dev [reloader=1]
+## specify browser=(chrome|chrome-mv2|firefox) type=dev [reloader=1]
 dev: copy build $(BUILD_DIR)/buildtime.txt
 
 .PHONY: dev
@@ -55,7 +60,7 @@ dev: copy build $(BUILD_DIR)/buildtime.txt
 ## watch: Create a debug build for a platform in build/$(browser)/dev, and keep
 ##        it up to date as files are changed.
 ##        Pass reloader=0 to disable automatic extension reloading.
-## specify browser=(chrome|chrome-mv3|firefox) type=dev [reloader=1]
+## specify browser=(chrome|chrome-mv2|firefox) type=dev [reloader=1]
 MAKE = make $(type) browser=$(browser) type=$(type)
 watch:
 	$(MAKE)
@@ -99,20 +104,14 @@ chrome-release-zip:
 
 .PHONY: chrome-release-zip
 
-chrome-mv3-release-zip:
-	rm -f build/chrome-mv3/release/chrome-mv3-release-*.zip
-	cd build/chrome-mv3/release/ && zip -rq chrome-mv3-release-$(shell date +"%Y%m%d_%H%M%S").zip *
-
-.PHONY: chrome-mv3-release-zip
-
-chrome-mv3-beta-zip: prepare-chrome-beta chrome-mv3-release-zip
+chrome-beta-zip: prepare-chrome-beta chrome-release-zip
 	
 
-.PHONY: chrome-mv3-beta-zip
+.PHONY: chrome-beta-zip
 
 prepare-chrome-beta:
-	sed 's/__MSG_appName__/DuckDuckGo Privacy Essentials MV3 Beta/' ./browsers/chrome-mv3/manifest.json > build/chrome-mv3/release/manifest.json
-	cp -r build/chrome-mv3/release/img/beta/* build/chrome-mv3/release/img/
+	sed 's/__MSG_appName__/DuckDuckGo Privacy Essentials Beta/' ./browsers/chrome/manifest.json > build/chrome/release/manifest.json
+	cp -r build/chrome/release/img/beta/* build/chrome/release/img/
 
 .PHONY: prepare-chrome-beta
 
@@ -250,10 +249,10 @@ $(CONTENT_SCOPE_SCRIPTS)/build/locales: $(CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS)
 	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-locales
 	touch $@
 
-$(CONTENT_SCOPE_SCRIPTS)/build/$(browser)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
-	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-$(browser)
+$(CONTENT_SCOPE_SCRIPTS)/build/$(LEGACY_BROWSER)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
+	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-$(LEGACY_BROWSER)
 
-$(BUILD_DIR)/public/js/inject.js: $(CONTENT_SCOPE_SCRIPTS)/build/$(browser)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
+$(BUILD_DIR)/public/js/inject.js: $(CONTENT_SCOPE_SCRIPTS)/build/$(LEGACY_BROWSER)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
 	node scripts/bundleContentScopeScripts.mjs $@ $^
 
 BUILD_TARGETS += $(BUILD_DIR)/public/js/inject.js
@@ -292,7 +291,7 @@ build/.smarter_encryption.txt:
 $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json: build/.smarter_encryption.txt
 	npx ddg2dnr smarter-encryption $< $@
 
-ifeq ('$(browser)','chrome-mv3')
+ifeq ('$(browser)','chrome')
   BUILD_TARGETS += $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json
 endif
 

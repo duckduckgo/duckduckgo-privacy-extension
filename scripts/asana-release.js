@@ -7,7 +7,7 @@ const path = require('path')
 const ASANA_ACCESS_TOKEN = process.env.ASANA_ACCESS_TOKEN
 const version = process.env.VERSION
 const releaseUrl = process.env.RELEASE_URL
-const platforms = ['chrome', 'chrome-mv3', 'firefox']
+const platforms = ['chrome', 'firefox']
 const artifacts = platforms.map((platform) => {
     const pathParts = [__dirname, '/../build/', platform, 'release']
     if (platform === 'firefox') {
