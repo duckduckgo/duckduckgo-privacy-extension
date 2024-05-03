@@ -43,7 +43,8 @@ export default class DebuggerConnection {
         this.configURLOverride = configURLOverride
         this.debuggerConnectionEnabled = debuggerConnection
         if (this.configURLOverride && this.debuggerConnectionEnabled) {
-            const url = new URL('./debugger/extension', this.configURLOverride.replace(/http:/, 'ws:').replace(/https:/, 'wss:'))
+            const url = new URL('./debugger/extension', this.configURLOverride)
+            url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
             url.searchParams.append('browserName', getBrowserName())
             url.searchParams.append('version', getExtensionVersion())
             let lastUpdate = 0
