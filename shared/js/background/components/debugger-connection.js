@@ -57,10 +57,10 @@ export default class DebuggerConnection {
                         this.tds.config.checkForUpdates(true)
                     }
                 } else if (messageType === 'subscribe') {
-                    const { tabId } = payload
-                    if (!this.subscribedTabs.has(tabId)) {
+                    const tabId = parseInt(payload.tabId, 10)
+                    if (!this.subscribedTabs.has(tabId) && !isNaN(tabId)) {
                         this.subscribedTabs.add(tabId)
-                        this.forwardDebugMessagesForTab(parseInt(tabId, 10))
+                        this.forwardDebugMessagesForTab(tabId)
                     }
                 } else if (messageType === 'reloadTab') {
                     const { tabId } = payload
