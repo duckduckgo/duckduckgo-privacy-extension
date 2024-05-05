@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1714119302984,
+    "version": 1714746648846,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -310,6 +310,9 @@
                     "domain": "www.michelinman.com"
                 },
                 {
+                    "domain": "malmostadsteater.se"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
@@ -339,19 +342,16 @@
                 ]
             },
             "state": "disabled",
-            "hash": "e26268a8b231ad1f9f4f675dd1da92ab"
+            "hash": "6451ad8b35997da103c47b86e6a74c67"
         },
         "autofill": {
             "exceptions": [
                 {
                     "domain": "roll20.net"
-                },
-                {
-                    "domain": "rumble.com"
                 }
             ],
             "state": "enabled",
-            "hash": "5bb5c0fc0d462da4674e4ca07dbc9363"
+            "hash": "b1ae580a636957bcbe90d16aa92c40bd"
         },
         "clickToLoad": {
             "exceptions": [
@@ -3565,6 +3565,15 @@
                         ]
                     },
                     {
+                        "domain": "realtor.com",
+                        "rules": [
+                            {
+                                "selector": ".ads_container",
+                                "type": "hide"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "reddit.com",
                         "rules": [
                             {
@@ -4301,11 +4310,20 @@
                                 "type": "override"
                             }
                         ]
+                    },
+                    {
+                        "domain": "wideopencountry.com",
+                        "rules": [
+                            {
+                                "selector": ".entry-ad",
+                                "type": "hide-empty"
+                            }
+                        ]
                     }
                 ]
             },
             "state": "enabled",
-            "hash": "17c35228a637c78dc5896d4fe6f61995"
+            "hash": "98c12c40aff272e8bf6dac96a2cced71"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -5982,6 +6000,16 @@
                             }
                         ]
                     },
+                    "curalate.com": {
+                        "rules": [
+                            {
+                                "rule": "edge.curalate.com/sites/",
+                                "domains": [
+                                    "<all>"
+                                ]
+                            }
+                        ]
+                    },
                     "cxense.com": {
                         "rules": [
                             {
@@ -6300,6 +6328,28 @@
                             }
                         ]
                     },
+                    "facebook.com": {
+                        "rules": [
+                            {
+                                "rule": "facebook.com/plugins/customer_chat/",
+                                "domains": [
+                                    "danibowman.com"
+                                ]
+                            },
+                            {
+                                "rule": "facebook.com/v6.0/plugins/customer_chat/",
+                                "domains": [
+                                    "danibowman.com"
+                                ]
+                            },
+                            {
+                                "rule": "facebook.com/v6.0/plugins/customerchat.php",
+                                "domains": [
+                                    "danibowman.com"
+                                ]
+                            }
+                        ]
+                    },
                     "facebook.net": {
                         "rules": [
                             {
@@ -6314,6 +6364,12 @@
                                 "rule": "connect.facebook.net/en_US/all.js",
                                 "domains": [
                                     "nordicwellness.se"
+                                ]
+                            },
+                            {
+                                "rule": "connect.facebook.net/en_US/sdk/xfbml.customerchat.js",
+                                "domains": [
+                                    "danibowman.com"
                                 ]
                             },
                             {
@@ -6571,6 +6627,7 @@
                                     "arkadium.com",
                                     "cbssports.com",
                                     "gamak.tv",
+                                    "gbnews.com",
                                     "metro.co.uk",
                                     "pandora.com",
                                     "paper-io.com",
@@ -6822,6 +6879,16 @@
                             }
                         ]
                     },
+                    "grow.me": {
+                        "rules": [
+                            {
+                                "rule": "grow.me/main.js",
+                                "domains": [
+                                    "budgetbytes.com"
+                                ]
+                            }
+                        ]
+                    },
                     "gstatic.com": {
                         "rules": [
                             {
@@ -6858,6 +6925,12 @@
                             },
                             {
                                 "rule": "no-cache.hubspot.com/cta/default/",
+                                "domains": [
+                                    "<all>"
+                                ]
+                            },
+                            {
+                                "rule": "api.hubspot.com/livechat-public/v1/message/public",
                                 "domains": [
                                     "<all>"
                                 ]
@@ -7251,7 +7324,7 @@
                             {
                                 "rule": "connect.nosto.com/script/shopify/nosto.js",
                                 "domains": [
-                                    "oneill.com"
+                                    "<all>"
                                 ]
                             }
                         ]
@@ -7298,6 +7371,12 @@
                                 "rule": "cigna.sc.omtrdc.net/public/digital-experience/js/common.js",
                                 "domains": [
                                     "cigna.com"
+                                ]
+                            },
+                            {
+                                "rule": "altriagroupinc.tt.omtrdc.net/rest/v1/delivery",
+                                "domains": [
+                                    "marlboro.com"
                                 ]
                             },
                             {
@@ -7455,10 +7534,23 @@
                     "primis.tech": {
                         "rules": [
                             {
-                                "rule": "live.primis.tech/live/liveView.php",
+                                "rule": "video.primis.tech/",
+                                "domains": [
+                                    "wideopencountry.com"
+                                ]
+                            },
+                            {
+                                "rule": "live.primis.tech/content/omid/static/",
+                                "domains": [
+                                    "wideopencountry.com"
+                                ]
+                            },
+                            {
+                                "rule": "live.primis.tech/live/",
                                 "domains": [
                                     "belfastlive.co.uk",
-                                    "cornwalllive.com"
+                                    "cornwalllive.com",
+                                    "wideopencountry.com"
                                 ]
                             }
                         ]
@@ -8365,7 +8457,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "2ba4c20f6ded5f548724384e0a5545de"
+            "hash": "679ce334f2fe0344c46e7e73152f6c3c"
         },
         "trackingCookies1p": {
             "settings": {
