@@ -43,22 +43,22 @@ export default class DebuggerConnection {
         this.configURLOverride = configURLOverride
         this.debuggerConnectionEnabled = debuggerConnection
         if (this.configURLOverride && this.debuggerConnectionEnabled) {
-            const url = new URL('./debugger/extension', this.configURLOverride.replace(/https?:/, 'ws:'))
+            const url = new URL('./debugger/extension', this.configURLOverride)
+            url.protocol = url.protocol === 'https:' ? 'wss:' : 'ws:'
             url.searchParams.append('browserName', getBrowserName())
             url.searchParams.append('version', getExtensionVersion())
             let lastUpdate = 0
             this.socket = new WebSocket(url.href)
             this.socket.addEventListener('message', (event) => {
                 const { messageType, payload } = JSON.parse(event.data)
-                console.log('debugger message', event.data)
                 if (messageType === 'status') {
                     if (payload.lastBuild > lastUpdate) {
                         lastUpdate = payload.lastBuild
                         this.tds.config.checkForUpdates(true)
                     }
                 } else if (messageType === 'subscribe') {
-                    const { tabId } = payload
-                    if (!this.subscribedTabs.has(tabId)) {
+                    const tabId = parseInt(payload.tabId, 10)
+                    if (!this.subscribedTabs.has(tabId) && !isNaN(tabId)) {
                         this.subscribedTabs.add(tabId)
                         this.forwardDebugMessagesForTab(tabId)
                     }
