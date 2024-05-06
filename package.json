@@ -30,16 +30,16 @@
         "beta-chrome": "make chrome-beta browser=chrome type=release"
     },
     "devDependencies": {
-        "@fingerprintjs/fingerprintjs": "^4.2.2",
+        "@fingerprintjs/fingerprintjs": "^4.3.0",
         "@playwright/test": "^1.43.1",
-        "@types/chrome": "^0.0.266",
+        "@types/chrome": "^0.0.267",
         "@types/jasmine": "^4.3.5",
-        "@types/node": "^20.12.7",
+        "@types/node": "^20.12.8",
         "@types/webextension-polyfill": "^0.10.7",
         "asana": "github:Asana/node-asana",
         "duckduckgo-colors": "0.0.1",
         "esbuild": "^0.20.2",
-        "eslint": "^8.57.0",
+        "eslint": "^9.2.0",
         "eslint-config-standard": "^17.1.0",
         "eslint-plugin-import": "^2.29.1",
         "eslint-plugin-node": "^11.1.0",
@@ -53,11 +53,11 @@
         "karma-source-map-support": "1.4.0",
         "node-fetch": "^3.3.2",
         "puppeteer": "^19.3.0",
-        "sass": "^1.75.0",
+        "sass": "^1.76.0",
         "standard": "17.1.0",
         "timekeeper": "^2.3.1",
         "typescript": "^5.3.3",
-        "webextension-polyfill": "^0.10.0",
+        "webextension-polyfill": "^0.11.0",
         "yargs": "^17.7.2"
     },
     "dependencies": {
@@ -72,7 +72,7 @@
         "deep-freeze": "0.0.1",
         "dexie": "4.0.4",
         "eventemitter2": "6.4.9",
-        "i18next": "^23.11.2",
+        "i18next": "^23.11.3",
         "i18next-icu": "^2.3.0",
         "is-plain-object": "5.0.0",
         "jquery": "3.7.1",
@@ -81,9 +81,9 @@
         "normalize.scss": "0.1.0",
         "privacy-test-pages": "github:duckduckgo/privacy-test-pages#1.3.1",
         "punycode": "2.3.1",
-        "tldts": "^6.1.16",
+        "tldts": "^6.1.19",
         "web-ext": "^7.11.0",
-        "zod": "^3.22.4"
+        "zod": "^3.23.6"
     },
     "workspaces": [
         "packages/privacy-grade",
