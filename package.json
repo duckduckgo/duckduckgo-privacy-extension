@@ -65,7 +65,7 @@
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#5.12.0",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",
         "@duckduckgo/jsbloom": "^1.0.2",
-        "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#3.5.0",
+        "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#3.5.2",
         "@duckduckgo/privacy-grade": "file:packages/privacy-grade",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#main",
         "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.3.2",
