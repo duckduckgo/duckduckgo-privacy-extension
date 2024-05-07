@@ -9,6 +9,10 @@ ifeq ('$(browser)','chrome-mv2')
   BROWSER_TYPE = chrome
   LEGACY_BROWSER = chrome
 endif
+ifeq ('$(browser)','firefox')
+  BROWSER_TYPE = chrome
+  LEGACY_BROWSER = chrome
+endif
 
 # Output directory for builds.
 BUILD_DIR = build/$(browser)/$(type)
