@@ -163,6 +163,23 @@ function handleRequest (requestData) {
             return
         }
 
+        // don't block requests originating from cross-origin/cross-site iframes
+        // documentUrl is undefined for the main frame
+        if (requestData.documentUrl) {
+            const docUrl = new URL(requestData.documentUrl)
+            const tabUrl = new URL(thisTab.url)
+            // cross-origin
+            if (docUrl.origin !== tabUrl.origin) {
+                console.log('Skipping', requestData.url, 'loaded via', docUrl.href, 'on', tabUrl.href)
+                return
+            }
+            // cross-site
+            //if (utils.getBaseDomain(requestData.documentUrl) !== utils.getBaseDomain(thisTab.url)) {
+            //    console.log('Skipping', requestData.url, 'loaded via', docUrl.href, 'on', tabUrl.href)
+            //    return
+            //}
+        }
+
         const handleResponse = blockHandleResponse(thisTab, requestData)
         if (handleResponse) {
             return handleResponse
