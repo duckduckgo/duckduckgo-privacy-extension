@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1717503609184,
+    "version": 1718217947996,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -322,6 +322,9 @@
                     "domain": "sports.tipico.de"
                 },
                 {
+                    "domain": "lotusbakeries.com"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
@@ -352,7 +355,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "9c32675352d748895cdcd83f376204fd"
+            "hash": "b02d25593b7b79316c3eac55386e956f"
         },
         "autofill": {
             "exceptions": [
@@ -5258,6 +5261,26 @@
             ],
             "hash": "00228cbb6be645db2e858731eac18099"
         },
+        "pluginPointFocusedViewPlugin": {
+            "state": "disabled",
+            "exceptions": [],
+            "hash": "c292bb627849854515cebbded288ef5a"
+        },
+        "pluginPointNewTabPagePlugin": {
+            "state": "disabled",
+            "exceptions": [],
+            "hash": "c292bb627849854515cebbded288ef5a"
+        },
+        "pluginPointNewTabPageSectionPlugin": {
+            "state": "disabled",
+            "exceptions": [],
+            "hash": "c292bb627849854515cebbded288ef5a"
+        },
+        "pluginPointNewTabPageShortcutPlugin": {
+            "state": "disabled",
+            "exceptions": [],
+            "hash": "c292bb627849854515cebbded288ef5a"
+        },
         "privacyDashboard": {
             "exceptions": [],
             "features": {
@@ -8878,32 +8901,15 @@
             "state": "disabled",
             "hash": "728493ef7a1488e4781656d3f9db84aa"
         },
-        "windowsStartupBoost": {
-            "exceptions": [
-                {
-                    "domain": "marvel.com"
-                },
-                {
-                    "domain": "sundancecatalog.com"
-                },
-                {
-                    "domain": "localhost"
-                },
-                {
-                    "domain": "127.0.0.1"
-                },
-                {
-                    "domain": "::1"
-                },
-                {
-                    "domain": "livenation.com"
-                },
-                {
-                    "domain": "ticketmaster.com"
-                }
-            ],
+        "windowsSpellChecker": {
+            "exceptions": [],
             "state": "disabled",
-            "hash": "3cb7de51dc4c5fc7d9ca0f76eec17d22"
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
+        },
+        "windowsStartupBoost": {
+            "exceptions": [],
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
         },
         "windowsWaitlist": {
             "exceptions": [],
