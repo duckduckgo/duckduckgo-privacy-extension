@@ -104,7 +104,7 @@ export default class EmailAutofill {
             .then(async response => {
                 if (response.ok) {
                     return response.json().then(async ({ address }) => {
-                        if (!/^[a-z0-9]+$/.test(address)) throw new Error('Invalid address')
+                        if (!/^[a-z0-9-]+$/.test(address)) throw new Error('Invalid address')
 
                         this.settings.updateSetting('userData', Object.assign(userData, { nextAlias: `${address}` }))
                         // Reset attempts
