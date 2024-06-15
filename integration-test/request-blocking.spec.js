@@ -79,6 +79,11 @@ test.describe('Test request blocking', () => {
         expect(extensionTrackersCount).toBeGreaterThanOrEqual(testCount)
 
         expect(extensionTrackers).toEqual({
+            'privacy-test-pages.site': {
+                urls: {},
+                count: 0,
+                displayName: 'privacy-test-pages.site'
+            },
             'Test Site for Tracker Blocking': {
                 displayName: 'Bad Third Party Site',
                 prevalence: 0.1,
