@@ -168,8 +168,9 @@ export default class ResourceLoader extends EventTarget {
      *  contents: any;
      *  etag?: string;
      * }} result
+     * @param {boolean} waitForUpdateProcessing
      */
-    async _updateData (result) {
+    async _updateData (result, waitForUpdateProcessing = false) {
         console.log(`Loaded ${this.name}:`, result)
         const updated = !!(this.data === null || this.etag)
         this.data = result.contents
@@ -190,10 +191,18 @@ export default class ResourceLoader extends EventTarget {
             }))
             // After dispatchEvent, the return values of all onUpdate listeners will have been
             // added to this._onUpdateProcessing, so we can wait for those promises to resolve.
-            Promise.all(this._onUpdateProcessing).then(() => {
+            const updateProcessing = Promise.all(this._onUpdateProcessing).then(() => {
                 this._onUpdateProcessing = []
                 this.dispatchEvent(new Event(AFTER_UPDATE_EVENT_NAME))
             })
+
+            // When configurations are being overridden, e.g. from the developer
+            // tools, it's useful to then wait for the update processing to have
+            // finished. That way, for MV3 builds the returned Promise will only
+            // resolve after the corresponding ruleset changes have been made.
+            if (waitForUpdateProcessing) {
+                await updateProcessing
+            }
         }
     }
 
@@ -225,7 +234,7 @@ export default class ResourceLoader extends EventTarget {
         await this._updateData({
             contents: data,
             etag
-        })
+        }, true)
     }
 
     /**

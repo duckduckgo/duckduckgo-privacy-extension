@@ -3,21 +3,20 @@ import browser from 'webextension-polyfill'
 import { restoreDefaultClickToLoadRuleActions } from '../dnr-click-to-load'
 import Companies from '../companies'
 import { isRedirect } from '../utils'
-// eslint-disable-next-line no-restricted-syntax
-import * as devtools from '../devtools'
 
 /**
+ * @typedef {import('./devtools').default} Devtools
  * @typedef {import('../tab-manager.js')} TabManager
- * @typedef {import('../devtools')} Devtools
  */
 
 export default class TabTracker {
     /**
      * @param {{
     *  tabManager: TabManager;
+    *  devtools: Devtools;
     * }} options
     */
-    constructor ({ tabManager }) {
+    constructor ({ tabManager, devtools }) {
         this.tabManager = tabManager
         this.createdTargets = new Map()
 

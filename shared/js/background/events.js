@@ -24,7 +24,6 @@ const constants = require('../../data/constants')
 const onboarding = require('./onboarding')
 const cspProtection = require('./csp-blocking')
 const browserName = utils.getBrowserName()
-const devtools = require('./devtools')
 const browserWrapper = require('./wrapper')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest, validateSetCookieBlock } = require('./events/3p-tracking-cookie-blocking')
@@ -495,4 +494,3 @@ browser.webRequest.onErrorOccurred.addListener(e => {
 if (browserName === 'moz') {
     cspProtection.init()
 }
-devtools.init()

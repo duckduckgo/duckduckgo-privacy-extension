@@ -2,9 +2,9 @@ import browser from 'webextension-polyfill'
 import { registerMessageHandler } from '../message-handlers'
 import { getBrowserName } from '../utils'
 import { getExtensionVersion, getFromSessionStorage, removeFromSessionStorage, setToSessionStorage } from '../wrapper'
-import { registerDebugHandler } from '../devtools'
 
 /**
+ * @typedef {import('./devtools').default} Devtools
  * @typedef {import('./tds').default} TDSStorage
  */
 
@@ -22,12 +22,14 @@ export async function getDebuggerSettings () {
 export default class DebuggerConnection {
     /**
      * @param {{
-    *  tds: TDSStorage
-    * }} options
+     *   tds: TDSStorage
+     *   devtools: Devtools
+     * }} options
      */
-    constructor ({ tds }) {
+    constructor ({ tds, devtools }) {
         this.init()
         this.tds = tds
+        this.devtools = devtools
         this.socket = null
         this.subscribedTabs = new Set()
         registerMessageHandler('getDebuggingSettings', getDebuggerSettings)
@@ -134,7 +136,7 @@ export default class DebuggerConnection {
     }
 
     forwardDebugMessagesForTab (tabId) {
-        registerDebugHandler(tabId, (payload) => {
+        this.devtools.registerDebugHandler(tabId, (payload) => {
             if (this.socket) {
                 this.socket.send(JSON.stringify({
                     messageType: 'devtools',
