@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1718217947996,
+    "version": 1719225510541,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -81,6 +81,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -120,7 +123,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "d509599bd9cb18f4aca0db45b58cf70d"
+            "hash": "a05cf11665d93b18fa0c0350c281532c"
         },
         "androidBrowserConfig": {
             "exceptions": [],
@@ -331,6 +334,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -355,7 +361,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "b02d25593b7b79316c3eac55386e956f"
+            "hash": "e95b5e558931efe6487702c12eb420a1"
         },
         "autofill": {
             "exceptions": [
@@ -365,6 +371,11 @@
             ],
             "state": "enabled",
             "hash": "b1ae580a636957bcbe90d16aa92c40bd"
+        },
+        "brokenSiteReportExperiment": {
+            "exceptions": [],
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
         },
         "clickToLoad": {
             "exceptions": [
@@ -975,6 +986,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -1006,7 +1020,7 @@
             },
             "state": "enabled",
             "minSupportedVersion": "2023.7.7.2",
-            "hash": "21694e53f956e8ef1c74db590d799c9d"
+            "hash": "0e4ea5af2f948baa2c5a538d6c09f008"
         },
         "clickToPlay": {
             "exceptions": [
@@ -1015,6 +1029,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "localhost"
@@ -1042,7 +1059,7 @@
                 }
             },
             "state": "enabled",
-            "hash": "d40ca776248d02977496c6048c8d197a"
+            "hash": "a30cab71f41c162a0e144800f6441b5f"
         },
         "clientBrandHint": {
             "exceptions": [],
@@ -1080,6 +1097,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -1095,7 +1115,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "2f36805b23a2f53416fe6c24af63ab50"
+            "hash": "a802c2fa9ae427a99bb74f3a7dfb355c"
         },
         "cookie": {
             "settings": {
@@ -1122,7 +1142,13 @@
                 "firstPartyCookiePolicy": {
                     "threshold": 604800,
                     "maxAge": 604800
-                }
+                },
+                "thirdPartyCookieNames": [
+                    "user_id",
+                    "__Secure-3PAPISID",
+                    "SAPISID",
+                    "APISID"
+                ]
             },
             "exceptions": [
                 {
@@ -1142,6 +1168,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "soundcloud.com"
@@ -1167,7 +1196,7 @@
             ],
             "state": "enabled",
             "minSupportedVersion": "2022.6.1",
-            "hash": "7f5b240d314786abb75ae6ed360e29d3"
+            "hash": "785caaa7355243f7421fefaa734bd98d"
         },
         "customUserAgent": {
             "settings": {
@@ -1193,6 +1222,11 @@
         },
         "duckPlayer": {
             "exceptions": [],
+            "features": {
+                "pip": {
+                    "state": "disabled"
+                }
+            },
             "settings": {
                 "tryDuckPlayerLink": "https://www.youtube.com/watch?v=yKWIA-Pys4c",
                 "overlays": {
@@ -1257,7 +1291,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "59ef4ce748dc657aa3d42756131dcb16"
+            "hash": "314df3f87ca501a86eb1d04db8bf7bbc"
         },
         "dummyWebMessageListener": {
             "exceptions": [],
@@ -1274,6 +1308,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "localhost"
@@ -4467,7 +4504,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "75940163aaeac0541db93d0bdf28ddd9"
+            "hash": "7ec282e98da7f1b3a6632d64a8bea134"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -4476,6 +4513,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "localhost"
@@ -4494,7 +4534,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "07fb9673f2ad7cb6dba5a353e9758fd5"
+            "hash": "c42e86910926cd573c089496e839cb44"
         },
         "extendedOnboarding": {
             "exceptions": [],
@@ -4514,6 +4554,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -4529,7 +4572,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "a7186b6cd5b5b7984b6cc206d2136f60"
+            "hash": "35587474adae248ccfda657b16a719e2"
         },
         "fingerprintingBattery": {
             "exceptions": [
@@ -4541,6 +4584,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "localhost"
@@ -4559,7 +4605,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "3283438a78a334c3ba49bdb8a8961dec"
+            "hash": "ff0318738061175abc95af6d713f24f0"
         },
         "fingerprintingCanvas": {
             "settings": {
@@ -4657,6 +4703,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -4673,7 +4722,7 @@
                 }
             ],
             "state": "disabled",
-            "hash": "3c4518999e54978f53df136c7d9588b9"
+            "hash": "41c1202bd9f576ce164b18ab58b84477"
         },
         "fingerprintingHardware": {
             "settings": {
@@ -4718,10 +4767,19 @@
                     "domain": "proton.me"
                 },
                 {
+                    "domain": "nordstrom.com"
+                },
+                {
+                    "domain": "xfinity.com"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "flysas.com"
@@ -4746,7 +4804,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "4d0a032eba0ca3fc6931590ba26ab3a4"
+            "hash": "1eef1bb4c8de8f1d6c4b0233cd54bb21"
         },
         "fingerprintingScreenSize": {
             "settings": {
@@ -4793,6 +4851,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -4809,7 +4870,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "8b99c8bf7f2965a173eab337edaa17bd"
+            "hash": "421968d9bb2681a6896dec8ba9f45a6e"
         },
         "fingerprintingTemporaryStorage": {
             "exceptions": [
@@ -4829,6 +4890,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -4845,7 +4909,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "0f0b0766d3905ed10afd6be83acbff9e"
+            "hash": "d90d247926da4cbae0696765c01a0314"
         },
         "googleRejected": {
             "exceptions": [
@@ -4856,6 +4920,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -4872,7 +4939,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "07fb9673f2ad7cb6dba5a353e9758fd5"
+            "hash": "c42e86910926cd573c089496e839cb44"
         },
         "gpc": {
             "state": "enabled",
@@ -4920,10 +4987,16 @@
                     "domain": "monstergear.monsterenergy.com"
                 },
                 {
+                    "domain": "npr.org"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "bananarepublic.gap.com"
@@ -4953,7 +5026,7 @@
                     "privacy-test-pages.site"
                 ]
             },
-            "hash": "efcc89aa078b44915ef255d071e975d1"
+            "hash": "ee3a3f06581006f480cb9fdb095ad3bd"
         },
         "harmfulApis": {
             "settings": {
@@ -5062,6 +5135,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -5078,7 +5154,7 @@
                 }
             ],
             "state": "disabled",
-            "hash": "810fc6e9d51b0ade579ed00a0998e491"
+            "hash": "075e3ef3a813d40ab279dd8f4210a46c"
         },
         "history": {
             "state": "disabled",
@@ -5104,6 +5180,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -5119,7 +5198,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "42b64c8b4d8f0b9ad58533335949822f"
+            "hash": "01dd287c1cf7e836cc37532961a19e74"
         },
         "incontextSignup": {
             "exceptions": [],
@@ -5161,6 +5240,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -5184,7 +5266,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "91d6f196d63dfcded334af19433f87dd"
+            "hash": "c1348175e63ee57ba57563cc15e3f6ba"
         },
         "networkProtection": {
             "state": "disabled",
@@ -5216,6 +5298,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -5232,7 +5317,7 @@
                 }
             ],
             "state": "disabled",
-            "hash": "08a119d60ca8a7610f35c537924c8636"
+            "hash": "92dcc4583d0ef2dbfd8814f0df970fb4"
         },
         "performanceMetrics": {
             "state": "disabled",
@@ -5244,6 +5329,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -5259,7 +5347,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "00228cbb6be645db2e858731eac18099"
+            "hash": "5e2e5d75caafbf3ed108112a49563d7b"
         },
         "pluginPointFocusedViewPlugin": {
             "state": "disabled",
@@ -5334,6 +5422,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -5350,7 +5441,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "439459e76a697223c5566dc9e60e704b"
+            "hash": "1bb649e77bf1466a818a45a6a1055420"
         },
         "requestFilterer": {
             "state": "disabled",
@@ -5360,6 +5451,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "localhost"
@@ -5380,7 +5474,7 @@
             "settings": {
                 "windowInMs": 0
             },
-            "hash": "aa7637f751f6875c9ecbc0d252605ab9"
+            "hash": "f716426bbb1930082bea4a42212b00bd"
         },
         "runtimeChecks": {
             "state": "disabled",
@@ -5390,6 +5484,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "localhost"
@@ -5408,7 +5505,7 @@
                 }
             ],
             "settings": {},
-            "hash": "fe8893ac2c8ae2dd093938890cb6b9c7"
+            "hash": "ca15a04d46500cdb7d4c83ba5c7f5cdb"
         },
         "serviceworkerInitiatedRequests": {
             "exceptions": [
@@ -5417,6 +5514,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "localhost"
@@ -5435,7 +5535,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "07fb9673f2ad7cb6dba5a353e9758fd5"
+            "hash": "c42e86910926cd573c089496e839cb44"
         },
         "sslCertificates": {
             "state": "disabled",
@@ -6212,6 +6312,12 @@
                                 "domains": [
                                     "shapermint.com"
                                 ]
+                            },
+                            {
+                                "rule": "datadoghq-browser-agent.com",
+                                "domains": [
+                                    "indeed.com"
+                                ]
                             }
                         ]
                     },
@@ -6372,7 +6478,7 @@
                     "dynamicyield.com": {
                         "rules": [
                             {
-                                "rule": "cdn.dynamicyield.com/api/",
+                                "rule": "dynamicyield.com/api/",
                                 "domains": [
                                     "<all>"
                                 ]
@@ -6794,6 +6900,12 @@
                                 "rule": "www.google.com/maps/",
                                 "domains": [
                                     "<all>"
+                                ]
+                            },
+                            {
+                                "rule": "google.com/adsense/search/",
+                                "domains": [
+                                    "ihowlist.com"
                                 ]
                             }
                         ]
@@ -7331,14 +7443,7 @@
                             {
                                 "rule": "klaviyo.com/",
                                 "domains": [
-                                    "andieswim.com",
-                                    "dreamfarm.com",
-                                    "footweartruth.com",
-                                    "holdonbags.com",
-                                    "kmail-lists.com",
-                                    "nestlenutritionstore.com",
-                                    "organakratom.com",
-                                    "usafacts.org"
+                                    "<all>"
                                 ]
                             }
                         ]
@@ -7432,6 +7537,12 @@
                                 "rule": "cdn.medallia.com/react-surveys/",
                                 "domains": [
                                     "<all>"
+                                ]
+                            },
+                            {
+                                "rule": "digital-cloud-west.medallia.com/",
+                                "domains": [
+                                    "walgreens.com"
                                 ]
                             },
                             {
@@ -8694,6 +8805,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -8709,7 +8823,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "9145534d55f949acb3cd15c3f1f2122f"
+            "hash": "0e7b6da8ecb137f287b30beb03836abb"
         },
         "trackingCookies1p": {
             "settings": {
@@ -8726,6 +8840,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -8742,7 +8859,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "8b7f1d4f73a046f061dba5fa137f73ef"
+            "hash": "83dfe2d998b9d995ce6e0822fac8f6f3"
         },
         "trackingCookies3p": {
             "settings": {
@@ -8756,6 +8873,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -8772,7 +8892,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "e6a079e49733d7e256d760dc6659439a"
+            "hash": "f79e7acf40ec77d8c5cbdd30709eba65"
         },
         "trackingParameters": {
             "exceptions": [
@@ -8784,6 +8904,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "localhost"
@@ -8832,7 +8955,7 @@
             },
             "state": "enabled",
             "minSupportedVersion": "2023.5.23",
-            "hash": "3529cad8310ce254bf48d16b860f9afb"
+            "hash": "09a71ca2b33a9e86c3510b8381952d4b"
         },
         "userAgentRotation": {
             "settings": {
@@ -8844,6 +8967,9 @@
                 },
                 {
                     "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
                 },
                 {
                     "domain": "localhost"
@@ -8862,7 +8988,7 @@
                 }
             ],
             "state": "disabled",
-            "hash": "b113fe9a8ab6d3334e10a25ab9e1b342"
+            "hash": "16a7b21c6161d02a1fd8053550ec3522"
         },
         "voiceSearch": {
             "exceptions": [],
@@ -8878,6 +9004,9 @@
                     "domain": "sundancecatalog.com"
                 },
                 {
+                    "domain": "noaprints.com"
+                },
+                {
                     "domain": "localhost"
                 },
                 {
@@ -8894,9 +9023,14 @@
                 }
             ],
             "state": "disabled",
-            "hash": "3cb7de51dc4c5fc7d9ca0f76eec17d22"
+            "hash": "1e9c6e4141cb04a2537fe72d55291e1b"
         },
         "windowsPermissionUsage": {
+            "exceptions": [],
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
+        },
+        "windowsPrecisionScroll": {
             "exceptions": [],
             "state": "disabled",
             "hash": "728493ef7a1488e4781656d3f9db84aa"
