@@ -351,9 +351,6 @@ class Trackers {
         const sameEntity = (requestOwner && websiteOwner) ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
 
         if (!tracker) {
-            if (sameEntity) {
-                return null
-            }
             const owner = {
                 name: requestOwner || requestData.urlToCheckDomain || 'unknown',
                 displayName: requestOwner || requestData.urlToCheckDomain || 'Unknown'
