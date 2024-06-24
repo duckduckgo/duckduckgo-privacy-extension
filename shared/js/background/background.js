@@ -25,6 +25,7 @@ import InternalUserDetector from './components/internal-user-detector'
 import TDSStorage from './components/tds'
 import TrackersGlobal from './components/trackers'
 import DebuggerConnection from './components/debugger-connection'
+import Devtools from './components/devtools'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
@@ -41,6 +42,7 @@ settings.ready().then(() => {
 })
 
 const tds = new TDSStorage({ settings })
+const devtools = new Devtools({ tds })
 /**
  * @type {{
  *  autofill: EmailAutofill;
@@ -56,10 +58,11 @@ const components = {
     autofill: new EmailAutofill({ settings }),
     omnibox: new OmniboxSearch(),
     internalUser: new InternalUserDetector({ settings }),
-    tabTracking: new TabTracker({ tabManager }),
+    tabTracking: new TabTracker({ tabManager, devtools }),
     tds,
     trackers: new TrackersGlobal({ tds }),
-    debugger: new DebuggerConnection({ tds })
+    debugger: new DebuggerConnection({ tds, devtools }),
+    devtools
 }
 
 // Chrome-only components

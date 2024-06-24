@@ -224,10 +224,10 @@ export function isBroken (url) {
     return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1
 }
 
-export function removeBroken (domain) {
-    const index = brokenListIndex(domain, tdsStorage.config.unprotectedTemporary)
+export function removeBroken (domain, config = tdsStorage.config) {
+    const index = brokenListIndex(domain, config.unprotectedTemporary)
     if (index !== -1) {
-        console.log('remove', tdsStorage.config.unprotectedTemporary.splice(index, 1))
+        console.log('remove', config.unprotectedTemporary.splice(index, 1))
     }
 }
 

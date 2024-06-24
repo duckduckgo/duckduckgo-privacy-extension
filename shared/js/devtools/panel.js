@@ -6,6 +6,43 @@ const protectionButton = document.getElementById('protection')
 const tabPicker = document.getElementById('tab-picker')
 const tdsOption = document.getElementById('tds')
 
+const devtoolsMessageResponseReceived = new EventTarget()
+
+// Open the messaging port and re-open if disconnected. The connection will
+// disconnect for MV3 builds when the background ServiceWorker becomes inactive.
+let port
+function openPort () {
+    port = chrome.runtime.connect({ name: 'devtools' })
+    port.onDisconnect.addListener(openPort)
+
+    port.onMessage.addListener((message) => {
+        const m = JSON.parse(message)
+        if (m.tabId === tabId) {
+            if (devtoolsMessageHandlers[m.action]) {
+                devtoolsMessageHandlers[m.action](m)
+            } else if (m?.message?.isProxy) {
+                displayProxyRow(m)
+            }
+            if (document.querySelector('tbody').lastChild) {
+                setRowVisible(document.querySelector('tbody').lastChild)
+            }
+        }
+    })
+}
+openPort()
+
+function sendDevtoolsMessage (message) {
+    return new Promise(resolve => {
+        message.id = Math.random()
+        devtoolsMessageResponseReceived.addEventListener(
+            message.id,
+            ({ detail: response }) => resolve(response),
+            { once: true }
+        )
+        port.postMessage(message)
+    })
+}
+
 function sendMessage (messageType, options, callback) {
     chrome.runtime.sendMessage({ messageType, options }, callback)
 }
@@ -53,15 +90,6 @@ function incrementCurrentRequestCounter () {
 
 let tabId = chrome.devtools?.inspectedWindow?.tabId || parseInt(0 + new URL(document.location.href).searchParams.get('tabId'))
 
-// Open the messaging port and re-open if disconnected. The connection will
-// disconnect for MV3 builds when the background ServiceWorker becomes inactive.
-let port
-function openPort () {
-    port = chrome.runtime.connect({ name: 'devtools' })
-    port.onDisconnect.addListener(openPort)
-}
-openPort()
-
 // fetch the list of configurable features from the config and create toggles for them.
 const loadConfigurableFeatures = new Promise((resolve) => {
     sendMessage('getListContents', 'config', ({ data: config }) => {
@@ -71,12 +99,15 @@ const loadConfigurableFeatures = new Promise((resolve) => {
             btn.id = feature
             btn.innerText = `${feature}: ???`
             document.querySelector('#protections').appendChild(btn)
-            btn.addEventListener('click', () => {
-                port.postMessage({
-                    action: `toggle${feature}`,
+            btn.addEventListener('click', async () => {
+                btn.disabled = true
+                await sendDevtoolsMessage({
+                    action: 'toggleFeature',
+                    feature,
                     tabId
                 })
                 reloadPage()
+                btn.disabled = false
             })
         })
         resolve(features)
@@ -103,7 +134,12 @@ function setupProtectionButton (element, textName, isEnabled) {
     element.classList.remove(`protection-button-${isEnabled ? 'off' : 'on'}`)
 }
 
-const actionHandlers = {
+const devtoolsMessageHandlers = {
+    response: ({ message: { id, response } }) => {
+        devtoolsMessageResponseReceived.dispatchEvent(
+            new CustomEvent(id, { detail: response })
+        )
+    },
     tracker: (m) => {
         const { tracker, url, requestData, siteUrl, serviceWorkerInitiated } = m.message
         const row = document.getElementById('request-row').content.firstElementChild.cloneNode(true)
@@ -117,8 +153,9 @@ const actionHandlers = {
         }
         toggleLink.addEventListener('click', (ev) => {
             ev.preventDefault()
-            port.postMessage({
-                action: toggleLink.innerText,
+            sendDevtoolsMessage({
+                action: 'toggleTracker',
+                toggleType: toggleLink.innerText,
                 tabId,
                 tracker,
                 requestData,
@@ -317,20 +354,6 @@ function setRowVisible (row) {
     row.hidden = !shouldShowRow(row)
 }
 
-port.onMessage.addListener((message) => {
-    const m = JSON.parse(message)
-    if (m.tabId === tabId) {
-        if (actionHandlers[m.action]) {
-            actionHandlers[m.action](m)
-        } else if (m?.message?.isProxy) {
-            displayProxyRow(m)
-        }
-        if (document.querySelector('tbody').lastChild) {
-            setRowVisible(document.querySelector('tbody').lastChild)
-        }
-    }
-})
-
 function updateTabSelector () {
     chrome.tabs.query({}, (tabs) => {
         while (tabPicker.firstChild !== null) {
@@ -360,14 +383,14 @@ if (!chrome.devtools) {
     tabPicker.addEventListener('change', () => {
         tabId = parseInt(tabPicker.selectedOptions[0].value)
         clear()
-        port.postMessage({ action: 'setTab', tabId })
+        sendDevtoolsMessage({ action: 'setTab', tabId })
     })
 } else {
     tabPicker.hidden = true
 }
 
 if (tabId) {
-    port.postMessage({ action: 'setTab', tabId })
+    sendDevtoolsMessage({ action: 'setTab', tabId })
 }
 
 function clear () {
@@ -390,12 +413,14 @@ function reloadPage () {
 // listeners for buttons and toggles
 clearButton.addEventListener('click', clear)
 refreshButton.addEventListener('click', reloadPage)
-protectionButton.addEventListener('click', () => {
-    port.postMessage({
-        action: 'toggleProtection',
+protectionButton.addEventListener('click', async () => {
+    protectionButton.disabled = true
+    await sendDevtoolsMessage({
+        action: 'toggleProtections',
         tabId
     })
     reloadPage()
+    protectionButton.disabled = false
 })
 
 sendMessage('getSetting', { name: 'tds-channel' }, (result) => {
