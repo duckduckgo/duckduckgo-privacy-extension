@@ -17,6 +17,9 @@ import {
 import httpsStorage from './storage/https'
 import ATB from './atb'
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report'
+import {
+    sendPageloadsWithAdAttributionPixelAndResetCount
+} from './classes/ad-click-attribution-policy'
 const utils = require('./utils')
 const experiment = require('./experiments')
 const settings = require('./settings')
@@ -441,6 +444,9 @@ browserWrapper.createAlarm('rotateUserAgent', { periodInMinutes: 24 * 60 })
 browserWrapper.createAlarm('rotateSessionKey', { periodInMinutes: 60 })
 // Expire site breakage reports
 browserWrapper.createAlarm('clearExpiredBrokenSiteReportTimes', { periodInMinutes: 60 })
+// Reset the ad click attribution counter and send out the corresponding pixel
+// request where necessary.
+browserWrapper.createAlarm('adClickAttributionDaily', { periodInMinutes: 60 * 24 })
 
 browser.alarms.onAlarm.addListener(async alarmEvent => {
     // Warning: Awaiting in this function doesn't actually wait for the promise to resolve before unblocking the main thread.
@@ -458,6 +464,8 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
         await utils.resetSessionKey()
     } else if (alarmEvent.name === 'clearExpiredBrokenSiteReportTimes') {
         await clearExpiredBrokenSiteReportTimes()
+    } else if (alarmEvent.name === 'adClickAttributionDaily') {
+        await sendPageloadsWithAdAttributionPixelAndResetCount()
     }
 })
 

@@ -70,6 +70,14 @@ class Tab {
         return this._tabState.adClick
     }
 
+    set firstAdAttributionAllowed (value) {
+        this._tabState.setValue('firstAdAttributionAllowed', value)
+    }
+
+    get firstAdAttributionAllowed () {
+        return this._tabState.firstAdAttributionAllowed
+    }
+
     set disabledClickToLoadRuleActions (value) {
         this._tabState.setValue('disabledClickToLoadRuleActions', value)
     }
