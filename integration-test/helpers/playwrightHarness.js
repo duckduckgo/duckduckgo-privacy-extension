@@ -103,7 +103,8 @@ export const test = base.extend({
                     body: JSON.stringify(mockAtb)
                 })
             }
-            if (url.startsWith('https://duckduckgo.com/exti')) {
+            if (url.startsWith('https://duckduckgo.com/exti') ||
+                url.startsWith('https://improving.duckduckgo.com/')) {
                 return route.fulfill({
                     status: 200,
                     body: ''

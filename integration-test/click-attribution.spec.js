@@ -1,13 +1,38 @@
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
+import { logPixels } from './helpers/pixels'
 import testCases from 'privacy-test-pages/adClickFlow/shared/testCases.json'
+import { expectedPixels } from './data/click-attribution-pixels'
 
 if (testCases.length === 0) {
     throw new Error('No test cases found')
 }
 
+// Populate the expected pixels for each test case.
+// TODO: Remove this once expected pixels are included in testCases.json.
+for (let i = 0; i < testCases.length; i++) {
+    let j = 0
+    for (; j < testCases[i].steps.length; j++) {
+        testCases[i].steps[j].expected.pixels = expectedPixels?.[i]?.[j + 1] || []
+    }
+
+    testCases[i].steps[j - 1].final = true
+}
+
 test.describe('Ad click blocking', () => {
-    test.beforeEach(async ({ context }) => {
+    const backgroundPixels = []
+    let clearBackgroundPixels
+
+    test.beforeEach(async ({ context, backgroundNetworkContext }) => {
+        if (clearBackgroundPixels) {
+            clearBackgroundPixels()
+        }
+        clearBackgroundPixels = await logPixels(
+            backgroundNetworkContext,
+            backgroundPixels,
+            ({ name }) => name !== 'page_extensionsuccess_impression'
+        )
+
         await backgroundWait.forExtensionLoaded(context)
     })
 
@@ -49,7 +74,7 @@ test.describe('Ad click blocking', () => {
     for (const testCase of testCases) {
         // Allow to filter to one test case
         const itMethod = testCase.only ? test.only : test
-        itMethod(testCase.name, async ({ context }) => {
+        itMethod(testCase.name, async ({ context, backgroundPage }) => {
             let page = await context.newPage()
             for (const step of testCase.steps) {
                 if (step.action.type === 'navigate') {
@@ -83,6 +108,21 @@ test.describe('Ad click blocking', () => {
                             .toBe(request.status)
                     }
                 }
+
+                if (step.final) {
+                    // Simulate 24 hours having passed, when the final pixel should fire.
+                    await backgroundPage.evaluate(
+                        () => globalThis.dbg.sendPageloadsWithAdAttributionPixelAndResetCount()
+                    )
+                }
+
+                expect(backgroundPixels.length, `${step.name} expects the right number of pixels to fire`)
+                    .toEqual(step.expected.pixels.length)
+                for (let i = 0; i < step.expected.pixels.length; i++) {
+                    expect(backgroundPixels[i], `${step.name} expects pixel "${step.expected.pixels[i].name}" to have fired correctly.`)
+                        .toEqual(step.expected.pixels[i])
+                }
+                clearBackgroundPixels()
             }
             await page.close()
         })

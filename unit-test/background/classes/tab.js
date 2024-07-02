@@ -97,6 +97,7 @@ describe('Tab', () => {
                 surrogates: {},
                 referrer: null,
                 adClick: null,
+                firstAdAttributionAllowed: false,
                 disabledClickToLoadRuleActions: [],
                 dnrRuleIdsByDisabledClickToLoadRuleAction: {},
                 trackers: {},

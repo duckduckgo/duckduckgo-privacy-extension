@@ -1,4 +1,3 @@
-/* global BUILD_TARGET */
 import browser from 'webextension-polyfill'
 import { sendPixelRequest } from '../pixels'
 import { registerMessageHandler } from '../message-handlers'
@@ -16,8 +15,6 @@ import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage, c
 const MENU_ITEM_ID = 'ddg-autofill-context-menu-item'
 export const REFETCH_ALIAS_ALARM = 'refetchAlias'
 const REFETCH_ALIAS_ATTEMPT = 'refetchAliasAttempt'
-
-const pixelsEnabled = BUILD_TARGET !== 'firefox'
 
 export default class EmailAutofill {
     /**
@@ -200,7 +197,6 @@ export default class EmailAutofill {
 
     fireAutofillPixel (pixel, shouldUpdateLastUsed = false) {
         const browserName = getBrowserName() ?? 'unknown'
-        if (!pixelsEnabled) return
 
         const userData = this.settings.getSetting('userData')
         if (!userData?.userName) return
@@ -306,7 +302,6 @@ const getFullPixelName = (name, browserName) => {
 
 const fireIncontextSignupPixel = (pixel, params) => {
     const browserName = getBrowserName() ?? 'unknown'
-    if (!pixelsEnabled) return
 
     sendPixelRequest(getFullPixelName(pixel, browserName), params)
 }

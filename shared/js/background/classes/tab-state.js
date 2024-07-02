@@ -28,6 +28,8 @@ export class TabState {
         this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
         /** @type {null | import('./ad-click-attribution-policy').AdClick} */
         this.adClick = null
+        /** @type {boolean} */
+        this.firstAdAttributionAllowed = false
         /** @type {Record<string, import('./tracker').Tracker>} */
         this.trackers = {}
         /** @type {null | import('../events/referrer-trimming').Referrer} */

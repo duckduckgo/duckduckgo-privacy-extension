@@ -31,8 +31,22 @@ export default class TabTracker {
                 isRedirect(request.statusCode)
             ) {
                 tab.setAdClickIfValidRedirect(request.url)
-            } else if (tab && tab.adClick && tab.adClick.adClickRedirect && !isRedirect(request.statusCode)) {
-                tab.adClick.setAdBaseDomain(tab.site.baseDomain || '')
+            } else if (tab && tab.adClick && !isRedirect(request.statusCode)) {
+                // At the end of the redirect chain, ensure the final URL's base
+                // domain (aka the "heuristic" base domain) is noted for the
+                // 'm_ad_click_detected' pixel.
+                let heuristicAdBaseDomain = null
+                if (tab.adClick.heuristicDetectionEnabled) {
+                    heuristicAdBaseDomain = tab.site.baseDomain || ''
+
+                    // No parameter domain was provided by the SERP, so fall
+                    // back to the heuristic domain for the ad click.
+                    if (tab.adClick.adClickRedirect) {
+                        tab.adClick.setAdBaseDomain(heuristicAdBaseDomain)
+                    }
+                }
+
+                tab.adClick.sendAdClickDetectedPixel(heuristicAdBaseDomain)
             }
         }, { urls: ['<all_urls>'], types: ['main_frame'] })
 

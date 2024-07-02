@@ -1,5 +1,33 @@
 {
     "trackers": {
+        "ad-company.example": {
+            "domain": "ad-company.example",
+            "owner": {
+                "name": "Ad Company Example",
+                "displayName": "Ad Company Example",
+                "url": "http://ad-company.example"
+            },
+            "prevalence": 0.1,
+            "fingerprinting": 2,
+            "cookies": 0.1,
+            "categories": [],
+            "rules": [],
+            "default": "block"
+        },
+        "ad-company.site": {
+            "domain": "ad-company.site",
+            "owner": {
+                "name": "Ad Company",
+                "displayName": "Ad Company",
+                "url": "http://ad-company.site"
+            },
+            "prevalence": 0.1,
+            "fingerprinting": 2,
+            "cookies": 0.1,
+            "categories": [],
+            "rules": [],
+            "default": "block"
+        },
         "bad.third-party.site": {
             "domain": "bad.third-party.site",
             "owner": {
@@ -31,6 +59,20 @@
         }
     },
     "entities": {
+        "Ad Company Example": {
+            "displayName": "Ad Company Example",
+            "prevalence": 0.1,
+            "domains": [
+                "ad-company.example"
+            ]
+        },
+        "Ad Company": {
+            "displayName": "Ad Company",
+            "prevalence": 0.1,
+            "domains": [
+                "ad-company.site"
+            ]
+        },
         "Test Site for Tracker Blocking": {
             "displayName": "Test Site for Tracker Blocking",
             "prevalence": 0.1,
@@ -42,6 +84,8 @@
     },
     "cnames": [],
     "domains": {
+        "ad-company.example": "Ad Company Example",
+        "ad-company.site": "Ad Company",
         "bad.third-party.site": "Test Site for Tracker Blocking",
         "broken.third-party.site": "Test Site for Tracker Blocking"
     }

@@ -1,3 +1,4 @@
+/* global BUILD_TARGET */
 import load from './load'
 
 /**
@@ -14,8 +15,13 @@ export function getURL (pixelName) {
 }
 
 export function sendPixelRequest (pixelName, params = {}) {
+    // Pixel requests should never fire for Firefox users.
+    if (BUILD_TARGET === 'firefox') {
+        return
+    }
+
     const randomNum = Math.ceil(Math.random() * 1e7)
     const searchParams = new URLSearchParams(Object.entries(params))
     const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
-    load.url(url)
+    return load.url(url)
 }

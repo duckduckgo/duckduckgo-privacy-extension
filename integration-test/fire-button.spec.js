@@ -134,7 +134,7 @@ test.describe('Fire Button', () => {
                 name: 'Last7days',
                 descriptionStats: {
                     clearHistory: true,
-                    cookies: 3, // gets the number of domains with cookies set
+                    cookies: 2, // gets the number of domains with cookies set
                     duration: 'week',
                     openTabs: 6, // gets all open tabs that will be cleared
                     pinnedTabs: 0

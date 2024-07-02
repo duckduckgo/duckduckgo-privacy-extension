@@ -19,13 +19,21 @@
  * @param {LoggedRequestDetails[]} requests
  *   Array of request details, appended to as requests happen.
  *   Note: The requests array is mutated by this function.
- * @param {function} [filter]
+ * @param {function} [requestFilter]
  *   Optional filter function that (if given) should return falsey for requests
+ *   that should be ignored.
+ * @param {function} [transform]
+ *   Optional function to transform each request before adding them to the
+ *   requests array.
+ * @param {function} [postTransformFilter]
+ *   Optional second filter function that returns false for transformed requests
  *   that should be ignored.
  * @returns {Promise<function>}
  *   Function that clears logged requests (and in progress requests).
  */
-export async function logPageRequests (page, requests, filter) {
+export async function logPageRequests (
+    page, requests, requestFilter, transform, postTransformFilter
+) {
     /** @type {Map<number, LoggedRequestDetails>} */
     const requestDetailsByRequestId = new Map()
 
@@ -47,8 +55,15 @@ export async function logPageRequests (page, requests, filter) {
 
         updateDetails(details)
 
-        if (!filter || filter(details)) {
-            requests.push(details)
+        if (!requestFilter || requestFilter(details)) {
+            if (transform) {
+                const transformedDetails = transform(details)
+                if (!postTransformFilter || postTransformFilter(transformedDetails)) {
+                    requests.push(transformedDetails)
+                }
+            } else {
+                requests.push(details)
+            }
         }
     }
 
