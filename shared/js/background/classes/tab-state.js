@@ -1,4 +1,5 @@
 import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } from '../wrapper'
+import { getUserLocale } from '../i18n'
 import { Tracker } from './tracker'
 import { AdClick } from './ad-click-attribution-policy'
 
@@ -56,6 +57,14 @@ export class TabState {
         this.httpErrorCodes = []
         /** @type {boolean} */
         this.performanceWarning = false // True when the runtime.onPerformanceWarning event fired for the tab.
+        /** @type {number} */
+        this.userRefreshCount = 0
+        /** @type {string | null} */
+        this.openerContext = null
+        /** @type {number[]} */
+        this.jsPerformance = []
+        /** @type {string} */
+        this.locale = getUserLocale();
         // Whilst restoring, prevent the tab data being stored
         if (!restoring) {
             Storage.backup(this)

@@ -4,6 +4,7 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
+import browser from 'webextension-polyfill'
 const load = require('./load')
 const browserWrapper = require('./wrapper')
 const settings = require('./settings')
@@ -179,6 +180,16 @@ export async function breakageReportForTab ({
         }
     }
 
+    // collect page parameters
+    const pageParams = await browser.tabs.sendMessage(tab.id, {getBreakagePageParams: true})
+    if (pageParams.docRefererrer) {
+        if (pageParams.docRefererrer.includes('duckduckgo.com')) {
+            tab.openerContext = 'serp'
+        }
+    } else if (!pageParams.opener) {
+        tab.openerContext = 'external'
+    }
+
     const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
     const ctlYouTube = tab.ctlYouTube ? 'true' : 'false'
     const ctlFacebookPlaceholderShown = tab.ctlFacebookPlaceholderShown ? 'true' : 'false'
@@ -190,6 +201,10 @@ export async function breakageReportForTab ({
     const errorDescriptions = JSON.stringify(tab.errorDescriptions)
     const httpErrorCodes = tab.httpErrorCodes.join(',')
     const lastSentDay = await computeLastSentDay(tab.url)
+    const userRefreshCount = tab.userRefreshCount
+    const openerContext = tab.openerContext ? tab.openerContext : undefined
+    const jsPerformance = pageParams.jsPerformance ? pageParams.jsPerformance : undefined
+    const locale = tab.locale
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
@@ -202,7 +217,10 @@ export async function breakageReportForTab ({
         ctlFacebookPlaceholderShown,
         ctlFacebookLogin,
         performanceWarning,
-        protectionsState: tab.site.isFeatureEnabled('contentBlocking')
+        protectionsState: tab.site.isFeatureEnabled('contentBlocking'),
+        userRefreshCount,
+        jsPerformance,
+        locale
     })
 
     for (const [key, value] of Object.entries(requestCategories)) {
@@ -216,6 +234,7 @@ export async function breakageReportForTab ({
     if (description) brokenSiteParams.set('description', description)
     if (errorDescriptions) brokenSiteParams.set('errorDescriptions', errorDescriptions)
     if (httpErrorCodes) brokenSiteParams.set('httpErrorCodes', httpErrorCodes)
-
+    if (openerContext) brokenSiteParams.set('openerContext', openerContext)
+    console.log(brokenSiteParams)
     return fire(brokenSiteParams.toString())
 }
