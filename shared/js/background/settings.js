@@ -133,6 +133,22 @@ function updateSetting (name, value) {
     })
 }
 
+function incrementNumericSetting (name, increment = 1) {
+    if (!isReady) {
+        console.warn(
+            'Settings: incrementNumericSetting() Setting not loaded:', name
+        )
+        return
+    }
+
+    let value = settings[name]
+    if (typeof value !== 'number' || isNaN(value)) {
+        value = 0
+    }
+
+    updateSetting(name, value + increment)
+}
+
 function removeSetting (name) {
     if (!isReady) {
         console.warn(`Settings: removeSetting() Setting not loaded: ${name}`)
@@ -153,6 +169,7 @@ function logSettings () {
 module.exports = {
     getSetting,
     updateSetting,
+    incrementNumericSetting,
     removeSetting,
     logSettings,
     ready,
