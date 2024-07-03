@@ -4,7 +4,6 @@
  * Learn more at https://duck.co/help/privacy/atb
  *
  */
-import browser from 'webextension-polyfill'
 const load = require('./load')
 const browserWrapper = require('./wrapper')
 const settings = require('./settings')
@@ -36,7 +35,7 @@ function constructUrl (querystring, truncate) {
     const randomNum = Math.ceil(Math.random() * 1e7)
     const pixelName = 'epbf'
     const browserInfo = parseUserAgentString()
-    const browserName = browserInfo?.browser
+    const browser = browserInfo?.browser
     const extensionVersion = browserWrapper.getExtensionVersion()
     const atb = settings.getSetting('atb')
 
@@ -56,8 +55,8 @@ function constructUrl (querystring, truncate) {
     }
     // build url string
     let url = getURL(pixelName)
-    if (browserName) {
-        url += `_${browserName.toLowerCase()}`
+    if (browser) {
+        url += `_${browser.toLowerCase()}`
     }
     // random number cache buster
     url += `?${randomNum}&`
