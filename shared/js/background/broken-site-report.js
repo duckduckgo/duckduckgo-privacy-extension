@@ -154,10 +154,11 @@ export async function clearAllBrokenSiteReportTimes () {
  * @prop {string} arg.remoteConfigVersion - config version
  * @prop {string | undefined} arg.category - optional category
  * @prop {string | undefined} arg.description - optional description
+ * @prop {Object | undefined} arg.pageParams - on page parameters
  */
 export async function breakageReportForTab ({
     tab, tds, remoteConfigEtag, remoteConfigVersion,
-    category, description
+    category, description, pageParams
 }) {
     if (!tab.url) {
         return
@@ -181,9 +182,8 @@ export async function breakageReportForTab ({
     }
 
     // collect page parameters
-    const pageParams = await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })
-    if (pageParams.docRefererrer) {
-        if (pageParams.docRefererrer.includes('duckduckgo.com')) {
+    if (pageParams.docReferrer) {
+        if (pageParams.docReferrer.hostname === 'duckduckgo.com') {
             tab.openerContext = 'serp'
         } else {
             tab.openerContext = 'navigation'

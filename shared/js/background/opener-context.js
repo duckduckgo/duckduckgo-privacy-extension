@@ -10,7 +10,8 @@ function handleOpenerContext (requestData) {
     for (const header of requestData.requestHeaders) {
         if (header.name !== 'referrer') continue
 
-        if (header.value.includes('duckduckgo.com')) {
+        const referrerUrl = new URL(header.value)
+        if (referrerUrl.hostname === 'duckduckgo.com') {
             thisTab.openerContext = 'serp'
         } else if (header.value !== '') {
             thisTab.openerContext = 'navigation'

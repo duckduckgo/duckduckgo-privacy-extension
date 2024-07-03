@@ -61,13 +61,20 @@ async function submitAndValidateReport (report) {
     addActionRequests(report.adAttributionRequests, 'ad-attribution')
     addActionRequests(report.noActionRequests, 'none')
 
+    const mockedPageParams = {
+        userRefreshCount: 2,
+        jsPerformance: [123.45],
+        docReferrer: 'http://example.com'
+    }
+
     await breakageReportForTab({
         tab,
         tds: report.blocklistVersion,
         remoteConfigEtag: report.remoteConfigEtag,
         remoteConfigVersion: report.remoteConfigVersion,
         category: report.category,
-        description: report.providedDescription
+        description: report.providedDescription,
+        pageParams: mockedPageParams
     })
     expect(loadPixelSpy.calls.count()).withContext('Expect only one pixel').toEqual(1)
 
@@ -153,7 +160,8 @@ describe('Broken Site Reporting tests / protections state', () => {
             remoteConfigEtag: 'abd142',
             remoteConfigVersion: '1234',
             category: 'content',
-            description: 'test'
+            description: 'test',
+            pageParams: {}
         })
         const requestURLString = loadPixelSpy.calls.argsFor(0)[0]
         return new URL(requestURLString).searchParams

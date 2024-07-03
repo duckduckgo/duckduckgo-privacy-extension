@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener(
 
         sendResponse({
             jsPerformance,
-            docRefererrer: document.referrer,
+            docReferrer: new URL(document.referrer),
             opener: window.opener
         })
     }
