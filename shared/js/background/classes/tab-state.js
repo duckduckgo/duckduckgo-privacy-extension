@@ -64,7 +64,7 @@ export class TabState {
         /** @type {number[]} */
         this.jsPerformance = []
         /** @type {string} */
-        this.locale = getUserLocale();
+        this.locale = getUserLocale()
         // Whilst restoring, prevent the tab data being stored
         if (!restoring) {
             Storage.backup(this)

@@ -246,7 +246,7 @@ class Tab {
         return this._tabState.userRefreshCount
     }
 
-    set userRefreshCount (value)  {
+    set userRefreshCount (value) {
         this._tabState.setValue('userRefreshCount', value)
     }
 

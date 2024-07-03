@@ -1,28 +1,29 @@
-let pageReloaded = false;
+let pageReloaded = false
 let jsPerformance = []
 
-function notifyPageReloaded() {
+function notifyPageReloaded () {
     (async () => {
-        await chrome.runtime.sendMessage({pageReloaded: true});
-    })();
+        await chrome.runtime.sendMessage({ pageReloaded: true })
+    })()
 }
 
 new PerformanceObserver((entryList) => {
     for (const entry of entryList.getEntriesByName('first-contentful-paint')) {
         jsPerformance = [entry.startTime]
     }
-}).observe({type: 'paint', buffered: true});
+}).observe({ type: 'paint', buffered: true })
 
-document.addEventListener("DOMContentLoaded", function (event) {
+document.addEventListener('DOMContentLoaded', function (event) {
     pageReloaded = (
         (window.performance.navigation && window.performance.navigation.type === 1) ||
         window.performance
-        .getEntriesByType('navigation')
-        .map((nav) => nav.type)
-        .includes('reload')
-    );
-    if (pageReloaded)
-        notifyPageReloaded();
+            .getEntriesByType('navigation')
+            .map((nav) => nav.type)
+            .includes('reload')
+    )
+    if (pageReloaded) {
+        notifyPageReloaded()
+    }
 })
 
 chrome.runtime.onMessage.addListener(

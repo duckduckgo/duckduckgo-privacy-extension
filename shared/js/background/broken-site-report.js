@@ -36,7 +36,7 @@ function constructUrl (querystring, truncate) {
     const randomNum = Math.ceil(Math.random() * 1e7)
     const pixelName = 'epbf'
     const browserInfo = parseUserAgentString()
-    const browser = browserInfo?.browser
+    const browserName = browserInfo?.browser
     const extensionVersion = browserWrapper.getExtensionVersion()
     const atb = settings.getSetting('atb')
 
@@ -56,8 +56,8 @@ function constructUrl (querystring, truncate) {
     }
     // build url string
     let url = getURL(pixelName)
-    if (browser) {
-        url += `_${browser.toLowerCase()}`
+    if (browserName) {
+        url += `_${browserName.toLowerCase()}`
     }
     // random number cache buster
     url += `?${randomNum}&`
@@ -181,7 +181,7 @@ export async function breakageReportForTab ({
     }
 
     // collect page parameters
-    const pageParams = await browser.tabs.sendMessage(tab.id, {getBreakagePageParams: true})
+    const pageParams = await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })
     if (pageParams.docRefererrer) {
         if (pageParams.docRefererrer.includes('duckduckgo.com')) {
             tab.openerContext = 'serp'
