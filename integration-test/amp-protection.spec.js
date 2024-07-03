@@ -59,6 +59,12 @@ test.describe('Test AMP link protection', () => {
             await page.goto(
                 initialUrl, { waitUntil: 'commit' }
             )
+
+            if (page.url().startsWith('https://www.wpxi.com/unavailable-location/')) {
+                console.warn('SKIPPED:', description, '- Test page geo-blocked')
+                continue
+            }
+
             expect(page.url(), description).toEqual(expectedUrl)
         }
     })
