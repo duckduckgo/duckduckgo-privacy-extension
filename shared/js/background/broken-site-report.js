@@ -185,6 +185,8 @@ export async function breakageReportForTab ({
     if (pageParams.docRefererrer) {
         if (pageParams.docRefererrer.includes('duckduckgo.com')) {
             tab.openerContext = 'serp'
+        } else {
+            tab.openerContext = 'navigation'
         }
     } else if (!pageParams.opener) {
         tab.openerContext = 'external'
@@ -235,6 +237,6 @@ export async function breakageReportForTab ({
     if (errorDescriptions) brokenSiteParams.set('errorDescriptions', errorDescriptions)
     if (httpErrorCodes) brokenSiteParams.set('httpErrorCodes', httpErrorCodes)
     if (openerContext) brokenSiteParams.set('openerContext', openerContext)
-    console.log(brokenSiteParams)
+
     return fire(brokenSiteParams.toString())
 }

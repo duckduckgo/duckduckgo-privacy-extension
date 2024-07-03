@@ -1,5 +1,5 @@
 let pageReloaded = false;
-let vitals = []
+let jsPerformance = []
 
 function notifyPageReloaded() {
     (async () => {
@@ -7,11 +7,13 @@ function notifyPageReloaded() {
     })();
 }
 
-document.addEventListener("DOMContentLoaded", function (event) {
-    const paintResources = performance.getEntriesByType('paint')
-    const firstPaint = paintResources.find((entry) => entry.name === 'first-contentful-paint')
-    vitals = firstPaint ? [firstPaint.startTime] : []
+new PerformanceObserver((entryList) => {
+    for (const entry of entryList.getEntriesByName('first-contentful-paint')) {
+        jsPerformance = [entry.startTime]
+    }
+}).observe({type: 'paint', buffered: true});
 
+document.addEventListener("DOMContentLoaded", function (event) {
     pageReloaded = (
         (window.performance.navigation && window.performance.navigation.type === 1) ||
         window.performance
@@ -28,7 +30,7 @@ chrome.runtime.onMessage.addListener(
         if (!req.getBreakagePageParams) return
 
         sendResponse({
-            vitals,
+            jsPerformance,
             docRefererrer: document.referrer,
             opener: window.opener
         })

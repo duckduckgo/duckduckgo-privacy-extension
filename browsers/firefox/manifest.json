@@ -55,7 +55,8 @@
         },
         {
             "js": [
-                "public/js/content-scripts/autofill.js"
+                "public/js/content-scripts/autofill.js",
+                "public/js/content-scripts/breakage-stats.js"
             ],
             "css": [
                 "public/css/autofill-host-styles.css"

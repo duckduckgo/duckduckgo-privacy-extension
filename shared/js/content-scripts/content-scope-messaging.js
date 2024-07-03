@@ -6,7 +6,8 @@ const allowedMessages = [
     'setYoutubePreviewsEnabled',
     'unblockClickToLoadContent',
     'updateYouTubeCTLAddedFlag',
-    'updateFacebookCTLBreakageFlags'
+    'updateFacebookCTLBreakageFlags',
+    'pageReloaded'
 ]
 
 function getSecret () {
