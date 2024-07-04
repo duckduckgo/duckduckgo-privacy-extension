@@ -27,7 +27,6 @@ const browserName = utils.getBrowserName()
 const browserWrapper = require('./wrapper')
 const limitReferrerData = require('./events/referrer-trimming')
 const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest, validateSetCookieBlock } = require('./events/3p-tracking-cookie-blocking')
-const { handleOpenerContext } = require('./opener-context')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
@@ -398,12 +397,6 @@ if (manifestVersion === 2) {
 
 browser.webRequest.onBeforeSendHeaders.addListener(
     dropTracking3pCookiesFromRequest,
-    { urls: ['<all_urls>'] },
-    extraInfoSpecSendHeaders
-)
-
-browser.webRequest.onBeforeSendHeaders.addListener(
-    handleOpenerContext,
     { urls: ['<all_urls>'] },
     extraInfoSpecSendHeaders
 )

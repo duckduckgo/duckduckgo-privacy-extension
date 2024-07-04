@@ -32,8 +32,8 @@ chrome.runtime.onMessage.addListener(
 
         sendResponse({
             jsPerformance,
-            docReferrer: new URL(document.referrer),
-            opener: window.opener
+            docReferrer: document.referrer,
+            opener: !!window.opener
         })
     }
 )

@@ -181,11 +181,16 @@ export async function breakageReportForTab ({
     }
 
     // collect page parameters
-    if (pageParams.docReferrer) {
-        if (pageParams.docReferrer.hostname === 'duckduckgo.com') {
-            tab.openerContext = 'serp'
-        } else {
-            tab.openerContext = 'navigation'
+    if (pageParams.docReferrer && pageParams.docReferrer !== '') {
+        try {
+            const referrerUrl = new URL(pageParams.docReferrer)
+            if (referrerUrl.hostname === 'duckduckgo.com') {
+                tab.openerContext = 'serp'
+            } else {
+                tab.openerContext = 'navigation'
+            }
+        } catch {
+            console.error('Unable to construct referrer URL from:' + pageParams.docReferrer)
         }
     } else if (!pageParams.opener) {
         tab.openerContext = 'external'
