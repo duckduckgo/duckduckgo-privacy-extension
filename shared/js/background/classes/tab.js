@@ -250,6 +250,38 @@ class Tab {
         this._tabState.setValue('performanceWarning', value)
     }
 
+    get userRefreshCount () {
+        return this._tabState.userRefreshCount
+    }
+
+    set userRefreshCount (value) {
+        this._tabState.setValue('userRefreshCount', value)
+    }
+
+    get openerContext () {
+        return this._tabState.openerContext
+    }
+
+    set openerContext (value) {
+        this._tabState.setValue('openerContext', value)
+    }
+
+    get jsPerformance () {
+        return this._tabState.jsPerformance
+    }
+
+    set jsPerformance (value) {
+        this._tabState.setValue('jsPerformance', value)
+    }
+
+    get locale () {
+        return this._tabState.locale
+    }
+
+    set locale (value) {
+        this._tabState.setValue('locale', value)
+    }
+
     /**
      * If given a valid adClick redirect, set the adClick to the tab.
      * @param {string} requestURL
@@ -286,6 +318,7 @@ class Tab {
 
         this.url = url
         this.site = new Site(url, this._tabState)
+        this.userRefreshCount = 0
     }
 
     // Store all trackers for a given tab even if we don't block them.

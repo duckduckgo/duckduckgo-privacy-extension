@@ -332,6 +332,15 @@ browser.runtime.onMessage.addListener((req, sender) => {
         return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req))
     }
 
+    // Count refreshes per page
+    if (req.pageReloaded && (sender.tab !== undefined)) {
+        const tab = tabManager.get({ tabId: sender.tab.id })
+        if (tab) {
+            tab.userRefreshCount += 1
+        }
+        return
+    }
+
     // TODO clean up legacy onboarding messaging
     if (browserName === 'chrome') {
         if (req === 'healthCheckRequest' || req === 'rescheduleCounterMessagingRequest') {

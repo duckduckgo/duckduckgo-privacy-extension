@@ -153,10 +153,11 @@ export async function clearAllBrokenSiteReportTimes () {
  * @prop {string} arg.remoteConfigVersion - config version
  * @prop {string | undefined} arg.category - optional category
  * @prop {string | undefined} arg.description - optional description
+ * @prop {Object | undefined} arg.pageParams - on page parameters
  */
 export async function breakageReportForTab ({
     tab, tds, remoteConfigEtag, remoteConfigVersion,
-    category, description
+    category, description, pageParams
 }) {
     if (!tab.url) {
         return
@@ -179,6 +180,22 @@ export async function breakageReportForTab ({
         }
     }
 
+    // collect page parameters
+    if (pageParams.docReferrer && pageParams.docReferrer !== '') {
+        try {
+            const referrerUrl = new URL(pageParams.docReferrer)
+            if (referrerUrl.hostname === 'duckduckgo.com') {
+                tab.openerContext = 'serp'
+            } else {
+                tab.openerContext = 'navigation'
+            }
+        } catch {
+            console.error('Unable to construct referrer URL from:' + pageParams.docReferrer)
+        }
+    } else if (!pageParams.opener) {
+        tab.openerContext = 'external'
+    }
+
     const urlParametersRemoved = tab.urlParametersRemoved ? 'true' : 'false'
     const ctlYouTube = tab.ctlYouTube ? 'true' : 'false'
     const ctlFacebookPlaceholderShown = tab.ctlFacebookPlaceholderShown ? 'true' : 'false'
@@ -190,6 +207,10 @@ export async function breakageReportForTab ({
     const errorDescriptions = JSON.stringify(tab.errorDescriptions)
     const httpErrorCodes = tab.httpErrorCodes.join(',')
     const lastSentDay = await computeLastSentDay(tab.url)
+    const userRefreshCount = tab.userRefreshCount
+    const openerContext = tab.openerContext ? tab.openerContext : undefined
+    const jsPerformance = pageParams.jsPerformance ? pageParams.jsPerformance : undefined
+    const locale = tab.locale
 
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
@@ -202,7 +223,10 @@ export async function breakageReportForTab ({
         ctlFacebookPlaceholderShown,
         ctlFacebookLogin,
         performanceWarning,
-        protectionsState: tab.site.isFeatureEnabled('contentBlocking')
+        protectionsState: tab.site.isFeatureEnabled('contentBlocking'),
+        userRefreshCount,
+        jsPerformance,
+        locale
     })
 
     for (const [key, value] of Object.entries(requestCategories)) {
@@ -216,6 +240,7 @@ export async function breakageReportForTab ({
     if (description) brokenSiteParams.set('description', description)
     if (errorDescriptions) brokenSiteParams.set('errorDescriptions', errorDescriptions)
     if (httpErrorCodes) brokenSiteParams.set('httpErrorCodes', httpErrorCodes)
+    if (openerContext) brokenSiteParams.set('openerContext', openerContext)
 
     return fire(brokenSiteParams.toString())
 }

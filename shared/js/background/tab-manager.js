@@ -19,7 +19,7 @@ const {
 // These tab properties are preserved when a new tab Object replaces an existing
 // one for the same tab ID.
 const persistentTabProperties = [
-    'ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction'
+    'ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction', 'userRefreshCount'
 ]
 
 class TabManager {

@@ -159,7 +159,7 @@ $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill.css $(BUILD_DIR)/public/css/autofill.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill-host-styles_$(BROWSER_TYPE).css $(BUILD_DIR)/public/css/autofill-host-styles.css
-	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js shared/js/content-scripts/content-scope-messaging.js $(BUILD_DIR)/public/js/content-scripts
+	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js shared/js/content-scripts/*.js $(BUILD_DIR)/public/js/content-scripts
 	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
 	touch $@
 
