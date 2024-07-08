@@ -39,7 +39,7 @@
     "content_scripts": [
         {
             "js": [
-                "public/js/content-scripts/autofill.js" 
+                "public/js/content-scripts/autofill.js"
             ],
             "css": [
                 "public/css/autofill-host-styles.css"
