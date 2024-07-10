@@ -27,6 +27,9 @@ async function submitAndValidateReport (report) {
         spyOnProperty(tab.site, 'denylisted').and.returnValue(true)
     }
 
+    tab.userRefreshCount = report.userRefreshCount || 0
+    tab.locale = report.locale || 'en'
+
     const addRequest = (hostname, action, opts = {}) => {
         tab.addToTrackers({
             action,
@@ -62,8 +65,7 @@ async function submitAndValidateReport (report) {
     addActionRequests(report.noActionRequests, 'none')
 
     const mockedPageParams = {
-        userRefreshCount: 2,
-        jsPerformance: [123.45],
+        jsPerformance: [Number.parseFloat(report.jsPerformance)],
         docReferrer: 'http://example.com'
     }
 
