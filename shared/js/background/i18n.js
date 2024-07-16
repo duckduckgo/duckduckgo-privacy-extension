@@ -12,3 +12,11 @@ export function getUserLocale () {
     }
     return lang
 }
+
+export function getFullUserLocale () {
+    if (!browser?.i18n) {
+        return 'en-US'
+    }
+
+    return browser.i18n.getUILanguage()
+}

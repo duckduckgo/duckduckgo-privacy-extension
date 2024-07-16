@@ -123,7 +123,7 @@ describe('Tab', () => {
                 userRefreshCount: 0,
                 openerContext: null,
                 jsPerformance: [],
-                locale: 'en'
+                locale: 'en-US'
             }
             expect(tabClone.site.enabledFeatures.length).toBe(14)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))
