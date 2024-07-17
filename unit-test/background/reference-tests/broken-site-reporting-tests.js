@@ -28,7 +28,7 @@ async function submitAndValidateReport (report) {
     }
 
     tab.userRefreshCount = report.userRefreshCount || 0
-    tab.locale = report.locale || 'en'
+    tab.locale = report.locale || 'en-US'
 
     const addRequest = (hostname, action, opts = {}) => {
         tab.addToTrackers({
