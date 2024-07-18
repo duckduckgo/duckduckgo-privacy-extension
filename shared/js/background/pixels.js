@@ -1,5 +1,6 @@
 /* global BUILD_TARGET */
 import load from './load'
+import { getBrowserName } from './utils'
 
 /**
  *
@@ -20,8 +21,11 @@ export function sendPixelRequest (pixelName, params = {}) {
         return
     }
 
+    const browserName = getBrowserName() || 'unknown'
+
     const randomNum = Math.ceil(Math.random() * 1e7)
     const searchParams = new URLSearchParams(Object.entries(params))
-    const url = getURL(pixelName) + `?${randomNum}&${searchParams.toString()}`
+    const url = getURL(`${pixelName}_extension_${browserName}`) +
+        `?${randomNum}&${searchParams.toString()}`
     return load.url(url)
 }

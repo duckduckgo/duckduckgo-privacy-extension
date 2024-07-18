@@ -3,7 +3,7 @@ import { sendPixelRequest } from '../pixels'
 import { registerMessageHandler } from '../message-handlers'
 import { getDomain } from 'tldts'
 import tdsStorage from '../storage/tds'
-import { getBrowserName, isInstalledWithinDays, sendTabMessage } from '../utils'
+import { isInstalledWithinDays, sendTabMessage } from '../utils'
 import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage, createAlarm } from '../wrapper'
 
 /**
@@ -168,25 +168,25 @@ export default class EmailAutofill {
         const { pixelName } = options
         switch (pixelName) {
         case 'autofill_show':
-            this.fireAutofillPixel('email_tooltip_show_extension')
+            this.fireAutofillPixel('email_tooltip_show')
             break
         case 'autofill_private_address':
-            this.fireAutofillPixel('email_filled_random_extension', true)
+            this.fireAutofillPixel('email_filled_random', true)
             break
         case 'autofill_personal_address':
-            this.fireAutofillPixel('email_filled_main_extension', true)
+            this.fireAutofillPixel('email_filled_main', true)
             break
         case 'incontext_show':
-            fireIncontextSignupPixel('incontext_show_extension')
+            sendPixelRequest('incontext_show')
             break
         case 'incontext_primary_cta':
-            fireIncontextSignupPixel('incontext_primary_cta_extension')
+            sendPixelRequest('incontext_primary_cta')
             break
         case 'incontext_dismiss_persisted':
-            fireIncontextSignupPixel('incontext_dismiss_persisted_extension')
+            sendPixelRequest('incontext_dismiss_persisted')
             break
         case 'incontext_close_x':
-            fireIncontextSignupPixel('incontext_close_x_extension')
+            sendPixelRequest('incontext_close_x')
             break
         default:
             getFromSessionStorage('dev').then(isDev => {
@@ -196,14 +196,12 @@ export default class EmailAutofill {
     }
 
     fireAutofillPixel (pixel, shouldUpdateLastUsed = false) {
-        const browserName = getBrowserName() ?? 'unknown'
-
         const userData = this.settings.getSetting('userData')
         if (!userData?.userName) return
 
         const lastAddressUsedAt = this.settings.getSetting('lastAddressUsedAt') ?? ''
 
-        sendPixelRequest(getFullPixelName(pixel, browserName), { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
+        sendPixelRequest(pixel, { duck_address_last_used: lastAddressUsedAt, cohort: userData.cohort })
         if (shouldUpdateLastUsed) {
             this.settings.updateSetting('lastAddressUsedAt', currentDate())
         }
@@ -294,16 +292,6 @@ function currentDate () {
         timeZone: 'America/New_York',
         dateStyle: 'short'
     })
-}
-
-const getFullPixelName = (name, browserName) => {
-    return `${name}_${browserName.toLowerCase()}`
-}
-
-const fireIncontextSignupPixel = (pixel, params) => {
-    const browserName = getBrowserName() ?? 'unknown'
-
-    sendPixelRequest(getFullPixelName(pixel, browserName), params)
 }
 
 /**

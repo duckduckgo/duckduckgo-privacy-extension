@@ -7,7 +7,7 @@ import {
     AdClickAttributionPolicy,
     sendPageloadsWithAdAttributionPixelAndResetCount
 } from '../../shared/js/background/classes/ad-click-attribution-policy'
-import Tab from '../../shared/js/background/classes/tab'
+import tabManager from '../../shared/js/background/tab-manager'
 import trackers from '../../shared/js/background/trackers'
 import tdsStorage from '../../shared/js/background/storage/tds'
 import load from '../../shared/js/background/load'
@@ -69,22 +69,30 @@ describe('check policy', () => {
 
 describe('pixels', () => {
     const actualSentPixels = []
+    const tabId = 123
 
     const expectPixels = async ({
         startUrl, adClickUrl, heuristicDomain = null, navigations = [], policy,
         sendPageloadCountPixel = true, context, expectedPixels
     }) => {
         actualSentPixels.length = 0
-        let tab = new Tab({ tabId: 123, url: startUrl })
 
-        const adClickAttributionPolicy = createAdClickAttributionPolicy(policy)
-        const adClick = adClickAttributionPolicy.createAdClick(adClickUrl)
-        adClick.sendAdClickDetectedPixel(heuristicDomain)
-        for (const { url: navigationUrl, attributionRequestCount } of navigations) {
-            tab = new Tab({ tabId: 123, url: navigationUrl })
+        let tab = tabManager.create({ tabId, url: startUrl })
+        tab._adClickAttributionPolicy = createAdClickAttributionPolicy(policy)
+        tab.setAdClickIfValidRedirect(adClickUrl)
 
-            for (let i = 0; i < attributionRequestCount; i++) {
-                adClick.allowAdAttribution(tab)
+        tab.adClick.sendAdClickDetectedPixel(heuristicDomain)
+        for (const { url: navigationUrl, subRequests } of navigations) {
+            tab = tabManager.create({ tabId, url: navigationUrl })
+
+            for (const { url: subRequestUrl, allowed: expectedAllowed } of subRequests) {
+                const subRequestContext =
+                    `${context}\nSubrequest: ${subRequestUrl} ` +
+                      `${expectedAllowed ? 'should' : 'shouldn\'t'} be allowed.`
+
+                expect(tab.allowAdAttribution(subRequestUrl))
+                    .withContext(subRequestContext)
+                    .toEqual(expectedAllowed)
             }
         }
         if (sendPageloadCountPixel) {
@@ -122,8 +130,9 @@ describe('pixels', () => {
             sendPageloadCountPixel: false,
             context: 'No ad click domain available.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'none',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -141,8 +150,9 @@ describe('pixels', () => {
             sendPageloadCountPixel: false,
             context: 'Param domain ignored, no heuristic domain.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'none',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '0'
@@ -161,8 +171,9 @@ describe('pixels', () => {
             sendPageloadCountPixel: false,
             context: 'Heuristic domain ignored, no param domain.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'none',
                     heuristicDetectionEnabled: '0',
                     domainDetectionEnabled: '1'
@@ -182,8 +193,9 @@ describe('pixels', () => {
             sendPageloadCountPixel: false,
             context: 'All domains ignored.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'none',
                     heuristicDetectionEnabled: '0',
                     domainDetectionEnabled: '0'
@@ -199,8 +211,9 @@ describe('pixels', () => {
             sendPageloadCountPixel: false,
             context: 'Only param domain.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'serp_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -217,8 +230,9 @@ describe('pixels', () => {
             sendPageloadCountPixel: false,
             context: 'Only heuristic domain.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'heuristic_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -235,8 +249,9 @@ describe('pixels', () => {
             sendPageloadCountPixel: false,
             context: 'Domains match.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'matched',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -253,8 +268,9 @@ describe('pixels', () => {
             sendPageloadCountPixel: false,
             context: 'Domains match (with www. subdomain).',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'matched',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -271,8 +287,9 @@ describe('pixels', () => {
             sendPageloadCountPixel: false,
             context: 'Domains don\'t match.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'mismatch',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -287,13 +304,27 @@ describe('pixels', () => {
             policy: { },
             adClickUrl: 'https://duckduckgo.com/y.js?ad_domain=example.com',
             navigations: [
-                { url: 'https://foo.example/page', attributionRequestCount: 2 }
+                {
+                    url: 'https://foo.example/page',
+                    subRequests: [
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: false
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: false
+                        }
+                    ]
+                }
+
             ],
             sendPageloadCountPixel: false,
             context: 'Navigated to wrong domain, so not sent.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'serp_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -306,20 +337,76 @@ describe('pixels', () => {
             policy: { },
             adClickUrl: 'https://duckduckgo.com/y.js?ad_domain=example.com',
             navigations: [
-                { url: 'https://example.com/page', attributionRequestCount: 4 }
+                {
+                    url: 'https://example.com/page',
+                    subRequests: [
+                        {
+                            url: 'https://ad-company.example/tracker.js',
+                            allowed: false
+                        },
+                        {
+                            url: 'https://different.example.com/convert.js',
+                            allowed: false
+                        }
+                    ]
+                }
+
+            ],
+            sendPageloadCountPixel: false,
+            context: 'No allowed requests, so not sent.',
+            expectedPixels: [{
+                name: 'm_ad_click_detected_extension_chrome',
+                params: {
+                    appVersion: '1234.56',
+                    domainDetection: 'serp_only',
+                    heuristicDetectionEnabled: '1',
+                    domainDetectionEnabled: '1'
+                }
+            }]
+        })
+
+        await expectPixels({
+            startUrl: 'https://duckduckgo.com',
+            policy: { },
+            adClickUrl: 'https://duckduckgo.com/y.js?ad_domain=example.com',
+            navigations: [
+                {
+                    url: 'https://example.com/page',
+                    subRequests: [
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        }
+                    ]
+                }
             ],
             sendPageloadCountPixel: false,
             context: 'One navigation, four allowed requests.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'serp_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
                 }
             }, {
-                name: 'm_ad_click_active',
-                params: { }
+                name: 'm_ad_click_active_extension_chrome',
+                params: {
+                    appVersion: '1234.56'
+                }
             }]
         })
 
@@ -328,21 +415,56 @@ describe('pixels', () => {
             policy: { },
             adClickUrl: 'https://duckduckgo.com/y.js?ad_domain=example.com',
             navigations: [
-                { url: 'https://example.com/page', attributionRequestCount: 4 },
-                { url: 'https://example.com/page2', attributionRequestCount: 2 }
+                {
+                    url: 'https://example.com/page',
+                    subRequests: [
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        }
+                    ]
+                },
+                {
+                    url: 'https://example.com/page2',
+                    subRequests: [
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        }
+                    ]
+                }
             ],
             sendPageloadCountPixel: false,
             context: 'Two navigation, six allowed requests.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'serp_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
                 }
             }, {
-                name: 'm_ad_click_active',
-                params: { }
+                name: 'm_ad_click_active_extension_chrome',
+                params: {
+                    appVersion: '1234.56'
+                }
             }]
         })
     })
@@ -355,8 +477,9 @@ describe('pixels', () => {
             navigations: [],
             context: 'No navigations.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'serp_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -369,24 +492,92 @@ describe('pixels', () => {
             policy: { },
             adClickUrl: 'https://duckduckgo.com/y.js?ad_domain=example.com',
             navigations: [
-                { url: 'https://example.com/page', attributionRequestCount: 4 },
-                { url: 'https://example.com/page2', attributionRequestCount: 2 },
-                { url: 'https://foo.example/wrong', attributionRequestCount: 3 },
-                { url: 'https://example.com/page3', attributionRequestCount: 1 }
+                {
+                    url: 'https://example.com/page',
+                    subRequests: [
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        }
+                    ]
+                },
+                {
+                    url: 'https://example.com/page2',
+                    subRequests: [
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        }
+                    ]
+                },
+                {
+                    url: 'https://foo.example/wrong',
+                    subRequests: [
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: false
+                        },
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: false
+                        },
+                        {
+                            url: 'https://ad-company.example/tracker.js',
+                            allowed: false
+                        }
+                    ]
+                },
+                {
+                    url: 'https://example.com/page3',
+                    subRequests: [
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        }
+                    ]
+                },
+                {
+                    url: 'https://example.com/page4',
+                    subRequests: [
+                        {
+                            url: 'https://ad-company.example/tracker.js',
+                            allowed: false
+                        }
+                    ]
+                }
             ],
-            context: 'Four navigations (one wrong), seven allowed requests.',
+            context: 'Five navigations (one wrong), seven allowed requests.',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'serp_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
                 }
             }, {
-                name: 'm_ad_click_active',
-                params: { }
+                name: 'm_ad_click_active_extension_chrome',
+                params: {
+                    appVersion: '1234.56'
+                }
             }, {
-                name: 'm_pageloads_with_ad_attribution',
+                name: 'm_pageloads_with_ad_attribution_extension_chrome',
                 params: {
                     count: '3'
                 }
@@ -399,21 +590,32 @@ describe('pixels', () => {
             policy: { },
             adClickUrl: 'https://duckduckgo.com/y.js?ad_domain=example.com',
             navigations: [
-                { url: 'https://example.com/page', attributionRequestCount: 2 }
+                {
+                    url: 'https://example.com/page',
+                    subRequests: [
+                        {
+                            url: 'https://convert.ad-company.example/convert.js',
+                            allowed: true
+                        }
+                    ]
+                }
             ],
             context: 'One navigation, two allowed requests',
             expectedPixels: [{
-                name: 'm_ad_click_detected',
+                name: 'm_ad_click_detected_extension_chrome',
                 params: {
+                    appVersion: '1234.56',
                     domainDetection: 'serp_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
                 }
             }, {
-                name: 'm_ad_click_active',
-                params: { }
+                name: 'm_ad_click_active_extension_chrome',
+                params: {
+                    appVersion: '1234.56'
+                }
             }, {
-                name: 'm_pageloads_with_ad_attribution',
+                name: 'm_pageloads_with_ad_attribution_extension_chrome',
                 params: {
                     count: '1'
                 }

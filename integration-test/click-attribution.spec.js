@@ -20,10 +20,11 @@ for (let i = 0; i < testCases.length; i++) {
 }
 
 test.describe('Ad click blocking', () => {
+    let extensionVersion
     const backgroundPixels = []
     let clearBackgroundPixels
 
-    test.beforeEach(async ({ context, backgroundNetworkContext }) => {
+    test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
         if (clearBackgroundPixels) {
             clearBackgroundPixels()
         }
@@ -34,6 +35,10 @@ test.describe('Ad click blocking', () => {
         )
 
         await backgroundWait.forExtensionLoaded(context)
+
+        extensionVersion = await backgroundPage.evaluate(
+            () => chrome.runtime.getManifest().version
+        )
     })
 
     /**
@@ -119,6 +124,14 @@ test.describe('Ad click blocking', () => {
                 expect(backgroundPixels.length, `${step.name} expects the right number of pixels to fire`)
                     .toEqual(step.expected.pixels.length)
                 for (let i = 0; i < step.expected.pixels.length; i++) {
+                    // Integration tests only run on Chrome so far, so this is a
+                    // safe assumption for now.
+                    step.expected.pixels[i].name += '_extension_chrome'
+
+                    if (step.expected.pixels[i]?.params?.appVersion === 'EXTENSION_VERSION') {
+                        step.expected.pixels[i].params.appVersion = extensionVersion
+                    }
+
                     expect(backgroundPixels[i], `${step.name} expects pixel "${step.expected.pixels[i].name}" to have fired correctly.`)
                         .toEqual(step.expected.pixels[i])
                 }
