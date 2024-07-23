@@ -24,6 +24,7 @@ exports.expectedPixels = [
             {
                 name: 'm_ad_click_detected',
                 params: {
+                    appVersion: 'EXTENSION_VERSION',
                     domainDetection: 'heuristic_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -31,7 +32,9 @@ exports.expectedPixels = [
             },
             {
                 name: 'm_ad_click_active',
-                params: { }
+                params: {
+                    appVersion: 'EXTENSION_VERSION'
+                }
             },
             // After 24 hours the aggregate pixel fires.
             {
@@ -53,6 +56,7 @@ exports.expectedPixels = [
             {
                 name: 'm_ad_click_detected',
                 params: {
+                    appVersion: 'EXTENSION_VERSION',
                     domainDetection: 'heuristic_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -60,7 +64,9 @@ exports.expectedPixels = [
             },
             {
                 name: 'm_ad_click_active',
-                params: { }
+                params: {
+                    appVersion: 'EXTENSION_VERSION'
+                }
             },
             // After 24 hours the aggregate pixel fires.
             {
@@ -83,6 +89,7 @@ exports.expectedPixels = [
             {
                 name: 'm_ad_click_detected',
                 params: {
+                    appVersion: 'EXTENSION_VERSION',
                     domainDetection: 'matched',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -90,7 +97,9 @@ exports.expectedPixels = [
             },
             {
                 name: 'm_ad_click_active',
-                params: { }
+                params: {
+                    appVersion: 'EXTENSION_VERSION'
+                }
             },
             // After 24 hours the aggregate pixel fires.
             {
@@ -113,6 +122,7 @@ exports.expectedPixels = [
             {
                 name: 'm_ad_click_detected',
                 params: {
+                    appVersion: 'EXTENSION_VERSION',
                     domainDetection: 'matched',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -120,7 +130,9 @@ exports.expectedPixels = [
             },
             {
                 name: 'm_ad_click_active',
-                params: { }
+                params: {
+                    appVersion: 'EXTENSION_VERSION'
+                }
             },
             // After 24 hours the aggregate pixel fires.
             {
@@ -142,6 +154,7 @@ exports.expectedPixels = [
             {
                 name: 'm_ad_click_detected',
                 params: {
+                    appVersion: 'EXTENSION_VERSION',
                     domainDetection: 'heuristic_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -149,7 +162,9 @@ exports.expectedPixels = [
             },
             {
                 name: 'm_ad_click_active',
-                params: { }
+                params: {
+                    appVersion: 'EXTENSION_VERSION'
+                }
             }
         ],
         // Navigated to another page, two more requests allowed.
@@ -174,6 +189,7 @@ exports.expectedPixels = [
             {
                 name: 'm_ad_click_detected',
                 params: {
+                    appVersion: 'EXTENSION_VERSION',
                     domainDetection: 'heuristic_only',
                     heuristicDetectionEnabled: '1',
                     domainDetectionEnabled: '1'
@@ -181,7 +197,9 @@ exports.expectedPixels = [
             },
             {
                 name: 'm_ad_click_active',
-                params: { }
+                params: {
+                    appVersion: 'EXTENSION_VERSION'
+                }
             }
         ],
         // Navigated to another page, two more requests allowed.

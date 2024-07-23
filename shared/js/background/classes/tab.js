@@ -310,7 +310,12 @@ class Tab {
     allowAdAttribution (resourcePath) {
         if (!this.site.isFeatureEnabled('adClickAttribution') || !this.adClick || !this.adClick.allowAdAttribution(this)) return false
         const policy = this.getAdClickAttributionPolicy()
-        return policy.resourcePermitted(resourcePath)
+        const permitted = policy.resourcePermitted(resourcePath)
+        if (permitted) {
+            this.adClick.requestWasAllowed(this)
+        }
+
+        return permitted
     }
 
     updateSite (url) {

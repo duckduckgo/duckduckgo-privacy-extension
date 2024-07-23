@@ -12,6 +12,7 @@ const { getFeatureSettings, getBaseDomain } = require('../utils')
 const browserWrapper = require('../wrapper')
 const { getNextSessionRuleId } = require('../dnr-session-rule-id')
 
+const appVersion = browserWrapper.getExtensionVersion()
 const manifestVersion = browserWrapper.getManifestVersion()
 
 /**
@@ -254,6 +255,7 @@ export class AdClick {
         }
 
         sendPixelRequest('m_ad_click_detected', {
+            appVersion,
             domainDetection,
             heuristicDetectionEnabled: this.heuristicDetectionEnabled ? '1' : '0',
             domainDetectionEnabled: this.domainDetectionEnabled ? '1' : 0
@@ -293,33 +295,37 @@ export class AdClick {
     }
 
     /**
-     * For use of checking if a load should be permitted for a tab.
-     * Returns true if the policy hasn't expired and the ad domain matches the tab domain.
+     * Check if this AdClick is active for the tab and currently allowing
+     * requests. Returns true if it hasn't expired and the ad domain matches the
+     * tab domain.
      * @param {Tab} tab
      * @returns {boolean}
      */
     allowAdAttribution (tab) {
-        if (tab.site.baseDomain !== this.adBaseDomain) return false
-        const allowed = this.hasNotExpired()
+        return tab.site.baseDomain === this.adBaseDomain && this.hasNotExpired()
+    }
 
-        if (allowed) {
-            // If this is the first ad attribution request allowed for the tab,
-            // increment the count sent with the
-            // 'm_pageloads_with_ad_attribution' pixel.
-            if (!tab.firstAdAttributionAllowed) {
-                settings.incrementNumericSetting('m_pageloads_with_ad_attribution.count')
-                tab.firstAdAttributionAllowed = true
-            }
-
-            // If this is the first ad attribution request allowed for this
-            // AdClick, send the 'm_ad_click_active' pixel.
-            if (!this.adClickActivePixelSent) {
-                sendPixelRequest('m_ad_click_active')
-                this.adClickActivePixelSent = true
-            }
+    /**
+     * Called when a request has been allowed by the AdClickAttributionPolicy
+     * (only happens when this AdClick is active for the tab). Takes care of
+     * some housekeeping for the ad_attribution pixels.
+     * @param {Tab} tab
+     */
+    requestWasAllowed (tab) {
+        // If this is the first ad attribution request allowed for the tab,
+        // increment the count sent with the 'm_pageloads_with_ad_attribution'
+        // pixel.
+        if (!tab.firstAdAttributionAllowed) {
+            settings.incrementNumericSetting('m_pageloads_with_ad_attribution.count')
+            tab.firstAdAttributionAllowed = true
         }
 
-        return allowed
+        // If this is the first ad attribution request allowed for this AdClick,
+        // send the 'm_ad_click_active' pixel.
+        if (!this.adClickActivePixelSent) {
+            sendPixelRequest('m_ad_click_active', { appVersion })
+            this.adClickActivePixelSent = true
+        }
     }
 
     getAdClickDNR (tabId) {
