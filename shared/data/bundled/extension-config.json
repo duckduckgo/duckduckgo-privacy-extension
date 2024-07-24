@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1720535902632,
+    "version": 1721748106575,
     "features": {
         "adClickAttribution": {
             "readme": "https://help.duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#3rd-party-tracker-loading-protection",
@@ -336,6 +336,9 @@
                     "domain": "lotusbakeries.com"
                 },
                 {
+                    "domain": "harley-davidson.com"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
@@ -369,7 +372,15 @@
                 ]
             },
             "state": "disabled",
-            "hash": "875059316da5e15f71ee7c3fc60b32a5"
+            "hash": "eccbd517a8b327c9c4de727c5a6762e2"
+        },
+        "autofillBreakageReporter": {
+            "state": "disabled",
+            "settings": {
+                "monitorIntervalDays": 42
+            },
+            "exceptions": [],
+            "hash": "ebf35854bdf33091c165b35d418d5707"
         },
         "autofill": {
             "exceptions": [
@@ -1165,9 +1176,6 @@
                     "domain": "soranews24.com"
                 },
                 {
-                    "domain": "pointstreaksites.com"
-                },
-                {
                     "domain": "marvel.com"
                 },
                 {
@@ -1192,7 +1200,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "0b4e3ea3185c9a78514b08fd9f6cd87f"
+            "hash": "a802c2fa9ae427a99bb74f3a7dfb355c"
         },
         "cookie": {
             "settings": {
@@ -1542,6 +1550,10 @@
                         "type": "closest-empty"
                     },
                     {
+                        "selector": "#leaderboard-container",
+                        "type": "hide-empty"
+                    },
+                    {
                         "selector": ".leaderboard_wrapper",
                         "type": "hide-empty"
                     },
@@ -1567,6 +1579,10 @@
                     },
                     {
                         "selector": "#topAd",
+                        "type": "hide-empty"
+                    },
+                    {
+                        "selector": "#topad",
                         "type": "hide-empty"
                     },
                     {
@@ -2869,6 +2885,27 @@
                         ]
                     },
                     {
+                        "domain": "gizmodo.com",
+                        "rules": [
+                            {
+                                "selector": ".banner-top",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": ".od-wrapper",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".widget_keleops-ad",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[id^='optidigital-adslot-Billboard']",
+                                "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "google.com",
                         "rules": [
                             {
@@ -3814,7 +3851,7 @@
                                 "type": "hide"
                             },
                             {
-                                "selector": "[devicetype=\"desktop\"] .grid:not([style='filter: blur(4px);']) ~ shreddit-experience-tree",
+                                "selector": "[devicetype=\"desktop\"] .grid:not([style='filter: blur(4px);']) ~ shreddit-experience-tree:not([active-experiences='[\"nsfw_bypassable\"]'])",
                                 "type": "hide"
                             }
                         ]
@@ -4032,6 +4069,14 @@
                         "rules": [
                             {
                                 "selector": "[class^='styles__PubAdWrapper']",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[data-test='sponsored-text']",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[id^='btf-']",
                                 "type": "closest-empty"
                             }
                         ]
@@ -4591,7 +4636,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "5363eea5f911e326e75c79cc602194ed"
+            "hash": "f1b5bf3472a0e4828b9961794f306ebf"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -5407,6 +5452,36 @@
             "hash": "92dcc4583d0ef2dbfd8814f0df970fb4"
         },
         "performanceMetrics": {
+            "state": "disabled",
+            "exceptions": [
+                {
+                    "domain": "marvel.com"
+                },
+                {
+                    "domain": "sundancecatalog.com"
+                },
+                {
+                    "domain": "noaprints.com"
+                },
+                {
+                    "domain": "localhost"
+                },
+                {
+                    "domain": "127.0.0.1"
+                },
+                {
+                    "domain": "::1"
+                },
+                {
+                    "domain": "livenation.com"
+                },
+                {
+                    "domain": "ticketmaster.com"
+                }
+            ],
+            "hash": "5e2e5d75caafbf3ed108112a49563d7b"
+        },
+        "phishingDetection": {
             "state": "disabled",
             "exceptions": [
                 {
@@ -7221,6 +7296,7 @@
                                     "newschannel20.com",
                                     "newschannel9.com",
                                     "okcfox.com",
+                                    "pointstreaksites.com",
                                     "post-gazette.com",
                                     "raleighcw.com",
                                     "siouxlandnews.com",
@@ -8928,7 +9004,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "9092f77f7e3aef23bb76fafc18f72c59"
+            "hash": "9df9d955c8e4547e68b90f9b84325316"
         },
         "trackingCookies1p": {
             "settings": {
@@ -9103,6 +9179,9 @@
         "webCompat": {
             "exceptions": [
                 {
+                    "domain": "crocs.com"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
@@ -9128,7 +9207,7 @@
                 }
             ],
             "state": "disabled",
-            "hash": "1e9c6e4141cb04a2537fe72d55291e1b"
+            "hash": "e65df53e47a251ce0eede16cac04b91c"
         },
         "webViewBlobDownload": {
             "exceptions": [],
