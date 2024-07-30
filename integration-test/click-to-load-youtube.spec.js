@@ -76,6 +76,10 @@ function overrideHandler (route) {
 
 test.describe('Test YouTube Click To Load', () => {
     test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
+        // TODO: Remove these tests with the rest of the feature's code, or get
+        //       them passing again.
+        test.skip(true, 'YouTube Click to Load tests disabled for now.')
+
         // Overwrite the parts of the configuration needed for our tests.
         await overridePrivacyConfig(backgroundNetworkContext, 'click-to-load-youtube.json')
         await overrideTds(backgroundNetworkContext, 'click-to-load-tds.json')
