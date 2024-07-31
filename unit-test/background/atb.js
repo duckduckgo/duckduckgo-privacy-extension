@@ -293,7 +293,7 @@ describe('atb.getUninstallURL()', () => {
             expect(searchParams.get('atb')).toEqual(expectedAtb)
             expect(searchParams.get('set_atb')).toEqual(expectedSetAtb)
             expect(searchParams.get('browser')).toEqual('Chrome')
-            expect(searchParams.get('bv')).toEqual('108')
+            expect(searchParams.get('bv')).toEqual('127')
             expect(searchParams.get('v')).toEqual('1234.56')
         }
 
