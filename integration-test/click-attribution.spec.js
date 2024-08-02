@@ -2,21 +2,9 @@ import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 import { logPixels } from './helpers/pixels'
 import testCases from 'privacy-test-pages/adClickFlow/shared/testCases.json'
-import { expectedPixels } from './data/click-attribution-pixels'
 
 if (testCases.length === 0) {
     throw new Error('No test cases found')
-}
-
-// Populate the expected pixels for each test case.
-// TODO: Remove this once expected pixels are included in testCases.json.
-for (let i = 0; i < testCases.length; i++) {
-    let j = 0
-    for (; j < testCases[i].steps.length; j++) {
-        testCases[i].steps[j].expected.pixels = expectedPixels?.[i]?.[j + 1] || []
-    }
-
-    testCases[i].steps[j - 1].final = true
 }
 
 test.describe('Ad click blocking', () => {
@@ -77,6 +65,11 @@ test.describe('Ad click blocking', () => {
     }
 
     for (const testCase of testCases) {
+        // Make checking for the final pixels easier.
+        if (testCase?.steps?.length) {
+            testCase.steps[testCase.steps.length - 1].final = true
+        }
+
         // Allow to filter to one test case
         const itMethod = testCase.only ? test.only : test
         itMethod(testCase.name, async ({ context, backgroundPage }) => {
@@ -128,7 +121,7 @@ test.describe('Ad click blocking', () => {
                     // safe assumption for now.
                     step.expected.pixels[i].name += '_extension_chrome'
 
-                    if (step.expected.pixels[i]?.params?.appVersion === 'EXTENSION_VERSION') {
+                    if (step.expected.pixels[i]?.params?.appVersion === 'APP_VERSION') {
                         step.expected.pixels[i].params.appVersion = extensionVersion
                     }
 
