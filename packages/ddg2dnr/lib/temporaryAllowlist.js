@@ -11,7 +11,7 @@ const {
 
 /**
  * @typedef generateTemporaryAllowlistRulesResult
- * @property {import('./utils').DNRRule} rule
+ * @property {Omit<chrome.declarativeNetRequest.Rule, 'id'>} rule
  * @property {object} matchDetails
  */
 

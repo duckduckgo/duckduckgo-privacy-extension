@@ -131,19 +131,31 @@ function generateSmarterEncryptionRuleset (domains, startingRuleId = 1) {
 }
 
 /**
+ * @typedef {{
+ *   rule: Omit<chrome.declarativeNetRequest.Rule, 'id'>,
+ *   matchDetails: {
+ *     type: string;
+ *     possibleTrackerDomains?: string[];
+ *   };
+ * }} CreateSmarterEncryptionTemporaryRuleResult
+ */
+
+/**
  * Create a rule to disable or enable automatic HTTPS upgrades for a set of domains.
  *  - if type is 'allow' this will be an exception rule, preventing upgrades for the given domains.
  *  - if type is 'upgrade' this will be an upgradeScheme rule, causing requests for that domain to be upgraded to HTTPs.
+ *
+ * @overload
+ * @param {string[]} domains
+ * @param {'allow' | 'upgrade'} [type="allow"]
+ * @returns {CreateSmarterEncryptionTemporaryRuleResult}
+ *
+ * @overload
  * @param {string[]} domains
  * @param {'allow' | 'upgrade'} type 'allow' to create an allowlist rule, 'upgrade' to create an upgrade rule
- * @param {number} [id] (optional) rule ID
- * @returns {{
- *  rule: import('./utils.js').DNRRule;
- *  matchDetails: {
- *      type: string;
- *      possibleTrackerDomains?: string[];
- *  };
- *  }}
+ * @param {number} id (optional) rule ID
+ * @returns {Omit<CreateSmarterEncryptionTemporaryRuleResult, 'rule'> &
+              {rule: chrome.declarativeNetRequest.Rule}}
  */
 function createSmarterEncryptionTemporaryRule (domains, type = 'allow', id) {
     if (['allow', 'upgrade'].indexOf(type) === -1) {

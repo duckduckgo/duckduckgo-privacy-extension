@@ -51,40 +51,10 @@
 */
 /**
  * @typedef RulesetResult
- * @property {import('./utils.js').DNRRule[]} ruleset
+ * @property {chrome.declarativeNetRequest.Rule[]} ruleset
  *   The generated Tracker Blocking declarativeNetRequest ruleset.
  * @property {MatchDetailsByRuleId} matchDetailsByRuleId
  *   Rule ID -> match details.
- */
-
-/**
- * Unfortunately it's a little tricky to interact with TypeScript Enum types
- * from JavaScript code, assigning the literal value (even if valid) results in
- * a type coercion error. As a workaround, use the backtick syntax to get the
- * possible enum values and then use those values to declare new types.
- * Hopefully, interacting with Enums will get easier in the future and this can
- * be removed.
- * @typedef {`${chrome.declarativeNetRequest.DomainType}`} DomainType
- * @typedef {`${chrome.declarativeNetRequest.RequestMethod}`} RequestMethod
- * @typedef {`${chrome.declarativeNetRequest.ResourceType}` |
- *           'webbundle' | 'webtransport'} ResourceType
- * @typedef {`${chrome.declarativeNetRequest.RuleActionType}`} DNRRuleActionType
- * @typedef {Omit<chrome.declarativeNetRequest.RuleAction,
- *                'type' | 'redirect' | 'requestHeaders' | 'responseHeaders'> &
- *           {type: DNRRuleActionType, redirect?: object,
- *            requestHeaders?: object, responseHeaders?: object}} DNRRuleAction
- * @typedef {Omit<chrome.declarativeNetRequest.RuleCondition,
- *               'domainType' | 'excludedRequestMethods' |
- *               'excludedResourceTypes' | 'requestMethods' |
- *               'resourceTypes'> &
- *           {domainType?: DomainType, excludedRequestMethods?: RequestMethod[],
- *            excludedResourceTypes?: ResourceType[],
- *            requestMethods?: RequestMethod[],
- *            resourceTypes?: ResourceType[]}} DNRRuleCondition
- * @typedef {Omit<chrome.declarativeNetRequest.Rule,
- *                'id' | 'action' | 'condition'> &
- *           {id?: number, action: DNRRuleAction,
- *            condition: DNRRuleCondition}} DNRRule
  */
 
 // Tracker entries that 1. match cnames and 2. have rules that are anchored to
@@ -146,10 +116,34 @@ function storeInLookup (lookup, key, values) {
 }
 
 /**
+ * Helper to cast JavaScript strings to the TypeScript enum types expected by
+ * @types/chrome for declarativeNetRequest rules. Does not change the provided
+ * value, just helps appease the type checker!
+ *
+ * @overload
+ * @param {`${chrome.declarativeNetRequest.DomainType}`} s
+ * @returns {chrome.declarativeNetRequest.DomainType}
+ *
+ * @overload
+ * @param {`${chrome.declarativeNetRequest.RuleActionType}`} s
+ * @returns {chrome.declarativeNetRequest.RuleActionType}
+ *
+ * @overload
+ * @param {`${chrome.declarativeNetRequest.HeaderOperation}`} s
+ * @returns {chrome.declarativeNetRequest.HeaderOperation}
+ */
+function castDNREnum (s) {
+    return s
+}
+
+/**
+ * @typedef {`${chrome.declarativeNetRequest.ResourceType}` |
+ *           'webbundle' | 'webtransport'} ResourceType
+ *
  * @typedef {object} generateDNRRuleDetails
  * @property {number} [id]
  * @property {number} priority
- * @property {DNRRuleActionType} actionType
+ * @property {`${chrome.declarativeNetRequest.RuleActionType}`} actionType
  * @property {object} [redirect]
  * @property {object[]} [requestHeaders]
  * @property {object[]} [responseHeaders]
@@ -164,14 +158,20 @@ function storeInLookup (lookup, key, values) {
  * @property {boolean} [matchCase]
  * @property {number[]} [tabIds]
  * @property {number[]} [excludedTabIds]
- * @property {RequestMethod[]} [requestMethods]
- * @property {RequestMethod[]} [excludedRequestMethods]
+ * @property {`${chrome.declarativeNetRequest.RequestMethod}`[]} [requestMethods]
+ * @property {`${chrome.declarativeNetRequest.RequestMethod}`[]} [excludedRequestMethods]
  */
 
 /**
  * Generates a declarativeNetRequest rule with the given details.
+ *
+ * @overload
+ * @param {Omit<generateDNRRuleDetails, 'id'>} ruleDetails
+ * @returns {Omit<chrome.declarativeNetRequest.Rule, 'id'>}
+ *
+ * @overload
  * @param {generateDNRRuleDetails} ruleDetails
- * @return {DNRRule}
+ * @returns {chrome.declarativeNetRequest.Rule}
  */
 function generateDNRRule ({
     id, priority, actionType, redirect, requestHeaders, responseHeaders,
@@ -180,7 +180,7 @@ function generateDNRRule ({
     excludedInitiatorDomains, matchCase = false, tabIds, excludedTabIds,
     requestMethods, excludedRequestMethods
 }) {
-    /** @type {DNRRule} */
+    /** @type {Omit<chrome.declarativeNetRequest.Rule, 'id'> & {id?: number}} */
     const dnrRule = {
         priority,
         action: {
@@ -263,7 +263,7 @@ function generateDNRRule ({
             // Assume that if only one initiator domain is excluded (and there
             // is only one request domain), that the excluded initiator domain
             // is the same as the request domain.
-            dnrRule.condition.domainType = 'thirdParty'
+            dnrRule.condition.domainType = castDNREnum('thirdParty')
         } else {
             dnrRule.condition.excludedInitiatorDomains =
                 excludedInitiatorDomains
@@ -506,7 +506,7 @@ function processPlaintextTrackerRule (domain, trackerRule) {
 /**
  * Finds the closest matching tracker entry for the given domain. Returns the
  * tracking domain if one is found, null otherwise.
- * @param {Record<string, import('./utils.js').TrackerObj>} trackerEntries
+ * @param {Record<string, TrackerObj>} trackerEntries
  *   The trackers section of the Tracker Blocking configuration.
  * @param {string} domain
  *   The domain to search for. Subdomains will be stripped away until a matching
@@ -598,10 +598,11 @@ const resourceTypes = new Set([
     'webtransport', 'webbundle', 'other'
 ])
 
-exports.resourceTypes = resourceTypes
-exports.storeInLookup = storeInLookup
+exports.castDNREnum = castDNREnum
 exports.generateDNRRule = generateDNRRule
+exports.generateRequestDomainsByTrackerDomain = generateRequestDomainsByTrackerDomain
+exports.getTrackerEntryDomain = getTrackerEntryDomain
 exports.processRegexTrackerRule = processRegexTrackerRule
 exports.processPlaintextTrackerRule = processPlaintextTrackerRule
-exports.getTrackerEntryDomain = getTrackerEntryDomain
-exports.generateRequestDomainsByTrackerDomain = generateRequestDomainsByTrackerDomain
+exports.resourceTypes = resourceTypes
+exports.storeInLookup = storeInLookup

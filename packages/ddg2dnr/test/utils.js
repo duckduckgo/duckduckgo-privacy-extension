@@ -103,6 +103,7 @@ describe('generateDNRRule', () => {
         {
             // generateDNRRule considers the ID optional, so that it can be
             // populated later if necessary.
+            // @ts-ignore - Deliberately accessing missing ID
             const { id } = await generateDNRRule({
                 priority: 30,
                 actionType: 'block'

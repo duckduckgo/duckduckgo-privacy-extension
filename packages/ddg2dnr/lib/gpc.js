@@ -13,7 +13,7 @@ const GPC_HEADER_PRIORITY = 40000
  * @param {string[]=} allowedDomains
  *   Request domains not to add the header for. Note this also applies to
  *   initiator domains.
- * @return {import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule}
+ * @return {chrome.declarativeNetRequest.Rule}
  */
 function generateGPCheaderRule (ruleId, allowedDomains) {
     return generateDNRRule({
