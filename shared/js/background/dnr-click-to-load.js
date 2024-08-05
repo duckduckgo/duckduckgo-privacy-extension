@@ -11,7 +11,7 @@ import tdsStorage from './storage/tds'
  * mutated to note the new rule IDs as a side effect.
  * @param {string} ruleAction
  * @param {import('./classes/tab')} tab
- * @return {Promise<import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRule[]>}
+ * @return {Promise<DNRRuleWithID[]>}
  */
 async function generateDnrAllowingRules (tab, ruleAction) {
     // The necessary declarativeNetRequest allowing rules already exist for this

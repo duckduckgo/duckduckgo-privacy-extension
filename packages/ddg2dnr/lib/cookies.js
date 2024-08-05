@@ -10,7 +10,7 @@ const COOKIE_PRIORITY = 40000
  * @returns {import('./utils').RulesetResult} Cookie blocking rules
  */
 function generateCookieBlockingRuleset (tds, excludedCookieDomains, siteAllowlist, startingRuleId = 1) {
-    /** @type {import('./utils').DNRRule[]} */
+    /** @type {import('./utils').DNRRuleWithID[]} */
     const rules = []
     /** @type {Map<string, { domains: Set<string>, trackerDomains: Set<string> }>} */
     const entityDomainMapping = new Map()

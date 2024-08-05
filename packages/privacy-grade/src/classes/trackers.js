@@ -82,7 +82,7 @@ class Trackers {
 
     /**
      * @param {{
-     *    tldts: import('tldts'),
+     *    tldts?: import('tldts'),
      *    tldjs: import('tldts'),
      *    utils: *,
      * }} ops

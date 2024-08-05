@@ -51,7 +51,7 @@
 */
 /**
  * @typedef RulesetResult
- * @property {import('./utils.js').DNRRule[]} ruleset
+ * @property {DNRRuleWithID[]} ruleset
  *   The generated Tracker Blocking declarativeNetRequest ruleset.
  * @property {MatchDetailsByRuleId} matchDetailsByRuleId
  *   Rule ID -> match details.
@@ -81,10 +81,9 @@
  *            excludedResourceTypes?: ResourceType[],
  *            requestMethods?: RequestMethod[],
  *            resourceTypes?: ResourceType[]}} DNRRuleCondition
- * @typedef {Omit<chrome.declarativeNetRequest.Rule,
- *                'id' | 'action' | 'condition'> &
- *           {id?: number, action: DNRRuleAction,
- *            condition: DNRRuleCondition}} DNRRule
+ * @typedef {Omit<chrome.declarativeNetRequest.Rule, 'action' | 'condition'> &
+ *           {action: DNRRuleAction, condition: DNRRuleCondition}} DNRRuleWithID
+ * @typedef {Omit<DNRRuleWithID, 'id'> & {id?: number}} DNRRule
  */
 
 // Tracker entries that 1. match cnames and 2. have rules that are anchored to
@@ -170,8 +169,14 @@ function storeInLookup (lookup, key, values) {
 
 /**
  * Generates a declarativeNetRequest rule with the given details.
+ *
+ * @overload
+ * @param {Omit<generateDNRRuleDetails, 'id'>} ruleDetails
+ * @returns {DNRRule}
+ *
+ * @overload
  * @param {generateDNRRuleDetails} ruleDetails
- * @return {DNRRule}
+ * @returns {DNRRuleWithID}
  */
 function generateDNRRule ({
     id, priority, actionType, redirect, requestHeaders, responseHeaders,
@@ -506,7 +511,7 @@ function processPlaintextTrackerRule (domain, trackerRule) {
 /**
  * Finds the closest matching tracker entry for the given domain. Returns the
  * tracking domain if one is found, null otherwise.
- * @param {Record<string, import('./utils.js').TrackerObj>} trackerEntries
+ * @param {Record<string, TrackerObj>} trackerEntries
  *   The trackers section of the Tracker Blocking configuration.
  * @param {string} domain
  *   The domain to search for. Subdomains will be stripped away until a matching
