@@ -215,8 +215,7 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
             let ruleId = 10000
             blockAndAllowRules = ruleset
             for (const { rule } of generateTrackerAllowlistRules(mockConfig)) {
-                rule.id = ruleId++
-                blockAndAllowRules.push(rule)
+                blockAndAllowRules.push({ id: ruleId++, ...rule })
             }
         })
         this.beforeEach(/** @this {testFunction} */ async function () {

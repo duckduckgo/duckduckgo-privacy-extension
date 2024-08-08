@@ -8,7 +8,7 @@ const AMP_PROTECTION_PRIORITY = 40000
 
 /**
  * @typedef generateAmpProtectionRulesResult
- * @property {import('./utils').DNRRule} rule
+ * @property {Omit<chrome.declarativeNetRequest.Rule, 'id'>} rule
  * @property {object} matchDetails
  */
 

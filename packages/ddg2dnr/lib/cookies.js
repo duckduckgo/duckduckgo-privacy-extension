@@ -1,4 +1,9 @@
-const { generateRequestDomainsByTrackerDomain, getTrackerEntryDomain, storeInLookup } = require('./utils')
+const {
+    castDNREnum,
+    generateRequestDomainsByTrackerDomain,
+    getTrackerEntryDomain,
+    storeInLookup
+} = require('./utils')
 
 const COOKIE_PRIORITY = 40000
 
@@ -10,7 +15,7 @@ const COOKIE_PRIORITY = 40000
  * @returns {import('./utils').RulesetResult} Cookie blocking rules
  */
 function generateCookieBlockingRuleset (tds, excludedCookieDomains, siteAllowlist, startingRuleId = 1) {
-    /** @type {import('./utils').DNRRule[]} */
+    /** @type {chrome.declarativeNetRequest.Rule[]} */
     const rules = []
     /** @type {Map<string, { domains: Set<string>, trackerDomains: Set<string> }>} */
     const entityDomainMapping = new Map()
@@ -66,9 +71,15 @@ function generateCookieBlockingRuleset (tds, excludedCookieDomains, siteAllowlis
             id: startingRuleId++,
             priority: COOKIE_PRIORITY,
             action: {
-                type: 'modifyHeaders',
-                requestHeaders: [{ header: 'cookie', operation: 'remove' }],
-                responseHeaders: [{ header: 'set-cookie', operation: 'remove' }]
+                type: castDNREnum('modifyHeaders'),
+                requestHeaders: [{
+                    header: 'cookie',
+                    operation: castDNREnum('remove')
+                }],
+                responseHeaders: [{
+                    header: 'set-cookie',
+                    operation: castDNREnum('remove')
+                }]
             },
             condition: {
                 requestDomains: Array.from(trackerDomains),
@@ -87,14 +98,20 @@ function generateCookieBlockingRuleset (tds, excludedCookieDomains, siteAllowlis
             id: ++startingRuleId,
             priority: COOKIE_PRIORITY,
             action: {
-                type: 'modifyHeaders',
-                requestHeaders: [{ header: 'cookie', operation: 'remove' }],
-                responseHeaders: [{ header: 'set-cookie', operation: 'remove' }]
+                type: castDNREnum('modifyHeaders'),
+                requestHeaders: [{
+                    header: 'cookie',
+                    operation: castDNREnum('remove')
+                }],
+                responseHeaders: [{
+                    header: 'set-cookie',
+                    operation: castDNREnum('remove')
+                }]
             },
             condition: {
                 requestDomains: singleDomainEntityDomains,
                 excludedInitiatorDomains: siteAllowlist,
-                domainType: 'thirdParty'
+                domainType: castDNREnum('thirdParty')
             }
         })
         matchDetailsByRuleId[startingRuleId] = {

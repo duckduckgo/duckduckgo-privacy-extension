@@ -480,7 +480,7 @@ function finalizeDNRRulesAndLookup (startingRuleId, dnrRules) {
 
 /**
  * @typedef {object} generateTdsRulesetResult
- * @property {import('./utils.js').DNRRule[]} ruleset
+ * @property {chrome.declarativeNetRequest.Rule[]} ruleset
  *   The generated Tracker Blocking declarativeNetRequest ruleset.
  * @property {object} matchDetailsByRuleId
  *   Rule ID -> match details.

@@ -23,7 +23,7 @@ const MAXIMUM_RULES_PER_TRACKER_ENTRY = (CEILING_PRIORITY - BASELINE_PRIORITY) /
 
 /**
  * @typedef generateTrackerAllowlistRulesResult
- * @property {import('./utils').DNRRule} rule
+ * @property {Omit<chrome.declarativeNetRequest.Rule, 'id'>} rule
  * @property {object} matchDetails
  */
 

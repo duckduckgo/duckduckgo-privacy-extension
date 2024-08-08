@@ -329,9 +329,15 @@ export class AdClick {
     }
 
     getAdClickDNR (tabId) {
+        const id = getNextSessionRuleId()
+        if (typeof id !== 'number') {
+            console.error('Failed to create ad click attribution rule.')
+            return
+        }
+
         const adClickDNR = {
             rule: generateDNRRule({
-                id: null,
+                id,
                 priority: AD_ATTRIBUTION_POLICY_PRIORITY,
                 actionType: 'allow',
                 requestDomains: this.allowlist.map((entry) => entry.host)
@@ -349,9 +355,13 @@ export class AdClick {
     }
 
     createDNR (tabId) {
-        this.adClickDNR = this.getAdClickDNR(tabId)
-        this.adClickDNR.rule.id = getNextSessionRuleId()
-        chrome.declarativeNetRequest.updateSessionRules({ addRules: [this.adClickDNR.rule] })
+        const adClickDNR = this.getAdClickDNR(tabId)
+        if (adClickDNR) {
+            this.adClickDNR = adClickDNR
+            chrome.declarativeNetRequest.updateSessionRules({
+                addRules: [this.adClickDNR.rule]
+            })
+        }
     }
 
     updateDNR () {
