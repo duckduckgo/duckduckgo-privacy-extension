@@ -29,7 +29,7 @@ import {
  * ensured.
  * @param {number} id
  * @param {string} etag
- * @returns {DNRRuleWithID}
+ * @returns {import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRuleWithID}
  */
 function generateEtagRule (id, etag) {
     return generateDNRRule({
@@ -111,7 +111,7 @@ function minimalConfig ({ unprotectedTemporary, features }) {
  * for a configuration.
  * @param {string} configName
  * @param {Object} latestState
- * @param {DNRRuleWithID[]} rules
+ * @param {import('@duckduckgo/ddg2dnr/lib/utils.js').DNRRuleWithID[]} rules
  * @param {Object} matchDetailsByRuleId
  * @returns {Promise<>}
  */

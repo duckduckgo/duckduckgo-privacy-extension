@@ -69,20 +69,9 @@
  * @typedef {`${chrome.declarativeNetRequest.ResourceType}` |
  *           'webbundle' | 'webtransport'} ResourceType
  * @typedef {`${chrome.declarativeNetRequest.RuleActionType}`} DNRRuleActionType
- * @typedef {Omit<chrome.declarativeNetRequest.RuleAction,
- *                'type' | 'redirect' | 'requestHeaders' | 'responseHeaders'> &
- *           {type: DNRRuleActionType, redirect?: object,
- *            requestHeaders?: object, responseHeaders?: object}} DNRRuleAction
- * @typedef {Omit<chrome.declarativeNetRequest.RuleCondition,
- *               'domainType' | 'excludedRequestMethods' |
- *               'excludedResourceTypes' | 'requestMethods' |
- *               'resourceTypes'> &
- *           {domainType?: DomainType, excludedRequestMethods?: RequestMethod[],
- *            excludedResourceTypes?: ResourceType[],
- *            requestMethods?: RequestMethod[],
- *            resourceTypes?: ResourceType[]}} DNRRuleCondition
- * @typedef {Omit<chrome.declarativeNetRequest.Rule, 'action' | 'condition'> &
- *           {action: DNRRuleAction, condition: DNRRuleCondition}} DNRRuleWithID
+ * @typedef {chrome.declarativeNetRequest.RuleAction} DNRRuleAction
+ * @typedef {chrome.declarativeNetRequest.RuleCondition} DNRRuleCondition
+ * @typedef {chrome.declarativeNetRequest.Rule} DNRRuleWithID
  * @typedef {Omit<DNRRuleWithID, 'id'> & {id?: number}} DNRRule
  */
 
@@ -268,7 +257,7 @@ function generateDNRRule ({
             // Assume that if only one initiator domain is excluded (and there
             // is only one request domain), that the excluded initiator domain
             // is the same as the request domain.
-            dnrRule.condition.domainType = 'thirdParty'
+            dnrRule.condition.domainType = domainType('thirdParty')
         } else {
             dnrRule.condition.excludedInitiatorDomains =
                 excludedInitiatorDomains
@@ -292,6 +281,14 @@ function generateDNRRule ({
     }
 
     return dnrRule
+}
+
+/**
+ * @param {`${chrome.declarativeNetRequest.DomainType}`} type
+ * @returns {chrome.declarativeNetRequest.DomainType}
+ */
+function domainType(type) {
+    return /** @type {chrome.declarativeNetRequest.DomainType} */(type)
 }
 
 function alphaChar (charCode) {

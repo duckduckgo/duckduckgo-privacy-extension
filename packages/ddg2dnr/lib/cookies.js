@@ -66,9 +66,9 @@ function generateCookieBlockingRuleset (tds, excludedCookieDomains, siteAllowlis
             id: startingRuleId++,
             priority: COOKIE_PRIORITY,
             action: {
-                type: 'modifyHeaders',
-                requestHeaders: [{ header: 'cookie', operation: 'remove' }],
-                responseHeaders: [{ header: 'set-cookie', operation: 'remove' }]
+                type: ruleAction('modifyHeaders'),
+                requestHeaders: [{ header: 'cookie', operation: headerOp('remove') }],
+                responseHeaders: [{ header: 'set-cookie', operation: headerOp('remove') }]
             },
             condition: {
                 requestDomains: Array.from(trackerDomains),
@@ -87,14 +87,14 @@ function generateCookieBlockingRuleset (tds, excludedCookieDomains, siteAllowlis
             id: ++startingRuleId,
             priority: COOKIE_PRIORITY,
             action: {
-                type: 'modifyHeaders',
-                requestHeaders: [{ header: 'cookie', operation: 'remove' }],
-                responseHeaders: [{ header: 'set-cookie', operation: 'remove' }]
+                type: ruleAction('modifyHeaders'),
+                requestHeaders: [{ header: 'cookie', operation: headerOp('remove') }],
+                responseHeaders: [{ header: 'set-cookie', operation: headerOp('remove') }]
             },
             condition: {
                 requestDomains: singleDomainEntityDomains,
                 excludedInitiatorDomains: siteAllowlist,
-                domainType: 'thirdParty'
+                domainType: domainType('thirdParty')
             }
         })
         matchDetailsByRuleId[startingRuleId] = {
@@ -107,6 +107,28 @@ function generateCookieBlockingRuleset (tds, excludedCookieDomains, siteAllowlis
         ruleset: rules,
         matchDetailsByRuleId
     }
+}
+
+/**
+ * @param {`${chrome.declarativeNetRequest.DomainType}`} type
+ * @returns {chrome.declarativeNetRequest.DomainType}
+ */
+function domainType(type) {
+    return /** @type {chrome.declarativeNetRequest.DomainType} */(type)
+}
+/**
+ * @param {`${chrome.declarativeNetRequest.RuleActionType}`} rule
+ * @returns {chrome.declarativeNetRequest.RuleActionType}
+ */
+function ruleAction(rule) {
+    return /** @type {chrome.declarativeNetRequest.RuleActionType} */(rule)
+}
+/**
+ * @param {`${chrome.declarativeNetRequest.HeaderOperation}`} op
+ * @returns {chrome.declarativeNetRequest.HeaderOperation}
+ */
+function headerOp(op) {
+  return /** @type {chrome.declarativeNetRequest.HeaderOperation} */(op)
 }
 
 exports.generateCookieBlockingRuleset = generateCookieBlockingRuleset
