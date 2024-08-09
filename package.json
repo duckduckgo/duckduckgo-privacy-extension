@@ -31,7 +31,7 @@
     },
     "devDependencies": {
         "@fingerprintjs/fingerprintjs": "^4.4.1",
-        "@playwright/test": "^1.44.1",
+        "@playwright/test": "^1.46.0",
         "@types/chrome": "^0.0.268",
         "@types/jasmine": "^4.3.5",
         "@types/node": "^20.14.2",
