@@ -137,11 +137,14 @@ describe('atb.setInitialVersions()', () => {
 
     it('should try hitting atb.js a few times if it\'s down', (done) => {
         settingHelper.stub({ atb: null })
-        const loadJSONSpy = spyOn(load, 'JSONfromExternalFile').and.returnValues(
-            Promise.reject(new Error()),
-            Promise.reject(new Error()),
-            Promise.resolve({ data: { version: 'v111-5' } })
-        )
+
+        let i = 0
+        const loadJSONSpy = spyOn(load, 'JSONfromExternalFile').and.callFake(() => {
+            if (i++ < 2) {
+                return Promise.reject(new Error())
+            }
+            return Promise.resolve({ data: { version: 'v111-5' } })
+        })
 
         atb.setInitialVersions().then(() => {
             expect(loadJSONSpy).toHaveBeenCalledTimes(3)

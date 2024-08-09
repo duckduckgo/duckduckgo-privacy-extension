@@ -1,5 +1,7 @@
 const chrome = {
     alarms: {
+        create () { },
+        get () { },
         onAlarm: {
             addListener () { },
             removeListener () { }
