@@ -1,5 +1,0 @@
-[
-    {"tracker": "https://google-analytics.com/ga.js", "site": "https://reddit.com", "req": {"type": "script"}, "result": {"action": "redirect", "sameEntity": false, "reason": "matched rule - surrogate"}},
-    {"tracker": "https://google-analytics.com/ga.js", "site": "https://google.com", "req": {"type": "script"}, "result": {"action": "ignore", "sameEntity": true, "reason": "first party"}},
-    {"tracker": "https://yahoo.com/", "site": "https://facebook.com", "req": {"type": "image"}, "result": {"action": "block", "sameEntity": false, "reason": "default block"}}
-]
