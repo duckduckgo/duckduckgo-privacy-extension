@@ -1,9 +1,0 @@
-language: node_js
-node_js:
-  - 16
-before_script:
-  - npm install -g grunt-cli
-script: npm run lint && npm test
-cache:
-  directories:
-    - "node_modules"
