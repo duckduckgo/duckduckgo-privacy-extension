@@ -413,7 +413,7 @@ export function getURLWithoutQueryString (urlString) {
 export async function reloadCurrentTab () {
     const tab = await getCurrentTab()
     if (tab && tab.id) {
-        browser.tabs.reload(tab.id)
+        await browser.tabs.reload(tab.id)
     }
 }
 

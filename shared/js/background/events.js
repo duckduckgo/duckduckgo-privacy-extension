@@ -20,6 +20,7 @@ import { clearExpiredBrokenSiteReportTimes } from './broken-site-report'
 import {
     sendPageloadsWithAdAttributionPixelAndResetCount
 } from './classes/ad-click-attribution-policy'
+import { popupConnectionOpened, postPopupMessage } from './popupMessaging'
 const utils = require('./utils')
 const experiment = require('./experiments')
 const settings = require('./settings')
@@ -285,7 +286,7 @@ browser.webRequest.onHeadersReceived.addListener(
  */
 // message popup to close when the active tab changes.
 browser.tabs.onActivated.addListener(() => {
-    browserWrapper.notifyPopup({ closePopup: true })
+    postPopupMessage({ messageType: 'closePopup' })
 })
 
 // Include the performanceWarning flag in breakage reports.
@@ -350,6 +351,13 @@ browser.runtime.onMessage.addListener((req, sender) => {
 
     console.error('Unrecognized message to background:', req, sender)
     return false
+})
+
+// Handle popup UI (aka privacy dashboard) messaging.
+browser.runtime.onConnect.addListener(port => {
+    if (port.name === 'privacy-dashboard') {
+        popupConnectionOpened(port, messageHandlers)
+    }
 })
 
 /*

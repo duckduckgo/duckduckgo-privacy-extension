@@ -1,6 +1,7 @@
 const TopBlocked = require('./classes/top-blocked')
 const Company = require('./classes/company')
 const browserWrapper = require('./wrapper')
+const { postPopupMessage } = require('./popupMessaging')
 
 const Companies = (() => {
     let companyContainer = {}
@@ -87,8 +88,7 @@ const Companies = (() => {
             totalPagesWithTrackers = 0
             lastStatsResetDate = Date.now()
             Companies.syncToStorage()
-            const resetDate = Companies.getLastResetDate()
-            browserWrapper.notifyPopup({ didResetTrackersData: resetDate })
+            postPopupMessage({ messageType: 'didResetTrackersData' })
         },
 
         getLastResetDate: () => lastStatsResetDate,
