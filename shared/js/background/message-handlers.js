@@ -91,35 +91,22 @@ export function openOptions () {
 export async function submitBrokenSiteReport (breakageReport) {
     const { category, description } = breakageReport
 
-    const currentTab = await utils.getCurrentTab()
-    if (!currentTab?.id) {
+    // Await for storage to be ready; this happens on service worker closing mostly.
+    await settings.ready()
+    await tdsStorage.ready('config')
+
+    const tab = await tabManager.getOrRestoreCurrentTab()
+    if (!tab) {
         console.error('could not access the current tab...')
         return
     }
 
-    const tab = await getTab(currentTab.id)
-    if (!tab) {
-        console.error('cannot access current tab with ID ' + currentTab.id)
-        return
-    }
-
-    const pageParams = await browser.tabs.sendMessage(currentTab.id, { getBreakagePageParams: true }) || {}
+    const pageParams = await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true }) || {}
 
     const tds = settings.getSetting('tds-etag')
     const remoteConfigEtag = settings.getSetting('config-etag')
     const remoteConfigVersion = tdsStorage.config.version
     return breakageReportForTab({ tab, tds, remoteConfigEtag, remoteConfigVersion, category, description, pageParams })
-}
-
-/**
- * @param tabId
- * @returns {Promise<import("./classes/tab")>}
- */
-async function getTab (tabId) {
-    // Await for storage to be ready; this happens on service worker closing mostly.
-    await settings.ready()
-    await tdsStorage.ready('config')
-    return tabManager.getOrRestoreTab(tabId)
 }
 
 /**
@@ -138,7 +125,12 @@ export async function getPrivacyDashboardData (options) {
         }
         tabId = currentTab?.id
     }
-    const tab = await getTab(tabId)
+
+    // Await for storage to be ready; this happens on service worker closing mostly.
+    await settings.ready()
+    await tdsStorage.ready('config')
+
+    const tab = await tabManager.getOrRestoreTab(tabId)
     if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
     const fireButtonData = {
@@ -201,10 +193,6 @@ export async function getYouTubeVideoDetails (videoURL) {
     } catch (e) {
         return { status: 'failed', videoURL }
     }
-}
-
-export function getCurrentTab () {
-    return utils.getCurrentTab()
 }
 
 export async function unblockClickToLoadContent (data, sender) {
@@ -366,12 +354,10 @@ const messageHandlers = {
     getBrowser,
     openOptions,
     submitBrokenSiteReport,
-    getTab,
     getPrivacyDashboardData,
     getTopBlockedByPages,
     getClickToLoadState,
     getYouTubeVideoDetails,
-    getCurrentTab,
     unblockClickToLoadContent,
     updateYouTubeCTLAddedFlag,
     updateFacebookCTLBreakageFlags,
