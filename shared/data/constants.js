@@ -130,7 +130,7 @@ module.exports = {
         },
         {
             name: 'config',
-            url: getConfigFileName(),
+            url: 'https://jsonblob.com/api/1281236405081464832',
             format: 'json',
             source: 'external'
         }
