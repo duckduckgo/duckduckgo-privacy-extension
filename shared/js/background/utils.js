@@ -471,3 +471,18 @@ export function daysInstalled (fromDate = Date.now(), atb = settings.getSetting(
 
     return (fromDate - installTimestamp) / dayMultiplier
 }
+
+/**
+ * Returns a Promise that resolves after the given number of milliseconds.
+ * Note: The background ServiceWorker might be restarted before the returned
+ *       Promise is resolved. Consider the implications of that happening when
+ *       using this function.
+ *
+ * {number} delay (milliseconds)
+ * {returns} Promise<void>
+ */
+export function resolveAfterDelay (delay) {
+    return new Promise(resolve => {
+        setTimeout(resolve, delay)
+    })
+}
