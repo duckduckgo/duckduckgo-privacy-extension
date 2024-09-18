@@ -41,7 +41,10 @@ export default function initDebugBuild () {
         getListContents,
         companies: Companies,
         ntts: createNewtabTrackerStatsDebugApi(),
-        sendPageloadsWithAdAttributionPixelAndResetCount
+        sendPageloadsWithAdAttributionPixelAndResetCount,
+        resetToggleReports () {
+            settings.updateSetting('toggleReportTimes', [])
+        }
     }
 
     // mark this as a dev build

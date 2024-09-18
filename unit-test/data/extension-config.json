@@ -208,6 +208,22 @@
                     "reason": "Breaks images on deezer"
                 }
             ]
+        },
+        "toggleReports": {
+            "state": "enabled",
+            "exceptions": [
+                {
+                    "domain": "no-toggle-reports.example",
+                    "reason": "Testing"
+                }
+            ],
+            "settings": {
+                "dismissLogicEnabled": true,
+                "dismissInterval": 86400,
+                "promptLimitLogicEnabled": true,
+                "promptInterval": 172800,
+                "maxPromptCount": 3
+            }
         }
     },
     "unprotectedTemporary": [

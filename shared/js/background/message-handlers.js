@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
-import { breakageReportForTab } from './broken-site-report'
+import { sendBreakageReportForCurrentTab } from './broken-site-report'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string'
 import { getExtensionURL } from './wrapper'
 import { isFeatureEnabled, reloadCurrentTab } from './utils'
@@ -9,6 +9,7 @@ import tdsStorage from './storage/tds'
 import { getArgumentsObject } from './helpers/arguments-object'
 import { isFireButtonEnabled } from './components/fire-button'
 import { postPopupMessage } from './popupMessaging'
+import ToggleReports from './components/toggle-reports'
 const utils = require('./utils')
 const settings = require('./settings')
 const tabManager = require('./tab-manager')
@@ -51,11 +52,26 @@ export function setList (options) {
  * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').SetListOptions} options
  */
 export async function setLists (options) {
+    // Is the user clicking to disable protections for the website (aka
+    // allowlisting the website), or enabling protections for the website again?
+    let allowlisting = false
+
     // TODO: Consider making these tabManager.setList calls concurrently with
     //       Promise.all, but first verify that works in practice (e.g. with
     //       simultaneous DNR rule updates).
     for (const listItem of options.lists) {
+        if (listItem.value && listItem.list === 'allowlisted') {
+            allowlisting = true
+        }
         await tabManager.setList(listItem)
+    }
+
+    // If the user is disabling protections for the page and the conditions are
+    // met, display a prompt asking the user to send a breakage report before
+    // reloading the page.
+    if (allowlisting && await ToggleReports.shouldDisplay()) {
+        postPopupMessage({ messageType: 'toggleReport' })
+        return
     }
 
     try {
@@ -88,25 +104,10 @@ export function openOptions () {
  * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').BreakageReportRequest} breakageReport
  * @returns {Promise<void>}
  */
-export async function submitBrokenSiteReport (breakageReport) {
+export function submitBrokenSiteReport (breakageReport) {
+    const pixelName = 'epbf'
     const { category, description } = breakageReport
-
-    // Await for storage to be ready; this happens on service worker closing mostly.
-    await settings.ready()
-    await tdsStorage.ready('config')
-
-    const tab = await tabManager.getOrRestoreCurrentTab()
-    if (!tab) {
-        console.error('could not access the current tab...')
-        return
-    }
-
-    const pageParams = await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true }) || {}
-
-    const tds = settings.getSetting('tds-etag')
-    const remoteConfigEtag = settings.getSetting('config-etag')
-    const remoteConfigVersion = tdsStorage.config.version
-    return breakageReportForTab({ tab, tds, remoteConfigEtag, remoteConfigVersion, category, description, pageParams })
+    return sendBreakageReportForCurrentTab({ pixelName, category, description })
 }
 
 /**

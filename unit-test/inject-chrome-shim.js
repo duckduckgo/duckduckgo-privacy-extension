@@ -78,7 +78,8 @@ const chrome = {
             removeListener () { }
         },
         sendMessage: () => {},
-        query: () => Promise.resolve([])
+        query: () => Promise.resolve([]),
+        reload: () => Promise.resolve()
     },
     webNavigation: {
         onCommitted: {
