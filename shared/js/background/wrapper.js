@@ -53,14 +53,6 @@ export function getExtensionId () {
     return browser.runtime.id
 }
 
-export async function notifyPopup (message) {
-    try {
-        await browser.runtime.sendMessage(message)
-    } catch {
-        // Ignore this as can throw an error message when the popup is not open.
-    }
-}
-
 /**
  * @param {browser.WebRequest.OnBeforeRedirectDetailsType | browser.Tabs.Tab | browser.Tabs.OnUpdatedChangeInfoType} tabData
  * @returns {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}}

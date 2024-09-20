@@ -2,12 +2,13 @@ import browser from 'webextension-polyfill'
 import { dashboardDataFromTab } from './classes/privacy-dashboard-data'
 import { breakageReportForTab } from './broken-site-report'
 import parseUserAgentString from '../shared-utils/parse-user-agent-string'
-import { getExtensionURL, notifyPopup } from './wrapper'
+import { getExtensionURL } from './wrapper'
 import { isFeatureEnabled, reloadCurrentTab } from './utils'
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load'
 import tdsStorage from './storage/tds'
 import { getArgumentsObject } from './helpers/arguments-object'
 import { isFireButtonEnabled } from './components/fire-button'
+import { postPopupMessage } from './popupMessaging'
 const utils = require('./utils')
 const settings = require('./settings')
 const tabManager = require('./tab-manager')
@@ -58,8 +59,8 @@ export async function setLists (options) {
     }
 
     try {
-        notifyPopup({ closePopup: true })
-        reloadCurrentTab()
+        postPopupMessage({ messageType: 'closePopup' })
+        await reloadCurrentTab()
     } catch (e) {
         console.error('Error trying to reload+refresh following `setLists` message', e)
     }

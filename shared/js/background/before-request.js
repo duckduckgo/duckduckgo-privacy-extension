@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill'
 import EventEmitter2 from 'eventemitter2'
 import ATB from './atb'
+import { postPopupMessage } from './popupMessaging'
 
 const utils = require('./utils')
 const trackers = require('./trackers')
@@ -331,7 +332,7 @@ function blockHandleResponse (thisTab, requestData) {
             }
         }
         // the tab has finished loading
-        browserWrapper.notifyPopup({ updateTabData: true })
+        postPopupMessage({ messageType: 'updateTabData' })
         // Block the request if the site is not allowlisted
         if (['block', 'redirect'].includes(tracker.action)) {
             // @ts-ignore
