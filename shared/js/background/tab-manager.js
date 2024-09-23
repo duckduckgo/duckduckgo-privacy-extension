@@ -11,6 +11,7 @@ const {
 const {
     clearClickToLoadDnrRulesForTab
 } = require('./dnr-click-to-load')
+const { getCurrentTab } = require('./utils')
 
 /**
  * @typedef {import('./classes/site.js').allowlistName} allowlistName
@@ -108,6 +109,19 @@ class TabManager {
             await tabManager.restore(tabId)
         }
         return tabManager.get({ tabId })
+    }
+
+    /**
+     * Return a Tab Object for the currently focused tab, if possible.
+     *
+     * @returns {Promise<import("./classes/tab")?>}
+     */
+    async getOrRestoreCurrentTab () {
+        const currentTabDetails = await getCurrentTab()
+        if (currentTabDetails?.id) {
+            return await tabManager.getOrRestoreTab(currentTabDetails.id)
+        }
+        return null
     }
 
     /**

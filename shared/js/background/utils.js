@@ -151,16 +151,26 @@ export function findParentDisplayName (url) {
     return 'unknown'
 }
 
-export function getCurrentURL (callback) {
-    browser.tabs.query({ active: true, lastFocusedWindow: true }).then((tabData) => {
-        if (tabData.length) {
-            callback(tabData[0].url)
-        }
-    })
-}
+/**
+ * Return the details of the currently focused tab, if available.
+ *
+ * @returns {Promise<browser.Tabs.Tab|undefined>}
+ */
+export async function getCurrentTab () {
+    // If the current tab ID is already known, fetch the details for that tab.
+    const tabId = await getFromSessionStorage('currentTabId')
 
-export async function getCurrentTab (callback) {
-    const tabData = await browser.tabs.query({ active: true, lastFocusedWindow: true })
+    if (tabId) {
+        try {
+            return await browser.tabs.get(tabId)
+        } catch (e) { }
+    }
+
+    // Otherwise, fetch the details for the currently focused tab.
+    const tabData = await browser.tabs.query({
+        active: true,
+        lastFocusedWindow: true
+    })
     if (tabData.length) {
         return tabData[0]
     }

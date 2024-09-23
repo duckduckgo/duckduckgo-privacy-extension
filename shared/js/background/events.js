@@ -284,9 +284,30 @@ browser.webRequest.onHeadersReceived.addListener(
 /**
  * TABS
  */
-// message popup to close when the active tab changes.
-browser.tabs.onActivated.addListener(() => {
+browser.tabs.onActivated.addListener(({ tabId }) => {
+    // Note the active tab ID to session storage (to memory) as it changes, so
+    // that the current tab can still be determined when the "popup" UI (aka
+    // privacy dashboard) is open.
+    if (tabId) {
+        // Note: No need to await for this to finish before closing the popup.
+        browserWrapper.setToSessionStorage('currentTabId', tabId)
+    }
+
+    // Message popup to close when the active tab changes.
     postPopupMessage({ messageType: 'closePopup' })
+})
+
+browser.windows.onFocusChanged.addListener(async windowId => {
+    const previousWindowId =
+        await browserWrapper.getFromSessionStorage('currentWindowId')
+
+    if (windowId > 0 && windowId !== previousWindowId) {
+        // If there are multiple browser windows and the user switches to a
+        // different window, the tabs.onActivated event won't fire, but the
+        // current tab has likely changed.
+        await browserWrapper.removeFromSessionStorage('currentTabId')
+        await browserWrapper.setToSessionStorage('currentWindowId', windowId)
+    }
 })
 
 // Include the performanceWarning flag in breakage reports.
