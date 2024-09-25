@@ -24,11 +24,6 @@ export default class TDSStorage {
     * }} opts
     */
     constructor ({ settings }) {
-        this.tds = new ResourceLoader({
-            name: 'tds',
-            remoteUrl: constants.tdsLists[1].url,
-            updateIntervalMinutes: 15
-        }, { settings })
         this.surrogates = new ResourceLoader({
             name: 'surrogates',
             localUrl: '/data/surrogates.txt',
@@ -40,6 +35,19 @@ export default class TDSStorage {
             localUrl: '/data/bundled/extension-config.json',
             updateIntervalMinutes: 15
         }, { settings })
+        this.tds = new ResourceLoader({
+            name: 'tds',
+            remoteUrl: this.getTDSUrl.bind(this),
+            updateIntervalMinutes: 15
+        }, { settings })
+
+        // trigger TDS fetch if the config changes the TDS URL
+        this.config.onUpdate(async () => {
+            if (await this.getTDSUrl() !== constants.tdsLists[1].url) {
+                console.log('refetch TDS')
+                this.tds.checkForUpdates(true)
+            }
+        })
     }
 
     ready () {
@@ -48,5 +56,15 @@ export default class TDSStorage {
             this.surrogates.ready,
             this.config.ready
         ])
+    }
+
+    async getTDSUrl () {
+        await this.config.ready
+        const tdsConfig = this.config.data.features.tds
+        console.log('checking TDS URL from config', tdsConfig)
+        if (tdsConfig && tdsConfig.settings.overridePath) {
+            return `https://staticcdn.duckduckgo.com/trackerblocking/${tdsConfig.settings.overridePath}`
+        }
+        return constants.tdsLists[1].url
     }
 }
