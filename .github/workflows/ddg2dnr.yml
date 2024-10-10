@@ -7,7 +7,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        node: [18.x]
+        node: [20.x]
         os: [ubuntu-latest] # FIXME - macos-latest runner keeps failing
     steps:
       - uses: actions/checkout@v4
@@ -22,7 +22,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        node: [18.x]
+        node: [20.x]
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
