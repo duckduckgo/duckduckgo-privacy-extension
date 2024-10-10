@@ -9,10 +9,10 @@
 }
 
 .ddg-logo {
-    @include ddg_logo();
     width: 158px;
     height: 44px;
     margin-bottom: 23px;
+    @include ddg_logo();
 
     span {
         display: none;
@@ -26,7 +26,7 @@
         font-weight: normal;
         line-height: 1.4;
         color: #666666;
-        
+
         a {
             font-weight: bold;
         }
@@ -67,7 +67,7 @@
         left: 0;
         top: -8px;
     }
-    
+
     a {
         font-weight: bold;
     }

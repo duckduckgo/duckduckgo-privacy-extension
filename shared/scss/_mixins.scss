@@ -2,13 +2,13 @@
 
 /* Logo */
 @mixin ddg_logo () {
-    @include cross_platform_bg_image("logo-horizontal@2x.png");
     background-size: contain;
+    @include cross_platform_bg_image("logo-horizontal@2x.png");
 }
 
 @mixin ddg_logo--small () {
-    @include cross_platform_bg_image("logo-small.svg");
     background-size: contain;
+    @include cross_platform_bg_image("logo-small.svg");
 }
 
 
