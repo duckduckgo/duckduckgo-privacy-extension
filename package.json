@@ -52,7 +52,7 @@
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
         "node-fetch": "^3.3.2",
-        "puppeteer": "^23.0.2",
+        "puppeteer": "^23.5.0",
         "sass": "^1.77.8",
         "standard": "17.1.0",
         "timekeeper": "^2.3.1",
