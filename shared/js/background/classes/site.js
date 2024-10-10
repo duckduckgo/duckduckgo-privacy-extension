@@ -166,7 +166,9 @@ export default class Site {
      * - User toggle on
      */
     isFeatureEnabled (featureName) {
-        const allowlistOnlyFeatures = ['autofill', 'adClickAttribution']
+        const allowlistOnlyFeatures = [
+            'autofill', 'adClickAttribution', 'toggleReports'
+        ]
         if (allowlistOnlyFeatures.includes(featureName)) {
             return this.enabledFeatures.includes(featureName)
         }

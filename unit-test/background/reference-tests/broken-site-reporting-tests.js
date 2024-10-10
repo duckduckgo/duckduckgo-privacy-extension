@@ -70,6 +70,7 @@ async function submitAndValidateReport (report) {
     }
 
     await breakageReportForTab({
+        pixelName: 'epbf',
         tab,
         tds: report.blocklistVersion,
         remoteConfigEtag: report.remoteConfigEtag,
@@ -157,6 +158,7 @@ describe('Broken Site Reporting tests / protections state', () => {
     async function submit (tab) {
         loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
         await breakageReportForTab({
+            pixelName: 'epbf',
             tab,
             tds: 'abc123',
             remoteConfigEtag: 'abd142',
