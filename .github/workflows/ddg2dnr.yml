@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm run install-ci
       - run: npm run lint --workspace=packages/ddg2dnr
   test:
     runs-on: "${{ matrix.os }}"
@@ -31,5 +31,5 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm run install-ci
       - run: npm test --workspace=packages/ddg2dnr
