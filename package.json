@@ -2,7 +2,7 @@
     "name": "duckduckgo-privacy-extension",
     "engines": {
         "node": ">=20.0.0",
-        "npm": ">=8.0.0"
+        "npm": ">=10.0.0"
     },
     "license": "Apache-2.0",
     "repository": "duckduckgo/duckduckgo-privacy-extension",
