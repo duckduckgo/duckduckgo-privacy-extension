@@ -1,7 +1,7 @@
 ###--- Shared variables ---###
 # Browser types (browser, but "chrome" adjusted as required)
 BROWSER_TYPE = $(browser)
-LEGACY_BROWSER = $(browser)
+LEGACY_BROWSER = chrome-mv3
 ifeq ('$(browser)','chrome')
   LEGACY_BROWSER = chrome-mv3
 endif
@@ -105,7 +105,7 @@ chrome-release-zip:
 .PHONY: chrome-release-zip
 
 chrome-beta-zip: prepare-chrome-beta chrome-release-zip
-	
+
 
 .PHONY: chrome-beta-zip
 
@@ -277,7 +277,7 @@ $(BUILD_DIR)/public/font/%: $(INTERMEDIATES_DIR)/%
 
 # Fetch fonts from the webserver to be included in the generated build
 .SECONDARY:
-$(INTERMEDIATES_DIR)/%: 
+$(INTERMEDIATES_DIR)/%:
 	curl -s -o $@ https://duckduckgo.com/font/all/`basename $@`
 
 ## Other
