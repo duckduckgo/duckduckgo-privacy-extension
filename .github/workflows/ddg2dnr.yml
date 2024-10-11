@@ -7,7 +7,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        node: [18.x]
+        node: [20.x]
         os: [ubuntu-latest] # FIXME - macos-latest runner keeps failing
     steps:
       - uses: actions/checkout@v4
@@ -16,13 +16,13 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm run install-ci
       - run: npm run lint --workspace=packages/ddg2dnr
   test:
     runs-on: "${{ matrix.os }}"
     strategy:
       matrix:
-        node: [18.x]
+        node: [20.x]
         os: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
@@ -31,5 +31,5 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: 'npm'
-      - run: npm ci
+      - run: npm run install-ci
       - run: npm test --workspace=packages/ddg2dnr
