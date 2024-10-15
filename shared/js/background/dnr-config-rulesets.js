@@ -299,8 +299,3 @@ export async function onConfigUpdate (configName, etag, configValue) {
     })
     await ruleUpdateLock
 }
-
-if (getManifestVersion() === 3) {
-    tdsStorage.onUpdate('config', onConfigUpdate)
-    tdsStorage.onUpdate('tds', onConfigUpdate)
-}

@@ -7,11 +7,9 @@ import * as tds from '../data/tds.json'
 // eslint-disable-next-line no-restricted-syntax
 import * as testConfig from '../data/extension-config.json'
 // eslint-disable-next-line no-restricted-syntax
-import * as tdsStorageStub from '../helpers/tds'
 import settings from '../../shared/js/background/settings'
 import tabManager from '../../shared/js/background/tab-manager'
 import tdsStorage from '../../shared/js/background/storage/tds'
-import trackers from '../../shared/js/background/trackers'
 import { ensureGPCHeaderRule } from '../../shared/js/background/dnr-gpc'
 import {
     ensureServiceWorkerInitiatedRequestExceptions
@@ -35,6 +33,9 @@ import {
     USER_ALLOWLISTED_PRIORITY
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 import { GPC_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/gpc'
+import DNR from '../../shared/js/background/components/dnr'
+import ResourceLoader from '../../shared/js/background/components/resource-loader'
+import TrackersGlobal from '../../shared/js/background/components/trackers'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
 const TEST_EXTENION_VERSIONS = ['2023.1.1', '2023.2.1', '2023.3.1']
@@ -152,19 +153,37 @@ const expectedLookupByConfigName = {
     }
 }
 
-async function updateConfiguration (configName, etag) {
-    const configValue = { config, tds }[configName]
-    const listeners = onUpdateListeners.get(configName)
-    settings.updateSetting(`${configName}-etag`, etag)
-    if (listeners) {
-        await Promise.all(
-            listeners.map(listener => listener(configName, etag, configValue))
-        )
+class MockResourceLoader {
+    constructor (name, data) {
+        this.name = name
+        this.data = data
+        this.etag = ''
+        this.updateCbs = []
+    }
+
+    onUpdate (fn) {
+        this.updateCbs.push(fn)
+    }
+
+    updateData (value, etag) {
+        this.data = value
+        this.etag = etag
+        return Promise.all(this.updateCbs.map((cb) => cb(this.name, etag, value)))
     }
 }
 
-describe('declarativeNetRequest', () => {
-    let updateSettingObserver
+const mockTds = {
+    config: new MockResourceLoader('config', config),
+    tds: new MockResourceLoader('tds', tds),
+    surrogates: new MockResourceLoader('surrogates', '')
+}
+
+async function updateConfiguration (configName, etag) {
+    const configValue = { config, tds }[configName]
+    await mockTds[configName].updateData(configValue, etag)
+}
+
+fdescribe('declarativeNetRequest', () => {
     let updateDynamicRulesObserver
     let updateSessionRulesObserver
 
@@ -179,20 +198,25 @@ describe('declarativeNetRequest', () => {
         dynamicRulesByRuleId = new Map()
         sessionRulesByRuleId = new Map()
 
-        onUpdateListeners = tdsStorageStub.stub({ config }).onUpdateListeners
-        onUpdateListeners.set('config', [onConfigUpdate])
-        onUpdateListeners.set('tds', [onConfigUpdate])
-        tdsStorage.getLists().then(lists => trackers.setLists(lists))
+        // TODO: Eliminate use of global tdsStorage - it should all be passed via the DNR object
+        tdsStorage._config = mockTds.config.data
+        tdsStorage._tds = mockTds.tds.data
+        tdsStorage._surrogates = mockTds.surrogates.data
+
+        // sets up TDS and settings listeners for DNR updates
+        const components = {
+            trackers: new TrackersGlobal({ tds: mockTds }),
+            dnr: new DNR({ settings, tds: mockTds })
+        }
 
         spyOn(settings, 'getSetting').and.callFake(
             name => settingsStorage.get(name)
         )
-        updateSettingObserver =
-            spyOn(settings, 'updateSetting').and.callFake(
-                (name, value) => {
-                    settingsStorage.set(name, value)
-                }
-            )
+        spyOn(settings, 'updateSetting').and.callFake(
+            (name, value) => {
+                settingsStorage.set(name, value)
+            }
+        )
 
         updateDynamicRulesObserver =
             spyOn(
@@ -253,7 +277,6 @@ describe('declarativeNetRequest', () => {
     })
 
     beforeEach(() => {
-        updateSettingObserver.calls.reset()
         updateDynamicRulesObserver.calls.reset()
         updateSessionRulesObserver.calls.reset()
         settingsStorage.clear()
@@ -876,6 +899,7 @@ describe('declarativeNetRequest', () => {
         }
 
         // Add the extension configuration rules.
+        debugger;
         await updateConfiguration('config', TEST_ETAGS[1])
 
         // Extension configuration match details should now show up.

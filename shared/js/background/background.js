@@ -26,6 +26,7 @@ import TDSStorage from './components/tds'
 import TrackersGlobal from './components/trackers'
 import DebuggerConnection from './components/debugger-connection'
 import Devtools from './components/devtools'
+import DNR from './components/dnr'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
@@ -72,6 +73,7 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
 // MV3-only components
 if (BUILD_TARGET === 'chrome') {
     components.scriptInjection = new MV3ContentScriptInjection()
+    components.dnr = new DNR({ settings, tds })
 }
 console.log(new Date(), 'Loaded components:', components)
 // @ts-ignore
