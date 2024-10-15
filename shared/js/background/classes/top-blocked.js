@@ -1,28 +1,27 @@
-function TopBlocked () {
-    this.data = []
-}
+class TopBlocked {
+    constructor () {
+        this.data = []
+    }
 
-TopBlocked.prototype = {
+    add (el) {
+        this.data.push(el)
+    }
 
-    add: function (element) {
-        this.data.push(element)
-    },
-
-    getTop: function (n, sortFunc) {
+    getTop (n, sortFunc) {
         this.sort(sortFunc)
         n = n || 10
         return this.data.slice(0, n)
-    },
+    }
 
-    sort: function (sortFunc) {
+    sort (sortFunc) {
         this.data.sort(sortFunc)
-    },
+    }
 
-    clear: function () {
+    clear () {
         this.data = []
-    },
+    }
 
-    setData: function (data) {
+    setData (data) {
         this.data = data
     }
 }
