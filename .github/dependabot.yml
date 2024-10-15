@@ -9,13 +9,22 @@ updates:
     labels:
       - "dependencies"
     groups:
-      external-dependencies:
+      types:
         patterns:
-          - "*"
-        exclude-patterns:
-          - "puppeteer"
-          - "@duckduckgo/*"
-          - "privacy-test-pages"
+          - "@types/*"
+      test:
+        patterns:
+          - "karma*"
+          - "@playwright/*"
+          - "timekeeper"
+      build:
+        patterns:
+          - "eslint*"
+          - "sass"
+          - "standard"
+          - "esbuild"
+          - "yargs"
+          - "web-ext"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
