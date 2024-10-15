@@ -46,7 +46,7 @@
         "fake-indexeddb": "^6.0.0",
         "glob": "^11.0.0",
         "jasmine": "^5.4.0",
-        "jsdom": "^24.1.1",
+        "jsdom": "^25.0.1",
         "karma": "6.4.4",
         "karma-chrome-launcher": "3.2.0",
         "karma-jasmine": "1.1.1",
