@@ -30,7 +30,7 @@
         "beta-chrome": "make chrome-beta browser=chrome type=release"
     },
     "devDependencies": {
-        "@fingerprintjs/fingerprintjs": "^4.4.3",
+        "@fingerprintjs/fingerprintjs": "^4.5.0",
         "@playwright/test": "^1.46.0",
         "@types/chrome": "^0.0.269",
         "@types/jasmine": "^5.1.4",
