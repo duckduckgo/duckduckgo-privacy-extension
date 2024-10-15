@@ -23,6 +23,7 @@ import EmailAutofill from './components/email-autofill'
 import OmniboxSearch from './components/omnibox-search'
 import InternalUserDetector from './components/internal-user-detector'
 import TDSStorage from './components/tds'
+import ToggleReports from './components/toggle-reports'
 import TrackersGlobal from './components/trackers'
 import DebuggerConnection from './components/debugger-connection'
 import Devtools from './components/devtools'
@@ -60,6 +61,7 @@ const components = {
     internalUser: new InternalUserDetector({ settings }),
     tabTracking: new TabTracker({ tabManager, devtools }),
     tds,
+    toggleReports: new ToggleReports(),
     trackers: new TrackersGlobal({ tds }),
     debugger: new DebuggerConnection({ tds, devtools }),
     devtools

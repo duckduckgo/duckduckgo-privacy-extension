@@ -125,7 +125,7 @@ describe('Tab', () => {
                 jsPerformance: [],
                 locale: 'en-US'
             }
-            expect(tabClone.site.enabledFeatures.length).toBe(14)
+            expect(tabClone.site.enabledFeatures.length).toBe(15)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))
         })
         it('should be able to get the tab from tab manager', () => {

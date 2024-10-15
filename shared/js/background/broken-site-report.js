@@ -1,15 +1,21 @@
 /**
+ * When web tracking protections interfere with essential usability, for
+ * example, if users can't sign in to a popular website, they can report that
+ * breakage to us anonymously in our apps and extensions. This is part of our
+ * tooling for those anonymous broken site reports.
  *
- * This is part of our tool for anonymous broken site reports
- * Learn more at https://duck.co/help/privacy/atb
- *
+ * Learn more at: https://duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#remotely-configured-exceptions
  */
+
+const browser = require('webextension-polyfill')
 const load = require('./load')
 const browserWrapper = require('./wrapper')
 const settings = require('./settings')
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string')
 const { getURLWithoutQueryString } = require('./utils')
 const { getURL } = require('./pixels')
+const tdsStorage = require('./storage/tds').default
+const tabManager = require('./tab-manager')
 const maxPixelLength = 7000
 
 /**
@@ -19,23 +25,22 @@ const maxPixelLength = 7000
  * @param {string} querystring
  *
  */
-export function fire (querystring) {
-    let url = constructUrl(querystring, false)
+export function fire (pixelName, querystring) {
+    let url = constructUrl(pixelName, querystring, false)
 
     // If we're over the max pixel length, truncate the less important params
     if (url.length > maxPixelLength) {
-        url = constructUrl(querystring, true)
+        url = constructUrl(pixelName, querystring, true)
     }
 
     // Send the request
     load.url(url)
 }
 
-function constructUrl (querystring, truncate) {
+function constructUrl (pixelName, querystring, truncate) {
     const randomNum = Math.ceil(Math.random() * 1e7)
-    const pixelName = 'epbf'
     const browserInfo = parseUserAgentString()
-    const browser = browserInfo?.browser
+    const browserName = browserInfo?.browser
     const extensionVersion = browserWrapper.getExtensionVersion()
     const atb = settings.getSetting('atb')
 
@@ -55,8 +60,8 @@ function constructUrl (querystring, truncate) {
     }
     // build url string
     let url = getURL(pixelName)
-    if (browser) {
-        url += `_${browser.toLowerCase()}`
+    if (browserName) {
+        url += `_${browserName.toLowerCase()}`
     }
     // random number cache buster
     url += `?${randomNum}&`
@@ -147,6 +152,7 @@ export async function clearAllBrokenSiteReportTimes () {
  * came from.
  *
  * @param {Object} arg
+ * @prop {string} pixelName
  * @prop {import("./classes/tab")} arg.tab
  * @prop {string} arg.tds - tds-etag from settings
  * @prop {string} arg.remoteConfigEtag - config-etag from settings
@@ -154,10 +160,12 @@ export async function clearAllBrokenSiteReportTimes () {
  * @prop {string | undefined} arg.category - optional category
  * @prop {string | undefined} arg.description - optional description
  * @prop {Object | undefined} arg.pageParams - on page parameters
+ * @prop {string | undefined} arg.reportFlow
+ *   String detailing the UI flow that this breakage report came from.
  */
 export async function breakageReportForTab ({
-    tab, tds, remoteConfigEtag, remoteConfigVersion,
-    category, description, pageParams
+    pixelName, tab, tds, remoteConfigEtag, remoteConfigVersion,
+    category, description, pageParams, reportFlow
 }) {
     if (!tab.url) {
         return
@@ -212,6 +220,9 @@ export async function breakageReportForTab ({
     const jsPerformance = pageParams.jsPerformance ? pageParams.jsPerformance : undefined
     const locale = tab.locale
 
+    // Note: Take care to update the `ToggleReports.PARAM_IDS` array (see
+    //       './components/toggle-reports.js') when adding/removing breakage
+    //       parameters!
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
         tds,
@@ -223,11 +234,20 @@ export async function breakageReportForTab ({
         ctlFacebookPlaceholderShown,
         ctlFacebookLogin,
         performanceWarning,
-        protectionsState: tab.site.isFeatureEnabled('contentBlocking'),
         userRefreshCount,
         jsPerformance,
         locale
     })
+
+    // The protectionsState parameter will always be false for these reports,
+    // and misleading since the user will have disabled protections directly
+    // before the report was sent (but before the page was reloaded).
+    if (pixelName !== 'protection-toggled-off-breakage-report') {
+        brokenSiteParams.set(
+            'protectionsState',
+            tab.site.isFeatureEnabled('contentBlocking')
+        )
+    }
 
     for (const [key, value] of Object.entries(requestCategories)) {
         brokenSiteParams.append(key, value.join(','))
@@ -241,6 +261,50 @@ export async function breakageReportForTab ({
     if (errorDescriptions) brokenSiteParams.set('errorDescriptions', errorDescriptions)
     if (httpErrorCodes) brokenSiteParams.set('httpErrorCodes', httpErrorCodes)
     if (openerContext) brokenSiteParams.set('openerContext', openerContext)
+    if (reportFlow) brokenSiteParams.set('reportFlow', reportFlow)
 
-    return fire(brokenSiteParams.toString())
+    return fire(pixelName, brokenSiteParams.toString())
+}
+
+/**
+ * Attempt to send a breakage report for the currently focused tab.
+ *
+ * @param {Object} arg
+ * @prop {string} pixelName
+ * @prop {import("./classes/tab") | undefined} arg.currentTab
+ * @prop {string | undefined} arg.category
+ * @prop {string | undefined} arg.description
+ * @prop {string | undefined} arg.reportFlow
+ *   String detailing the UI flow that this breakage report came from.
+ */
+export async function sendBreakageReportForCurrentTab (
+    { pixelName, currentTab, category, description, reportFlow }
+) {
+    await settings.ready()
+    await tdsStorage.ready('config')
+
+    const tab = currentTab || await tabManager.getOrRestoreCurrentTab()
+    if (!tab) {
+        return
+    }
+
+    const pageParams = await browser.tabs.sendMessage(
+        tab.id, { getBreakagePageParams: true }
+    ) || {}
+
+    const tds = settings.getSetting('tds-etag')
+    const remoteConfigEtag = settings.getSetting('config-etag')
+    const remoteConfigVersion = tdsStorage.config.version
+
+    return await breakageReportForTab({
+        pixelName,
+        tab,
+        tds,
+        remoteConfigEtag,
+        remoteConfigVersion,
+        category,
+        description,
+        pageParams,
+        reportFlow
+    })
 }
