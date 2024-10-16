@@ -243,9 +243,9 @@ export default class DNRConfigRulesets {
     async updateCombinedConfigBlocklistRules () {
         const extensionVersion = getExtensionVersion()
         const denylistedDomains = await getDenylistedDomains(this.settings)
-        const tdsEtag = this.settings.getSetting('tds-etag')
+        const tdsEtag = this.tds.tds.etag
         const combinedState = {
-            etag: `${this.settings.getSetting('config-etag')}-${tdsEtag}`,
+            etag: `${this.tds.config.etag}-${tdsEtag}`,
             denylistedDomains: denylistedDomains.join(),
             extensionVersion
         }
@@ -320,7 +320,7 @@ export default class DNRConfigRulesets {
      * @return {Promise}
      */
     async updateUserDenylist () {
-        await this.updateExtensionConfigRules()
+        await this.updateExtensionConfigRules(this.tds.config.etag, this.tds.config.data)
         await this.updateCombinedConfigBlocklistRules()
     }
 }

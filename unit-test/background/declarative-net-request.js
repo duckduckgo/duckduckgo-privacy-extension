@@ -6,7 +6,6 @@ import * as allowlistedTrackers from '@duckduckgo/privacy-reference-tests/tracke
 import * as tds from '../data/tds.json'
 // eslint-disable-next-line no-restricted-syntax
 import * as testConfig from '../data/extension-config.json'
-// eslint-disable-next-line no-restricted-syntax
 import settings from '../../shared/js/background/settings'
 import tabManager from '../../shared/js/background/tab-manager'
 import tdsStorage from '../../shared/js/background/storage/tds'
@@ -32,6 +31,7 @@ import {
 import { GPC_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/gpc'
 import DNR from '../../shared/js/background/components/dnr'
 import TrackersGlobal from '../../shared/js/background/components/trackers'
+import { getComponent, registerComponent } from '../../shared/js/background/components/util'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
 const TEST_EXTENION_VERSIONS = ['2023.1.1', '2023.2.1', '2023.3.1']
@@ -153,6 +153,7 @@ class MockResourceLoader {
         this.data = data
         this.etag = ''
         this.updateCbs = []
+        this.ready = Promise.resolve()
     }
 
     onUpdate (fn) {
@@ -162,19 +163,20 @@ class MockResourceLoader {
     updateData (value, etag) {
         this.data = value
         this.etag = etag
-        return Promise.all(this.updateCbs.map((cb) => cb(this.name, etag, value)))
+        settings.updateSetting(`${this.name}-etag`, etag)
     }
 }
 
 const mockTds = {
-    config: new MockResourceLoader('config', config),
-    tds: new MockResourceLoader('tds', tds),
-    surrogates: new MockResourceLoader('surrogates', '')
+    config: new MockResourceLoader('config', config.default),
+    tds: new MockResourceLoader('tds', tds.default),
+    surrogates: new MockResourceLoader('surrogates', require('./../data/surrogates.js').surrogates)
 }
 
 async function updateConfiguration (configName, etag) {
     const configValue = { config, tds }[configName]
-    await mockTds[configName].updateData(configValue, etag)
+    mockTds[configName].updateData(configValue, etag)
+    await getComponent('dnr').dnrConfigRulesets.onConfigUpdate(configName, etag, configValue)
 }
 
 fdescribe('declarativeNetRequest', () => {
@@ -198,11 +200,9 @@ fdescribe('declarativeNetRequest', () => {
         tdsStorage._surrogates = mockTds.surrogates.data
 
         // sets up TDS and settings listeners for DNR updates
-        const components = {
-            trackers: new TrackersGlobal({ tds: mockTds }),
-            tds: mockTds
-        }
-        components.dnr = new DNR({ settings, tds: mockTds, trackers: components.trackers })
+        registerComponent('trackers', new TrackersGlobal({ tds: mockTds }))
+        registerComponent('tds', mockTds)
+        registerComponent('dnr', new DNR({ settings, tds: mockTds, trackers: getComponent('trackers') }))
 
         spyOn(settings, 'getSetting').and.callFake(
             name => settingsStorage.get(name)
@@ -277,6 +277,8 @@ fdescribe('declarativeNetRequest', () => {
         settingsStorage.clear()
         dynamicRulesByRuleId.clear()
         sessionRulesByRuleId.clear()
+        mockTds.config.etag = ''
+        mockTds.tds.etag = ''
     })
 
     it('Config ruleset updates', async () => {
@@ -381,6 +383,8 @@ fdescribe('declarativeNetRequest', () => {
 
         // Settings missing, add rules again.
         settingsStorage.clear()
+        mockTds.tds.etag = ''
+        mockTds.config.etag = ''
         await updateConfiguration('tds', TEST_ETAGS[1])
         await updateConfiguration('config', TEST_ETAGS[2])
         expectState({

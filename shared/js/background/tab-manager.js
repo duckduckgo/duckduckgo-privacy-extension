@@ -153,7 +153,7 @@ class TabManager {
             if (data.list === 'allowlisted') {
                 await toggleUserAllowlistDomain(data.domain, data.value)
             } else if (data.list === 'denylisted') {
-                getComponent('dnr')?.updateUserDenylist()
+                await getComponent('dnr')?.updateUserDenylist()
             }
         }
     }
