@@ -30,6 +30,7 @@ import DNR from './components/dnr'
 import initDebugBuild from './devbuild'
 import initReloader from './devbuild-reloader'
 import tabManager from './tab-manager'
+import { registerComponent, components } from './components/util'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events')
@@ -44,27 +45,15 @@ settings.ready().then(() => {
 
 const tds = new TDSStorage({ settings })
 const devtools = new Devtools({ tds })
-/**
- * @type {{
- *  autofill: EmailAutofill;
- *  omnibox: OmniboxSearch;
- *  fireButton?: FireButton;
- *  internalUser: InternalUserDetector;
- *  tds: TDSStorage;
- *  tabTracking: TabTracker;
- *  trackers: TrackersGlobal;
- * }}
- */
-const components = {
-    autofill: new EmailAutofill({ settings }),
-    omnibox: new OmniboxSearch(),
-    internalUser: new InternalUserDetector({ settings }),
-    tabTracking: new TabTracker({ tabManager, devtools }),
-    tds,
-    trackers: new TrackersGlobal({ tds }),
-    debugger: new DebuggerConnection({ tds, devtools }),
-    devtools
-}
+
+registerComponent('autofill', new EmailAutofill({ settings }))
+registerComponent('omnibox', new OmniboxSearch())
+registerComponent('internalUser', new InternalUserDetector({ settings }))
+registerComponent('tabTracking', new TabTracker({ tabManager, devtools }))
+registerComponent('tds', tds)
+registerComponent('trackers', new TrackersGlobal({ tds }))
+registerComponent('debugger', new DebuggerConnection({ tds, devtools }))
+registerComponent('devtools', devtools)
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
