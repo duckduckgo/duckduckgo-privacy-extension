@@ -5,13 +5,13 @@ const ServiceWorkerTab = require('./classes/sw-tab')
 const { TabState } = require('./classes/tab-state')
 const browserWrapper = require('./wrapper')
 const {
-    toggleUserAllowlistDomain,
-    updateUserDenylist
+    toggleUserAllowlistDomain
 } = require('./dnr-user-allowlist.js')
 const {
     clearClickToLoadDnrRulesForTab
 } = require('./dnr-click-to-load')
 const { getCurrentTab } = require('./utils')
+const { getComponent } = require('./components/util')
 
 /**
  * @typedef {import('./classes/site.js').allowlistName} allowlistName
@@ -153,7 +153,7 @@ class TabManager {
             if (data.list === 'allowlisted') {
                 await toggleUserAllowlistDomain(data.domain, data.value)
             } else if (data.list === 'denylisted') {
-                await updateUserDenylist()
+                getComponent('dnr')?.updateUserDenylist()
             }
         }
     }

@@ -54,4 +54,8 @@ export default class DNR {
         }
         await refreshUserAllowlistRules(allowlistedDomains)
     }
+
+    updateUserDenyList () {
+        this.dnrConfigRulesets.updateUserDenylist()
+    }
 }
