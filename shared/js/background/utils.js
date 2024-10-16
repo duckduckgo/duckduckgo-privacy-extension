@@ -377,10 +377,11 @@ export function satisfiesMinVersion (minVersionString, extensionVersionString) {
  * parameter to check if the state is equeal to other states (i.e. state === 'beta').
  *
  * @param {String} featureName - the name of the feature
+ * @param {Object} [config] - privacy config to check (defaults to global value)
  * @returns {boolean} - if feature is enabled
  */
-export function isFeatureEnabled (featureName) {
-    const feature = tdsStorage.config.features[featureName]
+export function isFeatureEnabled (featureName, config = tdsStorage.config) {
+    const feature = config.features[featureName]
     if (!feature) {
         return false
     }

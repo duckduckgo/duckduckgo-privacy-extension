@@ -1,13 +1,6 @@
-import settings from './settings'
-
 import {
     USER_ALLOWLISTED_PRIORITY
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
-
-import {
-    updateExtensionConfigRules,
-    updateCombinedConfigBlocklistRules
-} from './dnr-config-rulesets'
 
 import {
     USER_ALLOWLIST_RULE_ID,
@@ -105,7 +98,7 @@ export async function refreshUserAllowlistRules (allowlistedDomains) {
  * Retrieve a normalized and sorted list of user denylisted domains.
  * @returns {Promise<string[]>}
  */
-export async function getDenylistedDomains () {
+export async function getDenylistedDomains (settings) {
     await settings.ready()
     const denylist = settings.getSetting('denylisted') || {}
 
@@ -120,16 +113,4 @@ export async function getDenylistedDomains () {
     }
 
     return denylistedDomains.sort()
-}
-
-/**
- * Update all the extension configuration rulesets, so that the
- * declarativeNetRequest rules generated for the contentBlocking and
- * unprotectedTemporary allowlisting features take care to exclude the
- * user "denylisted" domains.
- * @return {Promise}
- */
-export async function updateUserDenylist () {
-    await updateExtensionConfigRules()
-    await updateCombinedConfigBlocklistRules()
 }

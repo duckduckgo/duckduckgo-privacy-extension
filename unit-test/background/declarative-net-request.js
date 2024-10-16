@@ -15,9 +15,6 @@ import {
     ensureServiceWorkerInitiatedRequestExceptions
 } from '../../shared/js/background/dnr-service-worker-initiated'
 import {
-    onConfigUpdate
-} from '../../shared/js/background/dnr-config-rulesets'
-import {
     refreshUserAllowlistRules,
     toggleUserAllowlistDomain
 } from '../../shared/js/background/dnr-user-allowlist'
@@ -34,13 +31,10 @@ import {
 } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 import { GPC_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/gpc'
 import DNR from '../../shared/js/background/components/dnr'
-import ResourceLoader from '../../shared/js/background/components/resource-loader'
 import TrackersGlobal from '../../shared/js/background/components/trackers'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
 const TEST_EXTENION_VERSIONS = ['2023.1.1', '2023.2.1', '2023.3.1']
-
-let onUpdateListeners
 
 // Set up the extension configuration to ensure that tracker allowlisting is
 // enabled for the right domains.
@@ -206,8 +200,9 @@ fdescribe('declarativeNetRequest', () => {
         // sets up TDS and settings listeners for DNR updates
         const components = {
             trackers: new TrackersGlobal({ tds: mockTds }),
-            dnr: new DNR({ settings, tds: mockTds })
+            tds: mockTds
         }
+        components.dnr = new DNR({ settings, tds: mockTds, trackers: components.trackers })
 
         spyOn(settings, 'getSetting').and.callFake(
             name => settingsStorage.get(name)
@@ -899,7 +894,6 @@ fdescribe('declarativeNetRequest', () => {
         }
 
         // Add the extension configuration rules.
-        debugger;
         await updateConfiguration('config', TEST_ETAGS[1])
 
         // Extension configuration match details should now show up.

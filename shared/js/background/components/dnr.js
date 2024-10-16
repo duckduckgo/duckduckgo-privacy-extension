@@ -3,12 +3,13 @@ import ATB from '../atb'
 import { flushSessionRules } from '../dnr-session-rule-id'
 import { clearInvalidDynamicRules } from '../dnr-utils'
 import { refreshUserAllowlistRules } from '../dnr-user-allowlist'
-import { onConfigUpdate } from '../dnr-config-rulesets'
+import DNRConfigRulesets from '../dnr-config-rulesets'
 import { ensureGPCHeaderRule } from '../dnr-gpc'
 
 /**
  * @typedef {import('./tds.js').default} TDS
  * @typedef {import('../settings.js')} Settings
+ * @typedef {import('./trackers.js').default} Trackers
  */
 
 export default class DNR {
@@ -16,15 +17,17 @@ export default class DNR {
      * @param {{
     *  settings: Settings;
     *  tds: TDS;
+    *  trackers: Trackers;
     * }} options
     */
-    constructor ({ settings, tds }) {
+    constructor ({ settings, tds, trackers }) {
         this.featureName = 'DNR'
         this.settings = settings
         this.tds = tds
+        this.dnrConfigRulesets = new DNRConfigRulesets({ settings, tds, trackers })
         browser.runtime.onInstalled.addListener(this.postInstall.bind(this))
-        tds.config.onUpdate(onConfigUpdate)
-        tds.tds.onUpdate(onConfigUpdate)
+        tds.config.onUpdate(this.dnrConfigRulesets.onConfigUpdate.bind(this.dnrConfigRulesets))
+        tds.tds.onUpdate(this.dnrConfigRulesets.onConfigUpdate.bind(this.dnrConfigRulesets))
         this.settings.onSettingUpdate.addEventListener(
             'GPC', () => { ensureGPCHeaderRule(this.tds.config.data) }
         )
