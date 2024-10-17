@@ -50,7 +50,6 @@ function generateEtagRule (id, etag) {
  */
 async function configRulesNeedUpdate (configName, expectedState) {
     const settingName = SETTING_PREFIX + configName
-    await settings.ready()
     const settingValue = settings.getSetting(settingName)
 
     // No setting saved for the configuration yet, this is likely the first time
@@ -164,7 +163,6 @@ async function updateConfigRules (
         settingValue[key] = latestState[key]
     }
 
-    await settings.ready()
     if (Object.keys(allowingRulesByClickToLoadAction).length) {
         settings.updateSetting('allowingDnrRulesByClickToLoadRuleAction', allowingRulesByClickToLoadAction)
     }
@@ -182,7 +180,7 @@ async function updateConfigRules (
  */
 export async function updateExtensionConfigRules (etag = null, configValue = null) {
     const extensionVersion = getExtensionVersion()
-    const denylistedDomains = await getDenylistedDomains()
+    const denylistedDomains = getDenylistedDomains()
 
     const latestState = {
         extensionVersion,
@@ -191,14 +189,11 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
     }
 
     if (!configValue) {
-        await tdsStorage.ready('config')
         configValue = tdsStorage.config
     }
 
     if (!etag) {
         const settingName = SETTING_PREFIX + 'config'
-        await settings.ready()
-        await tdsStorage.ready('config')
         const settingValue = settings.getSetting(settingName)
         if (!settingValue?.etag) {
             // Should not be possible, but if the etag is unknown at this point
@@ -229,7 +224,7 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
 
 export async function updateCombinedConfigBlocklistRules () {
     const extensionVersion = getExtensionVersion()
-    const denylistedDomains = await getDenylistedDomains()
+    const denylistedDomains = getDenylistedDomains()
     const tdsEtag = settings.getSetting('tds-etag')
     const combinedState = {
         etag: `${settings.getSetting('config-etag')}-${tdsEtag}`,

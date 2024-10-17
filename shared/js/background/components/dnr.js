@@ -27,7 +27,10 @@ export default class DNR {
         tds.config.onUpdate(onConfigUpdate)
         tds.tds.onUpdate(onConfigUpdate)
         this.settings.onSettingUpdate.addEventListener(
-            'GPC', () => { ensureGPCHeaderRule(this.tds.config.data) }
+            'GPC', async () => {
+                await this.tds.config.ready
+                ensureGPCHeaderRule(this.tds.config.data)
+            }
         )
     }
 
