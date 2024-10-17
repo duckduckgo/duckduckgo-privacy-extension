@@ -35,7 +35,3 @@ export async function ensureGPCHeaderRule (config = null) {
         removeRuleIds, addRules
     })
 }
-
-settings.onSettingUpdate.addEventListener(
-    'GPC', () => { ensureGPCHeaderRule() }
-)
