@@ -7,13 +7,6 @@
 import browser from 'webextension-polyfill'
 import messageHandlers from './message-handlers'
 import { updateActionIcon } from './events/privacy-icon-indicator'
-import { flushSessionRules } from './dnr-session-rule-id'
-import {
-    clearInvalidDynamicRules
-} from './dnr-utils'
-import {
-    refreshUserAllowlistRules
-} from './dnr-user-allowlist'
 import httpsStorage from './storage/https'
 import ATB from './atb'
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report'
@@ -52,32 +45,6 @@ async function onInstalled (details) {
         }
     } else if (details.reason.match(/update/) && browserName === 'chrome') {
         experiment.setActiveExperiment()
-    }
-
-    if (manifestVersion === 3) {
-        await settings.ready()
-
-        // remove any orphaned session rules (can happen on extension update/restart)
-        await flushSessionRules()
-
-        // check that the dynamic rule state is consistent with the rule ranges we expect
-        clearInvalidDynamicRules()
-
-        // create ATB rule if there is a stored value in settings
-        ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'))
-
-        // Refresh the user allowlisting declarativeNetRequest rule, only
-        // necessary to handle the upgrade between MV2 and MV3 extensions.
-        // TODO: Remove this a while after users have all been migrated to
-        //       the MV3 build.
-        const allowlist = settings.getSetting('allowlisted') || {}
-        const allowlistedDomains = []
-        for (const [domain, enabled] of Object.entries(allowlist)) {
-            if (enabled) {
-                allowlistedDomains.push(domain)
-            }
-        }
-        await refreshUserAllowlistRules(allowlistedDomains)
     }
 
     // Inject the email content script on all tabs upon installation (not needed on Firefox)

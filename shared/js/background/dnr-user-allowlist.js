@@ -103,10 +103,9 @@ export async function refreshUserAllowlistRules (allowlistedDomains) {
 
 /**
  * Retrieve a normalized and sorted list of user denylisted domains.
- * @returns {Promise<string[]>}
+ * @returns {string[]}
  */
-export async function getDenylistedDomains () {
-    await settings.ready()
+export function getDenylistedDomains () {
     const denylist = settings.getSetting('denylisted') || {}
 
     const denylistedDomains = []

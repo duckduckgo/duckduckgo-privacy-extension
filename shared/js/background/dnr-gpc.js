@@ -15,7 +15,6 @@ export async function ensureGPCHeaderRule (config = null) {
     const addRules = []
 
     if (!config) {
-        await tdsStorage.ready('config')
         config = tdsStorage.config
     }
 
@@ -35,7 +34,3 @@ export async function ensureGPCHeaderRule (config = null) {
         removeRuleIds, addRules
     })
 }
-
-settings.onSettingUpdate.addEventListener(
-    'GPC', () => { ensureGPCHeaderRule() }
-)
