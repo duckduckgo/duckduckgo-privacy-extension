@@ -7,13 +7,6 @@
 import browser from 'webextension-polyfill'
 import messageHandlers from './message-handlers'
 import { updateActionIcon } from './events/privacy-icon-indicator'
-import { flushSessionRules } from './dnr-session-rule-id'
-import {
-    clearInvalidDynamicRules
-} from './dnr-utils'
-import {
-    refreshUserAllowlistRules
-} from './dnr-user-allowlist'
 import httpsStorage from './storage/https'
 import ATB from './atb'
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report'

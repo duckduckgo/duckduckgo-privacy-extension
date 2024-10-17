@@ -1,4 +1,4 @@
-import { getExtensionVersion, getManifestVersion } from './wrapper'
+import { getExtensionVersion } from './wrapper'
 import settings from './settings'
 import tdsStorage from './storage/tds'
 import trackers from './trackers'
