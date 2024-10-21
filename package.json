@@ -32,10 +32,10 @@
     "devDependencies": {
         "@fingerprintjs/fingerprintjs": "^4.5.0",
         "@playwright/test": "^1.48.0",
-        "@types/chrome": "^0.0.269",
+        "@types/chrome": "^0.0.278",
         "@types/jasmine": "^5.1.4",
-        "@types/node": "^22.1.0",
-        "@types/webextension-polyfill": "^0.10.7",
+        "@types/node": "^22.7.7",
+        "@types/webextension-polyfill": "^0.12.1",
         "asana": "github:Asana/node-asana",
         "duckduckgo-colors": "0.0.1",
         "esbuild": "^0.24.0",
