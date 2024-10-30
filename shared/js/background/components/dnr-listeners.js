@@ -1,10 +1,10 @@
 import browser from 'webextension-polyfill'
-import ATB from '../atb'
-import { flushSessionRules } from '../dnr-session-rule-id'
-import { clearInvalidDynamicRules } from '../dnr-utils'
-import { refreshUserAllowlistRules } from '../dnr-user-allowlist'
-import { ensureGPCHeaderRule } from '../dnr-gpc'
-import { onConfigUpdate } from '../dnr-config-rulesets'
+import ATB from '../atb.js'
+import { flushSessionRules } from '../dnr-session-rule-id.js'
+import { clearInvalidDynamicRules } from '../dnr-utils.js'
+import { refreshUserAllowlistRules } from '../dnr-user-allowlist.js'
+import { ensureGPCHeaderRule } from '../dnr-gpc.js'
+import { onConfigUpdate } from '../dnr-config-rulesets.js'
 
 /**
  * @typedef {import('./tds.js').default} TDS
@@ -12,8 +12,15 @@ import { onConfigUpdate } from '../dnr-config-rulesets'
  * @typedef {import('./trackers.js').default} Trackers
  */
 
-export default class DNR {
+export default class DNRListeners {
     /**
+     * This component hooks up DNR library functions to various listeners so they can react to
+     * resource state and set DNR rules accordingly. Currently listens for:
+     *  - Config loading and updates.
+     *  - Blocklist loading and updates.
+     *  - Settings changes (for the GPC setting).
+     *  - Extension install and update events.
+     *
      * @param {{
     *  settings: Settings;
     *  tds: TDS;
