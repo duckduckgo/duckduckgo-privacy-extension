@@ -29,7 +29,7 @@ export function readEtags () {
  */
 export function writeEtags (newEtags) {
     const etags = readEtags()
-    for (let [key, value] of Object.entries(newEtags)) {
+    for (const [key, value] of Object.entries(newEtags)) {
         if (typeof value === 'string') {
             etags[key] = value
         }
