@@ -29,4 +29,21 @@ export default [
             }],
         },
     },
+
+    {
+        files: ["packages/ddg2dnr/**/*.js"],
+        rules: {
+            "generator-star-spacing": ["error", {
+                before: false,
+                after: true
+            }]
+        },
+    },
+
+    {
+        files: ["packages/privacy-grade/**/*.js"],
+        rules: {
+            "object-shorthand": 0
+        },
+    }
 ];

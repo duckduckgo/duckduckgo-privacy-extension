@@ -9,7 +9,7 @@
     },
     "scripts": {
         "extension-configuration": "node cli.js extension-configuration",
-        "eslint": "eslint . --ext .js",
+        "eslint": "eslint '**/*.js'",
         "eslint-fix": "npm run eslint -- --fix",
         "tsc": "tsc",
         "lint": "npm run eslint && npm run tsc",
