@@ -52,7 +52,6 @@
         "node-fetch": "^3.3.2",
         "puppeteer": "^23.0.2",
         "sass": "^1.79.5",
-        "standard": "17.1.2",
         "timekeeper": "^2.3.1",
         "typescript": "^5.6.3",
         "webextension-polyfill": "^0.12.0",
