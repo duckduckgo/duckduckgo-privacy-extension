@@ -7,6 +7,7 @@ const settings = require('../settings')
 const { isActive } = require('../devtools')
 const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
+const browserWrapper = require('../wrapper')
 
 export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
@@ -74,6 +75,7 @@ export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         sessionKey,
         site,
         platform: constants.platform,
+        versionString: browserWrapper.getExtensionVersion(),
         locale: getUserLocale(),
         assets: {
             regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),
