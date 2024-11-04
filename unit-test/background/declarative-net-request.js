@@ -13,27 +13,17 @@ import tabManager from '../../shared/js/background/tab-manager'
 import tdsStorage from '../../shared/js/background/storage/tds'
 import trackers from '../../shared/js/background/trackers'
 import { ensureGPCHeaderRule } from '../../shared/js/background/dnr-gpc'
-import {
-    ensureServiceWorkerInitiatedRequestExceptions
-} from '../../shared/js/background/dnr-service-worker-initiated'
-import {
-    onConfigUpdate
-} from '../../shared/js/background/dnr-config-rulesets'
-import {
-    refreshUserAllowlistRules,
-    toggleUserAllowlistDomain
-} from '../../shared/js/background/dnr-user-allowlist'
+import { ensureServiceWorkerInitiatedRequestExceptions } from '../../shared/js/background/dnr-service-worker-initiated'
+import { onConfigUpdate } from '../../shared/js/background/dnr-config-rulesets'
+import { refreshUserAllowlistRules, toggleUserAllowlistDomain } from '../../shared/js/background/dnr-user-allowlist'
 import {
     getMatchDetails,
     GPC_HEADER_RULE_ID,
     SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
     USER_ALLOWLIST_RULE_ID,
-    SETTING_PREFIX
+    SETTING_PREFIX,
 } from '../../shared/js/background/dnr-utils'
-import {
-    SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
-    USER_ALLOWLISTED_PRIORITY
-} from '@duckduckgo/ddg2dnr/lib/rulePriorities'
+import { SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY, USER_ALLOWLISTED_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 import { GPC_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/gpc'
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage']
@@ -46,120 +36,116 @@ let onUpdateListeners
 const config = JSON.parse(JSON.stringify(testConfig))
 config.features.trackerAllowlist = {
     state: 'enabled',
-    settings: { allowlistedTrackers }
+    settings: { allowlistedTrackers },
 }
 
 const expectedRuleIdsByConfigName = {
     tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 21001, 21002, 21003, 21004],
-    config: [
-        10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010
-    ]
+    config: [10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010],
 }
 
 const expectedLookupByConfigName = {
     tds: {
         2: {
             type: 'trackerBlocking',
-            possibleTrackerDomains: ['facebook.com']
+            possibleTrackerDomains: ['facebook.com'],
         },
         3: {
             type: 'clickToLoad',
-            possibleTrackerDomains: ['facebook.net']
+            possibleTrackerDomains: ['facebook.net'],
         },
         4: {
             type: 'clickToLoad',
-            possibleTrackerDomains: ['facebook.net']
+            possibleTrackerDomains: ['facebook.net'],
         },
         5: {
             type: 'trackerBlocking',
-            possibleTrackerDomains: ['google-analytics.com']
+            possibleTrackerDomains: ['google-analytics.com'],
         },
         6: {
             type: 'trackerBlocking',
-            possibleTrackerDomains: ['google-analytics.com']
+            possibleTrackerDomains: ['google-analytics.com'],
         },
         7: {
             type: 'trackerBlocking',
-            possibleTrackerDomains: ['google-analytics.com']
+            possibleTrackerDomains: ['google-analytics.com'],
         },
         8: {
             type: 'trackerBlocking',
-            possibleTrackerDomains: ['google-analytics.com']
+            possibleTrackerDomains: ['google-analytics.com'],
         },
         9: {
             type: 'surrogateScript',
-            possibleTrackerDomains: ['google-analytics.com']
+            possibleTrackerDomains: ['google-analytics.com'],
         },
         10: {
             type: 'trackerBlocking',
-            possibleTrackerDomains: ['google-analytics.com']
+            possibleTrackerDomains: ['google-analytics.com'],
         },
         11: {
             type: 'trackerBlocking',
-            possibleTrackerDomains: ['google-analytics.com']
+            possibleTrackerDomains: ['google-analytics.com'],
         },
         12: {
             type: 'trackerBlocking',
-            possibleTrackerDomains: ['yahoo.com']
-        }
+            possibleTrackerDomains: ['yahoo.com'],
+        },
     },
     config: {
         10002: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-1.com',
-            reason: 'match on subdomain'
+            reason: 'match on subdomain',
         },
         10003: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-1.com',
-            reason: 'match single resource on single site'
+            reason: 'match single resource on single site',
         },
         10004: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-2.com',
-            reason: 'match single resource on all sites'
+            reason: 'match single resource on all sites',
         },
         10005: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-2.com',
-            reason: 'match all sites and all paths'
+            reason: 'match all sites and all paths',
         },
         10006: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-2.com',
-            reason: 'specific subdomain rule'
+            reason: 'specific subdomain rule',
         },
         10007: {
             type: 'trackerAllowlist',
             domain: 'allowlist-tracker-3.com',
-            reason: 'match all requests'
+            reason: 'match all requests',
         },
         10008: {
             type: 'unprotectedTemporary',
             domain: 'google.com',
-            reason: 'site breakage'
+            reason: 'site breakage',
         },
         10009: {
             type: 'unprotectedTemporary',
             domain: 'suntrust.com',
-            reason: 'site breakage'
+            reason: 'site breakage',
         },
         10010: {
             type: 'contentBlocking',
             domain: 'content-blocking.example',
-            reason: 'site breakage'
-        }
-    }
+            reason: 'site breakage',
+        },
+    },
 }
 
-async function updateConfiguration (configName, etag) {
+async function updateConfiguration(configName, etag) {
     const configValue = { config, tds }[configName]
     const listeners = onUpdateListeners.get(configName)
     settings.updateSetting(`${configName}-etag`, etag)
     if (listeners) {
-        await Promise.all(
-            listeners.map(listener => listener(configName, etag, configValue))
-        )
+        await Promise.all(listeners.map((listener) => listener(configName, etag, configValue)))
     }
 }
 
@@ -182,73 +168,56 @@ describe('declarativeNetRequest', () => {
         onUpdateListeners = tdsStorageStub.stub({ config }).onUpdateListeners
         onUpdateListeners.set('config', [onConfigUpdate])
         onUpdateListeners.set('tds', [onConfigUpdate])
-        tdsStorage.getLists().then(lists => trackers.setLists(lists))
+        tdsStorage.getLists().then((lists) => trackers.setLists(lists))
 
-        spyOn(settings, 'getSetting').and.callFake(
-            name => settingsStorage.get(name)
-        )
-        updateSettingObserver =
-            spyOn(settings, 'updateSetting').and.callFake(
-                (name, value) => {
-                    settingsStorage.set(name, value)
-                }
-            )
+        spyOn(settings, 'getSetting').and.callFake((name) => settingsStorage.get(name))
+        updateSettingObserver = spyOn(settings, 'updateSetting').and.callFake((name, value) => {
+            settingsStorage.set(name, value)
+        })
 
-        updateDynamicRulesObserver =
-            spyOn(
-                chrome.declarativeNetRequest,
-                'updateDynamicRules'
-            ).and.callFake(
-                ({ removeRuleIds, addRules }) => {
-                    if (removeRuleIds) {
-                        for (const id of removeRuleIds) {
-                            dynamicRulesByRuleId.delete(id)
-                        }
+        updateDynamicRulesObserver = spyOn(chrome.declarativeNetRequest, 'updateDynamicRules').and.callFake(
+            ({ removeRuleIds, addRules }) => {
+                if (removeRuleIds) {
+                    for (const id of removeRuleIds) {
+                        dynamicRulesByRuleId.delete(id)
                     }
-                    if (addRules) {
-                        for (const rule of addRules) {
-                            if (dynamicRulesByRuleId.has(rule.id)) {
-                                throw new Error('Duplicate rule ID: ' + rule.id)
-                            }
-                            dynamicRulesByRuleId.set(rule.id, rule)
-                        }
-                    }
-                    return Promise.resolve()
                 }
-            )
-        spyOn(chrome.declarativeNetRequest, 'getDynamicRules').and.callFake(
-            () => Array.from(dynamicRulesByRuleId.values())
+                if (addRules) {
+                    for (const rule of addRules) {
+                        if (dynamicRulesByRuleId.has(rule.id)) {
+                            throw new Error('Duplicate rule ID: ' + rule.id)
+                        }
+                        dynamicRulesByRuleId.set(rule.id, rule)
+                    }
+                }
+                return Promise.resolve()
+            },
         )
+        spyOn(chrome.declarativeNetRequest, 'getDynamicRules').and.callFake(() => Array.from(dynamicRulesByRuleId.values()))
 
-        updateSessionRulesObserver =
-            spyOn(
-                chrome.declarativeNetRequest,
-                'updateSessionRules'
-            ).and.callFake(
-                ({ removeRuleIds, addRules }) => {
-                    if (removeRuleIds) {
-                        for (const id of removeRuleIds) {
-                            sessionRulesByRuleId.delete(id)
-                        }
+        updateSessionRulesObserver = spyOn(chrome.declarativeNetRequest, 'updateSessionRules').and.callFake(
+            ({ removeRuleIds, addRules }) => {
+                if (removeRuleIds) {
+                    for (const id of removeRuleIds) {
+                        sessionRulesByRuleId.delete(id)
                     }
-                    if (addRules) {
-                        for (const rule of addRules) {
-                            if (sessionRulesByRuleId.has(rule.id)) {
-                                throw new Error('Duplicate rule ID: ' + rule.id)
-                            }
-                            sessionRulesByRuleId.set(rule.id, rule)
-                        }
-                    }
-                    return Promise.resolve()
                 }
-            )
-        spyOn(chrome.declarativeNetRequest, 'getSessionRules').and.callFake(
-            () => Array.from(sessionRulesByRuleId.values())
+                if (addRules) {
+                    for (const rule of addRules) {
+                        if (sessionRulesByRuleId.has(rule.id)) {
+                            throw new Error('Duplicate rule ID: ' + rule.id)
+                        }
+                        sessionRulesByRuleId.set(rule.id, rule)
+                    }
+                }
+                return Promise.resolve()
+            },
         )
+        spyOn(chrome.declarativeNetRequest, 'getSessionRules').and.callFake(() => Array.from(sessionRulesByRuleId.values()))
 
         spyOn(browser.runtime, 'getManifest').and.callFake(() => ({
             version: extensionVersion,
-            manifest_version: 3
+            manifest_version: 3,
         }))
     })
 
@@ -264,21 +233,19 @@ describe('declarativeNetRequest', () => {
     it('Config ruleset updates', async () => {
         const expectState = (expectedSettings, expectedUpdateCallCount) => {
             const expectedRuleIds = new Set()
-            for (const [configName, {
-                etag: expectedEtag,
-                extensionVersion: expectedExtensionVersion
-            }] of Object.entries(expectedSettings)) {
+            for (const [configName, { etag: expectedEtag, extensionVersion: expectedExtensionVersion }] of Object.entries(
+                expectedSettings,
+            )) {
                 if (!expectedEtag) {
                     continue
                 }
 
-                const setting =
-                      settingsStorage.get(SETTING_PREFIX + configName) || {}
+                const setting = settingsStorage.get(SETTING_PREFIX + configName) || {}
 
                 const {
                     etag: actualLookupEtag,
                     matchDetailsByRuleId: actualLookup,
-                    extensionVersion: actualLookupExtensionVersion
+                    extensionVersion: actualLookupExtensionVersion,
                 } = setting
                 const etagRuleId = expectedRuleIdsByConfigName[configName][0]
                 const etagRule = dynamicRulesByRuleId.get(etagRuleId)
@@ -287,8 +254,7 @@ describe('declarativeNetRequest', () => {
                 expect(actualLookup).toEqual(expectedLookupByConfigName[configName])
                 expect(actualRuleEtag).toEqual(expectedEtag)
                 expect(actualLookupEtag).toEqual(expectedEtag)
-                expect(actualLookupExtensionVersion)
-                    .toEqual(expectedExtensionVersion)
+                expect(actualLookupExtensionVersion).toEqual(expectedExtensionVersion)
 
                 for (const ruleId of expectedRuleIdsByConfigName[configName]) {
                     expectedRuleIds.add(ruleId)
@@ -297,144 +263,201 @@ describe('declarativeNetRequest', () => {
 
             expect(new Set(dynamicRulesByRuleId.keys())).toEqual(expectedRuleIds)
 
-            expect(updateDynamicRulesObserver.calls.count())
-                .toEqual(expectedUpdateCallCount)
+            expect(updateDynamicRulesObserver.calls.count()).toEqual(expectedUpdateCallCount)
         }
 
-        expectState({
-            tds: { etag: null, extensionVersion: null },
-            config: { etag: null, extensionVersion: null }
-        }, 0)
+        expectState(
+            {
+                tds: { etag: null, extensionVersion: null },
+                config: { etag: null, extensionVersion: null },
+            },
+            0,
+        )
 
         // Nothing saved, tracker blocking rules should be added.
         await updateConfiguration('tds', TEST_ETAGS[0])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[0], extensionVersion: TEST_EXTENION_VERSIONS[0]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[0],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
+                config: {
+                    etag: null,
+                    extensionVersion: null,
+                },
             },
-            config: {
-                etag: null, extensionVersion: null
-            }
-        }, 2) // 1x TDS, 1x Combined
+            2,
+        ) // 1x TDS, 1x Combined
 
         // Rules for that ruleset are already present, skip.
         await updateConfiguration('tds', TEST_ETAGS[0])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[0], extensionVersion: TEST_EXTENION_VERSIONS[0]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[0],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
+                config: {
+                    etag: null,
+                    extensionVersion: null,
+                },
             },
-            config: {
-                etag: null, extensionVersion: null
-            }
-        }, 2) // 1x TDS, 1x Combined
+            2,
+        ) // 1x TDS, 1x Combined
 
         // Add configuration ruleset.
         await updateConfiguration('config', TEST_ETAGS[2])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[0], extensionVersion: TEST_EXTENION_VERSIONS[0]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[0],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
+                config: {
+                    etag: TEST_ETAGS[2],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
             },
-            config: {
-                etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
-            }
-        }, 4) // 1x TDS, 2x Combined, 1x Config
+            4,
+        ) // 1x TDS, 2x Combined, 1x Config
 
         // Tracker blocking rules are outdated, replace with new ones.
         await updateConfiguration('tds', TEST_ETAGS[1])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[1], extensionVersion: TEST_EXTENION_VERSIONS[0]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[1],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
+                config: {
+                    etag: TEST_ETAGS[2],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
             },
-            config: {
-                etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
-            }
-        }, 6) // 2x TDS, 3x Combined, 1x Config
+            6,
+        ) // 2x TDS, 3x Combined, 1x Config
 
         // Configuration ruleset already present, skip.
         await updateConfiguration('config', TEST_ETAGS[2])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[1], extensionVersion: TEST_EXTENION_VERSIONS[0]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[1],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
+                config: {
+                    etag: TEST_ETAGS[2],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
             },
-            config: {
-                etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
-            }
-        }, 6) // 2x TDS, 3x Combined, 1x Config
+            6,
+        ) // 2x TDS, 3x Combined, 1x Config
 
         // Settings missing, add rules again.
         settingsStorage.clear()
         await updateConfiguration('tds', TEST_ETAGS[1])
         await updateConfiguration('config', TEST_ETAGS[2])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[1], extensionVersion: TEST_EXTENION_VERSIONS[0]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[1],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
+                config: {
+                    etag: TEST_ETAGS[2],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
             },
-            config: {
-                etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
-            }
-        }, 10) // 3x TDS, 5x Combined, 2x Config
+            10,
+        ) // 3x TDS, 5x Combined, 2x Config
 
         // Rules missing, add tracker blocking rules again.
         dynamicRulesByRuleId.clear()
         await updateConfiguration('tds', TEST_ETAGS[1])
         await updateConfiguration('config', TEST_ETAGS[2])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[1], extensionVersion: TEST_EXTENION_VERSIONS[0]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[1],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
+                config: {
+                    etag: TEST_ETAGS[2],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
             },
-            config: {
-                etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
-            }
-        }, 13) // 4x TDS, 6x Combined, 3x Config
+            13,
+        ) // 4x TDS, 6x Combined, 3x Config
 
         // All good again, skip.
         await updateConfiguration('tds', TEST_ETAGS[1])
         await updateConfiguration('config', TEST_ETAGS[2])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[1], extensionVersion: TEST_EXTENION_VERSIONS[0]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[1],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
+                config: {
+                    etag: TEST_ETAGS[2],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
             },
-            config: {
-                etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
-            }
-        }, 13) // 4x TDS, 6x Combined, 3x Config
+            13,
+        ) // 4x TDS, 6x Combined, 3x Config
 
         // Extension has been updated, refresh rules again
         extensionVersion = TEST_EXTENION_VERSIONS[1]
         await updateConfiguration('tds', TEST_ETAGS[1])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[1], extensionVersion: TEST_EXTENION_VERSIONS[1]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[1],
+                    extensionVersion: TEST_EXTENION_VERSIONS[1],
+                },
+                config: {
+                    etag: TEST_ETAGS[2],
+                    extensionVersion: TEST_EXTENION_VERSIONS[0],
+                },
             },
-            config: {
-                etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[0]
-            }
-        }, 15) // 5x TDS, 7x Combined, 3x Config
+            15,
+        ) // 5x TDS, 7x Combined, 3x Config
         await updateConfiguration('config', TEST_ETAGS[2])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[1], extensionVersion: TEST_EXTENION_VERSIONS[1]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[1],
+                    extensionVersion: TEST_EXTENION_VERSIONS[1],
+                },
+                config: {
+                    etag: TEST_ETAGS[2],
+                    extensionVersion: TEST_EXTENION_VERSIONS[1],
+                },
             },
-            config: {
-                etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[1]
-            }
-        }, 16) // 5x TDS, 7x Combined, 4x Config
+            16,
+        ) // 5x TDS, 7x Combined, 4x Config
 
         // All good again, skip.
         await updateConfiguration('tds', TEST_ETAGS[1])
         await updateConfiguration('config', TEST_ETAGS[2])
-        expectState({
-            tds: {
-                etag: TEST_ETAGS[1], extensionVersion: TEST_EXTENION_VERSIONS[1]
+        expectState(
+            {
+                tds: {
+                    etag: TEST_ETAGS[1],
+                    extensionVersion: TEST_EXTENION_VERSIONS[1],
+                },
+                config: {
+                    etag: TEST_ETAGS[2],
+                    extensionVersion: TEST_EXTENION_VERSIONS[1],
+                },
             },
-            config: {
-                etag: TEST_ETAGS[2], extensionVersion: TEST_EXTENION_VERSIONS[1]
-            }
-        }, 16) // 5x TDS, 7x Combined, 4x Config
+            16,
+        ) // 5x TDS, 7x Combined, 4x Config
     })
 
     it('User allowlisting updates', async () => {
-        const expectState = expectedAllowlistedDomains => {
+        const expectState = (expectedAllowlistedDomains) => {
             const ruleExists = dynamicRulesByRuleId.has(USER_ALLOWLIST_RULE_ID)
 
             if (expectedAllowlistedDomains.length === 0) {
@@ -445,8 +468,7 @@ describe('declarativeNetRequest', () => {
                 expect(rule.priority).toEqual(USER_ALLOWLISTED_PRIORITY)
                 expect(rule.action.type).toEqual('allowAllRequests')
                 expect(rule.condition.resourceTypes).toEqual(['main_frame'])
-                expect(rule.condition.requestDomains.sort())
-                    .toEqual(expectedAllowlistedDomains.sort())
+                expect(rule.condition.requestDomains.sort()).toEqual(expectedAllowlistedDomains.sort())
             }
         }
 
@@ -493,22 +515,19 @@ describe('declarativeNetRequest', () => {
         const expectAllowlistDenylistState = ({
             expectedDenylistedDomains,
             expectedUnprotectedTemporaryDomains,
-            expectedContentBlockingDomains
+            expectedContentBlockingDomains,
         }) => {
-            const setting =
-                settingsStorage.get(SETTING_PREFIX + 'config') || {}
+            const setting = settingsStorage.get(SETTING_PREFIX + 'config') || {}
             const matchDetailsByRuleId = setting.matchDetailsByRuleId || {}
             const denylistedDomains = setting.denylistedDomains || ''
 
-            expect(denylistedDomains)
-                .toEqual(expectedDenylistedDomains.sort().join())
+            expect(denylistedDomains).toEqual(expectedDenylistedDomains.sort().join())
 
             const allowlistedDomains = new Map([
                 ['unprotectedTemporary', []],
-                ['contentBlocking', []]
+                ['contentBlocking', []],
             ])
-            for (const [ruleIdString, matchDetails]
-                of Object.entries(matchDetailsByRuleId)) {
+            for (const [ruleIdString, matchDetails] of Object.entries(matchDetailsByRuleId)) {
                 const ruleId = parseInt(ruleIdString, 10)
                 if (allowlistedDomains.has(matchDetails.type)) {
                     const domains = allowlistedDomains.get(matchDetails.type)
@@ -517,30 +536,24 @@ describe('declarativeNetRequest', () => {
                     // Sanity check that the rule exists and it's an allowing
                     // rule
                     expect(dynamicRulesByRuleId.has(ruleId)).toBeTrue()
-                    expect(
-                        dynamicRulesByRuleId.get(ruleId).action.type
-                    ).toEqual('allowAllRequests')
+                    expect(dynamicRulesByRuleId.get(ruleId).action.type).toEqual('allowAllRequests')
                 }
             }
 
-            expect(allowlistedDomains.get('unprotectedTemporary'))
-                .toEqual(expectedUnprotectedTemporaryDomains)
-            expect(allowlistedDomains.get('contentBlocking'))
-                .toEqual(expectedContentBlockingDomains)
+            expect(allowlistedDomains.get('unprotectedTemporary')).toEqual(expectedUnprotectedTemporaryDomains)
+            expect(allowlistedDomains.get('contentBlocking')).toEqual(expectedContentBlockingDomains)
         }
 
         expect(updateDynamicRulesObserver.calls.count()).toEqual(0)
 
         // If a domain is denylisted before the configuration is ready, not much
         // should happen.
-        await tabManager.setList(
-            { list: 'denylisted', domain: 'denylisted.example', value: true }
-        )
+        await tabManager.setList({ list: 'denylisted', domain: 'denylisted.example', value: true })
         expect(updateDynamicRulesObserver.calls.count()).toEqual(0)
         expectAllowlistDenylistState({
             expectedDenylistedDomains: [],
             expectedUnprotectedTemporaryDomains: [],
-            expectedContentBlockingDomains: []
+            expectedContentBlockingDomains: [],
         })
 
         // But once the configuration is ready, the domain should be denylisted.
@@ -549,7 +562,7 @@ describe('declarativeNetRequest', () => {
         expectAllowlistDenylistState({
             expectedDenylistedDomains: ['denylisted.example'],
             expectedUnprotectedTemporaryDomains: ['google.com', 'suntrust.com'],
-            expectedContentBlockingDomains: ['content-blocking.example']
+            expectedContentBlockingDomains: ['content-blocking.example'],
         })
 
         // Once TDS is also set, combined rules are also updated
@@ -557,27 +570,22 @@ describe('declarativeNetRequest', () => {
 
         // By default, contentBlocking and unprotectedTemporary allowlist rules
         // should be added and no domains should be denylisted.
-        await tabManager.setList(
-            { list: 'denylisted', domain: 'denylisted.example', value: false }
-        )
+        await tabManager.setList({ list: 'denylisted', domain: 'denylisted.example', value: false })
         expect(updateDynamicRulesObserver.calls.count()).toEqual(5) // 2x Config, 2x Combined, 1x TDS
         expectAllowlistDenylistState({
             expectedDenylistedDomains: [],
             expectedUnprotectedTemporaryDomains: ['google.com', 'suntrust.com'],
-            expectedContentBlockingDomains: ['content-blocking.example']
+            expectedContentBlockingDomains: ['content-blocking.example'],
         })
 
         // Denylisting a domain should cancel an unprotectedTemporary allow.
-        settingsStorage.set(
-            'denylisted',
-            { 'google.com': true }
-        )
+        settingsStorage.set('denylisted', { 'google.com': true })
         await updateConfiguration('config', TEST_ETAGS[0])
         expect(updateDynamicRulesObserver.calls.count()).toEqual(7) // 3x Config, 3x Combined, 1x TDS
         expectAllowlistDenylistState({
             expectedDenylistedDomains: ['google.com'],
             expectedUnprotectedTemporaryDomains: ['suntrust.com'],
-            expectedContentBlockingDomains: ['content-blocking.example']
+            expectedContentBlockingDomains: ['content-blocking.example'],
         })
 
         // If denylist (and other state) hasn't changed, rules should not be
@@ -587,7 +595,7 @@ describe('declarativeNetRequest', () => {
         expectAllowlistDenylistState({
             expectedDenylistedDomains: ['google.com'],
             expectedUnprotectedTemporaryDomains: ['suntrust.com'],
-            expectedContentBlockingDomains: ['content-blocking.example']
+            expectedContentBlockingDomains: ['content-blocking.example'],
         })
 
         // But if other state changes, rules should be regenerates.
@@ -596,98 +604,66 @@ describe('declarativeNetRequest', () => {
         expectAllowlistDenylistState({
             expectedDenylistedDomains: ['google.com'],
             expectedUnprotectedTemporaryDomains: ['suntrust.com'],
-            expectedContentBlockingDomains: ['content-blocking.example']
+            expectedContentBlockingDomains: ['content-blocking.example'],
         })
 
         // Denylisting a domain should cancel a contentblocking allow.
-        settingsStorage.set(
-            'denylisted',
-            { 'google.com': false, 'content-blocking.example': true }
-        )
+        settingsStorage.set('denylisted', { 'google.com': false, 'content-blocking.example': true })
         await updateConfiguration('config', TEST_ETAGS[1])
         expect(updateDynamicRulesObserver.calls.count()).toEqual(11)
         expectAllowlistDenylistState({
             expectedDenylistedDomains: ['content-blocking.example'],
             expectedUnprotectedTemporaryDomains: ['google.com', 'suntrust.com'],
-            expectedContentBlockingDomains: []
+            expectedContentBlockingDomains: [],
         })
 
         // Denylisting domains should be normalized.
-        settingsStorage.set(
-            'denylisted',
-            { ':': true, 'suntrust.COM': true, 'cOnTeNt-blocking.example': true }
-        )
+        settingsStorage.set('denylisted', { ':': true, 'suntrust.COM': true, 'cOnTeNt-blocking.example': true })
         await updateConfiguration('config', TEST_ETAGS[1])
         expect(updateDynamicRulesObserver.calls.count()).toEqual(13)
         expectAllowlistDenylistState({
-            expectedDenylistedDomains: [
-                'content-blocking.example',
-                'suntrust.com'
-            ],
+            expectedDenylistedDomains: ['content-blocking.example', 'suntrust.com'],
             expectedUnprotectedTemporaryDomains: ['google.com'],
-            expectedContentBlockingDomains: []
+            expectedContentBlockingDomains: [],
         })
 
         // The tabManager.setList() code path should trigger the rules to be
         // regenerated when a new domain is added to the denylist.
-        await tabManager.setList(
-            { list: 'denylisted', domain: 'google.com', value: true }
-        )
+        await tabManager.setList({ list: 'denylisted', domain: 'google.com', value: true })
         expect(updateDynamicRulesObserver.calls.count()).toEqual(15)
         expectAllowlistDenylistState({
-            expectedDenylistedDomains: [
-                'content-blocking.example',
-                'google.com',
-                'suntrust.com'
-            ],
+            expectedDenylistedDomains: ['content-blocking.example', 'google.com', 'suntrust.com'],
             expectedUnprotectedTemporaryDomains: [],
-            expectedContentBlockingDomains: []
+            expectedContentBlockingDomains: [],
         })
 
         // But not when the domain was already in the list.
-        await tabManager.setList(
-            { list: 'denylisted', domain: 'google.com', value: true }
-        )
+        await tabManager.setList({ list: 'denylisted', domain: 'google.com', value: true })
         expect(updateDynamicRulesObserver.calls.count()).toEqual(15)
         expectAllowlistDenylistState({
-            expectedDenylistedDomains: [
-                'content-blocking.example',
-                'google.com',
-                'suntrust.com'
-            ],
+            expectedDenylistedDomains: ['content-blocking.example', 'google.com', 'suntrust.com'],
             expectedUnprotectedTemporaryDomains: [],
-            expectedContentBlockingDomains: []
+            expectedContentBlockingDomains: [],
         })
 
         // Nor when removing a domain that didn't previously exist in the
         // denylist.
-        await tabManager.setList(
-            { list: 'denylisted', domain: 'unknown.example', value: false }
-        )
+        await tabManager.setList({ list: 'denylisted', domain: 'unknown.example', value: false })
         expect(updateDynamicRulesObserver.calls.count()).toEqual(15)
         expectAllowlistDenylistState({
-            expectedDenylistedDomains: [
-                'content-blocking.example',
-                'google.com',
-                'suntrust.com'
-            ],
+            expectedDenylistedDomains: ['content-blocking.example', 'google.com', 'suntrust.com'],
             expectedUnprotectedTemporaryDomains: [],
-            expectedContentBlockingDomains: []
+            expectedContentBlockingDomains: [],
         })
 
         // The tabManager.setList() code path should trigger the rules to be
         // regenerated when an existing domains is removed from the denylist.
-        await tabManager.setList(
-            { list: 'denylisted', domain: 'google.com', value: false }
-        )
+        await tabManager.setList({ list: 'denylisted', domain: 'google.com', value: false })
         expect(updateDynamicRulesObserver.calls.count()).toEqual(17)
         expectAllowlistDenylistState({
-            expectedDenylistedDomains: [
-                'content-blocking.example',
-                'suntrust.com'
-            ],
+            expectedDenylistedDomains: ['content-blocking.example', 'suntrust.com'],
             expectedUnprotectedTemporaryDomains: ['google.com'],
-            expectedContentBlockingDomains: []
+            expectedContentBlockingDomains: [],
         })
     })
 
@@ -698,7 +674,7 @@ describe('declarativeNetRequest', () => {
             id: ruleId,
             priority: rulePriority,
             action: { type: 'allow' },
-            condition: { tabIds: [-1], initiatorDomains: ['example.com', 'google.com', 'suntrust.com'] }
+            condition: { tabIds: [-1], initiatorDomains: ['example.com', 'google.com', 'suntrust.com'] },
         }
         const tempUnprotected = config.unprotectedTemporary
 
@@ -709,7 +685,7 @@ describe('declarativeNetRequest', () => {
         // if there are no serviceworker exceptions, or unprotected sites, no rule should be created
         config.features.serviceworkerInitiatedRequests = {
             state: 'enabled',
-            exceptions: []
+            exceptions: [],
         }
         config.unprotectedTemporary = []
         await ensureServiceWorkerInitiatedRequestExceptions(config)
@@ -720,7 +696,7 @@ describe('declarativeNetRequest', () => {
         // exceptions.
         config.features.serviceworkerInitiatedRequests = {
             state: 'disabled',
-            exceptions: [{ domain: 'example.com', reason: '' }]
+            exceptions: [{ domain: 'example.com', reason: '' }],
         }
         config.unprotectedTemporary = tempUnprotected
         await ensureServiceWorkerInitiatedRequestExceptions(config)
@@ -762,25 +738,29 @@ describe('declarativeNetRequest', () => {
             priority: rulePriority,
             action: {
                 type: 'modifyHeaders',
-                requestHeaders: [
-                    { header: 'Sec-GPC', operation: 'set', value: '1' }
-                ]
+                requestHeaders: [{ header: 'Sec-GPC', operation: 'set', value: '1' }],
             },
             condition: {
                 resourceTypes: [
-                    'main_frame', 'sub_frame', 'stylesheet', 'script', 'image',
-                    'font', 'object', 'xmlhttprequest', 'ping', 'csp_report',
-                    'media', 'websocket', 'webtransport', 'webbundle', 'other'
+                    'main_frame',
+                    'sub_frame',
+                    'stylesheet',
+                    'script',
+                    'image',
+                    'font',
+                    'object',
+                    'xmlhttprequest',
+                    'ping',
+                    'csp_report',
+                    'media',
+                    'websocket',
+                    'webtransport',
+                    'webbundle',
+                    'other',
                 ],
-                excludedInitiatorDomains: [
-                    'exception1.example',
-                    'exception2.example'
-                ],
-                excludedRequestDomains: [
-                    'exception1.example',
-                    'exception2.example'
-                ]
-            }
+                excludedInitiatorDomains: ['exception1.example', 'exception2.example'],
+                excludedRequestDomains: ['exception1.example', 'exception2.example'],
+            },
         }
 
         // The rule won't exist initially.
@@ -796,13 +776,16 @@ describe('declarativeNetRequest', () => {
         settings.updateSetting('GPC', true)
         config.features.gpc = {
             state: 'enabled',
-            exceptions: [{
-                domain: 'exception1.example',
-                reason: '1st GPC header reason'
-            }, {
-                domain: 'exception2.example',
-                reason: '2nd GPC header reason'
-            }]
+            exceptions: [
+                {
+                    domain: 'exception1.example',
+                    reason: '1st GPC header reason',
+                },
+                {
+                    domain: 'exception2.example',
+                    reason: '2nd GPC header reason',
+                },
+            ],
         }
 
         await ensureGPCHeaderRule(config)
@@ -870,8 +853,7 @@ describe('declarativeNetRequest', () => {
             if (!expectedLookupByConfigName.tds[i]) continue
             expect(await getMatchDetails(i)).toEqual({
                 type: 'trackerBlocking',
-                possibleTrackerDomains:
-                    expectedLookupByConfigName.tds[i].split(',')
+                possibleTrackerDomains: expectedLookupByConfigName.tds[i].split(','),
             })
         }
 
@@ -881,9 +863,7 @@ describe('declarativeNetRequest', () => {
         // Extension configuration match details should now show up.
         for (let i in expectedLookupByConfigName.config) {
             i = parseInt(i, 10)
-            expect(await getMatchDetails(i)).toEqual(
-                expectedLookupByConfigName.config[i]
-            )
+            expect(await getMatchDetails(i)).toEqual(expectedLookupByConfigName.config[i])
         }
 
         // Tracker blocking match details should still be there too.
@@ -891,24 +871,19 @@ describe('declarativeNetRequest', () => {
             if (!expectedLookupByConfigName.tds[i]) continue
             expect(await getMatchDetails(i)).toEqual({
                 type: 'trackerBlocking',
-                possibleTrackerDomains:
-                    expectedLookupByConfigName.tds[i].split(',')
+                possibleTrackerDomains: expectedLookupByConfigName.tds[i].split(','),
             })
         }
 
         // User allowlisting matches should be easy to identify.
         expect(await getMatchDetails(USER_ALLOWLIST_RULE_ID)).toEqual({
-            type: 'userAllowlist'
+            type: 'userAllowlist',
         })
 
         // Likewise for ServiceWorker initiated requests.
-        expect(
-            await getMatchDetails(SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID)
-        ).toEqual({ type: 'serviceWorkerInitiatedAllowing' })
+        expect(await getMatchDetails(SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID)).toEqual({ type: 'serviceWorkerInitiatedAllowing' })
 
         // And GPC header redirections.
-        expect(
-            await getMatchDetails(GPC_HEADER_RULE_ID)
-        ).toEqual({ type: 'gpc' })
+        expect(await getMatchDetails(GPC_HEADER_RULE_ID)).toEqual({ type: 'gpc' })
     })
 })

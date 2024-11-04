@@ -4,13 +4,8 @@ const Tab = require('./classes/tab')
 const ServiceWorkerTab = require('./classes/sw-tab')
 const { TabState } = require('./classes/tab-state')
 const browserWrapper = require('./wrapper')
-const {
-    toggleUserAllowlistDomain,
-    updateUserDenylist
-} = require('./dnr-user-allowlist.js')
-const {
-    clearClickToLoadDnrRulesForTab
-} = require('./dnr-click-to-load')
+const { toggleUserAllowlistDomain, updateUserDenylist } = require('./dnr-user-allowlist.js')
+const { clearClickToLoadDnrRulesForTab } = require('./dnr-click-to-load')
 const { getCurrentTab } = require('./utils')
 
 /**
@@ -19,12 +14,10 @@ const { getCurrentTab } = require('./utils')
 
 // These tab properties are preserved when a new tab Object replaces an existing
 // one for the same tab ID.
-const persistentTabProperties = [
-    'ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction', 'userRefreshCount'
-]
+const persistentTabProperties = ['ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction', 'userRefreshCount']
 
 class TabManager {
-    constructor () {
+    constructor() {
         /** @type {Record<number, Tab>} */
         this.tabContainer = {}
         /** @type {Record<string, Tab>} */
@@ -36,7 +29,7 @@ class TabManager {
      * 1. When a new tab is opened. See onUpdated listener below
      * 2. When we get a new main_frame request
      */
-    create (tabData) {
+    create(tabData) {
         const normalizedData = browserWrapper.normalizeTabData(tabData)
         const newTab = new Tab(normalizedData)
 
@@ -54,14 +47,14 @@ class TabManager {
         return newTab
     }
 
-    async restoreOrCreate (tabData) {
+    async restoreOrCreate(tabData) {
         const restored = await this.restore(tabData.id)
         if (!restored) {
             await this.create(tabData)
         }
     }
 
-    async restore (tabId) {
+    async restore(tabId) {
         const restoredState = await Tab.restore(tabId)
         if (restoredState) {
             this.tabContainer[tabId] = restoredState
@@ -69,7 +62,7 @@ class TabManager {
         return restoredState
     }
 
-    delete (id) {
+    delete(id) {
         const tabToRemove = this.tabContainer[id]
         if (tabToRemove) {
             tabToRemove?.adClick?.removeDNR()
@@ -82,7 +75,7 @@ class TabManager {
         TabState.delete(id)
     }
 
-    has (id) {
+    has(id) {
         return id in this.tabContainer
     }
 
@@ -91,7 +84,7 @@ class TabManager {
      * get({tabId: ###});
      * @returns {Tab}
      */
-    get (tabData) {
+    get(tabData) {
         if (tabData.tabId === -1 && (tabData.initiator || tabData.documentUrl)) {
             // service worker request - use a 'ServiceWorkerTab' for the origin as a proxy for the real tab(s)
             const swUrl = tabData.initiator || tabData.documentUrl
@@ -104,7 +97,7 @@ class TabManager {
         return this.tabContainer[tabData.tabId]
     }
 
-    async getOrRestoreTab (tabId) {
+    async getOrRestoreTab(tabId) {
         if (!tabManager.has(tabId)) {
             await tabManager.restore(tabId)
         }
@@ -116,7 +109,7 @@ class TabManager {
      *
      * @returns {Promise<import("./classes/tab")?>}
      */
-    async getOrRestoreCurrentTab () {
+    async getOrRestoreCurrentTab() {
         const currentTabDetails = await getCurrentTab()
         if (currentTabDetails?.id) {
             return await tabManager.getOrRestoreTab(currentTabDetails.id)
@@ -133,15 +126,17 @@ class TabManager {
      * @param {boolean} data.value - allowlist value, true or false
      * @return {Promise}
      */
-    async setList (data) {
+    async setList(data) {
         this.setGlobalAllowlist(data.list, data.domain, data.value)
 
         // collect all tabs (both normal and SW) tracked by this object
-        const allTabs = [...Object.keys(this.tabContainer).map(tabId => this.tabContainer[tabId]),
-            ...Object.keys(this.swContainer).map(origin => this.swContainer[origin])]
+        const allTabs = [
+            ...Object.keys(this.tabContainer).map((tabId) => this.tabContainer[tabId]),
+            ...Object.keys(this.swContainer).map((origin) => this.swContainer[origin]),
+        ]
         // propegate the list change to all tabs with the same site
         allTabs
-            .filter(tab => tab.site && tab.site.domain === data.domain)
+            .filter((tab) => tab.site && tab.site.domain === data.domain)
             .forEach((tab) => {
                 tab.site.setListValue(data.list, data.value)
             })
@@ -165,7 +160,7 @@ class TabManager {
      * @param {string} domain
      * @param {boolean} value
      */
-    setGlobalAllowlist (list, domain, value) {
+    setGlobalAllowlist(list, domain, value) {
         const globalallowlist = settings.getSetting(list) || {}
 
         if (value) {
@@ -183,7 +178,7 @@ class TabManager {
      * an intital tab instance here. We'll update this instance
      * later on when webrequests start coming in.
      */
-    createOrUpdateTab (id, info) {
+    createOrUpdateTab(id, info) {
         if (!tabManager.get({ tabId: id })) {
             info.id = id
             return tabManager.create(info)
@@ -206,8 +201,7 @@ class TabManager {
 
                     console.info(tab.site.grade)
 
-                    if (tab.statusCode === 200 &&
-                        !tab.site.didIncrementCompaniesData) {
+                    if (tab.statusCode === 200 && !tab.site.didIncrementCompaniesData) {
                         if (tab.trackers && Object.keys(tab.trackers).length > 0) {
                             Companies.incrementTotalPagesWithTrackers()
                         }
@@ -221,7 +215,7 @@ class TabManager {
         }
     }
 
-    updateTabUrl (request) {
+    updateTabUrl(request) {
         // Update tab data. This makes
         // sure we have the correct url after any https rewrites
         const tab = tabManager.get({ tabId: request.tabId })

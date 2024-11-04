@@ -1,35 +1,35 @@
 name: ddg2dnr
 
-on: [ pull_request ]
+on: [pull_request]
 
 jobs:
-  lint:
-    runs-on: "${{ matrix.os }}"
-    strategy:
-      matrix:
-        node: [20.x]
-        os: [ubuntu-latest] # FIXME - macos-latest runner keeps failing
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-          cache: 'npm'
-      - run: npm run install-ci
-      - run: npm run lint --workspace=packages/ddg2dnr
-  test:
-    runs-on: "${{ matrix.os }}"
-    strategy:
-      matrix:
-        node: [20.x]
-        os: [ubuntu-latest]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-          cache: 'npm'
-      - run: npm run install-ci
-      - run: npm test --workspace=packages/ddg2dnr
+    lint:
+        runs-on: '${{ matrix.os }}'
+        strategy:
+            matrix:
+                node: [20.x]
+                os: [ubuntu-latest] # FIXME - macos-latest runner keeps failing
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js ${{ matrix.node }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node }}
+                  cache: 'npm'
+            - run: npm run install-ci
+            - run: npm run lint --workspace=packages/ddg2dnr
+    test:
+        runs-on: '${{ matrix.os }}'
+        strategy:
+            matrix:
+                node: [20.x]
+                os: [ubuntu-latest]
+        steps:
+            - uses: actions/checkout@v4
+            - name: Use Node.js ${{ matrix.node }}
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node }}
+                  cache: 'npm'
+            - run: npm run install-ci
+            - run: npm test --workspace=packages/ddg2dnr

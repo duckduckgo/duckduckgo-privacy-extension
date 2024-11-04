@@ -4,37 +4,31 @@ const parseUserAgentString = require('../../shared-utils/parse-user-agent-string
 const FeedbackFormView = require('../views/feedback-form')
 const FeedbackFormModel = require('../models/feedback-form')
 
-function Feedback (ops) {
+function Feedback(ops) {
     Parent.call(this, ops)
 }
 
-Feedback.prototype = window.$.extend({},
-    Parent.prototype,
-    mixins.setBrowserClassOnBodyTag,
-    mixins.parseQueryString,
-    {
+Feedback.prototype = window.$.extend({}, Parent.prototype, mixins.setBrowserClassOnBodyTag, mixins.parseQueryString, {
+    pageName: 'feedback',
 
-        pageName: 'feedback',
+    ready: function () {
+        Parent.prototype.ready.call(this)
+        this.setBrowserClassOnBodyTag()
 
-        ready: function () {
-            Parent.prototype.ready.call(this)
-            this.setBrowserClassOnBodyTag()
+        const params = this.parseQueryString(window.location.search)
+        const browserInfo = parseUserAgentString()
 
-            const params = this.parseQueryString(window.location.search)
-            const browserInfo = parseUserAgentString()
-
-            this.form = new FeedbackFormView({
-                appendTo: window.$('.js-feedback-form'),
-                model: new FeedbackFormModel({
-                    isBrokenSite: params.broken,
-                    url: decodeURIComponent(params.url || ''),
-                    browser: browserInfo.browser,
-                    browserVersion: browserInfo.version
-                })
-            })
-        }
-    }
-)
+        this.form = new FeedbackFormView({
+            appendTo: window.$('.js-feedback-form'),
+            model: new FeedbackFormModel({
+                isBrokenSite: params.broken,
+                url: decodeURIComponent(params.url || ''),
+                browser: browserInfo.browser,
+                browserVersion: browserInfo.version,
+            }),
+        })
+    },
+})
 
 // kickoff!
 window.DDG = window.DDG || {}

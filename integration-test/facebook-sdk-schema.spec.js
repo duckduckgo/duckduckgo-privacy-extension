@@ -6,7 +6,7 @@ const testSite = 'https://privacy-test-pages.site/privacy-protections/click-to-l
 
 // We're using the original playwright test function which does not load the extension
 test.describe('Facebook SDK schema', () => {
-    test('CTL: Facebook SDK schema hasn\'t changed', async ({ page }) => {
+    test("CTL: Facebook SDK schema hasn't changed", async ({ page }) => {
         await routeFromLocalhost(page)
         await page.goto(testSite)
 
@@ -23,9 +23,7 @@ test.describe('Facebook SDK schema', () => {
         //
         //  See also https://developers.facebook.com/docs/graph-api/changelog
 
-        const { actualSchema, expectedSchema } = await apiSchema.setupAPISchemaTest(
-            page, 'facebook-sdk.json', ['FB']
-        )
+        const { actualSchema, expectedSchema } = await apiSchema.setupAPISchemaTest(page, 'facebook-sdk.json', ['FB'])
         expect(actualSchema).toEqual(expectedSchema)
     })
 })

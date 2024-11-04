@@ -18,12 +18,14 @@ describe('Https upgrades', () => {
 
         // TODO: Re-enable when example.com back online
         xit('should make a valid request to the SE service', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: () => {}
-                },
-                json: () => Promise.resolve([])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: () => {},
+                    },
+                    json: () => Promise.resolve([]),
+                }),
+            )
 
             httpsService.checkInService('example.com')
 
@@ -32,12 +34,14 @@ describe('Https upgrades', () => {
         })
 
         it('should support punycode', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: () => {}
-                },
-                json: () => Promise.resolve([])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: () => {},
+                    },
+                    json: () => Promise.resolve([]),
+                }),
+            )
 
             httpsService.checkInService('☃.social')
             expect(spy.calls.argsFor(0)[0]).toBe('https://duckduckgo.com/smarter_encryption.js?pv1=1427')
@@ -50,35 +54,39 @@ describe('Https upgrades', () => {
         })
 
         it('should return a true/false result via promise 1/2', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: () => {}
-                },
-                json: () => Promise.resolve(['bad', '0caaf24ab1a0c33440c06afe99df986365b0781f', 'bad2'])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: () => {},
+                    },
+                    json: () => Promise.resolve(['bad', '0caaf24ab1a0c33440c06afe99df986365b0781f', 'bad2']),
+                }),
+            )
 
             const libraryResult = httpsService.checkInService('example.com')
 
             expect(libraryResult instanceof Promise).toBe(true)
 
-            return libraryResult.then(libraryPromiseResult => {
+            return libraryResult.then((libraryPromiseResult) => {
                 expect(libraryPromiseResult).toBe(true)
             })
         })
 
         it('should return a true/false result via promise 2/2', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: () => {}
-                },
-                json: () => Promise.resolve(['bad', 'bad2', 'bad3'])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: () => {},
+                    },
+                    json: () => Promise.resolve(['bad', 'bad2', 'bad3']),
+                }),
+            )
 
             const libraryResult = httpsService.checkInService('example.com')
 
             expect(libraryResult instanceof Promise).toBe(true)
 
-            return libraryResult.then(libraryPromiseResult => {
+            return libraryResult.then((libraryPromiseResult) => {
                 expect(libraryPromiseResult).toBe(false)
             })
         })
@@ -90,12 +98,14 @@ describe('Https upgrades', () => {
         })
 
         it('should not make multiple requests with the same query at the same time', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: () => {}
-                },
-                json: () => Promise.resolve([])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: () => {},
+                    },
+                    json: () => Promise.resolve([]),
+                }),
+            )
 
             const promise1 = httpsService.checkInService('example.com')
             const promise2 = httpsService.checkInService('example.com')
@@ -107,12 +117,14 @@ describe('Https upgrades', () => {
         })
 
         it('should allow to make multiple requests with the same query one after another', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: () => {}
-                },
-                json: () => Promise.resolve([])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: () => {},
+                    },
+                    json: () => Promise.resolve([]),
+                }),
+            )
 
             const promise1 = httpsService.checkInService('example.com')
 
@@ -127,12 +139,14 @@ describe('Https upgrades', () => {
 
     describe('caching', () => {
         it('should cache responses', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: () => {}
-                },
-                json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f'])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: () => {},
+                    },
+                    json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f']),
+                }),
+            )
 
             const promise1 = httpsService.checkInService('example.com')
 
@@ -142,16 +156,18 @@ describe('Https upgrades', () => {
         })
 
         it('should allow to clear the cache', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: name => {
-                        if (name === 'expires') {
-                            return 'Tue, 1 Aug 2000 12:00:00 GMT'
-                        }
-                    }
-                },
-                json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f'])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: (name) => {
+                            if (name === 'expires') {
+                                return 'Tue, 1 Aug 2000 12:00:00 GMT'
+                            }
+                        },
+                    },
+                    json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f']),
+                }),
+            )
 
             const promise1 = httpsService.checkInService('example.com')
 
@@ -162,16 +178,18 @@ describe('Https upgrades', () => {
         })
 
         it('should allow to remove expired cache 1/2', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: name => {
-                        if (name === 'expires') {
-                            return 'Tue, 1 Aug 2000 12:00:00 GMT'
-                        }
-                    }
-                },
-                json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f'])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: (name) => {
+                            if (name === 'expires') {
+                                return 'Tue, 1 Aug 2000 12:00:00 GMT'
+                            }
+                        },
+                    },
+                    json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f']),
+                }),
+            )
 
             const promise1 = httpsService.checkInService('example.com')
 
@@ -183,16 +201,18 @@ describe('Https upgrades', () => {
         })
 
         it('should allow to remove expired cache 2/2', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: name => {
-                        if (name === 'expires') {
-                            return 'Mon, 1 Aug 2050 12:00:00 GMT'
-                        }
-                    }
-                },
-                json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f'])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: (name) => {
+                            if (name === 'expires') {
+                                return 'Mon, 1 Aug 2050 12:00:00 GMT'
+                            }
+                        },
+                    },
+                    json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f']),
+                }),
+            )
 
             const promise1 = httpsService.checkInService('example.com')
 
@@ -204,16 +224,18 @@ describe('Https upgrades', () => {
         })
 
         it('should cache for 1h if "expires" header contains invalid date', () => {
-            spy.and.returnValue(Promise.resolve({
-                headers: {
-                    get: name => {
-                        if (name === 'expires') {
-                            return 'cats are not dates'
-                        }
-                    }
-                },
-                json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f'])
-            }))
+            spy.and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: (name) => {
+                            if (name === 'expires') {
+                                return 'cats are not dates'
+                            }
+                        },
+                    },
+                    json: () => Promise.resolve(['0caaf24ab1a0c33440c06afe99df986365b0781f']),
+                }),
+            )
 
             const promise1 = httpsService.checkInService('example.com')
 

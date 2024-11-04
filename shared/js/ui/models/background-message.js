@@ -19,17 +19,14 @@ const browserUIWrapper = require('./../base/ui-wrapper.js')
  *
  *  The common sendMessage method is defined in base/model.js
  */
-function BackgroundMessage (attrs) {
+function BackgroundMessage(attrs) {
     Parent.call(this, attrs)
     const thisModel = this
     browserUIWrapper.backgroundMessage(thisModel)
 }
 
-BackgroundMessage.prototype = window.$.extend({},
-    Parent.prototype,
-    {
-        modelName: 'backgroundMessage'
-    }
-)
+BackgroundMessage.prototype = window.$.extend({}, Parent.prototype, {
+    modelName: 'backgroundMessage',
+})
 
 module.exports = BackgroundMessage

@@ -1,10 +1,6 @@
-import {
-    AD_ATTRIBUTION_POLICY_PRIORITY
-} from '@duckduckgo/ddg2dnr/lib/rulePriorities'
+import { AD_ATTRIBUTION_POLICY_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
 
-import {
-    generateDNRRule
-} from '@duckduckgo/ddg2dnr/lib/utils'
+import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
 
 import settings from '../settings'
 import { sendPixelRequest } from '../pixels'
@@ -32,7 +28,7 @@ const manifestVersion = browserWrapper.getManifestVersion()
  */
 
 export class AdClickAttributionPolicy {
-    constructor () {
+    constructor() {
         const policy = getFeatureSettings('adClickAttribution')
 
         /** @type {AdClickAttributionLinkFormat[]} */
@@ -49,7 +45,7 @@ export class AdClickAttributionPolicy {
      * @param {URL} resourceURL
      * @returns {AdClickAttributionLinkFormat | undefined}
      */
-    getMatchingLinkFormat (resourceURL) {
+    getMatchingLinkFormat(resourceURL) {
         const hostnameAndPath = resourceURL.hostname + resourceURL.pathname
 
         for (const linkFormat of this.linkFormats) {
@@ -70,7 +66,7 @@ export class AdClickAttributionPolicy {
      * @param {Tab} tab
      * @returns {AdClick | undefined}
      */
-    createAdClick (resourcePath, tab) {
+    createAdClick(resourcePath, tab) {
         let resourceURL
         try {
             resourceURL = new URL(resourcePath)
@@ -85,7 +81,7 @@ export class AdClickAttributionPolicy {
             this.totalExpiration,
             this.allowlist,
             this.heuristicDetectionEnabled,
-            this.domainDetectionEnabled
+            this.domainDetectionEnabled,
         )
 
         if (manifestVersion === 3) {
@@ -114,7 +110,7 @@ export class AdClickAttributionPolicy {
      * @param {string} resourcePath
      * @returns {boolean}
      */
-    resourcePermitted (resourcePath) {
+    resourcePermitted(resourcePath) {
         let resourceURL
         try {
             resourceURL = new URL(resourcePath)
@@ -138,10 +134,7 @@ export class AdClick {
      * @param {boolean} heuristicDetectionEnabled
      * @param {boolean} domainDetectionEnabled
      */
-    constructor (
-        navigationExpiration, totalExpiration, allowlist,
-        heuristicDetectionEnabled, domainDetectionEnabled
-    ) {
+    constructor(navigationExpiration, totalExpiration, allowlist, heuristicDetectionEnabled, domainDetectionEnabled) {
         /** @type {string?} */
         this.adBaseDomain = null
         /** @type {string?} */
@@ -149,8 +142,8 @@ export class AdClick {
         this.adClickRedirect = false
         this.navigationExpiration = navigationExpiration
         this.totalExpiration = totalExpiration
-        this.expires = Date.now() + (this.totalExpiration * 1000)
-        this.clickExpires = Date.now() + (this.navigationExpiration * 1000)
+        this.expires = Date.now() + this.totalExpiration * 1000
+        this.clickExpires = Date.now() + this.navigationExpiration * 1000
         this.allowlist = allowlist
         this.adClickDNR = null
         this.heuristicDetectionEnabled = heuristicDetectionEnabled
@@ -159,19 +152,19 @@ export class AdClick {
         this.adClickActivePixelSent = false
     }
 
-    clone () {
+    clone() {
         const adClick = new AdClick(
             this.navigationExpiration,
             this.totalExpiration,
             this.allowlist,
             this.heuristicDetectionEnabled,
-            this.domainDetectionEnabled
+            this.domainDetectionEnabled,
         )
         adClick.adBaseDomain = this.adBaseDomain
         adClick.parameterAdBaseDomain = this.parameterAdBaseDomain
         adClick.adClickRedirect = this.adClickRedirect
         adClick.expires = this.expires
-        adClick.clickExpires = Date.now() + (this.navigationExpiration * 1000)
+        adClick.clickExpires = Date.now() + this.navigationExpiration * 1000
         adClick.adClickDNR = this.adClickDNR
         adClick.adClickDetectedPixelSent = this.adClickDetectedPixelSent
         adClick.adClickActivePixelSent = this.adClickActivePixelSent
@@ -183,7 +176,7 @@ export class AdClick {
      * @param {number} tabId
      * @returns {AdClick} adClick
      */
-    propagate (tabId) {
+    propagate(tabId) {
         const adClick = this.clone()
 
         if (this.adClickDNR) {
@@ -193,13 +186,13 @@ export class AdClick {
         return adClick
     }
 
-    static restore (adClick) {
+    static restore(adClick) {
         const restoredAdClick = new AdClick(
             adClick.navigationExpiration,
             adClick.totalExpiration,
             adClick.allowlist,
             adClick.heuristicDetectionEnabled,
-            adClick.domainDetectionEnabled
+            adClick.domainDetectionEnabled,
         )
         restoredAdClick.adBaseDomain = adClick.adBaseDomain
         restoredAdClick.parameterAdBaseDomain = adClick.parameterAdBaseDomain
@@ -215,7 +208,7 @@ export class AdClick {
     /**
      * @param {string} domain
      **/
-    setAdBaseDomain (domain) {
+    setAdBaseDomain(domain) {
         this.adBaseDomain = domain
         this.adClickRedirect = false
 
@@ -229,7 +222,7 @@ export class AdClick {
      * been sent already.
      * @param {string?} heuristicAdBaseDomain
      */
-    sendAdClickDetectedPixel (heuristicAdBaseDomain) {
+    sendAdClickDetectedPixel(heuristicAdBaseDomain) {
         if (this.adClickDetectedPixelSent) {
             return
         }
@@ -258,7 +251,7 @@ export class AdClick {
             appVersion,
             domainDetection,
             heuristicDetectionEnabled: this.heuristicDetectionEnabled ? '1' : '0',
-            domainDetectionEnabled: this.domainDetectionEnabled ? '1' : 0
+            domainDetectionEnabled: this.domainDetectionEnabled ? '1' : 0,
         })
         this.adClickDetectedPixelSent = true
     }
@@ -267,7 +260,7 @@ export class AdClick {
      * @param {Tab} tab
      * @returns {boolean} true if a new tab should have the ad attribution policy applied
      */
-    shouldPropagateAdClickForNewTab (tab) {
+    shouldPropagateAdClickForNewTab(tab) {
         if (tab.site.baseDomain === this.adBaseDomain) {
             return this.hasNotExpired()
         }
@@ -278,14 +271,14 @@ export class AdClick {
      * @param {Tab} tab
      * @returns {boolean} true if a new navigation should have the ad attribution policy applied
      */
-    shouldPropagateAdClickForNavigation (tab) {
+    shouldPropagateAdClickForNavigation(tab) {
         if (tab.site.baseDomain !== this.adBaseDomain) {
             return this.clickExpires > Date.now()
         }
         return this.hasNotExpired()
     }
 
-    hasNotExpired () {
+    hasNotExpired() {
         if (this.expires > Date.now()) {
             return true
         } else {
@@ -301,7 +294,7 @@ export class AdClick {
      * @param {Tab} tab
      * @returns {boolean}
      */
-    allowAdAttribution (tab) {
+    allowAdAttribution(tab) {
         return tab.site.baseDomain === this.adBaseDomain && this.hasNotExpired()
     }
 
@@ -311,7 +304,7 @@ export class AdClick {
      * some housekeeping for the ad_attribution pixels.
      * @param {Tab} tab
      */
-    requestWasAllowed (tab) {
+    requestWasAllowed(tab) {
         // If this is the first ad attribution request allowed for the tab,
         // increment the count sent with the 'm_pageloads_with_ad_attribution'
         // pixel.
@@ -328,7 +321,7 @@ export class AdClick {
         }
     }
 
-    getAdClickDNR (tabId) {
+    getAdClickDNR(tabId) {
         const id = getNextSessionRuleId()
         if (typeof id !== 'number') {
             console.error('Failed to create ad click attribution rule.')
@@ -340,40 +333,40 @@ export class AdClick {
                 id,
                 priority: AD_ATTRIBUTION_POLICY_PRIORITY,
                 actionType: 'allow',
-                requestDomains: this.allowlist.map((entry) => entry.host)
-            })
+                requestDomains: this.allowlist.map((entry) => entry.host),
+            }),
         }
         adClickDNR.rule.condition.tabIds = [tabId]
         return adClickDNR
     }
 
-    updateDNRInitiator (domain) {
+    updateDNRInitiator(domain) {
         if (this.adClickDNR && domain) {
             this.adClickDNR.rule.condition.initiatorDomains = [domain]
             this.updateDNR()
         }
     }
 
-    createDNR (tabId) {
+    createDNR(tabId) {
         const adClickDNR = this.getAdClickDNR(tabId)
         if (adClickDNR) {
             this.adClickDNR = adClickDNR
             chrome.declarativeNetRequest.updateSessionRules({
-                addRules: [this.adClickDNR.rule]
+                addRules: [this.adClickDNR.rule],
             })
         }
     }
 
-    updateDNR () {
+    updateDNR() {
         if (this.adClickDNR) {
             chrome.declarativeNetRequest.updateSessionRules({
                 removeRuleIds: [this.adClickDNR.rule.id],
-                addRules: [this.adClickDNR.rule]
+                addRules: [this.adClickDNR.rule],
             })
         }
     }
 
-    removeDNR () {
+    removeDNR() {
         if (this.adClickDNR) {
             chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: [this.adClickDNR.rule.id] })
         }
@@ -386,12 +379,12 @@ export class AdClick {
  * testing.
  * @returns {Promise<void>}
  */
-export async function sendPageloadsWithAdAttributionPixelAndResetCount () {
+export async function sendPageloadsWithAdAttributionPixelAndResetCount() {
     await settings.ready()
     const count = settings.getSetting('m_pageloads_with_ad_attribution.count')
     if (typeof count === 'number' && count > 0) {
         await sendPixelRequest('m_pageloads_with_ad_attribution', {
-            count
+            count,
         })
     }
     settings.updateSetting('m_pageloads_with_ad_attribution.count', 0)

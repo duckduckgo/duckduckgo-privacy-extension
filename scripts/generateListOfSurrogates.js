@@ -16,7 +16,7 @@ if (argv.json) {
     console.log(JSON.stringify(files, null, 2))
 } else {
     // Legacy format used by the extension at runtime.
-    files.forEach(file => {
+    files.forEach((file) => {
         console.log(`domain.com/${file} application/javascript\n`)
     })
 }

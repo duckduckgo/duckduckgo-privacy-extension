@@ -36,14 +36,14 @@ export class TrackerStats {
     current = {
         start: 0,
         end: 0,
-        entries: new Map()
+        entries: new Map(),
     }
 
     /**
      * @param {string} key
      * @param {number} [now] optional timestamp to use as the current time
      */
-    increment (key, now = Date.now()) {
+    increment(key, now = Date.now()) {
         this.totalCount += 1
 
         // if current is empty, start it
@@ -68,10 +68,10 @@ export class TrackerStats {
      * Every hour, pack up the current entries and start a new pack
      * @param {number} [now] optional timestamp to use as the current time
      */
-    pack (now = Date.now()) {
+    pack(now = Date.now()) {
         const delta = now - this.current.start
-        const currentIsUnsetOrOverAnHourOld = this.current.start === 0 || (delta) >= HOUR
-        const currentIsUnsetOrOverADayOld = this.current.start === 0 || (delta) >= DAY
+        const currentIsUnsetOrOverAnHourOld = this.current.start === 0 || delta >= HOUR
+        const currentIsUnsetOrOverADayOld = this.current.start === 0 || delta >= DAY
 
         // if current is over a day old, just clear it
         if (currentIsUnsetOrOverADayOld) {
@@ -83,7 +83,7 @@ export class TrackerStats {
             const next = {
                 start: this.current.start,
                 end: now,
-                entries: Object.fromEntries(this.current.entries)
+                entries: Object.fromEntries(this.current.entries),
             }
 
             this.packs.push(next)
@@ -95,8 +95,8 @@ export class TrackerStats {
         }
 
         // prune expired packs, only accepting the last 23 to account for clock drift/adjustments
-        this.packs = this.packs.slice(-23).filter(pack => {
-            const packIsYoungerThanADay = (now - pack.end) <= DAY
+        this.packs = this.packs.slice(-23).filter((pack) => {
+            const packIsYoungerThanADay = now - pack.end <= DAY
             return packIsYoungerThanADay
         })
     }
@@ -105,13 +105,13 @@ export class TrackerStats {
      * @param {number} [now] - optional timestamp to use as the current time
      * @return {PlainEntries}
      */
-    data (now = Date.now()) {
+    data(now = Date.now()) {
         /** @type {Record<string, number>} */
         const output = {}
 
         // aggregate all packs
         for (const pack of this.packs) {
-            const packIsYoungerThanADay = (now - pack.end) < DAY
+            const packIsYoungerThanADay = now - pack.end < DAY
             if (!packIsYoungerThanADay) continue
             for (const [key, count] of Object.entries(pack.entries)) {
                 output[key] = (output[key] ?? 0) + count
@@ -119,7 +119,7 @@ export class TrackerStats {
         }
 
         // aggregate current, but only if it's younger than a day
-        const currentIsYoungerThanADay = (now - this.current.start) < DAY
+        const currentIsYoungerThanADay = now - this.current.start < DAY
         if (currentIsYoungerThanADay) {
             for (const [key, count] of this.current.entries) {
                 output[key] = (output[key] ?? 0) + count
@@ -133,12 +133,12 @@ export class TrackerStats {
      * @param {number} [now] optional timestamp to use as the current time
      * @returns {SortedOutput}
      */
-    sorted (now = Date.now()) {
+    sorted(now = Date.now()) {
         const data = this.data(now)
 
         /** @type {SortedOutput} */
         const keys = Object.keys(data)
-            .map(key => {
+            .map((key) => {
                 return { key, count: data[key] }
             })
             .sort((a, b) => b.count - a.count)
@@ -152,12 +152,12 @@ export class TrackerStats {
      * @param {Pack} params.current
      * @param {Pack[]} params.packs
      */
-    deserialize (params) {
+    deserialize(params) {
         // this is the schema for a single pack. It's used for the current pack and for the packs array
         const packSchema = z.object({
             start: z.number().default(0),
             end: z.number().default(0),
-            entries: z.record(z.string(), z.number())
+            entries: z.record(z.string(), z.number()),
         })
 
         // this is the schema for the entire storage object
@@ -166,9 +166,9 @@ export class TrackerStats {
             current: packSchema.default({
                 start: 0,
                 end: 0,
-                entries: {}
+                entries: {},
             }),
-            packs: z.array(packSchema).default([])
+            packs: z.array(packSchema).default([]),
         })
 
         // try to validate the data, but without throwing errors
@@ -183,7 +183,7 @@ export class TrackerStats {
             this.current = {
                 start: result.data.current.start,
                 end: result.data.current.end,
-                entries: new Map(Object.entries(result.data.current.entries))
+                entries: new Map(Object.entries(result.data.current.entries)),
             }
             this.packs = result.data.packs
         }
@@ -199,12 +199,12 @@ export class TrackerStats {
      *
      * @return {{current: Pack, totalCount: number, packs: Pack[], entries: null}}
      */
-    serialize () {
+    serialize() {
         const output = {
             totalCount: this.totalCount,
             current: {
                 ...this.current,
-                entries: Object.fromEntries(this.current.entries)
+                entries: Object.fromEntries(this.current.entries),
             },
             packs: this.packs,
             /**
@@ -212,7 +212,7 @@ export class TrackerStats {
              * confusion with the different data types we are no longer using this key name.
              * To ensure no lingering data, setting this to `null` deletes any unused data
              */
-            entries: null
+            entries: null,
         }
         return output
     }
@@ -224,22 +224,22 @@ export class TrackerStats {
      *
      * @param {number} [now] optional timestamp to use as the current time
      */
-    evictExpired (now = Date.now()) {
+    evictExpired(now = Date.now()) {
         this.pack(now)
     }
 
-    clearCurrent () {
+    clearCurrent() {
         this.current.entries.clear()
         this.current.start = 0
         this.current.end = 0
     }
 
-    clear () {
+    clear() {
         this.clearCurrent()
         this.packs = []
     }
 
-    clearAll () {
+    clearAll() {
         this.clearCurrent()
         this.packs = []
         this.totalCount = 0

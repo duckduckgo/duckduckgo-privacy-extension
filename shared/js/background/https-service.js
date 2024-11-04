@@ -8,7 +8,7 @@ const ONE_HOUR_MS = 60 * 60 * 1000
 const sessionStoreKey = 'httpsServiceCache'
 
 class HTTPSService {
-    constructor () {
+    constructor() {
         this._cache = new Map()
         this._activeRequests = new Map()
         // Pull cache values from session storage (for MV3)
@@ -19,8 +19,8 @@ class HTTPSService {
         })
     }
 
-    _cacheResponse (query, data, expires) {
-        let expiryDate = (new Date(expires)).getTime()
+    _cacheResponse(query, data, expires) {
+        let expiryDate = new Date(expires).getTime()
 
         if (isNaN(expiryDate)) {
             console.warn(`Expiry date is invalid: "${expires}", caching for 1h`)
@@ -29,22 +29,22 @@ class HTTPSService {
 
         this._cache.set(query, {
             expires: expiryDate,
-            data
+            data,
         })
         this._persistCache()
     }
 
-    _persistCache () {
+    _persistCache() {
         // put the cache in session storage, so when the background restarts (i.e. on MV3), we can reload the previous cache state.
         setToSessionStorage(sessionStoreKey, [...this._cache.entries()])
     }
 
-    _hostToHash (host) {
+    _hostToHash(host) {
         return sha1(punycode.toASCII(host.toLowerCase()))
     }
 
     // added here for easy mocking in tests
-    _fetch (url) {
+    _fetch(url) {
         return fetch(url)
     }
 
@@ -52,7 +52,7 @@ class HTTPSService {
      * @param {string} host
      * @returns {Boolean|null}
      */
-    checkInCache (host) {
+    checkInCache(host) {
         const hash = this._hostToHash(host)
         const query = hash.substr(0, HASH_PREFIX_SIZE)
         const result = this._cache.get(query)
@@ -68,7 +68,7 @@ class HTTPSService {
      * @param {string} host
      * @returns {Promise<Boolean>}
      */
-    checkInService (host) {
+    checkInService(host) {
         const hash = this._hostToHash(host)
         const query = hash.substring(0, HASH_PREFIX_SIZE)
 
@@ -83,22 +83,21 @@ class HTTPSService {
         queryUrl.searchParams.append('pv1', query)
 
         const request = this._fetch(queryUrl.toString())
-            .then(response => {
+            .then((response) => {
                 this._activeRequests.delete(query)
 
-                return response.json()
-                    .then(data => {
-                        const expires = response.headers.get('expires')
-                        this._cacheResponse(query, data, expires)
-                        return data
-                    })
+                return response.json().then((data) => {
+                    const expires = response.headers.get('expires')
+                    this._cacheResponse(query, data, expires)
+                    return data
+                })
             })
-            .then(data => {
+            .then((data) => {
                 const result = data.includes(hash)
                 console.info(`HTTPS Service: ${host} is${result ? '' : ' not'} upgradable.`)
                 return result
             })
-            .catch(e => {
+            .catch((e) => {
                 this._activeRequests.delete(query)
                 console.error('HTTPS Service: Failed contacting service: ' + e.message)
                 throw e
@@ -109,17 +108,17 @@ class HTTPSService {
         return request
     }
 
-    clearCache () {
+    clearCache() {
         this._cache.clear()
         this._persistCache()
     }
 
-    clearExpiredCache () {
+    clearExpiredCache() {
         const now = Date.now()
 
         Array.from(this._cache.keys())
-            .filter(key => this._cache.get(key).expires < now)
-            .forEach(key => this._cache.delete(key))
+            .filter((key) => this._cache.get(key).expires < now)
+            .forEach((key) => this._cache.delete(key))
         this._persistCache()
     }
 }

@@ -1,4 +1,4 @@
-module.exports = function(config) {
+module.exports = function (config) {
     process.env.CHROME_BIN = require('puppeteer').executablePath()
 
     const configuration = {
@@ -12,9 +12,9 @@ module.exports = function(config) {
         customLaunchers: {
             ChromeNoSandbox: {
                 base: 'ChromeHeadless',
-                flags: ['--no-sandbox']
-            }
-        }
+                flags: ['--no-sandbox'],
+            },
+        },
     }
 
     config.set(configuration)

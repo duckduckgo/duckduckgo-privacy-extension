@@ -1,22 +1,22 @@
 /**
-* This is injected programatically on the DuckDuckGo SERP (mostly during the first search
-* post extension install) to assist with user onboarding
-* We handle 2 cases:
-* - Firefox: we simply call a method on window so that the SERP can display a welcome
-* message to users
-* - Chrome: we do the same thing (but provide more data) and set-up listeners so that
-* the SERP can:
-*    - Assess if the extension has been deactivated by Chrome
-*    - Reschedule the onboarding for the next restart
-*/
-function onDocumentEnd ({
+ * This is injected programatically on the DuckDuckGo SERP (mostly during the first search
+ * post extension install) to assist with user onboarding
+ * We handle 2 cases:
+ * - Firefox: we simply call a method on window so that the SERP can display a welcome
+ * message to users
+ * - Chrome: we do the same thing (but provide more data) and set-up listeners so that
+ * the SERP can:
+ *    - Assess if the extension has been deactivated by Chrome
+ *    - Reschedule the onboarding for the next restart
+ */
+function onDocumentEnd({
     isAddressBarQuery,
     showWelcomeBanner,
     showCounterMessaging,
     extensionId,
     duckDuckGoSerpHostname,
     browserName,
-    manifestVersion
+    manifestVersion,
 }) {
     const origin = `https://${duckDuckGoSerpHostname}`
 
@@ -25,13 +25,13 @@ function onDocumentEnd ({
      * `createOnboardingCodeInjectedAtDocumentStart` that was injected earlier to capture
      * variables at an earlier stage of the page lifecycle
      */
-    function getDocumentStartData (cb) {
+    function getDocumentStartData(cb) {
         if (browserName !== 'chrome') {
             return cb()
         }
 
         window.postMessage({ type: 'documentStartDataRequest' }, origin)
-        window.addEventListener('message', function handleMessage (e) {
+        window.addEventListener('message', function handleMessage(e) {
             if (e.origin === origin && e.data.type === 'documentStartDataResponse') {
                 window.removeEventListener('message', handleMessage)
                 cb(e.data.payload)
@@ -39,7 +39,7 @@ function onDocumentEnd ({
         })
     }
 
-    function start () {
+    function start() {
         getDocumentStartData((documentStartData) => {
             // DDG privacy policy prevents us to use `chrome.runtime` on the SERP so we
             // setup a relay here so that the SERP can communicate with the background process
@@ -47,31 +47,25 @@ function onDocumentEnd ({
                 window.addEventListener('message', (e) => {
                     if (e.origin === origin) {
                         switch (e.data.type) {
-                        case 'healthCheckRequest': {
-                            try {
-                                chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
-                                    e.source.postMessage(
-                                        { type: 'healthCheckResponse', isAlive: !chrome.runtime.lastError },
-                                        e.origin
-                                    )
-                                })
-                            } catch (err) {
-                                e.source.postMessage(
-                                    { type: 'healthCheckResponse', isAlive: false },
-                                    e.origin
-                                )
-                            }
-                            break
-                        }
-
-                        case 'rescheduleCounterMessagingRequest': {
-                            chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
-                                if (chrome.runtime.lastError) {
-                                    console.error(chrome.runtime.lastError)
+                            case 'healthCheckRequest': {
+                                try {
+                                    chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
+                                        e.source.postMessage({ type: 'healthCheckResponse', isAlive: !chrome.runtime.lastError }, e.origin)
+                                    })
+                                } catch (err) {
+                                    e.source.postMessage({ type: 'healthCheckResponse', isAlive: false }, e.origin)
                                 }
-                            })
-                            break
-                        }
+                                break
+                            }
+
+                            case 'rescheduleCounterMessagingRequest': {
+                                chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
+                                    if (chrome.runtime.lastError) {
+                                        console.error(chrome.runtime.lastError)
+                                    }
+                                })
+                                break
+                            }
                         }
                     }
                 })
@@ -110,12 +104,8 @@ function onDocumentEnd ({
     }
 }
 
-function onDocumentEndMainWorld ({
-    isAddressBarQuery,
-    showWelcomeBanner,
-    showCounterMessaging
-}) {
-    window.addEventListener('message', function handleFirstSearchMessage (e) {
+function onDocumentEndMainWorld({ isAddressBarQuery, showWelcomeBanner, showCounterMessaging }) {
+    window.addEventListener('message', function handleFirstSearchMessage(e) {
         if (e.origin === origin && e.data.type === 'onFirstSearch') {
             window.removeEventListener('message', handleFirstSearchMessage)
 
@@ -125,17 +115,17 @@ function onDocumentEndMainWorld ({
                     isAddressBarQuery,
                     showWelcomeBanner,
                     showCounterMessaging,
-                    ...documentStartData
+                    ...documentStartData,
                 })
             }
         }
     })
 }
 
-function onDocumentStart ({ duckDuckGoSerpHostname }) {
+function onDocumentStart({ duckDuckGoSerpHostname }) {
     const hadFocusOnStart = document.hasFocus()
 
-    window.addEventListener('message', function handleMessage (e) {
+    window.addEventListener('message', function handleMessage(e) {
         if (e.origin === `https://${duckDuckGoSerpHostname}` && e.data.type === 'documentStartDataRequest') {
             window.removeEventListener('message', handleMessage)
             e.source.postMessage({ type: 'documentStartDataResponse', payload: { hadFocusOnStart } }, e.origin)
@@ -146,5 +136,5 @@ function onDocumentStart ({ duckDuckGoSerpHostname }) {
 module.exports = {
     onDocumentEnd,
     onDocumentEndMainWorld,
-    onDocumentStart
+    onDocumentStart,
 }

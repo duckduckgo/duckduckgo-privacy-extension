@@ -16,7 +16,7 @@ const manifestVersion = browserWrapper.getManifestVersion()
  */
 const expectedSetCookieBlocked = new Set()
 
-function shouldBlockHeaders (request, tab, requestIsTracker) {
+function shouldBlockHeaders(request, tab, requestIsTracker) {
     if (!tab.site.isFeatureEnabled('cookie')) {
         return false
     }
@@ -44,8 +44,8 @@ function shouldBlockHeaders (request, tab, requestIsTracker) {
  *
  * @returns {{responseHeaders: Array<{name: string, value:string}>} | undefined}
  */
-function dropTracking3pCookiesFromResponse (request) {
-    if (request.type === 'main_frame' || request.responseHeaders.findIndex(header => header.name.toLowerCase() === 'set-cookie') === -1) {
+function dropTracking3pCookiesFromResponse(request) {
+    if (request.type === 'main_frame' || request.responseHeaders.findIndex((header) => header.name.toLowerCase() === 'set-cookie') === -1) {
         return
     }
     const tab = tabManager.get({ tabId: request.tabId })
@@ -59,14 +59,14 @@ function dropTracking3pCookiesFromResponse (request) {
 
         // Strip 3rd party cookie response header
         if (!utils.isCookieExcluded(request.url)) {
-            responseHeaders = responseHeaders.filter(header => header.name.toLowerCase() !== 'set-cookie')
+            responseHeaders = responseHeaders.filter((header) => header.name.toLowerCase() !== 'set-cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
                 kind: `set-cookie-${requestIsTracker ? 'tracker' : 'non-tracker'}`,
                 url: request.url,
                 siteUrl: tab?.site?.url,
                 requestId: request.requestId,
-                type: request.type
+                type: request.type,
             })
             if (manifestVersion === 2) {
                 return { responseHeaders }
@@ -82,8 +82,8 @@ function dropTracking3pCookiesFromResponse (request) {
  *
  * @returns {{requestHeaders: Array<{name: string, value:string}>} | undefined}
  */
-function dropTracking3pCookiesFromRequest (request) {
-    if (request.type === 'main_frame' || request.requestHeaders.findIndex(header => header.name.toLowerCase() === 'cookie') === -1) {
+function dropTracking3pCookiesFromRequest(request) {
+    if (request.type === 'main_frame' || request.requestHeaders.findIndex((header) => header.name.toLowerCase() === 'cookie') === -1) {
         return
     }
     const tab = tabManager.get({ tabId: request.tabId })
@@ -97,14 +97,14 @@ function dropTracking3pCookiesFromRequest (request) {
 
         // Strip 3rd party response header
         if (!utils.isCookieExcluded(request.url)) {
-            requestHeaders = requestHeaders.filter(header => header.name.toLowerCase() !== 'cookie')
+            requestHeaders = requestHeaders.filter((header) => header.name.toLowerCase() !== 'cookie')
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
                 kind: `cookie-${requestIsTracker ? 'tracker' : 'non-tracker'}`,
                 url: request.url,
                 siteUrl: tab?.site?.url,
                 requestId: request.requestId,
-                type: request.type
+                type: request.type,
             })
             if (manifestVersion === 2) {
                 return { requestHeaders }
@@ -113,15 +113,15 @@ function dropTracking3pCookiesFromRequest (request) {
     }
 }
 
-function validateSetCookieBlock (request) {
+function validateSetCookieBlock(request) {
     if (request.type !== 'main_frame' && expectedSetCookieBlocked.has(request.requestId)) {
-        const cookieHeader = request.responseHeaders?.find(header => header.name.toLowerCase() === 'set-cookie')
+        const cookieHeader = request.responseHeaders?.find((header) => header.name.toLowerCase() === 'set-cookie')
         if (chrome.cookies && cookieHeader) {
             // Unset the cookie that got set erroneously
             const cookieName = cookieHeader.value.split(';')[0].split('=')[0]
             chrome.cookies.remove({
                 name: cookieName,
-                url: request.url
+                url: request.url,
             })
         }
         expectedSetCookieBlocked.delete(request.requestId)
@@ -131,5 +131,5 @@ function validateSetCookieBlock (request) {
 module.exports = {
     dropTracking3pCookiesFromResponse,
     dropTracking3pCookiesFromRequest,
-    validateSetCookieBlock
+    validateSetCookieBlock,
 }

@@ -8,14 +8,14 @@ import { getExtensionVersion, getFromSessionStorage, removeFromSessionStorage, s
  * @typedef {import('./tds').default} TDSStorage
  */
 
-export async function getDebuggerSettings () {
+export async function getDebuggerSettings() {
     const [configURLOverride, debuggerConnection] = await Promise.all([
         getFromSessionStorage('configURLOverride'),
-        getFromSessionStorage('debuggerConnection')
+        getFromSessionStorage('debuggerConnection'),
     ])
     return {
         configURLOverride,
-        debuggerConnection
+        debuggerConnection,
     }
 }
 
@@ -26,7 +26,7 @@ export default class DebuggerConnection {
      *   devtools: Devtools
      * }} options
      */
-    constructor ({ tds, devtools }) {
+    constructor({ tds, devtools }) {
         this.init()
         this.tds = tds
         this.devtools = devtools
@@ -40,7 +40,7 @@ export default class DebuggerConnection {
         registerMessageHandler('forceReloadConfig', this.forceReloadConfig.bind(this))
     }
 
-    async init () {
+    async init() {
         const { configURLOverride, debuggerConnection } = await getDebuggerSettings()
         this.configURLOverride = configURLOverride
         this.debuggerConnectionEnabled = debuggerConnection
@@ -90,10 +90,12 @@ export default class DebuggerConnection {
                 }
                 lastTabSend = Date.now()
                 const tabs = await browser.tabs.query({})
-                this.socket?.send(JSON.stringify({
-                    messageType: 'tabs',
-                    payload: tabs.sort((a, b) => (a.lastAccessed || 0) - (b.lastAccessed || 0))
-                }))
+                this.socket?.send(
+                    JSON.stringify({
+                        messageType: 'tabs',
+                        payload: tabs.sort((a, b) => (a.lastAccessed || 0) - (b.lastAccessed || 0)),
+                    }),
+                )
             }
 
             this.socket.addEventListener('open', async () => {
@@ -110,38 +112,34 @@ export default class DebuggerConnection {
         }
     }
 
-    async isActive () {
+    async isActive() {
         return this.socket !== null
     }
 
-    async enableDebugging (url, debuggerConnection = false) {
-        await Promise.all([
-            setToSessionStorage('configURLOverride', url),
-            setToSessionStorage('debuggerConnection', debuggerConnection)
-        ])
+    async enableDebugging(url, debuggerConnection = false) {
+        await Promise.all([setToSessionStorage('configURLOverride', url), setToSessionStorage('debuggerConnection', debuggerConnection)])
         this.init()
         this.forceReloadConfig()
     }
 
-    async forceReloadConfig () {
+    async forceReloadConfig() {
         this.tds.config.checkForUpdates(true)
     }
 
-    async disableDebugging () {
-        await Promise.all([
-            removeFromSessionStorage('configURLOverride'),
-            removeFromSessionStorage('debuggerConnection')
-        ])
+    async disableDebugging() {
+        await Promise.all([removeFromSessionStorage('configURLOverride'), removeFromSessionStorage('debuggerConnection')])
         this.socket?.close()
     }
 
-    forwardDebugMessagesForTab (tabId) {
+    forwardDebugMessagesForTab(tabId) {
         this.devtools.registerDebugHandler(tabId, (payload) => {
             if (this.socket) {
-                this.socket.send(JSON.stringify({
-                    messageType: 'devtools',
-                    payload
-                }))
+                this.socket.send(
+                    JSON.stringify({
+                        messageType: 'devtools',
+                        payload,
+                    }),
+                )
             }
         })
     }

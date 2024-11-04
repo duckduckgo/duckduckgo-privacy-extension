@@ -11,11 +11,11 @@ const etagFilePath = './shared/data/etags.json'
  *       without overwriting any changes to unrelated etags.
  * @return {Record<string, string>}
  */
-export function readEtags () {
+export function readEtags() {
     try {
         return JSON.parse(readFileSync(etagFilePath))
     } catch (e) {
-        return { }
+        return {}
     }
 }
 
@@ -27,7 +27,7 @@ export function readEtags () {
  *       might also write to the etags file.
  * @param {Record<string, string|undefined>} newEtags
  */
-export function writeEtags (newEtags) {
+export function writeEtags(newEtags) {
     const etags = readEtags()
     for (const [key, value] of Object.entries(newEtags)) {
         if (typeof value === 'string') {
@@ -43,7 +43,7 @@ export function writeEtags (newEtags) {
  * @param {string} path
  * @return {string?}
  */
-export function md5sum (path) {
+export function md5sum(path) {
     let contents
     try {
         contents = readFileSync(path)

@@ -8,5 +8,5 @@ module.exports = {
             window.$('html').addClass(browserClass)
             window.$('body').addClass(browserClass)
         })
-    }
+    },
 }

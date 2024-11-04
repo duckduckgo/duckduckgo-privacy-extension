@@ -11,17 +11,16 @@ describe('Tracker allowlist tests:', () => {
         config.features.trackerAllowlist = {
             state: 'enabled',
             settings: {
-                allowlistedTrackers: require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json')
-            }
+                allowlistedTrackers: require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_allowlist_reference.json'),
+            },
         }
 
         tdsStorageStub.stub({ config })
 
-        return tdsStorage.getLists()
-            .then(lists => tds.setLists(lists))
+        return tdsStorage.getLists().then((lists) => tds.setLists(lists))
     })
 
-    refTests.forEach(test => {
+    refTests.forEach((test) => {
         it(`${test.description}`, () => {
             const result = allowList(test.site, test.request)
 

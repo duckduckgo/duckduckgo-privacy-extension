@@ -28,7 +28,7 @@ export default class ResourceLoader extends EventTarget {
      *  settings: Settings
      * }} opts
      */
-    constructor (config, { settings }) {
+    constructor(config, { settings }) {
         super()
         this.settings = settings
         this.name = config.name
@@ -67,23 +67,23 @@ export default class ResourceLoader extends EventTarget {
         }
     }
 
-    get lastUpdate () {
+    get lastUpdate() {
         return this.settings.getSetting(`${this.name}-lastUpdate`) || 0
     }
 
-    set lastUpdate (value) {
+    set lastUpdate(value) {
         this.settings.updateSetting(`${this.name}-lastUpdate`, value)
     }
 
-    get etag () {
+    get etag() {
         return this.settings.getSetting(`${this.name}-etag`) || ''
     }
 
-    set etag (value) {
+    set etag(value) {
         this.settings.updateSetting(`${this.name}-etag`, value)
     }
 
-    async checkForUpdates (force) {
+    async checkForUpdates(force) {
         await this.settings.ready()
         const remoteUrl = this.remoteUrl instanceof Function ? await this.remoteUrl() : this.remoteUrl
         const loadFromDb = this._loadFromDB.bind(this)
@@ -93,15 +93,9 @@ export default class ResourceLoader extends EventTarget {
         let loadOrder = []
         if (this.remoteUrl && Date.now() - this.lastUpdate < this.updateIntervalMinutes * 1000 * 60 && !force) {
             // load from DB first as it should be fresh
-            loadOrder = [
-                loadFromDb,
-                loadFromRemoteNoCache
-            ]
+            loadOrder = [loadFromDb, loadFromRemoteNoCache]
         } else if (this.remoteUrl) {
-            loadOrder = [
-                loadFromRemote,
-                loadFromDb
-            ]
+            loadOrder = [loadFromRemote, loadFromDb]
         }
         // The last backup is the local file
         if (this.localUrl) {
@@ -120,16 +114,16 @@ export default class ResourceLoader extends EventTarget {
         }
     }
 
-    async _loadFromDB () {
+    async _loadFromDB() {
         console.log(`Load ${this.name} from DB`)
         const dbc = await this._getDb()
         const list = await dbc.table('tdsStorage').get({ name: this.name })
         return {
-            contents: list.data
+            contents: list.data,
         }
     }
 
-    async _loadFromURL (url, local = false, nocache = false) {
+    async _loadFromURL(url, local = false, nocache = false) {
         console.log(`Load ${this.name} from url`)
         const request = new Request(url)
         /** @type {HeadersInit} */
@@ -147,15 +141,15 @@ export default class ResourceLoader extends EventTarget {
         const contents = await response[this.format]()
         return {
             contents,
-            etag: local ? bundledEtags[`${this.name}-etag`] : response.headers.get('etag')
+            etag: local ? bundledEtags[`${this.name}-etag`] : response.headers.get('etag'),
         }
     }
 
-    async _getDb () {
+    async _getDb() {
         if (!ResourceLoader.dbc) {
             const dbc = new Dexie('tdsStorage')
             dbc.version(1).stores({
-                tdsStorage: 'name,data'
+                tdsStorage: 'name,data',
             })
             ResourceLoader.dbc = dbc
             await dbc.open()
@@ -170,7 +164,7 @@ export default class ResourceLoader extends EventTarget {
      * }} result
      * @param {boolean} waitForUpdateProcessing
      */
-    async _updateData (result, waitForUpdateProcessing = false) {
+    async _updateData(result, waitForUpdateProcessing = false) {
         console.log(`Loaded ${this.name}:`, result)
         const updated = !!(this.data === null || this.etag)
         this.data = result.contents
@@ -182,13 +176,15 @@ export default class ResourceLoader extends EventTarget {
             this.lastUpdate = Date.now()
         }
         if (updated) {
-            this.dispatchEvent(new CustomEvent('update', {
-                detail: {
-                    name: this.name,
-                    etag: this.etag,
-                    data: this.data
-                }
-            }))
+            this.dispatchEvent(
+                new CustomEvent('update', {
+                    detail: {
+                        name: this.name,
+                        etag: this.etag,
+                        data: this.data,
+                    },
+                }),
+            )
             // After dispatchEvent, the return values of all onUpdate listeners will have been
             // added to this._onUpdateProcessing, so we can wait for those promises to resolve.
             const updateProcessing = Promise.all(this._onUpdateProcessing).then(() => {
@@ -209,7 +205,7 @@ export default class ResourceLoader extends EventTarget {
     /**
      * @param {OnUpdatedCallback} cb
      */
-    onUpdate (cb) {
+    onUpdate(cb) {
         this.addEventListener('update', (ev) => {
             if (ev instanceof CustomEvent) {
                 const { name, etag, data } = ev.detail
@@ -225,23 +221,24 @@ export default class ResourceLoader extends EventTarget {
      * Manually set the value of this resource
      * @param {any} data
      */
-    async overrideDataValue (data) {
+    async overrideDataValue(data) {
         // create an etag hash based on the content
         const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(JSON.stringify(data)))
-        const etag = [...new Uint8Array(hash)]
-            .map(x => x.toString(16).padStart(2, '0'))
-            .join('')
-        await this._updateData({
-            contents: data,
-            etag
-        }, true)
+        const etag = [...new Uint8Array(hash)].map((x) => x.toString(16).padStart(2, '0')).join('')
+        await this._updateData(
+            {
+                contents: data,
+                etag,
+            },
+            true,
+        )
     }
 
     /**
      * Modify resource data in-place
      * @param {(data: any) => any} func
      */
-    async modify (func) {
+    async modify(func) {
         await this.ready
         const newValue = func(this.data)
         await this.overrideDataValue(newValue)

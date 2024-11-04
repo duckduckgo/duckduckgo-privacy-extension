@@ -9,40 +9,37 @@
 // 1 - https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/extensions/api/scripting/scripting_api.cc;l=929
 
 export default class MV3ContentScriptInjection {
-    constructor () {
+    constructor() {
         this.ready = this.registerScripts()
     }
 
-    async registerScripts () {
+    async registerScripts() {
         // check if scripts were already registered - in scripts will remain registered under
         // some startup conditions, and in that case registering the scripts will throw an error.
         const scripts = await chrome.scripting.getRegisteredContentScripts()
-        const ids = scripts.map(s => s.id)
+        const ids = scripts.map((s) => s.id)
         if (ids.length > 0) {
             await chrome.scripting.unregisterContentScripts({ ids })
         }
-        await chrome.scripting.registerContentScripts([{
-            id: '1-script-injection-isolated-world',
-            allFrames: true,
-            js: ['public/js/content-scripts/content-scope-messaging.js'],
-            runAt: 'document_start',
-            world: 'ISOLATED',
-            matches: ['<all_urls>'],
-            excludeMatches: [
-                '*://localhost/*',
-                '*://*.localhost/'
-            ]
-        }, {
-            id: '2-script-injection-main-world',
-            allFrames: true,
-            js: ['public/js/inject.js'],
-            runAt: 'document_start',
-            world: 'MAIN',
-            matches: ['<all_urls>'],
-            excludeMatches: [
-                '*://localhost/*',
-                '*://*.localhost/'
-            ]
-        }])
+        await chrome.scripting.registerContentScripts([
+            {
+                id: '1-script-injection-isolated-world',
+                allFrames: true,
+                js: ['public/js/content-scripts/content-scope-messaging.js'],
+                runAt: 'document_start',
+                world: 'ISOLATED',
+                matches: ['<all_urls>'],
+                excludeMatches: ['*://localhost/*', '*://*.localhost/'],
+            },
+            {
+                id: '2-script-injection-main-world',
+                allFrames: true,
+                js: ['public/js/inject.js'],
+                runAt: 'document_start',
+                world: 'MAIN',
+                matches: ['<all_urls>'],
+                excludeMatches: ['*://localhost/*', '*://*.localhost/'],
+            },
+        ])
     }
 }

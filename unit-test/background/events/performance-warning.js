@@ -3,12 +3,12 @@ import tabManager from '../../../shared/js/background/tab-manager'
 import { TabState } from '../../../shared/js/background/classes/tab-state'
 import '../../../shared/js/background/events'
 
-async function createTab (id, url) {
+async function createTab(id, url) {
     const tab = tabManager.create({
         id,
         requestId: 123,
         url,
-        status: 200
+        status: 200,
     })
     await TabState.done()
     return tab
@@ -16,9 +16,7 @@ async function createTab (id, url) {
 
 describe('onPerformanceWarning event handler', () => {
     it('Sets the performanceWarning flag correctly', async () => {
-        expect(
-            browser.runtime.onPerformanceWarning._listeners.length
-        ).toEqual(1)
+        expect(browser.runtime.onPerformanceWarning._listeners.length).toEqual(1)
         const fireEvent = browser.runtime.onPerformanceWarning._listeners[0]
 
         let tab1 = await createTab(1, 'https://1.example')

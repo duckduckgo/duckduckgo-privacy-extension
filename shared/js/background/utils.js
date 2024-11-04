@@ -11,11 +11,11 @@ const browserInfo = parseUserAgentString()
  * Produce a random float, matches the output of Math.random() but much more cryptographically psudo-random.
  * @returns {number}
  */
-function getRandomFloat () {
+function getRandomFloat() {
     return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
 }
 
-export async function getSessionKey () {
+export async function getSessionKey() {
     let sessionKey = await getFromSessionStorage('sessionKey')
     if (!sessionKey) {
         sessionKey = await resetSessionKey()
@@ -23,13 +23,13 @@ export async function getSessionKey () {
     return sessionKey
 }
 
-export async function resetSessionKey () {
+export async function resetSessionKey() {
     const sessionKey = sha1(getRandomFloat().toString())
     await setToSessionStorage('sessionKey', sessionKey)
     return sessionKey
 }
 
-export async function sendTabMessage (id, message, details) {
+export async function sendTabMessage(id, message, details) {
     try {
         await browser.tabs.sendMessage(id, message, details)
     } catch {
@@ -37,7 +37,7 @@ export async function sendTabMessage (id, message, details) {
     }
 }
 
-export async function sendAllTabsMessage (message, details) {
+export async function sendAllTabsMessage(message, details) {
     try {
         for (const { id: tabId } of await browser.tabs.query({})) {
             sendTabMessage(tabId, message, details)
@@ -51,7 +51,7 @@ export async function sendAllTabsMessage (message, details) {
  * @param {string} urlString
  * @returns {string | null} etld plus one of the URL
  */
-export function getBaseDomain (urlString) {
+export function getBaseDomain(urlString) {
     const parsedUrl = tldtsParse(urlString, { allowPrivateDomains: true })
     if (parsedUrl.hostname === 'localhost' || parsedUrl.hostname?.endsWith('.localhost') || parsedUrl.isIp) {
         return parsedUrl.hostname
@@ -59,7 +59,7 @@ export function getBaseDomain (urlString) {
     return parsedUrl.domain
 }
 
-export function extractHostFromURL (url, shouldKeepWWW) {
+export function extractHostFromURL(url, shouldKeepWWW) {
     if (!url) return ''
 
     // Tweak the URL for Firefox about:* pages to ensure that they are parsed
@@ -80,7 +80,7 @@ export function extractHostFromURL (url, shouldKeepWWW) {
 
 // Removes information from a URL, such as path, user information, and optionally sub domains
 // @ts-ignore
-export function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
+export function extractLimitedDomainFromURL(url, { keepSubdomains } = {}) {
     if (!url) return undefined
     try {
         const parsedURL = new URL(url)
@@ -107,7 +107,7 @@ export function extractLimitedDomainFromURL (url, { keepSubdomains } = {}) {
     }
 }
 
-export function extractTopSubdomainFromHost (host) {
+export function extractTopSubdomainFromHost(host) {
     if (typeof host !== 'string') return false
     const rgx = /\./g
     // @ts-ignore
@@ -118,7 +118,7 @@ export function extractTopSubdomainFromHost (host) {
 }
 
 // pull off subdomains and look for parent companies
-export function findParent (url) {
+export function findParent(url) {
     const parts = extractHostFromURL(url).split('.')
 
     while (parts.length > 1) {
@@ -140,7 +140,7 @@ export function findParent (url) {
  * @param {string} url
  * @returns {string}
  */
-export function findParentDisplayName (url) {
+export function findParentDisplayName(url) {
     const parent = findParent(url)
     const entity = tdsStorage.tds.entities[parent]
 
@@ -156,20 +156,20 @@ export function findParentDisplayName (url) {
  *
  * @returns {Promise<browser.Tabs.Tab|undefined>}
  */
-export async function getCurrentTab () {
+export async function getCurrentTab() {
     // If the current tab ID is already known, fetch the details for that tab.
     const tabId = await getFromSessionStorage('currentTabId')
 
     if (tabId) {
         try {
             return await browser.tabs.get(tabId)
-        } catch (e) { }
+        } catch (e) {}
     }
 
     // Otherwise, fetch the details for the currently focused tab.
     const tabData = await browser.tabs.query({
         active: true,
-        lastFocusedWindow: true
+        lastFocusedWindow: true,
     })
     if (tabData.length) {
         return tabData[0]
@@ -178,7 +178,7 @@ export async function getCurrentTab () {
 
 // Browser / Version detection
 // Get correct name for fetching UI assets
-export function getBrowserName () {
+export function getBrowserName() {
     if (!browserInfo || !browserInfo.browser) return
 
     let browserName = browserInfo.browser.toLowerCase()
@@ -187,13 +187,13 @@ export function getBrowserName () {
     return browserName
 }
 
-export function getOsName () {
+export function getOsName() {
     if (!browserInfo || !browserInfo.os) return
     return browserInfo.os
 }
 
 // Determine if upgradeToSecure supported (Firefox 59+)
-export function getUpgradeToSecureSupport () {
+export function getUpgradeToSecureSupport() {
     let canUpgrade = false
     if (getBrowserName() !== 'moz') return canUpgrade
 
@@ -205,7 +205,7 @@ export function getUpgradeToSecureSupport () {
 }
 
 // return true if browser allows to handle request async
-export function getAsyncBlockingSupport () {
+export function getAsyncBlockingSupport() {
     const browserName = getBrowserName()
 
     if (browserName === 'moz' && browserInfo && browserInfo.version >= 52) {
@@ -222,26 +222,26 @@ export function getAsyncBlockingSupport () {
  * @param {number} statusCode
  * @returns {boolean}
  */
-export function isRedirect (statusCode) {
-    return (statusCode >= 300 && statusCode <= 399)
+export function isRedirect(statusCode) {
+    return statusCode >= 300 && statusCode <= 399
 }
 
 /*
  * check to see if this is a broken site reported on github
-*/
-export function isBroken (url) {
+ */
+export function isBroken(url) {
     if (!tdsStorage?.config.unprotectedTemporary) return
     return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1
 }
 
-export function removeBroken (domain, config = tdsStorage.config) {
+export function removeBroken(domain, config = tdsStorage.config) {
     const index = brokenListIndex(domain, config.unprotectedTemporary)
     if (index !== -1) {
         console.log('remove', config.unprotectedTemporary.splice(index, 1))
     }
 }
 
-export function getEnabledFeaturesAboutBlank (url) {
+export function getEnabledFeaturesAboutBlank(url) {
     if (!tdsStorage.config.features) return []
     const enabledFeatures = []
     for (const feature in tdsStorage.config.features) {
@@ -254,7 +254,7 @@ export function getEnabledFeaturesAboutBlank (url) {
     return enabledFeatures
 }
 
-export function getEnabledFeatures (url) {
+export function getEnabledFeatures(url) {
     if (!tdsStorage.config.features) return []
     const enabledFeatures = []
     for (const feature in tdsStorage.config.features) {
@@ -265,33 +265,32 @@ export function getEnabledFeatures (url) {
     return enabledFeatures
 }
 
-export function brokenListIndex (url, list) {
+export function brokenListIndex(url, list) {
     const parsedDomain = tldtsParse(url)
     const hostname = parsedDomain.hostname || url
 
     // If root domain in temp unprotected list, return true
     return list.findIndex((brokenSiteDomain) => {
         if (brokenSiteDomain.domain) {
-            return hostname === brokenSiteDomain.domain ||
-                   hostname.endsWith(`.${brokenSiteDomain.domain}`)
+            return hostname === brokenSiteDomain.domain || hostname.endsWith(`.${brokenSiteDomain.domain}`)
         }
         return false
     })
 }
 
 // We inject this into content scripts
-export function getBrokenScriptLists () {
+export function getBrokenScriptLists() {
     const brokenScripts = {}
     for (const key in tdsStorage.config.features) {
         const featureSettings = getFeatureSettings(key)
-        brokenScripts[key] = featureSettings.scripts?.map(obj => obj.domain) || []
+        brokenScripts[key] = featureSettings.scripts?.map((obj) => obj.domain) || []
     }
     return brokenScripts
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
 // tabManager.site.isProtectionEnabled() is the preferred method.
-export function isSafeListed (url) {
+export function isSafeListed(url) {
     const hostname = extractHostFromURL(url)
     const safeList = settings.getSetting('allowlisted')
     const subdomains = hostname.split('.')
@@ -312,18 +311,18 @@ export function isSafeListed (url) {
     return false
 }
 
-export function isCookieExcluded (url) {
-    const domain = (new URL(url)).host
+export function isCookieExcluded(url) {
+    const domain = new URL(url).host
     return isDomainCookieExcluded(domain)
 }
 
-function isDomainCookieExcluded (domain) {
+function isDomainCookieExcluded(domain) {
     const cookieSettings = getFeatureSettings('cookie')
     if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
         return false
     }
 
-    if (cookieSettings.excludedCookieDomains.find(elem => elem.domain === domain)) {
+    if (cookieSettings.excludedCookieDomains.find((elem) => elem.domain === domain)) {
         return true
     }
 
@@ -340,7 +339,7 @@ function isDomainCookieExcluded (domain) {
  * Tests whether the two URL's belong to the same
  * top level domain.
  */
-export function isSameTopLevelDomain (url1, url2) {
+export function isSameTopLevelDomain(url1, url2) {
     const first = getBaseDomain(url1)
     const second = getBaseDomain(url2)
 
@@ -351,11 +350,11 @@ export function isSameTopLevelDomain (url1, url2) {
     return first === second
 }
 
-export function parseVersionString (versionString) {
+export function parseVersionString(versionString) {
     return versionString.split('.').map(Number)
 }
 
-export function satisfiesMinVersion (minVersionString, extensionVersionString) {
+export function satisfiesMinVersion(minVersionString, extensionVersionString) {
     const minVersions = parseVersionString(minVersionString)
     const currentVersions = parseVersionString(extensionVersionString)
     const maxLength = Math.max(minVersions.length, currentVersions.length)
@@ -379,7 +378,7 @@ export function satisfiesMinVersion (minVersionString, extensionVersionString) {
  * @param {String} featureName - the name of the feature
  * @returns {boolean} - if feature is enabled
  */
-export function isFeatureEnabled (featureName) {
+export function isFeatureEnabled(featureName) {
     const feature = tdsStorage.config.features[featureName]
     if (!feature) {
         return false
@@ -402,7 +401,7 @@ export function isFeatureEnabled (featureName) {
  * @param {String} featureName - the name of the feature
  * @returns {Object} - Settings associated in the config with featureName
  */
-export function getFeatureSettings (featureName) {
+export function getFeatureSettings(featureName) {
     const feature = tdsStorage.config.features[featureName]
     if (typeof feature !== 'object' || feature === null || !feature.settings) {
         return {}
@@ -416,11 +415,11 @@ export function getFeatureSettings (featureName) {
  * @param {string} urlString
  * @returns {string}
  */
-export function getURLWithoutQueryString (urlString) {
+export function getURLWithoutQueryString(urlString) {
     return urlString?.split('?')[0]
 }
 
-export async function reloadCurrentTab () {
+export async function reloadCurrentTab() {
     const tab = await getCurrentTab()
     if (tab && tab.id) {
         await browser.tabs.reload(tab.id)
@@ -434,7 +433,7 @@ const dayMultiplier = 24 * 60 * 60 * 1000
  * @param {string} atb
  * @returns {number|null}
  */
-export function getInstallTimestamp (atb) {
+export function getInstallTimestamp(atb) {
     const match = atb.match(/^v?(\d+)-(\d)(.+)?$/i)
     if (!match) return null
 
@@ -452,7 +451,7 @@ export function getInstallTimestamp (atb) {
  * @param {string} [atb]
  * @returns {boolean}
  */
-export function isInstalledWithinDays (numberOfDays, fromDate = Date.now(), atb = settings.getSetting('atb')) {
+export function isInstalledWithinDays(numberOfDays, fromDate = Date.now(), atb = settings.getSetting('atb')) {
     return daysInstalled(fromDate, atb) <= numberOfDays
 }
 
@@ -462,7 +461,7 @@ export function isInstalledWithinDays (numberOfDays, fromDate = Date.now(), atb 
  * @param {string} [atb]
  * @returns {number}
  */
-export function daysInstalled (fromDate = Date.now(), atb = settings.getSetting('atb')) {
+export function daysInstalled(fromDate = Date.now(), atb = settings.getSetting('atb')) {
     if (!atb) return NaN
 
     const installTimestamp = getInstallTimestamp(atb)
@@ -481,8 +480,8 @@ export function daysInstalled (fromDate = Date.now(), atb = settings.getSetting(
  * {number} delay (milliseconds)
  * {returns} Promise<void>
  */
-export function resolveAfterDelay (delay) {
-    return new Promise(resolve => {
+export function resolveAfterDelay(delay) {
+    return new Promise((resolve) => {
         setTimeout(resolve, delay)
     })
 }

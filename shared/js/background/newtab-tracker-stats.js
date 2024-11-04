@@ -13,10 +13,7 @@ import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils'
  * @typedef {import("../background/classes/tracker-stats").TrackerStats} TrackerStats
  */
 
-const {
-    incoming,
-    outgoing
-} = constants.trackerStats.events
+const { incoming, outgoing } = constants.trackerStats.events
 const { clientPortName } = constants.trackerStats
 
 /**
@@ -69,7 +66,7 @@ export class NewTabTrackerStats {
     /**
      * @param {TrackerStats} stats - the interface for the stats data.
      */
-    constructor (stats) {
+    constructor(stats) {
         this.stats = stats
     }
 
@@ -79,7 +76,7 @@ export class NewTabTrackerStats {
      * The purpose of this method is to co-locate all extension handlers in a single
      * place for this module.
      */
-    register () {
+    register() {
         const manifestVersion = getManifestVersion()
         if (manifestVersion === 3) {
             mv3Redirect()
@@ -118,7 +115,7 @@ export class NewTabTrackerStats {
          */
         const pruneAlarmName = 'pruneNewTabData'
         createAlarm(pruneAlarmName, { periodInMinutes: 10 })
-        browser.alarms.onAlarm.addListener(async alarmEvent => {
+        browser.alarms.onAlarm.addListener(async (alarmEvent) => {
             if (alarmEvent.name === pruneAlarmName) {
                 this._handlePruneAlarm()
             }
@@ -156,14 +153,15 @@ export class NewTabTrackerStats {
      * @param {Record<string, { displayName: string, prevalence: number }>} entities
      * @param {number} [maxCount] - how many to consider 'top companies'
      */
-    assignTopCompanies (entities, maxCount = 100) {
+    assignTopCompanies(entities, maxCount = 100) {
         const sorted = Object.keys(entities)
             .map(
                 /** @returns {[string, number]} */
                 (key) => {
                     const current = entities[key]
                     return [current.displayName, current.prevalence]
-                })
+                },
+            )
             .sort((a, b) => b[1] - a[1])
             .slice(0, maxCount)
 
@@ -177,7 +175,7 @@ export class NewTabTrackerStats {
      * @param {string} displayName
      * @param {number} [timestamp] - optional timestamp
      */
-    record (displayName, timestamp) {
+    record(displayName, timestamp) {
         /**
          * Increment the count of this company if the following 2 predicates are satisfied
          *
@@ -203,14 +201,14 @@ export class NewTabTrackerStats {
     /**
      * Persist data into the extensions storage in the following format
      */
-    syncToStorage () {
+    syncToStorage() {
         const serializedData = this.stats.serialize()
         const toSync = {
             [NewTabTrackerStats.storageKey]: {
                 // making this an object to ensure we can store more things under this
                 // namespace later if we need to
-                stats: serializedData
-            }
+                stats: serializedData,
+            },
         }
         syncToStorage(toSync)
     }
@@ -219,14 +217,14 @@ export class NewTabTrackerStats {
      * Attempt to re-populate stats from storage.
      * @returns {Promise<void>}
      */
-    async restoreFromStorage () {
+    async restoreFromStorage() {
         try {
             const prev = await getFromStorage(NewTabTrackerStats.storageKey)
             if (prev) {
                 this.stats.deserialize(prev.stats)
             }
         } catch (e) {
-            console.warn('could not deserialize data from _cachedDisplayData \'trackerStats\' storage')
+            console.warn("could not deserialize data from _cachedDisplayData 'trackerStats' storage")
         }
 
         // also evictExpired once we've restored
@@ -237,8 +235,8 @@ export class NewTabTrackerStats {
      * Convert locally stored data into data that can be consumed by a UI
      * @param {string} reason - a reason or path that caused this
      */
-    sendToNewTab (reason) {
-        if (!reason) throw new Error('you must provide a \'reason\' for sending new data')
+    sendToNewTab(reason) {
+        if (!reason) throw new Error("you must provide a 'reason' for sending new data")
         this._throttled('sendToNewTab', 200, () => this._publish(reason))
     }
 
@@ -247,7 +245,7 @@ export class NewTabTrackerStats {
      * to the new tab page such as heartbeat etc
      * @returns {void}
      */
-    _handleIncomingEvent (event) {
+    _handleIncomingEvent(event) {
         // only handle messages prefixed with `newTabPage_`
         if (typeof event.messageType === 'string' && event.messageType.startsWith(NewTabTrackerStats.eventPrefix)) {
             // currently this is the only incoming message we accept
@@ -263,7 +261,7 @@ export class NewTabTrackerStats {
      * Private method for doing the actual send in a single place
      * that's easy to debug
      */
-    _publish (reason = 'unknown') {
+    _publish(reason = 'unknown') {
         if (this._debug) {
             console.info(`sending new tab data because: ${reason}`)
         }
@@ -271,7 +269,7 @@ export class NewTabTrackerStats {
         /** @type {import('zod').infer<typeof import('../newtab/schema').dataMessage>} */
         const msg = {
             messageType: outgoing.newTabPage_data,
-            options: this.toDisplayData()
+            options: this.toDisplayData(),
         }
 
         const invalidPorts = []
@@ -295,7 +293,7 @@ export class NewTabTrackerStats {
      *   - publish the changed data
      * @param {number} [now] - optional timestamp to use in comparisons
      */
-    _handlePruneAlarm (now = Date.now()) {
+    _handlePruneAlarm(now = Date.now()) {
         this.stats.evictExpired(now)
         this.syncToStorage()
         this.sendToNewTab('following a evictExpired alarm')
@@ -310,10 +308,10 @@ export class NewTabTrackerStats {
      * @param {number} [now] - optional timestamp to use in comparisons
      * @returns {import('zod').infer<typeof import('../newtab/schema').dataFormatSchema>}
      */
-    toDisplayData (now = Date.now()) {
+    toDisplayData(now = Date.now()) {
         // access the entries once they are sorted and grouped
         const stats = this.stats.sorted(now)
-        const index = stats.findIndex(result => result.key === NewTabTrackerStats.otherCompaniesKey)
+        const index = stats.findIndex((result) => result.key === NewTabTrackerStats.otherCompaniesKey)
 
         // ensure 'other' is pushed to the end of the list
         if (index > -1) {
@@ -330,17 +328,15 @@ export class NewTabTrackerStats {
             totalCount: this.stats.totalCount,
             totalPeriod: 'install-time',
             trackerCompaniesPeriod: 'last-day',
-            trackerCompanies: stats.map(item => {
+            trackerCompanies: stats.map((item) => {
                 // convert our known key into the 'Other'
-                const displayName = item.key === NewTabTrackerStats.otherCompaniesKey
-                    ? 'Other'
-                    : item.key
+                const displayName = item.key === NewTabTrackerStats.otherCompaniesKey ? 'Other' : item.key
 
                 return {
                     displayName,
-                    count: item.count
+                    count: item.count,
                 }
-            })
+            }),
         }
     }
 
@@ -356,7 +352,7 @@ export class NewTabTrackerStats {
      * @param {number} timeout
      * @param {() => unknown} fn
      */
-    _throttled (name, timeout, fn) {
+    _throttled(name, timeout, fn) {
         if (this.throttleFlags[name] === true) {
             // do nothing, if we get here we're already _throttled
         } else {
@@ -380,34 +376,36 @@ export class NewTabTrackerStats {
  *
  * @param details
  */
-export function mv2Redirect () {
+export function mv2Redirect() {
     const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin)
     /**
      * This listener will redirect the request for tracker-stats.html
      * on the new tab page to our own HTML file under `web_accessible_resources`
      */
-    browser.webRequest.onBeforeRequest.addListener((details) => {
-        // Only do the redirect if we're being iframed into a known origin
-        if (details.type === 'sub_frame') {
-            const parsed = new URL(details.url)
-            if (parsed.origin === constants.trackerStats.allowedOrigin) {
-                if (parsed.pathname.includes(constants.trackerStats.allowedPathname)) {
-                    return {
-                        redirectUrl: chrome.runtime.getURL(constants.trackerStats.redirectTarget)
+    browser.webRequest.onBeforeRequest.addListener(
+        (details) => {
+            // Only do the redirect if we're being iframed into a known origin
+            if (details.type === 'sub_frame') {
+                const parsed = new URL(details.url)
+                if (parsed.origin === constants.trackerStats.allowedOrigin) {
+                    if (parsed.pathname.includes(constants.trackerStats.allowedPathname)) {
+                        return {
+                            redirectUrl: chrome.runtime.getURL(constants.trackerStats.redirectTarget),
+                        }
                     }
                 }
             }
-        }
-        return undefined
-    },
-    {
-        urls: [incomingUrl.toString()],
-        types: ['sub_frame']
-    },
-    ['blocking'])
+            return undefined
+        },
+        {
+            urls: [incomingUrl.toString()],
+            types: ['sub_frame'],
+        },
+        ['blocking'],
+    )
 }
 
-function mv3Redirect () {
+function mv3Redirect() {
     const targetUrl = chrome.runtime.getURL(constants.trackerStats.redirectTarget)
     const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin)
     const redirectRule = generateDNRRule({
@@ -415,13 +413,13 @@ function mv3Redirect () {
         priority: NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY,
         actionType: 'redirect',
         redirect: {
-            url: targetUrl
+            url: targetUrl,
         },
         urlFilter: incomingUrl.toString(),
-        resourceTypes: ['sub_frame']
+        resourceTypes: ['sub_frame'],
     })
     chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds: [redirectRule.id],
-        addRules: [redirectRule]
+        addRules: [redirectRule],
     })
 }

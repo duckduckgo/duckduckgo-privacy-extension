@@ -35,7 +35,7 @@ module.exports = function () {
     </form>`
 }
 
-function showThankYou (isBrokenSite) {
+function showThankYou(isBrokenSite) {
     if (isBrokenSite) {
         return bel`<div>
             <p>${t('feedback:thankYou.title')}</p>

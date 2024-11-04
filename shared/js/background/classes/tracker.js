@@ -15,7 +15,7 @@ export class Tracker {
     /**
      * @param {TrackerData | null} t
      */
-    constructor (t) {
+    constructor(t) {
         /** @type {Record<string, DetectedRequestWithAction>} */
         this.urls = {}
         this.count = 0 // request count
@@ -39,7 +39,7 @@ export class Tracker {
      * @param {string} baseDomain
      * @param {string} url
      */
-    addTrackerUrl (t, tabUrl, baseDomain, url) {
+    addTrackerUrl(t, tabUrl, baseDomain, url) {
         // don't consider first-party requests at all
         if (t.sameBaseDomain) {
             return
@@ -59,7 +59,7 @@ export class Tracker {
         if (!state) return
 
         // Choose the first tracker radar category that we accept
-        const category = t.tracker?.categories?.find(trackerRadarCategory => constants.displayCategories.includes(trackerRadarCategory))
+        const category = t.tracker?.categories?.find((trackerRadarCategory) => constants.displayCategories.includes(trackerRadarCategory))
 
         /** @type {DetectedRequestWithAction} */
         const detectedRequest = {
@@ -71,7 +71,7 @@ export class Tracker {
             prevalence: this.prevalence,
             ownerName: this.parentCompany?.name,
             category,
-            state
+            state,
         }
 
         this.urls[key] = detectedRequest
@@ -81,7 +81,7 @@ export class Tracker {
      * @param {Tracker} data
      * @returns {Tracker}
      */
-    static restore (data) {
+    static restore(data) {
         const tracker = new Tracker(null)
         for (const [key, value] of Object.entries(data)) {
             tracker[key] = value

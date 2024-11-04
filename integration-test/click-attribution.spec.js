@@ -19,14 +19,12 @@ test.describe('Ad click blocking', () => {
         clearBackgroundPixels = await logPixels(
             backgroundNetworkContext,
             backgroundPixels,
-            ({ name }) => name !== 'page_extensionsuccess_impression'
+            ({ name }) => name !== 'page_extensionsuccess_impression',
         )
 
         await backgroundWait.forExtensionLoaded(context)
 
-        extensionVersion = await backgroundPage.evaluate(
-            () => chrome.runtime.getManifest().version
-        )
+        extensionVersion = await backgroundPage.evaluate(() => chrome.runtime.getManifest().version)
     })
 
     /**
@@ -35,11 +33,8 @@ test.describe('Ad click blocking', () => {
      * @param {string} selector
      * @returns {Promise<*>}
      */
-    function clickAndNavigate (page, selector) {
-        return Promise.all([
-            page.waitForNavigation(),
-            page.click(selector)
-        ])
+    function clickAndNavigate(page, selector) {
+        return Promise.all([page.waitForNavigation(), page.click(selector)])
     }
 
     /**
@@ -48,7 +43,7 @@ test.describe('Ad click blocking', () => {
      * @param {string} selector
      * @returns {Promise<*>}
      */
-    async function clickAndNewTab (existingPage, selector, options, expectedURL) {
+    async function clickAndNewTab(existingPage, selector, options, expectedURL) {
         const newTarget = new Promise((resolve) => {
             existingPage.context().once('page', (page) => {
                 resolve(page)
@@ -92,30 +87,28 @@ test.describe('Ad click blocking', () => {
                         await clickAndNavigate(page, clickSelector)
                     }
                 }
-                expect(page.url(), `${step.name} expects ${step.expected.url}`)
-                    .toBe(step.expected.url)
+                expect(page.url(), `${step.name} expects ${step.expected.url}`).toBe(step.expected.url)
 
                 if (step.expected.requests) {
                     const resources = await page.evaluate(() => globalThis.resources)
                     expect(resources.length).toBe(step.expected.requests.length)
                     for (const request of step.expected.requests) {
-                        const expectedResource = resources.find(resource => resource.url === request.url)
-                        expect(expectedResource, `${step.name} expects ${request.url} to have be detected in the page`)
-                            .toBeDefined()
-                        expect(expectedResource.status, `${step.name} expects ${request.url} to be '${request.status}'`)
-                            .toBe(request.status)
+                        const expectedResource = resources.find((resource) => resource.url === request.url)
+                        expect(expectedResource, `${step.name} expects ${request.url} to have be detected in the page`).toBeDefined()
+                        expect(expectedResource.status, `${step.name} expects ${request.url} to be '${request.status}'`).toBe(
+                            request.status,
+                        )
                     }
                 }
 
                 if (step.final) {
                     // Simulate 24 hours having passed, when the final pixel should fire.
-                    await backgroundPage.evaluate(
-                        () => globalThis.dbg.sendPageloadsWithAdAttributionPixelAndResetCount()
-                    )
+                    await backgroundPage.evaluate(() => globalThis.dbg.sendPageloadsWithAdAttributionPixelAndResetCount())
                 }
 
-                expect(backgroundPixels.length, `${step.name} expects the right number of pixels to fire`)
-                    .toEqual(step.expected.pixels.length)
+                expect(backgroundPixels.length, `${step.name} expects the right number of pixels to fire`).toEqual(
+                    step.expected.pixels.length,
+                )
                 for (let i = 0; i < step.expected.pixels.length; i++) {
                     // Integration tests only run on Chrome so far, so this is a
                     // safe assumption for now.
@@ -125,8 +118,10 @@ test.describe('Ad click blocking', () => {
                         step.expected.pixels[i].params.appVersion = extensionVersion
                     }
 
-                    expect(backgroundPixels[i], `${step.name} expects pixel "${step.expected.pixels[i].name}" to have fired correctly.`)
-                        .toEqual(step.expected.pixels[i])
+                    expect(
+                        backgroundPixels[i],
+                        `${step.name} expects pixel "${step.expected.pixels[i].name}" to have fired correctly.`,
+                    ).toEqual(step.expected.pixels[i])
                 }
                 clearBackgroundPixels()
             }

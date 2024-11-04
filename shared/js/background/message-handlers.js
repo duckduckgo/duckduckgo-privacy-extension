@@ -18,7 +18,7 @@ const browserName = utils.getBrowserName()
 const devtools = require('./devtools')
 const browserWrapper = require('./wrapper')
 
-export async function registeredContentScript (options, sender, req) {
+export async function registeredContentScript(options, sender, req) {
     const sessionKey = await utils.getSessionKey()
     const argumentsObject = getArgumentsObject(sender.tab.id, sender, options?.documentUrl || req.documentUrl, sessionKey)
     if (!argumentsObject) {
@@ -29,11 +29,11 @@ export async function registeredContentScript (options, sender, req) {
     return argumentsObject
 }
 
-export function resetTrackersData () {
+export function resetTrackersData() {
     return Companies.resetData()
 }
 
-export function getExtensionVersion () {
+export function getExtensionVersion() {
     return browserWrapper.getExtensionVersion()
 }
 
@@ -42,7 +42,7 @@ export function getExtensionVersion () {
  *
  * @param options
  */
-export function setList (options) {
+export function setList(options) {
     tabManager.setList(options)
 }
 
@@ -51,7 +51,7 @@ export function setList (options) {
  *
  * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').SetListOptions} options
  */
-export async function setLists (options) {
+export async function setLists(options) {
     // Is the user clicking to disable protections for the website (aka
     // allowlisting the website), or enabling protections for the website again?
     let allowlisting = false
@@ -69,7 +69,7 @@ export async function setLists (options) {
     // If the user is disabling protections for the page and the conditions are
     // met, display a prompt asking the user to send a breakage report before
     // reloading the page.
-    if (allowlisting && await ToggleReports.shouldDisplay()) {
+    if (allowlisting && (await ToggleReports.shouldDisplay())) {
         postPopupMessage({ messageType: 'toggleReport' })
         return
     }
@@ -82,16 +82,16 @@ export async function setLists (options) {
     }
 }
 
-export function allowlistOptIn (optInData) {
+export function allowlistOptIn(optInData) {
     tabManager.setGlobalAllowlist('allowlistOptIn', optInData.domain, optInData.value)
 }
 
 // popup will ask for the browser type then it is created
-export function getBrowser () {
+export function getBrowser() {
     return browserName
 }
 
-export function openOptions () {
+export function openOptions() {
     if (browserName === 'moz') {
         browser.tabs.create({ url: getExtensionURL('/html/options.html') })
     } else {
@@ -104,7 +104,7 @@ export function openOptions () {
  * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').BreakageReportRequest} breakageReport
  * @returns {Promise<void>}
  */
-export function submitBrokenSiteReport (breakageReport) {
+export function submitBrokenSiteReport(breakageReport) {
     const pixelName = 'epbf'
     const { category, description } = breakageReport
     return sendBreakageReportForCurrentTab({ pixelName, category, description })
@@ -117,7 +117,7 @@ export function submitBrokenSiteReport (breakageReport) {
  * Currently, it will collect data for the current tab and email protection
  * user data.
  */
-export async function getPrivacyDashboardData (options) {
+export async function getPrivacyDashboardData(options) {
     let { tabId } = options
     if (tabId === null) {
         const currentTab = await utils.getCurrentTab()
@@ -135,12 +135,12 @@ export async function getPrivacyDashboardData (options) {
     if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId)
     const userData = settings.getSetting('userData')
     const fireButtonData = {
-        enabled: isFireButtonEnabled
+        enabled: isFireButtonEnabled,
     }
     return dashboardDataFromTab(tab, userData, fireButtonData)
 }
 
-export function getTopBlockedByPages (options) {
+export function getTopBlockedByPages(options) {
     return Companies.getTopBlockedByPages(options)
 }
 
@@ -157,18 +157,16 @@ export function getTopBlockedByPages (options) {
  * Returns the current state of the Click to Load feature.
  * @returns {Promise<getClickToLoadStateResponse>}
  */
-export async function getClickToLoadState () {
-    const devMode =
-        (await browserWrapper.getFromSessionStorage('dev')) || false
+export async function getClickToLoadState() {
+    const devMode = (await browserWrapper.getFromSessionStorage('dev')) || false
 
     await settings.ready()
-    const youtubePreviewsEnabled =
-        (await settings.getSetting('youtubePreviewsEnabled')) || false
+    const youtubePreviewsEnabled = (await settings.getSetting('youtubePreviewsEnabled')) || false
 
     return { devMode, youtubePreviewsEnabled }
 }
 
-export async function getYouTubeVideoDetails (videoURL) {
+export async function getYouTubeVideoDetails(videoURL) {
     const endpointURL = new URL('https://www.youtube.com/oembed?format=json')
     const parsedVideoURL = new URL(videoURL)
 
@@ -183,12 +181,10 @@ export async function getYouTubeVideoDetails (videoURL) {
     }
 
     try {
-        const youTubeVideoResponse = await fetch(
-            endpointURL.href, {
-                referrerPolicy: 'no-referrer',
-                credentials: 'omit'
-            }
-        ).then(response => response.json())
+        const youTubeVideoResponse = await fetch(endpointURL.href, {
+            referrerPolicy: 'no-referrer',
+            credentials: 'omit',
+        }).then((response) => response.json())
         const { title, thumbnail_url: previewImage } = youTubeVideoResponse
         return { status: 'success', videoURL, title, previewImage }
     } catch (e) {
@@ -196,7 +192,7 @@ export async function getYouTubeVideoDetails (videoURL) {
     }
 }
 
-export async function unblockClickToLoadContent (data, sender) {
+export async function unblockClickToLoadContent(data, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id })
 
     if (!tab.disabledClickToLoadRuleActions.includes(data.action)) {
@@ -208,7 +204,7 @@ export async function unblockClickToLoadContent (data, sender) {
     }
 }
 
-export function updateYouTubeCTLAddedFlag (value, sender) {
+export function updateYouTubeCTLAddedFlag(value, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id })
     tab.ctlYouTube = Boolean(value)
 }
@@ -231,10 +227,7 @@ export function updateYouTubeCTLAddedFlag (value, sender) {
  * @param {updateFacebookCTLBreakageFlagsRequest} flags
  * @param {browser.Runtime.MessageSender} sender
  */
-export function updateFacebookCTLBreakageFlags (
-    { ctlFacebookPlaceholderShown = false, ctlFacebookLogin = false },
-    sender
-) {
+export function updateFacebookCTLBreakageFlags({ ctlFacebookPlaceholderShown = false, ctlFacebookLogin = false }, sender) {
     const tabId = sender?.tab?.id
     if (typeof tabId === 'undefined') {
         return
@@ -251,31 +244,31 @@ export function updateFacebookCTLBreakageFlags (
     }
 }
 
-export function setYoutubePreviewsEnabled (value, sender) {
+export function setYoutubePreviewsEnabled(value, sender) {
     return updateSetting({ name: 'youtubePreviewsEnabled', value })
 }
 
-export async function updateSetting ({ name, value }) {
+export async function updateSetting({ name, value }) {
     await settings.ready()
     settings.updateSetting(name, value)
     utils.sendAllTabsMessage({ messageType: `ddg-settings-${name}`, value })
     return { messageType: `ddg-settings-${name}`, value }
 }
 
-export async function getSetting ({ name }) {
+export async function getSetting({ name }) {
     await settings.ready()
     return settings.getSetting(name)
 }
 
-export function getTopBlocked (options) {
+export function getTopBlocked(options) {
     return Companies.getTopBlocked(options)
 }
 
-export function getListContents (list) {
+export function getListContents(list) {
     const loader = globalThis.components.tds[list]
     return {
         data: tdsStorage.getSerializableList(list),
-        etag: loader.etag
+        etag: loader.etag,
     }
 }
 
@@ -283,21 +276,21 @@ export function getListContents (list) {
  * Manually override the value of a list
  * @param {{ name: string, value: object}} list value
  */
-export async function setListContents ({ name, value }) {
+export async function setListContents({ name, value }) {
     const loader = globalThis.components.tds[name]
     await loader.overrideDataValue(value)
     return loader.etag
 }
 
-export async function reloadList (listName) {
+export async function reloadList(listName) {
     await globalThis.components.tds[listName].checkForUpdates(true)
 }
 
-export function debuggerMessage (message, sender) {
+export function debuggerMessage(message, sender) {
     devtools.postMessage(sender.tab?.id, message.action, message.message)
 }
 
-export function search ({ term }) {
+export function search({ term }) {
     const browserInfo = parseUserAgentString()
     if (browserInfo?.os) {
         const url = new URL('https://duckduckgo.com')
@@ -307,20 +300,17 @@ export function search ({ term }) {
     }
 }
 
-export function openShareFeedbackPage () {
+export function openShareFeedbackPage() {
     return browserWrapper.openExtensionPage('/html/feedback.html')
 }
 
-export async function isClickToLoadYoutubeEnabled () {
+export async function isClickToLoadYoutubeEnabled() {
     await tdsStorage.ready('config')
 
-    return (
-        isFeatureEnabled('clickToLoad') &&
-        tdsStorage?.config?.features?.clickToLoad?.settings?.Youtube?.state === 'enabled'
-    )
+    return isFeatureEnabled('clickToLoad') && tdsStorage?.config?.features?.clickToLoad?.settings?.Youtube?.state === 'enabled'
 }
 
-export function addDebugFlag (message, sender, req) {
+export function addDebugFlag(message, sender, req) {
     const tab = tabManager.get({ tabId: sender.tab.id })
     const flags = new Set(tab.debugFlags)
     flags.add(message.flag)
@@ -332,7 +322,7 @@ export function addDebugFlag (message, sender, req) {
  * @param {string} name
  * @param {(options: any, sender: any, req: any) => any} func
  */
-export function registerMessageHandler (name, func) {
+export function registerMessageHandler(name, func) {
     if (messageHandlers[name]) {
         throw new Error(`Attempt to re-register existing message handler ${name}`)
     }
@@ -373,6 +363,6 @@ const messageHandlers = {
     search,
     openShareFeedbackPage,
     isClickToLoadYoutubeEnabled,
-    addDebugFlag
+    addDebugFlag,
 }
 export default messageHandlers

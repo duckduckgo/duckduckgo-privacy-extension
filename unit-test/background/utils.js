@@ -10,57 +10,57 @@ const tdsStorageStub = require('../helpers/tds')
 const findParentTestCases = [
     {
         url: 'google.com',
-        parent: 'Google LLC'
+        parent: 'Google LLC',
     },
     {
         url: 'youtube.com',
-        parent: 'Google LLC'
+        parent: 'Google LLC',
     },
     {
         url: 'encrypted.google.com',
-        parent: 'Google LLC'
+        parent: 'Google LLC',
     },
     {
         url: 'duckduckgo.com',
-        parent: 'undefined'
-    }
+        parent: 'undefined',
+    },
 ]
 const extractHostFromURLTestCases = [
     {
         url: 'http://google.com',
         result: 'google.com',
-        resultWithWWW: 'google.com'
+        resultWithWWW: 'google.com',
     },
     {
         url: 'https://www.duckduckgo.com/?q=test&atb=v126-7&ia=web',
         result: 'duckduckgo.com',
-        resultWithWWW: 'www.duckduckgo.com'
+        resultWithWWW: 'www.duckduckgo.com',
     },
     {
         url: 'asdasdasd',
         result: 'asdasdasd',
-        resultWithWWW: 'asdasdasd'
+        resultWithWWW: 'asdasdasd',
     },
     {
         url: 'www.bttf.duckduckgo.com',
         result: 'bttf.duckduckgo.com',
-        resultWithWWW: 'www.bttf.duckduckgo.com'
+        resultWithWWW: 'www.bttf.duckduckgo.com',
     },
     {
         url: 'https://www.amazon.co.uk',
         result: 'amazon.co.uk',
-        resultWithWWW: 'www.amazon.co.uk'
+        resultWithWWW: 'www.amazon.co.uk',
     },
     {
         url: 'https://127.0.0.1/test',
         result: '127.0.0.1',
-        resultWithWWW: '127.0.0.1'
+        resultWithWWW: '127.0.0.1',
     },
     {
         url: 'https://[::1]/test',
         result: '::1',
-        resultWithWWW: '::1'
-    }
+        resultWithWWW: '::1',
+    },
 ]
 
 describe('utils find owner and parent function', () => {
@@ -132,7 +132,7 @@ describe('utils.extractHostFromURL()', () => {
 })
 
 describe('utils.isSameTopLevelDomain()', () => {
-    [
+    ;[
         ['example.com', 'example.com', true],
         ['example.com', 'www.example.com', true],
         ['localhost', 'localhost', true],
@@ -142,7 +142,7 @@ describe('utils.isSameTopLevelDomain()', () => {
         ['a.blogspot.com', 'b.blogspot.com', false],
         ['localhost', 'ddg', false],
         ['1.2.3.4', '1.2.3.4', true],
-        ['127.0.0.1', 'localhost', false]
+        ['127.0.0.1', 'localhost', false],
     ].forEach(([a, b, expected]) => {
         it(`returns ${expected} for ${a} and ${b}`, () => {
             if (expected) {
@@ -157,7 +157,7 @@ describe('utils.isSameTopLevelDomain()', () => {
 })
 
 describe('utils.getBaseDomain()', () => {
-    [
+    ;[
         ['com', null],
         ['.com', null],
         ['example.com', 'example.com'],
@@ -174,7 +174,7 @@ describe('utils.getBaseDomain()', () => {
         ['ddg.localhost', 'ddg.localhost'],
         ['sub.ddg.local', 'ddg.local'],
         ['abcefg', null],
-        ['1234', null]
+        ['1234', null],
     ].forEach(([hostname, baseDomain]) => {
         it(`returns ${baseDomain} for ${hostname}`, () => {
             expect(utils.getBaseDomain(hostname)).toBe(baseDomain)
@@ -188,7 +188,7 @@ describe('utils.parseVersionString', () => {
         ['12.1', [12, 1]],
         ['12.1.1', [12, 1, 1]],
         ['100002.1.1', [100002, 1, 1]],
-        ['broken.string.parse', [NaN, NaN, NaN]]
+        ['broken.string.parse', [NaN, NaN, NaN]],
     ]
     for (const testCase of cases) {
         const [versionString, expectedOutcome] = testCase
@@ -226,7 +226,7 @@ describe('utils.satisfiesMinVersion', () => {
         ['102.12.12.1', '102.12.12.3', true],
         ['102.12.12.1', '102.12.12.1.1', true],
         ['102.12.12.1', '102.12.12.2.1', true],
-        ['102.12.12.1', '102.12.12.1.1.1.1.1.1.1', true]
+        ['102.12.12.1', '102.12.12.1.1.1.1.1.1.1', true],
     ]
     for (const testCase of cases) {
         const [versionString, extensionVersionString, expectedOutcome] = testCase

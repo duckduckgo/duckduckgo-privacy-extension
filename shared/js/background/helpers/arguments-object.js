@@ -8,7 +8,7 @@ const { isActive } = require('../devtools')
 const constants = require('../../../data/constants')
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer')
 
-export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
+export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId })
     if (!tab || !tab.url) {
         return null
@@ -22,7 +22,7 @@ export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
     // Special case for iframes that are blank we check if it's also enabled
     if (sender.url === 'about:blank') {
         const aboutBlankEnabled = utils.getEnabledFeaturesAboutBlank(tab.url)
-        site.enabledFeatures = site.enabledFeatures.filter(feature => aboutBlankEnabled.includes(feature))
+        site.enabledFeatures = site.enabledFeatures.filter((feature) => aboutBlankEnabled.includes(feature))
     }
 
     site.enabledFeatures = site.enabledFeatures.filter((feature) => {
@@ -48,7 +48,7 @@ export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
             isThirdPartyFrame: false,
             shouldBlock: false,
             isTracker: false,
-            isFrame: false
+            isFrame: false,
         }
 
         if (sender.frameId !== 0) {
@@ -56,8 +56,7 @@ export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         }
 
         if (trackerutils.hasTrackerListLoaded()) {
-            if (documentUrl &&
-                trackerutils.isTracker(documentUrl)) {
+            if (documentUrl && trackerutils.isTracker(documentUrl)) {
                 cookie.isTracker = true
             }
             cookie.isThirdPartyFrame = !trackerutils.isFirstPartyByEntity(documentUrl, tab.url)
@@ -77,7 +76,7 @@ export function getArgumentsObject (tabId, sender, documentUrl, sessionKey) {
         locale: getUserLocale(),
         assets: {
             regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),
-            boldFontUrl: getExtensionURL('/public/font/ProximaNova-Bold-webfont.woff')
-        }
+            boldFontUrl: getExtensionURL('/public/font/ProximaNova-Bold-webfont.woff'),
+        },
     }
 }

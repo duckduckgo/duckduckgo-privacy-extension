@@ -1,27 +1,27 @@
 class TopBlocked {
-    constructor () {
+    constructor() {
         this.data = []
     }
 
-    add (el) {
+    add(el) {
         this.data.push(el)
     }
 
-    getTop (n, sortFunc) {
+    getTop(n, sortFunc) {
         this.sort(sortFunc)
         n = n || 10
         return this.data.slice(0, n)
     }
 
-    sort (sortFunc) {
+    sort(sortFunc) {
         this.data.sort(sortFunc)
     }
 
-    clear () {
+    clear() {
         this.data = []
     }
 
-    setData (data) {
+    setData(data) {
         this.data = data
     }
 }

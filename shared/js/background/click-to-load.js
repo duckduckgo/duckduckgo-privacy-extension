@@ -8,14 +8,13 @@ import { sendTabMessage } from './utils'
  * @param {import('./classes/tab')} tab
  * @return {string[]}
  */
-export function getDefaultEnabledClickToLoadRuleActionsForTab (tab) {
+export function getDefaultEnabledClickToLoadRuleActionsForTab(tab) {
     // Click to Load feature isn't supported or is disabled for the tab.
     if (!tab?.site?.isFeatureEnabled('clickToLoad')) {
         return []
     }
 
-    const clickToLoadSettings =
-        tdsStorage?.config?.features?.clickToLoad?.settings
+    const clickToLoadSettings = tdsStorage?.config?.features?.clickToLoad?.settings
 
     // Click to Load configuration isn't ready yet.
     if (!clickToLoadSettings) {
@@ -50,12 +49,12 @@ export function getDefaultEnabledClickToLoadRuleActionsForTab (tab) {
  *   rule action will be refreshed. By default, all placeholders will be
  *   refreshed.
  */
-export async function displayClickToLoadPlaceholders (tab, ruleAction) {
+export async function displayClickToLoadPlaceholders(tab, ruleAction) {
     const message = {
         type: 'update',
         feature: 'clickToLoad',
         messageType: 'displayClickToLoadPlaceholders',
-        options: { }
+        options: {},
     }
     if (typeof ruleAction === 'string') {
         message.options.ruleAction = ruleAction

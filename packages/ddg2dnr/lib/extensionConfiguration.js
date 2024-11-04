@@ -22,9 +22,7 @@ const { createSmarterEncryptionTemporaryRule } = require('./smarterEncryption')
  * @return {Promise<import('./utils.js').RulesetResult>}
  */
 
-async function generateExtensionConfigurationRuleset (
-    extensionConfig, denylistedDomains, isRegexSupported, startingRuleId = 1
-) {
+async function generateExtensionConfigurationRuleset(extensionConfig, denylistedDomains, isRegexSupported, startingRuleId = 1) {
     if (typeof isRegexSupported !== 'function') {
         throw new Error('Missing isRegexSupported function.')
     }
@@ -34,7 +32,7 @@ async function generateExtensionConfigurationRuleset (
     /** @type {import('./utils').MatchDetailsByRuleId} */
     const matchDetailsByRuleId = {}
 
-    const appendRuleResult = result => {
+    const appendRuleResult = (result) => {
         if (result) {
             const { matchDetails, rule } = result
             rule.id = ruleId++
@@ -44,8 +42,7 @@ async function generateExtensionConfigurationRuleset (
     }
 
     // AMP link protection.
-    for (const result of
-        await generateAmpProtectionRules(extensionConfig, isRegexSupported)) {
+    for (const result of await generateAmpProtectionRules(extensionConfig, isRegexSupported)) {
         appendRuleResult(result)
     }
 
@@ -64,11 +61,10 @@ async function generateExtensionConfigurationRuleset (
     }
 
     if (extensionConfig.features?.https?.exceptions?.length > 0) {
-        appendRuleResult(createSmarterEncryptionTemporaryRule(extensionConfig.features.https.exceptions.map(entry => entry.domain)))
+        appendRuleResult(createSmarterEncryptionTemporaryRule(extensionConfig.features.https.exceptions.map((entry) => entry.domain)))
     }
 
     return { ruleset, matchDetailsByRuleId }
 }
 
-exports.generateExtensionConfigurationRuleset =
-    generateExtensionConfigurationRuleset
+exports.generateExtensionConfigurationRuleset = generateExtensionConfigurationRuleset

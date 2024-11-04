@@ -37,15 +37,11 @@ export const ruleIdRangeByConfigName = {
     tds: [1, 10000],
     config: [10001, 20000],
     _RESERVED: [20001, 21000],
-    combined: [21001, 31000]
+    combined: [21001, 31000],
 }
 
 // Valid dynamic rule IDs - others will be removed on extension start
-const RESERVED_DYNAMIC_RULE_IDS = [
-    USER_ALLOWLIST_RULE_ID,
-    ATB_PARAM_RULE_ID,
-    NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID
-]
+const RESERVED_DYNAMIC_RULE_IDS = [USER_ALLOWLIST_RULE_ID, ATB_PARAM_RULE_ID, NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID]
 
 /**
  * Find an existing session or dynamic declarativeNetRequest rule with the given rule ID
@@ -53,13 +49,13 @@ const RESERVED_DYNAMIC_RULE_IDS = [
  * @param {number} desiredRuleId
  * @returns {Promise<chrome.declarativeNetRequest.Rule | undefined>}
  */
-async function findExistingRule (isSessionRule = false, desiredRuleId) {
+async function findExistingRule(isSessionRule = false, desiredRuleId) {
     // TODO: Pass a rule ID filter[1] (to avoid querying all rules) once
     //       Chrome >= 111 is the minimum supported version.
     //       See https://crbug.com/1379699
     // 1 - https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#type-GetRulesFilter
     const rules = await chrome.declarativeNetRequest[isSessionRule ? 'getSessionRules' : 'getDynamicRules']()
-    return rules.find(r => r.id === desiredRuleId)
+    return rules.find((r) => r.id === desiredRuleId)
 }
 
 export const findExistingDynamicRule = findExistingRule.bind(null, false)
@@ -97,35 +93,34 @@ export const findExistingSessionRule = findExistingRule.bind(null, true)
  *                  getMatchDetailsExtensionConfigurationResult |
  *                  getMatchDetailsTrackerBlockingResult>}
  */
-export async function getMatchDetails (ruleId) {
+export async function getMatchDetails(ruleId) {
     await settings.ready()
 
     if (ruleId === USER_ALLOWLIST_RULE_ID) {
         return {
-            type: 'userAllowlist'
+            type: 'userAllowlist',
         }
     }
 
     if (ruleId === GPC_HEADER_RULE_ID) {
         return {
-            type: 'gpc'
+            type: 'gpc',
         }
     }
 
     if (ruleId === SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID) {
         return {
-            type: 'serviceWorkerInitiatedAllowing'
+            type: 'serviceWorkerInitiatedAllowing',
         }
     }
 
     if (ruleId === ATB_PARAM_RULE_ID) {
         return {
-            type: 'atbParam'
+            type: 'atbParam',
         }
     }
 
-    for (const [configName, [ruleIdStart, ruleIdEnd]]
-        of Object.entries(ruleIdRangeByConfigName)) {
+    for (const [configName, [ruleIdStart, ruleIdEnd]] of Object.entries(ruleIdRangeByConfigName)) {
         if (ruleId >= ruleIdStart && ruleId <= ruleIdEnd) {
             const settingName = SETTING_PREFIX + configName
             const settingValue = settings.getSetting(settingName)
@@ -134,7 +129,7 @@ export async function getMatchDetails (ruleId) {
                 if (configName === 'tds') {
                     return {
                         type: 'trackerBlocking',
-                        possibleTrackerDomains: matchDetails.split(',')
+                        possibleTrackerDomains: matchDetails.split(','),
                     }
                 }
 
@@ -149,19 +144,21 @@ export async function getMatchDetails (ruleId) {
 /**
  * Find any dynamic rules outside of the existing expected rule range and remove them.
  */
-export async function clearInvalidDynamicRules () {
+export async function clearInvalidDynamicRules() {
     const existingRules = await chrome.declarativeNetRequest.getDynamicRules()
-    const invalidRules = existingRules.filter((rule) => {
-        if (rule.id >= ruleIdRangeByConfigName.combined[1]) {
-            // greater than the max rule ID
-            return true
-        }
-        if (rule.id >= ruleIdRangeByConfigName._RESERVED[0] && rule.id <= ruleIdRangeByConfigName._RESERVED[1]) {
-            // in the reserved rule range, only explictly defined IDs are allowed
-            return !RESERVED_DYNAMIC_RULE_IDS.includes(rule.id)
-        }
-        return false
-    }).map((rule) => rule.id)
+    const invalidRules = existingRules
+        .filter((rule) => {
+            if (rule.id >= ruleIdRangeByConfigName.combined[1]) {
+                // greater than the max rule ID
+                return true
+            }
+            if (rule.id >= ruleIdRangeByConfigName._RESERVED[0] && rule.id <= ruleIdRangeByConfigName._RESERVED[1]) {
+                // in the reserved rule range, only explictly defined IDs are allowed
+                return !RESERVED_DYNAMIC_RULE_IDS.includes(rule.id)
+            }
+            return false
+        })
+        .map((rule) => rule.id)
     if (invalidRules.length > 0) {
         console.log('Removing invliad rule ids', invalidRules)
         await chrome.declarativeNetRequest.updateDynamicRules({ removeRuleIds: invalidRules })

@@ -5,24 +5,24 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const config = require('@duckduckgo/privacy-reference-tests/url-parameters/config_reference.json')
 const {
-    trackingParameters: { name: featureDescription, tests }
+    trackingParameters: { name: featureDescription, tests },
 } = require('@duckduckgo/privacy-reference-tests/url-parameters/tests.json')
 
-const {
-    stripTrackingParameters,
-    trackingParametersStrippingEnabled
-} = require('../../../shared/js/background/url-parameters')
+const { stripTrackingParameters, trackingParametersStrippingEnabled } = require('../../../shared/js/background/url-parameters')
 
 describe(featureDescription + ': ', () => {
     beforeAll(() => {
         tdsStorageStub.stub({ config })
 
-        return tdsStorage.getLists().then(lists => tds.setLists(lists))
+        return tdsStorage.getLists().then((lists) => tds.setLists(lists))
     })
 
     for (const {
-        name: testDescription, testURL: initialUrl, initiatorURL: initiatorUrl,
-        expectURL: expectedUrl, exceptPlatforms: skippedPlatforms = []
+        name: testDescription,
+        testURL: initialUrl,
+        initiatorURL: initiatorUrl,
+        expectURL: expectedUrl,
+        exceptPlatforms: skippedPlatforms = [],
     } of tests) {
         if (skippedPlatforms.includes('web-extension')) {
             continue
@@ -34,9 +34,7 @@ describe(featureDescription + ': ', () => {
             const expectedResult = expectedUrl.length < initialUrl.length
 
             const urlObject = new URL(initialUrl)
-            const stripResult = trackingParametersStrippingEnabled(
-                new Site(initialUrl), initiatorUrl
-            ) && stripTrackingParameters(urlObject)
+            const stripResult = trackingParametersStrippingEnabled(new Site(initialUrl), initiatorUrl) && stripTrackingParameters(urlObject)
             const strippedUrl = urlObject.href
 
             expect(stripResult).toEqual(expectedResult)

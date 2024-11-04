@@ -1,15 +1,10 @@
 const assert = require('assert')
 
-const {
-    CONTENT_BLOCKING_ALLOWLIST_PRIORITY,
-    UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY
-} = require('../lib/temporaryAllowlist')
+const { CONTENT_BLOCKING_ALLOWLIST_PRIORITY, UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY } = require('../lib/temporaryAllowlist')
 
-const {
-    generateExtensionConfigurationRuleset
-} = require('../lib/extensionConfiguration')
+const { generateExtensionConfigurationRuleset } = require('../lib/extensionConfiguration')
 
-async function isRegexSupportedTrue ({ regex, isCaseSensitive }) {
+async function isRegexSupportedTrue({ regex, isCaseSensitive }) {
     return { isSupported: true }
 }
 
@@ -17,34 +12,37 @@ const baseExtensionConfigStringifed = JSON.stringify({
     features: {
         contentBlocking: {
             state: 'enabled',
-            exceptions: [{
-                domain: 'content-blocking1.example',
-                reason: 'First contentBlocking reason'
-            }, {
-                domain: 'content-blocking2.example',
-                reason: 'Second contentBlocking reason'
-            }]
-        }
+            exceptions: [
+                {
+                    domain: 'content-blocking1.example',
+                    reason: 'First contentBlocking reason',
+                },
+                {
+                    domain: 'content-blocking2.example',
+                    reason: 'Second contentBlocking reason',
+                },
+            ],
+        },
     },
-    unprotectedTemporary: [{
-        domain: 'unprotected-temporary1.example',
-        reason: 'First unprotectedTemporary reason'
-    }, {
-        domain: 'unprotected-temporary2.example',
-        reason: 'Second unprotectedTemporary reason'
-    }]
+    unprotectedTemporary: [
+        {
+            domain: 'unprotected-temporary1.example',
+            reason: 'First unprotectedTemporary reason',
+        },
+        {
+            domain: 'unprotected-temporary2.example',
+            reason: 'Second unprotectedTemporary reason',
+        },
+    ],
 })
 
-async function rulesetEqual (
-    extensionConfig, denylistedDomains, expectedRuleset, expectedLookup
-) {
+async function rulesetEqual(extensionConfig, denylistedDomains, expectedRuleset, expectedLookup) {
     const extensionConfigBefore = JSON.stringify(extensionConfig)
 
-    const {
-        ruleset: actualRuleset,
-        matchDetailsByRuleId: actualLookup
-    } = await generateExtensionConfigurationRuleset(
-        extensionConfig, denylistedDomains, isRegexSupportedTrue
+    const { ruleset: actualRuleset, matchDetailsByRuleId: actualLookup } = await generateExtensionConfigurationRuleset(
+        extensionConfig,
+        denylistedDomains,
+        isRegexSupportedTrue,
     )
 
     assert.deepEqual(actualRuleset, expectedRuleset)
@@ -66,85 +64,69 @@ describe('Temporary Allowlist', () => {
                     id: 1,
                     priority: UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY,
                     condition: {
-                        requestDomains: [
-                            'unprotected-temporary1.example'
-                        ],
-                        resourceTypes: [
-                            'main_frame'
-                        ]
+                        requestDomains: ['unprotected-temporary1.example'],
+                        resourceTypes: ['main_frame'],
                     },
                     action: {
-                        type: 'allowAllRequests'
-                    }
+                        type: 'allowAllRequests',
+                    },
                 },
                 {
                     id: 2,
                     priority: UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY,
                     condition: {
-                        requestDomains: [
-                            'unprotected-temporary2.example'
-                        ],
-                        resourceTypes: [
-                            'main_frame'
-                        ]
+                        requestDomains: ['unprotected-temporary2.example'],
+                        resourceTypes: ['main_frame'],
                     },
                     action: {
-                        type: 'allowAllRequests'
-                    }
+                        type: 'allowAllRequests',
+                    },
                 },
                 {
                     id: 3,
                     priority: CONTENT_BLOCKING_ALLOWLIST_PRIORITY,
                     condition: {
-                        requestDomains: [
-                            'content-blocking1.example'
-                        ],
-                        resourceTypes: [
-                            'main_frame'
-                        ]
+                        requestDomains: ['content-blocking1.example'],
+                        resourceTypes: ['main_frame'],
                     },
                     action: {
-                        type: 'allowAllRequests'
-                    }
+                        type: 'allowAllRequests',
+                    },
                 },
                 {
                     id: 4,
                     priority: CONTENT_BLOCKING_ALLOWLIST_PRIORITY,
                     condition: {
-                        requestDomains: [
-                            'content-blocking2.example'
-                        ],
-                        resourceTypes: [
-                            'main_frame'
-                        ]
+                        requestDomains: ['content-blocking2.example'],
+                        resourceTypes: ['main_frame'],
                     },
                     action: {
-                        type: 'allowAllRequests'
-                    }
-                }
+                        type: 'allowAllRequests',
+                    },
+                },
             ],
             {
                 1: {
                     type: 'unprotectedTemporary',
                     domain: 'unprotected-temporary1.example',
-                    reason: 'First unprotectedTemporary reason'
+                    reason: 'First unprotectedTemporary reason',
                 },
                 2: {
                     type: 'unprotectedTemporary',
                     domain: 'unprotected-temporary2.example',
-                    reason: 'Second unprotectedTemporary reason'
+                    reason: 'Second unprotectedTemporary reason',
                 },
                 3: {
                     type: 'contentBlocking',
                     domain: 'content-blocking1.example',
-                    reason: 'First contentBlocking reason'
+                    reason: 'First contentBlocking reason',
                 },
                 4: {
                     type: 'contentBlocking',
                     domain: 'content-blocking2.example',
-                    reason: 'Second contentBlocking reason'
-                }
-            }
+                    reason: 'Second contentBlocking reason',
+                },
+            },
         )
     })
 
@@ -161,78 +143,64 @@ describe('Temporary Allowlist', () => {
                     id: 1,
                     priority: CONTENT_BLOCKING_ALLOWLIST_PRIORITY,
                     condition: {
-                        resourceTypes: [
-                            'main_frame'
-                        ]
+                        resourceTypes: ['main_frame'],
                     },
                     action: {
-                        type: 'allowAllRequests'
-                    }
-                }
+                        type: 'allowAllRequests',
+                    },
+                },
             ],
             {
                 1: {
                     type: 'contentBlocking',
-                    reason: 'contentBlocking disabled for all domains.'
-                }
-            }
+                    reason: 'contentBlocking disabled for all domains.',
+                },
+            },
         )
     })
 
-    it('shouldn\'t generate rules for denylisted domains', async () => {
+    it("shouldn't generate rules for denylisted domains", async () => {
         const extensionConfig = JSON.parse(baseExtensionConfigStringifed)
 
         await rulesetEqual(
             extensionConfig,
-            [
-                'content-blocking2.example',
-                'different-domain.example',
-                'unprotected-temporary1.example'
-            ],
+            ['content-blocking2.example', 'different-domain.example', 'unprotected-temporary1.example'],
             [
                 {
                     id: 1,
                     priority: UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY,
                     condition: {
-                        requestDomains: [
-                            'unprotected-temporary2.example'
-                        ],
-                        resourceTypes: [
-                            'main_frame'
-                        ]
+                        requestDomains: ['unprotected-temporary2.example'],
+                        resourceTypes: ['main_frame'],
                     },
                     action: {
-                        type: 'allowAllRequests'
-                    }
+                        type: 'allowAllRequests',
+                    },
                 },
                 {
                     id: 2,
                     priority: CONTENT_BLOCKING_ALLOWLIST_PRIORITY,
                     condition: {
-                        requestDomains: [
-                            'content-blocking1.example'
-                        ],
-                        resourceTypes: [
-                            'main_frame'
-                        ]
+                        requestDomains: ['content-blocking1.example'],
+                        resourceTypes: ['main_frame'],
                     },
                     action: {
-                        type: 'allowAllRequests'
-                    }
-                }
+                        type: 'allowAllRequests',
+                    },
+                },
             ],
             {
                 1: {
                     type: 'unprotectedTemporary',
                     domain: 'unprotected-temporary2.example',
-                    reason: 'Second unprotectedTemporary reason'
+                    reason: 'Second unprotectedTemporary reason',
                 },
                 2: {
                     type: 'contentBlocking',
                     domain: 'content-blocking1.example',
-                    reason: 'First contentBlocking reason'
-                }
-            }
+                    reason: 'First contentBlocking reason',
+                },
+            },
         )
     })
 })

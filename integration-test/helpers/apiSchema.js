@@ -24,11 +24,11 @@ import path from 'path'
  * @returns {Promise<Object>}
  *   The target Object's schema.
  */
-export async function getObjectSchema (page, targetObjectName) {
+export async function getObjectSchema(page, targetObjectName) {
     // eslint-disable-next-line no-eval
-    const targetObjectHandle = await page.evaluateHandle(name => eval(name), targetObjectName)
+    const targetObjectHandle = await page.evaluateHandle((name) => eval(name), targetObjectName)
 
-    return await page.evaluate(function inPageGetObjectSchema (targetObject, previouslySeenObjects) {
+    return await page.evaluate(function inPageGetObjectSchema(targetObject, previouslySeenObjects) {
         // On first call, the only 'seen' Object is the current target Object.
         if (!previouslySeenObjects) {
             previouslySeenObjects = new Set([targetObject])
@@ -94,13 +94,9 @@ export async function getObjectSchema (page, targetObjectName) {
  * @returns {Promise<Object>}
  *   The target Object's schema.
  */
-export async function setupAPISchemaTest (page, schemaFilename, targetObjectNames) {
-    const actualSchemaPath = path.resolve(
-        __dirname, '..', 'artifacts', 'api_schemas', schemaFilename
-    )
-    const expectedSchemaPath = path.resolve(
-        __dirname, '..', 'data', 'api_schemas', schemaFilename
-    )
+export async function setupAPISchemaTest(page, schemaFilename, targetObjectNames) {
+    const actualSchemaPath = path.resolve(__dirname, '..', 'artifacts', 'api_schemas', schemaFilename)
+    const expectedSchemaPath = path.resolve(__dirname, '..', 'data', 'api_schemas', schemaFilename)
 
     const actualSchema = Object.create(null)
     for (const objectName of targetObjectNames) {
@@ -118,5 +114,5 @@ export async function setupAPISchemaTest (page, schemaFilename, targetObjectName
 
 export default {
     getObjectSchema,
-    setupAPISchemaTest
+    setupAPISchemaTest,
 }

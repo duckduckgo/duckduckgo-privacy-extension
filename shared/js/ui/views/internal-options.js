@@ -3,20 +3,20 @@ const ModelParent = window.DDG.base.Model
 const ViewParent = window.DDG.base.View
 
 class Model extends ModelParent {
-    constructor () {
+    constructor() {
         super({
-            modelName: 'internalOptions'
+            modelName: 'internalOptions',
         })
         this.isInternalUser = false
     }
 
-    async getState () {
+    async getState() {
         this.isInternalUser = await this.sendMessage('isInternalUser')
         this.debuggingSettings = await this.sendMessage('getDebuggingSettings')
     }
 }
 
-function template () {
+function template() {
     if (this.model.isInternalUser) {
         const buttonState = this._buttonState()
         const buttonDisabled = buttonState.endsWith('disabled')
@@ -40,7 +40,7 @@ function template () {
     return bel`<section class="options-content__allowlist"></section>`
 }
 
-export default function InternalOptionsView (ops) {
+export default function InternalOptionsView(ops) {
     this.model = ops.model = new Model()
     this.template = ops.template = template
     this.pageView = ops.pageView
@@ -53,7 +53,7 @@ InternalOptionsView.prototype = window.$.extend({}, ViewParent.prototype, {
         this._cacheElems('.js-options', ['config-url', 'set-config-url'])
         this.bindEvents([
             [this.$setconfigurl, 'click', this._clickSetting],
-            [this.$configurl, 'input', this._onURLChange]
+            [this.$configurl, 'input', this._onURLChange],
         ])
         this._onURLChange()
     },
@@ -62,7 +62,7 @@ InternalOptionsView.prototype = window.$.extend({}, ViewParent.prototype, {
         const inputValue = this.$configurl?.val() || currentValue
         let inputIsValidUrl = false
         try {
-            inputIsValidUrl = !!(new URL(inputValue))
+            inputIsValidUrl = !!new URL(inputValue)
         } catch (e) {}
         if (!currentValue) {
             return inputIsValidUrl ? 'Set' : 'Set disabled'
@@ -82,7 +82,7 @@ InternalOptionsView.prototype = window.$.extend({}, ViewParent.prototype, {
             // enable and set
             await this.model.sendMessage('enableDebugging', {
                 configURLOverride: inputValue,
-                debuggerConnection: true
+                debuggerConnection: true,
             })
         } else if (buttonState === 'Clear') {
             await this.model.sendMessage('disableDebugging')
@@ -104,5 +104,5 @@ InternalOptionsView.prototype = window.$.extend({}, ViewParent.prototype, {
             this._rerender()
             this.setup()
         })
-    }
+    },
 })

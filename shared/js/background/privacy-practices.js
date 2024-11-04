@@ -8,7 +8,7 @@ const tosdrRegexList = []
 const tosdrScores = {}
 
 class PrivacyPractices {
-    constructor () {
+    constructor() {
         Object.keys(tosdr).forEach((site) => {
             // only match domains, and from the start of the URL
             tosdrRegexList.push(new RegExp(`(^)${tldts.getDomain(site)}`))
@@ -47,11 +47,11 @@ class PrivacyPractices {
         })
     }
 
-    getTosdr (url) {
+    getTosdr(url) {
         const domain = tldts.getDomain(url)
         let tosdrData
 
-        tosdrRegexList.some(tosdrSite => {
+        tosdrRegexList.some((tosdrSite) => {
             const match = tosdrSite.exec(domain)
 
             if (!match) return false
@@ -91,20 +91,20 @@ class PrivacyPractices {
             class: tosdrData.class,
             reasons: {
                 good: matchGood,
-                bad: matchBad
+                bad: matchBad,
             },
-            message
+            message,
         }
     }
 
-    getTosdrScore (hostname, parent) {
+    getTosdrScore(hostname, parent) {
         const domain = tldts.getDomain(hostname)
 
         // look for tosdr match in list of parent properties
         let parentMatch = ''
         if (parent && parent.domains) {
             Object.keys(tosdrScores).some((tosdrName) => {
-                const match = parent.domains.find(d => d === tosdrName)
+                const match = parent.domains.find((d) => d === tosdrName)
                 if (match) {
                     parentMatch = match
                     return true
@@ -120,11 +120,7 @@ class PrivacyPractices {
         // foo.bar.com and bar.com have entries in tosdr.json
         // and different scores - should they propagate
         // the same way parent entity ones do?
-        const score = [
-            tosdrScores[parentMatch],
-            tosdrScores[domain],
-            tosdrScores[hostname]
-        ].find(s => typeof s === 'number')
+        const score = [tosdrScores[parentMatch], tosdrScores[domain], tosdrScores[hostname]].find((s) => typeof s === 'number')
 
         return score
     }

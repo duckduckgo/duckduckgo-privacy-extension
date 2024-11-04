@@ -13,11 +13,10 @@ import tdsStorage from './storage/tds'
  * @param {import('./classes/tab')} tab
  * @return {Promise<chrome.declarativeNetRequest.Rule[]>}
  */
-async function generateDnrAllowingRules (tab, ruleAction) {
+async function generateDnrAllowingRules(tab, ruleAction) {
     // The necessary declarativeNetRequest allowing rules already exist for this
     // tab, nothing to do.
-    const existingRuleIds =
-        tab.dnrRuleIdsByDisabledClickToLoadRuleAction[ruleAction]
+    const existingRuleIds = tab.dnrRuleIdsByDisabledClickToLoadRuleAction[ruleAction]
     if (existingRuleIds && existingRuleIds.length > 0) {
         return []
     }
@@ -25,8 +24,7 @@ async function generateDnrAllowingRules (tab, ruleAction) {
     // Load the Click to Load declarativeNetRequest allowing rule lookup from
     // the settings.
     await settings.ready()
-    const allowingDnrRulesByClickToLoadRuleAction =
-        settings.getSetting('allowingDnrRulesByClickToLoadRuleAction')
+    const allowingDnrRulesByClickToLoadRuleAction = settings.getSetting('allowingDnrRulesByClickToLoadRuleAction')
     if (!allowingDnrRulesByClickToLoadRuleAction) {
         console.warn('Failed to load Click to Load allowing rules.')
         return []
@@ -89,21 +87,19 @@ async function generateDnrAllowingRules (tab, ruleAction) {
  * @param {import('./classes/tab')} tab
  * @return {Promise}
  */
-export async function restoreDefaultClickToLoadRuleActions (tab) {
+export async function restoreDefaultClickToLoadRuleActions(tab) {
     const addRules = []
     const removeRuleIds = []
 
     await settings.ready()
-    const allowingDnrRulesByClickToLoadRuleAction =
-        settings.getSetting('allowingDnrRulesByClickToLoadRuleAction')
+    const allowingDnrRulesByClickToLoadRuleAction = settings.getSetting('allowingDnrRulesByClickToLoadRuleAction')
     if (!allowingDnrRulesByClickToLoadRuleAction) {
         console.warn('Click to Load DNR rules are not known yet, skipping.')
         return
     }
 
     // Assume all Click to Load rule actions should be disabled initially.
-    const disabledRuleActions =
-        new Set(Object.keys(allowingDnrRulesByClickToLoadRuleAction))
+    const disabledRuleActions = new Set(Object.keys(allowingDnrRulesByClickToLoadRuleAction))
 
     // If the Click to Load feature is supported and enabled for this tab, see
     // which rule actions shouldn't be disabled.
@@ -118,16 +114,14 @@ export async function restoreDefaultClickToLoadRuleActions (tab) {
     }
 
     // Check which Click to Load rule actions are already disabled for the tab.
-    for (const disabledRuleAction of
-        Object.keys(tab.dnrRuleIdsByDisabledClickToLoadRuleAction)) {
+    for (const disabledRuleAction of Object.keys(tab.dnrRuleIdsByDisabledClickToLoadRuleAction)) {
         if (disabledRuleActions.has(disabledRuleAction)) {
             // Existing declarativeNetRequest rules can be reused, since this
             // Click to Load rule action should still be still be disabled.
             disabledRuleActions.delete(disabledRuleAction)
         } else {
             // Existing declarativeNetRequest rules should be cleared.
-            for (const ruleId of
-                tab.dnrRuleIdsByDisabledClickToLoadRuleAction[disabledRuleAction]) {
+            for (const ruleId of tab.dnrRuleIdsByDisabledClickToLoadRuleAction[disabledRuleAction]) {
                 removeRuleIds.push(ruleId)
             }
             delete tab.dnrRuleIdsByDisabledClickToLoadRuleAction[disabledRuleAction]
@@ -139,7 +133,7 @@ export async function restoreDefaultClickToLoadRuleActions (tab) {
     // Note: This also updates the dnrRuleIdsByDisabledClickToLoadRuleAction
     //       lookup for the tab.
     for (const disabledRuleAction of disabledRuleActions) {
-        addRules.push(...await generateDnrAllowingRules(tab, disabledRuleAction))
+        addRules.push(...(await generateDnrAllowingRules(tab, disabledRuleAction)))
     }
 
     // Notes:
@@ -161,9 +155,7 @@ export async function restoreDefaultClickToLoadRuleActions (tab) {
 
     // Update the declarativeNetRequest session rules for the tab.
     if (addRules.length > 0 || removeRuleIds.length > 0) {
-        return await chrome.declarativeNetRequest.updateSessionRules(
-            { addRules, removeRuleIds }
-        )
+        return await chrome.declarativeNetRequest.updateSessionRules({ addRules, removeRuleIds })
     }
 }
 
@@ -174,7 +166,7 @@ export async function restoreDefaultClickToLoadRuleActions (tab) {
  * @param {import('./classes/tab')} tab
  * @return {Promise}
  */
-export async function ensureClickToLoadRuleActionDisabled (ruleAction, tab) {
+export async function ensureClickToLoadRuleActionDisabled(ruleAction, tab) {
     const addRules = await generateDnrAllowingRules(tab, ruleAction)
 
     if (addRules.length > 0) {
@@ -188,14 +180,10 @@ export async function ensureClickToLoadRuleActionDisabled (ruleAction, tab) {
  * @param {import('./classes/tab')} tab
  * @return {Promise}
  */
-export async function clearClickToLoadDnrRulesForTab (tab) {
-    const removeRuleIds = Array.prototype.concat(
-        ...Object.values(tab.dnrRuleIdsByDisabledClickToLoadRuleAction)
-    )
+export async function clearClickToLoadDnrRulesForTab(tab) {
+    const removeRuleIds = Array.prototype.concat(...Object.values(tab.dnrRuleIdsByDisabledClickToLoadRuleAction))
 
     if (removeRuleIds.length > 0) {
-        return await chrome.declarativeNetRequest.updateSessionRules(
-            { removeRuleIds }
-        )
+        return await chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds })
     }
 }

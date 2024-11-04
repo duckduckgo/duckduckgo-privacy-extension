@@ -69,7 +69,7 @@ describe('utils.getCurrentATB', () => {
         { date: 'Sun Mar 12 2017 01:01:00 GMT-0500 (EST)', atb: 'v55-5' },
         { date: 'Sun Mar 12 2017 01:59:00 GMT-0500 (EST)', atb: 'v55-5' },
         { date: 'Sun Mar 12 2017 02:01:00 GMT-0400 (EDT)', atb: 'v55-5' },
-        { date: 'Sun Mar 12 2017 03:01:00 GMT-0400 (EDT)', atb: 'v55-5' }
+        { date: 'Sun Mar 12 2017 03:01:00 GMT-0400 (EDT)', atb: 'v55-5' },
     ]
 
     tests.forEach(function (test) {

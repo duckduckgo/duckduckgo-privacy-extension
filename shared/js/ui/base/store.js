@@ -47,9 +47,13 @@ const notifiers = require('./notifiers.js')
  * @param {string} notifierName - unique name of registrant (i.e. model name)
  * @api public
  */
-function register (notifierName) {
-    if (typeof notifierName !== 'string') { throw new Error('notifierName argument must be a string') }
-    if (notifiers.registered[notifierName]) { throw new Error(`notifierName argument must be unique to store ${notifierName} already exists`) }
+function register(notifierName) {
+    if (typeof notifierName !== 'string') {
+        throw new Error('notifierName argument must be a string')
+    }
+    if (notifiers.registered[notifierName]) {
+        throw new Error(`notifierName argument must be unique to store ${notifierName} already exists`)
+    }
 
     notifiers.add(notifierName)
     const combinedNotifiers = notifiers.combine()
@@ -61,7 +65,7 @@ function register (notifierName) {
             _publish(notification) // publish notif. about state changes to subscribers
         })
     } else {
-    // update reducers to include the newest registered here
+        // update reducers to include the newest registered here
         _store.replaceNotifier(combinedNotifiers)
     }
 }
@@ -72,7 +76,7 @@ function register (notifierName) {
  * done with model.set(), model.clear(), model.send() instead of directly here.
  * @api public
  */
-function publish (notification) {
+function publish(notification) {
     _store.dispatch(notification)
 }
 
@@ -87,7 +91,7 @@ _publisher.setMaxListeners(100) // EventEmitter2 default of 10 is too low
  * Emits notifications via _publisher
  * @api private
  */
-function _publish (notification) {
+function _publish(notification) {
     if (notification && notification.change) {
         console.info(`STORE NOTIFICATION change:${notification.notifierName}`, notification)
         _publisher.emit(`change:${notification.notifierName}`, notification)
@@ -103,7 +107,7 @@ function _publish (notification) {
  * @param {string} notifierName
  * @api public
  */
-function remove (notifierName) {
+function remove(notifierName) {
     if (notifiers.remove(notifierName)) {
         const combinedNotifiers = notifiers.combine()
         _store.replaceNotifier(combinedNotifiers)
@@ -125,16 +129,17 @@ let _store = null
  * https://www.npmjs.com/package/minidux#var-store--createstorereducer-initialstate-enhancer
  * @api private
  */
-function _createStore (notifier) {
+function _createStore(notifier) {
     if (!notifier || typeof notifier !== 'function') throw new Error('notifier must be a function')
 
     let state = {}
     let listener = null
     let isEmitting = false
 
-    function dispatch (notification) {
+    function dispatch(notification) {
         if (!notification || !isPlainObject(notification)) throw new Error('notification parameter is required and must be a plain object')
-        if (!notification.notifierName || typeof notification.notifierName !== 'string') throw new Error('notifierName property of notification parameter is required and must be a string')
+        if (!notification.notifierName || typeof notification.notifierName !== 'string')
+            throw new Error('notifierName property of notification parameter is required and must be a string')
         if (isEmitting) throw new Error('subscribers may not generate notifications')
 
         isEmitting = true
@@ -144,12 +149,12 @@ function _createStore (notifier) {
         return notification
     }
 
-    function subscribe (cb) {
+    function subscribe(cb) {
         if (!cb || typeof cb !== 'function') throw new Error('listener must be a function')
         listener = cb
     }
 
-    function replaceNotifier (next) {
+    function replaceNotifier(next) {
         if (typeof next !== 'function') throw new Error('new notifier must be a function')
         notifier = next
     }
@@ -159,7 +164,7 @@ function _createStore (notifier) {
     return {
         dispatch,
         subscribe,
-        replaceNotifier
+        replaceNotifier,
     }
 }
 
@@ -168,5 +173,5 @@ module.exports = {
     register, // registers a new notifier to the store (likely a model)
     publish, // publish a notification from notifier to subscribers
     subscribe: _publisher, // subscribe to notifiers' notifications
-    remove // remove a notifier from the store
+    remove, // remove a notifier from the store
 }

@@ -6,10 +6,8 @@ import path from 'path'
  * @param {import('@playwright/test').Page | import('@playwright/test').BrowserContext} networkContext
  * @param {string} testConfigFilename
  */
-export async function overridePrivacyConfig (networkContext, testConfigFilename) {
-    const filePath = path.resolve(
-        __dirname, '..', 'data', 'configs', testConfigFilename
-    )
+export async function overridePrivacyConfig(networkContext, testConfigFilename) {
+    const filePath = path.resolve(__dirname, '..', 'data', 'configs', testConfigFilename)
     const testConfig = JSON.parse(fs.readFileSync(filePath).toString())
 
     await networkContext.route('https://staticcdn.duckduckgo.com/trackerblocking/config/**/*', async (route) => {
@@ -32,8 +30,8 @@ export async function overridePrivacyConfig (networkContext, testConfigFilename)
             status: 200,
             body: JSON.stringify(localConfig),
             headers: {
-                etag: 'test'
-            }
+                etag: 'test',
+            },
         })
     })
 }
@@ -43,15 +41,15 @@ export async function overridePrivacyConfig (networkContext, testConfigFilename)
  * @param {import('@playwright/test').Page | import('@playwright/test').BrowserContext} networkContext
  * @param {string} tdsFilePath
  */
-export async function overrideTds (networkContext, tdsFilePath) {
+export async function overrideTds(networkContext, tdsFilePath) {
     await networkContext.route('https://staticcdn.duckduckgo.com/trackerblocking/v6/**/*', async (route) => {
         const tds = await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8')
         route.fulfill({
             status: 200,
             body: tds,
             headers: {
-                etag: 'test'
-            }
+                etag: 'test',
+            },
         })
     })
 }

@@ -4,10 +4,10 @@ const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
 const config = require('@duckduckgo/privacy-reference-tests/amp-protections/config_reference.json')
 const {
-    ampFormats: { name: formatFeatureDescription, tests: ampFormatsTests }
+    ampFormats: { name: formatFeatureDescription, tests: ampFormatsTests },
 } = require('@duckduckgo/privacy-reference-tests/amp-protections/tests.json')
 const {
-    ampKeywords: { name: keywordFeatureDescription, tests: ampKeywordTests }
+    ampKeywords: { name: keywordFeatureDescription, tests: ampKeywordTests },
 } = require('@duckduckgo/privacy-reference-tests/amp-protections/tests.json')
 
 const ampProtection = require('../../../shared/js/background/amp-protection')
@@ -16,12 +16,10 @@ describe(formatFeatureDescription + ': ', () => {
     beforeAll(() => {
         tdsStorageStub.stub({ config })
 
-        return tdsStorage.getLists().then(lists => tds.setLists(lists))
+        return tdsStorage.getLists().then((lists) => tds.setLists(lists))
     })
 
-    for (const {
-        name: testDescription, ampURL, expectURL, exceptPlatforms: skippedPlatforms = []
-    } of ampFormatsTests) {
+    for (const { name: testDescription, ampURL, expectURL, exceptPlatforms: skippedPlatforms = [] } of ampFormatsTests) {
         if (skippedPlatforms.includes('web-extension')) {
             continue
         }
@@ -44,12 +42,10 @@ describe(keywordFeatureDescription + ': ', () => {
     beforeAll(() => {
         tdsStorageStub.stub({ config })
 
-        return tdsStorage.getLists().then(lists => tds.setLists(lists))
+        return tdsStorage.getLists().then((lists) => tds.setLists(lists))
     })
 
-    for (const {
-        name: testDescription, ampURL, expectAmpDetected, exceptPlatforms: skippedPlatforms = []
-    } of ampKeywordTests) {
+    for (const { name: testDescription, ampURL, expectAmpDetected, exceptPlatforms: skippedPlatforms = [] } of ampKeywordTests) {
         if (skippedPlatforms.includes('web-extension')) {
             continue
         }

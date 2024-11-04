@@ -35,17 +35,14 @@ for (const setName of Object.keys(testSets)) {
                 httpsBloom: bloomFilter,
                 httpsAllowlist: bloomFilterAllowlist,
                 httpsNegativeBloom: negativeBloomFilter,
-                httpsNegativeAllowlist: negativeBloomFilterAllowlist
+                httpsNegativeAllowlist: negativeBloomFilterAllowlist,
             })
 
             // initialize https upgreade data and config
-            return Promise.all([
-                httpsStorage.getLists().then(lists => https.setLists(lists)),
-                tdsStorage.getLists()
-            ])
+            return Promise.all([httpsStorage.getLists().then((lists) => https.setLists(lists)), tdsStorage.getLists()])
         })
 
-        testSet.tests.forEach(test => {
+        testSet.tests.forEach((test) => {
             if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                 return
             }
@@ -54,9 +51,9 @@ for (const setName of Object.keys(testSets)) {
                 const url = test.requestURL
                 const tab = new Tab({
                     id: 1,
-                    url: test.siteURL
+                    url: test.siteURL,
                 })
-                const isMainFrame = (test.requestType === 'main_frame')
+                const isMainFrame = test.requestType === 'main_frame'
                 const isPost = false
 
                 expect(https.getUpgradedUrl(url, tab, isMainFrame, isPost)).toEqual(test.expectURL)

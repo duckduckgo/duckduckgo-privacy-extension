@@ -12,7 +12,7 @@ const testSets = require('@duckduckgo/privacy-reference-tests/privacy-configurat
 const configs = {
     'config1_reference.json': require('@duckduckgo/privacy-reference-tests/privacy-configuration/config1_reference.json'),
     'config2_reference.json': require('@duckduckgo/privacy-reference-tests/privacy-configuration/config2_reference.json'),
-    'config3_reference.json': require('@duckduckgo/privacy-reference-tests/privacy-configuration/config3_reference.json')
+    'config3_reference.json': require('@duckduckgo/privacy-reference-tests/privacy-configuration/config3_reference.json'),
 }
 
 for (const setName of Object.keys(testSets)) {
@@ -27,7 +27,7 @@ for (const setName of Object.keys(testSets)) {
             return tdsStorage.getLists()
         })
 
-        testSet.tests.forEach(test => {
+        testSet.tests.forEach((test) => {
             if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                 return
             }
@@ -42,7 +42,7 @@ for (const setName of Object.keys(testSets)) {
             } else if (test.scriptURL) {
                 it(`${test.name}`, () => {
                     contentScriptUtils.initStringExemptionLists({
-                        stringExemptionLists: utils.getBrokenScriptLists()
+                        stringExemptionLists: utils.getBrokenScriptLists(),
                     })
                     const isEnabled = !contentScriptUtils.shouldExemptUrl(test.featureName, test.scriptURL)
 

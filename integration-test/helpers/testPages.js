@@ -1,9 +1,4 @@
-const testPageHosts = new Set([
-    'privacy-test-pages.site',
-    'broken.third-party.site',
-    'good.third-party.site',
-    'bad.third-party.site'
-])
+const testPageHosts = new Set(['privacy-test-pages.site', 'broken.third-party.site', 'good.third-party.site', 'bad.third-party.site'])
 
 export const TEST_SERVER_ORIGIN = 'http://127.0.0.1:3000'
 
@@ -13,7 +8,7 @@ export const TEST_SERVER_ORIGIN = 'http://127.0.0.1:3000'
  * @param {(route: import("@playwright/test").Route) => boolean} [overrideHandler] Optional handler to
  * intercept additional requests before this route applies.
  */
-export function routeFromLocalhost (page, overrideHandler) {
+export function routeFromLocalhost(page, overrideHandler) {
     return page.route('**/*', async (route) => {
         if (overrideHandler && overrideHandler(route)) {
             return
@@ -31,7 +26,7 @@ export function routeFromLocalhost (page, overrideHandler) {
             method: route.request().method(),
             body: route.request().postDataBuffer(),
             headers,
-            redirect: 'manual'
+            redirect: 'manual',
         })
         const response = await fetch(requestData)
         const responseHeaders = {}
@@ -46,7 +41,7 @@ export function routeFromLocalhost (page, overrideHandler) {
         return route.fulfill({
             status: response.status,
             body: await response.text(),
-            headers: responseHeaders
+            headers: responseHeaders,
         })
     })
 }

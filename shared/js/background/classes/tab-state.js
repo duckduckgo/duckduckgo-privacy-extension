@@ -7,7 +7,7 @@ export class TabState {
     /**
      * @param {import('./tab').TabData} tabData
      */
-    constructor (tabData, restoring = false) {
+    constructor(tabData, restoring = false) {
         this.tabId = tabData.tabId
         this.url = tabData.url
         /** @type {boolean} */
@@ -73,7 +73,7 @@ export class TabState {
         }
     }
 
-    static async done () {
+    static async done() {
         await Storage.done()
     }
 
@@ -83,7 +83,7 @@ export class TabState {
      * @param {K} key
      * @param {T[K]} value
      */
-    setValue (key, value) {
+    setValue(key, value) {
         // @ts-expect-error - we know this is a valid key, ts doesn't seem to understand T matches this
         this[key] = value
         // Fire and forget storage backup
@@ -95,7 +95,7 @@ export class TabState {
      * @param {number} tabId
      * @returns {Promise<TabState | null>}
      */
-    static async restore (tabId) {
+    static async restore(tabId) {
         const data = await Storage.get(tabId)
         if (!data) {
             return null
@@ -131,7 +131,7 @@ export class TabState {
      * Used for removing the stored tab state.
      * @param {number} tabId
      */
-    static async delete (tabId) {
+    static async delete(tabId) {
         await Storage.delete(tabId)
     }
 }
@@ -149,7 +149,7 @@ class StorageInstance {
      * Awaits until the storage queue is empty.
      * @returns {Promise<void>}
      */
-    async done () {
+    async done() {
         const queue = this.taskQueue
         await Promise.all(queue)
     }
@@ -162,14 +162,14 @@ class StorageInstance {
      * @param {() => Promise<T>} task
      * @returns {Promise<T>}
      */
-    async _addTask (task) {
-        let done = _ => {}
+    async _addTask(task) {
+        let done = (_) => {}
         this.taskQueue.push(async () => {
             const value = await Promise.resolve(task())
             done(value)
         })
         this.processQueue()
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             done = resolve
         })
     }
@@ -177,7 +177,7 @@ class StorageInstance {
     /**
      * Processes the storage queue in order.
      */
-    async processQueue () {
+    async processQueue() {
         if (!this.processing) {
             while (this.taskQueue.length > 0) {
                 this.processing = true
@@ -193,7 +193,7 @@ class StorageInstance {
      * @param {number} tabId
      * @returns {string}
      */
-    static _getStorageKey (tabId) {
+    static _getStorageKey(tabId) {
         return `tabState-${tabId}`
     }
 
@@ -201,7 +201,7 @@ class StorageInstance {
      * Deletes a tab-state from session storage.
      * @param {number} tabId
      */
-    async delete (tabId) {
+    async delete(tabId) {
         await this._addTask(async () => {
             try {
                 await removeFromSessionStorage(StorageInstance._getStorageKey(tabId))
@@ -216,7 +216,7 @@ class StorageInstance {
      * @param {number} tabId
      * @returns {Promise<string | undefined>}
      */
-    async get (tabId) {
+    async get(tabId) {
         return this._addTask(async () => {
             try {
                 return getFromSessionStorage(StorageInstance._getStorageKey(tabId))
@@ -231,7 +231,7 @@ class StorageInstance {
      * @param {TabState} tabState
      * @returns {Promise<void>}
      */
-    async backup (tabState) {
+    async backup(tabState) {
         await this._addTask(async () => {
             try {
                 await setToSessionStorage(StorageInstance._getStorageKey(tabState.tabId), JSON.stringify(tabState))

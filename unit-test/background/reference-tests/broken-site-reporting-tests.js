@@ -7,16 +7,16 @@ const multipleTestSets = require('@duckduckgo/privacy-reference-tests/broken-sit
 
 let loadPixelSpy
 
-async function submitAndValidateReport (report) {
+async function submitAndValidateReport(report) {
     const trackerName = 'Ad Company'
     const trackerObj = {
         owner: {
             name: trackerName,
-            displayName: trackerName
-        }
+            displayName: trackerName,
+        },
     }
     const tab = new Tab({
-        url: report.siteURL
+        url: report.siteURL,
     })
     tab.upgradedHttps = report.wasUpgraded
 
@@ -41,12 +41,12 @@ async function submitAndValidateReport (report) {
             matchedRuleException: false,
             tracker: trackerObj,
             fullTrackerDomain: hostname,
-            ...opts
+            ...opts,
         })
     }
 
     const addRequests = (trackers, f) => {
-        (trackers || []).forEach(hostname => {
+        ;(trackers || []).forEach((hostname) => {
             const opts = f(hostname)
             const { action } = opts
             addRequest(hostname, action, opts)
@@ -54,7 +54,7 @@ async function submitAndValidateReport (report) {
     }
 
     const addActionRequests = (trackers, action) => {
-        addRequests(trackers, _ => ({ action }))
+        addRequests(trackers, (_) => ({ action }))
     }
 
     addActionRequests(report.blockedTrackers, 'block')
@@ -66,7 +66,7 @@ async function submitAndValidateReport (report) {
 
     const mockedPageParams = {
         jsPerformance: [Number.parseFloat(report.jsPerformance)],
-        docReferrer: 'http://example.com'
+        docReferrer: 'http://example.com',
     }
 
     await breakageReportForTab({
@@ -77,7 +77,7 @@ async function submitAndValidateReport (report) {
         remoteConfigVersion: report.remoteConfigVersion,
         category: report.category,
         description: report.providedDescription,
-        pageParams: mockedPageParams
+        pageParams: mockedPageParams,
     })
     expect(loadPixelSpy.calls.count()).withContext('Expect only one pixel').toEqual(1)
 
@@ -93,7 +93,7 @@ async function submitAndValidateReport (report) {
         // we can't use searchParams because those are automatically decoded
         const searchItems = requestUrl.search.split('&')
 
-        report.expectReportURLParams.forEach(param => {
+        report.expectReportURLParams.forEach((param) => {
             if ('value' in param) {
                 expect(searchItems).toContain(`${param.name}=${param.value}`)
             }
@@ -107,7 +107,7 @@ async function submitAndValidateReport (report) {
             }
             if ('matches' in param) {
                 const regex = new RegExp(param.matches)
-                const fields = searchItems.map(item => item.split('='))
+                const fields = searchItems.map((item) => item.split('='))
                 for (const [key, value] of fields) {
                     if (key === param.name) {
                         expect(value).toMatch(regex)
@@ -115,7 +115,7 @@ async function submitAndValidateReport (report) {
                 }
             }
             if ('present' in param) {
-                const fields = searchItems.map(item => item.split('=')[0])
+                const fields = searchItems.map((item) => item.split('=')[0])
                 if (param.present) {
                     expect(fields).withContext(`Expected ${param.name} to be present in ${searchItems}`).toContain(param.name)
                 } else {
@@ -125,7 +125,7 @@ async function submitAndValidateReport (report) {
         })
     }
 }
-function runTests (testSets, supportsMultipleReports = false) {
+function runTests(testSets, supportsMultipleReports = false) {
     for (const setName of Object.keys(testSets)) {
         const testSet = testSets[setName]
 
@@ -155,7 +155,7 @@ runTests(singleTestSets)
 runTests(multipleTestSets, true)
 
 describe('Broken Site Reporting tests / protections state', () => {
-    async function submit (tab) {
+    async function submit(tab) {
         loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
         await breakageReportForTab({
             pixelName: 'epbf',
@@ -165,7 +165,7 @@ describe('Broken Site Reporting tests / protections state', () => {
             remoteConfigVersion: '1234',
             category: 'content',
             description: 'test',
-            pageParams: {}
+            pageParams: {},
         })
         const requestURLString = loadPixelSpy.calls.argsFor(0)[0]
         return new URL(requestURLString).searchParams

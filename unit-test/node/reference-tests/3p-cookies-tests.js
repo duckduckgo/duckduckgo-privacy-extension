@@ -5,7 +5,10 @@ const tdsStorageStub = require('../../helpers/tds')
 const tdsStorage = require('../../../shared/js/background/storage/tds').default
 
 const tabManager = require('../../../shared/js/background/tab-manager')
-const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest } = require('../../../shared/js/background/events/3p-tracking-cookie-blocking')
+const {
+    dropTracking3pCookiesFromResponse,
+    dropTracking3pCookiesFromRequest,
+} = require('../../../shared/js/background/events/3p-tracking-cookie-blocking')
 const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object')
 
 const jsdom = require('jsdom')
@@ -22,12 +25,12 @@ const { JSDOM } = jsdom
 
 const orgGlobalThis = globalThis
 
-function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, blocklistReference) {
+function runTestSuite(suiteType, testSet, jsCookieProtection, configReference, blocklistReference) {
     describe(`Third party ${suiteType} cookies blocking tests / ${testSet.name} /`, () => {
         beforeAll(() => {
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
-            return tdsStorage.getLists().then(lists => trackers.setLists(lists))
+            return tdsStorage.getLists().then((lists) => trackers.setLists(lists))
         })
 
         afterEach(() => {
@@ -35,7 +38,7 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
             globalThis = orgGlobalThis
         })
 
-        testSet.tests.forEach(test => {
+        testSet.tests.forEach((test) => {
             if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                 return
             }
@@ -45,7 +48,7 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                     tabManager.delete(1)
                     tabManager.create({
                         tabId: 1,
-                        url: test.siteURL
+                        url: test.siteURL,
                     })
 
                     if ('expectSetCookieHeadersRemoved' in test) {
@@ -54,11 +57,12 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                             initiator: test.siteURL,
                             url: test.requestURL,
                             responseHeaders: test.responseHeaders,
-                            type: 'script'
+                            type: 'script',
                         })
 
                         if (test.expectCookieHeadersRemoved) {
-                            const headersAreRemoved = outputRequest?.responseHeaders.find(h => h.name.toLocaleLowerCase() === 'set-cookie') === undefined
+                            const headersAreRemoved =
+                                outputRequest?.responseHeaders.find((h) => h.name.toLocaleLowerCase() === 'set-cookie') === undefined
                             expect(headersAreRemoved).toBe(test.expectSetCookieHeadersRemoved)
                         } else {
                             expect(outputRequest).toBeFalsy()
@@ -69,11 +73,12 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                             initiator: test.siteURL,
                             url: test.requestURL,
                             requestHeaders: test.requestHeaders,
-                            type: 'script'
+                            type: 'script',
                         })
 
                         if (test.expectCookieHeadersRemoved) {
-                            const headersAreRemoved = outputRequest?.requestHeaders.find(h => h.name.toLocaleLowerCase() === 'cookie') === undefined
+                            const headersAreRemoved =
+                                outputRequest?.requestHeaders.find((h) => h.name.toLocaleLowerCase() === 'cookie') === undefined
                             expect(headersAreRemoved).toBe(test.expectCookieHeadersRemoved)
                         } else {
                             expect(outputRequest).toBeFalsy()
@@ -85,15 +90,20 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                     tabManager.delete(1)
                     tabManager.create({
                         tabId: 1,
-                        url: test.siteURL
+                        url: test.siteURL,
                     })
 
-                    const args = getArgumentsObject(1, { url: test.frameURL || test.siteURL, frameId: test.frameURL ? 1 : 0 }, test.frameURL || test.siteURL, 'abc123')
+                    const args = getArgumentsObject(
+                        1,
+                        { url: test.frameURL || test.siteURL, frameId: test.frameURL ? 1 : 0 },
+                        test.frameURL || test.siteURL,
+                        'abc123',
+                    )
 
                     const cookieJar = new jsdom.CookieJar()
                     const dom = new JSDOM(`<iframe src="${test.frameURL}"></iframe>`, {
                         url: test.siteURL,
-                        cookieJar
+                        cookieJar,
                     })
 
                     // protection only works in an iframe
@@ -103,7 +113,7 @@ function runTestSuite (suiteType, testSet, jsCookieProtection, configReference, 
                     globalThis = jsdomWindow
 
                     jsCookieProtection.callLoad({
-                        platform: constants.platform
+                        platform: constants.platform,
                     })
                     jsCookieProtection.callInit(args)
 

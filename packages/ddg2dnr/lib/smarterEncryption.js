@@ -4,21 +4,16 @@ const { storeInLookup } = require('./utils')
 
 const SMARTER_ENCRYPTION_PRIORITY = 5000
 
-function generateRegexFilter (subdomainCount, matchWwwSubdomain) {
-    return (
-        '^http://' +
-        (matchWwwSubdomain ? '(www\\.)?' : '') +
-        Array(subdomainCount).fill('[^.]+').join('\\.') +
-        '(:|/|$)'
-    )
+function generateRegexFilter(subdomainCount, matchWwwSubdomain) {
+    return '^http://' + (matchWwwSubdomain ? '(www\\.)?' : '') + Array(subdomainCount).fill('[^.]+').join('\\.') + '(:|/|$)'
 }
 
-function generateRule (id, subdomainCount, domains, matchWwwSubdomain) {
+function generateRule(id, subdomainCount, domains, matchWwwSubdomain) {
     return {
         id,
         priority: SMARTER_ENCRYPTION_PRIORITY,
         action: {
-            type: 'upgradeScheme'
+            type: 'upgradeScheme',
         },
         condition: {
             resourceTypes: [
@@ -36,11 +31,11 @@ function generateRule (id, subdomainCount, domains, matchWwwSubdomain) {
                 'websocket',
                 'webtransport',
                 'webbundle',
-                'other'
+                'other',
             ],
             requestDomains: domains,
-            regexFilter: generateRegexFilter(subdomainCount, matchWwwSubdomain)
-        }
+            regexFilter: generateRegexFilter(subdomainCount, matchWwwSubdomain),
+        },
     }
 }
 
@@ -54,7 +49,7 @@ function generateRule (id, subdomainCount, domains, matchWwwSubdomain) {
  * @return {Object[]}
  *   The declarativeNetRequest rules.
  */
-function generateSmarterEncryptionRuleset (domains, startingRuleId = 1) {
+function generateSmarterEncryptionRuleset(domains, startingRuleId = 1) {
     const domainsBySubdomainCount = new Map()
     const domainsWithOptionalWwwBySubdomainCount = new Map()
 
@@ -79,17 +74,9 @@ function generateSmarterEncryptionRuleset (domains, startingRuleId = 1) {
     for (const domain of nonWwwDomains) {
         if (domainsToMatchWithWwwPrefix.has(domain)) {
             domainsToMatchWithWwwPrefix.delete(domain)
-            storeInLookup(
-                domainsWithOptionalWwwBySubdomainCount,
-                domain.split('.').length,
-                [domain]
-            )
+            storeInLookup(domainsWithOptionalWwwBySubdomainCount, domain.split('.').length, [domain])
         } else {
-            storeInLookup(
-                domainsBySubdomainCount,
-                domain.split('.').length,
-                [domain]
-            )
+            storeInLookup(domainsBySubdomainCount, domain.split('.').length, [domain])
         }
     }
 
@@ -102,11 +89,7 @@ function generateSmarterEncryptionRuleset (domains, startingRuleId = 1) {
     //       the domain "www.pl" - matching the entire "pl" TLD would be a
     //       mistake!
     for (const domain of domainsToMatchWithWwwPrefix) {
-        storeInLookup(
-            domainsBySubdomainCount,
-            domain.split('.').length + 1,
-            ['www.' + domain]
-        )
+        storeInLookup(domainsBySubdomainCount, domain.split('.').length + 1, ['www.' + domain])
     }
 
     // Generate the rules.
@@ -119,8 +102,7 @@ function generateSmarterEncryptionRuleset (domains, startingRuleId = 1) {
         }
         rules.push(generateRule(id++, subdomainCount, domainGroup, false))
     }
-    for (const [subdomainCount, domainGroup] of
-        domainsWithOptionalWwwBySubdomainCount) {
+    for (const [subdomainCount, domainGroup] of domainsWithOptionalWwwBySubdomainCount) {
         if (domainGroup.length < 1) {
             continue
         }
@@ -157,7 +139,7 @@ function generateSmarterEncryptionRuleset (domains, startingRuleId = 1) {
  * @returns {Omit<CreateSmarterEncryptionTemporaryRuleResult, 'rule'> &
               {rule: chrome.declarativeNetRequest.Rule}}
  */
-function createSmarterEncryptionTemporaryRule (domains, type = 'allow', id) {
+function createSmarterEncryptionTemporaryRule(domains, type = 'allow', id) {
     if (['allow', 'upgrade'].indexOf(type) === -1) {
         // invalid type
         throw new Error(`createSmarterEncryptionTemporaryRule type ${type} is not valid`)
@@ -169,7 +151,7 @@ function createSmarterEncryptionTemporaryRule (domains, type = 'allow', id) {
             id,
             priority: SMARTER_ENCRYPTION_PRIORITY,
             action: {
-                type: actionType
+                type: actionType,
             },
             condition: {
                 requestDomains: domains,
@@ -188,14 +170,14 @@ function createSmarterEncryptionTemporaryRule (domains, type = 'allow', id) {
                     'websocket',
                     'webtransport',
                     'webbundle',
-                    'other'
-                ]
-            }
+                    'other',
+                ],
+            },
         },
         matchDetails: {
             type: detailsType,
-            possibleTrackerDomains: domains
-        }
+            possibleTrackerDomains: domains,
+        },
     }
 }
 

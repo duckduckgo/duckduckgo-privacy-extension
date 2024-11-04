@@ -46,9 +46,9 @@ describe('constructor', () => {
                         parentEntity: 'comScore',
                         reason: 'trackersWithParentCompany',
                         type: 'Analytics',
-                        url: 'scorecardresearch.com'
-                    }
-                }
+                        url: 'scorecardresearch.com',
+                    },
+                },
             },
             trackersNotBlocked: {
                 'Amazon.com': {
@@ -58,21 +58,21 @@ describe('constructor', () => {
                         url: 's3.amazonaws.com',
                         type: 'trackersWhitelist',
                         block: false,
-                        reason: 'whitelisted'
-                    }
-                }
-            }
+                        reason: 'whitelisted',
+                    },
+                },
+            },
         })
 
         expect(grade.https).toEqual(true)
         expect(grade.httpsAutoUpgrade).toEqual(true)
         expect(grade.privacyScore).toEqual(5)
         expect(grade.entitiesBlocked).toEqual({
-            comScore: 12.75
+            comScore: 12.75,
         })
         expect(grade.entitiesNotBlocked).toEqual({
             Oath: 7.06,
-            'Amazon.com': 14.15
+            'Amazon.com': 14.15,
         })
     })
 })

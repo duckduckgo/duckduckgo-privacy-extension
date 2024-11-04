@@ -103,5 +103,5 @@ export default {
     sk: { feedback: skFeedback, options: skOptions, shared: skShared },
     sl: { feedback: slFeedback, options: slOptions, shared: slShared },
     sv: { feedback: svFeedback, options: svOptions, shared: svShared },
-    tr: { feedback: trFeedback, options: trOptions, shared: trShared }
+    tr: { feedback: trFeedback, options: trOptions, shared: trShared },
 }

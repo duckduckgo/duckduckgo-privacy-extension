@@ -18,8 +18,8 @@ const browserName = utils.getBrowserName()
  *
  * @returns {{requestHeaders: Array<{name: string, value:string}>} | { redirectUrl: URL } | undefined}
  */
-module.exports = function limitReferrerData (e) {
-    const referrer = e.requestHeaders.find(header => header.name.toLowerCase() === 'referer')?.value
+module.exports = function limitReferrerData(e) {
+    const referrer = e.requestHeaders.find((header) => header.name.toLowerCase() === 'referer')?.value
     if (!referrer) return
 
     const tab = tabManager.get(e)
@@ -27,7 +27,7 @@ module.exports = function limitReferrerData (e) {
     // Firefox only - Check if this tab had a surrogate redirect request and if it will
     // likely be blocked by CORS (Origin header). Chrome surrogate redirects happen in onBeforeRequest.
     if (browserName === 'moz' && tab && tab.surrogates && tab.surrogates[e.url]) {
-        const hasOrigin = e.requestHeaders.filter(h => h.name.match(/^origin$/i))
+        const hasOrigin = e.requestHeaders.filter((h) => h.name.match(/^origin$/i))
         if (!hasOrigin.length) {
             const redirectUrl = tab.surrogates[e.url]
             // remove redirect entry for the tab
@@ -47,17 +47,17 @@ module.exports = function limitReferrerData (e) {
         return
     }
 
-    const requestHeaders = e.requestHeaders.filter(header => header.name.toLowerCase() !== 'referer')
+    const requestHeaders = e.requestHeaders.filter((header) => header.name.toLowerCase() !== 'referer')
     if (!!tab && (!tab.referrer || tab.referrer.site !== tab.site.url)) {
         tab.referrer = {
             site: tab.site.url,
             referrerHost: new URL(referrer).hostname,
-            referrer: modifiedReferrer
+            referrer: modifiedReferrer,
         }
     }
     requestHeaders.push({
         name: 'referer',
-        value: modifiedReferrer
+        value: modifiedReferrer,
     })
     return { requestHeaders }
 }

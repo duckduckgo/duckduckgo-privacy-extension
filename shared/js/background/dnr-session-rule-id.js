@@ -8,7 +8,7 @@ const SESSION_RULE_STORAGE_KEY = 'sessionRuleOffset'
 let sessionRuleOffset = 0
 let ready = false
 
-export async function setSessionRuleOffsetFromStorage () {
+export async function setSessionRuleOffsetFromStorage() {
     const offset = await getFromSessionStorage(SESSION_RULE_STORAGE_KEY)
     if (offset) {
         sessionRuleOffset = offset
@@ -20,7 +20,7 @@ export async function setSessionRuleOffsetFromStorage () {
  * Get the next unique session rule id to use when creating session DNR rules
  * @returns {number | null} nextRuleId
  */
-export function getNextSessionRuleId () {
+export function getNextSessionRuleId() {
     if (!ready) {
         console.warn('Tried to get session rule id before reading offset from storage')
         return null
@@ -32,20 +32,20 @@ export function getNextSessionRuleId () {
     return nextRuleId
 }
 
-function isValidSessionId (id) {
+function isValidSessionId(id) {
     return id >= SESSION_RULE_ID_START
 }
 
 /**
-* Remove orphaned session ids
-* We increment the rule IDs for some session rules, starting at STARTING_RULE_ID and
-* keep a note of the next rule ID in session storage. During extesion update/restarts
-* session storage is cleared, while session rules are not, which causes errors due to
-* session rule ID conflicts
+ * Remove orphaned session ids
+ * We increment the rule IDs for some session rules, starting at STARTING_RULE_ID and
+ * keep a note of the next rule ID in session storage. During extesion update/restarts
+ * session storage is cleared, while session rules are not, which causes errors due to
+ * session rule ID conflicts
  * @return {Promise}
  */
-export function flushSessionRules () {
-    return chrome.declarativeNetRequest.getSessionRules().then(rules => {
+export function flushSessionRules() {
+    return chrome.declarativeNetRequest.getSessionRules().then((rules) => {
         const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId)
         if (ruleIds.length) {
             return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })

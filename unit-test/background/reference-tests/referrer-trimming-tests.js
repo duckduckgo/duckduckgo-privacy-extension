@@ -21,10 +21,10 @@ for (const setName of Object.keys(testSets)) {
         beforeAll(() => {
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
-            return tdsStorage.getLists().then(lists => tds.setLists(lists))
+            return tdsStorage.getLists().then((lists) => tds.setLists(lists))
         })
 
-        testSet.tests.forEach(test => {
+        testSet.tests.forEach((test) => {
             if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                 return
             }
@@ -34,7 +34,7 @@ for (const setName of Object.keys(testSets)) {
                     tabManager.delete(1)
                     tabManager.create({
                         tabId: 1,
-                        url: test.navigatingFromUrl || test.siteURL
+                        url: test.navigatingFromUrl || test.siteURL,
                     })
 
                     const requestChanges = limitReferrerData({
@@ -42,15 +42,15 @@ for (const setName of Object.keys(testSets)) {
                         url: test.navigatingToURL || test.requestURL,
                         requestHeaders: [
                             { name: 'something', value: 'else' },
-                            { name: 'referer', value: test.referrerValue }
+                            { name: 'referer', value: test.referrerValue },
                         ],
-                        type: test.requestType || 'main_frame'
+                        type: test.requestType || 'main_frame',
                     })
 
                     let refererHeaderValueAfter = test.referrerValue
 
                     if (requestChanges && requestChanges.requestHeaders) {
-                        refererHeaderValueAfter = requestChanges.requestHeaders.find(h => h.name === 'referer')?.value
+                        refererHeaderValueAfter = requestChanges.requestHeaders.find((h) => h.name === 'referer')?.value
                     }
 
                     expect(refererHeaderValueAfter).toEqual(test.expectReferrerHeaderValue)
@@ -60,7 +60,7 @@ for (const setName of Object.keys(testSets)) {
                     tabManager.delete(1)
                     tabManager.create({
                         tabId: 1,
-                        url: test.siteURL
+                        url: test.siteURL,
                     })
 
                     limitReferrerData({
@@ -68,19 +68,17 @@ for (const setName of Object.keys(testSets)) {
                         url: test.siteURL,
                         requestHeaders: [
                             { name: 'something', value: 'else' },
-                            { name: 'referer', value: test.referrerValue }
+                            { name: 'referer', value: test.referrerValue },
                         ],
-                        type: 'main_frame'
+                        type: 'main_frame',
                     })
 
                     if ('frameURL' in test) {
                         limitReferrerData({
                             tabId: 1,
                             url: test.frameURL,
-                            requestHeaders: [
-                                { name: 'referer', value: test.referrerValue }
-                            ],
-                            type: 'sub_frame'
+                            requestHeaders: [{ name: 'referer', value: test.referrerValue }],
+                            type: 'sub_frame',
                         })
                     }
 
@@ -89,7 +87,7 @@ for (const setName of Object.keys(testSets)) {
                         get: () => test.referrerValue,
                         configurable: true,
                         enumerable: true,
-                        writeable: true
+                        writeable: true,
                     })
                     const orgDocument = globalThis.Document
 

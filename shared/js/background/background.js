@@ -65,7 +65,7 @@ const components = {
     toggleReports: new ToggleReports(),
     trackers: new TrackersGlobal({ tds }),
     debugger: new DebuggerConnection({ tds, devtools }),
-    devtools
+    devtools,
 }
 
 // Chrome-only components

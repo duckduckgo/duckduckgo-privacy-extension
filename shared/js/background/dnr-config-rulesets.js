@@ -4,23 +4,13 @@ import tdsStorage from './storage/tds'
 import trackers from './trackers'
 import { isFeatureEnabled } from './utils'
 import { ensureGPCHeaderRule } from './dnr-gpc'
-import {
-    ensureServiceWorkerInitiatedRequestExceptions
-} from './dnr-service-worker-initiated'
+import { ensureServiceWorkerInitiatedRequestExceptions } from './dnr-service-worker-initiated'
 import { getDenylistedDomains } from './dnr-user-allowlist'
 import { findExistingDynamicRule, SETTING_PREFIX, ruleIdRangeByConfigName } from './dnr-utils'
-import {
-    generateExtensionConfigurationRuleset
-} from '@duckduckgo/ddg2dnr/lib/extensionConfiguration'
-import {
-    generateTdsRuleset
-} from '@duckduckgo/ddg2dnr/lib/tds'
-import {
-    generateDNRRule
-} from '@duckduckgo/ddg2dnr/lib/utils'
-import {
-    generateCombinedConfigBlocklistRuleset
-} from '@duckduckgo/ddg2dnr/lib/combined'
+import { generateExtensionConfigurationRuleset } from '@duckduckgo/ddg2dnr/lib/extensionConfiguration'
+import { generateTdsRuleset } from '@duckduckgo/ddg2dnr/lib/tds'
+import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
+import { generateCombinedConfigBlocklistRuleset } from '@duckduckgo/ddg2dnr/lib/combined'
 
 /**
  * A dummy etag rule is saved with the declarativeNetRequest rules generated for
@@ -31,13 +21,13 @@ import {
  * @param {string} etag
  * @returns {chrome.declarativeNetRequest.Rule}
  */
-function generateEtagRule (id, etag) {
+function generateEtagRule(id, etag) {
     return generateDNRRule({
         id,
         priority: 1,
         actionType: 'allow',
         urlFilter: etag,
-        requestDomains: ['etag.invalid']
+        requestDomains: ['etag.invalid'],
     })
 }
 
@@ -48,7 +38,7 @@ function generateEtagRule (id, etag) {
  * @param {Object} expectedState
  * @returns {Promise<boolean>}
  */
-async function configRulesNeedUpdate (configName, expectedState) {
+async function configRulesNeedUpdate(configName, expectedState) {
     const settingName = SETTING_PREFIX + configName
     const settingValue = settings.getSetting(settingName)
 
@@ -93,8 +83,8 @@ async function configRulesNeedUpdate (configName, expectedState) {
  * @param {Object} config
  * @returns {Object}
  */
-function minimalConfig ({ unprotectedTemporary, features }) {
-    const result = { features: { }, unprotectedTemporary }
+function minimalConfig({ unprotectedTemporary, features }) {
+    const result = { features: {}, unprotectedTemporary }
 
     for (const featureName of Object.keys(features)) {
         if (isFeatureEnabled(featureName)) {
@@ -114,9 +104,7 @@ function minimalConfig ({ unprotectedTemporary, features }) {
  * @param {Object} matchDetailsByRuleId
  * @returns {Promise<>}
  */
-async function updateConfigRules (
-    configName, latestState, rules, matchDetailsByRuleId, allowingRulesByClickToLoadAction = {}
-) {
+async function updateConfigRules(configName, latestState, rules, matchDetailsByRuleId, allowingRulesByClickToLoadAction = {}) {
     const [ruleIdStart, ruleIdEnd] = ruleIdRangeByConfigName[configName]
     const etagRuleId = ruleIdStart
     const maxNumberOfRules = ruleIdEnd - ruleIdStart
@@ -124,10 +112,7 @@ async function updateConfigRules (
     const { etag } = latestState
 
     if (!rules) {
-        console.error(
-            'No declarativeNetRequest rules generated for configuration: ',
-            configName, '(Etag: ', etag, ')'
-        )
+        console.error('No declarativeNetRequest rules generated for configuration: ', configName, '(Etag: ', etag, ')')
         return
     }
 
@@ -138,7 +123,11 @@ async function updateConfigRules (
         console.error(
             'Too many declarativeNetRequest rules generated for configuration: ',
             configName,
-            '(Etag: ', etag, ', Rules generated: ', rules.length, ')'
+            '(Etag: ',
+            etag,
+            ', Rules generated: ',
+            rules.length,
+            ')',
         )
         return
     }
@@ -151,13 +140,14 @@ async function updateConfigRules (
 
     // Install the updated rules.
     await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds, addRules: rules
+        removeRuleIds,
+        addRules: rules,
     })
 
     // Then update the setting entry.
     const settingName = SETTING_PREFIX + configName
     const settingValue = {
-        matchDetailsByRuleId
+        matchDetailsByRuleId,
     }
     for (const key of Object.keys(latestState)) {
         settingValue[key] = latestState[key]
@@ -178,14 +168,14 @@ async function updateConfigRules (
  * @param {object?} configValue
  * @returns {Promise<>}
  */
-export async function updateExtensionConfigRules (etag = null, configValue = null) {
+export async function updateExtensionConfigRules(etag = null, configValue = null) {
     const extensionVersion = getExtensionVersion()
     const denylistedDomains = getDenylistedDomains()
 
     const latestState = {
         extensionVersion,
         denylistedDomains: denylistedDomains.join(),
-        etag
+        etag,
     }
 
     if (!configValue) {
@@ -208,38 +198,32 @@ export async function updateExtensionConfigRules (etag = null, configValue = nul
     }
 
     const [ruleIdStart] = ruleIdRangeByConfigName.config
-    const {
-        ruleset, matchDetailsByRuleId
-    } = await generateExtensionConfigurationRuleset(
+    const { ruleset, matchDetailsByRuleId } = await generateExtensionConfigurationRuleset(
         minimalConfig(configValue),
         denylistedDomains,
         chrome.declarativeNetRequest.isRegexSupported,
-        ruleIdStart + 1
+        ruleIdStart + 1,
     )
 
-    await updateConfigRules(
-        'config', latestState, ruleset, matchDetailsByRuleId
-    )
+    await updateConfigRules('config', latestState, ruleset, matchDetailsByRuleId)
 }
 
-export async function updateCombinedConfigBlocklistRules () {
+export async function updateCombinedConfigBlocklistRules() {
     const extensionVersion = getExtensionVersion()
     const denylistedDomains = getDenylistedDomains()
     const tdsEtag = settings.getSetting('tds-etag')
     const combinedState = {
         etag: `${settings.getSetting('config-etag')}-${tdsEtag}`,
         denylistedDomains: denylistedDomains.join(),
-        extensionVersion
+        extensionVersion,
     }
     // require a blocklist before generating rules - config is optional
-    if (tdsEtag && await configRulesNeedUpdate('combined', combinedState)) {
-        const {
-            ruleset, matchDetailsByRuleId
-        } = generateCombinedConfigBlocklistRuleset(
+    if (tdsEtag && (await configRulesNeedUpdate('combined', combinedState))) {
+        const { ruleset, matchDetailsByRuleId } = generateCombinedConfigBlocklistRuleset(
             tdsStorage.tds,
             minimalConfig(tdsStorage.config),
             denylistedDomains,
-            ruleIdRangeByConfigName.combined[0] + 1
+            ruleIdRangeByConfigName.combined[0] + 1,
         )
         await updateConfigRules('combined', combinedState, ruleset, matchDetailsByRuleId)
     }
@@ -255,12 +239,12 @@ let ruleUpdateLock = Promise.resolve()
  * @param {object} configValue
  * @returns {Promise}
  */
-export async function onConfigUpdate (configName, etag, configValue) {
+export async function onConfigUpdate(configName, etag, configValue) {
     const extensionVersion = getExtensionVersion()
     console.log('update', configName, etag, configValue)
     // Run an async lock on all blocklist updates so the latest update is always processed last
     ruleUpdateLock = ruleUpdateLock.then(async () => {
-    // TDS (aka the block list).
+        // TDS (aka the block list).
         if (configName === 'tds') {
             const [ruleIdStart] = ruleIdRangeByConfigName[configName]
             const latestState = { etag, extensionVersion }
@@ -272,18 +256,16 @@ export async function onConfigUpdate (configName, etag, configValue) {
             await tdsStorage.ready()
             const supportedSurrogates = new Set(Object.keys(trackers.surrogateList))
 
-            const {
-                ruleset, matchDetailsByRuleId, allowingRulesByClickToLoadAction
-            } = await generateTdsRuleset(
+            const { ruleset, matchDetailsByRuleId, allowingRulesByClickToLoadAction } = await generateTdsRuleset(
                 configValue,
                 supportedSurrogates,
                 '/web_accessible_resources/',
                 chrome.declarativeNetRequest.isRegexSupported,
-                ruleIdStart + 1
+                ruleIdStart + 1,
             )
 
             await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId, allowingRulesByClickToLoadAction)
-        // Extension configuration.
+            // Extension configuration.
         } else if (configName === 'config') {
             await updateExtensionConfigRules(etag, configValue)
             await ensureGPCHeaderRule(configValue)

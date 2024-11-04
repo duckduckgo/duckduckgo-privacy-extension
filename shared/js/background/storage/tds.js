@@ -15,35 +15,35 @@ export default {
     _config: { features: {} },
     _tds: { entities: {}, trackers: {}, domains: {}, cnames: {} },
     _surrogates: '',
-    get config () {
+    get config() {
         return globalThis.components?.tds.config.data || this._config
     },
-    get tds () {
+    get tds() {
         return globalThis.components?.tds.tds.data || this._tds
     },
-    get surrogates () {
+    get surrogates() {
         return globalThis.components?.tds.surrogates.data || this._surrogates
     },
     // these setters are to allow legacy tests to override the values here. In a running extension
     // these will have no effect
-    set config (fallbackValue) {
+    set config(fallbackValue) {
         this._config = fallbackValue
     },
-    set tds (fallbackValue) {
+    set tds(fallbackValue) {
         this._tds = fallbackValue
     },
-    set surrogates (fallbackValue) {
+    set surrogates(fallbackValue) {
         this._surrogates = fallbackValue
     },
     /** @type {TDSStorage?} */
-    get tdsStorage () {
+    get tdsStorage() {
         return globalThis.components?.tds
     },
     /**
      * @param {import('../components/resource-loader').ResourceName} configName
      * @param {import('../components/resource-loader').OnUpdatedCallback} cb
      */
-    async onUpdate (configName, cb) {
+    async onUpdate(configName, cb) {
         await settings.ready()
         if (listNames.includes(configName) && this.tdsStorage && this.tdsStorage[configName]) {
             this.tdsStorage[configName].onUpdate(cb)
@@ -53,7 +53,7 @@ export default {
      * @param {import('../components/resource-loader').ResourceName} [configName]
      * @returns {Promise}
      */
-    async ready (configName) {
+    async ready(configName) {
         await settings.ready()
         const tdsStorage = this.tdsStorage
         if (!tdsStorage) {
@@ -62,9 +62,9 @@ export default {
         if (configName && listNames.includes(configName)) {
             return tdsStorage[configName].ready
         }
-        return Promise.all(listNames.map(n => tdsStorage[n].ready))
+        return Promise.all(listNames.map((n) => tdsStorage[n].ready))
     },
-    getSerializableList (name) {
+    getSerializableList(name) {
         // TODO: This should be moved to a 'devtools' component
         if (name === 'tds') {
             const tds = globalThis.components.tds.tds
@@ -82,17 +82,21 @@ export default {
             return globalThis.components.tds[name].data
         }
     },
-    async getLists () {
+    async getLists() {
         await this.ready()
-        return [{
-            name: 'tds',
-            data: this.tds
-        }, {
-            name: 'config',
-            data: this.config
-        }, {
-            name: 'surrogates',
-            data: this.surrogates
-        }]
-    }
+        return [
+            {
+                name: 'tds',
+                data: this.tds,
+            },
+            {
+                name: 'config',
+                data: this.config,
+            },
+            {
+                name: 'surrogates',
+                data: this.surrogates,
+            },
+        ]
+    },
 }

@@ -7,8 +7,8 @@ const saveButton = document.getElementById('save')
 const lists = constants.tdsLists
 let selected = lists[0].name
 
-function getListFormat (name) {
-    return lists.find(l => l.name === name)?.format
+function getListFormat(name) {
+    return lists.find((l) => l.name === name)?.format
 }
 
 // build switcher options
@@ -20,7 +20,7 @@ lists.forEach(({ name }) => {
     listPicker.appendChild(button)
 })
 
-function listSwitcher (event) {
+function listSwitcher(event) {
     document.querySelectorAll('#list-picker button').forEach((btn) => {
         btn.classList.remove('selected')
     })
@@ -32,26 +32,30 @@ function listSwitcher (event) {
 
 document.querySelector('#list-picker button').click()
 
-function sendMessage (messageType, options, callback) {
+function sendMessage(messageType, options, callback) {
     chrome.runtime.sendMessage({ messageType, options }, callback)
 }
 
-function loadList (name) {
+function loadList(name) {
     sendMessage('getListContents', name, ({ etag, data }) => {
         const value = getListFormat(name) === 'json' ? JSON.stringify(data, null, '  ') : data
         document.querySelector('#list-content').value = value
     })
 }
 
-function saveList (name) {
+function saveList(name) {
     const value = listEditor.value
-    sendMessage('setListContents', {
-        name,
-        value: getListFormat(name) === 'json' ? JSON.parse(value) : value
-    }, () => loadList(name))
+    sendMessage(
+        'setListContents',
+        {
+            name,
+            value: getListFormat(name) === 'json' ? JSON.parse(value) : value,
+        },
+        () => loadList(name),
+    )
 }
 
-function reloadList (name) {
+function reloadList(name) {
     sendMessage('reloadList', name, () => loadList(name))
 }
 

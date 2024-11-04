@@ -29,7 +29,7 @@ export default class FireButton {
      *  tabManager: TabManager;
      * }} options
      */
-    constructor ({ settings, tabManager }) {
+    constructor({ settings, tabManager }) {
         this.featureName = 'FireButton'
         this.settings = settings
         this.tabManager = tabManager
@@ -44,12 +44,12 @@ export default class FireButton {
     /**
      * Get the user's preferred default settings from the extension settings store.
      */
-    getDefaultSettings () {
+    getDefaultSettings() {
         return {
             closeTabs: this.settings.getSetting('fireButtonTabClearEnabled'),
             clearHistory: this.settings.getSetting('fireButtonClearHistoryEnabled'),
             selectedOption: this.settings.getSetting('fireButtonDefaultOption') || 'CurrentSite',
-            since: undefined
+            since: undefined,
         }
     }
 
@@ -58,7 +58,7 @@ export default class FireButton {
      * @param {Partial<BurnConfig>} options
      * @returns {Promise<boolean>}
      */
-    async burn (options) {
+    async burn(options) {
         /** @type {BurnConfig} config */
         const config = Object.assign(this.getDefaultSettings(), options)
 
@@ -68,41 +68,53 @@ export default class FireButton {
             // 1/ Clear downloads and history
             const clearing = []
             if (!config.origins || config.origins.length === 0) {
-                clearing.push(chrome.browsingData.remove({
-                    since: config.since
-                }, {
-                    downloads: true,
-                    history: config.clearHistory
-                }))
+                clearing.push(
+                    chrome.browsingData.remove(
+                        {
+                            since: config.since,
+                        },
+                        {
+                            downloads: true,
+                            history: config.clearHistory,
+                        },
+                    ),
+                )
             }
             // TODO: handle clearing downloads and history for specific origins
 
             // 2/ Clear cookies, except on SERP
             const cookieOptions = {
-                since: config.since
+                since: config.since,
             }
             if (config.origins) {
                 cookieOptions.origins = config.origins
             } else {
                 cookieOptions.excludeOrigins = ['https://duckduckgo.com']
             }
-            clearing.push(chrome.browsingData.remove(cookieOptions, {
-                cookies: true,
-                localStorage: true
-            }))
+            clearing.push(
+                chrome.browsingData.remove(cookieOptions, {
+                    cookies: true,
+                    localStorage: true,
+                }),
+            )
             // 3/ Clear origin-keyed storage
-            clearing.push(chrome.browsingData.remove({
-                origins: config.origins,
-                since: config.since
-            }, {
-                appcache: true,
-                cache: true,
-                cacheStorage: true,
-                indexedDB: true,
-                fileSystems: true,
-                serviceWorkers: true,
-                webSQL: true
-            }))
+            clearing.push(
+                chrome.browsingData.remove(
+                    {
+                        origins: config.origins,
+                        since: config.since,
+                    },
+                    {
+                        appcache: true,
+                        cache: true,
+                        cacheStorage: true,
+                        indexedDB: true,
+                        fileSystems: true,
+                        serviceWorkers: true,
+                        webSQL: true,
+                    },
+                ),
+            )
             const results = await Promise.all(clearing)
             console.log('🔥 result', results)
             return true
@@ -116,12 +128,14 @@ export default class FireButton {
      * @param {boolean} closeTabs If true, tabs are also closed
      * @param {string[]} [origins] Only close tabs for these origins
      */
-    async clearTabs (closeTabs = true, origins) {
+    async clearTabs(closeTabs = true, origins) {
         // gather all non-pinned tabs
-        const openTabs = (await browser.tabs.query({
-            pinned: false
-        })).filter(tabMatchesHostFilter(origins))
-        const removeTabIds = openTabs.map(t => t.id || 0)
+        const openTabs = (
+            await browser.tabs.query({
+                pinned: false,
+            })
+        ).filter(tabMatchesHostFilter(origins))
+        const removeTabIds = openTabs.map((t) => t.id || 0)
         // clear adclick attribution data
         removeTabIds.forEach((tabId) => {
             const tab = this.tabManager.tabContainer[tabId]
@@ -137,10 +151,10 @@ export default class FireButton {
         }
     }
 
-    async showBurnAnimation () {
+    async showBurnAnimation() {
         await browser.tabs.create({
             active: true,
-            url: getExtensionURL('/html/fire.html')
+            url: getExtensionURL('/html/fire.html'),
         })
     }
 
@@ -148,23 +162,19 @@ export default class FireButton {
      * Get options to display in the burn modal
      * @returns {Promise<import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').FireButtonData>}
      */
-    async getBurnOptions () {
+    async getBurnOptions() {
         // time durations for 'since' parameters
         const ONE_HOUR_MS = 60 * 60 * 1000
         const ONE_DAY_MS = 24 * ONE_HOUR_MS
         const SEVEN_DAYS_MS = 7 * ONE_DAY_MS
         const FOUR_WEEKS_MS = 4 * SEVEN_DAYS_MS
-        const [currentTab, allTabs, allCookies] = await Promise.all([
-            getCurrentTab(),
-            browser.tabs.query({}),
-            browser.cookies.getAll({})
-        ])
-        const openTabs = allTabs.filter(t => !t.pinned).length
+        const [currentTab, allTabs, allCookies] = await Promise.all([getCurrentTab(), browser.tabs.query({}), browser.cookies.getAll({})])
+        const openTabs = allTabs.filter((t) => !t.pinned).length
         const cookies = allCookies.reduce((sites, curr) => {
             sites.add(getDomain(curr.domain, tldtsOptions))
             return sites
         }, new Set()).size
-        const pinnedTabs = allTabs.filter(t => t.pinned)
+        const pinnedTabs = allTabs.filter((t) => t.pinned)
         // Apply defaults for history and tab clearing
         const { closeTabs, clearHistory, selectedOption } = this.getDefaultSettings()
 
@@ -172,7 +182,7 @@ export default class FireButton {
             openTabs: closeTabs ? openTabs : 0,
             cookies,
             pinnedTabs: closeTabs ? pinnedTabs.length : 0,
-            clearHistory
+            clearHistory,
         }
 
         /** @type {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').FireOption[]} */
@@ -182,50 +192,50 @@ export default class FireButton {
         options.push({
             name: 'LastHour',
             options: {
-                since: Date.now() - ONE_HOUR_MS
+                since: Date.now() - ONE_HOUR_MS,
             },
             descriptionStats: {
                 ...defaultStats,
-                duration: 'hour'
-            }
+                duration: 'hour',
+            },
         })
         options.push({
             name: 'Last24Hour',
             options: {
-                since: Date.now() - ONE_DAY_MS
+                since: Date.now() - ONE_DAY_MS,
             },
             descriptionStats: {
                 ...defaultStats,
-                duration: 'day'
-            }
+                duration: 'day',
+            },
         })
         options.push({
             name: 'Last7days',
             options: {
-                since: Date.now() - SEVEN_DAYS_MS
+                since: Date.now() - SEVEN_DAYS_MS,
             },
             descriptionStats: {
                 ...defaultStats,
-                duration: 'week'
-            }
+                duration: 'week',
+            },
         })
         options.push({
             name: 'Last4Weeks',
             options: {
-                since: Date.now() - FOUR_WEEKS_MS
+                since: Date.now() - FOUR_WEEKS_MS,
             },
             descriptionStats: {
                 ...defaultStats,
-                duration: 'month'
-            }
+                duration: 'month',
+            },
         })
         options.push({
             name: 'AllTime',
             options: {},
             descriptionStats: {
                 ...defaultStats,
-                duration: 'all'
-            }
+                duration: 'all',
+            },
         })
 
         // only show the current site option if this an origin we can clear
@@ -236,7 +246,7 @@ export default class FireButton {
             options.push({
                 name: 'CurrentSite',
                 options: {
-                    origins
+                    origins,
                 },
                 descriptionStats: {
                     ...defaultStats,
@@ -244,8 +254,8 @@ export default class FireButton {
                     pinnedTabs: closeTabs ? pinnedMatchingOrigin : 0,
                     cookies: 1,
                     duration: 'all',
-                    site: getDomain(origins[0], tldtsOptions) || ''
-                }
+                    site: getDomain(origins[0], tldtsOptions) || '',
+                },
             })
         }
 
@@ -257,14 +267,14 @@ export default class FireButton {
         })
 
         return {
-            options
+            options,
         }
     }
 
-    async onFireAnimationComplete (msg, sender) {
+    async onFireAnimationComplete(msg, sender) {
         const fireTabId = sender.tab.id
         chrome.tabs.update(fireTabId, {
-            url: 'chrome://newtab'
+            url: 'chrome://newtab',
         })
     }
 }
@@ -275,7 +285,7 @@ export default class FireButton {
  * @param {string} url
  * @returns {string[]} List of origins
  */
-export function getOriginsForUrl (url) {
+export function getOriginsForUrl(url) {
     const origins = []
     const { subdomain, domain } = parse(url, { allowPrivateDomains: true })
     origins.push(`https://${domain}`)
@@ -299,11 +309,11 @@ export function getOriginsForUrl (url) {
  * @param {string[]} [origins] Origins to filter by
  * @returns {(tab: { url?: string | undefined }) => boolean}
  */
-export function tabMatchesHostFilter (origins) {
+export function tabMatchesHostFilter(origins) {
     if (!origins) {
         return () => true
     }
     const etldPlusOnes = new Set()
-    origins.forEach(o => etldPlusOnes.add(getDomain(o, tldtsOptions)))
-    return tab => !!tab.url && etldPlusOnes.has(getDomain(tab.url, tldtsOptions))
+    origins.forEach((o) => etldPlusOnes.add(getDomain(o, tldtsOptions)))
+    return (tab) => !!tab.url && etldPlusOnes.has(getDomain(tab.url, tldtsOptions))
 }

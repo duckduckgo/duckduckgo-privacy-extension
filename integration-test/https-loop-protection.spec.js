@@ -12,10 +12,7 @@ test.describe('Loop protection', () => {
 
         await page.goto(loopProtectionPage, { waitUntil: 'networkidle' })
         await page.click('#start')
-        await page.waitForFunction(
-            () => results.date !== null && results.results[0].value !== null,
-            { polling: 100, timeout: 20000 }
-        )
+        await page.waitForFunction(() => results.date !== null && results.results[0].value !== null, { polling: 100, timeout: 20000 })
         const results = await page.evaluate(() => {
             return results
         })

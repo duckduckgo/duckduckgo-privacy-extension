@@ -14,13 +14,10 @@ const testSite = 'https://privacy-test-pages.site/privacy-protections/query-para
  *   The value of `urlParametersRemoved` for the currently active tab, or null
  *   on failure.
  */
-function getUrlParametersRemoved (bgPage) {
+function getUrlParametersRemoved(bgPage) {
     return bgPage.evaluate(async () => {
-        const [{ id: tabId }] = await new Promise(resolve => {
-            chrome.tabs.query(
-                { active: true, currentWindow: true },
-                resolve
-            )
+        const [{ id: tabId }] = await new Promise((resolve) => {
+            chrome.tabs.query({ active: true, currentWindow: true }, resolve)
         })
 
         if (typeof tabId !== 'number') {
@@ -48,22 +45,24 @@ test.describe('Test URL tracking parameters protection', () => {
         // Scrape the list of test cases.
         const testCases = []
         for (const li of await page.$$('li')) {
-            testCases.push(await page.evaluate(liInstance => {
-                const { innerText: description, href: initialUrl } = liInstance.querySelector('a')
-                let { innerText: expectedSearch } = liInstance.querySelector('.expected')
+            testCases.push(
+                await page.evaluate((liInstance) => {
+                    const { innerText: description, href: initialUrl } = liInstance.querySelector('a')
+                    let { innerText: expectedSearch } = liInstance.querySelector('.expected')
 
-                // Strip the 'Expected: "..."' wrapper if it exists.
-                const match = /"([^"]*)"/.exec(expectedSearch)
-                if (match) {
-                    expectedSearch = match[1]
-                }
+                    // Strip the 'Expected: "..."' wrapper if it exists.
+                    const match = /"([^"]*)"/.exec(expectedSearch)
+                    if (match) {
+                        expectedSearch = match[1]
+                    }
 
-                let expectedUrl = new URL(initialUrl)
-                expectedUrl.search = expectedSearch
-                expectedUrl = expectedUrl.href
+                    let expectedUrl = new URL(initialUrl)
+                    expectedUrl.search = expectedSearch
+                    expectedUrl = expectedUrl.href
 
-                return { initialUrl, expectedUrl, description }
-            }, li))
+                    return { initialUrl, expectedUrl, description }
+                }, li),
+            )
         }
 
         // Perform the tests.
@@ -83,8 +82,9 @@ test.describe('Test URL tracking parameters protection', () => {
             //  - `null` denotes tab not found.
             //  - This is not supported with Chrome MV3.
             if (manifestVersion === 2) {
-                expect(await getUrlParametersRemoved(backgroundPage), description + ' (urlParametersRemoved)')
-                    .toEqual(expectedUrl.length < initialUrl.length)
+                expect(await getUrlParametersRemoved(backgroundPage), description + ' (urlParametersRemoved)').toEqual(
+                    expectedUrl.length < initialUrl.length,
+                )
             }
 
             // Reload the page, to check that `urlParametersRemoved` was cleared.

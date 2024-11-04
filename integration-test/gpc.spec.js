@@ -4,7 +4,7 @@ import path from 'path'
 import { test, expect } from './helpers/playwrightHarness'
 import backgroundWait from './helpers/backgroundWait'
 
-function getGPCValueOfContext (ctx) {
+function getGPCValueOfContext(ctx) {
     return ctx.evaluate(() => {
         return (async () => {
             return navigator.globalPrivacyControl
@@ -15,17 +15,14 @@ function getGPCValueOfContext (ctx) {
 const fakeOrigin = 'http://test.example'
 
 test('Ensure GPC is injected into frames', async ({ context, page, manifestVersion }) => {
-    const frameTests = [
-        `${fakeOrigin}:8081`,
-        `${fakeOrigin}:8080`
-    ]
+    const frameTests = [`${fakeOrigin}:8081`, `${fakeOrigin}:8080`]
     await backgroundWait.forExtensionLoaded(context)
     await page.route('**/*', async (route) => {
         const url = new URL(route.request().url())
         const data = await fs.promises.readFile(path.join(__dirname, 'data', 'pages', url.pathname))
         return route.fulfill({
             status: 200,
-            body: data
+            body: data,
         })
     })
 
@@ -35,7 +32,7 @@ test('Ensure GPC is injected into frames', async ({ context, page, manifestVersi
         await page.goto(`${fakeOrigin}/index.html?host=${iframeHost}`, { waitUntil: 'networkidle' })
         const gpc = await getGPCValueOfContext(page)
 
-        const iframeInstance = page.frames().find(iframe => iframe.url() === iframeHost + '/framed.html')
+        const iframeInstance = page.frames().find((iframe) => iframe.url() === iframeHost + '/framed.html')
         const gpc2 = await getGPCValueOfContext(iframeInstance)
 
         expect(gpc).toEqual(true)
@@ -49,7 +46,7 @@ test('Ensure GPC is injected into frames', async ({ context, page, manifestVersi
         await page.goto(`${fakeOrigin}/blank_framer.html`, { waitUntil: 'networkidle' })
         const gpc = await getGPCValueOfContext(page)
 
-        const iframeInstance = page.frames().find(iframe => iframe.url() === 'about:blank')
+        const iframeInstance = page.frames().find((iframe) => iframe.url() === 'about:blank')
         const gpc2 = await getGPCValueOfContext(iframeInstance)
 
         expect(gpc).toEqual(true)

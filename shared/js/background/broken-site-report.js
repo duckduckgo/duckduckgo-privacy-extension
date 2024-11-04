@@ -25,7 +25,7 @@ const maxPixelLength = 7000
  * @param {string} querystring
  *
  */
-export function fire (pixelName, querystring) {
+export function fire(pixelName, querystring) {
     let url = constructUrl(pixelName, querystring, false)
 
     // If we're over the max pixel length, truncate the less important params
@@ -37,7 +37,7 @@ export function fire (pixelName, querystring) {
     load.url(url)
 }
 
-function constructUrl (pixelName, querystring, truncate) {
+function constructUrl(pixelName, querystring, truncate) {
     const randomNum = Math.ceil(Math.random() * 1e7)
     const browserInfo = parseUserAgentString()
     const browserName = browserInfo?.browser
@@ -66,8 +66,8 @@ function constructUrl (pixelName, querystring, truncate) {
     // random number cache buster
     url += `?${randomNum}&`
     // some params should be not urlencoded
-    let extraParams = '';
-    [...Object.values(requestCategoryMapping)].forEach((key) => {
+    let extraParams = ''
+    ;[...Object.values(requestCategoryMapping)].forEach((key) => {
         // if we're truncating, don't include the truncatable fields
         if (truncate && truncatableFields.includes(key)) return
         if (searchParams.has(key)) {
@@ -90,20 +90,18 @@ const requestCategoryMapping = {
     redirect: 'surrogates',
     none: 'noActionRequests',
     'ad-attribution': 'adAttributionRequests',
-    'ignore-user': 'ignoredByUserRequests'
+    'ignore-user': 'ignoredByUserRequests',
 }
 
-async function digestMessage (message) {
+async function digestMessage(message) {
     const msgUint8 = new TextEncoder().encode(message)
     const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8)
     const hashArray = Array.from(new Uint8Array(hashBuffer))
-    const hashHex = hashArray
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('')
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('')
     return hashHex
 }
 
-async function computeLastSentDay (urlString) {
+async function computeLastSentDay(urlString) {
     const url = new URL(urlString)
     // Output time as a string in the format YYYY-MM-DD
     const dayOutput = new Date().toISOString().split('T')[0]
@@ -126,7 +124,7 @@ async function computeLastSentDay (urlString) {
  * Clears any expired broken site report times
  * Called by an alarm every hour to remove entries older than 30 days
  */
-export async function clearExpiredBrokenSiteReportTimes () {
+export async function clearExpiredBrokenSiteReportTimes() {
     await settings.ready()
     const brokenSiteReports = settings.getSetting('brokenSiteReportTimes') || {}
     // Expiry of 30 days
@@ -140,7 +138,7 @@ export async function clearExpiredBrokenSiteReportTimes () {
     settings.updateSetting('brokenSiteReportTimes', brokenSiteReports)
 }
 
-export async function clearAllBrokenSiteReportTimes () {
+export async function clearAllBrokenSiteReportTimes() {
     settings.updateSetting('brokenSiteReportTimes', {})
 }
 
@@ -163,9 +161,16 @@ export async function clearAllBrokenSiteReportTimes () {
  * @prop {string | undefined} arg.reportFlow
  *   String detailing the UI flow that this breakage report came from.
  */
-export async function breakageReportForTab ({
-    pixelName, tab, tds, remoteConfigEtag, remoteConfigVersion,
-    category, description, pageParams, reportFlow
+export async function breakageReportForTab({
+    pixelName,
+    tab,
+    tds,
+    remoteConfigEtag,
+    remoteConfigVersion,
+    category,
+    description,
+    pageParams,
+    reportFlow,
 }) {
     if (!tab.url) {
         return
@@ -236,17 +241,14 @@ export async function breakageReportForTab ({
         performanceWarning,
         userRefreshCount,
         jsPerformance,
-        locale
+        locale,
     })
 
     // The protectionsState parameter will always be false for these reports,
     // and misleading since the user will have disabled protections directly
     // before the report was sent (but before the page was reloaded).
     if (pixelName !== 'protection-toggled-off-breakage-report') {
-        brokenSiteParams.set(
-            'protectionsState',
-            tab.site.isFeatureEnabled('contentBlocking')
-        )
+        brokenSiteParams.set('protectionsState', tab.site.isFeatureEnabled('contentBlocking'))
     }
 
     for (const [key, value] of Object.entries(requestCategories)) {
@@ -277,20 +279,16 @@ export async function breakageReportForTab ({
  * @prop {string | undefined} arg.reportFlow
  *   String detailing the UI flow that this breakage report came from.
  */
-export async function sendBreakageReportForCurrentTab (
-    { pixelName, currentTab, category, description, reportFlow }
-) {
+export async function sendBreakageReportForCurrentTab({ pixelName, currentTab, category, description, reportFlow }) {
     await settings.ready()
     await tdsStorage.ready('config')
 
-    const tab = currentTab || await tabManager.getOrRestoreCurrentTab()
+    const tab = currentTab || (await tabManager.getOrRestoreCurrentTab())
     if (!tab) {
         return
     }
 
-    const pageParams = await browser.tabs.sendMessage(
-        tab.id, { getBreakagePageParams: true }
-    ) || {}
+    const pageParams = (await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })) || {}
 
     const tds = settings.getSetting('tds-etag')
     const remoteConfigEtag = settings.getSetting('config-etag')
@@ -305,6 +303,6 @@ export async function sendBreakageReportForCurrentTab (
         category,
         description,
         pageParams,
-        reportFlow
+        reportFlow,
     })
 }

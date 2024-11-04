@@ -15,5 +15,5 @@ module.exports = {
     'tds-etag': null,
     lastTdsUpdate: 0,
     fireButtonClearHistoryEnabled: true,
-    fireButtonTabClearEnabled: true
+    fireButtonTabClearEnabled: true,
 }

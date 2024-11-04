@@ -11,12 +11,12 @@ describe('Https storage normal update', () => {
             httpsBloom,
             httpsAllowlist,
             httpsNegativeBloom,
-            httpsNegativeAllowlist
+            httpsNegativeAllowlist,
         })
     })
 
     it('should have list data', () => {
-        return httpsStorage.getLists().then(lists => {
+        return httpsStorage.getLists().then((lists) => {
             expect(!!lists.length).toEqual(true)
         })
     })
@@ -33,14 +33,14 @@ describe('Https storage bad xhr update', () => {
             httpsBloom: badBloom,
             httpsAllowlist,
             httpsNegativeBloom,
-            httpsNegativeAllowlist
+            httpsNegativeAllowlist,
         })
 
         // stub for db storage
         spyOn(httpsStorage, 'storeInLocalDB').and.callFake((name, type, data) => {
             dbStub[name] = JSON.parse(JSON.stringify(data))
         })
-        spyOn(httpsStorage, 'getListFromLocalDB').and.callFake(listDetails => {
+        spyOn(httpsStorage, 'getListFromLocalDB').and.callFake((listDetails) => {
             const val = dbStub[listDetails.name]
             if (val) {
                 return Promise.resolve(Object.assign(listDetails, val))
@@ -56,13 +56,16 @@ describe('Https storage bad xhr update', () => {
         })
 
         it('should fail if there is no db fallback', () => {
-            return httpsStorage.getLists().then(lists => {
-                // this should never resolve
-                expect(true).toEqual(false)
-            }).catch(e => {
-                // a failed update should always thow an error
-                expect(true).toEqual(true)
-            })
+            return httpsStorage
+                .getLists()
+                .then((lists) => {
+                    // this should never resolve
+                    expect(true).toEqual(false)
+                })
+                .catch((e) => {
+                    // a failed update should always thow an error
+                    expect(true).toEqual(true)
+                })
         })
     })
 
@@ -75,7 +78,7 @@ describe('Https storage bad xhr update', () => {
             // set some good data in local db
             httpsStorage.storeInLocalDB('httpsUpgradeBloomFilter', 'upgrade list', httpsBloom)
 
-            return httpsStorage.getLists().then(lists => {
+            return httpsStorage.getLists().then((lists) => {
                 expect(!!lists.length).toEqual(true)
                 // we should get the check sum from the good list back
                 expect(lists[0].checksum.sha256).toEqual(httpsBloom.checksum.sha256)

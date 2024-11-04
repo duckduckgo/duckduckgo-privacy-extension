@@ -28,8 +28,7 @@ const ATB = (() => {
     const ddgAtbURL = 'https://duckduckgo.com/atb.js?'
 
     return {
-
-        shouldUpdateSetAtb (request) {
+        shouldUpdateSetAtb(request) {
             return matchPage.test(request.url)
         },
 
@@ -68,17 +67,17 @@ const ATB = (() => {
         },
 
         /**
-        * Accept the URL of a main_frame request in progress. If atb parameters
-        * should be added by redirection, mutate the URL to add the parameters
-        * and return true. Otherwise, return false.
-        * @param {URL} url
-        *   The request URL.
-        *   Note: This is mutated to add parameters where necessary.
-        * @returns {boolean}
-        *   True if parameters were added and the request should be redirected,
-        *   false otherwise.
-        */
-        addParametersMainFrameRequestUrl (url) {
+         * Accept the URL of a main_frame request in progress. If atb parameters
+         * should be added by redirection, mutate the URL to add the parameters
+         * and return true. Otherwise, return false.
+         * @param {URL} url
+         *   The request URL.
+         *   Note: This is mutated to add parameters where necessary.
+         * @returns {boolean}
+         *   True if parameters were added and the request should be redirected,
+         *   false otherwise.
+         */
+        addParametersMainFrameRequestUrl(url) {
             if (url.searchParams.has('atb')) {
                 return false
             }
@@ -99,18 +98,21 @@ const ATB = (() => {
             const randomValue = Math.ceil(Math.random() * 1e7)
             // @ts-ignore
             const url = ddgAtbURL + randomValue + '&browser=' + parseUserAgentString().browser
-            return load.JSONfromExternalFile(url).then((res) => {
-                settings.updateSetting('atb', res.data.version)
-            }, () => {
-                console.log('couldn\'t reach atb.js for initial server call, trying again')
-                numTries += 1
+            return load.JSONfromExternalFile(url).then(
+                (res) => {
+                    settings.updateSetting('atb', res.data.version)
+                },
+                () => {
+                    console.log("couldn't reach atb.js for initial server call, trying again")
+                    numTries += 1
 
-                return new Promise((resolve) => {
-                    setTimeout(resolve, 500)
-                }).then(() => {
-                    return ATB.setInitialVersions(numTries)
-                })
-            })
+                    return new Promise((resolve) => {
+                        setTimeout(resolve, 500)
+                    }).then(() => {
+                        return ATB.setInitialVersions(numTries)
+                    })
+                },
+            )
         },
 
         finalizeATB: (params) => {
@@ -136,14 +138,14 @@ const ATB = (() => {
         getAcceptedParamsFromURL: (url) => {
             const validParams = new URLSearchParams()
             if (url === '') return validParams
-            const parsedParams = (new URL(url)).searchParams
+            const parsedParams = new URL(url).searchParams
 
-            ACCEPTED_URL_PARAMS.forEach(param => {
+            ACCEPTED_URL_PARAMS.forEach((param) => {
                 if (parsedParams.has(param)) {
                     validParams.append(
                         param === 'natb' ? 'atb' : param,
                         // @ts-ignore
-                        parsedParams.get(param)
+                        parsedParams.get(param),
                     )
                 }
             })
@@ -159,12 +161,13 @@ const ATB = (() => {
 
         updateATBValues: (ddgTabUrls) => {
             // wait until settings is ready to try and get atb from the page
-            return settings.ready()
+            return settings
+                .ready()
                 .then(ATB.setInitialVersions)
                 .then(() => {
                     let atb
                     let params
-                    ddgTabUrls.some(url => {
+                    ddgTabUrls.some((url) => {
                         params = ATB.getAcceptedParamsFromURL(url)
                         atb = params.has('atb') && params.get('atb')
                         return !!atb
@@ -184,14 +187,14 @@ const ATB = (() => {
             // - the user hasn't seen the page before
             await settings.ready()
             const tabs = await browser.tabs.query({ currentWindow: true, active: true })
-            const domain = (tabs && tabs[0]) ? tabs[0].url : ''
+            const domain = tabs && tabs[0] ? tabs[0].url : ''
             if (ATB.canShowPostInstall(domain)) {
                 settings.updateSetting('hasSeenPostInstall', true)
                 let postInstallURL = 'https://duckduckgo.com/extension-success'
                 const atb = settings.getSetting('atb')
                 postInstallURL += atb ? `?atb=${atb}` : ''
                 browser.tabs.create({
-                    url: postInstallURL
+                    url: postInstallURL,
                 })
             }
         },
@@ -202,15 +205,13 @@ const ATB = (() => {
 
             if (!(domain && settings)) return false
 
-            return !settings.getSetting('hasSeenPostInstall') &&
-                !domain.match(regExpPostInstall) &&
-                !domain.match(regExpSoftwarePage)
+            return !settings.getSetting('hasSeenPostInstall') && !domain.match(regExpPostInstall) && !domain.match(regExpSoftwarePage)
         },
 
         /**
-        * Creates a DNR rule for ATB parameters
-        * @param {string} atb
-        */
+         * Creates a DNR rule for ATB parameters
+         * @param {string} atb
+         */
         setOrUpdateATBdnrRule: (atb) => {
             if (!atb || manifestVersion !== 3) {
                 return
@@ -223,22 +224,22 @@ const ATB = (() => {
                 redirect: {
                     transform: {
                         queryTransform: {
-                            addOrReplaceParams: [{ key: 'atb', value: atb }]
-                        }
-                    }
+                            addOrReplaceParams: [{ key: 'atb', value: atb }],
+                        },
+                    },
                 },
                 resourceTypes: ['main_frame'],
                 requestDomains: ['duckduckgo.com'],
-                regexFilter: regExpAboutPage.source
+                regexFilter: regExpAboutPage.source,
             })
 
             chrome.declarativeNetRequest.updateDynamicRules({
                 removeRuleIds: [atbRule.id],
-                addRules: [atbRule]
+                addRules: [atbRule],
             })
         },
 
-        async getSurveyURL () {
+        async getSurveyURL() {
             let url = ddgAtbURL + Math.ceil(Math.random() * 1e7) + '&uninstall=1&action=survey'
             const atb = settings.getSetting('atb')
             const setAtb = settings.getSetting('set_atb')
@@ -258,26 +259,25 @@ const ATB = (() => {
                 url += '&test=1'
             }
             return url
-        }
+        },
     }
 })()
 
 settings.ready().then(() => {
-    const updateUninstallURL =
-        async () => { browserWrapper.setUninstallURL(await ATB.getSurveyURL()) }
+    const updateUninstallURL = async () => {
+        browserWrapper.setUninstallURL(await ATB.getSurveyURL())
+    }
 
     // set initial uninstall url
     updateUninstallURL()
 
     // Ensure the uninstall URL and the ATB declarativeNetRequest rules are also
     // kept up to date as the ATB values are updated.
-    settings.onSettingUpdate.addEventListener(
-        'atb', event => {
-            const atb = event instanceof CustomEvent ? event.detail : undefined
-            updateUninstallURL()
-            ATB.setOrUpdateATBdnrRule(atb)
-        }
-    )
+    settings.onSettingUpdate.addEventListener('atb', (event) => {
+        const atb = event instanceof CustomEvent ? event.detail : undefined
+        updateUninstallURL()
+        ATB.setOrUpdateATBdnrRule(atb)
+    })
     settings.onSettingUpdate.addEventListener('set_atb', updateUninstallURL)
 })
 

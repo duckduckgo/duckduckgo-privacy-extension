@@ -15,7 +15,7 @@
 
 .frm__label__chk {
     margin-top: 0.1em;
-    margin-right: .5em;
+    margin-right: 0.5em;
     display: inline-block;
     vertical-align: top;
 }
@@ -78,7 +78,8 @@
     color: $white;
     -webkit-appearance: none !important;
 
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
         text-decoration: none !important;
         color: $white;
         background-color: $blue;

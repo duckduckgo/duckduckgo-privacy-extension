@@ -8,16 +8,16 @@ module.exports = function (config) {
         files: ['background/*.js', 'background/**/*.js', 'shared-utils/*.js', 'ui/**/*.js', 'legacy-background.js'],
         logLevel: config.LOG_ERROR,
         browserConsoleLogOptions: {
-            level: 'warn'
+            level: 'warn',
         },
         browsers: ['ChromeHeadless'],
         reporters: ['dots'],
         customLaunchers: {
             Chrome_travis_ci: {
                 base: 'ChromeHeadless',
-                flags: ['--no-sandbox']
-            }
-        }
+                flags: ['--no-sandbox'],
+            },
+        },
     }
 
     if (process.env.TRAVIS) {

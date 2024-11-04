@@ -11,18 +11,22 @@ const Companies = (() => {
     let totalPagesWithTrackers = 0
     let lastStatsResetDate = null
 
-    function sortByCount (a, b) {
+    function sortByCount(a, b) {
         return companyContainer[b].count - companyContainer[a].count
     }
 
-    function sortByPages (a, b) {
+    function sortByPages(a, b) {
         return companyContainer[b].pagesSeenOn - companyContainer[a].pagesSeenOn
     }
 
     return {
-        get: (name) => { return companyContainer[name] },
+        get: (name) => {
+            return companyContainer[name]
+        },
 
-        getTotalPages: () => { return totalPages },
+        getTotalPages: () => {
+            return totalPages
+        },
 
         add: (c) => {
             if (!companyContainer[c.name]) {
@@ -42,7 +46,9 @@ const Companies = (() => {
             if (c.name !== 'unknown') companyContainer[c.name].incrementPagesSeenOn()
         },
 
-        all: () => { return Object.keys(companyContainer) },
+        all: () => {
+            return Object.keys(companyContainer)
+        },
 
         getTopBlocked: (n) => {
             const topBlockedData = []
@@ -61,7 +67,7 @@ const Companies = (() => {
                 topBlockedData.push({
                     name: c.name,
                     displayName: c.displayName,
-                    percent: Math.min(100, Math.round((c.pagesSeenOn / totalPages) * 100))
+                    percent: Math.min(100, Math.round((c.pagesSeenOn / totalPages) * 100)),
                 })
             })
 
@@ -69,7 +75,7 @@ const Companies = (() => {
                 topBlocked: topBlockedData,
                 totalPages,
                 pctPagesWithTrackers: Math.min(100, Math.round((totalPagesWithTrackers / totalPages) * 100)),
-                lastStatsResetDate
+                lastStatsResetDate,
             }
         },
 
@@ -132,8 +138,12 @@ const Companies = (() => {
                 }
             })
 
-            browserWrapper.getFromStorage('totalPages').then((n) => { if (n) totalPages = n })
-            browserWrapper.getFromStorage('totalPagesWithTrackers').then((n) => { if (n) totalPagesWithTrackers = n })
+            browserWrapper.getFromStorage('totalPages').then((n) => {
+                if (n) totalPages = n
+            })
+            browserWrapper.getFromStorage('totalPagesWithTrackers').then((n) => {
+                if (n) totalPagesWithTrackers = n
+            })
             browserWrapper.getFromStorage('lastStatsResetDate').then((d) => {
                 if (d) {
                     lastStatsResetDate = d
@@ -143,7 +153,7 @@ const Companies = (() => {
                     Companies.resetData()
                 }
             })
-        }
+        },
     }
 })()
 

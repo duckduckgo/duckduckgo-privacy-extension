@@ -12,46 +12,47 @@ import { isRedirect } from '../utils'
 export default class TabTracker {
     /**
      * @param {{
-    *  tabManager: TabManager;
-    *  devtools: Devtools;
-    * }} options
-    */
-    constructor ({ tabManager, devtools }) {
+     *  tabManager: TabManager;
+     *  devtools: Devtools;
+     * }} options
+     */
+    constructor({ tabManager, devtools }) {
         this.tabManager = tabManager
         this.createdTargets = new Map()
 
-        browser.webRequest.onHeadersReceived.addListener((request) => {
-            this.tabManager.updateTabUrl(request)
-            const tab = tabManager.get({ tabId: request.tabId })
+        browser.webRequest.onHeadersReceived.addListener(
+            (request) => {
+                this.tabManager.updateTabUrl(request)
+                const tab = tabManager.get({ tabId: request.tabId })
 
-            tab.httpErrorCodes.push(request.statusCode)
+                tab.httpErrorCodes.push(request.statusCode)
 
-            // SERP ad click detection
-            if (
-                isRedirect(request.statusCode)
-            ) {
-                tab.setAdClickIfValidRedirect(request.url)
-            } else if (tab && tab.adClick && !isRedirect(request.statusCode)) {
-                // At the end of the redirect chain, ensure the final URL's base
-                // domain (aka the "heuristic" base domain) is noted for the
-                // 'm_ad_click_detected' pixel.
-                let heuristicAdBaseDomain = null
-                if (tab.adClick.heuristicDetectionEnabled) {
-                    heuristicAdBaseDomain = tab.site.baseDomain || ''
+                // SERP ad click detection
+                if (isRedirect(request.statusCode)) {
+                    tab.setAdClickIfValidRedirect(request.url)
+                } else if (tab && tab.adClick && !isRedirect(request.statusCode)) {
+                    // At the end of the redirect chain, ensure the final URL's base
+                    // domain (aka the "heuristic" base domain) is noted for the
+                    // 'm_ad_click_detected' pixel.
+                    let heuristicAdBaseDomain = null
+                    if (tab.adClick.heuristicDetectionEnabled) {
+                        heuristicAdBaseDomain = tab.site.baseDomain || ''
 
-                    // No parameter domain was provided by the SERP, so fall
-                    // back to the heuristic domain for the ad click.
-                    if (tab.adClick.adClickRedirect) {
-                        tab.adClick.setAdBaseDomain(heuristicAdBaseDomain)
+                        // No parameter domain was provided by the SERP, so fall
+                        // back to the heuristic domain for the ad click.
+                        if (tab.adClick.adClickRedirect) {
+                            tab.adClick.setAdBaseDomain(heuristicAdBaseDomain)
+                        }
                     }
-                }
 
-                tab.adClick.sendAdClickDetectedPixel(heuristicAdBaseDomain)
-            }
-        }, { urls: ['<all_urls>'], types: ['main_frame'] })
+                    tab.adClick.sendAdClickDetectedPixel(heuristicAdBaseDomain)
+                }
+            },
+            { urls: ['<all_urls>'], types: ['main_frame'] },
+        )
 
         // Store the created tab id for when onBeforeNavigate is called so data can be copied across from the source tab
-        browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
+        browser.webNavigation.onCreatedNavigationTarget.addListener((details) => {
             this.createdTargets.set(details.tabId, details.sourceTabId)
         })
 
@@ -122,7 +123,7 @@ export default class TabTracker {
         this.restoreOrCreateTabs()
     }
 
-    async restoreOrCreateTabs () {
+    async restoreOrCreateTabs() {
         const savedTabs = await browser.tabs.query({ status: 'complete' })
         for (let i = 0; i < savedTabs.length; i++) {
             const tab = savedTabs[i]

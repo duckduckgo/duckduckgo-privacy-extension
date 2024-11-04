@@ -5,7 +5,7 @@ export class LegacyTabTransfer {
     /**
      * @param {import('./tab')} tab
      */
-    constructor (tab) {
+    constructor(tab) {
         const clonedTab = cloneClassObject(tab)
         const entries = Object.entries(clonedTab)
         for (const [key] of entries) {
@@ -18,7 +18,7 @@ export class LegacyTabTransfer {
  * @param {*} value
  * @returns {boolean}
  */
-function isPrimitive (value) {
+function isPrimitive(value) {
     return Object(value) !== value
 }
 
@@ -26,11 +26,11 @@ function isPrimitive (value) {
  * @param {*} value
  * @returns {boolean}
  */
-function isStructuredCloneable (value) {
+function isStructuredCloneable(value) {
     return isPrimitive(value) || Array.isArray(value)
 }
 
-function cloneClassObject (object) {
+function cloneClassObject(object) {
     if (isStructuredCloneable(object)) {
         return structuredClone(object)
     }
@@ -59,6 +59,6 @@ function cloneClassObject (object) {
     return out
 }
 
-function hasModifiedPrototype (object) {
+function hasModifiedPrototype(object) {
     return Object.getPrototypeOf(object) !== Object.getPrototypeOf({})
 }

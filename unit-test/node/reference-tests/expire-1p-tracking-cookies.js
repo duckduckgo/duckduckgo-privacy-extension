@@ -25,7 +25,7 @@ for (const setName of Object.keys(testSets)) {
         beforeAll(() => {
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference })
 
-            return tdsStorage.getLists().then(lists => tds.setLists(lists))
+            return tdsStorage.getLists().then((lists) => tds.setLists(lists))
         })
 
         afterEach(() => {
@@ -33,7 +33,7 @@ for (const setName of Object.keys(testSets)) {
             globalThis = orgGlobalThis
         })
 
-        testSet.tests.forEach(test => {
+        testSet.tests.forEach((test) => {
             if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                 return
             }
@@ -42,7 +42,7 @@ for (const setName of Object.keys(testSets)) {
                 tabManager.delete(1)
                 tabManager.create({
                     tabId: 1,
-                    url: test.siteURL
+                    url: test.siteURL,
                 })
 
                 const args = getArgumentsObject(1, { url: test.siteURL, frameId: 0 }, test.siteURL, 'abc123')
@@ -50,7 +50,7 @@ for (const setName of Object.keys(testSets)) {
                 const cookieJar = new jsdom.CookieJar()
                 const dom = new JSDOM('', {
                     url: test.siteURL,
-                    cookieJar
+                    cookieJar,
                 })
 
                 const jsdomWindow = dom.window
@@ -70,7 +70,7 @@ for (const setName of Object.keys(testSets)) {
                 const jsCookieProtection = new JsCookieProtection('cookie')
 
                 jsCookieProtection.callLoad({
-                    platform: constants.platform
+                    platform: constants.platform,
                 })
                 jsCookieProtection.callInit(args)
 
@@ -83,7 +83,7 @@ for (const setName of Object.keys(testSets)) {
                 handleRequest({
                     tabId: 1,
                     url: test.scriptURL,
-                    type: 'script'
+                    type: 'script',
                 })
 
                 const setDate = Date.now()

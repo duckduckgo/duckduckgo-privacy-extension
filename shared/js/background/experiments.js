@@ -3,13 +3,13 @@ const atbUtils = require('./atb-utils')
 const retentionExperiments = require('../../data/experiments-out')
 const ATB_FORMAT_RE = /(v\d+-\d(?:[a-z_]{2})?)$/
 class Experiment {
-    constructor () {
+    constructor() {
         this.variant = ''
         this.atbVariant = ''
         this.activeExperiment = {}
     }
 
-    getVariant () {
+    getVariant() {
         const atbVal = settings.getSetting('atb')
         if (atbVal && atbVal.match(ATB_FORMAT_RE) && atbVal[atbVal.length - 2].match(/[a-z]/i)) {
             this.variant = atbVal[atbVal.length - 2]
@@ -19,7 +19,7 @@ class Experiment {
         return this.variant
     }
 
-    getATBVariant () {
+    getATBVariant() {
         const atbVal = settings.getSetting('atb')
         if (atbVal && atbVal.match(ATB_FORMAT_RE) && atbVal[atbVal.length - 1].match(/[a-z]/i)) {
             this.atbVariant = atbVal[atbVal.length - 1]
@@ -29,8 +29,9 @@ class Experiment {
         return this.atbVariant
     }
 
-    setActiveExperiment () {
-        settings.ready()
+    setActiveExperiment() {
+        settings
+            .ready()
             .then(this.getVariant.bind(this))
             .then(this.getATBVariant.bind(this))
             .then(() => {
@@ -70,13 +71,13 @@ class Experiment {
             })
     }
 
-    applySettingsChanges () {
+    applySettingsChanges() {
         for (const setting in this.activeExperiment.settings) {
             settings.updateSetting(setting, this.activeExperiment.settings[setting])
         }
     }
 
-    getDaysSinceInstall () {
+    getDaysSinceInstall() {
         const cohort = settings.getSetting('atb')
         if (!cohort) return false
 
@@ -91,10 +92,13 @@ class Experiment {
         // remove any atb variant that may be appended to the setting.
         minorVersion = minorVersion.replace(/[a-z_]/g, '')
 
-        return atbUtils.getDaysBetweenCohorts({
-            majorVersion: parseInt(majorVersion, 10),
-            minorVersion: parseInt(minorVersion, 10)
-        }, atbUtils.getCurrentATB())
+        return atbUtils.getDaysBetweenCohorts(
+            {
+                majorVersion: parseInt(majorVersion, 10),
+                minorVersion: parseInt(minorVersion, 10),
+            },
+            atbUtils.getCurrentATB(),
+        )
     }
 }
 

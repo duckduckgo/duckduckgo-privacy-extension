@@ -12,7 +12,7 @@ module.exports = function () {
     ${addToAllowlist()}
 </section>`
 
-    function addToAllowlist () {
+    function addToAllowlist() {
         return bel`<div>
     <p class="allowlist-show-add js-allowlist-show-add">
         <a href="javascript:void(0)" role="button">${t('options:addUnprotectedSite.title')}</a>

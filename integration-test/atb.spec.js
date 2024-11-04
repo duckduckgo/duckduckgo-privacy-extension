@@ -2,10 +2,7 @@ import { test, expect, mockAtb } from './helpers/playwrightHarness'
 import backgroundWait, { forSetting } from './helpers/backgroundWait'
 
 test.describe('install workflow', () => {
-    test('postinstall page: should open the postinstall page correctly', async ({
-        context,
-        page
-    }) => {
+    test('postinstall page: should open the postinstall page correctly', async ({ context, page }) => {
         // wait for post install page to open
         // we leverage the extension loaded helper, which returns the extension success URL when it is opened
         const postInstallOpened = await backgroundWait.forExtensionLoaded(context)
@@ -20,8 +17,8 @@ test.describe('install workflow', () => {
     test.describe('atb values', () => {
         test.beforeEach(async ({ backgroundNetworkContext, backgroundPage }) => {
             // wait for the exti call to go out
-            await new Promise(resolve => {
-                const extiListener = request => {
+            await new Promise((resolve) => {
+                const extiListener = (request) => {
                     if (request.url().match(/exti/)) {
                         resolve()
                         backgroundNetworkContext.off('request', extiListener)
@@ -37,7 +34,11 @@ test.describe('install workflow', () => {
             })
         })
 
-        test('should get its ATB param from atb.js when there\'s no install success page', async ({ page, backgroundPage, backgroundNetworkContext }) => {
+        test("should get its ATB param from atb.js when there's no install success page", async ({
+            page,
+            backgroundPage,
+            backgroundNetworkContext,
+        }) => {
             // listen for outgoing atb and exti calls
             let numAtbCalled = 0
             let numExtiCalled = 0
@@ -73,7 +74,11 @@ test.describe('install workflow', () => {
             expect(numExtiCalled).toEqual(1)
         })
 
-        test('should get its ATB param from the success page when one is present', async ({ page, backgroundNetworkContext, backgroundPage }) => {
+        test('should get its ATB param from the success page when one is present', async ({
+            page,
+            backgroundNetworkContext,
+            backgroundPage,
+        }) => {
             let numExtiCalled = 0
             backgroundNetworkContext.on('request', (request) => {
                 const url = request.url()
@@ -161,7 +166,10 @@ test.describe('search workflow', () => {
 
     test('should update set_atb if a repeat search is made on a different day', async ({ backgroundPage, page }) => {
         // set set_atb to an older version
-        await backgroundPage.evaluate((pageLastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageLastWeeksAtb), lastWeeksAtb)
+        await backgroundPage.evaluate(
+            (pageLastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageLastWeeksAtb),
+            lastWeeksAtb,
+        )
         // run a search
         await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' })
 
@@ -174,7 +182,10 @@ test.describe('search workflow', () => {
 
     test('should update atb if the server passes back updateVersion', async ({ backgroundPage, page }) => {
         // set set_atb and atb to older versions
-        await backgroundPage.evaluate((pageLastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageLastWeeksAtb), lastWeeksAtb)
+        await backgroundPage.evaluate(
+            (pageLastWeeksAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageLastWeeksAtb),
+            lastWeeksAtb,
+        )
         await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('atb', 'v123-6'))
 
         // run a search

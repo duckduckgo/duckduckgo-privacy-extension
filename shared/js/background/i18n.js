@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill'
 
-export function getUserLocale () {
+export function getUserLocale() {
     if (!browser?.i18n) {
         return 'en'
     }
@@ -13,7 +13,7 @@ export function getUserLocale () {
     return lang
 }
 
-export function getFullUserLocale () {
+export function getFullUserLocale() {
     if (!browser?.i18n) {
         return 'en-US'
     }

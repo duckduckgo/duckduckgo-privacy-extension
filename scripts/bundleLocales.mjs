@@ -4,17 +4,20 @@ import path from 'path'
 const imports = []
 const localeObjects = {}
 const localesDir = './shared/locales'
-const locales = fs.readdirSync(localesDir).filter(f => !f.startsWith('.'))
+const locales = fs.readdirSync(localesDir).filter((f) => !f.startsWith('.'))
 
 locales.forEach((lang) => {
-    const namespaces = fs.readdirSync(path.join(localesDir, lang))
-        .filter(f => !f.startsWith('.'))
-        .map(f => f.slice(0, f.length - 5))
-    const resources = namespaces.map((ns) => {
-        const importName = `${lang}${ns[0].toUpperCase()}${ns.slice(1)}`
-        imports.push(`import ${importName} from '../../../locales/${lang}/${ns}.json'`)
-        return `${ns}: ${importName}`
-    }).join(', ')
+    const namespaces = fs
+        .readdirSync(path.join(localesDir, lang))
+        .filter((f) => !f.startsWith('.'))
+        .map((f) => f.slice(0, f.length - 5))
+    const resources = namespaces
+        .map((ns) => {
+            const importName = `${lang}${ns[0].toUpperCase()}${ns.slice(1)}`
+            imports.push(`import ${importName} from '../../../locales/${lang}/${ns}.json'`)
+            return `${ns}: ${importName}`
+        })
+        .join(', ')
     localeObjects[lang] = `{ ${resources} }`
 })
 console.log(`/**
@@ -24,5 +27,7 @@ console.log(`/**
 ${imports.join('\n')}
 
 export default {
-    ${Object.keys(localeObjects).map(lang => `${lang}: ${localeObjects[lang]}`).join(',\n    ')}
+    ${Object.keys(localeObjects)
+        .map((lang) => `${lang}: ${localeObjects[lang]}`)
+        .join(',\n    ')}
 }`)

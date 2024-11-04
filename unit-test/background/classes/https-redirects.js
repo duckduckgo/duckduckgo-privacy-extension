@@ -29,7 +29,7 @@ const getMainFrameRequest = () => {
     return {
         requestId: id,
         type: 'main_frame',
-        url: 'http://example.com'
+        url: 'http://example.com',
     }
 }
 
@@ -39,7 +39,7 @@ const getImageRequest = () => {
     return {
         requestId: id,
         type: 'image',
-        url: 'http://example.com/cat.gif'
+        url: 'http://example.com/cat.gif',
     }
 }
 
@@ -157,7 +157,7 @@ describe('HttpsRedirects', () => {
             }
         })
 
-        it('should not allow https redirects for a URL after it\'s failed', () => {
+        it("should not allow https redirects for a URL after it's failed", () => {
             const request = getImageRequest()
 
             for (let i = 1; i < 10; i += 1) {
@@ -168,7 +168,7 @@ describe('HttpsRedirects', () => {
             const canRedirect = httpsRedirects.canRedirect({
                 requestId: 105,
                 url: 'http://example.com/something/another.js',
-                type: 'xhr'
+                type: 'xhr',
             })
 
             expect(canRedirect).toEqual(false)
@@ -182,7 +182,7 @@ describe('HttpsRedirects', () => {
             httpsRedirects.registerRedirect({
                 id: 105,
                 url: 'http://example.com',
-                type: 'main_frame'
+                type: 'main_frame',
             })
             const redirect = httpsRedirects.getMainFrameRedirect()
 
@@ -193,7 +193,7 @@ describe('HttpsRedirects', () => {
             httpsRedirects.registerRedirect({
                 id: 105,
                 url: 'http://example.com',
-                type: 'main_frame'
+                type: 'main_frame',
             })
             httpsRedirects.persistMainFrameRedirect({ url: 'http://example.com', time: Date.now() - 500 })
 

@@ -7,21 +7,21 @@ import { NewTabTrackerStats } from './newtab-tracker-stats'
  * It's useful for stress-testing things like the `top100Companies` list, storage etc
  *
  */
-export function createNewtabTrackerStatsDebugApi () {
+export function createNewtabTrackerStatsDebugApi() {
     const SEC = 1000
     const MIN = SEC * 60
     const HOUR = MIN * 60
     const DAY = HOUR * 24
 
     const shared = {
-        get instance () {
-            if (!NewTabTrackerStats.shared) throw new Error('unreachable, NewTabTrackerStats.shared wasn\'t set yet')
+        get instance() {
+            if (!NewTabTrackerStats.shared) throw new Error("unreachable, NewTabTrackerStats.shared wasn't set yet")
             return NewTabTrackerStats.shared
         },
-        get stats () {
-            if (!NewTabTrackerStats.shared) throw new Error('unreachable, NewTabTrackerStats.shared.stats wasn\'t available')
+        get stats() {
+            if (!NewTabTrackerStats.shared) throw new Error("unreachable, NewTabTrackerStats.shared.stats wasn't available")
             return NewTabTrackerStats.shared.stats
-        }
+        },
     }
 
     return {
@@ -30,7 +30,7 @@ export function createNewtabTrackerStatsDebugApi () {
          *
          * @return {import("./classes/tracker-stats").TrackerStats}
          */
-        clear () {
+        clear() {
             shared.stats.clear()
             shared.instance.sendToNewTab('testing clear')
             shared.instance.syncToStorage()
@@ -41,7 +41,7 @@ export function createNewtabTrackerStatsDebugApi () {
          *
          * @return {import("./classes/tracker-stats").TrackerStats}
          */
-        clearAll () {
+        clearAll() {
             shared.instance.stats.clearAll()
             shared.instance.sendToNewTab('testing clearAll')
             shared.instance.syncToStorage()
@@ -53,7 +53,7 @@ export function createNewtabTrackerStatsDebugApi () {
          * @param {string} [name] - optional company name. If you provide it, all entries will be created for it
          * @return {import("./classes/tracker-stats").TrackerStats}
          */
-        record (count, name) {
+        record(count, name) {
             const now = Date.now()
             if (name) {
                 for (let i = 0; i < Math.abs(count); i++) {
@@ -80,7 +80,7 @@ export function createNewtabTrackerStatsDebugApi () {
          * Simulate what happens when previously valid entries are followed
          * by an invalid one (for example, when a user has altered their clock)
          */
-        recordInvalid () {
+        recordInvalid() {
             const now = Date.now()
             const nowMinus1Hour = now - MIN
             shared.instance.record('ABC', now)
@@ -95,7 +95,7 @@ export function createNewtabTrackerStatsDebugApi () {
         /**
          * Simulate what happens when the pruneAlarm is activated
          */
-        pack () {
+        pack() {
             const now = Date.now()
             const oneDayMinusOneHour = now + DAY - HOUR
             shared.instance._handlePruneAlarm(oneDayMinusOneHour)
@@ -105,7 +105,7 @@ export function createNewtabTrackerStatsDebugApi () {
          * Simulate what happens when the pruneAlarm is activated, but
          * current data is older than 1 day (for example, when a user opens their browser the next day)
          */
-        packAfterDay () {
+        packAfterDay() {
             const now = Date.now()
             const oneDayPlusOneMin = now + DAY + MIN
             shared.instance._handlePruneAlarm(oneDayPlusOneMin)
@@ -115,11 +115,11 @@ export function createNewtabTrackerStatsDebugApi () {
          * Simulate what happens when the pruneAlarm is activated with an invalid date,
          * for example when a user has altered their clock
          */
-        packInvalid () {
+        packInvalid() {
             const now = Date.now()
             const nowMinus1Hour = now - HOUR
             shared.instance._handlePruneAlarm(nowMinus1Hour)
             return shared.instance.stats
-        }
+        },
     }
 }

@@ -5,12 +5,12 @@ const { normalizeTabData } = require('../../../shared/js/background/wrapper')
 /**
  * @returns {Tab}
  */
-function baseTab () {
+function baseTab() {
     const tabData = normalizeTabData({
         id: 123,
         requestId: 123,
         url: 'https://example.com',
-        status: 200
+        status: 200,
     })
     return new Tab(tabData)
 }
@@ -30,16 +30,16 @@ describe('Tab -> Privacy Dashboard conversion', () => {
                     allowlisted: false,
                     denylisted: false,
                     unprotectedTemporary: false,
-                    enabledFeatures: ['contentBlocking']
+                    enabledFeatures: ['contentBlocking'],
                 },
                 upgradedHttps: false,
-                localeSettings: { locale: 'en' }
+                localeSettings: { locale: 'en' },
             },
             requestData: {
-                requests: []
+                requests: [],
             },
             emailProtectionUserData: undefined,
-            fireButton: undefined
+            fireButton: undefined,
         })
     })
     it('converts basic tab without trackers & protections off', async () => {
@@ -57,16 +57,16 @@ describe('Tab -> Privacy Dashboard conversion', () => {
                     allowlisted: true,
                     denylisted: false,
                     unprotectedTemporary: false,
-                    enabledFeatures: ['contentBlocking']
+                    enabledFeatures: ['contentBlocking'],
                 },
                 upgradedHttps: false,
-                localeSettings: { locale: 'en' }
+                localeSettings: { locale: 'en' },
             },
             requestData: {
-                requests: []
+                requests: [],
             },
             emailProtectionUserData: undefined,
-            fireButton: undefined
+            fireButton: undefined,
         })
     })
     it('converts tab with a tracker', async () => {
@@ -76,20 +76,24 @@ describe('Tab -> Privacy Dashboard conversion', () => {
         const trackerObj = {
             owner: {
                 name: trackerName,
-                displayName: trackerName
-            }
+                displayName: trackerName,
+            },
         }
-        tab.addToTrackers({
-            action: 'block',
-            reason: 'matched rule - block',
-            sameEntity: false,
-            sameBaseDomain: false,
-            redirectUrl: false,
-            matchedRule: 'block',
-            matchedRuleException: false,
-            tracker: trackerObj,
-            fullTrackerDomain: 'subdomain.abc.com'
-        }, 'subdomain.abc.com', 'https://subdomain.abc.com/a.js')
+        tab.addToTrackers(
+            {
+                action: 'block',
+                reason: 'matched rule - block',
+                sameEntity: false,
+                sameBaseDomain: false,
+                redirectUrl: false,
+                matchedRule: 'block',
+                matchedRuleException: false,
+                tracker: trackerObj,
+                fullTrackerDomain: 'subdomain.abc.com',
+            },
+            'subdomain.abc.com',
+            'https://subdomain.abc.com/a.js',
+        )
         const data = dashboardDataFromTab(tab, undefined)
         expect(data.tab).toEqual({
             id: 123,
@@ -100,10 +104,10 @@ describe('Tab -> Privacy Dashboard conversion', () => {
                 allowlisted: false,
                 denylisted: false,
                 unprotectedTemporary: false,
-                enabledFeatures: ['contentBlocking']
+                enabledFeatures: ['contentBlocking'],
             },
             upgradedHttps: false,
-            localeSettings: { locale: 'en' }
+            localeSettings: { locale: 'en' },
         })
         /**
          * Not asserting on everything in the request data for 2 reasons:
@@ -120,31 +124,39 @@ describe('Tab -> Privacy Dashboard conversion', () => {
         const trackerObj = {
             owner: {
                 name: trackerName,
-                displayName: trackerName
-            }
+                displayName: trackerName,
+            },
         }
-        tab.addToTrackers({
-            action: 'block',
-            reason: 'matched rule - block',
-            sameEntity: false,
-            sameBaseDomain: false,
-            redirectUrl: false,
-            matchedRule: 'block',
-            matchedRuleException: false,
-            tracker: trackerObj,
-            fullTrackerDomain: 'subdomain.abc.com'
-        }, 'subdomain.abc.com', 'https://subdomain.abc.com/a.js')
-        tab.addToTrackers({
-            action: 'none',
-            reason: 'not sure',
-            sameEntity: false,
-            sameBaseDomain: false,
-            redirectUrl: false,
-            matchedRule: 'block',
-            matchedRuleException: false,
-            tracker: trackerObj,
-            fullTrackerDomain: 'subdomain.abc.com'
-        }, 'subdomain.abc.com', 'https://subdomain.abc.com/b.jpg')
+        tab.addToTrackers(
+            {
+                action: 'block',
+                reason: 'matched rule - block',
+                sameEntity: false,
+                sameBaseDomain: false,
+                redirectUrl: false,
+                matchedRule: 'block',
+                matchedRuleException: false,
+                tracker: trackerObj,
+                fullTrackerDomain: 'subdomain.abc.com',
+            },
+            'subdomain.abc.com',
+            'https://subdomain.abc.com/a.js',
+        )
+        tab.addToTrackers(
+            {
+                action: 'none',
+                reason: 'not sure',
+                sameEntity: false,
+                sameBaseDomain: false,
+                redirectUrl: false,
+                matchedRule: 'block',
+                matchedRuleException: false,
+                tracker: trackerObj,
+                fullTrackerDomain: 'subdomain.abc.com',
+            },
+            'subdomain.abc.com',
+            'https://subdomain.abc.com/b.jpg',
+        )
         const data = dashboardDataFromTab(tab, undefined)
         expect(data.tab).toEqual({
             id: 123,
@@ -155,10 +167,10 @@ describe('Tab -> Privacy Dashboard conversion', () => {
                 allowlisted: false,
                 denylisted: false,
                 unprotectedTemporary: false,
-                enabledFeatures: ['contentBlocking']
+                enabledFeatures: ['contentBlocking'],
             },
             upgradedHttps: false,
-            localeSettings: { locale: 'en' }
+            localeSettings: { locale: 'en' },
         })
         /**
          * There should be 2 entries now, even though the domains match, one was "block"
@@ -173,31 +185,39 @@ describe('Tab -> Privacy Dashboard conversion', () => {
         const trackerObj = {
             owner: {
                 name: trackerName,
-                displayName: trackerName
-            }
+                displayName: trackerName,
+            },
         }
-        tab.addToTrackers({
-            action: 'ignore',
-            reason: 'first party',
-            sameEntity: true,
-            sameBaseDomain: true,
-            redirectUrl: false,
-            matchedRule: 'block',
-            matchedRuleException: false,
-            tracker: trackerObj,
-            fullTrackerDomain: 'subdomain.abc.com'
-        }, 'subdomain.abc.com', 'https://subdomain.abc.com/a.js')
-        tab.addToTrackers({
-            action: 'block',
-            reason: 'not sure',
-            sameEntity: true,
-            sameBaseDomain: false,
-            redirectUrl: false,
-            matchedRule: 'block',
-            matchedRuleException: false,
-            tracker: trackerObj,
-            fullTrackerDomain: 'subdomain.abcd.com'
-        }, 'subdomain.abcd.com', 'https://subdomain.abc.com/b.jpg')
+        tab.addToTrackers(
+            {
+                action: 'ignore',
+                reason: 'first party',
+                sameEntity: true,
+                sameBaseDomain: true,
+                redirectUrl: false,
+                matchedRule: 'block',
+                matchedRuleException: false,
+                tracker: trackerObj,
+                fullTrackerDomain: 'subdomain.abc.com',
+            },
+            'subdomain.abc.com',
+            'https://subdomain.abc.com/a.js',
+        )
+        tab.addToTrackers(
+            {
+                action: 'block',
+                reason: 'not sure',
+                sameEntity: true,
+                sameBaseDomain: false,
+                redirectUrl: false,
+                matchedRule: 'block',
+                matchedRuleException: false,
+                tracker: trackerObj,
+                fullTrackerDomain: 'subdomain.abcd.com',
+            },
+            'subdomain.abcd.com',
+            'https://subdomain.abc.com/b.jpg',
+        )
         const data = dashboardDataFromTab(tab, undefined)
         /**
          * There should be 1 entry now because the first was `sameBaseDomain`

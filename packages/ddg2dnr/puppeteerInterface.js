@@ -8,35 +8,26 @@ const path = require('path')
 const puppeteer = require('puppeteer')
 
 class PuppeteerInterface {
-    async setupBrowser () {
-        const testExtensionPath = path.join(
-            __dirname, 'test', 'data', 'chrome-extension'
-        )
+    async setupBrowser() {
+        const testExtensionPath = path.join(__dirname, 'test', 'data', 'chrome-extension')
 
         // Open the browser, installing the test extension.
         this.browser = await puppeteer.launch({
             headless: 'chrome',
-            args: [
-                '--disable-extensions-except=' + testExtensionPath,
-                '--load-extension=' + testExtensionPath
-            ]
+            args: ['--disable-extensions-except=' + testExtensionPath, '--load-extension=' + testExtensionPath],
         })
 
         // Find the background ServiceWorker for the extension.
-        const backgroundWorkerTarget =
-              await this.browser.waitForTarget(
-                  target => target.type() === 'service_worker',
-                  { timeout: 2000 }
-              )
+        const backgroundWorkerTarget = await this.browser.waitForTarget((target) => target.type() === 'service_worker', { timeout: 2000 })
         this.backgroundWorker = await backgroundWorkerTarget.worker()
     }
 
-    async closeBrowser () {
+    async closeBrowser() {
         await this.ready
         await this.browser?.close()
     }
 
-    constructor () {
+    constructor() {
         this.ready = this.setupBrowser()
     }
 
@@ -54,17 +45,15 @@ class PuppeteerInterface {
      * @param {RegexOptions} regexOptions
      * @return {Promise<boolean>}
      */
-    async isRegexSupported (regexOptions) {
+    async isRegexSupported(regexOptions) {
         await this.ready
-        return await this.backgroundWorker?.evaluate(options =>
-            new Promise(
-                resolve => {
-                    chrome.declarativeNetRequest.isRegexSupported(
-                        options, resolve
-                    )
-                }
-            )
-        , regexOptions)
+        return await this.backgroundWorker?.evaluate(
+            (options) =>
+                new Promise((resolve) => {
+                    chrome.declarativeNetRequest.isRegexSupported(options, resolve)
+                }),
+            regexOptions,
+        )
     }
 
     /**
@@ -73,11 +62,11 @@ class PuppeteerInterface {
      * @param {object[]} rules
      *   The rules to add.
      */
-    async addRules (rules) {
+    async addRules(rules) {
         await this.ready
-        await this.backgroundWorker?.evaluate(async addRules => {
+        await this.backgroundWorker?.evaluate(async (addRules) => {
             await chrome.declarativeNetRequest.updateDynamicRules({
-                addRules
+                addRules,
             })
 
             if (typeof self.ruleById === 'undefined') {
@@ -96,9 +85,9 @@ class PuppeteerInterface {
      *   The rules to remove.
      *   Note: Only the rule.id property is strictly required.
      */
-    async removeRules (rules) {
+    async removeRules(rules) {
         await this.ready
-        await this.backgroundWorker?.evaluate(async removeRules => {
+        await this.backgroundWorker?.evaluate(async (removeRules) => {
             const ruleIds = []
             for (const rule of removeRules) {
                 if (typeof self.ruleById !== 'undefined') {
@@ -108,7 +97,7 @@ class PuppeteerInterface {
             }
 
             await chrome.declarativeNetRequest.updateDynamicRules({
-                removeRuleIds: ruleIds
+                removeRuleIds: ruleIds,
             })
         }, rules)
     }
@@ -116,7 +105,7 @@ class PuppeteerInterface {
     /**
      * Clear all declarativeNetRequest rules from the test extension.
      */
-    async clearAllRules (rules) {
+    async clearAllRules(rules) {
         await this.ready
         await this.backgroundWorker?.evaluate(async () => {
             if (typeof self.ruleById === 'undefined') {
@@ -124,7 +113,7 @@ class PuppeteerInterface {
             }
 
             await chrome.declarativeNetRequest.updateDynamicRules({
-                removeRuleIds: Array.from(self.ruleById.keys())
+                removeRuleIds: Array.from(self.ruleById.keys()),
             })
 
             delete self.ruleById
@@ -151,33 +140,24 @@ class PuppeteerInterface {
      */
 
     /**
-      * Tests which rules (if any) match the given request details.
-      * Returns an array of matching rules.
-      * @param {TestRequestDetails} testRequest
-      *   The request details to match against.
-      * @return {Promise<object[]>}
-      *   The matching rules (if any).
-      */
-    async testMatchOutcome (testRequest) {
+     * Tests which rules (if any) match the given request details.
+     * Returns an array of matching rules.
+     * @param {TestRequestDetails} testRequest
+     *   The request details to match against.
+     * @return {Promise<object[]>}
+     *   The matching rules (if any).
+     */
+    async testMatchOutcome(testRequest) {
         await this.ready
         if (!this.backgroundWorker) return []
         return await this.backgroundWorker.evaluate(
-            async testRequestDetails =>
-                new Promise(resolve =>
-                    chrome.declarativeNetRequest.testMatchOutcome(
-                        testRequestDetails,
-                        ({ matchedRules }) => {
-                            resolve(
-                                matchedRules.map(
-                                    ({ ruleId }) =>
-                                        self.ruleById.get(ruleId) ||
-                                        { id: ruleId }
-                                )
-                            )
-                        }
-                    )
-                )
-            , testRequest
+            async (testRequestDetails) =>
+                new Promise((resolve) =>
+                    chrome.declarativeNetRequest.testMatchOutcome(testRequestDetails, ({ matchedRules }) => {
+                        resolve(matchedRules.map(({ ruleId }) => self.ruleById.get(ruleId) || { id: ruleId }))
+                    }),
+                ),
+            testRequest,
         )
     }
 }

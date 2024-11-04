@@ -11,7 +11,7 @@ const devtoolsMessageResponseReceived = new EventTarget()
 // Open the messaging port and re-open if disconnected. The connection will
 // disconnect for MV3 builds when the background ServiceWorker becomes inactive.
 let port
-function openPort () {
+function openPort() {
     port = chrome.runtime.connect({ name: 'devtools' })
     port.onDisconnect.addListener(openPort)
 
@@ -31,19 +31,15 @@ function openPort () {
 }
 openPort()
 
-function sendDevtoolsMessage (message) {
-    return new Promise(resolve => {
+function sendDevtoolsMessage(message) {
+    return new Promise((resolve) => {
         message.id = Math.random()
-        devtoolsMessageResponseReceived.addEventListener(
-            message.id,
-            ({ detail: response }) => resolve(response),
-            { once: true }
-        )
+        devtoolsMessageResponseReceived.addEventListener(message.id, ({ detail: response }) => resolve(response), { once: true })
         port.postMessage(message)
     })
 }
 
-function sendMessage (messageType, options, callback) {
+function sendMessage(messageType, options, callback) {
     chrome.runtime.sendMessage({ messageType, options }, callback)
 }
 
@@ -52,7 +48,7 @@ function sendMessage (messageType, options, callback) {
  *
  * @param {HTMLTableRowElement} row
  */
-function addNewRequestRow (row) {
+function addNewRequestRow(row) {
     const counter = row.querySelector('.action-count')
     panelConfig.currentCounter = counter
     panelConfig.lastRowTemplate = row.cloneNode(true)
@@ -64,7 +60,7 @@ function addNewRequestRow (row) {
  *
  * @param {HTMLTableRowElement} row
  */
-function addRequestRow (row) {
+function addRequestRow(row) {
     const prevRowTemplate = panelConfig.lastRowTemplate
     if (prevRowTemplate) {
         // if duplicate request lines would be printed, we instead show a
@@ -82,7 +78,7 @@ function addRequestRow (row) {
 /**
  * Increment the counter for the current request type.
  */
-function incrementCurrentRequestCounter () {
+function incrementCurrentRequestCounter() {
     const counter = panelConfig.currentCounter
     const prevCount = parseInt(counter.textContent.replaceAll(/[ [\]]/g, '') || '1')
     counter.textContent = ` [${prevCount + 1}]`
@@ -104,7 +100,7 @@ const loadConfigurableFeatures = new Promise((resolve) => {
                 await sendDevtoolsMessage({
                     action: 'toggleFeature',
                     feature,
-                    tabId
+                    tabId,
                 })
                 reloadPage()
                 btn.disabled = false
@@ -120,7 +116,7 @@ const actionIcons = {
     ignore: '⚠️',
     none: '✅',
     'ad-attribution': '🪄',
-    'ignore-user': '🎛️'
+    'ignore-user': '🎛️',
 }
 
 /**
@@ -128,7 +124,7 @@ const actionIcons = {
  * @param {string} textName
  * @param {boolean} isEnabled
  */
-function setupProtectionButton (element, textName, isEnabled) {
+function setupProtectionButton(element, textName, isEnabled) {
     element.innerText = `${textName}: ${isEnabled ? 'ON' : 'OFF'}`
     element.classList.add(`protection-button-${isEnabled ? 'on' : 'off'}`)
     element.classList.remove(`protection-button-${isEnabled ? 'off' : 'on'}`)
@@ -136,9 +132,7 @@ function setupProtectionButton (element, textName, isEnabled) {
 
 const devtoolsMessageHandlers = {
     response: ({ message: { id, response } }) => {
-        devtoolsMessageResponseReceived.dispatchEvent(
-            new CustomEvent(id, { detail: response })
-        )
+        devtoolsMessageResponseReceived.dispatchEvent(new CustomEvent(id, { detail: response }))
     },
     tracker: (m) => {
         const { tracker, url, requestData, siteUrl, serviceWorkerInitiated } = m.message
@@ -159,7 +153,7 @@ const devtoolsMessageHandlers = {
                 tabId,
                 tracker,
                 requestData,
-                siteUrl
+                siteUrl,
             })
             row.classList.remove(tracker.action)
             row.classList.add(toggleLink.innerText === 'I' ? 'ignore' : 'block')
@@ -247,7 +241,7 @@ const devtoolsMessageHandlers = {
         cells[4].textContent = value.split(';')[0]
         row.classList.add('jscookie')
         addRequestRow(row)
-    }
+    },
 }
 
 /**
@@ -255,7 +249,7 @@ const devtoolsMessageHandlers = {
  * @param {*} m message from background
  * @param {*} actionName nice name to display for the action
  */
-function displayProxyRow (m) {
+function displayProxyRow(m) {
     const { documentUrl, action, kind, stack, args } = m.message
     const featureAction = m.action
     const row = document.getElementById('cookie-row').content.firstElementChild.cloneNode(true)
@@ -273,7 +267,7 @@ function displayProxyRow (m) {
     addRequestRow(row)
 }
 
-function appendCallStack (cell, stack, drop = 2) {
+function appendCallStack(cell, stack, drop = 2) {
     if (stack) {
         const lines = stack.split('\n')
         // Shift off the first lines of the stack as will be us.
@@ -305,12 +299,12 @@ const panelConfig = {
         runtimeChecks: true,
         proxyCalls: false,
         noneRequest: true,
-        ignoreUser: true
+        ignoreUser: true,
     },
-    rowFilter: ''
+    rowFilter: '',
 }
 
-function shouldShowRow (row) {
+function shouldShowRow(row) {
     // empty search box is considered to be no filter
     if (panelConfig.rowFilter !== '') {
         // when a filter is in effect, match against the whole rows text content
@@ -321,40 +315,40 @@ function shouldShowRow (row) {
 
     const className = row.classList[0]
     switch (className) {
-    case 'ignore':
-        if (row.querySelector('.request-action').textContent === `${actionIcons.ignore} ignore (first party)`) {
-            return panelConfig.rowVisibility.ignored && panelConfig.rowVisibility.ignoredFirstParty
-        }
-        return panelConfig.rowVisibility.ignored
-    case 'block':
-        return panelConfig.rowVisibility.blocked
-    case 'redirect':
-        return panelConfig.rowVisibility.redirected
-    case 'cookie-tracker':
-    case 'set-cookie-tracker':
-        return panelConfig.rowVisibility.cookieHTTP
-    case 'jscookie':
-        return panelConfig.rowVisibility.cookieJS
-    case 'jsException':
-        return panelConfig.rowVisibility.jsException
-    case 'runtimeChecks':
-        return panelConfig.rowVisibility.runtimeChecks
-    case 'proxyCall':
-        return panelConfig.rowVisibility.proxyCalls
-    case 'none':
-        return panelConfig.rowVisibility.noneRequest
-    case 'ignore-user':
-        return panelConfig.rowVisibility.ignoreUser
+        case 'ignore':
+            if (row.querySelector('.request-action').textContent === `${actionIcons.ignore} ignore (first party)`) {
+                return panelConfig.rowVisibility.ignored && panelConfig.rowVisibility.ignoredFirstParty
+            }
+            return panelConfig.rowVisibility.ignored
+        case 'block':
+            return panelConfig.rowVisibility.blocked
+        case 'redirect':
+            return panelConfig.rowVisibility.redirected
+        case 'cookie-tracker':
+        case 'set-cookie-tracker':
+            return panelConfig.rowVisibility.cookieHTTP
+        case 'jscookie':
+            return panelConfig.rowVisibility.cookieJS
+        case 'jsException':
+            return panelConfig.rowVisibility.jsException
+        case 'runtimeChecks':
+            return panelConfig.rowVisibility.runtimeChecks
+        case 'proxyCall':
+            return panelConfig.rowVisibility.proxyCalls
+        case 'none':
+            return panelConfig.rowVisibility.noneRequest
+        case 'ignore-user':
+            return panelConfig.rowVisibility.ignoreUser
     }
     // always show if we don't have an appropriate toggle
     return true
 }
 
-function setRowVisible (row) {
+function setRowVisible(row) {
     row.hidden = !shouldShowRow(row)
 }
 
-function updateTabSelector () {
+function updateTabSelector() {
     chrome.tabs.query({}, (tabs) => {
         while (tabPicker.firstChild !== null) {
             tabPicker.removeChild(tabPicker.firstChild)
@@ -393,7 +387,7 @@ if (tabId) {
     sendDevtoolsMessage({ action: 'setTab', tabId })
 }
 
-function clear () {
+function clear() {
     while (table.lastChild) {
         table.removeChild(table.lastChild)
     }
@@ -401,7 +395,7 @@ function clear () {
     panelConfig.currentCounter = undefined
 }
 
-function reloadPage () {
+function reloadPage() {
     clear()
     if (chrome.devtools) {
         chrome.devtools.inspectedWindow.eval('window.location.reload();')
@@ -417,7 +411,7 @@ protectionButton.addEventListener('click', async () => {
     protectionButton.disabled = true
     await sendDevtoolsMessage({
         action: 'toggleProtections',
-        tabId
+        tabId,
     })
     reloadPage()
     protectionButton.disabled = false
@@ -432,12 +426,16 @@ sendMessage('getSetting', { name: 'tds-channel' }, (result) => {
 })
 
 tdsOption.addEventListener('change', (e) => {
-    sendMessage('updateSetting', {
-        name: 'tds-channel',
-        value: tdsOption.selectedOptions[0].value
-    }, () => {
-        sendMessage('reloadList', 'tds')
-    })
+    sendMessage(
+        'updateSetting',
+        {
+            name: 'tds-channel',
+            value: tdsOption.selectedOptions[0].value,
+        },
+        () => {
+            sendMessage('reloadList', 'tds')
+        },
+    )
 })
 
 const displayFilters = document.querySelector('#table-filter').querySelectorAll('input')

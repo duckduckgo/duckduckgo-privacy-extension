@@ -3,19 +3,24 @@ const settings = require('../../shared/js/background/settings')
 const atbUtils = require('../../shared/js/background/atb-utils')
 
 describe('experiment.getVariant', () => {
-    const tests = [{
-        atb: 'v123-1ab',
-        variant: 'a'
-    }, {
-        atb: 'v123-1_b',
-        variant: '_'
-    }, {
-        atb: 'v123',
-        variant: '_'
-    }, {
-        atb: '',
-        variant: '_'
-    }]
+    const tests = [
+        {
+            atb: 'v123-1ab',
+            variant: 'a',
+        },
+        {
+            atb: 'v123-1_b',
+            variant: '_',
+        },
+        {
+            atb: 'v123',
+            variant: '_',
+        },
+        {
+            atb: '',
+            variant: '_',
+        },
+    ]
 
     tests.forEach((test) => {
         it('gets correct variant from settings', () => {
@@ -27,19 +32,24 @@ describe('experiment.getVariant', () => {
 })
 
 describe('experiment.getATBVariant', () => {
-    const tests = [{
-        atb: 'v123-1ab',
-        atbVariant: 'b'
-    }, {
-        atb: 'v123-1_b',
-        atbVariant: 'b'
-    }, {
-        atb: 'v123',
-        atbVariant: '_'
-    }, {
-        atb: '',
-        atbVariant: '_'
-    }]
+    const tests = [
+        {
+            atb: 'v123-1ab',
+            atbVariant: 'b',
+        },
+        {
+            atb: 'v123-1_b',
+            atbVariant: 'b',
+        },
+        {
+            atb: 'v123',
+            atbVariant: '_',
+        },
+        {
+            atb: '',
+            atbVariant: '_',
+        },
+    ]
 
     tests.forEach((test) => {
         it('gets correct variant from settings', () => {
@@ -51,21 +61,23 @@ describe('experiment.getATBVariant', () => {
 })
 
 describe('experiment.getDaysSinceInstall', () => {
-    const tests = [{
-        atb: 'v214-1',
-        currentATB: { majorVersion: 214, minorVersion: 1 },
-        diff: 0
-
-    }, {
-        atb: 'v214-1',
-        currentATB: { majorVersion: 215, minorVersion: 1 },
-        diff: 7
-    },
-    {
-        atb: 'v215-1',
-        currentATB: { majorVersion: 214, minorVersion: 1 },
-        diff: -7
-    }]
+    const tests = [
+        {
+            atb: 'v214-1',
+            currentATB: { majorVersion: 214, minorVersion: 1 },
+            diff: 0,
+        },
+        {
+            atb: 'v214-1',
+            currentATB: { majorVersion: 215, minorVersion: 1 },
+            diff: 7,
+        },
+        {
+            atb: 'v215-1',
+            currentATB: { majorVersion: 214, minorVersion: 1 },
+            diff: -7,
+        },
+    ]
 
     tests.forEach((test) => {
         it('calculates correct days since install', () => {

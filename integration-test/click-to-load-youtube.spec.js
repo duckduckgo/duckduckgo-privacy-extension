@@ -13,7 +13,7 @@ const youTubeImageDomains = new Set(['i.ytimg.com'])
 /**
  * @param {import('../helpers/requests').LoggedRequestDetails[]} requests
  */
-function summariseYouTubeRequests (requests) {
+function summariseYouTubeRequests(requests) {
     const youTubeIframeApi = { checked: false, alwaysRedirected: true }
     const youTubeStandard = { blocked: 0, allowed: 0, total: 0 }
     const youTubeNocookie = { blocked: 0, allowed: 0, total: 0 }
@@ -61,12 +61,10 @@ function summariseYouTubeRequests (requests) {
     return { youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage, hasYouTubeAutoPlay }
 }
 
-function overrideHandler (route) {
+function overrideHandler(route) {
     const { hostname } = new URL(route.request().url())
 
-    if (youTubeStandardDomains.has(hostname) ||
-        youTubeNocookieDomains.has(hostname) ||
-        youTubeImageDomains.has(hostname)) {
+    if (youTubeStandardDomains.has(hostname) || youTubeNocookieDomains.has(hostname) || youTubeImageDomains.has(hostname)) {
         route.abort()
         return true
     }
@@ -97,9 +95,7 @@ test.describe('Test YouTube Click To Load', () => {
         // be blocked.
         await page.goto(testSite, { waitUntil: 'networkidle' })
         {
-            const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage
-            } = summariseYouTubeRequests(pageRequests)
+            const { youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage } = summariseYouTubeRequests(pageRequests)
 
             expect(youTubeIframeApi.checked).toBe(true)
             expect(youTubeIframeApi.alwaysRedirected).toBe(true)
@@ -118,9 +114,8 @@ test.describe('Test YouTube Click To Load', () => {
         await page.click('main > div:nth-child(2) button.primary')
         await waitForNetworkIdle(page)
         {
-            const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage, hasYouTubeAutoPlay
-            } = summariseYouTubeRequests(pageRequests)
+            const { youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage, hasYouTubeAutoPlay } =
+                summariseYouTubeRequests(pageRequests)
 
             expect(youTubeIframeApi.checked).toBe(true)
             expect(youTubeIframeApi.alwaysRedirected).toBe(false)
@@ -136,9 +131,7 @@ test.describe('Test YouTube Click To Load', () => {
         clearRequests()
         await page.reload({ waitUntil: 'networkidle' })
         {
-            const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie
-            } = summariseYouTubeRequests(pageRequests)
+            const { youTubeIframeApi, youTubeStandard, youTubeNocookie } = summariseYouTubeRequests(pageRequests)
 
             expect(youTubeIframeApi.checked).toBe(true)
             expect(youTubeIframeApi.alwaysRedirected).toBe(true)
@@ -154,9 +147,7 @@ test.describe('Test YouTube Click To Load', () => {
         await page.click('#short-container #DuckDuckGoPrivacyEssentialsCTLElementTitleTextButton')
         await waitForNetworkIdle(page)
         {
-            const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie
-            } = summariseYouTubeRequests(pageRequests)
+            const { youTubeIframeApi, youTubeStandard, youTubeNocookie } = summariseYouTubeRequests(pageRequests)
 
             expect(youTubeIframeApi.checked).toBe(true)
             expect(youTubeIframeApi.alwaysRedirected).toBe(false)
@@ -172,12 +163,11 @@ test.describe('Test YouTube Click To Load', () => {
         // Test the Iframe API controls and events function correctly, even when
         // used with an existing video.
         {
-            const waitForExpectedBorder = expectedBorder =>
-                page.waitForFunction(pageExpectedBorder => {
+            const waitForExpectedBorder = (expectedBorder) =>
+                page.waitForFunction((pageExpectedBorder) => {
                     const video = document.getElementById('existing-video')
                     return video?.style.border.split(' ').pop() === pageExpectedBorder
-                },
-                expectedBorder)
+                }, expectedBorder)
 
             await waitForExpectedBorder('0px')
 
@@ -197,14 +187,15 @@ test.describe('Test YouTube Click To Load', () => {
         // Test the Iframe API controls a 360 video correctly.
         {
             const waitForExpectedRoll = (expectedRoll, clickFlip) =>
-                page.waitForFunction(({ pageExpectedRoll, pageClickFlip }) => {
-                    if (pageClickFlip) {
-                        document.getElementById('spherical-video-flip').click()
-                    }
-                    return document.getElementById('spherical-video-roll')
-                        .value === pageExpectedRoll
-                },
-                { pageExpectedRoll: expectedRoll, pageClickFlip: clickFlip })
+                page.waitForFunction(
+                    ({ pageExpectedRoll, pageClickFlip }) => {
+                        if (pageClickFlip) {
+                            document.getElementById('spherical-video-flip').click()
+                        }
+                        return document.getElementById('spherical-video-roll').value === pageExpectedRoll
+                    },
+                    { pageExpectedRoll: expectedRoll, pageClickFlip: clickFlip },
+                )
 
             await waitForExpectedRoll('')
 
@@ -251,9 +242,7 @@ test.describe('Test YouTube Click To Load', () => {
 
             expect(totalEmbeddedVideosBlocked).toEqual(totalEmbeddedVideosPreviews)
 
-            const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage
-            } = summariseYouTubeRequests(pageRequests)
+            const { youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage } = summariseYouTubeRequests(pageRequests)
 
             expect(youTubeIframeApi.checked).toBe(false)
             expect(youTubeIframeApi.alwaysRedirected).toBe(true)
@@ -270,9 +259,7 @@ test.describe('Test YouTube Click To Load', () => {
         await page.click('main > div:nth-child(2) button.primary')
         await waitForNetworkIdle(page)
         {
-            const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie, hasYouTubeAutoPlay
-            } = summariseYouTubeRequests(pageRequests)
+            const { youTubeIframeApi, youTubeStandard, youTubeNocookie, hasYouTubeAutoPlay } = summariseYouTubeRequests(pageRequests)
 
             expect(youTubeIframeApi.checked).toBe(true)
             expect(youTubeIframeApi.alwaysRedirected).toBe(false)
@@ -288,9 +275,7 @@ test.describe('Test YouTube Click To Load', () => {
         clearRequests()
         await page.reload({ waitUntil: 'networkidle' })
         {
-            const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage
-            } = summariseYouTubeRequests(pageRequests)
+            const { youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage } = summariseYouTubeRequests(pageRequests)
 
             expect(youTubeIframeApi.checked).toBe(true)
             expect(youTubeIframeApi.alwaysRedirected).toBe(true)
@@ -308,9 +293,7 @@ test.describe('Test YouTube Click To Load', () => {
         await page.click('#short-container #DuckDuckGoPrivacyEssentialsCTLElementTitleTextButton')
         await waitForNetworkIdle(page)
         {
-            const {
-                youTubeIframeApi, youTubeStandard, youTubeNocookie, hasYouTubeAutoPlay
-            } = summariseYouTubeRequests(pageRequests)
+            const { youTubeIframeApi, youTubeStandard, youTubeNocookie, hasYouTubeAutoPlay } = summariseYouTubeRequests(pageRequests)
 
             expect(youTubeIframeApi.checked).toBe(true)
             expect(youTubeIframeApi.alwaysRedirected).toBe(false)

@@ -10,18 +10,18 @@
 
 let devtools = null
 
-export function registerDevtools (newDevtools) {
+export function registerDevtools(newDevtools) {
     devtools = newDevtools
 }
 
-export function isActive (tabId) {
+export function isActive(tabId) {
     if (devtools) {
         return devtools.isActive(tabId)
     }
     return false
 }
 
-export function postMessage (tabId, action, message) {
+export function postMessage(tabId, action, message) {
     if (devtools) {
         devtools.postMessage(tabId, action, message)
     }

@@ -12,9 +12,11 @@ const dnrSessionId = require('./dnr-session-rule-id')
 /** @module */
 
 let resolveReadyPromise
-const readyPromise = new Promise(resolve => { resolveReadyPromise = resolve })
+const readyPromise = new Promise((resolve) => {
+    resolveReadyPromise = resolve
+})
 
-export async function onStartup () {
+export async function onStartup() {
     if (BUILD_TARGET === 'chrome') {
         await dnrSessionId.setSessionRuleOffsetFromStorage()
     }
@@ -23,7 +25,7 @@ export async function onStartup () {
     experiment.setActiveExperiment()
 
     try {
-        const httpsLists = await httpsStorage.getLists(/* preferLocal= */true)
+        const httpsLists = await httpsStorage.getLists(/* preferLocal= */ true)
         https.setLists(httpsLists)
     } catch (e) {
         console.warn('Error loading https lists', e)
@@ -62,6 +64,6 @@ export async function onStartup () {
     }
 }
 
-export function ready () {
+export function ready() {
     return readyPromise
 }

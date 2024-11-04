@@ -8,14 +8,19 @@ const thirdPartyDomain = 'good.third-party.site'
 const thirdPartyTracker = 'broken.third-party.site'
 const thirdPartyAd = 'convert.ad-company.site'
 
-async function waitForAllResults (page) {
+async function waitForAllResults(page) {
     while ((await page.$$('#tests-details > li > span > ul')).length < 2) {
-        await new Promise(resolve => setTimeout(resolve, 100))
+        await new Promise((resolve) => setTimeout(resolve, 100))
     }
 }
 
 test.describe('Storage blocking Tests', () => {
-    test(`Blocks storage correctly on https://${testPageDomain}/privacy-protections/storage-blocking/`, async ({ page, backgroundPage, context, backgroundNetworkContext }) => {
+    test(`Blocks storage correctly on https://${testPageDomain}/privacy-protections/storage-blocking/`, async ({
+        page,
+        backgroundPage,
+        context,
+        backgroundNetworkContext,
+    }) => {
         await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json')
         await overrideTds(backgroundNetworkContext, 'mock-tds.json')
         await backgroundWait.forExtensionLoaded(context)
@@ -34,25 +39,25 @@ test.describe('Storage blocking Tests', () => {
             [testPageDomain]: {
                 top_firstparty_headerdata: expectUnmodified('does not block 1st party HTTP cookies'),
                 jsdata: expectUnmodified('does not block 1st party JS cookies'),
-                tpsdata: expectUnmodified('does not block 1st party JS cookies set by non-trackers')
+                tpsdata: expectUnmodified('does not block 1st party JS cookies set by non-trackers'),
             },
             [thirdPartyDomain]: {
                 top_thirdparty_headerdata: expectUnmodified('allows 3rd party HTTP cookies not on block list'),
                 thirdparty_firstparty_headerdata: expectUnmodified('allows 1st party HTTP cookies from non-tracker frames'),
-                jsdata: expectUnmodified('does not block 3rd party JS cookies not on block list')
+                jsdata: expectUnmodified('does not block 3rd party JS cookies not on block list'),
             },
             [thirdPartyAd]: {
                 top_thirdparty_headerdata: expectUnmodified('allows 3rd party HTTP cookies not on block list'),
                 thirdparty_firstparty_headerdata: expectUnmodified('allows 1st party HTTP cookies from non-tracker frames'),
-                jsdata: expectUnmodified('does not block 3rd party JS cookies not on block list')
+                jsdata: expectUnmodified('does not block 3rd party JS cookies not on block list'),
             },
             [thirdPartyTracker]: {
                 thirdpartytracker_thirdparty_headerdata: expectUnmodified('allows 3rd party tracker HTTP cookies from tracker frames'),
                 top_tracker_headerdata: expectBlocked('blocks 3rd party HTTP cookies for trackers'),
                 thirdparty_tracker_headerdata: expectBlocked('blocks 3rd party tracker HTTP cookies from non-tracker frames'),
                 thirdpartytracker_firstparty_headerdata: expectBlocked('blocks 1st party HTTP cookies from tracker frames'),
-                jsdata: expectBlocked('blocks 3rd party JS cookies from trackers')
-            }
+                jsdata: expectBlocked('blocks 3rd party JS cookies from trackers'),
+            },
         }
         for (const cookie of cookies) {
             if (expectedCookies[cookie.domain] && expectedCookies[cookie.domain][cookie.name]) {
@@ -71,7 +76,7 @@ test.describe('Storage blocking Tests', () => {
     })
 
     test.describe('Cookie blocking tests', () => {
-        async function runStorageTest (page, origin) {
+        async function runStorageTest(page, origin) {
             await page.bringToFront()
             await page.goto(`${origin}/privacy-protections/storage-blocking/?store`)
             await waitForAllResults(page)
@@ -82,14 +87,14 @@ test.describe('Storage blocking Tests', () => {
             return results
         }
 
-        function assertCookieAllowed (results, testName) {
+        function assertCookieAllowed(results, testName) {
             const savedResult = results.results.find(({ id }) => id === 'memory').value
             const checkResult = results.results.find(({ id }) => id === testName)?.value
             expect(checkResult).toBeTruthy()
             expect(checkResult).toEqual(savedResult)
         }
 
-        function assertCookieBlocked (results, testName) {
+        function assertCookieBlocked(results, testName) {
             expect(results.results.find(({ id }) => id === testName).value).toBeNull()
         }
 
@@ -106,12 +111,12 @@ test.describe('Storage blocking Tests', () => {
                 await dbg.tabManager.setList({
                     list: 'allowlisted',
                     domain,
-                    value: false
+                    value: false,
                 })
                 await dbg.tabManager.setList({
                     list: 'denylisted',
                     domain,
-                    value: false
+                    value: false,
                 })
             }, testPageDomain)
         })
@@ -128,7 +133,7 @@ test.describe('Storage blocking Tests', () => {
                 return await dbg.tabManager.setList({
                     list: 'allowlisted',
                     domain,
-                    value: true
+                    value: true,
                 })
             }, testPageDomain)
             const results = await runStorageTest(page, `https://${testPageDomain}`)
@@ -143,7 +148,7 @@ test.describe('Storage blocking Tests', () => {
                 await configLoader.modify((config) => {
                     config.features.cookie.settings.excludedCookieDomains.push({
                         domain,
-                        reason: 'test'
+                        reason: 'test',
                     })
                     return config
                 })
@@ -159,7 +164,7 @@ test.describe('Storage blocking Tests', () => {
                 await configLoader.modify((config) => {
                     config.features.cookie.exceptions.push({
                         domain,
-                        reason: 'test'
+                        reason: 'test',
                     })
                     return config
                 })
@@ -175,7 +180,7 @@ test.describe('Storage blocking Tests', () => {
                 await configLoader.modify((config) => {
                     config.unprotectedTemporary.push({
                         domain,
-                        reason: 'test'
+                        reason: 'test',
                     })
                     return config
                 })
@@ -189,14 +194,14 @@ test.describe('Storage blocking Tests', () => {
                 await dbg.tabManager.setList({
                     list: 'denylisted',
                     domain,
-                    value: true
+                    value: true,
                 })
                 /** @type {import('../shared/js/background/components/resource-loader').default} */
                 const configLoader = globalThis.components.tds.config
                 await configLoader.modify((config) => {
                     config.unprotectedTemporary.push({
                         domain,
-                        reason: 'test'
+                        reason: 'test',
                     })
                     return config
                 })

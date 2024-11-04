@@ -15,7 +15,7 @@ import { getUserLocale } from '../i18n'
  * @param {EmailProtectionUserData | undefined | {}} userData
  * @returns {ExtensionGetPrivacyDashboardData}
  */
-export function dashboardDataFromTab (tab, userData, fireButtonData) {
+export function dashboardDataFromTab(tab, userData, fireButtonData) {
     const protectionsEnabled = !tab.site.allowlisted && !tab.site.isBroken && tab.site.enabledFeatures.includes('contentBlocking')
 
     // parent entity, if available
@@ -24,7 +24,7 @@ export function dashboardDataFromTab (tab, userData, fireButtonData) {
     if (tab.site.parentEntity) {
         parentEntity = {
             displayName: tab.site.parentEntity,
-            prevalence: tab.site.parentPrevalence ?? 0
+            prevalence: tab.site.parentPrevalence ?? 0,
         }
     }
 
@@ -33,7 +33,7 @@ export function dashboardDataFromTab (tab, userData, fireButtonData) {
         allowlisted: Boolean(tab.site.allowlisted),
         denylisted: Boolean(tab.site.denylisted),
         unprotectedTemporary: Boolean(tab.site.isBroken),
-        enabledFeatures: tab.site.enabledFeatures
+        enabledFeatures: tab.site.enabledFeatures,
     }
 
     const requests = convertToRequests(tab, protectionsEnabled)
@@ -57,13 +57,13 @@ export function dashboardDataFromTab (tab, userData, fireButtonData) {
              * Explicitly setting this to 'en' for now. When ready we can send 2-character codes such
              * as 'pl' or 'de' etc. Please see https://duckduckgo.github.io/privacy-dashboard/interfaces/Generated_Schema_Definitions.LocaleSettings.html
              */
-            localeSettings: { locale: getUserLocale() }
+            localeSettings: { locale: getUserLocale() },
         },
         requestData: {
-            requests
+            requests,
         },
         emailProtectionUserData,
-        fireButton: fireButtonData
+        fireButton: fireButtonData,
     }
 }
 
@@ -74,7 +74,7 @@ export function dashboardDataFromTab (tab, userData, fireButtonData) {
  * @param {boolean} protectionsEnabled
  * @returns {DetectedRequest[]}
  */
-function convertToRequests (tab, protectionsEnabled) {
+function convertToRequests(tab, protectionsEnabled) {
     /** @type {DetectedRequest[]} */
     const detectedRequests = []
     for (const tracker of Object.values(tab.trackers || {})) {
@@ -85,7 +85,7 @@ function convertToRequests (tab, protectionsEnabled) {
                 const nextState = { allowed: { reason: 'protectionDisabled' } }
                 const request = {
                     ...detectedRequest,
-                    state: nextState
+                    state: nextState,
                 }
                 detectedRequests.push(request)
                 continue
@@ -103,7 +103,7 @@ function convertToRequests (tab, protectionsEnabled) {
  * @param {boolean} isSameEntity
  * @return {DetectedRequest["state"] | null}
  */
-export function convertState (action, isSameEntity) {
+export function convertState(action, isSameEntity) {
     if (action === 'none') {
         return { allowed: { reason: 'otherThirdPartyRequest' } }
     }

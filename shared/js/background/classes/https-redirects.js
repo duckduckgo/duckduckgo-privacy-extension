@@ -15,7 +15,7 @@ const manifestVersion = browserWrapper.getManifestVersion()
  */
 
 class HttpsRedirects {
-    constructor () {
+    constructor() {
         this.failedUpgradeHosts = {}
         this.redirectCounts = {}
 
@@ -23,10 +23,9 @@ class HttpsRedirects {
         this.clearMainFrameTimeout = null
     }
 
-    registerRedirect (request) {
+    registerRedirect(request) {
         if (request.type === 'main_frame') {
-            if (this.mainFrameRedirect &&
-                    request.url === this.mainFrameRedirect.url) {
+            if (this.mainFrameRedirect && request.url === this.mainFrameRedirect.url) {
                 this.mainFrameRedirect.count += 1
                 return
             }
@@ -34,7 +33,7 @@ class HttpsRedirects {
             this.mainFrameRedirect = {
                 url: request.url,
                 time: Date.now(),
-                count: 0
+                count: 0,
             }
 
             // @ts-ignore
@@ -46,7 +45,7 @@ class HttpsRedirects {
         }
     }
 
-    canRedirect (request) {
+    canRedirect(request) {
         let canRedirect = true
 
         const hostname = utils.extractHostFromURL(request.url, true)
@@ -71,8 +70,7 @@ class HttpsRedirects {
          * by trying to open the same URL repeatedly before it's loaded.
          */
         if (request.type === 'main_frame') {
-            if (this.mainFrameRedirect &&
-                    this.mainFrameRedirect.url === request.url) {
+            if (this.mainFrameRedirect && this.mainFrameRedirect.url === request.url) {
                 const timeSinceFirstHit = Date.now() - this.mainFrameRedirect.time
 
                 if (timeSinceFirstHit < MAINFRAME_RESET_MS && this.mainFrameRedirect.count >= REQUEST_REDIRECT_LIMIT) {
@@ -106,8 +104,10 @@ class HttpsRedirects {
      * persistMainFrameRedirect() is used whenever a tab object is regenerated,
      * so we can maintain redirect loop protection across multiple main_frame requests
      */
-    persistMainFrameRedirect (redirectData) {
-        if (!redirectData) { return }
+    persistMainFrameRedirect(redirectData) {
+        if (!redirectData) {
+            return
+        }
 
         // shallow copy to prevent pass-by-reference issues
         this.mainFrameRedirect = Object.assign({}, redirectData)
@@ -116,11 +116,11 @@ class HttpsRedirects {
         this.clearMainFrameTimeout = setTimeout(this.resetMainFrameRedirect, MAINFRAME_RESET_MS)
     }
 
-    getMainFrameRedirect () {
+    getMainFrameRedirect() {
         return this.mainFrameRedirect
     }
 
-    resetMainFrameRedirect () {
+    resetMainFrameRedirect() {
         // @ts-ignore
         clearTimeout(this.clearMainFrameTimeout)
         this.mainFrameRedirect = null

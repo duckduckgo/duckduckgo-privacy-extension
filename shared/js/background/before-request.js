@@ -12,17 +12,11 @@ const browserWrapper = require('./wrapper')
 const settings = require('./settings')
 const devtools = require('./devtools')
 const trackerAllowlist = require('./allowlisted-trackers')
-const {
-    stripTrackingParameters,
-    trackingParametersStrippingEnabled
-} = require('./url-parameters')
+const { stripTrackingParameters, trackingParametersStrippingEnabled } = require('./url-parameters')
 const ampProtection = require('./amp-protection')
-const {
-    displayClickToLoadPlaceholders,
-    getDefaultEnabledClickToLoadRuleActionsForTab
-} = require('./click-to-load')
+const { displayClickToLoadPlaceholders, getDefaultEnabledClickToLoadRuleActionsForTab } = require('./click-to-load')
 
-function buildResponse (url, requestData, tab, isMainFrame) {
+function buildResponse(url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
         console.log('HTTPS: upgrade request url to ' + url)
         tab.httpsRedirects.registerRedirect(requestData)
@@ -40,13 +34,13 @@ function buildResponse (url, requestData, tab, isMainFrame) {
     }
 }
 
-function updateTabCleanAmpUrl (currentTab, canonicalUrl, url) {
+function updateTabCleanAmpUrl(currentTab, canonicalUrl, url) {
     if (currentTab) {
         currentTab.cleanAmpUrl = canonicalUrl || url
     }
 }
 
-async function handleAmpAsyncRedirect (thisTab, url) {
+async function handleAmpAsyncRedirect(thisTab, url) {
     const canonicalUrl = await ampProtection.fetchAMPURL(thisTab.site, url)
     const currentTab = tabManager.get({ tabId: thisTab.id })
     updateTabCleanAmpUrl(currentTab, canonicalUrl, url)
@@ -55,7 +49,7 @@ async function handleAmpAsyncRedirect (thisTab, url) {
     }
 }
 
-async function handleAmpDelayedUpdate (thisTab, url) {
+async function handleAmpDelayedUpdate(thisTab, url) {
     const canonicalUrl = await ampProtection.fetchAMPURL(thisTab.site, url)
     const currentTab = tabManager.get({ tabId: thisTab.id })
     const newUrl = canonicalUrl || url
@@ -64,8 +58,10 @@ async function handleAmpDelayedUpdate (thisTab, url) {
     browser.tabs.update(thisTab.id, { url: newUrl })
 }
 
-function handleAmpRedirect (thisTab, url) {
-    if (!thisTab) { return }
+function handleAmpRedirect(thisTab, url) {
+    if (!thisTab) {
+        return
+    }
     if (utils.getBrowserName() === 'moz') {
         return handleAmpAsyncRedirect(thisTab, url)
     }
@@ -83,7 +79,7 @@ function handleAmpRedirect (thisTab, url) {
  * - Upgrade http -> https where possible
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  */
-function handleRequest (requestData) {
+function handleRequest(requestData) {
     const thisTab = tabManager.get(requestData)
 
     // control access to web accessible resources
@@ -116,24 +112,19 @@ function handleRequest (requestData) {
             thisTab.cleanAmpUrl = null
         }
 
-        const ampRedirected = thisTab.ampUrl &&
-                              thisTab.cleanAmpUrl && thisTab.cleanAmpUrl !== thisTab.ampUrl &&
-                              requestData.url === thisTab.ampUrl
+        const ampRedirected =
+            thisTab.ampUrl && thisTab.cleanAmpUrl && thisTab.cleanAmpUrl !== thisTab.ampUrl && requestData.url === thisTab.ampUrl
 
         // Tracking parameter stripping.
 
-        thisTab.urlParametersRemoved = (
+        thisTab.urlParametersRemoved =
             // Tracking parameters were stripped previously, this is the request
             // event that fired after the redirection to strip the parameters.
-            thisTab.urlParametersRemovedUrl &&
-            thisTab.urlParametersRemovedUrl === requestData.url
-        ) || (
+            (thisTab.urlParametersRemovedUrl && thisTab.urlParametersRemovedUrl === requestData.url) ||
             // Strip tracking parameters if 1. there are any and 2. the feature
             // is enabled for both the request URL and the initiator URL.
-            trackingParametersStrippingEnabled(
-                thisTab.site, (requestData.initiator || requestData.originUrl)
-            ) && stripTrackingParameters(mainFrameRequestURL)
-        )
+            (trackingParametersStrippingEnabled(thisTab.site, requestData.initiator || requestData.originUrl) &&
+                stripTrackingParameters(mainFrameRequestURL))
 
         // To strip tracking parameters, the request is redirected and this event
         // listener fires again for the redirected request. Take note of the URL
@@ -179,9 +170,12 @@ function handleRequest (requestData) {
 
     // Skip https upgrade on broken sites
     if (thisTab.site.isBroken) {
-        console.log('temporarily skip https upgrades for site: ' +
-              utils.extractHostFromURL(thisTab.url) + '\n' +
-              'more info: https://github.com/duckduckgo/privacy-configuration')
+        console.log(
+            'temporarily skip https upgrades for site: ' +
+                utils.extractHostFromURL(thisTab.url) +
+                '\n' +
+                'more info: https://github.com/duckduckgo/privacy-configuration',
+        )
         return
     }
 
@@ -201,7 +195,7 @@ function handleRequest (requestData) {
     const resultUrl = https.getUpgradedUrl(requestData.url, thisTab, isMainFrame, isPost)
 
     if (resultUrl instanceof Promise) {
-        return resultUrl.then(url => buildResponse(url, requestData, thisTab, isMainFrame))
+        return resultUrl.then((url) => buildResponse(url, requestData, thisTab, isMainFrame))
     } else {
         return buildResponse(resultUrl, requestData, thisTab, isMainFrame)
     }
@@ -226,7 +220,7 @@ export class TrackerBlockedEvent {
      * @param {object} params
      * @param {string} params.companyDisplayName
      */
-    constructor (params) {
+    constructor(params) {
         this.companyDisplayName = params.companyDisplayName
     }
 }
@@ -238,19 +232,17 @@ export class TrackerBlockedEvent {
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
  * @returns {browser.WebRequest.BlockingResponseOrPromise | undefined}
  */
-function blockHandleResponse (thisTab, requestData) {
+function blockHandleResponse(thisTab, requestData) {
     const blockingEnabled = thisTab.site.isContentBlockingEnabled()
 
     // Find the supported and enabled Click to Load rule actions for this tab.
     const enabledRuleActions = new Set(
         getDefaultEnabledClickToLoadRuleActionsForTab(thisTab).filter(
-            ruleAction => !thisTab.disabledClickToLoadRuleActions.includes(ruleAction)
-        )
+            (ruleAction) => !thisTab.disabledClickToLoadRuleActions.includes(ruleAction),
+        ),
     )
 
-    const tracker = trackers.getTrackerData(
-        requestData.url, thisTab.site.url, requestData, enabledRuleActions
-    )
+    const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData, enabledRuleActions)
     const baseDomain = trackers.getBaseDomain(requestData.url)
     const serviceWorkerInitiated = requestData.tabId === -1
 
@@ -304,12 +296,12 @@ function blockHandleResponse (thisTab, requestData) {
         thisTab.postDevtoolsMessage(devtools, 'tracker', {
             tracker: {
                 ...reportedTracker,
-                matchedRule: reportedTracker.matchedRule?.rule?.toString()
+                matchedRule: reportedTracker.matchedRule?.rule?.toString(),
             },
             url: cleanUrl,
             requestData,
             siteUrl: thisTab.site.url,
-            serviceWorkerInitiated
+            serviceWorkerInitiated,
         })
 
         // Count and block trackers.
@@ -342,9 +334,16 @@ function blockHandleResponse (thisTab, requestData) {
             const displayName = utils.findParentDisplayName(requestData.url)
             emitter.emit(TrackerBlockedEvent.eventName, new TrackerBlockedEvent({ companyDisplayName: displayName }))
 
-            console.info('blocked ' + utils.extractHostFromURL(thisTab.url) +
-                        // @ts-ignore
-                        ' [' + tracker.tracker.owner.name + '] ' + requestData.url + (serviceWorkerInitiated ? ' (serviceworker)' : ''))
+            console.info(
+                'blocked ' +
+                    utils.extractHostFromURL(thisTab.url) +
+                    // @ts-ignore
+                    ' [' +
+                    tracker.tracker.owner.name +
+                    '] ' +
+                    requestData.url +
+                    (serviceWorkerInitiated ? ' (serviceworker)' : ''),
+            )
 
             // return surrogate redirect if match, otherwise
             // tell Chrome to cancel this webrequest
@@ -371,9 +370,12 @@ function blockHandleResponse (thisTab, requestData) {
      * Notify skipping for broken sites
      */
     if (thisTab.site.isBroken) {
-        console.log('temporarily skip tracker blocking for site: ' +
-            utils.extractHostFromURL(thisTab.url) + '\n' +
-            'more info: https://github.com/duckduckgo/privacy-configuration')
+        console.log(
+            'temporarily skip tracker blocking for site: ' +
+                utils.extractHostFromURL(thisTab.url) +
+                '\n' +
+                'more info: https://github.com/duckduckgo/privacy-configuration',
+        )
     }
 }
 
@@ -386,7 +388,7 @@ function blockHandleResponse (thisTab, requestData) {
  * In Chrome we don't have access to a sub_frame ancestors. We can check that a request
  * is coming from the main_frame and that it matches our current tab url
  */
-function isSameDomainRequest (tab, req) {
+function isSameDomainRequest(tab, req) {
     // Firefox
     if (req.documentUrl) {
         if (req.frameAncestors && req.frameAncestors.length) {
@@ -398,7 +400,7 @@ function isSameDomainRequest (tab, req) {
         } else {
             return req.documentUrl === tab.url
         }
-    // Chrome
+        // Chrome
     } else if (req.initiator && req.frameId === 0) {
         return !!tab.url.match(req.initiator)
     } else {
@@ -406,7 +408,4 @@ function isSameDomainRequest (tab, req) {
     }
 }
 
-export {
-    blockHandleResponse,
-    handleRequest
-}
+export { blockHandleResponse, handleRequest }

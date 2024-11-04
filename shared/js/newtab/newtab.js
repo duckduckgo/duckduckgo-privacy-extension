@@ -19,7 +19,7 @@ let receivedMessageFromAllowedOrigin = false
  * Because this JS file is loaded into an iframe with access to `window.chrome.runtime`
  * we use it to forward data into the parent page.
  */
-function connect () {
+function connect() {
     const port = chrome.runtime.connect({ name: clientPortName })
 
     port.onMessage.addListener((msg) => {
@@ -76,7 +76,7 @@ window.addEventListener('message', (e) => {
  *
  * @param {import("zod").infer<outgoing>} msg
  */
-function sendToNewTabPage (msg) {
+function sendToNewTabPage(msg) {
     // try to validate the message
     const parsed = outgoing.safeParse(msg)
     if (!parsed.success) {
@@ -103,7 +103,7 @@ function sendToNewTabPage (msg) {
  * @param {import("zod").infer<incoming>} msg
  */
 let port = null
-function sendToChromeRuntime (msg) {
+function sendToChromeRuntime(msg) {
     if (!receivedMessageFromAllowedOrigin) return
     try {
         // If we get here and we're not currently listening to internal events, flip the

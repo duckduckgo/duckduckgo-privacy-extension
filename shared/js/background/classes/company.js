@@ -1,24 +1,24 @@
 class Company {
-    constructor (c) {
+    constructor(c) {
         this.name = c.name
         this.count = 0
         this.pagesSeenOn = 0
         this.displayName = c.displayName || c.name
     }
 
-    incrementCount () {
+    incrementCount() {
         this.count += 1
     }
 
-    incrementPagesSeenOn () {
+    incrementPagesSeenOn() {
         this.pagesSeenOn += 1
     }
 
-    get (property) {
+    get(property) {
         return this[property]
     }
 
-    set (property, val) {
+    set(property, val) {
         this[property] = val
     }
 }

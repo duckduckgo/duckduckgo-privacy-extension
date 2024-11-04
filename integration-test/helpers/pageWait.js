@@ -7,12 +7,12 @@
  * @param {number} idleTime
  *   How long with no network connections until finished, in milliseconds.
  */
-export function waitForNetworkIdle (page, idleTime = 500) {
-    return new Promise(resolve => {
+export function waitForNetworkIdle(page, idleTime = 500) {
+    return new Promise((resolve) => {
         let timeout = null
         let requestCount = 0
 
-        const onRequestEvent = requestCountChange => {
+        const onRequestEvent = (requestCountChange) => {
             requestCount += requestCountChange
 
             if (requestCount <= 0) {

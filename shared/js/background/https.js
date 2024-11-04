@@ -11,7 +11,7 @@ const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test']
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
-function base64ToUint8Array (base64) {
+function base64ToUint8Array(base64) {
     const binaryString = globalThis.atob(base64)
     const len = binaryString.length
     const bytes = new Uint8Array(len)
@@ -22,7 +22,7 @@ function base64ToUint8Array (base64) {
 }
 
 class HTTPS {
-    constructor () {
+    constructor() {
         // Store multiple upgrade / don't upgrade bloom filters
         this.upgradeBloomFilters = new Map()
         this.dontUpgradeBloomFilters = new Map()
@@ -37,20 +37,20 @@ class HTTPS {
     // is gathered from HTTPSStorage.
     // 'upgrade bloom filter' and 'don't upgrade bloom filter' are assumed to be bloom filters
     // 'upgrade safelist' and 'don't upgrade safelist' should be arrays
-    setLists (lists) {
+    setLists(lists) {
         try {
-            lists.forEach(list => {
+            lists.forEach((list) => {
                 if (!list.data) {
                     throw new Error(`HTTPS: ${list.name} missing data`)
                 }
 
                 if (list.type === 'upgrade bloom filter') {
                     this.upgradeBloomFilters.set(list.name, this.createBloomFilter(list))
-                } else if (list.type === 'don\'t upgrade bloom filter') {
+                } else if (list.type === "don't upgrade bloom filter") {
                     this.dontUpgradeBloomFilters.set(list.name, this.createBloomFilter(list))
                 } else if (list.type === 'upgrade safelist') {
                     this.upgradeList = list.data
-                } else if (list.type === 'don\'t upgrade safelist') {
+                } else if (list.type === "don't upgrade safelist") {
                     this.dontUpgradeList = list.data
                 }
             })
@@ -67,7 +67,7 @@ class HTTPS {
 
     // create a new BloomFilter
     // filterData is assumed to be base64 encoded 8 bit typed array
-    createBloomFilter (filterData) {
+    createBloomFilter(filterData) {
         const bloom = new BloomFilter(filterData.totalEntries, filterData.errorRate)
         const buffer = base64ToUint8Array(filterData.data)
         bloom.importData(buffer)
@@ -78,7 +78,7 @@ class HTTPS {
      * @param {string} url either domain (example.com) or a full URL (http://example.com/about)
      * @returns {null|boolean|Promise<boolean>} returns true if host can be upgraded, false if it shouldn't be upgraded and a promise if we don't know yet and we are checking against a remote service
      */
-    canUpgradeUrl (url) {
+    canUpgradeUrl(url) {
         const parsedUrl = tldts.parse(url)
         const host = parsedUrl.hostname
 
@@ -113,14 +113,14 @@ class HTTPS {
             return true
         }
 
-        const foundInDontUpgradeBloomFilters = Array.from(this.dontUpgradeBloomFilters.values()).some(list => list.checkEntry(host))
+        const foundInDontUpgradeBloomFilters = Array.from(this.dontUpgradeBloomFilters.values()).some((list) => list.checkEntry(host))
 
         if (foundInDontUpgradeBloomFilters) {
             console.log('HTTPS: Bloom filter - host is not upgradable', host)
             return false
         }
 
-        const foundInUpgradeBloomFilters = Array.from(this.upgradeBloomFilters.values()).some(list => list.checkEntry(host))
+        const foundInUpgradeBloomFilters = Array.from(this.upgradeBloomFilters.values()).some((list) => list.checkEntry(host))
 
         if (foundInUpgradeBloomFilters) {
             console.log('HTTPS: Bloom filter - host is upgradable', host)
@@ -142,16 +142,19 @@ class HTTPS {
         const serviceCheck = httpsService.checkInService(host)
         if (manifestVersion === 3) {
             // Once we get the result from the service, ensure we add a session upgrade rule
-            serviceCheck.then((result) => {
-                if (result) {
-                    addSmarterEncryptionSessionRule(host)
-                }
-            }, (e) => {})
+            serviceCheck.then(
+                (result) => {
+                    if (result) {
+                        addSmarterEncryptionSessionRule(host)
+                    }
+                },
+                (e) => {},
+            )
         }
         return serviceCheck
     }
 
-    downgradeTab ({ tabId, expectedUrl, targetUrl }) {
+    downgradeTab({ tabId, expectedUrl, targetUrl }) {
         // make sure that tab still has expected url (user could have navigated away or been redirected)
         const tab = tabManager.get({ tabId })
 
@@ -163,7 +166,7 @@ class HTTPS {
         }
     }
 
-    getUpgradedUrl (reqUrl, tab, isMainFrame, isPost) {
+    getUpgradedUrl(reqUrl, tab, isMainFrame, isPost) {
         if (!this.isReady) {
             console.warn('HTTPS: not ready')
             return reqUrl
@@ -202,7 +205,7 @@ class HTTPS {
         }
 
         // create an upgraded URL
-        urlObj.protocol = (urlObj.protocol === 'http:') ? 'https:' : 'wss:'
+        urlObj.protocol = urlObj.protocol === 'http:' ? 'https:' : 'wss:'
         const upgradedUrl = urlObj.toString()
 
         // request is upgradable
@@ -234,7 +237,7 @@ class HTTPS {
         // we hold the request until we hear back from our service
         if (utils.getAsyncBlockingSupport()) {
             return isUpgradable
-                .then(result => {
+                .then((result) => {
                     if (result) {
                         tab.mainFrameUpgraded = true
                         this.incrementUpgradeCount('totalUpgrades')
@@ -242,7 +245,7 @@ class HTTPS {
 
                     return result ? upgradedUrl : reqUrl
                 })
-                .catch(e => {
+                .catch((e) => {
                     console.error('HTTPS: Error connecting to the HTTPS service: ' + e.message)
                     return upgradedUrl
                 })
@@ -250,20 +253,20 @@ class HTTPS {
             // if async blocking is NOT available:
             // we upgrade it proactively while waiting for a response from a remote service
             isUpgradable
-                .then(result => {
+                .then((result) => {
                     if (result === false) {
                         console.info('HTTPS: Remote check returned - downgrade request', reqUrl)
 
                         this.downgradeTab({
                             tabId: tab.id,
                             expectedUrl: upgradedUrl,
-                            targetUrl: reqUrl
+                            targetUrl: reqUrl,
                         })
                     } else {
                         console.info('HTTPS: Remote check returned - let request continue', reqUrl)
                     }
                 })
-                .catch(e => {
+                .catch((e) => {
                     console.error('HTTPS: Error connecting to the HTTPS service: ' + e.message)
                 })
 
@@ -279,7 +282,7 @@ class HTTPS {
     }
 
     // Increment upgrade or failed upgrade settings
-    incrementUpgradeCount (setting) {
+    incrementUpgradeCount(setting) {
         let value = parseInt(settings.getSetting(setting)) || 0
         value += 1
         settings.updateSetting(setting, value)

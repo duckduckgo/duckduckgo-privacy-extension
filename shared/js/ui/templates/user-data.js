@@ -10,8 +10,8 @@ module.exports = function () {
     </section>`
 }
 
-function renderUserDataContent (model) {
-    return (!model.userName)
+function renderUserDataContent(model) {
+    return !model.userName
         ? bel`<div>
                 <p class="menu-paragraph">${t('options:autofillDisabled.title')}</p>
                 <p class="options-info">

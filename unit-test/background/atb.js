@@ -27,20 +27,24 @@ describe('atb.canShowPostInstall()', () => {
     const canShowAtbCases = [
         {
             domain: 'duckduckgo.com/software',
-            result: false
-        }, {
+            result: false,
+        },
+        {
             domain: 'duckduckgo.com/app',
-            result: false
-        }, {
+            result: false,
+        },
+        {
             domain: undefined,
-            result: false
-        }, {
+            result: false,
+        },
+        {
             domain: 'duckduckgo.com/about',
-            result: true
-        }, {
+            result: true,
+        },
+        {
             domain: 'duckduckgo.com',
-            result: true
-        }
+            result: true,
+        },
     ]
 
     canShowAtbCases.forEach((test) => {
@@ -65,7 +69,10 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
         { url: 'https://icons.duckduckgo.com/ip2/weather.com.ico', rewrite: false },
         { url: 'https://duckduckgo.com/t/ias_meanings?6753163&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false },
         { url: 'https://duckduckgo.com/share/spice/forecast/1347/forecast.css', rewrite: false },
-        { url: 'https://duckduckgo.com/t/iaui?7725756&oi=forecast&r0=forecast&r1=forecast&r2=forecast&r5=en_wikipedia_queries,nlp_fathead,nlp_wiki&r8=news&r16=news&r19=forecast&r28=apps_domains&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false },
+        {
+            url: 'https://duckduckgo.com/t/iaui?7725756&oi=forecast&r0=forecast&r1=forecast&r2=forecast&r5=en_wikipedia_queries,nlp_fathead,nlp_wiki&r8=news&r16=news&r19=forecast&r28=apps_domains&q=weather&ct=US&d=m&kl=wt-wt',
+            rewrite: false,
+        },
         { url: 'https://www.reddit.com/search?q=duckduckgo', rewrite: false },
         { url: 'https://duckduckgo.com/?q=whois+https://duckduckgo.com/?q=whois', rewrite: true },
         { url: 'https://beta.duckduckgo.com/t/ias_meanings?6753163&q=weather&ct=US&d=m&kl=wt-wt', rewrite: false },
@@ -74,7 +81,7 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
         { url: 'https://beta.duckduckgo.com/?q=something', rewrite: true },
         { url: 'https://beta.duckduckgo.com/?q=something&atb=v70-1', rewrite: false },
         { url: 'https://dev-testing.duckduckgo.com/?q=something', rewrite: true },
-        { url: 'https://dev-testing.duckduckgo.com/chrome_newtab', rewrite: true }
+        { url: 'https://dev-testing.duckduckgo.com/chrome_newtab', rewrite: true },
     ]
 
     beforeEach(() => {
@@ -98,7 +105,10 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
         { url: 'https://duckduckgo.com/?q=something', expected: 'https://duckduckgo.com/?q=something&atb=v123-4ab' },
         { url: 'https://duckduckgo.com/about#newsletter', expected: 'https://duckduckgo.com/about?atb=v123-4ab#newsletter' },
         { url: 'https://duckduckgo.com/chrome_newtab', expected: 'https://duckduckgo.com/chrome_newtab?atb=v123-4ab' },
-        { url: 'https://duckduckgo.com/chrome_newtab?ntp_test=true', expected: 'https://duckduckgo.com/chrome_newtab?ntp_test=true&atb=v123-4ab' }
+        {
+            url: 'https://duckduckgo.com/chrome_newtab?ntp_test=true',
+            expected: 'https://duckduckgo.com/chrome_newtab?ntp_test=true&atb=v123-4ab',
+        },
     ]
 
     correctUrlTests.forEach((test) => {
@@ -135,7 +145,7 @@ describe('atb.setInitialVersions()', () => {
         })
     })
 
-    it('should try hitting atb.js a few times if it\'s down', (done) => {
+    it("should try hitting atb.js a few times if it's down", (done) => {
         settingHelper.stub({ atb: null })
 
         let i = 0
@@ -216,12 +226,12 @@ describe('getAcceptedParamsFromURL()', () => {
         { url: 'https://duckduckgo.com/?natb=v123_sdf', output: '' },
         { url: 'https://duckduckgo.com/?natb=v11111111', output: '' },
         { url: 'https://duckduckgo.com/?natb=v111-4444', output: '' },
-        { url: 'https://duckduckgo.com/?natb=v123-4abcd&foo=bar', output: '' }
+        { url: 'https://duckduckgo.com/?natb=v123-4abcd&foo=bar', output: '' },
     ]
 
     tests.forEach((test) => {
         it(`should get atb ${test.output} from ${test.url}`, () => {
-            expect((atb.getAcceptedParamsFromURL(test.url)).toString()).toEqual(test.output)
+            expect(atb.getAcceptedParamsFromURL(test.url).toString()).toEqual(test.output)
         })
     })
 })
@@ -242,7 +252,7 @@ describe('complex install workflow cases', () => {
             }
         })
 
-        expect(numExtiCalls).toEqual(1, 'exti service should\'ve been called exactly once')
+        expect(numExtiCalls).toEqual(1, "exti service should've been called exactly once")
     }
 
     beforeEach(() => {
@@ -251,29 +261,26 @@ describe('complex install workflow cases', () => {
         settingHelper.stub()
     })
 
-    it('should handle the install process correctly if there\'s no DDG pages open', () => {
-        return atb.updateATBValues([])
-            .then(() => {
-                validateExtiWasHit('v112-2')
-                expect(settings.getSetting('atb')).toEqual('v112-2')
-                expect(settings.getSetting('set_atb')).toEqual('v112-2')
-            })
+    it("should handle the install process correctly if there's no DDG pages open", () => {
+        return atb.updateATBValues([]).then(() => {
+            validateExtiWasHit('v112-2')
+            expect(settings.getSetting('atb')).toEqual('v112-2')
+            expect(settings.getSetting('set_atb')).toEqual('v112-2')
+        })
     })
-    it('should handle the install process correctly if there\'s DDG pages open that pass an ATB param', () => {
-        return atb.updateATBValues(['https://duckduckgo.com/about', 'https://duckduckgo.com/?natb=v112-2ab'])
-            .then(() => {
-                validateExtiWasHit('v112-2ab')
-                expect(settings.getSetting('atb')).toEqual('v112-2ab')
-                expect(settings.getSetting('set_atb')).toEqual('v112-2ab')
-            })
+    it("should handle the install process correctly if there's DDG pages open that pass an ATB param", () => {
+        return atb.updateATBValues(['https://duckduckgo.com/about', 'https://duckduckgo.com/?natb=v112-2ab']).then(() => {
+            validateExtiWasHit('v112-2ab')
+            expect(settings.getSetting('atb')).toEqual('v112-2ab')
+            expect(settings.getSetting('set_atb')).toEqual('v112-2ab')
+        })
     })
-    it('should handle the install process correctly if there\'s DDG pages open that do not pass an ATB param', () => {
-        return atb.updateATBValues(['https://duckduckgo.com/about', 'https://duckduckgo.com/?q=test'])
-            .then(() => {
-                validateExtiWasHit('v112-2')
-                expect(settings.getSetting('atb')).toEqual('v112-2')
-                expect(settings.getSetting('set_atb')).toEqual('v112-2')
-            })
+    it("should handle the install process correctly if there's DDG pages open that do not pass an ATB param", () => {
+        return atb.updateATBValues(['https://duckduckgo.com/about', 'https://duckduckgo.com/?q=test']).then(() => {
+            validateExtiWasHit('v112-2')
+            expect(settings.getSetting('atb')).toEqual('v112-2')
+            expect(settings.getSetting('set_atb')).toEqual('v112-2')
+        })
     })
 })
 
@@ -282,7 +289,7 @@ describe('atb.getUninstallURL()', () => {
         settingHelper.stub({ atb: null })
 
         let uninstallUrl = null
-        const setUninstallURLSpy = spyOn(browser.runtime, 'setUninstallURL').and.callFake(url => {
+        const setUninstallURLSpy = spyOn(browser.runtime, 'setUninstallURL').and.callFake((url) => {
             uninstallUrl = url
         })
 
@@ -312,26 +319,26 @@ describe('atb.getUninstallURL()', () => {
         // After the atb is set.
         stubLoadJSON({ returnedAtb: 'v119-8' })
         await atb.setInitialVersions()
-        await new Promise(resolve => setTimeout(resolve, 0))
+        await new Promise((resolve) => setTimeout(resolve, 0))
         expect(settings.getSetting('atb')).toEqual('v119-8')
         expect(setUninstallURLSpy).toHaveBeenCalledTimes(1)
         checkUninstallUrl('v119-8', null)
 
         // After set_atb is set.
         await atb.updateSetAtb()
-        await new Promise(resolve => setTimeout(resolve, 0))
+        await new Promise((resolve) => setTimeout(resolve, 0))
         expect(setUninstallURLSpy).toHaveBeenCalledTimes(2)
         checkUninstallUrl('v119-8', 'v119-8')
 
         // After atb is updated.
         settings.updateSetting('atb', 'v119-8a')
-        await new Promise(resolve => setTimeout(resolve, 0))
+        await new Promise((resolve) => setTimeout(resolve, 0))
         expect(setUninstallURLSpy).toHaveBeenCalledTimes(3)
         checkUninstallUrl('v119-8a', 'v119-8')
 
         // After set_atb is updated.
         settings.updateSetting('set_atb', 'v119-8b')
-        await new Promise(resolve => setTimeout(resolve, 0))
+        await new Promise((resolve) => setTimeout(resolve, 0))
         expect(setUninstallURLSpy).toHaveBeenCalledTimes(4)
         checkUninstallUrl('v119-8a', 'v119-8b')
     })

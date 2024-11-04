@@ -7,13 +7,7 @@ import browser from 'webextension-polyfill'
 import { registerMessageHandler } from '../message-handlers'
 import { postPopupMessage } from '../popupMessaging'
 import settings from '../settings'
-import {
-    getCurrentTab,
-    getFeatureSettings,
-    getURLWithoutQueryString,
-    reloadCurrentTab,
-    resolveAfterDelay
-} from '../utils'
+import { getCurrentTab, getFeatureSettings, getURLWithoutQueryString, reloadCurrentTab, resolveAfterDelay } from '../utils'
 import { sendBreakageReportForCurrentTab } from '../broken-site-report'
 import { createAlarm } from '../wrapper'
 import tabManager from '../tab-manager'
@@ -67,31 +61,19 @@ export default class ToggleReports {
         'jsPerformance',
         'openerContext',
         'requests',
-        'userRefreshCount'
+        'userRefreshCount',
     ]
 
-    constructor () {
+    constructor() {
         this.onDisconnect = this.toggleReportFinished.bind(this, false)
 
-        registerMessageHandler(
-            'getToggleReportOptions',
-            (_, sender) => this.toggleReportStarted(sender)
-        )
+        registerMessageHandler('getToggleReportOptions', (_, sender) => this.toggleReportStarted(sender))
 
-        registerMessageHandler(
-            'rejectToggleReport',
-            (_, sender) => this.toggleReportFinished(false, sender)
-        )
+        registerMessageHandler('rejectToggleReport', (_, sender) => this.toggleReportFinished(false, sender))
 
-        registerMessageHandler(
-            'sendToggleReport',
-            (_, sender) => this.toggleReportFinished(true, sender)
-        )
+        registerMessageHandler('sendToggleReport', (_, sender) => this.toggleReportFinished(true, sender))
 
-        registerMessageHandler(
-            'seeWhatIsSent',
-            () => { }
-        )
+        registerMessageHandler('seeWhatIsSent', () => {})
 
         createAlarm(ToggleReports.ALARM_NAME, { periodInMinutes: 60 })
         browser.alarms.onAlarm.addListener(async ({ name }) => {
@@ -109,7 +91,7 @@ export default class ToggleReports {
      * @param {browser.Runtime.Port} sender
      * @returns {Promise<ToggleReportOptions>}
      */
-    async toggleReportStarted (sender) {
+    async toggleReportStarted(sender) {
         // If the browser closes the popup UI during the "toggle reports" flow
         // (e.g. because the user clicked away), the connection will drop and
         // this event will fire.
@@ -126,9 +108,7 @@ export default class ToggleReports {
 
         for (const paramId of ToggleReports.PARAM_IDS) {
             if (paramId === 'siteUrl' && siteUrl) {
-                response.data.push(
-                    { id: 'siteUrl', additional: { url: siteUrl } }
-                )
+                response.data.push({ id: 'siteUrl', additional: { url: siteUrl } })
             } else {
                 response.data.push({ id: paramId })
             }
@@ -146,7 +126,7 @@ export default class ToggleReports {
      * @param {browser.Runtime.Port?} sender
      * @returns {Promise<void>}
      */
-    async toggleReportFinished (accepted, sender) {
+    async toggleReportFinished(accepted, sender) {
         sender?.onDisconnect?.removeListener(this.onDisconnect)
 
         // Note the response and time.
@@ -161,7 +141,7 @@ export default class ToggleReports {
                 // the correct page details are sent with the report.
                 await sendBreakageReportForCurrentTab({
                     pixelName: 'protection-toggled-off-breakage-report',
-                    reportFlow: 'on_protections_off_dashboard_main'
+                    reportFlow: 'on_protections_off_dashboard_main',
                 })
             } catch (e) {
                 // Catch this, mostly to ensure the page is still reloaded if
@@ -173,10 +153,7 @@ export default class ToggleReports {
         // Reload the page. If the user opted to send the breakage report, also
         // wait five seconds before closing the popup to give them a chance to
         // read the thank you message.
-        await Promise.all([
-            reloadCurrentTab(),
-            resolveAfterDelay(accepted ? 5000 : 0)]
-        )
+        await Promise.all([reloadCurrentTab(), resolveAfterDelay(accepted ? 5000 : 0)])
 
         postPopupMessage({ messageType: 'closePopup' })
     }
@@ -186,21 +163,18 @@ export default class ToggleReports {
      *
      * @returns {Promise<void>}
      */
-    static async clearExpiredResponses () {
-        const {
-            dismissInterval,
-            promptInterval
-        } = getFeatureSettings('toggleReports')
+    static async clearExpiredResponses() {
+        const { dismissInterval, promptInterval } = getFeatureSettings('toggleReports')
 
         const now = Date.now()
         let dismissCutoff = null
         let acceptCutoff = null
 
         if (typeof dismissInterval === 'number') {
-            dismissCutoff = now - (dismissInterval * 1000)
+            dismissCutoff = now - dismissInterval * 1000
         }
         if (typeof promptInterval === 'number') {
-            acceptCutoff = now - (promptInterval * 1000)
+            acceptCutoff = now - promptInterval * 1000
         }
 
         await settings.ready()
@@ -208,10 +182,8 @@ export default class ToggleReports {
         const existingTimesLength = times.length
         times = times.filter(
             ({ accepted, timestamp }) =>
-                (accepted && (typeof acceptCutoff !== 'number' ||
-                              timestamp >= acceptCutoff)) ||
-                (!accepted && (typeof dismissCutoff !== 'number' ||
-                               timestamp >= dismissCutoff))
+                (accepted && (typeof acceptCutoff !== 'number' || timestamp >= acceptCutoff)) ||
+                (!accepted && (typeof dismissCutoff !== 'number' || timestamp >= dismissCutoff)),
         )
 
         if (times.length < existingTimesLength) {
@@ -227,7 +199,7 @@ export default class ToggleReports {
      *
      * @returns {Promise<{accepted: number, declined: number}>}
      */
-    static async countResponses () {
+    static async countResponses() {
         await settings.ready()
         const times = settings.getSetting('toggleReportTimes') || []
 
@@ -245,7 +217,7 @@ export default class ToggleReports {
      *
      * @returns {Promise<boolean>}
      */
-    static async shouldDisplay () {
+    static async shouldDisplay() {
         const currentTab = await tabManager.getOrRestoreCurrentTab()
 
         // Feature must be enabled for the tab.
@@ -253,24 +225,18 @@ export default class ToggleReports {
             return false
         }
 
-        const {
-            dismissLogicEnabled,
-            promptLimitLogicEnabled,
-            maxPromptCount
-        } = getFeatureSettings('toggleReports')
+        const { dismissLogicEnabled, promptLimitLogicEnabled, maxPromptCount } = getFeatureSettings('toggleReports')
 
         await ToggleReports.clearExpiredResponses()
-        const counts =
-            await ToggleReports.countResponses()
+        const counts = await ToggleReports.countResponses()
 
         // Dismissed report count must not exceed the limit.
-        if (dismissLogicEnabled && (counts.declined > 0)) {
+        if (dismissLogicEnabled && counts.declined > 0) {
             return false
         }
 
         // Accepted report count must not exceed the limit.
-        if (promptLimitLogicEnabled && typeof maxPromptCount === 'number' &&
-            counts.accepted >= maxPromptCount) {
+        if (promptLimitLogicEnabled && typeof maxPromptCount === 'number' && counts.accepted >= maxPromptCount) {
             return false
         }
 

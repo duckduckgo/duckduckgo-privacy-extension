@@ -28,7 +28,7 @@ class Tab {
     /**
      * @param {TabData|TabState} tabData
      */
-    constructor (tabData) {
+    constructor(tabData) {
         if (tabData instanceof TabState) {
             /** @type {TabState} */
             this._tabState = tabData
@@ -46,7 +46,7 @@ class Tab {
     /**
      * @param {number} tabId
      */
-    static async restore (tabId) {
+    static async restore(tabId) {
         const state = await TabState.restore(tabId)
         if (!state) {
             return null
@@ -54,231 +54,231 @@ class Tab {
         return new Tab(state)
     }
 
-    set referrer (value) {
+    set referrer(value) {
         this._tabState.setValue('referrer', value)
     }
 
-    get referrer () {
+    get referrer() {
         return this._tabState.referrer
     }
 
-    set adClick (value) {
+    set adClick(value) {
         this._tabState.setValue('adClick', value)
     }
 
-    get adClick () {
+    get adClick() {
         return this._tabState.adClick
     }
 
-    set firstAdAttributionAllowed (value) {
+    set firstAdAttributionAllowed(value) {
         this._tabState.setValue('firstAdAttributionAllowed', value)
     }
 
-    get firstAdAttributionAllowed () {
+    get firstAdAttributionAllowed() {
         return this._tabState.firstAdAttributionAllowed
     }
 
-    set disabledClickToLoadRuleActions (value) {
+    set disabledClickToLoadRuleActions(value) {
         this._tabState.setValue('disabledClickToLoadRuleActions', value)
     }
 
-    get disabledClickToLoadRuleActions () {
+    get disabledClickToLoadRuleActions() {
         return this._tabState.disabledClickToLoadRuleActions
     }
 
-    set dnrRuleIdsByDisabledClickToLoadRuleAction (value) {
+    set dnrRuleIdsByDisabledClickToLoadRuleAction(value) {
         this._tabState.setValue('dnrRuleIdsByDisabledClickToLoadRuleAction', value)
     }
 
-    get dnrRuleIdsByDisabledClickToLoadRuleAction () {
+    get dnrRuleIdsByDisabledClickToLoadRuleAction() {
         return this._tabState.dnrRuleIdsByDisabledClickToLoadRuleAction
     }
 
-    set trackers (value) {
+    set trackers(value) {
         this._tabState.setValue('trackers', value)
     }
 
-    get trackers () {
+    get trackers() {
         return this._tabState.trackers
     }
 
-    get url () {
+    get url() {
         return this._tabState.url
     }
 
-    set url (url) {
+    set url(url) {
         this._tabState.setValue('url', url)
     }
 
-    get id () {
+    get id() {
         return this._tabState.tabId
     }
 
-    set id (tabId) {
+    set id(tabId) {
         this._tabState.setValue('tabId', tabId)
     }
 
-    get upgradedHttps () {
+    get upgradedHttps() {
         return this._tabState.upgradedHttps
     }
 
-    set upgradedHttps (value) {
+    set upgradedHttps(value) {
         this._tabState.setValue('upgradedHttps', value)
     }
 
-    get hasHttpsError () {
+    get hasHttpsError() {
         return this._tabState.hasHttpsError
     }
 
-    set hasHttpsError (value) {
+    set hasHttpsError(value) {
         this._tabState.setValue('hasHttpsError', value)
     }
 
-    get mainFrameUpgraded () {
+    get mainFrameUpgraded() {
         return this._tabState.mainFrameUpgraded
     }
 
-    set mainFrameUpgraded (value) {
+    set mainFrameUpgraded(value) {
         this._tabState.setValue('mainFrameUpgraded', value)
     }
 
-    get urlParametersRemoved () {
+    get urlParametersRemoved() {
         return this._tabState.urlParametersRemoved
     }
 
-    set urlParametersRemoved (value) {
+    set urlParametersRemoved(value) {
         this._tabState.setValue('urlParametersRemoved', value)
     }
 
-    get urlParametersRemovedUrl () {
+    get urlParametersRemovedUrl() {
         return this._tabState.urlParametersRemovedUrl
     }
 
-    set urlParametersRemovedUrl (value) {
+    set urlParametersRemovedUrl(value) {
         this._tabState.setValue('urlParametersRemovedUrl', value)
     }
 
-    get ampUrl () {
+    get ampUrl() {
         return this._tabState.ampUrl
     }
 
-    set ampUrl (url) {
+    set ampUrl(url) {
         this._tabState.setValue('ampUrl', url)
     }
 
-    get cleanAmpUrl () {
+    get cleanAmpUrl() {
         return this._tabState.cleanAmpUrl
     }
 
-    get requestId () {
+    get requestId() {
         return this._tabState.requestId
     }
 
-    set cleanAmpUrl (url) {
+    set cleanAmpUrl(url) {
         this._tabState.setValue('cleanAmpUrl', url)
     }
 
-    get status () {
+    get status() {
         return this._tabState.status
     }
 
-    set status (value) {
+    set status(value) {
         this._tabState.setValue('status', value)
     }
 
-    get statusCode () {
+    get statusCode() {
         return this._tabState.statusCode
     }
 
-    set statusCode (value) {
+    set statusCode(value) {
         this._tabState.setValue('statusCode', value)
     }
 
-    get ctlYouTube () {
+    get ctlYouTube() {
         return this._tabState.ctlYouTube
     }
 
-    set ctlYouTube (value) {
+    set ctlYouTube(value) {
         this._tabState.setValue('ctlYouTube', value)
     }
 
-    get ctlFacebookPlaceholderShown () {
+    get ctlFacebookPlaceholderShown() {
         return this._tabState.ctlFacebookPlaceholderShown
     }
 
-    set ctlFacebookPlaceholderShown (value) {
+    set ctlFacebookPlaceholderShown(value) {
         this._tabState.setValue('ctlFacebookPlaceholderShown', value)
     }
 
-    get ctlFacebookLogin () {
+    get ctlFacebookLogin() {
         return this._tabState.ctlFacebookLogin
     }
 
-    set ctlFacebookLogin (value) {
+    set ctlFacebookLogin(value) {
         this._tabState.setValue('ctlFacebookLogin', value)
     }
 
-    get debugFlags () {
+    get debugFlags() {
         return this._tabState.debugFlags
     }
 
-    set debugFlags (value) {
+    set debugFlags(value) {
         this._tabState.setValue('debugFlags', value)
     }
 
-    get errorDescriptions () {
+    get errorDescriptions() {
         return this._tabState.errorDescriptions
     }
 
-    set errorDescriptions (value) {
+    set errorDescriptions(value) {
         this._tabState.setValue('errorDescriptions', value)
     }
 
-    get httpErrorCodes () {
+    get httpErrorCodes() {
         return this._tabState.httpErrorCodes
     }
 
-    set httpErrorCodes (value) {
+    set httpErrorCodes(value) {
         this._tabState.setValue('httpErrorCodes', value)
     }
 
-    get performanceWarning () {
+    get performanceWarning() {
         return this._tabState.performanceWarning
     }
 
-    set performanceWarning (value) {
+    set performanceWarning(value) {
         this._tabState.setValue('performanceWarning', value)
     }
 
-    get userRefreshCount () {
+    get userRefreshCount() {
         return this._tabState.userRefreshCount
     }
 
-    set userRefreshCount (value) {
+    set userRefreshCount(value) {
         this._tabState.setValue('userRefreshCount', value)
     }
 
-    get openerContext () {
+    get openerContext() {
         return this._tabState.openerContext
     }
 
-    set openerContext (value) {
+    set openerContext(value) {
         this._tabState.setValue('openerContext', value)
     }
 
-    get jsPerformance () {
+    get jsPerformance() {
         return this._tabState.jsPerformance
     }
 
-    set jsPerformance (value) {
+    set jsPerformance(value) {
         this._tabState.setValue('jsPerformance', value)
     }
 
-    get locale () {
+    get locale() {
         return this._tabState.locale
     }
 
-    set locale (value) {
+    set locale(value) {
         this._tabState.setValue('locale', value)
     }
 
@@ -286,7 +286,7 @@ class Tab {
      * If given a valid adClick redirect, set the adClick to the tab.
      * @param {string} requestURL
      */
-    setAdClickIfValidRedirect (requestURL) {
+    setAdClickIfValidRedirect(requestURL) {
         const policy = this.getAdClickAttributionPolicy()
         const adClick = policy.createAdClick(requestURL, this)
         if (adClick) {
@@ -297,7 +297,7 @@ class Tab {
     /**
      * @returns {AdClickAttributionPolicy}
      */
-    getAdClickAttributionPolicy () {
+    getAdClickAttributionPolicy() {
         this._adClickAttributionPolicy = this._adClickAttributionPolicy || new AdClickAttributionPolicy()
         return this._adClickAttributionPolicy
     }
@@ -307,7 +307,7 @@ class Tab {
      * @param {string} resourcePath
      * @returns {boolean}
      */
-    allowAdAttribution (resourcePath) {
+    allowAdAttribution(resourcePath) {
         if (!this.site.isFeatureEnabled('adClickAttribution') || !this.adClick || !this.adClick.allowAdAttribution(this)) return false
         const policy = this.getAdClickAttributionPolicy()
         const permitted = policy.resourcePermitted(resourcePath)
@@ -318,7 +318,7 @@ class Tab {
         return permitted
     }
 
-    updateSite (url) {
+    updateSite(url) {
         if (this.site.url === url) return
 
         this.url = url
@@ -333,7 +333,7 @@ class Tab {
      * @param {string} url
      * @returns {Tracker}
      */
-    addToTrackers (t, baseDomain, url) {
+    addToTrackers(t, baseDomain, url) {
         const trackers = this.trackers
         const tracker = this.trackers[t.tracker.owner.name]
 
@@ -357,7 +357,7 @@ class Tab {
      * @param {string} resourceName URL to the web accessible resource
      * @returns {string} generated access key
      **/
-    addWebResourceAccess (resourceName) {
+    addWebResourceAccess(resourceName) {
         // random 8-9 character key for web resource access
         const key = Math.floor(Math.random() * 10000000000).toString(16)
         this.webResourceAccess.push({ key, resourceName, time: Date.now(), wasAccessed: false })
@@ -371,7 +371,7 @@ class Tab {
      * @param {string} resourceURL web accessible resource URL
      * @returns {boolean} is access to the resource allowed
      **/
-    hasWebResourceAccess (resourceURL) {
+    hasWebResourceAccess(resourceURL) {
         // no record of web resource access for this tab
         if (!this.webResourceAccess.length) {
             return false
@@ -383,10 +383,10 @@ class Tab {
         }
 
         const key = keyMatches[1]
-        const hasAccess = this.webResourceAccess.some(resource => {
+        const hasAccess = this.webResourceAccess.some((resource) => {
             if (resource.key === key && !resource.wasAccessed) {
                 resource.wasAccessed = true
-                if ((Date.now() - resource.time) < 1000) {
+                if (Date.now() - resource.time < 1000) {
                     return true
                 }
             }
@@ -403,7 +403,7 @@ class Tab {
      *
      * @param {string} url - the url to set ampUrl to
      */
-    setAmpUrl (url) {
+    setAmpUrl(url) {
         if (this.ampUrl) {
             const ampUrl = new URL(this.ampUrl)
             const newUrl = new URL(url)
@@ -421,7 +421,7 @@ class Tab {
      * @param {string} action
      * @param {Object} message
      */
-    postDevtoolsMessage (devtools, action, message) {
+    postDevtoolsMessage(devtools, action, message) {
         devtools.postMessage(this.id, action, message)
     }
 }

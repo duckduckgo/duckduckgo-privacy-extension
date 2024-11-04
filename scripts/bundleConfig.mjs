@@ -7,7 +7,7 @@ import { writeEtags } from './utils.mjs'
 const bundlePath = './shared/data/bundled/'
 const configProps = config.tdsLists.find((c) => c.name === 'config')
 
-async function getConfig (name, url) {
+async function getConfig(name, url) {
     const etags = {}
     const response = await fetch(url)
     if (!response.ok) {
@@ -23,7 +23,7 @@ async function getConfig (name, url) {
     return etags
 }
 
-async function fetchConfigs () {
+async function fetchConfigs() {
     const etags = await getConfig('config', configProps.url)
     writeEtags(etags)
     console.log('Config imported successfully')

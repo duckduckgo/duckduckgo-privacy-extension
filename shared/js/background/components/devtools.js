@@ -12,25 +12,23 @@ import { registerDevtools } from '../devtools'
  */
 
 class DevtoolsConnection {
-    static allowedMessageActions = new Set(
-        ['setTab', 'toggleFeature', 'toggleProtections', 'toggleTracker']
-    )
+    static allowedMessageActions = new Set(['setTab', 'toggleFeature', 'toggleProtections', 'toggleTracker'])
 
     /**
      * @param {Devtools} devtools
      * @param {Object} port
      */
-    constructor (devtools, port) {
+    constructor(devtools, port) {
         this.devtools = devtools
-        this.disconnected = new Promise(resolve => {
+        this.disconnected = new Promise((resolve) => {
             this._disconnectedResolver = resolve
         })
         this.port = port
-        this.tabId = new Promise(resolve => {
+        this.tabId = new Promise((resolve) => {
             this._tabIdResolver = resolve
         })
 
-        port.onMessage.addListener(async message => {
+        port.onMessage.addListener(async (message) => {
             const { action, id } = message
             if (DevtoolsConnection.allowedMessageActions.has(action)) {
                 const response = await this[action](message)
@@ -48,7 +46,7 @@ class DevtoolsConnection {
      * @param {any} message
      * @returns {Promise<void>}
      */
-    async postMessage (action, message) {
+    async postMessage(action, message) {
         const tabId = await this.tabId
         this.port.postMessage(JSON.stringify({ tabId, action, message }))
     }
@@ -61,7 +59,7 @@ class DevtoolsConnection {
      *   tabId: number
      * }} message
      */
-    setTab ({ tabId }) {
+    setTab({ tabId }) {
         this._tabIdResolver(tabId)
         const tab = tabManager.get({ tabId })
         this.postMessage('tabChange', this.devtools.serializeTab(tab))
@@ -74,12 +72,11 @@ class DevtoolsConnection {
      * }} message
      * @returns {Promise<void>}
      */
-    async toggleFeature ({ feature }) {
+    async toggleFeature({ feature }) {
         if (feature === 'trackerAllowlist') {
-            await this.devtools.tds.config.modify(config => {
+            await this.devtools.tds.config.modify((config) => {
                 const currentState = config.features.trackerAllowlist.state
-                config.features.trackerAllowlist.state =
-                    currentState === 'enabled' ? 'disabled' : 'enabled'
+                config.features.trackerAllowlist.state = currentState === 'enabled' ? 'disabled' : 'enabled'
                 return config
             })
         } else {
@@ -88,15 +85,18 @@ class DevtoolsConnection {
             const enabled = tab.site?.enabledFeatures.includes(feature)
             const tabDomain = tldts.getDomain(tab.site.domain)
 
-            await this.devtools.tds.config.modify(config => {
+            await this.devtools.tds.config.modify((config) => {
                 const excludedSites = config.features[feature].exceptions
                 if (enabled) {
                     excludedSites.push({
                         domain: tabDomain,
-                        reason: 'Manually disabled'
+                        reason: 'Manually disabled',
                     })
                 } else {
-                    excludedSites.splice(excludedSites.findIndex(({ domain }) => domain === tabDomain), 1)
+                    excludedSites.splice(
+                        excludedSites.findIndex(({ domain }) => domain === tabDomain),
+                        1,
+                    )
                 }
                 return config
             })
@@ -107,11 +107,11 @@ class DevtoolsConnection {
      * Toggle all protections on/off for the tab.
      * @returns {Promise<void>}
      */
-    async toggleProtections () {
+    async toggleProtections() {
         const tabId = await this.tabId
         const tab = tabManager.get({ tabId })
         if (tab.site?.isBroken && tab.url) {
-            await this.devtools.tds.config.modify(config => {
+            await this.devtools.tds.config.modify((config) => {
                 removeBroken(tab.site.domain, config)
                 if (tab.url) {
                     removeBroken(new URL(tab.url).hostname, config)
@@ -122,7 +122,7 @@ class DevtoolsConnection {
             await tabManager.setList({
                 list: 'allowlisted',
                 domain: tab.site.domain,
-                value: !tab.site.allowlisted
+                value: !tab.site.allowlisted,
             })
         }
         this.postMessage('tabChange', this.devtools.serializeTab(tab))
@@ -140,10 +140,8 @@ class DevtoolsConnection {
      *   toggleType: string
      * }} message
      */
-    toggleTracker ({ requestData, siteUrl, tracker, toggleType }) {
-        const matchedTrackerDetails = trackers.getTrackerData(
-            requestData.url, siteUrl, requestData
-        )
+    toggleTracker({ requestData, siteUrl, tracker, toggleType }) {
+        const matchedTrackerDetails = trackers.getTrackerData(requestData.url, siteUrl, requestData)
         const matchedTrackerDomain = matchedTrackerDetails?.tracker?.domain
         const matchedTrackerAction = matchedTrackerDetails?.action
 
@@ -151,15 +149,14 @@ class DevtoolsConnection {
             return
         }
 
-        this.devtools.tds.tds.modify(tds => {
+        this.devtools.tds.tds.modify((tds) => {
             const matchedTracker = tds.trackers[matchedTrackerDomain]
             if (!matchedTracker) {
                 return tds
             }
 
             if (!tracker.matchedRule) {
-                matchedTracker.default =
-                    toggleType === 'I' ? 'ignore' : 'block'
+                matchedTracker.default = toggleType === 'I' ? 'ignore' : 'block'
                 return tds
             }
 
@@ -205,7 +202,7 @@ export default class Devtools {
      *   tds: TDSStorage
      * }} options
      */
-    constructor ({ tds }) {
+    constructor({ tds }) {
         this.tds = tds
         // Note: It is not necessary to use session storage to store the
         //       tabId -> DevtoolsConnection mapping for MV3 compatibility. That
@@ -216,7 +213,9 @@ export default class Devtools {
         //       will fire again.
         this.devtoolsConnections = new Map()
         this.debugHandlers = new Map()
-        browser.runtime.onConnect.addListener(port => { this.onConnect(port) })
+        browser.runtime.onConnect.addListener((port) => {
+            this.onConnect(port)
+        })
         registerDevtools(this)
     }
 
@@ -227,7 +226,7 @@ export default class Devtools {
      * @param {Object} port
      * @returns {Promise<void>}
      */
-    async onConnect (port) {
+    async onConnect(port) {
         if (port.name !== 'devtools') {
             return
         }
@@ -249,7 +248,7 @@ export default class Devtools {
      * @param {number} tabId
      * @returns {boolean}
      */
-    isActive (tabId) {
+    isActive(tabId) {
         return this.devtoolsConnections.has(tabId) || this.debugHandlers.has(tabId)
     }
 
@@ -258,7 +257,7 @@ export default class Devtools {
      * @param {string} action
      * @param {any} message
      */
-    postMessage (tabId, action, message) {
+    postMessage(tabId, action, message) {
         if (this.devtoolsConnections.has(tabId)) {
             this.devtoolsConnections.get(tabId).postMessage(action, message)
         }
@@ -273,7 +272,7 @@ export default class Devtools {
      * @param {number} tabId
      * @param {function} fn
      */
-    registerDebugHandler (tabId, fn) {
+    registerDebugHandler(tabId, fn) {
         this.debugHandlers.set(tabId, fn)
     }
 
@@ -288,14 +287,14 @@ export default class Devtools {
      *   }
      * }}
      */
-    serializeTab (tab) {
+    serializeTab(tab) {
         if (tab.site) {
             return {
                 site: {
                     allowlisted: tab.site.allowlisted,
                     isBroken: tab.site.isBroken,
-                    enabledFeatures: tab.site.enabledFeatures || []
-                }
+                    enabledFeatures: tab.site.enabledFeatures || [],
+                },
             }
         }
         return {}

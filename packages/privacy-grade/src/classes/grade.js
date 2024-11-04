@@ -38,8 +38,8 @@ const TRACKER_RANGE_MAP = {
         [20, 6],
         [30, 7],
         [45, 8],
-        [66, 9]
-    ]
+        [66, 9],
+    ],
 }
 
 const GRADE_RANGE_MAP = {
@@ -51,12 +51,12 @@ const GRADE_RANGE_MAP = {
         [10, 'B'],
         [14, 'C+'],
         [20, 'C'],
-        [30, 'D']
-    ]
+        [30, 'D'],
+    ],
 }
 
 class Grade {
-    constructor (attrs) {
+    constructor(attrs) {
         // defaults
         this.https = false
         this.httpsAutoUpgrade = false
@@ -91,37 +91,37 @@ class Grade {
         }
     }
 
-    setHttps (https, httpsAutoUpgrade) {
+    setHttps(https, httpsAutoUpgrade) {
         this.scores = null
         this.https = https
         this.httpsAutoUpgrade = httpsAutoUpgrade
     }
 
-    setPrivacyScore (score) {
+    setPrivacyScore(score) {
         this.scores = null
         this.privacyScore = typeof score === 'number' ? score : UNKNOWN_PRIVACY_SCORE
     }
 
-    addEntityBlocked (name, prevalence) {
+    addEntityBlocked(name, prevalence) {
         if (!name) return
 
         this.scores = null
         this.entitiesBlocked[name] = prevalence
     }
 
-    addEntityNotBlocked (name, prevalence) {
+    addEntityNotBlocked(name, prevalence) {
         if (!name) return
 
         this.scores = null
         this.entitiesNotBlocked[name] = prevalence
     }
 
-    setParentEntity (name, prevalence) {
+    setParentEntity(name, prevalence) {
         this.scores = null
         this.addEntityNotBlocked(name, prevalence)
     }
 
-    calculate () {
+    calculate() {
         // HTTPS
         let siteHttpsScore, enhancedHttpsScore
 
@@ -162,25 +162,25 @@ class Grade {
                 score: siteTotalScore,
                 trackerScore: siteTrackerScore,
                 httpsScore: siteHttpsScore,
-                privacyScore: privacyScore
+                privacyScore: privacyScore,
             },
             enhanced: {
                 grade: this._scoreToGrade(enhancedTotalScore),
                 score: enhancedTotalScore,
                 trackerScore: enhancedTrackerScore,
                 httpsScore: enhancedHttpsScore,
-                privacyScore: privacyScore
-            }
+                privacyScore: privacyScore,
+            },
         }
     }
 
-    get () {
+    get() {
         if (!this.scores) this.calculate()
 
         return this.scores
     }
 
-    _getValueFromRangeMap (value, rangeMapData) {
+    _getValueFromRangeMap(value, rangeMapData) {
         const steps = rangeMapData.steps
 
         if (!value || value <= 0) {
@@ -198,11 +198,11 @@ class Grade {
         }
     }
 
-    _normalizeTrackerScore (pct) {
+    _normalizeTrackerScore(pct) {
         return this._getValueFromRangeMap(pct, TRACKER_RANGE_MAP)
     }
 
-    _scoreToGrade (score) {
+    _scoreToGrade(score) {
         return this._getValueFromRangeMap(score, GRADE_RANGE_MAP)
     }
 }

@@ -1,9 +1,9 @@
-function emptyBlockList () {
+function emptyBlockList() {
     return {
         cnames: {},
         domains: {},
         entities: {},
-        trackers: {}
+        trackers: {},
     }
 }
 

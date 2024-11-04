@@ -6,10 +6,9 @@ const tdsStorageStub = require('./../helpers/tds')
 describe('tracker blocking', () => {
     beforeEach(() => {
         tdsStorageStub.stub()
-        return tdsStorage.getLists()
-            .then(lists => {
-                return tds.setLists(lists)
-            })
+        return tdsStorage.getLists().then((lists) => {
+            return tds.setLists(lists)
+        })
     })
 
     it('tracker module has correct data', () => {
@@ -20,7 +19,7 @@ describe('tracker blocking', () => {
     })
 
     it('test blocking result data', () => {
-        tdsTests.forEach(test => {
+        tdsTests.forEach((test) => {
             const result = tds.getTrackerData(test.tracker, test.site, test.req)
             expect(result.action).toBe(test.result.action)
             expect(result.reason).toBe(test.result.reason)

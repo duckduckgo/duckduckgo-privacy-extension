@@ -1,14 +1,9 @@
 const https = require('../src/https')
 
 https.addLists({
-    https: [
-        'github.com',
-        'status.github.com'
-    ],
+    https: ['github.com', 'status.github.com'],
 
-    httpsAutoUpgrade: [
-        'test.com'
-    ]
+    httpsAutoUpgrade: ['test.com'],
 })
 
 describe('getUpgradedUrl', () => {
@@ -22,7 +17,7 @@ describe('getUpgradedUrl', () => {
         { url: 'http://github.com/duckduckgo/?query=string', shouldUpgrade: true },
 
         // malformed URL
-        { url: 'http://%20%20s.src%20%3D/', shouldUpgrade: false }
+        { url: 'http://%20%20s.src%20%3D/', shouldUpgrade: false },
     ]
 
     tests.forEach((test) => {

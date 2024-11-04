@@ -1,8 +1,6 @@
 /** @module tds */
 
-const {
-    generateDNRRule
-} = require('./utils')
+const { generateDNRRule } = require('./utils')
 
 const AMP_PROTECTION_PRIORITY = 40000
 
@@ -22,20 +20,23 @@ const AMP_PROTECTION_PRIORITY = 40000
  *   See https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#method-isRegexSupported
  * @return {Promise<generateAmpProtectionRulesResult[]>}
  */
-async function generateAmpProtectionRules ({ features: { ampLinks } }, isRegexSupported) {
+async function generateAmpProtectionRules({ features: { ampLinks } }, isRegexSupported) {
     const results = []
 
-    if (!ampLinks ||
+    if (
+        !ampLinks ||
         ampLinks.state !== 'enabled' ||
         !ampLinks.settings ||
         !ampLinks.settings.linkFormats ||
-        ampLinks.settings.linkFormats.length === 0) {
+        ampLinks.settings.linkFormats.length === 0
+    ) {
         return results
     }
 
-    const { settings: { linkFormats: ampLinkRegexps } } = ampLinks
-    const excludedDomains =
-        (ampLinks?.exceptions || []).map(({ domain }) => domain)
+    const {
+        settings: { linkFormats: ampLinkRegexps },
+    } = ampLinks
+    const excludedDomains = (ampLinks?.exceptions || []).map(({ domain }) => domain)
 
     for (const ampLinkRegex of ampLinkRegexps) {
         // It seems that \S (non-whitespace character class) is not always
@@ -47,7 +48,7 @@ async function generateAmpProtectionRules ({ features: { ampLinks } }, isRegexSu
         const { isSupported } = await isRegexSupported({
             regex: regexFilter,
             isCaseSensitive: false,
-            requireCapturing: true
+            requireCapturing: true,
         })
         if (!isSupported) {
             continue
@@ -60,10 +61,10 @@ async function generateAmpProtectionRules ({ features: { ampLinks } }, isRegexSu
             redirect: { regexSubstitution: 'https://\\1' },
             resourceTypes: ['main_frame'],
             excludedInitiatorDomains: excludedDomains,
-            excludedRequestDomains: excludedDomains
+            excludedRequestDomains: excludedDomains,
         })
         const matchDetails = {
-            type: 'ampProtection'
+            type: 'ampProtection',
         }
         results.push({ rule, matchDetails })
     }

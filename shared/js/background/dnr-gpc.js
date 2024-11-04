@@ -10,7 +10,7 @@ import { generateGPCheaderRule } from '@duckduckgo/ddg2dnr/lib/gpc'
  *   The privacy configuration.
  * @return {Promise}
  */
-export async function ensureGPCHeaderRule (config = null) {
+export async function ensureGPCHeaderRule(config = null) {
     const removeRuleIds = [GPC_HEADER_RULE_ID]
     const addRules = []
 
@@ -18,19 +18,19 @@ export async function ensureGPCHeaderRule (config = null) {
         config = tdsStorage.config
     }
 
-    const gpcEnabled = settings.getSetting('GPC') &&
-          config?.features?.gpc?.state === 'enabled'
+    const gpcEnabled = settings.getSetting('GPC') && config?.features?.gpc?.state === 'enabled'
 
     if (gpcEnabled) {
         addRules.push(
             generateGPCheaderRule(
                 GPC_HEADER_RULE_ID,
-                config.features.gpc.exceptions?.map(e => e.domain)
-            )
+                config.features.gpc.exceptions?.map((e) => e.domain),
+            ),
         )
     }
 
     await chrome.declarativeNetRequest.updateSessionRules({
-        removeRuleIds, addRules
+        removeRuleIds,
+        addRules,
     })
 }

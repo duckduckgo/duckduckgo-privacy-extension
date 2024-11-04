@@ -17,5 +17,5 @@ const loadStub = (stubData) => {
 }
 
 module.exports = {
-    loadStub
+    loadStub,
 }

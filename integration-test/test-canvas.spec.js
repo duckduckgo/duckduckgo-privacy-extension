@@ -11,11 +11,7 @@ test.describe('Canvas verification', () => {
 
     test('Canvas drawing should be different per hostname', async ({ page }) => {
         await routeFromLocalhost(page)
-        const hostnames = [
-            'bad.third-party.site',
-            'good.third-party.site',
-            'broken.third-party.site'
-        ]
+        const hostnames = ['bad.third-party.site', 'good.third-party.site', 'broken.third-party.site']
         const hostnameResults = {}
         for (const hostname of hostnames) {
             await page.goto(`https://${hostname}/features/canvas-draw.html`, { waitUntil: 'load' })
@@ -46,7 +42,7 @@ test.describe('Canvas verification', () => {
         await page.waitForFunction(() => results && results.complete)
         const results = await page.evaluate(() => results)
         // filter out perf test from the fails
-        const fails = results.fails.filter(f => !f[0].startsWith('Getting image data must be under 250ms'))
+        const fails = results.fails.filter((f) => !f[0].startsWith('Getting image data must be under 250ms'))
         expect(fails).toHaveLength(0)
     })
 })

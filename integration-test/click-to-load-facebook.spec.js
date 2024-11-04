@@ -11,7 +11,7 @@ import { logPageRequests } from './helpers/requests'
 const testSite = 'https://privacy-test-pages.site/privacy-protections/click-to-load/'
 const facebookDomains = new Set(['facebook.com', 'facebook.net', 'fbcdn.net'])
 
-function countFacebookRequests (requests) {
+function countFacebookRequests(requests) {
     let allowCount = 0
     // Note: Does not include the SDK request. Playwright is now reporting that
     //       as having the URL of chrome://invalid, with no redirection/status
@@ -72,19 +72,16 @@ test.describe('Test Facebook Click To Load', () => {
 
         clearRequests()
         const buttonCount = await page.evaluate(() => {
-            globalThis.buttons =
-                Array.from(document.querySelectorAll('body > div'))
-                    .map(div => div.shadowRoot && div.shadowRoot.querySelector('button'))
-                    .filter(button => button && button.innerText.startsWith('Unblock'))
+            globalThis.buttons = Array.from(document.querySelectorAll('body > div'))
+                .map((div) => div.shadowRoot && div.shadowRoot.querySelector('button'))
+                .filter((button) => button && button.innerText.startsWith('Unblock'))
             return globalThis.buttons.length
         })
         for (let i = 0; i < buttonCount; i++) {
-            const button = await page.evaluateHandle(
-                pageI => globalThis.buttons[pageI], i
-            )
+            const button = await page.evaluateHandle((pageI) => globalThis.buttons[pageI], i)
             try {
                 await button.click()
-            } catch (e) { }
+            } catch (e) {}
         }
         await waitForNetworkIdle(page, 1000)
         {

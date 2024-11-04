@@ -8,7 +8,7 @@ const tdsStorage = require('./storage/tds').default
 //       See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#state
 let trackingParameters = null
 
-function ensureTrackingParametersConfig () {
+function ensureTrackingParametersConfig() {
     if (trackingParameters) {
         return true
     }
@@ -31,7 +31,7 @@ function ensureTrackingParametersConfig () {
  * @returns {boolean}
  *   True if tracking parameters were stripped, false otherwise.
  */
-function stripTrackingParameters (url) {
+function stripTrackingParameters(url) {
     let parametersRemoved = false
 
     // No parameters, nothing to remove.
@@ -76,7 +76,7 @@ function stripTrackingParameters (url) {
  * @returns {boolean}
  *   True if the 'trackingParameters' feature is active, false otherwise.
  */
-function trackingParametersStrippingEnabled (site, initiatorUrl) {
+function trackingParametersStrippingEnabled(site, initiatorUrl) {
     // Only strip tracking parameters if the feature is enabled for the
     // request URL (URL that the user is navigating to).
     if (site.specialDomainName || !site.isFeatureEnabled('trackingParameters')) {
@@ -87,8 +87,7 @@ function trackingParametersStrippingEnabled (site, initiatorUrl) {
     // the initiating URL (the URL that the user navigated from, if any).
     if (initiatorUrl) {
         const initiatorSite = new Site(initiatorUrl)
-        if (initiatorSite.specialDomainName ||
-            !initiatorSite.isFeatureEnabled('trackingParameters')) {
+        if (initiatorSite.specialDomainName || !initiatorSite.isFeatureEnabled('trackingParameters')) {
             return false
         }
     }
@@ -101,5 +100,6 @@ tdsStorage.onUpdate('config', () => {
 })
 
 module.exports = {
-    trackingParametersStrippingEnabled, stripTrackingParameters
+    trackingParametersStrippingEnabled,
+    stripTrackingParameters,
 }

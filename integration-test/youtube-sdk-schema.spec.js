@@ -6,7 +6,7 @@ const testSite = 'https://privacy-test-pages.site/privacy-protections/youtube-cl
 
 // We're using the original playwright test function which does not load the extension
 test.describe('YouTube Iframe Player API schema', () => {
-    test('CTL: YouTube SDK schema hasn\'t changed', async ({ page }) => {
+    test("CTL: YouTube SDK schema hasn't changed", async ({ page }) => {
         await routeFromLocalhost(page)
         await page.goto(testSite)
 
@@ -21,9 +21,7 @@ test.describe('YouTube Iframe Player API schema', () => {
         //       If no changes to the surrogate scripts are required, please
         //       explain why to the reviewer!
 
-        const { actualSchema, expectedSchema } = await apiSchema.setupAPISchemaTest(
-            page, 'youtube-iframe-api.json', ['YT', 'YTConfig']
-        )
+        const { actualSchema, expectedSchema } = await apiSchema.setupAPISchemaTest(page, 'youtube-iframe-api.json', ['YT', 'YTConfig'])
         expect(actualSchema).toEqual(expectedSchema)
     })
 })

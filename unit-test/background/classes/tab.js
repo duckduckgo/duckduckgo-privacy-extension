@@ -18,7 +18,7 @@ describe('Tab', () => {
                 id: 123,
                 requestId: 123,
                 url: 'http://example.com',
-                status: 200
+                status: 200,
             })
         })
         it('should update the site object if the URL is different', () => {
@@ -50,13 +50,13 @@ describe('Tab', () => {
                 id: 123,
                 requestId: 123,
                 url: 'http://example.com',
-                status: 200
+                status: 200,
             })
             await TabState.done()
         })
         it('should serialize to the correct legacy state', () => {
             const tabClone = new LegacyTabTransfer(tab)
-            function getExpectedEnabledFeatures (url) {
+            function getExpectedEnabledFeatures(url) {
                 return utils.getEnabledFeatures(url)
             }
             const url = 'http://example.com'
@@ -70,7 +70,7 @@ describe('Tab', () => {
                         privacyScore: 2,
                         entitiesBlocked: {},
                         entitiesNotBlocked: {},
-                        scores: null
+                        scores: null,
                     },
                     didIncrementCompaniesData: false,
                     tosdr: {},
@@ -85,13 +85,13 @@ describe('Tab', () => {
                     protocol: 'http',
                     baseDomain: 'example.com',
                     parentEntity: '',
-                    parentPrevalence: 0
+                    parentPrevalence: 0,
                 },
                 httpsRedirects: {
                     failedUpgradeHosts: {},
                     redirectCounts: {},
                     mainFrameRedirect: null,
-                    clearMainFrameTimeout: null
+                    clearMainFrameTimeout: null,
                 },
                 webResourceAccess: [],
                 surrogates: {},
@@ -123,7 +123,7 @@ describe('Tab', () => {
                 userRefreshCount: 0,
                 openerContext: null,
                 jsPerformance: [],
-                locale: 'en-US'
+                locale: 'en-US',
             }
             expect(tabClone.site.enabledFeatures.length).toBe(15)
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4))
@@ -162,7 +162,9 @@ describe('Tab', () => {
             expect(fetchedRestoredTab).not.toBeUndefined()
             expect(fetchedRestoredTab.url).toEqual(tab.url)
 
-            const setters = Object.entries(Object.getOwnPropertyDescriptors(Tab)).filter(([key, descriptor]) => typeof descriptor.set === 'function')
+            const setters = Object.entries(Object.getOwnPropertyDescriptors(Tab)).filter(
+                ([key, descriptor]) => typeof descriptor.set === 'function',
+            )
 
             // Set all the properties to something different
             const marker = '::::::::::::::::::::marker::::::::::::::::::::'
@@ -191,7 +193,7 @@ describe('Tab', () => {
                 id: 212,
                 requestId: 222,
                 url: 'http://example.com',
-                status: 200
+                status: 200,
             })
             await TabState.done()
         })
@@ -201,8 +203,8 @@ describe('Tab', () => {
             const trackerObj = {
                 owner: {
                     name: trackerName,
-                    displayName: trackerName
-                }
+                    displayName: trackerName,
+                },
             }
             const domain = 'http://example.com'
             const tracker = {
@@ -214,7 +216,7 @@ describe('Tab', () => {
                 matchedRule: 'block',
                 matchedRuleException: false,
                 tracker: trackerObj,
-                fullTrackerDomain: domain
+                fullTrackerDomain: domain,
             }
             tab.site.addTracker(tracker)
             tab.addToTrackers(tracker)

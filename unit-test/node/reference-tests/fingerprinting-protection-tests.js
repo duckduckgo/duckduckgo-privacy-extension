@@ -38,7 +38,7 @@ for (const setName of Object.keys(testSets)) {
         beforeAll(() => {
             tdsStorageStub.stub({ config: configReference })
 
-            return tdsStorage.getLists().then(lists => tds.setLists(lists))
+            return tdsStorage.getLists().then((lists) => tds.setLists(lists))
         })
 
         afterEach(() => {
@@ -46,7 +46,7 @@ for (const setName of Object.keys(testSets)) {
             globalThis = orgGlobalThis
         })
 
-        testsToRun.forEach(test => {
+        testsToRun.forEach((test) => {
             if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                 return
             }
@@ -55,13 +55,13 @@ for (const setName of Object.keys(testSets)) {
                 tabManager.delete(1)
                 tabManager.create({
                     tabId: 1,
-                    url: test.siteURL
+                    url: test.siteURL,
                 })
 
                 const args = getArgumentsObject(1, { url: test.siteURL, frameId: 0 }, test.siteURL, 'abc123')
                 const dom = new JSDOM('', {
                     url: 'https://example.com/',
-                    runScripts: 'outside-only'
+                    runScripts: 'outside-only',
                 })
 
                 // mock non-standard APIs not implemented by jsdom
@@ -87,7 +87,7 @@ for (const setName of Object.keys(testSets)) {
                 // validate result
                 const result = await dom.window.eval(test.property)
 
-                function check (resultValue) {
+                function check(resultValue) {
                     const resultString = resultValue === undefined ? 'undefined' : resultValue.toString()
                     expect(resultString).toBe(test.expectPropertyValue)
                 }

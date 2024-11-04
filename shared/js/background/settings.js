@@ -23,18 +23,18 @@ const _ready = init().then(() => {
     console.log('Settings are loaded')
 })
 
-async function init () {
+async function init() {
     buildSettingsFromDefaults()
     await buildSettingsFromManagedStorage()
     await buildSettingsFromLocalStorage()
 }
 
-function ready () {
+function ready() {
     return _ready
 }
 
 // Ensures we have cleared up old storage keys we have renamed
-function checkForLegacyKeys () {
+function checkForLegacyKeys() {
     const legacyKeys = {
         // Keys to migrate
         whitelisted: 'allowlisted',
@@ -63,7 +63,7 @@ function checkForLegacyKeys () {
         'brokenSiteList-etag': null,
         'surrogateList-etag': null,
         'trackersWhitelist-etag': null,
-        'trackersWhitelistTemporary-etag': null
+        'trackersWhitelistTemporary-etag': null,
     }
     let syncNeeded = false
     for (const legacyKey in legacyKeys) {
@@ -83,7 +83,7 @@ function checkForLegacyKeys () {
     }
 }
 
-async function buildSettingsFromLocalStorage () {
+async function buildSettingsFromLocalStorage() {
     const results = await browserWrapper.getFromStorage(['settings'])
     // copy over saved settings from storage
     if (!results) return
@@ -91,21 +91,21 @@ async function buildSettingsFromLocalStorage () {
     checkForLegacyKeys()
 }
 
-async function buildSettingsFromManagedStorage () {
+async function buildSettingsFromManagedStorage() {
     const results = await browserWrapper.getFromManagedStorage(MANAGED_SETTINGS)
     settings = browserWrapper.mergeSavedSettings(settings, results)
 }
 
-function buildSettingsFromDefaults () {
+function buildSettingsFromDefaults() {
     // initial settings are a copy of default settings
     settings = Object.assign({}, defaultSettings)
 }
 
-function syncSettingTolocalStorage () {
+function syncSettingTolocalStorage() {
     return browserWrapper.syncToStorage({ settings })
 }
 
-function getSetting (name) {
+function getSetting(name) {
     if (!isReady) {
         console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
         return
@@ -121,7 +121,7 @@ function getSetting (name) {
     }
 }
 
-function updateSetting (name, value) {
+function updateSetting(name, value) {
     if (!isReady) {
         console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
         return
@@ -133,11 +133,9 @@ function updateSetting (name, value) {
     })
 }
 
-function incrementNumericSetting (name, increment = 1) {
+function incrementNumericSetting(name, increment = 1) {
     if (!isReady) {
-        console.warn(
-            'Settings: incrementNumericSetting() Setting not loaded:', name
-        )
+        console.warn('Settings: incrementNumericSetting() Setting not loaded:', name)
         return
     }
 
@@ -149,7 +147,7 @@ function incrementNumericSetting (name, increment = 1) {
     updateSetting(name, value + increment)
 }
 
-function removeSetting (name) {
+function removeSetting(name) {
     if (!isReady) {
         console.warn(`Settings: removeSetting() Setting not loaded: ${name}`)
         return
@@ -160,7 +158,7 @@ function removeSetting (name) {
     }
 }
 
-function logSettings () {
+function logSettings() {
     browserWrapper.getFromStorage(['settings']).then((s) => {
         console.log(s.settings)
     })
@@ -173,5 +171,5 @@ module.exports = {
     removeSetting,
     logSettings,
     ready,
-    onSettingUpdate
+    onSettingUpdate,
 }

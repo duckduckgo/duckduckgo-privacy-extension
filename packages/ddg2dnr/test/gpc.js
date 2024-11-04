@@ -10,25 +10,29 @@ const expectedRule = {
     priority: GPC_HEADER_PRIORITY,
     action: {
         type: 'modifyHeaders',
-        requestHeaders: [
-            { header: 'Sec-GPC', operation: 'set', value: '1' }
-        ]
+        requestHeaders: [{ header: 'Sec-GPC', operation: 'set', value: '1' }],
     },
     condition: {
         resourceTypes: [
-            'main_frame', 'sub_frame', 'stylesheet', 'script', 'image',
-            'font', 'object', 'xmlhttprequest', 'ping', 'csp_report',
-            'media', 'websocket', 'webtransport', 'webbundle', 'other'
+            'main_frame',
+            'sub_frame',
+            'stylesheet',
+            'script',
+            'image',
+            'font',
+            'object',
+            'xmlhttprequest',
+            'ping',
+            'csp_report',
+            'media',
+            'websocket',
+            'webtransport',
+            'webbundle',
+            'other',
         ],
-        excludedInitiatorDomains: [
-            'exception1.example',
-            'exception2.example'
-        ],
-        excludedRequestDomains: [
-            'exception1.example',
-            'exception2.example'
-        ]
-    }
+        excludedInitiatorDomains: ['exception1.example', 'exception2.example'],
+        excludedRequestDomains: ['exception1.example', 'exception2.example'],
+    },
 }
 
 describe('GPC Header rule', () => {

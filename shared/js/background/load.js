@@ -1,14 +1,14 @@
 const browserWrapper = require('./wrapper')
 
-function JSONfromLocalFile (path) {
+function JSONfromLocalFile(path) {
     return loadExtensionFile({ url: path, returnType: 'json' })
 }
 
-function JSONfromExternalFile (urlString) {
+function JSONfromExternalFile(urlString) {
     return loadExtensionFile({ url: urlString, returnType: 'json', source: 'external' })
 }
 
-function url (urlString) {
+function url(urlString) {
     return loadExtensionFile({ url: urlString, source: 'external' })
 }
 
@@ -18,7 +18,7 @@ function url (urlString) {
  *  - source: requests are internal by default. set source to 'external' for non-extension URLs
  *  - etag: set an if-none-match header
  */
-async function loadExtensionFile (params) {
+async function loadExtensionFile(params) {
     const headers = new Headers()
     let urlString = params.url
 
@@ -41,14 +41,16 @@ async function loadExtensionFile (params) {
     }
 
     let rej
-    const timeoutPromise = new Promise((resolve, reject) => { rej = reject })
+    const timeoutPromise = new Promise((resolve, reject) => {
+        rej = reject
+    })
     // @ts-ignore
     const fetchTimeout = setTimeout(rej, params.timeout || 30000)
 
     const fetchResult = fetch(urlString, {
         method: 'GET',
-        headers
-    }).then(async response => {
+        headers,
+    }).then(async (response) => {
         clearTimeout(fetchTimeout)
 
         const status = response.status
@@ -69,14 +71,14 @@ async function loadExtensionFile (params) {
                 status,
                 date,
                 etag,
-                data
+                data,
             }
         } else if (status === 304) {
             console.log(`${urlString} returned 304, resource not changed`)
             return {
                 status,
                 date,
-                etag
+                etag,
             }
         } else {
             throw new Error(`${urlString} returned ${response.status}`)
@@ -90,5 +92,5 @@ module.exports = {
     loadExtensionFile,
     JSONfromLocalFile,
     JSONfromExternalFile,
-    url
+    url,
 }

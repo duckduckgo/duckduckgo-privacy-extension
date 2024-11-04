@@ -1,11 +1,6 @@
 /** @module trackerAllowlist */
 
-const {
-    processPlaintextTrackerRule,
-    storeInLookup,
-    generateDNRRule,
-    getTrackerEntryDomain
-} = require('./utils')
+const { processPlaintextTrackerRule, storeInLookup, generateDNRRule, getTrackerEntryDomain } = require('./utils')
 
 // Priority that the Tracker Blocking Allowlist declarativeNetRequest rules
 // start from.
@@ -18,8 +13,7 @@ const PRIORITY_INCREMENT = 1
 // Note: Limited to 100 in order to be consistent with Tracker Blocking.
 const CEILING_PRIORITY = 20100
 
-const MAXIMUM_RULES_PER_TRACKER_ENTRY = (CEILING_PRIORITY - BASELINE_PRIORITY) /
-                                            PRIORITY_INCREMENT
+const MAXIMUM_RULES_PER_TRACKER_ENTRY = (CEILING_PRIORITY - BASELINE_PRIORITY) / PRIORITY_INCREMENT
 
 /**
  * @typedef generateTrackerAllowlistRulesResult
@@ -34,13 +28,15 @@ const MAXIMUM_RULES_PER_TRACKER_ENTRY = (CEILING_PRIORITY - BASELINE_PRIORITY) /
  *   The extension configuration.
  * @return {Generator<generateTrackerAllowlistRulesResult>}
  */
-function* generateTrackerAllowlistRules ({ features: { trackerAllowlist } }) {
+function* generateTrackerAllowlistRules({ features: { trackerAllowlist } }) {
     // No allowlisted trackers.
-    if (!trackerAllowlist ||
+    if (
+        !trackerAllowlist ||
         trackerAllowlist.state !== 'enabled' ||
         !trackerAllowlist.settings ||
         !trackerAllowlist.settings.allowlistedTrackers ||
-        trackerAllowlist.settings.allowlistedTrackers.length === 0) {
+        trackerAllowlist.settings.allowlistedTrackers.length === 0
+    ) {
         return
     }
 
@@ -55,58 +51,40 @@ function* generateTrackerAllowlistRules ({ features: { trackerAllowlist } }) {
         /** @type {string|null} */
         let currentTrackerDomain = trackerDomain
         while (currentTrackerDomain) {
-            currentTrackerDomain = getTrackerEntryDomain(
-                allowlistedTrackers, currentTrackerDomain, 1
-            )
+            currentTrackerDomain = getTrackerEntryDomain(allowlistedTrackers, currentTrackerDomain, 1)
             if (currentTrackerDomain) {
-                storeInLookup(
-                    excludedRequestDomainsByTrackerEntry,
-                    currentTrackerDomain,
-                    [trackerDomain]
-                )
+                storeInLookup(excludedRequestDomainsByTrackerEntry, currentTrackerDomain, [trackerDomain])
             }
         }
     }
 
-    for (const [trackerDomain, trackerEntry] of
-        Object.entries(allowlistedTrackers)) {
+    for (const [trackerDomain, trackerEntry] of Object.entries(allowlistedTrackers)) {
         const { rules: trackerEntryRules } = trackerEntry
 
         if (!trackerEntryRules || trackerEntryRules.length === 0) {
             continue
         }
         if (trackerEntryRules.length > MAXIMUM_RULES_PER_TRACKER_ENTRY) {
-            throw new Error(
-                'Too many allowlist rules for tracker domain: ' + trackerDomain
-            )
+            throw new Error('Too many allowlist rules for tracker domain: ' + trackerDomain)
         }
 
         const requestDomains = [trackerDomain]
-        const excludedRequestDomains =
-              excludedRequestDomainsByTrackerEntry.get(trackerDomain)
+        const excludedRequestDomains = excludedRequestDomainsByTrackerEntry.get(trackerDomain)
 
         // Iterate through the tracker entry's rules backwards, since rules for
         // a tracker entry are matched in order and therefore the corresponding
         // declarativeNetRequest rules should have descending priority.
         let priority = BASELINE_PRIORITY
         for (let i = trackerEntryRules.length - 1; i >= 0; i--) {
-            let {
-                rule: trackerRule,
-                domains: initiatorDomains,
-                reason: allowlistReason
-            } = trackerEntryRules[i]
+            let { rule: trackerRule, domains: initiatorDomains, reason: allowlistReason } = trackerEntryRules[i]
 
             // Tracker Blocking Allowlist entries always have an initiator
             // domains condition, but if it's `['<all>']` it must be ignored.
-            if (initiatorDomains.length === 0 ||
-                initiatorDomains[0] === '<all>') {
+            if (initiatorDomains.length === 0 || initiatorDomains[0] === '<all>') {
                 initiatorDomains = null
             }
 
-            const {
-                urlFilter,
-                matchCase
-            } = processPlaintextTrackerRule(trackerDomain, trackerRule)
+            const { urlFilter, matchCase } = processPlaintextTrackerRule(trackerDomain, trackerRule)
 
             const rule = generateDNRRule({
                 priority,
@@ -115,13 +93,13 @@ function* generateTrackerAllowlistRules ({ features: { trackerAllowlist } }) {
                 matchCase,
                 requestDomains,
                 excludedRequestDomains,
-                initiatorDomains
+                initiatorDomains,
             })
 
             const matchDetails = {
                 type: 'trackerAllowlist',
                 domain: trackerDomain,
-                reason: allowlistReason
+                reason: allowlistReason,
             }
 
             yield { rule, matchDetails }

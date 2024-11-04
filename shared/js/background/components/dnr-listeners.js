@@ -22,26 +22,24 @@ export default class DNRListeners {
      *  - Extension install and update events.
      *
      * @param {{
-    *  settings: Settings;
-    *  tds: TDS;
-    * }} options
-    */
-    constructor ({ settings, tds }) {
+     *  settings: Settings;
+     *  tds: TDS;
+     * }} options
+     */
+    constructor({ settings, tds }) {
         this.featureName = 'DNR'
         this.settings = settings
         this.tds = tds
         browser.runtime.onInstalled.addListener(this.postInstall.bind(this))
         tds.config.onUpdate(onConfigUpdate)
         tds.tds.onUpdate(onConfigUpdate)
-        this.settings.onSettingUpdate.addEventListener(
-            'GPC', async () => {
-                await this.tds.config.ready
-                ensureGPCHeaderRule(this.tds.config.data)
-            }
-        )
+        this.settings.onSettingUpdate.addEventListener('GPC', async () => {
+            await this.tds.config.ready
+            ensureGPCHeaderRule(this.tds.config.data)
+        })
     }
 
-    async postInstall () {
+    async postInstall() {
         await this.settings.ready()
         // remove any orphaned session rules (can happen on extension update/restart)
         await flushSessionRules()

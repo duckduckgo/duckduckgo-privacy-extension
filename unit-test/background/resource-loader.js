@@ -3,15 +3,16 @@ import ResourceLoader from '../../shared/js/background/components/resource-loade
 let mockSettingsReady
 const mockSettingData = new Map()
 const settingsMock = {
-    ready: () => new Promise(resolve => {
-        mockSettingsReady = resolve
-    }),
+    ready: () =>
+        new Promise((resolve) => {
+            mockSettingsReady = resolve
+        }),
     getSetting: (key) => {
         return mockSettingData.get(key)
     },
     updateSetting: (key, value) => {
         mockSettingData.set(key, value)
-    }
+    },
 }
 
 describe('ResourceLoader', () => {
@@ -26,11 +27,14 @@ describe('ResourceLoader', () => {
         const mockEtag = 'etag-data'
 
         beforeEach(() => {
-            loader = new ResourceLoader({
-                name: 'test',
-                remoteUrl: 'https://example.com/test.json',
-                localUrl: '/test.json'
-            }, { settings: settingsMock })
+            loader = new ResourceLoader(
+                {
+                    name: 'test',
+                    remoteUrl: 'https://example.com/test.json',
+                    localUrl: '/test.json',
+                },
+                { settings: settingsMock },
+            )
             mockSettingData.clear()
             loadFromDbSpy = spyOn(loader, '_loadFromDB').and.rejectWith('mockDbReject')
             loadFromUrlSpy = spyOn(loader, '_loadFromURL').and.rejectWith('mockUrlReject')
@@ -45,7 +49,7 @@ describe('ResourceLoader', () => {
         it('Loads first from remote with no settings', async () => {
             loadFromUrlSpy.and.resolveTo({
                 contents: mockData,
-                etag: mockEtag
+                etag: mockEtag,
             })
             mockSettingsReady()
             await loader.ready
@@ -59,7 +63,7 @@ describe('ResourceLoader', () => {
             // load fetch succeeds
             loadFromUrlSpy.withArgs('/test.json', true).and.resolveTo({
                 contents: mockData,
-                etag: mockEtag
+                etag: mockEtag,
             })
             mockSettingsReady()
             await loader.ready
@@ -80,7 +84,7 @@ describe('ResourceLoader', () => {
 
         it('Loads from DB if remote fails', async () => {
             loadFromDbSpy.and.resolveTo({
-                contents: mockData
+                contents: mockData,
             })
             settingsMock.updateSetting('test-etag', 'etag-from-settings')
             mockSettingsReady()

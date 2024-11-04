@@ -87,7 +87,7 @@ class Trackers {
      *    utils: *,
      * }} ops
      */
-    constructor (ops) {
+    constructor(ops) {
         this.tldts = ops.tldts || ops.tldjs
         this.utils = ops.utils
     }
@@ -95,8 +95,8 @@ class Trackers {
     /**
      * @param {{data: *, name: string}[]} lists
      */
-    setLists (lists) {
-        lists.forEach(list => {
+    setLists(lists) {
+        lists.forEach((list) => {
             if (list.name === 'tds') {
                 this.entityList = this.processEntityList(list.data.entities)
                 this.trackerList = this.processTrackerList(list.data.trackers)
@@ -112,7 +112,7 @@ class Trackers {
      * @param {Record<string, TrackerObj>} data
      * @returns {*}
      */
-    processTrackerList (data) {
+    processTrackerList(data) {
         for (const name in data) {
             if (data[name].rules) {
                 for (const i in data[name].rules) {
@@ -127,11 +127,11 @@ class Trackers {
      * @param {Record<string, EntityData>} data
      * @returns {Record<string, string>}
      */
-    processEntityList (data) {
+    processEntityList(data) {
         /** @type {Record<string, string>} */
         const processed = {}
         for (const entity in data) {
-            data[entity].domains.forEach(domain => {
+            data[entity].domains.forEach((domain) => {
                 processed[domain] = entity
             })
         }
@@ -142,16 +142,16 @@ class Trackers {
      * @param {string} text
      * @returns {Record<string, string>}
      */
-    processSurrogateList (text) {
+    processSurrogateList(text) {
         const b64dataheader = 'data:application/javascript;base64,'
         /** @type {Record<string, string>} */
         const surrogateList = {}
         const splitSurrogateList = text.trim().split('\n\n')
 
-        splitSurrogateList.forEach(sur => {
+        splitSurrogateList.forEach((sur) => {
             // remove comment lines
             const lines = sur.split('\n').filter((line) => {
-                return !(/^#.*/).test(line)
+                return !/^#.*/.test(line)
             })
 
             // remove first line, store it
@@ -172,7 +172,7 @@ class Trackers {
      * @param {string} url
      * @returns {{fromCname: string | undefined, finalURL: string}}
      */
-    resolveCname (url) {
+    resolveCname(url) {
         const parsed = this.tldts.parse(url, { allowPrivateDomains: true })
         let finalURL = url
         let fromCname
@@ -189,7 +189,7 @@ class Trackers {
         }
         return {
             fromCname,
-            finalURL
+            finalURL,
         }
     }
 
@@ -197,7 +197,7 @@ class Trackers {
      * Copied from extension (FIX)
      * @param {string} urlString
      **/
-    getBaseDomain (urlString) {
+    getBaseDomain(urlString) {
         const parsedUrl = this.tldts.parse(urlString, { allowPrivateDomains: true })
         return parsedUrl.domain || parsedUrl.hostname
     }
@@ -211,7 +211,7 @@ class Trackers {
      * @param {RequestExpression} request
      * @returns {RequestData | null}
      */
-    getRequestData (urlToCheck, siteUrl, request) {
+    getRequestData(urlToCheck, siteUrl, request) {
         const siteDomain = this.getBaseDomain(siteUrl)
         const urlToCheckDomain = this.getBaseDomain(urlToCheck)
         if (!siteDomain || !urlToCheckDomain) {
@@ -225,7 +225,7 @@ class Trackers {
             siteUrlSplit: this.utils.extractHostFromURL(siteUrl).split('.'),
             urlToCheck: urlToCheck,
             urlToCheckDomain,
-            urlToCheckSplit: this.utils.extractHostFromURL(urlToCheck).split('.')
+            urlToCheckSplit: this.utils.extractHostFromURL(urlToCheck).split('.'),
         }
     }
 
@@ -233,7 +233,7 @@ class Trackers {
      * @param {string} url
      * @returns {boolean}
      */
-    isSpecialURL (url) {
+    isSpecialURL(url) {
         let urlObj
         try {
             urlObj = new URL(url)
@@ -284,13 +284,15 @@ class Trackers {
             'urn:',
             'webcal:',
             'wtai:',
-            'xmpp:'
+            'xmpp:',
         ]
         if (urlObj) {
-            if (specialProtocols.includes(urlObj.protocol) ||
+            if (
+                specialProtocols.includes(urlObj.protocol) ||
                 // https://html.spec.whatwg.org/#web+-scheme-prefix
                 urlObj.protocol.startsWith('web+') ||
-                urlObj.hostname === 'localhost') {
+                urlObj.hostname === 'localhost'
+            ) {
                 return true
             }
         }
@@ -311,7 +313,7 @@ class Trackers {
      *         @see {Trackers.prototype.standardRuleActions}.
      * @returns {TrackerData | null}
      */
-    getTrackerData (urlToCheck, siteUrl, request, supportedCustomRuleActions) {
+    getTrackerData(urlToCheck, siteUrl, request, supportedCustomRuleActions) {
         if (!this.entityList || !this.trackerList) {
             throw new Error('tried to detect trackers before rules were loaded')
         }
@@ -348,12 +350,13 @@ class Trackers {
         const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
         const requestOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
         const websiteOwner = this.findWebsiteOwner(requestData)
-        const sameEntity = (requestOwner && websiteOwner) ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
+        const sameEntity =
+            requestOwner && websiteOwner ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
 
         if (!tracker) {
             const owner = {
                 name: requestOwner || requestData.urlToCheckDomain || 'unknown',
-                displayName: requestOwner || requestData.urlToCheckDomain || 'Unknown'
+                displayName: requestOwner || requestData.urlToCheckDomain || 'Unknown',
             }
             /** @type {TrackerObj} */
             const trackerObj = {
@@ -364,7 +367,7 @@ class Trackers {
                 cookies: 0,
                 categories: [],
                 default: 'none',
-                rules: []
+                rules: [],
             }
             return {
                 action: trackerObj.default,
@@ -376,14 +379,14 @@ class Trackers {
                 matchedRuleException: false,
                 tracker: trackerObj,
                 fullTrackerDomain,
-                fromCname
+                fromCname,
             }
         }
         // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
         const matchedRule = this.findRule(tracker, requestData, supportedCustomRuleActions)
 
         // @ts-ignore
-        const redirectUrl = (matchedRule && matchedRule.surrogate) ? this.surrogateList[matchedRule.surrogate] : false
+        const redirectUrl = matchedRule && matchedRule.surrogate ? this.surrogateList[matchedRule.surrogate] : false
 
         // sets tracker.exception by looking at tracker.rule exceptions (if any)
         const matchedRuleException = matchedRule ? this.matchesRuleDefinition(matchedRule, 'exceptions', requestData) : false
@@ -393,7 +396,7 @@ class Trackers {
             matchedRule,
             matchedRuleException,
             defaultAction: tracker.default,
-            redirectUrl
+            redirectUrl,
         })
         return {
             action,
@@ -405,7 +408,7 @@ class Trackers {
             matchedRuleException,
             tracker,
             fullTrackerDomain,
-            fromCname
+            fromCname,
         }
     }
 
@@ -414,7 +417,7 @@ class Trackers {
      * @param {{urlToCheckSplit: string[]}} urlToCheckObject
      * @returns {undefined | TrackerObj}
      */
-    findTracker (urlToCheckObject) {
+    findTracker(urlToCheckObject) {
         if (!this.trackerList) {
             throw new Error('tried to detect trackers before rules were loaded')
         }
@@ -434,7 +437,7 @@ class Trackers {
      * @param {string} trackerDomain
      * @returns {string | undefined}
      */
-    findTrackerOwner (trackerDomain) {
+    findTrackerOwner(trackerDomain) {
         // @ts-ignore
         return this.entityList[trackerDomain]
     }
@@ -444,7 +447,7 @@ class Trackers {
      * @param {{siteUrlSplit: string[]}} siteUrlSplitObject
      * @returns {string | undefined}
      */
-    findWebsiteOwner (siteUrlSplitObject) {
+    findWebsiteOwner(siteUrlSplitObject) {
         // find the site owner
         const siteUrlList = Array.from(siteUrlSplitObject.siteUrlSplit)
 
@@ -467,7 +470,7 @@ class Trackers {
      * @param {Set<string>} [supportedCustomRuleActions]
      * @returns {boolean}
      */
-    ruleActionSupported ({ action }, supportedCustomRuleActions) {
+    ruleActionSupported({ action }, supportedCustomRuleActions) {
         return (
             // Rule action generally defaults to 'block' if omitted.
             !action ||
@@ -485,13 +488,12 @@ class Trackers {
      * @param {Set<string>} [supportedCustomRuleActions]
      * @returns {TrackerRule | null}
      */
-    findRule (tracker, requestData, supportedCustomRuleActions) {
+    findRule(tracker, requestData, supportedCustomRuleActions) {
         let matchedRule = null
         // Find a matching rule from this tracker
         if (tracker.rules && tracker.rules.length) {
-            tracker.rules.some(ruleObj => {
-                if (this.requestMatchesRule(requestData, ruleObj) &&
-                    this.ruleActionSupported(ruleObj, supportedCustomRuleActions)) {
+            tracker.rules.some((ruleObj) => {
+                if (this.requestMatchesRule(requestData, ruleObj) && this.ruleActionSupported(ruleObj, supportedCustomRuleActions)) {
                     matchedRule = ruleObj
                     return true
                 }
@@ -506,7 +508,7 @@ class Trackers {
      * @param {TrackerRule} ruleObj
      * @returns {boolean}
      */
-    requestMatchesRule (requestData, ruleObj) {
+    requestMatchesRule(requestData, ruleObj) {
         if (requestData.urlToCheck.match(ruleObj.rule)) {
             if (ruleObj.options) {
                 return this.matchesRuleDefinition(ruleObj, 'options', requestData)
@@ -525,21 +527,21 @@ class Trackers {
      * @param {RequestData} requestData
      * @returns {boolean} true if all options matched
      */
-    matchesRuleDefinition (rule, type, requestData) {
+    matchesRuleDefinition(rule, type, requestData) {
         const ruleDefinition = rule[type]
         if (!ruleDefinition) {
             return false
         }
 
-        const matchTypes = (ruleDefinition.types && ruleDefinition.types.length)
-            ? ruleDefinition.types.includes(requestData.request.type)
-            : true
+        const matchTypes =
+            ruleDefinition.types && ruleDefinition.types.length ? ruleDefinition.types.includes(requestData.request.type) : true
 
-        const matchDomains = (ruleDefinition.domains && ruleDefinition.domains.length)
-            ? ruleDefinition.domains.some(domain => domain.match(requestData.siteDomain))
-            : true
+        const matchDomains =
+            ruleDefinition.domains && ruleDefinition.domains.length
+                ? ruleDefinition.domains.some((domain) => domain.match(requestData.siteDomain))
+                : true
 
-        return (matchTypes && matchDomains)
+        return matchTypes && matchDomains
     }
 
     /**
@@ -552,7 +554,7 @@ class Trackers {
      * }} tracker
      * @returns {{ action: ActionName, reason: string }}
      */
-    getAction (tracker) {
+    getAction(tracker) {
         // Determine the blocking decision and reason.
         /** @type {ActionName | undefined} */
         let action = 'ignore'

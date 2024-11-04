@@ -1,46 +1,30 @@
 const assert = require('assert')
 
-const {
-    SMARTER_ENCRYPTION_PRIORITY
-} = require('../lib/smarterEncryption')
+const { SMARTER_ENCRYPTION_PRIORITY } = require('../lib/smarterEncryption')
 
-const {
-    AMP_PROTECTION_PRIORITY
-} = require('../lib/ampProtection')
+const { AMP_PROTECTION_PRIORITY } = require('../lib/ampProtection')
 
-const {
-    GPC_HEADER_PRIORITY
-} = require('../lib/gpc')
+const { GPC_HEADER_PRIORITY } = require('../lib/gpc')
 
-const {
-    TRACKING_PARAM_PRIORITY
-} = require('../lib/trackingParams')
+const { TRACKING_PARAM_PRIORITY } = require('../lib/trackingParams')
 
-const {
-    BASELINE_PRIORITY: TRACKER_BLOCKING_BASELINE_PRIORITY,
-    CEILING_PRIORITY: TRACKER_BLOCKING_CEILING_PRIORITY
-} = require('../lib/tds')
+const { BASELINE_PRIORITY: TRACKER_BLOCKING_BASELINE_PRIORITY, CEILING_PRIORITY: TRACKER_BLOCKING_CEILING_PRIORITY } = require('../lib/tds')
 
-const {
-    COOKIE_PRIORITY
-} = require('../lib/cookies')
+const { COOKIE_PRIORITY } = require('../lib/cookies')
 
 const {
     BASELINE_PRIORITY: TRACKER_ALLOWLIST_BASELINE_PRIORITY,
-    CEILING_PRIORITY: TRACKER_ALLOWLIST_CEILING_PRIORITY
+    CEILING_PRIORITY: TRACKER_ALLOWLIST_CEILING_PRIORITY,
 } = require('../lib/trackerAllowlist')
 
-const {
-    CONTENT_BLOCKING_ALLOWLIST_PRIORITY,
-    UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY
-} = require('../lib/temporaryAllowlist')
+const { CONTENT_BLOCKING_ALLOWLIST_PRIORITY, UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY } = require('../lib/temporaryAllowlist')
 
 const {
     AD_ATTRIBUTION_POLICY_PRIORITY,
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
     USER_ALLOWLISTED_PRIORITY,
     ATB_PARAM_PRIORITY,
-    NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY
+    NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY,
 } = require('../lib/rulePriorities')
 
 describe('Rule Priorities', () => {

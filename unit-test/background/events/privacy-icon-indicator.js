@@ -17,10 +17,12 @@ describe('privacy icon indicator', () => {
         await updateActionIcon(site, tabId)
 
         // ensure the browser api is called with the correct args.
-        expect(browser.browserAction.setIcon.calls.argsFor(0)).toEqual([{
-            path: iconPaths.withSpecialState,
-            tabId: 100
-        }])
+        expect(browser.browserAction.setIcon.calls.argsFor(0)).toEqual([
+            {
+                path: iconPaths.withSpecialState,
+                tabId: 100,
+            },
+        ])
     })
     it('uses special state when a site is remote-disabled', async () => {
         // construct an instance of Site where the `contentBlocking` feature was disabled
@@ -32,9 +34,11 @@ describe('privacy icon indicator', () => {
         await updateActionIcon(site, tabId)
 
         // ensure the browser api is called with the correct args.
-        expect(browser.browserAction.setIcon.calls.argsFor(0)).toEqual([{
-            path: iconPaths.withSpecialState,
-            tabId: 100
-        }])
+        expect(browser.browserAction.setIcon.calls.argsFor(0)).toEqual([
+            {
+                path: iconPaths.withSpecialState,
+                tabId: 100,
+            },
+        ])
     })
 })

@@ -9,7 +9,7 @@ const stub = (arg) => {
     const tdsData = {
         tds: require('./../data/tds.json'),
         surrogates: require('./../data/surrogates.js').surrogates,
-        config: require('./../data/extension-config.json')
+        config: require('./../data/extension-config.json'),
     }
 
     if (arg) {
@@ -21,27 +21,30 @@ const stub = (arg) => {
         }
     }
 
-    spyOn(tdsStorage, 'onUpdate')
-        .and.callFake((configName, listener) => {
-            let listeners = onUpdateListeners.get(configName)
-            if (!listeners) {
-                listeners = []
-                onUpdateListeners.set(configName, listeners)
-            }
-            listeners.push(listener)
-        })
+    spyOn(tdsStorage, 'onUpdate').and.callFake((configName, listener) => {
+        let listeners = onUpdateListeners.get(configName)
+        if (!listeners) {
+            listeners = []
+            onUpdateListeners.set(configName, listeners)
+        }
+        listeners.push(listener)
+    })
 
     spyOn(tdsStorage, 'getLists').and.callFake(() => {
-        return Promise.resolve([{
-            name: 'tds',
-            data: tdsData.tds
-        }, {
-            name: 'config',
-            data: tdsData.config
-        }, {
-            name: 'surrogates',
-            data: tdsData.surrogates
-        }])
+        return Promise.resolve([
+            {
+                name: 'tds',
+                data: tdsData.tds,
+            },
+            {
+                name: 'config',
+                data: tdsData.config,
+            },
+            {
+                name: 'surrogates',
+                data: tdsData.surrogates,
+            },
+        ])
     })
 
     spyOn(tdsStorage, 'ready').and.callFake(() => Promise.resolve())
@@ -50,5 +53,5 @@ const stub = (arg) => {
     return { onUpdateListeners, tdsData }
 }
 module.exports = {
-    stub
+    stub,
 }

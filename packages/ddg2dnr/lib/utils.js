@@ -48,7 +48,7 @@
  *   domain?: string;
  *   reason?: string;
  * }}} MatchDetailsByRuleId
-*/
+ */
 /**
  * @typedef RulesetResult
  * @property {chrome.declarativeNetRequest.Rule[]} ruleset
@@ -70,11 +70,9 @@ const cnameDomainAnchorCompatibleRuleSuffix = /^(:[0-9]+)?[/?]/
 // Note: This is not perfect, but good enough for now to avoid using regexFilter
 //       unless needed. In the future improvements could be made (e.g. by
 //       ignoring a closing ']' unless an opening '[' was already seen).
-const regularExpressionChars = new Set(
-    ['.', '*', '+', '?', '{', '}', '[', ']', '{', '}']
-)
+const regularExpressionChars = new Set(['.', '*', '+', '?', '{', '}', '[', ']', '{', '}'])
 
-function storeInMapLookup (lookup, key, values) {
+function storeInMapLookup(lookup, key, values) {
     let storedValues = lookup.get(key)
     if (!storedValues) {
         storedValues = []
@@ -85,7 +83,7 @@ function storeInMapLookup (lookup, key, values) {
     }
 }
 
-function storeInObjectLookup (lookup, key, values) {
+function storeInObjectLookup(lookup, key, values) {
     let storedValues = lookup[key]
     if (!storedValues) {
         storedValues = []
@@ -107,7 +105,7 @@ function storeInObjectLookup (lookup, key, values) {
  * @param {any} key
  * @param {any[]} values
  */
-function storeInLookup (lookup, key, values) {
+function storeInLookup(lookup, key, values) {
     if (lookup instanceof Map) {
         storeInMapLookup(lookup, key, values)
     } else {
@@ -132,7 +130,7 @@ function storeInLookup (lookup, key, values) {
  * @param {`${chrome.declarativeNetRequest.HeaderOperation}`} s
  * @returns {chrome.declarativeNetRequest.HeaderOperation}
  */
-function castDNREnum (s) {
+function castDNREnum(s) {
     return s
 }
 
@@ -173,21 +171,34 @@ function castDNREnum (s) {
  * @param {generateDNRRuleDetails} ruleDetails
  * @returns {chrome.declarativeNetRequest.Rule}
  */
-function generateDNRRule ({
-    id, priority, actionType, redirect, requestHeaders, responseHeaders,
-    urlFilter, regexFilter, resourceTypes, excludedResourceTypes,
-    requestDomains, excludedRequestDomains, initiatorDomains,
-    excludedInitiatorDomains, matchCase = false, tabIds, excludedTabIds,
-    requestMethods, excludedRequestMethods
+function generateDNRRule({
+    id,
+    priority,
+    actionType,
+    redirect,
+    requestHeaders,
+    responseHeaders,
+    urlFilter,
+    regexFilter,
+    resourceTypes,
+    excludedResourceTypes,
+    requestDomains,
+    excludedRequestDomains,
+    initiatorDomains,
+    excludedInitiatorDomains,
+    matchCase = false,
+    tabIds,
+    excludedTabIds,
+    requestMethods,
+    excludedRequestMethods,
 }) {
     /** @type {Omit<chrome.declarativeNetRequest.Rule, 'id'> & {id?: number}} */
     const dnrRule = {
         priority,
         action: {
-            type: actionType
+            type: actionType,
         },
-        condition: {
-        }
+        condition: {},
     }
 
     if (typeof id === 'number') {
@@ -255,18 +266,14 @@ function generateDNRRule ({
 
     // Note: It's not necessary to exclude initiator domains for allowing rules
     //       since first-party requests will be allowed anyway.
-    if (excludedInitiatorDomains &&
-        excludedInitiatorDomains.length > 0 &&
-        actionType !== 'allow') {
-        if (excludedInitiatorDomains.length === 1 &&
-            requestDomains && requestDomains.length === 1) {
+    if (excludedInitiatorDomains && excludedInitiatorDomains.length > 0 && actionType !== 'allow') {
+        if (excludedInitiatorDomains.length === 1 && requestDomains && requestDomains.length === 1) {
             // Assume that if only one initiator domain is excluded (and there
             // is only one request domain), that the excluded initiator domain
             // is the same as the request domain.
             dnrRule.condition.domainType = castDNREnum('thirdParty')
         } else {
-            dnrRule.condition.excludedInitiatorDomains =
-                excludedInitiatorDomains
+            dnrRule.condition.excludedInitiatorDomains = excludedInitiatorDomains
         }
     }
 
@@ -289,12 +296,11 @@ function generateDNRRule ({
     return dnrRule
 }
 
-function alphaChar (charCode) {
-    return ((charCode >= 97 && charCode <= 122) ||
-            (charCode >= 65 && charCode <= 90))
+function alphaChar(charCode) {
+    return (charCode >= 97 && charCode <= 122) || (charCode >= 65 && charCode <= 90)
 }
 
-function parseRegexTrackerRule (domain, trackerRule) {
+function parseRegexTrackerRule(domain, trackerRule) {
     let requiresRegexFilter = false
     let urlFilter = ''
     let afterDomainRuleIndex = -1
@@ -307,8 +313,7 @@ function parseRegexTrackerRule (domain, trackerRule) {
         const char = trackerRule[i]
         const charCode = char.charCodeAt(0)
 
-        if (domain && urlFilter.length === domain.length &&
-            afterDomainRuleIndex === -1) {
+        if (domain && urlFilter.length === domain.length && afterDomainRuleIndex === -1) {
             // Store the index in the trackerRule that corresponds to the first
             // character after the domain part. That is assuming the rule is
             // prefixed with the domain part... that is verified later.
@@ -365,7 +370,10 @@ function parseRegexTrackerRule (domain, trackerRule) {
     }
 
     return {
-        requiresRegexFilter, urlFilter, afterDomainRuleIndex, lastAlphaIndex
+        requiresRegexFilter,
+        urlFilter,
+        afterDomainRuleIndex,
+        lastAlphaIndex,
     }
 }
 
@@ -393,16 +401,14 @@ function parseRegexTrackerRule (domain, trackerRule) {
  *   If cname matching is necessary for this rule.
  * @return {processRegexTrackerRuleResult}
  */
-function processRegexTrackerRule (domain, trackerRule, matchCnames) {
+function processRegexTrackerRule(domain, trackerRule, matchCnames) {
     // If the tracker rule is empty, then neither urlFilter nor regexFilter are
     // necessary.
     if (!trackerRule) {
-        return { }
+        return {}
     }
 
-    let {
-        requiresRegexFilter, urlFilter, afterDomainRuleIndex, lastAlphaIndex
-    } = parseRegexTrackerRule(domain, trackerRule)
+    let { requiresRegexFilter, urlFilter, afterDomainRuleIndex, lastAlphaIndex } = parseRegexTrackerRule(domain, trackerRule)
 
     let regexFilter = trackerRule
     let matchCase = false
@@ -413,7 +419,7 @@ function processRegexTrackerRule (domain, trackerRule, matchCnames) {
         // strings are equal (since the urlFilter starts with the domain).
         // Neither urlFilter nor regexFilter are necessary.
         if (urlFilter.length === domain.length) {
-            return { }
+            return {}
         }
 
         // Ignore the domain when considering if the rule needs to be matched
@@ -438,13 +444,9 @@ function processRegexTrackerRule (domain, trackerRule, matchCnames) {
             // Note: This workaround only works if there is a '/' or '?'
             //       character directly after the domain (or port) part of the
             //       rule.
-            if (matchCnames &&
-                afterDomainRuleIndex > -1 &&
-                cnameDomainAnchorCompatibleRuleSuffix
-                    .test(urlFilter.substr(domain.length))) {
+            if (matchCnames && afterDomainRuleIndex > -1 && cnameDomainAnchorCompatibleRuleSuffix.test(urlFilter.substr(domain.length))) {
                 usedRegexForWorkaround = true
-                regexFilter = cnameDomainAnchor +
-                                  trackerRule.substr(afterDomainRuleIndex)
+                regexFilter = cnameDomainAnchor + trackerRule.substr(afterDomainRuleIndex)
             }
 
             // Prepend the '||' urlFilter domain anchor to improve matching
@@ -488,7 +490,7 @@ function processRegexTrackerRule (domain, trackerRule, matchCnames) {
  *   The tracker entry's rule (literal string to match).
  * @return {processPlaintextTrackerRuleResult}
  */
-function processPlaintextTrackerRule (domain, trackerRule) {
+function processPlaintextTrackerRule(domain, trackerRule) {
     let urlFilter = trackerRule
 
     if (domain && urlFilter.startsWith(domain)) {
@@ -520,7 +522,7 @@ function processPlaintextTrackerRule (domain, trackerRule) {
  *   The closest-matching (skipped subdomains allowing) tracking domain, or null
  *   if none are found.
  */
-function getTrackerEntryDomain (trackerEntries, domain, skipSubdomains = 0) {
+function getTrackerEntryDomain(trackerEntries, domain, skipSubdomains = 0) {
     // Strip leading '.' in cname entries, nothing otherwise.
     let i = domain[0] === '.' ? 0 : -1
 
@@ -547,14 +549,12 @@ function getTrackerEntryDomain (trackerEntries, domain, skipSubdomains = 0) {
  * @param {TDS} tds Tracker blocklist
  * @returns {Map<string, string[]>} domain mapping
  */
-function generateRequestDomainsByTrackerDomain (tds) {
+function generateRequestDomainsByTrackerDomain(tds) {
     const requestDomainsByTrackerDomain = new Map()
     // Create a lookup of each tracker entry's domain, that matching cname
     // entries will be added to.
     for (const trackerDomain of Object.keys(tds.trackers)) {
-        storeInLookup(
-            requestDomainsByTrackerDomain, trackerDomain, [trackerDomain]
-        )
+        storeInLookup(requestDomainsByTrackerDomain, trackerDomain, [trackerDomain])
     }
     for (const [domain, cname] of Object.entries(tds.cnames)) {
         // Find the appropriate tracker entry that the cname entry should apply
@@ -581,11 +581,7 @@ function generateRequestDomainsByTrackerDomain (tds) {
 
             // Ensure that the cname is added to included request domains for
             // the matching tracker entry.
-            storeInLookup(
-                requestDomainsByTrackerDomain,
-                trackerEntryDomain,
-                [domain]
-            )
+            storeInLookup(requestDomainsByTrackerDomain, trackerEntryDomain, [domain])
         }
     }
     return requestDomainsByTrackerDomain
@@ -593,9 +589,21 @@ function generateRequestDomainsByTrackerDomain (tds) {
 
 /** @type Set<ResourceType> */
 const resourceTypes = new Set([
-    'main_frame', 'sub_frame', 'stylesheet', 'script', 'image', 'font',
-    'object', 'xmlhttprequest', 'ping', 'csp_report', 'media', 'websocket',
-    'webtransport', 'webbundle', 'other'
+    'main_frame',
+    'sub_frame',
+    'stylesheet',
+    'script',
+    'image',
+    'font',
+    'object',
+    'xmlhttprequest',
+    'ping',
+    'csp_report',
+    'media',
+    'websocket',
+    'webtransport',
+    'webbundle',
+    'other',
 ])
 
 exports.castDNREnum = castDNREnum

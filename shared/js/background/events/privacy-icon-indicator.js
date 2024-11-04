@@ -11,7 +11,7 @@ import { setActionIcon } from '../wrapper'
  * @param {number} tabId
  * @returns {Promise<void>}
  */
-export function updateActionIcon (site, tabId) {
+export function updateActionIcon(site, tabId) {
     // For the icon state, we consider 'protections enabled' to mean
     //    1) user has not manually added this site to their `allowlist`
     //    2) AND the 'contentBlocking' feature is enabled
@@ -19,9 +19,7 @@ export function updateActionIcon (site, tabId) {
 
     // Enabled: regular icon
     // Disabled: special state, greyed-out Dax
-    const nextIcon = protectionsEnabled
-        ? iconPaths.regular
-        : iconPaths.withSpecialState
+    const nextIcon = protectionsEnabled ? iconPaths.regular : iconPaths.withSpecialState
 
     // now call out to the browser wrapper to actually change the icon
     return setActionIcon(nextIcon, tabId)

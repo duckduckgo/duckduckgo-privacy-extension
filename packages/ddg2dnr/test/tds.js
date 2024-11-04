@@ -1,8 +1,6 @@
 const assert = require('assert')
 
-const {
-    emptyBlockList
-} = require('./utils/helpers')
+const { emptyBlockList } = require('./utils/helpers')
 const {
     BASELINE_PRIORITY,
     SUBDOMAIN_PRIORITY_INCREMENT,
@@ -10,30 +8,27 @@ const {
     MAXIMUM_SUBDOMAIN_PRIORITY,
     MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT,
     MAXIMUM_REGEX_RULES,
-    generateTdsRuleset
+    generateTdsRuleset,
 } = require('../lib/tds')
 
-const MAXIMUM_RULES_PER_DOMAIN = Math.floor(
-    MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT /
-        TRACKER_RULE_PRIORITY_INCREMENT
-)
+const MAXIMUM_RULES_PER_DOMAIN = Math.floor(MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT / TRACKER_RULE_PRIORITY_INCREMENT)
 
 const supportedSurrogateScripts = new Set(['supported.js', 'supported2.js'])
 
-async function isRegexSupportedTrue ({ regex, isCaseSensitive }) {
+async function isRegexSupportedTrue({ regex, isCaseSensitive }) {
     return { isSupported: true }
 }
 
-async function isRegexSupportedFalse ({ regex, isCaseSensitive }) {
+async function isRegexSupportedFalse({ regex, isCaseSensitive }) {
     return { isSupported: false }
 }
 
-function addDomain (blockList, domain, entity, defaultAction, rules) {
+function addDomain(blockList, domain, entity, defaultAction, rules) {
     blockList.domains[domain] = entity
 
     if (!blockList.entities[entity]) {
         blockList.entities[entity] = {
-            domains: []
+            domains: [],
         }
     }
     blockList.entities[entity].domains.push(domain)
@@ -45,9 +40,9 @@ function addDomain (blockList, domain, entity, defaultAction, rules) {
     blockList.trackers[domain] = {
         domain,
         owner: {
-            name: entity
+            name: entity,
         },
-        default: defaultAction
+        default: defaultAction,
     }
 
     if (rules) {
@@ -63,12 +58,8 @@ function addDomain (blockList, domain, entity, defaultAction, rules) {
     }
 }
 
-function stringifyBlocklist (tds) {
-    return JSON.stringify(
-        tds,
-        (key, value) => value instanceof RegExp ? value.source : value,
-        2
-    )
+function stringifyBlocklist(tds) {
+    return JSON.stringify(tds, (key, value) => (value instanceof RegExp ? value.source : value), 2)
 }
 
 /**
@@ -107,22 +98,19 @@ function stringifyBlocklist (tds) {
  * @param {rulesetEqualOptions} options
  * @return {Promise<>}
  */
-async function rulesetEqual (tds, isRegexSupported, startingRuleId, {
-    expectedRuleset, expectedMatchDetailsLookup, rulesetTransform,
-    ruleTransform, lookupTransform, expectedCTLAllowingRules
-}) {
+async function rulesetEqual(
+    tds,
+    isRegexSupported,
+    startingRuleId,
+    { expectedRuleset, expectedMatchDetailsLookup, rulesetTransform, ruleTransform, lookupTransform, expectedCTLAllowingRules },
+) {
     const tdsBefore = stringifyBlocklist(tds)
 
     let result
     if (typeof startingRuleId === 'number') {
-        result = await generateTdsRuleset(
-            tds, supportedSurrogateScripts, '/', isRegexSupported,
-            startingRuleId
-        )
+        result = await generateTdsRuleset(tds, supportedSurrogateScripts, '/', isRegexSupported, startingRuleId)
     } else {
-        result = await generateTdsRuleset(
-            tds, supportedSurrogateScripts, '/', isRegexSupported
-        )
+        result = await generateTdsRuleset(tds, supportedSurrogateScripts, '/', isRegexSupported)
     }
 
     assert.deepEqual(stringifyBlocklist(tds), tdsBefore, 'TDS mutated!')
@@ -166,31 +154,27 @@ describe('generateTdsRuleset', () => {
             { cnames: {}, entities: {}, trackers: {} },
             { cnames: {}, domains: {}, trackers: {} },
             { cnames: {}, domains: {}, entities: {} },
-            { cnames: 1, domains: 2, entities: 3, trackers: 4 }
+            { cnames: 1, domains: 2, entities: 3, trackers: 4 },
         ]
 
         for (const blockList of invalidBlockLists) {
-            await assert.rejects(() =>
-                generateTdsRuleset(
-                    blockList, supportedSurrogateScripts, '', () => { }
-                )
-            )
+            await assert.rejects(() => generateTdsRuleset(blockList, supportedSurrogateScripts, '', () => {}))
         }
     })
 
     it('should notice missing isRegexSupported argument', async () => {
         await assert.rejects(() =>
             // @ts-expect-error - Missing isRegexSupported argument.
-            generateTdsRuleset(
-                { cnames: {}, domains: {}, entities: {}, trackers: {} }
-            )
+            generateTdsRuleset({ cnames: {}, domains: {}, entities: {}, trackers: {} }),
         )
         await assert.rejects(() =>
             generateTdsRuleset(
                 { cnames: {}, domains: {}, entities: {}, trackers: {} },
+                supportedSurrogateScripts,
+                '',
                 // @ts-expect-error - Invalid isRegexSupported argument.
-                supportedSurrogateScripts, '', 3
-            )
+                3,
+            ),
         )
     })
 
@@ -199,43 +183,37 @@ describe('generateTdsRuleset', () => {
             generateTdsRuleset(
                 { cnames: {}, domains: {}, entities: {}, trackers: {} },
                 // @ts-expect-error - Invalid surrogateScripts argument.
-                null, '', 3
-            )
+                null,
+                '',
+                3,
+            ),
         )
     })
 
-    it('should reject a tds.json file that contains too many tracker entries ' +
-        'for subdomains of the same domain', async () => {
+    it('should reject a tds.json file that contains too many tracker entries ' + 'for subdomains of the same domain', async () => {
         const blockList = emptyBlockList()
         const entity = 'Example entity'
 
         let domain = 'example.invalid'
-        for (let priority = BASELINE_PRIORITY;
+        for (
+            let priority = BASELINE_PRIORITY;
             priority <= MAXIMUM_SUBDOMAIN_PRIORITY;
-            priority += SUBDOMAIN_PRIORITY_INCREMENT,
-            domain = 'a.' + domain) {
+            priority += SUBDOMAIN_PRIORITY_INCREMENT, domain = 'a.' + domain
+        ) {
             addDomain(blockList, domain, entity, 'block')
         }
 
-        const { ruleset } = await generateTdsRuleset(
-            blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
-        )
+        const { ruleset } = await generateTdsRuleset(blockList, supportedSurrogateScripts, '', isRegexSupportedTrue)
         for (const rule of ruleset) {
-            assert.ok(typeof rule.priority === 'number' &&
-                    rule.priority <= MAXIMUM_SUBDOMAIN_PRIORITY)
+            assert.ok(typeof rule.priority === 'number' && rule.priority <= MAXIMUM_SUBDOMAIN_PRIORITY)
         }
 
         addDomain(blockList, 'a.' + domain, entity, 'block')
 
-        await assert.rejects(() =>
-            generateTdsRuleset(
-                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
-            )
-        )
+        await assert.rejects(() => generateTdsRuleset(blockList, supportedSurrogateScripts, '', isRegexSupportedTrue))
     })
 
-    it('should reject a tds.json file if a tracker entry contains too many ' +
-        'rules', async () => {
+    it('should reject a tds.json file if a tracker entry contains too many ' + 'rules', async () => {
         const blockList = emptyBlockList()
 
         const rules = new Array(MAXIMUM_RULES_PER_DOMAIN)
@@ -245,27 +223,17 @@ describe('generateTdsRuleset', () => {
         const domain = 'example.invalid'
         addDomain(blockList, domain, entity, 'allow', rules)
 
-        await assert.doesNotReject(() =>
-            generateTdsRuleset(
-                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
-            )
-        )
+        await assert.doesNotReject(() => generateTdsRuleset(blockList, supportedSurrogateScripts, '', isRegexSupportedTrue))
 
         blockList.trackers[domain].rules.push({ rule: 'example\\.com/extra' })
 
-        await assert.rejects(() =>
-            generateTdsRuleset(
-                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
-            )
-        )
+        await assert.rejects(() => generateTdsRuleset(blockList, supportedSurrogateScripts, '', isRegexSupportedTrue))
     })
 
-    it('should reject a tds.json file if it requires too many regular ' +
-        'expression rule filters', async () => {
+    it('should reject a tds.json file if it requires too many regular ' + 'expression rule filters', async () => {
         const blockList = emptyBlockList()
 
-        const maxRegexDomains =
-                Math.floor(MAXIMUM_REGEX_RULES / MAXIMUM_RULES_PER_DOMAIN)
+        const maxRegexDomains = Math.floor(MAXIMUM_REGEX_RULES / MAXIMUM_RULES_PER_DOMAIN)
 
         const rules = new Array(MAXIMUM_RULES_PER_DOMAIN)
         rules.fill({ rule: '[0-9]+' })
@@ -277,91 +245,68 @@ describe('generateTdsRuleset', () => {
             addDomain(blockList, domain, entity, 'allow', rules)
         }
 
-        await assert.doesNotReject(() =>
-            generateTdsRuleset(
-                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
-            )
-        )
+        await assert.doesNotReject(() => generateTdsRuleset(blockList, supportedSurrogateScripts, '', isRegexSupportedTrue))
 
         addDomain(blockList, 'example-extra.invalid', entity, 'allow', rules)
 
-        await assert.rejects(() =>
-            generateTdsRuleset(
-                blockList, supportedSurrogateScripts, '', isRegexSupportedTrue
-            )
-        )
+        await assert.rejects(() => generateTdsRuleset(blockList, supportedSurrogateScripts, '', isRegexSupportedTrue))
     })
 
     it('should strip rules with unsupported regexFilters', async () => {
         const blockList = emptyBlockList()
-        addDomain(blockList, 'example.invalid', 'Example entity', 'ignore', [
-            { rule: '[0-9]+' },
-            { rule: 'plaintext' }
-        ])
+        addDomain(blockList, 'example.invalid', 'Example entity', 'ignore', [{ rule: '[0-9]+' }, { rule: 'plaintext' }])
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
             expectedRuleset: [
                 {
                     id: 1,
-                    priority: BASELINE_PRIORITY +
-                        TRACKER_RULE_PRIORITY_INCREMENT,
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        requestDomains: [
-                            'example.invalid'
-                        ],
+                        requestDomains: ['example.invalid'],
                         urlFilter: 'plaintext',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 2,
-                    priority: BASELINE_PRIORITY +
-                        TRACKER_RULE_PRIORITY_INCREMENT * 2,
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 2,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        requestDomains: [
-                            'example.invalid'
-                        ],
+                        requestDomains: ['example.invalid'],
                         regexFilter: '[0-9]+',
-                        domainType: 'thirdParty'
-                    }
-                }
-            ]
+                        domainType: 'thirdParty',
+                    },
+                },
+            ],
         })
 
         await rulesetEqual(blockList, isRegexSupportedFalse, null, {
             expectedRuleset: [
                 {
                     id: 1,
-                    priority: BASELINE_PRIORITY +
-                        TRACKER_RULE_PRIORITY_INCREMENT,
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        requestDomains: [
-                            'example.invalid'
-                        ],
+                        requestDomains: ['example.invalid'],
                         urlFilter: 'plaintext',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
-                }
-            ]
+                        domainType: 'thirdParty',
+                    },
+                },
+            ],
         })
     })
 
-    it('should return an empty ruleset for an empty tds.json ' +
-        'file', async () => {
-        await rulesetEqual(
-            emptyBlockList(), isRegexSupportedTrue, null,
-            { expectedRuleset: [] })
+    it('should return an empty ruleset for an empty tds.json ' + 'file', async () => {
+        await rulesetEqual(emptyBlockList(), isRegexSupportedTrue, null, { expectedRuleset: [] })
     })
 
     it('should handle basic tracking entries', async () => {
@@ -380,48 +325,44 @@ describe('generateTdsRuleset', () => {
                     id: 1,
                     priority: BASELINE_PRIORITY,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        requestDomains: [
-                            'block.invalid'
-                        ],
+                        requestDomains: ['block.invalid'],
                         excludedInitiatorDomains: [
                             'block.invalid',
                             'ignore.invalid',
                             // Note: Excluding this subdomain serves no purpose.
                             //       such subdomain initiator exclusions could
                             //       be stripped as a future improvement.
-                            'allow.block.invalid'
-                        ]
-                    }
+                            'allow.block.invalid',
+                        ],
+                    },
                 },
                 {
                     id: 2,
                     priority: BASELINE_PRIORITY + SUBDOMAIN_PRIORITY_INCREMENT,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
-                        requestDomains: [
-                            'allow.block.invalid'
-                        ]
+                        requestDomains: ['allow.block.invalid'],
                         // Note: excludedInitiatorDomains are stripped for
                         //       allowing rules. First-party requests won't be
                         //       blocked anyway.
-                    }
-                }
+                    },
+                },
             ],
             expectedMatchDetailsLookup: {
                 1: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['block.invalid']
+                    possibleTrackerDomains: ['block.invalid'],
                 },
                 2: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['allow.block.invalid']
-                }
-            }
+                    possibleTrackerDomains: ['allow.block.invalid'],
+                },
+            },
         })
     })
 
@@ -440,59 +381,50 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, 'bar-c.invalid', 'Entity C')
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            ruleTransform (rule) {
+            ruleTransform(rule) {
                 return [
                     rule.condition.requestDomains.join(','),
-                    rule.condition.domainType ||
-                    rule.condition.excludedInitiatorDomains?.join(',') || ''
+                    rule.condition.domainType || rule.condition.excludedInitiatorDomains?.join(',') || '',
                 ]
             },
             expectedRuleset: [
                 ['a.invalid', 'thirdParty'],
                 ['b.invalid', 'b.invalid,allowed.b.invalid'],
                 ['allowed.b.invalid', ''],
-                ['c.invalid', 'c.invalid,foo-c.invalid,bar-c.invalid']
-            ]
+                ['c.invalid', 'c.invalid,foo-c.invalid,bar-c.invalid'],
+            ],
         })
     })
 
     it('should increase priority for longer domain matches', async () => {
         const blockList = emptyBlockList()
         addDomain(blockList, 'domain.invalid', 'Example entity', 'block')
-        addDomain(
-            blockList, 'subdomain.domain.invalid', 'Example entity', 'block'
-        )
-        addDomain(
-            blockList, 'another.subdomain.domain.invalid',
-            'Example entity', 'block'
-        )
+        addDomain(blockList, 'subdomain.domain.invalid', 'Example entity', 'block')
+        addDomain(blockList, 'another.subdomain.domain.invalid', 'Example entity', 'block')
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            ruleTransform (rule) {
+            ruleTransform(rule) {
                 return [rule.condition.requestDomains.join(','), rule.priority]
             },
             expectedRuleset: [
                 ['domain.invalid', BASELINE_PRIORITY],
-                ['subdomain.domain.invalid',
-                    BASELINE_PRIORITY + SUBDOMAIN_PRIORITY_INCREMENT],
-                ['another.subdomain.domain.invalid',
-                    BASELINE_PRIORITY + (SUBDOMAIN_PRIORITY_INCREMENT * 2)]
-            ]
+                ['subdomain.domain.invalid', BASELINE_PRIORITY + SUBDOMAIN_PRIORITY_INCREMENT],
+                ['another.subdomain.domain.invalid', BASELINE_PRIORITY + SUBDOMAIN_PRIORITY_INCREMENT * 2],
+            ],
         })
     })
 
-    it('should increase priority for tracker rules, in descending ' +
-        'order', async () => {
+    it('should increase priority for tracker rules, in descending ' + 'order', async () => {
         const blockList = emptyBlockList()
         addDomain(blockList, 'domain.invalid', 'Example entity', 'ignore', [
             { rule: '1', exceptions: { domains: ['a.invalid'] } },
             { rule: '2' },
             { rule: '3', exceptions: { domains: ['a.invalid'] } },
             { rule: '4', action: 'ignore' },
-            { rule: '5' }
+            { rule: '5' },
         ])
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            ruleTransform (rule) {
+            ruleTransform(rule) {
                 return [rule.condition.urlFilter, rule.priority]
             },
             expectedRuleset: [
@@ -500,22 +432,16 @@ describe('generateTdsRuleset', () => {
                 // rule for a tracker entry matches first. That is why the
                 // generated declarativeNetRequest rules are in reverse order.
                 ['5', BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT],
-                ['4', BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 2)],
-                ['3', BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 3)],
+                ['4', BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 2],
+                ['3', BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 3],
                 // Allowing exception for the rule has the same priority, since
                 // declarativeNetRequest rules with 'allow' actions take
                 // priority over rules with 'block' action of same priority.
-                ['3', BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 3)],
-                ['2', BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 4)],
-                ['1', BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 5)],
-                ['1', BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 5)]
-            ]
+                ['3', BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 3],
+                ['2', BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 4],
+                ['1', BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 5],
+                ['1', BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 5],
+            ],
         })
     })
 
@@ -531,12 +457,10 @@ describe('generateTdsRuleset', () => {
         // With '.' prefix.
         blockList.cnames['cname.second.invalid'] = '.subdomain.block.invalid'
         // Without '.' prefix.
-        blockList.cnames['cname.a.b.c.d.third.invalid'] =
-            'subdomain.a.b.c.d.block.invalid'
+        blockList.cnames['cname.a.b.c.d.third.invalid'] = 'subdomain.a.b.c.d.block.invalid'
         blockList.cnames['root-cname.third.invalid'] = '.block.invalid'
         // Ignored since it maps to a domain that does not have a tracker entry.
-        blockList.cnames['ignored-cname.third.invalid'] =
-            '.subdomain.fourth.invalid'
+        blockList.cnames['ignored-cname.third.invalid'] = '.subdomain.fourth.invalid'
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
             expectedRuleset: [
@@ -544,13 +468,13 @@ describe('generateTdsRuleset', () => {
                     id: 1,
                     priority: BASELINE_PRIORITY,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         excludedInitiatorDomains: [
                             'block.invalid',
                             'allow.block.invalid',
-                            'block.block.invalid'
+                            'block.block.invalid',
                             // Skipped, since doesn't help + adds to ruleset
                             // size.
                             // 'cname.second.invalid',
@@ -561,50 +485,45 @@ describe('generateTdsRuleset', () => {
                             'block.invalid',
                             'cname.second.invalid',
                             'cname.a.b.c.d.third.invalid',
-                            'root-cname.third.invalid'
-                        ]
-                    }
+                            'root-cname.third.invalid',
+                        ],
+                    },
                 },
                 {
                     id: 2,
                     priority: BASELINE_PRIORITY + SUBDOMAIN_PRIORITY_INCREMENT,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
-                        requestDomains: [
-                            'allow.block.invalid'
-                        ]
-                    }
+                        requestDomains: ['allow.block.invalid'],
+                    },
                 },
                 {
                     id: 3,
                     priority: BASELINE_PRIORITY + SUBDOMAIN_PRIORITY_INCREMENT,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         excludedInitiatorDomains: [
                             'block.invalid',
                             'allow.block.invalid',
-                            'block.block.invalid'
+                            'block.block.invalid',
                             // Skipped, since doesn't help + adds to ruleset
                             // size.
                             // 'cname.second.invalid',
                             // 'cname.a.b.c.d.third.invalid',
                             // 'root-cname.third.invalid'
                         ],
-                        requestDomains: [
-                            'block.block.invalid'
-                        ]
-                    }
-                }
-            ]
+                        requestDomains: ['block.block.invalid'],
+                    },
+                },
+            ],
         })
     })
 
-    it('should ignore cname entries for subdomains of tracking ' +
-        'domains', async () => {
+    it('should ignore cname entries for subdomains of tracking ' + 'domains', async () => {
         const blockList = emptyBlockList()
         // Do not require declarativeNetRequest rules since they are default
         // action ignore.
@@ -617,16 +536,18 @@ describe('generateTdsRuleset', () => {
         blockList.cnames['ignored-cname.first.invalid'] = '.unknown.invalid'
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            expectedRuleset: []
+            expectedRuleset: [],
         })
     })
 
     it('should handle ignore rules', async () => {
         const blockList = emptyBlockList()
-        addDomain(blockList, 'block.invalid', 'Example entity', 'block', [{
-            rule: 'block\\.invalid\\/path',
-            action: 'ignore'
-        }])
+        addDomain(blockList, 'block.invalid', 'Example entity', 'block', [
+            {
+                rule: 'block\\.invalid\\/path',
+                action: 'ignore',
+            },
+        ])
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
             expectedRuleset: [
@@ -634,28 +555,25 @@ describe('generateTdsRuleset', () => {
                     id: 1,
                     priority: BASELINE_PRIORITY,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        requestDomains: [
-                            'block.invalid'
-                        ],
-                        domainType: 'thirdParty'
-                    }
+                        requestDomains: ['block.invalid'],
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 2,
-                    priority: BASELINE_PRIORITY +
-                        TRACKER_RULE_PRIORITY_INCREMENT,
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '||block.invalid/path',
-                        isUrlFilterCaseSensitive: false
-                    }
-                }
-            ]
+                        isUrlFilterCaseSensitive: false,
+                    },
+                },
+            ],
         })
     })
 
@@ -664,57 +582,50 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, 'allow.invalid', 'Example entity', 'ignore', [
             { rule: 'allow\\.invalid\\/path' },
             { rule: 'example.*urlfilter', action: 'block' },
-            { rule: 'example[0-9]+regexp' }
+            { rule: 'example[0-9]+regexp' },
         ])
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
             expectedRuleset: [
                 {
                     id: 1,
-                    priority: BASELINE_PRIORITY +
-                        TRACKER_RULE_PRIORITY_INCREMENT,
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         regexFilter: 'example[0-9]+regexp',
                         isUrlFilterCaseSensitive: false,
-                        requestDomains: [
-                            'allow.invalid'
-                        ],
-                        domainType: 'thirdParty'
-                    }
+                        requestDomains: ['allow.invalid'],
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 2,
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 2,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: 'example*urlfilter',
                         isUrlFilterCaseSensitive: false,
-                        requestDomains: [
-                            'allow.invalid'
-                        ],
-                        domainType: 'thirdParty'
-                    }
+                        requestDomains: ['allow.invalid'],
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 3,
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 3,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||allow.invalid/path',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
-                }
-            ]
+                        domainType: 'thirdParty',
+                    },
+                },
+            ],
         })
     })
 
@@ -724,85 +635,81 @@ describe('generateTdsRuleset', () => {
             // urlFilter
             {
                 // Empty.
-                rule: ''
+                rule: '',
             },
             {
                 // Only contains domain part.
-                rule: 'domain\\.invalid'
+                rule: 'domain\\.invalid',
             },
             {
                 // Contains wildcard directly after domain part.
-                rule: 'domain\\.invalid.*\\/path'
+                rule: 'domain\\.invalid.*\\/path',
             },
             {
                 // Starts with domain, alpha chars after domain.
-                rule: 'domain\\.invalid\\/domain'
+                rule: 'domain\\.invalid\\/domain',
             },
             {
                 // Starts with domain, no-alpha chars after domain.
-                rule: 'domain\\.invalid\\/12345'
+                rule: 'domain\\.invalid\\/12345',
             },
             {
                 // Doesn't start with domain, alpha chars.
-                rule: 'path'
+                rule: 'path',
             },
             {
                 // Doesn't start with domain, no-alpha chars.
-                rule: '12345'
+                rule: '12345',
             },
             {
                 // Contains domain, but does not start with it.
                 // Note: Perhaps this case could be handled better.
-                rule: 'subdomain\\.domain\\.invalid'
+                rule: 'subdomain\\.domain\\.invalid',
             },
             // regexFilter
             {
                 // Unescaped '.', so does not start with domain + needs regex.
-                rule: 'domain.invalid\\/domainregexp'
+                rule: 'domain.invalid\\/domainregexp',
             },
             {
                 // Requires regex.
-                rule: 'domain\\.invalid\\/domainregexp[0-9]+'
+                rule: 'domain\\.invalid\\/domainregexp[0-9]+',
             },
             {
                 // .* wildcard can be handled by urlFilter.
-                rule: 'domain\\.invalid\\/wild.*card'
+                rule: 'domain\\.invalid\\/wild.*card',
             },
             {
                 // * wildcard required regex.
-                rule: 'domain\\.invalid\\/regexp*wildcard'
+                rule: 'domain\\.invalid\\/regexp*wildcard',
             },
             {
                 // . wildcard requires regex.
-                rule: 'domain\\.invalid\\/regexp.wildcard'
+                rule: 'domain\\.invalid\\/regexp.wildcard',
             },
             {
                 // '*' literals don't translate to urlFilter unfortunately.
-                rule: 'domain\\.invalid\\/escaped\\*wildcard'
+                rule: 'domain\\.invalid\\/escaped\\*wildcard',
             },
             {
                 // Requires regexp, but domain part can be stripped.
-                rule: 'domain\\.invalid.*\\/path[0-9]+'
+                rule: 'domain\\.invalid.*\\/path[0-9]+',
             },
             {
                 // Requires regexp, but not case insensitive matching.
-                rule: 'domain\\.invalid\\/[0-9]+'
+                rule: 'domain\\.invalid\\/[0-9]+',
             },
             {
                 // Requires regexp, but not case insensitive matching.
-                rule: '[0-9]+'
-            }
+                rule: '[0-9]+',
+            },
         ])
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            ruleTransform (rule) {
-                return [
-                    rule.condition.urlFilter || '',
-                    rule.condition.regexFilter || '',
-                    rule.condition.isUrlFilterCaseSensitive === false
-                ]
+            ruleTransform(rule) {
+                return [rule.condition.urlFilter || '', rule.condition.regexFilter || '', rule.condition.isUrlFilterCaseSensitive === false]
             },
-            rulesetTransform (ruleset) {
+            rulesetTransform(ruleset) {
                 return ruleset.reverse()
             },
             expectedRuleset: [
@@ -824,8 +731,8 @@ describe('generateTdsRuleset', () => {
                 ['', 'domain\\.invalid\\/escaped\\*wildcard', true],
                 ['', '\\/path[0-9]+', true],
                 ['', 'domain\\.invalid\\/[0-9]+', false],
-                ['', '[0-9]+', false]
-            ]
+                ['', '[0-9]+', false],
+            ],
         })
     })
 
@@ -834,19 +741,19 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, 'block.invalid', 'Example entity', 'block', [
             {
                 rule: 'block\\.invalid\\/domain',
-                exceptions: { domains: ['allowed.invalid'] }
+                exceptions: { domains: ['allowed.invalid'] },
             },
             {
                 rule: 'block\\.invalid\\/images',
-                exceptions: { types: ['image'] }
+                exceptions: { types: ['image'] },
             },
             {
                 rule: 'block\\.invalid\\/scripts',
                 exceptions: {
                     domains: ['scripts.allowed.invalid'],
-                    types: ['script']
-                }
-            }
+                    types: ['script'],
+                },
+            },
         ])
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
@@ -855,14 +762,12 @@ describe('generateTdsRuleset', () => {
                     id: 1,
                     priority: BASELINE_PRIORITY,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        requestDomains: [
-                            'block.invalid'
-                        ],
-                        domainType: 'thirdParty'
-                    }
+                        requestDomains: ['block.invalid'],
+                        domainType: 'thirdParty',
+                    },
                 },
                 // Removed as rule is redundant. Default action is block, so
                 // following with a more specific block rule doesn't achieve
@@ -883,186 +788,179 @@ describe('generateTdsRuleset', () => {
                 // },
                 {
                     id: 2,
-                    priority: BASELINE_PRIORITY +
-                        TRACKER_RULE_PRIORITY_INCREMENT,
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '||block.invalid/scripts',
                         isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
-                        initiatorDomains: [
-                            'scripts.allowed.invalid'
-                        ]
-                    }
+                        initiatorDomains: ['scripts.allowed.invalid'],
+                    },
                 },
                 {
                     id: 3,
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 2,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||block.invalid/images',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 4,
                     // Note: Rule priority is not incremented for rule
                     //       exceptions since 'allow' rules trump 'block' rules
                     //       of the same priority.
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 2,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '||block.invalid/images',
                         isUrlFilterCaseSensitive: false,
-                        resourceTypes: ['image']
-                    }
+                        resourceTypes: ['image'],
+                    },
                 },
                 {
                     id: 5,
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 3,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||block.invalid/domain',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 6,
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 3,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '||block.invalid/domain',
                         isUrlFilterCaseSensitive: false,
-                        initiatorDomains: [
-                            'allowed.invalid'
-                        ]
-                    }
-                }
-            ]
+                        initiatorDomains: ['allowed.invalid'],
+                    },
+                },
+            ],
         })
     })
 
     it('should handle block rules with options', async () => {
         const blockList = emptyBlockList()
-        addDomain(blockList, 'block.invalid', 'Example entity', 'ignore', [
-            {
-                rule: 'block\\.invalid\\/image',
-                options: { types: ['image'] }
-            },
-            {
-                rule: 'block\\.invalid\\/scripts',
-                options: {
-                    domains: ['block-this-domain.invalid'],
-                    types: ['script']
-                }
-            },
-            {
-                rule: 'block\\.invalid\\/with-surrogate',
-                options: {
-                    domains: ['block-this-domain.invalid']
+        addDomain(
+            blockList,
+            'block.invalid',
+            'Example entity',
+            'ignore',
+            [
+                {
+                    rule: 'block\\.invalid\\/image',
+                    options: { types: ['image'] },
                 },
-                surrogate: 'supported.js'
-            },
-            {
-                rule: 'block\\.invalid\\/with-type-exception',
-                options: {
-                    domains: ['block-this-domain.invalid', 'also-block-this-one.invalid']
+                {
+                    rule: 'block\\.invalid\\/scripts',
+                    options: {
+                        domains: ['block-this-domain.invalid'],
+                        types: ['script'],
+                    },
                 },
-                exceptions: {
-                    types: ['image']
-                }
-            }
-        ].reverse())
+                {
+                    rule: 'block\\.invalid\\/with-surrogate',
+                    options: {
+                        domains: ['block-this-domain.invalid'],
+                    },
+                    surrogate: 'supported.js',
+                },
+                {
+                    rule: 'block\\.invalid\\/with-type-exception',
+                    options: {
+                        domains: ['block-this-domain.invalid', 'also-block-this-one.invalid'],
+                    },
+                    exceptions: {
+                        types: ['image'],
+                    },
+                },
+            ].reverse(),
+        )
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
             expectedRuleset: [
                 {
                     id: 1,
-                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        resourceTypes: [
-                            'image'
-                        ],
+                        resourceTypes: ['image'],
                         domainType: 'thirdParty',
                         isUrlFilterCaseSensitive: false,
-                        urlFilter: '||block.invalid/image'
-                    }
+                        urlFilter: '||block.invalid/image',
+                    },
                 },
                 {
                     id: 2,
-                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 2,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        resourceTypes: [
-                            'script'
-                        ],
+                        resourceTypes: ['script'],
                         domainType: 'thirdParty',
                         isUrlFilterCaseSensitive: false,
                         initiatorDomains: ['block-this-domain.invalid'],
-                        urlFilter: '||block.invalid/scripts'
-                    }
+                        urlFilter: '||block.invalid/scripts',
+                    },
                 },
                 {
                     id: 3,
-                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 3,
                     action: {
                         type: 'redirect',
-                        redirect: { extensionPath: '/supported.js' }
+                        redirect: { extensionPath: '/supported.js' },
                     },
                     condition: {
                         domainType: 'thirdParty',
                         isUrlFilterCaseSensitive: false,
                         initiatorDomains: ['block-this-domain.invalid'],
-                        urlFilter: '||block.invalid/with-surrogate'
-                    }
+                        urlFilter: '||block.invalid/with-surrogate',
+                    },
                 },
                 {
                     id: 4,
-                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 4,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         domainType: 'thirdParty',
                         isUrlFilterCaseSensitive: false,
                         initiatorDomains: ['block-this-domain.invalid', 'also-block-this-one.invalid'],
-                        urlFilter: '||block.invalid/with-type-exception'
-                    }
+                        urlFilter: '||block.invalid/with-type-exception',
+                    },
                 },
                 {
                     id: 5,
-                    priority: BASELINE_PRIORITY + (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 4,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         isUrlFilterCaseSensitive: false,
                         resourceTypes: ['image'],
-                        urlFilter: '||block.invalid/with-type-exception'
-                    }
-                }
-            ]
+                        urlFilter: '||block.invalid/with-type-exception',
+                    },
+                },
+            ],
         })
     })
 
@@ -1071,57 +969,48 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, 'domain.invalid', 'Example entity', 'ignore', [
             {
                 rule: 'domain\\.invalid\\/imageset',
-                exceptions: { types: ['imageset'] }
+                exceptions: { types: ['imageset'] },
             },
             {
                 rule: 'domain\\.invalid\\/image',
-                exceptions: { types: ['image'] }
+                exceptions: { types: ['image'] },
             },
             {
                 rule: 'domain\\.invalid\\/imageduplicate',
-                exceptions: { types: ['imageset', 'image'] }
+                exceptions: { types: ['imageset', 'image'] },
             },
             {
                 rule: 'domain\\.invalid\\/other',
-                exceptions: { types: ['other'] }
+                exceptions: { types: ['other'] },
             },
             {
                 rule: 'domain\\.invalid\\/unknownother',
-                exceptions: { types: ['foobar'] }
+                exceptions: { types: ['foobar'] },
             },
             {
                 rule: 'domain\\.invalid\\/otherduplicate',
-                exceptions: { types: ['foobar', 'other'] }
+                exceptions: { types: ['foobar', 'other'] },
             },
             // 'main_frame' is stripped since main frame requests are not
             // embedded trackers, but navigations...
             {
                 rule: 'domain\\.invalid\\/image_main_frame',
-                exceptions: { types: ['image', 'main_frame'] }
+                exceptions: { types: ['image', 'main_frame'] },
             },
             {
                 rule: 'domain\\.invalid\\/lots',
                 exceptions: {
-                    types: [
-                        'script', 'image', 'main_frame', 'script', 'flob',
-                        'sub_frame', 'object'
-                    ]
-                }
-            }
+                    types: ['script', 'image', 'main_frame', 'script', 'flob', 'sub_frame', 'object'],
+                },
+            },
         ])
 
         rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            rulesetTransform (ruleset) {
-                return (
-                    ruleset.filter(rule => rule.condition.resourceTypes)
-                        .reverse()
-                )
+            rulesetTransform(ruleset) {
+                return ruleset.filter((rule) => rule.condition.resourceTypes).reverse()
             },
-            ruleTransform (rule) {
-                return [
-                    rule.condition.urlFilter,
-                    rule.condition.resourceTypes.join(',')
-                ]
+            ruleTransform(rule) {
+                return [rule.condition.urlFilter, rule.condition.resourceTypes.join(',')]
             },
             expectedRuleset: [
                 ['||domain.invalid/imageset', 'image'],
@@ -1131,8 +1020,8 @@ describe('generateTdsRuleset', () => {
                 ['||domain.invalid/unknownother', 'other'],
                 ['||domain.invalid/otherduplicate', 'other'],
                 ['||domain.invalid/image_main_frame', 'image'],
-                ['||domain.invalid/lots', 'script,image,other,sub_frame,object']
-            ]
+                ['||domain.invalid/lots', 'script,image,other,sub_frame,object'],
+            ],
         })
     })
 
@@ -1142,25 +1031,20 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, 'rule.invalid', 'Rule entity', 'block', [
             {
                 rule: 'rule\\.invalid\\/image',
-                exceptions: { types: ['image'] }
-            }
+                exceptions: { types: ['image'] },
+            },
         ])
-        addDomain(
-            blockList, 'subdomain.rule.invalid', 'Rule entity', 'block', [
-                {
-                    rule: 'subdomain\\.rule\\.invalid\\/script',
-                    exceptions: { types: ['script'] }
-                },
-                {
-                    rule: 'subdomain\\.rule\\.invalid\\/stylesheet',
-                    exceptions: { types: ['stylesheet'] }
-                }
-            ]
-        )
-        addDomain(
-            blockList, 'another.subdomain.domain.invalid',
-            'Rule entity', 'ignore'
-        )
+        addDomain(blockList, 'subdomain.rule.invalid', 'Rule entity', 'block', [
+            {
+                rule: 'subdomain\\.rule\\.invalid\\/script',
+                exceptions: { types: ['script'] },
+            },
+            {
+                rule: 'subdomain\\.rule\\.invalid\\/stylesheet',
+                exceptions: { types: ['stylesheet'] },
+            },
+        ])
+        addDomain(blockList, 'another.subdomain.domain.invalid', 'Rule entity', 'ignore')
 
         addDomain(blockList, 'block.invalid', 'Block entity', 'block')
         addDomain(blockList, 'allow.block.invalid', 'Block entity', 'ignore')
@@ -1173,7 +1057,7 @@ describe('generateTdsRuleset', () => {
         addDomain(blockList, 'ignored.invalid', 'Ignored entity')
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            lookupTransform (lookup, ruleset) {
+            lookupTransform(lookup, ruleset) {
                 const domains = []
                 for (const rule of ruleset) {
                     domains.push(...lookup[rule.id].possibleTrackerDomains)
@@ -1190,8 +1074,8 @@ describe('generateTdsRuleset', () => {
                 'block.invalid',
                 'allow.block.invalid',
                 'block.block.invalid',
-                'another.invalid'
-            ]
+                'another.invalid',
+            ],
         })
     })
 
@@ -1205,57 +1089,65 @@ describe('generateTdsRuleset', () => {
             expectedMatchDetailsLookup: {
                 3333: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['block.invalid']
+                    possibleTrackerDomains: ['block.invalid'],
                 },
                 3334: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['allow.block.invalid']
+                    possibleTrackerDomains: ['allow.block.invalid'],
                 },
                 3335: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['block.block.invalid']
-                }
-            }
+                    possibleTrackerDomains: ['block.block.invalid'],
+                },
+            },
         })
     })
 
     it('should remove redundant rules', async () => {
         const blockList = emptyBlockList()
         // Default allow action doesn't generally require a rule.
-        addDomain(blockList, 'allow.invalid', 'Allow entity', 'ignore', [
-            // Consecutive rules with same allow action can be removed too.
-            { rule: '4', action: 'ignore' },
-            { rule: '3', action: 'ignore' },
-            // But once rule action is block, they can't be removed.
-            { rule: '2', action: 'block' },
-            { rule: '1', action: 'ignore' }
-        ].reverse())
+        addDomain(
+            blockList,
+            'allow.invalid',
+            'Allow entity',
+            'ignore',
+            [
+                // Consecutive rules with same allow action can be removed too.
+                { rule: '4', action: 'ignore' },
+                { rule: '3', action: 'ignore' },
+                // But once rule action is block, they can't be removed.
+                { rule: '2', action: 'block' },
+                { rule: '1', action: 'ignore' },
+            ].reverse(),
+        )
 
         // Default block actions do require a rule.
-        addDomain(blockList, 'block.invalid', 'Block entity', 'block', [
-            // But consecutive rules with block action can still be removed.
-            { rule: '8', action: 'block' },
-            { rule: '7', action: 'block' },
-            // But once rule action is allow, they can't be removed.
-            { rule: '6', action: 'allow' },
-            { rule: '5', action: 'block' }
-        ].reverse())
+        addDomain(
+            blockList,
+            'block.invalid',
+            'Block entity',
+            'block',
+            [
+                // But consecutive rules with block action can still be removed.
+                { rule: '8', action: 'block' },
+                { rule: '7', action: 'block' },
+                // But once rule action is allow, they can't be removed.
+                { rule: '6', action: 'allow' },
+                { rule: '5', action: 'block' },
+            ].reverse(),
+        )
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            ruleTransform (rule) {
-                return [
-                    rule.condition.urlFilter ||
-                    rule.condition.requestDomains.join(','),
-                    rule.action.type
-                ]
+            ruleTransform(rule) {
+                return [rule.condition.urlFilter || rule.condition.requestDomains.join(','), rule.action.type]
             },
             expectedRuleset: [
                 ['2', 'block'],
                 ['1', 'allow'],
                 ['block.invalid', 'block'],
                 ['6', 'allow'],
-                ['5', 'block']
-            ]
+                ['5', 'block'],
+            ],
         })
     })
 
@@ -1269,7 +1161,7 @@ describe('generateTdsRuleset', () => {
             // the other declarativeNetRequest rules are combined. There was a
             // bug in the past where that happened, this test case is designed
             // to catch that in the future.
-            { rule: '1234', action: 'ignore' }
+            { rule: '1234', action: 'ignore' },
         ])
         addDomain(blockList, 'b.invalid', 'B entity', 'block')
         addDomain(blockList, 'c.invalid', 'C entity', 'block')
@@ -1280,108 +1172,101 @@ describe('generateTdsRuleset', () => {
                     id: 1,
                     priority: BASELINE_PRIORITY,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        requestDomains: [
-                            'a.invalid',
-                            'b.invalid',
-                            'c.invalid'
-                        ],
-                        domainType: 'thirdParty'
-                    }
+                        requestDomains: ['a.invalid', 'b.invalid', 'c.invalid'],
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 2,
-                    priority: BASELINE_PRIORITY +
-                        TRACKER_RULE_PRIORITY_INCREMENT,
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '1234',
-                        requestDomains: [
-                            'a.invalid'
-                        ]
-                    }
-                }
-
+                        requestDomains: ['a.invalid'],
+                    },
+                },
             ],
             expectedMatchDetailsLookup: {
                 1: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains:
-                        ['a.invalid', 'b.invalid', 'c.invalid']
+                    possibleTrackerDomains: ['a.invalid', 'b.invalid', 'c.invalid'],
                 },
                 2: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['a.invalid']
-                }
-            }
+                    possibleTrackerDomains: ['a.invalid'],
+                },
+            },
         })
     })
 
     it('should strip requestDomains conditions where possible', async () => {
         const blockList = emptyBlockList()
-        addDomain(blockList, 'allow.invalid', 'Example entity', 'ignore', [
-            // requestDomains can be removed since urlFilter anchored to domain
-            // and there's only one requestDomain.
-            { rule: 'allow\\.invalid\\/path', action: 'block' },
-            // urlFilter not anchored to domain so requestDomains can't be
-            // removed.
-            // Note: Would be nice to improve this outcome for subdomains of the
-            //       request domain in the future.
-            { rule: 'subdomain\\.allow\\.invalid\\/path', action: 'block' }
-        ].reverse())
+        addDomain(
+            blockList,
+            'allow.invalid',
+            'Example entity',
+            'ignore',
+            [
+                // requestDomains can be removed since urlFilter anchored to domain
+                // and there's only one requestDomain.
+                { rule: 'allow\\.invalid\\/path', action: 'block' },
+                // urlFilter not anchored to domain so requestDomains can't be
+                // removed.
+                // Note: Would be nice to improve this outcome for subdomains of the
+                //       request domain in the future.
+                { rule: 'subdomain\\.allow\\.invalid\\/path', action: 'block' },
+            ].reverse(),
+        )
         // Due to the cname mapping, there are two request domains for this
         // rule. That means the requestDomains can't be removed.
         blockList.cnames['foo.invalid'] = '.subdomain.another.invalid'
-        addDomain(blockList, 'another.invalid', 'Example entity', 'ignore', [
-            { rule: 'another\\.invalid\\/path', action: 'block' }
-        ])
+        addDomain(blockList, 'another.invalid', 'Example entity', 'ignore', [{ rule: 'another\\.invalid\\/path', action: 'block' }])
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            ruleTransform (rule) {
+            ruleTransform(rule) {
                 return rule.condition.requestDomains
             },
-            expectedRuleset: [
-                undefined,
-                ['allow.invalid'],
-                ['another.invalid', 'foo.invalid']
-            ]
+            expectedRuleset: [undefined, ['allow.invalid'], ['another.invalid', 'foo.invalid']],
         })
     })
 
-    it('should handle domain-anchored rules for cnames where ' +
-        'possible', async () => {
+    it('should handle domain-anchored rules for cnames where ' + 'possible', async () => {
         const blockList = emptyBlockList()
-        addDomain(blockList, 'example.invalid', 'Example entity', 'ignore', [
-            // Anchored to domain, workaround is viable.
-            { rule: 'example\\.invalid\\/path', action: 'block' },
-            // Start of part after domain is no good, can't workaround.
-            { rule: 'example\\.invalid\\.foo\\/path', action: 'block' },
-            // Anchored to domain, but domain part not needed. Workaround not
-            // needed.
-            { rule: 'example\\.invalid.*\\/path', action: 'block' },
-            // Not anchored to domain, can't workaround.
-            // Note: Would be nice to handle this case for subdomains in the
-            //       future.
-            { rule: 'subdomain\\.example\\.invalid\\/path', action: 'block' },
-            // Anchored to domain, plus regular expression is needed anyway.
-            { rule: 'example\\.invalid\\/path[0-9]+', action: 'block' },
-            // Not anchored to domain, so workaround won't work + regular
-            // expression is required so can't fall back to urlFilter.
-            { rule: 'subdomain\\.example\\.invalid\\/[0-9]+', action: 'block' }
-        ].reverse())
+        addDomain(
+            blockList,
+            'example.invalid',
+            'Example entity',
+            'ignore',
+            [
+                // Anchored to domain, workaround is viable.
+                { rule: 'example\\.invalid\\/path', action: 'block' },
+                // Start of part after domain is no good, can't workaround.
+                { rule: 'example\\.invalid\\.foo\\/path', action: 'block' },
+                // Anchored to domain, but domain part not needed. Workaround not
+                // needed.
+                { rule: 'example\\.invalid.*\\/path', action: 'block' },
+                // Not anchored to domain, can't workaround.
+                // Note: Would be nice to handle this case for subdomains in the
+                //       future.
+                { rule: 'subdomain\\.example\\.invalid\\/path', action: 'block' },
+                // Anchored to domain, plus regular expression is needed anyway.
+                { rule: 'example\\.invalid\\/path[0-9]+', action: 'block' },
+                // Not anchored to domain, so workaround won't work + regular
+                // expression is required so can't fall back to urlFilter.
+                { rule: 'subdomain\\.example\\.invalid\\/[0-9]+', action: 'block' },
+            ].reverse(),
+        )
         blockList.cnames['cname.invalid'] = '.subdomain.example.invalid'
 
         // With regular expression fallbacks.
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
-            ruleTransform (rule) {
-                return [
-                    rule.condition.urlFilter || '',
-                    rule.condition.regexFilter || ''
-                ]
+            ruleTransform(rule) {
+                return [rule.condition.urlFilter || '', rule.condition.regexFilter || '']
             },
             expectedRuleset: [
                 ['', '[a-z]+://[^/?]*\\/path'],
@@ -1389,143 +1274,141 @@ describe('generateTdsRuleset', () => {
                 ['/path', ''],
                 ['subdomain.example.invalid/path', ''],
                 ['', '[a-z]+://[^/?]*\\/path[0-9]+'],
-                ['', 'subdomain\\.example\\.invalid\\/[0-9]+']
-            ]
+                ['', 'subdomain\\.example\\.invalid\\/[0-9]+'],
+            ],
         })
 
         // Without regular expression fallbacks (or any regular expressions).
         await rulesetEqual(blockList, isRegexSupportedFalse, null, {
-            ruleTransform (rule) {
-                return [
-                    rule.condition.urlFilter || '',
-                    rule.condition.regexFilter || ''
-                ]
+            ruleTransform(rule) {
+                return [rule.condition.urlFilter || '', rule.condition.regexFilter || '']
             },
             expectedRuleset: [
                 ['||example.invalid/path', ''],
                 ['||example.invalid.foo/path', ''],
                 ['/path', ''],
-                ['subdomain.example.invalid/path', '']
-            ]
+                ['subdomain.example.invalid/path', ''],
+            ],
         })
     })
 
     it('should handle surrogate rules', async () => {
         const blockList = emptyBlockList()
-        addDomain(blockList, 'entity.invalid', 'Example entity', 'ignore', [
-            {
-                rule: 'entity\\.invalid\\/path'
-            },
-            {
-                rule: 'entity\\.invalid\\/.*foo\\.js',
-                surrogate: 'supported.js'
-            },
-            {
-                rule: 'entity\\.invalid\\/bar\\.js',
-                surrogate: 'not-supported.js'
-            },
-            {
-                rule: 'entity\\.invalid\\/cabbage\\.js',
-                surrogate: 'supported2.js',
-                exceptions: { domains: ['exception.invalid'] }
-            }
-        ].reverse())
+        addDomain(
+            blockList,
+            'entity.invalid',
+            'Example entity',
+            'ignore',
+            [
+                {
+                    rule: 'entity\\.invalid\\/path',
+                },
+                {
+                    rule: 'entity\\.invalid\\/.*foo\\.js',
+                    surrogate: 'supported.js',
+                },
+                {
+                    rule: 'entity\\.invalid\\/bar\\.js',
+                    surrogate: 'not-supported.js',
+                },
+                {
+                    rule: 'entity\\.invalid\\/cabbage\\.js',
+                    surrogate: 'supported2.js',
+                    exceptions: { domains: ['exception.invalid'] },
+                },
+            ].reverse(),
+        )
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
             expectedRuleset: [
                 {
                     id: 1,
-                    priority: BASELINE_PRIORITY +
-                        TRACKER_RULE_PRIORITY_INCREMENT,
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||entity.invalid/path',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 2,
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 2),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 2,
                     action: {
                         type: 'redirect',
-                        redirect: { extensionPath: '/supported.js' }
+                        redirect: { extensionPath: '/supported.js' },
                     },
                     condition: {
                         urlFilter: '||entity.invalid/*foo.js',
                         isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
-                        resourceTypes: ['script']
-                    }
+                        resourceTypes: ['script'],
+                    },
                 },
                 {
                     id: 3,
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 3),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 3,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||entity.invalid/bar.js',
                         isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
-                        resourceTypes: ['script']
-                    }
+                        resourceTypes: ['script'],
+                    },
                 },
                 {
                     id: 4,
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 4,
                     action: {
                         type: 'redirect',
-                        redirect: { extensionPath: '/supported2.js' }
+                        redirect: { extensionPath: '/supported2.js' },
                     },
                     condition: {
                         urlFilter: '||entity.invalid/cabbage.js',
                         isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
-                        resourceTypes: ['script']
-                    }
+                        resourceTypes: ['script'],
+                    },
                 },
                 {
                     id: 5,
-                    priority: BASELINE_PRIORITY +
-                        (TRACKER_RULE_PRIORITY_INCREMENT * 4),
+                    priority: BASELINE_PRIORITY + TRACKER_RULE_PRIORITY_INCREMENT * 4,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '||entity.invalid/cabbage.js',
                         isUrlFilterCaseSensitive: false,
-                        initiatorDomains: ['exception.invalid']
-                    }
-                }
+                        initiatorDomains: ['exception.invalid'],
+                    },
+                },
             ],
             expectedMatchDetailsLookup: {
                 1: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['entity.invalid']
+                    possibleTrackerDomains: ['entity.invalid'],
                 },
                 2: {
                     type: 'surrogateScript',
-                    possibleTrackerDomains: ['entity.invalid']
+                    possibleTrackerDomains: ['entity.invalid'],
                 },
                 3: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['entity.invalid']
+                    possibleTrackerDomains: ['entity.invalid'],
                 },
                 4: {
                     type: 'surrogateScript',
-                    possibleTrackerDomains: ['entity.invalid']
+                    possibleTrackerDomains: ['entity.invalid'],
                 },
                 5: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['entity.invalid']
-                }
-            }
+                    possibleTrackerDomains: ['entity.invalid'],
+                },
+            },
         })
     })
 
@@ -1535,57 +1418,57 @@ describe('generateTdsRuleset', () => {
         const blockList = emptyBlockList()
         addDomain(blockList, 'default-ignore.invalid', 'Default Ignore entity', 'ignore', [
             {
-                rule: 'default-ignore\\.invalid\\/known-action-1'
+                rule: 'default-ignore\\.invalid\\/known-action-1',
             },
             {
                 rule: 'default-ignore\\.invalid\\/unknown-action-1',
-                action: randAction()
+                action: randAction(),
             },
             {
                 rule: 'default-ignore\\.invalid\\/known-action-3',
-                exceptions: { types: ['script'] }
+                exceptions: { types: ['script'] },
             },
             {
                 rule: 'default-ignore\\.invalid\\/unknown-action-2',
                 action: randAction(),
-                exceptions: { types: ['script'] }
-            }
+                exceptions: { types: ['script'] },
+            },
         ])
         addDomain(blockList, 'default-block.invalid', 'Default Block entity', 'block', [
             {
-                rule: 'default-block\\.invalid\\/known-action-1'
+                rule: 'default-block\\.invalid\\/known-action-1',
             },
             {
                 rule: 'default-block\\.invalid\\/unknown-action-1',
-                action: randAction()
+                action: randAction(),
             },
             {
                 rule: 'default-block\\.invalid\\/known-action-2',
-                exceptions: { types: ['script'] }
+                exceptions: { types: ['script'] },
             },
             {
                 rule: 'default-block\\.invalid\\/unknown-action-2',
                 action: randAction(),
-                exceptions: { types: ['script'] }
-            }
+                exceptions: { types: ['script'] },
+            },
         ])
         addDomain(blockList, 'default-unknown.invalid', 'Default Unknown entity', randAction(), [
             {
-                rule: 'default-unknown\\.invalid\\/known-action-1'
+                rule: 'default-unknown\\.invalid\\/known-action-1',
             },
             {
                 rule: 'default-unknown\\.invalid\\/unknown-action-1',
-                action: randAction()
+                action: randAction(),
             },
             {
                 rule: 'default-unknown\\.invalid\\/known-action-2',
-                exceptions: { types: ['script'] }
+                exceptions: { types: ['script'] },
             },
             {
                 rule: 'default-unknown\\.invalid\\/unknown-action-2',
                 action: randAction(),
-                exceptions: { types: ['script'] }
-            }
+                exceptions: { types: ['script'] },
+            },
         ])
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
@@ -1594,74 +1477,74 @@ describe('generateTdsRuleset', () => {
                     id: 1,
                     priority: 10001,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         domainType: 'thirdParty',
                         isUrlFilterCaseSensitive: false,
-                        urlFilter: '||default-ignore.invalid/known-action-3'
-                    }
+                        urlFilter: '||default-ignore.invalid/known-action-3',
+                    },
                 },
                 {
                     id: 2,
                     priority: 10001,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
-                        urlFilter: '||default-ignore.invalid/known-action-3'
-                    }
+                        urlFilter: '||default-ignore.invalid/known-action-3',
+                    },
                 },
                 {
                     id: 3,
                     priority: 10002,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         domainType: 'thirdParty',
                         isUrlFilterCaseSensitive: false,
-                        urlFilter: '||default-ignore.invalid/known-action-1'
-                    }
+                        urlFilter: '||default-ignore.invalid/known-action-1',
+                    },
                 },
                 {
                     id: 4,
                     priority: 10000,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         domainType: 'thirdParty',
-                        requestDomains: ['default-block.invalid']
-                    }
+                        requestDomains: ['default-block.invalid'],
+                    },
                 },
                 {
                     id: 5,
                     priority: 10001,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
-                        urlFilter: '||default-block.invalid/known-action-2'
-                    }
+                        urlFilter: '||default-block.invalid/known-action-2',
+                    },
                 },
                 {
                     id: 6,
                     priority: 10002,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         domainType: 'thirdParty',
                         isUrlFilterCaseSensitive: false,
-                        urlFilter: '||default-block.invalid/known-action-1'
-                    }
-                }
-            ]
+                        urlFilter: '||default-block.invalid/known-action-1',
+                    },
+                },
+            ],
         })
     })
 
@@ -1669,40 +1552,40 @@ describe('generateTdsRuleset', () => {
         const blockList = emptyBlockList()
         addDomain(blockList, 'default-ignore.invalid', 'Default Ignore entity', 'ignore', [
             {
-                rule: 'default-ignore\\.invalid\\/known-action-1'
+                rule: 'default-ignore\\.invalid\\/known-action-1',
             },
             {
                 rule: 'default-ignore\\.invalid\\/block-ctl-fb-1',
-                action: 'block-ctl-fb'
+                action: 'block-ctl-fb',
             },
             {
                 rule: 'default-ignore\\.invalid\\/known-action-2',
-                exceptions: { types: ['script'] }
+                exceptions: { types: ['script'] },
             },
             {
                 rule: 'default-ignore\\.invalid\\/block-ctl-yt-1',
                 action: 'block-ctl-yt',
-                exceptions: { types: ['script'] }
-            }
+                exceptions: { types: ['script'] },
+            },
         ])
         addDomain(blockList, 'default-block.invalid', 'Default Block entity', 'block', [
             {
-                rule: 'default-block\\.invalid\\/known-action-1'
+                rule: 'default-block\\.invalid\\/known-action-1',
             },
             {
                 rule: 'default-block\\.invalid\\/block-ctl-fb-1',
                 action: 'block-ctl-fb',
-                surrogate: 'supported.js'
+                surrogate: 'supported.js',
             },
             {
                 rule: 'default-block\\.invalid\\/known-action-2',
-                exceptions: { types: ['script'] }
+                exceptions: { types: ['script'] },
             },
             {
                 rule: 'default-block\\.invalid\\/block-ctl-yt-1',
                 action: 'block-ctl-yt',
-                exceptions: { types: ['script'] }
-            }
+                exceptions: { types: ['script'] },
+            },
         ])
         addDomain(blockList, 'another-default-block.invalid', 'Default Block entity', 'block')
 
@@ -1712,164 +1595,149 @@ describe('generateTdsRuleset', () => {
                     id: 1,
                     priority: 10001,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 2,
                     priority: 10001,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
                         isUrlFilterCaseSensitive: false,
-                        resourceTypes: ['script']
-                    }
+                        resourceTypes: ['script'],
+                    },
                 },
                 {
                     id: 3,
                     priority: 10002,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/known-action-2',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 4,
                     priority: 10002,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/known-action-2',
                         isUrlFilterCaseSensitive: false,
-                        resourceTypes: ['script']
-                    }
+                        resourceTypes: ['script'],
+                    },
                 },
                 {
                     id: 5,
                     priority: 10003,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 6,
                     priority: 10004,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/known-action-1',
                         isUrlFilterCaseSensitive: false,
-                        domainType: 'thirdParty'
-                    }
+                        domainType: 'thirdParty',
+                    },
                 },
                 {
                     id: 7,
                     priority: 10000,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
-                        excludedInitiatorDomains: [
-                            'default-block.invalid',
-                            'another-default-block.invalid'
-                        ],
-                        requestDomains: [
-                            'default-block.invalid',
-                            'another-default-block.invalid'
-                        ]
-                    }
+                        excludedInitiatorDomains: ['default-block.invalid', 'another-default-block.invalid'],
+                        requestDomains: ['default-block.invalid', 'another-default-block.invalid'],
+                    },
                 },
                 {
                     id: 8,
                     priority: 10001,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/block-ctl-yt-1',
                         isUrlFilterCaseSensitive: false,
-                        resourceTypes: ['script']
-                    }
+                        resourceTypes: ['script'],
+                    },
                 },
                 {
                     id: 9,
                     priority: 10002,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/known-action-2',
                         isUrlFilterCaseSensitive: false,
-                        excludedInitiatorDomains: [
-                            'default-block.invalid',
-                            'another-default-block.invalid'
-                        ]
-                    }
+                        excludedInitiatorDomains: ['default-block.invalid', 'another-default-block.invalid'],
+                    },
                 },
                 {
                     id: 10,
                     priority: 10002,
                     action: {
-                        type: 'allow'
+                        type: 'allow',
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/known-action-2',
                         isUrlFilterCaseSensitive: false,
-                        resourceTypes: ['script']
-                    }
+                        resourceTypes: ['script'],
+                    },
                 },
                 {
                     id: 11,
                     priority: 10003,
                     action: {
                         redirect: {
-                            extensionPath: '/supported.js'
+                            extensionPath: '/supported.js',
                         },
-                        type: 'redirect'
+                        type: 'redirect',
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/block-ctl-fb-1',
                         isUrlFilterCaseSensitive: false,
-                        excludedInitiatorDomains: [
-                            'default-block.invalid',
-                            'another-default-block.invalid'
-                        ],
-                        resourceTypes: ['script']
-                    }
+                        excludedInitiatorDomains: ['default-block.invalid', 'another-default-block.invalid'],
+                        resourceTypes: ['script'],
+                    },
                 },
                 {
                     id: 12,
                     priority: 10004,
                     action: {
-                        type: 'block'
+                        type: 'block',
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/known-action-1',
                         isUrlFilterCaseSensitive: false,
-                        excludedInitiatorDomains: [
-                            'default-block.invalid',
-                            'another-default-block.invalid'
-                        ]
-                    }
-                }
+                        excludedInitiatorDomains: ['default-block.invalid', 'another-default-block.invalid'],
+                    },
+                },
             ],
             expectedCTLAllowingRules: {
                 'block-ctl-fb': [
@@ -1878,8 +1746,8 @@ describe('generateTdsRuleset', () => {
                         action: { type: 'allow' },
                         condition: {
                             urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
-                            isUrlFilterCaseSensitive: false
-                        }
+                            isUrlFilterCaseSensitive: false,
+                        },
                     },
                     {
                         priority: 10003,
@@ -1887,9 +1755,9 @@ describe('generateTdsRuleset', () => {
                         condition: {
                             urlFilter: '||default-block.invalid/block-ctl-fb-1',
                             isUrlFilterCaseSensitive: false,
-                            resourceTypes: ['script']
-                        }
-                    }
+                            resourceTypes: ['script'],
+                        },
+                    },
                 ],
                 'block-ctl-yt': [
                     {
@@ -1897,64 +1765,61 @@ describe('generateTdsRuleset', () => {
                         action: { type: 'allow' },
                         condition: {
                             urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
-                            isUrlFilterCaseSensitive: false
-                        }
-                    }
-                ]
+                            isUrlFilterCaseSensitive: false,
+                        },
+                    },
+                ],
             },
             expectedMatchDetailsLookup: {
                 1: {
                     type: 'clickToLoad',
-                    possibleTrackerDomains: ['default-ignore.invalid']
+                    possibleTrackerDomains: ['default-ignore.invalid'],
                 },
                 2: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['default-ignore.invalid']
+                    possibleTrackerDomains: ['default-ignore.invalid'],
                 },
                 3: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['default-ignore.invalid']
+                    possibleTrackerDomains: ['default-ignore.invalid'],
                 },
                 4: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['default-ignore.invalid']
+                    possibleTrackerDomains: ['default-ignore.invalid'],
                 },
                 5: {
                     type: 'clickToLoad',
-                    possibleTrackerDomains: ['default-ignore.invalid']
+                    possibleTrackerDomains: ['default-ignore.invalid'],
                 },
                 6: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['default-ignore.invalid']
+                    possibleTrackerDomains: ['default-ignore.invalid'],
                 },
                 7: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: [
-                        'default-block.invalid',
-                        'another-default-block.invalid'
-                    ]
+                    possibleTrackerDomains: ['default-block.invalid', 'another-default-block.invalid'],
                 },
                 8: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['default-block.invalid']
+                    possibleTrackerDomains: ['default-block.invalid'],
                 },
                 9: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['default-block.invalid']
+                    possibleTrackerDomains: ['default-block.invalid'],
                 },
                 10: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['default-block.invalid']
+                    possibleTrackerDomains: ['default-block.invalid'],
                 },
                 11: {
                     type: 'clickToLoad',
-                    possibleTrackerDomains: ['default-block.invalid']
+                    possibleTrackerDomains: ['default-block.invalid'],
                 },
                 12: {
                     type: 'trackerBlocking',
-                    possibleTrackerDomains: ['default-block.invalid']
-                }
-            }
+                    possibleTrackerDomains: ['default-block.invalid'],
+                },
+            },
         })
     })
 })

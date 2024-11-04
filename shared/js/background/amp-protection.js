@@ -11,17 +11,19 @@ const featureName = 'ampLinks'
  *
  * @returns {boolean} - true if the config is loaded
  */
-function ensureConfig () {
+function ensureConfig() {
     if (ampSettings) {
         return true
     }
 
-    if (!tdsStorage.config ||
+    if (
+        !tdsStorage.config ||
         !tdsStorage.config.features ||
         !tdsStorage.config.features.ampLinks ||
         !tdsStorage.config.features.ampLinks.settings ||
         !tdsStorage.config.features.ampLinks.settings.linkFormats ||
-        !tdsStorage.config.features.ampLinks.settings.keywords) {
+        !tdsStorage.config.features.ampLinks.settings.keywords
+    ) {
         return false
     }
 
@@ -35,7 +37,7 @@ function ensureConfig () {
  * @param {string} url - the url to check
  * @returns true if the url is a valid http(s) url
  */
-function isHttpUrl (url) {
+function isHttpUrl(url) {
     try {
         const newUrl = new URL(url)
         if (newUrl.protocol.startsWith('http')) {
@@ -53,7 +55,7 @@ function isHttpUrl (url) {
  * @param {Site} site - the site to check
  * @returns true if the site is excluded from AMP protection
  */
-function isSiteExcluded (site) {
+function isSiteExcluded(site) {
     if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
         return true
     }
@@ -68,7 +70,7 @@ function isSiteExcluded (site) {
  * @param {string} url - the url being loaded
  * @returns canonical url if found, null otherwise
  */
-function extractAMPURL (site, url) {
+function extractAMPURL(site, url) {
     if (!ensureConfig()) {
         return null
     }
@@ -116,7 +118,7 @@ function extractAMPURL (site, url) {
  * @param {object} mainFrameRequestURL - main frame request url
  * @returns true if the request is a suspected 1st party AMP url
  */
-function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
+function tabNeedsDeepExtraction(requestData, thisTab, mainFrameRequestURL) {
     if (utils.getBrowserName() !== 'moz') {
         // deep extraction is only supported on Firefox
         return false
@@ -143,7 +145,7 @@ function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
  * @param {string} url - the url being loaded
  * @returns true is the url is suspected to be a 1st party AMP url
  */
-function isAMPURL (url) {
+function isAMPURL(url) {
     if (!ensureConfig()) {
         return false
     }
@@ -153,7 +155,7 @@ function isAMPURL (url) {
         return false
     }
 
-    return ampSettings.keywords.some(keyword => url.includes(keyword))
+    return ampSettings.keywords.some((keyword) => url.includes(keyword))
 }
 
 /**
@@ -164,7 +166,7 @@ function isAMPURL (url) {
  * @param {string} url - the url being loaded
  * @returns cancalon url if found, null otherwise
  */
-async function fetchAMPURL (site, url) {
+async function fetchAMPURL(site, url) {
     if (!ensureConfig()) {
         return null
     }
@@ -223,7 +225,7 @@ async function fetchAMPURL (site, url) {
  * @param {object} request - request object
  * @returns true if the request was initiated by an extension
  */
-function requestIsExtension (request) {
+function requestIsExtension(request) {
     return request.initiator && request.initiator.startsWith('chrome-extension://')
 }
 
@@ -235,5 +237,5 @@ module.exports = {
     isAMPURL,
     extractAMPURL,
     fetchAMPURL,
-    tabNeedsDeepExtraction
+    tabNeedsDeepExtraction,
 }

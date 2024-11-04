@@ -7,9 +7,7 @@ import Companies from './companies'
 import atb from './atb'
 import tds from './storage/tds'
 import { createNewtabTrackerStatsDebugApi } from './newtab-tracker-stats-debug'
-import {
-    sendPageloadsWithAdAttributionPixelAndResetCount
-} from './classes/ad-click-attribution-policy'
+import { sendPageloadsWithAdAttributionPixelAndResetCount } from './classes/ad-click-attribution-policy'
 const settings = require('./settings')
 const tabManager = require('./tab-manager')
 const https = require('./https')
@@ -20,13 +18,13 @@ const { TabState } = require('./classes/tab-state')
 const Wrapper = require('./wrapper.js')
 const { setListContents, getListContents } = require('./message-handlers')
 
-export default function initDebugBuild () {
+export default function initDebugBuild() {
     // @ts-ignore - dbg is not a standard property of self.
     self.dbg = {
         settings,
         startup: {
             ready,
-            onStartup
+            onStartup,
         },
         tabManager,
         Tab,
@@ -42,9 +40,9 @@ export default function initDebugBuild () {
         companies: Companies,
         ntts: createNewtabTrackerStatsDebugApi(),
         sendPageloadsWithAdAttributionPixelAndResetCount,
-        resetToggleReports () {
+        resetToggleReports() {
             settings.updateSetting('toggleReportTimes', [])
-        }
+        },
     }
 
     // mark this as a dev build

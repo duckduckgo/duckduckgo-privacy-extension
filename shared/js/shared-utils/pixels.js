@@ -7,7 +7,7 @@
  *   params: Object
  * }?}
  */
-export function _formatPixelRequestForTesting (url) {
+export function _formatPixelRequestForTesting(url) {
     let parsed
     try {
         parsed = url instanceof URL ? url : new URL(url)

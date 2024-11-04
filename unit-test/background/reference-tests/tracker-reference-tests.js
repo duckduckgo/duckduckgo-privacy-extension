@@ -10,14 +10,16 @@ describe('Tracker reference tests:', () => {
     beforeAll(() => {
         tdsStorageStub.stub()
 
-        const testLists = [{
-            name: 'tds',
-            data: refTrackers
-        },
-        {
-            name: 'surrogates',
-            data: refSurrogates
-        }]
+        const testLists = [
+            {
+                name: 'tds',
+                data: refTrackers,
+            },
+            {
+                name: 'surrogates',
+                data: refSurrogates,
+            },
+        ]
         return tds.setLists(testLists)
     })
 
@@ -36,7 +38,7 @@ describe('Tracker reference tests:', () => {
             const requestType = test.requestType
             const expectRedirect = test.expectRedirect
             const result = tds.getTrackerData(requestURL, rootURL, { type: requestType })
-            let action = (result && result.action)
+            let action = result && result.action
             if (action === 'none') {
                 action = null
             }

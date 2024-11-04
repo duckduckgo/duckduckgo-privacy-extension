@@ -10,15 +10,15 @@ const expectedFingerprintValues = {
     colorDepth: 24,
     pixelDepth: 24,
     productSub: '20030107',
-    vendorSub: ''
+    vendorSub: '',
 }
 
 const tests = [
     { url: 'duckduckgo.com', har: getHARPath('duckduckgo.com/homepage.har') },
-    { url: 'example.com', har: getHARPath('example.com/example.har') }
+    { url: 'example.com', har: getHARPath('example.com/example.har') },
 ]
 
-function testFPValues (values) {
+function testFPValues(values) {
     for (const [name, prop] of Object.entries(values)) {
         expect(prop, `${name}`).toEqual(expectedFingerprintValues[name])
     }
@@ -29,7 +29,7 @@ test.describe('Fingerprint Defense Tests', () => {
         await backgroundWait.forExtensionLoaded(context)
     })
 
-    tests.forEach(testCase => {
+    tests.forEach((testCase) => {
         test(`${testCase.url} should include anti-fingerprinting code`, async ({ context, page }) => {
             await page.routeFromHAR(testCase.har)
             await page.goto(`https://${testCase.url}`, { waitUntil: 'networkidle' })
@@ -42,7 +42,7 @@ test.describe('Fingerprint Defense Tests', () => {
                     colorDepth: screen.colorDepth,
                     pixelDepth: screen.pixelDepth,
                     productSub: navigator.productSub,
-                    vendorSub: navigator.vendorSub
+                    vendorSub: navigator.vendorSub,
                 }
             })
             testFPValues(values)
@@ -58,7 +58,7 @@ test.describe('First Party Fingerprint Randomization', () => {
         await backgroundWait.forExtensionLoaded(context)
     })
 
-    async function runTest (testCase, page) {
+    async function runTest(testCase, page) {
         await page.routeFromHAR(testCase.har)
         await page.goto(`https://${testCase.url}`)
         await page.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' })
@@ -72,7 +72,7 @@ test.describe('First Party Fingerprint Randomization', () => {
         })
         return {
             canvas: fingerprint.components.canvas.value,
-            plugin: fingerprint.components.plugins.value
+            plugin: fingerprint.components.plugins.value,
         }
     }
 
@@ -109,7 +109,7 @@ test.describe('Verify injected script is not visible to the page', () => {
         await backgroundWait.forExtensionLoaded(context)
     })
 
-    tests.forEach(testCase => {
+    tests.forEach((testCase) => {
         test(`sjcl is not exposed to page scope: ${testCase.url}`, async ({ page }) => {
             await page.routeFromHAR(testCase.har)
             await page.goto(`https://${testCase.url}`)

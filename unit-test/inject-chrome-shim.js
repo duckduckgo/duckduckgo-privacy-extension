@@ -1,27 +1,29 @@
 const chrome = {
     alarms: {
-        create () { },
-        get () { },
+        create() {},
+        get() {},
         onAlarm: {
-            addListener () { },
-            removeListener () { }
-        }
+            addListener() {},
+            removeListener() {},
+        },
     },
     browserAction: {
-        setIcon: () => {}
+        setIcon: () => {},
     },
     contextMenus: {
         create: () => {},
         onClicked: {
-            addListener: () => {}
-        }
+            addListener: () => {},
+        },
     },
     declarativeNetRequest: {
-        isRegexSupported () { return { isSupported: true } },
-        getDynamicRules () { },
-        getSessionRules () { },
-        updateDynamicRules () { },
-        updateSessionRules () { }
+        isRegexSupported() {
+            return { isSupported: true }
+        },
+        getDynamicRules() {},
+        getSessionRules() {},
+        updateDynamicRules() {},
+        updateSessionRules() {},
     },
     runtime: {
         id: '577dc9b9-c381-115a-2246-3f95fe0e6ffe',
@@ -30,29 +32,29 @@ const chrome = {
             return { version: '1234.56' }
         },
         setUninstallURL: () => {},
-        getURL: path => path,
+        getURL: (path) => path,
         onConnect: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         onInstalled: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         onMessage: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         onPerformanceWarning: {
-            addListener (listener) {
+            addListener(listener) {
                 chrome.runtime.onPerformanceWarning._listeners.push(listener)
             },
-            _listeners: []
+            _listeners: [],
         },
         onStartup: {
-            addListener () { },
-            removeListener () { }
-        }
+            addListener() {},
+            removeListener() {},
+        },
     },
     storage: {
         local: {
@@ -62,69 +64,66 @@ const chrome = {
             get: (args, cb) => {
                 cb({})
             },
-            _setCalls: []
+            _setCalls: [],
         },
         managed: {
             get: (args, cb) => {
                 cb({})
-            }
-        }
+            },
+        },
     },
     tabs: {
         onActivated: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         sendMessage: () => {},
         query: () => Promise.resolve([]),
-        reload: () => Promise.resolve()
+        reload: () => Promise.resolve(),
     },
     webNavigation: {
         onCommitted: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         onCompleted: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         onErrorOccurred: {
-            addListener () { },
-            removeListener () { }
-        }
+            addListener() {},
+            removeListener() {},
+        },
     },
     webRequest: {
-        OnBeforeSendHeadersOptions: { },
-        OnHeadersReceivedOptions: { },
+        OnBeforeSendHeadersOptions: {},
+        OnHeadersReceivedOptions: {},
         onBeforeRequest: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         onBeforeSendHeaders: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         onCompleted: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         onErrorOccurred: {
-            addListener () { },
-            removeListener () { }
+            addListener() {},
+            removeListener() {},
         },
         onHeadersReceived: {
-            addListener () { },
-            removeListener () { }
-        }
+            addListener() {},
+            removeListener() {},
+        },
     },
     windows: {
         onFocusChanged: {
-            addListener () { },
-            removeListener () { }
-        }
-    }
+            addListener() {},
+            removeListener() {},
+        },
+    },
 }
-export {
-    chrome as 'globalThis.chrome',
-    chrome
-}
+export { chrome as 'globalThis.chrome', chrome }

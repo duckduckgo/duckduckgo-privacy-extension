@@ -19,7 +19,7 @@ let activePort = null
  *     (options: any, sender: any, message: any) => any
  * >} messageHandlers
  */
-export function popupConnectionOpened (port, messageHandlers) {
+export function popupConnectionOpened(port, messageHandlers) {
     activePort = port
     port.onDisconnect.addListener(() => {
         if (activePort === port) {
@@ -27,13 +27,11 @@ export function popupConnectionOpened (port, messageHandlers) {
         }
     })
 
-    port.onMessage.addListener(async message => {
+    port.onMessage.addListener(async (message) => {
         const messageType = message?.messageType
 
         if (!messageType || !(messageType in messageHandlers)) {
-            console.error(
-                'Unrecognized message (privacy-dashboard -> background):', message
-            )
+            console.error('Unrecognized message (privacy-dashboard -> background):', message)
             return
         }
 
@@ -42,7 +40,7 @@ export function popupConnectionOpened (port, messageHandlers) {
             port.postMessage({
                 id: message.id,
                 messageType: 'response',
-                options: response
+                options: response,
             })
         }
     })
@@ -53,6 +51,6 @@ export function popupConnectionOpened (port, messageHandlers) {
  *
  * @param {OutgoingPopupMessage} message
  */
-export function postPopupMessage (message) {
+export function postPopupMessage(message) {
     activePort?.postMessage(message)
 }

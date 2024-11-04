@@ -6,12 +6,12 @@
 import browser from 'webextension-polyfill'
 import { createAlarm, getFromSessionStorage, setToSessionStorage } from './wrapper'
 
-export default function initReloader () {
-    function createAlarmTimer () {
+export default function initReloader() {
+    function createAlarmTimer() {
         createAlarm('checkBuildTime', { when: Date.now() + 5000 })
     }
 
-    browser.alarms.onAlarm.addListener(async alarmEvent => {
+    browser.alarms.onAlarm.addListener(async (alarmEvent) => {
         if (alarmEvent.name !== 'checkBuildTime') {
             return
         }
@@ -21,7 +21,7 @@ export default function initReloader () {
         try {
             const response = await fetch('/buildtime.txt', { cache: 'no-store' })
             buildTime = await response.text()
-        } catch (e) { }
+        } catch (e) {}
 
         if (buildTime) {
             const previousBuildTime = await getFromSessionStorage('buildTime')

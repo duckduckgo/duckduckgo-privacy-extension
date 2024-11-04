@@ -31,17 +31,15 @@
  * @returns {Promise<function>}
  *   Function that clears logged requests (and in progress requests).
  */
-export async function logPageRequests (
-    page, requests, requestFilter, transform, postTransformFilter
-) {
+export async function logPageRequests(page, requests, requestFilter, transform, postTransformFilter) {
     /** @type {Map<number, LoggedRequestDetails>} */
     const requestDetailsByRequestId = new Map()
 
     /**
-   * @param {number} requestId
-   * @param {(details: LoggedRequestDetails) => void} updateDetails
-   * @returns {void}
-   */
+     * @param {number} requestId
+     * @param {(details: LoggedRequestDetails) => void} updateDetails
+     * @returns {void}
+     */
     const saveRequestOutcome = (requestId, updateDetails) => {
         if (!requestDetailsByRequestId.has(requestId)) {
             return
@@ -75,13 +73,13 @@ export async function logPageRequests (
     }
 }
 
-function logRequestsPlaywright (page, requestDetailsByRequestId, saveRequestOutcome) {
+function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutcome) {
     page.on('request', (request) => {
         const url = request.url()
         const requestDetails = {
             url,
             method: request.method(),
-            type: request.resourceType()
+            type: request.resourceType(),
         }
         if (request.redirectedFrom()) {
             requestDetails.redirectUrl = request.url()
@@ -90,12 +88,12 @@ function logRequestsPlaywright (page, requestDetailsByRequestId, saveRequestOutc
         requestDetailsByRequestId.set(url, requestDetails)
     })
     page.on('requestfinished', (request) => {
-        saveRequestOutcome(request.url(), details => {
+        saveRequestOutcome(request.url(), (details) => {
             details.status = details.redirectUrl ? 'redirected' : 'allowed'
         })
     })
     page.on('requestfailed', (request) => {
-        saveRequestOutcome(request.url(), details => {
+        saveRequestOutcome(request.url(), (details) => {
             const { errorText } = request.failure()
             if (errorText === 'net::ERR_BLOCKED_BY_CLIENT' || errorText === 'net::ERR_ABORTED') {
                 details.status = 'blocked'

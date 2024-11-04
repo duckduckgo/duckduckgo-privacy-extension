@@ -1,7 +1,7 @@
 const utils = require('./utils')
 
 class HTTPS {
-    addLists (lists) {
+    addLists(lists) {
         this.httpsList = lists.https
         this.httpsAutoUpgradeList = lists.httpsAutoUpgrade
 
@@ -9,7 +9,7 @@ class HTTPS {
         this.httpsAutoUpgradeSet = new Set(this.httpsAutoUpgradeList)
     }
 
-    getUpgradedUrl (url) {
+    getUpgradedUrl(url) {
         // Only deal with http calls
         if (url.indexOf('http:') !== 0) {
             return url
@@ -26,7 +26,7 @@ class HTTPS {
         return url
     }
 
-    canUpgradeHost (host) {
+    canUpgradeHost(host) {
         if (!this.httpsSet) {
             throw new Error('tried to upgrade hosts before rules were loaded')
         }
@@ -34,7 +34,7 @@ class HTTPS {
         return this.httpsSet.has(host)
     }
 
-    hostAutoUpgrades (host) {
+    hostAutoUpgrades(host) {
         if (!this.httpsAutoUpgradeSet) {
             throw new Error('tried to upgrade hosts before rules were loaded')
         }

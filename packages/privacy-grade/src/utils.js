@@ -31,5 +31,5 @@ const extractHostFromURL = (url) => {
 module.exports = {
     findParent,
     extractHostFromURL,
-    getDomain
+    getDomain,
 }

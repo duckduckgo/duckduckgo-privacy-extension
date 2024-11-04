@@ -20,7 +20,7 @@ const { TabState } = require('./tab-state')
  */
 
 export default class Site {
-    constructor (url, tabState) {
+    constructor(url, tabState) {
         // If no tabState is passed in then we create a new one to simulate a new tab
         if (!tabState) {
             tabState = new TabState({ tabId: 1, url, status: 'complete' })
@@ -52,27 +52,27 @@ export default class Site {
         this.specialDomainName = this.getSpecialDomain()
     }
 
-    get allowlisted () {
+    get allowlisted() {
         return this._tabState.allowlisted
     }
 
-    set allowlisted (value) {
+    set allowlisted(value) {
         this._tabState.setValue('allowlisted', value)
     }
 
-    get allowlistOptIn () {
+    get allowlistOptIn() {
         return this._tabState.allowlistOptIn
     }
 
-    set allowlistOptIn (value) {
+    set allowlistOptIn(value) {
         this._tabState.setValue('allowlistOptIn', value)
     }
 
-    get denylisted () {
+    get denylisted() {
         return this._tabState.denylisted
     }
 
-    set denylisted (value) {
+    set denylisted(value) {
         this._tabState.setValue('denylisted', value)
     }
 
@@ -81,11 +81,11 @@ export default class Site {
      * This would make the list apply to a much larger audience than is required.
      * The other allowlisting code is different and probably should be changed to match.
      */
-    get isBroken () {
+    get isBroken() {
         return utils.isBroken(this.domainWWW) // broken sites reported to github repo
     }
 
-    get enabledFeatures () {
+    get enabledFeatures() {
         // all features disabled for 'special' domains like localhost
         if (this.specialDomainName && this.specialDomainName !== 'new tab') {
             return []
@@ -93,30 +93,30 @@ export default class Site {
         return utils.getEnabledFeatures(this.domainWWW) // site issues reported to github repo
     }
 
-    get domain () {
+    get domain() {
         const domain = utils.extractHostFromURL(this.url) || ''
         return domain.toLowerCase()
     }
 
-    get domainWWW () {
+    get domainWWW() {
         // Retain any www. prefix for our broken site lists
         const domainWWW = utils.extractHostFromURL(this.url, true) || ''
         return domainWWW.toLowerCase()
     }
 
-    get protocol () {
+    get protocol() {
         return this.url.substr(0, this.url.indexOf(':'))
     }
 
-    get baseDomain () {
+    get baseDomain() {
         return utils.getBaseDomain(this.url)
     }
 
-    get parentEntity () {
+    get parentEntity() {
         return utils.findParent(this.domain) || ''
     }
 
-    get parentPrevalence () {
+    get parentPrevalence() {
         const parent = tdsStorage.tds.entities[this.parentEntity]
         return parent ? parent.prevalence : 0
     }
@@ -125,7 +125,7 @@ export default class Site {
      * When site objects are created we check the stored lists
      * and set the new site list statuses
      */
-    setListStatusFromGlobal () {
+    setListStatusFromGlobal() {
         /** @type {allowlistName[]} */
         const globalLists = ['allowlisted', 'allowlistOptIn', 'denylisted']
         globalLists.forEach((name) => {
@@ -138,17 +138,17 @@ export default class Site {
      * @param {allowlistName} listName
      * @param {boolean} value
      */
-    setListValue (listName, value) {
+    setListValue(listName, value) {
         if (value === true || value === false) {
             this[listName] = value
         }
     }
 
-    isContentBlockingEnabled () {
+    isContentBlockingEnabled() {
         return this.isFeatureEnabled('contentBlocking')
     }
 
-    isProtectionEnabled () {
+    isProtectionEnabled() {
         if (this.denylisted) {
             return true
         }
@@ -165,10 +165,8 @@ export default class Site {
      *      - "exceptions" check
      * - User toggle on
      */
-    isFeatureEnabled (featureName) {
-        const allowlistOnlyFeatures = [
-            'autofill', 'adClickAttribution', 'toggleReports'
-        ]
+    isFeatureEnabled(featureName) {
+        const allowlistOnlyFeatures = ['autofill', 'adClickAttribution', 'toggleReports']
         if (allowlistOnlyFeatures.includes(featureName)) {
             return this.enabledFeatures.includes(featureName)
         }
@@ -182,7 +180,7 @@ export default class Site {
     /**
      * @param {import("../../../../node_modules/@duckduckgo/privacy-grade/src/classes/trackers").TrackerData} t
      */
-    addTracker (t) {
+    addTracker(t) {
         // Ignore trackers that aren't first party
         if (t.action === 'ignore' && !t.sameEntity) {
             return
@@ -209,7 +207,7 @@ export default class Site {
      * returns: a useable special page description string.
      *          or null if not a special page.
      */
-    getSpecialDomain () {
+    getSpecialDomain() {
         const extensionId = browserWrapper.getExtensionId()
         const localhostName = 'localhost'
         const { protocol, url, domain } = this
@@ -232,10 +230,7 @@ export default class Site {
 
         // For special pages with a protocol, just return whatever word comes
         // after the protocol. E.g. 'chrome://extensions' becomes 'extensions'.
-        if (protocol === 'about' ||
-            protocol === 'chrome' ||
-            protocol === 'chrome-search' ||
-            protocol === 'vivaldi') {
+        if (protocol === 'about' || protocol === 'chrome' || protocol === 'chrome-search' || protocol === 'vivaldi') {
             if (domain === 'newtab' || domain === 'local-ntp') {
                 return 'new tab'
             }

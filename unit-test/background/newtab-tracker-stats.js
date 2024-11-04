@@ -56,12 +56,12 @@ describe('NewTabTrackerStats', () => {
         expect(output.trackerCompanies).toEqual([
             {
                 displayName: 'Google',
-                count: 1
+                count: 1,
             },
             {
                 displayName: 'Other',
-                count: 2
-            }
+                count: 2,
+            },
         ])
     })
     it('combines none-top entries', () => {
@@ -74,7 +74,7 @@ describe('NewTabTrackerStats', () => {
         const now = Date.now()
         const top10 = Object.keys(testTDS.entities)
             .slice(0, 5)
-            .map(key => testTDS.entities[key].displayName)
+            .map((key) => testTDS.entities[key].displayName)
 
         for (const displayName of top10) {
             newtab.record(displayName, now)
@@ -94,22 +94,28 @@ describe('NewTabTrackerStats', () => {
             totalCount: 7,
             totalPeriod: 'install-time',
             trackerCompaniesPeriod: 'last-day',
-            trackerCompanies: [{
-                displayName: 'Facebook',
-                count: 1
-            }, {
-                displayName: 'Google',
-                count: 1
-            }, {
-                displayName: 'Microsoft',
-                count: 1
-            }, {
-                displayName: 'Xandr',
-                count: 1
-            }, {
-                displayName: 'Other',
-                count: 3
-            }]
+            trackerCompanies: [
+                {
+                    displayName: 'Facebook',
+                    count: 1,
+                },
+                {
+                    displayName: 'Google',
+                    count: 1,
+                },
+                {
+                    displayName: 'Microsoft',
+                    count: 1,
+                },
+                {
+                    displayName: 'Xandr',
+                    count: 1,
+                },
+                {
+                    displayName: 'Other',
+                    count: 3,
+                },
+            ],
         })
     })
 })
@@ -160,14 +166,14 @@ describe('sending data', () => {
                         start: now,
                         end: 0,
                         entries: {
-                            Google: 6
-                        }
+                            Google: 6,
+                        },
                     },
                     packs: [],
                     totalCount: 6,
-                    entries: null
-                }
-            }
+                    entries: null,
+                },
+            },
         })
     })
 })
@@ -182,11 +188,11 @@ describe('incoming events', () => {
                 start: now,
                 end: 0,
                 entries: {
-                    Google: 6
-                }
+                    Google: 6,
+                },
             },
             packs: [],
-            totalCount: 6
+            totalCount: 6,
         })
 
         newtab = new NewTabTrackerStats(stats)
@@ -199,7 +205,7 @@ describe('incoming events', () => {
     it('should respond to heartbeat', () => {
         // simulate a valid incoming event
         newtab._handleIncomingEvent({
-            messageType: constants.trackerStats.events.incoming.newTabPage_heartbeat
+            messageType: constants.trackerStats.events.incoming.newTabPage_heartbeat,
         })
 
         // allow for the debouncing on send
@@ -212,23 +218,25 @@ describe('alarms', () => {
     let newtab, sendSpy
     const now = 1673473220560
     const oneHourAgo = now - HOUR
-    const twoHourAgo = now - (HOUR * 2)
+    const twoHourAgo = now - HOUR * 2
     beforeEach(() => {
         const stats = new TrackerStats()
         stats.deserialize({
             current: {
                 start: 0,
                 end: 0,
-                entries: {}
+                entries: {},
             },
-            packs: [{
-                start: twoHourAgo,
-                end: oneHourAgo,
-                entries: {
-                    Google: 6
-                }
-            }],
-            totalCount: 6
+            packs: [
+                {
+                    start: twoHourAgo,
+                    end: oneHourAgo,
+                    entries: {
+                        Google: 6,
+                    },
+                },
+            ],
+            totalCount: 6,
         })
         spyOn(settings, 'getSetting').and.returnValue('v374')
         newtab = new NewTabTrackerStats(stats)
@@ -254,7 +262,7 @@ describe('alarms', () => {
             totalCount: 6,
             totalPeriod: 'install-time',
             trackerCompaniesPeriod: 'last-day',
-            trackerCompanies: []
+            trackerCompanies: [],
         })
     })
 })
@@ -262,10 +270,14 @@ describe('alarms', () => {
 describe('CSP for new tab page', () => {
     it('should contain a valid CSP entry for MV2', () => {
         const mv2 = require('../../browsers/chrome-mv2/manifest.json')
-        expect(mv2.content_security_policy).toBe("script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com")
+        expect(mv2.content_security_policy).toBe(
+            "script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com",
+        )
     })
     it('should contain a valid CSP entry for MV3', () => {
         const mv3 = require('../../browsers/chrome/manifest.json')
-        expect(mv3.content_security_policy.extension_pages).toBe("script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com")
+        expect(mv3.content_security_policy.extension_pages).toBe(
+            "script-src 'self'; object-src 'self'; frame-ancestors https://duckduckgo.com https://*.duckduckgo.com",
+        )
     })
 })

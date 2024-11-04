@@ -10,9 +10,7 @@ import { updateActionIcon } from './events/privacy-icon-indicator'
 import httpsStorage from './storage/https'
 import ATB from './atb'
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report'
-import {
-    sendPageloadsWithAdAttributionPixelAndResetCount
-} from './classes/ad-click-attribution-policy'
+import { sendPageloadsWithAdAttributionPixelAndResetCount } from './classes/ad-click-attribution-policy'
 import { popupConnectionOpened, postPopupMessage } from './popupMessaging'
 const utils = require('./utils')
 const experiment = require('./experiments')
@@ -23,11 +21,15 @@ const cspProtection = require('./csp-blocking')
 const browserName = utils.getBrowserName()
 const browserWrapper = require('./wrapper')
 const limitReferrerData = require('./events/referrer-trimming')
-const { dropTracking3pCookiesFromResponse, dropTracking3pCookiesFromRequest, validateSetCookieBlock } = require('./events/3p-tracking-cookie-blocking')
+const {
+    dropTracking3pCookiesFromResponse,
+    dropTracking3pCookiesFromRequest,
+    validateSetCookieBlock,
+} = require('./events/3p-tracking-cookie-blocking')
 
 const manifestVersion = browserWrapper.getManifestVersion()
 
-async function onInstalled (details) {
+async function onInstalled(details) {
     if (details.reason.match(/install/)) {
         // get tab URLs immediately to prevent race with install page
         const ddgTabUrls = await browserWrapper.getDDGTabUrls()
@@ -59,7 +61,7 @@ async function onInstalled (details) {
                 }
                 await browserWrapper.executeScript({
                     target: { tabId: tab.id },
-                    files: ['public/js/content-scripts/autofill.js']
+                    files: ['public/js/content-scripts/autofill.js'],
                 })
             }
         }
@@ -74,7 +76,7 @@ browser.runtime.onInstalled.addListener(onInstalled)
  * ONBOARDING
  * Logic to allow the SERP to display onboarding UI
  */
-async function onboardingMessaging ({ transitionQualifiers, tabId }) {
+async function onboardingMessaging({ transitionQualifiers, tabId }) {
     await settings.ready()
     const showWelcomeBanner = settings.getSetting('showWelcomeBanner')
     const showCounterMessaging = settings.getSetting('showCounterMessaging')
@@ -105,10 +107,12 @@ async function onboardingMessaging ({ transitionQualifiers, tabId }) {
         browserWrapper.executeScript({
             target: { tabId },
             func: onboarding.onDocumentStart,
-            args: [{
-                duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname
-            }],
-            injectImmediately: true
+            args: [
+                {
+                    duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
+                },
+            ],
+            injectImmediately: true,
         })
     }
 
@@ -116,53 +120,55 @@ async function onboardingMessaging ({ transitionQualifiers, tabId }) {
         browserWrapper.executeScript({
             target: { tabId },
             func: onboarding.onDocumentEndMainWorld,
-            args: [{
-                isAddressBarQuery,
-                showWelcomeBanner,
-                showCounterMessaging
-            }],
+            args: [
+                {
+                    isAddressBarQuery,
+                    showWelcomeBanner,
+                    showCounterMessaging,
+                },
+            ],
             injectImmediately: false,
-            world: 'MAIN'
+            world: 'MAIN',
         })
     }
 
     browserWrapper.executeScript({
         target: { tabId },
         func: onboarding.onDocumentEnd,
-        args: [{
-            isAddressBarQuery,
-            showWelcomeBanner,
-            showCounterMessaging,
-            browserName,
-            duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
-            extensionId: browserWrapper.getExtensionId(),
-            manifestVersion
-        }],
-        injectImmediately: false
+        args: [
+            {
+                isAddressBarQuery,
+                showWelcomeBanner,
+                showCounterMessaging,
+                browserName,
+                duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
+                extensionId: browserWrapper.getExtensionId(),
+                manifestVersion,
+            },
+        ],
+        injectImmediately: false,
     })
 }
 
-browser.webNavigation.onCommitted.addListener(
-    onboardingMessaging, {
-        // We only target the search results page (SERP), which has a 'q' query
-        // parameter. Two filters are required since the parameter is not
-        // necessarily first.
-        url: [
-            {
-                schemes: ['https'],
-                hostEquals: constants.duckDuckGoSerpHostname,
-                pathEquals: '/',
-                queryContains: '?q='
-            },
-            {
-                schemes: ['https'],
-                hostEquals: constants.duckDuckGoSerpHostname,
-                pathEquals: '/',
-                queryContains: '&q='
-            }
-        ]
-    }
-)
+browser.webNavigation.onCommitted.addListener(onboardingMessaging, {
+    // We only target the search results page (SERP), which has a 'q' query
+    // parameter. Two filters are required since the parameter is not
+    // necessarily first.
+    url: [
+        {
+            schemes: ['https'],
+            hostEquals: constants.duckDuckGoSerpHostname,
+            pathEquals: '/',
+            queryContains: '?q=',
+        },
+        {
+            schemes: ['https'],
+            hostEquals: constants.duckDuckGoSerpHostname,
+            pathEquals: '/',
+            queryContains: '&q=',
+        },
+    ],
+})
 
 /**
  * Health checks + `showCounterMessaging` mutation
@@ -204,9 +210,9 @@ if (manifestVersion === 2) {
 browser.webRequest.onBeforeRequest.addListener(
     beforeRequest.handleRequest,
     {
-        urls: ['<all_urls>']
+        urls: ['<all_urls>'],
     },
-    additionalOptions
+    additionalOptions,
 )
 
 // MV2 needs blocking for webRequest
@@ -227,7 +233,7 @@ if (browser.webRequest.OnHeadersReceivedOptions.EXTRA_HEADERS) {
 const isTopicsEnabled = manifestVersion === 2 && 'browsingTopics' in document && utils.isFeatureEnabled('googleRejected')
 
 browser.webRequest.onHeadersReceived.addListener(
-    request => {
+    (request) => {
         if (ATB.shouldUpdateSetAtb(request)) {
             // returns a promise
             return ATB.updateSetAtb()
@@ -245,7 +251,7 @@ browser.webRequest.onHeadersReceived.addListener(
         return { responseHeaders }
     },
     { urls: ['<all_urls>'] },
-    extraInfoSpec
+    extraInfoSpec,
 )
 
 /**
@@ -264,9 +270,8 @@ browser.tabs.onActivated.addListener(({ tabId }) => {
     postPopupMessage({ messageType: 'closePopup' })
 })
 
-browser.windows.onFocusChanged.addListener(async windowId => {
-    const previousWindowId =
-        await browserWrapper.getFromSessionStorage('currentWindowId')
+browser.windows.onFocusChanged.addListener(async (windowId) => {
+    const previousWindowId = await browserWrapper.getFromSessionStorage('currentWindowId')
 
     if (windowId > 0 && windowId !== previousWindowId) {
         // If there are multiple browser windows and the user switches to a
@@ -304,7 +309,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
         'getEmailProtectionCapabilities',
         'getAddresses',
         'refreshAlias',
-        'debuggerMessage'
+        'debuggerMessage',
     ]
     for (const legacyMessageType of legacyMessageTypes) {
         if (legacyMessageType in req) {
@@ -322,7 +327,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
     }
 
     // Count refreshes per page
-    if (req.pageReloaded && (sender.tab !== undefined)) {
+    if (req.pageReloaded && sender.tab !== undefined) {
         const tab = tabManager.get({ tabId: sender.tab.id })
         if (tab) {
             tab.userRefreshCount += 1
@@ -342,7 +347,7 @@ browser.runtime.onMessage.addListener((req, sender) => {
 })
 
 // Handle popup UI (aka privacy dashboard) messaging.
-browser.runtime.onConnect.addListener(port => {
+browser.runtime.onConnect.addListener((port) => {
     if (port.name === 'privacy-dashboard') {
         popupConnectionOpened(port, messageHandlers)
     }
@@ -357,11 +362,7 @@ if (manifestVersion === 2) {
         referrerListenerOptions.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS)
     }
 
-    browser.webRequest.onBeforeSendHeaders.addListener(
-        limitReferrerData,
-        { urls: ['<all_urls>'] },
-        referrerListenerOptions
-    )
+    browser.webRequest.onBeforeSendHeaders.addListener(limitReferrerData, { urls: ['<all_urls>'] }, referrerListenerOptions)
 }
 
 /**
@@ -377,7 +378,7 @@ if (manifestVersion === 2) {
     extraInfoSpecSendHeaders.push('blocking')
     // Attach GPC header to all requests if enabled.
     browser.webRequest.onBeforeSendHeaders.addListener(
-        request => {
+        (request) => {
             const tab = tabManager.get({ tabId: request.tabId })
             const GPCHeader = GPC.getHeader()
             const GPCEnabled = tab && tab.site.isFeatureEnabled('gpc')
@@ -390,34 +391,22 @@ if (manifestVersion === 2) {
             return { requestHeaders }
         },
         { urls: ['<all_urls>'] },
-        extraInfoSpecSendHeaders
+        extraInfoSpecSendHeaders,
     )
 }
 
-browser.webRequest.onBeforeSendHeaders.addListener(
-    dropTracking3pCookiesFromRequest,
-    { urls: ['<all_urls>'] },
-    extraInfoSpecSendHeaders
-)
+browser.webRequest.onBeforeSendHeaders.addListener(dropTracking3pCookiesFromRequest, { urls: ['<all_urls>'] }, extraInfoSpecSendHeaders)
 
-browser.webRequest.onHeadersReceived.addListener(
-    dropTracking3pCookiesFromResponse,
-    { urls: ['<all_urls>'] },
-    extraInfoSpec
-)
+browser.webRequest.onHeadersReceived.addListener(dropTracking3pCookiesFromResponse, { urls: ['<all_urls>'] }, extraInfoSpec)
 
 if (manifestVersion === 3) {
-    browser.webRequest.onCompleted.addListener(
-        validateSetCookieBlock,
-        { urls: ['<all_urls>'] },
-        extraInfoSpec
-    )
+    browser.webRequest.onCompleted.addListener(validateSetCookieBlock, { urls: ['<all_urls>'] }, extraInfoSpec)
 }
 
 /**
  * For each completed page load, update the extension's action icon
  */
-browser.webNavigation.onCompleted.addListener(details => {
+browser.webNavigation.onCompleted.addListener((details) => {
     // only update the icon when the outermost frame is complete
     if (details.parentFrameId !== -1) return
 
@@ -428,8 +417,7 @@ browser.webNavigation.onCompleted.addListener(details => {
     if (!tab) return
 
     // select the next icon state
-    updateActionIcon(tab.site, tab.id)
-        .catch(e => console.error('could not set the action icon', e))
+    updateActionIcon(tab.site, tab.id).catch((e) => console.error('could not set the action icon', e))
 })
 
 /**
@@ -439,7 +427,7 @@ browser.webNavigation.onCompleted.addListener(details => {
 const httpsService = require('./https-service')
 
 browserWrapper.createAlarm('updateHTTPSLists', {
-    periodInMinutes: httpsStorage.updatePeriodInMinutes
+    periodInMinutes: httpsStorage.updatePeriodInMinutes,
 })
 // remove expired HTTPS service entries
 browserWrapper.createAlarm('clearExpiredHTTPSServiceCache', { periodInMinutes: 60 })
@@ -453,7 +441,7 @@ browserWrapper.createAlarm('clearExpiredBrokenSiteReportTimes', { periodInMinute
 // request where necessary.
 browserWrapper.createAlarm('adClickAttributionDaily', { periodInMinutes: 60 * 24 })
 
-browser.alarms.onAlarm.addListener(async alarmEvent => {
+browser.alarms.onAlarm.addListener(async (alarmEvent) => {
     // Warning: Awaiting in this function doesn't actually wait for the promise to resolve before unblocking the main thread.
     if (alarmEvent.name === 'updateHTTPSLists') {
         await settings.ready()
@@ -474,35 +462,38 @@ browser.alarms.onAlarm.addListener(async alarmEvent => {
     }
 })
 
-browser.webNavigation.onErrorOccurred.addListener(e => {
+browser.webNavigation.onErrorOccurred.addListener((e) => {
     // If not main frame ignore
     if (e.frameId !== 0) return
     const tab = tabManager.get({ tabId: e.tabId })
     tab.errorDescriptions.push(e.error)
 })
 
-browser.webRequest.onErrorOccurred.addListener(e => {
-    if (!(e.type === 'main_frame')) return
+browser.webRequest.onErrorOccurred.addListener(
+    (e) => {
+        if (!(e.type === 'main_frame')) return
 
-    const tab = tabManager.get({ tabId: e.tabId })
-    tab.errorDescriptions.push(e.error)
+        const tab = tabManager.get({ tabId: e.tabId })
+        tab.errorDescriptions.push(e.error)
 
-    // We're only looking at failed main_frame upgrades. A tab can send multiple
-    // main_frame request errors so we will only look at the first one then set tab.hasHttpsError.
-    if (!tab || !tab.mainFrameUpgraded || tab.hasHttpsError) {
-        return
-    }
-
-    // Count https upgrade failures to allow bad data to be removed from lists
-    if (e.error && e.url.match(/^https/)) {
-        const errCode = constants.httpsErrorCodes[e.error]
-        tab.hasHttpsError = true
-
-        if (errCode) {
-            https.incrementUpgradeCount('failedUpgrades')
+        // We're only looking at failed main_frame upgrades. A tab can send multiple
+        // main_frame request errors so we will only look at the first one then set tab.hasHttpsError.
+        if (!tab || !tab.mainFrameUpgraded || tab.hasHttpsError) {
+            return
         }
-    }
-}, { urls: ['<all_urls>'] })
+
+        // Count https upgrade failures to allow bad data to be removed from lists
+        if (e.error && e.url.match(/^https/)) {
+            const errCode = constants.httpsErrorCodes[e.error]
+            tab.hasHttpsError = true
+
+            if (errCode) {
+                https.incrementUpgradeCount('failedUpgrades')
+            }
+        }
+    },
+    { urls: ['<all_urls>'] },
+)
 
 if (browserName === 'moz') {
     cspProtection.init()

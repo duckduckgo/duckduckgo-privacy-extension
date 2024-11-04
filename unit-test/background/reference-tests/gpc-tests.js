@@ -23,7 +23,7 @@ for (const setName of Object.keys(testSets)) {
             return tdsStorage.getLists()
         })
 
-        testSet.tests.forEach(test => {
+        testSet.tests.forEach((test) => {
             if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                 return
             }
@@ -48,7 +48,7 @@ for (const setName of Object.keys(testSets)) {
                     const args = {
                         site: new Site(test.siteURL),
                         globalPrivacyControlValue: test.gpcUserSettingOn,
-                        platform: constants.platform
+                        platform: constants.platform,
                     }
                     const isEnabled = !contentScriptUtils.isFeatureBroken(args, 'gpc')
 

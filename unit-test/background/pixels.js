@@ -3,8 +3,8 @@ const url = 'https://improving.duckduckgo.com/t/'
 const getURLTestCases = [
     {
         pixelName: 'ep',
-        result: url + 'ep'
-    }
+        result: url + 'ep',
+    },
 ]
 
 describe('pixel.getURL()', () => {

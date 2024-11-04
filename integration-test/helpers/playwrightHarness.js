@@ -1,21 +1,18 @@
-import {
-    test as base,
-    chromium
-} from '@playwright/test'
+import { test as base, chromium } from '@playwright/test'
 import path from 'path'
 import fs from 'fs/promises'
 
 const testRoot = path.join(__dirname, '..')
 const projectRoot = path.join(testRoot, '..')
-export function getHARPath (harFile) {
+export function getHARPath(harFile) {
     return path.join(testRoot, 'data', 'har', harFile)
 }
 
-export function getManifestVersion () {
+export function getManifestVersion() {
     return process.env.npm_lifecycle_event === 'playwright-mv2' ? 2 : 3
 }
 
-async function routeLocalResources (route) {
+async function routeLocalResources(route) {
     const url = new URL(route.request().url())
     const localPath = path.join(testRoot, 'data', 'staticcdn', url.pathname)
     try {
@@ -25,8 +22,8 @@ async function routeLocalResources (route) {
             status: 200,
             body,
             headers: {
-                etag: 'test'
-            }
+                etag: 'test',
+            },
         })
     } catch (e) {
         // console.log('request served from network', route.request().url())
@@ -37,7 +34,7 @@ async function routeLocalResources (route) {
 export const mockAtb = {
     majorVersion: 364,
     minorVersion: 2,
-    version: 'v364-2'
+    version: 'v364-2',
 }
 
 // based off example at https://playwright.dev/docs/chrome-extensions#testing
@@ -49,16 +46,12 @@ export const test = base.extend({
     /**
      * @type {import('@playwright/test').BrowserContext}
      */
-    async context ({ manifestVersion }, use) {
-        const extensionPath =
-            manifestVersion === 3 ? 'build/chrome/dev' : 'build/chrome-mv2/dev'
+    async context({ manifestVersion }, use) {
+        const extensionPath = manifestVersion === 3 ? 'build/chrome/dev' : 'build/chrome-mv2/dev'
         const pathToExtension = path.join(projectRoot, extensionPath)
         const context = await chromium.launchPersistentContext('', {
             headless: false,
-            args: [
-                `--disable-extensions-except=${pathToExtension}`,
-                `--load-extension=${pathToExtension}`
-            ]
+            args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
         })
         // intercept extension install page and use HAR
         context.on('page', (page) => {
@@ -67,7 +60,7 @@ export const test = base.extend({
                 // HAR file generated with the following command:
                 // npx playwright open --save-har=data/har/duckduckgo.com/extension-success.har https://duckduckgo.com/extension-success
                 page.routeFromHAR(getHARPath('duckduckgo.com/extension-success.har'), {
-                    notFound: 'abort'
+                    notFound: 'abort',
                 })
             }
         })
@@ -77,7 +70,7 @@ export const test = base.extend({
     /**
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
      */
-    async backgroundPage ({ context, manifestVersion }, use) {
+    async backgroundPage({ context, manifestVersion }, use) {
         // let background: Page | Worker
         const routeHandler = (route) => {
             const url = route.request().url()
@@ -94,20 +87,19 @@ export const test = base.extend({
                         return route.fulfill({
                             body: JSON.stringify({
                                 ...mockAtb,
-                                updateVersion: `v${majorVersion}-1`
-                            })
+                                updateVersion: `v${majorVersion}-1`,
+                            }),
                         })
                     }
                 }
                 return route.fulfill({
-                    body: JSON.stringify(mockAtb)
+                    body: JSON.stringify(mockAtb),
                 })
             }
-            if (url.startsWith('https://duckduckgo.com/exti') ||
-                url.startsWith('https://improving.duckduckgo.com/')) {
+            if (url.startsWith('https://duckduckgo.com/exti') || url.startsWith('https://improving.duckduckgo.com/')) {
                 return route.fulfill({
                     status: 200,
-                    body: ''
+                    body: '',
                 })
             }
             route.continue()
@@ -133,7 +125,7 @@ export const test = base.extend({
      * wraps the 'route' function in a manifest agnostic way
      * @type {(url: string | RegExp, handler: (route: Route, request: Request) => any) => Promise<void>}
      */
-    async routeExtensionRequests ({ manifestVersion, backgroundPage, context }, use) {
+    async routeExtensionRequests({ manifestVersion, backgroundPage, context }, use) {
         if (manifestVersion === 3) {
             await use(context.route.bind(context))
         } else {
@@ -144,13 +136,13 @@ export const test = base.extend({
      * Use this for listening and modifying network events for both MV2 and MV3
      * @type {import('@playwright/test').Page | import('@playwright/test').BrowserContext}
      */
-    async backgroundNetworkContext ({ manifestVersion, backgroundPage, context }, use) {
+    async backgroundNetworkContext({ manifestVersion, backgroundPage, context }, use) {
         if (manifestVersion === 3) {
             await use(context)
         } else {
             await use(backgroundPage)
         }
-    }
+    },
 })
 
 export const expect = test.expect

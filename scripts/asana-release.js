@@ -13,7 +13,7 @@ const artifacts = platforms.map((platform) => {
         pathParts.push('web-ext-artifacts')
     }
     const folder = path.join(...pathParts)
-    const filename = fs.readdirSync(folder).find(fn => fn.endsWith('.zip'))
+    const filename = fs.readdirSync(folder).find((fn) => fn.endsWith('.zip'))
     return path.join(folder, filename)
 })
 
@@ -25,28 +25,26 @@ const extensionVersionCustomFieldGid = '1204270899747122'
 
 let asana
 
-function setupAsana () {
+function setupAsana() {
     asana = Asana.Client.create({
         defaultHeaders: {
-            'Asana-Enable': 'new_user_task_lists,new_project_templates,new_goal_memberships'
-        }
+            'Asana-Enable': 'new_user_task_lists,new_project_templates,new_goal_memberships',
+        },
     }).useAccessToken(ASANA_ACCESS_TOKEN)
 }
 
-function duplicateTemplateTask (templateTaskGid) {
+function duplicateTemplateTask(templateTaskGid) {
     const duplicateOption = {
         include: ['notes', 'assignee', 'subtasks', 'projects'],
         name: `Extension Release ${version}`,
-        opt_fields: 'html_notes'
+        opt_fields: 'html_notes',
     }
 
     return asana.tasks.duplicateTask(templateTaskGid, duplicateOption)
 }
 
-const getTaskList = (tasks) => tasks.map((t) =>
-    `<li><a data-asana-gid="${t.gid}" /> — ${
-        t.assignee ? `<a data-asana-gid="${t.assignee.gid}" />` : '…'
-    }</li>`).join('')
+const getTaskList = (tasks) =>
+    tasks.map((t) => `<li><a data-asana-gid="${t.gid}" /> — ${t.assignee ? `<a data-asana-gid="${t.assignee.gid}" />` : '…'}</li>`).join('')
 
 // get list of assignees to add to the release task
 const getAssigneeGids = (releaseTasks) =>
@@ -56,7 +54,7 @@ const getAssigneeGids = (releaseTasks) =>
 
             return assignees
         },
-        new Set() // using a Set so they're unique
+        new Set(), // using a Set so they're unique
     )
 
 const run = async () => {
@@ -64,13 +62,10 @@ const run = async () => {
 
     console.info('Getting list of release tasks')
     // get list of tasks in release section
-    const { data: releaseTasks } = await asana.tasks.getTasksForSection(
-        releaseSectionGid,
-        {
-            completed_since: 'now', // only fetch incomplete tasks
-            opt_fields: 'gid,assignee,name'
-        }
-    )
+    const { data: releaseTasks } = await asana.tasks.getTasksForSection(releaseSectionGid, {
+        completed_since: 'now', // only fetch incomplete tasks
+        opt_fields: 'gid,assignee,name',
+    })
     if (!releaseTasks || releaseTasks.length === 0) {
         console.error('No tasks found to release!')
         return
@@ -85,9 +80,7 @@ const run = async () => {
     // create html list with <a>task</a> - @assignee
     const releaseNotes = `<ul>${getTaskList(releaseTasks)}</ul>`
 
-    const updatedNotes =
-        notes.replace('[[release_url]]', `<a href="${releaseUrl}">${releaseUrl}</a>`)
-            .replace('[[notes]]', releaseNotes)
+    const updatedNotes = notes.replace('[[release_url]]', `<a href="${releaseUrl}">${releaseUrl}</a>`).replace('[[notes]]', releaseNotes)
 
     console.info('Updating task html')
 
@@ -97,7 +90,7 @@ const run = async () => {
 
     await asana.tasks.addProjectForTask(new_task.gid, {
         project: extensionProjectGid,
-        section: extensionReleaseSectionGid
+        section: extensionReleaseSectionGid,
     })
 
     console.info('Uploading files...')
@@ -109,11 +102,11 @@ const run = async () => {
             method: 'POST',
             url: `https://app.asana.com/api/1.0/tasks/${new_task.gid}/attachments`,
             formData: {
-                file: fs.createReadStream(pathString)
+                file: fs.createReadStream(pathString),
             },
             headers: {
-                'Content-Type': 'multipart/form-data'
-            }
+                'Content-Type': 'multipart/form-data',
+            },
         }
         return asana.dispatcher.dispatch(params, {})
     }
@@ -124,10 +117,7 @@ const run = async () => {
 
     const taskAssignees = getAssigneeGids(releaseTasks)
 
-    await asana.tasks.addFollowersForTask(
-        new_task.gid,
-        { followers: [...taskAssignees] }
-    )
+    await asana.tasks.addFollowersForTask(new_task.gid, { followers: [...taskAssignees] })
 
     console.info('Assigning testing task to stakeholders...')
 
@@ -136,25 +126,19 @@ const run = async () => {
     const testingSubtask = subtasks.find((task) => task.name.includes('Extension Testing'))
 
     for (const taskAssignee of taskAssignees) {
-        const { new_task: duplicateTestingTask } = await asana.tasks.duplicateTask(
-            testingSubtask.gid,
-            {
-                name: 'Extension Testing',
-                include: ['notes', 'parent', 'subtasks']
-            }
-        )
-        await asana.tasks.updateTask(
-            duplicateTestingTask.gid,
-            { assignee: taskAssignee }
-        )
+        const { new_task: duplicateTestingTask } = await asana.tasks.duplicateTask(testingSubtask.gid, {
+            name: 'Extension Testing',
+            include: ['notes', 'parent', 'subtasks'],
+        })
+        await asana.tasks.updateTask(duplicateTestingTask.gid, { assignee: taskAssignee })
     }
 
     console.info('Setting release version field for PR tasks...')
     for (const task of releaseTasks) {
         await asana.tasks.updateTask(task.gid, {
             custom_fields: {
-                [extensionVersionCustomFieldGid]: version
-            }
+                [extensionVersionCustomFieldGid]: version,
+            },
         })
     }
 

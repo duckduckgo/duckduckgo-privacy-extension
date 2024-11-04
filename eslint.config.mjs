@@ -1,12 +1,11 @@
-
-import ddgConfig from "@duckduckgo/eslint-config";
-import globals from "globals";
+import ddgConfig from '@duckduckgo/eslint-config'
+import globals from 'globals'
 
 export default [
     ...ddgConfig,
 
     {
-        ignores: ["shared/js/content-scope/sjcl.js", "unit-test/data/reference-tests/"],
+        ignores: ['shared/js/content-scope/sjcl.js', 'unit-test/data/reference-tests/'],
     },
 
     {
@@ -21,29 +20,35 @@ export default [
         },
 
         rules: {
-            "no-shadow": ["error"],
+            'no-shadow': ['error'],
 
-            "no-restricted-syntax": ["error", {
-                selector: ":matches(ImportNamespaceSpecifier, ExportAllDeclaration, ExportNamespaceSpecifier)",
-                message: "Prefer explicit named imports over wildcard (import * as x)",
-            }],
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: ':matches(ImportNamespaceSpecifier, ExportAllDeclaration, ExportNamespaceSpecifier)',
+                    message: 'Prefer explicit named imports over wildcard (import * as x)',
+                },
+            ],
         },
     },
 
     {
-        files: ["packages/ddg2dnr/**/*.js"],
+        files: ['packages/ddg2dnr/**/*.js'],
         rules: {
-            "generator-star-spacing": ["error", {
-                before: false,
-                after: true
-            }]
+            'generator-star-spacing': [
+                'error',
+                {
+                    before: false,
+                    after: true,
+                },
+            ],
         },
     },
 
     {
-        files: ["packages/privacy-grade/**/*.js"],
+        files: ['packages/privacy-grade/**/*.js'],
         rules: {
-            "object-shorthand": 0
+            'object-shorthand': 0,
         },
-    }
-];
+    },
+]

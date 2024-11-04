@@ -3,21 +3,18 @@ import FeedbackForm from '../../../shared/js/ui/models/feedback-form'
 
 let feedbackForm
 
-function setup () {
+function setup() {
     // make sure we always have an atb and extension version handy
     const spy = spyOn(FeedbackForm.prototype, 'sendMessage')
 
-    spy.withArgs('getSetting', { name: 'atb' })
-        .and.returnValue(Promise.resolve('v110-1'))
+    spy.withArgs('getSetting', { name: 'atb' }).and.returnValue(Promise.resolve('v110-1'))
 
-    spy.withArgs('getSetting', { name: 'tds-etag' })
-        .and.returnValue(Promise.resolve('1234asdf'))
+    spy.withArgs('getSetting', { name: 'tds-etag' }).and.returnValue(Promise.resolve('1234asdf'))
 
-    spy.withArgs('getExtensionVersion')
-        .and.returnValue(Promise.resolve('2018.5.1'))
+    spy.withArgs('getExtensionVersion').and.returnValue(Promise.resolve('2018.5.1'))
 
     feedbackForm = new FeedbackForm({
-        modelName: Math.random().toString()
+        modelName: Math.random().toString(),
     })
 
     window.$ = { ajax: () => {} }
@@ -82,7 +79,7 @@ describe('submit', () => {
             message: 'hello',
             url: 'http://example.com',
             browser: 'Chrome',
-            browserVersion: '60.5'
+            browserVersion: '60.5',
         })
         feedbackForm.updateCanSubmit()
 

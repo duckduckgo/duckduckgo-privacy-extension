@@ -14,13 +14,12 @@ describe('Https upgrades', () => {
             httpsBloom,
             httpsAllowlist,
             httpsNegativeBloom,
-            httpsNegativeAllowlist
+            httpsNegativeAllowlist,
         })
 
-        return httpsStorage.getLists()
-            .then(lists => {
-                return https.setLists(lists)
-            })
+        return httpsStorage.getLists().then((lists) => {
+            return https.setLists(lists)
+        })
     })
 
     describe('https on', () => {
@@ -33,31 +32,31 @@ describe('Https upgrades', () => {
         })
 
         it('should upgrade domains found in the positive bloom filter', () => {
-            testDomains.shouldUpgrade.forEach(domain => {
+            testDomains.shouldUpgrade.forEach((domain) => {
                 expect(https.canUpgradeUrl(domain)).toEqual(true)
             })
         })
 
         it('should not upgrade any local or private URLs', () => {
-            testDomains.shouldNotUpgradePrivate.forEach(domain => {
+            testDomains.shouldNotUpgradePrivate.forEach((domain) => {
                 expect(https.canUpgradeUrl(domain)).toEqual(false)
             })
         })
 
         it('should not upgrade domains found in the negative bloom filter', () => {
-            testDomains.shouldNotUpgrade.forEach(domain => {
+            testDomains.shouldNotUpgrade.forEach((domain) => {
                 expect(https.canUpgradeUrl(domain)).toEqual(false)
             })
         })
 
         it('should not upgrade domains on the "don\'t upgrade" safelist', () => {
-            https.dontUpgradeList.forEach(domain => {
+            https.dontUpgradeList.forEach((domain) => {
                 expect(https.canUpgradeUrl(domain)).toEqual(false)
             })
         })
 
         it('should upgrade domains on the "upgrade" safelist', () => {
-            https.upgradeList.forEach(domain => {
+            https.upgradeList.forEach((domain) => {
                 expect(https.canUpgradeUrl(domain)).toEqual(true)
             })
         })
@@ -65,31 +64,32 @@ describe('Https upgrades', () => {
         it('should request information from a service for domains missing from the bloom filters', () => {
             httpsService.clearCache()
 
-            const spy = spyOn(httpsService, '_fetch').and.returnValue(Promise.resolve({
-                headers: {
-                    get: () => {}
-                },
-                json: () => Promise.resolve([])
-            }))
+            const spy = spyOn(httpsService, '_fetch').and.returnValue(
+                Promise.resolve({
+                    headers: {
+                        get: () => {},
+                    },
+                    json: () => Promise.resolve([]),
+                }),
+            )
             const requests = []
 
-            testDomains.notInBloomFilters.forEach(domain => {
+            testDomains.notInBloomFilters.forEach((domain) => {
                 const result = https.canUpgradeUrl(domain)
                 expect(result instanceof Promise).toBe(true)
                 requests.push(result)
             })
 
             // when all promises resolve, make sure that the cache is used next time
-            return Promise.all(requests)
-                .then(() => {
-                    testDomains.notInBloomFilters.forEach(domain => {
-                        expect(https.canUpgradeUrl(domain)).toEqual(false)
-                    })
-
-                    expect(spy.calls.count()).toEqual(testDomains.notInBloomFilters.length)
-                    // disable the spy
-                    spy.and.callThrough()
+            return Promise.all(requests).then(() => {
+                testDomains.notInBloomFilters.forEach((domain) => {
+                    expect(https.canUpgradeUrl(domain)).toEqual(false)
                 })
+
+                expect(spy.calls.count()).toEqual(testDomains.notInBloomFilters.length)
+                // disable the spy
+                spy.and.callThrough()
+            })
         })
     })
 

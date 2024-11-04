@@ -6,7 +6,7 @@ const {
     storeInLookup,
     processRegexTrackerRule,
     resourceTypes,
-    generateRequestDomainsByTrackerDomain
+    generateRequestDomainsByTrackerDomain,
 } = require('./utils')
 
 // Tracker entry rules with an action starting with this prefix relate to the
@@ -35,14 +35,12 @@ const TRACKER_RULE_PRIORITY_INCREMENT = 1
 
 // Limit the number of tracker entries there can be for a domain, to avoid the
 // ceiling priority from being exceeded.
-const MAXIMUM_SUBDOMAIN_PRIORITY =
-      CEILING_PRIORITY - (CEILING_PRIORITY % SUBDOMAIN_PRIORITY_INCREMENT)
+const MAXIMUM_SUBDOMAIN_PRIORITY = CEILING_PRIORITY - (CEILING_PRIORITY % SUBDOMAIN_PRIORITY_INCREMENT)
 
 // Limit the additional priority a tracker entry's rules can have, to avoid the
 // subdomain priority increment from being exceeded by the tracker rule priority
 // increment.
-const MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT =
-    SUBDOMAIN_PRIORITY_INCREMENT - TRACKER_RULE_PRIORITY_INCREMENT
+const MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT = SUBDOMAIN_PRIORITY_INCREMENT - TRACKER_RULE_PRIORITY_INCREMENT
 
 // The declarativeNetRequest API limits the number of regular expression rules
 // that can be added. At the time of writing the limit is 1000. Since some
@@ -63,7 +61,7 @@ const trackerDomainSymbol = Symbol('trackerDomain')
 // and stored for that action.
 const clickToLoadActionSymbol = Symbol('clickToLoadActionSymbol')
 
-function normalizeTypesCondition (types) {
+function normalizeTypesCondition(types) {
     if (!types || types.length === 0) {
         return []
     }
@@ -71,26 +69,26 @@ function normalizeTypesCondition (types) {
     const normalizedTypes = new Set()
     for (const type of types) {
         switch (type) {
-        case 'main_frame':
-            // Main frame requests are never blocked as trackers. They are also
-            // not blocked by the declarativeNetRequest API by default.
-            continue
-        case 'imageset':
-            normalizedTypes.add('image')
-            break
-        default:
-            if (resourceTypes.has(type)) {
-                normalizedTypes.add(type)
-            } else {
-                normalizedTypes.add('other')
-            }
+            case 'main_frame':
+                // Main frame requests are never blocked as trackers. They are also
+                // not blocked by the declarativeNetRequest API by default.
+                continue
+            case 'imageset':
+                normalizedTypes.add('image')
+                break
+            default:
+                if (resourceTypes.has(type)) {
+                    normalizedTypes.add(type)
+                } else {
+                    normalizedTypes.add('other')
+                }
         }
     }
 
     return Array.from(normalizedTypes)
 }
 
-function normalizeAction (action, defaultAction) {
+function normalizeAction(action, defaultAction) {
     if (action === 'ignore') {
         return 'allow'
     }
@@ -102,7 +100,7 @@ function normalizeAction (action, defaultAction) {
     return action
 }
 
-function normalizeTrackerRule (trackerRule) {
+function normalizeTrackerRule(trackerRule) {
     if (trackerRule instanceof RegExp) {
         return trackerRule.source
     }
@@ -110,7 +108,7 @@ function normalizeTrackerRule (trackerRule) {
     return trackerRule
 }
 
-function calculateTrackerEntryPriorities (tds) {
+function calculateTrackerEntryPriorities(tds) {
     const priorityByTrackerEntryDomain = new Map()
 
     for (let domain of Object.keys(tds.trackers)) {
@@ -134,8 +132,7 @@ function calculateTrackerEntryPriorities (tds) {
             // more matches.
             if (tds.trackers[domain]) {
                 if (priorityByTrackerEntryDomain.has(domain)) {
-                    basePriority = priorityByTrackerEntryDomain.get(domain) +
-                        SUBDOMAIN_PRIORITY_INCREMENT
+                    basePriority = priorityByTrackerEntryDomain.get(domain) + SUBDOMAIN_PRIORITY_INCREMENT
                     break
                 }
                 trackerEntryDomains.push(domain)
@@ -146,9 +143,7 @@ function calculateTrackerEntryPriorities (tds) {
         // length, starting from the first previously calculated priority
         // (if any).
         for (let i = trackerEntryDomains.length - 1; i >= 0; i--) {
-            priorityByTrackerEntryDomain.set(
-                trackerEntryDomains[i], basePriority
-            )
+            priorityByTrackerEntryDomain.set(trackerEntryDomains[i], basePriority)
             basePriority += SUBDOMAIN_PRIORITY_INCREMENT
         }
     }
@@ -156,14 +151,14 @@ function calculateTrackerEntryPriorities (tds) {
     return priorityByTrackerEntryDomain
 }
 
-function removeRedundantDNRRules (dnrRules) {
+function removeRedundantDNRRules(dnrRules) {
     if (!dnrRules || dnrRules.length === 0) {
         return []
     }
 
     const {
         priority: defaultPriority,
-        action: { type: defaultAction }
+        action: { type: defaultAction },
     } = dnrRules[0]
 
     let rulesToRemoveStartIndex = 1
@@ -194,9 +189,15 @@ function removeRedundantDNRRules (dnrRules) {
     return dnrRules
 }
 
-async function generateDNRRulesForTrackerEntry (
-    trackerDomain, trackerEntry, requestDomains, excludedInitiatorDomains,
-    priority, isRegexSupported, surrogatePathPrefix, supportedSurrogateScripts
+async function generateDNRRulesForTrackerEntry(
+    trackerDomain,
+    trackerEntry,
+    requestDomains,
+    excludedInitiatorDomains,
+    priority,
+    isRegexSupported,
+    surrogatePathPrefix,
+    supportedSurrogateScripts,
 ) {
     const dnrRules = []
 
@@ -220,14 +221,13 @@ async function generateDNRRulesForTrackerEntry (
             priority,
             actionType: defaultAction,
             requestDomains,
-            excludedInitiatorDomains
-        })
+            excludedInitiatorDomains,
+        }),
     )
 
     const matchCnames = requestDomains.length > 1
 
-    if (trackerEntryRules.length * TRACKER_RULE_PRIORITY_INCREMENT >
-        MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT) {
+    if (trackerEntryRules.length * TRACKER_RULE_PRIORITY_INCREMENT > MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT) {
         throw new Error('Too many rules for tracker domain:' + trackerDomain)
     }
 
@@ -236,13 +236,7 @@ async function generateDNRRulesForTrackerEntry (
     // declarativeNetRequest rules should have descending priority.
     // See https://github.com/duckduckgo/duckduckgo-privacy-extension/blob/develop/docs/blocking-algorithm.md
     for (let i = trackerEntryRules.length - 1; i >= 0; i--) {
-        let {
-            action: ruleAction,
-            rule: trackerRule,
-            exceptions: ruleExceptions,
-            options: ruleOptions,
-            surrogate
-        } = trackerEntryRules[i]
+        let { action: ruleAction, rule: trackerRule, exceptions: ruleExceptions, options: ruleOptions, surrogate } = trackerEntryRules[i]
 
         ruleAction = normalizeAction(ruleAction, 'block')
 
@@ -264,19 +258,14 @@ async function generateDNRRulesForTrackerEntry (
 
         trackerRule = normalizeTrackerRule(trackerRule)
 
-        let {
-            fallbackUrlFilter,
-            urlFilter,
-            regexFilter,
-            matchCase
-        } = processRegexTrackerRule(trackerDomain, trackerRule, matchCnames)
+        let { fallbackUrlFilter, urlFilter, regexFilter, matchCase } = processRegexTrackerRule(trackerDomain, trackerRule, matchCnames)
 
         // If the required regular expression is too complex, then go with the
         // fallback urlFilter (if any). If there is no fallback, skip this rule.
         if (regexFilter) {
             const { isSupported } = await isRegexSupported({
                 regex: regexFilter,
-                isCaseSensitive: matchCase
+                isCaseSensitive: matchCase,
             })
 
             if (!isSupported) {
@@ -302,7 +291,7 @@ async function generateDNRRulesForTrackerEntry (
             } else {
                 ruleAction = 'redirect'
                 redirectAction = {
-                    extensionPath: surrogatePathPrefix + surrogate
+                    extensionPath: surrogatePathPrefix + surrogate,
                 }
             }
         }
@@ -312,8 +301,7 @@ async function generateDNRRulesForTrackerEntry (
         // Handle tracker entry rules with 'options'. These rules turn blocking on
         // only for listed domains and types.
         let initiatorDomains = null
-        if (ruleOptions &&
-            (ruleAction === 'block' || ruleAction === 'redirect')) {
+        if (ruleOptions && (ruleAction === 'block' || ruleAction === 'redirect')) {
             ruleResourceTypes = normalizeTypesCondition(ruleOptions.types)
             initiatorDomains = ruleOptions.domains
         }
@@ -328,7 +316,7 @@ async function generateDNRRulesForTrackerEntry (
                 requestDomains,
                 excludedInitiatorDomains,
                 initiatorDomains,
-                resourceTypes: ruleResourceTypes
+                resourceTypes: ruleResourceTypes,
             })
 
             if (clickToLoadAction) {
@@ -338,30 +326,31 @@ async function generateDNRRulesForTrackerEntry (
             dnrRules.push(newRule)
         }
 
-        if (ruleExceptions &&
-            (ruleAction === 'block' || ruleAction === 'redirect')) {
+        if (ruleExceptions && (ruleAction === 'block' || ruleAction === 'redirect')) {
             // Incrementing this priority is not necessary since
             // declarativeNetRequest rules with an 'allow' action trump
             // declarativeNetRequest rules with a 'block'/'redirect' action of
             // the same priority.
             // See https://developer.chrome.com/docs/extensions/reference/declarativeNetRequest/#matching-algorithm
-            dnrRules.push(generateDNRRule({
-                priority,
-                actionType: 'allow',
-                urlFilter,
-                regexFilter,
-                matchCase,
-                resourceTypes: normalizeTypesCondition(ruleExceptions.types),
-                requestDomains,
-                initiatorDomains: ruleExceptions.domains
-            }))
+            dnrRules.push(
+                generateDNRRule({
+                    priority,
+                    actionType: 'allow',
+                    urlFilter,
+                    regexFilter,
+                    matchCase,
+                    resourceTypes: normalizeTypesCondition(ruleExceptions.types),
+                    requestDomains,
+                    initiatorDomains: ruleExceptions.domains,
+                }),
+            )
         }
     }
 
     return removeRedundantDNRRules(dnrRules)
 }
 
-function finalizeDNRRulesAndLookup (startingRuleId, dnrRules) {
+function finalizeDNRRulesAndLookup(startingRuleId, dnrRules) {
     const ruleIdByByStringifiedDNRRule = new Map()
     const requestDomainsByRuleId = new Map()
     const trackerDomainsByRuleId = new Map()
@@ -391,11 +380,7 @@ function finalizeDNRRulesAndLookup (startingRuleId, dnrRules) {
             delete inverseAllowingRule.condition.domainType
             delete inverseAllowingRule.condition.excludedInitiatorDomains
 
-            storeInLookup(
-                allowingRulesByClickToLoadAction,
-                clickToLoadAction,
-                [inverseAllowingRule]
-            )
+            storeInLookup(allowingRulesByClickToLoadAction, clickToLoadAction, [inverseAllowingRule])
         }
 
         // Rules without a requestDomains condition definitely can't be
@@ -404,10 +389,7 @@ function finalizeDNRRulesAndLookup (startingRuleId, dnrRules) {
         // Load" rules can't be combined since the match details type is
         // different. For those cases just add the rule to the ruleset and match
         // details to the lookup now.
-        if (!rule.condition.requestDomains ||
-            rule.priority !== BASELINE_PRIORITY ||
-            rule.action === 'redirect' ||
-            clickToLoadAction) {
+        if (!rule.condition.requestDomains || rule.priority !== BASELINE_PRIORITY || rule.action === 'redirect' || clickToLoadAction) {
             const ruleId = nextRuleId++
             rule.id = ruleId
             ruleset.push(rule)
@@ -421,7 +403,7 @@ function finalizeDNRRulesAndLookup (startingRuleId, dnrRules) {
 
             matchDetailsByRuleId[ruleId] = {
                 type: matchType,
-                possibleTrackerDomains: [trackerDomain]
+                possibleTrackerDomains: [trackerDomain],
             }
 
             continue
@@ -471,7 +453,7 @@ function finalizeDNRRulesAndLookup (startingRuleId, dnrRules) {
 
         matchDetailsByRuleId[i] = {
             type: 'trackerBlocking',
-            possibleTrackerDomains: trackerDomainsByRuleId.get(i)
+            possibleTrackerDomains: trackerDomainsByRuleId.get(i),
         }
     }
 
@@ -506,13 +488,14 @@ function finalizeDNRRulesAndLookup (startingRuleId, dnrRules) {
  *   IDs are incremented sequentially from the starting point.
  * @return {Promise<generateTdsRulesetResult>}
  */
-async function generateTdsRuleset (
-    tds, supportedSurrogateScripts, surrogatePathPrefix, isRegexSupported,
-    startingRuleId = 1
-) {
-    if (typeof tds !== 'object' ||
-        typeof tds.cnames !== 'object' || typeof tds.domains !== 'object' ||
-        typeof tds.entities !== 'object' || typeof tds.trackers !== 'object') {
+async function generateTdsRuleset(tds, supportedSurrogateScripts, surrogatePathPrefix, isRegexSupported, startingRuleId = 1) {
+    if (
+        typeof tds !== 'object' ||
+        typeof tds.cnames !== 'object' ||
+        typeof tds.domains !== 'object' ||
+        typeof tds.entities !== 'object' ||
+        typeof tds.trackers !== 'object'
+    ) {
         throw new Error('Invalid block list.')
     }
     if (typeof isRegexSupported !== 'function') {
@@ -535,23 +518,25 @@ async function generateTdsRuleset (
             // occasionally entity data is missing for a given owner / name
             continue
         }
-        const excludedInitiatorDomains =
-              tds.entities[trackerEntry.owner.name].domains
+        const excludedInitiatorDomains = tds.entities[trackerEntry.owner.name].domains
         const priority = priorityByTrackerDomain.get(trackerDomain)
         const trackerRules = await generateDNRRulesForTrackerEntry(
-            trackerDomain, trackerEntry, requestDomains,
-            excludedInitiatorDomains, priority, isRegexSupported,
-            surrogatePathPrefix, supportedSurrogateScripts)
+            trackerDomain,
+            trackerEntry,
+            requestDomains,
+            excludedInitiatorDomains,
+            priority,
+            isRegexSupported,
+            surrogatePathPrefix,
+            supportedSurrogateScripts,
+        )
 
         for (const rule of trackerRules) {
             // Probably better to throw early, than to worry about the unlikely
             // situation where regular expression rules are combined to bring
             // the count below the limit.
-            if (rule.condition.regexFilter &&
-                ++regexRuleCount > MAXIMUM_REGEX_RULES) {
-                throw new Error(
-                    'Maximum number of regular expression rules exceeded!'
-                )
+            if (rule.condition.regexFilter && ++regexRuleCount > MAXIMUM_REGEX_RULES) {
+                throw new Error('Maximum number of regular expression rules exceeded!')
             }
 
             rule[trackerDomainSymbol] = trackerDomain
@@ -566,8 +551,7 @@ exports.CEILING_PRIORITY = CEILING_PRIORITY
 exports.SUBDOMAIN_PRIORITY_INCREMENT = SUBDOMAIN_PRIORITY_INCREMENT
 exports.TRACKER_RULE_PRIORITY_INCREMENT = TRACKER_RULE_PRIORITY_INCREMENT
 exports.MAXIMUM_SUBDOMAIN_PRIORITY = MAXIMUM_SUBDOMAIN_PRIORITY
-exports.MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT =
-    MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT
+exports.MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT = MAXIMUM_TRACKER_RULE_PRIORITY_INCREMENT
 exports.MAXIMUM_REGEX_RULES = MAXIMUM_REGEX_RULES
 
 exports.getTrackerEntryDomain = getTrackerEntryDomain
