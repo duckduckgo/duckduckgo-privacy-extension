@@ -30,6 +30,7 @@
         "beta-chrome": "make chrome-beta browser=chrome type=release"
     },
     "devDependencies": {
+        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#51dc868a4342379d6aec1d0f4214156e7046d5f6",
         "@fingerprintjs/fingerprintjs": "^4.5.0",
         "@playwright/test": "^1.48.1",
         "@types/chrome": "^0.0.269",
@@ -39,10 +40,7 @@
         "asana": "github:Asana/node-asana",
         "duckduckgo-colors": "0.0.1",
         "esbuild": "^0.24.0",
-        "eslint": "^8.57.0",
-        "eslint-config-standard": "^17.1.0",
-        "eslint-plugin-import": "^2.31.0",
-        "eslint-plugin-node": "^11.1.0",
+        "eslint": "^9.13.0",
         "fake-indexeddb": "^6.0.0",
         "glob": "^11.0.0",
         "jasmine": "^5.4.0",
@@ -54,7 +52,6 @@
         "node-fetch": "^3.3.2",
         "puppeteer": "^23.0.2",
         "sass": "^1.79.5",
-        "standard": "17.1.2",
         "timekeeper": "^2.3.1",
         "typescript": "^5.6.3",
         "webextension-polyfill": "^0.12.0",

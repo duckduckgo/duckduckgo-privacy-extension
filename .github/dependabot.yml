@@ -19,9 +19,9 @@ updates:
           - "timekeeper"
       build:
         patterns:
+          - "@duckduckgo/eslint-config"
           - "eslint*"
           - "sass"
-          - "standard"
           - "esbuild"
           - "yargs"
           - "web-ext"

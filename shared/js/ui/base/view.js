@@ -92,7 +92,7 @@ BaseView.prototype = $.extend(
                         delete views[c]
                     }
                 }
-            }(this.views) // eslint-disable-line
+            }(this.views)
             delete this.views
         },
 

@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /* eslint-disable camelcase */
 const fs = require('fs')
 const Asana = require('asana')
