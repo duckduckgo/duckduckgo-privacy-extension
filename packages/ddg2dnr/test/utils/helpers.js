@@ -4,7 +4,7 @@ function emptyBlockList() {
         domains: {},
         entities: {},
         trackers: {},
-    }
+    };
 }
 
-exports.emptyBlockList = emptyBlockList
+exports.emptyBlockList = emptyBlockList;

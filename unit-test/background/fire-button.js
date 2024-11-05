@@ -1,4 +1,4 @@
-import { getOriginsForUrl, tabMatchesHostFilter } from '../../shared/js/background/components/fire-button'
+import { getOriginsForUrl, tabMatchesHostFilter } from '../../shared/js/background/components/fire-button';
 
 describe('fire button utils', () => {
     describe('tabMatchesOriginFilter', () => {
@@ -24,7 +24,7 @@ describe('fire button utils', () => {
             {
                 url: 'https://other.blogspot.com/',
             },
-        ]
+        ];
 
         const testCases = [
             {
@@ -52,19 +52,19 @@ describe('fire button utils', () => {
                 origins: ['https://a.blogspot.com'],
                 expected: [5],
             },
-        ]
+        ];
 
         testCases.forEach(({ desc, origins, expected }) => {
             it(desc, () => {
-                expect(tabs.filter(tabMatchesHostFilter(origins))).toEqual(expected.map((ind) => tabs[ind]))
-            })
-        })
-    })
+                expect(tabs.filter(tabMatchesHostFilter(origins))).toEqual(expected.map((ind) => tabs[ind]));
+            });
+        });
+    });
 
     describe('getOriginsForUrl', () => {
         it('returns http and https origins for a URL', () => {
-            expect(getOriginsForUrl('https://example.com')).toEqual(['https://example.com', 'http://example.com'])
-        })
+            expect(getOriginsForUrl('https://example.com')).toEqual(['https://example.com', 'http://example.com']);
+        });
 
         it('expands out all subdomain origins', () => {
             expect(getOriginsForUrl('https://a.b.example.com')).toEqual([
@@ -74,8 +74,8 @@ describe('fire button utils', () => {
                 'http://b.example.com',
                 'https://a.b.example.com',
                 'http://a.b.example.com',
-            ])
-        })
+            ]);
+        });
 
         it('expands up to eTLD+1 (with private entries)', () => {
             expect(getOriginsForUrl('https://a.b.blogspot.com')).toEqual([
@@ -83,7 +83,7 @@ describe('fire button utils', () => {
                 'http://b.blogspot.com',
                 'https://a.b.blogspot.com',
                 'http://a.b.blogspot.com',
-            ])
-        })
-    })
-})
+            ]);
+        });
+    });
+});

@@ -1,20 +1,20 @@
-import browser from 'webextension-polyfill'
-import constants from '../../data/constants'
-import { getManifestVersion, createAlarm, syncToStorage, getFromStorage } from './wrapper.js'
-import tdsStorage from './storage/tds'
-import settings from './settings'
-import { emitter, TrackerBlockedEvent } from './before-request.js'
-import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
-import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
-import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils'
+import browser from 'webextension-polyfill';
+import constants from '../../data/constants';
+import { getManifestVersion, createAlarm, syncToStorage, getFromStorage } from './wrapper.js';
+import tdsStorage from './storage/tds';
+import settings from './settings';
+import { emitter, TrackerBlockedEvent } from './before-request.js';
+import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils';
+import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
+import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils';
 
 /**
  * @typedef {import('./settings.js')} Settings
  * @typedef {import("../background/classes/tracker-stats").TrackerStats} TrackerStats
  */
 
-const { incoming, outgoing } = constants.trackerStats.events
-const { clientPortName } = constants.trackerStats
+const { incoming, outgoing } = constants.trackerStats.events;
+const { clientPortName } = constants.trackerStats;
 
 /**
  * The extension-specific interface to tracker stats.
@@ -35,39 +35,39 @@ export class NewTabTrackerStats {
     /**
      * The key to use when persisting data into storage
      */
-    static storageKey = 'trackerStats'
+    static storageKey = 'trackerStats';
     /**
      * The key to use when we don't want to record the company name
      */
-    static otherCompaniesKey = '__others__'
+    static otherCompaniesKey = '__others__';
     /**
      * The prefix used for events. This is used to ensure we only handle events we care about
      */
-    static eventPrefix = 'newTabPage_'
+    static eventPrefix = 'newTabPage_';
 
     /**
      * A place to store a singleton instance of this class
      * @type {NewTabTrackerStats | null}
      */
-    static shared = null
+    static shared = null;
 
     /**
      * @type {Map<string, number> | null}
      */
-    top100Companies = null
+    top100Companies = null;
 
     /**
      * Internal flag to enable some certain types of logging when developing
      */
-    _debug = false
+    _debug = false;
 
-    ports = []
+    ports = [];
 
     /**
      * @param {TrackerStats} stats - the interface for the stats data.
      */
     constructor(stats) {
-        this.stats = stats
+        this.stats = stats;
     }
 
     /**
@@ -77,11 +77,11 @@ export class NewTabTrackerStats {
      * place for this module.
      */
     register() {
-        const manifestVersion = getManifestVersion()
+        const manifestVersion = getManifestVersion();
         if (manifestVersion === 3) {
-            mv3Redirect()
+            mv3Redirect();
         } else {
-            mv2Redirect()
+            mv2Redirect();
         }
 
         /**
@@ -89,51 +89,51 @@ export class NewTabTrackerStats {
          * instance.
          */
         chrome.runtime.onConnect.addListener((port) => {
-            if (port.name !== clientPortName) return
+            if (port.name !== clientPortName) return;
 
             // keep a reference to this port
-            this.ports.push(port)
+            this.ports.push(port);
 
             // handle every message on this port
             port.onMessage.addListener((msg) => {
-                this._handleIncomingEvent(msg)
-            })
+                this._handleIncomingEvent(msg);
+            });
 
             // ensure we're not holding on to zombie ports (those that have disconnected)
             port.onDisconnect.addListener((msg) => {
-                const index = this.ports.indexOf(port)
+                const index = this.ports.indexOf(port);
                 if (index > -1) {
-                    console.log('removing port with index:', index)
-                    this.ports.splice(index, 1)
+                    console.log('removing port with index:', index);
+                    this.ports.splice(index, 1);
                 }
-            })
-        })
+            });
+        });
 
         /**
          * Register an alarm and handle when it fires.
          * For now, we're pruning data every 10 min
          */
-        const pruneAlarmName = 'pruneNewTabData'
-        createAlarm(pruneAlarmName, { periodInMinutes: 10 })
+        const pruneAlarmName = 'pruneNewTabData';
+        createAlarm(pruneAlarmName, { periodInMinutes: 10 });
         browser.alarms.onAlarm.addListener(async (alarmEvent) => {
             if (alarmEvent.name === pruneAlarmName) {
-                this._handlePruneAlarm()
+                this._handlePruneAlarm();
             }
-        })
+        });
 
         /**
          * listen for the 'tracker-blocked' event that is fired from `before-request.js`
          * when a request is either blocked or a surrogate was used
          */
         emitter.on(TrackerBlockedEvent.eventName, (event) => {
-            if (!(event instanceof TrackerBlockedEvent)) return
-            this.record(event.companyDisplayName)
-        })
+            if (!(event instanceof TrackerBlockedEvent)) return;
+            this.record(event.companyDisplayName);
+        });
 
         /**
          * Assign the entities from the initial `tds` data
          */
-        this.assignTopCompanies(tdsStorage.tds.entities)
+        this.assignTopCompanies(tdsStorage.tds.entities);
 
         /**
          * Observe changes to the 'tds' data and update the topCompanies
@@ -141,9 +141,9 @@ export class NewTabTrackerStats {
         tdsStorage.onUpdate('tds', (name, etag, updatedValue) => {
             // just double-checking, is this incoming data validated anywhere else?
             if (updatedValue?.tds?.entities) {
-                this.assignTopCompanies(updatedValue.tds.entities)
+                this.assignTopCompanies(updatedValue.tds.entities);
             }
-        })
+        });
     }
 
     /**
@@ -158,14 +158,14 @@ export class NewTabTrackerStats {
             .map(
                 /** @returns {[string, number]} */
                 (key) => {
-                    const current = entities[key]
-                    return [current.displayName, current.prevalence]
+                    const current = entities[key];
+                    return [current.displayName, current.prevalence];
                 },
             )
             .sort((a, b) => b[1] - a[1])
-            .slice(0, maxCount)
+            .slice(0, maxCount);
 
-        this.top100Companies = new Map(sorted)
+        this.top100Companies = new Map(sorted);
     }
 
     /**
@@ -183,34 +183,34 @@ export class NewTabTrackerStats {
          * 2) the `displayName` of the company is NOT in our `excludedCompanies` list
          */
         if (this.top100Companies?.has(displayName) && !constants.trackerStats.excludedCompanies.includes(displayName)) {
-            this.stats.increment(displayName, timestamp)
+            this.stats.increment(displayName, timestamp);
         } else {
             /**
              * Otherwise just increase the 'Other' count
              */
-            this.stats.increment(NewTabTrackerStats.otherCompaniesKey, timestamp)
+            this.stats.increment(NewTabTrackerStats.otherCompaniesKey, timestamp);
         }
 
         // enqueue a sync + data push
         this._throttled('record', 1000, () => {
-            this.syncToStorage()
-            this.sendToNewTab('following a recorded tracker-blocked event')
-        })
+            this.syncToStorage();
+            this.sendToNewTab('following a recorded tracker-blocked event');
+        });
     }
 
     /**
      * Persist data into the extensions storage in the following format
      */
     syncToStorage() {
-        const serializedData = this.stats.serialize()
+        const serializedData = this.stats.serialize();
         const toSync = {
             [NewTabTrackerStats.storageKey]: {
                 // making this an object to ensure we can store more things under this
                 // namespace later if we need to
                 stats: serializedData,
             },
-        }
-        syncToStorage(toSync)
+        };
+        syncToStorage(toSync);
     }
 
     /**
@@ -219,16 +219,16 @@ export class NewTabTrackerStats {
      */
     async restoreFromStorage() {
         try {
-            const prev = await getFromStorage(NewTabTrackerStats.storageKey)
+            const prev = await getFromStorage(NewTabTrackerStats.storageKey);
             if (prev) {
-                this.stats.deserialize(prev.stats)
+                this.stats.deserialize(prev.stats);
             }
         } catch (e) {
-            console.warn("could not deserialize data from _cachedDisplayData 'trackerStats' storage")
+            console.warn("could not deserialize data from _cachedDisplayData 'trackerStats' storage");
         }
 
         // also evictExpired once we've restored
-        this.stats.evictExpired()
+        this.stats.evictExpired();
     }
 
     /**
@@ -236,8 +236,8 @@ export class NewTabTrackerStats {
      * @param {string} reason - a reason or path that caused this
      */
     sendToNewTab(reason) {
-        if (!reason) throw new Error("you must provide a 'reason' for sending new data")
-        this._throttled('sendToNewTab', 200, () => this._publish(reason))
+        if (!reason) throw new Error("you must provide a 'reason' for sending new data");
+        this._throttled('sendToNewTab', 200, () => this._publish(reason));
     }
 
     /**
@@ -250,9 +250,9 @@ export class NewTabTrackerStats {
         if (typeof event.messageType === 'string' && event.messageType.startsWith(NewTabTrackerStats.eventPrefix)) {
             // currently this is the only incoming message we accept
             if (event.messageType === incoming.newTabPage_heartbeat) {
-                this.sendToNewTab(`response to '${event.messageType}'`)
+                this.sendToNewTab(`response to '${event.messageType}'`);
             } else {
-                console.error('unhandled event prefixed with: ', NewTabTrackerStats.eventPrefix, event)
+                console.error('unhandled event prefixed with: ', NewTabTrackerStats.eventPrefix, event);
             }
         }
     }
@@ -263,26 +263,26 @@ export class NewTabTrackerStats {
      */
     _publish(reason = 'unknown') {
         if (this._debug) {
-            console.info(`sending new tab data because: ${reason}`)
+            console.info(`sending new tab data because: ${reason}`);
         }
 
         /** @type {import('zod').infer<typeof import('../newtab/schema').dataMessage>} */
         const msg = {
             messageType: outgoing.newTabPage_data,
             options: this.toDisplayData(),
-        }
+        };
 
-        const invalidPorts = []
+        const invalidPorts = [];
         for (const port of this.ports) {
             try {
-                port.postMessage(msg)
+                port.postMessage(msg);
             } catch (e) {
-                invalidPorts.push(port)
+                invalidPorts.push(port);
             }
         }
 
         if (invalidPorts.length) {
-            console.error('Stale ports detected...', invalidPorts)
+            console.error('Stale ports detected...', invalidPorts);
         }
     }
 
@@ -294,9 +294,9 @@ export class NewTabTrackerStats {
      * @param {number} [now] - optional timestamp to use in comparisons
      */
     _handlePruneAlarm(now = Date.now()) {
-        this.stats.evictExpired(now)
-        this.syncToStorage()
-        this.sendToNewTab('following a evictExpired alarm')
+        this.stats.evictExpired(now);
+        this.syncToStorage();
+        this.sendToNewTab('following a evictExpired alarm');
     }
 
     /**
@@ -310,16 +310,16 @@ export class NewTabTrackerStats {
      */
     toDisplayData(now = Date.now()) {
         // access the entries once they are sorted and grouped
-        const stats = this.stats.sorted(now)
-        const index = stats.findIndex((result) => result.key === NewTabTrackerStats.otherCompaniesKey)
+        const stats = this.stats.sorted(now);
+        const index = stats.findIndex((result) => result.key === NewTabTrackerStats.otherCompaniesKey);
 
         // ensure 'other' is pushed to the end of the list
         if (index > -1) {
-            const spliced = stats.splice(index, 1)
-            stats.push(...spliced)
+            const spliced = stats.splice(index, 1);
+            stats.push(...spliced);
         }
 
-        const atbValue = settings.getSetting('atb')
+        const atbValue = settings.getSetting('atb');
 
         // now produce the data in the shape consumers require for rendering their UI
         // see 'dataFormatSchema' for the required format, it's in the `../newtab/schema` file
@@ -330,17 +330,17 @@ export class NewTabTrackerStats {
             trackerCompaniesPeriod: 'last-day',
             trackerCompanies: stats.map((item) => {
                 // convert our known key into the 'Other'
-                const displayName = item.key === NewTabTrackerStats.otherCompaniesKey ? 'Other' : item.key
+                const displayName = item.key === NewTabTrackerStats.otherCompaniesKey ? 'Other' : item.key;
 
                 return {
                     displayName,
                     count: item.count,
-                }
+                };
             }),
-        }
+        };
     }
 
-    throttleFlags = {}
+    throttleFlags = {};
 
     /**
      * A trailing throttle implementation.
@@ -357,14 +357,14 @@ export class NewTabTrackerStats {
             // do nothing, if we get here we're already _throttled
         } else {
             // mark this operation as active
-            this.throttleFlags[name] = true
+            this.throttleFlags[name] = true;
 
             // schedule the callback
             setTimeout(() => {
                 // mark this operation as 'inactive'
-                this.throttleFlags[name] = false
-                fn()
-            }, timeout)
+                this.throttleFlags[name] = false;
+                fn();
+            }, timeout);
         }
     }
 }
@@ -377,7 +377,7 @@ export class NewTabTrackerStats {
  * @param details
  */
 export function mv2Redirect() {
-    const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin)
+    const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin);
     /**
      * This listener will redirect the request for tracker-stats.html
      * on the new tab page to our own HTML file under `web_accessible_resources`
@@ -386,28 +386,28 @@ export function mv2Redirect() {
         (details) => {
             // Only do the redirect if we're being iframed into a known origin
             if (details.type === 'sub_frame') {
-                const parsed = new URL(details.url)
+                const parsed = new URL(details.url);
                 if (parsed.origin === constants.trackerStats.allowedOrigin) {
                     if (parsed.pathname.includes(constants.trackerStats.allowedPathname)) {
                         return {
                             redirectUrl: chrome.runtime.getURL(constants.trackerStats.redirectTarget),
-                        }
+                        };
                     }
                 }
             }
-            return undefined
+            return undefined;
         },
         {
             urls: [incomingUrl.toString()],
             types: ['sub_frame'],
         },
         ['blocking'],
-    )
+    );
 }
 
 function mv3Redirect() {
-    const targetUrl = chrome.runtime.getURL(constants.trackerStats.redirectTarget)
-    const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin)
+    const targetUrl = chrome.runtime.getURL(constants.trackerStats.redirectTarget);
+    const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin);
     const redirectRule = generateDNRRule({
         id: NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID,
         priority: NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY,
@@ -417,9 +417,9 @@ function mv3Redirect() {
         },
         urlFilter: incomingUrl.toString(),
         resourceTypes: ['sub_frame'],
-    })
+    });
     chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds: [redirectRule.id],
         addRules: [redirectRule],
-    })
+    });
 }

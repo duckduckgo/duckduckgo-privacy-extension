@@ -1,15 +1,15 @@
-import { AD_ATTRIBUTION_POLICY_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
+import { AD_ATTRIBUTION_POLICY_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
 
-import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
+import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils';
 
-import settings from '../settings'
-import { sendPixelRequest } from '../pixels'
-const { getFeatureSettings, getBaseDomain } = require('../utils')
-const browserWrapper = require('../wrapper')
-const { getNextSessionRuleId } = require('../dnr-session-rule-id')
+import settings from '../settings';
+import { sendPixelRequest } from '../pixels';
+const { getFeatureSettings, getBaseDomain } = require('../utils');
+const browserWrapper = require('../wrapper');
+const { getNextSessionRuleId } = require('../dnr-session-rule-id');
 
-const appVersion = browserWrapper.getExtensionVersion()
-const manifestVersion = browserWrapper.getManifestVersion()
+const appVersion = browserWrapper.getExtensionVersion();
+const manifestVersion = browserWrapper.getManifestVersion();
 
 /**
  * @typedef AdClickAttributionLinkFormat
@@ -29,16 +29,16 @@ const manifestVersion = browserWrapper.getManifestVersion()
 
 export class AdClickAttributionPolicy {
     constructor() {
-        const policy = getFeatureSettings('adClickAttribution')
+        const policy = getFeatureSettings('adClickAttribution');
 
         /** @type {AdClickAttributionLinkFormat[]} */
-        this.linkFormats = policy.linkFormats || []
+        this.linkFormats = policy.linkFormats || [];
         /** @type {AdClickAttributionAllowListItem[]} */
-        this.allowlist = policy.allowlist || []
-        this.navigationExpiration = policy.navigationExpiration || 0
-        this.totalExpiration = policy.totalExpiration || 0
-        this.domainDetectionEnabled = policy.domainDetection === 'enabled'
-        this.heuristicDetectionEnabled = policy.heuristicDetection === 'enabled'
+        this.allowlist = policy.allowlist || [];
+        this.navigationExpiration = policy.navigationExpiration || 0;
+        this.totalExpiration = policy.totalExpiration || 0;
+        this.domainDetectionEnabled = policy.domainDetection === 'enabled';
+        this.heuristicDetectionEnabled = policy.heuristicDetection === 'enabled';
     }
 
     /**
@@ -46,14 +46,14 @@ export class AdClickAttributionPolicy {
      * @returns {AdClickAttributionLinkFormat | undefined}
      */
     getMatchingLinkFormat(resourceURL) {
-        const hostnameAndPath = resourceURL.hostname + resourceURL.pathname
+        const hostnameAndPath = resourceURL.hostname + resourceURL.pathname;
 
         for (const linkFormat of this.linkFormats) {
             if (hostnameAndPath === linkFormat.url) {
                 if (linkFormat.adDomainParameterName) {
-                    const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName)
+                    const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName);
                     if (parameterDomain !== null) {
-                        return linkFormat
+                        return linkFormat;
                     }
                 }
             }
@@ -67,14 +67,14 @@ export class AdClickAttributionPolicy {
      * @returns {AdClick | undefined}
      */
     createAdClick(resourcePath, tab) {
-        let resourceURL
+        let resourceURL;
         try {
-            resourceURL = new URL(resourcePath)
+            resourceURL = new URL(resourcePath);
         } catch {
-            return
+            return;
         }
-        const linkFormat = this.getMatchingLinkFormat(resourceURL)
-        if (!linkFormat) return
+        const linkFormat = this.getMatchingLinkFormat(resourceURL);
+        if (!linkFormat) return;
 
         const adClick = new AdClick(
             this.navigationExpiration,
@@ -82,28 +82,28 @@ export class AdClickAttributionPolicy {
             this.allowlist,
             this.heuristicDetectionEnabled,
             this.domainDetectionEnabled,
-        )
+        );
 
         if (manifestVersion === 3) {
-            adClick.createDNR(tab.id)
+            adClick.createDNR(tab.id);
         }
 
         if (linkFormat.adDomainParameterName) {
-            const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName)
+            const parameterDomain = resourceURL.searchParams.get(linkFormat.adDomainParameterName);
             if (parameterDomain && this.domainDetectionEnabled) {
-                const parsedParameterDomain = getBaseDomain(parameterDomain)
+                const parsedParameterDomain = getBaseDomain(parameterDomain);
                 if (parsedParameterDomain) {
-                    adClick.setAdBaseDomain(parsedParameterDomain)
-                    adClick.parameterAdBaseDomain = parsedParameterDomain
+                    adClick.setAdBaseDomain(parsedParameterDomain);
+                    adClick.parameterAdBaseDomain = parsedParameterDomain;
                 }
             }
         }
 
         if (this.heuristicDetectionEnabled && !adClick.parameterAdBaseDomain) {
-            adClick.adClickRedirect = true
+            adClick.adClickRedirect = true;
         }
 
-        return adClick
+        return adClick;
     }
 
     /**
@@ -111,18 +111,18 @@ export class AdClickAttributionPolicy {
      * @returns {boolean}
      */
     resourcePermitted(resourcePath) {
-        let resourceURL
+        let resourceURL;
         try {
-            resourceURL = new URL(resourcePath)
+            resourceURL = new URL(resourcePath);
         } catch {
-            return true // fail open if we can't parse the URL
+            return true; // fail open if we can't parse the URL
         }
         for (const allowlistItem of this.allowlist) {
             if (resourceURL.hostname === allowlistItem.host || resourceURL.hostname.endsWith('.' + allowlistItem.host)) {
-                return true
+                return true;
             }
         }
-        return false
+        return false;
     }
 }
 
@@ -136,20 +136,20 @@ export class AdClick {
      */
     constructor(navigationExpiration, totalExpiration, allowlist, heuristicDetectionEnabled, domainDetectionEnabled) {
         /** @type {string?} */
-        this.adBaseDomain = null
+        this.adBaseDomain = null;
         /** @type {string?} */
-        this.parameterAdBaseDomain = null
-        this.adClickRedirect = false
-        this.navigationExpiration = navigationExpiration
-        this.totalExpiration = totalExpiration
-        this.expires = Date.now() + this.totalExpiration * 1000
-        this.clickExpires = Date.now() + this.navigationExpiration * 1000
-        this.allowlist = allowlist
-        this.adClickDNR = null
-        this.heuristicDetectionEnabled = heuristicDetectionEnabled
-        this.domainDetectionEnabled = domainDetectionEnabled
-        this.adClickDetectedPixelSent = false
-        this.adClickActivePixelSent = false
+        this.parameterAdBaseDomain = null;
+        this.adClickRedirect = false;
+        this.navigationExpiration = navigationExpiration;
+        this.totalExpiration = totalExpiration;
+        this.expires = Date.now() + this.totalExpiration * 1000;
+        this.clickExpires = Date.now() + this.navigationExpiration * 1000;
+        this.allowlist = allowlist;
+        this.adClickDNR = null;
+        this.heuristicDetectionEnabled = heuristicDetectionEnabled;
+        this.domainDetectionEnabled = domainDetectionEnabled;
+        this.adClickDetectedPixelSent = false;
+        this.adClickActivePixelSent = false;
     }
 
     clone() {
@@ -159,16 +159,16 @@ export class AdClick {
             this.allowlist,
             this.heuristicDetectionEnabled,
             this.domainDetectionEnabled,
-        )
-        adClick.adBaseDomain = this.adBaseDomain
-        adClick.parameterAdBaseDomain = this.parameterAdBaseDomain
-        adClick.adClickRedirect = this.adClickRedirect
-        adClick.expires = this.expires
-        adClick.clickExpires = Date.now() + this.navigationExpiration * 1000
-        adClick.adClickDNR = this.adClickDNR
-        adClick.adClickDetectedPixelSent = this.adClickDetectedPixelSent
-        adClick.adClickActivePixelSent = this.adClickActivePixelSent
-        return adClick
+        );
+        adClick.adBaseDomain = this.adBaseDomain;
+        adClick.parameterAdBaseDomain = this.parameterAdBaseDomain;
+        adClick.adClickRedirect = this.adClickRedirect;
+        adClick.expires = this.expires;
+        adClick.clickExpires = Date.now() + this.navigationExpiration * 1000;
+        adClick.adClickDNR = this.adClickDNR;
+        adClick.adClickDetectedPixelSent = this.adClickDetectedPixelSent;
+        adClick.adClickActivePixelSent = this.adClickActivePixelSent;
+        return adClick;
     }
 
     /**
@@ -177,13 +177,13 @@ export class AdClick {
      * @returns {AdClick} adClick
      */
     propagate(tabId) {
-        const adClick = this.clone()
+        const adClick = this.clone();
 
         if (this.adClickDNR) {
-            this.createDNR(tabId)
+            this.createDNR(tabId);
         }
 
-        return adClick
+        return adClick;
     }
 
     static restore(adClick) {
@@ -193,27 +193,27 @@ export class AdClick {
             adClick.allowlist,
             adClick.heuristicDetectionEnabled,
             adClick.domainDetectionEnabled,
-        )
-        restoredAdClick.adBaseDomain = adClick.adBaseDomain
-        restoredAdClick.parameterAdBaseDomain = adClick.parameterAdBaseDomain
-        restoredAdClick.adClickRedirect = adClick.adClickRedirect
-        restoredAdClick.expires = adClick.expires
-        restoredAdClick.clickExpires = adClick.clickExpires
-        restoredAdClick.adClickDNR = adClick.adClickDNR
-        restoredAdClick.adClickDetectedPixelSent = adClick.adClickDetectedPixelSent
-        restoredAdClick.adClickActivePixelSent = adClick.adClickActivePixelSent
-        return restoredAdClick
+        );
+        restoredAdClick.adBaseDomain = adClick.adBaseDomain;
+        restoredAdClick.parameterAdBaseDomain = adClick.parameterAdBaseDomain;
+        restoredAdClick.adClickRedirect = adClick.adClickRedirect;
+        restoredAdClick.expires = adClick.expires;
+        restoredAdClick.clickExpires = adClick.clickExpires;
+        restoredAdClick.adClickDNR = adClick.adClickDNR;
+        restoredAdClick.adClickDetectedPixelSent = adClick.adClickDetectedPixelSent;
+        restoredAdClick.adClickActivePixelSent = adClick.adClickActivePixelSent;
+        return restoredAdClick;
     }
 
     /**
      * @param {string} domain
      **/
     setAdBaseDomain(domain) {
-        this.adBaseDomain = domain
-        this.adClickRedirect = false
+        this.adBaseDomain = domain;
+        this.adClickRedirect = false;
 
         if (this.adClickDNR) {
-            this.updateDNRInitiator(domain)
+            this.updateDNRInitiator(domain);
         }
     }
 
@@ -224,27 +224,27 @@ export class AdClick {
      */
     sendAdClickDetectedPixel(heuristicAdBaseDomain) {
         if (this.adClickDetectedPixelSent) {
-            return
+            return;
         }
 
         // Clear heuristic domain if it shouldn't be used. Not technically
         // necessary, but helps with the unit tests.
         if (!this.heuristicDetectionEnabled && heuristicAdBaseDomain) {
-            heuristicAdBaseDomain = null
+            heuristicAdBaseDomain = null;
         }
 
-        let domainDetection = 'none'
+        let domainDetection = 'none';
 
         if (this.parameterAdBaseDomain && heuristicAdBaseDomain) {
             if (this.parameterAdBaseDomain === heuristicAdBaseDomain) {
-                domainDetection = 'matched'
+                domainDetection = 'matched';
             } else {
-                domainDetection = 'mismatch'
+                domainDetection = 'mismatch';
             }
         } else if (this.parameterAdBaseDomain) {
-            domainDetection = 'serp_only'
+            domainDetection = 'serp_only';
         } else if (heuristicAdBaseDomain) {
-            domainDetection = 'heuristic_only'
+            domainDetection = 'heuristic_only';
         }
 
         sendPixelRequest('m_ad_click_detected', {
@@ -252,8 +252,8 @@ export class AdClick {
             domainDetection,
             heuristicDetectionEnabled: this.heuristicDetectionEnabled ? '1' : '0',
             domainDetectionEnabled: this.domainDetectionEnabled ? '1' : 0,
-        })
-        this.adClickDetectedPixelSent = true
+        });
+        this.adClickDetectedPixelSent = true;
     }
 
     /**
@@ -262,9 +262,9 @@ export class AdClick {
      */
     shouldPropagateAdClickForNewTab(tab) {
         if (tab.site.baseDomain === this.adBaseDomain) {
-            return this.hasNotExpired()
+            return this.hasNotExpired();
         }
-        return false
+        return false;
     }
 
     /**
@@ -273,17 +273,17 @@ export class AdClick {
      */
     shouldPropagateAdClickForNavigation(tab) {
         if (tab.site.baseDomain !== this.adBaseDomain) {
-            return this.clickExpires > Date.now()
+            return this.clickExpires > Date.now();
         }
-        return this.hasNotExpired()
+        return this.hasNotExpired();
     }
 
     hasNotExpired() {
         if (this.expires > Date.now()) {
-            return true
+            return true;
         } else {
-            this.removeDNR()
-            return false
+            this.removeDNR();
+            return false;
         }
     }
 
@@ -295,7 +295,7 @@ export class AdClick {
      * @returns {boolean}
      */
     allowAdAttribution(tab) {
-        return tab.site.baseDomain === this.adBaseDomain && this.hasNotExpired()
+        return tab.site.baseDomain === this.adBaseDomain && this.hasNotExpired();
     }
 
     /**
@@ -309,23 +309,23 @@ export class AdClick {
         // increment the count sent with the 'm_pageloads_with_ad_attribution'
         // pixel.
         if (!tab.firstAdAttributionAllowed) {
-            settings.incrementNumericSetting('m_pageloads_with_ad_attribution.count')
-            tab.firstAdAttributionAllowed = true
+            settings.incrementNumericSetting('m_pageloads_with_ad_attribution.count');
+            tab.firstAdAttributionAllowed = true;
         }
 
         // If this is the first ad attribution request allowed for this AdClick,
         // send the 'm_ad_click_active' pixel.
         if (!this.adClickActivePixelSent) {
-            sendPixelRequest('m_ad_click_active', { appVersion })
-            this.adClickActivePixelSent = true
+            sendPixelRequest('m_ad_click_active', { appVersion });
+            this.adClickActivePixelSent = true;
         }
     }
 
     getAdClickDNR(tabId) {
-        const id = getNextSessionRuleId()
+        const id = getNextSessionRuleId();
         if (typeof id !== 'number') {
-            console.error('Failed to create ad click attribution rule.')
-            return
+            console.error('Failed to create ad click attribution rule.');
+            return;
         }
 
         const adClickDNR = {
@@ -335,25 +335,25 @@ export class AdClick {
                 actionType: 'allow',
                 requestDomains: this.allowlist.map((entry) => entry.host),
             }),
-        }
-        adClickDNR.rule.condition.tabIds = [tabId]
-        return adClickDNR
+        };
+        adClickDNR.rule.condition.tabIds = [tabId];
+        return adClickDNR;
     }
 
     updateDNRInitiator(domain) {
         if (this.adClickDNR && domain) {
-            this.adClickDNR.rule.condition.initiatorDomains = [domain]
-            this.updateDNR()
+            this.adClickDNR.rule.condition.initiatorDomains = [domain];
+            this.updateDNR();
         }
     }
 
     createDNR(tabId) {
-        const adClickDNR = this.getAdClickDNR(tabId)
+        const adClickDNR = this.getAdClickDNR(tabId);
         if (adClickDNR) {
-            this.adClickDNR = adClickDNR
+            this.adClickDNR = adClickDNR;
             chrome.declarativeNetRequest.updateSessionRules({
                 addRules: [this.adClickDNR.rule],
-            })
+            });
         }
     }
 
@@ -362,13 +362,13 @@ export class AdClick {
             chrome.declarativeNetRequest.updateSessionRules({
                 removeRuleIds: [this.adClickDNR.rule.id],
                 addRules: [this.adClickDNR.rule],
-            })
+            });
         }
     }
 
     removeDNR() {
         if (this.adClickDNR) {
-            chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: [this.adClickDNR.rule.id] })
+            chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: [this.adClickDNR.rule.id] });
         }
     }
 }
@@ -380,12 +380,12 @@ export class AdClick {
  * @returns {Promise<void>}
  */
 export async function sendPageloadsWithAdAttributionPixelAndResetCount() {
-    await settings.ready()
-    const count = settings.getSetting('m_pageloads_with_ad_attribution.count')
+    await settings.ready();
+    const count = settings.getSetting('m_pageloads_with_ad_attribution.count');
     if (typeof count === 'number' && count > 0) {
         await sendPixelRequest('m_pageloads_with_ad_attribution', {
             count,
-        })
+        });
     }
-    settings.updateSetting('m_pageloads_with_ad_attribution.count', 0)
+    settings.updateSetting('m_pageloads_with_ad_attribution.count', 0);
 }

@@ -1,6 +1,6 @@
-import constants from '../../data/constants'
-import { incoming, outgoing } from './schema'
-const { events, allowedOrigin, clientPortName } = constants.trackerStats
+import constants from '../../data/constants';
+import { incoming, outgoing } from './schema';
+const { events, allowedOrigin, clientPortName } = constants.trackerStats;
 
 /**
  * A flag to ensure we're not doing work until we've received a trusted event
@@ -11,7 +11,7 @@ const { events, allowedOrigin, clientPortName } = constants.trackerStats
  *
  * @type {boolean}
  */
-let receivedMessageFromAllowedOrigin = false
+let receivedMessageFromAllowedOrigin = false;
 
 /**
  * Establish the connection with the extension, but not initially.
@@ -20,19 +20,19 @@ let receivedMessageFromAllowedOrigin = false
  * we use it to forward data into the parent page.
  */
 function connect() {
-    const port = chrome.runtime.connect({ name: clientPortName })
+    const port = chrome.runtime.connect({ name: clientPortName });
 
     port.onMessage.addListener((msg) => {
         if (msg.messageType in events.outgoing) {
-            sendToNewTabPage(msg)
+            sendToNewTabPage(msg);
         }
-    })
+    });
 
     port.onDisconnect.addListener((msg) => {
-        console.log('🚨 PORT onDisconnect', msg)
-    })
+        console.log('🚨 PORT onDisconnect', msg);
+    });
 
-    return port
+    return port;
 }
 
 /**
@@ -42,27 +42,27 @@ function connect() {
 window.addEventListener('message', (e) => {
     if (!e.isTrusted || e.origin !== constants.trackerStats.allowedOrigin) {
         // ignore messages from any domain that we have not explicitly allowed
-        console.error('this event was not trusted:', e)
-        return
+        console.error('this event was not trusted:', e);
+        return;
     }
 
     // if we get here, we've observed a trusted event
-    receivedMessageFromAllowedOrigin = true
+    receivedMessageFromAllowedOrigin = true;
 
     if (typeof e.data?.messageType !== 'string') {
-        console.error('unknown message format. required: { messageType: ... } ', e.data)
-        return
+        console.error('unknown message format. required: { messageType: ... } ', e.data);
+        return;
     }
 
     if (!(e.data.messageType in events.incoming)) {
-        console.error('unknown message type, ignoring', e.data)
-        return
+        console.error('unknown message type, ignoring', e.data);
+        return;
     }
 
     // if we get this far, it's a valid message that we can forward into the Extension
     // console.log('📩 INCOMING newtab.js', e.data)
-    sendToChromeRuntime(e.data)
-})
+    sendToChromeRuntime(e.data);
+});
 
 /**
  * Send a message the allowedOrigin
@@ -78,18 +78,18 @@ window.addEventListener('message', (e) => {
  */
 function sendToNewTabPage(msg) {
     // try to validate the message
-    const parsed = outgoing.safeParse(msg)
+    const parsed = outgoing.safeParse(msg);
     if (!parsed.success) {
-        console.warn('not forwarding as validation failed on', msg)
-        return console.error(parsed.error)
+        console.warn('not forwarding as validation failed on', msg);
+        return console.error(parsed.error);
     }
 
     // if we get here, we're sure it's a known message and we attempt to ping
     // it up into the parent frame.
     if (typeof window.parent?.postMessage === 'function') {
-        window.parent.postMessage(parsed.data, allowedOrigin)
+        window.parent.postMessage(parsed.data, allowedOrigin);
     } else {
-        console.error('lost connection to window.parent')
+        console.error('lost connection to window.parent');
     }
 }
 
@@ -102,29 +102,29 @@ function sendToNewTabPage(msg) {
  *
  * @param {import("zod").infer<incoming>} msg
  */
-let port = null
+let port = null;
 function sendToChromeRuntime(msg) {
-    if (!receivedMessageFromAllowedOrigin) return
+    if (!receivedMessageFromAllowedOrigin) return;
     try {
         // If we get here and we're not currently listening to internal events, flip the
         // switch and start listening
         if (!port) {
-            port = connect()
+            port = connect();
         }
 
         // now ensure the event is valid
-        const parsed = incoming.safeParse(msg)
+        const parsed = incoming.safeParse(msg);
         if (!parsed.success) {
-            console.warn('not forwarding to the chrome runtime because validation failed for:', msg)
-            return console.error(parsed.error)
+            console.warn('not forwarding to the chrome runtime because validation failed for:', msg);
+            return console.error(parsed.error);
         }
 
         /**
          * send the message as normal now
          */
-        port.postMessage(parsed.data)
+        port.postMessage(parsed.data);
     } catch (e) {
-        console.error('could not connect to, or send to `port.postMessage`', e)
-        sendToNewTabPage({ messageType: events.outgoing.newTabPage_disconnect })
+        console.error('could not connect to, or send to `port.postMessage`', e);
+        sendToNewTabPage({ messageType: events.outgoing.newTabPage_disconnect });
     }
 }

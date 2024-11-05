@@ -1,10 +1,10 @@
-const assert = require('assert')
+const assert = require('assert');
 
 const {
     SMARTER_ENCRYPTION_PRIORITY,
     generateSmarterEncryptionRuleset,
     createSmarterEncryptionTemporaryRule,
-} = require('../lib/smarterEncryption')
+} = require('../lib/smarterEncryption');
 
 /**
  * @typedef {{ browser: import('../puppeteerInterface').PuppeteerInterface}} testFunction
@@ -12,8 +12,8 @@ const {
 
 describe('generateSmarterEncryptionRuleset', () => {
     it('should return an empty list of rules if there are no domains', () => {
-        assert.equal(generateSmarterEncryptionRuleset([]).length, 0)
-    })
+        assert.equal(generateSmarterEncryptionRuleset([]).length, 0);
+    });
 
     it('should generate a basic rule', () => {
         assert.deepEqual(generateSmarterEncryptionRuleset(['domain.invalid']), [
@@ -45,8 +45,8 @@ describe('generateSmarterEncryptionRuleset', () => {
                     regexFilter: '^http://[^.]+\\.[^.]+(:|/|$)',
                 },
             },
-        ])
-    })
+        ]);
+    });
 
     it('should group domains by subdomain count', () => {
         assert.deepEqual(
@@ -143,8 +143,8 @@ describe('generateSmarterEncryptionRuleset', () => {
                     },
                 },
             ],
-        )
-    })
+        );
+    });
 
     it('should handle the www. subdomain correctly', () => {
         assert.deepEqual(
@@ -242,8 +242,8 @@ describe('generateSmarterEncryptionRuleset', () => {
                     },
                 },
             ],
-        )
-    })
+        );
+    });
 
     it('should honour starting rule ID parameter', () => {
         assert.deepEqual(
@@ -259,43 +259,43 @@ describe('generateSmarterEncryptionRuleset', () => {
                 4321,
             ).map((rule) => rule.id),
             [4321, 4322, 4323],
-        )
-    })
+        );
+    });
 
     it('should upgrade insecure requests from provided domains', /** @this {testFunction} */ async function () {
-        const ruleset = generateSmarterEncryptionRuleset(['privacy-test-pages.site'])
-        await this.browser.addRules(ruleset)
+        const ruleset = generateSmarterEncryptionRuleset(['privacy-test-pages.site']);
+        await this.browser.addRules(ruleset);
         const matchedRules = await this.browser.testMatchOutcome({
             url: 'http://privacy-test-pages.site/insecure',
             type: 'main_frame',
             tabId: 1,
-        })
-        assert.equal(matchedRules.length, 1)
-        assert.equal(matchedRules[0].action.type, 'upgradeScheme')
-    })
+        });
+        assert.equal(matchedRules.length, 1);
+        assert.equal(matchedRules[0].action.type, 'upgradeScheme');
+    });
 
     it('createSmarterEncryptionExceptionRule should prevent https upgrade for domain', /** @this {testFunction} */ async function () {
-        const testDomains = ['privacy-test-pages.site', 'glitch.me']
-        await this.browser.addRules(generateSmarterEncryptionRuleset(testDomains, 2))
-        await this.browser.addRules([createSmarterEncryptionTemporaryRule([testDomains[0]], 'allow', 1).rule])
+        const testDomains = ['privacy-test-pages.site', 'glitch.me'];
+        await this.browser.addRules(generateSmarterEncryptionRuleset(testDomains, 2));
+        await this.browser.addRules([createSmarterEncryptionTemporaryRule([testDomains[0]], 'allow', 1).rule]);
         const expectNotUpgraded = await this.browser.testMatchOutcome({
             url: 'http://privacy-test-pages.site/insecure',
             type: 'main_frame',
             tabId: 1,
-        })
-        assert.equal(expectNotUpgraded.length, 1)
-        assert.equal(expectNotUpgraded[0].action.type, 'allow')
+        });
+        assert.equal(expectNotUpgraded.length, 1);
+        assert.equal(expectNotUpgraded[0].action.type, 'allow');
         const expectUpgraded = await this.browser.testMatchOutcome({
             url: 'http://glitch.me/insecure',
             type: 'main_frame',
             tabId: 1,
-        })
-        assert.equal(expectUpgraded.length, 1)
-        assert.equal(expectUpgraded[0].action.type, 'upgradeScheme')
-    })
+        });
+        assert.equal(expectUpgraded.length, 1);
+        assert.equal(expectUpgraded[0].action.type, 'upgradeScheme');
+    });
 
     it('createSmarterEncryptionExceptionRule should create correct allow rule', function () {
-        const testDomains = ['example.com', 'sub.test.com']
+        const testDomains = ['example.com', 'sub.test.com'];
         assert.deepEqual(createSmarterEncryptionTemporaryRule(testDomains, 'allow', 4).rule, {
             id: 4,
             priority: SMARTER_ENCRYPTION_PRIORITY,
@@ -322,11 +322,11 @@ describe('generateSmarterEncryptionRuleset', () => {
                     'other',
                 ],
             },
-        })
-    })
+        });
+    });
 
     it('createSmarterEncryptionExceptionRule should create correct upgrade rule', function () {
-        const testDomains = ['example.com', 'sub.test.com']
+        const testDomains = ['example.com', 'sub.test.com'];
         assert.deepEqual(createSmarterEncryptionTemporaryRule(testDomains, 'upgrade', 4).rule, {
             id: 4,
             priority: SMARTER_ENCRYPTION_PRIORITY,
@@ -353,11 +353,11 @@ describe('generateSmarterEncryptionRuleset', () => {
                     'other',
                 ],
             },
-        })
-    })
+        });
+    });
 
     it('createSmarterEncryptionExceptionRule throws for invalid type', function () {
         // @ts-ignore
-        assert.throws(() => createSmarterEncryptionTemporaryRule([], 'block'))
-    })
-})
+        assert.throws(() => createSmarterEncryptionTemporaryRule([], 'block'));
+    });
+});

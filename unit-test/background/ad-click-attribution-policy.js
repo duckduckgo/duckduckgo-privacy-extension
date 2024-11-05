@@ -1,35 +1,35 @@
-import config from '../data/extension-config.json'
-import tdsStorageStub from '../helpers/tds'
-import { _formatPixelRequestForTesting } from '../../shared/js/shared-utils/pixels'
+import config from '../data/extension-config.json';
+import tdsStorageStub from '../helpers/tds';
+import { _formatPixelRequestForTesting } from '../../shared/js/shared-utils/pixels';
 import {
     AdClickAttributionPolicy,
     sendPageloadsWithAdAttributionPixelAndResetCount,
-} from '../../shared/js/background/classes/ad-click-attribution-policy'
-import tabManager from '../../shared/js/background/tab-manager'
-import trackers from '../../shared/js/background/trackers'
-import tdsStorage from '../../shared/js/background/storage/tds'
-import load from '../../shared/js/background/load'
+} from '../../shared/js/background/classes/ad-click-attribution-policy';
+import tabManager from '../../shared/js/background/tab-manager';
+import trackers from '../../shared/js/background/trackers';
+import tdsStorage from '../../shared/js/background/storage/tds';
+import load from '../../shared/js/background/load';
 
 function createAdClickAttributionPolicy(policy = {}) {
     // This is not ideal, but it's the only way to get the policy to
     // load the expected data. Stubs aren't working through imports.
-    const adClickAttributionPolicy = new AdClickAttributionPolicy()
+    const adClickAttributionPolicy = new AdClickAttributionPolicy();
     if (!policy.allowlist) {
-        policy.allowlist = config.features.adClickAttribution.settings.allowlist
+        policy.allowlist = config.features.adClickAttribution.settings.allowlist;
     }
     for (const [key, value] of Object.entries(policy)) {
-        adClickAttributionPolicy[key] = value
+        adClickAttributionPolicy[key] = value;
     }
 
-    return adClickAttributionPolicy
+    return adClickAttributionPolicy;
 }
 
 describe('check policy', () => {
-    let adClickAttributionPolicy
+    let adClickAttributionPolicy;
     beforeEach(async () => {
-        adClickAttributionPolicy = createAdClickAttributionPolicy()
-        expect(adClickAttributionPolicy.allowlist.length).not.toEqual(0)
-    })
+        adClickAttributionPolicy = createAdClickAttributionPolicy();
+        expect(adClickAttributionPolicy.allowlist.length).not.toEqual(0);
+    });
     it('should return false if url is not expected to match', () => {
         const invalidCases = [
             'https://www.google.com/',
@@ -39,11 +39,11 @@ describe('check policy', () => {
             'https://convert.ad-company.site.other.com/path/to/file.html',
             'https://bigconvert.ad-company.site/',
             'https://bigconvert.ad-company.site/path/to/file.html',
-        ]
+        ];
         for (const url of invalidCases) {
-            expect(adClickAttributionPolicy.resourcePermitted(url)).withContext(`Expect url: ${url} to be blocked`).toBe(false)
+            expect(adClickAttributionPolicy.resourcePermitted(url)).withContext(`Expect url: ${url} to be blocked`).toBe(false);
         }
-    })
+    });
     it('should return true if url is expected to match', () => {
         const validCases = [
             'https://convert.ad-company.example/',
@@ -54,16 +54,16 @@ describe('check policy', () => {
             'https://other.convert.ad-company.site/',
             'https://other.convert.ad-company.site/url/test/case.sjs',
             'https://other.convert.ad-company.site/url/test/case.sjs?param=value',
-        ]
+        ];
         for (const url of validCases) {
-            expect(adClickAttributionPolicy.resourcePermitted(url)).withContext(`Expect url: ${url} to be permitted`).toBe(true)
+            expect(adClickAttributionPolicy.resourcePermitted(url)).withContext(`Expect url: ${url} to be permitted`).toBe(true);
         }
-    })
-})
+    });
+});
 
 describe('pixels', () => {
-    const actualSentPixels = []
-    const tabId = 123
+    const actualSentPixels = [];
+    const tabId = 123;
 
     const expectPixels = async ({
         startUrl,
@@ -75,46 +75,46 @@ describe('pixels', () => {
         context,
         expectedPixels,
     }) => {
-        actualSentPixels.length = 0
+        actualSentPixels.length = 0;
 
-        let tab = tabManager.create({ tabId, url: startUrl })
-        tab._adClickAttributionPolicy = createAdClickAttributionPolicy(policy)
-        tab.setAdClickIfValidRedirect(adClickUrl)
+        let tab = tabManager.create({ tabId, url: startUrl });
+        tab._adClickAttributionPolicy = createAdClickAttributionPolicy(policy);
+        tab.setAdClickIfValidRedirect(adClickUrl);
 
-        tab.adClick.sendAdClickDetectedPixel(heuristicDomain)
+        tab.adClick.sendAdClickDetectedPixel(heuristicDomain);
         for (const { url: navigationUrl, subRequests } of navigations) {
-            tab = tabManager.create({ tabId, url: navigationUrl })
+            tab = tabManager.create({ tabId, url: navigationUrl });
 
             for (const { url: subRequestUrl, allowed: expectedAllowed } of subRequests) {
                 const subRequestContext =
-                    `${context}\nSubrequest: ${subRequestUrl} ` + `${expectedAllowed ? 'should' : "shouldn't"} be allowed.`
+                    `${context}\nSubrequest: ${subRequestUrl} ` + `${expectedAllowed ? 'should' : "shouldn't"} be allowed.`;
 
-                expect(tab.allowAdAttribution(subRequestUrl)).withContext(subRequestContext).toEqual(expectedAllowed)
+                expect(tab.allowAdAttribution(subRequestUrl)).withContext(subRequestContext).toEqual(expectedAllowed);
             }
         }
         if (sendPageloadCountPixel) {
-            await sendPageloadsWithAdAttributionPixelAndResetCount()
+            await sendPageloadsWithAdAttributionPixelAndResetCount();
         }
 
-        expect(actualSentPixels).withContext(context).toEqual(expectedPixels)
-    }
+        expect(actualSentPixels).withContext(context).toEqual(expectedPixels);
+    };
 
     beforeAll(async () => {
-        tdsStorageStub.stub({ config })
-        await trackers.setLists(await tdsStorage.getLists())
+        tdsStorageStub.stub({ config });
+        await trackers.setLists(await tdsStorage.getLists());
 
         spyOn(load, 'url').and.callFake((url) => {
-            const pixel = _formatPixelRequestForTesting(url)
+            const pixel = _formatPixelRequestForTesting(url);
             if (pixel) {
-                actualSentPixels.push(pixel)
+                actualSentPixels.push(pixel);
             }
-        })
-    })
+        });
+    });
 
     beforeEach(async () => {
-        await sendPageloadsWithAdAttributionPixelAndResetCount()
-        actualSentPixels.length = 0
-    })
+        await sendPageloadsWithAdAttributionPixelAndResetCount();
+        actualSentPixels.length = 0;
+    });
 
     it('should send the correct the m_ad_click_detected pixel parameters', async () => {
         await expectPixels({
@@ -135,7 +135,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -157,7 +157,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -180,7 +180,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -204,7 +204,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -224,7 +224,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -245,7 +245,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -266,7 +266,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -287,7 +287,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -308,8 +308,8 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
-    })
+        });
+    });
 
     it('should send the correct the m_ad_click_active pixel at the right times', async () => {
         await expectPixels({
@@ -344,7 +344,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -378,7 +378,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -426,7 +426,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -487,8 +487,8 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
-    })
+        });
+    });
 
     it('should send the correct the m_pageloads_with_ad_attribution pixel with correct count', async () => {
         await expectPixels({
@@ -508,7 +508,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         await expectPixels({
             startUrl: 'https://duckduckgo.com',
@@ -609,7 +609,7 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
+        });
 
         // Test again, to ensure count was reset last time.
         await expectPixels({
@@ -651,6 +651,6 @@ describe('pixels', () => {
                     },
                 },
             ],
-        })
-    })
-})
+        });
+    });
+});

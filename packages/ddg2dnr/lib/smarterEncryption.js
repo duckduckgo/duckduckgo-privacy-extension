@@ -1,11 +1,11 @@
 /** @module smarterEncryption */
 
-const { storeInLookup } = require('./utils')
+const { storeInLookup } = require('./utils');
 
-const SMARTER_ENCRYPTION_PRIORITY = 5000
+const SMARTER_ENCRYPTION_PRIORITY = 5000;
 
 function generateRegexFilter(subdomainCount, matchWwwSubdomain) {
-    return '^http://' + (matchWwwSubdomain ? '(www\\.)?' : '') + Array(subdomainCount).fill('[^.]+').join('\\.') + '(:|/|$)'
+    return '^http://' + (matchWwwSubdomain ? '(www\\.)?' : '') + Array(subdomainCount).fill('[^.]+').join('\\.') + '(:|/|$)';
 }
 
 function generateRule(id, subdomainCount, domains, matchWwwSubdomain) {
@@ -36,7 +36,7 @@ function generateRule(id, subdomainCount, domains, matchWwwSubdomain) {
             requestDomains: domains,
             regexFilter: generateRegexFilter(subdomainCount, matchWwwSubdomain),
         },
-    }
+    };
 }
 
 /**
@@ -50,19 +50,19 @@ function generateRule(id, subdomainCount, domains, matchWwwSubdomain) {
  *   The declarativeNetRequest rules.
  */
 function generateSmarterEncryptionRuleset(domains, startingRuleId = 1) {
-    const domainsBySubdomainCount = new Map()
-    const domainsWithOptionalWwwBySubdomainCount = new Map()
+    const domainsBySubdomainCount = new Map();
+    const domainsWithOptionalWwwBySubdomainCount = new Map();
 
     // Separate domains with the www. prefix. Many domains are listed both with
     // and without the www subdomain, so it makes sense to combine those entries
     // in the ruleset.
-    const domainsToMatchWithWwwPrefix = new Set()
-    const nonWwwDomains = []
+    const domainsToMatchWithWwwPrefix = new Set();
+    const nonWwwDomains = [];
     for (const domain of domains) {
         if (domain.startsWith('www.')) {
-            domainsToMatchWithWwwPrefix.add(domain.substr(4))
+            domainsToMatchWithWwwPrefix.add(domain.substr(4));
         } else {
-            nonWwwDomains.push(domain)
+            nonWwwDomains.push(domain);
         }
     }
 
@@ -73,10 +73,10 @@ function generateSmarterEncryptionRuleset(domains, startingRuleId = 1) {
     // domains with a different number of subdomains.
     for (const domain of nonWwwDomains) {
         if (domainsToMatchWithWwwPrefix.has(domain)) {
-            domainsToMatchWithWwwPrefix.delete(domain)
-            storeInLookup(domainsWithOptionalWwwBySubdomainCount, domain.split('.').length, [domain])
+            domainsToMatchWithWwwPrefix.delete(domain);
+            storeInLookup(domainsWithOptionalWwwBySubdomainCount, domain.split('.').length, [domain]);
         } else {
-            storeInLookup(domainsBySubdomainCount, domain.split('.').length, [domain])
+            storeInLookup(domainsBySubdomainCount, domain.split('.').length, [domain]);
         }
     }
 
@@ -89,27 +89,27 @@ function generateSmarterEncryptionRuleset(domains, startingRuleId = 1) {
     //       the domain "www.pl" - matching the entire "pl" TLD would be a
     //       mistake!
     for (const domain of domainsToMatchWithWwwPrefix) {
-        storeInLookup(domainsBySubdomainCount, domain.split('.').length + 1, ['www.' + domain])
+        storeInLookup(domainsBySubdomainCount, domain.split('.').length + 1, ['www.' + domain]);
     }
 
     // Generate the rules.
-    let id = startingRuleId
-    const rules = []
+    let id = startingRuleId;
+    const rules = [];
 
     for (const [subdomainCount, domainGroup] of domainsBySubdomainCount) {
         if (domainGroup.length < 1) {
-            continue
+            continue;
         }
-        rules.push(generateRule(id++, subdomainCount, domainGroup, false))
+        rules.push(generateRule(id++, subdomainCount, domainGroup, false));
     }
     for (const [subdomainCount, domainGroup] of domainsWithOptionalWwwBySubdomainCount) {
         if (domainGroup.length < 1) {
-            continue
+            continue;
         }
-        rules.push(generateRule(id++, subdomainCount, domainGroup, true))
+        rules.push(generateRule(id++, subdomainCount, domainGroup, true));
     }
 
-    return rules
+    return rules;
 }
 
 /**
@@ -142,10 +142,10 @@ function generateSmarterEncryptionRuleset(domains, startingRuleId = 1) {
 function createSmarterEncryptionTemporaryRule(domains, type = 'allow', id) {
     if (['allow', 'upgrade'].indexOf(type) === -1) {
         // invalid type
-        throw new Error(`createSmarterEncryptionTemporaryRule type ${type} is not valid`)
+        throw new Error(`createSmarterEncryptionTemporaryRule type ${type} is not valid`);
     }
-    const actionType = type === 'allow' ? 'allow' : 'upgradeScheme'
-    const detailsType = type === 'allow' ? 'httpsAllowlist' : 'sessionUpgrades'
+    const actionType = type === 'allow' ? 'allow' : 'upgradeScheme';
+    const detailsType = type === 'allow' ? 'httpsAllowlist' : 'sessionUpgrades';
     return {
         rule: {
             id,
@@ -178,9 +178,9 @@ function createSmarterEncryptionTemporaryRule(domains, type = 'allow', id) {
             type: detailsType,
             possibleTrackerDomains: domains,
         },
-    }
+    };
 }
 
-exports.SMARTER_ENCRYPTION_PRIORITY = SMARTER_ENCRYPTION_PRIORITY
-exports.generateSmarterEncryptionRuleset = generateSmarterEncryptionRuleset
-exports.createSmarterEncryptionTemporaryRule = createSmarterEncryptionTemporaryRule
+exports.SMARTER_ENCRYPTION_PRIORITY = SMARTER_ENCRYPTION_PRIORITY;
+exports.generateSmarterEncryptionRuleset = generateSmarterEncryptionRuleset;
+exports.createSmarterEncryptionTemporaryRule = createSmarterEncryptionTemporaryRule;

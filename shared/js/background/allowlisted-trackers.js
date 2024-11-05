@@ -1,6 +1,6 @@
-const tdsStorage = require('./storage/tds').default
-const tldts = require('tldts')
-const { getURLWithoutQueryString } = require('./utils')
+const tdsStorage = require('./storage/tds').default;
+const tldts = require('tldts');
+const { getURLWithoutQueryString } = require('./utils');
 
 /**
  * @typedef {Object} TrackerAllowlistRule
@@ -23,7 +23,7 @@ const { getURLWithoutQueryString } = require('./utils')
 function isTrackerAllowlisted(site, request) {
     // check that allowlist exists and is not disabled
     if (!tdsStorage.config.features.trackerAllowlist || tdsStorage.config.features.trackerAllowlist.state === 'disabled') {
-        return false
+        return false;
     }
 
     // check that allowlist has entries
@@ -31,21 +31,21 @@ function isTrackerAllowlisted(site, request) {
         !tdsStorage.config.features.trackerAllowlist.settings ||
         !Object.keys(tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers).length
     ) {
-        return false
+        return false;
     }
 
-    const parsedRequest = tldts.parse(request)
+    const parsedRequest = tldts.parse(request);
     if (!parsedRequest.domain) {
-        return false
+        return false;
     }
     /** @type {TrackerAllowlist} */
-    const trackerAllowlist = tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers
-    const allowListEntry = trackerAllowlist[parsedRequest.domain]
+    const trackerAllowlist = tdsStorage.config.features.trackerAllowlist.settings.allowlistedTrackers;
+    const allowListEntry = trackerAllowlist[parsedRequest.domain];
 
     if (allowListEntry) {
-        return _matchesRule(site, request, allowListEntry)
+        return _matchesRule(site, request, allowListEntry);
     } else {
-        return false
+        return false;
     }
 }
 
@@ -56,43 +56,43 @@ function isTrackerAllowlisted(site, request) {
  * @returns {TrackerAllowlistRule | false}
  */
 function _matchesRule(site, request, allowListEntry) {
-    let matchedRule = null
-    request = getURLWithoutQueryString(request).split(';')[0]
+    let matchedRule = null;
+    request = getURLWithoutQueryString(request).split(';')[0];
 
     // remove port from request urls
-    const parsedRequest = new URL(request)
+    const parsedRequest = new URL(request);
     if (parsedRequest.port) {
-        parsedRequest.port = parsedRequest.protocol === 'https:' ? '443' : '80'
-        request = parsedRequest.href
+        parsedRequest.port = parsedRequest.protocol === 'https:' ? '443' : '80';
+        request = parsedRequest.href;
     }
 
     if (allowListEntry.rules && allowListEntry.rules.length) {
         for (const ruleObj of allowListEntry.rules) {
             if (request.match(ruleObj.rule)) {
-                matchedRule = ruleObj
-                break
+                matchedRule = ruleObj;
+                break;
             }
         }
     }
 
     if (matchedRule) {
         if (matchedRule.domains.includes('<all>')) {
-            return matchedRule
+            return matchedRule;
         }
-        const { domain, hostname } = tldts.parse(site)
+        const { domain, hostname } = tldts.parse(site);
         // eTLD+1 match
         if (domain && matchedRule.domains.includes(domain)) {
-            return matchedRule
+            return matchedRule;
         }
         // hostname, or hostname-suffix match
         if (hostname && matchedRule.domains.find((d) => d === hostname || hostname.endsWith(`.${d}`))) {
-            return matchedRule
+            return matchedRule;
         }
     } else {
-        return false
+        return false;
     }
 
-    return false
+    return false;
 }
 
-module.exports = isTrackerAllowlisted
+module.exports = isTrackerAllowlisted;

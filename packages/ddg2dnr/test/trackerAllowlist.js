@@ -1,21 +1,21 @@
-const assert = require('assert')
+const assert = require('assert');
 
-const { BASELINE_PRIORITY, PRIORITY_INCREMENT, MAXIMUM_RULES_PER_TRACKER_ENTRY } = require('../lib/trackerAllowlist')
+const { BASELINE_PRIORITY, PRIORITY_INCREMENT, MAXIMUM_RULES_PER_TRACKER_ENTRY } = require('../lib/trackerAllowlist');
 
-const { generateExtensionConfigurationRuleset } = require('../lib/extensionConfiguration')
+const { generateExtensionConfigurationRuleset } = require('../lib/extensionConfiguration');
 
 async function isRegexSupportedTrue({ regex, isCaseSensitive }) {
-    return { isSupported: true }
+    return { isSupported: true };
 }
 
 describe('Tracker Allowlist', () => {
     it('should reject extension configuration if there are too many rules ' + 'for a tracker blocking allowlist entry', async () => {
-        const rules = new Array(MAXIMUM_RULES_PER_TRACKER_ENTRY)
+        const rules = new Array(MAXIMUM_RULES_PER_TRACKER_ENTRY);
         rules.fill({
             rule: 'example\\.com',
             domains: ['<all>'],
             reason: '',
-        })
+        });
 
         const extensionConfig = {
             features: {
@@ -30,14 +30,14 @@ describe('Tracker Allowlist', () => {
                     },
                 },
             },
-        }
+        };
 
-        await assert.doesNotReject(() => generateExtensionConfigurationRuleset(extensionConfig, [], isRegexSupportedTrue))
+        await assert.doesNotReject(() => generateExtensionConfigurationRuleset(extensionConfig, [], isRegexSupportedTrue));
 
-        rules.push(rules[0])
+        rules.push(rules[0]);
 
-        await assert.rejects(() => generateExtensionConfigurationRuleset(extensionConfig, [], isRegexSupportedTrue))
-    })
+        await assert.rejects(() => generateExtensionConfigurationRuleset(extensionConfig, [], isRegexSupportedTrue));
+    });
 
     it('should return no rules if trackerAllowlist feature is disabled or ' + 'configuration is empty', async () => {
         assert.deepEqual(
@@ -52,7 +52,7 @@ describe('Tracker Allowlist', () => {
                 isRegexSupportedTrue,
             ),
             { ruleset: [], matchDetailsByRuleId: {} },
-        )
+        );
 
         assert.deepEqual(
             await generateExtensionConfigurationRuleset(
@@ -81,7 +81,7 @@ describe('Tracker Allowlist', () => {
                 isRegexSupportedTrue,
             ),
             { ruleset: [], matchDetailsByRuleId: {} },
-        )
+        );
 
         assert.deepEqual(
             await generateExtensionConfigurationRuleset(
@@ -100,8 +100,8 @@ describe('Tracker Allowlist', () => {
                 isRegexSupportedTrue,
             ),
             { ruleset: [], matchDetailsByRuleId: {} },
-        )
-    })
+        );
+    });
 
     it('should generate allowlists correctly', async () => {
         const extensionConfig = {
@@ -156,9 +156,9 @@ describe('Tracker Allowlist', () => {
                 },
                 contentBlocking: { state: 'enabled' },
             },
-        }
+        };
 
-        const extensionConfigCopy = JSON.parse(JSON.stringify(extensionConfig))
+        const extensionConfigCopy = JSON.parse(JSON.stringify(extensionConfig));
 
         assert.deepEqual(await generateExtensionConfigurationRuleset(extensionConfig, [], isRegexSupportedTrue, 23), {
             ruleset: [
@@ -257,9 +257,9 @@ describe('Tracker Allowlist', () => {
                     reason: 'reason 5',
                 },
             },
-        })
+        });
 
         // Verify that the extension configuration wasn't mutated.
-        assert.deepEqual(extensionConfig, extensionConfigCopy)
-    })
-})
+        assert.deepEqual(extensionConfig, extensionConfigCopy);
+    });
+});

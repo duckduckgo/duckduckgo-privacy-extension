@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'fs';
+import path from 'path';
 
 /**
  * @typedef {import('@playwright/test').Page} Page - Playwright Page
@@ -26,24 +26,24 @@ import path from 'path'
  */
 export async function getObjectSchema(page, targetObjectName) {
     // eslint-disable-next-line no-eval
-    const targetObjectHandle = await page.evaluateHandle((name) => eval(name), targetObjectName)
+    const targetObjectHandle = await page.evaluateHandle((name) => eval(name), targetObjectName);
 
     return await page.evaluate(function inPageGetObjectSchema(targetObject, previouslySeenObjects) {
         // On first call, the only 'seen' Object is the current target Object.
         if (!previouslySeenObjects) {
-            previouslySeenObjects = new Set([targetObject])
+            previouslySeenObjects = new Set([targetObject]);
         }
 
-        const result = Object.create(null)
-        const descriptors = Object.getOwnPropertyDescriptors(targetObject)
+        const result = Object.create(null);
+        const descriptors = Object.getOwnPropertyDescriptors(targetObject);
 
         // First keep track of any Object property values that the target has.
         // That way, cyclic Object values will be spotted consistently,
         // regardless the order of the properties.
-        const seenObjects = new Set(previouslySeenObjects)
+        const seenObjects = new Set(previouslySeenObjects);
         for (const { value } of Object.values(descriptors)) {
             if (typeof value === 'object' && value !== null) {
-                seenObjects.add(value)
+                seenObjects.add(value);
             }
         }
 
@@ -56,26 +56,26 @@ export async function getObjectSchema(page, targetObjectName) {
         //       string representations of other special Object values
         //       (e.g. RegExp, Date) too.
         for (const propertyName of Object.keys(descriptors).sort()) {
-            const descriptor = descriptors[propertyName]
-            result[propertyName] = Object.create(null)
+            const descriptor = descriptors[propertyName];
+            result[propertyName] = Object.create(null);
             for (const key of Object.keys(descriptor).sort()) {
-                const value = descriptor[key]
+                const value = descriptor[key];
                 if (typeof value === 'function') {
-                    result[propertyName][key] = 'function(' + value.length + ')'
+                    result[propertyName][key] = 'function(' + value.length + ')';
                 } else if (typeof value === 'object' && value !== null) {
                     if (previouslySeenObjects.has(value)) {
-                        result[propertyName][key] = 'CYCLIC OBJECT VALUE'
+                        result[propertyName][key] = 'CYCLIC OBJECT VALUE';
                     } else {
-                        result[propertyName][key] = inPageGetObjectSchema(value, seenObjects)
+                        result[propertyName][key] = inPageGetObjectSchema(value, seenObjects);
                     }
                 } else {
-                    result[propertyName][key] = JSON.stringify(value)
+                    result[propertyName][key] = JSON.stringify(value);
                 }
             }
         }
 
-        return result
-    }, targetObjectHandle)
+        return result;
+    }, targetObjectHandle);
 }
 
 /**
@@ -95,24 +95,24 @@ export async function getObjectSchema(page, targetObjectName) {
  *   The target Object's schema.
  */
 export async function setupAPISchemaTest(page, schemaFilename, targetObjectNames) {
-    const actualSchemaPath = path.resolve(__dirname, '..', 'artifacts', 'api_schemas', schemaFilename)
-    const expectedSchemaPath = path.resolve(__dirname, '..', 'data', 'api_schemas', schemaFilename)
+    const actualSchemaPath = path.resolve(__dirname, '..', 'artifacts', 'api_schemas', schemaFilename);
+    const expectedSchemaPath = path.resolve(__dirname, '..', 'data', 'api_schemas', schemaFilename);
 
-    const actualSchema = Object.create(null)
+    const actualSchema = Object.create(null);
     for (const objectName of targetObjectNames) {
-        actualSchema[objectName] = await getObjectSchema(page, objectName)
+        actualSchema[objectName] = await getObjectSchema(page, objectName);
     }
 
-    fs.mkdirSync(path.dirname(actualSchemaPath), { recursive: true })
+    fs.mkdirSync(path.dirname(actualSchemaPath), { recursive: true });
     // Write the actual schema to a file as a test artifact.
-    fs.writeFileSync(actualSchemaPath, JSON.stringify(actualSchema, null, 4))
+    fs.writeFileSync(actualSchemaPath, JSON.stringify(actualSchema, null, 4));
 
-    const expectedSchema = JSON.parse(fs.readFileSync(expectedSchemaPath).toString())
+    const expectedSchema = JSON.parse(fs.readFileSync(expectedSchemaPath).toString());
 
-    return { actualSchemaPath, expectedSchemaPath, actualSchema, expectedSchema }
+    return { actualSchemaPath, expectedSchemaPath, actualSchema, expectedSchema };
 }
 
 export default {
     getObjectSchema,
     setupAPISchemaTest,
-}
+};

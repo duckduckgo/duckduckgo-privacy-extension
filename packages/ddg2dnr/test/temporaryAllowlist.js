@@ -1,11 +1,11 @@
-const assert = require('assert')
+const assert = require('assert');
 
-const { CONTENT_BLOCKING_ALLOWLIST_PRIORITY, UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY } = require('../lib/temporaryAllowlist')
+const { CONTENT_BLOCKING_ALLOWLIST_PRIORITY, UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY } = require('../lib/temporaryAllowlist');
 
-const { generateExtensionConfigurationRuleset } = require('../lib/extensionConfiguration')
+const { generateExtensionConfigurationRuleset } = require('../lib/extensionConfiguration');
 
 async function isRegexSupportedTrue({ regex, isCaseSensitive }) {
-    return { isSupported: true }
+    return { isSupported: true };
 }
 
 const baseExtensionConfigStringifed = JSON.stringify({
@@ -34,27 +34,27 @@ const baseExtensionConfigStringifed = JSON.stringify({
             reason: 'Second unprotectedTemporary reason',
         },
     ],
-})
+});
 
 async function rulesetEqual(extensionConfig, denylistedDomains, expectedRuleset, expectedLookup) {
-    const extensionConfigBefore = JSON.stringify(extensionConfig)
+    const extensionConfigBefore = JSON.stringify(extensionConfig);
 
     const { ruleset: actualRuleset, matchDetailsByRuleId: actualLookup } = await generateExtensionConfigurationRuleset(
         extensionConfig,
         denylistedDomains,
         isRegexSupportedTrue,
-    )
+    );
 
-    assert.deepEqual(actualRuleset, expectedRuleset)
-    assert.deepEqual(actualLookup, expectedLookup)
+    assert.deepEqual(actualRuleset, expectedRuleset);
+    assert.deepEqual(actualLookup, expectedLookup);
 
     // Verify the extension config wasn't mutated.
-    assert.deepEqual(extensionConfig, JSON.parse(extensionConfigBefore))
+    assert.deepEqual(extensionConfig, JSON.parse(extensionConfigBefore));
 }
 
 describe('Temporary Allowlist', () => {
     it('should generate allowlisting rules correctly', async () => {
-        const extensionConfig = JSON.parse(baseExtensionConfigStringifed)
+        const extensionConfig = JSON.parse(baseExtensionConfigStringifed);
 
         await rulesetEqual(
             extensionConfig,
@@ -127,13 +127,13 @@ describe('Temporary Allowlist', () => {
                     reason: 'Second contentBlocking reason',
                 },
             },
-        )
-    })
+        );
+    });
 
     it('should allowlist all domains if contentBlocking is disabled', async () => {
-        const extensionConfig = JSON.parse(baseExtensionConfigStringifed)
-        extensionConfig.features.contentBlocking.state = 'disabled'
-        delete extensionConfig.unprotectedTemporary
+        const extensionConfig = JSON.parse(baseExtensionConfigStringifed);
+        extensionConfig.features.contentBlocking.state = 'disabled';
+        delete extensionConfig.unprotectedTemporary;
 
         await rulesetEqual(
             extensionConfig,
@@ -156,11 +156,11 @@ describe('Temporary Allowlist', () => {
                     reason: 'contentBlocking disabled for all domains.',
                 },
             },
-        )
-    })
+        );
+    });
 
     it("shouldn't generate rules for denylisted domains", async () => {
-        const extensionConfig = JSON.parse(baseExtensionConfigStringifed)
+        const extensionConfig = JSON.parse(baseExtensionConfigStringifed);
 
         await rulesetEqual(
             extensionConfig,
@@ -201,6 +201,6 @@ describe('Temporary Allowlist', () => {
                     reason: 'First contentBlocking reason',
                 },
             },
-        )
-    })
-})
+        );
+    });
+});

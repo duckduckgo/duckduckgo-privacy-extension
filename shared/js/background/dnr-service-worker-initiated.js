@@ -1,6 +1,6 @@
-import { SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID } from './dnr-utils'
-import { SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
-import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
+import { SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID } from './dnr-utils';
+import { SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
+import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils';
 
 /**
  * Ensure that the allowing rule for ServiceWorker initiated requests is
@@ -12,8 +12,8 @@ import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
  * @return {Promise}
  */
 export async function ensureServiceWorkerInitiatedRequestExceptions(config) {
-    const removeRuleIds = [SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID]
-    const addRules = []
+    const removeRuleIds = [SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID];
+    const addRules = [];
 
     if (config.features.serviceworkerInitiatedRequests?.state !== 'enabled') {
         // All ServiceWorker initiated request blocking is disabled.
@@ -24,12 +24,12 @@ export async function ensureServiceWorkerInitiatedRequestExceptions(config) {
                 actionType: 'allow',
                 tabIds: [-1],
             }),
-        )
+        );
     } else if (config.features.serviceworkerInitiatedRequests?.exceptions?.length > 0 || config.unprotectedTemporary?.length > 0) {
         // ServiceWorker initiated request blocking is disabled for some domains.
         const exceptionDomains = (config.features.serviceworkerInitiatedRequests?.exceptions || [])
             .concat(config.unprotectedTemporary || [])
-            .map((entry) => entry.domain)
+            .map((entry) => entry.domain);
         addRules.push(
             generateDNRRule({
                 id: SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
@@ -38,7 +38,7 @@ export async function ensureServiceWorkerInitiatedRequestExceptions(config) {
                 tabIds: [-1],
                 initiatorDomains: exceptionDomains,
             }),
-        )
+        );
     }
 
     // Rather than check if the rule already exists before adding it, add it and
@@ -50,5 +50,5 @@ export async function ensureServiceWorkerInitiatedRequestExceptions(config) {
     await chrome.declarativeNetRequest.updateSessionRules({
         removeRuleIds,
         addRules,
-    })
+    });
 }

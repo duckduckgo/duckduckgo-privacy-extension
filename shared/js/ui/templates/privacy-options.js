@@ -1,7 +1,7 @@
-const bel = require('nanohtml')
-const raw = require('nanohtml/raw')
-const toggleButton = require('./shared/toggle-button.js')
-const t = window.DDG.base.i18n.t
+const bel = require('nanohtml');
+const raw = require('nanohtml/raw');
+const toggleButton = require('./shared/toggle-button.js');
+const t = window.DDG.base.i18n.t;
 
 module.exports = function () {
     return bel`<section class="options-content__privacy divider-bottom">
@@ -74,5 +74,5 @@ module.exports = function () {
             ${toggleButton(this.model.fireButtonTabClearEnabled, 'js-options-firebutton-tabclear-enabled', 'fireButtonTabClearEnabled')}
         </li>
     </ul>
-</section>`
-}
+</section>`;
+};

@@ -18,7 +18,7 @@ function onDocumentEnd({
     browserName,
     manifestVersion,
 }) {
-    const origin = `https://${duckDuckGoSerpHostname}`
+    const origin = `https://${duckDuckGoSerpHostname}`;
 
     /**
      * Helper function that grabs value of the content-script created by
@@ -27,16 +27,16 @@ function onDocumentEnd({
      */
     function getDocumentStartData(cb) {
         if (browserName !== 'chrome') {
-            return cb()
+            return cb();
         }
 
-        window.postMessage({ type: 'documentStartDataRequest' }, origin)
+        window.postMessage({ type: 'documentStartDataRequest' }, origin);
         window.addEventListener('message', function handleMessage(e) {
             if (e.origin === origin && e.data.type === 'documentStartDataResponse') {
-                window.removeEventListener('message', handleMessage)
-                cb(e.data.payload)
+                window.removeEventListener('message', handleMessage);
+                cb(e.data.payload);
             }
-        })
+        });
     }
 
     function start() {
@@ -50,25 +50,25 @@ function onDocumentEnd({
                             case 'healthCheckRequest': {
                                 try {
                                     chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
-                                        e.source.postMessage({ type: 'healthCheckResponse', isAlive: !chrome.runtime.lastError }, e.origin)
-                                    })
+                                        e.source.postMessage({ type: 'healthCheckResponse', isAlive: !chrome.runtime.lastError }, e.origin);
+                                    });
                                 } catch (err) {
-                                    e.source.postMessage({ type: 'healthCheckResponse', isAlive: false }, e.origin)
+                                    e.source.postMessage({ type: 'healthCheckResponse', isAlive: false }, e.origin);
                                 }
-                                break
+                                break;
                             }
 
                             case 'rescheduleCounterMessagingRequest': {
                                 chrome.runtime.sendMessage(extensionId, e.data.type, (response) => {
                                     if (chrome.runtime.lastError) {
-                                        console.error(chrome.runtime.lastError)
+                                        console.error(chrome.runtime.lastError);
                                     }
-                                })
-                                break
+                                });
+                                break;
                             }
                         }
                     }
-                })
+                });
             }
 
             // This content script in the "isolated world" does not share the
@@ -82,59 +82,59 @@ function onDocumentEnd({
 
             // For MV3 builds, send a message to the "main world" content script.
             if (manifestVersion === 3) {
-                window.postMessage({ type: 'onFirstSearch', documentStartData })
-                return
+                window.postMessage({ type: 'onFirstSearch', documentStartData });
+                return;
             }
 
             // For MV2 builds, inject a `<script>` element.
-            const script = document.createElement('script')
+            const script = document.createElement('script');
             script.textContent = `
                     if (window.onFirstSearchPostExtensionInstall) {
                         window.onFirstSearchPostExtensionInstall(${JSON.stringify(Object.assign({ isAddressBarQuery, showWelcomeBanner, showCounterMessaging }, documentStartData))})
                     }
-                `
-            document.head.appendChild(script)
-        })
+                `;
+            document.head.appendChild(script);
+        });
     }
 
     if (document.readyState === 'interactive' || document.readyState === 'complete') {
-        start()
+        start();
     } else {
-        document.addEventListener('DOMContentLoaded', start)
+        document.addEventListener('DOMContentLoaded', start);
     }
 }
 
 function onDocumentEndMainWorld({ isAddressBarQuery, showWelcomeBanner, showCounterMessaging }) {
     window.addEventListener('message', function handleFirstSearchMessage(e) {
         if (e.origin === origin && e.data.type === 'onFirstSearch') {
-            window.removeEventListener('message', handleFirstSearchMessage)
+            window.removeEventListener('message', handleFirstSearchMessage);
 
             if (window.onFirstSearchPostExtensionInstall) {
-                const { documentStartData } = e.data
+                const { documentStartData } = e.data;
                 window.onFirstSearchPostExtensionInstall({
                     isAddressBarQuery,
                     showWelcomeBanner,
                     showCounterMessaging,
                     ...documentStartData,
-                })
+                });
             }
         }
-    })
+    });
 }
 
 function onDocumentStart({ duckDuckGoSerpHostname }) {
-    const hadFocusOnStart = document.hasFocus()
+    const hadFocusOnStart = document.hasFocus();
 
     window.addEventListener('message', function handleMessage(e) {
         if (e.origin === `https://${duckDuckGoSerpHostname}` && e.data.type === 'documentStartDataRequest') {
-            window.removeEventListener('message', handleMessage)
-            e.source.postMessage({ type: 'documentStartDataResponse', payload: { hadFocusOnStart } }, e.origin)
+            window.removeEventListener('message', handleMessage);
+            e.source.postMessage({ type: 'documentStartDataResponse', payload: { hadFocusOnStart } }, e.origin);
         }
-    })
+    });
 }
 
 module.exports = {
     onDocumentEnd,
     onDocumentEndMainWorld,
     onDocumentStart,
-}
+};

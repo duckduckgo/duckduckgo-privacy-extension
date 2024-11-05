@@ -1,23 +1,23 @@
-const Parent = window.DDG.base.View
+const Parent = window.DDG.base.View;
 
 function PrivacyOptions(ops) {
-    this.model = ops.model
-    this.pageView = ops.pageView
-    this.template = ops.template
+    this.model = ops.model;
+    this.pageView = ops.pageView;
+    this.template = ops.template;
 
-    Parent.call(this, ops)
+    Parent.call(this, ops);
 
     this.model.getState().then(() => {
-        this.rerender()
-    })
+        this.rerender();
+    });
 }
 
 PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
     _clickSetting: function (e) {
-        const key = window.$(e.target).data('key') || window.$(e.target).parent().data('key')
-        console.log(`privacyOptions view click for setting "${key}"`)
-        this.model.toggle(key)
-        this.rerender()
+        const key = window.$(e.target).data('key') || window.$(e.target).parent().data('key');
+        console.log(`privacyOptions view click for setting "${key}"`);
+        this.model.toggle(key);
+        this.rerender();
     },
 
     setup: function () {
@@ -29,7 +29,7 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
             'youtube-previews-enabled',
             'firebutton-clear-history-enabled',
             'firebutton-tabclear-enabled',
-        ])
+        ]);
         this.bindEvents([
             [this.$blocktrackers, 'click', this._clickSetting],
             [this.$httpseverywhereenabled, 'click', this._clickSetting],
@@ -38,14 +38,14 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
             [this.$youtubepreviewsenabled, 'click', this._clickSetting],
             [this.$firebuttonclearhistoryenabled, 'click', this._clickSetting],
             [this.$firebuttontabclearenabled, 'click', this._clickSetting],
-        ])
+        ]);
     },
 
     rerender: function () {
-        this.unbindEvents()
-        this._rerender()
-        this.setup()
+        this.unbindEvents();
+        this._rerender();
+        this.setup();
     },
-})
+});
 
-module.exports = PrivacyOptions
+module.exports = PrivacyOptions;

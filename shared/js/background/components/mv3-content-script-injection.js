@@ -10,16 +10,16 @@
 
 export default class MV3ContentScriptInjection {
     constructor() {
-        this.ready = this.registerScripts()
+        this.ready = this.registerScripts();
     }
 
     async registerScripts() {
         // check if scripts were already registered - in scripts will remain registered under
         // some startup conditions, and in that case registering the scripts will throw an error.
-        const scripts = await chrome.scripting.getRegisteredContentScripts()
-        const ids = scripts.map((s) => s.id)
+        const scripts = await chrome.scripting.getRegisteredContentScripts();
+        const ids = scripts.map((s) => s.id);
         if (ids.length > 0) {
-            await chrome.scripting.unregisterContentScripts({ ids })
+            await chrome.scripting.unregisterContentScripts({ ids });
         }
         await chrome.scripting.registerContentScripts([
             {
@@ -40,6 +40,6 @@ export default class MV3ContentScriptInjection {
                 matches: ['<all_urls>'],
                 excludeMatches: ['*://localhost/*', '*://*.localhost/'],
             },
-        ])
+        ]);
     }
 }

@@ -1,7 +1,7 @@
-const assert = require('assert')
+const assert = require('assert');
 
-const { emptyBlockList } = require('./utils/helpers')
-const { generateCombinedConfigBlocklistRuleset } = require('../lib/combined')
+const { emptyBlockList } = require('./utils/helpers');
+const { generateCombinedConfigBlocklistRuleset } = require('../lib/combined');
 
 describe('generateCombinedConfigBlocklistRuleset', () => {
     it('should reject invalid extension configuration', () => {
@@ -11,8 +11,8 @@ describe('generateCombinedConfigBlocklistRuleset', () => {
                 // @ts-expect-error - Arguments invalid on purpose.
                 null,
                 [],
-            )
-        })
+            );
+        });
 
         assert.deepEqual(
             generateCombinedConfigBlocklistRuleset(
@@ -22,7 +22,7 @@ describe('generateCombinedConfigBlocklistRuleset', () => {
                 [],
             ),
             { ruleset: [], matchDetailsByRuleId: {} },
-        )
+        );
 
         assert.deepEqual(
             generateCombinedConfigBlocklistRuleset(
@@ -32,7 +32,7 @@ describe('generateCombinedConfigBlocklistRuleset', () => {
                 [],
             ),
             { ruleset: [], matchDetailsByRuleId: {} },
-        )
+        );
 
         assert.deepEqual(
             generateCombinedConfigBlocklistRuleset(
@@ -42,11 +42,11 @@ describe('generateCombinedConfigBlocklistRuleset', () => {
                 [],
             ),
             { ruleset: [], matchDetailsByRuleId: {} },
-        )
+        );
 
         assert.deepEqual(generateCombinedConfigBlocklistRuleset(emptyBlockList(), { features: {}, unprotectedTemporary: [] }, []), {
             ruleset: [],
             matchDetailsByRuleId: {},
-        })
-    })
-})
+        });
+    });
+});

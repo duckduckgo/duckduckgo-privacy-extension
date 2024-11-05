@@ -1,37 +1,37 @@
-import browser from 'webextension-polyfill'
-import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from './wrapper'
-import tdsStorage from './storage/tds'
-import settings from './settings'
-import { parse as tldtsParse } from 'tldts'
-import parseUserAgentString from '../shared-utils/parse-user-agent-string'
-import sha1 from '../shared-utils/sha1'
-const browserInfo = parseUserAgentString()
+import browser from 'webextension-polyfill';
+import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from './wrapper';
+import tdsStorage from './storage/tds';
+import settings from './settings';
+import { parse as tldtsParse } from 'tldts';
+import parseUserAgentString from '../shared-utils/parse-user-agent-string';
+import sha1 from '../shared-utils/sha1';
+const browserInfo = parseUserAgentString();
 
 /**
  * Produce a random float, matches the output of Math.random() but much more cryptographically psudo-random.
  * @returns {number}
  */
 function getRandomFloat() {
-    return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32
+    return crypto.getRandomValues(new Uint32Array(1))[0] / 2 ** 32;
 }
 
 export async function getSessionKey() {
-    let sessionKey = await getFromSessionStorage('sessionKey')
+    let sessionKey = await getFromSessionStorage('sessionKey');
     if (!sessionKey) {
-        sessionKey = await resetSessionKey()
+        sessionKey = await resetSessionKey();
     }
-    return sessionKey
+    return sessionKey;
 }
 
 export async function resetSessionKey() {
-    const sessionKey = sha1(getRandomFloat().toString())
-    await setToSessionStorage('sessionKey', sessionKey)
-    return sessionKey
+    const sessionKey = sha1(getRandomFloat().toString());
+    await setToSessionStorage('sessionKey', sessionKey);
+    return sessionKey;
 }
 
 export async function sendTabMessage(id, message, details) {
     try {
-        await browser.tabs.sendMessage(id, message, details)
+        await browser.tabs.sendMessage(id, message, details);
     } catch {
         // Ignore errors
     }
@@ -40,7 +40,7 @@ export async function sendTabMessage(id, message, details) {
 export async function sendAllTabsMessage(message, details) {
     try {
         for (const { id: tabId } of await browser.tabs.query({})) {
-            sendTabMessage(tabId, message, details)
+            sendTabMessage(tabId, message, details);
         }
     } catch {
         // Ignore errors
@@ -52,85 +52,85 @@ export async function sendAllTabsMessage(message, details) {
  * @returns {string | null} etld plus one of the URL
  */
 export function getBaseDomain(urlString) {
-    const parsedUrl = tldtsParse(urlString, { allowPrivateDomains: true })
+    const parsedUrl = tldtsParse(urlString, { allowPrivateDomains: true });
     if (parsedUrl.hostname === 'localhost' || parsedUrl.hostname?.endsWith('.localhost') || parsedUrl.isIp) {
-        return parsedUrl.hostname
+        return parsedUrl.hostname;
     }
-    return parsedUrl.domain
+    return parsedUrl.domain;
 }
 
 export function extractHostFromURL(url, shouldKeepWWW) {
-    if (!url) return ''
+    if (!url) return '';
 
     // Tweak the URL for Firefox about:* pages to ensure that they are parsed
     // correctly. For example, 'about:example' becomes 'about://example'.
     if (url.startsWith('about:') && url[6] !== '/') {
-        url = 'about://' + url.substr(6)
+        url = 'about://' + url.substr(6);
     }
 
-    const urlObj = tldtsParse(url)
-    let hostname = urlObj.hostname || ''
+    const urlObj = tldtsParse(url);
+    let hostname = urlObj.hostname || '';
 
     if (!shouldKeepWWW) {
-        hostname = hostname.replace(/^www\./, '')
+        hostname = hostname.replace(/^www\./, '');
     }
 
-    return hostname
+    return hostname;
 }
 
 // Removes information from a URL, such as path, user information, and optionally sub domains
 // @ts-ignore
 export function extractLimitedDomainFromURL(url, { keepSubdomains } = {}) {
-    if (!url) return undefined
+    if (!url) return undefined;
     try {
-        const parsedURL = new URL(url)
-        const tld = tldtsParse(url)
-        if (!parsedURL || !tld) return ''
+        const parsedURL = new URL(url);
+        const tld = tldtsParse(url);
+        if (!parsedURL || !tld) return '';
         // tld.domain is null if this is an IP or the domain does not use a known TLD (e.g. localhost)
         // in that case use the hostname (no truncation)
-        let finalURL = tld.domain || tld.hostname
+        let finalURL = tld.domain || tld.hostname;
         if (keepSubdomains) {
-            finalURL = tld.hostname
+            finalURL = tld.hostname;
         } else if (tld.subdomain && tld.subdomain.toLowerCase() === 'www') {
             // This is a special case where if a domain requires 'www' to work
             // we keep it, even if we wouldn't normally keep subdomains.
             // note that even mutliple subdomains like www.something.domain.com has
             // subdomain of www.something, and wouldn't trigger this case.
-            finalURL = 'www.' + tld.domain
+            finalURL = 'www.' + tld.domain;
         }
-        const port = parsedURL.port ? `:${parsedURL.port}` : ''
+        const port = parsedURL.port ? `:${parsedURL.port}` : '';
 
-        return `${parsedURL.protocol}//${finalURL}${port}/`
+        return `${parsedURL.protocol}//${finalURL}${port}/`;
     } catch (e) {
         // tried to parse invalid URL, such as an extension URL. In this case, don't modify anything
-        return undefined
+        return undefined;
     }
 }
 
 export function extractTopSubdomainFromHost(host) {
-    if (typeof host !== 'string') return false
-    const rgx = /\./g
+    if (typeof host !== 'string') return false;
+    const rgx = /\./g;
     // @ts-ignore
     if (host.match(rgx) && host.match(rgx).length > 1) {
-        return host.split('.')[0]
+        return host.split('.')[0];
     }
-    return false
+    return false;
 }
 
 // pull off subdomains and look for parent companies
 export function findParent(url) {
-    const parts = extractHostFromURL(url).split('.')
+    const parts = extractHostFromURL(url).split('.');
 
     while (parts.length > 1) {
-        const joinURL = parts.join('.')
+        const joinURL = parts.join('.');
 
         // check if tracker owner has 'ownedBy' to indicate a parent.
         if (tdsStorage.tds.trackers[joinURL]?.owner?.ownedBy) {
-            return tdsStorage.tds.trackers[joinURL].owner.ownedBy
+            return tdsStorage.tds.trackers[joinURL].owner.ownedBy;
         } else if (tdsStorage.tds.domains[joinURL]) {
-            return tdsStorage.tds.domains[joinURL]
+            return tdsStorage.tds.domains[joinURL];
         }
-        parts.shift()
+        parts.shift();
     }
 }
 
@@ -141,14 +141,14 @@ export function findParent(url) {
  * @returns {string}
  */
 export function findParentDisplayName(url) {
-    const parent = findParent(url)
-    const entity = tdsStorage.tds.entities[parent]
+    const parent = findParent(url);
+    const entity = tdsStorage.tds.entities[parent];
 
     if (entity && entity.displayName) {
-        return entity.displayName
+        return entity.displayName;
     }
 
-    return 'unknown'
+    return 'unknown';
 }
 
 /**
@@ -158,11 +158,11 @@ export function findParentDisplayName(url) {
  */
 export async function getCurrentTab() {
     // If the current tab ID is already known, fetch the details for that tab.
-    const tabId = await getFromSessionStorage('currentTabId')
+    const tabId = await getFromSessionStorage('currentTabId');
 
     if (tabId) {
         try {
-            return await browser.tabs.get(tabId)
+            return await browser.tabs.get(tabId);
         } catch (e) {}
     }
 
@@ -170,52 +170,52 @@ export async function getCurrentTab() {
     const tabData = await browser.tabs.query({
         active: true,
         lastFocusedWindow: true,
-    })
+    });
     if (tabData.length) {
-        return tabData[0]
+        return tabData[0];
     }
 }
 
 // Browser / Version detection
 // Get correct name for fetching UI assets
 export function getBrowserName() {
-    if (!browserInfo || !browserInfo.browser) return
+    if (!browserInfo || !browserInfo.browser) return;
 
-    let browserName = browserInfo.browser.toLowerCase()
-    if (browserName === 'firefox') browserName = 'moz'
+    let browserName = browserInfo.browser.toLowerCase();
+    if (browserName === 'firefox') browserName = 'moz';
 
-    return browserName
+    return browserName;
 }
 
 export function getOsName() {
-    if (!browserInfo || !browserInfo.os) return
-    return browserInfo.os
+    if (!browserInfo || !browserInfo.os) return;
+    return browserInfo.os;
 }
 
 // Determine if upgradeToSecure supported (Firefox 59+)
 export function getUpgradeToSecureSupport() {
-    let canUpgrade = false
-    if (getBrowserName() !== 'moz') return canUpgrade
+    let canUpgrade = false;
+    if (getBrowserName() !== 'moz') return canUpgrade;
 
     if (browserInfo && browserInfo.version >= 59) {
-        canUpgrade = true
+        canUpgrade = true;
     }
 
-    return canUpgrade
+    return canUpgrade;
 }
 
 // return true if browser allows to handle request async
 export function getAsyncBlockingSupport() {
-    const browserName = getBrowserName()
+    const browserName = getBrowserName();
 
     if (browserName === 'moz' && browserInfo && browserInfo.version >= 52) {
-        return true
+        return true;
     } else if (['edg', 'edge', 'brave', 'chrome'].includes(browserName)) {
-        return false
+        return false;
     }
 
-    console.warn(`Unrecognized browser "${browserName}" - async response disallowed`)
-    return false
+    console.warn(`Unrecognized browser "${browserName}" - async response disallowed`);
+    return false;
 }
 
 /**
@@ -223,116 +223,116 @@ export function getAsyncBlockingSupport() {
  * @returns {boolean}
  */
 export function isRedirect(statusCode) {
-    return statusCode >= 300 && statusCode <= 399
+    return statusCode >= 300 && statusCode <= 399;
 }
 
 /*
  * check to see if this is a broken site reported on github
  */
 export function isBroken(url) {
-    if (!tdsStorage?.config.unprotectedTemporary) return
-    return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1
+    if (!tdsStorage?.config.unprotectedTemporary) return;
+    return brokenListIndex(url, tdsStorage?.config.unprotectedTemporary) !== -1;
 }
 
 export function removeBroken(domain, config = tdsStorage.config) {
-    const index = brokenListIndex(domain, config.unprotectedTemporary)
+    const index = brokenListIndex(domain, config.unprotectedTemporary);
     if (index !== -1) {
-        console.log('remove', config.unprotectedTemporary.splice(index, 1))
+        console.log('remove', config.unprotectedTemporary.splice(index, 1));
     }
 }
 
 export function getEnabledFeaturesAboutBlank(url) {
-    if (!tdsStorage.config.features) return []
-    const enabledFeatures = []
+    if (!tdsStorage.config.features) return [];
+    const enabledFeatures = [];
     for (const feature in tdsStorage.config.features) {
-        const featureSettings = getFeatureSettings(feature)
+        const featureSettings = getFeatureSettings(feature);
 
         if (featureSettings.aboutBlankEnabled !== 'disabled' && brokenListIndex(url, featureSettings.aboutBlankSites || []) === -1) {
-            enabledFeatures.push(feature)
+            enabledFeatures.push(feature);
         }
     }
-    return enabledFeatures
+    return enabledFeatures;
 }
 
 export function getEnabledFeatures(url) {
-    if (!tdsStorage.config.features) return []
-    const enabledFeatures = []
+    if (!tdsStorage.config.features) return [];
+    const enabledFeatures = [];
     for (const feature in tdsStorage.config.features) {
         if (isFeatureEnabled(feature) && brokenListIndex(url, tdsStorage.config.features[feature].exceptions || []) === -1) {
-            enabledFeatures.push(feature)
+            enabledFeatures.push(feature);
         }
     }
-    return enabledFeatures
+    return enabledFeatures;
 }
 
 export function brokenListIndex(url, list) {
-    const parsedDomain = tldtsParse(url)
-    const hostname = parsedDomain.hostname || url
+    const parsedDomain = tldtsParse(url);
+    const hostname = parsedDomain.hostname || url;
 
     // If root domain in temp unprotected list, return true
     return list.findIndex((brokenSiteDomain) => {
         if (brokenSiteDomain.domain) {
-            return hostname === brokenSiteDomain.domain || hostname.endsWith(`.${brokenSiteDomain.domain}`)
+            return hostname === brokenSiteDomain.domain || hostname.endsWith(`.${brokenSiteDomain.domain}`);
         }
-        return false
-    })
+        return false;
+    });
 }
 
 // We inject this into content scripts
 export function getBrokenScriptLists() {
-    const brokenScripts = {}
+    const brokenScripts = {};
     for (const key in tdsStorage.config.features) {
-        const featureSettings = getFeatureSettings(key)
-        brokenScripts[key] = featureSettings.scripts?.map((obj) => obj.domain) || []
+        const featureSettings = getFeatureSettings(key);
+        brokenScripts[key] = featureSettings.scripts?.map((obj) => obj.domain) || [];
     }
-    return brokenScripts
+    return brokenScripts;
 }
 
 // return true if the given url is in the safelist. For checking if the current tab is in the safelist,
 // tabManager.site.isProtectionEnabled() is the preferred method.
 export function isSafeListed(url) {
-    const hostname = extractHostFromURL(url)
-    const safeList = settings.getSetting('allowlisted')
-    const subdomains = hostname.split('.')
+    const hostname = extractHostFromURL(url);
+    const safeList = settings.getSetting('allowlisted');
+    const subdomains = hostname.split('.');
     // Check user safe list
     // TODO make the same as brokenListIndex matching
     while (subdomains.length > 1) {
         if (safeList && safeList[subdomains.join('.')]) {
-            return true
+            return true;
         }
-        subdomains.shift()
+        subdomains.shift();
     }
 
     // Check broken sites
     if (isBroken(hostname)) {
-        return true
+        return true;
     }
 
-    return false
+    return false;
 }
 
 export function isCookieExcluded(url) {
-    const domain = new URL(url).host
-    return isDomainCookieExcluded(domain)
+    const domain = new URL(url).host;
+    return isDomainCookieExcluded(domain);
 }
 
 function isDomainCookieExcluded(domain) {
-    const cookieSettings = getFeatureSettings('cookie')
+    const cookieSettings = getFeatureSettings('cookie');
     if (!cookieSettings || !cookieSettings.excludedCookieDomains) {
-        return false
+        return false;
     }
 
     if (cookieSettings.excludedCookieDomains.find((elem) => elem.domain === domain)) {
-        return true
+        return true;
     }
 
-    const comps = domain.split('.')
+    const comps = domain.split('.');
     if (comps.length > 2) {
-        comps.shift()
-        return isDomainCookieExcluded(comps.join('.'))
+        comps.shift();
+        return isDomainCookieExcluded(comps.join('.'));
     }
 
-    return false
+    return false;
 }
 
 /**
@@ -340,35 +340,35 @@ function isDomainCookieExcluded(domain) {
  * top level domain.
  */
 export function isSameTopLevelDomain(url1, url2) {
-    const first = getBaseDomain(url1)
-    const second = getBaseDomain(url2)
+    const first = getBaseDomain(url1);
+    const second = getBaseDomain(url2);
 
     if (!first || !second) {
-        return false
+        return false;
     }
 
-    return first === second
+    return first === second;
 }
 
 export function parseVersionString(versionString) {
-    return versionString.split('.').map(Number)
+    return versionString.split('.').map(Number);
 }
 
 export function satisfiesMinVersion(minVersionString, extensionVersionString) {
-    const minVersions = parseVersionString(minVersionString)
-    const currentVersions = parseVersionString(extensionVersionString)
-    const maxLength = Math.max(minVersions.length, currentVersions.length)
+    const minVersions = parseVersionString(minVersionString);
+    const currentVersions = parseVersionString(extensionVersionString);
+    const maxLength = Math.max(minVersions.length, currentVersions.length);
     for (let i = 0; i < maxLength; i++) {
-        const minNumberPart = minVersions[i] || 0
-        const currentVersionPart = currentVersions[i] || 0
+        const minNumberPart = minVersions[i] || 0;
+        const currentVersionPart = currentVersions[i] || 0;
         if (currentVersionPart > minNumberPart) {
-            return true
+            return true;
         }
         if (currentVersionPart < minNumberPart) {
-            return false
+            return false;
         }
     }
-    return true
+    return true;
 }
 
 /**
@@ -379,20 +379,20 @@ export function satisfiesMinVersion(minVersionString, extensionVersionString) {
  * @returns {boolean} - if feature is enabled
  */
 export function isFeatureEnabled(featureName) {
-    const feature = tdsStorage.config.features[featureName]
+    const feature = tdsStorage.config.features[featureName];
     if (!feature) {
-        return false
+        return false;
     }
 
     // If we have a supplied min version for the feature ensure the extension meets it
     if ('minSupportedVersion' in feature) {
-        const extensionVersionString = getExtensionVersion()
+        const extensionVersionString = getExtensionVersion();
         if (!satisfiesMinVersion(feature.minSupportedVersion, extensionVersionString)) {
-            return false
+            return false;
         }
     }
 
-    return feature.state === 'enabled'
+    return feature.state === 'enabled';
 }
 
 /**
@@ -402,12 +402,12 @@ export function isFeatureEnabled(featureName) {
  * @returns {Object} - Settings associated in the config with featureName
  */
 export function getFeatureSettings(featureName) {
-    const feature = tdsStorage.config.features[featureName]
+    const feature = tdsStorage.config.features[featureName];
     if (typeof feature !== 'object' || feature === null || !feature.settings) {
-        return {}
+        return {};
     }
 
-    return feature.settings
+    return feature.settings;
 }
 
 /**
@@ -416,17 +416,17 @@ export function getFeatureSettings(featureName) {
  * @returns {string}
  */
 export function getURLWithoutQueryString(urlString) {
-    return urlString?.split('?')[0]
+    return urlString?.split('?')[0];
 }
 
 export async function reloadCurrentTab() {
-    const tab = await getCurrentTab()
+    const tab = await getCurrentTab();
     if (tab && tab.id) {
-        await browser.tabs.reload(tab.id)
+        await browser.tabs.reload(tab.id);
     }
 }
 
-const dayMultiplier = 24 * 60 * 60 * 1000
+const dayMultiplier = 24 * 60 * 60 * 1000;
 
 /**
  * Converts ATB value into date
@@ -434,14 +434,14 @@ const dayMultiplier = 24 * 60 * 60 * 1000
  * @returns {number|null}
  */
 export function getInstallTimestamp(atb) {
-    const match = atb.match(/^v?(\d+)-(\d)(.+)?$/i)
-    if (!match) return null
+    const match = atb.match(/^v?(\d+)-(\d)(.+)?$/i);
+    if (!match) return null;
 
-    const startDate = 1456272000000
-    const weeksSince = (parseInt(match[1], 10) - 1) * 7 * dayMultiplier
-    const daysSince = (parseInt(match[2], 10) - 1) * dayMultiplier
-    const installTimestamp = new Date(startDate + weeksSince + daysSince).getTime()
-    return isNaN(installTimestamp) ? null : installTimestamp
+    const startDate = 1456272000000;
+    const weeksSince = (parseInt(match[1], 10) - 1) * 7 * dayMultiplier;
+    const daysSince = (parseInt(match[2], 10) - 1) * dayMultiplier;
+    const installTimestamp = new Date(startDate + weeksSince + daysSince).getTime();
+    return isNaN(installTimestamp) ? null : installTimestamp;
 }
 
 /**
@@ -452,7 +452,7 @@ export function getInstallTimestamp(atb) {
  * @returns {boolean}
  */
 export function isInstalledWithinDays(numberOfDays, fromDate = Date.now(), atb = settings.getSetting('atb')) {
-    return daysInstalled(fromDate, atb) <= numberOfDays
+    return daysInstalled(fromDate, atb) <= numberOfDays;
 }
 
 /**
@@ -462,13 +462,13 @@ export function isInstalledWithinDays(numberOfDays, fromDate = Date.now(), atb =
  * @returns {number}
  */
 export function daysInstalled(fromDate = Date.now(), atb = settings.getSetting('atb')) {
-    if (!atb) return NaN
+    if (!atb) return NaN;
 
-    const installTimestamp = getInstallTimestamp(atb)
+    const installTimestamp = getInstallTimestamp(atb);
     // If we can't get the install date, assume it wasn't installed in time period
-    if (!installTimestamp) return NaN
+    if (!installTimestamp) return NaN;
 
-    return (fromDate - installTimestamp) / dayMultiplier
+    return (fromDate - installTimestamp) / dayMultiplier;
 }
 
 /**
@@ -482,6 +482,6 @@ export function daysInstalled(fromDate = Date.now(), atb = settings.getSetting('
  */
 export function resolveAfterDelay(delay) {
     return new Promise((resolve) => {
-        setTimeout(resolve, delay)
-    })
+        setTimeout(resolve, delay);
+    });
 }

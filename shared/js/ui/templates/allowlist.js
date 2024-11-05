@@ -1,6 +1,6 @@
-const bel = require('nanohtml')
-const allowlistItems = require('./allowlist-items.js')
-const t = window.DDG.base.i18n.t
+const bel = require('nanohtml');
+const allowlistItems = require('./allowlist-items.js');
+const t = window.DDG.base.i18n.t;
 
 module.exports = function () {
     return bel`<section class="options-content__allowlist">
@@ -10,7 +10,7 @@ module.exports = function () {
         ${allowlistItems(this.model.list)}
     </ul>
     ${addToAllowlist()}
-</section>`
+</section>`;
 
     function addToAllowlist() {
         return bel`<div>
@@ -33,6 +33,6 @@ module.exports = function () {
             </span>
         </div>
     </div>
-</div>`
+</div>`;
     }
-}
+};

@@ -1,5 +1,5 @@
 module.exports = function (config) {
-    process.env.CHROME_BIN = require('puppeteer').executablePath()
+    process.env.CHROME_BIN = require('puppeteer').executablePath();
 
     const configuration = {
         basePath: 'build/test/',
@@ -18,11 +18,11 @@ module.exports = function (config) {
                 flags: ['--no-sandbox'],
             },
         },
-    }
+    };
 
     if (process.env.TRAVIS) {
-        configuration.browsers = ['Chrome_travis_ci']
+        configuration.browsers = ['Chrome_travis_ci'];
     }
 
-    config.set(configuration)
-}
+    config.set(configuration);
+};

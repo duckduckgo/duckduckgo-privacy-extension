@@ -1,7 +1,7 @@
-import '../../../shared/js/ui/base/index'
-const Allowlist = require('../../../shared/js/ui/models/allowlist')
+import '../../../shared/js/ui/base/index';
+const Allowlist = require('../../../shared/js/ui/models/allowlist');
 
-let allowlist
+let allowlist;
 
 const domainTestCases = [
     {
@@ -64,18 +64,18 @@ const domainTestCases = [
         allowlistedDomain: '',
         valid: false,
     },
-]
+];
 
 describe('allowlist.addDomain()', () => {
-    allowlist = new Allowlist({})
+    allowlist = new Allowlist({});
     domainTestCases.forEach((test) => {
         it(`should return ${test.valid} for ${test.url}`, () => {
-            const result = allowlist.addDomain(test.url)
+            const result = allowlist.addDomain(test.url);
             if (test.valid) {
-                expect(result).toBe(test.allowlistedDomain)
+                expect(result).toBe(test.allowlistedDomain);
             } else {
-                expect(result).toBe(null)
+                expect(result).toBe(null);
             }
-        })
-    })
-})
+        });
+    });
+});

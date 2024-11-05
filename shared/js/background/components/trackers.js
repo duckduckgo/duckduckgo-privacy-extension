@@ -1,4 +1,4 @@
-import trackers from '../trackers'
+import trackers from '../trackers';
 
 /**
  * @typedef {import('./tds').default} TDSStorage
@@ -13,8 +13,8 @@ export default class TrackersGlobal {
     constructor({ tds }) {
         /** @type {import('./resource-loader').OnUpdatedCallback} */
         const setLists = (name, _, data) => {
-            trackers.setLists([{ name, data }])
-        }
+            trackers.setLists([{ name, data }]);
+        };
         this.ready = Promise.all([tds.tds.ready, tds.surrogates.ready]).then(() => {
             trackers.setLists([
                 {
@@ -25,11 +25,11 @@ export default class TrackersGlobal {
                     name: 'surrogates',
                     data: tds.surrogates.data,
                 },
-            ])
+            ]);
             // listen for updates to tds or surrogates
-            tds.tds.onUpdate(setLists)
-            tds.surrogates.onUpdate(setLists)
-        })
-        this.trackers = trackers
+            tds.tds.onUpdate(setLists);
+            tds.surrogates.onUpdate(setLists);
+        });
+        this.trackers = trackers;
     }
 }

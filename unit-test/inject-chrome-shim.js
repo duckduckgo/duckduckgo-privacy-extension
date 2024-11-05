@@ -18,7 +18,7 @@ const chrome = {
     },
     declarativeNetRequest: {
         isRegexSupported() {
-            return { isSupported: true }
+            return { isSupported: true };
         },
         getDynamicRules() {},
         getSessionRules() {},
@@ -29,7 +29,7 @@ const chrome = {
         id: '577dc9b9-c381-115a-2246-3f95fe0e6ffe',
         sendMessage: () => {},
         getManifest: () => {
-            return { version: '1234.56' }
+            return { version: '1234.56' };
         },
         setUninstallURL: () => {},
         getURL: (path) => path,
@@ -47,7 +47,7 @@ const chrome = {
         },
         onPerformanceWarning: {
             addListener(listener) {
-                chrome.runtime.onPerformanceWarning._listeners.push(listener)
+                chrome.runtime.onPerformanceWarning._listeners.push(listener);
             },
             _listeners: [],
         },
@@ -59,16 +59,16 @@ const chrome = {
     storage: {
         local: {
             set: (value) => {
-                chrome.storage.local._setCalls.push(value)
+                chrome.storage.local._setCalls.push(value);
             },
             get: (args, cb) => {
-                cb({})
+                cb({});
             },
             _setCalls: [],
         },
         managed: {
             get: (args, cb) => {
-                cb({})
+                cb({});
             },
         },
     },
@@ -125,5 +125,5 @@ const chrome = {
             removeListener() {},
         },
     },
-}
-export { chrome as 'globalThis.chrome', chrome }
+};
+export { chrome as 'globalThis.chrome', chrome };

@@ -62,35 +62,35 @@
 // workaround, it is sometimes possible to instead use a regexFilter (in
 // combination with the requestDomains condition) that matches any domain, while
 // still anchoring the rest of the rule to the domain correctly.
-const cnameDomainAnchor = '[a-z]+://[^/?]*'
-const cnameDomainAnchorCompatibleRuleSuffix = /^(:[0-9]+)?[/?]/
+const cnameDomainAnchor = '[a-z]+://[^/?]*';
+const cnameDomainAnchorCompatibleRuleSuffix = /^(:[0-9]+)?[/?]/;
 
 // Characters that indicate a tracker rule needs to be treated as a regular
 // expression (rather than a URL filter).
 // Note: This is not perfect, but good enough for now to avoid using regexFilter
 //       unless needed. In the future improvements could be made (e.g. by
 //       ignoring a closing ']' unless an opening '[' was already seen).
-const regularExpressionChars = new Set(['.', '*', '+', '?', '{', '}', '[', ']', '{', '}'])
+const regularExpressionChars = new Set(['.', '*', '+', '?', '{', '}', '[', ']', '{', '}']);
 
 function storeInMapLookup(lookup, key, values) {
-    let storedValues = lookup.get(key)
+    let storedValues = lookup.get(key);
     if (!storedValues) {
-        storedValues = []
-        lookup.set(key, storedValues)
+        storedValues = [];
+        lookup.set(key, storedValues);
     }
     for (const value of values) {
-        storedValues.push(value)
+        storedValues.push(value);
     }
 }
 
 function storeInObjectLookup(lookup, key, values) {
-    let storedValues = lookup[key]
+    let storedValues = lookup[key];
     if (!storedValues) {
-        storedValues = []
-        lookup[key] = storedValues
+        storedValues = [];
+        lookup[key] = storedValues;
     }
     for (const value of values) {
-        storedValues.push(value)
+        storedValues.push(value);
     }
 }
 
@@ -107,9 +107,9 @@ function storeInObjectLookup(lookup, key, values) {
  */
 function storeInLookup(lookup, key, values) {
     if (lookup instanceof Map) {
-        storeInMapLookup(lookup, key, values)
+        storeInMapLookup(lookup, key, values);
     } else {
-        storeInObjectLookup(lookup, key, values)
+        storeInObjectLookup(lookup, key, values);
     }
 }
 
@@ -131,7 +131,7 @@ function storeInLookup(lookup, key, values) {
  * @returns {chrome.declarativeNetRequest.HeaderOperation}
  */
 function castDNREnum(s) {
-    return s
+    return s;
 }
 
 /**
@@ -199,31 +199,31 @@ function generateDNRRule({
             type: actionType,
         },
         condition: {},
-    }
+    };
 
     if (typeof id === 'number') {
-        dnrRule.id = id
+        dnrRule.id = id;
     }
 
     if (requestDomains && requestDomains.length > 0) {
-        dnrRule.condition.requestDomains = requestDomains
+        dnrRule.condition.requestDomains = requestDomains;
     }
 
     if (actionType === 'redirect' && redirect) {
-        dnrRule.action.redirect = redirect
+        dnrRule.action.redirect = redirect;
     }
 
     if (actionType === 'modifyHeaders') {
         if (requestHeaders && requestHeaders.length > 0) {
-            dnrRule.action.requestHeaders = requestHeaders
+            dnrRule.action.requestHeaders = requestHeaders;
         }
         if (responseHeaders && responseHeaders.length > 0) {
-            dnrRule.action.responseHeaders = responseHeaders
+            dnrRule.action.responseHeaders = responseHeaders;
         }
     }
 
     if (urlFilter) {
-        dnrRule.condition.urlFilter = urlFilter
+        dnrRule.condition.urlFilter = urlFilter;
 
         // If the URL filter is anchored to a domain anyway, then additional
         // (included) request domain conditions don't serve a purpose.
@@ -234,34 +234,34 @@ function generateDNRRule({
         //            domain
         //         2. cname entries never map to a subdomain of the same tracker
         if (urlFilter[0] === '|' && urlFilter[1] === '|') {
-            delete dnrRule.condition.requestDomains
+            delete dnrRule.condition.requestDomains;
         }
 
         if (!matchCase) {
-            dnrRule.condition.isUrlFilterCaseSensitive = false
+            dnrRule.condition.isUrlFilterCaseSensitive = false;
         }
     } else if (regexFilter) {
-        dnrRule.condition.regexFilter = regexFilter
+        dnrRule.condition.regexFilter = regexFilter;
 
         if (!matchCase) {
-            dnrRule.condition.isUrlFilterCaseSensitive = false
+            dnrRule.condition.isUrlFilterCaseSensitive = false;
         }
     }
 
     if (resourceTypes && resourceTypes.length > 0) {
-        dnrRule.condition.resourceTypes = resourceTypes
+        dnrRule.condition.resourceTypes = resourceTypes;
     }
 
     if (excludedResourceTypes && excludedResourceTypes.length > 0) {
-        dnrRule.condition.excludedResourceTypes = excludedResourceTypes
+        dnrRule.condition.excludedResourceTypes = excludedResourceTypes;
     }
 
     if (initiatorDomains && initiatorDomains.length > 0) {
-        dnrRule.condition.initiatorDomains = initiatorDomains
+        dnrRule.condition.initiatorDomains = initiatorDomains;
     }
 
     if (excludedRequestDomains && excludedRequestDomains.length > 0) {
-        dnrRule.condition.excludedRequestDomains = excludedRequestDomains
+        dnrRule.condition.excludedRequestDomains = excludedRequestDomains;
     }
 
     // Note: It's not necessary to exclude initiator domains for allowing rules
@@ -271,102 +271,102 @@ function generateDNRRule({
             // Assume that if only one initiator domain is excluded (and there
             // is only one request domain), that the excluded initiator domain
             // is the same as the request domain.
-            dnrRule.condition.domainType = castDNREnum('thirdParty')
+            dnrRule.condition.domainType = castDNREnum('thirdParty');
         } else {
-            dnrRule.condition.excludedInitiatorDomains = excludedInitiatorDomains
+            dnrRule.condition.excludedInitiatorDomains = excludedInitiatorDomains;
         }
     }
 
     if (tabIds && tabIds.length > 0) {
-        dnrRule.condition.tabIds = tabIds
+        dnrRule.condition.tabIds = tabIds;
     }
 
     if (excludedTabIds && excludedTabIds.length > 0) {
-        dnrRule.condition.excludedTabIds = excludedTabIds
+        dnrRule.condition.excludedTabIds = excludedTabIds;
     }
 
     if (requestMethods && requestMethods.length > 0) {
-        dnrRule.condition.requestMethods = requestMethods
+        dnrRule.condition.requestMethods = requestMethods;
     }
 
     if (excludedRequestMethods && excludedRequestMethods.length > 0) {
-        dnrRule.condition.excludedRequestMethods = excludedRequestMethods
+        dnrRule.condition.excludedRequestMethods = excludedRequestMethods;
     }
 
-    return dnrRule
+    return dnrRule;
 }
 
 function alphaChar(charCode) {
-    return (charCode >= 97 && charCode <= 122) || (charCode >= 65 && charCode <= 90)
+    return (charCode >= 97 && charCode <= 122) || (charCode >= 65 && charCode <= 90);
 }
 
 function parseRegexTrackerRule(domain, trackerRule) {
-    let requiresRegexFilter = false
-    let urlFilter = ''
-    let afterDomainRuleIndex = -1
-    let lastAlphaIndex = -1
+    let requiresRegexFilter = false;
+    let urlFilter = '';
+    let afterDomainRuleIndex = -1;
+    let lastAlphaIndex = -1;
 
-    let escaped = false
-    let previousCharWasPeriod = false
+    let escaped = false;
+    let previousCharWasPeriod = false;
 
     for (let i = 0; i < trackerRule.length; i++) {
-        const char = trackerRule[i]
-        const charCode = char.charCodeAt(0)
+        const char = trackerRule[i];
+        const charCode = char.charCodeAt(0);
 
         if (domain && urlFilter.length === domain.length && afterDomainRuleIndex === -1) {
             // Store the index in the trackerRule that corresponds to the first
             // character after the domain part. That is assuming the rule is
             // prefixed with the domain part... that is verified later.
-            afterDomainRuleIndex = i
+            afterDomainRuleIndex = i;
         }
 
         if (escaped) {
             // Matching (only) a '*' literal in a urlFilter does not seem to be
             // possible. (Tested as of Chromium M101.)
             if (char === '*') {
-                requiresRegexFilter = true
-                continue
+                requiresRegexFilter = true;
+                continue;
             }
 
             if (alphaChar(charCode)) {
-                lastAlphaIndex = i
+                lastAlphaIndex = i;
             }
 
-            escaped = false
-            urlFilter += char
-            continue
+            escaped = false;
+            urlFilter += char;
+            continue;
         }
 
         if (char === '\\') {
-            escaped = true
-            continue
+            escaped = true;
+            continue;
         }
 
         if (char === '.') {
-            previousCharWasPeriod = true
-            continue
+            previousCharWasPeriod = true;
+            continue;
         }
 
         if (char === '*' && previousCharWasPeriod) {
-            urlFilter += '*'
-            previousCharWasPeriod = false
-            continue
+            urlFilter += '*';
+            previousCharWasPeriod = false;
+            continue;
         }
 
         if (regularExpressionChars.has(char) || previousCharWasPeriod) {
-            requiresRegexFilter = true
-            continue
+            requiresRegexFilter = true;
+            continue;
         }
 
         if (alphaChar(charCode)) {
-            lastAlphaIndex = i
+            lastAlphaIndex = i;
         }
 
-        urlFilter += char
+        urlFilter += char;
     }
 
     if (previousCharWasPeriod) {
-        requiresRegexFilter = true
+        requiresRegexFilter = true;
     }
 
     return {
@@ -374,7 +374,7 @@ function parseRegexTrackerRule(domain, trackerRule) {
         urlFilter,
         afterDomainRuleIndex,
         lastAlphaIndex,
-    }
+    };
 }
 
 /**
@@ -405,26 +405,26 @@ function processRegexTrackerRule(domain, trackerRule, matchCnames) {
     // If the tracker rule is empty, then neither urlFilter nor regexFilter are
     // necessary.
     if (!trackerRule) {
-        return {}
+        return {};
     }
 
-    let { requiresRegexFilter, urlFilter, afterDomainRuleIndex, lastAlphaIndex } = parseRegexTrackerRule(domain, trackerRule)
+    let { requiresRegexFilter, urlFilter, afterDomainRuleIndex, lastAlphaIndex } = parseRegexTrackerRule(domain, trackerRule);
 
-    let regexFilter = trackerRule
-    let matchCase = false
-    let usedRegexForWorkaround = false
+    let regexFilter = trackerRule;
+    let matchCase = false;
+    let usedRegexForWorkaround = false;
 
     if (domain && urlFilter.startsWith(domain)) {
         // If the the urlFilter is the same length as the domain, then the
         // strings are equal (since the urlFilter starts with the domain).
         // Neither urlFilter nor regexFilter are necessary.
         if (urlFilter.length === domain.length) {
-            return {}
+            return {};
         }
 
         // Ignore the domain when considering if the rule needs to be matched
         // case sensitively.
-        matchCase = lastAlphaIndex < afterDomainRuleIndex
+        matchCase = lastAlphaIndex < afterDomainRuleIndex;
 
         if (urlFilter[domain.length] === '*') {
             // If the urlFilter is longer than the domain, but the next
@@ -435,8 +435,8 @@ function processRegexTrackerRule(domain, trackerRule, matchCnames) {
             // Note: Remove an extra character from the regexFilter, since the
             //       wild-card for a regular expression is '.*' rather than just
             //       '*'.
-            regexFilter = regexFilter.substr(afterDomainRuleIndex + 2)
-            urlFilter = urlFilter.substr(domain.length + 1)
+            regexFilter = regexFilter.substr(afterDomainRuleIndex + 2);
+            urlFilter = urlFilter.substr(domain.length + 1);
         } else {
             // If the pattern needs to be anchored to the domain, and cname
             // matching is required, then a regexFilter is necessary to anchor
@@ -445,32 +445,32 @@ function processRegexTrackerRule(domain, trackerRule, matchCnames) {
             //       character directly after the domain (or port) part of the
             //       rule.
             if (matchCnames && afterDomainRuleIndex > -1 && cnameDomainAnchorCompatibleRuleSuffix.test(urlFilter.substr(domain.length))) {
-                usedRegexForWorkaround = true
-                regexFilter = cnameDomainAnchor + trackerRule.substr(afterDomainRuleIndex)
+                usedRegexForWorkaround = true;
+                regexFilter = cnameDomainAnchor + trackerRule.substr(afterDomainRuleIndex);
             }
 
             // Prepend the '||' urlFilter domain anchor to improve matching
             // performance.
-            urlFilter = '||' + urlFilter
+            urlFilter = '||' + urlFilter;
         }
     } else {
         // If there isn't a (known) domain part, then case sensitive matching
         // can only happen if there were no alpha characters.
-        matchCase = lastAlphaIndex === -1
+        matchCase = lastAlphaIndex === -1;
     }
 
     if (requiresRegexFilter) {
-        return { regexFilter, matchCase }
+        return { regexFilter, matchCase };
     }
 
     // The regular expression will sometimes be too complex (long) for a
     // declarativeNetRequest rule. Provide the urlFilter as a fallback, but note
     // that cnames will not be matched correctly by the urlFilter.
     if (usedRegexForWorkaround) {
-        return { regexFilter, matchCase, fallbackUrlFilter: urlFilter }
+        return { regexFilter, matchCase, fallbackUrlFilter: urlFilter };
     }
 
-    return { urlFilter, matchCase }
+    return { urlFilter, matchCase };
 }
 
 /**
@@ -491,18 +491,18 @@ function processRegexTrackerRule(domain, trackerRule, matchCnames) {
  * @return {processPlaintextTrackerRuleResult}
  */
 function processPlaintextTrackerRule(domain, trackerRule) {
-    let urlFilter = trackerRule
+    let urlFilter = trackerRule;
 
     if (domain && urlFilter.startsWith(domain)) {
-        urlFilter = '||' + urlFilter
+        urlFilter = '||' + urlFilter;
     }
 
     // Note: In the future it would be nice to avoid case-insensitive matching
     //       unless necessary. The logic to do that could potentially be shared
     //       with processRegexTrackerRule.
-    const matchCase = false
+    const matchCase = false;
 
-    return { urlFilter, matchCase }
+    return { urlFilter, matchCase };
 }
 
 /**
@@ -524,24 +524,24 @@ function processPlaintextTrackerRule(domain, trackerRule) {
  */
 function getTrackerEntryDomain(trackerEntries, domain, skipSubdomains = 0) {
     // Strip leading '.' in cname entries, nothing otherwise.
-    let i = domain[0] === '.' ? 0 : -1
+    let i = domain[0] === '.' ? 0 : -1;
 
     do {
-        domain = domain.substr(i + 1)
-        i = domain.indexOf('.')
+        domain = domain.substr(i + 1);
+        i = domain.indexOf('.');
 
         if (skipSubdomains > 0) {
-            skipSubdomains -= 1
-            continue
+            skipSubdomains -= 1;
+            continue;
         }
 
-        const trackerEntry = trackerEntries[domain]
+        const trackerEntry = trackerEntries[domain];
         if (trackerEntry) {
-            return domain
+            return domain;
         }
-    } while (i > -1)
+    } while (i > -1);
 
-    return null
+    return null;
 }
 
 /**
@@ -550,16 +550,16 @@ function getTrackerEntryDomain(trackerEntries, domain, skipSubdomains = 0) {
  * @returns {Map<string, string[]>} domain mapping
  */
 function generateRequestDomainsByTrackerDomain(tds) {
-    const requestDomainsByTrackerDomain = new Map()
+    const requestDomainsByTrackerDomain = new Map();
     // Create a lookup of each tracker entry's domain, that matching cname
     // entries will be added to.
     for (const trackerDomain of Object.keys(tds.trackers)) {
-        storeInLookup(requestDomainsByTrackerDomain, trackerDomain, [trackerDomain])
+        storeInLookup(requestDomainsByTrackerDomain, trackerDomain, [trackerDomain]);
     }
     for (const [domain, cname] of Object.entries(tds.cnames)) {
         // Find the appropriate tracker entry that the cname entry should apply
         // to.
-        const trackerEntryDomain = getTrackerEntryDomain(tds.trackers, cname)
+        const trackerEntryDomain = getTrackerEntryDomain(tds.trackers, cname);
         if (trackerEntryDomain) {
             // There are some difficult edge-cases when the subdomain of a cname
             // entry has its own tracker entry. Requests are first checked
@@ -571,7 +571,7 @@ function generateRequestDomainsByTrackerDomain(tds) {
             // tracker entry.
             // See https://github.com/duckduckgo/privacy-grade/blob/4d28937/src/classes/trackers.js#L111-L125
             if (getTrackerEntryDomain(tds.trackers, domain, 1)) {
-                continue
+                continue;
             }
 
             // Strictly speaking, the domain should also be added to the
@@ -581,10 +581,10 @@ function generateRequestDomainsByTrackerDomain(tds) {
 
             // Ensure that the cname is added to included request domains for
             // the matching tracker entry.
-            storeInLookup(requestDomainsByTrackerDomain, trackerEntryDomain, [domain])
+            storeInLookup(requestDomainsByTrackerDomain, trackerEntryDomain, [domain]);
         }
     }
-    return requestDomainsByTrackerDomain
+    return requestDomainsByTrackerDomain;
 }
 
 /** @type Set<ResourceType> */
@@ -604,13 +604,13 @@ const resourceTypes = new Set([
     'webtransport',
     'webbundle',
     'other',
-])
+]);
 
-exports.castDNREnum = castDNREnum
-exports.generateDNRRule = generateDNRRule
-exports.generateRequestDomainsByTrackerDomain = generateRequestDomainsByTrackerDomain
-exports.getTrackerEntryDomain = getTrackerEntryDomain
-exports.processRegexTrackerRule = processRegexTrackerRule
-exports.processPlaintextTrackerRule = processPlaintextTrackerRule
-exports.resourceTypes = resourceTypes
-exports.storeInLookup = storeInLookup
+exports.castDNREnum = castDNREnum;
+exports.generateDNRRule = generateDNRRule;
+exports.generateRequestDomainsByTrackerDomain = generateRequestDomainsByTrackerDomain;
+exports.getTrackerEntryDomain = getTrackerEntryDomain;
+exports.processRegexTrackerRule = processRegexTrackerRule;
+exports.processPlaintextTrackerRule = processPlaintextTrackerRule;
+exports.resourceTypes = resourceTypes;
+exports.storeInLookup = storeInLookup;

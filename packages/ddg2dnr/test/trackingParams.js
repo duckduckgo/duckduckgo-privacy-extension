@@ -1,6 +1,6 @@
-const assert = require('assert')
+const assert = require('assert');
 
-const { generateTrackingParameterRules, TRACKING_PARAM_PRIORITY } = require('../lib/trackingParams')
+const { generateTrackingParameterRules, TRACKING_PARAM_PRIORITY } = require('../lib/trackingParams');
 
 const baseExtensionConfig = {
     features: {
@@ -21,7 +21,7 @@ const baseExtensionConfig = {
             ],
         },
     },
-}
+};
 
 const expectedTrackingParamResult = [
     {
@@ -44,18 +44,18 @@ const expectedTrackingParamResult = [
             },
         },
     },
-]
+];
 
 describe('Remove Tracking Parameter Rule', () => {
     it('should generate tracking param rule correctly', async () => {
-        const trackingParamRule = generateTrackingParameterRules(baseExtensionConfig)
-        assert.deepEqual(trackingParamRule, expectedTrackingParamResult)
-    })
+        const trackingParamRule = generateTrackingParameterRules(baseExtensionConfig);
+        assert.deepEqual(trackingParamRule, expectedTrackingParamResult);
+    });
 
     it("shouldn't generate rules if disabled", async () => {
-        const disabledConfig = baseExtensionConfig
-        disabledConfig.features.trackingParameters.state = 'disabled'
-        const trackingParamRule = generateTrackingParameterRules(baseExtensionConfig)
-        assert.deepEqual(trackingParamRule, [])
-    })
-})
+        const disabledConfig = baseExtensionConfig;
+        disabledConfig.features.trackingParameters.state = 'disabled';
+        const trackingParamRule = generateTrackingParameterRules(baseExtensionConfig);
+        assert.deepEqual(trackingParamRule, []);
+    });
+});

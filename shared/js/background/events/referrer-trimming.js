@@ -1,7 +1,7 @@
-const tabManager = require('../tab-manager')
-const trackerutils = require('../tracker-utils')
-const utils = require('../utils')
-const browserName = utils.getBrowserName()
+const tabManager = require('../tab-manager');
+const trackerutils = require('../tracker-utils');
+const utils = require('../utils');
+const browserName = utils.getBrowserName();
 
 /**
  * @typedef Referrer
@@ -19,45 +19,45 @@ const browserName = utils.getBrowserName()
  * @returns {{requestHeaders: Array<{name: string, value:string}>} | { redirectUrl: URL } | undefined}
  */
 module.exports = function limitReferrerData(e) {
-    const referrer = e.requestHeaders.find((header) => header.name.toLowerCase() === 'referer')?.value
-    if (!referrer) return
+    const referrer = e.requestHeaders.find((header) => header.name.toLowerCase() === 'referer')?.value;
+    if (!referrer) return;
 
-    const tab = tabManager.get(e)
+    const tab = tabManager.get(e);
 
     // Firefox only - Check if this tab had a surrogate redirect request and if it will
     // likely be blocked by CORS (Origin header). Chrome surrogate redirects happen in onBeforeRequest.
     if (browserName === 'moz' && tab && tab.surrogates && tab.surrogates[e.url]) {
-        const hasOrigin = e.requestHeaders.filter((h) => h.name.match(/^origin$/i))
+        const hasOrigin = e.requestHeaders.filter((h) => h.name.match(/^origin$/i));
         if (!hasOrigin.length) {
-            const redirectUrl = tab.surrogates[e.url]
+            const redirectUrl = tab.surrogates[e.url];
             // remove redirect entry for the tab
-            delete tab.surrogates[e.url]
+            delete tab.surrogates[e.url];
 
-            return { redirectUrl }
+            return { redirectUrl };
         }
     }
 
     if (!tab || !tab.site.isFeatureEnabled('referrer')) {
-        return
+        return;
     }
 
     // Additional safe list and broken site list checks are included in the referrer evaluation
-    const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url)
+    const modifiedReferrer = trackerutils.truncateReferrer(referrer, e.url);
     if (!modifiedReferrer) {
-        return
+        return;
     }
 
-    const requestHeaders = e.requestHeaders.filter((header) => header.name.toLowerCase() !== 'referer')
+    const requestHeaders = e.requestHeaders.filter((header) => header.name.toLowerCase() !== 'referer');
     if (!!tab && (!tab.referrer || tab.referrer.site !== tab.site.url)) {
         tab.referrer = {
             site: tab.site.url,
             referrerHost: new URL(referrer).hostname,
             referrer: modifiedReferrer,
-        }
+        };
     }
     requestHeaders.push({
         name: 'referer',
         value: modifiedReferrer,
-    })
-    return { requestHeaders }
-}
+    });
+    return { requestHeaders };
+};

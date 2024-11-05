@@ -1,11 +1,11 @@
-import settings from './settings'
+import settings from './settings';
 
-import { USER_ALLOWLISTED_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities'
+import { USER_ALLOWLISTED_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
 
-import { updateExtensionConfigRules, updateCombinedConfigBlocklistRules } from './dnr-config-rulesets'
+import { updateExtensionConfigRules, updateCombinedConfigBlocklistRules } from './dnr-config-rulesets';
 
-import { USER_ALLOWLIST_RULE_ID, findExistingDynamicRule } from './dnr-utils'
-import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
+import { USER_ALLOWLIST_RULE_ID, findExistingDynamicRule } from './dnr-utils';
+import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils';
 
 /**
  * Normalize and validate the given untrusted domain (e.g. from user input).
@@ -16,9 +16,9 @@ import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils'
  */
 function normalizeUntrustedDomain(domain) {
     try {
-        return new URL('https://' + domain).hostname
+        return new URL('https://' + domain).hostname;
     } catch (e) {
-        return null
+        return null;
     }
 }
 
@@ -29,8 +29,8 @@ function normalizeUntrustedDomain(domain) {
  * @return {Promise}
  */
 async function updateUserAllowlistRule(allowlistedDomains) {
-    const addRules = []
-    const removeRuleIds = [USER_ALLOWLIST_RULE_ID]
+    const addRules = [];
+    const removeRuleIds = [USER_ALLOWLIST_RULE_ID];
 
     if (allowlistedDomains.length > 0) {
         addRules.push(
@@ -41,13 +41,13 @@ async function updateUserAllowlistRule(allowlistedDomains) {
                 resourceTypes: ['main_frame'],
                 requestDomains: allowlistedDomains,
             }),
-        )
+        );
     }
 
     await chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds,
         addRules,
-    })
+    });
 }
 
 /**
@@ -60,17 +60,17 @@ async function updateUserAllowlistRule(allowlistedDomains) {
  * @return {Promise}
  */
 export async function toggleUserAllowlistDomain(domain, enable) {
-    const normalizedDomain = normalizeUntrustedDomain(domain)
+    const normalizedDomain = normalizeUntrustedDomain(domain);
     if (typeof normalizedDomain !== 'string') {
-        return
+        return;
     }
 
     // Figure out the correct set of allowlisted domains.
-    const existingRule = await findExistingDynamicRule(USER_ALLOWLIST_RULE_ID)
-    const allowlistedDomains = new Set(existingRule ? existingRule.condition.requestDomains : [])
-    allowlistedDomains[enable ? 'add' : 'delete'](normalizedDomain)
+    const existingRule = await findExistingDynamicRule(USER_ALLOWLIST_RULE_ID);
+    const allowlistedDomains = new Set(existingRule ? existingRule.condition.requestDomains : []);
+    allowlistedDomains[enable ? 'add' : 'delete'](normalizedDomain);
 
-    await updateUserAllowlistRule(Array.from(allowlistedDomains))
+    await updateUserAllowlistRule(Array.from(allowlistedDomains));
 }
 
 /**
@@ -85,9 +85,9 @@ export async function refreshUserAllowlistRules(allowlistedDomains) {
     // prevent invalid input sneaking through.
     const normalizedAllowlistedDomains = /** @type {string[]} */ (
         allowlistedDomains.map(normalizeUntrustedDomain).filter((domain) => typeof domain === 'string')
-    )
+    );
 
-    await updateUserAllowlistRule(normalizedAllowlistedDomains)
+    await updateUserAllowlistRule(normalizedAllowlistedDomains);
 }
 
 /**
@@ -95,19 +95,19 @@ export async function refreshUserAllowlistRules(allowlistedDomains) {
  * @returns {string[]}
  */
 export function getDenylistedDomains() {
-    const denylist = settings.getSetting('denylisted') || {}
+    const denylist = settings.getSetting('denylisted') || {};
 
-    const denylistedDomains = []
+    const denylistedDomains = [];
     for (const [domain, enabled] of Object.entries(denylist)) {
         if (enabled) {
-            const normalizedDomain = normalizeUntrustedDomain(domain)
+            const normalizedDomain = normalizeUntrustedDomain(domain);
             if (normalizedDomain) {
-                denylistedDomains.push(normalizedDomain)
+                denylistedDomains.push(normalizedDomain);
             }
         }
     }
 
-    return denylistedDomains.sort()
+    return denylistedDomains.sort();
 }
 
 /**
@@ -118,6 +118,6 @@ export function getDenylistedDomains() {
  * @return {Promise}
  */
 export async function updateUserDenylist() {
-    await updateExtensionConfigRules()
-    await updateCombinedConfigBlocklistRules()
+    await updateExtensionConfigRules();
+    await updateCombinedConfigBlocklistRules();
 }

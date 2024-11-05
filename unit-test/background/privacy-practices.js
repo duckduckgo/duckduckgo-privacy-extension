@@ -1,4 +1,4 @@
-const privacyPractices = require('../../shared/js/background/privacy-practices')
+const privacyPractices = require('../../shared/js/background/privacy-practices');
 
 describe('getTosdr', () => {
     const tests = [
@@ -32,21 +32,21 @@ describe('getTosdr', () => {
             isMessageBad: 0,
             descr: 'not bad tosdr rating for deletefacebook.com',
         },
-    ]
+    ];
 
     tests.forEach((test) => {
         it(`should return ${test.descr}`, () => {
-            const result = privacyPractices.getTosdr(test.domain)
-            const message = result.message
+            const result = privacyPractices.getTosdr(test.domain);
+            const message = result.message;
 
             if (test.isMessageBad) {
-                expect(message).toEqual('Poor')
+                expect(message).toEqual('Poor');
             } else {
-                expect(message).not.toEqual('Poor')
+                expect(message).not.toEqual('Poor');
             }
-        })
-    })
-})
+        });
+    });
+});
 
 describe('getTosdrScore', () => {
     const tests = [
@@ -65,11 +65,11 @@ describe('getTosdrScore', () => {
 
         // we don't know
         { domain: 'en.wikipedia.org', expectedScore: undefined },
-    ]
+    ];
 
     tests.forEach((test) => {
         it(`should give ${test.domain} score ${test.expectedScore}`, () => {
-            expect(privacyPractices.getTosdrScore(test.domain)).toEqual(test.expectedScore)
-        })
-    })
-})
+            expect(privacyPractices.getTosdrScore(test.domain)).toEqual(test.expectedScore);
+        });
+    });
+});

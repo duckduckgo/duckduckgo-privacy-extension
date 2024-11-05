@@ -1,4 +1,4 @@
-const privacyPolicy = require('../src/privacy-policy')
+const privacyPolicy = require('../src/privacy-policy');
 
 privacyPolicy.addLists({
     tosdr: {
@@ -48,7 +48,7 @@ privacyPolicy.addLists({
             score: 0,
         },
     },
-})
+});
 
 describe('getScoreForUrl', () => {
     const tests = [
@@ -57,11 +57,11 @@ describe('getScoreForUrl', () => {
         { url: 'couchsurfing.org', expected: 5 },
         { url: 'maps.google.com', expected: 10 },
         { url: 'legal-dictionary.thefreedictionary.com', expected: 0 },
-    ]
+    ];
 
     tests.forEach((test) => {
         it(`should get correct score for ${test.url}`, () => {
-            expect(privacyPolicy.getScoreForUrl(test.url)).toEqual(test.expected)
-        })
-    })
-})
+            expect(privacyPolicy.getScoreForUrl(test.url)).toEqual(test.expected);
+        });
+    });
+});

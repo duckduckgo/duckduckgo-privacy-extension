@@ -1,8 +1,8 @@
-import constants from '../../../data/constants'
-import { convertState } from './privacy-dashboard-data'
-import tdsStorage from '../storage/tds'
+import constants from '../../../data/constants';
+import { convertState } from './privacy-dashboard-data';
+import tdsStorage from '../storage/tds';
 
-const Companies = require('../companies')
+const Companies = require('../companies');
 
 /**
  * @typedef {import('../trackers').ActionName} ActionName
@@ -17,18 +17,18 @@ export class Tracker {
      */
     constructor(t) {
         /** @type {Record<string, DetectedRequestWithAction>} */
-        this.urls = {}
-        this.count = 0 // request count
+        this.urls = {};
+        this.count = 0; // request count
         // Used for class deserizalization
         if (!t) {
-            return
+            return;
         }
         if (!t.tracker) {
-            throw new Error('Tracker object required for Tracker constructor')
+            throw new Error('Tracker object required for Tracker constructor');
         }
-        this.parentCompany = Companies.get(t.tracker.owner.ownedBy || t.tracker.owner.name)
-        this.displayName = this.parentCompany?.displayName || t.tracker.owner.displayName
-        this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence
+        this.parentCompany = Companies.get(t.tracker.owner.ownedBy || t.tracker.owner.name);
+        this.displayName = this.parentCompany?.displayName || t.tracker.owner.displayName;
+        this.prevalence = tdsStorage.tds.entities[t.tracker.owner.name]?.prevalence;
     }
 
     /**
@@ -42,24 +42,24 @@ export class Tracker {
     addTrackerUrl(t, tabUrl, baseDomain, url) {
         // don't consider first-party requests at all
         if (t.sameBaseDomain) {
-            return
+            return;
         }
 
-        this.count += 1
+        this.count += 1;
 
         // make a key from `fullTrackerDomain` + action to ensure we only deliver 1 entry per domain + status.
-        const key = t.fullTrackerDomain + ':' + t.action
+        const key = t.fullTrackerDomain + ':' + t.action;
 
         // return early if this combination exists.
-        if (this.urls[key]) return
+        if (this.urls[key]) return;
 
-        const state = convertState(t.action, t.sameEntity)
+        const state = convertState(t.action, t.sameEntity);
 
         // if we can't convert the state, do nothing.
-        if (!state) return
+        if (!state) return;
 
         // Choose the first tracker radar category that we accept
-        const category = t.tracker?.categories?.find((trackerRadarCategory) => constants.displayCategories.includes(trackerRadarCategory))
+        const category = t.tracker?.categories?.find((trackerRadarCategory) => constants.displayCategories.includes(trackerRadarCategory));
 
         /** @type {DetectedRequestWithAction} */
         const detectedRequest = {
@@ -72,9 +72,9 @@ export class Tracker {
             ownerName: this.parentCompany?.name,
             category,
             state,
-        }
+        };
 
-        this.urls[key] = detectedRequest
+        this.urls[key] = detectedRequest;
     }
 
     /**
@@ -82,10 +82,10 @@ export class Tracker {
      * @returns {Tracker}
      */
     static restore(data) {
-        const tracker = new Tracker(null)
+        const tracker = new Tracker(null);
         for (const [key, value] of Object.entries(data)) {
-            tracker[key] = value
+            tracker[key] = value;
         }
-        return tracker
+        return tracker;
     }
 }

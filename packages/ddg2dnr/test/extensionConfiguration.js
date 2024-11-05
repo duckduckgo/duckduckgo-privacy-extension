@@ -1,11 +1,11 @@
-const assert = require('assert')
+const assert = require('assert');
 
-const { generateExtensionConfigurationRuleset } = require('../lib/extensionConfiguration')
+const { generateExtensionConfigurationRuleset } = require('../lib/extensionConfiguration');
 
 describe('generateExtensionConfigurationRuleset', () => {
     it('should reject invalid extension configuration', async () => {
-        await assert.rejects(() => generateExtensionConfigurationRuleset(null, [], () => {}))
-        await assert.rejects(() => generateExtensionConfigurationRuleset({}, [], () => {}))
+        await assert.rejects(() => generateExtensionConfigurationRuleset(null, [], () => {}));
+        await assert.rejects(() => generateExtensionConfigurationRuleset({}, [], () => {}));
         await assert.rejects(() =>
             generateExtensionConfigurationRuleset(
                 {
@@ -14,7 +14,7 @@ describe('generateExtensionConfigurationRuleset', () => {
                 [],
                 () => {},
             ),
-        )
+        );
         await assert.doesNotReject(() =>
             generateExtensionConfigurationRuleset(
                 {
@@ -23,8 +23,8 @@ describe('generateExtensionConfigurationRuleset', () => {
                 [],
                 () => {},
             ),
-        )
-    })
+        );
+    });
 
     it('should notice missing isRegexSupported argument', async () => {
         await assert.rejects(() =>
@@ -35,7 +35,7 @@ describe('generateExtensionConfigurationRuleset', () => {
                 },
                 [],
             ),
-        )
+        );
         await assert.rejects(() =>
             generateExtensionConfigurationRuleset(
                 { features: {} },
@@ -43,7 +43,7 @@ describe('generateExtensionConfigurationRuleset', () => {
                 // @ts-expect-error - Invalid isRegexSupported argument.
                 3,
             ),
-        )
+        );
         await assert.doesNotReject(() =>
             generateExtensionConfigurationRuleset(
                 {
@@ -52,6 +52,6 @@ describe('generateExtensionConfigurationRuleset', () => {
                 [],
                 () => {},
             ),
-        )
-    })
-})
+        );
+    });
+});

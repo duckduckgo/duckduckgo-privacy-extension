@@ -1,5 +1,5 @@
-const assert = require('assert')
-const { generateCookieBlockingRuleset } = require('../lib/cookies.js')
+const assert = require('assert');
+const { generateCookieBlockingRuleset } = require('../lib/cookies.js');
 
 /** @type {import('../lib/utils.js').TDS} */
 const mockTds = {
@@ -77,7 +77,7 @@ const mockTds = {
     cnames: {
         'track.example.com': 'example.track-the-things.com',
     },
-}
+};
 
 describe('cookie rules', () => {
     describe('generateCookieBlockingRuleset', () => {
@@ -90,73 +90,73 @@ describe('cookie rules', () => {
                 },
                 [],
                 [],
-            )
-            assert.equal(ruleset.length, 0)
-        })
+            );
+            assert.equal(ruleset.length, 0);
+        });
 
         it('generates a block rule with entity domains included (including CNAMEs)', () => {
-            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], [])
-            const trackerRule = ruleset.find((rule) => rule.condition.requestDomains?.includes('track-the-things.com'))
-            assert.ok(!!trackerRule)
-            assert.deepEqual(trackerRule.condition.requestDomains, ['track-the-things.com', 'track.example.com', 'track-more.com'])
+            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], []);
+            const trackerRule = ruleset.find((rule) => rule.condition.requestDomains?.includes('track-the-things.com'));
+            assert.ok(!!trackerRule);
+            assert.deepEqual(trackerRule.condition.requestDomains, ['track-the-things.com', 'track.example.com', 'track-more.com']);
             assert.deepEqual(trackerRule.condition.excludedInitiatorDomains, [
                 'track-the-things.com',
                 'track.example.com',
                 'track-more.com',
                 'track-homepage.com',
-            ])
-        })
+            ]);
+        });
 
         it('excludedCookieDomains: removes a domain from the rules', () => {
-            const { ruleset } = generateCookieBlockingRuleset(mockTds, ['broken.track-more.com'], [])
-            const trackerRule = ruleset.find((rule) => rule.condition.requestDomains?.includes('track-the-things.com'))
-            assert.ok(!!trackerRule)
-            assert.deepEqual(trackerRule.condition.requestDomains, ['track-the-things.com', 'track.example.com', 'track-more.com'])
+            const { ruleset } = generateCookieBlockingRuleset(mockTds, ['broken.track-more.com'], []);
+            const trackerRule = ruleset.find((rule) => rule.condition.requestDomains?.includes('track-the-things.com'));
+            assert.ok(!!trackerRule);
+            assert.deepEqual(trackerRule.condition.requestDomains, ['track-the-things.com', 'track.example.com', 'track-more.com']);
             assert.deepEqual(trackerRule.condition.excludedInitiatorDomains, [
                 'track-the-things.com',
                 'track.example.com',
                 'track-more.com',
                 'track-homepage.com',
-            ])
-            assert.deepEqual(trackerRule.condition.excludedRequestDomains, ['broken.track-more.com'])
+            ]);
+            assert.deepEqual(trackerRule.condition.excludedRequestDomains, ['broken.track-more.com']);
             // check that this exclusion isn't added to irrelevant rules
-            const otherRule = ruleset.find((rule) => rule.condition.requestDomains?.includes('tracker.com'))
-            assert.deepEqual(otherRule?.condition.excludedRequestDomains || [], [])
-        })
+            const otherRule = ruleset.find((rule) => rule.condition.requestDomains?.includes('tracker.com'));
+            assert.deepEqual(otherRule?.condition.excludedRequestDomains || [], []);
+        });
 
         it('site allowlist domains are added to every rule', () => {
-            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], ['safe.site'])
-            assert.ok(ruleset.every((r) => r.condition.excludedInitiatorDomains?.includes('safe.site')))
-        })
+            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], ['safe.site']);
+            assert.ok(ruleset.every((r) => r.condition.excludedInitiatorDomains?.includes('safe.site')));
+        });
 
         it('groups single domain entities', () => {
-            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], [])
-            const thirdPartyRules = ruleset.filter((r) => r.condition.domainType === 'thirdParty')
-            assert.equal(thirdPartyRules.length, 1)
-            assert.deepEqual(thirdPartyRules[0].condition.requestDomains, ['tracker.com'])
-        })
+            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], []);
+            const thirdPartyRules = ruleset.filter((r) => r.condition.domainType === 'thirdParty');
+            assert.equal(thirdPartyRules.length, 1);
+            assert.deepEqual(thirdPartyRules[0].condition.requestDomains, ['tracker.com']);
+        });
 
         it('handles not eTLD+1 trackers', () => {
-            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], [])
-            const exampleRule = ruleset.find((r) => r.condition.requestDomains?.includes('sub.example.com'))
-            assert.ok(!!exampleRule)
-            assert.deepEqual(exampleRule.condition.requestDomains, ['sub.example.com'])
-            assert.deepEqual(exampleRule.condition.excludedInitiatorDomains, ['sub.example.com', 'example.com'])
-        })
-    })
+            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], []);
+            const exampleRule = ruleset.find((r) => r.condition.requestDomains?.includes('sub.example.com'));
+            assert.ok(!!exampleRule);
+            assert.deepEqual(exampleRule.condition.requestDomains, ['sub.example.com']);
+            assert.deepEqual(exampleRule.condition.excludedInitiatorDomains, ['sub.example.com', 'example.com']);
+        });
+    });
 
     describe('matchDetailsByRuleId', function () {
         it('returns a list of possible domains for a matched rule', /** @this {{ browser: import('../puppeteerInterface').PuppeteerInterface }} */ async function () {
-            const { ruleset, matchDetailsByRuleId } = generateCookieBlockingRuleset(mockTds, [], [])
-            await this.browser.addRules(ruleset)
+            const { ruleset, matchDetailsByRuleId } = generateCookieBlockingRuleset(mockTds, [], []);
+            await this.browser.addRules(ruleset);
             const matchedRules = await this.browser.testMatchOutcome({
                 url: 'https://tracker.com/pixel',
                 initiator: 'https://www.example.com/',
                 type: 'xmlhttprequest',
                 tabId: 1,
-            })
-            assert.equal(matchedRules.length, 1)
-            assert.ok(matchDetailsByRuleId[matchedRules[0].id].possibleTrackerDomains?.includes('tracker.com'))
-        })
-    })
-})
+            });
+            assert.equal(matchedRules.length, 1);
+            assert.ok(matchDetailsByRuleId[matchedRules[0].id].possibleTrackerDomains?.includes('tracker.com'));
+        });
+    });
+});

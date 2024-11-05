@@ -1,22 +1,22 @@
-import { test as base, chromium } from '@playwright/test'
-import path from 'path'
-import fs from 'fs/promises'
+import { test as base, chromium } from '@playwright/test';
+import path from 'path';
+import fs from 'fs/promises';
 
-const testRoot = path.join(__dirname, '..')
-const projectRoot = path.join(testRoot, '..')
+const testRoot = path.join(__dirname, '..');
+const projectRoot = path.join(testRoot, '..');
 export function getHARPath(harFile) {
-    return path.join(testRoot, 'data', 'har', harFile)
+    return path.join(testRoot, 'data', 'har', harFile);
 }
 
 export function getManifestVersion() {
-    return process.env.npm_lifecycle_event === 'playwright-mv2' ? 2 : 3
+    return process.env.npm_lifecycle_event === 'playwright-mv2' ? 2 : 3;
 }
 
 async function routeLocalResources(route) {
-    const url = new URL(route.request().url())
-    const localPath = path.join(testRoot, 'data', 'staticcdn', url.pathname)
+    const url = new URL(route.request().url());
+    const localPath = path.join(testRoot, 'data', 'staticcdn', url.pathname);
     try {
-        const body = await fs.readFile(localPath)
+        const body = await fs.readFile(localPath);
         // console.log('request served from disk', route.request().url())
         route.fulfill({
             status: 200,
@@ -24,10 +24,10 @@ async function routeLocalResources(route) {
             headers: {
                 etag: 'test',
             },
-        })
+        });
     } catch (e) {
         // console.log('request served from network', route.request().url())
-        route.continue()
+        route.continue();
     }
 }
 
@@ -35,7 +35,7 @@ export const mockAtb = {
     majorVersion: 364,
     minorVersion: 2,
     version: 'v364-2',
-}
+};
 
 // based off example at https://playwright.dev/docs/chrome-extensions#testing
 export const test = base.extend({
@@ -47,12 +47,12 @@ export const test = base.extend({
      * @type {import('@playwright/test').BrowserContext}
      */
     async context({ manifestVersion }, use) {
-        const extensionPath = manifestVersion === 3 ? 'build/chrome/dev' : 'build/chrome-mv2/dev'
-        const pathToExtension = path.join(projectRoot, extensionPath)
+        const extensionPath = manifestVersion === 3 ? 'build/chrome/dev' : 'build/chrome-mv2/dev';
+        const pathToExtension = path.join(projectRoot, extensionPath);
         const context = await chromium.launchPersistentContext('', {
             headless: false,
             args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
-        })
+        });
         // intercept extension install page and use HAR
         context.on('page', (page) => {
             // console.log('page', page.url())
@@ -61,11 +61,11 @@ export const test = base.extend({
                 // npx playwright open --save-har=data/har/duckduckgo.com/extension-success.har https://duckduckgo.com/extension-success
                 page.routeFromHAR(getHARPath('duckduckgo.com/extension-success.har'), {
                     notFound: 'abort',
-                })
+                });
             }
-        })
+        });
         //
-        await use(context)
+        await use(context);
     },
     /**
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
@@ -73,52 +73,52 @@ export const test = base.extend({
     async backgroundPage({ context, manifestVersion }, use) {
         // let background: Page | Worker
         const routeHandler = (route) => {
-            const url = route.request().url()
+            const url = route.request().url();
             if (url.startsWith('https://staticcdn.duckduckgo.com/')) {
-                return routeLocalResources(route)
+                return routeLocalResources(route);
             }
             if (url.startsWith('https://duckduckgo.com/atb.js')) {
                 // mock ATB endpoint
-                const params = new URL(url).searchParams
+                const params = new URL(url).searchParams;
                 if (params.has('atb')) {
-                    const version = params.get('atb')
-                    const [majorVersion, minorVersion] = version.slice(1).split('-')
+                    const version = params.get('atb');
+                    const [majorVersion, minorVersion] = version.slice(1).split('-');
                     if (majorVersion < 360 && minorVersion > 1) {
                         return route.fulfill({
                             body: JSON.stringify({
                                 ...mockAtb,
                                 updateVersion: `v${majorVersion}-1`,
                             }),
-                        })
+                        });
                     }
                 }
                 return route.fulfill({
                     body: JSON.stringify(mockAtb),
-                })
+                });
             }
             if (url.startsWith('https://duckduckgo.com/exti') || url.startsWith('https://improving.duckduckgo.com/')) {
                 return route.fulfill({
                     status: 200,
                     body: '',
-                })
+                });
             }
-            route.continue()
-        }
+            route.continue();
+        };
         if (manifestVersion === 3) {
-            let [background] = context.serviceWorkers()
-            if (!background) background = await context.waitForEvent('serviceworker')
+            let [background] = context.serviceWorkers();
+            if (!background) background = await context.waitForEvent('serviceworker');
             // SW request routing is experimental: https://playwright.dev/docs/service-workers-experimental
-            context.route('**/*', routeHandler)
-            await use(background)
+            context.route('**/*', routeHandler);
+            await use(background);
         } else {
-            let [background] = context.backgroundPages()
+            let [background] = context.backgroundPages();
             if (!background) {
-                background = await context.waitForEvent('backgroundpage')
+                background = await context.waitForEvent('backgroundpage');
             }
 
             // Serve extension background requests from local cache
-            background.route('**/*', routeHandler)
-            await use(background)
+            background.route('**/*', routeHandler);
+            await use(background);
         }
     },
     /**
@@ -127,9 +127,9 @@ export const test = base.extend({
      */
     async routeExtensionRequests({ manifestVersion, backgroundPage, context }, use) {
         if (manifestVersion === 3) {
-            await use(context.route.bind(context))
+            await use(context.route.bind(context));
         } else {
-            await use(backgroundPage.route.bind(backgroundPage))
+            await use(backgroundPage.route.bind(backgroundPage));
         }
     },
     /**
@@ -138,11 +138,11 @@ export const test = base.extend({
      */
     async backgroundNetworkContext({ manifestVersion, backgroundPage, context }, use) {
         if (manifestVersion === 3) {
-            await use(context)
+            await use(context);
         } else {
-            await use(backgroundPage)
+            await use(backgroundPage);
         }
     },
-})
+});
 
-export const expect = test.expect
+export const expect = test.expect;

@@ -2,18 +2,18 @@
  * For managing dynamically created MV3 session rules
  * getNextSessionRuleId will return the next unique session rule id to use when creating new session rules
  **/
-import { getFromSessionStorage, setToSessionStorage } from './wrapper'
-const SESSION_RULE_ID_START = 100000
-const SESSION_RULE_STORAGE_KEY = 'sessionRuleOffset'
-let sessionRuleOffset = 0
-let ready = false
+import { getFromSessionStorage, setToSessionStorage } from './wrapper';
+const SESSION_RULE_ID_START = 100000;
+const SESSION_RULE_STORAGE_KEY = 'sessionRuleOffset';
+let sessionRuleOffset = 0;
+let ready = false;
 
 export async function setSessionRuleOffsetFromStorage() {
-    const offset = await getFromSessionStorage(SESSION_RULE_STORAGE_KEY)
+    const offset = await getFromSessionStorage(SESSION_RULE_STORAGE_KEY);
     if (offset) {
-        sessionRuleOffset = offset
+        sessionRuleOffset = offset;
     }
-    ready = true
+    ready = true;
 }
 
 /**
@@ -22,18 +22,18 @@ export async function setSessionRuleOffsetFromStorage() {
  */
 export function getNextSessionRuleId() {
     if (!ready) {
-        console.warn('Tried to get session rule id before reading offset from storage')
-        return null
+        console.warn('Tried to get session rule id before reading offset from storage');
+        return null;
     }
 
-    const nextRuleId = SESSION_RULE_ID_START + sessionRuleOffset
-    sessionRuleOffset += 1
-    setToSessionStorage(SESSION_RULE_STORAGE_KEY, sessionRuleOffset)
-    return nextRuleId
+    const nextRuleId = SESSION_RULE_ID_START + sessionRuleOffset;
+    sessionRuleOffset += 1;
+    setToSessionStorage(SESSION_RULE_STORAGE_KEY, sessionRuleOffset);
+    return nextRuleId;
 }
 
 function isValidSessionId(id) {
-    return id >= SESSION_RULE_ID_START
+    return id >= SESSION_RULE_ID_START;
 }
 
 /**
@@ -46,9 +46,9 @@ function isValidSessionId(id) {
  */
 export function flushSessionRules() {
     return chrome.declarativeNetRequest.getSessionRules().then((rules) => {
-        const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId)
+        const ruleIds = rules.map(({ id }) => id).filter(isValidSessionId);
         if (ruleIds.length) {
-            return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds })
+            return chrome.declarativeNetRequest.updateSessionRules({ removeRuleIds: ruleIds });
         }
-    })
+    });
 }

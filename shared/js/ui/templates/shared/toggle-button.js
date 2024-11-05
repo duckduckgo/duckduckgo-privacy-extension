@@ -1,9 +1,9 @@
-const bel = require('nanohtml')
+const bel = require('nanohtml');
 
 module.exports = function (isActiveBoolean, klass, dataKey) {
     // make `klass` and `dataKey` optional:
-    klass = klass || ''
-    dataKey = dataKey || ''
+    klass = klass || '';
+    dataKey = dataKey || '';
 
     return bel`
 <button class="toggle-button toggle-button--is-active-${isActiveBoolean} ${klass}"
@@ -14,5 +14,5 @@ module.exports = function (isActiveBoolean, klass, dataKey) {
     <div class="toggle-button__bg">
     </div>
     <div class="toggle-button__knob"></div>
-</button>`
-}
+</button>`;
+};

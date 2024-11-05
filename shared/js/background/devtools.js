@@ -8,21 +8,21 @@
  * See shared/js/background/components/
  */
 
-let devtools = null
+let devtools = null;
 
 export function registerDevtools(newDevtools) {
-    devtools = newDevtools
+    devtools = newDevtools;
 }
 
 export function isActive(tabId) {
     if (devtools) {
-        return devtools.isActive(tabId)
+        return devtools.isActive(tabId);
     }
-    return false
+    return false;
 }
 
 export function postMessage(tabId, action, message) {
     if (devtools) {
-        devtools.postMessage(tabId, action, message)
+        devtools.postMessage(tabId, action, message);
     }
 }

@@ -1,10 +1,10 @@
 /** @module extensionConfiguration */
 
-const { generateAmpProtectionRules } = require('./ampProtection')
-const { generateTrackerAllowlistRules } = require('./trackerAllowlist')
-const { generateTemporaryAllowlistRules } = require('./temporaryAllowlist')
-const { generateTrackingParameterRules } = require('./trackingParams')
-const { createSmarterEncryptionTemporaryRule } = require('./smarterEncryption')
+const { generateAmpProtectionRules } = require('./ampProtection');
+const { generateTrackerAllowlistRules } = require('./trackerAllowlist');
+const { generateTemporaryAllowlistRules } = require('./temporaryAllowlist');
+const { generateTrackingParameterRules } = require('./trackingParams');
+const { createSmarterEncryptionTemporaryRule } = require('./smarterEncryption');
 
 /**
  * Generated an extension configuration declarativeNetRequest ruleset.
@@ -24,47 +24,47 @@ const { createSmarterEncryptionTemporaryRule } = require('./smarterEncryption')
 
 async function generateExtensionConfigurationRuleset(extensionConfig, denylistedDomains, isRegexSupported, startingRuleId = 1) {
     if (typeof isRegexSupported !== 'function') {
-        throw new Error('Missing isRegexSupported function.')
+        throw new Error('Missing isRegexSupported function.');
     }
 
-    let ruleId = startingRuleId
-    const ruleset = []
+    let ruleId = startingRuleId;
+    const ruleset = [];
     /** @type {import('./utils').MatchDetailsByRuleId} */
-    const matchDetailsByRuleId = {}
+    const matchDetailsByRuleId = {};
 
     const appendRuleResult = (result) => {
         if (result) {
-            const { matchDetails, rule } = result
-            rule.id = ruleId++
-            ruleset.push(rule)
-            matchDetailsByRuleId[rule.id] = matchDetails
+            const { matchDetails, rule } = result;
+            rule.id = ruleId++;
+            ruleset.push(rule);
+            matchDetailsByRuleId[rule.id] = matchDetails;
         }
-    }
+    };
 
     // AMP link protection.
     for (const result of await generateAmpProtectionRules(extensionConfig, isRegexSupported)) {
-        appendRuleResult(result)
+        appendRuleResult(result);
     }
 
     // Tracker Allowlist.
     for (const result of generateTrackerAllowlistRules(extensionConfig)) {
-        appendRuleResult(result)
+        appendRuleResult(result);
     }
 
     // Content Blocking and Unprotected Temporary allowlists.
     for (const result of generateTemporaryAllowlistRules(extensionConfig, denylistedDomains)) {
-        appendRuleResult(result)
+        appendRuleResult(result);
     }
 
     for (const result of generateTrackingParameterRules(extensionConfig)) {
-        appendRuleResult(result)
+        appendRuleResult(result);
     }
 
     if (extensionConfig.features?.https?.exceptions?.length > 0) {
-        appendRuleResult(createSmarterEncryptionTemporaryRule(extensionConfig.features.https.exceptions.map((entry) => entry.domain)))
+        appendRuleResult(createSmarterEncryptionTemporaryRule(extensionConfig.features.https.exceptions.map((entry) => entry.domain)));
     }
 
-    return { ruleset, matchDetailsByRuleId }
+    return { ruleset, matchDetailsByRuleId };
 }
 
-exports.generateExtensionConfigurationRuleset = generateExtensionConfigurationRuleset
+exports.generateExtensionConfigurationRuleset = generateExtensionConfigurationRuleset;

@@ -7,7 +7,7 @@
  * generated notification dispatch handler (handlers
  * are similar to Redux reducers).
  */
-const registered = {}
+const registered = {};
 
 /**
  * .add() auto-generates the store's notification dispatch
@@ -21,7 +21,7 @@ const registered = {}
  */
 function add(notifierName) {
     registered[notifierName] = (state, notification) => {
-        if (state === undefined) state = {}
+        if (state === undefined) state = {};
         if (notification.notifierName === notifierName) {
             /**
              * Define global notification types here
@@ -35,7 +35,7 @@ function add(notifierName) {
                 return {
                     change: notification.change,
                     attributes: notification.attributes,
-                }
+                };
             }
 
             /**
@@ -47,12 +47,12 @@ function add(notifierName) {
                     action: notification.action,
                     data: notification.data,
                     attributes: notification.attributes,
-                }
+                };
             }
         } else {
-            return state
+            return state;
         }
-    }
+    };
 }
 
 function combine() {
@@ -63,26 +63,26 @@ function combine() {
      * store event subscribers. This function is a slimmer version of:
      * https://www.npmjs.com/package/minidux#combinereducersreducers
      */
-    const keys = Object.keys(registered)
+    const keys = Object.keys(registered);
     return function combination(state, notification) {
-        const nextState = {}
+        const nextState = {};
 
         for (let i = 0; i < keys.length; i++) {
-            const key = keys[i]
+            const key = keys[i];
             if (typeof registered[key] !== 'function') {
-                throw new Error('notifier ' + key + 'must be a function')
+                throw new Error('notifier ' + key + 'must be a function');
             }
-            nextState[key] = registered[key](state[key], notification)
+            nextState[key] = registered[key](state[key], notification);
         }
 
-        return nextState
-    }
+        return nextState;
+    };
 }
 
 function remove(notifier) {
     if (registered[notifier]) {
-        delete registered[notifier]
-        return true
+        delete registered[notifier];
+        return true;
     }
 }
 
@@ -92,4 +92,4 @@ module.exports = {
     add, // adds a new notifier to `registered`
     combine, // similar to Redux combineReducers() function
     remove, // remove a notifier from `registered` object
-}
+};

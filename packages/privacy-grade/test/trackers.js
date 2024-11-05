@@ -1,9 +1,9 @@
-const Trackers = require('../src/classes/trackers')
-const trackerLists = require('./data/tracker-lists')
-const tldts = require('tldts')
-const utils = require('../src/utils')
+const Trackers = require('../src/classes/trackers');
+const trackerLists = require('./data/tracker-lists');
+const tldts = require('tldts');
+const utils = require('../src/utils');
 
-const trackers = new Trackers({ tldts, utils: utils })
+const trackers = new Trackers({ tldts, utils: utils });
 trackers.setLists([
     {
         name: 'tds',
@@ -16,7 +16,7 @@ trackers.setLists([
         name: 'surrogates',
         data: trackerLists.surrogates,
     },
-])
+]);
 
 describe('getTrackerData', () => {
     describe('find tracker data', () => {
@@ -166,7 +166,7 @@ describe('getTrackerData', () => {
                 matchedRuleException: false,
                 supportedCustomRuleActions: new Set(['custom-action']),
             },
-        ]
+        ];
 
         trackerTests.forEach((test) => {
             it(`should block ${test.urlToCheck}`, () => {
@@ -175,20 +175,20 @@ describe('getTrackerData', () => {
                     test.siteUrl,
                     { url: test.urlToCheck, type: test.requestType },
                     test.supportedCustomRuleActions,
-                )
+                );
 
-                expect(tracker.action).toEqual(test.action)
-                expect(tracker.reason).toEqual(test.expectedReason)
+                expect(tracker.action).toEqual(test.action);
+                expect(tracker.reason).toEqual(test.expectedReason);
 
                 if (test.expectedRule) {
-                    expect(tracker.matchedRule.rule.toString()).toEqual(new RegExp(test.expectedRule, 'gi').toString())
+                    expect(tracker.matchedRule.rule.toString()).toEqual(new RegExp(test.expectedRule, 'gi').toString());
                 }
 
-                expect(tracker.sameEntity).toEqual(test.sameEntity)
-                expect(tracker.redirectUrl).toEqual(test.redirectUrl)
-                expect(tracker.matchedRuleException).toEqual(test.matchedRuleException)
-            })
-        })
+                expect(tracker.sameEntity).toEqual(test.sameEntity);
+                expect(tracker.redirectUrl).toEqual(test.redirectUrl);
+                expect(tracker.matchedRuleException).toEqual(test.matchedRuleException);
+            });
+        });
 
         const malformedTests = [
             // Malformed urls
@@ -228,15 +228,15 @@ describe('getTrackerData', () => {
                 siteUrl: 'ftp://blah.com/test.html',
                 requestType: 'image',
             },
-        ]
+        ];
 
         malformedTests.forEach((test) => {
             it(`should not block ${test.urlToCheck}`, () => {
-                const tracker = trackers.getTrackerData(test.urlToCheck, test.siteUrl, { url: test.urlToCheck, type: test.requestType })
+                const tracker = trackers.getTrackerData(test.urlToCheck, test.siteUrl, { url: test.urlToCheck, type: test.requestType });
 
-                expect(tracker).toEqual(null)
-            })
-        })
+                expect(tracker).toEqual(null);
+            });
+        });
 
         const nonTrackerTests = [
             // Non tracker requests
@@ -250,13 +250,13 @@ describe('getTrackerData', () => {
                 siteUrl: 'https://example.com',
                 requestType: 'script',
             },
-        ]
+        ];
         nonTrackerTests.forEach((test) => {
             it(`should not block ${test.urlToCheck}`, () => {
-                const tracker = trackers.getTrackerData(test.urlToCheck, test.siteUrl, { url: test.urlToCheck, type: test.requestType })
+                const tracker = trackers.getTrackerData(test.urlToCheck, test.siteUrl, { url: test.urlToCheck, type: test.requestType });
 
-                expect(tracker.action).toEqual('none')
-            })
-        })
-    })
-})
+                expect(tracker.action).toEqual('none');
+            });
+        });
+    });
+});

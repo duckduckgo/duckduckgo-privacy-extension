@@ -1,11 +1,11 @@
-const bel = require('nanohtml')
-const t = window.DDG.base.i18n.t
+const bel = require('nanohtml');
+const t = window.DDG.base.i18n.t;
 
 module.exports = function () {
-    let fields
+    let fields;
 
     if (this.model.submitted || this.model.errored) {
-        return showThankYou(this.model.isBrokenSite)
+        return showThankYou(this.model.isBrokenSite);
     }
 
     if (this.model.isBrokenSite) {
@@ -14,12 +14,12 @@ module.exports = function () {
             <input class='js-feedback-url frm__input' type='text' placeholder='${t('feedback:brokenSitePlaceholder.title')}' value='${this.model.url}'/>
             <label class='frm__label'>${t('feedback:describeTheIssue.title')}</label>
             <textarea class='frm__text js-feedback-message' required placeholder='${t('feedback:describeBreakagePlaceholder.title')}'></textarea>
-        </div>`
+        </div>`;
     } else {
         fields = bel`<div>
             <label class='frm__label'>${t('feedback:feedbackHeaderLabel.title')}</label>
             <textarea class='frm__text js-feedback-message' placeholder='${t('feedback:feedbackPlaceholder.title')}'></textarea>
-        </div>`
+        </div>`;
     }
 
     return bel`<form class='frm'>
@@ -32,16 +32,16 @@ module.exports = function () {
         ${fields}
         <input class='btn js-feedback-submit ${this.model.canSubmit ? '' : 'is-disabled'}'
             type='submit' value='${t('feedback:submit.title')}' ${this.model.canSubmit ? '' : 'disabled'}/>
-    </form>`
-}
+    </form>`;
+};
 
 function showThankYou(isBrokenSite) {
     if (isBrokenSite) {
         return bel`<div>
             <p>${t('feedback:thankYou.title')}</p>
             <p>${t('feedback:thankYouBrokenSite.title')}</p>
-        </div>`
+        </div>`;
     } else {
-        return bel`<p>${t('feedback:thankYou.title')}</p>`
+        return bel`<p>${t('feedback:thankYou.title')}</p>`;
     }
 }

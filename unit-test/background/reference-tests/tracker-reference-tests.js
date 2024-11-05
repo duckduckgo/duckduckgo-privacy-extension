@@ -1,14 +1,14 @@
-import refSurrogates from '@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/surrogates.txt'
+import refSurrogates from '@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/surrogates.txt';
 
-const tds = require('../../../shared/js/background/trackers')
-const tdsStorageStub = require('../../helpers/tds')
+const tds = require('../../../shared/js/background/trackers');
+const tdsStorageStub = require('../../helpers/tds');
 
-const refTrackers = require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_radar_reference.json')
-const refTests = require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/domain_matching_tests.json')
+const refTrackers = require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/tracker_radar_reference.json');
+const refTests = require('@duckduckgo/privacy-reference-tests/tracker-radar-tests/TR-domain-matching/domain_matching_tests.json');
 
 describe('Tracker reference tests:', () => {
     beforeAll(() => {
-        tdsStorageStub.stub()
+        tdsStorageStub.stub();
 
         const testLists = [
             {
@@ -19,33 +19,33 @@ describe('Tracker reference tests:', () => {
                 name: 'surrogates',
                 data: refSurrogates,
             },
-        ]
-        return tds.setLists(testLists)
-    })
+        ];
+        return tds.setLists(testLists);
+    });
 
-    const domainTests = refTests.domainTests.tests
-    const surrogateTests = refTests.surrogateTests.tests
-    const tests = domainTests.concat(surrogateTests)
+    const domainTests = refTests.domainTests.tests;
+    const surrogateTests = refTests.surrogateTests.tests;
+    const tests = domainTests.concat(surrogateTests);
 
     for (const test of tests) {
         if (test.exceptPlatforms?.includes('web-extension')) {
-            continue
+            continue;
         }
 
         it(`${test.name}`, () => {
-            const rootURL = test.siteURL
-            const requestURL = test.requestURL
-            const requestType = test.requestType
-            const expectRedirect = test.expectRedirect
-            const result = tds.getTrackerData(requestURL, rootURL, { type: requestType })
-            let action = result && result.action
+            const rootURL = test.siteURL;
+            const requestURL = test.requestURL;
+            const requestType = test.requestType;
+            const expectRedirect = test.expectRedirect;
+            const result = tds.getTrackerData(requestURL, rootURL, { type: requestType });
+            let action = result && result.action;
             if (action === 'none') {
-                action = null
+                action = null;
             }
-            expect(action).toEqual(test.expectAction)
+            expect(action).toEqual(test.expectAction);
             if (expectRedirect) {
-                expect(result.redirectUrl).toEqual(expectRedirect)
+                expect(result.redirectUrl).toEqual(expectRedirect);
             }
-        })
+        });
     }
-})
+});

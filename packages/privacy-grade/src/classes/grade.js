@@ -1,4 +1,4 @@
-const UNKNOWN_PRIVACY_SCORE = 2
+const UNKNOWN_PRIVACY_SCORE = 2;
 
 /**
  * Range map data structures:
@@ -40,7 +40,7 @@ const TRACKER_RANGE_MAP = {
         [45, 8],
         [66, 9],
     ],
-}
+};
 
 const GRADE_RANGE_MAP = {
     zero: 'A',
@@ -53,108 +53,108 @@ const GRADE_RANGE_MAP = {
         [20, 'C'],
         [30, 'D'],
     ],
-}
+};
 
 class Grade {
     constructor(attrs) {
         // defaults
-        this.https = false
-        this.httpsAutoUpgrade = false
-        this.privacyScore = UNKNOWN_PRIVACY_SCORE // unknown
+        this.https = false;
+        this.httpsAutoUpgrade = false;
+        this.privacyScore = UNKNOWN_PRIVACY_SCORE; // unknown
 
-        this.entitiesBlocked = {}
-        this.entitiesNotBlocked = {}
+        this.entitiesBlocked = {};
+        this.entitiesNotBlocked = {};
 
-        this.scores = null
+        this.scores = null;
 
         // set any values that were passed in
-        attrs = attrs || {}
+        attrs = attrs || {};
 
         if (attrs.https) {
-            this.setHttps(attrs.https, attrs.httpsAutoUpgrade)
+            this.setHttps(attrs.https, attrs.httpsAutoUpgrade);
         }
         if (typeof attrs.privacyScore !== 'undefined') {
-            this.setPrivacyScore(attrs.privacyScore)
+            this.setPrivacyScore(attrs.privacyScore);
         }
         if (attrs.parentEntity) {
-            this.setParentEntity(attrs.parentEntity, attrs.prevalence)
+            this.setParentEntity(attrs.parentEntity, attrs.prevalence);
         }
         if (attrs.trackersBlocked) {
             Object.keys(attrs.trackersBlocked).forEach((entityName) => {
-                this.addEntityBlocked(entityName, attrs.trackersBlocked[entityName].prevalence)
-            })
+                this.addEntityBlocked(entityName, attrs.trackersBlocked[entityName].prevalence);
+            });
         }
         if (attrs.trackersNotBlocked) {
             Object.keys(attrs.trackersNotBlocked).forEach((entityName) => {
-                this.addEntityNotBlocked(entityName, attrs.trackersNotBlocked[entityName].prevalence)
-            })
+                this.addEntityNotBlocked(entityName, attrs.trackersNotBlocked[entityName].prevalence);
+            });
         }
     }
 
     setHttps(https, httpsAutoUpgrade) {
-        this.scores = null
-        this.https = https
-        this.httpsAutoUpgrade = httpsAutoUpgrade
+        this.scores = null;
+        this.https = https;
+        this.httpsAutoUpgrade = httpsAutoUpgrade;
     }
 
     setPrivacyScore(score) {
-        this.scores = null
-        this.privacyScore = typeof score === 'number' ? score : UNKNOWN_PRIVACY_SCORE
+        this.scores = null;
+        this.privacyScore = typeof score === 'number' ? score : UNKNOWN_PRIVACY_SCORE;
     }
 
     addEntityBlocked(name, prevalence) {
-        if (!name) return
+        if (!name) return;
 
-        this.scores = null
-        this.entitiesBlocked[name] = prevalence
+        this.scores = null;
+        this.entitiesBlocked[name] = prevalence;
     }
 
     addEntityNotBlocked(name, prevalence) {
-        if (!name) return
+        if (!name) return;
 
-        this.scores = null
-        this.entitiesNotBlocked[name] = prevalence
+        this.scores = null;
+        this.entitiesNotBlocked[name] = prevalence;
     }
 
     setParentEntity(name, prevalence) {
-        this.scores = null
-        this.addEntityNotBlocked(name, prevalence)
+        this.scores = null;
+        this.addEntityNotBlocked(name, prevalence);
     }
 
     calculate() {
         // HTTPS
-        let siteHttpsScore, enhancedHttpsScore
+        let siteHttpsScore, enhancedHttpsScore;
 
         if (this.httpsAutoUpgrade) {
-            siteHttpsScore = 0
-            enhancedHttpsScore = 0
+            siteHttpsScore = 0;
+            enhancedHttpsScore = 0;
         } else if (this.https) {
-            siteHttpsScore = 3
-            enhancedHttpsScore = 0
+            siteHttpsScore = 3;
+            enhancedHttpsScore = 0;
         } else {
-            siteHttpsScore = 10
-            enhancedHttpsScore = 10
+            siteHttpsScore = 10;
+            enhancedHttpsScore = 10;
         }
 
         // PRIVACY
         // clamp to 10
-        const privacyScore = Math.min(this.privacyScore, 10)
+        const privacyScore = Math.min(this.privacyScore, 10);
 
         // TRACKERS
-        let siteTrackerScore = 0
-        let enhancedTrackerScore = 0
+        let siteTrackerScore = 0;
+        let enhancedTrackerScore = 0;
 
         for (const entity in this.entitiesBlocked) {
-            siteTrackerScore += this._normalizeTrackerScore(this.entitiesBlocked[entity])
+            siteTrackerScore += this._normalizeTrackerScore(this.entitiesBlocked[entity]);
         }
 
         for (const entity in this.entitiesNotBlocked) {
-            siteTrackerScore += this._normalizeTrackerScore(this.entitiesNotBlocked[entity])
-            enhancedTrackerScore += this._normalizeTrackerScore(this.entitiesNotBlocked[entity])
+            siteTrackerScore += this._normalizeTrackerScore(this.entitiesNotBlocked[entity]);
+            enhancedTrackerScore += this._normalizeTrackerScore(this.entitiesNotBlocked[entity]);
         }
 
-        const siteTotalScore = siteHttpsScore + siteTrackerScore + privacyScore
-        const enhancedTotalScore = enhancedHttpsScore + enhancedTrackerScore + privacyScore
+        const siteTotalScore = siteHttpsScore + siteTrackerScore + privacyScore;
+        const enhancedTotalScore = enhancedHttpsScore + enhancedTrackerScore + privacyScore;
 
         this.scores = {
             site: {
@@ -171,40 +171,40 @@ class Grade {
                 httpsScore: enhancedHttpsScore,
                 privacyScore: privacyScore,
             },
-        }
+        };
     }
 
     get() {
-        if (!this.scores) this.calculate()
+        if (!this.scores) this.calculate();
 
-        return this.scores
+        return this.scores;
     }
 
     _getValueFromRangeMap(value, rangeMapData) {
-        const steps = rangeMapData.steps
+        const steps = rangeMapData.steps;
 
         if (!value || value <= 0) {
-            return rangeMapData.zero
+            return rangeMapData.zero;
         }
 
         if (value >= steps[steps.length - 1][0]) {
-            return rangeMapData.max
+            return rangeMapData.max;
         }
 
         for (let i = 0; i < steps.length; i++) {
             if (value < steps[i][0]) {
-                return steps[i][1]
+                return steps[i][1];
             }
         }
     }
 
     _normalizeTrackerScore(pct) {
-        return this._getValueFromRangeMap(pct, TRACKER_RANGE_MAP)
+        return this._getValueFromRangeMap(pct, TRACKER_RANGE_MAP);
     }
 
     _scoreToGrade(score) {
-        return this._getValueFromRangeMap(score, GRADE_RANGE_MAP)
+        return this._getValueFromRangeMap(score, GRADE_RANGE_MAP);
     }
 }
 
-module.exports = Grade
+module.exports = Grade;

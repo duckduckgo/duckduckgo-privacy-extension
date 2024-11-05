@@ -1,16 +1,16 @@
 /* global DEBUG */
-import browser from 'webextension-polyfill'
-import { registerMessageHandler } from '../message-handlers'
+import browser from 'webextension-polyfill';
+import { registerMessageHandler } from '../message-handlers';
 
-const VERIFICATION_HOST = 'use-login.duckduckgo.com'
-const SETTINGS_KEY = 'isInternalUser'
+const VERIFICATION_HOST = 'use-login.duckduckgo.com';
+const SETTINGS_KEY = 'isInternalUser';
 
 /**
  * Is the user a DDG employee
  * @param {import('../settings.js')} settings
  */
 export function isInternalUser(settings) {
-    return settings.getSetting(SETTINGS_KEY) || DEBUG
+    return settings.getSetting(SETTINGS_KEY) || DEBUG;
 }
 
 export default class InternalUserDetector {
@@ -20,21 +20,21 @@ export default class InternalUserDetector {
      * }} options
      */
     constructor({ settings }) {
-        this.settings = settings
+        this.settings = settings;
         browser.webRequest.onCompleted.addListener(
             (details) => {
                 if (details.statusCode === 200) {
-                    settings.updateSetting(SETTINGS_KEY, true)
+                    settings.updateSetting(SETTINGS_KEY, true);
                 }
             },
             {
                 urls: [`https://${VERIFICATION_HOST}/*`],
             },
-        )
-        registerMessageHandler('isInternalUser', this.isInternalUser.bind(this))
+        );
+        registerMessageHandler('isInternalUser', this.isInternalUser.bind(this));
     }
 
     isInternalUser() {
-        return isInternalUser(this.settings)
+        return isInternalUser(this.settings);
     }
 }

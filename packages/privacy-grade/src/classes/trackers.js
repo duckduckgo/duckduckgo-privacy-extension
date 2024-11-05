@@ -78,7 +78,7 @@
  */
 
 class Trackers {
-    static standardRuleActions = new Set(['block', 'ignore'])
+    static standardRuleActions = new Set(['block', 'ignore']);
 
     /**
      * @param {{
@@ -88,8 +88,8 @@ class Trackers {
      * }} ops
      */
     constructor(ops) {
-        this.tldts = ops.tldts || ops.tldjs
-        this.utils = ops.utils
+        this.tldts = ops.tldts || ops.tldjs;
+        this.utils = ops.utils;
     }
 
     /**
@@ -98,14 +98,14 @@ class Trackers {
     setLists(lists) {
         lists.forEach((list) => {
             if (list.name === 'tds') {
-                this.entityList = this.processEntityList(list.data.entities)
-                this.trackerList = this.processTrackerList(list.data.trackers)
-                this.domains = list.data.domains
-                this.cnames = list.data.cnames
+                this.entityList = this.processEntityList(list.data.entities);
+                this.trackerList = this.processTrackerList(list.data.trackers);
+                this.domains = list.data.domains;
+                this.cnames = list.data.cnames;
             } else if (list.name === 'surrogates') {
-                this.surrogateList = this.processSurrogateList(list.data)
+                this.surrogateList = this.processSurrogateList(list.data);
             }
-        })
+        });
     }
 
     /**
@@ -116,11 +116,11 @@ class Trackers {
         for (const name in data) {
             if (data[name].rules) {
                 for (const i in data[name].rules) {
-                    data[name].rules[i].rule = new RegExp(data[name].rules[i].rule, 'ig')
+                    data[name].rules[i].rule = new RegExp(data[name].rules[i].rule, 'ig');
                 }
             }
         }
-        return data
+        return data;
     }
 
     /**
@@ -129,13 +129,13 @@ class Trackers {
      */
     processEntityList(data) {
         /** @type {Record<string, string>} */
-        const processed = {}
+        const processed = {};
         for (const entity in data) {
             data[entity].domains.forEach((domain) => {
-                processed[domain] = entity
-            })
+                processed[domain] = entity;
+            });
         }
-        return processed
+        return processed;
     }
 
     /**
@@ -143,29 +143,29 @@ class Trackers {
      * @returns {Record<string, string>}
      */
     processSurrogateList(text) {
-        const b64dataheader = 'data:application/javascript;base64,'
+        const b64dataheader = 'data:application/javascript;base64,';
         /** @type {Record<string, string>} */
-        const surrogateList = {}
-        const splitSurrogateList = text.trim().split('\n\n')
+        const surrogateList = {};
+        const splitSurrogateList = text.trim().split('\n\n');
 
         splitSurrogateList.forEach((sur) => {
             // remove comment lines
             const lines = sur.split('\n').filter((line) => {
-                return !/^#.*/.test(line)
-            })
+                return !/^#.*/.test(line);
+            });
 
             // remove first line, store it
-            const firstLine = lines.shift()
+            const firstLine = lines.shift();
             if (!firstLine) {
-                return
+                return;
             }
 
             // take identifier from first line
-            const pattern = firstLine.split(' ')[0].split('/')[1]
-            const b64surrogate = btoa(lines.join('\n').toString())
-            surrogateList[pattern] = b64dataheader + b64surrogate
-        })
-        return surrogateList
+            const pattern = firstLine.split(' ')[0].split('/')[1];
+            const b64surrogate = btoa(lines.join('\n').toString());
+            surrogateList[pattern] = b64dataheader + b64surrogate;
+        });
+        return surrogateList;
     }
 
     /**
@@ -173,24 +173,24 @@ class Trackers {
      * @returns {{fromCname: string | undefined, finalURL: string}}
      */
     resolveCname(url) {
-        const parsed = this.tldts.parse(url, { allowPrivateDomains: true })
-        let finalURL = url
-        let fromCname
+        const parsed = this.tldts.parse(url, { allowPrivateDomains: true });
+        let finalURL = url;
+        let fromCname;
         if (parsed && this.cnames && parsed.domain) {
-            let domain = parsed.domain
+            let domain = parsed.domain;
             if (parsed.subdomain) {
-                domain = parsed.subdomain + '.' + domain
+                domain = parsed.subdomain + '.' + domain;
             }
-            const finalDomain = this.cnames[domain] || domain
-            finalURL = finalURL.replace(domain, finalDomain)
+            const finalDomain = this.cnames[domain] || domain;
+            finalURL = finalURL.replace(domain, finalDomain);
             if (finalDomain !== domain) {
-                fromCname = domain
+                fromCname = domain;
             }
         }
         return {
             fromCname,
             finalURL,
-        }
+        };
     }
 
     /**
@@ -198,8 +198,8 @@ class Trackers {
      * @param {string} urlString
      **/
     getBaseDomain(urlString) {
-        const parsedUrl = this.tldts.parse(urlString, { allowPrivateDomains: true })
-        return parsedUrl.domain || parsedUrl.hostname
+        const parsedUrl = this.tldts.parse(urlString, { allowPrivateDomains: true });
+        return parsedUrl.domain || parsedUrl.hostname;
     }
 
     /**
@@ -212,10 +212,10 @@ class Trackers {
      * @returns {RequestData | null}
      */
     getRequestData(urlToCheck, siteUrl, request) {
-        const siteDomain = this.getBaseDomain(siteUrl)
-        const urlToCheckDomain = this.getBaseDomain(urlToCheck)
+        const siteDomain = this.getBaseDomain(siteUrl);
+        const urlToCheckDomain = this.getBaseDomain(urlToCheck);
         if (!siteDomain || !urlToCheckDomain) {
-            return null
+            return null;
         }
         return {
             siteUrl: siteUrl,
@@ -226,7 +226,7 @@ class Trackers {
             urlToCheck: urlToCheck,
             urlToCheckDomain,
             urlToCheckSplit: this.utils.extractHostFromURL(urlToCheck).split('.'),
-        }
+        };
     }
 
     /**
@@ -234,12 +234,12 @@ class Trackers {
      * @returns {boolean}
      */
     isSpecialURL(url) {
-        let urlObj
+        let urlObj;
         try {
-            urlObj = new URL(url)
+            urlObj = new URL(url);
         } catch {
             // This really shouldn't happen but if it does, we'll just assume it's a special URL
-            return true
+            return true;
         }
         const specialProtocols = [
             // Browser specific internal protocols
@@ -285,7 +285,7 @@ class Trackers {
             'webcal:',
             'wtai:',
             'xmpp:',
-        ]
+        ];
         if (urlObj) {
             if (
                 specialProtocols.includes(urlObj.protocol) ||
@@ -293,10 +293,10 @@ class Trackers {
                 urlObj.protocol.startsWith('web+') ||
                 urlObj.hostname === 'localhost'
             ) {
-                return true
+                return true;
             }
         }
-        return false
+        return false;
     }
 
     /**
@@ -315,49 +315,49 @@ class Trackers {
      */
     getTrackerData(urlToCheck, siteUrl, request, supportedCustomRuleActions) {
         if (!this.entityList || !this.trackerList) {
-            throw new Error('tried to detect trackers before rules were loaded')
+            throw new Error('tried to detect trackers before rules were loaded');
         }
 
         if (this.isSpecialURL(urlToCheck) || this.isSpecialURL(siteUrl)) {
-            return null
+            return null;
         }
 
-        let fromCname
-        let requestData = this.getRequestData(urlToCheck, siteUrl, request)
+        let fromCname;
+        let requestData = this.getRequestData(urlToCheck, siteUrl, request);
         if (!requestData) {
-            return null
+            return null;
         }
         // We don't want to use CNAME check for this caluclation as we would avoid showing in the panel.
         // So we're calcuating this before the CNAME check.
-        const sameBaseDomain = requestData.sameBaseDomain
+        const sameBaseDomain = requestData.sameBaseDomain;
 
         // finds a tracker definition by iterating over the whole trackerList and finding the matching tracker.
-        let tracker = this.findTracker(requestData)
+        let tracker = this.findTracker(requestData);
 
         if (!tracker) {
             // if request doesn't have any rules associated with it, we should check if it's a CNAMEed tracker
-            const cnameResolution = this.resolveCname(urlToCheck)
-            const cnameRequestData = this.getRequestData(cnameResolution.finalURL, siteUrl, request)
+            const cnameResolution = this.resolveCname(urlToCheck);
+            const cnameRequestData = this.getRequestData(cnameResolution.finalURL, siteUrl, request);
             if (cnameResolution.fromCname && cnameRequestData) {
-                tracker = this.findTracker(cnameRequestData)
+                tracker = this.findTracker(cnameRequestData);
                 if (tracker) {
-                    fromCname = cnameResolution.fromCname
-                    requestData = cnameRequestData
+                    fromCname = cnameResolution.fromCname;
+                    requestData = cnameRequestData;
                 }
             }
         }
 
-        const fullTrackerDomain = requestData.urlToCheckSplit.join('.')
-        const requestOwner = this.findTrackerOwner(requestData.urlToCheckDomain)
-        const websiteOwner = this.findWebsiteOwner(requestData)
+        const fullTrackerDomain = requestData.urlToCheckSplit.join('.');
+        const requestOwner = this.findTrackerOwner(requestData.urlToCheckDomain);
+        const websiteOwner = this.findWebsiteOwner(requestData);
         const sameEntity =
-            requestOwner && websiteOwner ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain
+            requestOwner && websiteOwner ? requestOwner === websiteOwner : requestData.siteDomain === requestData.urlToCheckDomain;
 
         if (!tracker) {
             const owner = {
                 name: requestOwner || requestData.urlToCheckDomain || 'unknown',
                 displayName: requestOwner || requestData.urlToCheckDomain || 'Unknown',
-            }
+            };
             /** @type {TrackerObj} */
             const trackerObj = {
                 domain: fullTrackerDomain,
@@ -368,7 +368,7 @@ class Trackers {
                 categories: [],
                 default: 'none',
                 rules: [],
-            }
+            };
             return {
                 action: trackerObj.default,
                 reason: '',
@@ -380,16 +380,16 @@ class Trackers {
                 tracker: trackerObj,
                 fullTrackerDomain,
                 fromCname,
-            }
+            };
         }
         // finds a matching rule by iterating over the rules in tracker.data and sets redirectUrl.
-        const matchedRule = this.findRule(tracker, requestData, supportedCustomRuleActions)
+        const matchedRule = this.findRule(tracker, requestData, supportedCustomRuleActions);
 
         // @ts-ignore
-        const redirectUrl = matchedRule && matchedRule.surrogate ? this.surrogateList[matchedRule.surrogate] : false
+        const redirectUrl = matchedRule && matchedRule.surrogate ? this.surrogateList[matchedRule.surrogate] : false;
 
         // sets tracker.exception by looking at tracker.rule exceptions (if any)
-        const matchedRuleException = matchedRule ? this.matchesRuleDefinition(matchedRule, 'exceptions', requestData) : false
+        const matchedRuleException = matchedRule ? this.matchesRuleDefinition(matchedRule, 'exceptions', requestData) : false;
 
         const { action, reason } = this.getAction({
             sameEntity,
@@ -397,7 +397,7 @@ class Trackers {
             matchedRuleException,
             defaultAction: tracker.default,
             redirectUrl,
-        })
+        });
         return {
             action,
             reason,
@@ -409,7 +409,7 @@ class Trackers {
             tracker,
             fullTrackerDomain,
             fromCname,
-        }
+        };
     }
 
     /**
@@ -419,16 +419,16 @@ class Trackers {
      */
     findTracker(urlToCheckObject) {
         if (!this.trackerList) {
-            throw new Error('tried to detect trackers before rules were loaded')
+            throw new Error('tried to detect trackers before rules were loaded');
         }
-        const urlList = Array.from(urlToCheckObject.urlToCheckSplit)
+        const urlList = Array.from(urlToCheckObject.urlToCheckSplit);
         while (urlList.length > 1) {
-            const trackerDomain = urlList.join('.')
-            urlList.shift()
+            const trackerDomain = urlList.join('.');
+            urlList.shift();
 
-            const matchedTracker = this.trackerList[trackerDomain]
+            const matchedTracker = this.trackerList[trackerDomain];
             if (matchedTracker) {
-                return matchedTracker
+                return matchedTracker;
             }
         }
     }
@@ -439,7 +439,7 @@ class Trackers {
      */
     findTrackerOwner(trackerDomain) {
         // @ts-ignore
-        return this.entityList[trackerDomain]
+        return this.entityList[trackerDomain];
     }
 
     /**
@@ -449,16 +449,16 @@ class Trackers {
      */
     findWebsiteOwner(siteUrlSplitObject) {
         // find the site owner
-        const siteUrlList = Array.from(siteUrlSplitObject.siteUrlSplit)
+        const siteUrlList = Array.from(siteUrlSplitObject.siteUrlSplit);
 
         while (siteUrlList.length > 1) {
-            const siteToCheck = siteUrlList.join('.')
-            siteUrlList.shift()
+            const siteToCheck = siteUrlList.join('.');
+            siteUrlList.shift();
 
             // @ts-ignore
             if (this.entityList[siteToCheck]) {
                 // @ts-ignore
-                return this.entityList[siteToCheck]
+                return this.entityList[siteToCheck];
             }
         }
     }
@@ -478,7 +478,7 @@ class Trackers {
             Trackers.standardRuleActions.has(action) ||
             // Provided custom rule actions (if any) are also supported.
             (!!supportedCustomRuleActions && supportedCustomRuleActions.has(action))
-        )
+        );
     }
 
     /**
@@ -489,18 +489,18 @@ class Trackers {
      * @returns {TrackerRule | null}
      */
     findRule(tracker, requestData, supportedCustomRuleActions) {
-        let matchedRule = null
+        let matchedRule = null;
         // Find a matching rule from this tracker
         if (tracker.rules && tracker.rules.length) {
             tracker.rules.some((ruleObj) => {
                 if (this.requestMatchesRule(requestData, ruleObj) && this.ruleActionSupported(ruleObj, supportedCustomRuleActions)) {
-                    matchedRule = ruleObj
-                    return true
+                    matchedRule = ruleObj;
+                    return true;
                 }
-                return false
-            })
+                return false;
+            });
         }
-        return matchedRule
+        return matchedRule;
     }
 
     /**
@@ -511,12 +511,12 @@ class Trackers {
     requestMatchesRule(requestData, ruleObj) {
         if (requestData.urlToCheck.match(ruleObj.rule)) {
             if (ruleObj.options) {
-                return this.matchesRuleDefinition(ruleObj, 'options', requestData)
+                return this.matchesRuleDefinition(ruleObj, 'options', requestData);
             } else {
-                return true
+                return true;
             }
         } else {
-            return false
+            return false;
         }
     }
 
@@ -528,20 +528,20 @@ class Trackers {
      * @returns {boolean} true if all options matched
      */
     matchesRuleDefinition(rule, type, requestData) {
-        const ruleDefinition = rule[type]
+        const ruleDefinition = rule[type];
         if (!ruleDefinition) {
-            return false
+            return false;
         }
 
         const matchTypes =
-            ruleDefinition.types && ruleDefinition.types.length ? ruleDefinition.types.includes(requestData.request.type) : true
+            ruleDefinition.types && ruleDefinition.types.length ? ruleDefinition.types.includes(requestData.request.type) : true;
 
         const matchDomains =
             ruleDefinition.domains && ruleDefinition.domains.length
                 ? ruleDefinition.domains.some((domain) => domain.match(requestData.siteDomain))
-                : true
+                : true;
 
-        return matchTypes && matchDomains
+        return matchTypes && matchDomains;
     }
 
     /**
@@ -557,36 +557,36 @@ class Trackers {
     getAction(tracker) {
         // Determine the blocking decision and reason.
         /** @type {ActionName | undefined} */
-        let action = 'ignore'
-        let reason = 'unknown fallback'
+        let action = 'ignore';
+        let reason = 'unknown fallback';
 
         if (tracker.sameEntity) {
-            action = 'ignore'
-            reason = 'first party'
+            action = 'ignore';
+            reason = 'first party';
         } else if (tracker.matchedRuleException) {
-            action = 'ignore'
-            reason = 'matched rule - exception'
+            action = 'ignore';
+            reason = 'matched rule - exception';
         } else if (!tracker.matchedRule && tracker.defaultAction === 'ignore') {
-            action = 'ignore'
-            reason = 'default ignore'
+            action = 'ignore';
+            reason = 'default ignore';
         } else if (tracker.matchedRule && tracker.matchedRule.action === 'ignore') {
-            action = 'ignore'
-            reason = 'matched rule - ignore'
+            action = 'ignore';
+            reason = 'matched rule - ignore';
         } else if (!tracker.matchedRule && tracker.defaultAction === 'block') {
-            action = 'block'
-            reason = 'default block'
+            action = 'block';
+            reason = 'default block';
         } else if (tracker.matchedRule) {
             if (tracker.redirectUrl) {
-                action = 'redirect'
-                reason = 'matched rule - surrogate'
+                action = 'redirect';
+                reason = 'matched rule - surrogate';
             } else {
-                action = 'block'
-                reason = 'matched rule - block'
+                action = 'block';
+                reason = 'matched rule - block';
             }
         }
 
-        return { action, reason }
+        return { action, reason };
     }
 }
 
-module.exports = Trackers
+module.exports = Trackers;

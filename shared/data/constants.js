@@ -1,25 +1,25 @@
-const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string')
-const browserInfo = parseUserAgentString()
+const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string');
+const browserInfo = parseUserAgentString();
 
-const trackerBlockingEndpointBase = 'https://staticcdn.duckduckgo.com/trackerblocking'
+const trackerBlockingEndpointBase = 'https://staticcdn.duckduckgo.com/trackerblocking';
 
 function isMV3() {
     if (typeof chrome !== 'undefined') {
-        return chrome?.runtime.getManifest().manifest_version === 3
+        return chrome?.runtime.getManifest().manifest_version === 3;
     }
-    return false
+    return false;
 }
 
 function getConfigFileName() {
-    let browserName = browserInfo?.browser?.toLowerCase() || ''
+    let browserName = browserInfo?.browser?.toLowerCase() || '';
 
     // clamp to known browsers
     if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
-        browserName = ''
+        browserName = '';
     } else {
-        browserName = '-' + browserName + (isMV3() ? 'mv3' : '')
+        browserName = '-' + browserName + (isMV3() ? 'mv3' : '');
     }
-    return `${trackerBlockingEndpointBase}/config/v4/extension${browserName}-config.json`
+    return `${trackerBlockingEndpointBase}/config/v4/extension${browserName}-config.json`;
 }
 
 /**
@@ -29,8 +29,8 @@ function getConfigFileName() {
  * @returns {string}
  */
 function getTDSEndpoint(version) {
-    const thisPlatform = `extension${isMV3() ? '-mv3' : ''}`
-    return `${trackerBlockingEndpointBase}/${version}/${thisPlatform}-tds.json`
+    const thisPlatform = `extension${isMV3() ? '-mv3' : ''}`;
+    return `${trackerBlockingEndpointBase}/${version}/${thisPlatform}-tds.json`;
 }
 
 module.exports = {
@@ -174,4 +174,4 @@ module.exports = {
             },
         },
     }),
-}
+};

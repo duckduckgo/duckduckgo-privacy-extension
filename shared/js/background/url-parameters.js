@@ -1,25 +1,25 @@
-const Site = require('./classes/site').default
-const tdsStorage = require('./storage/tds').default
+const Site = require('./classes/site').default;
+const tdsStorage = require('./storage/tds').default;
 
 /** @module */
 
 // Note: These lists of parameters would need to be stored in session storage if
 //       this code was used by MV3 builds of the extension.
 //       See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#state
-let trackingParameters = null
+let trackingParameters = null;
 
 function ensureTrackingParametersConfig() {
     if (trackingParameters) {
-        return true
+        return true;
     }
 
     if (!tdsStorage?.config?.features?.trackingParameters?.settings?.parameters) {
-        return false
+        return false;
     }
 
-    trackingParameters = new Set(tdsStorage.config.features.trackingParameters.settings.parameters)
+    trackingParameters = new Set(tdsStorage.config.features.trackingParameters.settings.parameters);
 
-    return true
+    return true;
 }
 
 /**
@@ -32,17 +32,17 @@ function ensureTrackingParametersConfig() {
  *   True if tracking parameters were stripped, false otherwise.
  */
 function stripTrackingParameters(url) {
-    let parametersRemoved = false
+    let parametersRemoved = false;
 
     // No parameters, nothing to remove.
     if (url.search.length <= 1) {
-        return parametersRemoved
+        return parametersRemoved;
     }
 
     // Make sure that the tracking parameters configuration has been processed
     // since the extension config was last updated.
     if (!ensureTrackingParametersConfig()) {
-        return parametersRemoved
+        return parametersRemoved;
     }
 
     // Remove tracking parameters
@@ -51,19 +51,19 @@ function stripTrackingParameters(url) {
     //            See https://url.spec.whatwg.org/#urlsearchparams
     //
     // percent encoded parameters.
-    const params = url.search.slice(1).split('&')
-    const paramsToKeep = []
+    const params = url.search.slice(1).split('&');
+    const paramsToKeep = [];
     for (const param of params) {
         if (trackingParameters.has(param.split('=')[0])) {
-            parametersRemoved = true
-            continue
+            parametersRemoved = true;
+            continue;
         }
 
-        paramsToKeep.push(param)
+        paramsToKeep.push(param);
     }
-    url.search = paramsToKeep.length === 0 ? '' : '?' + paramsToKeep.join('&')
+    url.search = paramsToKeep.length === 0 ? '' : '?' + paramsToKeep.join('&');
 
-    return parametersRemoved
+    return parametersRemoved;
 }
 
 /**
@@ -80,26 +80,26 @@ function trackingParametersStrippingEnabled(site, initiatorUrl) {
     // Only strip tracking parameters if the feature is enabled for the
     // request URL (URL that the user is navigating to).
     if (site.specialDomainName || !site.isFeatureEnabled('trackingParameters')) {
-        return false
+        return false;
     }
 
     // Also only strip tracking parameters if the feature is enabled for
     // the initiating URL (the URL that the user navigated from, if any).
     if (initiatorUrl) {
-        const initiatorSite = new Site(initiatorUrl)
+        const initiatorSite = new Site(initiatorUrl);
         if (initiatorSite.specialDomainName || !initiatorSite.isFeatureEnabled('trackingParameters')) {
-            return false
+            return false;
         }
     }
 
-    return true
+    return true;
 }
 
 tdsStorage.onUpdate('config', () => {
-    trackingParameters = null
-})
+    trackingParameters = null;
+});
 
 module.exports = {
     trackingParametersStrippingEnabled,
     stripTrackingParameters,
-}
+};

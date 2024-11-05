@@ -1,29 +1,29 @@
-const trackerutils = require('../../shared/js/background/tracker-utils')
-const tds = require('../../shared/js/background/trackers')
-const tdsStorage = require('../../shared/js/background/storage/tds').default
-const tdsStorageStub = require('./../helpers/tds')
-const settings = require('../../shared/js/background/settings')
+const trackerutils = require('../../shared/js/background/tracker-utils');
+const tds = require('../../shared/js/background/trackers');
+const tdsStorage = require('../../shared/js/background/storage/tds').default;
+const tdsStorageStub = require('./../helpers/tds');
+const settings = require('../../shared/js/background/settings');
 
 describe('Tracker Utilities', () => {
-    let settingsObserver
-    let timer = Date.now()
-    const jump = 1000 * 60 * 31 // slightly more than cache timeout
+    let settingsObserver;
+    let timer = Date.now();
+    const jump = 1000 * 60 * 31; // slightly more than cache timeout
 
     beforeAll(() => {
-        settingsObserver = spyOn(settings, 'getSetting')
-        tdsStorageStub.stub()
+        settingsObserver = spyOn(settings, 'getSetting');
+        tdsStorageStub.stub();
 
         // Make sure we don't use any list caches for these tests
         spyOn(Date, 'now').and.callFake(function () {
             // Cache may be updated on each run, so keep jumping the time forward for each call
-            timer += jump
-            return timer
-        })
+            timer += jump;
+            return timer;
+        });
 
         return tdsStorage.getLists().then((lists) => {
-            return tds.setLists(lists)
-        })
-    })
+            return tds.setLists(lists);
+        });
+    });
 
     const knownTrackers = [
         'http://google-analytics.com',
@@ -32,21 +32,21 @@ describe('Tracker Utilities', () => {
         'https://google-analytics.com/a/b?p=g&1=2',
         'https://google-analytics.com:443/abc',
         'https://yahoo.com',
-    ]
+    ];
     it('Should identify a tracker correctly', () => {
         for (const tracker of knownTrackers) {
-            settingsObserver.and.returnValue(undefined)
-            expect(trackerutils.isTracker(tracker)).toBeTruthy()
+            settingsObserver.and.returnValue(undefined);
+            expect(trackerutils.isTracker(tracker)).toBeTruthy();
         }
-    })
+    });
 
-    const notTrackers = ['http://not-google-analytics.com', 'http://www.justarandompersonalsite.com']
+    const notTrackers = ['http://not-google-analytics.com', 'http://www.justarandompersonalsite.com'];
     it('Should identify a non-tracker correctly', () => {
         for (const tracker of notTrackers) {
-            settingsObserver.and.returnValue(true)
-            expect(trackerutils.isTracker(tracker)).toBeFalsy()
+            settingsObserver.and.returnValue(true);
+            expect(trackerutils.isTracker(tracker)).toBeFalsy();
         }
-    })
+    });
 
     const entityTests = [
         {
@@ -74,13 +74,13 @@ describe('Tracker Utilities', () => {
             entity2: 'google.com',
             sameEntity: false,
         },
-    ]
+    ];
     it('Should correctly match entities', () => {
         for (const test of entityTests) {
-            settingsObserver.and.returnValue(undefined)
-            expect(trackerutils.isSameEntity(test.entity1, test.entity2)).toEqual(test.sameEntity)
+            settingsObserver.and.returnValue(undefined);
+            expect(trackerutils.isSameEntity(test.entity1, test.entity2)).toEqual(test.sameEntity);
         }
-    })
+    });
 
     const referrerSameEntityTests = [
         {
@@ -103,13 +103,13 @@ describe('Tracker Utilities', () => {
             target: 'analytics.google.com',
             expectedReferrer: undefined,
         },
-    ]
+    ];
     it('Should not modify referrer on blank referrers and first party', () => {
         for (const test of referrerSameEntityTests) {
-            settingsObserver.and.returnValue(undefined)
-            expect(trackerutils.truncateReferrer(test.referrer, test.target)).toEqual(test.expectedReferrer)
+            settingsObserver.and.returnValue(undefined);
+            expect(trackerutils.truncateReferrer(test.referrer, test.target)).toEqual(test.expectedReferrer);
         }
-    })
+    });
 
     const referrerUserSafelistTests = [
         {
@@ -140,15 +140,15 @@ describe('Tracker Utilities', () => {
             safelist: { 'siteb.com': true },
             expectedReferrer: undefined,
         },
-    ]
+    ];
     it('Should not modify referrer when either site is safe listed by the user', () => {
         for (const test of referrerUserSafelistTests) {
-            settingsObserver.and.returnValue(test.safelist)
+            settingsObserver.and.returnValue(test.safelist);
             expect(trackerutils.truncateReferrer(test.referrer, test.target))
                 .withContext(`safelist: ${test.name}`)
-                .toEqual(test.expectedReferrer)
+                .toEqual(test.expectedReferrer);
         }
-    })
+    });
 
     const referrerSafelistTests = [
         {
@@ -175,15 +175,15 @@ describe('Tracker Utilities', () => {
             target: 'http://subdomain.testing.com/some/path?option=yes&option2=no',
             expectedReferrer: undefined,
         },
-    ]
+    ];
     it('Should not modify referrer when either site is safe listed by the global referrer safe list', () => {
         for (const test of referrerSafelistTests) {
-            settingsObserver.and.returnValue(undefined)
+            settingsObserver.and.returnValue(undefined);
             expect(trackerutils.truncateReferrer(test.referrer, test.target))
                 .withContext(`test: ${test.name}`)
-                .toEqual(test.expectedReferrer)
+                .toEqual(test.expectedReferrer);
         }
-    })
+    });
 
     const referrerTruncationTests = [
         {
@@ -258,15 +258,15 @@ describe('Tracker Utilities', () => {
             target: 'https://google-analytics.com/some/path',
             expectedReferrer: 'http://1.2.3.4/',
         },
-    ]
+    ];
     it('Should modify referrer when referrer != target', () => {
         for (const test of referrerTruncationTests) {
-            settingsObserver.and.returnValue(undefined)
+            settingsObserver.and.returnValue(undefined);
             expect(trackerutils.truncateReferrer(test.referrer, test.target))
                 .withContext(`test: ${test.name}`)
-                .toEqual(test.expectedReferrer)
+                .toEqual(test.expectedReferrer);
         }
-    })
+    });
 
     const referrerOddURLTests = [
         {
@@ -329,38 +329,38 @@ describe('Tracker Utilities', () => {
             referrer: 'http://siteB.com',
             target: 'moz-extension://31261636-83bc-0f4a-b9fc-b2edc39ea32cdf/dashboard.html#settings.html',
         },
-    ]
+    ];
     it('Should not throw errors when unusual URLs are encountered', () => {
         for (const test of referrerOddURLTests) {
             expect(function () {
-                settingsObserver.and.returnValue(undefined)
-                trackerutils.truncateReferrer(test.referrer, test.target)
+                settingsObserver.and.returnValue(undefined);
+                trackerutils.truncateReferrer(test.referrer, test.target);
             })
                 .withContext(`test: ${test.name}`)
-                .not.toThrow()
+                .not.toThrow();
         }
-    })
-})
+    });
+});
 
 describe('trackerutils.isFirstPartyByEntity()', () => {
-    let timer = Date.now()
-    const jump = 1000 * 60 * 31 // slightly more than cache timeout
+    let timer = Date.now();
+    const jump = 1000 * 60 * 31; // slightly more than cache timeout
 
     beforeAll(() => {
-        spyOn(settings, 'getSetting')
-        tdsStorageStub.stub()
+        spyOn(settings, 'getSetting');
+        tdsStorageStub.stub();
 
         // Make sure we don't use any list caches for these tests
         spyOn(Date, 'now').and.callFake(function () {
             // Cache may be updated on each run, so keep jumping the time forward for each call
-            timer += jump
-            return timer
-        })
+            timer += jump;
+            return timer;
+        });
 
         return tdsStorage.getLists().then((lists) => {
-            return tds.setLists(lists)
-        })
-    })
+            return tds.setLists(lists);
+        });
+    });
 
     const firstPartyTests = [
         { a: 'http://google-analytics.com', b: 'http://google.com', expected: true }, // tracker, tracker
@@ -369,16 +369,16 @@ describe('trackerutils.isFirstPartyByEntity()', () => {
         { a: 'http://cloudrobotics.com', b: 'http://ridepenguin.com', expected: true }, // non tracker, non tracker
         { a: 'http://disqus.com', b: 'http://google.com', expected: false },
         { a: 'https://google-analytics.com/script-exception', b: 'https://example.com', expected: false },
-    ]
+    ];
     it('Should detect first partiness', () => {
         for (const test of firstPartyTests) {
             if (test.expected) {
                 expect(trackerutils.isFirstPartyByEntity(test.a, test.b))
                     .withContext(`test: a: ${test.a} b: ${test.b} expected: ${test.expected}`)
-                    .toBeTrue()
+                    .toBeTrue();
             } else {
-                expect(trackerutils.isFirstPartyByEntity(test.a, test.b)).toBeFalse()
+                expect(trackerutils.isFirstPartyByEntity(test.a, test.b)).toBeFalse();
             }
         }
-    })
-})
+    });
+});

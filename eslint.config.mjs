@@ -1,5 +1,5 @@
-import ddgConfig from '@duckduckgo/eslint-config'
-import globals from 'globals'
+import ddgConfig from '@duckduckgo/eslint-config';
+import globals from 'globals';
 
 export default [
     ...ddgConfig,
@@ -51,4 +51,4 @@ export default [
             'object-shorthand': 0,
         },
     },
-]
+];

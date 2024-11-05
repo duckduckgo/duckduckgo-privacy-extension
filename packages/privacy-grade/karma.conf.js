@@ -1,5 +1,5 @@
 module.exports = function (config) {
-    process.env.CHROME_BIN = require('puppeteer').executablePath()
+    process.env.CHROME_BIN = require('puppeteer').executablePath();
 
     const configuration = {
         basePath: 'build/',
@@ -15,7 +15,7 @@ module.exports = function (config) {
                 flags: ['--no-sandbox'],
             },
         },
-    }
+    };
 
-    config.set(configuration)
-}
+    config.set(configuration);
+};
