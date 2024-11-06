@@ -1,40 +1,40 @@
-const defaultSettings = require('../../data/defaultSettings')
-const browserWrapper = require('./wrapper')
+const defaultSettings = require('../../data/defaultSettings');
+const browserWrapper = require('./wrapper');
 
-const onSettingUpdate = new EventTarget()
+const onSettingUpdate = new EventTarget();
 
 // @ts-expect-error Workaround for the tests in unit-tests/node/reference-tests.
-if (typeof CustomEvent === 'undefined') globalThis.CustomEvent = Event
+if (typeof CustomEvent === 'undefined') globalThis.CustomEvent = Event;
 
 /**
  * Settings whose defaults can by managed by the system administrator
  */
-const MANAGED_SETTINGS = ['hasSeenPostInstall']
+const MANAGED_SETTINGS = ['hasSeenPostInstall'];
 /**
  * Public api
  * Usage:
  * You can use promise callbacks to check readyness before getting and updating
  * settings.ready().then(() => settings.updateSetting('settingName', settingValue))
  */
-let settings = {}
-let isReady = false
+let settings = {};
+let isReady = false;
 const _ready = init().then(() => {
-    isReady = true
-    console.log('Settings are loaded')
-})
+    isReady = true;
+    console.log('Settings are loaded');
+});
 
-async function init () {
-    buildSettingsFromDefaults()
-    await buildSettingsFromManagedStorage()
-    await buildSettingsFromLocalStorage()
+async function init() {
+    buildSettingsFromDefaults();
+    await buildSettingsFromManagedStorage();
+    await buildSettingsFromLocalStorage();
 }
 
-function ready () {
-    return _ready
+function ready() {
+    return _ready;
 }
 
 // Ensures we have cleared up old storage keys we have renamed
-function checkForLegacyKeys () {
+function checkForLegacyKeys() {
     const legacyKeys = {
         // Keys to migrate
         whitelisted: 'allowlisted',
@@ -63,107 +63,105 @@ function checkForLegacyKeys () {
         'brokenSiteList-etag': null,
         'surrogateList-etag': null,
         'trackersWhitelist-etag': null,
-        'trackersWhitelistTemporary-etag': null
-    }
-    let syncNeeded = false
+        'trackersWhitelistTemporary-etag': null,
+    };
+    let syncNeeded = false;
     for (const legacyKey in legacyKeys) {
-        const key = legacyKeys[legacyKey]
+        const key = legacyKeys[legacyKey];
         if (!(legacyKey in settings)) {
-            continue
+            continue;
         }
-        syncNeeded = true
-        const legacyValue = settings[legacyKey]
+        syncNeeded = true;
+        const legacyValue = settings[legacyKey];
         if (key && legacyValue) {
-            settings[key] = legacyValue
+            settings[key] = legacyValue;
         }
-        delete settings[legacyKey]
+        delete settings[legacyKey];
     }
     if (syncNeeded) {
-        syncSettingTolocalStorage()
+        syncSettingTolocalStorage();
     }
 }
 
-async function buildSettingsFromLocalStorage () {
-    const results = await browserWrapper.getFromStorage(['settings'])
+async function buildSettingsFromLocalStorage() {
+    const results = await browserWrapper.getFromStorage(['settings']);
     // copy over saved settings from storage
-    if (!results) return
-    settings = browserWrapper.mergeSavedSettings(settings, results)
-    checkForLegacyKeys()
+    if (!results) return;
+    settings = browserWrapper.mergeSavedSettings(settings, results);
+    checkForLegacyKeys();
 }
 
-async function buildSettingsFromManagedStorage () {
-    const results = await browserWrapper.getFromManagedStorage(MANAGED_SETTINGS)
-    settings = browserWrapper.mergeSavedSettings(settings, results)
+async function buildSettingsFromManagedStorage() {
+    const results = await browserWrapper.getFromManagedStorage(MANAGED_SETTINGS);
+    settings = browserWrapper.mergeSavedSettings(settings, results);
 }
 
-function buildSettingsFromDefaults () {
+function buildSettingsFromDefaults() {
     // initial settings are a copy of default settings
-    settings = Object.assign({}, defaultSettings)
+    settings = Object.assign({}, defaultSettings);
 }
 
-function syncSettingTolocalStorage () {
-    return browserWrapper.syncToStorage({ settings })
+function syncSettingTolocalStorage() {
+    return browserWrapper.syncToStorage({ settings });
 }
 
-function getSetting (name) {
+function getSetting(name) {
     if (!isReady) {
-        console.warn(`Settings: getSetting() Settings not loaded: ${name}`)
-        return
+        console.warn(`Settings: getSetting() Settings not loaded: ${name}`);
+        return;
     }
 
     // let all and null return all settings
-    if (name === 'all') name = null
+    if (name === 'all') name = null;
 
     if (name) {
-        return settings[name]
+        return settings[name];
     } else {
-        return settings
+        return settings;
     }
 }
 
-function updateSetting (name, value) {
+function updateSetting(name, value) {
     if (!isReady) {
-        console.warn(`Settings: updateSetting() Setting not loaded: ${name}`)
-        return
+        console.warn(`Settings: updateSetting() Setting not loaded: ${name}`);
+        return;
     }
 
-    settings[name] = value
+    settings[name] = value;
     syncSettingTolocalStorage().then(() => {
-        onSettingUpdate.dispatchEvent(new CustomEvent(name, { detail: value }))
-    })
+        onSettingUpdate.dispatchEvent(new CustomEvent(name, { detail: value }));
+    });
 }
 
-function incrementNumericSetting (name, increment = 1) {
+function incrementNumericSetting(name, increment = 1) {
     if (!isReady) {
-        console.warn(
-            'Settings: incrementNumericSetting() Setting not loaded:', name
-        )
-        return
+        console.warn('Settings: incrementNumericSetting() Setting not loaded:', name);
+        return;
     }
 
-    let value = settings[name]
+    let value = settings[name];
     if (typeof value !== 'number' || isNaN(value)) {
-        value = 0
+        value = 0;
     }
 
-    updateSetting(name, value + increment)
+    updateSetting(name, value + increment);
 }
 
-function removeSetting (name) {
+function removeSetting(name) {
     if (!isReady) {
-        console.warn(`Settings: removeSetting() Setting not loaded: ${name}`)
-        return
+        console.warn(`Settings: removeSetting() Setting not loaded: ${name}`);
+        return;
     }
     if (settings[name]) {
-        delete settings[name]
-        syncSettingTolocalStorage()
+        delete settings[name];
+        syncSettingTolocalStorage();
     }
 }
 
-function logSettings () {
+function logSettings() {
     browserWrapper.getFromStorage(['settings']).then((s) => {
-        console.log(s.settings)
-    })
+        console.log(s.settings);
+    });
 }
 
 module.exports = {
@@ -173,5 +171,5 @@ module.exports = {
     removeSetting,
     logSettings,
     ready,
-    onSettingUpdate
-}
+    onSettingUpdate,
+};

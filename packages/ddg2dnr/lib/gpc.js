@@ -1,10 +1,7 @@
 /** @module gpc */
-const {
-    resourceTypes,
-    generateDNRRule
-} = require('./utils')
+const { resourceTypes, generateDNRRule } = require('./utils');
 
-const GPC_HEADER_PRIORITY = 40000
+const GPC_HEADER_PRIORITY = 40000;
 
 /**
  * Generate a declarativeNetRequest rule to add Global Privacy Control (GPC)
@@ -15,19 +12,17 @@ const GPC_HEADER_PRIORITY = 40000
  *   initiator domains.
  * @return {chrome.declarativeNetRequest.Rule}
  */
-function generateGPCheaderRule (ruleId, allowedDomains) {
+function generateGPCheaderRule(ruleId, allowedDomains) {
     return generateDNRRule({
         id: ruleId,
         priority: GPC_HEADER_PRIORITY,
         actionType: 'modifyHeaders',
-        requestHeaders: [
-            { header: 'Sec-GPC', operation: 'set', value: '1' }
-        ],
+        requestHeaders: [{ header: 'Sec-GPC', operation: 'set', value: '1' }],
         resourceTypes: [...resourceTypes],
         excludedInitiatorDomains: allowedDomains,
-        excludedRequestDomains: allowedDomains
-    })
+        excludedRequestDomains: allowedDomains,
+    });
 }
 
-exports.GPC_HEADER_PRIORITY = GPC_HEADER_PRIORITY
-exports.generateGPCheaderRule = generateGPCheaderRule
+exports.GPC_HEADER_PRIORITY = GPC_HEADER_PRIORITY;
+exports.generateGPCheaderRule = generateGPCheaderRule;

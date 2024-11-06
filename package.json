@@ -13,7 +13,7 @@
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "eslint": "eslint '*.js' shared/js shared/data unit-test integration-test scripts",
         "eslint-fix": "npm run eslint -- --fix",
-        "lint": "npm run eslint && npm run tsc",
+        "lint": "npm run eslint && prettier . --check && npm run tsc",
         "test": "npm run test.unit && npm run test.node",
         "test.unit": "make unit-test",
         "test.node": "make node-test",
@@ -30,7 +30,7 @@
         "beta-chrome": "make chrome-beta browser=chrome type=release"
     },
     "devDependencies": {
-        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#51dc868a4342379d6aec1d0f4214156e7046d5f6",
+        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.1.0",
         "@fingerprintjs/fingerprintjs": "^4.5.0",
         "@playwright/test": "^1.48.1",
         "@types/chrome": "^0.0.269",
@@ -50,6 +50,7 @@
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
         "node-fetch": "^3.3.2",
+        "prettier": "3.3.3",
         "puppeteer": "^23.0.2",
         "sass": "^1.79.5",
         "timekeeper": "^2.3.1",

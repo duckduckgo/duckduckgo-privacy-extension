@@ -1,42 +1,51 @@
-@import "../vars";
-@import "../mixins";
+@import '../vars';
+@import '../mixins';
 
 /* Normalize File */
-@import "../../../node_modules/normalize.scss/normalize";
+@import '../../../node_modules/normalize.scss/normalize';
 
 /* Font definitions */
-@import "fonts";
+@import 'fonts';
 
-@import "forms";
-
+@import 'forms';
 
 /**
  * DDG Extension Resets & Base Styles
  */
 
-html, body {
-
+html,
+body {
     &.body--neutral {
         background: $color--white;
     }
 }
 
-h1, h2, h3, h4, h5, h5, p, div {
+h1,
+h2,
+h3,
+h4,
+h5,
+h5,
+p,
+div {
     font-size: $font__size--default;
     margin: 0;
     padding: 0;
 
     &.menu-title {
-      font-weight: bold;
-      padding: 14px 0;
+        font-weight: bold;
+        padding: 14px 0;
 
-      &.fire-title{
-        padding-top: 0px;
-      }
+        &.fire-title {
+            padding-top: 0px;
+        }
     }
 }
 
-section, ul, ol, li {
+section,
+ul,
+ol,
+li {
     margin: 0;
     padding: 0;
     position: relative;
@@ -52,7 +61,11 @@ section, ul, ol, li {
     }
 }
 
-form, input, select, option, button {
+form,
+input,
+select,
+option,
+button {
     outline: none;
 
     * {
@@ -66,13 +79,12 @@ button {
     padding: 0;
 }
 
-
 /* Fonts */
 body,
 input,
 textarea,
 select {
-    font-family:$font__face--default;
+    font-family: $font__face--default;
     font-size: $font__size--default;
     font-weight: normal;
     color: $slate;
@@ -81,7 +93,6 @@ select {
 .bold {
     font-weight: bold;
 }
-
 
 /* Links */
 a {
@@ -97,17 +108,14 @@ a {
     }
 }
 
-
 /**
  * DDG Extension Helper Classes
  */
-
 
 /* Hide element */
 .is-hidden {
     display: none;
 }
-
 
 /* Position */
 .pull-right {
@@ -120,12 +128,10 @@ a {
     left: 20px;
 }
 
-
 /* Display */
 .block {
     display: block;
 }
-
 
 /* Floats */
 .float-left {
@@ -142,7 +148,6 @@ a {
     line-height: 0;
 }
 
-
 /* Text Centering */
 .text--center {
     text-align: center;
@@ -151,7 +156,6 @@ a {
 .text--left {
     text-align: left;
 }
-
 
 /* Borders */
 .border--top {
@@ -166,7 +170,7 @@ a {
     position: relative;
 
     &:after {
-        content: "";
+        content: '';
         border-bottom: $card__border;
         position: absolute;
         bottom: 0;
@@ -179,7 +183,7 @@ a {
     position: relative;
 
     &:before {
-        content: "";
+        content: '';
         border-top: $card__border;
         position: absolute;
         top: 0;
@@ -187,7 +191,6 @@ a {
         right: 20px;
     }
 }
-
 
 /* Padding */
 .padded {
@@ -234,14 +237,14 @@ a {
         width: 14px;
         height: 14px;
 
-        @include cross_platform_bg_image("close.svg");
+        @include cross_platform_bg_image('close.svg');
     }
 
     &.icon__arrow {
         width: 12px;
         height: 12px;
 
-        @include cross_platform_bg_image("arrow@2x.png");
+        @include cross_platform_bg_image('arrow@2x.png');
 
         &.icon__arrow--left {
             transform: rotate(180deg);
@@ -250,7 +253,7 @@ a {
         &.icon__arrow--large {
             width: 7px;
             margin-top: -20px;
-            @include cross_platform_bg_image("arrow--large.svg");
+            @include cross_platform_bg_image('arrow--large.svg');
         }
     }
 
@@ -258,7 +261,7 @@ a {
         width: 16px;
         height: 16px;
 
-        @include cross_platform_bg_image("settings-gear@2x.png");
+        @include cross_platform_bg_image('settings-gear@2x.png');
     }
 
     &.icon__error {
@@ -267,7 +270,7 @@ a {
         vertical-align: bottom;
         margin-left: -2px;
 
-        @include cross_platform_bg_image("error.svg");
+        @include cross_platform_bg_image('error.svg');
     }
 
     &.icon__check {
@@ -277,7 +280,7 @@ a {
         margin-left: 1px;
         vertical-align: top;
 
-        @include cross_platform_bg_image("check.svg");
+        @include cross_platform_bg_image('check.svg');
     }
 
     &.icon__shield {
@@ -287,10 +290,9 @@ a {
         margin-left: 1px;
         vertical-align: top;
 
-        @include cross_platform_bg_image("shield.svg");
+        @include cross_platform_bg_image('shield.svg');
     }
 }
-
 
 /* Popover
  * Template is in templates/shread/popover.js

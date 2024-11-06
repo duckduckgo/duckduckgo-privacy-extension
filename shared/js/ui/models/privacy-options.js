@@ -1,49 +1,45 @@
 /* global BUILD_TARGET */
-const Parent = window.DDG.base.Model
+const Parent = window.DDG.base.Model;
 
-function PrivacyOptions (attrs) {
+function PrivacyOptions(attrs) {
     // set some default values for the toggle switches in the template
-    attrs.httpsEverywhereEnabled = true
-    attrs.embeddedTweetsEnabled = false
-    attrs.GPC = false
-    attrs.youtubeClickToLoadEnabled = false
-    attrs.youtubePreviewsEnabled = false
-    attrs.fireButtonClearHistoryEnabled = true
-    attrs.fireButtonTabClearEnabled = true
+    attrs.httpsEverywhereEnabled = true;
+    attrs.embeddedTweetsEnabled = false;
+    attrs.GPC = false;
+    attrs.youtubeClickToLoadEnabled = false;
+    attrs.youtubePreviewsEnabled = false;
+    attrs.fireButtonClearHistoryEnabled = true;
+    attrs.fireButtonTabClearEnabled = true;
 
-    Parent.call(this, attrs)
+    Parent.call(this, attrs);
 }
 
-PrivacyOptions.prototype = window.$.extend({},
-    Parent.prototype,
-    {
+PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
+    modelName: 'privacyOptions',
 
-        modelName: 'privacyOptions',
-
-        toggle: function (k) {
-            if (Object.hasOwnProperty.call(this, k)) {
-                this[k] = !this[k]
-                console.log(`PrivacyOptions model toggle ${k} is now ${this[k]}`)
-                this.sendMessage('updateSetting', { name: k, value: this[k] })
-            }
-        },
-
-        async getState () {
-            const [settings, youtubeClickToLoadEnabled] = await Promise.all([
-                this.sendMessage('getSetting', 'all'),
-                this.sendMessage('isClickToLoadYoutubeEnabled')
-            ])
-
-            this.httpsEverywhereEnabled = settings.httpsEverywhereEnabled
-            this.embeddedTweetsEnabled = settings.embeddedTweetsEnabled
-            this.GPC = settings.GPC
-            this.youtubeClickToLoadEnabled = youtubeClickToLoadEnabled
-            this.youtubePreviewsEnabled = settings.youtubePreviewsEnabled
-            this.fireButtonEnabled = BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2'
-            this.fireButtonClearHistoryEnabled = settings.fireButtonClearHistoryEnabled
-            this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled
+    toggle: function (k) {
+        if (Object.hasOwnProperty.call(this, k)) {
+            this[k] = !this[k];
+            console.log(`PrivacyOptions model toggle ${k} is now ${this[k]}`);
+            this.sendMessage('updateSetting', { name: k, value: this[k] });
         }
-    }
-)
+    },
 
-module.exports = PrivacyOptions
+    async getState() {
+        const [settings, youtubeClickToLoadEnabled] = await Promise.all([
+            this.sendMessage('getSetting', 'all'),
+            this.sendMessage('isClickToLoadYoutubeEnabled'),
+        ]);
+
+        this.httpsEverywhereEnabled = settings.httpsEverywhereEnabled;
+        this.embeddedTweetsEnabled = settings.embeddedTweetsEnabled;
+        this.GPC = settings.GPC;
+        this.youtubeClickToLoadEnabled = youtubeClickToLoadEnabled;
+        this.youtubePreviewsEnabled = settings.youtubePreviewsEnabled;
+        this.fireButtonEnabled = BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2';
+        this.fireButtonClearHistoryEnabled = settings.fireButtonClearHistoryEnabled;
+        this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled;
+    },
+});
+
+module.exports = PrivacyOptions;

@@ -1,23 +1,23 @@
-const atbUtils = require('../../shared/js/background/atb-utils')
+const atbUtils = require('../../shared/js/background/atb-utils');
 
 describe('utils.getCurrentATB', () => {
-    const result = atbUtils.getCurrentATB()
+    const result = atbUtils.getCurrentATB();
 
     it('should return a majorVersion that is an integer', function () {
-        expect(result.majorVersion % 1).toEqual(0)
-    })
+        expect(result.majorVersion % 1).toEqual(0);
+    });
 
     it('should return a majorVersion greater than 25', function () {
-        expect(result.majorVersion).toBeGreaterThan(25)
-    })
+        expect(result.majorVersion).toBeGreaterThan(25);
+    });
 
     it('should return a majorVersion less than 500', function () {
-        expect(result.majorVersion).toBeLessThan(500)
-    })
+        expect(result.majorVersion).toBeLessThan(500);
+    });
 
     it('should return a minorVersion from 1-7', function () {
-        expect([1, 2, 3, 4, 5, 6, 7].indexOf(result.minorVersion)).toBeGreaterThan(-1)
-    })
+        expect([1, 2, 3, 4, 5, 6, 7].indexOf(result.minorVersion)).toBeGreaterThan(-1);
+    });
 
     const tests = [
         // eastern
@@ -69,18 +69,18 @@ describe('utils.getCurrentATB', () => {
         { date: 'Sun Mar 12 2017 01:01:00 GMT-0500 (EST)', atb: 'v55-5' },
         { date: 'Sun Mar 12 2017 01:59:00 GMT-0500 (EST)', atb: 'v55-5' },
         { date: 'Sun Mar 12 2017 02:01:00 GMT-0400 (EDT)', atb: 'v55-5' },
-        { date: 'Sun Mar 12 2017 03:01:00 GMT-0400 (EDT)', atb: 'v55-5' }
-    ]
+        { date: 'Sun Mar 12 2017 03:01:00 GMT-0400 (EDT)', atb: 'v55-5' },
+    ];
 
     tests.forEach(function (test) {
         it('should return version ' + test.atb + ' for ' + test.date, function () {
-            const baseTime = new Date(test.date)
-            jasmine.clock().mockDate(baseTime)
+            const baseTime = new Date(test.date);
+            jasmine.clock().mockDate(baseTime);
 
-            const currentATBResult = atbUtils.getCurrentATB()
+            const currentATBResult = atbUtils.getCurrentATB();
 
-            jasmine.clock().uninstall()
-            expect(currentATBResult.version).toEqual(test.atb)
-        })
-    })
-})
+            jasmine.clock().uninstall();
+            expect(currentATBResult.version).toEqual(test.atb);
+        });
+    });
+});

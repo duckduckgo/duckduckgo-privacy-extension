@@ -1,21 +1,11 @@
-import settings from './settings'
+import settings from './settings';
 
-import {
-    USER_ALLOWLISTED_PRIORITY
-} from '@duckduckgo/ddg2dnr/lib/rulePriorities'
+import { USER_ALLOWLISTED_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
 
-import {
-    updateExtensionConfigRules,
-    updateCombinedConfigBlocklistRules
-} from './dnr-config-rulesets'
+import { updateExtensionConfigRules, updateCombinedConfigBlocklistRules } from './dnr-config-rulesets';
 
-import {
-    USER_ALLOWLIST_RULE_ID,
-    findExistingDynamicRule
-} from './dnr-utils'
-import {
-    generateDNRRule
-} from '@duckduckgo/ddg2dnr/lib/utils'
+import { USER_ALLOWLIST_RULE_ID, findExistingDynamicRule } from './dnr-utils';
+import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils';
 
 /**
  * Normalize and validate the given untrusted domain (e.g. from user input).
@@ -24,11 +14,11 @@ import {
  * @param {string} domain
  * @return {null|string}
  */
-function normalizeUntrustedDomain (domain) {
+function normalizeUntrustedDomain(domain) {
     try {
-        return new URL('https://' + domain).hostname
+        return new URL('https://' + domain).hostname;
     } catch (e) {
-        return null
+        return null;
     }
 }
 
@@ -38,23 +28,26 @@ function normalizeUntrustedDomain (domain) {
  * @param {string[]} allowlistedDomains
  * @return {Promise}
  */
-async function updateUserAllowlistRule (allowlistedDomains) {
-    const addRules = []
-    const removeRuleIds = [USER_ALLOWLIST_RULE_ID]
+async function updateUserAllowlistRule(allowlistedDomains) {
+    const addRules = [];
+    const removeRuleIds = [USER_ALLOWLIST_RULE_ID];
 
     if (allowlistedDomains.length > 0) {
-        addRules.push(generateDNRRule({
-            id: USER_ALLOWLIST_RULE_ID,
-            priority: USER_ALLOWLISTED_PRIORITY,
-            actionType: 'allowAllRequests',
-            resourceTypes: ['main_frame'],
-            requestDomains: allowlistedDomains
-        }))
+        addRules.push(
+            generateDNRRule({
+                id: USER_ALLOWLIST_RULE_ID,
+                priority: USER_ALLOWLISTED_PRIORITY,
+                actionType: 'allowAllRequests',
+                resourceTypes: ['main_frame'],
+                requestDomains: allowlistedDomains,
+            }),
+        );
     }
 
     await chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds, addRules
-    })
+        removeRuleIds,
+        addRules,
+    });
 }
 
 /**
@@ -66,20 +59,18 @@ async function updateUserAllowlistRule (allowlistedDomains) {
  *   removed.
  * @return {Promise}
  */
-export async function toggleUserAllowlistDomain (domain, enable) {
-    const normalizedDomain = normalizeUntrustedDomain(domain)
+export async function toggleUserAllowlistDomain(domain, enable) {
+    const normalizedDomain = normalizeUntrustedDomain(domain);
     if (typeof normalizedDomain !== 'string') {
-        return
+        return;
     }
 
     // Figure out the correct set of allowlisted domains.
-    const existingRule = await findExistingDynamicRule(USER_ALLOWLIST_RULE_ID)
-    const allowlistedDomains = new Set(
-        existingRule ? existingRule.condition.requestDomains : []
-    )
-    allowlistedDomains[enable ? 'add' : 'delete'](normalizedDomain)
+    const existingRule = await findExistingDynamicRule(USER_ALLOWLIST_RULE_ID);
+    const allowlistedDomains = new Set(existingRule ? existingRule.condition.requestDomains : []);
+    allowlistedDomains[enable ? 'add' : 'delete'](normalizedDomain);
 
-    await updateUserAllowlistRule(Array.from(allowlistedDomains))
+    await updateUserAllowlistRule(Array.from(allowlistedDomains));
 }
 
 /**
@@ -88,37 +79,35 @@ export async function toggleUserAllowlistDomain (domain, enable) {
  * @param {string[]} allowlistedDomains
  * @return {Promise}
  */
-export async function refreshUserAllowlistRules (allowlistedDomains) {
+export async function refreshUserAllowlistRules(allowlistedDomains) {
     // Normalise and validate the domains. We're passing the user provided
     // domains through to the declarativeNetRequest API, so it's important to
     // prevent invalid input sneaking through.
     const normalizedAllowlistedDomains = /** @type {string[]} */ (
-        allowlistedDomains
-            .map(normalizeUntrustedDomain)
-            .filter(domain => typeof domain === 'string')
-    )
+        allowlistedDomains.map(normalizeUntrustedDomain).filter((domain) => typeof domain === 'string')
+    );
 
-    await updateUserAllowlistRule(normalizedAllowlistedDomains)
+    await updateUserAllowlistRule(normalizedAllowlistedDomains);
 }
 
 /**
  * Retrieve a normalized and sorted list of user denylisted domains.
  * @returns {string[]}
  */
-export function getDenylistedDomains () {
-    const denylist = settings.getSetting('denylisted') || {}
+export function getDenylistedDomains() {
+    const denylist = settings.getSetting('denylisted') || {};
 
-    const denylistedDomains = []
+    const denylistedDomains = [];
     for (const [domain, enabled] of Object.entries(denylist)) {
         if (enabled) {
-            const normalizedDomain = normalizeUntrustedDomain(domain)
+            const normalizedDomain = normalizeUntrustedDomain(domain);
             if (normalizedDomain) {
-                denylistedDomains.push(normalizedDomain)
+                denylistedDomains.push(normalizedDomain);
             }
         }
     }
 
-    return denylistedDomains.sort()
+    return denylistedDomains.sort();
 }
 
 /**
@@ -128,7 +117,7 @@ export function getDenylistedDomains () {
  * user "denylisted" domains.
  * @return {Promise}
  */
-export async function updateUserDenylist () {
-    await updateExtensionConfigRules()
-    await updateCombinedConfigBlocklistRules()
+export async function updateUserDenylist() {
+    await updateExtensionConfigRules();
+    await updateCombinedConfigBlocklistRules();
 }

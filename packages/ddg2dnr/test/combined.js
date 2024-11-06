@@ -1,50 +1,52 @@
-const assert = require('assert')
+const assert = require('assert');
 
-const {
-    emptyBlockList
-} = require('./utils/helpers')
-const {
-    generateCombinedConfigBlocklistRuleset
-} = require('../lib/combined')
+const { emptyBlockList } = require('./utils/helpers');
+const { generateCombinedConfigBlocklistRuleset } = require('../lib/combined');
 
 describe('generateCombinedConfigBlocklistRuleset', () => {
     it('should reject invalid extension configuration', () => {
         assert.throws(() => {
             generateCombinedConfigBlocklistRuleset(
+                emptyBlockList(),
                 // @ts-expect-error - Arguments invalid on purpose.
-                emptyBlockList(), null, []
-            )
-        })
+                null,
+                [],
+            );
+        });
 
         assert.deepEqual(
             generateCombinedConfigBlocklistRuleset(
+                emptyBlockList(),
                 // @ts-expect-error - Arguments invalid on purpose.
-                emptyBlockList(), { features: null }, []
+                { features: null },
+                [],
             ),
-            { ruleset: [], matchDetailsByRuleId: { } }
-        )
+            { ruleset: [], matchDetailsByRuleId: {} },
+        );
 
         assert.deepEqual(
             generateCombinedConfigBlocklistRuleset(
+                emptyBlockList(),
                 // @ts-expect-error - Arguments invalid on purpose.
-                emptyBlockList(), {}, []
+                {},
+                [],
             ),
-            { ruleset: [], matchDetailsByRuleId: { } }
-        )
+            { ruleset: [], matchDetailsByRuleId: {} },
+        );
 
         assert.deepEqual(
             generateCombinedConfigBlocklistRuleset(
+                emptyBlockList(),
                 // @ts-expect-error - Arguments invalid on purpose.
-                emptyBlockList(), { features: { } }, []
+                { features: {} },
+                [],
             ),
-            { ruleset: [], matchDetailsByRuleId: { } }
-        )
+            { ruleset: [], matchDetailsByRuleId: {} },
+        );
 
-        assert.deepEqual(
-            generateCombinedConfigBlocklistRuleset(
-                emptyBlockList(), { features: { }, unprotectedTemporary: [] }, []
-            ),
-            { ruleset: [], matchDetailsByRuleId: { } }
-        )
-    })
-})
+        assert.deepEqual(generateCombinedConfigBlocklistRuleset(emptyBlockList(), { features: {}, unprotectedTemporary: [] }, []), {
+            ruleset: [],
+            matchDetailsByRuleId: {},
+        });
+    });
+});

@@ -1,80 +1,80 @@
-import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } from '../wrapper'
-import { getFullUserLocale } from '../i18n'
-import { Tracker } from './tracker'
-import { AdClick } from './ad-click-attribution-policy'
+import { getFromSessionStorage, setToSessionStorage, removeFromSessionStorage } from '../wrapper';
+import { getFullUserLocale } from '../i18n';
+import { Tracker } from './tracker';
+import { AdClick } from './ad-click-attribution-policy';
 
 export class TabState {
     /**
      * @param {import('./tab').TabData} tabData
      */
-    constructor (tabData, restoring = false) {
-        this.tabId = tabData.tabId
-        this.url = tabData.url
+    constructor(tabData, restoring = false) {
+        this.tabId = tabData.tabId;
+        this.url = tabData.url;
         /** @type {boolean} */
-        this.upgradedHttps = false
+        this.upgradedHttps = false;
         /** @type {boolean} */
-        this.hasHttpsError = false
+        this.hasHttpsError = false;
         /** @type {boolean} */
-        this.mainFrameUpgraded = false
+        this.mainFrameUpgraded = false;
         /** @type {boolean} */
-        this.urlParametersRemoved = false
+        this.urlParametersRemoved = false;
         /** @type {string | null} */
-        this.urlParametersRemovedUrl = null
+        this.urlParametersRemovedUrl = null;
         /** @type {string | null} */
-        this.ampUrl = null
+        this.ampUrl = null;
         /** @type {string | null} */
-        this.cleanAmpUrl = null
-        this.requestId = tabData.requestId
-        this.status = tabData.status
-        this.statusCode = null // statusCode is set when headers are recieved in tabManager.js
+        this.cleanAmpUrl = null;
+        this.requestId = tabData.requestId;
+        this.status = tabData.status;
+        this.statusCode = null; // statusCode is set when headers are recieved in tabManager.js
         /** @type {null | import('./ad-click-attribution-policy').AdClick} */
-        this.adClick = null
+        this.adClick = null;
         /** @type {boolean} */
-        this.firstAdAttributionAllowed = false
+        this.firstAdAttributionAllowed = false;
         /** @type {Record<string, import('./tracker').Tracker>} */
-        this.trackers = {}
+        this.trackers = {};
         /** @type {null | import('../events/referrer-trimming').Referrer} */
-        this.referrer = null
+        this.referrer = null;
         /** @type {string[]} */
-        this.disabledClickToLoadRuleActions = []
+        this.disabledClickToLoadRuleActions = [];
         /** @type {Record<string, number[]>} */
-        this.dnrRuleIdsByDisabledClickToLoadRuleAction = {}
+        this.dnrRuleIdsByDisabledClickToLoadRuleAction = {};
         /** @type {boolean} */
-        this.ctlYouTube = false // True when at least one YouTube Click to Load placeholder was displayed in the tab.
+        this.ctlYouTube = false; // True when at least one YouTube Click to Load placeholder was displayed in the tab.
         /** @type {boolean} */
-        this.ctlFacebookPlaceholderShown = false
+        this.ctlFacebookPlaceholderShown = false;
         /** @type {boolean} */
-        this.ctlFacebookLogin = false
+        this.ctlFacebookLogin = false;
         /** @type {boolean} */
-        this.allowlisted = false // user-allowlisted sites; applies to all privacy features
+        this.allowlisted = false; // user-allowlisted sites; applies to all privacy features
         /** @type {boolean} */
-        this.allowlistOptIn = false
+        this.allowlistOptIn = false;
         /** @type {boolean} */
-        this.denylisted = false
+        this.denylisted = false;
         /** @type {string[]} */
-        this.debugFlags = []
+        this.debugFlags = [];
         /** @type {string[]} */
-        this.errorDescriptions = []
+        this.errorDescriptions = [];
         /** @type {number[]} */
-        this.httpErrorCodes = []
+        this.httpErrorCodes = [];
         /** @type {boolean} */
-        this.performanceWarning = false // True when the runtime.onPerformanceWarning event fired for the tab.
+        this.performanceWarning = false; // True when the runtime.onPerformanceWarning event fired for the tab.
         /** @type {number} */
-        this.userRefreshCount = 0
+        this.userRefreshCount = 0;
         /** @type {string | null} */
-        this.openerContext = null
+        this.openerContext = null;
         /** @type {number[]} */
-        this.jsPerformance = []
+        this.jsPerformance = [];
         /** @type {string} */
-        this.locale = getFullUserLocale()
+        this.locale = getFullUserLocale();
         // Whilst restoring, prevent the tab data being stored
         if (!restoring) {
-            Storage.backup(this)
+            Storage.backup(this);
         }
     }
 
-    static async done () {
-        await Storage.done()
+    static async done() {
+        await Storage.done();
     }
 
     /**
@@ -83,11 +83,11 @@ export class TabState {
      * @param {K} key
      * @param {T[K]} value
      */
-    setValue (key, value) {
+    setValue(key, value) {
         // @ts-expect-error - we know this is a valid key, ts doesn't seem to understand T matches this
-        this[key] = value
+        this[key] = value;
         // Fire and forget storage backup
-        Storage.backup(this)
+        Storage.backup(this);
     }
 
     /**
@@ -95,44 +95,44 @@ export class TabState {
      * @param {number} tabId
      * @returns {Promise<TabState | null>}
      */
-    static async restore (tabId) {
-        const data = await Storage.get(tabId)
+    static async restore(tabId) {
+        const data = await Storage.get(tabId);
         if (!data) {
-            return null
+            return null;
         }
-        let parsedData
+        let parsedData;
         try {
-            parsedData = JSON.parse(data)
+            parsedData = JSON.parse(data);
         } catch (e) {
-            console.error('Error parsing tab state', e)
-            return null
+            console.error('Error parsing tab state', e);
+            return null;
         }
-        const state = new TabState(parsedData, true)
+        const state = new TabState(parsedData, true);
         for (const [key, value] of Object.entries(parsedData)) {
             if (key === 'trackers') {
                 /** @type {Record<string, import('./tracker').Tracker>} */
-                const trackers = {}
+                const trackers = {};
                 for (const trackerKey of Object.keys(value)) {
-                    const tracker = parsedData[key][trackerKey]
-                    trackers[trackerKey] = Tracker.restore(tracker)
+                    const tracker = parsedData[key][trackerKey];
+                    trackers[trackerKey] = Tracker.restore(tracker);
                 }
-                state[key] = trackers
+                state[key] = trackers;
             } else if (key === 'adClick' && value) {
-                state[key] = AdClick.restore(value)
+                state[key] = AdClick.restore(value);
             } else {
-                state[key] = value
+                state[key] = value;
             }
         }
-        await Storage.backup(state)
-        return state
+        await Storage.backup(state);
+        return state;
     }
 
     /**
      * Used for removing the stored tab state.
      * @param {number} tabId
      */
-    static async delete (tabId) {
-        await Storage.delete(tabId)
+    static async delete(tabId) {
+        await Storage.delete(tabId);
     }
 }
 
@@ -142,16 +142,16 @@ export class TabState {
  * Fire and forget of the storage tasks to simplify call sites.
  */
 class StorageInstance {
-    taskQueue = []
-    processing = false
+    taskQueue = [];
+    processing = false;
 
     /**
      * Awaits until the storage queue is empty.
      * @returns {Promise<void>}
      */
-    async done () {
-        const queue = this.taskQueue
-        await Promise.all(queue)
+    async done() {
+        const queue = this.taskQueue;
+        await Promise.all(queue);
     }
 
     /**
@@ -162,29 +162,29 @@ class StorageInstance {
      * @param {() => Promise<T>} task
      * @returns {Promise<T>}
      */
-    async _addTask (task) {
-        let done = _ => {}
+    async _addTask(task) {
+        let done = (_) => {};
         this.taskQueue.push(async () => {
-            const value = await Promise.resolve(task())
-            done(value)
-        })
-        this.processQueue()
-        return new Promise(resolve => {
-            done = resolve
-        })
+            const value = await Promise.resolve(task());
+            done(value);
+        });
+        this.processQueue();
+        return new Promise((resolve) => {
+            done = resolve;
+        });
     }
 
     /**
      * Processes the storage queue in order.
      */
-    async processQueue () {
+    async processQueue() {
         if (!this.processing) {
             while (this.taskQueue.length > 0) {
-                this.processing = true
-                const task = this.taskQueue.shift()
-                await task()
+                this.processing = true;
+                const task = this.taskQueue.shift();
+                await task();
             }
-            this.processing = false
+            this.processing = false;
         }
     }
 
@@ -193,22 +193,22 @@ class StorageInstance {
      * @param {number} tabId
      * @returns {string}
      */
-    static _getStorageKey (tabId) {
-        return `tabState-${tabId}`
+    static _getStorageKey(tabId) {
+        return `tabState-${tabId}`;
     }
 
     /**
      * Deletes a tab-state from session storage.
      * @param {number} tabId
      */
-    async delete (tabId) {
+    async delete(tabId) {
         await this._addTask(async () => {
             try {
-                await removeFromSessionStorage(StorageInstance._getStorageKey(tabId))
+                await removeFromSessionStorage(StorageInstance._getStorageKey(tabId));
             } catch (e) {
-                console.error('Removal of tab state failed', e)
+                console.error('Removal of tab state failed', e);
             }
-        })
+        });
     }
 
     /**
@@ -216,29 +216,29 @@ class StorageInstance {
      * @param {number} tabId
      * @returns {Promise<string | undefined>}
      */
-    async get (tabId) {
+    async get(tabId) {
         return this._addTask(async () => {
             try {
-                return getFromSessionStorage(StorageInstance._getStorageKey(tabId))
+                return getFromSessionStorage(StorageInstance._getStorageKey(tabId));
             } catch (e) {
-                console.error('Retrieval of tab state failed', e)
-                return undefined
+                console.error('Retrieval of tab state failed', e);
+                return undefined;
             }
-        })
+        });
     }
 
     /**
      * @param {TabState} tabState
      * @returns {Promise<void>}
      */
-    async backup (tabState) {
+    async backup(tabState) {
         await this._addTask(async () => {
             try {
-                await setToSessionStorage(StorageInstance._getStorageKey(tabState.tabId), JSON.stringify(tabState))
+                await setToSessionStorage(StorageInstance._getStorageKey(tabState.tabId), JSON.stringify(tabState));
             } catch (e) {
-                console.error('Storage of tab state failed', e)
+                console.error('Storage of tab state failed', e);
             }
-        })
+        });
     }
 }
-const Storage = new StorageInstance()
+const Storage = new StorageInstance();

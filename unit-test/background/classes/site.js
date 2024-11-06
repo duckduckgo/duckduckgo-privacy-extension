@@ -1,18 +1,18 @@
-const Site = require('../../../shared/js/background/classes/site').default
-const load = require('./../../helpers/utils')
-const config = require('./../../../shared/data/bundled/extension-config.json')
-const tdsStorage = require('../../../shared/js/background/storage/tds').default
-const tdsStorageStub = require('./../../helpers/tds')
+const Site = require('../../../shared/js/background/classes/site').default;
+const load = require('./../../helpers/utils');
+const config = require('./../../../shared/data/bundled/extension-config.json');
+const tdsStorage = require('../../../shared/js/background/storage/tds').default;
+const tdsStorageStub = require('./../../helpers/tds');
 
-const EXT_ID = chrome.runtime.id
+const EXT_ID = chrome.runtime.id;
 
 describe('Site', () => {
     beforeAll(() => {
-        load.loadStub({ config })
-        tdsStorageStub.stub()
+        load.loadStub({ config });
+        tdsStorageStub.stub();
 
-        return tdsStorage.getLists()
-    })
+        return tdsStorage.getLists();
+    });
 
     describe('getSpecialDomain()', () => {
         const tests = [
@@ -36,20 +36,23 @@ describe('Site', () => {
             { url: `moz-extension://${EXT_ID}/feedback.html`, expected: 'extension page' },
             { url: 'chrome-extension://asdfasdfasdfasdf/page.html', expected: 'extension page' },
             // vivaldi's start page - not trying to handle that specifically because it may change its ID
-            { url: 'chrome-extension://mpognobbkildjkofajifpdfhcoklimli/components/startpage/startpage.html?section=Speed-dials&activeSpeedDialIndex=0', expected: 'extension page' },
+            {
+                url: 'chrome-extension://mpognobbkildjkofajifpdfhcoklimli/components/startpage/startpage.html?section=Speed-dials&activeSpeedDialIndex=0',
+                expected: 'extension page',
+            },
             { url: 'file://example', expected: 'local file' },
             { url: 'https://duckduckgo.com/chrome_newtab', expected: 'new tab' },
-            { url: 'about:newtab', expected: 'new tab' }
-        ]
+            { url: 'about:newtab', expected: 'new tab' },
+        ];
 
         tests.forEach((test) => {
             it(`should return "${test.expected}" for: ${test.url}`, () => {
-                const site = new Site(test.url)
+                const site = new Site(test.url);
 
-                expect(site.specialDomainName).toEqual(test.expected)
-            })
-        })
-    })
+                expect(site.specialDomainName).toEqual(test.expected);
+            });
+        });
+    });
 
     describe('checkBrokenSites()', () => {
         const tests = [
@@ -60,13 +63,13 @@ describe('Site', () => {
             { url: 'https://sunt.rust.com', expected: false },
             { url: 'https://www1.onlinebanking.suntrust.com', expected: true },
             { url: 'https://nationwide.co.uk', expected: false },
-            { url: 'https://accounts.google.com', expected: true }
-        ]
+            { url: 'https://accounts.google.com', expected: true },
+        ];
         tests.forEach((test) => {
             it(`should return "${test.expected}" for: ${test.url}`, () => {
-                const site = new Site(test.url)
-                expect(site.isBroken).toEqual(test.expected)
-            })
-        })
-    })
-})
+                const site = new Site(test.url);
+                expect(site.isBroken).toEqual(test.expected);
+            });
+        });
+    });
+});

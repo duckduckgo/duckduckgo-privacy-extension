@@ -1,6 +1,6 @@
-const utils = require('./utils')
-const tldts = require('tldts')
-const Trackers = require('@duckduckgo/privacy-grade').Trackers
+const utils = require('./utils');
+const tldts = require('tldts');
+const Trackers = require('@duckduckgo/privacy-grade').Trackers;
 
 /**
  * @typedef {import("../../../node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js").ActionName} ActionName
@@ -8,5 +8,5 @@ const Trackers = require('@duckduckgo/privacy-grade').Trackers
  **/
 
 /** @type {import("../../../node_modules/@duckduckgo/privacy-grade/src/classes/trackers.js")} */
-const TrackersInstance = new Trackers({ tldjs: tldts, utils })
-module.exports = TrackersInstance
+const TrackersInstance = new Trackers({ tldjs: tldts, utils });
+module.exports = TrackersInstance;

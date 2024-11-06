@@ -1,7 +1,7 @@
-import { readFileSync, writeFileSync } from 'fs'
-import { createHash } from 'node:crypto'
+import { readFileSync, writeFileSync } from 'fs';
+import { createHash } from 'node:crypto';
 
-const etagFilePath = './shared/data/etags.json'
+const etagFilePath = './shared/data/etags.json';
 
 /**
  * Reads the shared/data/etags.json file, and returns the stored etag values. If
@@ -11,11 +11,11 @@ const etagFilePath = './shared/data/etags.json'
  *       without overwriting any changes to unrelated etags.
  * @return {Record<string, string>}
  */
-export function readEtags () {
+export function readEtags() {
     try {
-        return JSON.parse(readFileSync(etagFilePath))
+        return JSON.parse(readFileSync(etagFilePath));
     } catch (e) {
-        return { }
+        return {};
     }
 }
 
@@ -27,14 +27,14 @@ export function readEtags () {
  *       might also write to the etags file.
  * @param {Record<string, string|undefined>} newEtags
  */
-export function writeEtags (newEtags) {
-    const etags = readEtags()
+export function writeEtags(newEtags) {
+    const etags = readEtags();
     for (const [key, value] of Object.entries(newEtags)) {
         if (typeof value === 'string') {
-            etags[key] = value
+            etags[key] = value;
         }
     }
-    writeFileSync(etagFilePath, JSON.stringify(etags, null, 2))
+    writeFileSync(etagFilePath, JSON.stringify(etags, null, 2));
 }
 
 /**
@@ -43,15 +43,15 @@ export function writeEtags (newEtags) {
  * @param {string} path
  * @return {string?}
  */
-export function md5sum (path) {
-    let contents
+export function md5sum(path) {
+    let contents;
     try {
-        contents = readFileSync(path)
+        contents = readFileSync(path);
     } catch (e) {
-        return null
+        return null;
     }
 
-    const hash = createHash('md5')
-    hash.update(contents)
-    return hash.digest('hex')
+    const hash = createHash('md5');
+    hash.update(contents);
+    return hash.digest('hex');
 }

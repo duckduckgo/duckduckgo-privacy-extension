@@ -1,33 +1,35 @@
-const Site = require('./classes/site').default
-const tdsStorage = require('./storage/tds').default
-const utils = require('./utils')
+const Site = require('./classes/site').default;
+const tdsStorage = require('./storage/tds').default;
+const utils = require('./utils');
 
-let ampSettings = null
+let ampSettings = null;
 
-const featureName = 'ampLinks'
+const featureName = 'ampLinks';
 
 /**
  * Ensure the config has the ampLinks feature and its settings
  *
  * @returns {boolean} - true if the config is loaded
  */
-function ensureConfig () {
+function ensureConfig() {
     if (ampSettings) {
-        return true
+        return true;
     }
 
-    if (!tdsStorage.config ||
+    if (
+        !tdsStorage.config ||
         !tdsStorage.config.features ||
         !tdsStorage.config.features.ampLinks ||
         !tdsStorage.config.features.ampLinks.settings ||
         !tdsStorage.config.features.ampLinks.settings.linkFormats ||
-        !tdsStorage.config.features.ampLinks.settings.keywords) {
-        return false
+        !tdsStorage.config.features.ampLinks.settings.keywords
+    ) {
+        return false;
     }
 
-    ampSettings = tdsStorage.config.features.ampLinks.settings
+    ampSettings = tdsStorage.config.features.ampLinks.settings;
 
-    return true
+    return true;
 }
 
 /**
@@ -35,17 +37,17 @@ function ensureConfig () {
  * @param {string} url - the url to check
  * @returns true if the url is a valid http(s) url
  */
-function isHttpUrl (url) {
+function isHttpUrl(url) {
     try {
-        const newUrl = new URL(url)
+        const newUrl = new URL(url);
         if (newUrl.protocol.startsWith('http')) {
-            return true
+            return true;
         }
     } catch {
-        return false
+        return false;
     }
 
-    return false
+    return false;
 }
 
 /**
@@ -53,12 +55,12 @@ function isHttpUrl (url) {
  * @param {Site} site - the site to check
  * @returns true if the site is excluded from AMP protection
  */
-function isSiteExcluded (site) {
+function isSiteExcluded(site) {
     if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
-        return true
+        return true;
     }
 
-    return false
+    return false;
 }
 
 /**
@@ -68,44 +70,44 @@ function isSiteExcluded (site) {
  * @param {string} url - the url being loaded
  * @returns canonical url if found, null otherwise
  */
-function extractAMPURL (site, url) {
+function extractAMPURL(site, url) {
     if (!ensureConfig()) {
-        return null
+        return null;
     }
 
     if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
-        return null
+        return null;
     }
 
     for (const regexPattern of ampSettings.linkFormats) {
-        const match = url.match(regexPattern)
-        let needsScheme = false
+        const match = url.match(regexPattern);
+        let needsScheme = false;
         if (match && match.length > 1) {
-            const targetUrl = match[1]
+            const targetUrl = match[1];
             if (!isHttpUrl(targetUrl)) {
                 try {
                     // eslint-disable-next-line no-unused-vars
-                    const newUrl = new URL(`https://${targetUrl}`)
+                    const newUrl = new URL(`https://${targetUrl}`);
                     // Avoid using the direct result of the URL constructor
                     // to prevent encoding issues causing unwanted redirects
-                    needsScheme = true
+                    needsScheme = true;
                 } catch {
                     // If the URL constructor throws an error, then the URL is invalid
-                    return null
+                    return null;
                 }
             }
 
-            const newSite = new Site(needsScheme ? `https://${targetUrl}` : targetUrl)
+            const newSite = new Site(needsScheme ? `https://${targetUrl}` : targetUrl);
 
             if (isSiteExcluded(newSite)) {
-                return null
+                return null;
             }
 
-            return newSite.url
+            return newSite.url;
         }
     }
 
-    return null
+    return null;
 }
 
 /**
@@ -116,25 +118,25 @@ function extractAMPURL (site, url) {
  * @param {object} mainFrameRequestURL - main frame request url
  * @returns true if the request is a suspected 1st party AMP url
  */
-function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
+function tabNeedsDeepExtraction(requestData, thisTab, mainFrameRequestURL) {
     if (utils.getBrowserName() !== 'moz') {
         // deep extraction is only supported on Firefox
-        return false
+        return false;
     }
 
     if (!ensureConfig() || !ampSettings.deepExtractionEnabled) {
-        return false
+        return false;
     }
 
     if (requestIsExtension(requestData)) {
-        return false
+        return false;
     }
 
     if (thisTab.ampUrl && thisTab.ampUrl === mainFrameRequestURL.href) {
-        return false
+        return false;
     }
 
-    return isAMPURL(mainFrameRequestURL.href)
+    return isAMPURL(mainFrameRequestURL.href);
 }
 
 /**
@@ -143,17 +145,17 @@ function tabNeedsDeepExtraction (requestData, thisTab, mainFrameRequestURL) {
  * @param {string} url - the url being loaded
  * @returns true is the url is suspected to be a 1st party AMP url
  */
-function isAMPURL (url) {
+function isAMPURL(url) {
     if (!ensureConfig()) {
-        return false
+        return false;
     }
 
-    const site = new Site(url)
+    const site = new Site(url);
     if (site.specialDomainName || !site.isFeatureEnabled(featureName)) {
-        return false
+        return false;
     }
 
-    return ampSettings.keywords.some(keyword => url.includes(keyword))
+    return ampSettings.keywords.some((keyword) => url.includes(keyword));
 }
 
 /**
@@ -164,56 +166,56 @@ function isAMPURL (url) {
  * @param {string} url - the url being loaded
  * @returns cancalon url if found, null otherwise
  */
-async function fetchAMPURL (site, url) {
+async function fetchAMPURL(site, url) {
     if (!ensureConfig()) {
-        return null
+        return null;
     }
 
     if (site.specialDomainName || !site.isFeatureEnabled(featureName) || site.url === 'about:blank') {
-        return null
+        return null;
     }
 
-    let data = null
-    const timeoutController = new AbortController()
-    setTimeout(() => timeoutController.abort(), ampSettings.deepExtractionTimeout || 1500)
+    let data = null;
+    const timeoutController = new AbortController();
+    setTimeout(() => timeoutController.abort(), ampSettings.deepExtractionTimeout || 1500);
 
     try {
-        data = await fetch(url, { signal: timeoutController.signal })
+        data = await fetch(url, { signal: timeoutController.signal });
     } catch (e) {
-        console.error(e)
-        return null
+        console.error(e);
+        return null;
     }
 
     if (!data) {
-        return null
+        return null;
     }
 
-    const text = await data.text()
+    const text = await data.text();
     if (!text) {
-        return null
+        return null;
     }
 
-    const doc = new DOMParser().parseFromString(text, 'text/html')
+    const doc = new DOMParser().parseFromString(text, 'text/html');
 
     /** @type {HTMLLinkElement?} */
-    const firstCanonicalLink = doc.querySelector('[rel="canonical"]')
+    const firstCanonicalLink = doc.querySelector('[rel="canonical"]');
 
     if (firstCanonicalLink && firstCanonicalLink instanceof HTMLLinkElement) {
         // Only follow http(s) links
         if (!isHttpUrl(firstCanonicalLink.href)) {
-            return null
+            return null;
         }
 
-        const newSite = new Site(firstCanonicalLink.href)
+        const newSite = new Site(firstCanonicalLink.href);
 
         if (isSiteExcluded(newSite)) {
-            return null
+            return null;
         }
 
-        return firstCanonicalLink.href
+        return firstCanonicalLink.href;
     }
 
-    return null
+    return null;
 }
 
 /**
@@ -223,17 +225,17 @@ async function fetchAMPURL (site, url) {
  * @param {object} request - request object
  * @returns true if the request was initiated by an extension
  */
-function requestIsExtension (request) {
-    return request.initiator && request.initiator.startsWith('chrome-extension://')
+function requestIsExtension(request) {
+    return request.initiator && request.initiator.startsWith('chrome-extension://');
 }
 
 tdsStorage.onUpdate('config', () => {
-    ampSettings = null
-})
+    ampSettings = null;
+});
 
 module.exports = {
     isAMPURL,
     extractAMPURL,
     fetchAMPURL,
-    tabNeedsDeepExtraction
-}
+    tabNeedsDeepExtraction,
+};

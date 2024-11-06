@@ -10,11 +10,11 @@ module.exports = {
                 settings: {
                     experimentData: {
                         listName: 'tds',
-                        url: 'https://staticcdn.duckduckgo.com/trackerblocking/lm/tds.json'
-                    }
-                }
-            }
-        }
+                        url: 'https://staticcdn.duckduckgo.com/trackerblocking/lm/tds.json',
+                    },
+                },
+            },
+        },
     },
     o: {
         name: '1st and 3rd party cookie experiment',
@@ -25,10 +25,10 @@ module.exports = {
                 description: '3rd party experiment group',
                 settings: {
                     experimentData: {
-                        blockingActivated: true
-                    }
-                }
-            }
-        }
-    }
-}
+                        blockingActivated: true,
+                    },
+                },
+            },
+        },
+    },
+};

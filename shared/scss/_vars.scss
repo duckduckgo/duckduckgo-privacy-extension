@@ -1,15 +1,16 @@
 /* Font variables */
 $font__size--default: 14px;
-$font__face--default: "DDG_ProximaNova", "Helvetica Neue", "Helvetica", "Segoe UI", "Nimbus Sans L", "Liberation Sans", "Open Sans", FreeSans, Arial, sans-serif;
+$font__face--default: 'DDG_ProximaNova', 'Helvetica Neue', 'Helvetica', 'Segoe UI', 'Nimbus Sans L', 'Liberation Sans', 'Open Sans',
+    FreeSans, Arial, sans-serif;
 
 /* Status icons */
-$status--good: "status--good.svg";
-$status--mixed: "status--mixed.svg";
-$status--bad: "status--bad.svg";
-$status--info: "status--info.svg";
+$status--good: 'status--good.svg';
+$status--mixed: 'status--mixed.svg';
+$status--bad: 'status--bad.svg';
+$status--info: 'status--info.svg';
 
 /* Colors */
-@import "../../node_modules/duckduckgo-colors/colors";
+@import '../../node_modules/duckduckgo-colors/colors';
 $color--green: #3fa248;
 $color--dark-green: #29521f;
 $color--orange: #f89f22;
@@ -49,7 +50,7 @@ $hamburger-button__color: #afafaf;
 $hamburger-menu__bg-color: $slate;
 
 /* The ratings we give */
-$ratings: ("a", "b-plus", "b", "c", "c-plus", "d", "f");
+$ratings: ('a', 'b-plus', 'b', 'c', 'c-plus', 'd', 'f');
 
 /* Cards */
 $card__bg-color: $white;

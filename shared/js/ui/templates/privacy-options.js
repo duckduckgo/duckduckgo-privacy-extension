@@ -1,7 +1,7 @@
-const bel = require('nanohtml')
-const raw = require('nanohtml/raw')
-const toggleButton = require('./shared/toggle-button.js')
-const t = window.DDG.base.i18n.t
+const bel = require('nanohtml');
+const raw = require('nanohtml/raw');
+const toggleButton = require('./shared/toggle-button.js');
+const t = window.DDG.base.i18n.t;
 
 module.exports = function () {
     return bel`<section class="options-content__privacy divider-bottom">
@@ -9,9 +9,7 @@ module.exports = function () {
     <ul class="default-list">
         <li>
             ${t('options:showEmbeddedTweets.title')}
-            ${toggleButton(this.model.embeddedTweetsEnabled,
-        'js-options-embedded-tweets-enabled',
-        'embeddedTweetsEnabled')}
+            ${toggleButton(this.model.embeddedTweetsEnabled, 'js-options-embedded-tweets-enabled', 'embeddedTweetsEnabled')}
         </li>
         <li class="options-content__gpc-enabled">
             <h2 class="menu-title">${t('options:globalPrivacyControlAbbr.title')}</h2>
@@ -27,9 +25,7 @@ module.exports = function () {
                 </li>
             </ul>
             ${t('options:globalPrivacyControlAbbr.title')}
-            ${toggleButton(this.model.GPC,
-        'js-options-gpc-enabled',
-        'GPC')}
+            ${toggleButton(this.model.GPC, 'js-options-gpc-enabled', 'GPC')}
             <p class="gpc-disclaimer">
                 ${raw(t('options:globalPrivacyControlDisclaimer.title'))}
             </p>
@@ -64,19 +60,19 @@ module.exports = function () {
         </li>
         <li class="fire-button-toggle">
             ${t('options:fireButtonClearHistoryTitle.title')}
-            ${toggleButton(this.model.fireButtonClearHistoryEnabled,
-        'js-options-firebutton-clear-history-enabled',
-        'fireButtonClearHistoryEnabled')}
+            ${toggleButton(
+                this.model.fireButtonClearHistoryEnabled,
+                'js-options-firebutton-clear-history-enabled',
+                'fireButtonClearHistoryEnabled',
+            )}
         </li>
         <li>
             <p class="menu-paragraph">${t('options:fireButtonClearHistoryDesc.title')}</p>
         </li>
         <li class="fire-button-toggle">
             ${t('options:fireButtonTabClosureTitle.title')}
-            ${toggleButton(this.model.fireButtonTabClearEnabled,
-        'js-options-firebutton-tabclear-enabled',
-        'fireButtonTabClearEnabled')}
+            ${toggleButton(this.model.fireButtonTabClearEnabled, 'js-options-firebutton-tabclear-enabled', 'fireButtonTabClearEnabled')}
         </li>
     </ul>
-</section>`
-}
+</section>`;
+};

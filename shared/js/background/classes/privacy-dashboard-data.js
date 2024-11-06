@@ -1,4 +1,4 @@
-import { getUserLocale } from '../i18n'
+import { getUserLocale } from '../i18n';
 /**
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').GetPrivacyDashboardData} ExtensionGetPrivacyDashboardData
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').DetectedRequest} DetectedRequest
@@ -15,17 +15,17 @@ import { getUserLocale } from '../i18n'
  * @param {EmailProtectionUserData | undefined | {}} userData
  * @returns {ExtensionGetPrivacyDashboardData}
  */
-export function dashboardDataFromTab (tab, userData, fireButtonData) {
-    const protectionsEnabled = !tab.site.allowlisted && !tab.site.isBroken && tab.site.enabledFeatures.includes('contentBlocking')
+export function dashboardDataFromTab(tab, userData, fireButtonData) {
+    const protectionsEnabled = !tab.site.allowlisted && !tab.site.isBroken && tab.site.enabledFeatures.includes('contentBlocking');
 
     // parent entity, if available
     /** @type {ParentEntity | undefined} */
-    let parentEntity
+    let parentEntity;
     if (tab.site.parentEntity) {
         parentEntity = {
             displayName: tab.site.parentEntity,
-            prevalence: tab.site.parentPrevalence ?? 0
-        }
+            prevalence: tab.site.parentPrevalence ?? 0,
+        };
     }
 
     /** @type {ProtectionsStatus} */
@@ -33,16 +33,16 @@ export function dashboardDataFromTab (tab, userData, fireButtonData) {
         allowlisted: Boolean(tab.site.allowlisted),
         denylisted: Boolean(tab.site.denylisted),
         unprotectedTemporary: Boolean(tab.site.isBroken),
-        enabledFeatures: tab.site.enabledFeatures
-    }
+        enabledFeatures: tab.site.enabledFeatures,
+    };
 
-    const requests = convertToRequests(tab, protectionsEnabled)
+    const requests = convertToRequests(tab, protectionsEnabled);
 
     // Only assign `emailProtectionUserData` if we're sure it is valid data (eg: has at least 'nextAlias'
     // - otherwise allow it to be undefined.
-    let emailProtectionUserData
+    let emailProtectionUserData;
     if (userData && 'nextAlias' in userData) {
-        emailProtectionUserData = userData
+        emailProtectionUserData = userData;
     }
 
     return {
@@ -57,14 +57,14 @@ export function dashboardDataFromTab (tab, userData, fireButtonData) {
              * Explicitly setting this to 'en' for now. When ready we can send 2-character codes such
              * as 'pl' or 'de' etc. Please see https://duckduckgo.github.io/privacy-dashboard/interfaces/Generated_Schema_Definitions.LocaleSettings.html
              */
-            localeSettings: { locale: getUserLocale() }
+            localeSettings: { locale: getUserLocale() },
         },
         requestData: {
-            requests
+            requests,
         },
         emailProtectionUserData,
-        fireButton: fireButtonData
-    }
+        fireButton: fireButtonData,
+    };
 }
 
 /**
@@ -74,28 +74,28 @@ export function dashboardDataFromTab (tab, userData, fireButtonData) {
  * @param {boolean} protectionsEnabled
  * @returns {DetectedRequest[]}
  */
-function convertToRequests (tab, protectionsEnabled) {
+function convertToRequests(tab, protectionsEnabled) {
     /** @type {DetectedRequest[]} */
-    const detectedRequests = []
+    const detectedRequests = [];
     for (const tracker of Object.values(tab.trackers || {})) {
         for (const detectedRequest of Object.values(tracker.urls || {})) {
             // When protections are off, change the 'state' of each tracking request
             if (!protectionsEnabled && detectedRequest.action !== 'none') {
                 /** @type {DetectedRequest["state"]} */
-                const nextState = { allowed: { reason: 'protectionDisabled' } }
+                const nextState = { allowed: { reason: 'protectionDisabled' } };
                 const request = {
                     ...detectedRequest,
-                    state: nextState
-                }
-                detectedRequests.push(request)
-                continue
+                    state: nextState,
+                };
+                detectedRequests.push(request);
+                continue;
             }
 
             // other, just add the request as-is
-            detectedRequests.push(detectedRequest)
+            detectedRequests.push(detectedRequest);
         }
     }
-    return detectedRequests
+    return detectedRequests;
 }
 
 /**
@@ -103,27 +103,27 @@ function convertToRequests (tab, protectionsEnabled) {
  * @param {boolean} isSameEntity
  * @return {DetectedRequest["state"] | null}
  */
-export function convertState (action, isSameEntity) {
+export function convertState(action, isSameEntity) {
     if (action === 'none') {
-        return { allowed: { reason: 'otherThirdPartyRequest' } }
+        return { allowed: { reason: 'otherThirdPartyRequest' } };
     }
     if (action === 'ignore' || action === 'ignore-user') {
         if (isSameEntity) {
-            return { allowed: { reason: 'ownedByFirstParty' } }
+            return { allowed: { reason: 'ownedByFirstParty' } };
         }
-        return { allowed: { reason: 'ruleException' } }
+        return { allowed: { reason: 'ruleException' } };
     }
     if (action === 'ad-attribution') {
-        return { allowed: { reason: 'adClickAttribution' } }
+        return { allowed: { reason: 'adClickAttribution' } };
     }
     if (action === 'block') {
-        return { blocked: {} }
+        return { blocked: {} };
     }
     if (action === 'redirect') {
-        return { blocked: {} }
+        return { blocked: {} };
     }
     /** @type {never} */
     // eslint-disable-next-line no-unused-vars
-    const _output = action
-    return null
+    const _output = action;
+    return null;
 }

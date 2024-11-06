@@ -31,79 +31,77 @@
  * @returns {Promise<function>}
  *   Function that clears logged requests (and in progress requests).
  */
-export async function logPageRequests (
-    page, requests, requestFilter, transform, postTransformFilter
-) {
+export async function logPageRequests(page, requests, requestFilter, transform, postTransformFilter) {
     /** @type {Map<number, LoggedRequestDetails>} */
-    const requestDetailsByRequestId = new Map()
+    const requestDetailsByRequestId = new Map();
 
     /**
-   * @param {number} requestId
-   * @param {(details: LoggedRequestDetails) => void} updateDetails
-   * @returns {void}
-   */
+     * @param {number} requestId
+     * @param {(details: LoggedRequestDetails) => void} updateDetails
+     * @returns {void}
+     */
     const saveRequestOutcome = (requestId, updateDetails) => {
         if (!requestDetailsByRequestId.has(requestId)) {
-            return
+            return;
         }
 
-        const details = requestDetailsByRequestId.get(requestId)
-        requestDetailsByRequestId.delete(requestId)
+        const details = requestDetailsByRequestId.get(requestId);
+        requestDetailsByRequestId.delete(requestId);
         if (!details) {
-            return
+            return;
         }
 
-        updateDetails(details)
+        updateDetails(details);
 
         if (!requestFilter || requestFilter(details)) {
             if (transform) {
-                const transformedDetails = transform(details)
+                const transformedDetails = transform(details);
                 if (!postTransformFilter || postTransformFilter(transformedDetails)) {
-                    requests.push(transformedDetails)
+                    requests.push(transformedDetails);
                 }
             } else {
-                requests.push(details)
+                requests.push(details);
             }
         }
-    }
+    };
 
-    logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutcome)
+    logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutcome);
 
     return () => {
-        requests.length = 0
-        requestDetailsByRequestId.clear()
-    }
+        requests.length = 0;
+        requestDetailsByRequestId.clear();
+    };
 }
 
-function logRequestsPlaywright (page, requestDetailsByRequestId, saveRequestOutcome) {
+function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutcome) {
     page.on('request', (request) => {
-        const url = request.url()
+        const url = request.url();
         const requestDetails = {
             url,
             method: request.method(),
-            type: request.resourceType()
-        }
+            type: request.resourceType(),
+        };
         if (request.redirectedFrom()) {
-            requestDetails.redirectUrl = request.url()
+            requestDetails.redirectUrl = request.url();
         }
-        requestDetails.url = new URL(requestDetails.url)
-        requestDetailsByRequestId.set(url, requestDetails)
-    })
+        requestDetails.url = new URL(requestDetails.url);
+        requestDetailsByRequestId.set(url, requestDetails);
+    });
     page.on('requestfinished', (request) => {
-        saveRequestOutcome(request.url(), details => {
-            details.status = details.redirectUrl ? 'redirected' : 'allowed'
-        })
-    })
+        saveRequestOutcome(request.url(), (details) => {
+            details.status = details.redirectUrl ? 'redirected' : 'allowed';
+        });
+    });
     page.on('requestfailed', (request) => {
-        saveRequestOutcome(request.url(), details => {
-            const { errorText } = request.failure()
+        saveRequestOutcome(request.url(), (details) => {
+            const { errorText } = request.failure();
             if (errorText === 'net::ERR_BLOCKED_BY_CLIENT' || errorText === 'net::ERR_ABORTED') {
-                details.status = 'blocked'
-                details.reason = errorText
+                details.status = 'blocked';
+                details.reason = errorText;
             } else {
-                details.status = 'failed'
-                details.reason = errorText
+                details.status = 'failed';
+                details.reason = errorText;
             }
-        })
-    })
+        });
+    });
 }

@@ -1,25 +1,25 @@
-const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string')
-const browserInfo = parseUserAgentString()
+const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string');
+const browserInfo = parseUserAgentString();
 
-const trackerBlockingEndpointBase = 'https://staticcdn.duckduckgo.com/trackerblocking'
+const trackerBlockingEndpointBase = 'https://staticcdn.duckduckgo.com/trackerblocking';
 
-function isMV3 () {
+function isMV3() {
     if (typeof chrome !== 'undefined') {
-        return chrome?.runtime.getManifest().manifest_version === 3
+        return chrome?.runtime.getManifest().manifest_version === 3;
     }
-    return false
+    return false;
 }
 
-function getConfigFileName () {
-    let browserName = browserInfo?.browser?.toLowerCase() || ''
+function getConfigFileName() {
+    let browserName = browserInfo?.browser?.toLowerCase() || '';
 
     // clamp to known browsers
     if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
-        browserName = ''
+        browserName = '';
     } else {
-        browserName = '-' + browserName + (isMV3() ? 'mv3' : '')
+        browserName = '-' + browserName + (isMV3() ? 'mv3' : '');
     }
-    return `${trackerBlockingEndpointBase}/config/v4/extension${browserName}-config.json`
+    return `${trackerBlockingEndpointBase}/config/v4/extension${browserName}-config.json`;
 }
 
 /**
@@ -28,9 +28,9 @@ function getConfigFileName () {
  * @param {`v6/${'current' | 'previous' | 'next'}` | 'beta'} version
  * @returns {string}
  */
-function getTDSEndpoint (version) {
-    const thisPlatform = `extension${isMV3() ? '-mv3' : ''}`
-    return `${trackerBlockingEndpointBase}/${version}/${thisPlatform}-tds.json`
+function getTDSEndpoint(version) {
+    const thisPlatform = `extension${isMV3() ? '-mv3' : ''}`;
+    return `${trackerBlockingEndpointBase}/${version}/${thisPlatform}-tds.json`;
 }
 
 module.exports = {
@@ -45,14 +45,14 @@ module.exports = {
         good: 'Good',
         bad: 'Poor',
         unknown: 'Unknown',
-        mixed: 'Mixed'
+        mixed: 'Mixed',
     },
     httpsService: 'https://duckduckgo.com/smarter_encryption.js',
     duckDuckGoSerpHostname: 'duckduckgo.com',
     httpsMessages: {
         secure: 'Encrypted Connection',
         upgraded: 'Forced Encryption',
-        none: 'Unencrypted Connection'
+        none: 'Unencrypted Connection',
     },
     /**
      * Major tracking networks data:
@@ -69,7 +69,7 @@ module.exports = {
         mediamath: 9,
         oath: 9,
         maxcdn: 7,
-        automattic: 7
+        automattic: 7,
     },
     /*
      * Mapping entity names to CSS class name for popup icons
@@ -85,37 +85,37 @@ module.exports = {
         'Automattic, Inc.': 'automattic',
         'Adobe Inc.': 'adobe',
         'Quantcast Corporation': 'quantcast',
-        'The Nielsen Company': 'nielsen'
+        'The Nielsen Company': 'nielsen',
     },
     httpsDBName: 'https',
     httpsLists: [
         {
             type: 'upgrade bloom filter',
             name: 'httpsUpgradeBloomFilter',
-            url: 'https://staticcdn.duckduckgo.com/https/https-bloom.json'
+            url: 'https://staticcdn.duckduckgo.com/https/https-bloom.json',
         },
         {
             type: "don't upgrade bloom filter",
             name: 'httpsDontUpgradeBloomFilters',
-            url: 'https://staticcdn.duckduckgo.com/https/negative-https-bloom.json'
+            url: 'https://staticcdn.duckduckgo.com/https/negative-https-bloom.json',
         },
         {
             type: 'upgrade safelist',
             name: 'httpsUpgradeList',
-            url: 'https://staticcdn.duckduckgo.com/https/negative-https-allowlist.json'
+            url: 'https://staticcdn.duckduckgo.com/https/negative-https-allowlist.json',
         },
         {
             type: "don't upgrade safelist",
             name: 'httpsDontUpgradeList',
-            url: 'https://staticcdn.duckduckgo.com/https/https-allowlist.json'
-        }
+            url: 'https://staticcdn.duckduckgo.com/https/https-allowlist.json',
+        },
     ],
     tdsLists: [
         {
             name: 'surrogates',
             url: '/data/surrogates.txt',
             format: 'text',
-            source: 'local'
+            source: 'local',
         },
         {
             name: 'tds',
@@ -125,15 +125,15 @@ module.exports = {
             channels: {
                 live: getTDSEndpoint('v6/current'),
                 next: getTDSEndpoint('v6/next'),
-                beta: getTDSEndpoint('beta')
-            }
+                beta: getTDSEndpoint('beta'),
+            },
         },
         {
             name: 'config',
             url: getConfigFileName(),
             format: 'json',
-            source: 'external'
-        }
+            source: 'external',
+        },
     ],
     httpsErrorCodes: {
         'net::ERR_CONNECTION_REFUSED': 1,
@@ -148,16 +148,16 @@ module.exports = {
         'Cannot communicate securely with peer: no common encryption algorithm(s).': 10,
         'SSL received a record that exceeded the maximum permissible length.': 11,
         'The certificate is not trusted because it is self-signed.': 12,
-        downgrade_redirect_loop: 13
+        downgrade_redirect_loop: 13,
     },
     iconPaths: /** @type {const} */ ({
         regular: '/img/icon_browser_action.png',
-        withSpecialState: '/img/icon_browser_action_special.png'
+        withSpecialState: '/img/icon_browser_action_special.png',
     }),
     platform: {
-        name: 'extension'
+        name: 'extension',
     },
-    trackerStats: /** @type {const} */({
+    trackerStats: /** @type {const} */ ({
         allowedOrigin: 'https://duckduckgo.com',
         allowedPathname: 'ntp-tracker-stats.html',
         redirectTarget: 'html/tracker-stats.html',
@@ -166,12 +166,12 @@ module.exports = {
         excludedCompanies: ['ExoClick'],
         events: {
             incoming: {
-                newTabPage_heartbeat: 'newTabPage_heartbeat'
+                newTabPage_heartbeat: 'newTabPage_heartbeat',
             },
             outgoing: {
                 newTabPage_data: 'newTabPage_data',
-                newTabPage_disconnect: 'newTabPage_disconnect'
-            }
-        }
-    })
-}
+                newTabPage_disconnect: 'newTabPage_disconnect',
+            },
+        },
+    }),
+};

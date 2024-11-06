@@ -1,18 +1,16 @@
-@import "vars";
-@import "mixins";
-
+@import 'vars';
+@import 'mixins';
 
 /* Generic menu list styling */
 @include default_list();
 
-
 /* Generic toggle button styling */
 @include toggle_button();
 
-@import "views/extension-page";
+@import 'views/extension-page';
 
 /* allowlist */
-@import "views/allowlist";
+@import 'views/allowlist';
 
 .options-info {
     font-weight: bold;

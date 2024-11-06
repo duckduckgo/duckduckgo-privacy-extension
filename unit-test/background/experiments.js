@@ -1,86 +1,98 @@
-const experiment = require('../../shared/js/background/experiments')
-const settings = require('../../shared/js/background/settings')
-const atbUtils = require('../../shared/js/background/atb-utils')
+const experiment = require('../../shared/js/background/experiments');
+const settings = require('../../shared/js/background/settings');
+const atbUtils = require('../../shared/js/background/atb-utils');
 
 describe('experiment.getVariant', () => {
-    const tests = [{
-        atb: 'v123-1ab',
-        variant: 'a'
-    }, {
-        atb: 'v123-1_b',
-        variant: '_'
-    }, {
-        atb: 'v123',
-        variant: '_'
-    }, {
-        atb: '',
-        variant: '_'
-    }]
+    const tests = [
+        {
+            atb: 'v123-1ab',
+            variant: 'a',
+        },
+        {
+            atb: 'v123-1_b',
+            variant: '_',
+        },
+        {
+            atb: 'v123',
+            variant: '_',
+        },
+        {
+            atb: '',
+            variant: '_',
+        },
+    ];
 
     tests.forEach((test) => {
         it('gets correct variant from settings', () => {
-            spyOn(settings, 'getSetting').and.returnValue(test.atb)
-            const result = experiment.getVariant()
-            expect(result).toBe(test.variant)
-        })
-    })
-})
+            spyOn(settings, 'getSetting').and.returnValue(test.atb);
+            const result = experiment.getVariant();
+            expect(result).toBe(test.variant);
+        });
+    });
+});
 
 describe('experiment.getATBVariant', () => {
-    const tests = [{
-        atb: 'v123-1ab',
-        atbVariant: 'b'
-    }, {
-        atb: 'v123-1_b',
-        atbVariant: 'b'
-    }, {
-        atb: 'v123',
-        atbVariant: '_'
-    }, {
-        atb: '',
-        atbVariant: '_'
-    }]
+    const tests = [
+        {
+            atb: 'v123-1ab',
+            atbVariant: 'b',
+        },
+        {
+            atb: 'v123-1_b',
+            atbVariant: 'b',
+        },
+        {
+            atb: 'v123',
+            atbVariant: '_',
+        },
+        {
+            atb: '',
+            atbVariant: '_',
+        },
+    ];
 
     tests.forEach((test) => {
         it('gets correct variant from settings', () => {
-            spyOn(settings, 'getSetting').and.returnValue(test.atb)
-            const result = experiment.getATBVariant()
-            expect(result).toBe(test.atbVariant)
-        })
-    })
-})
+            spyOn(settings, 'getSetting').and.returnValue(test.atb);
+            const result = experiment.getATBVariant();
+            expect(result).toBe(test.atbVariant);
+        });
+    });
+});
 
 describe('experiment.getDaysSinceInstall', () => {
-    const tests = [{
-        atb: 'v214-1',
-        currentATB: { majorVersion: 214, minorVersion: 1 },
-        diff: 0
-
-    }, {
-        atb: 'v214-1',
-        currentATB: { majorVersion: 215, minorVersion: 1 },
-        diff: 7
-    },
-    {
-        atb: 'v215-1',
-        currentATB: { majorVersion: 214, minorVersion: 1 },
-        diff: -7
-    }]
+    const tests = [
+        {
+            atb: 'v214-1',
+            currentATB: { majorVersion: 214, minorVersion: 1 },
+            diff: 0,
+        },
+        {
+            atb: 'v214-1',
+            currentATB: { majorVersion: 215, minorVersion: 1 },
+            diff: 7,
+        },
+        {
+            atb: 'v215-1',
+            currentATB: { majorVersion: 214, minorVersion: 1 },
+            diff: -7,
+        },
+    ];
 
     tests.forEach((test) => {
         it('calculates correct days since install', () => {
-            const baseTime = new Date(test.date)
-            jasmine.clock().mockDate(baseTime)
+            const baseTime = new Date(test.date);
+            jasmine.clock().mockDate(baseTime);
 
-            spyOn(settings, 'getSetting').and.returnValue(test.atb)
-            spyOn(atbUtils, 'getCurrentATB').and.returnValue(test.currentATB)
+            spyOn(settings, 'getSetting').and.returnValue(test.atb);
+            spyOn(atbUtils, 'getCurrentATB').and.returnValue(test.currentATB);
 
-            const result = experiment.getDaysSinceInstall()
-            jasmine.clock().uninstall()
-            expect(result).toBe(test.diff)
-        })
-    })
-})
+            const result = experiment.getDaysSinceInstall();
+            jasmine.clock().uninstall();
+            expect(result).toBe(test.diff);
+        });
+    });
+});
 
 // describe('experiment.setActiveExperiment', () => {
 //     global.retentionExperiments = {

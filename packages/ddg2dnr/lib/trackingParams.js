@@ -1,22 +1,20 @@
 /** @module trackingParams */
-const {
-    generateDNRRule
-} = require('./utils')
+const { generateDNRRule } = require('./utils');
 
-const TRACKING_PARAM_PRIORITY = 40000
+const TRACKING_PARAM_PRIORITY = 40000;
 
-function generateTrackingParameterRules (config) {
+function generateTrackingParameterRules(config) {
     if (config.features?.trackingParameters?.state !== 'enabled') {
-        return []
+        return [];
     }
 
-    const allowedDomains = config.features.trackingParameters.exceptions?.map(e => e.domain)
+    const allowedDomains = config.features.trackingParameters.exceptions?.map((e) => e.domain);
 
     // Skip any wildcard or regex parameters, we can't support these in MV3
-    const trackingParams = config.features.trackingParameters.settings?.parameters?.filter(param => !(param.match(/[*+?{}[\]]/, 'g')))
+    const trackingParams = config.features.trackingParameters.settings?.parameters?.filter((param) => !param.match(/[*+?{}[\]]/, 'g'));
 
     if (!trackingParams) {
-        return []
+        return [];
     }
 
     const rule = generateDNRRule({
@@ -25,16 +23,16 @@ function generateTrackingParameterRules (config) {
         redirect: {
             transform: {
                 queryTransform: {
-                    removeParams: trackingParams
-                }
-            }
+                    removeParams: trackingParams,
+                },
+            },
         },
         resourceTypes: ['main_frame'],
-        excludedRequestDomains: allowedDomains
-    })
+        excludedRequestDomains: allowedDomains,
+    });
 
-    return [{ matchDetails: { type: 'trackingParams' }, rule }]
+    return [{ matchDetails: { type: 'trackingParams' }, rule }];
 }
 
-exports.TRACKING_PARAM_PRIORITY = TRACKING_PARAM_PRIORITY
-exports.generateTrackingParameterRules = generateTrackingParameterRules
+exports.TRACKING_PARAM_PRIORITY = TRACKING_PARAM_PRIORITY;
+exports.generateTrackingParameterRules = generateTrackingParameterRules;

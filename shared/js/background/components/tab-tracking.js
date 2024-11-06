@@ -1,8 +1,8 @@
 /* global BUILD_TARGET */
-import browser from 'webextension-polyfill'
-import { restoreDefaultClickToLoadRuleActions } from '../dnr-click-to-load'
-import Companies from '../companies'
-import { isRedirect } from '../utils'
+import browser from 'webextension-polyfill';
+import { restoreDefaultClickToLoadRuleActions } from '../dnr-click-to-load';
+import Companies from '../companies';
+import { isRedirect } from '../utils';
 
 /**
  * @typedef {import('./devtools').default} Devtools
@@ -12,48 +12,49 @@ import { isRedirect } from '../utils'
 export default class TabTracker {
     /**
      * @param {{
-    *  tabManager: TabManager;
-    *  devtools: Devtools;
-    * }} options
-    */
-    constructor ({ tabManager, devtools }) {
-        this.tabManager = tabManager
-        this.createdTargets = new Map()
+     *  tabManager: TabManager;
+     *  devtools: Devtools;
+     * }} options
+     */
+    constructor({ tabManager, devtools }) {
+        this.tabManager = tabManager;
+        this.createdTargets = new Map();
 
-        browser.webRequest.onHeadersReceived.addListener((request) => {
-            this.tabManager.updateTabUrl(request)
-            const tab = tabManager.get({ tabId: request.tabId })
+        browser.webRequest.onHeadersReceived.addListener(
+            (request) => {
+                this.tabManager.updateTabUrl(request);
+                const tab = tabManager.get({ tabId: request.tabId });
 
-            tab.httpErrorCodes.push(request.statusCode)
+                tab.httpErrorCodes.push(request.statusCode);
 
-            // SERP ad click detection
-            if (
-                isRedirect(request.statusCode)
-            ) {
-                tab.setAdClickIfValidRedirect(request.url)
-            } else if (tab && tab.adClick && !isRedirect(request.statusCode)) {
-                // At the end of the redirect chain, ensure the final URL's base
-                // domain (aka the "heuristic" base domain) is noted for the
-                // 'm_ad_click_detected' pixel.
-                let heuristicAdBaseDomain = null
-                if (tab.adClick.heuristicDetectionEnabled) {
-                    heuristicAdBaseDomain = tab.site.baseDomain || ''
+                // SERP ad click detection
+                if (isRedirect(request.statusCode)) {
+                    tab.setAdClickIfValidRedirect(request.url);
+                } else if (tab && tab.adClick && !isRedirect(request.statusCode)) {
+                    // At the end of the redirect chain, ensure the final URL's base
+                    // domain (aka the "heuristic" base domain) is noted for the
+                    // 'm_ad_click_detected' pixel.
+                    let heuristicAdBaseDomain = null;
+                    if (tab.adClick.heuristicDetectionEnabled) {
+                        heuristicAdBaseDomain = tab.site.baseDomain || '';
 
-                    // No parameter domain was provided by the SERP, so fall
-                    // back to the heuristic domain for the ad click.
-                    if (tab.adClick.adClickRedirect) {
-                        tab.adClick.setAdBaseDomain(heuristicAdBaseDomain)
+                        // No parameter domain was provided by the SERP, so fall
+                        // back to the heuristic domain for the ad click.
+                        if (tab.adClick.adClickRedirect) {
+                            tab.adClick.setAdBaseDomain(heuristicAdBaseDomain);
+                        }
                     }
-                }
 
-                tab.adClick.sendAdClickDetectedPixel(heuristicAdBaseDomain)
-            }
-        }, { urls: ['<all_urls>'], types: ['main_frame'] })
+                    tab.adClick.sendAdClickDetectedPixel(heuristicAdBaseDomain);
+                }
+            },
+            { urls: ['<all_urls>'], types: ['main_frame'] },
+        );
 
         // Store the created tab id for when onBeforeNavigate is called so data can be copied across from the source tab
-        browser.webNavigation.onCreatedNavigationTarget.addListener(details => {
-            this.createdTargets.set(details.tabId, details.sourceTabId)
-        })
+        browser.webNavigation.onCreatedNavigationTarget.addListener((details) => {
+            this.createdTargets.set(details.tabId, details.sourceTabId);
+        });
 
         // keep track of URLs that the browser navigates to.
         //
@@ -63,10 +64,10 @@ export default class TabTracker {
         // and Gmail's weird redirect which returns a 200 via a service worker
         browser.webNavigation.onBeforeNavigate.addListener((details) => {
             // ignore navigation on iframes
-            if (details.frameId !== 0) return
+            if (details.frameId !== 0) return;
 
-            const currentTab = tabManager.get({ tabId: details.tabId })
-            const newTab = tabManager.create({ tabId: details.tabId, url: details.url })
+            const currentTab = tabManager.get({ tabId: details.tabId });
+            const newTab = tabManager.create({ tabId: details.tabId, url: details.url });
 
             if (BUILD_TARGET === 'chrome') {
                 // Ensure that the correct declarativeNetRequest allowing rules are
@@ -76,60 +77,60 @@ export default class TabTracker {
                 //       not later committed. But since there is a race-condition
                 //       between the page loading and the rules being added, let's use
                 //       onBeforeNavigate for now as it fires sooner.
-                restoreDefaultClickToLoadRuleActions(newTab)
+                restoreDefaultClickToLoadRuleActions(newTab);
             }
 
             // persist the last URL the tab was trying to upgrade to HTTPS
             if (currentTab && currentTab.httpsRedirects) {
-                newTab.httpsRedirects.persistMainFrameRedirect(currentTab.httpsRedirects.getMainFrameRedirect())
+                newTab.httpsRedirects.persistMainFrameRedirect(currentTab.httpsRedirects.getMainFrameRedirect());
             }
             if (this.createdTargets.has(details.tabId)) {
-                const sourceTabId = this.createdTargets.get(details.tabId)
-                this.createdTargets.delete(details.tabId)
+                const sourceTabId = this.createdTargets.get(details.tabId);
+                this.createdTargets.delete(details.tabId);
 
-                const sourceTab = tabManager.get({ tabId: sourceTabId })
+                const sourceTab = tabManager.get({ tabId: sourceTabId });
                 if (sourceTab && sourceTab.adClick) {
-                    this.createdTargets.set(details.tabId, sourceTabId)
+                    this.createdTargets.set(details.tabId, sourceTabId);
                     if (sourceTab.adClick.shouldPropagateAdClickForNewTab(newTab)) {
-                        newTab.adClick = sourceTab.adClick.propagate(newTab.id)
+                        newTab.adClick = sourceTab.adClick.propagate(newTab.id);
                     }
                 }
             }
 
-            newTab.updateSite(details.url)
-            devtools.postMessage(details.tabId, 'tabChange', devtools.serializeTab(newTab))
-        })
+            newTab.updateSite(details.url);
+            devtools.postMessage(details.tabId, 'tabChange', devtools.serializeTab(newTab));
+        });
 
         browser.tabs.onCreated.addListener((info) => {
             if (info.id) {
-                tabManager.createOrUpdateTab(info.id, info)
+                tabManager.createOrUpdateTab(info.id, info);
             }
-        })
+        });
 
         browser.tabs.onUpdated.addListener((id, info) => {
             // sync company data to storage when a tab finishes loading
             if (info.status === 'complete') {
-                Companies.syncToStorage()
+                Companies.syncToStorage();
             }
-            tabManager.createOrUpdateTab(id, info)
-        })
+            tabManager.createOrUpdateTab(id, info);
+        });
 
         browser.tabs.onRemoved.addListener((id, info) => {
             // remove the tab object
-            tabManager.delete(id)
-        })
+            tabManager.delete(id);
+        });
 
-        this.restoreOrCreateTabs()
+        this.restoreOrCreateTabs();
     }
 
-    async restoreOrCreateTabs () {
-        const savedTabs = await browser.tabs.query({ status: 'complete' })
+    async restoreOrCreateTabs() {
+        const savedTabs = await browser.tabs.query({ status: 'complete' });
         for (let i = 0; i < savedTabs.length; i++) {
-            const tab = savedTabs[i]
+            const tab = savedTabs[i];
 
             if (tab.url) {
                 // On reinstall we wish to create the tab again
-                await this.tabManager.restoreOrCreate(tab)
+                await this.tabManager.restoreOrCreate(tab);
             }
         }
     }

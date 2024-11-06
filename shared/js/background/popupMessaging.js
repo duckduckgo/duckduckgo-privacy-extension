@@ -5,7 +5,7 @@
 
 // Messaging connection with the popup UI (when active).
 /** @type {Port?} */
-let activePort = null
+let activePort = null;
 
 /**
  * Set up the messaging connection with the popup UI.
@@ -19,33 +19,31 @@ let activePort = null
  *     (options: any, sender: any, message: any) => any
  * >} messageHandlers
  */
-export function popupConnectionOpened (port, messageHandlers) {
-    activePort = port
+export function popupConnectionOpened(port, messageHandlers) {
+    activePort = port;
     port.onDisconnect.addListener(() => {
         if (activePort === port) {
-            activePort = null
+            activePort = null;
         }
-    })
+    });
 
-    port.onMessage.addListener(async message => {
-        const messageType = message?.messageType
+    port.onMessage.addListener(async (message) => {
+        const messageType = message?.messageType;
 
         if (!messageType || !(messageType in messageHandlers)) {
-            console.error(
-                'Unrecognized message (privacy-dashboard -> background):', message
-            )
-            return
+            console.error('Unrecognized message (privacy-dashboard -> background):', message);
+            return;
         }
 
-        const response = await messageHandlers[messageType](message?.options, port, message)
+        const response = await messageHandlers[messageType](message?.options, port, message);
         if (typeof message?.id === 'number') {
             port.postMessage({
                 id: message.id,
                 messageType: 'response',
-                options: response
-            })
+                options: response,
+            });
         }
-    })
+    });
 }
 
 /**
@@ -53,6 +51,6 @@ export function popupConnectionOpened (port, messageHandlers) {
  *
  * @param {OutgoingPopupMessage} message
  */
-export function postPopupMessage (message) {
-    activePort?.postMessage(message)
+export function postPopupMessage(message) {
+    activePort?.postMessage(message);
 }

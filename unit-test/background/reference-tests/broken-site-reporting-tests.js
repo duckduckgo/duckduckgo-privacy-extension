@@ -1,34 +1,34 @@
-import Tab from '../../../shared/js/background/classes/tab'
-import { breakageReportForTab, clearAllBrokenSiteReportTimes } from '../../../shared/js/background/broken-site-report'
+import Tab from '../../../shared/js/background/classes/tab';
+import { breakageReportForTab, clearAllBrokenSiteReportTimes } from '../../../shared/js/background/broken-site-report';
 
-const loadPixel = require('../../../shared/js/background/load')
-const singleTestSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/tests.json')
-const multipleTestSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/multiple_report_tests.json')
+const loadPixel = require('../../../shared/js/background/load');
+const singleTestSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/tests.json');
+const multipleTestSets = require('@duckduckgo/privacy-reference-tests/broken-site-reporting/multiple_report_tests.json');
 
-let loadPixelSpy
+let loadPixelSpy;
 
-async function submitAndValidateReport (report) {
-    const trackerName = 'Ad Company'
+async function submitAndValidateReport(report) {
+    const trackerName = 'Ad Company';
     const trackerObj = {
         owner: {
             name: trackerName,
-            displayName: trackerName
-        }
-    }
+            displayName: trackerName,
+        },
+    };
     const tab = new Tab({
-        url: report.siteURL
-    })
-    tab.upgradedHttps = report.wasUpgraded
+        url: report.siteURL,
+    });
+    tab.upgradedHttps = report.wasUpgraded;
 
     if (report.protectionsEnabled === true) {
-        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking']);
     } else if (report.denylisted === true) {
-        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([])
-        spyOnProperty(tab.site, 'denylisted').and.returnValue(true)
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([]);
+        spyOnProperty(tab.site, 'denylisted').and.returnValue(true);
     }
 
-    tab.userRefreshCount = report.userRefreshCount || 0
-    tab.locale = report.locale || 'en-US'
+    tab.userRefreshCount = report.userRefreshCount || 0;
+    tab.locale = report.locale || 'en-US';
 
     const addRequest = (hostname, action, opts = {}) => {
         tab.addToTrackers({
@@ -41,33 +41,33 @@ async function submitAndValidateReport (report) {
             matchedRuleException: false,
             tracker: trackerObj,
             fullTrackerDomain: hostname,
-            ...opts
-        })
-    }
+            ...opts,
+        });
+    };
 
     const addRequests = (trackers, f) => {
-        (trackers || []).forEach(hostname => {
-            const opts = f(hostname)
-            const { action } = opts
-            addRequest(hostname, action, opts)
-        })
-    }
+        (trackers || []).forEach((hostname) => {
+            const opts = f(hostname);
+            const { action } = opts;
+            addRequest(hostname, action, opts);
+        });
+    };
 
     const addActionRequests = (trackers, action) => {
-        addRequests(trackers, _ => ({ action }))
-    }
+        addRequests(trackers, (_) => ({ action }));
+    };
 
-    addActionRequests(report.blockedTrackers, 'block')
-    addActionRequests(report.surrogates, 'redirect')
-    addActionRequests(report.ignoreRequests, 'ignore')
-    addActionRequests(report.ignoredByUserRequests, 'ignore-user')
-    addActionRequests(report.adAttributionRequests, 'ad-attribution')
-    addActionRequests(report.noActionRequests, 'none')
+    addActionRequests(report.blockedTrackers, 'block');
+    addActionRequests(report.surrogates, 'redirect');
+    addActionRequests(report.ignoreRequests, 'ignore');
+    addActionRequests(report.ignoredByUserRequests, 'ignore-user');
+    addActionRequests(report.adAttributionRequests, 'ad-attribution');
+    addActionRequests(report.noActionRequests, 'none');
 
     const mockedPageParams = {
         jsPerformance: [Number.parseFloat(report.jsPerformance)],
-        docReferrer: 'http://example.com'
-    }
+        docReferrer: 'http://example.com',
+    };
 
     await breakageReportForTab({
         pixelName: 'epbf',
@@ -77,86 +77,86 @@ async function submitAndValidateReport (report) {
         remoteConfigVersion: report.remoteConfigVersion,
         category: report.category,
         description: report.providedDescription,
-        pageParams: mockedPageParams
-    })
-    expect(loadPixelSpy.calls.count()).withContext('Expect only one pixel').toEqual(1)
+        pageParams: mockedPageParams,
+    });
+    expect(loadPixelSpy.calls.count()).withContext('Expect only one pixel').toEqual(1);
 
-    const requestURLString = loadPixelSpy.calls.argsFor(0)[0]
-    loadPixelSpy.calls.reset()
+    const requestURLString = loadPixelSpy.calls.argsFor(0)[0];
+    loadPixelSpy.calls.reset();
 
     if (report.expectReportURLPrefix) {
-        expect(requestURLString.startsWith(report.expectReportURLPrefix)).toBe(true)
+        expect(requestURLString.startsWith(report.expectReportURLPrefix)).toBe(true);
     }
 
     if (report.expectReportURLParams) {
-        const requestUrl = new URL(requestURLString)
+        const requestUrl = new URL(requestURLString);
         // we can't use searchParams because those are automatically decoded
-        const searchItems = requestUrl.search.split('&')
+        const searchItems = requestUrl.search.split('&');
 
-        report.expectReportURLParams.forEach(param => {
+        report.expectReportURLParams.forEach((param) => {
             if ('value' in param) {
-                expect(searchItems).toContain(`${param.name}=${param.value}`)
+                expect(searchItems).toContain(`${param.name}=${param.value}`);
             }
             if ('matchesCurrentDay' in param) {
-                const date = new Date()
-                const day = String(date.getDate()).padStart(2, '0')
-                const month = String(date.getMonth() + 1).padStart(2, '0')
-                const year = date.getFullYear()
-                const dateString = `${year}-${month}-${day}`
-                expect(searchItems).toContain(`${param.name}=${dateString}`)
+                const date = new Date();
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const year = date.getFullYear();
+                const dateString = `${year}-${month}-${day}`;
+                expect(searchItems).toContain(`${param.name}=${dateString}`);
             }
             if ('matches' in param) {
-                const regex = new RegExp(param.matches)
-                const fields = searchItems.map(item => item.split('='))
+                const regex = new RegExp(param.matches);
+                const fields = searchItems.map((item) => item.split('='));
                 for (const [key, value] of fields) {
                     if (key === param.name) {
-                        expect(value).toMatch(regex)
+                        expect(value).toMatch(regex);
                     }
                 }
             }
             if ('present' in param) {
-                const fields = searchItems.map(item => item.split('=')[0])
+                const fields = searchItems.map((item) => item.split('=')[0]);
                 if (param.present) {
-                    expect(fields).withContext(`Expected ${param.name} to be present in ${searchItems}`).toContain(param.name)
+                    expect(fields).withContext(`Expected ${param.name} to be present in ${searchItems}`).toContain(param.name);
                 } else {
-                    expect(fields).not.toContain(param.name)
+                    expect(fields).not.toContain(param.name);
                 }
             }
-        })
+        });
     }
 }
-function runTests (testSets, supportsMultipleReports = false) {
+function runTests(testSets, supportsMultipleReports = false) {
     for (const setName of Object.keys(testSets)) {
-        const testSet = testSets[setName]
+        const testSet = testSets[setName];
 
         describe(`Broken Site Reporting tests / ${testSet.name} /`, () => {
             for (const test of testSet.tests) {
                 if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
-                    return
+                    return;
                 }
 
                 it(test.name, async () => {
-                    loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
-                    await clearAllBrokenSiteReportTimes()
+                    loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null);
+                    await clearAllBrokenSiteReportTimes();
                     if (supportsMultipleReports) {
                         for (const report of test.reports) {
-                            await submitAndValidateReport(report)
+                            await submitAndValidateReport(report);
                         }
                     } else {
-                        await submitAndValidateReport(test)
+                        await submitAndValidateReport(test);
                     }
-                })
+                });
             }
-        })
+        });
     }
 }
 
-runTests(singleTestSets)
-runTests(multipleTestSets, true)
+runTests(singleTestSets);
+runTests(multipleTestSets, true);
 
 describe('Broken Site Reporting tests / protections state', () => {
-    async function submit (tab) {
-        loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null)
+    async function submit(tab) {
+        loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null);
         await breakageReportForTab({
             pixelName: 'epbf',
             tab,
@@ -165,51 +165,51 @@ describe('Broken Site Reporting tests / protections state', () => {
             remoteConfigVersion: '1234',
             category: 'content',
             description: 'test',
-            pageParams: {}
-        })
-        const requestURLString = loadPixelSpy.calls.argsFor(0)[0]
-        return new URL(requestURLString).searchParams
+            pageParams: {},
+        });
+        const requestURLString = loadPixelSpy.calls.argsFor(0)[0];
+        return new URL(requestURLString).searchParams;
     }
     it('sends 1 when protections are enabled', async () => {
-        const tab = new Tab({ url: 'https://example.com' })
-        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
+        const tab = new Tab({ url: 'https://example.com' });
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking']);
 
-        const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('true')
-    })
+        const params = await submit(tab);
+        expect(params.get('protectionsState')).toEqual('true');
+    });
     it('sends 1 when site is denylisted', async () => {
-        const tab = new Tab({ url: 'https://example.com' })
+        const tab = new Tab({ url: 'https://example.com' });
 
-        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([])
-        spyOnProperty(tab.site, 'denylisted').and.returnValue(true)
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([]);
+        spyOnProperty(tab.site, 'denylisted').and.returnValue(true);
 
-        const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('true')
-    })
+        const params = await submit(tab);
+        expect(params.get('protectionsState')).toEqual('true');
+    });
     it('sends 0 when site is allowlisted', async () => {
-        const tab = new Tab({ url: 'https://example.com' })
-        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
-        spyOnProperty(tab.site, 'allowlisted').and.returnValue(true)
+        const tab = new Tab({ url: 'https://example.com' });
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking']);
+        spyOnProperty(tab.site, 'allowlisted').and.returnValue(true);
 
-        const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('false')
-    })
+        const params = await submit(tab);
+        expect(params.get('protectionsState')).toEqual('false');
+    });
     it('sends 0 when contentBlocking is not enabled', async () => {
-        const tab = new Tab({ url: 'https://example.com' })
+        const tab = new Tab({ url: 'https://example.com' });
 
         // missing `contentBlocking`
-        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([])
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue([]);
 
-        const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('false')
-    })
+        const params = await submit(tab);
+        expect(params.get('protectionsState')).toEqual('false');
+    });
     it('sends 0 when domain is in unprotectedTemporary', async () => {
-        const tab = new Tab({ url: 'https://example.com' })
+        const tab = new Tab({ url: 'https://example.com' });
 
-        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking'])
-        spyOnProperty(tab.site, 'isBroken').and.returnValue(true)
+        spyOnProperty(tab.site, 'enabledFeatures').and.returnValue(['contentBlocking']);
+        spyOnProperty(tab.site, 'isBroken').and.returnValue(true);
 
-        const params = await submit(tab)
-        expect(params.get('protectionsState')).toEqual('false')
-    })
-})
+        const params = await submit(tab);
+        expect(params.get('protectionsState')).toEqual('false');
+    });
+});

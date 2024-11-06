@@ -1,16 +1,16 @@
-import browser from 'webextension-polyfill'
+import browser from 'webextension-polyfill';
 
-export function getExtensionURL (path) {
-    return browser.runtime.getURL(path)
+export function getExtensionURL(path) {
+    return browser.runtime.getURL(path);
 }
 
-export function getExtensionVersion () {
-    const manifest = browser.runtime.getManifest()
-    return manifest.version
+export function getExtensionVersion() {
+    const manifest = browser.runtime.getManifest();
+    return manifest.version;
 }
 
-export function openExtensionPage (path) {
-    browser.tabs.create({ url: getExtensionURL(path) })
+export function openExtensionPage(path) {
+    browser.tabs.create({ url: getExtensionURL(path) });
 }
 
 /**
@@ -18,152 +18,143 @@ export function openExtensionPage (path) {
  * @param {number} tabId
  * @returns {Promise<void>}
  */
-export async function setActionIcon (iconPath, tabId) {
+export async function setActionIcon(iconPath, tabId) {
     if (typeof browser.action === 'undefined') {
-        return browser.browserAction.setIcon({ path: iconPath, tabId })
+        return browser.browserAction.setIcon({ path: iconPath, tabId });
     }
-    return browser.action.setIcon({ path: iconPath, tabId })
+    return browser.action.setIcon({ path: iconPath, tabId });
 }
-export function getManifestVersion () {
-    const manifest = browser.runtime.getManifest()
-    return manifest.manifest_version
-}
-
-export function syncToStorage (data) {
-    return browser.storage.local.set(data)
+export function getManifestVersion() {
+    const manifest = browser.runtime.getManifest();
+    return manifest.manifest_version;
 }
 
-// @ts-ignore
-export async function getFromStorage (key, cb) {
-    const result = await browser.storage.local.get(key)
-    return result[key]
+export function syncToStorage(data) {
+    return browser.storage.local.set(data);
 }
 
 // @ts-ignore
-export async function getFromManagedStorage (keys, cb) {
+export async function getFromStorage(key, cb) {
+    const result = await browser.storage.local.get(key);
+    return result[key];
+}
+
+// @ts-ignore
+export async function getFromManagedStorage(keys, cb) {
     try {
-        return await browser.storage.managed.get(keys)
+        return await browser.storage.managed.get(keys);
     } catch (e) {
-        console.log('get managed failed', e)
+        console.log('get managed failed', e);
     }
-    return {}
+    return {};
 }
 
-export function getExtensionId () {
-    return browser.runtime.id
+export function getExtensionId() {
+    return browser.runtime.id;
 }
 
 /**
  * @param {browser.WebRequest.OnBeforeRedirectDetailsType | browser.Tabs.Tab | browser.Tabs.OnUpdatedChangeInfoType} tabData
  * @returns {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}}
  */
-export function normalizeTabData (tabData) {
+export function normalizeTabData(tabData) {
     // @ts-expect-error - id doesn't exist onUpdatedChangeInfoType but we rectify in onCreateOrUpdateTab
-    const tabId = 'tabId' in tabData ? tabData.tabId : tabData.id
-    const url = tabData.url
-    const status = 'status' in tabData ? tabData.status : null
-    const requestId = 'requestId' in tabData ? tabData.requestId : undefined
+    const tabId = 'tabId' in tabData ? tabData.tabId : tabData.id;
+    const url = tabData.url;
+    const status = 'status' in tabData ? tabData.status : null;
+    const requestId = 'requestId' in tabData ? tabData.requestId : undefined;
     return {
         tabId,
         url,
         requestId,
-        status
-    }
+        status,
+    };
 }
 
-export function mergeSavedSettings (settings, results) {
-    return Object.assign(settings, results)
+export function mergeSavedSettings(settings, results) {
+    return Object.assign(settings, results);
 }
 
-export async function getDDGTabUrls () {
-    const tabs = await browser.tabs.query({ url: 'https://*.duckduckgo.com/*' }) || []
-    return tabs.map(tab => tab.url)
+export async function getDDGTabUrls() {
+    const tabs = (await browser.tabs.query({ url: 'https://*.duckduckgo.com/*' })) || [];
+    return tabs.map((tab) => tab.url);
 }
 
-export function setUninstallURL (url) {
-    browser.runtime.setUninstallURL(url)
+export function setUninstallURL(url) {
+    browser.runtime.setUninstallURL(url);
 }
 
-export function changeTabURL (tabId, url) {
-    return browser.tabs.update(tabId, { url })
+export function changeTabURL(tabId, url) {
+    return browser.tabs.update(tabId, { url });
 }
 
-function convertScriptingAPIOptionsForTabsAPI (options) {
+function convertScriptingAPIOptionsForTabsAPI(options) {
     if (typeof options !== 'object') {
-        throw new Error(
-            'Missing/invalid options Object.'
-        )
+        throw new Error('Missing/invalid options Object.');
     }
 
-    if (typeof options.file !== 'undefined' ||
+    if (
+        typeof options.file !== 'undefined' ||
         typeof options.frameId !== 'undefined' ||
         typeof options.runAt !== 'undefined' ||
         typeof options.allFrames !== 'undefined' ||
-        typeof options.code !== 'undefined') {
-        throw new Error(
-            'Please provide options compatible with the (MV3) scripting API, ' +
-            'instead of the (MV2) tabs API.'
-        )
+        typeof options.code !== 'undefined'
+    ) {
+        throw new Error('Please provide options compatible with the (MV3) scripting API, ' + 'instead of the (MV2) tabs API.');
     }
 
     if (typeof options.world !== 'undefined') {
-        throw new Error(
-            'World targetting not supported by MV2.'
-        )
+        throw new Error('World targetting not supported by MV2.');
     }
 
-    const { allFrames, frameIds, tabId } = options.target
-    delete options.target
+    const { allFrames, frameIds, tabId } = options.target;
+    delete options.target;
 
     if (Array.isArray(frameIds) && frameIds.length > 0) {
         if (frameIds.length > 1) {
-            throw new Error(
-                'Targetting multiple frames by ID not supported by MV2.'
-            )
+            throw new Error('Targetting multiple frames by ID not supported by MV2.');
         }
 
-        options.frameId = frameIds[0]
+        options.frameId = frameIds[0];
     }
 
     if (typeof options.files !== 'undefined') {
         if (Array.isArray(options.files) && options.files.length > 0) {
             if (options.files.length > 1) {
-                throw new Error(
-                    'Inserting multiple stylesheets/scripts in one go not supported by MV2.'
-                )
+                throw new Error('Inserting multiple stylesheets/scripts in one go not supported by MV2.');
             }
-            options.file = options.files[0]
+            options.file = options.files[0];
         }
-        delete options.files
+        delete options.files;
     }
 
     if (typeof allFrames !== 'undefined') {
-        options.allFrames = allFrames
+        options.allFrames = allFrames;
     }
 
     if (typeof options.injectImmediately !== 'undefined') {
         if (options.injectImmediately) {
-            options.runAt = 'document_start'
+            options.runAt = 'document_start';
         }
-        delete options.injectImmediately
+        delete options.injectImmediately;
     }
 
-    let stringifiedArgs = ''
+    let stringifiedArgs = '';
     if (typeof options.args !== 'undefined') {
         if (Array.isArray(options.args)) {
-            stringifiedArgs = '...' + JSON.stringify(options.args)
+            stringifiedArgs = '...' + JSON.stringify(options.args);
         }
-        delete options.args
+        delete options.args;
     }
 
     if (typeof options.func !== 'undefined') {
         if (typeof options.func === 'function') {
-            options.code = '(' + options.func.toString() + ')(' + stringifiedArgs + ')'
+            options.code = '(' + options.func.toString() + ')(' + stringifiedArgs + ')';
         }
-        delete options.func
+        delete options.func;
     }
 
-    return [tabId, options]
+    return [tabId, options];
 }
 
 /**
@@ -181,15 +172,15 @@ function convertScriptingAPIOptionsForTabsAPI (options) {
  *   Script injection options.
  * @returns {Promise<*>}
  */
-export async function executeScript (options) {
+export async function executeScript(options) {
     if (typeof browser.scripting === 'undefined') {
         return await browser.tabs.executeScript(
             // @ts-ignore
-            ...convertScriptingAPIOptionsForTabsAPI(options)
-        )
+            ...convertScriptingAPIOptionsForTabsAPI(options),
+        );
     }
 
-    return await browser.scripting.executeScript(options)
+    return await browser.scripting.executeScript(options);
 }
 
 /**
@@ -203,21 +194,21 @@ export async function executeScript (options) {
  * @param {object} options
  *   CSS insertion options.
  */
-export async function insertCSS (options) {
+export async function insertCSS(options) {
     if (typeof browser.scripting === 'undefined') {
         return await browser.tabs.insertCSS(
             // @ts-ignore
-            ...convertScriptingAPIOptionsForTabsAPI(options)
-        )
+            ...convertScriptingAPIOptionsForTabsAPI(options),
+        );
     }
 
-    return await browser.scripting.insertCSS(options)
+    return await browser.scripting.insertCSS(options);
 }
 
 // Session storage
 // @ts-ignore
-const sessionStorageSupported = typeof browser.storage.session !== 'undefined'
-export const sessionStorageFallback = sessionStorageSupported ? null : new Map()
+const sessionStorageSupported = typeof browser.storage.session !== 'undefined';
+export const sessionStorageFallback = sessionStorageSupported ? null : new Map();
 
 /**
  * Save some data to memory, which persists until the session ends (e.g. until
@@ -233,18 +224,18 @@ export const sessionStorageFallback = sessionStorageSupported ? null : new Map()
  *   The value to write.
  * @return {Promise<undefined>}
  */
-export async function setToSessionStorage (key, data) {
+export async function setToSessionStorage(key, data) {
     if (typeof key !== 'string') {
-        throw new Error('Invalid storage key, string expected.')
+        throw new Error('Invalid storage key, string expected.');
     }
 
     if (sessionStorageSupported) {
         // @ts-ignore
-        return await browser.storage.session.set({ [key]: data })
+        return await browser.storage.session.set({ [key]: data });
     }
 
     // @ts-ignore - TS doesn't know it is a Map
-    sessionStorageFallback.set(key, data)
+    sessionStorageFallback.set(key, data);
 }
 
 /**
@@ -254,19 +245,19 @@ export async function setToSessionStorage (key, data) {
  * @return {Promise<*>}
  *   The retrieved value.
  */
-export async function getFromSessionStorage (key) {
+export async function getFromSessionStorage(key) {
     if (typeof key !== 'string') {
-        throw new Error('Invalid storage key, string expected.')
+        throw new Error('Invalid storage key, string expected.');
     }
 
     if (sessionStorageSupported) {
         // @ts-ignore
-        const result = await browser.storage.session.get([key])
-        return result[key]
+        const result = await browser.storage.session.get([key]);
+        return result[key];
     }
 
     // @ts-ignore
-    return sessionStorageFallback.get(key)
+    return sessionStorageFallback.get(key);
 }
 
 /**
@@ -275,18 +266,18 @@ export async function getFromSessionStorage (key) {
  *   The storage key to remove.
  * @return {Promise<undefined>}
  */
-export async function removeFromSessionStorage (key) {
+export async function removeFromSessionStorage(key) {
     if (typeof key !== 'string') {
-        throw new Error('Invalid storage key, string expected.')
+        throw new Error('Invalid storage key, string expected.');
     }
 
     if (sessionStorageSupported) {
         // @ts-ignore
-        return await browser.storage.session.remove(key)
+        return await browser.storage.session.remove(key);
     }
 
     // @ts-ignore
-    return sessionStorageFallback.delete(key)
+    return sessionStorageFallback.delete(key);
 }
 
 /**
@@ -299,9 +290,9 @@ export async function removeFromSessionStorage (key) {
  *   See https://developer.chrome.com/docs/extensions/reference/alarms/#type-AlarmCreateInfo
  * @return {Promise}
  */
-export async function createAlarm (name, alarmInfo) {
-    const existingAlarm = await browser.alarms.get(name)
+export async function createAlarm(name, alarmInfo) {
+    const existingAlarm = await browser.alarms.get(name);
     if (!existingAlarm) {
-        return await browser.alarms.create(name, alarmInfo)
+        return await browser.alarms.create(name, alarmInfo);
     }
 }

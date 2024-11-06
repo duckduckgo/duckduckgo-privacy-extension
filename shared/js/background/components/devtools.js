@@ -1,9 +1,9 @@
-import browser from 'webextension-polyfill'
-import tabManager from '../tab-manager'
-import tldts from 'tldts'
-import trackers from '../trackers'
-import { removeBroken } from '../utils'
-import { registerDevtools } from '../devtools'
+import browser from 'webextension-polyfill';
+import tabManager from '../tab-manager';
+import tldts from 'tldts';
+import trackers from '../trackers';
+import { removeBroken } from '../utils';
+import { registerDevtools } from '../devtools';
 
 /**
  * @typedef {import('../classes/tab')} Tab
@@ -12,35 +12,33 @@ import { registerDevtools } from '../devtools'
  */
 
 class DevtoolsConnection {
-    static allowedMessageActions = new Set(
-        ['setTab', 'toggleFeature', 'toggleProtections', 'toggleTracker']
-    )
+    static allowedMessageActions = new Set(['setTab', 'toggleFeature', 'toggleProtections', 'toggleTracker']);
 
     /**
      * @param {Devtools} devtools
      * @param {Object} port
      */
-    constructor (devtools, port) {
-        this.devtools = devtools
-        this.disconnected = new Promise(resolve => {
-            this._disconnectedResolver = resolve
-        })
-        this.port = port
-        this.tabId = new Promise(resolve => {
-            this._tabIdResolver = resolve
-        })
+    constructor(devtools, port) {
+        this.devtools = devtools;
+        this.disconnected = new Promise((resolve) => {
+            this._disconnectedResolver = resolve;
+        });
+        this.port = port;
+        this.tabId = new Promise((resolve) => {
+            this._tabIdResolver = resolve;
+        });
 
-        port.onMessage.addListener(async message => {
-            const { action, id } = message
+        port.onMessage.addListener(async (message) => {
+            const { action, id } = message;
             if (DevtoolsConnection.allowedMessageActions.has(action)) {
-                const response = await this[action](message)
+                const response = await this[action](message);
                 if (typeof id === 'number') {
-                    this.postMessage('response', { id, response })
+                    this.postMessage('response', { id, response });
                 }
             }
-        })
+        });
 
-        port.onDisconnect.addListener(this._disconnectedResolver)
+        port.onDisconnect.addListener(this._disconnectedResolver);
     }
 
     /**
@@ -48,9 +46,9 @@ class DevtoolsConnection {
      * @param {any} message
      * @returns {Promise<void>}
      */
-    async postMessage (action, message) {
-        const tabId = await this.tabId
-        this.port.postMessage(JSON.stringify({ tabId, action, message }))
+    async postMessage(action, message) {
+        const tabId = await this.tabId;
+        this.port.postMessage(JSON.stringify({ tabId, action, message }));
     }
 
     /**
@@ -61,10 +59,10 @@ class DevtoolsConnection {
      *   tabId: number
      * }} message
      */
-    setTab ({ tabId }) {
-        this._tabIdResolver(tabId)
-        const tab = tabManager.get({ tabId })
-        this.postMessage('tabChange', this.devtools.serializeTab(tab))
+    setTab({ tabId }) {
+        this._tabIdResolver(tabId);
+        const tab = tabManager.get({ tabId });
+        this.postMessage('tabChange', this.devtools.serializeTab(tab));
     }
 
     /**
@@ -74,32 +72,34 @@ class DevtoolsConnection {
      * }} message
      * @returns {Promise<void>}
      */
-    async toggleFeature ({ feature }) {
+    async toggleFeature({ feature }) {
         if (feature === 'trackerAllowlist') {
-            await this.devtools.tds.config.modify(config => {
-                const currentState = config.features.trackerAllowlist.state
-                config.features.trackerAllowlist.state =
-                    currentState === 'enabled' ? 'disabled' : 'enabled'
-                return config
-            })
+            await this.devtools.tds.config.modify((config) => {
+                const currentState = config.features.trackerAllowlist.state;
+                config.features.trackerAllowlist.state = currentState === 'enabled' ? 'disabled' : 'enabled';
+                return config;
+            });
         } else {
-            const tabId = await this.tabId
-            const tab = tabManager.get({ tabId })
-            const enabled = tab.site?.enabledFeatures.includes(feature)
-            const tabDomain = tldts.getDomain(tab.site.domain)
+            const tabId = await this.tabId;
+            const tab = tabManager.get({ tabId });
+            const enabled = tab.site?.enabledFeatures.includes(feature);
+            const tabDomain = tldts.getDomain(tab.site.domain);
 
-            await this.devtools.tds.config.modify(config => {
-                const excludedSites = config.features[feature].exceptions
+            await this.devtools.tds.config.modify((config) => {
+                const excludedSites = config.features[feature].exceptions;
                 if (enabled) {
                     excludedSites.push({
                         domain: tabDomain,
-                        reason: 'Manually disabled'
-                    })
+                        reason: 'Manually disabled',
+                    });
                 } else {
-                    excludedSites.splice(excludedSites.findIndex(({ domain }) => domain === tabDomain), 1)
+                    excludedSites.splice(
+                        excludedSites.findIndex(({ domain }) => domain === tabDomain),
+                        1,
+                    );
                 }
-                return config
-            })
+                return config;
+            });
         }
     }
 
@@ -107,25 +107,25 @@ class DevtoolsConnection {
      * Toggle all protections on/off for the tab.
      * @returns {Promise<void>}
      */
-    async toggleProtections () {
-        const tabId = await this.tabId
-        const tab = tabManager.get({ tabId })
+    async toggleProtections() {
+        const tabId = await this.tabId;
+        const tab = tabManager.get({ tabId });
         if (tab.site?.isBroken && tab.url) {
-            await this.devtools.tds.config.modify(config => {
-                removeBroken(tab.site.domain, config)
+            await this.devtools.tds.config.modify((config) => {
+                removeBroken(tab.site.domain, config);
                 if (tab.url) {
-                    removeBroken(new URL(tab.url).hostname, config)
+                    removeBroken(new URL(tab.url).hostname, config);
                 }
-                return config
-            })
+                return config;
+            });
         } else {
             await tabManager.setList({
                 list: 'allowlisted',
                 domain: tab.site.domain,
-                value: !tab.site.allowlisted
-            })
+                value: !tab.site.allowlisted,
+            });
         }
-        this.postMessage('tabChange', this.devtools.serializeTab(tab))
+        this.postMessage('tabChange', this.devtools.serializeTab(tab));
     }
 
     /**
@@ -140,62 +140,59 @@ class DevtoolsConnection {
      *   toggleType: string
      * }} message
      */
-    toggleTracker ({ requestData, siteUrl, tracker, toggleType }) {
-        const matchedTrackerDetails = trackers.getTrackerData(
-            requestData.url, siteUrl, requestData
-        )
-        const matchedTrackerDomain = matchedTrackerDetails?.tracker?.domain
-        const matchedTrackerAction = matchedTrackerDetails?.action
+    toggleTracker({ requestData, siteUrl, tracker, toggleType }) {
+        const matchedTrackerDetails = trackers.getTrackerData(requestData.url, siteUrl, requestData);
+        const matchedTrackerDomain = matchedTrackerDetails?.tracker?.domain;
+        const matchedTrackerAction = matchedTrackerDetails?.action;
 
         if (!matchedTrackerDomain) {
-            return
+            return;
         }
 
-        this.devtools.tds.tds.modify(tds => {
-            const matchedTracker = tds.trackers[matchedTrackerDomain]
+        this.devtools.tds.tds.modify((tds) => {
+            const matchedTracker = tds.trackers[matchedTrackerDomain];
             if (!matchedTracker) {
-                return tds
+                return tds;
             }
 
             if (!tracker.matchedRule) {
-                matchedTracker.default =
-                    toggleType === 'I' ? 'ignore' : 'block'
-                return tds
+                matchedTracker.default = toggleType === 'I' ? 'ignore' : 'block';
+                return tds;
             }
 
             // Find the rule for this URL.
-            const ruleIndex = matchedTracker.rules.findIndex((r) => r.rule?.toString() === tracker.matchedRule)
-            const rule = matchedTracker.rules[ruleIndex]
+            const ruleIndex = matchedTracker.rules.findIndex((r) => r.rule?.toString() === tracker.matchedRule);
+            const rule = matchedTracker.rules[ruleIndex];
 
-            const parsedHost = tldts.parse(siteUrl)
+            const parsedHost = tldts.parse(siteUrl);
             if (!parsedHost.domain || !parsedHost.hostname) {
-                return tds
+                return tds;
             }
 
             if (!rule.exceptions) {
-                rule.exceptions = {}
+                rule.exceptions = {};
             }
             if (!rule.exceptions.domains) {
-                rule.exceptions.domains = []
+                rule.exceptions.domains = [];
             }
 
             if (toggleType === 'B' && matchedTrackerAction === 'redirect') {
-                matchedTracker.rules.splice(ruleIndex, 1)
+                matchedTracker.rules.splice(ruleIndex, 1);
             } else if (toggleType === 'I') {
-                rule.exceptions.domains.push(parsedHost.domain)
+                rule.exceptions.domains.push(parsedHost.domain);
                 if (rule.exceptions.types && !rule.exceptions.types.includes(requestData.type)) {
-                    rule.exceptions.types.push(requestData.type)
+                    rule.exceptions.types.push(requestData.type);
                 }
             } else {
-                let index = rule.exceptions.domains.indexOf(parsedHost.domain)
+                let index = rule.exceptions.domains.indexOf(parsedHost.domain);
                 if (index === -1) {
-                    index = rule.exceptions.domains.indexOf(parsedHost.hostname)
+                    index = rule.exceptions.domains.indexOf(parsedHost.hostname);
                 }
-                rule.exceptions.domains.splice(index, 1)
+                rule.exceptions.domains.splice(index, 1);
             }
 
-            return tds
-        })
+            return tds;
+        });
     }
 }
 
@@ -205,8 +202,8 @@ export default class Devtools {
      *   tds: TDSStorage
      * }} options
      */
-    constructor ({ tds }) {
-        this.tds = tds
+    constructor({ tds }) {
+        this.tds = tds;
         // Note: It is not necessary to use session storage to store the
         //       tabId -> DevtoolsConnection mapping for MV3 compatibility. That
         //       is because when the background ServiceWoker becomes inactive,
@@ -214,10 +211,12 @@ export default class Devtools {
         //       reopen their connections. At that point, the background
         //       ServiceWorker will become active again and the onConnect event
         //       will fire again.
-        this.devtoolsConnections = new Map()
-        this.debugHandlers = new Map()
-        browser.runtime.onConnect.addListener(port => { this.onConnect(port) })
-        registerDevtools(this)
+        this.devtoolsConnections = new Map();
+        this.debugHandlers = new Map();
+        browser.runtime.onConnect.addListener((port) => {
+            this.onConnect(port);
+        });
+        registerDevtools(this);
     }
 
     /**
@@ -227,17 +226,17 @@ export default class Devtools {
      * @param {Object} port
      * @returns {Promise<void>}
      */
-    async onConnect (port) {
+    async onConnect(port) {
         if (port.name !== 'devtools') {
-            return
+            return;
         }
 
-        const devtoolsConnection = new DevtoolsConnection(this, port)
-        const tabId = await devtoolsConnection.tabId
-        this.devtoolsConnections.set(tabId, devtoolsConnection)
+        const devtoolsConnection = new DevtoolsConnection(this, port);
+        const tabId = await devtoolsConnection.tabId;
+        this.devtoolsConnections.set(tabId, devtoolsConnection);
 
-        await devtoolsConnection.disconnected
-        this.devtoolsConnections.delete(tabId)
+        await devtoolsConnection.disconnected;
+        this.devtoolsConnections.delete(tabId);
     }
 
     /**
@@ -249,8 +248,8 @@ export default class Devtools {
      * @param {number} tabId
      * @returns {boolean}
      */
-    isActive (tabId) {
-        return this.devtoolsConnections.has(tabId) || this.debugHandlers.has(tabId)
+    isActive(tabId) {
+        return this.devtoolsConnections.has(tabId) || this.debugHandlers.has(tabId);
     }
 
     /**
@@ -258,12 +257,12 @@ export default class Devtools {
      * @param {string} action
      * @param {any} message
      */
-    postMessage (tabId, action, message) {
+    postMessage(tabId, action, message) {
         if (this.devtoolsConnections.has(tabId)) {
-            this.devtoolsConnections.get(tabId).postMessage(action, message)
+            this.devtoolsConnections.get(tabId).postMessage(action, message);
         }
         if (this.debugHandlers.has(tabId)) {
-            this.debugHandlers.get(tabId)({ tabId, action, message })
+            this.debugHandlers.get(tabId)({ tabId, action, message });
         }
     }
 
@@ -273,8 +272,8 @@ export default class Devtools {
      * @param {number} tabId
      * @param {function} fn
      */
-    registerDebugHandler (tabId, fn) {
-        this.debugHandlers.set(tabId, fn)
+    registerDebugHandler(tabId, fn) {
+        this.debugHandlers.set(tabId, fn);
     }
 
     /**
@@ -288,16 +287,16 @@ export default class Devtools {
      *   }
      * }}
      */
-    serializeTab (tab) {
+    serializeTab(tab) {
         if (tab.site) {
             return {
                 site: {
                     allowlisted: tab.site.allowlisted,
                     isBroken: tab.site.isBroken,
-                    enabledFeatures: tab.site.enabledFeatures || []
-                }
-            }
+                    enabledFeatures: tab.site.enabledFeatures || [],
+                },
+            };
         }
-        return {}
+        return {};
     }
 }
