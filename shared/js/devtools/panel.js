@@ -1,4 +1,4 @@
-import { getStackTraceOrigins } from '@duckduckgo/content-scope-scripts/src/utils';
+import { getStackTraceOrigins } from '@duckduckgo/content-scope-scripts/injected/src/utils';
 const table = document.querySelector('#request-table');
 const clearButton = document.getElementById('clear');
 const refreshButton = document.getElementById('refresh');
