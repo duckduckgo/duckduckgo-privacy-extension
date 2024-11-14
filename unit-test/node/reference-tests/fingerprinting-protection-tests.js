@@ -7,15 +7,15 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default;
 const tabManager = require('../../../shared/js/background/tab-manager');
 const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object');
 
-const BatteryProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-battery').default;
+const BatteryProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/fingerprinting-battery').default;
 const batteryProtection = new BatteryProtection('fingerprintingBattery');
-const HardwareProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-hardware').default;
+const HardwareProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/fingerprinting-hardware').default;
 const hardwareProtection = new HardwareProtection('fingerprintingHardware');
-const ScreenProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-screen-size').default;
+const ScreenProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/fingerprinting-screen-size').default;
 const screenProtection = new ScreenProtection('fingerprintingScreenSize');
-const TempStorageProtection = require('@duckduckgo/content-scope-scripts/src/features/fingerprinting-temporary-storage').default;
+const TempStorageProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/fingerprinting-temporary-storage').default;
 const tempStorageProtection = new TempStorageProtection('fingerprintingTemporaryStorage');
-const { isFeatureBroken } = require('@duckduckgo/content-scope-scripts/src/utils');
+const { isFeatureBroken } = require('@duckduckgo/content-scope-scripts/injected/src/utils');
 
 const configReference = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/config_reference.json');
 const testSets = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/tests.json');
