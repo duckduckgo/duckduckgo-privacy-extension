@@ -13,7 +13,7 @@ const { getArgumentsObject } = require('../../../shared/js/background/helpers/ar
 
 const jsdom = require('jsdom');
 
-const TrackingJsCookieProtection = require('@duckduckgo/content-scope-scripts/src/features/cookie').default;
+const TrackingJsCookieProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/cookie').default;
 const trackingJsCookieProtection = new TrackingJsCookieProtection('cookie');
 
 const trackingConfigReference = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/config_reference.json');

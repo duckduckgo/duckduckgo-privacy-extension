@@ -63,10 +63,10 @@ for (const setName of Object.keys(testSets)) {
                 // eslint-disable-next-line no-global-assign
                 globalThis = jsdomWindow;
 
-                const utils = require('@duckduckgo/content-scope-scripts/src/utils');
+                const utils = require('@duckduckgo/content-scope-scripts/injected/src/utils');
                 utils.setGlobal(jsdomWindow);
 
-                const JsCookieProtection = require('@duckduckgo/content-scope-scripts/src/features/cookie').default;
+                const JsCookieProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/cookie').default;
                 const jsCookieProtection = new JsCookieProtection('cookie');
 
                 jsCookieProtection.callLoad({

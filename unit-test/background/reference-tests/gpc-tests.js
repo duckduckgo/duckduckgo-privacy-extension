@@ -3,12 +3,12 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default;
 
 const Site = require('../../../shared/js/background/classes/site').default;
 const GPC = require('../../../shared/js/background/GPC');
-const GpcContentScript = require('@duckduckgo/content-scope-scripts/src/features/gpc').default;
+const GpcContentScript = require('@duckduckgo/content-scope-scripts/injected/src/features/gpc').default;
 const gpcContentScript = new GpcContentScript('gpc');
 const constants = require('../../../shared/data/constants');
 const settings = require('../../../shared/js/background/settings');
 
-const contentScriptUtils = require('@duckduckgo/content-scope-scripts/src/utils.js');
+const contentScriptUtils = require('@duckduckgo/content-scope-scripts/injected/src/utils.js');
 
 const testSets = require('@duckduckgo/privacy-reference-tests/global-privacy-control/tests.json');
 const config = require('@duckduckgo/privacy-reference-tests/global-privacy-control/config_reference.json');

@@ -6,7 +6,7 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default;
 const Site = require('../../../shared/js/background/classes/site').default;
 const utils = require('../../../shared/js/background/utils');
 
-const contentScriptUtils = require('@duckduckgo/content-scope-scripts/src/utils.js');
+const contentScriptUtils = require('@duckduckgo/content-scope-scripts/injected/src/utils.js');
 
 const testSets = require('@duckduckgo/privacy-reference-tests/privacy-configuration/tests.json');
 const configs = {
