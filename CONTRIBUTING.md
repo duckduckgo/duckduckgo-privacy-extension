@@ -108,9 +108,9 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 ### Linting
 - All linting: `npm run lint`
     - This includes the ESLint and TypeScript checks as well as Prettier style checks.
-    - To auto-fix all lint issues: `npm run lint-fix`
+    - To automatically fix all lint issues: `npm run lint-fix`
 - ESLint linting: `npm run eslint`
-    - To automatically fix mistakes found (where possible) use: `npm run lint-fix`
+    - To automatically fix mistakes found (where possible) use: `npm run eslint-fix`
 - TypeScript Linting: `npm run tsc`
 - Prettier linting: `npm run prettier`
     - To automatically fix style issues use: `npm run prettier-fix`
