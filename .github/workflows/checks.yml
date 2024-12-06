@@ -15,7 +15,7 @@ jobs:
                   node-version: 20
                   cache: 'npm'
             - run: npm run install-ci
-            - run: npm run lint
+            - run: npm run lint && echo 'No lint issues!' || (npm run lint-fix; git diff; echo 'Lint check failed, review diff above or run "npm run lint-fix"'; return 1)
 
     build:
         strategy:
