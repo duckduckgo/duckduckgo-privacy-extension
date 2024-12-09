@@ -14,7 +14,7 @@ locales.forEach((lang) => {
     const resources = namespaces
         .map((ns) => {
             const importName = `${lang}${ns[0].toUpperCase()}${ns.slice(1)}`;
-            imports.push(`import ${importName} from '../../../locales/${lang}/${ns}.json'`);
+            imports.push(`import ${importName} from '../../../locales/${lang}/${ns}.json';`);
             return `${ns}: ${importName}`;
         })
         .join(', ');
@@ -29,5 +29,5 @@ ${imports.join('\n')}
 export default {
     ${Object.keys(localeObjects)
         .map((lang) => `${lang}: ${localeObjects[lang]}`)
-        .join(',\n    ')}
-}`);
+        .join(',\n    ')},
+};`);

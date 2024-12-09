@@ -59,6 +59,7 @@ export default class ToggleReports {
         'features',
         'httpErrorCodes',
         'jsPerformance',
+        'locale',
         'openerContext',
         'requests',
         'userRefreshCount',
