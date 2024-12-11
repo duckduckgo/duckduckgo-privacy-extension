@@ -1,7 +1,7 @@
 ###--- Shared variables ---###
 # Browser types (browser, but "chrome" adjusted as required)
 BROWSER_TYPE = $(browser)
-LEGACY_BROWSER = chrome-mv3
+LEGACY_BROWSER = $(browser)
 ifeq ('$(browser)','chrome')
   LEGACY_BROWSER = chrome-mv3
 endif
