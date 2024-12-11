@@ -68,7 +68,7 @@ async function init() {
     // response.
     // Note: This event listener is only for Chrome MV3 builds of the extension,
     //       the equivalent Chrome MV2 event listener lives in
-    //       content-scope-scripts/inject/chrome.js.
+    //       content-scope-scripts/entry-points/chrome.js.
     window.addEventListener('sendMessageProxy' + secret, (event) => {
         event.stopImmediatePropagation();
 
