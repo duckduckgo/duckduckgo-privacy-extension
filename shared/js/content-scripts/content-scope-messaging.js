@@ -52,10 +52,10 @@ async function init() {
             // Init the content-scope-scripts with the argumentsObject.
             window.dispatchEvent(
                 new CustomEvent(secret, {
-                    detail: {
+                    detail: JSON.stringify({
                         type: 'register',
                         argumentsObject,
-                    },
+                    }),
                 }),
             );
         },
@@ -76,12 +76,13 @@ async function init() {
             return console.warn('no details in sendMessage proxy', event);
         }
 
-        const messageType = event.detail?.messageType;
+        const eventDetail = JSON.parse(event.detail);
+        const messageType = eventDetail.messageType;
         if (!allowedMessages.includes(messageType)) {
             return console.warn('Ignoring invalid sendMessage messageType', messageType);
         }
 
-        chrome.runtime.sendMessage(event.detail, (response) => {
+        chrome.runtime.sendMessage(eventDetail, (response) => {
             const message = {
                 type: 'update',
                 messageType: 'response',
@@ -91,7 +92,7 @@ async function init() {
 
             window.dispatchEvent(
                 new CustomEvent(secret, {
-                    detail: message,
+                    detail: JSON.stringify(message),
                 }),
             );
         });
@@ -100,7 +101,7 @@ async function init() {
     chrome.runtime.onMessage.addListener((message) => {
         window.dispatchEvent(
             new CustomEvent(secret, {
-                detail: message,
+                detail: JSON.stringify(message),
             }),
         );
     });
