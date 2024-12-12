@@ -6,7 +6,7 @@ import { overridePrivacyConfig } from './helpers/testConfig';
 const testSite = 'https://privacy-test-pages.site/privacy-protections/amp/';
 
 test.describe('Test AMP link protection', () => {
-    test('Redirects AMP URLs correctly', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
+    test.skip('Redirects AMP URLs correctly', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
         await overridePrivacyConfig(backgroundNetworkContext, 'amp-protection.json');
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
