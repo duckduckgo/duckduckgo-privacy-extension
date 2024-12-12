@@ -105,7 +105,7 @@ chrome-release-zip:
 .PHONY: chrome-release-zip
 
 chrome-beta-zip: prepare-chrome-beta chrome-release-zip
-	
+
 
 .PHONY: chrome-beta-zip
 
@@ -231,12 +231,12 @@ CONTENT_SCOPE_SCRIPTS = node_modules/@duckduckgo/content-scope-scripts
 CONTENT_SCOPE_SCRIPTS_DEPS =
 CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS =
 ifneq ("$(wildcard $(CONTENT_SCOPE_SCRIPTS)/.git/)","")
-  CONTENT_SCOPE_SCRIPTS_DEPS += $(shell find $(CONTENT_SCOPE_SCRIPTS)/src $(CONTENT_SCOPE_SCRIPTS)/inject $(CONTENT_SCOPE_SCRIPTS)/scripts -type f -not -name "*~")
+  CONTENT_SCOPE_SCRIPTS_DEPS += $(shell find $(CONTENT_SCOPE_SCRIPTS)/injected/src $(CONTENT_SCOPE_SCRIPTS)/injected/entry-points $(CONTENT_SCOPE_SCRIPTS)/injected/scripts -type f -not -name "*~")
   CONTENT_SCOPE_SCRIPTS_DEPS += $(CONTENT_SCOPE_SCRIPTS)/package.json
   CONTENT_SCOPE_SCRIPTS_DEPS += $(CONTENT_SCOPE_SCRIPTS)/node_modules
   CONTENT_SCOPE_SCRIPTS_DEPS += $(CONTENT_SCOPE_SCRIPTS)/build/locales
 
-  CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS += $(shell find $(CONTENT_SCOPE_SCRIPTS)/src/locales $(CONTENT_SCOPE_SCRIPTS)/scripts)
+  CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS += $(shell find $(CONTENT_SCOPE_SCRIPTS)/injected/src/locales $(CONTENT_SCOPE_SCRIPTS)/injected/scripts)
   CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS += $(CONTENT_SCOPE_SCRIPTS)/package.json
   CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS += $(CONTENT_SCOPE_SCRIPTS)/node_modules
 endif
@@ -246,11 +246,11 @@ $(CONTENT_SCOPE_SCRIPTS)/node_modules: $(CONTENT_SCOPE_SCRIPTS)/package.json
 	touch $@
 
 $(CONTENT_SCOPE_SCRIPTS)/build/locales: $(CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS)
-	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-locales
+	cd $(CONTENT_SCOPE_SCRIPTS)/injected; npm run build-locales
 	touch $@
 
 $(CONTENT_SCOPE_SCRIPTS)/build/$(LEGACY_BROWSER)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
-	cd $(CONTENT_SCOPE_SCRIPTS); npm run build-$(LEGACY_BROWSER)
+	cd $(CONTENT_SCOPE_SCRIPTS)/injected; npm run build-$(LEGACY_BROWSER)
 
 $(BUILD_DIR)/public/js/inject.js: $(CONTENT_SCOPE_SCRIPTS)/build/$(LEGACY_BROWSER)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
 	node scripts/bundleContentScopeScripts.mjs $@ $^
@@ -277,7 +277,7 @@ $(BUILD_DIR)/public/font/%: $(INTERMEDIATES_DIR)/%
 
 # Fetch fonts from the webserver to be included in the generated build
 .SECONDARY:
-$(INTERMEDIATES_DIR)/%: 
+$(INTERMEDIATES_DIR)/%:
 	curl -s -o $@ https://duckduckgo.com/font/all/`basename $@`
 
 ## Other
