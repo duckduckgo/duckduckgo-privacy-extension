@@ -1,14 +1,9 @@
-/**
- * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').ToggleReportScreen} ToggleReportOptions
- * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').DataItemId} ToggleReportParamId
- */
-
 import browser from 'webextension-polyfill';
 import { registerMessageHandler } from '../message-handlers';
 import { postPopupMessage } from '../popupMessaging';
 import settings from '../settings';
-import { getCurrentTab, getFeatureSettings, getURLWithoutQueryString, reloadCurrentTab, resolveAfterDelay } from '../utils';
-import { sendBreakageReportForCurrentTab } from '../broken-site-report';
+import { getFeatureSettings, reloadCurrentTab, resolveAfterDelay } from '../utils';
+import { getDisclosureDetails, sendBreakageReportForCurrentTab } from '../broken-site-report';
 import { createAlarm } from '../wrapper';
 import tabManager from '../tab-manager';
 
@@ -27,43 +22,6 @@ import tabManager from '../tab-manager';
  */
 export default class ToggleReports {
     static ALARM_NAME = 'toggleReportsClearExpired';
-
-    /**
-     * When prompting the user to submit a breakage report, context is shown to
-     * explain what will be included in the report. This is to help the user
-     * make an informed decision. That context is based on this list of
-     * parameter IDs. The naming system is similar, but not quite the same as
-     * the breakage report parameter names themselves. See the docs[1] for a
-     * list of all the possible values. Take care to update this list as the
-     * privacy-dashboard dependency is updated, and when breakage parameters are
-     * added/removed (see '../broken-site-report.js').
-     *
-     * Note: The UI displays the parameters in the order the IDs are listed
-     *       here, so consider the ordering when adjusting the array.
-     *
-     * TODO: In the future, it would be better for the UI to accept all of the
-     *       actual parameter names instead. Needing to update the list here
-     *       manually seems error-prone. Likewise with the ordering, it would be
-     *       better for the UI to decide the display order for the parameters,
-     *       to ensure they are displayed consistently between platforms.
-     *
-     * 1 - https://duckduckgo.github.io/privacy-dashboard/modules/Toggle_Report.html
-     *
-     * @type {ToggleReportParamId[]}
-     */
-    static PARAM_IDS = [
-        'siteUrl',
-        'atb',
-        'errorDescriptions',
-        'extensionVersion',
-        'features',
-        'httpErrorCodes',
-        'jsPerformance',
-        'locale',
-        'openerContext',
-        'requests',
-        'userRefreshCount',
-    ];
 
     constructor() {
         this.onDisconnect = this.toggleReportFinished.bind(this, false);
@@ -90,7 +48,7 @@ export default class ToggleReports {
      * UI flow begins.
      *
      * @param {browser.Runtime.Port} sender
-     * @returns {Promise<ToggleReportOptions>}
+     * @returns {Promise<import('../broken-site-report').DisclosureDetails>}
      */
     async toggleReportStarted(sender) {
         // If the browser closes the popup UI during the "toggle reports" flow
@@ -98,24 +56,7 @@ export default class ToggleReports {
         // this event will fire.
         sender?.onDisconnect?.addListener(this.onDisconnect);
 
-        let siteUrl = null;
-        const currentTabUrl = (await getCurrentTab())?.url;
-        if (currentTabUrl) {
-            siteUrl = getURLWithoutQueryString(currentTabUrl);
-        }
-
-        /** @type {ToggleReportOptions} */
-        const response = { data: [] };
-
-        for (const paramId of ToggleReports.PARAM_IDS) {
-            if (paramId === 'siteUrl' && siteUrl) {
-                response.data.push({ id: 'siteUrl', additional: { url: siteUrl } });
-            } else {
-                response.data.push({ id: paramId });
-            }
-        }
-
-        return response;
+        return getDisclosureDetails();
     }
 
     /**
