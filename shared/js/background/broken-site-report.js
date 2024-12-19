@@ -5,6 +5,9 @@
  * tooling for those anonymous broken site reports.
  *
  * Learn more at: https://duckduckgo.com/duckduckgo-help-pages/privacy/web-tracking-protections/#remotely-configured-exceptions
+ *
+ * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').ToggleReportScreen} DisclosureDetails
+ * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').DataItemId} DisclosureParamId
  */
 
 const browser = require('webextension-polyfill');
@@ -12,11 +15,48 @@ const load = require('./load');
 const browserWrapper = require('./wrapper');
 const settings = require('./settings');
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string');
-const { getURLWithoutQueryString } = require('./utils');
+const { getCurrentTab, getURLWithoutQueryString } = require('./utils');
 const { getURL } = require('./pixels');
 const tdsStorage = require('./storage/tds').default;
 const tabManager = require('./tab-manager');
 const maxPixelLength = 7000;
+
+/**
+ * When the user clicks to see what a breakage report will include, the details
+ * displayed are based on these param IDs.
+ *
+ * Notes:
+ *  - The naming system is similar, but not quite the same as the breakage
+ *    report parameter names themselves. See the docs[1] for a list of all the
+ *    possible values.
+ *  - Take care to update this list as the privacy-dashboard dependency is
+ *    updated, and when breakage parameters are added/removed.
+ *  - The UI displays the parameters in the order the IDs are listed here, so
+ *    consider the ordering when adjusting the array.
+ *
+ * TODO: In the future, it would be better for the UI to accept all of the
+ *       actual parameter names instead. Needing to update the list here
+ *       manually seems error-prone. Likewise with the ordering, it would be
+ *       better for the UI to decide the display order for the parameters,
+ *       to ensure they are displayed consistently between platforms.
+ *
+ * 1 - https://duckduckgo.github.io/privacy-dashboard/documents/Guides.Toggle_Report.html#md:appendix-data-disclosure-item-ids-and-their-meanings
+ *
+ * @type {DisclosureParamId[]}
+ */
+const PARAM_IDS = [
+    'siteUrl',
+    'atb',
+    'errorDescriptions',
+    'extensionVersion',
+    'features',
+    'httpErrorCodes',
+    'jsPerformance',
+    'locale',
+    'openerContext',
+    'requests',
+    'userRefreshCount',
+];
 
 /**
  *
@@ -225,9 +265,8 @@ export async function breakageReportForTab({
     const jsPerformance = pageParams.jsPerformance ? pageParams.jsPerformance : undefined;
     const locale = tab.locale;
 
-    // Note: Take care to update the `ToggleReports.PARAM_IDS` array (see
-    //       './components/toggle-reports.js') when adding/removing breakage
-    //       parameters!
+    // Note: Take care to update the `PARAM_IDS` array (see above) when
+    //       adding/removing breakage parameters!
     const brokenSiteParams = new URLSearchParams({
         siteUrl,
         tds,
@@ -305,4 +344,31 @@ export async function sendBreakageReportForCurrentTab({ pixelName, currentTab, c
         pageParams,
         reportFlow,
     });
+}
+
+/**
+ * Returns the breakage report details as expected by the
+ * "getBreakageFormOptions" and "getToggleReportOptions" messages.
+ *
+ * @returns {Promise<DisclosureDetails>}
+ */
+export async function getDisclosureDetails() {
+    let siteUrl = null;
+    const currentTabUrl = (await getCurrentTab())?.url;
+    if (currentTabUrl) {
+        siteUrl = getURLWithoutQueryString(currentTabUrl);
+    }
+
+    /** @type {DisclosureDetails} */
+    const response = { data: [] };
+
+    for (const paramId of PARAM_IDS) {
+        if (paramId === 'siteUrl' && siteUrl) {
+            response.data.push({ id: 'siteUrl', additional: { url: siteUrl } });
+        } else {
+            response.data.push({ id: paramId });
+        }
+    }
+
+    return response;
 }

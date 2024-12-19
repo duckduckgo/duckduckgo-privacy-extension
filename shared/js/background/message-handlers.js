@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import { dashboardDataFromTab } from './classes/privacy-dashboard-data';
-import { sendBreakageReportForCurrentTab } from './broken-site-report';
+import { getDisclosureDetails, sendBreakageReportForCurrentTab } from './broken-site-report';
 import parseUserAgentString from '../shared-utils/parse-user-agent-string';
 import { getExtensionURL } from './wrapper';
 import { isFeatureEnabled, reloadCurrentTab } from './utils';
@@ -345,6 +345,7 @@ const messageHandlers = {
     getBrowser,
     openOptions,
     submitBrokenSiteReport,
+    getBreakageFormOptions: getDisclosureDetails,
     getPrivacyDashboardData,
     getTopBlockedByPages,
     getClickToLoadState,
