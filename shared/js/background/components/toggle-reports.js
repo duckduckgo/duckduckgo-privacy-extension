@@ -70,6 +70,8 @@ export default class ToggleReports {
 
         registerMessageHandler('getToggleReportOptions', (_, sender) => this.toggleReportStarted(sender));
 
+        registerMessageHandler('getBreakageFormOptions', (_, sender) => this.breakageFormOptionsRequested());
+
         registerMessageHandler('rejectToggleReport', (_, sender) => this.toggleReportFinished(false, sender));
 
         registerMessageHandler('sendToggleReport', (_, sender) => this.toggleReportFinished(true, sender));
@@ -98,6 +100,34 @@ export default class ToggleReports {
         // this event will fire.
         sender?.onDisconnect?.addListener(this.onDisconnect);
 
+        let siteUrl = null;
+        const currentTabUrl = (await getCurrentTab())?.url;
+        if (currentTabUrl) {
+            siteUrl = getURLWithoutQueryString(currentTabUrl);
+        }
+
+        /** @type {ToggleReportOptions} */
+        const response = { data: [] };
+
+        for (const paramId of ToggleReports.PARAM_IDS) {
+            if (paramId === 'siteUrl' && siteUrl) {
+                response.data.push({ id: 'siteUrl', additional: { url: siteUrl } });
+            } else {
+                response.data.push({ id: paramId });
+            }
+        }
+
+        return response;
+    }
+
+    /**
+     * Provides details of what will be included in a breakage report, so that
+     * the user can make an informed decision. Called when the "breakage form"
+     * UI flow begins.
+     *
+     * @returns {Promise<ToggleReportOptions>}
+     */
+    async breakageFormOptionsRequested() {
         let siteUrl = null;
         const currentTabUrl = (await getCurrentTab())?.url;
         if (currentTabUrl) {
