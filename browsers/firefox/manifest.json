@@ -48,6 +48,21 @@
             ],
             "match_about_blank": true,
             "all_frames": true,
+            "world": "ISOLATED",
+            "js": ["public/js/content-scripts/content-scope-messaging.js"],
+            "run_at": "document_start"
+        },
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "exclude_matches": [
+                "*://localhost/*",
+                "*://*.localhost/*"
+            ],
+            "match_about_blank": true,
+            "all_frames": true,
+            "world": "MAIN",
             "js": [
                 "public/js/inject.js"
             ],
