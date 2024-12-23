@@ -15,22 +15,18 @@
             "extensionVersion",
             {
                 "key": "adAttributionRequests",
-                "description": "If requests were allowed for ad attribution, these are included here.",
-                "type": "string"
+                "description": "If requests were allowed for ad attribution, these are included here."
             },
             {
                 "key": "ampUrl",
-                "description": "If an AMP URL was detected, what it was.",
-                "type": "string"
+                "description": "If an AMP URL was detected, what it was."
             },
             {
                 "key": "blockedTrackers",
-                "description": "Tracker domains blocked on the page. Comma separated list.",
-                "type": "string"
+                "description": "Tracker domains blocked on the page. Comma separated list."
             },
             {
                 "key": "category",
-                "type": "string",
                 "description": "User chosen breakage category",
                 "enum": [
                     "",
@@ -51,7 +47,6 @@
             },
             {
                 "key": "ctlFacebookLogin",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
@@ -60,7 +55,6 @@
             },
             {
                 "key": "ctlFacebookPlaceholderShown",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
@@ -69,7 +63,6 @@
             },
             {
                 "key": "ctlYouTube",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
@@ -78,58 +71,47 @@
             },
             {
                 "key": "debugFlags",
-                "type": "string",
                 "description": "Comma separated list of C-S-S features active."
             },
             {
                 "key": "description",
-                "type": "string",
                 "description": "User-provided description of the breakage."
             },
             {
                 "key": "errorDescriptions",
-                "type": "string",
                 "description": "List of main frame status error on page. URL encoded JSON array."
             },
             {
                 "key": "httpErrorCodes",
-                "type": "string",
                 "description": "List of HTTP error codes encountered."
             },
             {
                 "key": "ignoreRequests",
-                "type": "string",
                 "description": "Tracker domains not blocked due to an exception rule."
             },
             {
                 "key": "ignoredByUserRequests",
-                "type": "string",
                 "description": "Tracker domains not blocked due to a user site exception."
             },
             {
                 "key": "jsPerformance",
-                "type": "string",
                 "description": ""
             },
             {
                 "key": "lastSentDay",
-                "type": "string",
                 "description": "If a report for the same site was previously sent by this user, this indicates the day of that report."
             },
             {
                 "key": "locale",
-                "type": "string",
                 "description": "User's browser locale",
                 "pattern": "[a-z][a-z](-[A-Z][A-Z])?"
             },
             {
                 "key": "noActionRequests",
-                "type": "string",
                 "description": ""
             },
             {
                 "key": "openerContext",
-                "type": "string",
                 "description": "Reported page's opener context",
                 "enum": [
                     "external",
@@ -139,7 +121,6 @@
             },
             {
                 "key": "performanceWarning",
-                "type": "string",
                 "description": "True if the a performance warning was received from the browser.",
                 "enum": [
                     "false",
@@ -148,7 +129,6 @@
             },
             {
                 "key": "protectionsState",
-                "type": "string",
                 "description": "If the protections toggle is on or not for the site.",
                 "enum": [
                     "false",
@@ -157,7 +137,6 @@
             },
             {
                 "key": "remoteConfigEtag",
-                "type": "string",
                 "description": "",
                 "pattern": "W%2F%[0-9a-f]{32}%22"
             },
@@ -168,23 +147,19 @@
             },
             {
                 "key": "siteUrl",
-                "description": "URL of reported site (query string removed)",
-                "type": "string"
+                "description": "URL of reported site (query string removed)"
             },
             {
                 "key": "surrogates",
-                "description": "Surrogate scripts injected on the page",
-                "type": "string"
+                "description": "Surrogate scripts injected on the page"
             },
             {
                 "key": "tds",
-                "description": "eTag of active blocklist",
-                "type": "string"
+                "description": "eTag of active blocklist"
             },
             {
                 "key": "test",
                 "description": "",
-                "type": "string",
                 "enum": [
                     "",
                     "1"
@@ -192,7 +167,6 @@
             },
             {
                 "key": "truncated",
-                "type": "string",
                 "description": "If some data was removed due to query string length",
                 "enum": [
                     "",
@@ -201,7 +175,6 @@
             },
             {
                 "key": "upgradedHttps",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
@@ -210,7 +183,6 @@
             },
             {
                 "key": "urlParametersRemoved",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
@@ -240,22 +212,18 @@
             "extensionVersion",
             {
                 "key": "adAttributionRequests",
-                "description": "If requests were allowed for ad attribution, these are included here.",
-                "type": "string"
+                "description": "If requests were allowed for ad attribution, these are included here."
             },
             {
                 "key": "ampUrl",
-                "description": "If an AMP URL was detected, what it was.",
-                "type": "string"
+                "description": "If an AMP URL was detected, what it was."
             },
             {
                 "key": "blockedTrackers",
-                "description": "Tracker domains blocked on the page. Comma separated list.",
-                "type": "string"
+                "description": "Tracker domains blocked on the page. Comma separated list."
             },
             {
                 "key": "category",
-                "type": "string",
                 "description": "User chosen breakage category",
                 "enum": [
                     "",
@@ -276,7 +244,6 @@
             },
             {
                 "key": "ctlFacebookLogin",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
@@ -285,7 +252,6 @@
             },
             {
                 "key": "ctlFacebookPlaceholderShown",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
@@ -294,7 +260,6 @@
             },
             {
                 "key": "ctlYouTube",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
@@ -303,58 +268,47 @@
             },
             {
                 "key": "debugFlags",
-                "type": "string",
                 "description": "Comma separated list of C-S-S features active."
             },
             {
                 "key": "description",
-                "type": "string",
                 "description": "User-provided description of the breakage."
             },
             {
                 "key": "errorDescriptions",
-                "type": "string",
                 "description": "List of main frame status error on page. URL encoded JSON array."
             },
             {
                 "key": "httpErrorCodes",
-                "type": "string",
                 "description": "List of HTTP error codes encountered."
             },
             {
                 "key": "ignoreRequests",
-                "type": "string",
                 "description": "Tracker domains not blocked due to an exception rule."
             },
             {
                 "key": "ignoredByUserRequests",
-                "type": "string",
                 "description": "Tracker domains not blocked due to a user site exception."
             },
             {
                 "key": "jsPerformance",
-                "type": "string",
                 "description": ""
             },
             {
                 "key": "lastSentDay",
-                "type": "string",
                 "description": "If a report for the same site was previously sent by this user, this indicates the day of that report."
             },
             {
                 "key": "locale",
-                "type": "string",
                 "description": "User's browser locale",
                 "pattern": "[a-z][a-z](-[A-Z][A-Z])?"
             },
             {
                 "key": "noActionRequests",
-                "type": "string",
                 "description": ""
             },
             {
                 "key": "openerContext",
-                "type": "string",
                 "description": "Reported page's opener context",
                 "enum": [
                     "external",
@@ -364,7 +318,6 @@
             },
             {
                 "key": "performanceWarning",
-                "type": "string",
                 "description": "True if the a performance warning was received from the browser.",
                 "enum": [
                     "false",
@@ -373,7 +326,6 @@
             },
             {
                 "key": "protectionsState",
-                "type": "string",
                 "description": "If the protections toggle is on or not for the site.",
                 "enum": [
                     "false",
@@ -382,7 +334,6 @@
             },
             {
                 "key": "remoteConfigEtag",
-                "type": "string",
                 "description": "",
                 "pattern": "W%2F%[0-9a-f]{32}%22"
             },
@@ -394,22 +345,18 @@
             {
                 "key": "siteUrl",
                 "description": "URL of reported site (query string removed)",
-                "type": "string"
             },
             {
                 "key": "surrogates",
                 "description": "Surrogate scripts injected on the page",
-                "type": "string"
             },
             {
                 "key": "tds",
                 "description": "eTag of active blocklist",
-                "type": "string"
             },
             {
                 "key": "test",
                 "description": "",
-                "type": "string",
                 "enum": [
                     "",
                     "1"
@@ -417,7 +364,6 @@
             },
             {
                 "key": "truncated",
-                "type": "string",
                 "description": "If some data was removed due to query string length",
                 "enum": [
                     "",
@@ -426,7 +372,6 @@
             },
             {
                 "key": "upgradedHttps",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
@@ -435,7 +380,6 @@
             },
             {
                 "key": "urlParametersRemoved",
-                "type": "string",
                 "description": "",
                 "enum": [
                     "false",
