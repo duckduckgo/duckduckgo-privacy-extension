@@ -34,7 +34,7 @@
     },
     "devDependencies": {
         "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.1.0",
-        "@fingerprintjs/fingerprintjs": "^4.5.0",
+        "@fingerprintjs/fingerprintjs": "^4.5.1",
         "@playwright/test": "^1.49.1",
         "@types/chrome": "^0.0.269",
         "@types/jasmine": "^5.1.5",
