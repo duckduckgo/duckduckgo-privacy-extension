@@ -1,0 +1,7 @@
+{
+    "browser": {
+        "type": "string",
+        "description": "Browser type",
+        "enum": ["chrome", "firefox", "edg", "opera", "brave"]
+    }
+}
