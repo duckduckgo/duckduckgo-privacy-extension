@@ -1,0 +1,28 @@
+{
+    "email.tooltop.show": {
+        "description": "",
+        "owners": [
+            ""
+        ],
+        "triggers": [
+            ""
+        ],
+        "suffixes": [
+            "extension",
+            "browser"
+        ],
+        "parameters": [
+            {
+                "key": "cohort",
+                "description": "Beta cohort",
+                "type": "string"
+            },
+            {
+                "key": "duck_address_last_used",
+                "description": "",
+                "type": "string",
+                "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
+            }
+        ]
+    }
+}
