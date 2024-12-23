@@ -2,10 +2,10 @@
     "email.tooltop.show": {
         "description": "",
         "owners": [
-            ""
+            "emanuele"
         ],
         "triggers": [
-            ""
+            "other"
         ],
         "suffixes": [
             "extension",
@@ -14,13 +14,11 @@
         "parameters": [
             {
                 "key": "cohort",
-                "description": "Beta cohort",
-                "type": "string"
+                "description": "Beta cohort"
             },
             {
                 "key": "duck_address_last_used",
                 "description": "",
-                "type": "string",
                 "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2}"
             }
         ]
