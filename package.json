@@ -30,7 +30,8 @@
         "dev-chrome": "make watch browser=chrome type=dev",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip",
-        "beta-chrome": "make chrome-beta browser=chrome type=release"
+        "beta-chrome": "make chrome-beta browser=chrome type=release",
+        "validate-pixel-defs": "validate-ddg-pixel-defs pixel-definitions"
     },
     "devDependencies": {
         "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.1.0",
