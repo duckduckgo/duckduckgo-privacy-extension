@@ -1,0 +1,12 @@
+{
+    "browser": {
+        "type": "string",
+        "description": "Browser type",
+        "enum": ["chrome", "firefox", "edg", "opera", "brave"]
+    },
+    "extension": {
+        "type": "string",
+        "description": "Platform text.",
+        "enum": ["extension"]
+    }
+}
