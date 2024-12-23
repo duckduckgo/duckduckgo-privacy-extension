@@ -84,7 +84,7 @@
         "punycode": "2.3.1",
         "tldts": "^6.1.69",
         "web-ext": "^8.3.0",
-        "zod": "^3.23.8"
+        "zod": "^3.24.1"
     },
     "workspaces": [
         "packages/privacy-grade",
