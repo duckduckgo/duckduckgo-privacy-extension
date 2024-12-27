@@ -69,15 +69,17 @@ export default class RemoteConfig {
  * @returns {Config}
  */
 export function processRawConfig(configValue, settings) {
-    Object.values(configValue.features).forEach((feature) => {
+    Object.entries(configValue.features).forEach(([featureName, feature]) => {
         Object.entries(feature.features || {}).forEach(([name, subfeature]) => {
             if (subfeature.rollout && subfeature.state === 'enabled') {
-                const rolloutSettingsKey = `rollouts.${name}.roll`
+                const rolloutSettingsKey = `rollouts.${featureName}.${name}.roll`
                 const validSteps = subfeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100)
                 const rolloutPercent = validSteps.length > 0 ? validSteps.reverse()[0].percent : 0.0
-                const dieRoll = parseFloat(settings.getSetting(rolloutSettingsKey)) || Math.random() * 100
-                subfeature.state = rolloutPercent > dieRoll ? 'enabled' : 'disabled'
-                settings.updateSetting(rolloutSettingsKey, dieRoll)
+                if (!settings.getSetting(rolloutSettingsKey)) {
+                    settings.updateSetting(rolloutSettingsKey, Math.random() * 100)
+                }
+                const dieRoll = settings.getSetting(rolloutSettingsKey)
+                subfeature.state = rolloutPercent >= dieRoll ? 'enabled' : 'disabled'
             }
         })
     })
@@ -97,11 +99,11 @@ export function isSubFeatureEnabled(featureName, subFeatureName, config) {
     if (!feature || !subFeature) {
         return false
     }
-    if (subFeature?.minSupportedVersion) {
+    if (subFeature.minSupportedVersion) {
         const extensionVersionString = getExtensionVersion();
         if (!satisfiesMinVersion(subFeature.minSupportedVersion, extensionVersionString)) {
             return false;
         }
     }
-    return subFeature?.state === 'enabled';
+    return subFeature.state === 'enabled';
 }
