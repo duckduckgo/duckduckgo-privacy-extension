@@ -14,11 +14,13 @@ class MockSettings {
     }
 }
 
-fdescribe('rollouts', () => {
+describe('rollouts', () => {
     function constructMockRemoteConfig() {
         return new RemoteConfig({ settings: new MockSettings() });
     }
 
+    // Rollout tests: specs copied from the Android browser project.
+    // https://github.com/duckduckgo/Android/blob/develop/feature-toggles/feature-toggles-impl/src/test/java/com/duckduckgo/feature/toggles/codegen/ContributesRemoteFeatureCodeGeneratorTest.kt#L624
     it('test staged rollout for default-enabled feature flag', () => {
         const config = constructMockRemoteConfig();
         config.updateConfig({
@@ -282,5 +284,395 @@ fdescribe('rollouts', () => {
         });
         expect(config.isFeatureEnabled('testFeature')).toBeTrue();
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+    });
+
+    it('re-enable a previously disabled incremental rollout', () => {
+        const config = constructMockRemoteConfig();
+        // incremental rollout
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        // disable the previously enabled incremental rollout
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // re-enable the incremental rollout
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+    });
+
+    it('feature was enabled remains enabled and rollout threshold is set', () => {
+        const config = constructMockRemoteConfig();
+        config.settings.updateSetting('rollouts.testFeature.fooFeature.roll', 10.0);
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 50,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+    });
+
+    it('full feature lifecycle', () => {
+        const config = constructMockRemoteConfig();
+        // all disabled
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // enable parent feature
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                        },
+                    },
+                },
+            },
+        });
+
+        // add rollout information to sub-feature, still disabled
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 10,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // add more rollout information to sub-feature, still disabled
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 10,
+                                    },
+                                    {
+                                        percent: 20,
+                                    },
+                                    {
+                                        percent: 30,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // enable rollout
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 0,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        const rolloutThreshold = config.settings.getSetting('rollouts.testFeature.fooFeature.roll');
+        // increment rollout but just disabled
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: rolloutThreshold - 1.0,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // increment rollout but just disabled, still
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: rolloutThreshold,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+
+        // increment rollout but just enabled
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: rolloutThreshold + 1.0,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+
+        // halt rollout
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: rolloutThreshold + 1.0,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // resume rollout just of certain app versions
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            minSupportedVersion: '2030.12.25',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: rolloutThreshold + 1.0,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // resume rollout and update app version
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            minSupportedVersion: '2024.1.1',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: rolloutThreshold + 1.0,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+
+        // finish rollout
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            minSupportedVersion: '2024.1.1',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: rolloutThreshold + 1.0,
+                                    },
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+
+        // remove steps
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            minSupportedVersion: '2024.1.1',
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
     });
 });
