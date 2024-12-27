@@ -8,6 +8,10 @@ import sha1 from '../shared-utils/sha1';
 const browserInfo = parseUserAgentString();
 
 /**
+ * @typedef {import('@duckduckgo/privacy-configuration/schema/config.js').GenericV4Config} Config
+ */
+
+/**
  * Produce a random float, matches the output of Math.random() but much more cryptographically psudo-random.
  * @returns {number}
  */
@@ -376,10 +380,11 @@ export function satisfiesMinVersion(minVersionString, extensionVersionString) {
  * parameter to check if the state is equeal to other states (i.e. state === 'beta').
  *
  * @param {String} featureName - the name of the feature
+ * @param {Config} config
  * @returns {boolean} - if feature is enabled
  */
-export function isFeatureEnabled(featureName) {
-    const feature = tdsStorage.config.features[featureName];
+export function isFeatureEnabled(featureName, config = tdsStorage.config) {
+    const feature = config.features[featureName];
     if (!feature) {
         return false;
     }
@@ -399,10 +404,11 @@ export function isFeatureEnabled(featureName) {
  * Returns the settings object associated with featureName in the config
  *
  * @param {String} featureName - the name of the feature
+ * @param {Config} config
  * @returns {Object} - Settings associated in the config with featureName
  */
-export function getFeatureSettings(featureName) {
-    const feature = tdsStorage.config.features[featureName];
+export function getFeatureSettings(featureName, config = tdsStorage.config) {
+    const feature = config.features[featureName];
     if (typeof feature !== 'object' || feature === null || !feature.settings) {
         return {};
     }

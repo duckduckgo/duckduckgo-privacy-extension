@@ -28,6 +28,7 @@ import TrackersGlobal from './components/trackers';
 import DebuggerConnection from './components/debugger-connection';
 import Devtools from './components/devtools';
 import DNRListeners from './components/dnr-listeners';
+import RemoteConfig from './components/remote-config';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
@@ -66,6 +67,7 @@ const components = {
     trackers: new TrackersGlobal({ tds }),
     debugger: new DebuggerConnection({ tds, devtools }),
     devtools,
+    config: new RemoteConfig({ tds, settings })
 };
 
 // Chrome-only components
