@@ -385,6 +385,10 @@ describe('rollouts', () => {
 
     it('full feature lifecycle', () => {
         const config = constructMockRemoteConfig();
+        let mockExtensionVersion = '2024.10.12';
+        spyOn(chrome.runtime, 'getManifest').and.callFake(() => ({
+            version: mockExtensionVersion,
+        }));
         // all disabled
         config.updateConfig({
             features: {
@@ -591,7 +595,7 @@ describe('rollouts', () => {
                     features: {
                         fooFeature: {
                             state: 'enabled',
-                            minSupportedVersion: '2030.12.25',
+                            minSupportedVersion: '2024.12.25',
                             rollout: {
                                 steps: [
                                     {
@@ -608,6 +612,7 @@ describe('rollouts', () => {
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
 
         // resume rollout and update app version
+        mockExtensionVersion = '2024.12.25';
         config.updateConfig({
             features: {
                 testFeature: {
@@ -615,7 +620,7 @@ describe('rollouts', () => {
                     features: {
                         fooFeature: {
                             state: 'enabled',
-                            minSupportedVersion: '2024.1.1',
+                            minSupportedVersion: '2024.12.25',
                             rollout: {
                                 steps: [
                                     {
@@ -639,7 +644,7 @@ describe('rollouts', () => {
                     features: {
                         fooFeature: {
                             state: 'enabled',
-                            minSupportedVersion: '2024.1.1',
+                            minSupportedVersion: '2024.12.25',
                             rollout: {
                                 steps: [
                                     {
@@ -666,7 +671,7 @@ describe('rollouts', () => {
                     features: {
                         fooFeature: {
                             state: 'enabled',
-                            minSupportedVersion: '2024.1.1',
+                            minSupportedVersion: '2024.12.25',
                         },
                     },
                 },

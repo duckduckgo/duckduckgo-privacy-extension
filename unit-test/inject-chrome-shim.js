@@ -29,7 +29,7 @@ const chrome = {
         id: '577dc9b9-c381-115a-2246-3f95fe0e6ffe',
         sendMessage: () => {},
         getManifest: () => {
-            return { version: '2025.1.1' };
+            return { version: '1234.56' };
         },
         setUninstallURL: () => {},
         getURL: (path) => path,
