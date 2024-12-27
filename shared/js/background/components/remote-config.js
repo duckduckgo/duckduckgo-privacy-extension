@@ -11,7 +11,7 @@ import { getExtensionVersion } from '../wrapper'
 export default class RemoteConfig {
     /**
      * @param {{
-     * tds: TDSStorage
+     *  tds?: TDSStorage
      *  settings: Settings
      * }} opts
      */
@@ -20,12 +20,19 @@ export default class RemoteConfig {
         this.config = null
         this.settings = settings
         this.ready = new Promise((resolve) => {
-            tds.config.onUpdate(async (_, etag, v) => {
-                await this.settings.ready()
-                this.config = processRawConfig(v)
+            tds?.config.onUpdate(async (_, etag, v) => {
+                this.updateConfig(v)
                 resolve(null)
             })
         })
+    }
+
+    /**
+     * 
+     * @param {Config} configValue 
+     */
+    updateConfig(configValue) {
+        this.config = processRawConfig(configValue, this.settings)
     }
 
     /**
@@ -58,9 +65,22 @@ export default class RemoteConfig {
 /**
  * 
  * @param {Config} configValue 
+ * @param {Settings} settings
  * @returns {Config}
  */
-function processRawConfig(configValue) {
+export function processRawConfig(configValue, settings) {
+    Object.values(configValue.features).forEach((feature) => {
+        Object.entries(feature.features || {}).forEach(([name, subfeature]) => {
+            if (subfeature.rollout && subfeature.state === 'enabled') {
+                const rolloutSettingsKey = `rollouts.${name}.roll`
+                const validSteps = subfeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100)
+                const rolloutPercent = validSteps.length > 0 ? validSteps.reverse()[0].percent : 0.0
+                const dieRoll = parseFloat(settings.getSetting(rolloutSettingsKey)) || Math.random() * 100
+                subfeature.state = rolloutPercent > dieRoll ? 'enabled' : 'disabled'
+                settings.updateSetting(rolloutSettingsKey, dieRoll)
+            }
+        })
+    })
     return configValue
 }
 
@@ -71,7 +91,7 @@ function processRawConfig(configValue) {
  * @param {Config} config
  * @returns {boolean}
  */
-function isSubFeatureEnabled(featureName, subFeatureName, config) {
+export function isSubFeatureEnabled(featureName, subFeatureName, config) {
     const feature = config.features[featureName];
     const subFeature = (feature?.features || {})[subFeatureName];
     if (!feature || !subFeature) {
