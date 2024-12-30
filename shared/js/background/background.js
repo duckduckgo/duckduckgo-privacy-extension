@@ -67,7 +67,7 @@ const components = {
     trackers: new TrackersGlobal({ tds }),
     debugger: new DebuggerConnection({ tds, devtools }),
     devtools,
-    config: new RemoteConfig({ tds, settings })
+    config: new RemoteConfig({ tds, settings }),
 };
 
 // Chrome-only components
