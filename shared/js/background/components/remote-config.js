@@ -32,7 +32,9 @@ export default class RemoteConfig {
      * @param {Config} configValue 
      */
     updateConfig(configValue) {
-        this.config = processRawConfig(configValue, this.settings)
+        // copy config value before modification
+        const configCopy = structuredClone(configValue)
+        this.config = processRawConfig(configCopy, this.settings)
     }
 
     /**
