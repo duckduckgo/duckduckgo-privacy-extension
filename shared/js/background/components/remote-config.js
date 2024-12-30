@@ -74,6 +74,9 @@ export function processRawConfig(configValue, settings) {
     Object.entries(configValue.features).forEach(([featureName, feature]) => {
         Object.entries(feature.features || {}).forEach(([name, subfeature]) => {
             if (subfeature.rollout && subfeature.state === 'enabled') {
+                /* Handle a rollout: Dice roll is stored in settings and used that to decide 
+                 * whether the feature is set as 'enabled' or not.
+                 */
                 const rolloutSettingsKey = `rollouts.${featureName}.${name}.roll`
                 const validSteps = subfeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100)
                 const rolloutPercent = validSteps.length > 0 ? validSteps.reverse()[0].percent : 0.0
