@@ -1,9 +1,14 @@
 /**
  * @typedef {import('../settings.js')} Settings
  * @typedef {import('./tds').default} TDSStorage
- * @typedef {import('@duckduckgo/privacy-configuration/schema/config.js').GenericV4Config} Config
+ * @typedef {import('@duckduckgo/privacy-configuration/schema/config.ts').GenericV4Config} Config
+ * @typedef {{
+ *  localeCountry: string;
+ *  localeLanguage: string;
+ * }} TargetEnvironment
  */
 
+import { getFullUserLocale, getUserLocale } from '../i18n';
 import { getFeatureSettings, isFeatureEnabled, satisfiesMinVersion } from '../utils';
 import { getExtensionVersion } from '../wrapper';
 
@@ -18,6 +23,11 @@ export default class RemoteConfig {
         /** @type {Config?} */
         this.config = null;
         this.settings = settings;
+        /** @type {TargetEnvironment} */
+        this.targetEnvironment = {
+            localeCountry: getFullUserLocale().split('-')[1],
+            localeLanguage: getUserLocale(),
+        };
         this.ready = new Promise((resolve) => {
             tds?.config.onUpdate(async (_, etag, v) => {
                 this.updateConfig(v);
@@ -33,7 +43,7 @@ export default class RemoteConfig {
     updateConfig(configValue) {
         // copy config value before modification
         const configCopy = structuredClone(configValue);
-        this.config = processRawConfig(configCopy, this.settings);
+        this.config = processRawConfig(configCopy, this.settings, this.targetEnvironment);
     }
 
     /**
@@ -67,11 +77,19 @@ export default class RemoteConfig {
  *
  * @param {Config} configValue
  * @param {Settings} settings
+ * @param {TargetEnvironment} targetEnvironment
  * @returns {Config}
  */
-export function processRawConfig(configValue, settings) {
+export function processRawConfig(configValue, settings, targetEnvironment) {
     Object.entries(configValue.features).forEach(([featureName, feature]) => {
         Object.entries(feature.features || {}).forEach(([name, subfeature]) => {
+            if (subfeature.targets && subfeature.state === 'enabled') {
+                // Targets: subfeature should only be enabled if a matching target is found.
+                const match = subfeature.targets.some((t) => Object.entries(t).every(([k, v]) => v === targetEnvironment[k]));
+                if (!match) {
+                    subfeature.state = 'disabled';
+                }
+            }
             if (subfeature.rollout && subfeature.state === 'enabled') {
                 /* Handle a rollout: Dice roll is stored in settings and used that to decide
                  * whether the feature is set as 'enabled' or not.
