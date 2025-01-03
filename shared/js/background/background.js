@@ -44,7 +44,8 @@ settings.ready().then(() => {
     onStartup();
 });
 
-const tds = new TDSStorage({ settings });
+const config = new RemoteConfig({ settings });
+const tds = new TDSStorage({ settings, config });
 const devtools = new Devtools({ tds });
 /**
  * @type {{
@@ -67,7 +68,7 @@ const components = {
     trackers: new TrackersGlobal({ tds }),
     debugger: new DebuggerConnection({ tds, devtools }),
     devtools,
-    config: new RemoteConfig({ tds, settings }),
+    config,
 };
 
 // Chrome-only components

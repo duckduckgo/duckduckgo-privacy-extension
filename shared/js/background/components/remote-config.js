@@ -5,24 +5,42 @@
  */
 
 import { getFeatureSettings, isFeatureEnabled, satisfiesMinVersion } from '../utils';
-import { getExtensionVersion } from '../wrapper';
+import { getExtensionVersion, getFromSessionStorage } from '../wrapper';
+import ResourceLoader from './resource-loader';
+import constants from '../../../data/constants';
 
-export default class RemoteConfig {
+/**
+ * @returns {Promise<string>}
+ */
+async function getConfigUrl() {
+    const override = await getFromSessionStorage('configURLOverride');
+    if (override) {
+        return override;
+    }
+    return constants.tdsLists[2].url;
+}
+
+export default class RemoteConfig extends ResourceLoader {
     /**
      * @param {{
-     *  tds?: TDSStorage
      *  settings: Settings
      * }} opts
      */
-    constructor({ tds, settings }) {
+    constructor({ settings }) {
+        super(
+            {
+                name: 'config',
+                remoteUrl: getConfigUrl,
+                localUrl: '/data/bundled/extension-config.json',
+                updateIntervalMinutes: 15,
+            },
+            { settings },
+        );
         /** @type {Config?} */
         this.config = null;
         this.settings = settings;
-        this.ready = new Promise((resolve) => {
-            tds?.config.onUpdate(async (_, etag, v) => {
-                this.updateConfig(v);
-                resolve(null);
-            });
+        this.onUpdate(async (_, etag, v) => {
+            this.updateConfig(v);
         });
     }
 
