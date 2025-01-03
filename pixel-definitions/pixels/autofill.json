@@ -1,0 +1,26 @@
+{
+    "email.tooltop.show": {
+        "description": "",
+        "owners": [
+            "emanuele"
+        ],
+        "triggers": [
+            "other"
+        ],
+        "suffixes": [
+            "extension",
+            "browser"
+        ],
+        "parameters": [
+            {
+                "key": "cohort",
+                "description": "Beta cohort"
+            },
+            {
+                "key": "duck_address_last_used",
+                "description": "",
+                "format": "date"
+            }
+        ]
+    }
+}
