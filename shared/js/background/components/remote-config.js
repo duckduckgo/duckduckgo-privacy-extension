@@ -51,7 +51,7 @@ export default class RemoteConfig extends ResourceLoader {
     updateConfig(configValue) {
         // copy config value before modification
         const configCopy = structuredClone(configValue);
-        this.config = processRawConfig(configCopy, this.settings);
+        this.config = this._processRawConfig(configCopy);
     }
 
     /**
@@ -79,33 +79,32 @@ export default class RemoteConfig extends ResourceLoader {
             return false;
         }
     }
-}
 
-/**
- *
- * @param {Config} configValue
- * @param {Settings} settings
- * @returns {Config}
- */
-export function processRawConfig(configValue, settings) {
-    Object.entries(configValue.features).forEach(([featureName, feature]) => {
-        Object.entries(feature.features || {}).forEach(([name, subfeature]) => {
-            if (subfeature.rollout && subfeature.state === 'enabled') {
-                /* Handle a rollout: Dice roll is stored in settings and used that to decide
-                 * whether the feature is set as 'enabled' or not.
-                 */
-                const rolloutSettingsKey = `rollouts.${featureName}.${name}.roll`;
-                const validSteps = subfeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100);
-                const rolloutPercent = validSteps.length > 0 ? validSteps.reverse()[0].percent : 0.0;
-                if (!settings.getSetting(rolloutSettingsKey)) {
-                    settings.updateSetting(rolloutSettingsKey, Math.random() * 100);
+    /**
+     * Process config to apply rollout, targets and cohorts options to derive sub-feature enabled state.
+     * @param {Config} configValue
+     * @returns {Config}
+     */
+    _processRawConfig(configValue) {
+        Object.entries(configValue.features).forEach(([featureName, feature]) => {
+            Object.entries(feature.features || {}).forEach(([name, subfeature]) => {
+                if (subfeature.rollout && subfeature.state === 'enabled') {
+                    /* Handle a rollout: Dice roll is stored in settings and used that to decide
+                     * whether the feature is set as 'enabled' or not.
+                     */
+                    const rolloutSettingsKey = `rollouts.${featureName}.${name}.roll`;
+                    const validSteps = subfeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100);
+                    const rolloutPercent = validSteps.length > 0 ? validSteps.reverse()[0].percent : 0.0;
+                    if (!this.settings.getSetting(rolloutSettingsKey)) {
+                        this.settings.updateSetting(rolloutSettingsKey, Math.random() * 100);
+                    }
+                    const dieRoll = this.settings.getSetting(rolloutSettingsKey);
+                    subfeature.state = rolloutPercent >= dieRoll ? 'enabled' : 'disabled';
                 }
-                const dieRoll = settings.getSetting(rolloutSettingsKey);
-                subfeature.state = rolloutPercent >= dieRoll ? 'enabled' : 'disabled';
-            }
+            });
         });
-    });
-    return configValue;
+        return configValue;
+    }
 }
 
 /**
