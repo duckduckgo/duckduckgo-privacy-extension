@@ -1,4 +1,4 @@
-@import 'vars';
+@use 'vars';
 
 /* Logo */
 @mixin ddg_logo() {
@@ -29,7 +29,7 @@
 /* Font groupings */
 @mixin uppercase_label() {
     font-size: 12px;
-    color: $color--grey;
+    color: vars.$color--grey;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: bold;
@@ -96,7 +96,7 @@
             }
 
             .toggle-button__bg {
-                background-color: $color--medium-dark-platinum;
+                background-color: vars.$color--medium-dark-platinum;
             }
         }
 
@@ -106,7 +106,7 @@
             }
 
             .toggle-button__bg {
-                background-color: $color--green;
+                background-color: vars.$color--green;
             }
         }
     }
@@ -138,8 +138,8 @@
     .sliding-subview {
         position: absolute;
         top: 0;
-        left: $popup__width;
-        width: $popup__width;
+        left: vars.$popup__width;
+        width: vars.$popup__width;
         height: 100%;
         box-sizing: border-box;
 
@@ -150,7 +150,7 @@
             transition: left 0.35s ease-in-out;
 
             &.sliding-subview--open {
-                left: -$popup__width;
+                left: -(vars.$popup__width);
             }
         }
 
@@ -174,7 +174,7 @@
             .sliding-subview__header__title {
                 height: 26px;
                 width: 14px;
-                color: $slate;
+                color: vars.$slate;
                 font-size: 14px;
                 font-weight: bold;
                 padding: 14px 0 0 14px;
@@ -194,7 +194,7 @@
                 width: auto;
                 text-align: center;
                 font-weight: bold;
-                color: $slate;
+                color: vars.$slate;
                 padding: 14px 0 10px 0;
                 text-decoration: none;
             }
@@ -230,9 +230,9 @@
     border-radius: 28px;
     font-weight: bold;
     cursor: pointer;
-    border: 1px solid $color--medium-dark-slate;
-    color: $color--medium-dark-slate;
-    background: $white;
+    border: 1px solid vars.$color--medium-dark-slate;
+    color: vars.$color--medium-dark-slate;
+    background: vars.$white;
     padding: 0.4em 1.2em;
     text-decoration: none;
     text-align: center;

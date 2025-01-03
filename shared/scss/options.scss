@@ -1,21 +1,22 @@
-@import 'vars';
-@import 'mixins';
+@use 'sass:meta';
+@use 'vars';
+@use 'mixins';
 
 /* Generic menu list styling */
-@include default_list();
+@include mixins.default_list();
 
 /* Generic toggle button styling */
-@include toggle_button();
+@include mixins.toggle_button();
 
-@import 'views/extension-page';
+@include meta.load-css('views/extension-page');
 
 /* allowlist */
-@import 'views/allowlist';
+@include meta.load-css('views/allowlist');
 
 .options-info {
     font-weight: bold;
     margin-bottom: 10px;
-    color: $slate;
+    color: vars.$slate;
 }
 
 .options-content__privacy {
@@ -35,7 +36,7 @@
 }
 
 button:disabled {
-    background-color: $color--light-slate;
+    background-color: vars.$color--light-slate;
 }
 
 .js-options-set-config-url {
@@ -46,10 +47,10 @@ button:disabled {
     width: 120px;
     height: 30px;
     border-radius: 4px;
-    background-color: $blue;
+    background-color: vars.$blue;
     line-height: 1.5;
     text-align: center;
-    color: $white;
+    color: vars.$white;
     margin-left: 7px;
     cursor: pointer;
 }
