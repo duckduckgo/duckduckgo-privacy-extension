@@ -95,11 +95,12 @@
             },
             {
                 "key": "jsPerformance",
-                "description": ""
+                "description": "Metrics gathered via the Performance web API."
             },
             {
                 "key": "lastSentDay",
-                "description": "If a report for the same site was previously sent by this user, this indicates the day of that report."
+                "description": "If a report for the same site was previously sent by this user, this indicates the day of that report.",
+                "format": "date"
             },
             {
                 "key": "locale",
@@ -108,7 +109,7 @@
             },
             {
                 "key": "noActionRequests",
-                "description": ""
+                "description": "Hostnames of requests that were not present in the blocklist"
             },
             {
                 "key": "openerContext",
@@ -292,11 +293,12 @@
             },
             {
                 "key": "jsPerformance",
-                "description": ""
+                "description": "Metrics gathered via the Performance web API."
             },
             {
                 "key": "lastSentDay",
-                "description": "If a report for the same site was previously sent by this user, this indicates the day of that report."
+                "description": "If a report for the same site was previously sent by this user, this indicates the day of that report.",
+                "format": "date"
             },
             {
                 "key": "locale",
@@ -305,7 +307,7 @@
             },
             {
                 "key": "noActionRequests",
-                "description": ""
+                "description": "Hostnames of requests that were not present in the blocklist"
             },
             {
                 "key": "openerContext",
@@ -344,15 +346,15 @@
             },
             {
                 "key": "siteUrl",
-                "description": "URL of reported site (query string removed)",
+                "description": "URL of reported site (query string removed)"
             },
             {
                 "key": "surrogates",
-                "description": "Surrogate scripts injected on the page",
+                "description": "Surrogate scripts injected on the page"
             },
             {
                 "key": "tds",
-                "description": "eTag of active blocklist",
+                "description": "eTag of active blocklist"
             },
             {
                 "key": "test",
