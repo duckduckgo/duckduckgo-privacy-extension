@@ -13,4 +13,4 @@ jobs:
       ref: 'v1.3'
     secrets:
       asana_pat: ${{ secrets.ASANA_ACCESS_TOKEN }}
-      github_pat: ${{ secrets.GITHUB_TOKEN }}
+      github_pat: ${{ secrets.DAXMOBILE_TOKEN }}
