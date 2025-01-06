@@ -1,0 +1,398 @@
+{
+    "epbf": {
+        "description": "User sent broken site report",
+        "owners": [
+            "smacbeth"
+        ],
+        "triggers": [
+            "user_submitted"
+        ],
+        "suffixes": [
+            "browser"
+        ],
+        "parameters": [
+            "atb",
+            "extensionVersion",
+            {
+                "key": "adAttributionRequests",
+                "description": "If requests were allowed for ad attribution, these are included here."
+            },
+            {
+                "key": "ampUrl",
+                "description": "If an AMP URL was detected, what it was."
+            },
+            {
+                "key": "blockedTrackers",
+                "description": "Tracker domains blocked on the page. Comma separated list."
+            },
+            {
+                "key": "category",
+                "description": "User chosen breakage category",
+                "enum": [
+                    "",
+                    "comments",
+                    "blocked",
+                    "content",
+                    "dislike",
+                    "empty-spaces",
+                    "images",
+                    "layout",
+                    "links",
+                    "login",
+                    "other",
+                    "paywall",
+                    "shopping",
+                    "videos"
+                ]
+            },
+            {
+                "key": "ctlFacebookLogin",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "ctlFacebookPlaceholderShown",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "ctlYouTube",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "debugFlags",
+                "description": "Comma separated list of C-S-S features active."
+            },
+            {
+                "key": "description",
+                "description": "User-provided description of the breakage."
+            },
+            {
+                "key": "errorDescriptions",
+                "description": "List of main frame status error on page. URL encoded JSON array."
+            },
+            {
+                "key": "httpErrorCodes",
+                "description": "List of HTTP error codes encountered."
+            },
+            {
+                "key": "ignoreRequests",
+                "description": "Tracker domains not blocked due to an exception rule."
+            },
+            {
+                "key": "ignoredByUserRequests",
+                "description": "Tracker domains not blocked due to a user site exception."
+            },
+            {
+                "key": "jsPerformance",
+                "description": "Metrics gathered via the Performance web API."
+            },
+            {
+                "key": "lastSentDay",
+                "description": "If a report for the same site was previously sent by this user, this indicates the day of that report.",
+                "format": "date"
+            },
+            {
+                "key": "locale",
+                "description": "User's browser locale",
+                "pattern": "[a-z][a-z](-[A-Z][A-Z])?"
+            },
+            {
+                "key": "noActionRequests",
+                "description": "Hostnames of requests that were not present in the blocklist"
+            },
+            {
+                "key": "openerContext",
+                "description": "Reported page's opener context",
+                "enum": [
+                    "external",
+                    "navigation",
+                    "serp"
+                ]
+            },
+            {
+                "key": "performanceWarning",
+                "description": "True if the a performance warning was received from the browser.",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "protectionsState",
+                "description": "If the protections toggle is on or not for the site.",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "remoteConfigEtag",
+                "description": "",
+                "pattern": "W%2F%[0-9a-f]{32}%22"
+            },
+            {
+                "key": "remoteConfigVersion",
+                "type": "number",
+                "description": ""
+            },
+            {
+                "key": "siteUrl",
+                "description": "URL of reported site (query string removed)"
+            },
+            {
+                "key": "surrogates",
+                "description": "Surrogate scripts injected on the page"
+            },
+            {
+                "key": "tds",
+                "description": "eTag of active blocklist"
+            },
+            {
+                "key": "test",
+                "description": "",
+                "enum": [
+                    "",
+                    "1"
+                ]
+            },
+            {
+                "key": "truncated",
+                "description": "If some data was removed due to query string length",
+                "enum": [
+                    "",
+                    "1"
+                ]
+            },
+            {
+                "key": "upgradedHttps",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "urlParametersRemoved",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "userRefreshCount",
+                "type": "number",
+                "description": ""
+            }
+        ]
+    },
+    "protection-toggled-off-breakage-report": {
+        "description": "User sent broken site report",
+        "owners": [
+            "smacbeth"
+        ],
+        "triggers": [
+            "user_submitted"
+        ],
+        "suffixes": [
+            "browser"
+        ],
+        "parameters": [
+            "atb",
+            "extensionVersion",
+            {
+                "key": "adAttributionRequests",
+                "description": "If requests were allowed for ad attribution, these are included here."
+            },
+            {
+                "key": "ampUrl",
+                "description": "If an AMP URL was detected, what it was."
+            },
+            {
+                "key": "blockedTrackers",
+                "description": "Tracker domains blocked on the page. Comma separated list."
+            },
+            {
+                "key": "category",
+                "description": "User chosen breakage category",
+                "enum": [
+                    "",
+                    "comments",
+                    "blocked",
+                    "content",
+                    "dislike",
+                    "empty-spaces",
+                    "images",
+                    "layout",
+                    "links",
+                    "login",
+                    "other",
+                    "paywall",
+                    "shopping",
+                    "videos"
+                ]
+            },
+            {
+                "key": "ctlFacebookLogin",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "ctlFacebookPlaceholderShown",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "ctlYouTube",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "debugFlags",
+                "description": "Comma separated list of C-S-S features active."
+            },
+            {
+                "key": "description",
+                "description": "User-provided description of the breakage."
+            },
+            {
+                "key": "errorDescriptions",
+                "description": "List of main frame status error on page. URL encoded JSON array."
+            },
+            {
+                "key": "httpErrorCodes",
+                "description": "List of HTTP error codes encountered."
+            },
+            {
+                "key": "ignoreRequests",
+                "description": "Tracker domains not blocked due to an exception rule."
+            },
+            {
+                "key": "ignoredByUserRequests",
+                "description": "Tracker domains not blocked due to a user site exception."
+            },
+            {
+                "key": "jsPerformance",
+                "description": "Metrics gathered via the Performance web API."
+            },
+            {
+                "key": "lastSentDay",
+                "description": "If a report for the same site was previously sent by this user, this indicates the day of that report.",
+                "format": "date"
+            },
+            {
+                "key": "locale",
+                "description": "User's browser locale",
+                "pattern": "[a-z][a-z](-[A-Z][A-Z])?"
+            },
+            {
+                "key": "noActionRequests",
+                "description": "Hostnames of requests that were not present in the blocklist"
+            },
+            {
+                "key": "openerContext",
+                "description": "Reported page's opener context",
+                "enum": [
+                    "external",
+                    "navigation",
+                    "serp"
+                ]
+            },
+            {
+                "key": "performanceWarning",
+                "description": "True if the a performance warning was received from the browser.",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "protectionsState",
+                "description": "If the protections toggle is on or not for the site.",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "remoteConfigEtag",
+                "description": "",
+                "pattern": "W%2F%[0-9a-f]{32}%22"
+            },
+            {
+                "key": "remoteConfigVersion",
+                "type": "number",
+                "description": ""
+            },
+            {
+                "key": "siteUrl",
+                "description": "URL of reported site (query string removed)"
+            },
+            {
+                "key": "surrogates",
+                "description": "Surrogate scripts injected on the page"
+            },
+            {
+                "key": "tds",
+                "description": "eTag of active blocklist"
+            },
+            {
+                "key": "test",
+                "description": "",
+                "enum": [
+                    "",
+                    "1"
+                ]
+            },
+            {
+                "key": "truncated",
+                "description": "If some data was removed due to query string length",
+                "enum": [
+                    "",
+                    "1"
+                ]
+            },
+            {
+                "key": "upgradedHttps",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "urlParametersRemoved",
+                "description": "",
+                "enum": [
+                    "false",
+                    "true"
+                ]
+            },
+            {
+                "key": "userRefreshCount",
+                "type": "number",
+                "description": ""
+            }
+        ]
+    }
+}
