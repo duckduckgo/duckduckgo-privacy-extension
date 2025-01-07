@@ -1,3 +1,5 @@
+@use '../vars';
+
 // General form styles, mostly ripped from
 // https://github.com/duckduckgo/duckduckgo-styles
 // and
@@ -8,7 +10,7 @@
 }
 
 .frm__label {
-    color: $slate;
+    color: vars.$slate;
     margin-bottom: 10px;
     display: block;
 }
@@ -24,9 +26,9 @@
 .frm__input {
     box-sizing: border-box;
     margin: 0;
-    background-color: $silver-light;
+    background-color: vars.$silver-light;
     border: 1px solid #e6e6e6;
-    color: $slate;
+    color: vars.$slate;
     outline: none;
     margin-bottom: 10px;
 }
@@ -68,31 +70,31 @@
     user-select: none;
 
     outline: none !important;
-    background-color: $blue-light;
-    border: 1px solid $blue-light;
+    background-color: vars.$blue-light;
+    border: 1px solid vars.$blue-light;
     line-height: 2;
     font-weight: normal;
     font-size: 1em;
     padding-top: 2px;
     padding-bottom: 2px;
-    color: $white;
+    color: vars.$white;
     -webkit-appearance: none !important;
 
     &:hover,
     &:focus {
         text-decoration: none !important;
-        color: $white;
-        background-color: $blue;
-        border-color: $blue;
+        color: vars.$white;
+        background-color: vars.$blue;
+        border-color: vars.$blue;
     }
     &:active {
-        color: $white;
-        background-color: $blue-dark;
-        border-color: $blue-dark;
+        color: vars.$white;
+        background-color: vars.$blue-dark;
+        border-color: vars.$blue-dark;
     }
     &.is-disabled {
-        border-color: $platinum-darker;
-        background-color: $platinum-darker;
+        border-color: vars.$platinum-darker;
+        background-color: vars.$platinum-darker;
         cursor: default;
         color: #eee;
     }
