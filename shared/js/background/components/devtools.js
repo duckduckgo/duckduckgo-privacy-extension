@@ -74,7 +74,7 @@ class DevtoolsConnection {
      */
     async toggleFeature({ feature }) {
         if (feature === 'trackerAllowlist') {
-            await this.devtools.tds.config.modify((config) => {
+            await this.devtools.tds.remoteConfig.modify((config) => {
                 const currentState = config.features.trackerAllowlist.state;
                 config.features.trackerAllowlist.state = currentState === 'enabled' ? 'disabled' : 'enabled';
                 return config;
@@ -85,7 +85,7 @@ class DevtoolsConnection {
             const enabled = tab.site?.enabledFeatures.includes(feature);
             const tabDomain = tldts.getDomain(tab.site.domain);
 
-            await this.devtools.tds.config.modify((config) => {
+            await this.devtools.tds.remoteConfig.modify((config) => {
                 const excludedSites = config.features[feature].exceptions;
                 if (enabled) {
                     excludedSites.push({
@@ -111,7 +111,7 @@ class DevtoolsConnection {
         const tabId = await this.tabId;
         const tab = tabManager.get({ tabId });
         if (tab.site?.isBroken && tab.url) {
-            await this.devtools.tds.config.modify((config) => {
+            await this.devtools.tds.remoteConfig.modify((config) => {
                 removeBroken(tab.site.domain, config);
                 if (tab.url) {
                     removeBroken(new URL(tab.url).hostname, config);

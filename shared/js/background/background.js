@@ -28,6 +28,7 @@ import TrackersGlobal from './components/trackers';
 import DebuggerConnection from './components/debugger-connection';
 import Devtools from './components/devtools';
 import DNRListeners from './components/dnr-listeners';
+import RemoteConfig from './components/remote-config';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
@@ -43,7 +44,8 @@ settings.ready().then(() => {
     onStartup();
 });
 
-const tds = new TDSStorage({ settings });
+const remoteConfig = new RemoteConfig({ settings });
+const tds = new TDSStorage({ settings, remoteConfig });
 const devtools = new Devtools({ tds });
 /**
  * @type {{
@@ -54,6 +56,7 @@ const devtools = new Devtools({ tds });
  *  tds: TDSStorage;
  *  tabTracking: TabTracker;
  *  trackers: TrackersGlobal;
+ *  remoteConfig: RemoteConfig;
  * }}
  */
 const components = {
@@ -66,6 +69,7 @@ const components = {
     trackers: new TrackersGlobal({ tds }),
     debugger: new DebuggerConnection({ tds, devtools }),
     devtools,
+    remoteConfig,
 };
 
 // Chrome-only components
