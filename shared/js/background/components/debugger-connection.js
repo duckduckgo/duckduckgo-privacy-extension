@@ -56,7 +56,7 @@ export default class DebuggerConnection {
                 if (messageType === 'status') {
                     if (payload.lastBuild > lastUpdate) {
                         lastUpdate = payload.lastBuild;
-                        this.tds.config.checkForUpdates(true);
+                        this.tds.remoteConfig.checkForUpdates(true);
                     }
                 } else if (messageType === 'subscribe') {
                     const tabId = parseInt(payload.tabId, 10);
@@ -123,7 +123,7 @@ export default class DebuggerConnection {
     }
 
     async forceReloadConfig() {
-        this.tds.config.checkForUpdates(true);
+        this.tds.remoteConfig.checkForUpdates(true);
     }
 
     async disableDebugging() {

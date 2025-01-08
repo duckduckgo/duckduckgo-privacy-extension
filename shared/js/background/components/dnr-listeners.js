@@ -31,11 +31,11 @@ export default class DNRListeners {
         this.settings = settings;
         this.tds = tds;
         browser.runtime.onInstalled.addListener(this.postInstall.bind(this));
-        tds.config.onUpdate(onConfigUpdate);
+        tds.remoteConfig.onUpdate(onConfigUpdate);
         tds.tds.onUpdate(onConfigUpdate);
         this.settings.onSettingUpdate.addEventListener('GPC', async () => {
-            await this.tds.config.ready;
-            ensureGPCHeaderRule(this.tds.config.data);
+            await this.tds.remoteConfig.ready;
+            ensureGPCHeaderRule(this.tds.remoteConfig.config);
         });
     }
 

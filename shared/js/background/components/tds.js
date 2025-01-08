@@ -10,11 +10,13 @@ export default class TDSStorage {
     /**
      * @param {{
      *  settings: Settings,
-     *  config: RemoteConfig
+     *  remoteConfig: RemoteConfig
      * }} opts
      */
-    constructor({ settings, config }) {
-        this.config = config;
+    constructor({ settings, remoteConfig }) {
+        this.remoteConfig = remoteConfig;
+        /** @deprecated config is an alias of remoteConfig */
+        this.config = this.remoteConfig;
         this.surrogates = new ResourceLoader(
             {
                 name: 'surrogates',
@@ -34,6 +36,6 @@ export default class TDSStorage {
     }
 
     ready() {
-        return Promise.all([this.tds.ready, this.surrogates.ready, this.config.ready]);
+        return Promise.all([this.tds.ready, this.surrogates.ready, this.remoteConfig.ready]);
     }
 }

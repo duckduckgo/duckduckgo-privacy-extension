@@ -16,7 +16,7 @@ export default {
     _tds: { entities: {}, trackers: {}, domains: {}, cnames: {} },
     _surrogates: '',
     get config() {
-        return globalThis.components?.config.config || this._config;
+        return globalThis.components?.remoteConfig.config || this._config;
     },
     get tds() {
         return globalThis.components?.tds.tds.data || this._tds;
