@@ -1,4 +1,5 @@
-const { default: RemoteConfig } = require('../../shared/js/background/components/remote-config');
+import browser from 'webextension-polyfill';
+import RemoteConfig from '../../shared/js/background/components/remote-config';
 
 class MockSettings {
     constructor() {
@@ -672,6 +673,366 @@ describe('rollouts', () => {
                         fooFeature: {
                             state: 'enabled',
                             minSupportedVersion: '2024.12.25',
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+    });
+
+    it('test feature with multiple targets matching', () => {
+        spyOn(browser.i18n, 'getUILanguage').and.returnValue('fr-US');
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            targets: [
+                                {
+                                    localeCountry: 'US',
+                                    localeLanguage: 'fr',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+    });
+
+    it('test multiple languages', () => {
+        spyOn(browser.i18n, 'getUILanguage').and.returnValue('fr-US');
+        const config = constructMockRemoteConfig();
+        const configDataWithTargets = {
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            targets: [
+                                {
+                                    localeCountry: 'US',
+                                    localeLanguage: 'en',
+                                },
+                                {
+                                    localeCountry: 'FR',
+                                    localeLanguage: 'fr',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        };
+        config.updateConfig(configDataWithTargets);
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        config.targetEnvironment.localeCountry = 'US';
+        config.targetEnvironment.localeLanguage = 'en';
+        config.updateConfig(configDataWithTargets);
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+
+        config.targetEnvironment.localeCountry = 'FR';
+        config.targetEnvironment.localeLanguage = 'fr';
+        config.updateConfig(configDataWithTargets);
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+    });
+
+    it('test feature with multiple targets not matching', () => {
+        spyOn(browser.i18n, 'getUILanguage').and.returnValue('fr-FR');
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            targets: [
+                                {
+                                    localeCountry: 'US',
+                                    localeLanguage: 'fr',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+    });
+
+    it('test feature with multiple separate targets matching', () => {
+        spyOn(browser.i18n, 'getUILanguage').and.returnValue('fr-US');
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            targets: [
+                                {
+                                    variantKey: 'mc',
+                                },
+                                {
+                                    localeCountry: 'US',
+                                },
+                                {
+                                    localeLanguage: 'fr',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+    });
+
+    it('test feature with multiple separate targets not matching', () => {
+        spyOn(browser.i18n, 'getUILanguage').and.returnValue('fr-FR');
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            targets: [
+                                {
+                                    variantKey: 'mc',
+                                },
+                                {
+                                    localeCountry: 'US',
+                                },
+                                {
+                                    localeLanguage: 'zh',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+    });
+
+    it('test variant parsing when no remote variant provided', () => {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+    });
+
+    it('test rollout roll back', () => {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+
+        const fooFeatureRolloutPercentile = config.settings.getSetting('rollouts.testFeature.fooFeature.roll');
+        const justEnableRollout = fooFeatureRolloutPercentile + 1;
+        const justDisabledRollout = fooFeatureRolloutPercentile - 1;
+
+        // Roll back to 0% but as fooFeature was enabled before it should remain enabled
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 0,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // Disable fooFeature, should disable the feature
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 0,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // Roll fooFeature back to 100% with state still disabled, should remain disabled
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // re-enable fooFeature, should be enabled
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+
+        // disable feature
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // re-enable but roll back, should disable fooFeature
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enable',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: justDisabledRollout,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+
+        // roll out just enough, should enable fooFeature
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: justEnableRollout,
+                                    },
+                                ],
+                            },
                         },
                     },
                 },

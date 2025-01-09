@@ -1,9 +1,14 @@
 /**
  * @typedef {import('../settings.js')} Settings
  * @typedef {import('./tds').default} TDSStorage
- * @typedef {import('@duckduckgo/privacy-configuration/schema/config.js').GenericV4Config} Config
+ * @typedef {import('@duckduckgo/privacy-configuration/schema/config.ts').GenericV4Config} Config
+ * @typedef {{
+ *  localeCountry: string;
+ *  localeLanguage: string;
+ * }} TargetEnvironment
  */
 
+import { getUserLocaleCountry, getUserLocale } from '../i18n';
 import { getFeatureSettings, isFeatureEnabled, satisfiesMinVersion } from '../utils';
 import { getExtensionVersion, getFromSessionStorage } from '../wrapper';
 import ResourceLoader from './resource-loader';
@@ -42,6 +47,11 @@ export default class RemoteConfig extends ResourceLoader {
         this.onUpdate(async (_, etag, v) => {
             this.updateConfig(v);
         });
+        /** @type {TargetEnvironment} */
+        this.targetEnvironment = {
+            localeCountry: getUserLocaleCountry(),
+            localeLanguage: getUserLocale(),
+        };
     }
 
     /**
@@ -88,6 +98,13 @@ export default class RemoteConfig extends ResourceLoader {
     _processRawConfig(configValue) {
         Object.entries(configValue.features).forEach(([featureName, feature]) => {
             Object.entries(feature.features || {}).forEach(([name, subfeature]) => {
+                if (subfeature.targets && subfeature.state === 'enabled') {
+                    // Targets: subfeature should only be enabled if a matching target is found.
+                    const match = subfeature.targets.some((t) => Object.entries(t).every(([k, v]) => v === this.targetEnvironment[k]));
+                    if (!match) {
+                        subfeature.state = 'disabled';
+                    }
+                }
                 if (subfeature.rollout && subfeature.state === 'enabled') {
                     /* Handle a rollout: Dice roll is stored in settings and used that to decide
                      * whether the feature is set as 'enabled' or not.

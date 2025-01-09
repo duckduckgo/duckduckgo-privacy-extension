@@ -20,3 +20,11 @@ export function getFullUserLocale() {
 
     return browser.i18n.getUILanguage();
 }
+
+export function getUserLocaleCountry() {
+    try {
+        return getFullUserLocale().split('-')[1];
+    } catch (e) {
+        return '';
+    }
+}
