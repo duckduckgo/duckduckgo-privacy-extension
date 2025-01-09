@@ -91,6 +91,16 @@ export default class RemoteConfig extends ResourceLoader {
     }
 
     /**
+     * Get the user's assigned cohort for this feature and subfeature
+     * @param {string} featureName
+     * @param {string} subFeatureName
+     * @returns {string | null} Cohort name, or null if no cohort has been assigned.
+     */
+    getCohort(featureName, subFeatureName) {
+        return this.settings.getSetting(`abn.${featureName}.${subFeatureName}.cohort`);
+    }
+
+    /**
      * Process config to apply rollout, targets and cohorts options to derive sub-feature enabled state.
      * @param {Config} configValue
      * @returns {Config}
@@ -117,6 +127,22 @@ export default class RemoteConfig extends ResourceLoader {
                     }
                     const dieRoll = this.settings.getSetting(rolloutSettingsKey);
                     subfeature.state = rolloutPercent >= dieRoll ? 'enabled' : 'disabled';
+                }
+                if (subfeature.cohorts && subfeature.state === 'enabled') {
+                    /* Handle an ABN experiment: Experiment assignment is stored in settings */
+                    const assignedCohortSettingsKey = `abn.${featureName}.${name}.cohort`;
+                    const assignedCohort = this.settings.getSetting(assignedCohortSettingsKey);
+                    if (!assignedCohort) {
+                        const cohorts = subfeature.cohorts.filter((c) => c.weight > 0);
+                        const cohortWeightSum = cohorts.reduce((sum, c) => sum + c.weight, 0);
+                        const diceRoll = Math.random() * cohortWeightSum;
+                        let rollingTotal = 0;
+                        const chosen = cohorts.find((c) => {
+                            rollingTotal = rollingTotal + c.weight;
+                            return diceRoll <= rollingTotal;
+                        });
+                        this.settings.updateSetting(assignedCohortSettingsKey, chosen?.name);
+                    }
                 }
             });
         });

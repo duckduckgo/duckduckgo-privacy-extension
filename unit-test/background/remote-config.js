@@ -1041,4 +1041,40 @@ describe('rollouts', () => {
         expect(config.isFeatureEnabled('testFeature')).toBeTrue();
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
     });
+
+    it('test cohort is assigned automatically', () => {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isFeatureEnabled('testFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohort('testFeature', 'fooFeature')).toEqual('control')
+    });
 });
