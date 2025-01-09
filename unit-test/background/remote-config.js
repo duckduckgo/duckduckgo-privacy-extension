@@ -1075,6 +1075,771 @@ describe('rollouts', () => {
         });
         expect(config.isFeatureEnabled('testFeature')).toBeFalse();
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
-        expect(config.getCohort('testFeature', 'fooFeature')).toEqual('control')
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+    });
+
+    it('test remove all cohorts remotely removes assigned cohort', () => {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+
+        // remove blue cohort
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+
+        // remove all remaining cohorts
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual(null);
+    });
+
+    it('test disabling feature disables cohort', () => {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'disabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+    });
+
+    it('test cohort targets', () => {
+        spyOn(browser.i18n, 'getUILanguage').and.returnValue('fr-US');
+        const config = constructMockRemoteConfig();
+
+        const targettedConfig = {
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            targets: [
+                                {
+                                    localeLanguage: 'fr',
+                                    localeCountry: 'FR',
+                                },
+                            ],
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        };
+        config.updateConfig(targettedConfig);
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual(null);
+
+        config.targetEnvironment.localeCountry = 'FR';
+        config.targetEnvironment.localeLanguage = 'us';
+        config.updateConfig(targettedConfig);
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual(null);
+
+        config.targetEnvironment.localeCountry = 'US';
+        config.targetEnvironment.localeLanguage = 'en';
+        config.updateConfig(targettedConfig);
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual(null);
+
+        config.targetEnvironment.localeCountry = 'FR';
+        config.targetEnvironment.localeLanguage = 'fr';
+        config.updateConfig(targettedConfig);
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+
+        // once cohort is assigned, changing targets shall not affect feature state
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            targets: [
+                                {
+                                    localeCountry: 'FR',
+                                },
+                            ],
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+
+        // remove all cohorts to clean state
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            targets: [
+                                {
+                                    localeCountry: 'FR',
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual(null);
+
+        // re-populate experiment to re-assign new cohort, should not be assigned as it has wrong targets
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            targets: [
+                                {
+                                    localeCountry: 'FR',
+                                },
+                            ],
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 0,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 1,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        // TODO: what is the correct assertion here?
+        expect(config.getCohort('testFeature', 'fooFeature')).toEqual(null);
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+    });
+
+    it('test change remote cohorts after assignment should noop', () => {
+        const config = constructMockRemoteConfig();
+
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            targets: [
+                                {
+                                    localeCountry: 'US',
+                                },
+                            ],
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+
+        // changing cohort targets should not change cohort assignment
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            targets: [
+                                {
+                                    localeCountry: 'FR',
+                                },
+                            ],
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+
+        // changing cohort weight should not change current assignment
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            targets: [
+                                {
+                                    localeCountry: 'US',
+                                },
+                            ],
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 0,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 1,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+
+        // adding cohorts should not change current assignment
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            targets: [
+                                {
+                                    localeCountry: 'US',
+                                },
+                            ],
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'red',
+                                    weight: 1,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+    });
+
+    it('test enrollment date', () => {
+        const config = constructMockRemoteConfig();
+
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+        expect(config.getCohort('testFeature', 'fooFeature').enrolledAt).toBeGreaterThan(Date.now() - 1000);
+    });
+
+    it('test rollback cohort experiments', () => {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        const rolloutThreshold = config.settings.getSetting('rollouts.testFeature.fooFeature.roll');
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: rolloutThreshold - 1,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+    });
+
+    it('test cohort enabled and stop enrollment and then roll-back', () => {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+
+        // Stop enrollment, should keep assigned cohorts
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 0,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 1,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        // when weight of assigned cohort goes down to "0" we just stop the enrollment, but keep the cohort assignment
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+
+        // remove control, should re-allocate to blue
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'blue',
+                                    weight: 1,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+        expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('blue');
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeTrue()
+
+        // roll-back
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 0,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 0,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 1,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
     });
 });
