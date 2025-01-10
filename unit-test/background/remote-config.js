@@ -1,5 +1,11 @@
 import browser from 'webextension-polyfill';
+import { ParamsValidator } from '@duckduckgo/pixel-schema/src/params_validator.mjs';
+
 import RemoteConfig from '../../shared/js/background/components/remote-config';
+import load from '../../shared/js/background/load';
+import commonParams from '../../pixel-definitions/common_params.json';
+import commonSuffixes from '../../pixel-definitions/common_suffixes.json';
+import experimentPixels from '../../pixel-definitions/pixels/experiments.json';
 
 class MockSettings {
     constructor() {
@@ -8,7 +14,7 @@ class MockSettings {
     }
 
     getSetting(key) {
-        return this.mockSettingData.get(key);
+        return structuredClone(this.mockSettingData.get(key));
     }
     updateSetting(key, value) {
         this.mockSettingData.set(key, value);
@@ -18,6 +24,8 @@ class MockSettings {
 function constructMockRemoteConfig() {
     return new RemoteConfig({ settings: new MockSettings() });
 }
+
+const pixelValidator = new ParamsValidator(commonParams, commonSuffixes);
 
 describe('rollouts', () => {
     // Rollout tests: specs copied from the Android browser project.
@@ -681,8 +689,7 @@ describe('rollouts', () => {
         expect(config.isFeatureEnabled('testFeature')).toBeTrue();
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
     });
-
-})
+});
 
 describe('targets', () => {
     it('test feature with multiple targets matching', () => {
@@ -1044,11 +1051,9 @@ describe('targets', () => {
         expect(config.isFeatureEnabled('testFeature')).toBeTrue();
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
     });
-
 });
 
 describe('cohorts', () => {
-
     it('test cohort is assigned automatically', () => {
         const config = constructMockRemoteConfig();
         config.updateConfig({
@@ -1205,8 +1210,8 @@ describe('cohorts', () => {
         });
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
 
         config.updateConfig({
             features: {
@@ -1238,8 +1243,8 @@ describe('cohorts', () => {
             },
         });
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
 
         config.updateConfig({
             features: {
@@ -1272,8 +1277,8 @@ describe('cohorts', () => {
         });
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
     });
 
     it('test cohort targets', () => {
@@ -1441,8 +1446,8 @@ describe('cohorts', () => {
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         // TODO: what is the correct assertion here?
         expect(config.getCohort('testFeature', 'fooFeature')).toEqual(null);
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
     });
 
     it('test change remote cohorts after assignment should noop', () => {
@@ -1639,7 +1644,7 @@ describe('cohorts', () => {
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
         expect(config.getCohort('testFeature', 'fooFeature').assignedAt).toBeGreaterThan(Date.now() - 1000);
-        expect(config.getCohort('testFeature', 'fooFeature').enrolledAt).toBeFalsy()
+        expect(config.getCohort('testFeature', 'fooFeature').enrolledAt).toBeFalsy();
     });
 
     it('test rollback cohort experiments', () => {
@@ -1676,8 +1681,8 @@ describe('cohorts', () => {
         const rolloutThreshold = config.settings.getSetting('rollouts.testFeature.fooFeature.roll');
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
 
         config.updateConfig({
             features: {
@@ -1709,8 +1714,8 @@ describe('cohorts', () => {
             },
         });
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
     });
 
     it('test cohort enabled and stop enrollment and then roll-back', () => {
@@ -1746,8 +1751,8 @@ describe('cohorts', () => {
         });
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
 
         // Stop enrollment, should keep assigned cohorts
         config.updateConfig({
@@ -1782,8 +1787,8 @@ describe('cohorts', () => {
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         // when weight of assigned cohort goes down to "0" we just stop the enrollment, but keep the cohort assignment
         expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeTrue();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
 
         // remove control, should re-allocate to blue
         config.updateConfig({
@@ -1813,8 +1818,8 @@ describe('cohorts', () => {
         });
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('blue');
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeTrue()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeTrue();
 
         // roll-back
         config.updateConfig({
@@ -1847,7 +1852,55 @@ describe('cohorts', () => {
             },
         });
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse()
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse()
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
+    });
+});
+
+fdescribe('ABN pixels', () => {
+    it('markExperimentEnrolled sends a correct pixel only once', () => {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'disabled',
+                    features: {
+                        fooFeature: {
+                            state: 'enabled',
+                            rollout: {
+                                steps: [
+                                    {
+                                        percent: 100,
+                                    },
+                                ],
+                            },
+                            cohorts: [
+                                {
+                                    name: 'control',
+                                    weight: 1,
+                                },
+                                {
+                                    name: 'blue',
+                                    weight: 0,
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
+        });
+
+        let pixelRequest = '';
+        const pixelIntercept = spyOn(load, 'url').and.callFake((url) => {
+            const parsed = new URL(url);
+            pixelRequest = parsed.pathname + parsed.search;
+        });
+        config.markExperimentEnrolled('testFeature', 'fooFeature');
+        expect(pixelIntercept).toHaveBeenCalledTimes(1);
+        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.enroll'], 'experiment.enroll', pixelRequest)).toEqual([]);
+
+        // call a second time: pixel shouldn't be triggered again
+        config.markExperimentEnrolled('testFeature', 'fooFeature');
+        expect(pixelIntercept).toHaveBeenCalledTimes(1);
     });
 });
