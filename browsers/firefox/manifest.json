@@ -7,7 +7,7 @@
         }
     },
     "default_locale": "en",
-    "version": "2024.10.16",
+    "version": "2025.01.10",
     "description": "Privacy, simplified. Protect your data as you search and browse: tracker blocking, smarter encryption, private search, and more.",
     "icons": {
         "16": "img/icon_16.png",
@@ -49,7 +49,9 @@
             "match_about_blank": true,
             "all_frames": true,
             "world": "ISOLATED",
-            "js": ["public/js/content-scripts/content-scope-messaging.js"],
+            "js": [
+                "public/js/content-scripts/content-scope-messaging.js"
+            ],
             "run_at": "document_start"
         },
         {
