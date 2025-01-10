@@ -15,11 +15,11 @@ class MockSettings {
     }
 }
 
-describe('rollouts', () => {
-    function constructMockRemoteConfig() {
-        return new RemoteConfig({ settings: new MockSettings() });
-    }
+function constructMockRemoteConfig() {
+    return new RemoteConfig({ settings: new MockSettings() });
+}
 
+describe('rollouts', () => {
     // Rollout tests: specs copied from the Android browser project.
     // https://github.com/duckduckgo/Android/blob/develop/feature-toggles/feature-toggles-impl/src/test/java/com/duckduckgo/feature/toggles/codegen/ContributesRemoteFeatureCodeGeneratorTest.kt#L624
     it('test staged rollout for default-enabled feature flag', () => {
@@ -682,6 +682,9 @@ describe('rollouts', () => {
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
     });
 
+})
+
+describe('targets', () => {
     it('test feature with multiple targets matching', () => {
         spyOn(browser.i18n, 'getUILanguage').and.returnValue('fr-US');
         const config = constructMockRemoteConfig();
@@ -1041,6 +1044,10 @@ describe('rollouts', () => {
         expect(config.isFeatureEnabled('testFeature')).toBeTrue();
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
     });
+
+});
+
+describe('cohorts', () => {
 
     it('test cohort is assigned automatically', () => {
         const config = constructMockRemoteConfig();
@@ -1631,7 +1638,8 @@ describe('rollouts', () => {
         });
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         expect(config.getCohortName('testFeature', 'fooFeature')).toEqual('control');
-        expect(config.getCohort('testFeature', 'fooFeature').enrolledAt).toBeGreaterThan(Date.now() - 1000);
+        expect(config.getCohort('testFeature', 'fooFeature').assignedAt).toBeGreaterThan(Date.now() - 1000);
+        expect(config.getCohort('testFeature', 'fooFeature').enrolledAt).toBeFalsy()
     });
 
     it('test rollback cohort experiments', () => {

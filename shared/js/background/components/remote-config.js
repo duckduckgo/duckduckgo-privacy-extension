@@ -6,7 +6,10 @@
  *  localeCountry: string;
  *  localeLanguage: string;
  * }} TargetEnvironment
- * @typedef {import('@duckduckgo/privacy-configuration/schema/feature').Cohort & { enrolledAt: number }} ChosenCohort
+ * @typedef {import('@duckduckgo/privacy-configuration/schema/feature').Cohort & {
+ *  assignedAt: number;
+ *  enrolledAt?: number;
+ * }} ChosenCohort
  */
 
 import { getUserLocaleCountry, getUserLocale } from '../i18n';
@@ -14,6 +17,7 @@ import { getFeatureSettings, isFeatureEnabled, satisfiesMinVersion } from '../ut
 import { getExtensionVersion, getFromSessionStorage } from '../wrapper';
 import ResourceLoader from './resource-loader';
 import constants from '../../../data/constants';
+import { sendPixelRequest } from '../pixels';
 
 /**
  * @returns {Promise<string>}
@@ -108,7 +112,7 @@ export default class RemoteConfig extends ResourceLoader {
      * @returns {ChosenCohort | null} Cohort name, or null if no cohort has been assigned.
      */
     getCohort(featureName, subFeatureName) {
-       return this.settings.getSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName)) || null;
+        return this.settings.getSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName)) || null;
     }
 
     /**
@@ -125,14 +129,35 @@ export default class RemoteConfig extends ResourceLoader {
      *
      * @param {string} featureName
      * @param {string} subFeatureName
-     * @param {import('@duckduckgo/privacy-configuration/schema/feature').Cohort} cohort
+     * @param {import('@duckduckgo/privacy-configuration/schema/feature').Cohort | null} cohort
      */
     setCohort(featureName, subFeatureName, cohort) {
-        this.settings.updateSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName), { ...cohort, enrolledAt: Date.now() })
+        this.settings.updateSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName), {
+            ...cohort,
+            assignedAt: Date.now(),
+        });
+    }
+
+    /**
+     * Mark that the user should be enrolled in the experiment for the given feature and sub feature.
+     * 
+     * This will send the enrollment
+     * @param {string} featureName 
+     * @param {string} subFeatureName 
+     */
+    markExperimentEnrolled(featureName, subFeatureName) {
+        const cohort = this.getCohort(featureName, subFeatureName);
+        if (cohort && !cohort.enrolledAt) {
+            cohort.enrolledAt = Date.now()
+            sendPixelRequest(`experiment_enroll_${subFeatureName}_${cohort.name}`, {
+                enrollmentDate: new Date(cohort.enrolledAt).toISOString().slice(0, 10)
+            })
+            this.settings.updateSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName), cohort)
+        }
     }
 
     _getAssignedCohortSettingsKey(featureName, subFeatureName) {
-        return `abn.${featureName}.${subFeatureName}.cohort`
+        return `abn.${featureName}.${subFeatureName}.cohort`;
     }
 
     /**
@@ -164,15 +189,14 @@ export default class RemoteConfig extends ResourceLoader {
                     subfeature.state = rolloutPercent >= dieRoll ? 'enabled' : 'disabled';
                 }
 
-                const assignedCohortSettingsKey = `abn.${featureName}.${name}.cohort`;
                 /** @type {ChosenCohort | null} */
-                let assignedCohort = this.settings.getSetting(assignedCohortSettingsKey);
+                let assignedCohort = this.getCohort(featureName, name);
                 if (subfeature.cohorts && subfeature.state === 'enabled') {
                     /* Handle an ABN experiment: Experiment assignment is stored in settings */
                     const cohorts = subfeature.cohorts.filter((c) => c.weight > 0);
                     // check that assigned cohort still exists. If not, clear it.
                     if (assignedCohort && !subfeature.cohorts.find((c) => c.name === assignedCohort?.name)) {
-                        this.settings.updateSetting(assignedCohortSettingsKey, null);
+                        this.setCohort(featureName, name, null);
                         assignedCohort = null;
                     }
                     if (!assignedCohort && cohorts.length > 0) {
@@ -183,14 +207,11 @@ export default class RemoteConfig extends ResourceLoader {
                             rollingTotal = rollingTotal + c.weight;
                             return diceRoll <= rollingTotal;
                         });
-                        this.settings.updateSetting(assignedCohortSettingsKey, {
-                            ...chosen,
-                            enrolledAt: Date.now(),
-                        });
+                        this.setCohort(featureName, name, chosen || null);
                     }
                 } else if (!subfeature.cohorts && assignedCohort) {
                     // cohorts were removed, remove assignment
-                    this.settings.updateSetting(assignedCohortSettingsKey, null);
+                    this.setCohort(featureName, name, null);
                 }
             });
         });
