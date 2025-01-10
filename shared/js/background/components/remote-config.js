@@ -129,13 +129,10 @@ export default class RemoteConfig extends ResourceLoader {
      *
      * @param {string} featureName
      * @param {string} subFeatureName
-     * @param {import('@duckduckgo/privacy-configuration/schema/feature').Cohort | null} cohort
+     * @param {ChosenCohort | null} cohort
      */
     setCohort(featureName, subFeatureName, cohort) {
-        this.settings.updateSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName), {
-            ...cohort,
-            assignedAt: Date.now(),
-        });
+        this.settings.updateSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName), cohort);
     }
 
     /**
@@ -152,7 +149,8 @@ export default class RemoteConfig extends ResourceLoader {
             sendPixelRequest(`experiment_enroll_${subFeatureName}_${cohort.name}`, {
                 enrollmentDate: new Date(cohort.enrolledAt).toISOString().slice(0, 10)
             })
-            this.settings.updateSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName), cohort)
+            // updated stored cohort metadata
+            this.setCohort(featureName, subFeatureName, cohort)
         }
     }
 
@@ -207,7 +205,9 @@ export default class RemoteConfig extends ResourceLoader {
                             rollingTotal = rollingTotal + c.weight;
                             return diceRoll <= rollingTotal;
                         });
-                        this.setCohort(featureName, name, chosen || null);
+                        if (chosen) {
+                            this.setCohort(featureName, name, { ...chosen, assignedAt: Date.now() });
+                        }
                     }
                 } else if (!subfeature.cohorts && assignedCohort) {
                     // cohorts were removed, remove assignment

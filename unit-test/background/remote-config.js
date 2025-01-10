@@ -1857,7 +1857,7 @@ describe('cohorts', () => {
     });
 });
 
-fdescribe('ABN pixels', () => {
+describe('ABN pixels', () => {
     it('markExperimentEnrolled sends a correct pixel only once', () => {
         const config = constructMockRemoteConfig();
         config.updateConfig({
