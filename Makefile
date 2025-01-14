@@ -212,13 +212,16 @@ $(BUILD_DIR)/public/js/devtools-panel.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/list-editor.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/devtools/list-editor.js > $@
 
+$(BUILD_DIR)/public/js/rollouts.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/devtools/rollouts.js > $@
+
 $(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/newtab/newtab.js > $@
 
 $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/fire/index.js > $@
 
-JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js
+JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js
 
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 

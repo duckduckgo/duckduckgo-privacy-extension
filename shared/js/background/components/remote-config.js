@@ -10,6 +10,18 @@
  *  assignedAt: number;
  *  enrolledAt?: number;
  * }} ChosenCohort
+ * @typedef {{
+ *  feature: string;
+ *  subFeature: string;
+ *  state: import('@duckduckgo/privacy-configuration/schema/feature').FeatureState;
+ *  hasTargets: boolean;
+ *  hasRollout: boolean;
+ *  rolloutRoll: number?;
+ *  rolloutPercent: number?;
+ *  hasCohorts: boolean;
+ *  cohort: ChosenCohort?;
+ *  availableCohorts: import('@duckduckgo/privacy-configuration/schema/feature').Cohort[] | undefined
+ * }} SubFeatureStatus
  */
 
 import { getUserLocaleCountry, getUserLocale } from '../i18n';
@@ -18,6 +30,7 @@ import { getExtensionVersion, getFromSessionStorage } from '../wrapper';
 import ResourceLoader from './resource-loader';
 import constants from '../../../data/constants';
 import { sendPixelRequest } from '../pixels';
+import { registerMessageHandler } from '../message-handlers';
 
 /**
  * @returns {Promise<string>}
@@ -57,6 +70,14 @@ export default class RemoteConfig extends ResourceLoader {
             localeCountry: getUserLocaleCountry(),
             localeLanguage: getUserLocale(),
         };
+
+        registerMessageHandler('getSubfeatureStatuses', this.getSubFeatureStatuses.bind(this));
+        registerMessageHandler('forceReprocessConfig', async () => {
+            await this._updateData({
+                contents: this.data,
+                etag: this.etag,
+            });
+        });
     }
 
     /**
@@ -137,20 +158,20 @@ export default class RemoteConfig extends ResourceLoader {
 
     /**
      * Mark that the user should be enrolled in the experiment for the given feature and sub feature.
-     * 
+     *
      * This will send the enrollment
-     * @param {string} featureName 
-     * @param {string} subFeatureName 
+     * @param {string} featureName
+     * @param {string} subFeatureName
      */
     markExperimentEnrolled(featureName, subFeatureName) {
         const cohort = this.getCohort(featureName, subFeatureName);
         if (cohort && !cohort.enrolledAt) {
-            cohort.enrolledAt = Date.now()
+            cohort.enrolledAt = Date.now();
             sendPixelRequest(`experiment_enroll_${subFeatureName}_${cohort.name}`, {
-                enrollmentDate: new Date(cohort.enrolledAt).toISOString().slice(0, 10)
-            })
+                enrollmentDate: new Date(cohort.enrolledAt).toISOString().slice(0, 10),
+            });
             // updated stored cohort metadata
-            this.setCohort(featureName, subFeatureName, cohort)
+            this.setCohort(featureName, subFeatureName, cohort);
         }
     }
 
@@ -177,9 +198,8 @@ export default class RemoteConfig extends ResourceLoader {
                     /* Handle a rollout: Dice roll is stored in settings and used that to decide
                      * whether the feature is set as 'enabled' or not.
                      */
-                    const rolloutSettingsKey = `rollouts.${featureName}.${name}.roll`;
-                    const validSteps = subfeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100);
-                    const rolloutPercent = validSteps.length > 0 ? validSteps.reverse()[0].percent : 0.0;
+                    const rolloutSettingsKey = getRolloutSettingsKey(featureName, name);
+                    const rolloutPercent = getSubFeatureRolloutPercent(subfeature);
                     if (!this.settings.getSetting(rolloutSettingsKey)) {
                         this.settings.updateSetting(rolloutSettingsKey, Math.random() * 100);
                     }
@@ -217,6 +237,35 @@ export default class RemoteConfig extends ResourceLoader {
         });
         return configValue;
     }
+
+    /**
+     *
+     * @returns {SubFeatureStatus[]}
+     */
+    getSubFeatureStatuses() {
+        /** @type {SubFeatureStatus[]} */
+        const rolloutStatus = [];
+        if (!this.config) {
+            return rolloutStatus;
+        }
+        Object.entries(this.config.features).forEach(([featureName, feature]) => {
+            Object.entries(feature.features || {}).forEach(([name, subfeature]) => {
+                rolloutStatus.push({
+                    feature: featureName,
+                    subFeature: name,
+                    state: subfeature.state,
+                    hasTargets: !!subfeature.targets,
+                    hasRollout: !!subfeature.rollout,
+                    rolloutRoll: this.settings.getSetting(getRolloutSettingsKey(featureName, name)),
+                    rolloutPercent: getSubFeatureRolloutPercent(subfeature),
+                    hasCohorts: !!subfeature.cohorts,
+                    cohort: this.getCohort(featureName, name),
+                    availableCohorts: subfeature.cohorts?.filter((c) => c.weight > 0),
+                });
+            });
+        });
+        return rolloutStatus;
+    }
 }
 
 /**
@@ -239,4 +288,27 @@ export function isSubFeatureEnabled(featureName, subFeatureName, config) {
         }
     }
     return subFeature.state === 'enabled';
+}
+
+/**
+ * s
+ * @param {import('@duckduckgo/privacy-configuration/schema/feature').SubFeature<string>} subFeature
+ * @returns {number}
+ */
+function getSubFeatureRolloutPercent(subFeature) {
+    if (!subFeature.rollout) {
+        return 100;
+    }
+    const validSteps = subFeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100);
+    return validSteps.length > 0 ? validSteps.reverse()[0].percent : 0.0;
+}
+
+/**
+ * Get the settings corresponding to the rollout dice roll for a specific subfeature.
+ * @param {string} featureName
+ * @param {string} subFeatureName
+ * @returns {string}
+ */
+export function getRolloutSettingsKey(featureName, subFeatureName) {
+    return `rollouts.${featureName}.${subFeatureName}.roll`;
 }
