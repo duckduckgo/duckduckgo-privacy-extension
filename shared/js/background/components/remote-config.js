@@ -133,7 +133,7 @@ export default class RemoteConfig extends ResourceLoader {
      * @returns {ChosenCohort | null} Cohort name, or null if no cohort has been assigned.
      */
     getCohort(featureName, subFeatureName) {
-        return this.settings.getSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName)) || null;
+        return this.settings.getSetting(getAssignedCohortSettingsKey(featureName, subFeatureName)) || null;
     }
 
     /**
@@ -153,7 +153,7 @@ export default class RemoteConfig extends ResourceLoader {
      * @param {ChosenCohort | null} cohort
      */
     setCohort(featureName, subFeatureName, cohort) {
-        this.settings.updateSetting(this._getAssignedCohortSettingsKey(featureName, subFeatureName), cohort);
+        this.settings.updateSetting(getAssignedCohortSettingsKey(featureName, subFeatureName), cohort);
     }
 
     /**
@@ -173,10 +173,6 @@ export default class RemoteConfig extends ResourceLoader {
             // updated stored cohort metadata
             this.setCohort(featureName, subFeatureName, cohort);
         }
-    }
-
-    _getAssignedCohortSettingsKey(featureName, subFeatureName) {
-        return `abn.${featureName}.${subFeatureName}.cohort`;
     }
 
     /**
@@ -218,13 +214,7 @@ export default class RemoteConfig extends ResourceLoader {
                         assignedCohort = null;
                     }
                     if (!assignedCohort && cohorts.length > 0) {
-                        const cohortWeightSum = cohorts.reduce((sum, c) => sum + c.weight, 0);
-                        const diceRoll = Math.random() * cohortWeightSum;
-                        let rollingTotal = 0;
-                        const chosen = cohorts.find((c) => {
-                            rollingTotal = rollingTotal + c.weight;
-                            return diceRoll <= rollingTotal;
-                        });
+                        const chosen = choseCohort(cohorts, Math.random);
                         if (chosen) {
                             this.setCohort(featureName, name, { ...chosen, assignedAt: Date.now() });
                         }
@@ -304,11 +294,37 @@ function getSubFeatureRolloutPercent(subFeature) {
 }
 
 /**
- * Get the settings corresponding to the rollout dice roll for a specific subfeature.
+ * Get the settings key corresponding to the rollout dice roll for a specific subfeature.
  * @param {string} featureName
  * @param {string} subFeatureName
  * @returns {string}
  */
 export function getRolloutSettingsKey(featureName, subFeatureName) {
     return `rollouts.${featureName}.${subFeatureName}.roll`;
+}
+
+/**
+ * Get the settings key corresponding to the chosen experiment cohort for a specific subfeature.
+ * @param {string} featureName
+ * @param {string} subFeatureName
+ * @returns {string}
+ */
+export function getAssignedCohortSettingsKey(featureName, subFeatureName) {
+    return `abn.${featureName}.${subFeatureName}.cohort`;
+}
+
+/**
+ *
+ * @param {import('@duckduckgo/privacy-configuration/schema/feature').Cohort[]} cohorts
+ * @param {() => number} rng
+ * @returns {import('@duckduckgo/privacy-configuration/schema/feature').Cohort | undefined}
+ */
+export function choseCohort(cohorts, rng) {
+    const cohortWeightSum = cohorts.reduce((sum, c) => sum + c.weight, 0);
+    const diceRoll = rng() * cohortWeightSum;
+    let rollingTotal = 0;
+    return cohorts.find((c) => {
+        rollingTotal = rollingTotal + c.weight;
+        return diceRoll <= rollingTotal;
+    });
 }

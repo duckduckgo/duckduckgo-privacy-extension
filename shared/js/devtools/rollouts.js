@@ -1,3 +1,5 @@
+import { getAssignedCohortSettingsKey, getRolloutSettingsKey } from '../background/components/remote-config';
+
 async function updateSettingAndReloadConfig(settingKey, settingValue) {
     await chrome.runtime.sendMessage({
         messageType: 'updateSetting',
@@ -38,7 +40,7 @@ async function render() {
             resetRollout.innerText = 'Reset rollout';
             actionsCell.appendChild(resetRollout);
             resetRollout.addEventListener('click', async () => {
-                await updateSettingAndReloadConfig(`rollouts.${f.feature}.${f.subFeature}.roll`, undefined);
+                await updateSettingAndReloadConfig(getRolloutSettingsKey(f.feature, f.subFeature), undefined);
                 render();
             });
         }
@@ -47,7 +49,7 @@ async function render() {
             forceRollout.innerText = `Force ${f.state === 'enabled' ? 'leave' : 'join'} rollout`;
             actionsCell.appendChild(forceRollout);
             forceRollout.addEventListener('click', async () => {
-                await updateSettingAndReloadConfig(`rollouts.${f.feature}.${f.subFeature}.roll`, f.state === 'enabled' ? 100.0 : 0.1);
+                await updateSettingAndReloadConfig(getRolloutSettingsKey(f.feature, f.subFeature), f.state === 'enabled' ? 100.0 : 0.1);
                 render();
             });
         }
@@ -56,7 +58,7 @@ async function render() {
             reassign.innerText = `Reassign cohort`;
             actionsCell.appendChild(reassign);
             reassign.addEventListener('click', async () => {
-                await updateSettingAndReloadConfig(`abn.${f.feature}.${f.subFeature}.cohort`, undefined);
+                await updateSettingAndReloadConfig(getAssignedCohortSettingsKey(f.feature, f.subFeature), undefined);
                 render();
             });
             const otherEligableCohort = f.availableCohorts.find((c) => c.name !== f.cohort?.name);
