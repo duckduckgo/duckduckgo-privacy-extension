@@ -8,7 +8,7 @@ jobs:
         strategy:
             matrix:
                 node: [22.x]
-                os: [ubuntu-latest] # FIXME - macos-latest runner keeps failing
+                os: [ubuntu-22.04] # FIXME - macos-latest runner keeps failing
         steps:
             - uses: actions/checkout@v4
             - name: Use Node.js ${{ matrix.node }}
@@ -23,7 +23,7 @@ jobs:
         strategy:
             matrix:
                 node: [22.x]
-                os: [ubuntu-latest]
+                os: [ubuntu-22.04]
         steps:
             - uses: actions/checkout@v4
             - name: Use Node.js ${{ matrix.node }}
