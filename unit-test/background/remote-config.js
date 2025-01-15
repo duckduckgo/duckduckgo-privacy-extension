@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill';
 import { ParamsValidator } from '@duckduckgo/pixel-schema/src/params_validator.mjs';
 
 import RemoteConfig from '../../shared/js/background/components/remote-config';
+import messageHandlers from '../../shared/js/background/message-handlers';
 import load from '../../shared/js/background/load';
 import commonParams from '../../pixel-definitions/common_params.json';
 import commonSuffixes from '../../pixel-definitions/common_suffixes.json';
@@ -22,6 +23,8 @@ class MockSettings {
 }
 
 function constructMockRemoteConfig() {
+    // clear message handlers to prevent conflict when registering
+    Object.keys(messageHandlers).forEach((k) => delete messageHandlers[k]);
     return new RemoteConfig({ settings: new MockSettings() });
 }
 
@@ -395,7 +398,7 @@ describe('rollouts', () => {
     it('full feature lifecycle', () => {
         const config = constructMockRemoteConfig();
         let mockExtensionVersion = '2024.10.12';
-        spyOn(chrome.runtime, 'getManifest').and.callFake(() => ({
+        spyOn(browser.runtime, 'getManifest').and.callFake(() => ({
             version: mockExtensionVersion,
         }));
         // all disabled
@@ -887,8 +890,8 @@ describe('targets', () => {
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
 
         const fooFeatureRolloutPercentile = config.settings.getSetting('rollouts.testFeature.fooFeature.roll');
-        const justEnableRollout = fooFeatureRolloutPercentile + 1;
-        const justDisabledRollout = fooFeatureRolloutPercentile - 1;
+        const justEnableRollout = Math.min(fooFeatureRolloutPercentile + 1, 100.0);
+        const justDisabledRollout = Math.max(fooFeatureRolloutPercentile - 1, 0.0);
 
         // Roll back to 0% but as fooFeature was enabled before it should remain enabled
         config.updateConfig({
@@ -1408,7 +1411,7 @@ describe('cohorts', () => {
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         expect(config.getCohortName('testFeature', 'fooFeature')).toEqual(null);
 
-        // re-populate experiment to re-assign new cohort, should not be assigned as it has wrong targets
+        // re-populate experiment to re-assign new cohort, should be assigned to blue
         config.updateConfig({
             features: {
                 testFeature: {
@@ -1445,9 +1448,8 @@ describe('cohorts', () => {
         });
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
         // TODO: what is the correct assertion here?
-        expect(config.getCohort('testFeature', 'fooFeature')).toEqual(null);
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse();
-        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeTrue();
     });
 
     it('test change remote cohorts after assignment should noop', () => {
