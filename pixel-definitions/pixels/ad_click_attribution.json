@@ -16,7 +16,7 @@
             "appVersion",
             {
                 "key": "domainDetection",
-                "description": "matching method used",
+                "description": "Whether the SERP-provided domain matches what was heuristically detected.",
                 "enum": [
                     "none",
                     "matched",
