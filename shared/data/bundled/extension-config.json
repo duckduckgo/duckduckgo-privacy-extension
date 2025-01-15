@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1736498433340,
+    "version": 1736875021428,
     "features": {
         "adAttributionReporting": {
             "state": "disabled",
@@ -666,10 +666,140 @@
             "settings": {
                 "disabledCMPs": [
                     "healthline-media"
+                ],
+                "filterlistExceptions": [
+                    "google.ae",
+                    "google.at",
+                    "google.be",
+                    "google.bg",
+                    "google.by",
+                    "google.ca",
+                    "google.ch",
+                    "google.cl",
+                    "google.co.id",
+                    "google.co.il",
+                    "google.co.in",
+                    "google.co.jp",
+                    "google.co.ke",
+                    "google.co.kr",
+                    "google.co.nz",
+                    "google.co.th",
+                    "google.co.uk",
+                    "google.co.ve",
+                    "google.co.za",
+                    "google.com",
+                    "google.com.ar",
+                    "google.com.au",
+                    "google.com.br",
+                    "google.com.co",
+                    "google.com.ec",
+                    "google.com.eg",
+                    "google.com.hk",
+                    "google.com.mx",
+                    "google.com.my",
+                    "google.com.pe",
+                    "google.com.ph",
+                    "google.com.pk",
+                    "google.com.py",
+                    "google.com.sa",
+                    "google.com.sg",
+                    "google.com.tr",
+                    "google.com.tw",
+                    "google.com.ua",
+                    "google.com.uy",
+                    "google.com.vn",
+                    "google.cz",
+                    "google.de",
+                    "google.dk",
+                    "google.dz",
+                    "google.ee",
+                    "google.es",
+                    "google.fi",
+                    "google.fr",
+                    "google.gr",
+                    "google.hr",
+                    "google.hu",
+                    "google.ie",
+                    "google.it",
+                    "google.lt",
+                    "google.lv",
+                    "google.nl",
+                    "google.no",
+                    "google.pl",
+                    "google.pt",
+                    "google.ro",
+                    "google.rs",
+                    "google.ru",
+                    "google.se",
+                    "google.sk",
+                    "google.ae",
+                    "google.at",
+                    "google.be",
+                    "google.bg",
+                    "google.by",
+                    "google.ca",
+                    "google.ch",
+                    "google.cl",
+                    "google.co.id",
+                    "google.co.il",
+                    "google.co.in",
+                    "google.co.jp",
+                    "google.co.ke",
+                    "google.co.kr",
+                    "google.co.nz",
+                    "google.co.th",
+                    "google.co.uk",
+                    "google.co.ve",
+                    "google.co.za",
+                    "google.com",
+                    "google.com.ar",
+                    "google.com.au",
+                    "google.com.br",
+                    "google.com.co",
+                    "google.com.ec",
+                    "google.com.eg",
+                    "google.com.hk",
+                    "google.com.mx",
+                    "google.com.my",
+                    "google.com.pe",
+                    "google.com.ph",
+                    "google.com.pk",
+                    "google.com.py",
+                    "google.com.sa",
+                    "google.com.sg",
+                    "google.com.tr",
+                    "google.com.tw",
+                    "google.com.ua",
+                    "google.com.uy",
+                    "google.com.vn",
+                    "google.cz",
+                    "google.de",
+                    "google.dk",
+                    "google.dz",
+                    "google.ee",
+                    "google.es",
+                    "google.fi",
+                    "google.fr",
+                    "google.gr",
+                    "google.hr",
+                    "google.hu",
+                    "google.ie",
+                    "google.it",
+                    "google.lt",
+                    "google.lv",
+                    "google.nl",
+                    "google.no",
+                    "google.pl",
+                    "google.pt",
+                    "google.ro",
+                    "google.rs",
+                    "google.ru",
+                    "google.se",
+                    "google.sk"
                 ]
             },
             "state": "disabled",
-            "hash": "d98347e85964f449ef729acb618a5ec4"
+            "hash": "e36439bb775eb24ab194a1eec70658db"
         },
         "autofillBreakageReporter": {
             "state": "disabled",
@@ -708,6 +838,11 @@
             "state": "disabled",
             "exceptions": [],
             "hash": "c292bb627849854515cebbded288ef5a"
+        },
+        "bookmarksSorting": {
+            "exceptions": [],
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
         },
         "bookmarks": {
             "state": "enabled",
@@ -3540,6 +3675,14 @@
                                 "type": "hide"
                             },
                             {
+                                "selector": "div:has(> iframe[src*='prid=19044504'])",
+                                "type": "hide"
+                            },
+                            {
+                                "selector": "div:has(> iframe[src*='prid=19031729'])",
+                                "type": "hide"
+                            },
+                            {
                                 "selector": "[aria-labelledby='promo-header']",
                                 "type": "hide"
                             },
@@ -3711,6 +3854,10 @@
                             {
                                 "selector": "[data-mpu1=true]",
                                 "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[data-ad-unit-path]",
+                                "type": "closest-empty"
                             },
                             {
                                 "selector": "#stickyFooterRoot",
@@ -5312,7 +5459,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "1dabea544f4e456540e505e62f29f623"
+            "hash": "3a63048a370832670afc357fca73d5a4"
         },
         "exceptionHandler": {
             "exceptions": [
