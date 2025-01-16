@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1736875021428,
+    "version": 1737022816010,
     "features": {
         "adAttributionReporting": {
             "state": "disabled",
@@ -636,6 +636,9 @@
                     "domain": "collectcheckout.com"
                 },
                 {
+                    "domain": "sbid.org"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
@@ -795,11 +798,12 @@
                     "google.rs",
                     "google.ru",
                     "google.se",
-                    "google.sk"
+                    "google.sk",
+                    "sachsen-netze.de"
                 ]
             },
             "state": "disabled",
-            "hash": "e36439bb775eb24ab194a1eec70658db"
+            "hash": "9235a935af7f8202221fe1b0b920cf87"
         },
         "autofillBreakageReporter": {
             "state": "disabled",
@@ -6704,6 +6708,11 @@
             },
             "exceptions": [],
             "hash": "135891a02918c8fbf85532b465ca0a76"
+        },
+        "tabManager": {
+            "exceptions": [],
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
         },
         "textZoom": {
             "exceptions": [],
