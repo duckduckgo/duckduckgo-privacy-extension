@@ -26,7 +26,7 @@
 
 import { getUserLocaleCountry, getUserLocale } from '../i18n';
 import { getFeatureSettings, isFeatureEnabled, satisfiesMinVersion } from '../utils';
-import { getExtensionVersion, getFromSessionStorage } from '../wrapper';
+import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from '../wrapper';
 import ResourceLoader from './resource-loader';
 import constants from '../../../data/constants';
 import { sendPixelRequest } from '../pixels';
@@ -73,6 +73,7 @@ export default class RemoteConfig extends ResourceLoader {
 
         registerMessageHandler('getSubfeatureStatuses', this.getSubFeatureStatuses.bind(this));
         registerMessageHandler('forceReprocessConfig', async () => {
+            await setToSessionStorage('dev', true);
             await this._updateData({
                 contents: this.data,
                 etag: this.etag,
