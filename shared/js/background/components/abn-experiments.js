@@ -11,13 +11,13 @@
  *  sent: boolean;
  * } & ExperimentMetric} ExperimentMetricCounter
  */
-
+import browser from 'webextension-polyfill';
 import { sendPixelRequest } from '../pixels';
 
 /**
  * @returns {ExperimentMetric[]}
  */
-function generateBuildRetentionMetrics() {
+export function generateBuildRetentionMetrics() {
     return ['app_use', 'search'].flatMap((metric) => {
         const metrics = [0, 1, 2, 3, 4, 5, 6, 7].map((conversionWindowStart) => ({
             metric,
@@ -45,6 +45,43 @@ function generateBuildRetentionMetrics() {
             }),
         );
     });
+}
+
+export class AppUseMetric {
+    /**
+     * Metric that fires once on creation.
+     * @param {{
+     * abnMetrics: AbnExperimentMetrics
+     * }} opts
+     */
+    constructor({ abnMetrics }) {
+        // trigger on construction: happens whenever the service worker is spun up, which should correlate with browser activity.
+        abnMetrics.remoteConfig.ready.then(() => abnMetrics.onMetricTriggered('app_use'));
+    }
+}
+
+export class SearchMetric {
+    /**
+     * Metric that fires whenever a new search is made
+     * @param {{
+     * abnMetrics: AbnExperimentMetrics
+     * }} opts
+     */
+    constructor({ abnMetrics }) {
+        browser.webRequest.onCompleted.addListener(
+            async (details) => {
+                const params = new URL(details.url).searchParams;
+                if (params.has('q') && (params.get('q')?.length || 0) > 0) {
+                    await abnMetrics.remoteConfig.ready;
+                    abnMetrics.onMetricTriggered('search');
+                }
+            },
+            {
+                urls: ['https://*.duckduckgo.com/*'],
+                types: ['main_frame'],
+            },
+        );
+    }
 }
 
 export default class AbnExperimentMetrics {
@@ -85,7 +122,8 @@ export default class AbnExperimentMetrics {
      * @param {number} value
      * @param {number} [timestamp]
      */
-    onMetricTriggered(metric, value = 1, timestamp) {
+    async onMetricTriggered(metric, value = 1, timestamp) {
+        console.log('xxx metric triggered:', metric);
         this.remoteConfig
             .getSubFeatureStatuses()
             .filter((status) => status.hasCohorts && status.cohort && status.cohort.enrolledAt)
