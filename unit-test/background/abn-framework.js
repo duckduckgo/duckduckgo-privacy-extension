@@ -161,7 +161,7 @@ describe('choseCohort', () => {
     });
 });
 
-fdescribe('ABN pixels', () => {
+describe('ABN pixels', () => {
     const feature = 'testFeature';
     const subFeature = 'fooFeature';
     const mockExperimentConfig = {
@@ -241,7 +241,7 @@ fdescribe('ABN pixels', () => {
         expect(pixelIntercept).toHaveBeenCalledTimes(2);
         expect(pixelRequests[1]).toContain('conversionWindowDays=0&');
         expect(pixelRequests[1]).toContain('value=1&');
-        // TODO: pixel validation
+        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[1])).toEqual([]);
     });
 
     it('onMetricTriggered can trigger multiple matching metrics', () => {
@@ -258,6 +258,8 @@ fdescribe('ABN pixels', () => {
             .filter((u) => u.startsWith('/t/experiment_metrics_'))
             .map((u) => new URLSearchParams(u.split('?')[1]).get('conversionWindowDays'));
         expect(sentConversionWindows).toEqual(['6', '5-7']);
+        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[1])).toEqual([]);
+        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[2])).toEqual([]);
     });
 
     it('metric conversion window is inclusive of first and last days', () => {
@@ -277,6 +279,11 @@ fdescribe('ABN pixels', () => {
             .filter((u) => u.startsWith('/t/experiment_metrics_'))
             .map((u) => new URLSearchParams(u.split('?')[1]).get('conversionWindowDays'));
         expect(sentConversionWindows).toEqual(['5', '5-7', '7', '5-7']);
+        pixelRequests.forEach((u) => {
+            if (u.startsWith('/t/experiment_metrics_')) {
+                expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', u)).toEqual([]);
+            }
+        })
     });
 
     it('metric value count applies to conversion window only', () => {
