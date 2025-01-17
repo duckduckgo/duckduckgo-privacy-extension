@@ -32,7 +32,7 @@ import RemoteConfig from './components/remote-config';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
-import AbnExperimentMetrics from './components/abn-experiments';
+import AbnExperimentMetrics, { AppUseMetric, SearchMetric } from './components/abn-experiments';
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events');
@@ -48,7 +48,6 @@ settings.ready().then(() => {
 const remoteConfig = new RemoteConfig({ settings });
 const tds = new TDSStorage({ settings, remoteConfig });
 const devtools = new Devtools({ tds });
-const abnMetrics = new AbnExperimentMetrics({ remoteConfig });
 /**
  * @type {{
  *  autofill: EmailAutofill;
@@ -59,7 +58,7 @@ const abnMetrics = new AbnExperimentMetrics({ remoteConfig });
  *  tabTracking: TabTracker;
  *  trackers: TrackersGlobal;
  *  remoteConfig: RemoteConfig;
- *  abnMetrics: AbnExperimentMetrics;
+ *  abnMetrics: AbnExperimentMetrics?;
  * }}
  */
 const components = {
@@ -73,11 +72,13 @@ const components = {
     debugger: new DebuggerConnection({ tds, devtools }),
     devtools,
     remoteConfig,
-    abnMetrics,
 };
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
+    const abnMetrics = new AbnExperimentMetrics({ remoteConfig });
+    components.abnMetrics = abnMetrics;
+    components.metrics = [new AppUseMetric({ abnMetrics }), new SearchMetric({ abnMetrics })];
     components.fireButton = new FireButton({ settings, tabManager });
 }
 // MV3-only components
