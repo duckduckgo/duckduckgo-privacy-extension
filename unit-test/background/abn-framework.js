@@ -241,7 +241,9 @@ describe('ABN pixels', () => {
         expect(pixelIntercept).toHaveBeenCalledTimes(2);
         expect(pixelRequests[1]).toContain('conversionWindowDays=0&');
         expect(pixelRequests[1]).toContain('value=1&');
-        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[1])).toEqual([]);
+        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[1])).toEqual(
+            [],
+        );
     });
 
     it('onMetricTriggered can trigger multiple matching metrics', () => {
@@ -258,8 +260,12 @@ describe('ABN pixels', () => {
             .filter((u) => u.startsWith('/t/experiment_metrics_'))
             .map((u) => new URLSearchParams(u.split('?')[1]).get('conversionWindowDays'));
         expect(sentConversionWindows).toEqual(['6', '5-7']);
-        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[1])).toEqual([]);
-        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[2])).toEqual([]);
+        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[1])).toEqual(
+            [],
+        );
+        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[2])).toEqual(
+            [],
+        );
     });
 
     it('metric conversion window is inclusive of first and last days', () => {
@@ -283,33 +289,37 @@ describe('ABN pixels', () => {
             if (u.startsWith('/t/experiment_metrics_')) {
                 expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', u)).toEqual([]);
             }
-        })
+        });
     });
 
     it('metric value count applies to conversion window only', () => {
         const { remoteConfig, abnMetrics } = constructMockComponents();
         remoteConfig.updateConfig(mockExperimentConfig);
-        abnMetrics.markExperimentEnrolled(feature, subFeature, [{
-            metric: 'search',
-            conversionWindowStart: 5,
-            conversionWindowEnd: 7,
-            value: 4
-        }, {
-            metric: 'search',
-            conversionWindowStart: 5,
-            conversionWindowEnd: 5,
-            value: 1
-        }, {
-            metric: 'search',
-            conversionWindowStart: 5,
-            conversionWindowEnd: 5,
-            value: 2
-        }]);
+        abnMetrics.markExperimentEnrolled(feature, subFeature, [
+            {
+                metric: 'search',
+                conversionWindowStart: 5,
+                conversionWindowEnd: 7,
+                value: 4,
+            },
+            {
+                metric: 'search',
+                conversionWindowStart: 5,
+                conversionWindowEnd: 5,
+                value: 1,
+            },
+            {
+                metric: 'search',
+                conversionWindowStart: 5,
+                conversionWindowEnd: 5,
+                value: 2,
+            },
+        ]);
         // modify enrollment to be 7 days ago
         const cohort = remoteConfig.getCohort(feature, subFeature);
         cohort.enrolledAt = Date.now() - 1000 * 60 * 60 * 25 * 7;
         remoteConfig.setCohort(feature, subFeature, cohort);
-        pixelRequests.pop()
+        pixelRequests.pop();
         // day 1 search
         abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 6);
         expect(pixelIntercept).toHaveBeenCalledTimes(1);
@@ -326,7 +336,7 @@ describe('ABN pixels', () => {
         abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 2);
         // value=1 metric was triggered on day 5
         expect(pixelIntercept).toHaveBeenCalledTimes(2);
-        expect(pixelRequests.pop()).toContain('conversionWindowDays=5&value=1')
+        expect(pixelRequests.pop()).toContain('conversionWindowDays=5&value=1');
         // day 6 search x2
         abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 1);
         abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 1);
@@ -335,6 +345,6 @@ describe('ABN pixels', () => {
         abnMetrics.onMetricTriggered('search', 1, Date.now());
         // value=4 metric triggers now
         expect(pixelIntercept).toHaveBeenCalledTimes(3);
-        expect(pixelRequests.pop()).toContain('conversionWindowDays=5-7&value=4')
+        expect(pixelRequests.pop()).toContain('conversionWindowDays=5-7&value=4');
     });
 });

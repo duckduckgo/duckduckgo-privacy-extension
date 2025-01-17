@@ -90,7 +90,7 @@ export class PixelMetric {
      * Currently intercepts `epbf` pixels and triggers a `brokenSiteReport` metric.
      * @param {{
      * abnMetrics: AbnExperimentMetrics
-    * }} opts
+     * }} opts
      */
     constructor({ abnMetrics }) {
         browser.webRequest.onCompleted.addListener(
@@ -144,12 +144,12 @@ export default class AbnExperimentMetrics {
 
     /**
      * Triggered when a given metric is triggered.
-     * 
-     * Checks all active, enrolled subfeature experiments to find matching metrics that should be 
+     *
+     * Checks all active, enrolled subfeature experiments to find matching metrics that should be
      * sent for them. With those that match, their counter is incremented by `value`, and if they
      * exceed the threshold, a pixel is sent.
-     * 
-     * After incrementing counters and potentially sending pixels, the updated cohort state is 
+     *
+     * After incrementing counters and potentially sending pixels, the updated cohort state is
      * written back to settings.
      * @param {string} metric
      * @param {number} [value]

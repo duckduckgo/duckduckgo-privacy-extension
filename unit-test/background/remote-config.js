@@ -3,7 +3,6 @@ import browser from 'webextension-polyfill';
 import RemoteConfig from '../../shared/js/background/components/remote-config';
 import messageHandlers from '../../shared/js/background/message-handlers';
 
-
 class MockSettings {
     constructor() {
         this.mockSettingData = new Map();
