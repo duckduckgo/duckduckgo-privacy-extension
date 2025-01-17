@@ -143,9 +143,16 @@ export default class AbnExperimentMetrics {
     }
 
     /**
-     *
+     * Triggered when a given metric is triggered.
+     * 
+     * Checks all active, enrolled subfeature experiments to find matching metrics that should be 
+     * sent for them. With those that match, their counter is incremented by `value`, and if they
+     * exceed the threshold, a pixel is sent.
+     * 
+     * After incrementing counters and potentially sending pixels, the updated cohort state is 
+     * written back to settings.
      * @param {string} metric
-     * @param {number} value
+     * @param {number} [value]
      * @param {number} [timestamp]
      */
     async onMetricTriggered(metric, value = 1, timestamp) {
@@ -159,6 +166,8 @@ export default class AbnExperimentMetrics {
                 }
                 const enrollmentDate = new Date(cohort.enrolledAt).toISOString().slice(0, 10);
                 const daysSinceEnrollment = Math.floor(((timestamp || Date.now()) - cohort.enrolledAt) / (1000 * 60 * 60 * 24));
+                // Find metrics for this experiment that match at this point in time.
+                // i.e. we are within the conversion window, and haven't sent the pixel yet.
                 const matchingPixels = cohort.metrics.filter(
                     (m) =>
                         m.metric === metric &&
