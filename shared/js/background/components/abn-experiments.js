@@ -84,6 +84,32 @@ export class SearchMetric {
     }
 }
 
+export class PixelMetric {
+    /**
+     * Metric that observes outgoing pixel calls and routes a subset of them as experiment metrics.
+     * Currently intercepts `epbf` pixels and triggers a `brokenSiteReport` metric.
+     * @param {{
+     * abnMetrics: AbnExperimentMetrics
+    * }} opts
+     */
+    constructor({ abnMetrics }) {
+        browser.webRequest.onCompleted.addListener(
+            async (details) => {
+                await abnMetrics.remoteConfig.ready;
+                const url = new URL(details.url);
+                if (url.pathname.startsWith('/t/epbf_')) {
+                    // broken site report
+                    abnMetrics.onMetricTriggered('brokenSiteReport');
+                }
+            },
+            {
+                urls: ['https://improving.duckduckgo.com/t/*'],
+                tabId: -1,
+            },
+        );
+    }
+}
+
 export default class AbnExperimentMetrics {
     /**
      *
@@ -123,7 +149,6 @@ export default class AbnExperimentMetrics {
      * @param {number} [timestamp]
      */
     async onMetricTriggered(metric, value = 1, timestamp) {
-        console.log('xxx metric triggered:', metric);
         this.remoteConfig
             .getSubFeatureStatuses()
             .filter((status) => status.hasCohorts && status.cohort && status.cohort.enrolledAt)
