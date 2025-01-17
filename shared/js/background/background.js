@@ -46,7 +46,8 @@ settings.ready().then(() => {
 });
 
 const remoteConfig = new RemoteConfig({ settings });
-const tds = new TDSStorage({ settings, remoteConfig });
+const abnMetrics = BUILD_TARGET !== 'firefox' ? new AbnExperimentMetrics({ remoteConfig }) : null;
+const tds = new TDSStorage({ settings, remoteConfig, abnMetrics });
 const devtools = new Devtools({ tds });
 /**
  * @type {{
@@ -72,12 +73,11 @@ const components = {
     debugger: new DebuggerConnection({ tds, devtools }),
     devtools,
     remoteConfig,
+    abnMetrics,
 };
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
-    const abnMetrics = new AbnExperimentMetrics({ remoteConfig });
-    components.abnMetrics = abnMetrics;
     components.metrics = [new AppUseMetric({ abnMetrics }), new SearchMetric({ abnMetrics }), new PixelMetric({ abnMetrics })];
     components.fireButton = new FireButton({ settings, tabManager });
 }
