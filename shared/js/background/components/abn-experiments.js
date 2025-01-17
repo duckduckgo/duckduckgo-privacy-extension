@@ -17,7 +17,7 @@ import { sendPixelRequest } from '../pixels';
 /**
  * @returns {ExperimentMetric[]}
  */
-export function generateBuildRetentionMetrics() {
+export function generateRetentionMetrics() {
     return ['app_use', 'search'].flatMap((metric) => {
         const metrics = [0, 1, 2, 3, 4, 5, 6, 7].map((conversionWindowStart) => ({
             metric,
@@ -133,7 +133,7 @@ export default class AbnExperimentMetrics {
         const cohort = this.remoteConfig.getCohort(featureName, subFeatureName);
         if (cohort && !cohort.enrolledAt) {
             cohort.enrolledAt = Date.now();
-            cohort.metrics = (metrics || generateBuildRetentionMetrics()).map((m) => ({ ...m, counter: 0, sent: false }));
+            cohort.metrics = (metrics || generateRetentionMetrics()).map((m) => ({ ...m, counter: 0, sent: false }));
             sendPixelRequest(`experiment_enroll_${subFeatureName}_${cohort.name}`, {
                 enrollmentDate: new Date(cohort.enrolledAt).toISOString().slice(0, 10),
             });
