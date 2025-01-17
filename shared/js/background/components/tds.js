@@ -1,9 +1,11 @@
 import ResourceLoader from './resource-loader.js';
 import constants from '../../../data/constants';
+import { generateRetentionMetrics } from './abn-experiments.js';
 
 /**
  * @typedef {import('../settings.js')} Settings
  * @typedef {import('./remote-config.js').default} RemoteConfig
+ * @typedef {import('./abn-experiments.js').default} AbnExperimentMetrics
  */
 
 const TDS_OVERRIDE_SETTINGS_KEY = 'tdsOverride';
@@ -13,12 +15,14 @@ export default class TDSStorage {
     /**
      * @param {{
      *  settings: Settings,
-     *  remoteConfig: RemoteConfig
+     *  remoteConfig: RemoteConfig,
+     *  abnMetrics: AbnExperimentMetrics?
      * }} opts
      */
-    constructor({ settings, remoteConfig }) {
+    constructor({ settings, remoteConfig, abnMetrics }) {
         this.settings = settings;
         this.remoteConfig = remoteConfig;
+        this.abnMetrics = abnMetrics;
         /** @deprecated config is an alias of remoteConfig */
         this.config = this.remoteConfig;
         this.surrogates = new ResourceLoader(
@@ -58,25 +62,33 @@ export default class TDSStorage {
         const enabledBlocklistOverrides = Object.keys(contentBlockingSubFeatures).filter(
             (k) => k.startsWith('TDS') && this.config.isSubFeatureEnabled(CONTENT_BLOCKING, k),
         );
-        if (enabledBlocklistOverrides.length > 0) {
-            const subFeatureName = enabledBlocklistOverrides[0]
-            const overrideSubFeature = contentBlockingSubFeatures[subFeatureName]
+        if (enabledBlocklistOverrides.length > 0 && this.abnMetrics) {
+            const subFeatureName = enabledBlocklistOverrides[0];
+            const overrideSubFeature = contentBlockingSubFeatures[subFeatureName];
             // If this is enabled via an experiment, the override URL is defined as `${cohortName}Url`, otherwise, for a normal rollout use `nextUrl`.
-            const settingsKey = `${this.remoteConfig.getCohortName(CONTENT_BLOCKING, subFeatureName) || 'next'}Url`
-            const overridePath = overrideSubFeature.settings && overrideSubFeature.settings[settingsKey]
+            const settingsKey = `${this.remoteConfig.getCohortName(CONTENT_BLOCKING, subFeatureName) || 'next'}Url`;
+            const overridePath = overrideSubFeature.settings && overrideSubFeature.settings[settingsKey];
             if (!overridePath) {
-                console.warn(`Couldn't find TDS override path in subfeature settings.`)
-                return
+                console.warn(`Couldn't find TDS override path in subfeature settings.`);
+                return;
             }
             if (overridePath !== this.settings.getSetting(TDS_OVERRIDE_SETTINGS_KEY)) {
                 console.log('TDS URL override changed to ', overridePath);
                 this.settings.updateSetting(TDS_OVERRIDE_SETTINGS_KEY, overridePath);
                 this.tds.checkForUpdates(true);
             }
-            this.remoteConfig.markExperimentEnrolled(CONTENT_BLOCKING, subFeatureName)
+            this.abnMetrics.markExperimentEnrolled(CONTENT_BLOCKING, subFeatureName, [
+                ...generateRetentionMetrics(),
+                {
+                    metric: 'brokenSiteReport',
+                    conversionWindowStart: 0,
+                    conversionWindowEnd: 14,
+                    value: 1,
+                },
+            ]);
         } else if (this.settings.getSetting(TDS_OVERRIDE_SETTINGS_KEY)) {
             // User removed from experiment/rollout, reset TDS override and fetch default list
-            this.settings.removeSetting(TDS_OVERRIDE_SETTINGS_KEY)
+            this.settings.removeSetting(TDS_OVERRIDE_SETTINGS_KEY);
             this.tds.checkForUpdates(true);
         }
     }
