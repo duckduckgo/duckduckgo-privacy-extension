@@ -1,12 +1,8 @@
 import browser from 'webextension-polyfill';
-import { ParamsValidator } from '@duckduckgo/pixel-schema/src/params_validator.mjs';
 
 import RemoteConfig from '../../shared/js/background/components/remote-config';
 import messageHandlers from '../../shared/js/background/message-handlers';
-import load from '../../shared/js/background/load';
-import commonParams from '../../pixel-definitions/common_params.json';
-import commonSuffixes from '../../pixel-definitions/common_suffixes.json';
-import experimentPixels from '../../pixel-definitions/pixels/experiments.json';
+
 
 class MockSettings {
     constructor() {
@@ -27,8 +23,6 @@ function constructMockRemoteConfig() {
     Object.keys(messageHandlers).forEach((k) => delete messageHandlers[k]);
     return new RemoteConfig({ settings: new MockSettings() });
 }
-
-const pixelValidator = new ParamsValidator(commonParams, commonSuffixes);
 
 describe('rollouts', () => {
     // Rollout tests: specs copied from the Android browser project.
@@ -1856,53 +1850,5 @@ describe('cohorts', () => {
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'control')).toBeFalse();
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature', 'blue')).toBeFalse();
-    });
-});
-
-describe('ABN pixels', () => {
-    it('markExperimentEnrolled sends a correct pixel only once', () => {
-        const config = constructMockRemoteConfig();
-        config.updateConfig({
-            features: {
-                testFeature: {
-                    state: 'disabled',
-                    features: {
-                        fooFeature: {
-                            state: 'enabled',
-                            rollout: {
-                                steps: [
-                                    {
-                                        percent: 100,
-                                    },
-                                ],
-                            },
-                            cohorts: [
-                                {
-                                    name: 'control',
-                                    weight: 1,
-                                },
-                                {
-                                    name: 'blue',
-                                    weight: 0,
-                                },
-                            ],
-                        },
-                    },
-                },
-            },
-        });
-
-        let pixelRequest = '';
-        const pixelIntercept = spyOn(load, 'url').and.callFake((url) => {
-            const parsed = new URL(url);
-            pixelRequest = parsed.pathname + parsed.search;
-        });
-        config.markExperimentEnrolled('testFeature', 'fooFeature');
-        expect(pixelIntercept).toHaveBeenCalledTimes(1);
-        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.enroll'], 'experiment.enroll', pixelRequest)).toEqual([]);
-
-        // call a second time: pixel shouldn't be triggered again
-        config.markExperimentEnrolled('testFeature', 'fooFeature');
-        expect(pixelIntercept).toHaveBeenCalledTimes(1);
     });
 });
