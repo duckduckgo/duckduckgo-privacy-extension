@@ -32,6 +32,7 @@ import RemoteConfig from './components/remote-config';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
+import AbnExperimentMetrics from './components/abn-experiments';
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events');
@@ -47,6 +48,7 @@ settings.ready().then(() => {
 const remoteConfig = new RemoteConfig({ settings });
 const tds = new TDSStorage({ settings, remoteConfig });
 const devtools = new Devtools({ tds });
+const abnMetrics = new AbnExperimentMetrics({ remoteConfig });
 /**
  * @type {{
  *  autofill: EmailAutofill;
@@ -57,6 +59,7 @@ const devtools = new Devtools({ tds });
  *  tabTracking: TabTracker;
  *  trackers: TrackersGlobal;
  *  remoteConfig: RemoteConfig;
+ *  abnMetrics: AbnExperimentMetrics;
  * }}
  */
 const components = {
@@ -70,6 +73,7 @@ const components = {
     debugger: new DebuggerConnection({ tds, devtools }),
     devtools,
     remoteConfig,
+    abnMetrics,
 };
 
 // Chrome-only components
