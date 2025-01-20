@@ -110,6 +110,26 @@ export class PixelMetric {
     }
 }
 
+/**
+ * A/B/N testing framework: metrics.
+ *
+ * This component handles metrics needed for A/B testing. It handles the rate-limiting required
+ * to define and send metrics as per the documentation in Asana (https://app.asana.com/0/1208889145294658/1208747415972722/f)
+ *
+ * Usage:
+ *  - The main entry point is `markExperimentEnrolled`. This should be used to move an assigned experiment to
+ * 'enrolled' state when the user first sees the treatment behavior. You can call this multiple times, as
+ * subsequent calls will be a no-op if the user is already enrolled.
+ *  - When enrolling, you can pass a list of 'metrics' that should be sent for the experiment. Each metric defines an
+ * event, value count and conversion window. e.g. metric: 'search', value: 4, conversionWindow 1-7: triggered
+ * once 4 searches have been done within 1-7 days (inclusive) of enrollment.
+ *  - `generateRetentionMetrics` can be used to create a default list of retention metrics (search and app_use).
+ *
+ * Example:
+ *  - Check if user has been assigned a cohort for the subfeature: `remoteConfig.getCohortName(feature, subFeature) !== null`
+ *  - Check if user is in the 'treatment' group: `remoteConfig.isSubFeatureEnabled(feature, subFeature, 'treatment')`
+ *  - Enroll the user in the experiment (with default retention metrics.): `abnMetrics.markExperimentEnrolled(feature, subFeature)`
+ */
 export default class AbnExperimentMetrics {
     /**
      *
