@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1736875021428,
+    "version": 1737129345760,
     "features": {
         "adAttributionReporting": {
             "state": "disabled",
@@ -636,6 +636,18 @@
                     "domain": "collectcheckout.com"
                 },
                 {
+                    "domain": "sbid.org"
+                },
+                {
+                    "domain": "wunderground.com"
+                },
+                {
+                    "domain": "lecreuset.co.uk"
+                },
+                {
+                    "domain": "sueddeutsche.de"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
@@ -795,11 +807,15 @@
                     "google.rs",
                     "google.ru",
                     "google.se",
-                    "google.sk"
+                    "google.sk",
+                    "sachsen-netze.de",
+                    "alpharunning.co.uk",
+                    "lecreuset.co.uk",
+                    "sueddeutsche.de"
                 ]
             },
             "state": "disabled",
-            "hash": "e36439bb775eb24ab194a1eec70658db"
+            "hash": "ca38df98e04c37762a170f8a93b2f624"
         },
         "autofillBreakageReporter": {
             "state": "disabled",
@@ -4606,6 +4622,14 @@
                         "domain": "realtor.com",
                         "rules": [
                             {
+                                "selector": ".ad-wrapper",
+                                "type": "override"
+                            },
+                            {
+                                "selector": ".lb1-ad",
+                                "type": "hide-empty"
+                            },
+                            {
                                 "selector": ".ads_container",
                                 "type": "hide"
                             }
@@ -5459,7 +5483,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "3a63048a370832670afc357fca73d5a4"
+            "hash": "0a90fdd162336a1d9fbe4077f9aa4802"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -6602,6 +6626,11 @@
             "state": "enabled",
             "hash": "d83f0ee652454a3a8685f8e5094e40a6"
         },
+        "settingsPage": {
+            "exceptions": [],
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
+        },
         "showOnAppLaunch": {
             "exceptions": [
                 {
@@ -6704,6 +6733,11 @@
             },
             "exceptions": [],
             "hash": "135891a02918c8fbf85532b465ca0a76"
+        },
+        "tabManager": {
+            "exceptions": [],
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
         },
         "textZoom": {
             "exceptions": [],
@@ -10302,42 +10336,6 @@
             "state": "enabled",
             "minSupportedVersion": "2023.5.23",
             "hash": "e428b53f6390d172682450f29a07f4d1"
-        },
-        "userAgentRotation": {
-            "settings": {
-                "agentExcludePatterns": []
-            },
-            "exceptions": [
-                {
-                    "domain": "marvel.com"
-                },
-                {
-                    "domain": "sundancecatalog.com"
-                },
-                {
-                    "domain": "noaprints.com"
-                },
-                {
-                    "domain": "flexmls.com"
-                },
-                {
-                    "domain": "localhost"
-                },
-                {
-                    "domain": "127.0.0.1"
-                },
-                {
-                    "domain": "::1"
-                },
-                {
-                    "domain": "livenation.com"
-                },
-                {
-                    "domain": "ticketmaster.com"
-                }
-            ],
-            "state": "disabled",
-            "hash": "67c25bc5514a7bebf52167490b449fbd"
         },
         "voiceSearch": {
             "exceptions": [],
