@@ -1,7 +1,6 @@
 import browser from 'webextension-polyfill';
 
 import messageHandlers from '../message-handlers';
-import { popupConnectionOpened } from '../popupMessaging';
 import { getExtensionId } from '../wrapper';
 import { getBrowserName } from '../utils';
 
@@ -9,6 +8,42 @@ import { getBrowserName } from '../utils';
  * @typedef {import('webextension-polyfill').Runtime.Port} Port
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').IncomingExtensionMessage} OutgoingPopupMessage
  */
+
+class MessageReceivedEvent extends CustomEvent {
+    constructor(msg) {
+        super('messageReceived', { detail: msg })
+    }
+
+    get messageType() {
+        return this.detail.messageType
+    }
+}
+
+export class DashboardUseMetric {
+
+    messageToMetricMap = {
+        getPrivacyDashboardData: 'privacyDashboardOpen',
+        setLists: 'protectionToggle',
+        getBreakageFormOptions: 'breakageFormOpen',
+        doBurn: 'fireButton'
+    }
+
+    /**
+     * @param {{
+     *  abnMetrics: import('./abn-experiments').default;
+     *  messaging: MessageRouter
+     * }} opts
+     */
+    constructor({ abnMetrics, messaging }) {
+        messaging.addEventListener('messageReceived', (ev) => {
+            if (ev instanceof MessageReceivedEvent) {
+                if (this.messageToMetricMap[ev.messageType]) {
+                    abnMetrics.onMetricTriggered(this.messageToMetricMap[ev.messageType])
+                }
+            }
+        })
+    }
+}
 
 /** @type {Port?} */
 let activePort = null;
@@ -50,7 +85,7 @@ export default class MessageRouter extends EventTarget {
             }
 
             if (req.messageType && req.messageType in messageHandlers) {
-                this.dispatchEvent(new CustomEvent('messageReceived', req))
+                this.dispatchEvent(new MessageReceivedEvent(req))
                 return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req));
             }
 
@@ -92,13 +127,12 @@ export default class MessageRouter extends EventTarget {
 
         port.onMessage.addListener(async (message) => {
             const messageType = message?.messageType;
-            console.log('popup message', messageType, message)
 
             if (!messageType || !(messageType in messageHandlers)) {
                 console.error('Unrecognized message (privacy-dashboard -> background):', message);
                 return;
             }
-            this.dispatchEvent(new CustomEvent('messageReceived', message))
+            this.dispatchEvent(new MessageReceivedEvent(message))
 
             const response = await messageHandlers[messageType](message?.options, port, message);
             if (typeof message?.id === 'number') {

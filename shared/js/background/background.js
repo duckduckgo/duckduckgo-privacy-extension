@@ -33,7 +33,7 @@ import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
 import AbnExperimentMetrics, { AppUseMetric, PixelMetric, SearchMetric } from './components/abn-experiments';
-import MessageRouter from './components/message-router';
+import MessageRouter, { DashboardUseMetric } from './components/message-router';
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events');
@@ -76,12 +76,17 @@ const components = {
     devtools,
     remoteConfig,
     abnMetrics,
-    messaging: new MessageRouter({ tabManager })
+    messaging: new MessageRouter({ tabManager }),
 };
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
-    components.metrics = [new AppUseMetric({ abnMetrics }), new SearchMetric({ abnMetrics }), new PixelMetric({ abnMetrics })];
+    components.metrics = [
+        new AppUseMetric({ abnMetrics }),
+        new SearchMetric({ abnMetrics }),
+        new PixelMetric({ abnMetrics }),
+        new DashboardUseMetric({ abnMetrics, messaging: components.messaging }),
+    ];
     components.fireButton = new FireButton({ settings, tabManager });
 }
 // MV3-only components
@@ -97,7 +102,3 @@ self.components = components;
 // If these flags are set to false, the whole function is tree-shaked from the build.
 DEBUG && initDebugBuild();
 RELOADER && initReloader();
-
-components.messaging.addEventListener('messageReceived', (ev) => {
-    console.log('xxx msg', ev.detail)
-})
