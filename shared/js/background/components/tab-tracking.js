@@ -9,7 +9,7 @@ import { isRedirect } from '../utils';
  * @typedef {import('../tab-manager.js')} TabManager
  */
 
-export default class TabTracker {
+export default class TabTracker extends EventTarget {
     /**
      * @param {{
      *  tabManager: TabManager;
@@ -17,6 +17,7 @@ export default class TabTracker {
      * }} options
      */
     constructor({ tabManager, devtools }) {
+        super()
         this.tabManager = tabManager;
         this.createdTargets = new Map();
 
@@ -68,6 +69,9 @@ export default class TabTracker {
 
             const currentTab = tabManager.get({ tabId: details.tabId });
             const newTab = tabManager.create({ tabId: details.tabId, url: details.url });
+            if (currentTab && currentTab.site.url === details.url) {
+                this.dispatchEvent(new CustomEvent('tabRefresh', { detail: details }))
+            }
 
             if (BUILD_TARGET === 'chrome') {
                 // Ensure that the correct declarativeNetRequest allowing rules are

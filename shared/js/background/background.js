@@ -34,6 +34,7 @@ import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
 import AbnExperimentMetrics, { AppUseMetric, PixelMetric, SearchMetric } from './components/abn-experiments';
 import MessageRouter, { DashboardUseMetric } from './components/message-router';
+import { RefreshMetric } from './metrics'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events');
@@ -86,6 +87,9 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
         new SearchMetric({ abnMetrics }),
         new PixelMetric({ abnMetrics }),
         new DashboardUseMetric({ abnMetrics, messaging: components.messaging }),
+        new RefreshMetric({
+            abnMetrics, tabTracking: components.tabTracking
+        })
     ];
     components.fireButton = new FireButton({ settings, tabManager });
 }
