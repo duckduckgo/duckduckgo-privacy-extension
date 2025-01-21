@@ -204,7 +204,6 @@ export default class RemoteConfig extends ResourceLoader {
                     subfeature.state = rolloutPercent >= dieRoll ? 'enabled' : 'disabled';
                 }
 
-                /** @type {ChosenCohort | null} */
                 let assignedCohort = this.getCohort(featureName, name);
                 if (subfeature.cohorts && subfeature.state === 'enabled') {
                     /* Handle an ABN experiment: Experiment assignment is stored in settings */
