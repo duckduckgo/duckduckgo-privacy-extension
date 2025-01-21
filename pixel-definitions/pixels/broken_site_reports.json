@@ -133,13 +133,14 @@
                 "description": "If the protections toggle is on or not for the site.",
                 "enum": [
                     "false",
-                    "true"
+                    "true",
+                    ""
                 ]
             },
             {
                 "key": "remoteConfigEtag",
                 "description": "",
-                "pattern": "W%2F%[0-9a-f]{32}%22"
+                "pattern": "^$|null|W/\"[0-9a-f]{32}"
             },
             {
                 "key": "remoteConfigVersion",
@@ -331,13 +332,14 @@
                 "description": "If the protections toggle is on or not for the site.",
                 "enum": [
                     "false",
-                    "true"
+                    "true",
+                    ""
                 ]
             },
             {
                 "key": "remoteConfigEtag",
                 "description": "",
-                "pattern": "W%2F%[0-9a-f]{32}%22"
+                "pattern": "^$|null|W/\"[0-9a-f]{32}"
             },
             {
                 "key": "remoteConfigVersion",
@@ -392,6 +394,13 @@
                 "key": "userRefreshCount",
                 "type": "number",
                 "description": ""
+            },
+            {
+                "key": "reportFlow",
+                "description": "",
+                "enum": [
+                    "on_protections_off_dashboard_main"
+                ]
             }
         ]
     }

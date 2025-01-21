@@ -1,5 +1,5 @@
 {
-    "email.tooltop.show": {
+    "email.tooltip.show": {
         "description": "",
         "owners": [
             "emanuele"
@@ -19,7 +19,21 @@
             {
                 "key": "duck_address_last_used",
                 "description": "",
-                "format": "date"
+                "anyOf": [
+                    {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    {
+                      "type": "string",
+                      "maxLength": 0
+                    },
+                    {
+                        "type": "string",
+                        "description": "alternate date format",
+                        "pattern": "^[0-9]{1,2}\/[0-9]{1,2}\/([0-9]{2}|[0-9]{4})$"
+                    }
+                  ]
             }
         ]
     }
