@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import { registerMessageHandler } from '../message-handlers';
-import { postPopupMessage } from '../popupMessaging';
+import { postPopupMessage } from './message-router';
 import settings from '../settings';
 import { getFeatureSettings, reloadCurrentTab, resolveAfterDelay } from '../utils';
 import { getDisclosureDetails, sendBreakageReportForCurrentTab } from '../broken-site-report';

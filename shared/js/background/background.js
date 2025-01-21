@@ -33,6 +33,7 @@ import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
 import AbnExperimentMetrics, { AppUseMetric, PixelMetric, SearchMetric } from './components/abn-experiments';
+import MessageRouter from './components/message-router';
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events');
@@ -60,6 +61,7 @@ const devtools = new Devtools({ tds });
  *  trackers: TrackersGlobal;
  *  remoteConfig: RemoteConfig;
  *  abnMetrics: AbnExperimentMetrics?;
+ *  messaging: MessageRouter;
  * }}
  */
 const components = {
@@ -74,6 +76,7 @@ const components = {
     devtools,
     remoteConfig,
     abnMetrics,
+    messaging: new MessageRouter({ tabManager })
 };
 
 // Chrome-only components
@@ -94,3 +97,7 @@ self.components = components;
 // If these flags are set to false, the whole function is tree-shaked from the build.
 DEBUG && initDebugBuild();
 RELOADER && initReloader();
+
+components.messaging.addEventListener('messageReceived', (ev) => {
+    console.log('xxx msg', ev.detail)
+})

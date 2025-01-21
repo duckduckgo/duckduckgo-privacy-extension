@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 import EventEmitter2 from 'eventemitter2';
 import ATB from './atb';
-import { postPopupMessage } from './popupMessaging';
+import { postPopupMessage } from './components/message-router';
 
 const utils = require('./utils');
 const trackers = require('./trackers');

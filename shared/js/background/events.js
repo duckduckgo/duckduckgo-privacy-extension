@@ -5,13 +5,12 @@
  * if we do too much before adding it
  */
 import browser from 'webextension-polyfill';
-import messageHandlers from './message-handlers';
 import { updateActionIcon } from './events/privacy-icon-indicator';
 import httpsStorage from './storage/https';
 import ATB from './atb';
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report';
 import { sendPageloadsWithAdAttributionPixelAndResetCount } from './classes/ad-click-attribution-policy';
-import { popupConnectionOpened, postPopupMessage } from './popupMessaging';
+import { postPopupMessage } from './components/message-router';
 const utils = require('./utils');
 const experiment = require('./experiments');
 const settings = require('./settings');
@@ -293,65 +292,6 @@ if (browser.runtime.onPerformanceWarning) {
         }
     });
 }
-
-/**
- * MESSAGES
- */
-// Handle any messages that come from content/UI scripts
-browser.runtime.onMessage.addListener((req, sender) => {
-    if (sender.id !== browserWrapper.getExtensionId()) return;
-
-    // TODO clean up message passing
-    const legacyMessageTypes = [
-        'addUserData',
-        'getUserData',
-        'removeUserData',
-        'getEmailProtectionCapabilities',
-        'getAddresses',
-        'refreshAlias',
-        'debuggerMessage',
-    ];
-    for (const legacyMessageType of legacyMessageTypes) {
-        if (legacyMessageType in req) {
-            req.messageType = legacyMessageType;
-            req.options = req[legacyMessageType];
-        }
-    }
-
-    if (req.registeredTempAutofillContentScript) {
-        req.messageType = 'registeredContentScript';
-    }
-
-    if (req.messageType && req.messageType in messageHandlers) {
-        return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req));
-    }
-
-    // Count refreshes per page
-    if (req.pageReloaded && sender.tab !== undefined) {
-        const tab = tabManager.get({ tabId: sender.tab.id });
-        if (tab) {
-            tab.userRefreshCount += 1;
-        }
-        return;
-    }
-
-    // TODO clean up legacy onboarding messaging
-    if (browserName === 'chrome') {
-        if (req === 'healthCheckRequest' || req === 'rescheduleCounterMessagingRequest') {
-            return;
-        }
-    }
-
-    console.error('Unrecognized message to background:', req, sender);
-    return false;
-});
-
-// Handle popup UI (aka privacy dashboard) messaging.
-browser.runtime.onConnect.addListener((port) => {
-    if (port.name === 'privacy-dashboard') {
-        popupConnectionOpened(port, messageHandlers);
-    }
-});
 
 /*
  * Referrer Trimming

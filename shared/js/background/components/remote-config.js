@@ -42,7 +42,7 @@ async function getConfigUrl() {
     if (override) {
         return override;
     }
-    return constants.tdsLists[2].url;
+    return 'https://ppd.ngrok.io/sam/config';
 }
 
 export default class RemoteConfig extends ResourceLoader {
