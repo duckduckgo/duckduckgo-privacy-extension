@@ -37,5 +37,6 @@
       "shared/js/background/onboarding.js",
       "shared/js/devtools/list-editor.js",
       "shared/js/devtools/panel.js",
+      "shared/js/devtools/rollouts.js"
   ]
 }

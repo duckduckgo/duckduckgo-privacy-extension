@@ -1,0 +1,30 @@
+{
+    "experiment.enroll": {
+        "description": "Triggered when an user is enrolled in an A/B/N experiment.",
+        "owners": [
+            "smacbeth"
+        ],
+        "triggers": [
+            "startup"
+        ],
+        "suffixes": [
+            {
+                "description": "Experiment user is being enrolled in: equal to the sub feature name",
+                "type": "string"
+            },
+            {
+                "description": "Cohort the user has chosen",
+                "type": "string"
+            },
+            "extension",
+            "browser"
+        ],
+        "parameters": [
+            {
+                "key": "enrollmentDate",
+                "description": "Date the enrollment happened.",
+                "format": "date"
+            }
+        ]
+    }
+}

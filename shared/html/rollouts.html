@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <style type="text/css">
+        table {
+            border-collapse: collapse;
+            border: 1px solid black;
+        }
+
+        th,
+        td {
+            padding: 5px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            border-right: 1px solid black;
+            border-bottom: 1px solid black;
+        }
+
+        .enabled {
+            background-color: #3fa248;
+            color: #fff;
+        }
+
+        .disabled {
+            background-color: #ce2929;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Experiment and rollout debugger</h2>
+    <table>
+        <tr>
+            <th>Feature / SubFeature</th>
+            <th>State</th>
+            <th>Has Targets?</th>
+            <th>Rollout %</th>
+            <th>Rollout roll</th>
+            <th>Cohort</th>
+            <th>Cohort assigned</th>
+            <th>Experiment enrolled</th>
+            <th>Actions</th>
+        </tr>
+    </table>
+    <template id="rollout-row">
+        <tr class="subfeature">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </template>
+    <script src="/public/js/rollouts.js"></script>
+</body>
+
+</html>

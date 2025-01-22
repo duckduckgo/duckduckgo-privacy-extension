@@ -108,7 +108,6 @@ export default class ResourceLoader extends EventTarget {
                 await this._updateData(result);
                 break;
             } catch (e) {
-                console.warn('Load failed...', e);
                 continue;
             }
         }

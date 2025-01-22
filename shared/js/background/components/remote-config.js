@@ -6,13 +6,31 @@
  *  localeCountry: string;
  *  localeLanguage: string;
  * }} TargetEnvironment
+ * @typedef {import('@duckduckgo/privacy-configuration/schema/feature').Cohort & {
+ *  assignedAt: number;
+ *  enrolledAt?: number;
+ * }} ChosenCohort
+ * @typedef {{
+ *  feature: string;
+ *  subFeature: string;
+ *  state: import('@duckduckgo/privacy-configuration/schema/feature').FeatureState;
+ *  hasTargets: boolean;
+ *  hasRollout: boolean;
+ *  rolloutRoll: number?;
+ *  rolloutPercent: number?;
+ *  hasCohorts: boolean;
+ *  cohort: ChosenCohort?;
+ *  availableCohorts: import('@duckduckgo/privacy-configuration/schema/feature').Cohort[] | undefined
+ * }} SubFeatureStatus
  */
 
 import { getUserLocaleCountry, getUserLocale } from '../i18n';
 import { getFeatureSettings, isFeatureEnabled, satisfiesMinVersion } from '../utils';
-import { getExtensionVersion, getFromSessionStorage } from '../wrapper';
+import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from '../wrapper';
 import ResourceLoader from './resource-loader';
 import constants from '../../../data/constants';
+import { sendPixelRequest } from '../pixels';
+import { registerMessageHandler } from '../message-handlers';
 
 /**
  * @returns {Promise<string>}
@@ -52,6 +70,15 @@ export default class RemoteConfig extends ResourceLoader {
             localeCountry: getUserLocaleCountry(),
             localeLanguage: getUserLocale(),
         };
+
+        registerMessageHandler('getSubfeatureStatuses', this.getSubFeatureStatuses.bind(this));
+        registerMessageHandler('forceReprocessConfig', async () => {
+            await setToSessionStorage('dev', true);
+            await this._updateData({
+                contents: this.data,
+                etag: this.etag,
+            });
+        });
     }
 
     /**
@@ -82,11 +109,70 @@ export default class RemoteConfig extends ResourceLoader {
         return getFeatureSettings(featureName, this.config || undefined);
     }
 
-    isSubFeatureEnabled(featureName, subFeatureName) {
+    /**
+     * @param {string} featureName
+     * @param {string} subFeatureName
+     * @param {string} [cohortName]
+     * @returns {boolean}
+     */
+    isSubFeatureEnabled(featureName, subFeatureName, cohortName) {
         if (this.config) {
-            return isSubFeatureEnabled(featureName, subFeatureName, this.config);
+            const enabled = isSubFeatureEnabled(featureName, subFeatureName, this.config);
+            if (cohortName && enabled) {
+                return this.getCohortName(featureName, subFeatureName) === cohortName;
+            }
+            return enabled;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * Get the user's assigned cohort for this feature and subfeature
+     * @param {string} featureName
+     * @param {string} subFeatureName
+     * @returns {ChosenCohort | null} Cohort name, or null if no cohort has been assigned.
+     */
+    getCohort(featureName, subFeatureName) {
+        return this.settings.getSetting(getAssignedCohortSettingsKey(featureName, subFeatureName)) || null;
+    }
+
+    /**
+     *
+     * @param {string} featureName
+     * @param {string} subFeatureName
+     * @returns {string | null}
+     */
+    getCohortName(featureName, subFeatureName) {
+        return this.getCohort(featureName, subFeatureName)?.name || null;
+    }
+
+    /**
+     *
+     * @param {string} featureName
+     * @param {string} subFeatureName
+     * @param {ChosenCohort | null} cohort
+     */
+    setCohort(featureName, subFeatureName, cohort) {
+        this.settings.updateSetting(getAssignedCohortSettingsKey(featureName, subFeatureName), cohort);
+    }
+
+    /**
+     * Mark that the user should be enrolled in the experiment for the given feature and sub feature.
+     *
+     * This will send the enrollment
+     * @param {string} featureName
+     * @param {string} subFeatureName
+     */
+    markExperimentEnrolled(featureName, subFeatureName) {
+        const cohort = this.getCohort(featureName, subFeatureName);
+        if (cohort && !cohort.enrolledAt) {
+            cohort.enrolledAt = Date.now();
+            sendPixelRequest(`experiment_enroll_${subFeatureName}_${cohort.name}`, {
+                enrollmentDate: new Date(cohort.enrolledAt).toISOString().slice(0, 10),
+            });
+            // updated stored cohort metadata
+            this.setCohort(featureName, subFeatureName, cohort);
         }
     }
 
@@ -109,18 +195,66 @@ export default class RemoteConfig extends ResourceLoader {
                     /* Handle a rollout: Dice roll is stored in settings and used that to decide
                      * whether the feature is set as 'enabled' or not.
                      */
-                    const rolloutSettingsKey = `rollouts.${featureName}.${name}.roll`;
-                    const validSteps = subfeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100);
-                    const rolloutPercent = validSteps.length > 0 ? validSteps.reverse()[0].percent : 0.0;
+                    const rolloutSettingsKey = getRolloutSettingsKey(featureName, name);
+                    const rolloutPercent = getSubFeatureRolloutPercent(subfeature);
                     if (!this.settings.getSetting(rolloutSettingsKey)) {
                         this.settings.updateSetting(rolloutSettingsKey, Math.random() * 100);
                     }
                     const dieRoll = this.settings.getSetting(rolloutSettingsKey);
                     subfeature.state = rolloutPercent >= dieRoll ? 'enabled' : 'disabled';
                 }
+
+                let assignedCohort = this.getCohort(featureName, name);
+                if (subfeature.cohorts && subfeature.state === 'enabled') {
+                    /* Handle an ABN experiment: Experiment assignment is stored in settings */
+                    const cohorts = subfeature.cohorts.filter((c) => c.weight > 0);
+                    // check that assigned cohort still exists. If not, clear it.
+                    if (assignedCohort && !subfeature.cohorts.find((c) => c.name === assignedCohort?.name)) {
+                        this.setCohort(featureName, name, null);
+                        assignedCohort = null;
+                    }
+                    if (!assignedCohort && cohorts.length > 0) {
+                        const chosen = choseCohort(cohorts, Math.random);
+                        if (chosen) {
+                            this.setCohort(featureName, name, { ...chosen, assignedAt: Date.now() });
+                        }
+                    }
+                } else if (!subfeature.cohorts && assignedCohort) {
+                    // cohorts were removed, remove assignment
+                    this.setCohort(featureName, name, null);
+                }
             });
         });
         return configValue;
+    }
+
+    /**
+     *
+     * @returns {SubFeatureStatus[]}
+     */
+    getSubFeatureStatuses() {
+        /** @type {SubFeatureStatus[]} */
+        const rolloutStatus = [];
+        if (!this.config) {
+            return rolloutStatus;
+        }
+        Object.entries(this.config.features).forEach(([featureName, feature]) => {
+            Object.entries(feature.features || {}).forEach(([name, subfeature]) => {
+                rolloutStatus.push({
+                    feature: featureName,
+                    subFeature: name,
+                    state: subfeature.state,
+                    hasTargets: !!subfeature.targets,
+                    hasRollout: !!subfeature.rollout,
+                    rolloutRoll: this.settings.getSetting(getRolloutSettingsKey(featureName, name)),
+                    rolloutPercent: getSubFeatureRolloutPercent(subfeature),
+                    hasCohorts: !!subfeature.cohorts,
+                    cohort: this.getCohort(featureName, name),
+                    availableCohorts: subfeature.cohorts?.filter((c) => c.weight > 0),
+                });
+            });
+        });
+        return rolloutStatus;
     }
 }
 
@@ -144,4 +278,53 @@ export function isSubFeatureEnabled(featureName, subFeatureName, config) {
         }
     }
     return subFeature.state === 'enabled';
+}
+
+/**
+ * s
+ * @param {import('@duckduckgo/privacy-configuration/schema/feature').SubFeature<string>} subFeature
+ * @returns {number}
+ */
+function getSubFeatureRolloutPercent(subFeature) {
+    if (!subFeature.rollout) {
+        return 100;
+    }
+    const validSteps = subFeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100);
+    return validSteps.length > 0 ? validSteps.reverse()[0].percent : 0.0;
+}
+
+/**
+ * Get the settings key corresponding to the rollout dice roll for a specific subfeature.
+ * @param {string} featureName
+ * @param {string} subFeatureName
+ * @returns {string}
+ */
+export function getRolloutSettingsKey(featureName, subFeatureName) {
+    return `rollouts.${featureName}.${subFeatureName}.roll`;
+}
+
+/**
+ * Get the settings key corresponding to the chosen experiment cohort for a specific subfeature.
+ * @param {string} featureName
+ * @param {string} subFeatureName
+ * @returns {string}
+ */
+export function getAssignedCohortSettingsKey(featureName, subFeatureName) {
+    return `abn.${featureName}.${subFeatureName}.cohort`;
+}
+
+/**
+ *
+ * @param {import('@duckduckgo/privacy-configuration/schema/feature').Cohort[]} cohorts
+ * @param {() => number} rng
+ * @returns {import('@duckduckgo/privacy-configuration/schema/feature').Cohort | undefined}
+ */
+export function choseCohort(cohorts, rng) {
+    const cohortWeightSum = cohorts.reduce((sum, c) => sum + c.weight, 0);
+    const diceRoll = rng() * cohortWeightSum;
+    let rollingTotal = 0;
+    return cohorts.find((c) => {
+        rollingTotal = rollingTotal + c.weight;
+        return diceRoll <= rollingTotal;
+    });
 }
