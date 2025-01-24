@@ -42,39 +42,15 @@ export class SearchMetric {
     }
 }
 
-export class PixelMetric {
-    /**
-     * Metric that observes outgoing pixel calls and routes a subset of them as experiment metrics.
-     * Currently intercepts `epbf` pixels and triggers a `brokenSiteReport` metric.
-     * @param {{
-     * abnMetrics: AbnExperimentMetrics
-     * }} opts
-     */
-    constructor({ abnMetrics }) {
-        browser.webRequest.onCompleted.addListener(
-            async (details) => {
-                await abnMetrics.remoteConfig.ready;
-                const url = new URL(details.url);
-                if (url.pathname.startsWith('/t/epbf_')) {
-                    // broken site report
-                    abnMetrics.onMetricTriggered('brokenSiteReport');
-                }
-            },
-            {
-                urls: ['https://improving.duckduckgo.com/t/*'],
-                tabId: -1,
-            },
-        );
-    }
-}
-
 export class DashboardUseMetric {
 
     messageToMetricMap = {
         getPrivacyDashboardData: 'privacyDashboardOpen',
         setLists: 'protectionToggle',
         getBreakageFormOptions: 'breakageFormOpen',
-        doBurn: 'fireButton'
+        doBurn: 'fireButton',
+        submitBrokenSiteReport: 'brokenSiteReport',
+        sendToggleReport: 'toggleSiteReport'
     }
 
     /**
