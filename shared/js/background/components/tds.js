@@ -1,6 +1,7 @@
 import ResourceLoader from './resource-loader.js';
 import constants from '../../../data/constants';
 import { generateRetentionMetrics } from './abn-experiments.js';
+import { generateBreakageMetrics } from '../metrics.js';
 
 /**
  * @typedef {import('../settings.js')} Settings
@@ -79,12 +80,7 @@ export default class TDSStorage {
             }
             this.abnMetrics.markExperimentEnrolled(CONTENT_BLOCKING, subFeatureName, [
                 ...generateRetentionMetrics(),
-                {
-                    metric: 'brokenSiteReport',
-                    conversionWindowStart: 0,
-                    conversionWindowEnd: 14,
-                    value: 1,
-                },
+                ...generateBreakageMetrics(),
             ]);
         } else if (this.settings.getSetting(TDS_OVERRIDE_SETTINGS_KEY)) {
             // User removed from experiment/rollout, reset TDS override and fetch default list
