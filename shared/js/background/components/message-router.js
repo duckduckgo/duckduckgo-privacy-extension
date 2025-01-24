@@ -9,39 +9,13 @@ import { getBrowserName } from '../utils';
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').IncomingExtensionMessage} OutgoingPopupMessage
  */
 
-class MessageReceivedEvent extends CustomEvent {
+export class MessageReceivedEvent extends CustomEvent {
     constructor(msg) {
         super('messageReceived', { detail: msg })
     }
 
     get messageType() {
         return this.detail.messageType
-    }
-}
-
-export class DashboardUseMetric {
-
-    messageToMetricMap = {
-        getPrivacyDashboardData: 'privacyDashboardOpen',
-        setLists: 'protectionToggle',
-        getBreakageFormOptions: 'breakageFormOpen',
-        doBurn: 'fireButton'
-    }
-
-    /**
-     * @param {{
-     *  abnMetrics: import('./abn-experiments').default;
-     *  messaging: MessageRouter
-     * }} opts
-     */
-    constructor({ abnMetrics, messaging }) {
-        messaging.addEventListener('messageReceived', (ev) => {
-            if (ev instanceof MessageReceivedEvent) {
-                if (this.messageToMetricMap[ev.messageType]) {
-                    abnMetrics.onMetricTriggered(this.messageToMetricMap[ev.messageType])
-                }
-            }
-        })
     }
 }
 

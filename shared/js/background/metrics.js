@@ -1,3 +1,99 @@
+import browser from 'webextension-polyfill';
+import { MessageReceivedEvent } from './components/message-router';
+
+/**
+ * @typedef {import('./components/abn-experiments').default} AbnExperimentMetrics
+ * @typedef {import('./components/message-router').default} MessageRouter
+ */
+export class AppUseMetric {
+    /**
+     * Metric that fires once on creation.
+     * @param {{
+     * abnMetrics: AbnExperimentMetrics
+     * }} opts
+     */
+    constructor({ abnMetrics }) {
+        // trigger on construction: happens whenever the service worker is spun up, which should correlate with browser activity.
+        abnMetrics.remoteConfig.ready.then(() => abnMetrics.onMetricTriggered('app_use'));
+    }
+}
+
+export class SearchMetric {
+    /**
+     * Metric that fires whenever a new search is made
+     * @param {{
+     * abnMetrics: AbnExperimentMetrics
+     * }} opts
+     */
+    constructor({ abnMetrics }) {
+        browser.webRequest.onCompleted.addListener(
+            async (details) => {
+                const params = new URL(details.url).searchParams;
+                if (params.has('q') && (params.get('q')?.length || 0) > 0) {
+                    await abnMetrics.remoteConfig.ready;
+                    abnMetrics.onMetricTriggered('search');
+                }
+            },
+            {
+                urls: ['https://*.duckduckgo.com/*'],
+                types: ['main_frame'],
+            },
+        );
+    }
+}
+
+export class PixelMetric {
+    /**
+     * Metric that observes outgoing pixel calls and routes a subset of them as experiment metrics.
+     * Currently intercepts `epbf` pixels and triggers a `brokenSiteReport` metric.
+     * @param {{
+     * abnMetrics: AbnExperimentMetrics
+     * }} opts
+     */
+    constructor({ abnMetrics }) {
+        browser.webRequest.onCompleted.addListener(
+            async (details) => {
+                await abnMetrics.remoteConfig.ready;
+                const url = new URL(details.url);
+                if (url.pathname.startsWith('/t/epbf_')) {
+                    // broken site report
+                    abnMetrics.onMetricTriggered('brokenSiteReport');
+                }
+            },
+            {
+                urls: ['https://improving.duckduckgo.com/t/*'],
+                tabId: -1,
+            },
+        );
+    }
+}
+
+export class DashboardUseMetric {
+
+    messageToMetricMap = {
+        getPrivacyDashboardData: 'privacyDashboardOpen',
+        setLists: 'protectionToggle',
+        getBreakageFormOptions: 'breakageFormOpen',
+        doBurn: 'fireButton'
+    }
+
+    /**
+     * @param {{
+     *  abnMetrics: AbnExperimentMetrics;
+     *  messaging: MessageRouter
+     * }} opts
+     */
+    constructor({ abnMetrics, messaging }) {
+        messaging.addEventListener('messageReceived', (ev) => {
+            if (ev instanceof MessageReceivedEvent) {
+                if (this.messageToMetricMap[ev.messageType]) {
+                    abnMetrics.onMetricTriggered(this.messageToMetricMap[ev.messageType])
+                }
+            }
+        })
+    }
+}
+
 
 export class RefreshMetric {
 
@@ -8,7 +104,7 @@ export class RefreshMetric {
     /**
      *
      * @param {{
-     *   abnMetrics: import('./components/abn-experiments').default,
+     *   abnMetrics: AbnExperimentMetrics,
      *   tabTracking: import('./components/tab-tracking').default,
      * }} opts
      */

@@ -32,9 +32,9 @@ import RemoteConfig from './components/remote-config';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
-import AbnExperimentMetrics, { AppUseMetric, PixelMetric, SearchMetric } from './components/abn-experiments';
-import MessageRouter, { DashboardUseMetric } from './components/message-router';
-import { RefreshMetric } from './metrics'
+import AbnExperimentMetrics from './components/abn-experiments';
+import MessageRouter from './components/message-router';
+import { AppUseMetric, PixelMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics'
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events');

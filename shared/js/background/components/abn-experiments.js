@@ -11,7 +11,6 @@
  *  sent: boolean;
  * } & ExperimentMetric} ExperimentMetricCounter
  */
-import browser from 'webextension-polyfill';
 import { sendPixelRequest } from '../pixels';
 
 /**
