@@ -43,7 +43,7 @@ export default class TDSStorage {
             { settings },
         );
         this.remoteConfig.onUpdate(() => {
-            setTimeout(this.checkShouldOverrideTDS.bind(this), 1)
+            setTimeout(this.checkShouldOverrideTDS.bind(this), 1);
         });
     }
 

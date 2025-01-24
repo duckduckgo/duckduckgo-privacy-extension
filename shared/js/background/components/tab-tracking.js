@@ -17,7 +17,7 @@ export default class TabTracker extends EventTarget {
      * }} options
      */
     constructor({ tabManager, devtools }) {
-        super()
+        super();
         this.tabManager = tabManager;
         this.createdTargets = new Map();
 
@@ -70,7 +70,7 @@ export default class TabTracker extends EventTarget {
             const currentTab = tabManager.get({ tabId: details.tabId });
             const newTab = tabManager.create({ tabId: details.tabId, url: details.url });
             if (currentTab && currentTab.site.url === details.url) {
-                this.dispatchEvent(new CustomEvent('tabRefresh', { detail: details }))
+                this.dispatchEvent(new CustomEvent('tabRefresh', { detail: details }));
             }
 
             if (BUILD_TARGET === 'chrome') {

@@ -31,9 +31,9 @@ async function render() {
         cells[2].innerText = f.hasTargets ? 'Yes' : 'No';
         cells[3].innerText = f.rolloutPercent ? f.rolloutPercent : '-';
         cells[4].innerText = f.rolloutRoll ? Math.floor(f.rolloutRoll) : '-';
-        cells[5].innerText = (f.hasCohorts && f.cohort) ? f.cohort.name : '-';
-        cells[6].innerText = (f.cohort && f.cohort.assignedAt) ? new Date(f.cohort.assignedAt).toISOString().slice(0, 10) : '';
-        cells[7].innerText = (f.cohort && f.cohort.enrolledAt) ? new Date(f.cohort.enrolledAt).toISOString().slice(0, 10) : '';
+        cells[5].innerText = f.hasCohorts && f.cohort ? f.cohort.name : '-';
+        cells[6].innerText = f.cohort && f.cohort.assignedAt ? new Date(f.cohort.assignedAt).toISOString().slice(0, 10) : '';
+        cells[7].innerText = f.cohort && f.cohort.enrolledAt ? new Date(f.cohort.enrolledAt).toISOString().slice(0, 10) : '';
         const actionsCell = cells[8];
         if (f.hasRollout && f.rolloutRoll) {
             const resetRollout = document.createElement('button');

@@ -11,11 +11,11 @@ import { getBrowserName } from '../utils';
 
 export class MessageReceivedEvent extends CustomEvent {
     constructor(msg) {
-        super('messageReceived', { detail: msg })
+        super('messageReceived', { detail: msg });
     }
 
     get messageType() {
-        return this.detail.messageType
+        return this.detail.messageType;
     }
 }
 
@@ -25,7 +25,7 @@ let activePort = null;
 export default class MessageRouter extends EventTarget {
     constructor({ tabManager }) {
         super();
-        const browserName = getBrowserName()
+        const browserName = getBrowserName();
         // Handle popup UI (aka privacy dashboard) messaging.
         browser.runtime.onConnect.addListener((port) => {
             if (port.name === 'privacy-dashboard') {
@@ -59,7 +59,7 @@ export default class MessageRouter extends EventTarget {
             }
 
             if (req.messageType && req.messageType in messageHandlers) {
-                this.dispatchEvent(new MessageReceivedEvent(req))
+                this.dispatchEvent(new MessageReceivedEvent(req));
                 return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req));
             }
 
@@ -106,7 +106,7 @@ export default class MessageRouter extends EventTarget {
                 console.error('Unrecognized message (privacy-dashboard -> background):', message);
                 return;
             }
-            this.dispatchEvent(new MessageReceivedEvent(message))
+            this.dispatchEvent(new MessageReceivedEvent(message));
 
             const response = await messageHandlers[messageType](message?.options, port, message);
             if (typeof message?.id === 'number') {
