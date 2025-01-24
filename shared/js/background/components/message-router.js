@@ -3,6 +3,7 @@ import browser from 'webextension-polyfill';
 import messageHandlers from '../message-handlers';
 import { getExtensionId } from '../wrapper';
 import { getBrowserName } from '../utils';
+import { getActivePort, setActivePort } from '../popup-messaging';
 
 /**
  * @typedef {import('webextension-polyfill').Runtime.Port} Port
@@ -18,9 +19,6 @@ export class MessageReceivedEvent extends CustomEvent {
         return this.detail.messageType;
     }
 }
-
-/** @type {Port?} */
-let activePort = null;
 
 export default class MessageRouter extends EventTarget {
     constructor({ tabManager }) {
@@ -92,10 +90,10 @@ export default class MessageRouter extends EventTarget {
      * @param {Port} port
      */
     popupConnectionOpened(port) {
-        activePort = port;
+        setActivePort(port);
         port.onDisconnect.addListener(() => {
-            if (activePort === port) {
-                activePort = null;
+            if (getActivePort() === port) {
+                setActivePort(null);
             }
         });
 
@@ -118,13 +116,4 @@ export default class MessageRouter extends EventTarget {
             }
         });
     }
-}
-
-/**
- * Post a message to the popup UI, if it's open.
- *
- * @param {OutgoingPopupMessage} message
- */
-export function postPopupMessage(message) {
-    activePort?.postMessage(message);
 }

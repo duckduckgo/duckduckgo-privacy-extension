@@ -1,7 +1,7 @@
 const TopBlocked = require('./classes/top-blocked');
 const Company = require('./classes/company');
 const browserWrapper = require('./wrapper');
-const { postPopupMessage } = require('./components/message-router');
+const { postPopupMessage } = require('./popup-messaging');
 
 const Companies = (() => {
     let companyContainer = {};

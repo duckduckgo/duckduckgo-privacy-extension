@@ -8,7 +8,7 @@ import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load';
 import tdsStorage from './storage/tds';
 import { getArgumentsObject } from './helpers/arguments-object';
 import { isFireButtonEnabled } from './components/fire-button';
-import { postPopupMessage } from './components/message-router';
+import { postPopupMessage } from './popup-messaging';
 import ToggleReports from './components/toggle-reports';
 const utils = require('./utils');
 const settings = require('./settings');

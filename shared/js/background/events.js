@@ -10,7 +10,7 @@ import httpsStorage from './storage/https';
 import ATB from './atb';
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report';
 import { sendPageloadsWithAdAttributionPixelAndResetCount } from './classes/ad-click-attribution-policy';
-import { postPopupMessage } from './components/message-router';
+import { postPopupMessage } from './popup-messaging';
 const utils = require('./utils');
 const experiment = require('./experiments');
 const settings = require('./settings');
