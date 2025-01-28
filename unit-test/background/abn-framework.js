@@ -8,6 +8,8 @@ import commonParams from '../../pixel-definitions/common_params.json';
 import commonSuffixes from '../../pixel-definitions/common_suffixes.json';
 import experimentPixels from '../../pixel-definitions/pixels/experiments.json';
 
+const ONE_HOUR_MS = 1000 * 60 * 60;
+
 class MockSettings {
     constructor() {
         this.mockSettingData = new Map();
@@ -252,7 +254,8 @@ describe('ABN pixels', () => {
         abnMetrics.markExperimentEnrolled(feature, subFeature);
         // modify enrollment to be 6 days ago
         const cohort = remoteConfig.getCohort(feature, subFeature);
-        cohort.enrolledAt = Date.now() - 1000 * 60 * 60 * 25 * 6;
+        // note use 25 hours so this does fall exactly on a day boundry (which could make the test non-deterministic)
+        cohort.enrolledAt = Date.now() - ONE_HOUR_MS * 25 * 6;
         remoteConfig.setCohort(feature, subFeature, cohort);
         abnMetrics.onMetricTriggered('search');
         expect(pixelIntercept).toHaveBeenCalledTimes(3);
@@ -274,10 +277,10 @@ describe('ABN pixels', () => {
         abnMetrics.markExperimentEnrolled(feature, subFeature);
         // modify enrollment to be 7 days ago
         const cohort = remoteConfig.getCohort(feature, subFeature);
-        cohort.enrolledAt = Date.now() - 1000 * 60 * 60 * 25 * 7;
+        cohort.enrolledAt = Date.now() - ONE_HOUR_MS * 25 * 7;
         remoteConfig.setCohort(feature, subFeature, cohort);
         // trigger on day 5
-        abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 2);
+        abnMetrics.onMetricTriggered('search', 1, Date.now() - ONE_HOUR_MS * 25 * 2);
         // trigger on day 7
         abnMetrics.onMetricTriggered('app_use', 1, Date.now());
         expect(pixelIntercept).toHaveBeenCalledTimes(5);
@@ -317,29 +320,29 @@ describe('ABN pixels', () => {
         ]);
         // modify enrollment to be 7 days ago
         const cohort = remoteConfig.getCohort(feature, subFeature);
-        cohort.enrolledAt = Date.now() - 1000 * 60 * 60 * 25 * 7;
+        cohort.enrolledAt = Date.now() - ONE_HOUR_MS * 25 * 7;
         remoteConfig.setCohort(feature, subFeature, cohort);
         pixelRequests.pop();
         // day 1 search
-        abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 6);
+        abnMetrics.onMetricTriggered('search', 1, Date.now() - ONE_HOUR_MS * 25 * 6);
         expect(pixelIntercept).toHaveBeenCalledTimes(1);
         // day 2 search
-        abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 5);
+        abnMetrics.onMetricTriggered('search', 1, Date.now() - ONE_HOUR_MS * 25 * 5);
         expect(pixelIntercept).toHaveBeenCalledTimes(1);
         // day 3 search
-        abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 4);
+        abnMetrics.onMetricTriggered('search', 1, Date.now() - ONE_HOUR_MS * 25 * 4);
         expect(pixelIntercept).toHaveBeenCalledTimes(1);
         // day 4 search
-        abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 3);
+        abnMetrics.onMetricTriggered('search', 1, Date.now() - ONE_HOUR_MS * 25 * 3);
         expect(pixelIntercept).toHaveBeenCalledTimes(1);
         // day 5 search
-        abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 2);
+        abnMetrics.onMetricTriggered('search', 1, Date.now() - ONE_HOUR_MS * 25 * 2);
         // value=1 metric was triggered on day 5
         expect(pixelIntercept).toHaveBeenCalledTimes(2);
         expect(pixelRequests.pop()).toContain('conversionWindowDays=5&value=1');
         // day 6 search x2
-        abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 1);
-        abnMetrics.onMetricTriggered('search', 1, Date.now() - 1000 * 60 * 60 * 25 * 1);
+        abnMetrics.onMetricTriggered('search', 1, Date.now() - ONE_HOUR_MS * 25 * 1);
+        abnMetrics.onMetricTriggered('search', 1, Date.now() - ONE_HOUR_MS * 25 * 1);
         expect(pixelIntercept).toHaveBeenCalledTimes(2);
         // day 7 search
         abnMetrics.onMetricTriggered('search', 1, Date.now());
