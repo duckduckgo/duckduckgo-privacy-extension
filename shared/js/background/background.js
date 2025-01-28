@@ -32,6 +32,7 @@ import RemoteConfig from './components/remote-config';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
+import AbnExperimentMetrics, { AppUseMetric, PixelMetric, SearchMetric } from './components/abn-experiments';
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events');
@@ -57,6 +58,7 @@ const devtools = new Devtools({ tds });
  *  tabTracking: TabTracker;
  *  trackers: TrackersGlobal;
  *  remoteConfig: RemoteConfig;
+ *  abnMetrics: AbnExperimentMetrics?;
  * }}
  */
 const components = {
@@ -74,6 +76,9 @@ const components = {
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
+    const abnMetrics = new AbnExperimentMetrics({ remoteConfig });
+    components.abnMetrics = abnMetrics;
+    components.metrics = [new AppUseMetric({ abnMetrics }), new SearchMetric({ abnMetrics }), new PixelMetric({ abnMetrics })];
     components.fireButton = new FireButton({ settings, tabManager });
 }
 // MV3-only components

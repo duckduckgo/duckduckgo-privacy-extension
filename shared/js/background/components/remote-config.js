@@ -6,10 +6,13 @@
  *  localeCountry: string;
  *  localeLanguage: string;
  * }} TargetEnvironment
+ *
  * @typedef {import('@duckduckgo/privacy-configuration/schema/feature').Cohort & {
  *  assignedAt: number;
  *  enrolledAt?: number;
+ *  metrics: import('./abn-experiments').ExperimentMetricCounter[]
  * }} ChosenCohort
+ *
  * @typedef {{
  *  feature: string;
  *  subFeature: string;
@@ -29,7 +32,6 @@ import { getFeatureSettings, isFeatureEnabled, satisfiesMinVersion } from '../ut
 import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from '../wrapper';
 import ResourceLoader from './resource-loader';
 import constants from '../../../data/constants';
-import { sendPixelRequest } from '../pixels';
 import { registerMessageHandler } from '../message-handlers';
 
 /**
@@ -158,25 +160,6 @@ export default class RemoteConfig extends ResourceLoader {
     }
 
     /**
-     * Mark that the user should be enrolled in the experiment for the given feature and sub feature.
-     *
-     * This will send the enrollment
-     * @param {string} featureName
-     * @param {string} subFeatureName
-     */
-    markExperimentEnrolled(featureName, subFeatureName) {
-        const cohort = this.getCohort(featureName, subFeatureName);
-        if (cohort && !cohort.enrolledAt) {
-            cohort.enrolledAt = Date.now();
-            sendPixelRequest(`experiment_enroll_${subFeatureName}_${cohort.name}`, {
-                enrollmentDate: new Date(cohort.enrolledAt).toISOString().slice(0, 10),
-            });
-            // updated stored cohort metadata
-            this.setCohort(featureName, subFeatureName, cohort);
-        }
-    }
-
-    /**
      * Process config to apply rollout, targets and cohorts options to derive sub-feature enabled state.
      * @param {Config} configValue
      * @returns {Config}
@@ -216,7 +199,7 @@ export default class RemoteConfig extends ResourceLoader {
                     if (!assignedCohort && cohorts.length > 0) {
                         const chosen = choseCohort(cohorts, Math.random);
                         if (chosen) {
-                            this.setCohort(featureName, name, { ...chosen, assignedAt: Date.now() });
+                            this.setCohort(featureName, name, { ...chosen, assignedAt: Date.now(), metrics: [] });
                         }
                     }
                 } else if (!subfeature.cohorts && assignedCohort) {
