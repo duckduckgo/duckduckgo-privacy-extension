@@ -14,6 +14,8 @@ export class AppUseMetric {
      */
     constructor({ abnMetrics }) {
         // trigger on construction: happens whenever the service worker is spun up, which should correlate with browser activity.
+        // Note: we don't care about overtriggering here, as the experiment framework will handle deduplication.
+        // This metric will only correlate with when the browser is open, and not necessarily if it is being 'used'.
         abnMetrics.remoteConfig.ready.then(() => abnMetrics.onMetricTriggered('app_use'));
     }
 }
