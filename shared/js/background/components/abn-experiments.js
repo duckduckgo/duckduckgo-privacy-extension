@@ -71,7 +71,7 @@ export class SearchMetric {
         browser.webRequest.onCompleted.addListener(
             async (details) => {
                 const params = new URL(details.url).searchParams;
-                if (params.has('q') && (params.get('q')?.length || 0) > 0) {
+                if (params.get('q')?.length) {
                     await abnMetrics.remoteConfig.ready;
                     abnMetrics.onMetricTriggered('search');
                 }
