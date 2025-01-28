@@ -13,6 +13,7 @@
         "parameters": [
             "atb",
             "extensionVersion",
+            "remoteConfigEtag",
             {
                 "key": "adAttributionRequests",
                 "description": "If requests were allowed for ad attribution, these are included here."
@@ -133,14 +134,11 @@
                 "description": "If the protections toggle is on or not for the site.",
                 "enum": [
                     "false",
-                    "true"
+                    "true",
+                    ""
                 ]
             },
-            {
-                "key": "remoteConfigEtag",
-                "description": "",
-                "pattern": "W%2F%[0-9a-f]{32}%22"
-            },
+
             {
                 "key": "remoteConfigVersion",
                 "type": "number",
@@ -157,14 +155,6 @@
             {
                 "key": "tds",
                 "description": "eTag of active blocklist"
-            },
-            {
-                "key": "test",
-                "description": "",
-                "enum": [
-                    "",
-                    "1"
-                ]
             },
             {
                 "key": "truncated",
@@ -211,6 +201,7 @@
         "parameters": [
             "atb",
             "extensionVersion",
+            "remoteConfigEtag",
             {
                 "key": "adAttributionRequests",
                 "description": "If requests were allowed for ad attribution, these are included here."
@@ -331,13 +322,9 @@
                 "description": "If the protections toggle is on or not for the site.",
                 "enum": [
                     "false",
-                    "true"
+                    "true",
+                    ""
                 ]
-            },
-            {
-                "key": "remoteConfigEtag",
-                "description": "",
-                "pattern": "W%2F%[0-9a-f]{32}%22"
             },
             {
                 "key": "remoteConfigVersion",
@@ -355,14 +342,6 @@
             {
                 "key": "tds",
                 "description": "eTag of active blocklist"
-            },
-            {
-                "key": "test",
-                "description": "",
-                "enum": [
-                    "",
-                    "1"
-                ]
             },
             {
                 "key": "truncated",
@@ -392,6 +371,13 @@
                 "key": "userRefreshCount",
                 "type": "number",
                 "description": ""
+            },
+            {
+                "key": "reportFlow",
+                "description": "",
+                "enum": [
+                    "on_protections_off_dashboard_main"
+                ]
             }
         ]
     }

@@ -1,0 +1,23 @@
+{
+    "kp": {
+        "key": "kp",
+        "description": "",
+        "enum": [
+            1
+        ]
+    },
+    "p": {
+        "key": "p",
+        "description": "",
+        "enum": [
+            1
+        ]
+    },
+    "test": {
+        "key": "test",
+        "description": "",
+        "enum": [
+            1
+        ]
+    }
+}
