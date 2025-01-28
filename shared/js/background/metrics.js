@@ -71,13 +71,20 @@ export class DashboardUseMetric {
     }
 }
 
+/**
+ * Metric to track repeated refreshes from a single tab.
+ * Listens for the `tabRefresh` event from the TabTracker, then counts the number of refreshes
+ * over given intervals. Note, a refresh here is defined as a webNavigation event to the same URL.
+ * Yields metrics for the following:
+ *  - 2 refreshes within 12 seconds: '2xRefresh'
+ *  - 3 refreshes within 20 seconds: '3xRefresh'
+ */
 export class RefreshMetric {
     /** @type {Map<number, number[]>} */
     tabRefreshCounter = new Map();
     DEBOUNCE_MS = 500;
 
     /**
-     *
      * @param {{
      *   abnMetrics: AbnExperimentMetrics,
      *   tabTracking: import('./components/tab-tracking').default,
