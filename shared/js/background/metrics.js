@@ -93,31 +93,31 @@ export class RefreshMetric {
     constructor({ abnMetrics, tabTracking }) {
         tabTracking.addEventListener('tabRefresh', (ev) => {
             if (ev instanceof CustomEvent) {
-                const { tabId } = ev.detail;
+                const { tabId, timeStamp } = ev.detail;
                 if (!this.tabRefreshCounter.has(tabId)) {
                     this.tabRefreshCounter.set(tabId, []);
                 }
                 const refreshCounter = this.tabRefreshCounter.get(tabId) || [];
-                if (refreshCounter.length > 0 && refreshCounter[refreshCounter.length - 1] > Date.now() - this.DEBOUNCE_MS) {
+                if (refreshCounter.length > 0 && refreshCounter[refreshCounter.length - 1] > timeStamp - this.DEBOUNCE_MS) {
                     // last refresh less than DEBOUNCE_MS ago, ignore
                     return;
                 }
-                refreshCounter.push(Date.now());
+                refreshCounter.push(timeStamp);
 
                 // reload-twice-within-12-seconds
-                const tMinus12s = Date.now() - 12000;
+                const tMinus12s = timeStamp - 12000;
                 if (refreshCounter.filter((t) => t > tMinus12s).length === 2) {
                     abnMetrics.onMetricTriggered('2xRefresh');
                 }
                 // reload-three-times-within-20-seconds
-                const tMinus20s = Date.now() - 20000;
-                if (refreshCounter.filter((t) => tMinus20s).length === 3) {
+                const tMinus20s = timeStamp - 20000;
+                if (refreshCounter.filter((t) => t > tMinus20s).length === 3) {
                     abnMetrics.onMetricTriggered('3xRefresh');
                 }
 
                 // clean up old refreshes
                 while (refreshCounter.length > 0 && refreshCounter[0] < tMinus20s) {
-                    refreshCounter.pop();
+                    refreshCounter.shift();
                 }
                 if (refreshCounter.length === 0) {
                     this.tabRefreshCounter.delete(tabId);
