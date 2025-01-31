@@ -11,7 +11,6 @@
  *  sent: boolean;
  * } & ExperimentMetric} ExperimentMetricCounter
  */
-import browser from 'webextension-polyfill';
 import { sendPixelRequest } from '../pixels';
 
 /**
@@ -45,69 +44,6 @@ export function generateRetentionMetrics() {
             }),
         );
     });
-}
-
-export class AppUseMetric {
-    /**
-     * Metric that fires once on creation.
-     * @param {{
-     * abnMetrics: AbnExperimentMetrics
-     * }} opts
-     */
-    constructor({ abnMetrics }) {
-        // trigger on construction: happens whenever the service worker is spun up, which should correlate with browser activity.
-        abnMetrics.remoteConfig.ready.then(() => abnMetrics.onMetricTriggered('app_use'));
-    }
-}
-
-export class SearchMetric {
-    /**
-     * Metric that fires whenever a new search is made
-     * @param {{
-     * abnMetrics: AbnExperimentMetrics
-     * }} opts
-     */
-    constructor({ abnMetrics }) {
-        browser.webRequest.onCompleted.addListener(
-            async (details) => {
-                const params = new URL(details.url).searchParams;
-                if (params.get('q')?.length) {
-                    await abnMetrics.remoteConfig.ready;
-                    abnMetrics.onMetricTriggered('search');
-                }
-            },
-            {
-                urls: ['https://*.duckduckgo.com/*'],
-                types: ['main_frame'],
-            },
-        );
-    }
-}
-
-export class PixelMetric {
-    /**
-     * Metric that observes outgoing pixel calls and routes a subset of them as experiment metrics.
-     * Currently intercepts `epbf` pixels and triggers a `brokenSiteReport` metric.
-     * @param {{
-     * abnMetrics: AbnExperimentMetrics
-     * }} opts
-     */
-    constructor({ abnMetrics }) {
-        browser.webRequest.onCompleted.addListener(
-            async (details) => {
-                await abnMetrics.remoteConfig.ready;
-                const url = new URL(details.url);
-                if (url.pathname.startsWith('/t/epbf_')) {
-                    // broken site report
-                    abnMetrics.onMetricTriggered('brokenSiteReport');
-                }
-            },
-            {
-                urls: ['https://improving.duckduckgo.com/t/*'],
-                tabId: -1,
-            },
-        );
-    }
 }
 
 /**
