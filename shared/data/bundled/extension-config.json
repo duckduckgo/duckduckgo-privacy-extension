@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1736875021428,
+    "version": 1738568676812,
     "features": {
         "adAttributionReporting": {
             "state": "disabled",
@@ -66,6 +66,11 @@
             "hash": "b813ade8472a097ffbd43a3331116fe1"
         },
         "additionalCampaignPixelParams": {
+            "state": "disabled",
+            "exceptions": [],
+            "hash": "c292bb627849854515cebbded288ef5a"
+        },
+        "addressBarTldNavOrSearch": {
             "state": "disabled",
             "exceptions": [],
             "hash": "c292bb627849854515cebbded288ef5a"
@@ -261,9 +266,6 @@
                     "domain": "voici.fr"
                 },
                 {
-                    "domain": "tfl.gov.uk"
-                },
-                {
                     "domain": "corporatefinanceinstitute.com"
                 },
                 {
@@ -393,9 +395,6 @@
                     "domain": "97x.com"
                 },
                 {
-                    "domain": "speedweek.com"
-                },
-                {
                     "domain": "la-becanerie.com"
                 },
                 {
@@ -435,198 +434,6 @@
                     "domain": "mytolino.de"
                 },
                 {
-                    "domain": "google.ae"
-                },
-                {
-                    "domain": "google.at"
-                },
-                {
-                    "domain": "google.be"
-                },
-                {
-                    "domain": "google.bg"
-                },
-                {
-                    "domain": "google.by"
-                },
-                {
-                    "domain": "google.ca"
-                },
-                {
-                    "domain": "google.ch"
-                },
-                {
-                    "domain": "google.cl"
-                },
-                {
-                    "domain": "google.co.id"
-                },
-                {
-                    "domain": "google.co.il"
-                },
-                {
-                    "domain": "google.co.in"
-                },
-                {
-                    "domain": "google.co.jp"
-                },
-                {
-                    "domain": "google.co.ke"
-                },
-                {
-                    "domain": "google.co.kr"
-                },
-                {
-                    "domain": "google.co.nz"
-                },
-                {
-                    "domain": "google.co.th"
-                },
-                {
-                    "domain": "google.co.uk"
-                },
-                {
-                    "domain": "google.co.ve"
-                },
-                {
-                    "domain": "google.co.za"
-                },
-                {
-                    "domain": "google.com"
-                },
-                {
-                    "domain": "google.com.ar"
-                },
-                {
-                    "domain": "google.com.au"
-                },
-                {
-                    "domain": "google.com.br"
-                },
-                {
-                    "domain": "google.com.co"
-                },
-                {
-                    "domain": "google.com.ec"
-                },
-                {
-                    "domain": "google.com.eg"
-                },
-                {
-                    "domain": "google.com.hk"
-                },
-                {
-                    "domain": "google.com.mx"
-                },
-                {
-                    "domain": "google.com.my"
-                },
-                {
-                    "domain": "google.com.pe"
-                },
-                {
-                    "domain": "google.com.ph"
-                },
-                {
-                    "domain": "google.com.pk"
-                },
-                {
-                    "domain": "google.com.py"
-                },
-                {
-                    "domain": "google.com.sa"
-                },
-                {
-                    "domain": "google.com.sg"
-                },
-                {
-                    "domain": "google.com.tr"
-                },
-                {
-                    "domain": "google.com.tw"
-                },
-                {
-                    "domain": "google.com.ua"
-                },
-                {
-                    "domain": "google.com.uy"
-                },
-                {
-                    "domain": "google.com.vn"
-                },
-                {
-                    "domain": "google.cz"
-                },
-                {
-                    "domain": "google.de"
-                },
-                {
-                    "domain": "google.dk"
-                },
-                {
-                    "domain": "google.dz"
-                },
-                {
-                    "domain": "google.ee"
-                },
-                {
-                    "domain": "google.es"
-                },
-                {
-                    "domain": "google.fi"
-                },
-                {
-                    "domain": "google.fr"
-                },
-                {
-                    "domain": "google.gr"
-                },
-                {
-                    "domain": "google.hr"
-                },
-                {
-                    "domain": "google.hu"
-                },
-                {
-                    "domain": "google.ie"
-                },
-                {
-                    "domain": "google.it"
-                },
-                {
-                    "domain": "google.lt"
-                },
-                {
-                    "domain": "google.lv"
-                },
-                {
-                    "domain": "google.nl"
-                },
-                {
-                    "domain": "google.no"
-                },
-                {
-                    "domain": "google.pl"
-                },
-                {
-                    "domain": "google.pt"
-                },
-                {
-                    "domain": "google.ro"
-                },
-                {
-                    "domain": "google.rs"
-                },
-                {
-                    "domain": "google.ru"
-                },
-                {
-                    "domain": "google.se"
-                },
-                {
-                    "domain": "google.sk"
-                },
-                {
                     "domain": "serif.com"
                 },
                 {
@@ -634,6 +441,48 @@
                 },
                 {
                     "domain": "collectcheckout.com"
+                },
+                {
+                    "domain": "sbid.org"
+                },
+                {
+                    "domain": "wunderground.com"
+                },
+                {
+                    "domain": "lecreuset.co.uk"
+                },
+                {
+                    "domain": "sueddeutsche.de"
+                },
+                {
+                    "domain": "vital-parts.co.uk"
+                },
+                {
+                    "domain": "lta.org.uk"
+                },
+                {
+                    "domain": "hobbyhall.fi"
+                },
+                {
+                    "domain": "wienmobil.at"
+                },
+                {
+                    "domain": "memsoft.fr"
+                },
+                {
+                    "domain": "bafin.de"
+                },
+                {
+                    "domain": "levi.pt"
+                },
+                {
+                    "domain": "premiumegeszsegpenztar.hu"
+                },
+                {
+                    "domain": "mapquest.com"
+                },
+                {
+                    "domain": "ib3.org"
                 },
                 {
                     "domain": "marvel.com"
@@ -795,11 +644,24 @@
                     "google.rs",
                     "google.ru",
                     "google.se",
-                    "google.sk"
+                    "google.sk",
+                    "sachsen-netze.de",
+                    "alpharunning.co.uk",
+                    "lecreuset.co.uk",
+                    "sueddeutsche.de",
+                    "vital-parts.co.uk",
+                    "lta.org.uk",
+                    "hobbyhall.fi",
+                    "wienmobil.at",
+                    "memsoft.fr",
+                    "bafin.de",
+                    "levi.pt",
+                    "premiumegeszsegpenztar.hu",
+                    "mapquest.com"
                 ]
             },
             "state": "disabled",
-            "hash": "e36439bb775eb24ab194a1eec70658db"
+            "hash": "d83ff097323041738ecd050049d1095b"
         },
         "autofillBreakageReporter": {
             "state": "disabled",
@@ -3711,6 +3573,15 @@
                         ]
                     },
                     {
+                        "domain": "handleidingen.com",
+                        "rules": [
+                            {
+                                "selector": ".ad-container",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "harpygee.com",
                         "rules": [
                             {
@@ -4606,6 +4477,14 @@
                         "domain": "realtor.com",
                         "rules": [
                             {
+                                "selector": ".ad-wrapper",
+                                "type": "override"
+                            },
+                            {
+                                "selector": ".lb1-ad",
+                                "type": "hide-empty"
+                            },
+                            {
                                 "selector": ".ads_container",
                                 "type": "hide"
                             }
@@ -5459,7 +5338,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "3a63048a370832670afc357fca73d5a4"
+            "hash": "813a58ae8024cdfd4d7b80063070e9b6"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -6151,9 +6030,12 @@
             "features": {
                 "isLaunched": {
                     "state": "disabled"
+                },
+                "nextStepsWidget": {
+                    "state": "disabled"
                 }
             },
-            "hash": "8400a35feab96ad28d974fc04e895d88"
+            "hash": "796d897bcc379815c2e27db7f6b489ed"
         },
         "https": {
             "state": "enabled",
@@ -6602,6 +6484,11 @@
             "state": "enabled",
             "hash": "d83f0ee652454a3a8685f8e5094e40a6"
         },
+        "settingsPage": {
+            "exceptions": [],
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
+        },
         "showOnAppLaunch": {
             "exceptions": [
                 {
@@ -6704,6 +6591,11 @@
             },
             "exceptions": [],
             "hash": "135891a02918c8fbf85532b465ca0a76"
+        },
+        "tabManager": {
+            "exceptions": [],
+            "state": "disabled",
+            "hash": "728493ef7a1488e4781656d3f9db84aa"
         },
         "textZoom": {
             "exceptions": [],
@@ -6831,6 +6723,12 @@
                                 "rule": "ad3.adfarm1.adition.com/js",
                                 "domains": [
                                     "servustv.com"
+                                ]
+                            },
+                            {
+                                "rule": "imagesrv.adition.com/js",
+                                "domains": [
+                                    "derstandard.at"
                                 ]
                             }
                         ]
@@ -6976,6 +6874,12 @@
                     "alicdn.com": {
                         "rules": [
                             {
+                                "rule": "alicdn.com/g/qwenweb/qwen-webui-fe/0.0.15",
+                                "domains": [
+                                    "qwenlm.ai"
+                                ]
+                            },
+                            {
                                 "rule": "alicdn.com",
                                 "domains": [
                                     "aliexpress.us"
@@ -7021,6 +6925,16 @@
                                 "domains": [
                                     "dictionary.com",
                                     "thesaurus.com"
+                                ]
+                            }
+                        ]
+                    },
+                    "appboycdn.com": {
+                        "rules": [
+                            {
+                                "rule": "js.appboycdn.com/web-sdk/5.3/braze.min.js",
+                                "domains": [
+                                    "wallapop.com"
                                 ]
                             }
                         ]
@@ -8184,6 +8098,7 @@
                                     "eatroyo.com",
                                     "experian.com",
                                     "ljsilvers.com",
+                                    "newsweek.com",
                                     "tesla.com",
                                     "thesimsresource.com",
                                     "tradersync.com",
@@ -8606,6 +8521,16 @@
                             }
                         ]
                     },
+                    "karte.io": {
+                        "rules": [
+                            {
+                                "rule": "bs.karte.io",
+                                "domains": [
+                                    "rentio.jp"
+                                ]
+                            }
+                        ]
+                    },
                     "klarnaservices.com": {
                         "rules": [
                             {
@@ -8624,6 +8549,12 @@
                                 "rule": "osm.library.klarnaservices.com/lib.js",
                                 "domains": [
                                     "<all>"
+                                ]
+                            },
+                            {
+                                "rule": "na-library.klarnaservices.com",
+                                "domains": [
+                                    "blueair.com"
                                 ]
                             }
                         ]
@@ -8813,6 +8744,12 @@
                     },
                     "monetate.net": {
                         "rules": [
+                            {
+                                "rule": "monetate.net/img",
+                                "domains": [
+                                    "guitarcenter.com"
+                                ]
+                            },
                             {
                                 "rule": "monetate.net",
                                 "domains": [
@@ -9027,6 +8964,12 @@
                                 "rule": "https://cdn.optimizely.com/js/271989291.js",
                                 "domains": [
                                     "my.zipcar.com"
+                                ]
+                            },
+                            {
+                                "rule": "cdn.optimizely.com",
+                                "domains": [
+                                    "rushordertees.com"
                                 ]
                             }
                         ]
@@ -10148,7 +10091,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "2263d23b22a46d02e424bfedc996f124"
+            "hash": "2a225a6601cef0cac52fc3f30166ebf8"
         },
         "trackingCookies1p": {
             "settings": {
@@ -10303,42 +10246,6 @@
             "minSupportedVersion": "2023.5.23",
             "hash": "e428b53f6390d172682450f29a07f4d1"
         },
-        "userAgentRotation": {
-            "settings": {
-                "agentExcludePatterns": []
-            },
-            "exceptions": [
-                {
-                    "domain": "marvel.com"
-                },
-                {
-                    "domain": "sundancecatalog.com"
-                },
-                {
-                    "domain": "noaprints.com"
-                },
-                {
-                    "domain": "flexmls.com"
-                },
-                {
-                    "domain": "localhost"
-                },
-                {
-                    "domain": "127.0.0.1"
-                },
-                {
-                    "domain": "::1"
-                },
-                {
-                    "domain": "livenation.com"
-                },
-                {
-                    "domain": "ticketmaster.com"
-                }
-            ],
-            "state": "disabled",
-            "hash": "67c25bc5514a7bebf52167490b449fbd"
-        },
         "voiceSearch": {
             "exceptions": [],
             "state": "disabled",
@@ -10381,6 +10288,11 @@
             ],
             "state": "disabled",
             "hash": "953cce85052f59b6ea490e3c4047c1eb"
+        },
+        "webViewStateRestoration": {
+            "state": "disabled",
+            "exceptions": [],
+            "hash": "c292bb627849854515cebbded288ef5a"
         },
         "webViewBlobDownload": {
             "exceptions": [],
