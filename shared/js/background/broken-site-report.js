@@ -321,6 +321,8 @@ export async function breakageReportForTab({
 export async function sendBreakageReportForCurrentTab({ pixelName, currentTab, category, description, reportFlow }) {
     await settings.ready();
     await tdsStorage.ready('config');
+    // wait for onload callbacks (to ensure that config has been correctly processed)
+    await tdsStorage.config.allLoadingFinished
 
     const tab = currentTab || (await tabManager.getOrRestoreCurrentTab());
     if (!tab) {
