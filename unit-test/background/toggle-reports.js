@@ -1,17 +1,20 @@
 import browser from 'webextension-polyfill';
-import load from '../../shared/js/background/load';
 import settings from '../../shared/js/background/settings';
 import ToggleReports from '../../shared/js/background/components/toggle-reports';
-import { _formatPixelRequestForTesting } from '../../shared/js/shared-utils/pixels';
 import tabManager from '../../shared/js/background/tab-manager';
 import tdsStorageStub from '../helpers/tds';
 
 describe('ToggleReports', () => {
-    const actualSentReports = [];
     let currentTabDetails = null;
     let currentTimestamp = 1;
     let settingsStorage = null;
-    const toggleReports = new ToggleReports();
+    const toggleReports = new ToggleReports({
+        dashboardMessaging: {
+            submitBrokenSiteReport: () => {},
+        },
+    });
+    /** @type {jasmine.Spy} */
+    let submittedReports;
     let toggleReportsConfig = null;
 
     // Dummy timestamps.
@@ -61,17 +64,10 @@ describe('ToggleReports', () => {
         });
         spyOn(Date, 'now').and.callFake(() => currentTimestamp);
 
-        // Stub the load.url function (used for pixel requests).
-        spyOn(load, 'url').and.callFake((url) => {
-            const pixel = _formatPixelRequestForTesting(url);
-            if (pixel?.name?.startsWith('epbf') || pixel?.name?.startsWith('protection-toggled-off-breakage-report')) {
-                actualSentReports.push(pixel);
-            }
-        });
+        submittedReports = spyOn(toggleReports.dashboardMessaging, 'submitBrokenSiteReport');
     });
 
     beforeEach(() => {
-        actualSentReports.length = 0;
         currentTabDetails = null;
         currentTimestamp = 1;
         settingsStorage.clear();
@@ -116,8 +112,8 @@ describe('ToggleReports', () => {
     it('toggleReportFinished()', async () => {
         const expectReports = async (reports, accepted, declined) => {
             expect(await ToggleReports.countResponses()).toEqual({ accepted, declined });
-            expect(actualSentReports).toEqual(reports);
-            actualSentReports.length = 0;
+            expect(submittedReports).toHaveBeenCalledTimes(reports.length);
+            expect(submittedReports.calls.all().map((c) => c.args)).toEqual(reports);
         };
 
         // Set things up, so that breakage reports can be sent.
@@ -148,40 +144,7 @@ describe('ToggleReports', () => {
 
         // If user accepts, report should be sent.
         await toggleReports.toggleReportFinished(true);
-        await expectReports(
-            [
-                {
-                    name: 'protection-toggled-off-breakage-report_chrome',
-                    params: {
-                        siteUrl: 'https://domain.example/path',
-                        tds: 'tds-etag-123',
-                        remoteConfigEtag: 'config-etag-123',
-                        remoteConfigVersion: '2021.6.7',
-                        upgradedHttps: 'false',
-                        urlParametersRemoved: 'false',
-                        ctlYouTube: 'false',
-                        ctlFacebookPlaceholderShown: 'false',
-                        ctlFacebookLogin: 'false',
-                        performanceWarning: 'false',
-                        userRefreshCount: '0',
-                        jsPerformance: 'undefined',
-                        locale: 'en-US',
-                        errorDescriptions: '[]',
-                        openerContext: 'external',
-                        reportFlow: 'on_protections_off_dashboard_main',
-                        extensionVersion: '1234.56',
-                        ignoreRequests: '',
-                        blockedTrackers: '',
-                        surrogates: '',
-                        noActionRequests: '',
-                        adAttributionRequests: '',
-                        ignoredByUserRequests: '',
-                    },
-                },
-            ],
-            1,
-            2,
-        );
+        await expectReports([[{}, 'protection-toggled-off-breakage-report', 'on_protections_off_dashboard_main']], 1, 2);
 
         // Tidy up.
         tabManager.delete(currentTabDetails.id);

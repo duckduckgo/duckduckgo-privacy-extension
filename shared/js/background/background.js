@@ -52,7 +52,7 @@ const remoteConfig = new RemoteConfig({ settings });
 const abnMetrics = BUILD_TARGET !== 'firefox' ? new AbnExperimentMetrics({ remoteConfig }) : null;
 const tds = new TDSStorage({ settings, remoteConfig, abnMetrics });
 const devtools = new Devtools({ tds });
-const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager })
+const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager });
 /**
  * @type {{
  *  autofill: EmailAutofill;
