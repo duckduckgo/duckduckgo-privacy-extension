@@ -3,7 +3,7 @@ import { registerMessageHandler } from '../message-handlers';
 import { postPopupMessage } from '../popup-messaging';
 import settings from '../settings';
 import { getFeatureSettings, reloadCurrentTab, resolveAfterDelay } from '../utils';
-import { getDisclosureDetails, sendBreakageReportForCurrentTab } from '../broken-site-report';
+import { getDisclosureDetails } from '../broken-site-report';
 import { createAlarm } from '../wrapper';
 import tabManager from '../tab-manager';
 
@@ -23,7 +23,14 @@ import tabManager from '../tab-manager';
 export default class ToggleReports {
     static ALARM_NAME = 'toggleReportsClearExpired';
 
-    constructor() {
+    /**
+     *
+     * @param {{
+     *   dashboardMessaging: import('./dashboard-messaging').default
+     * }} args
+     */
+    constructor({ dashboardMessaging }) {
+        this.dashboardMessaging = dashboardMessaging;
         this.onDisconnect = this.toggleReportFinished.bind(this, false);
 
         registerMessageHandler('getToggleReportOptions', (_, sender) => this.toggleReportStarted(sender));
@@ -81,10 +88,11 @@ export default class ToggleReports {
             try {
                 // Send the breakage report before reloading the page, to ensure
                 // the correct page details are sent with the report.
-                await sendBreakageReportForCurrentTab({
-                    pixelName: 'protection-toggled-off-breakage-report',
-                    reportFlow: 'on_protections_off_dashboard_main',
-                });
+                await this.dashboardMessaging.submitBrokenSiteReport(
+                    {},
+                    'protection-toggled-off-breakage-report',
+                    'on_protections_off_dashboard_main',
+                );
             } catch (e) {
                 // Catch this, mostly to ensure the page is still reloaded if
                 // sending the breakage report fails.

@@ -15,6 +15,7 @@ export default {
     _config: { features: {} },
     _tds: { entities: {}, trackers: {}, domains: {}, cnames: {} },
     _surrogates: '',
+    /** @type {import('@duckduckgo/privacy-configuration/schema/config').GenericV4Config} */
     get config() {
         return globalThis.components?.remoteConfig.config || this._config;
     },
@@ -60,7 +61,7 @@ export default {
             return Promise.resolve();
         }
         if (configName && listNames.includes(configName)) {
-            return tdsStorage[configName].ready;
+            return tdsStorage[configName].allLoadingFinished;
         }
         return Promise.all(listNames.map((n) => tdsStorage[n].ready));
     },

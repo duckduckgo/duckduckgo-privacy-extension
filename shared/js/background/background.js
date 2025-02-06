@@ -29,6 +29,7 @@ import DebuggerConnection from './components/debugger-connection';
 import Devtools from './components/devtools';
 import DNRListeners from './components/dnr-listeners';
 import RemoteConfig from './components/remote-config';
+import DashboardMessaging from './components/dashboard-messaging';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
@@ -51,14 +52,17 @@ const remoteConfig = new RemoteConfig({ settings });
 const abnMetrics = BUILD_TARGET !== 'firefox' ? new AbnExperimentMetrics({ remoteConfig }) : null;
 const tds = new TDSStorage({ settings, remoteConfig, abnMetrics });
 const devtools = new Devtools({ tds });
+const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager })
 /**
  * @type {{
  *  autofill: EmailAutofill;
+ *  dashboardMessaging: DashboardMessaging
  *  omnibox: OmniboxSearch;
  *  fireButton?: FireButton;
  *  internalUser: InternalUserDetector;
  *  tds: TDSStorage;
  *  tabTracking: TabTracker;
+ *  toggleReports: ToggleReports;
  *  trackers: TrackersGlobal;
  *  remoteConfig: RemoteConfig;
  *  abnMetrics: AbnExperimentMetrics?;
@@ -67,11 +71,12 @@ const devtools = new Devtools({ tds });
  */
 const components = {
     autofill: new EmailAutofill({ settings }),
+    dashboardMessaging,
     omnibox: new OmniboxSearch(),
     internalUser: new InternalUserDetector({ settings }),
     tabTracking: new TabTracker({ tabManager, devtools }),
     tds,
-    toggleReports: new ToggleReports(),
+    toggleReports: new ToggleReports({ dashboardMessaging }),
     trackers: new TrackersGlobal({ tds }),
     debugger: new DebuggerConnection({ tds, devtools }),
     devtools,
