@@ -8,7 +8,7 @@ import { isFireButtonEnabled } from './fire-button';
 /**
  * Message handlers for communication from the dashboard to the extension background.
  *
- * Note, additional message handles for toggle reports is in the separate ToggleReports component.
+ * Note, additional message handlers for toggle reports is in the separate ToggleReports component.
  */
 export default class DashboardMessaging {
     /**
