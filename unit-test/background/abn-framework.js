@@ -7,22 +7,9 @@ import load from '../../shared/js/background/load';
 import commonParams from '../../pixel-definitions/common_params.json';
 import commonSuffixes from '../../pixel-definitions/common_suffixes.json';
 import experimentPixels from '../../pixel-definitions/pixels/experiments.json';
+import { MockSettings } from '../helpers/mocks';
 
 const ONE_HOUR_MS = 1000 * 60 * 60;
-
-class MockSettings {
-    constructor() {
-        this.mockSettingData = new Map();
-        this.ready = () => Promise.resolve();
-    }
-
-    getSetting(key) {
-        return structuredClone(this.mockSettingData.get(key));
-    }
-    updateSetting(key, value) {
-        this.mockSettingData.set(key, value);
-    }
-}
 
 function constructMockComponents() {
     // clear message handlers to prevent conflict when registering

@@ -279,9 +279,6 @@ export function addDebugFlag(message, sender, req) {
  * @param {(options: any, sender: any, req: any) => any} func
  */
 export function registerMessageHandler(name, func) {
-    if (messageHandlers[name]) {
-        throw new Error(`Attempt to re-register existing message handler ${name}`);
-    }
     messageHandlers[name] = func;
 }
 
