@@ -27,7 +27,7 @@ export function mockTdsStorage(settings) {
     const settingsReadyPromise = new Promise((resolve) => {
         settingsResolve = resolve;
     });
-    settings.ready = () => settingsReadyPromise
+    settings.ready = () => settingsReadyPromise;
     const etags = require('../../shared/data/etags.json');
     const remoteConfig = new RemoteConfig({ settings });
     remoteConfig._loadFromURL = () =>
@@ -44,7 +44,7 @@ export function mockTdsStorage(settings) {
     tds.surrogates._loadFromURL = () =>
         Promise.resolve({
             contents: require('./../data/surrogates.js').surrogates,
-            etag: 'surrogates'
+            etag: 'surrogates',
         });
     settingsResolve();
     return tds;
