@@ -98,15 +98,19 @@ describe('DashboardMessaging component', () => {
         it('can send toggle reports', async () => {
             currentTabDetails = {
                 id: 123,
-                url: 'https://domain.example/path?param=value',
+                url: 'https://domain2.example/path?param=value',
             };
             tabManager.create(currentTabDetails);
-            await dashboardMessaging.submitBrokenSiteReport({}, 'protection-toggled-off-breakage-report', 'on_protections_off_dashboard_main');
+            await dashboardMessaging.submitBrokenSiteReport(
+                {},
+                'protection-toggled-off-breakage-report',
+                'on_protections_off_dashboard_main',
+            );
             expect(actualSentReports).toHaveSize(1);
             expect(actualSentReports[0]).toEqual({
                 name: 'protection-toggled-off-breakage-report_chrome',
                 params: {
-                    siteUrl: 'https://domain.example/path',
+                    siteUrl: 'https://domain2.example/path',
                     tds: tds.tds.etag,
                     remoteConfigEtag: tds.remoteConfig.etag,
                     remoteConfigVersion: tds.remoteConfig.config.version,
