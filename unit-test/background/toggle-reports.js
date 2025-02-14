@@ -8,11 +8,8 @@ describe('ToggleReports', () => {
     let currentTabDetails = null;
     let currentTimestamp = 1;
     let settingsStorage = null;
-    const toggleReports = new ToggleReports({
-        dashboardMessaging: {
-            submitBrokenSiteReport: () => {},
-        },
-    });
+    /** @type {ToggleReports} */
+    let toggleReports = null;
     /** @type {jasmine.Spy} */
     let submittedReports;
     let toggleReportsConfig = null;
@@ -63,14 +60,19 @@ describe('ToggleReports', () => {
             callback();
         });
         spyOn(Date, 'now').and.callFake(() => currentTimestamp);
-
-        submittedReports = spyOn(toggleReports.dashboardMessaging, 'submitBrokenSiteReport');
     });
 
     beforeEach(() => {
         currentTabDetails = null;
         currentTimestamp = 1;
         settingsStorage.clear();
+
+        toggleReports = new ToggleReports({
+            dashboardMessaging: {
+                submitBrokenSiteReport: () => {},
+            },
+        });
+        submittedReports = spyOn(toggleReports.dashboardMessaging, 'submitBrokenSiteReport');
     });
 
     it('toggleReportStarted()', async () => {
