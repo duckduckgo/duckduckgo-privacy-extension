@@ -8,7 +8,31 @@ import { isFireButtonEnabled } from './fire-button';
 /**
  * Message handlers for communication from the dashboard to the extension background.
  *
- * Note, additional message handlers for toggle reports is in the separate ToggleReports component.
+ * Note, handlers are split over multiple components, and some are not yet encapsulated in a component.
+ *
+ * Implemented in this component:
+ *  - getBreakageFormOptions
+ *  - getPrivacyDashboardData
+ *  - submitBrokenSiteReport
+ *
+ * FireButton component:
+ *  - doBurn
+ *  - getBurnOptions
+ *  - setBurnDefaultOption
+ *
+ * EmailAutofill component:
+ *  - refreshAlias
+ *
+ * ToggleReports component:
+ *  - getToggleReportOptions
+ *  - rejectToggleReport
+ *  - sendToggleReport
+ *  - seeWhatIsSent
+ *
+ * Static message handlers:
+ *  - openOptions
+ *  - search
+ *  - setLists
  */
 export default class DashboardMessaging {
     /**
