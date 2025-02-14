@@ -83,7 +83,7 @@ describe('DashboardMessaging component', () => {
                     siteUrl: 'https://domain.example/path',
                     tds: tds.tds.etag,
                     remoteConfigEtag: tds.remoteConfig.etag,
-                    remoteConfigVersion: tds.remoteConfig.config.version,
+                    remoteConfigVersion: `${tds.remoteConfig.config.version}`,
                     protectionsState: 'false',
                     ...defaultBrokenSitePixelParams,
                 },
@@ -113,7 +113,7 @@ describe('DashboardMessaging component', () => {
                     siteUrl: 'https://domain2.example/path',
                     tds: tds.tds.etag,
                     remoteConfigEtag: tds.remoteConfig.etag,
-                    remoteConfigVersion: tds.remoteConfig.config.version,
+                    remoteConfigVersion: `${tds.remoteConfig.config.version}`,
                     reportFlow: 'on_protections_off_dashboard_main',
                     // protectionsState is removed from these reports
                     ...defaultBrokenSitePixelParams,
