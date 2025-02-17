@@ -33,6 +33,8 @@ import { isFireButtonEnabled } from './fire-button';
  *  - openOptions
  *  - search
  *  - setLists
+ *
+ * See https://duckduckgo.github.io/privacy-dashboard/modules/Browser_Extensions_integration.html
  */
 export default class DashboardMessaging {
     /**
