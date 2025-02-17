@@ -88,10 +88,11 @@ export default class AbnExperimentMetrics {
     markExperimentEnrolled(featureName, subFeatureName, metrics) {
         const cohort = this.remoteConfig.getCohort(featureName, subFeatureName);
         if (cohort && !cohort.enrolledAt) {
-            cohort.enrolledAt = Date.now();
+            // We set the enrollment timestamp as the start of the current day in ET, so that all conversion windows align with ET date changes.
+            cohort.enrolledAt = startOfDayEST(Date.now());
             cohort.metrics = (metrics || generateRetentionMetrics()).map((m) => ({ ...m, counter: 0, sent: false }));
             sendPixelRequest(`experiment_enroll_${subFeatureName}_${cohort.name}`, {
-                enrollmentDate: new Date(cohort.enrolledAt).toISOString().slice(0, 10),
+                enrollmentDate: getDateStringEST(cohort.enrolledAt),
             });
             // updated stored cohort metadata
             this.remoteConfig.setCohort(featureName, subFeatureName, cohort);
@@ -120,7 +121,7 @@ export default class AbnExperimentMetrics {
                 if (!cohort?.metrics || !cohort?.enrolledAt) {
                     return;
                 }
-                const enrollmentDate = new Date(cohort.enrolledAt).toISOString().slice(0, 10);
+                const enrollmentDate = getDateStringEST(cohort.enrolledAt);
                 const daysSinceEnrollment = Math.floor(((timestamp || Date.now()) - cohort.enrolledAt) / (1000 * 60 * 60 * 24));
                 // Find metrics for this experiment that match at this point in time.
                 // i.e. we are within the conversion window, and haven't sent the pixel yet.
@@ -154,4 +155,31 @@ export default class AbnExperimentMetrics {
                 }
             });
     }
+}
+
+/**
+ * Given a timestamp or date, returns a string in ISO (YYYY-MM-DD) format corresponding for the date
+ * at that instant in Eastern Summer Time (UTC-5).
+ * @param {number} timestamp
+ * @returns {string} Date string in ISO (YYYY-MM-DD) format.
+ */
+export function getDateStringEST(timestamp) {
+    // toLocaleDateString can return the date in our chosen timezone (in this case ET), however the output is also localized.
+    // We can use the 'sv' locale to get a date format that matches ISO (YYYY-MM-DD)
+    return new Date(timestamp).toLocaleDateString('sv', { timeZone: '-05:00' });
+}
+
+/**
+ * Calculates the unix timestamp for the start of the current day in Eastern Summer Time (UTC-5) from the provided
+ * timestamp.
+ * @param {number} now
+ * @returns {number} Timestamp for midnight on the current day in EST.
+ */
+export function startOfDayEST(now = Date.now()) {
+    const d = new Date(now);
+    // Before 05:00 UTC, move back one day
+    if (d.getUTCHours() < 5) {
+        d.setUTCDate(d.getUTCDate() - 1);
+    }
+    return d.setUTCHours(5, 0, 0, 0);
 }
