@@ -10,15 +10,12 @@
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').DataItemId} DisclosureParamId
  */
 
-const browser = require('webextension-polyfill');
 const load = require('./load');
 const browserWrapper = require('./wrapper');
 const settings = require('./settings');
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string');
 const { getCurrentTab, getURLWithoutQueryString } = require('./utils');
 const { getURL } = require('./pixels');
-const tdsStorage = require('./storage/tds').default;
-const tabManager = require('./tab-manager');
 const maxPixelLength = 7000;
 
 /**
@@ -305,45 +302,6 @@ export async function breakageReportForTab({
     if (reportFlow) brokenSiteParams.set('reportFlow', reportFlow);
 
     return fire(pixelName, brokenSiteParams.toString());
-}
-
-/**
- * Attempt to send a breakage report for the currently focused tab.
- *
- * @param {Object} arg
- * @prop {string} pixelName
- * @prop {import("./classes/tab") | undefined} arg.currentTab
- * @prop {string | undefined} arg.category
- * @prop {string | undefined} arg.description
- * @prop {string | undefined} arg.reportFlow
- *   String detailing the UI flow that this breakage report came from.
- */
-export async function sendBreakageReportForCurrentTab({ pixelName, currentTab, category, description, reportFlow }) {
-    await settings.ready();
-    await tdsStorage.ready('config');
-
-    const tab = currentTab || (await tabManager.getOrRestoreCurrentTab());
-    if (!tab) {
-        return;
-    }
-
-    const pageParams = (await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })) || {};
-
-    const tds = settings.getSetting('tds-etag');
-    const remoteConfigEtag = settings.getSetting('config-etag');
-    const remoteConfigVersion = tdsStorage.config.version;
-
-    return await breakageReportForTab({
-        pixelName,
-        tab,
-        tds,
-        remoteConfigEtag,
-        remoteConfigVersion,
-        category,
-        description,
-        pageParams,
-        reportFlow,
-    });
 }
 
 /**

@@ -1,13 +1,10 @@
 import browser from 'webextension-polyfill';
-import { dashboardDataFromTab } from './classes/privacy-dashboard-data';
-import { getDisclosureDetails, sendBreakageReportForCurrentTab } from './broken-site-report';
 import parseUserAgentString from '../shared-utils/parse-user-agent-string';
 import { getExtensionURL } from './wrapper';
 import { isFeatureEnabled, reloadCurrentTab } from './utils';
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load';
 import tdsStorage from './storage/tds';
 import { getArgumentsObject } from './helpers/arguments-object';
-import { isFireButtonEnabled } from './components/fire-button';
 import { postPopupMessage } from './popup-messaging';
 import ToggleReports from './components/toggle-reports';
 const utils = require('./utils');
@@ -97,47 +94,6 @@ export function openOptions() {
     } else {
         browser.runtime.openOptionsPage();
     }
-}
-
-/**
- * Only the dashboard sends this message, so we import the types from there.
- * @param {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').BreakageReportRequest} breakageReport
- * @returns {Promise<void>}
- */
-export function submitBrokenSiteReport(breakageReport) {
-    const pixelName = 'epbf';
-    const { category, description } = breakageReport;
-    return sendBreakageReportForCurrentTab({ pixelName, category, description });
-}
-
-/**
- * This message is here to ensure the privacy dashboard can render
- * from a single call to the extension.
- *
- * Currently, it will collect data for the current tab and email protection
- * user data.
- */
-export async function getPrivacyDashboardData(options) {
-    let { tabId } = options;
-    if (tabId === null) {
-        const currentTab = await utils.getCurrentTab();
-        if (!currentTab?.id) {
-            throw new Error('could not get the current tab...');
-        }
-        tabId = currentTab?.id;
-    }
-
-    // Await for storage to be ready; this happens on service worker closing mostly.
-    await settings.ready();
-    await tdsStorage.ready('config');
-
-    const tab = await tabManager.getOrRestoreTab(tabId);
-    if (!tab) throw new Error('unreachable - cannot access current tab with ID ' + tabId);
-    const userData = settings.getSetting('userData');
-    const fireButtonData = {
-        enabled: isFireButtonEnabled,
-    };
-    return dashboardDataFromTab(tab, userData, fireButtonData);
 }
 
 export function getTopBlockedByPages(options) {
@@ -323,9 +279,6 @@ export function addDebugFlag(message, sender, req) {
  * @param {(options: any, sender: any, req: any) => any} func
  */
 export function registerMessageHandler(name, func) {
-    if (messageHandlers[name]) {
-        throw new Error(`Attempt to re-register existing message handler ${name}`);
-    }
     messageHandlers[name] = func;
 }
 
@@ -344,9 +297,6 @@ const messageHandlers = {
     allowlistOptIn,
     getBrowser,
     openOptions,
-    submitBrokenSiteReport,
-    getBreakageFormOptions: getDisclosureDetails,
-    getPrivacyDashboardData,
     getTopBlockedByPages,
     getClickToLoadState,
     getYouTubeVideoDetails,
