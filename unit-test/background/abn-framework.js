@@ -2,7 +2,7 @@ import { ParamsValidator } from '@duckduckgo/pixel-schema/src/params_validator.m
 
 import messageHandlers from '../../shared/js/background/message-handlers';
 import RemoteConfig, { choseCohort } from '../../shared/js/background/components/remote-config';
-import AbnExperimentMetrics, { getDateStringET, startOfDayET } from '../../shared/js/background/components/abn-experiments';
+import AbnExperimentMetrics, { getDateStringEST, startOfDayEST } from '../../shared/js/background/components/abn-experiments';
 import load from '../../shared/js/background/load';
 import commonParams from '../../pixel-definitions/common_params.json';
 import commonSuffixes from '../../pixel-definitions/common_suffixes.json';
@@ -352,27 +352,27 @@ describe('ABN pixels', () => {
     });
 });
 
-describe('startOfDayET', () => {
+describe('startOfDayEST', () => {
     it('always returns a timestamp in the past', () => {
-        expect(startOfDayET()).toBeLessThan(Date.now());
+        expect(startOfDayEST()).toBeLessThan(Date.now());
     });
 
     it('returns a timestamp corresponding to the start of the current day in ET', () => {
         const ts = new Date('2025-02-01T06:00:00');
-        expect(new Date(startOfDayET(ts))).toEqual(new Date('Feb 1 2025 00:00:00 UTC-0500'));
+        expect(new Date(startOfDayEST(ts))).toEqual(new Date('Feb 1 2025 00:00:00 UTC-0500'));
         ts.setUTCHours(23);
-        expect(new Date(startOfDayET(ts))).toEqual(new Date('Feb 1 2025 00:00:00 UTC-0500'));
+        expect(new Date(startOfDayEST(ts))).toEqual(new Date('Feb 1 2025 00:00:00 UTC-0500'));
     });
 
     it('handles day rollover', () => {
         const ts = new Date('2025-02-01T03:00:00');
-        expect(new Date(startOfDayET(ts))).toEqual(new Date('Jan 31 2025 00:00:00 UTC-0500'));
+        expect(new Date(startOfDayEST(ts))).toEqual(new Date('Jan 31 2025 00:00:00 UTC-0500'));
     });
 });
 
-describe('getDateStringET', () => {
+describe('getDateStringEST', () => {
     it('returns a unix timestamp as the date in ET at that instant', () => {
-        expect(getDateStringET(new Date('2025-02-01T06:00:00'))).toEqual('2025-02-01');
-        expect(getDateStringET(new Date('2025-02-01T02:00:00'))).toEqual('2025-01-31');
+        expect(getDateStringEST(new Date('2025-02-01T06:00:00'))).toEqual('2025-02-01');
+        expect(getDateStringEST(new Date('2025-02-01T02:00:00'))).toEqual('2025-01-31');
     });
 });
