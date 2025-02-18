@@ -63,7 +63,7 @@ export default class DashboardMessaging {
      */
     async submitBrokenSiteReport(breakageReport, pixelName = 'epbf', reportFlow = undefined) {
         // wait for config and TDS so we can get etags and config version
-        await Promise.all([this.tds.remoteConfig.ready, this.tds.tds.ready]);
+        await Promise.all([this.tds.remoteConfig.allLoadingFinished, this.tds.tds.ready]);
         const { category, description } = breakageReport;
         const tab = await this.tabManager.getOrRestoreCurrentTab();
         if (!tab) {
@@ -72,7 +72,7 @@ export default class DashboardMessaging {
         const pageParams = (await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })) || {};
         const tds = this.tds.tds.etag;
         const remoteConfigEtag = this.tds.remoteConfig.etag;
-        const remoteConfigVersion = this.tds.remoteConfig.config?.version;
+        const remoteConfigVersion = this.tds.remoteConfig.config?.version || '';
         return breakageReportForTab({
             pixelName,
             tab,
