@@ -72,7 +72,7 @@ export default class DashboardMessaging {
         const pageParams = (await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })) || {};
         const tds = this.tds.tds.etag;
         const remoteConfigEtag = this.tds.remoteConfig.etag;
-        const remoteConfigVersion = this.tds.remoteConfig.config?.version;
+        const remoteConfigVersion = this.tds.remoteConfig.config?.version || '';
         return breakageReportForTab({
             pixelName,
             tab,
