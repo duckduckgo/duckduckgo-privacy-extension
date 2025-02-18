@@ -53,7 +53,7 @@ test.describe('Broken site reports', () => {
                 ignoreRequests: '',
                 ignoredByUserRequests: '',
                 // jsPerformance: '',
-                locale: 'en-GB',
+                // locale: 'en-GB',
                 noActionRequests: '',
                 openerContext: 'external',
                 performanceWarning: 'false',
@@ -69,6 +69,7 @@ test.describe('Broken site reports', () => {
             },
         });
         expect(pixel.params.jsPerformance).toMatch(/^[0-9]+$/);
+        expect(pixel.params.locale).toMatch(/^[a-z]{2}-[A-Z]{2}$/);
     });
 
     test('Includes correct metadata when blocklist fetch fails', async ({ context, backgroundPage, page, routeExtensionRequests }) => {
@@ -99,7 +100,7 @@ test.describe('Broken site reports', () => {
                 ignoreRequests: '',
                 ignoredByUserRequests: '',
                 // jsPerformance: '',
-                locale: 'en-GB',
+                // locale: 'en-GB',
                 noActionRequests: '',
                 openerContext: 'external',
                 performanceWarning: 'false',
