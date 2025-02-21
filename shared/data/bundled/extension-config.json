@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1738568676812,
+    "version": 1740008072863,
     "features": {
         "adAttributionReporting": {
             "state": "disabled",
@@ -485,6 +485,33 @@
                     "domain": "ib3.org"
                 },
                 {
+                    "domain": "bergwelten.com"
+                },
+                {
+                    "domain": "bibliotheek.be"
+                },
+                {
+                    "domain": "volcanoteide.com"
+                },
+                {
+                    "domain": "dwaalzin.nu"
+                },
+                {
+                    "domain": "omegawatches.com"
+                },
+                {
+                    "domain": "russafasingluten.com"
+                },
+                {
+                    "domain": "capita.com"
+                },
+                {
+                    "domain": "capita.co.uk"
+                },
+                {
+                    "domain": "katieloxton.com"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
@@ -661,7 +688,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "d83ff097323041738ecd050049d1095b"
+            "hash": "2d36326ee63b7783724b42ad0a553884"
         },
         "autofillBreakageReporter": {
             "state": "disabled",
@@ -758,6 +785,11 @@
             "exceptions": [],
             "state": "disabled",
             "hash": "728493ef7a1488e4781656d3f9db84aa"
+        },
+        "burn": {
+            "state": "enabled",
+            "exceptions": [],
+            "hash": "697382e31649d84b01166f1dc6f790d6"
         },
         "changeOmnibarPosition": {
             "exceptions": [],
@@ -2454,6 +2486,21 @@
                         ]
                     },
                     {
+                        "domain": "abcnews.go.com",
+                        "rules": [
+                            {
+                                "selector": ".navigation",
+                                "type": "modify-style",
+                                "values": [
+                                    {
+                                        "property": "top",
+                                        "value": "0px"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
                         "domain": "accuweather.com",
                         "rules": [
                             {
@@ -2554,6 +2601,15 @@
                             {
                                 "selector": ".h12container",
                                 "type": "hide"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "autoby.jp",
+                        "rules": [
+                            {
+                                "selector": ".ad-center",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -2686,6 +2742,15 @@
                             {
                                 "selector": "[data-testid='sparkle-ad']",
                                 "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "bloomberglaw.com",
+                        "rules": [
+                            {
+                                "selector": "[class^='HeaderAdSpot_']",
+                                "type": "hide-empty"
                             }
                         ]
                     },
@@ -3501,6 +3566,10 @@
                                 "type": "hide"
                             },
                             {
+                                "selector": "div:has(> iframe[src*='prid=19031497'])",
+                                "type": "hide"
+                            },
+                            {
                                 "selector": "div:has(> iframe[src*='prid=19043282'])",
                                 "type": "hide"
                             },
@@ -4054,6 +4123,19 @@
                             },
                             {
                                 "selector": "#nbcsports-leaderboard",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "ndtvprofit.com",
+                        "rules": [
+                            {
+                                "selector": "[class*='ad-with-placeholder']",
+                                "type": "closest-empty"
+                            },
+                            {
+                                "selector": "[class*='ad-wrapper']",
                                 "type": "hide-empty"
                             }
                         ]
@@ -5334,11 +5416,29 @@
                                 "type": "hide-empty"
                             }
                         ]
+                    },
+                    {
+                        "domain": "tdpri.com",
+                        "rules": [
+                            {
+                                "selector": "[data-aa-adunit]",
+                                "type": "closest-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "ukutabs.com",
+                        "rules": [
+                            {
+                                "selector": ".wpb_wrapper",
+                                "type": "hide-empty"
+                            }
+                        ]
                     }
                 ]
             },
             "state": "enabled",
-            "hash": "813a58ae8024cdfd4d7b80063070e9b6"
+            "hash": "7dc9b203d9f998f077ef8cc3091d4f7d"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -5625,6 +5725,9 @@
                     "domain": "humana.com"
                 },
                 {
+                    "domain": "target.com"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
@@ -5659,7 +5762,7 @@
                 }
             ],
             "state": "enabled",
-            "hash": "0bddc7b6a61dcf830318823e26fcadfc"
+            "hash": "470afc99bf3c6d173c039241c6b99cf4"
         },
         "fingerprintingScreenSize": {
             "settings": {
@@ -6024,6 +6127,11 @@
             "exceptions": [],
             "hash": "c292bb627849854515cebbded288ef5a"
         },
+        "htmlHistoryPage": {
+            "state": "disabled",
+            "exceptions": [],
+            "hash": "c292bb627849854515cebbded288ef5a"
+        },
         "htmlNewTabPage": {
             "state": "disabled",
             "exceptions": [],
@@ -6110,9 +6218,12 @@
             "exceptions": [
                 {
                     "domain": "broken.third-party.site"
+                },
+                {
+                    "domain": "d3qpjnspil4z56.cloudfront.net"
                 }
             ],
-            "hash": "d77ea378a62ed996480f10c6bb72ecbe"
+            "hash": "077ce61e98178cbb85e56c2053b26cd7"
         },
         "marketplaceAdPostback": {
             "state": "disabled",
@@ -6874,7 +6985,7 @@
                     "alicdn.com": {
                         "rules": [
                             {
-                                "rule": "alicdn.com/g/qwenweb/qwen-webui-fe/0.0.15",
+                                "rule": "alicdn.com/g/qwenweb/qwen-webui-fe/",
                                 "domains": [
                                     "qwenlm.ai"
                                 ]
@@ -7666,6 +7777,16 @@
                             }
                         ]
                     },
+                    "exoclick.com": {
+                        "rules": [
+                            {
+                                "rule": "ads.exoclick.com/ads.js",
+                                "domains": [
+                                    "myreadingmanga.info"
+                                ]
+                            }
+                        ]
+                    },
                     "ezodn.com": {
                         "rules": [
                             {
@@ -8103,6 +8224,7 @@
                                     "thesimsresource.com",
                                     "tradersync.com",
                                     "vanguardplan.com",
+                                    "vizio.com",
                                     "xpn.org"
                                 ]
                             }
@@ -9851,6 +9973,7 @@
                             {
                                 "rule": "dev.visualwebsiteoptimizer.com/j.php",
                                 "domains": [
+                                    "arlo.com",
                                     "searchhudforeclosures.com"
                                 ]
                             }
@@ -10091,7 +10214,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "2a225a6601cef0cac52fc3f30166ebf8"
+            "hash": "af7851f27973bcc300efa36f4b960ef6"
         },
         "trackingCookies1p": {
             "settings": {
