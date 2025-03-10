@@ -1,6 +1,6 @@
 {
     "readme": "https://github.com/duckduckgo/privacy-configuration",
-    "version": 1740008072863,
+    "version": 1741410644303,
     "features": {
         "adAttributionReporting": {
             "state": "disabled",
@@ -188,9 +188,6 @@
                     "domain": "bild.de"
                 },
                 {
-                    "domain": "breitbart.com"
-                },
-                {
                     "domain": "derstandard.de"
                 },
                 {
@@ -327,9 +324,6 @@
                 },
                 {
                     "domain": "publico.es"
-                },
-                {
-                    "domain": "leboncoin.fr"
                 },
                 {
                     "domain": "www.ffbb.com"
@@ -512,6 +506,30 @@
                     "domain": "katieloxton.com"
                 },
                 {
+                    "domain": "servustv.com"
+                },
+                {
+                    "domain": "xxlmag.com"
+                },
+                {
+                    "domain": "tfl.gov.uk"
+                },
+                {
+                    "domain": "jomajewellery.com"
+                },
+                {
+                    "domain": "stooq.pl"
+                },
+                {
+                    "domain": "schadefonds.nl"
+                },
+                {
+                    "domain": "boerse-aktuell.de"
+                },
+                {
+                    "domain": "bsrzepin.pl"
+                },
+                {
                     "domain": "marvel.com"
                 },
                 {
@@ -688,7 +706,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "2d36326ee63b7783724b42ad0a553884"
+            "hash": "97476dcea9213b6c4ba8bfea7bc1a162"
         },
         "autofillBreakageReporter": {
             "state": "disabled",
@@ -1749,6 +1767,9 @@
                 },
                 "openInNewTab": {
                     "state": "disabled"
+                },
+                "customError": {
+                    "state": "disabled"
                 }
             },
             "settings": {
@@ -1837,7 +1858,7 @@
                 ]
             },
             "state": "disabled",
-            "hash": "b6a1f037e0b7b9b36539009cf338c229"
+            "hash": "bf081a295f0a5f5b74f65930f877ea76"
         },
         "elementHiding": {
             "exceptions": [
@@ -2356,6 +2377,10 @@
                     {
                         "domain": "pocketbook.digital",
                         "reason": "https://github.com/duckduckgo/privacy-configuration/issues/1365"
+                    },
+                    {
+                        "domain": "bsrzepin.pl",
+                        "reason": "https://github.com/duckduckgo/privacy-configuration/pull/2821"
                     }
                 ],
                 "hideTimeouts": [
@@ -2472,6 +2497,15 @@
                             },
                             {
                                 "selector": "#top-adhesion",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "aarp.org",
+                        "rules": [
+                            {
+                                "selector": "[class*='AdBlock__container___']",
                                 "type": "hide-empty"
                             }
                         ]
@@ -2937,6 +2971,26 @@
                         ]
                     },
                     {
+                        "domain": "dailyboulder.com",
+                        "rules": [
+                            {
+                                "type": "disable-default"
+                            },
+                            {
+                                "selector": ".site-access-popup",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".site-access-inner",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".top-site-ad",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
                         "domain": "dailyherald.com",
                         "rules": [
                             {
@@ -3250,6 +3304,26 @@
                             {
                                 "selector": ".feed-b",
                                 "type": "hide-empty"
+                            },
+                            {
+                                "selector": ".global-nav-view, .global-nav-view .global-nav-content",
+                                "type": "modify-style",
+                                "values": [
+                                    {
+                                        "property": "margin-top",
+                                        "value": "0px"
+                                    }
+                                ]
+                            },
+                            {
+                                "selector": ".search-subnav-slender-view, .search-slender-advanced-panel-view",
+                                "type": "modify-style",
+                                "values": [
+                                    {
+                                        "property": "top",
+                                        "value": "0px"
+                                    }
+                                ]
                             }
                         ]
                     },
@@ -3614,6 +3688,10 @@
                                 "type": "hide"
                             },
                             {
+                                "selector": "div:has(> iframe[src*='prid=19046509'])",
+                                "type": "hide"
+                            },
+                            {
                                 "selector": "[aria-labelledby='promo-header']",
                                 "type": "hide"
                             },
@@ -3907,6 +3985,19 @@
                             },
                             {
                                 "selector": "[class*='placeholder']",
+                                "type": "hide-empty"
+                            }
+                        ]
+                    },
+                    {
+                        "domain": "kutv.com",
+                        "rules": [
+                            {
+                                "selector": "[class*='DisplayAdvert']",
+                                "type": "hide-empty"
+                            },
+                            {
+                                "selector": "[class*='adBeforeContent']",
                                 "type": "hide-empty"
                             }
                         ]
@@ -5438,7 +5529,7 @@
                 ]
             },
             "state": "enabled",
-            "hash": "7dc9b203d9f998f077ef8cc3091d4f7d"
+            "hash": "9583fd08a888374940b10e102f6340bc"
         },
         "exceptionHandler": {
             "exceptions": [
@@ -6130,7 +6221,12 @@
         "htmlHistoryPage": {
             "state": "disabled",
             "exceptions": [],
-            "hash": "c292bb627849854515cebbded288ef5a"
+            "features": {
+                "isLaunched": {
+                    "state": "disabled"
+                }
+            },
+            "hash": "8400a35feab96ad28d974fc04e895d88"
         },
         "htmlNewTabPage": {
             "state": "disabled",
@@ -6987,6 +7083,7 @@
                             {
                                 "rule": "alicdn.com/g/qwenweb/qwen-webui-fe/",
                                 "domains": [
+                                    "qwen.ai",
                                     "qwenlm.ai"
                                 ]
                             },
@@ -7025,6 +7122,16 @@
                                 "rule": "elb.amazonaws.com/public/digital-experience/js/common.js",
                                 "domains": [
                                     "cigna.com"
+                                ]
+                            }
+                        ]
+                    },
+                    "amplitude.com": {
+                        "rules": [
+                            {
+                                "rule": "flag.lab.eu.amplitude.com/sdk/",
+                                "domains": [
+                                    "bluelightcard.co.uk"
                                 ]
                             }
                         ]
@@ -7590,8 +7697,10 @@
                                 "domains": [
                                     "ah.nl",
                                     "applesfera.com",
+                                    "fincopilot.net",
                                     "goplay.be",
                                     "itsthevibe.com",
+                                    "kutv.com",
                                     "nytimes.com",
                                     "realmadrid.com",
                                     "repretel.com",
@@ -7621,6 +7730,7 @@
                                 "domains": [
                                     "applesfera.com",
                                     "itsthevibe.com",
+                                    "kutv.com",
                                     "triblive.com"
                                 ]
                             },
@@ -7635,6 +7745,7 @@
                                 "domains": [
                                     "crunchyroll.com",
                                     "nhl.com",
+                                    "pch.com",
                                     "rocketnews24.com",
                                     "viki.com"
                                 ]
@@ -8155,8 +8266,11 @@
                                     "ign.com",
                                     "metro.co.uk",
                                     "mlb.com",
+                                    "nicovideo.jp",
                                     "pandora.com",
                                     "paper-io.com",
+                                    "pch.com",
+                                    "plex.tv",
                                     "rawstory.com",
                                     "washingtonpost.com"
                                 ]
@@ -8225,6 +8339,7 @@
                                     "tradersync.com",
                                     "vanguardplan.com",
                                     "vizio.com",
+                                    "wps.com",
                                     "xpn.org"
                                 ]
                             }
@@ -8805,6 +8920,12 @@
                                 ]
                             },
                             {
+                                "rule": "cdn.medallia.com/react-surveys-next/",
+                                "domains": [
+                                    "dunkinrunsonyou.com"
+                                ]
+                            },
+                            {
                                 "rule": "digital-cloud-west.medallia.com/",
                                 "domains": [
                                     "walgreens.com"
@@ -8812,6 +8933,12 @@
                             },
                             {
                                 "rule": "survey.medallia.com/",
+                                "domains": [
+                                    "<all>"
+                                ]
+                            },
+                            {
+                                "rule": "resources.digital-cloud-gov.medallia.com/",
                                 "domains": [
                                     "<all>"
                                 ]
@@ -8860,6 +8987,16 @@
                                 "rule": "memberful.com/embed.js",
                                 "domains": [
                                     "<all>"
+                                ]
+                            }
+                        ]
+                    },
+                    "moatads.com": {
+                        "rules": [
+                            {
+                                "rule": "z.moatads.com/weatherprebidheader",
+                                "domains": [
+                                    "wunderground.com"
                                 ]
                             }
                         ]
@@ -9334,6 +9471,7 @@
                                 "rule": "a.pub.network/core/prebid-universal-creative.js",
                                 "domains": [
                                     "boingboing.net",
+                                    "newrepublic.com",
                                     "signupgenius.com",
                                     "smithsonianmag.com",
                                     "stockcharts.com",
@@ -9344,6 +9482,12 @@
                                 "rule": "a.pub.network/virtualpiano-net/pubfig.min.js",
                                 "domains": [
                                     "virtualpiano.net"
+                                ]
+                            },
+                            {
+                                "rule": "a.pub.network/thenation-com/pubfig.min.js",
+                                "domains": [
+                                    "thenation.com"
                                 ]
                             }
                         ]
@@ -9747,6 +9891,16 @@
                             }
                         ]
                     },
+                    "theadex.com": {
+                        "rules": [
+                            {
+                                "rule": "dmp.theadex.com/",
+                                "domains": [
+                                    "servustv.com"
+                                ]
+                            }
+                        ]
+                    },
                     "theplatform.com": {
                         "rules": [
                             {
@@ -10068,21 +10222,9 @@
                                 ]
                             },
                             {
-                                "rule": "rapid-cdn.yottaa.com/rapid/lib/ows8CdAyrC5lTw.js",
+                                "rule": "rapid-cdn.yottaa.com/rapid/lib/",
                                 "domains": [
-                                    "scheels.com"
-                                ]
-                            },
-                            {
-                                "rule": "rapid-cdn.yottaa.com/rapid/lib/3ZzYwky2C-3YQw.js",
-                                "domains": [
-                                    "fashionnova.com"
-                                ]
-                            },
-                            {
-                                "rule": "rapid-cdn.yottaa.com/rapid/lib/ZfJxptseJcUQIA.js",
-                                "domains": [
-                                    "aviatornation.com"
+                                    "<all>"
                                 ]
                             }
                         ]
@@ -10214,7 +10356,7 @@
                     "domain": "ticketmaster.com"
                 }
             ],
-            "hash": "af7851f27973bcc300efa36f4b960ef6"
+            "hash": "7de8375bcd7994508b664a5aabd9612a"
         },
         "trackingCookies1p": {
             "settings": {
