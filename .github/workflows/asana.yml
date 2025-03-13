@@ -15,11 +15,13 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-            - uses: sammacbeth/action-asana-sync@v6
+            - uses: duckduckgo/action-asana-sync@v7
               with:
                   ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
                   ASANA_WORKSPACE_ID: ${{ secrets.ASANA_WORKSPACE_ID }}
                   ASANA_PROJECT_ID: '312629933896096'
+                  GITHUB_PAT: ${{ secrets.GH_PAT }}
                   move_to_section_id: '1138897367676525'
                   USER_MAP: ${{ vars.USER_MAP }}
                   NO_AUTOCLOSE_PROJECTS: '312629933896096'
+                  ASSIGN_PR_AUTHOR: 'true'
