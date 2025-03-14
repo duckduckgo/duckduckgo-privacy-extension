@@ -2,7 +2,7 @@
     "agents": ["Chrome", "Firefox", "Edge", "Brave", "Opera"],
     "target": {
         "key": "extensionVersion",
-        "version": "2024.10.16"
+        "version": "2025.2.20"
     },
     "forceLowerCase": false
 }
