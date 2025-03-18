@@ -19,5 +19,10 @@
         "enum": [
             1
         ]
+    },
+    "scrlybrkr": {
+        "key": "scrlybrkr",
+        "description": "Added by 3rd party school proxy",
+        "type": "number"
     }
 }
