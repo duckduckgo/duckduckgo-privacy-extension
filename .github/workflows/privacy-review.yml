@@ -7,7 +7,7 @@ on:
 jobs:
   call-privacy-review:
     if: contains(github.event.label.name, 'privacy review')
-    uses: duckduckgo/native-github-asana-sync/.github/workflows/privacy-review.yml@la-privacy-review-updates
+    uses: ladamski/native-github-asana-sync/.github/workflows/privacy-review.yml@la-privacy-review-updates
     with:
       team_name: 'Extension'
       ref: 'v1.3'
