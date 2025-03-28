@@ -67,6 +67,10 @@
             {
                 "key": "value",
                 "description": "Value associated with the metric, e.g. number of times it triggered within the period."
+            },
+            {
+                "key": "test",
+                "description": "ignore me"
             }
         ]
     }
