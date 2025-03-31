@@ -1,10 +1,10 @@
 {
   "appName" : {
-    "message" : "DuckDuckGo Privacy Essentials",
+    "message" : "DuckDuckGo Search & Tracker Protection",
     "description" : "Заглавието на разширението, показано в уеб магазина"
   },
   "appDesc" : {
-    "message" : "Лесна и безпроблемна защита на поверителността за Вашия браузър.",
+    "message" : "Активно защитава данните ти в текущия ти браузър.",
     "description" : "Краткото описание на разширението, показано в уеб магазина"
   }
 }
