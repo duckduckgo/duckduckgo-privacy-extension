@@ -10,7 +10,7 @@ jobs:
     uses: duckduckgo/native-github-asana-sync/.github/workflows/privacy-review.yml@la-privacy-review-updates
     with:
       team_name: 'Extension'
-      ref: 'v1.3'
+      ref: 'v1.5'
     secrets:
       asana_pat: ${{ secrets.ASANA_ACCESS_TOKEN }}
       github_pat: ${{ secrets.DAXMOBILE_TOKEN }}
