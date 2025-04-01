@@ -18,7 +18,7 @@ export class AppUseMetric {
                 await abnMetrics.remoteConfig.ready;
                 abnMetrics.onMetricTriggered('app_use');
             }
-        })
+        });
     }
 }
 

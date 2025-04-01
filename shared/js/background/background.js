@@ -97,7 +97,7 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
         }),
     ];
     components.fireButton = new FireButton({ settings, tabManager });
-    setUpTestExperiment(abnMetrics)
+    setUpTestExperiment(abnMetrics);
 }
 // MV3-only components
 if (BUILD_TARGET === 'chrome') {
