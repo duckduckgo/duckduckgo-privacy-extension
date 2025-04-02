@@ -65,7 +65,11 @@ export default class TDSStorage {
         const enabledBlocklistOverrides = Object.keys(contentBlockingSubFeatures).filter(
             (k) => k.startsWith('TDS') && this.config.isSubFeatureEnabled(CONTENT_BLOCKING, k),
         );
-        if (enabledBlocklistOverrides.length > 0 && this.abnMetrics) {
+        if (
+            enabledBlocklistOverrides.length > 0 &&
+            this.abnMetrics &&
+            this.remoteConfig.getCohortName(CONTENT_BLOCKING, enabledBlocklistOverrides[0]) !== null
+        ) {
             const subFeatureName = enabledBlocklistOverrides[0];
             const overrideSubFeature = contentBlockingSubFeatures[subFeatureName];
             // If this is enabled via an experiment, the override URL is defined as `${cohortName}Url`, otherwise, for a normal rollout use `nextUrl`.
