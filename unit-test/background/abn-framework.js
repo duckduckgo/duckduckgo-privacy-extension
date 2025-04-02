@@ -4,8 +4,8 @@ import messageHandlers from '../../shared/js/background/message-handlers';
 import RemoteConfig, { choseCohort } from '../../shared/js/background/components/remote-config';
 import AbnExperimentMetrics, { getDateStringEST, startOfDayEST } from '../../shared/js/background/components/abn-experiments';
 import load from '../../shared/js/background/load';
-import commonParams from '../../pixel-definitions/common_params.json';
-import commonSuffixes from '../../pixel-definitions/common_suffixes.json';
+import commonParams from '../../pixel-definitions/params_dictionary.json';
+import commonSuffixes from '../../pixel-definitions/suffixes_dictionary.json';
 import experimentPixels from '../../pixel-definitions/pixels/experiments.json';
 import { MockSettings } from '../helpers/mocks';
 
