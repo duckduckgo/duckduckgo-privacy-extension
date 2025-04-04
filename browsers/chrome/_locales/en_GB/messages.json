@@ -1,1 +1,8 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Simple and seamless privacy protection for your browser."}}
+{
+    "appName": {
+        "message": "DuckDuckGo Search & Tracker Protection"
+    },
+    "appDesc": {
+        "message": "Actively protects your data in your current browser."
+    }
+}

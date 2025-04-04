@@ -1,10 +1,10 @@
 {
   "appName" : {
-    "message" : "DuckDuckGo Privacy Essentials",
+    "message" : "DuckDuckGo Search & Tracker Protection",
     "description" : "Titlul extensiei, afișat în magazinul web"
   },
   "appDesc" : {
-    "message" : "O protecție simplă, fără sincope, pentru browserul tău.",
+    "message" : "Îți protejează activ datele în browserul tău existent.",
     "description" : "Scurtă descriere a extensiei, afișată în magazinul web"
   }
 }
