@@ -1,10 +1,10 @@
 {
   "appName" : {
-    "message" : "DuckDuckGo Privacy Essentials",
+    "message" : "DuckDuckGo Search & Tracker Protection",
     "description" : "Tilläggets titel, visas i webbutiken"
   },
   "appDesc" : {
-    "message" : "Enkelt och okomplicerat integritetsskydd för din webbläsare.",
+    "message" : "Skyddar aktivt dina data i din nuvarande webbläsare.",
     "description" : "Kort beskrivning av tillägget, visas i webbutiken"
   }
 }

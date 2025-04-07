@@ -1,10 +1,10 @@
 {
   "appName" : {
-    "message" : "DuckDuckGo Privacy Essentials",
+    "message" : "DuckDuckGo Search & Tracker Protection",
     "description" : "A bővítmény webáruházban megjelenített neve"
   },
   "appDesc" : {
-    "message" : "Egyszerű és folyamatos adatvédelem a böngésződhöz.",
+    "message" : "Aktívan védi az adataidat az aktuális böngésződben.",
     "description" : "A bővítmény webáruházban megjelenített rövid leírása"
   }
 }
