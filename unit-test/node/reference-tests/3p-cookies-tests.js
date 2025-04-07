@@ -13,9 +13,6 @@ const { getArgumentsObject } = require('../../../shared/js/background/helpers/ar
 
 const jsdom = require('jsdom');
 
-const TrackingJsCookieProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/cookie').default;
-const trackingJsCookieProtection = new TrackingJsCookieProtection('cookie');
-
 const trackingConfigReference = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/config_reference.json');
 const trackingBlocklistReference = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/tracker_radar_reference.json');
 const trackingTestSets = require('@duckduckgo/privacy-reference-tests/block-third-party-tracking-cookies/tests.json');
@@ -25,7 +22,7 @@ const { JSDOM } = jsdom;
 
 const orgGlobalThis = globalThis;
 
-function runTestSuite(suiteType, testSet, jsCookieProtection, configReference, blocklistReference) {
+function runTestSuite(suiteType, testSet, configReference, blocklistReference) {
     describe(`Third party ${suiteType} cookies blocking tests / ${testSet.name} /`, () => {
         beforeAll(() => {
             tdsStorageStub.stub({ config: configReference, tds: blocklistReference });
@@ -108,10 +105,16 @@ function runTestSuite(suiteType, testSet, jsCookieProtection, configReference, b
 
                     // protection only works in an iframe
                     const jsdomWindow = dom.window.frames[0].window;
-
+                    const utils = require('@duckduckgo/content-scope-scripts/injected/src/utils');
+                    utils.setGlobal(jsdomWindow);
+                    const TrackingJsCookieProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/cookie').default;
                     // eslint-disable-next-line no-global-assign
                     globalThis = jsdomWindow;
-
+                    const importConfig = {
+                        trackerLookup: [],
+                        injectName: 'extensionTest',
+                    };
+                    const jsCookieProtection = new TrackingJsCookieProtection('cookie', importConfig, args);
                     jsCookieProtection.callLoad({
                         platform: constants.platform,
                     });
@@ -135,5 +138,5 @@ function runTestSuite(suiteType, testSet, jsCookieProtection, configReference, b
 for (const setName of Object.keys(trackingTestSets)) {
     const testSet = trackingTestSets[setName];
 
-    runTestSuite('tracking', testSet, trackingJsCookieProtection, trackingConfigReference, trackingBlocklistReference);
+    runTestSuite('tracking', testSet, trackingConfigReference, trackingBlocklistReference);
 }

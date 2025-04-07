@@ -67,7 +67,11 @@ for (const setName of Object.keys(testSets)) {
                 utils.setGlobal(jsdomWindow);
 
                 const JsCookieProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/cookie').default;
-                const jsCookieProtection = new JsCookieProtection('cookie');
+                const importConfig = {
+                    trackerLookup: [],
+                    injectName: 'extensionTest',
+                };
+                const jsCookieProtection = new JsCookieProtection('cookie', importConfig, args);
 
                 jsCookieProtection.callLoad({
                     platform: constants.platform,
