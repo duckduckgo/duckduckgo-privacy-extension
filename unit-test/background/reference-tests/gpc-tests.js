@@ -4,7 +4,6 @@ const tdsStorage = require('../../../shared/js/background/storage/tds').default;
 const Site = require('../../../shared/js/background/classes/site').default;
 const GPC = require('../../../shared/js/background/GPC');
 const GpcContentScript = require('@duckduckgo/content-scope-scripts/injected/src/features/gpc').default;
-const gpcContentScript = new GpcContentScript('gpc');
 const constants = require('../../../shared/data/constants');
 const settings = require('../../../shared/js/background/settings');
 
@@ -45,11 +44,16 @@ for (const setName of Object.keys(testSets)) {
                 });
             } else if ('expectGPCAPI' in test) {
                 it(`${test.name}`, () => {
+                    const importConfig = {
+                        trackerLookup: [],
+                        injectName: 'extensionTest',
+                    };
                     const args = {
                         site: new Site(test.siteURL),
                         globalPrivacyControlValue: test.gpcUserSettingOn,
                         platform: constants.platform,
                     };
+                    const gpcContentScript = new GpcContentScript('gpc', importConfig, args);
                     const isEnabled = !contentScriptUtils.isFeatureBroken(args, 'gpc');
 
                     expect(isEnabled).toEqual(test.expectGPCAPI);

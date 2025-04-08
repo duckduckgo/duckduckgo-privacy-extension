@@ -11,6 +11,7 @@
  *  sent: boolean;
  * } & ExperimentMetric} ExperimentMetricCounter
  */
+import { generateBreakageMetrics } from '../metrics';
 import { sendPixelRequest } from '../pixels';
 
 /**
@@ -182,4 +183,30 @@ export function startOfDayEST(now = Date.now()) {
         d.setUTCDate(d.getUTCDate() - 1);
     }
     return d.setUTCHours(5, 0, 0, 0);
+}
+
+/**
+ * Sets up a listener on config updates to automatically enroll in experiments in a testing feature.
+ *
+ * This can be primarily used to validate experiment enrollment and metrics
+ * @param {AbnExperimentMetrics} abnMetrics
+ * @param {string} [testFeatureName]
+ */
+export function setUpTestExperiment(abnMetrics, testFeatureName = 'incrementalRolloutTest') {
+    // check for rollout test
+    const remoteConfig = abnMetrics.remoteConfig;
+    remoteConfig.onUpdate(() => {
+        const testFeature = remoteConfig.config?.features[testFeatureName];
+        if (testFeature) {
+            Object.keys(testFeature.features || {}).forEach((subFeatureName) => {
+                const cohort = remoteConfig.getCohort(testFeatureName, subFeatureName);
+                if (cohort) {
+                    abnMetrics.markExperimentEnrolled(testFeatureName, subFeatureName, [
+                        ...generateRetentionMetrics(),
+                        ...generateBreakageMetrics(),
+                    ]);
+                }
+            });
+        }
+    });
 }

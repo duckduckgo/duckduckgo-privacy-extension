@@ -8,13 +8,9 @@ const tabManager = require('../../../shared/js/background/tab-manager');
 const { getArgumentsObject } = require('../../../shared/js/background/helpers/arguments-object');
 
 const BatteryProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/fingerprinting-battery').default;
-const batteryProtection = new BatteryProtection('fingerprintingBattery');
 const HardwareProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/fingerprinting-hardware').default;
-const hardwareProtection = new HardwareProtection('fingerprintingHardware');
 const ScreenProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/fingerprinting-screen-size').default;
-const screenProtection = new ScreenProtection('fingerprintingScreenSize');
 const TempStorageProtection = require('@duckduckgo/content-scope-scripts/injected/src/features/fingerprinting-temporary-storage').default;
-const tempStorageProtection = new TempStorageProtection('fingerprintingTemporaryStorage');
 const { isFeatureBroken } = require('@duckduckgo/content-scope-scripts/injected/src/utils');
 
 const configReference = require('@duckduckgo/privacy-reference-tests/fingerprinting-protections/config_reference.json');
@@ -69,6 +65,14 @@ for (const setName of Object.keys(testSets)) {
 
                 // eslint-disable-next-line no-global-assign
                 globalThis = dom.window;
+                const importConfig = {
+                    trackerLookup: [],
+                    injectName: 'extensionTest',
+                };
+                const batteryProtection = new BatteryProtection('fingerprintingBattery', importConfig, args);
+                const hardwareProtection = new HardwareProtection('fingerprintingHardware', importConfig, args);
+                const screenProtection = new ScreenProtection('fingerprintingScreenSize', importConfig, args);
+                const tempStorageProtection = new TempStorageProtection('fingerprintingTemporaryStorage', importConfig, args);
 
                 // init protections
                 if (!isFeatureBroken(args, 'fingerprintingBattery')) {

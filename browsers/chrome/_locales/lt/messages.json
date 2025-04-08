@@ -1,10 +1,10 @@
 {
   "appName" : {
-    "message" : "DuckDuckGo Privacy Essentials",
+    "message" : "DuckDuckGo Search & Tracker Protection",
     "description" : "Interneto parduotuvėje rodomo plėtinio pavadinimas"
   },
   "appDesc" : {
-    "message" : "Paprasta ir sklandi privatumo apsauga jūsų naršyklei.",
+    "message" : "Aktyviai apsaugo tavo duomenis dabartinėje naršyklėje.",
     "description" : "Trumpas interneto svetainėje rodomo plėtinio aprašymas"
   }
 }

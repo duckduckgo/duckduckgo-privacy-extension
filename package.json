@@ -35,7 +35,7 @@
     },
     "devDependencies": {
         "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.1.0",
-        "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.4",
+        "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.6",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
         "@fingerprintjs/fingerprintjs": "^4.6.1",
         "@playwright/test": "^1.51.0",
@@ -64,8 +64,8 @@
         "yargs": "^17.7.2"
     },
     "dependencies": {
-        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#16.2.0",
-        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#7.18.0",
+        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#17.0.1",
+        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#8.13.0",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#8.4.0",

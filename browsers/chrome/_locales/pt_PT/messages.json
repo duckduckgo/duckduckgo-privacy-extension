@@ -1,10 +1,10 @@
 {
   "appName" : {
-    "message" : "DuckDuckGo Privacy Essentials",
+    "message" : "DuckDuckGo Search & Tracker Protection",
     "description" : "O título da extensão, apresentada na loja Web"
   },
   "appDesc" : {
-    "message" : "Proteção de privacidade simples e sem falhas para o seu navegador.",
+    "message" : "Protege ativamente os teus dados no teu navegador atual.",
     "description" : "A breve descrição da extensão, apresentada na loja Web"
   }
 }

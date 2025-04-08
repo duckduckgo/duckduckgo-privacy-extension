@@ -1,11 +1,13 @@
-import { ParamsValidator } from '@duckduckgo/pixel-schema/src/params_validator.mjs';
+import { buildLivePixelValidator, buildTokenizedPixels, validateSinglePixel } from '@duckduckgo/pixel-schema';
 
 import messageHandlers from '../../shared/js/background/message-handlers';
 import RemoteConfig, { choseCohort } from '../../shared/js/background/components/remote-config';
 import AbnExperimentMetrics, { getDateStringEST, startOfDayEST } from '../../shared/js/background/components/abn-experiments';
 import load from '../../shared/js/background/load';
-import commonParams from '../../pixel-definitions/common_params.json';
-import commonSuffixes from '../../pixel-definitions/common_suffixes.json';
+import commonParams from '../../pixel-definitions/params_dictionary.json';
+import commonSuffixes from '../../pixel-definitions/suffixes_dictionary.json';
+import productDef from '../../pixel-definitions/product.json';
+import ignoreParams from '../../pixel-definitions/ignore_params.json';
 import experimentPixels from '../../pixel-definitions/pixels/experiments.json';
 import { MockSettings } from '../helpers/mocks';
 
@@ -22,7 +24,13 @@ function constructMockComponents() {
     };
 }
 
-const pixelValidator = new ParamsValidator(commonParams, commonSuffixes);
+const pixelValidator = buildLivePixelValidator(
+    commonParams,
+    commonSuffixes,
+    productDef,
+    ignoreParams,
+    buildTokenizedPixels([experimentPixels]),
+);
 
 describe('choseCohort', () => {
     it('picks the only cohort if there is only one available', () => {
@@ -188,8 +196,7 @@ describe('ABN pixels', () => {
     beforeEach(() => {
         pixelRequests = [];
         pixelIntercept = spyOn(load, 'url').and.callFake((url) => {
-            const parsed = new URL(url);
-            pixelRequests.push(parsed.pathname + parsed.search);
+            pixelRequests.push(url);
         });
     });
 
@@ -198,7 +205,7 @@ describe('ABN pixels', () => {
         remoteConfig.updateConfig(mockExperimentConfig);
         abnMetrics.markExperimentEnrolled(feature, subFeature);
         expect(pixelIntercept).toHaveBeenCalledTimes(1);
-        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.enroll'], 'experiment.enroll', pixelRequests[0])).toEqual([]);
+        validateSinglePixel(pixelValidator, pixelRequests[0]);
 
         // call a second time: pixel shouldn't be triggered again
         abnMetrics.markExperimentEnrolled(feature, subFeature);
@@ -230,9 +237,7 @@ describe('ABN pixels', () => {
         expect(pixelIntercept).toHaveBeenCalledTimes(2);
         expect(pixelRequests[1]).toContain('conversionWindowDays=0&');
         expect(pixelRequests[1]).toContain('value=1&');
-        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[1])).toEqual(
-            [],
-        );
+        validateSinglePixel(pixelValidator, pixelRequests[1]);
     });
 
     it('onMetricTriggered can trigger multiple matching metrics', () => {
@@ -247,15 +252,11 @@ describe('ABN pixels', () => {
         abnMetrics.onMetricTriggered('search');
         expect(pixelIntercept).toHaveBeenCalledTimes(3);
         const sentConversionWindows = pixelRequests
-            .filter((u) => u.startsWith('/t/experiment_metrics_'))
+            .filter((u) => u.includes('/t/experiment_metrics_'))
             .map((u) => new URLSearchParams(u.split('?')[1]).get('conversionWindowDays'));
         expect(sentConversionWindows).toEqual(['6', '5-7']);
-        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[1])).toEqual(
-            [],
-        );
-        expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', pixelRequests[2])).toEqual(
-            [],
-        );
+        validateSinglePixel(pixelValidator, pixelRequests[1]);
+        validateSinglePixel(pixelValidator, pixelRequests[2]);
     });
 
     it('metric conversion window is inclusive of first and last days', () => {
@@ -272,12 +273,12 @@ describe('ABN pixels', () => {
         abnMetrics.onMetricTriggered('app_use', 1, Date.now());
         expect(pixelIntercept).toHaveBeenCalledTimes(5);
         const sentConversionWindows = pixelRequests
-            .filter((u) => u.startsWith('/t/experiment_metrics_'))
+            .filter((u) => u.includes('/t/experiment_metrics_'))
             .map((u) => new URLSearchParams(u.split('?')[1]).get('conversionWindowDays'));
         expect(sentConversionWindows).toEqual(['5', '5-7', '7', '5-7']);
         pixelRequests.forEach((u) => {
             if (u.startsWith('/t/experiment_metrics_')) {
-                expect(pixelValidator.validateLivePixels(experimentPixels['experiment.metrics'], 'experiment.metrics', u)).toEqual([]);
+                validateSinglePixel(pixelValidator, u);
             }
         });
     });

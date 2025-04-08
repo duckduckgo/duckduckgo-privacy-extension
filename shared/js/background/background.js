@@ -33,7 +33,7 @@ import DashboardMessaging from './components/dashboard-messaging';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
-import AbnExperimentMetrics from './components/abn-experiments';
+import AbnExperimentMetrics, { setUpTestExperiment } from './components/abn-experiments';
 import MessageRouter from './components/message-router';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
@@ -97,6 +97,7 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
         }),
     ];
     components.fireButton = new FireButton({ settings, tabManager });
+    setUpTestExperiment(abnMetrics);
 }
 // MV3-only components
 if (BUILD_TARGET === 'chrome') {
