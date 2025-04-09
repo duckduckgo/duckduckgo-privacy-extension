@@ -7,10 +7,10 @@ on:
 jobs:
   call-privacy-review:
     if: contains(github.event.label.name, 'privacy review')
-    uses: duckduckgo/native-github-asana-sync/.github/workflows/privacy-review.yml@v1.6.1
+    uses: duckduckgo/native-github-asana-sync/.github/workflows/privacy-review.yml@v1.7
     with:
       team_name: 'Extension'
-      ref: 'v1.6.1'
+      ref: 'v1.7'
     secrets:
       asana_pat: ${{ secrets.ASANA_ACCESS_TOKEN }}
       github_pat: ${{ secrets.DAXMOBILE_TOKEN }}
