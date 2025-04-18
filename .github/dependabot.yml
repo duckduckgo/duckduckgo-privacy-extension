@@ -32,3 +32,7 @@ updates:
       target-branch: 'main'
       labels:
           - 'dependencies'
+      ignore:
+        - dependency-name: "native-github-asana-sync"
+          versions:
+            - "*"
