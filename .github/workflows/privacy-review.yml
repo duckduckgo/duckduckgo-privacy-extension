@@ -7,10 +7,19 @@ on:
 jobs:
   call-privacy-review:
     if: contains(github.event.label.name, 'privacy review')
-    uses: duckduckgo/native-github-asana-sync/.github/workflows/privacy-review.yml@v1.7.1
-    with:
-      team_name: 'Extension'
-      ref: 'v1.7.1'
-    secrets:
-      asana_pat: ${{ secrets.ASANA_ACCESS_TOKEN }}
-      github_pat: ${{ secrets.DAXMOBILE_TOKEN }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout native actions repo
+        uses: actions/checkout@v4
+        with:
+            ref: v1.9
+            # Do not change the below path (downstream actions expect it)
+            path: native-github-asana-sync
+            repository: duckduckgo/native-github-asana-sync
+
+      - name: Trigger review task
+        uses: ./native-github-asana-sync/.github/actions/privacy-review/
+        with:
+          team_name: 'Extension'
+          asana_pat: ${{ secrets.ASANA_ACCESS_TOKEN }}
+          github_pat: ${{ secrets.DAXMOBILE_TOKEN }}
