@@ -8,7 +8,7 @@ import commonParams from '../../pixel-definitions/params_dictionary.json';
 import commonSuffixes from '../../pixel-definitions/suffixes_dictionary.json';
 import productDef from '../../pixel-definitions/product.json';
 import ignoreParams from '../../pixel-definitions/ignore_params.json';
-import experimentPixels from '../../pixel-definitions/pixels/experiments.json';
+import experimentPixels from '../../pixel-definitions/native_experiments.json';
 import { MockSettings } from '../helpers/mocks';
 
 const ONE_HOUR_MS = 1000 * 60 * 60;
@@ -29,7 +29,8 @@ const pixelValidator = buildLivePixelValidator(
     commonSuffixes,
     productDef,
     ignoreParams,
-    buildTokenizedPixels([experimentPixels]),
+    {},
+    experimentPixels,
 );
 
 describe('choseCohort', () => {
