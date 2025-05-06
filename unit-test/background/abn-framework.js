@@ -1,4 +1,4 @@
-import { buildLivePixelValidator, buildTokenizedPixels, validateSinglePixel } from '@duckduckgo/pixel-schema';
+import { buildLivePixelValidator, validateSinglePixel } from '@duckduckgo/pixel-schema';
 
 import messageHandlers from '../../shared/js/background/message-handlers';
 import RemoteConfig, { choseCohort } from '../../shared/js/background/components/remote-config';
@@ -8,7 +8,7 @@ import commonParams from '../../pixel-definitions/params_dictionary.json';
 import commonSuffixes from '../../pixel-definitions/suffixes_dictionary.json';
 import productDef from '../../pixel-definitions/product.json';
 import ignoreParams from '../../pixel-definitions/ignore_params.json';
-import experimentPixels from '../../pixel-definitions/native_experiments.json';
+import experimentPixels from '../data/native_experiments.json';
 import { MockSettings } from '../helpers/mocks';
 
 const ONE_HOUR_MS = 1000 * 60 * 60;
