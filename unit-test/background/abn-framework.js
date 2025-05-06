@@ -24,14 +24,7 @@ function constructMockComponents() {
     };
 }
 
-const pixelValidator = buildLivePixelValidator(
-    commonParams,
-    commonSuffixes,
-    productDef,
-    ignoreParams,
-    {},
-    experimentPixels,
-);
+const pixelValidator = buildLivePixelValidator(commonParams, commonSuffixes, productDef, ignoreParams, {}, experimentPixels);
 
 describe('choseCohort', () => {
     it('picks the only cohort if there is only one available', () => {
