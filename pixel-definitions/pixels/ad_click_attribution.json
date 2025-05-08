@@ -1,5 +1,5 @@
 {
-    "m.ad.click.detected": {
+    "m_ad_click_detected": {
         "description": "Fire a pixel at the point the conditional allowlist is registered with the app",
         "owners": [
             "dvandyke",
@@ -43,7 +43,7 @@
             }
         ]
     },
-    "m.ad.click.active": {
+    "m_ad_click_active": {
         "description": "Fire a pixel on the first instance an allowlist is \"used\", once per registration.",
         "owners": [
             "dvandyke",
@@ -60,7 +60,7 @@
             "appVersion"
         ]
     },
-    "m.pageloads.with.ad.attribution": {
+    "m_pageloads_with_ad_attribution": {
         "description": "Aggregate the number of page loads that have had an active exemption over the course of some time period",
         "owners": [
             "dvandyke",
