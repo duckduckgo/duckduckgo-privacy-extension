@@ -6,31 +6,31 @@
             "metrics": {
                 "2xRefresh": {
                     "description": "2x Refresh Rate",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "3xRefresh": {
                     "description": "3x Refresh Rate",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "breakageFormOpen": {
                     "description": "Breakage Form Open",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "brokenSiteReport": {
                     "description": "Broken Site Report",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "protectionToggle": {
                     "description": "Protection Toggle",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "toggleSiteReport": {
                     "description": "Toggle Site Report",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "privacyDashboardOpen": {
                     "description": "Privacy Dashboard Open",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 }
             }
         },
@@ -39,97 +39,97 @@
             "metrics": {
                 "2xRefresh": {
                     "description": "2x Refresh Rate",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "3xRefresh": {
                     "description": "3x Refresh Rate",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "breakageFormOpen": {
                     "description": "Breakage Form Open",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "brokenSiteReport": {
                     "description": "Broken Site Report",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "protectionToggle": {
                     "description": "Protection Toggle",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "toggleSiteReport": {
                     "description": "Toggle Site Report",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "privacyDashboardOpen": {
                     "description": "Privacy Dashboard Open",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 }
             }
-        }, 
+        },
         "tdsaaexperiment3": {
             "cohorts": ["a", "b"],
             "metrics": {
                 "2xRefresh": {
                     "description": "2x Refresh Rate",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "3xRefresh": {
                     "description": "3x Refresh Rate",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "breakageFormOpen": {
                     "description": "Breakage Form Open",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "brokenSiteReport": {
                     "description": "Broken Site Report",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "protectionToggle": {
                     "description": "Protection Toggle",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "toggleSiteReport": {
                     "description": "Toggle Site Report",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "privacyDashboardOpen": {
                     "description": "Privacy Dashboard Open",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 }
             }
-        }, 
+        },
         "tdsaaexperiment4": {
             "cohorts": ["control", "treatment"],
             "metrics": {
                 "2xRefresh": {
                     "description": "2x Refresh Rate",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "3xRefresh": {
                     "description": "3x Refresh Rate",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "breakageFormOpen": {
                     "description": "Breakage Form Open",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "brokenSiteReport": {
                     "description": "Broken Site Report",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "protectionToggle": {
                     "description": "Protection Toggle",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "toggleSiteReport": {
                     "description": "Toggle Site Report",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 },
                 "privacyDashboardOpen": {
                     "description": "Privacy Dashboard Open",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
+                    "enum": [1, 2, 3, 4, 5, 6, 10, 11, 21, 30]
                 }
             }
         }

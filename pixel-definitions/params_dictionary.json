@@ -19,7 +19,7 @@
         "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
         "examples": ["2024.10.16"]
     },
-    "remoteConfigEtag" : {
+    "remoteConfigEtag": {
         "key": "remoteConfigEtag",
         "description": "",
         "pattern": "^$|null|W/\"[-0-9a-f]+"

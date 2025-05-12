@@ -1,15 +1,9 @@
 {
     "epbf": {
         "description": "User sent broken site report",
-        "owners": [
-            "smacbeth"
-        ],
-        "triggers": [
-            "user_submitted"
-        ],
-        "suffixes": [
-            "browser"
-        ],
+        "owners": ["smacbeth"],
+        "triggers": ["user_submitted"],
+        "suffixes": ["browser"],
         "parameters": [
             "atb",
             "extensionVersion",
@@ -49,26 +43,17 @@
             {
                 "key": "ctlFacebookLogin",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "ctlFacebookPlaceholderShown",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "ctlYouTube",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "debugFlags",
@@ -115,28 +100,17 @@
             {
                 "key": "openerContext",
                 "description": "Reported page's opener context",
-                "enum": [
-                    "external",
-                    "navigation",
-                    "serp"
-                ]
+                "enum": ["external", "navigation", "serp"]
             },
             {
                 "key": "performanceWarning",
                 "description": "True if the a performance warning was received from the browser.",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "protectionsState",
                 "description": "If the protections toggle is on or not for the site.",
-                "enum": [
-                    "false",
-                    "true",
-                    ""
-                ]
+                "enum": ["false", "true", ""]
             },
 
             {
@@ -159,26 +133,17 @@
             {
                 "key": "truncated",
                 "description": "If some data was removed due to query string length",
-                "enum": [
-                    "",
-                    "1"
-                ]
+                "enum": ["", "1"]
             },
             {
                 "key": "upgradedHttps",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "urlParametersRemoved",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "userRefreshCount",
@@ -189,15 +154,9 @@
     },
     "protection-toggled-off-breakage-report": {
         "description": "User sent broken site report",
-        "owners": [
-            "smacbeth"
-        ],
-        "triggers": [
-            "user_submitted"
-        ],
-        "suffixes": [
-            "browser"
-        ],
+        "owners": ["smacbeth"],
+        "triggers": ["user_submitted"],
+        "suffixes": ["browser"],
         "parameters": [
             "atb",
             "extensionVersion",
@@ -237,26 +196,17 @@
             {
                 "key": "ctlFacebookLogin",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "ctlFacebookPlaceholderShown",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "ctlYouTube",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "debugFlags",
@@ -303,28 +253,17 @@
             {
                 "key": "openerContext",
                 "description": "Reported page's opener context",
-                "enum": [
-                    "external",
-                    "navigation",
-                    "serp"
-                ]
+                "enum": ["external", "navigation", "serp"]
             },
             {
                 "key": "performanceWarning",
                 "description": "True if the a performance warning was received from the browser.",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "protectionsState",
                 "description": "If the protections toggle is on or not for the site.",
-                "enum": [
-                    "false",
-                    "true",
-                    ""
-                ]
+                "enum": ["false", "true", ""]
             },
             {
                 "key": "remoteConfigVersion",
@@ -346,26 +285,17 @@
             {
                 "key": "truncated",
                 "description": "If some data was removed due to query string length",
-                "enum": [
-                    "",
-                    "1"
-                ]
+                "enum": ["", "1"]
             },
             {
                 "key": "upgradedHttps",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "urlParametersRemoved",
                 "description": "",
-                "enum": [
-                    "false",
-                    "true"
-                ]
+                "enum": ["false", "true"]
             },
             {
                 "key": "userRefreshCount",
@@ -375,9 +305,7 @@
             {
                 "key": "reportFlow",
                 "description": "",
-                "enum": [
-                    "on_protections_off_dashboard_main"
-                ]
+                "enum": ["on_protections_off_dashboard_main"]
             }
         ]
     }
