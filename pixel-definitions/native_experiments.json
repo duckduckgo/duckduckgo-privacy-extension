@@ -33,10 +33,6 @@
                     "enum": [1,2,3,4,5,6,10,11,21,30]
                 }
             }
-        }, 
-        "abn": {
-            "cohorts": ["treatment"],
-            "metrics": {}
         },
         "tdsaaexperiment2": {
             "cohorts": ["control", "treatment"],
@@ -133,19 +129,6 @@
                 },
                 "privacyDashboardOpen": {
                     "description": "Privacy Dashboard Open",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
-                }
-            }
-        },
-        "tdsrolloutbetachanneljan2025": {
-            "cohorts": ["control", "treatment"],
-            "metrics": {
-                "2xRefresh": {
-                    "description": "2x Refresh Rate",
-                    "enum": [1,2,3,4,5,6,10,11,21,30]
-                },
-                "3xRefresh": {
-                    "description": "3x Refresh Rate",
                     "enum": [1,2,3,4,5,6,10,11,21,30]
                 }
             }
