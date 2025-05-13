@@ -4,4 +4,5 @@ docs/**/*
 **/*.md
 **/*.html
 **/*.json
+!pixel-definitions/**/*.json
 **/*.har

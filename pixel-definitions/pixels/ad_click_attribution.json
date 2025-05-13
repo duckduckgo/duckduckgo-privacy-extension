@@ -1,78 +1,40 @@
 {
-    "m.ad.click.detected": {
+    "m_ad_click_detected": {
         "description": "Fire a pixel at the point the conditional allowlist is registered with the app",
-        "owners": [
-            "dvandyke",
-            "senglehart"
-        ],
-        "triggers": [
-            "page_load"
-        ],
-        "suffixes": [
-            "extension",
-            "browser"
-        ],
+        "owners": ["dvandyke", "senglehart"],
+        "triggers": ["page_load"],
+        "suffixes": ["extension", "browser"],
         "parameters": [
             "appVersion",
             {
                 "key": "domainDetection",
                 "description": "Whether the SERP-provided domain matches what was heuristically detected.",
-                "enum": [
-                    "none",
-                    "matched",
-                    "mismatch",
-                    "serp_only",
-                    "heuristic_only"
-                ]
+                "enum": ["none", "matched", "mismatch", "serp_only", "heuristic_only"]
             },
             {
                 "key": "heuristicDetectionEnabled",
                 "description": "if heuristicDetection enabled via config",
-                "enum": [
-                    "0",
-                    "1"
-                ]
+                "enum": ["0", "1"]
             },
             {
                 "key": "domainDetectionEnabled",
                 "description": "if domainDetection enabled via config",
-                "enum": [
-                    "0",
-                    "1"
-                ]
+                "enum": ["0", "1"]
             }
         ]
     },
-    "m.ad.click.active": {
+    "m_ad_click_active": {
         "description": "Fire a pixel on the first instance an allowlist is \"used\", once per registration.",
-        "owners": [
-            "dvandyke",
-            "senglehart"
-        ],
-        "triggers": [
-            "page_load"
-        ],
-        "suffixes": [
-            "extension",
-            "browser"
-        ],
-        "parameters": [
-            "appVersion"
-        ]
+        "owners": ["dvandyke", "senglehart"],
+        "triggers": ["page_load"],
+        "suffixes": ["extension", "browser"],
+        "parameters": ["appVersion"]
     },
-    "m.pageloads.with.ad.attribution": {
+    "m_pageloads_with_ad_attribution": {
         "description": "Aggregate the number of page loads that have had an active exemption over the course of some time period",
-        "owners": [
-            "dvandyke",
-            "senglehart"
-        ],
-        "triggers": [
-            "page_load"
-        ],
-        "suffixes": [
-            "extension",
-            "browser"
-        ],
+        "owners": ["dvandyke", "senglehart"],
+        "triggers": ["page_load"],
+        "suffixes": ["extension", "browser"],
         "parameters": [
             {
                 "key": "count",
