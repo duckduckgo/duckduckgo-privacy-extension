@@ -7,6 +7,7 @@ const settings = require('../settings');
 const { isActive } = require('../devtools');
 const constants = require('../../../data/constants');
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer');
+import tdsStorage from '../storage/tds';
 
 export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId });
@@ -33,6 +34,8 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
         if (feature === 'referrer' && !tab.referrer?.referrer) return false;
         return true;
     });
+    // TODO filter out as above
+    const bundledConfig = tdsStorage.config;
 
     const featureSettings = {};
     for (const feature of site.enabledFeatures) {
@@ -65,7 +68,6 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
         cookie.shouldBlock = !utils.isCookieExcluded(documentUrl);
     }
     return {
-        featureSettings,
         debug: isActive(tabId),
         cookie,
         globalPrivacyControlValue: settings.getSetting('GPC'),
@@ -78,5 +80,6 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
             regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),
             boldFontUrl: getExtensionURL('/public/font/ProximaNova-Bold-webfont.woff'),
         },
+        bundledConfig
     };
 }
