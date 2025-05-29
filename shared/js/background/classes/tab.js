@@ -21,6 +21,7 @@ const Companies = require('../companies');
 const webResourceKeyRegex = /.*\?key=(.*)/;
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy');
 const { TabState } = require('./tab-state');
+const { getCurrentCohorts, enrollCurrentExperiments } = require('../utils');
 
 /** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
 
@@ -41,6 +42,20 @@ class Tab {
         this.httpsRedirects = new HttpsRedirects();
         this.webResourceAccess = [];
         this.surrogates = {};
+        this.initExperiments();
+    }
+
+    // Responsible for storing the experiments that ran on the page, so stale tabs don't report the wrong experiments.
+    initExperiments() {
+        enrollCurrentExperiments();
+        const experiments = getCurrentCohorts();
+        // Order by key
+        experiments.sort((a, b) => a.key.localeCompare(b.key));
+        // turn into an object
+        this.contentScopeExperiments = {};
+        for (const experiment of experiments) {
+            this.contentScopeExperiments[experiment.key] = experiment.value;
+        }
     }
 
     /**
@@ -60,6 +75,14 @@ class Tab {
 
     get referrer() {
         return this._tabState.referrer;
+    }
+
+    get contentScopeExperiments() {
+        return this._tabState.contentScopeExperiments;
+    }
+
+    set contentScopeExperiments(value) {
+        this._tabState.setValue('contentScopeExperiments', value);
     }
 
     set adClick(value) {

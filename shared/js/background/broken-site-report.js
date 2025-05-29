@@ -261,6 +261,7 @@ export async function breakageReportForTab({
     const openerContext = tab.openerContext ? tab.openerContext : undefined;
     const jsPerformance = pageParams.jsPerformance ? pageParams.jsPerformance : undefined;
     const locale = tab.locale;
+    const contentScopeExperiments = tab.contentScopeExperiments;
 
     // Note: Take care to update the `PARAM_IDS` array (see above) when
     //       adding/removing breakage parameters!
@@ -278,6 +279,7 @@ export async function breakageReportForTab({
         userRefreshCount,
         jsPerformance,
         locale,
+        contentScopeExperiments,
     });
 
     // The protectionsState parameter will always be false for these reports,

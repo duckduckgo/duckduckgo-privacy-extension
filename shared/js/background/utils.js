@@ -282,6 +282,39 @@ export function brokenListIndex(url, list) {
     });
 }
 
+export function enrollCurrentExperiments() {
+    const featureName = 'contentScopeExperiments';
+    globalThis.components.remoteConfig.getSubFeatureNames(featureName).forEach((subfeatureName) => {
+        globalThis.components.abnMetrics.markExperimentEnrolled(featureName, subfeatureName);
+    });
+}
+
+export function getCurrentCohorts() {
+    /*
+        [
+            {
+                feature: 'contentScopeExperiments',
+                subfeature: 'bloops',
+                cohort: 'control',
+            },
+            {
+                feature: 'contentScopeExperiments',
+                subfeature: 'test',
+                cohort: 'treatment',
+            },
+        ],
+    */
+    const featureName = 'contentScopeExperiments';
+    return globalThis.components.remoteConfig.getSubFeatureNames(featureName).map((subfeatureName) => {
+        const cohort = globalThis.components.remoteConfig.getCohortName(featureName, subfeatureName);
+        return {
+            feature: 'contentScopeExperiments',
+            subfeatureName,
+            cohort,
+        };
+    });
+}
+
 // We inject this into content scripts
 export function getBrokenScriptLists() {
     const brokenScripts = {};
