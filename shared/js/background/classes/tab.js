@@ -13,7 +13,7 @@
  *          }
  *      }
  */
-
+import { getCurrentCohorts, enrollCurrentExperiments } from '../utils';
 const Site = require('./site').default;
 const { Tracker } = require('./tracker');
 const HttpsRedirects = require('./https-redirects');
@@ -21,7 +21,6 @@ const Companies = require('../companies');
 const webResourceKeyRegex = /.*\?key=(.*)/;
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy');
 const { TabState } = require('./tab-state');
-const { getCurrentCohorts, enrollCurrentExperiments } = require('../utils');
 
 /** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
 

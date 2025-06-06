@@ -3,7 +3,7 @@ import { NewTabTrackerStats } from './newtab-tracker-stats';
 import { TrackerStats } from './classes/tracker-stats.js';
 import httpsStorage from './storage/https';
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report';
-const utils = require('./utils');
+import { getBrowserName } from './utils';
 const Companies = require('./companies');
 const experiment = require('./experiments');
 const https = require('./https');
@@ -36,7 +36,7 @@ export async function onStartup() {
     /**
      * in Chrome only, try to initiate the `NewTabTrackerStats` feature
      */
-    if (BUILD_TARGET !== 'firefox' && utils.getBrowserName() === 'chrome') {
+    if (BUILD_TARGET !== 'firefox' && getBrowserName() === 'chrome') {
         try {
             // build up dependencies
             const trackerStats = new TrackerStats();
