@@ -49,7 +49,7 @@ class Tab {
         enrollCurrentExperiments();
         const experiments = getCurrentCohorts();
         // Order by key
-        experiments.sort((a, b) => a.key.localeCompare(b.key));
+        experiments.sort((a, b) => a.subfeature.localeCompare(b.subfeature));
         // turn into an object
         this.contentScopeExperiments = {};
         for (const experiment of experiments) {

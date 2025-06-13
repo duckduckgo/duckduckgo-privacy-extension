@@ -309,7 +309,7 @@ export function getCurrentCohorts() {
         const cohort = globalThis.components.remoteConfig.getCohortName(featureName, subfeatureName);
         return {
             feature: 'contentScopeExperiments',
-            subfeatureName,
+            subfeature: subfeatureName,
             cohort,
         };
     });
