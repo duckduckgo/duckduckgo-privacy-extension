@@ -40,3 +40,4 @@ We're not accepting new feature pull requests right now. For bug fixes see [Deve
 
 ## Questions or help with the search engine
 See [help pages](https://duck.co/help).
+Alteração feita por Melissa para testar o Git.
