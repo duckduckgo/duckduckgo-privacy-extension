@@ -1,6 +1,10 @@
 {
     "globalThis.dbg.tds.config.unprotectedTempoary": [],
     "globalThis.dbg.tds.config.features.fingerprintingCanvas": {
-        "state": "enabled"
+        "state": "enabled",
+        "settings": {
+            "additionalEnabledCheck": "enabled",
+            "webgl": "enabled"
+        }
     }
 }
