@@ -282,14 +282,14 @@ export function brokenListIndex(url, list) {
     });
 }
 
-export function enrollCurrentExperiments() {
+export function enrollCurrentExperiments(components) {
     const featureName = 'contentScopeExperiments';
-    globalThis.components.remoteConfig.getSubFeatureNames(featureName).forEach((subfeatureName) => {
-        globalThis.components.abnMetrics.markExperimentEnrolled(featureName, subfeatureName);
+    components.remoteConfig.getSubFeatureNames(featureName).forEach((subfeatureName) => {
+        components.abnMetrics.markExperimentEnrolled(featureName, subfeatureName);
     });
 }
 
-export function getCurrentCohorts() {
+export function getCurrentCohorts(components) {
     /*
         [
             {
@@ -305,8 +305,8 @@ export function getCurrentCohorts() {
         ],
     */
     const featureName = 'contentScopeExperiments';
-    return globalThis.components.remoteConfig.getSubFeatureNames(featureName).map((subfeatureName) => {
-        const cohort = globalThis.components.remoteConfig.getCohortName(featureName, subfeatureName);
+    return components.remoteConfig.getSubFeatureNames(featureName).map((subfeatureName) => {
+        const cohort = components.remoteConfig.getCohortName(featureName, subfeatureName);
         return {
             feature: 'contentScopeExperiments',
             subfeature: subfeatureName,

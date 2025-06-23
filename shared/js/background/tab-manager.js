@@ -29,9 +29,9 @@ class TabManager {
      * 1. When a new tab is opened. See onUpdated listener below
      * 2. When we get a new main_frame request
      */
-    create(tabData) {
+    create(tabData, components) {
         const normalizedData = browserWrapper.normalizeTabData(tabData);
-        const newTab = new Tab(normalizedData);
+        const newTab = new Tab(normalizedData, components);
 
         const oldTab = this.tabContainer[newTab.id];
         if (oldTab) {

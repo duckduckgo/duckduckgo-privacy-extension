@@ -13,7 +13,7 @@
  *          }
  *      }
  */
-import { getCurrentCohorts, enrollCurrentExperiments } from '../utils';
+const { getCurrentCohorts, enrollCurrentExperiments } = require('../utils');
 const Site = require('./site').default;
 const { Tracker } = require('./tracker');
 const HttpsRedirects = require('./https-redirects');
@@ -27,8 +27,9 @@ const { TabState } = require('./tab-state');
 class Tab {
     /**
      * @param {TabData|TabState} tabData
+     * @param {Object} [components] - Optional components dependency for experiments
      */
-    constructor(tabData) {
+    constructor(tabData, components) {
         if (tabData instanceof TabState) {
             /** @type {TabState} */
             this._tabState = tabData;
@@ -41,13 +42,14 @@ class Tab {
         this.httpsRedirects = new HttpsRedirects();
         this.webResourceAccess = [];
         this.surrogates = {};
-        this.initExperiments();
+        this.initExperiments(components);
     }
 
     // Responsible for storing the experiments that ran on the page, so stale tabs don't report the wrong experiments.
-    initExperiments() {
-        enrollCurrentExperiments();
-        const experiments = getCurrentCohorts();
+    initExperiments(components) {
+        if (!components) return;
+        enrollCurrentExperiments(components);
+        const experiments = getCurrentCohorts(components);
         // Order by key
         experiments.sort((a, b) => a.subfeature.localeCompare(b.subfeature));
         // turn into an object
