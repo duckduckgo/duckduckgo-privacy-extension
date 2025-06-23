@@ -37,6 +37,23 @@ export async function overridePrivacyConfig(networkContext, testConfigFilename) 
 }
 
 /**
+ * Rewrites the config received from the server with the changes specified in testConfig
+ * @param {import('@playwright/test').Page | import('@playwright/test').BrowserContext} networkContext
+ * @param {object} testConfig
+ */
+export async function overridePrivacyConfigFromContent(networkContext, testConfig) {
+    await networkContext.route('https://staticcdn.duckduckgo.com/trackerblocking/config/**/*', async (route) => {
+        route.fulfill({
+            status: 200,
+            body: JSON.stringify(testConfig),
+            headers: {
+                etag: 'test',
+            },
+        });
+    });
+}
+
+/**
  * Rewrites the TDS received from the server with the changes specified in tdsFilePath
  * @param {import('@playwright/test').Page | import('@playwright/test').BrowserContext} networkContext
  * @param {string} tdsFilePath

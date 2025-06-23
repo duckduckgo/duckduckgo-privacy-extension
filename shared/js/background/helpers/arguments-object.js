@@ -68,7 +68,7 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
         featureSettings,
         debug: isActive(tabId),
         cookie,
-        currentCohorts: utils.getCurrentCohorts(),
+        currentCohorts: utils.getCurrentCohorts(globalThis.components),
         globalPrivacyControlValue: settings.getSetting('GPC'),
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,
