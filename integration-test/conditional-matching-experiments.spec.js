@@ -10,30 +10,24 @@ const configFile = 'https://privacy-test-pages.site/content-scope-scripts/infra/
 
 test.describe('Conditional Matching Experiments', () => {
     test('applies correct API manipulation for experiment cohort', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
-        const configContent = await fetch(configFile).then(res => res.json());
+        const configContent = await fetch(configFile).then((res) => res.json());
         expect(configContent).toBeDefined();
         await overridePrivacyConfigFromContent(backgroundNetworkContext, configContent);
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
         await routeFromLocalhost(page);
 
-        // Load a dummy page first:
-        await page.goto('https://www.duckduckgo.com', { waitUntil: 'networkidle' });
         await page.goto(testSite, { waitUntil: 'networkidle' });
         await page.bringToFront();
 
         // Click the button to run the tests
         await page.click('button');
-        //await page.waitForTimeout(1000);
 
-        // Example assertion: check navigator.hardwareConcurrency is patched
         const results = await page.evaluate(() => window.results);
-        // Keep the page open for debugging
-        //await page.waitForTimeout(100000);
         // The expected value depends on the cohort assigned by the config; adjust as needed
         const allResults = Object.values(results).flat();
         for (const { result, expected } of allResults) {
             expect(result).toBe(expected);
         }
     });
-}); 
+});
