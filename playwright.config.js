@@ -54,7 +54,7 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-        command: 'cd node_modules/privacy-test-pages && npm ci && node server.js',
+        command: 'cd node_modules/privacy-test-pages && node server.js',
         port: 3000,
         reuseExistingServer: !process.env.CI,
     },

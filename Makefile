@@ -86,6 +86,8 @@ node-test:
 npm:
 	npm ci --ignore-scripts
 	npm rebuild puppeteer
+	## Install the privacy-test-pages package for integration tests
+	cd node_modules/privacy-test-pages && npm install
 
 .PHONY: npm
 
