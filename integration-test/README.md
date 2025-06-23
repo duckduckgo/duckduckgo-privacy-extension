@@ -12,7 +12,9 @@ We use [Playwright](https://playwright.dev/) as a test runner. Tests are defined
 
 Playwright tests can be run with the following npm commands:
  - `npm run playwright` to test the Chrome MV3 extension
- - `npm run playwright-mv2` to test the Chrome MV2 extension (closest thing to testing Firefox MV2 extension we have until Playwright adds support for testing Firefox extensions)
+ - `npm run playwright-mv2` to test using Firefox browser (note: extension loading is limited due to Playwright constraints)
+
+**Note about Firefox testing**: Due to Playwright's current limitations with Firefox extension loading, the MV2 tests run in Firefox browser but without the extension loaded. This allows testing Firefox-specific browser behavior while the extension functionality is tested through the Chrome MV2 tests.
 
 If you want to re-run tests without rebuilding the extension, you can subsequently run:
  - `npx playwright test` to run all tests
