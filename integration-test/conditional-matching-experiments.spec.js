@@ -9,7 +9,16 @@ const testSite = 'https://privacy-test-pages.site/content-scope-scripts/infra/pa
 const configFile = 'https://privacy-test-pages.site/content-scope-scripts/infra/config/conditional-matching-experiments.json';
 
 test.describe('Conditional Matching Experiments', () => {
-    test('applies correct API manipulation for experiment cohort', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
+    test('applies correct API manipulation for experiment cohort', async ({
+        context,
+        backgroundPage,
+        page,
+        backgroundNetworkContext,
+        manifestVersion,
+    }) => {
+        // inject.js is outdated in C-S-S meaning this suite doesn't work.
+        // We either should move to using firefox or start building Chrome again.
+        test.skip(manifestVersion === 2, 'MV2 is not supported for this suite, inject.js is outdated');
         const configContent = await fetch(configFile).then((res) => res.json());
         expect(configContent).toBeDefined();
         await overridePrivacyConfigFromContent(backgroundNetworkContext, configContent);
