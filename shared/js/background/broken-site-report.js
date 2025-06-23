@@ -279,7 +279,6 @@ export async function breakageReportForTab({
         userRefreshCount,
         jsPerformance,
         locale,
-        contentScopeExperiments,
     });
 
     // The protectionsState parameter will always be false for these reports,
@@ -302,6 +301,13 @@ export async function breakageReportForTab({
     if (httpErrorCodes) brokenSiteParams.set('httpErrorCodes', httpErrorCodes);
     if (openerContext) brokenSiteParams.set('openerContext', openerContext);
     if (reportFlow) brokenSiteParams.set('reportFlow', reportFlow);
+    if (contentScopeExperiments && Object.keys(contentScopeExperiments).length > 0) {
+        const experiments = Object.entries(contentScopeExperiments)
+            .sort(([aKey], [bKey]) => aKey.localeCompare(bKey))
+            .map(([key, value]) => `${key}:${value}`)
+            .join(',');
+        brokenSiteParams.set('contentScopeExperiments', experiments);
+    }
 
     return fire(pixelName, brokenSiteParams.toString());
 }
