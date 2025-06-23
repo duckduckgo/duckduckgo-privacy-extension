@@ -20,6 +20,10 @@ test.describe('Conditional Matching Experiments', () => {
         await page.goto(testSite, { waitUntil: 'networkidle' });
         await page.bringToFront();
 
+        // Reload the page in case cohort assignment requires a reload
+        await page.reload({ waitUntil: 'networkidle' });
+        await page.bringToFront();
+
         // Click the button to run the tests
         await page.click('button');
 
