@@ -107,10 +107,10 @@ class TabManager {
     }
 
     async getOrRestoreTab(tabId) {
-        if (!tabManager.has(tabId)) {
-            await tabManager.restore(tabId);
+        if (!this.has(tabId)) {
+            await this.restore(tabId);
         }
-        return tabManager.get({ tabId });
+        return this.get({ tabId });
     }
 
     /**
@@ -121,7 +121,7 @@ class TabManager {
     async getOrRestoreCurrentTab() {
         const currentTabDetails = await getCurrentTab();
         if (currentTabDetails?.id) {
-            return await tabManager.getOrRestoreTab(currentTabDetails.id);
+            return await this.getOrRestoreTab(currentTabDetails.id);
         }
         return null;
     }
@@ -188,11 +188,11 @@ class TabManager {
      * later on when webrequests start coming in.
      */
     createOrUpdateTab(id, info) {
-        if (!tabManager.get({ tabId: id })) {
+        if (!this.get({ tabId: id })) {
             info.id = id;
-            return tabManager.create(info);
+            return this.create(info);
         } else {
-            const tab = tabManager.get({ tabId: id });
+            const tab = this.get({ tabId: id });
             if (tab && info.status) {
                 tab.status = info.status;
 
@@ -227,7 +227,7 @@ class TabManager {
     updateTabUrl(request) {
         // Update tab data. This makes
         // sure we have the correct url after any https rewrites
-        const tab = tabManager.get({ tabId: request.tabId });
+        const tab = this.get({ tabId: request.tabId });
 
         if (tab) {
             tab.statusCode = request.statusCode;

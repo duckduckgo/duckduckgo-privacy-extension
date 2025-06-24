@@ -52,6 +52,7 @@ const remoteConfig = new RemoteConfig({ settings });
 const abnMetrics = BUILD_TARGET !== 'firefox' ? new AbnExperimentMetrics({ remoteConfig }) : null;
 const tds = new TDSStorage({ settings, remoteConfig, abnMetrics });
 const devtools = new Devtools({ tds });
+const tabManager = new TabManager(abnMetrics);
 const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager });
 /**
  * @type {{
@@ -112,5 +113,3 @@ self.components = components;
 // If these flags are set to false, the whole function is tree-shaked from the build.
 DEBUG && initDebugBuild();
 RELOADER && initReloader();
-
-const tabManager = new TabManager(abnMetrics);
