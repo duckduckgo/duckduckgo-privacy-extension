@@ -156,6 +156,32 @@ export default class AbnExperimentMetrics {
                 }
             });
     }
+
+    /**
+     * Enroll all current experiments for the 'contentScopeExperiments' feature.
+     */
+    automaticallyEnrollCurrentContentScopeExperiments() {
+        const featureName = 'contentScopeExperiments';
+        this.remoteConfig.getSubFeatureNames(featureName).forEach((subfeatureName) => {
+            this.markExperimentEnrolled(featureName, subfeatureName);
+        });
+    }
+
+    /**
+     * Get the current cohorts for all subfeatures of 'contentScopeExperiments'.
+     * @returns {Array<{feature: string, subfeature: string, cohort: string | null}>}
+     */
+    getCurrentCohorts() {
+        const featureName = 'contentScopeExperiments';
+        return this.remoteConfig.getSubFeatureNames(featureName).map((subfeatureName) => {
+            const cohort = this.remoteConfig.getCohortName(featureName, subfeatureName);
+            return {
+                feature: featureName,
+                subfeature: subfeatureName,
+                cohort,
+            };
+        });
+    }
 }
 
 /**

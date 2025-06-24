@@ -282,45 +282,6 @@ export function brokenListIndex(url, list) {
     });
 }
 
-/**
- * @param {object} [components]
- */
-export function enrollCurrentExperiments(components) {
-    const featureName = 'contentScopeExperiments';
-    components?.remoteConfig.getSubFeatureNames(featureName).forEach((subfeatureName) => {
-        components.abnMetrics.markExperimentEnrolled(featureName, subfeatureName);
-    });
-}
-
-/**
- * @param {object} [components]
- */
-export function getCurrentCohorts(components) {
-    /*
-        [
-            {
-                feature: 'contentScopeExperiments',
-                subfeature: 'bloops',
-                cohort: 'control',
-            },
-            {
-                feature: 'contentScopeExperiments',
-                subfeature: 'test',
-                cohort: 'treatment',
-            },
-        ],
-    */
-    const featureName = 'contentScopeExperiments';
-    return components?.remoteConfig.getSubFeatureNames(featureName).map((subfeatureName) => {
-        const cohort = components?.remoteConfig.getCohortName(featureName, subfeatureName);
-        return {
-            feature: 'contentScopeExperiments',
-            subfeature: subfeatureName,
-            cohort,
-        };
-    });
-}
-
 // We inject this into content scripts
 export function getBrokenScriptLists() {
     const brokenScripts = {};

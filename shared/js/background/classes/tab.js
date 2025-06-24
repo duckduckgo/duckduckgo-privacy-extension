@@ -13,7 +13,6 @@
  *          }
  *      }
  */
-const { getCurrentCohorts, enrollCurrentExperiments } = require('../utils');
 const Site = require('./site').default;
 const { Tracker } = require('./tracker');
 const HttpsRedirects = require('./https-redirects');
@@ -24,12 +23,16 @@ const { TabState } = require('./tab-state');
 
 /** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
 
+/**
+ * @typedef {import('../components/abn-experiments').default} AbnExperimentMetrics
+ */
+
 class Tab {
     /**
      * @param {TabData|TabState} tabData
-     * @param {Object} [components] - Optional components dependency for experiments
+     * @param {AbnExperimentMetrics} abnMetrics - Optional abnMetrics instance for experiments (not supported in Firefox)
      */
-    constructor(tabData, components) {
+    constructor(tabData, abnMetrics) {
         if (tabData instanceof TabState) {
             /** @type {TabState} */
             this._tabState = tabData;
@@ -42,20 +45,23 @@ class Tab {
         this.httpsRedirects = new HttpsRedirects();
         this.webResourceAccess = [];
         this.surrogates = {};
-        this.initExperiments(components);
+        this.initExperiments(abnMetrics);
     }
 
-    // Responsible for storing the experiments that ran on the page, so stale tabs don't report the wrong experiments.
-    initExperiments(components) {
-        if (!components) return;
-        enrollCurrentExperiments(components);
-        const experiments = getCurrentCohorts(components);
+    /**
+     * Responsible for storing the experiments that ran on the page, so stale tabs don't report the wrong experiments.
+     * @param {AbnExperimentMetrics} abnMetrics
+     */
+    initExperiments(abnMetrics) {
+        if (!abnMetrics) return;
+        abnMetrics.automaticallyEnrollCurrentContentScopeExperiments();
+        const experiments = abnMetrics.getCurrentCohorts();
         // Order by key
         experiments.sort((a, b) => a.subfeature.localeCompare(b.subfeature));
         // turn into an object
         this.contentScopeExperiments = {};
         for (const experiment of experiments) {
-            this.contentScopeExperiments[experiment.key] = experiment.value;
+            this.contentScopeExperiments[experiment.subfeature] = experiment.cohort || '';
         }
     }
 
