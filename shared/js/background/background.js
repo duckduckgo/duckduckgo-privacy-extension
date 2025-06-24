@@ -32,7 +32,7 @@ import RemoteConfig from './components/remote-config';
 import DashboardMessaging from './components/dashboard-messaging';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
-import TabManager from './tab-manager';
+import tabManager from './tab-manager';
 import AbnExperimentMetrics, { setUpTestExperiment } from './components/abn-experiments';
 import MessageRouter from './components/message-router';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
@@ -52,7 +52,6 @@ const remoteConfig = new RemoteConfig({ settings });
 const abnMetrics = BUILD_TARGET !== 'firefox' ? new AbnExperimentMetrics({ remoteConfig }) : null;
 const tds = new TDSStorage({ settings, remoteConfig, abnMetrics });
 const devtools = new Devtools({ tds });
-const tabManager = new TabManager(abnMetrics);
 const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager });
 /**
  * @type {{
