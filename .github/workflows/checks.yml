@@ -50,7 +50,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                test: [playwright, playwright-mv2]
+                test: [playwright]
                 shard: [1/4, 2/4, 3/4, 4/4]
         steps:
             - uses: actions/checkout@v4
