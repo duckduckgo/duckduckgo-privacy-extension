@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import constants from '../../data/constants';
-import { getManifestVersion, createAlarm, syncToStorage, getFromStorage } from './wrapper.js';
+import { createAlarm, syncToStorage, getFromStorage } from './wrapper.js';
 import tdsStorage from './storage/tds';
 import settings from './settings';
 import { emitter, TrackerBlockedEvent } from './before-request.js';
@@ -77,12 +77,7 @@ export class NewTabTrackerStats {
      * place for this module.
      */
     register() {
-        const manifestVersion = getManifestVersion();
-        if (manifestVersion === 3) {
-            mv3Redirect();
-        } else {
-            mv2Redirect();
-        }
+        mv3Redirect();
 
         /**
          * Maintain a pool of connections - these will occur for every New Tab Page
@@ -373,38 +368,7 @@ export class NewTabTrackerStats {
  * Respond to requests for `tracker-stats.html` - if we determine
  * that the request was from an allowed origin, re-direct the
  * request to the web_accessible_resource file 'html/tracker-stats.html'
- *
- * @param details
  */
-export function mv2Redirect() {
-    const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin);
-    /**
-     * This listener will redirect the request for tracker-stats.html
-     * on the new tab page to our own HTML file under `web_accessible_resources`
-     */
-    browser.webRequest.onBeforeRequest.addListener(
-        (details) => {
-            // Only do the redirect if we're being iframed into a known origin
-            if (details.type === 'sub_frame') {
-                const parsed = new URL(details.url);
-                if (parsed.origin === constants.trackerStats.allowedOrigin) {
-                    if (parsed.pathname.includes(constants.trackerStats.allowedPathname)) {
-                        return {
-                            redirectUrl: chrome.runtime.getURL(constants.trackerStats.redirectTarget),
-                        };
-                    }
-                }
-            }
-            return undefined;
-        },
-        {
-            urls: [incomingUrl.toString()],
-            types: ['sub_frame'],
-        },
-        ['blocking'],
-    );
-}
-
 function mv3Redirect() {
     const targetUrl = chrome.runtime.getURL(constants.trackerStats.redirectTarget);
     const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin);

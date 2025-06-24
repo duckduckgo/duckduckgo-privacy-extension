@@ -86,7 +86,7 @@ const components = {
 };
 
 // Chrome-only components
-if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
+if (BUILD_TARGET === 'chrome') {
     components.metrics = [
         new AppUseMetric({ abnMetrics }),
         new SearchMetric({ abnMetrics }),

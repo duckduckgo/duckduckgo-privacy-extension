@@ -8,4 +8,4 @@ declare const DEBUG: boolean;
 /** True iff live extension reloading is enabled */
 declare const RELOADER: boolean;
 /** Platform the script is being built for */
-declare const BUILD_TARGET: 'chrome' | 'firefox' | 'chrome-mv2';
+declare const BUILD_TARGET: 'chrome' | 'firefox';

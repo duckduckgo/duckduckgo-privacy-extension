@@ -36,7 +36,7 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         this.GPC = settings.GPC;
         this.youtubeClickToLoadEnabled = youtubeClickToLoadEnabled;
         this.youtubePreviewsEnabled = settings.youtubePreviewsEnabled;
-        this.fireButtonEnabled = BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2';
+        this.fireButtonEnabled = BUILD_TARGET === 'chrome';
         this.fireButtonClearHistoryEnabled = settings.fireButtonClearHistoryEnabled;
         this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled;
     },
