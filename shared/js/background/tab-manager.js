@@ -21,16 +21,13 @@ const { getCurrentTab } = require('./utils');
 const persistentTabProperties = ['ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction', 'userRefreshCount'];
 
 class TabManager {
-    /**
-     * @param {AbnExperimentMetrics=} abnMetrics
-     */
-    constructor(abnMetrics) {
+    constructor() {
         /** @type {Record<number, Tab>} */
         this.tabContainer = {};
         /** @type {Record<string, Tab>} */
         this.swContainer = {};
         /** @type {AbnExperimentMetrics=} */
-        this.abnMetrics = abnMetrics;
+        this.abnMetrics = globalThis.components?.abnMetrics;
     }
 
     /* This overwrites the current tab data for a given
@@ -107,10 +104,10 @@ class TabManager {
     }
 
     async getOrRestoreTab(tabId) {
-        if (!this.has(tabId)) {
-            await this.restore(tabId);
+        if (!tabManager.has(tabId)) {
+            await tabManager.restore(tabId);
         }
-        return this.get({ tabId });
+        return tabManager.get({ tabId });
     }
 
     /**
@@ -121,7 +118,7 @@ class TabManager {
     async getOrRestoreCurrentTab() {
         const currentTabDetails = await getCurrentTab();
         if (currentTabDetails?.id) {
-            return await this.getOrRestoreTab(currentTabDetails.id);
+            return await tabManager.getOrRestoreTab(currentTabDetails.id);
         }
         return null;
     }
@@ -188,11 +185,11 @@ class TabManager {
      * later on when webrequests start coming in.
      */
     createOrUpdateTab(id, info) {
-        if (!this.get({ tabId: id })) {
+        if (!tabManager.get({ tabId: id })) {
             info.id = id;
-            return this.create(info);
+            return tabManager.create(info);
         } else {
-            const tab = this.get({ tabId: id });
+            const tab = tabManager.get({ tabId: id });
             if (tab && info.status) {
                 tab.status = info.status;
 
@@ -227,7 +224,7 @@ class TabManager {
     updateTabUrl(request) {
         // Update tab data. This makes
         // sure we have the correct url after any https rewrites
-        const tab = this.get({ tabId: request.tabId });
+        const tab = tabManager.get({ tabId: request.tabId });
 
         if (tab) {
             tab.statusCode = request.statusCode;
@@ -238,4 +235,5 @@ class TabManager {
     }
 }
 
-module.exports = TabManager;
+const tabManager = new TabManager();
+module.exports = tabManager;
