@@ -12,16 +12,25 @@ const { getCurrentTab } = require('./utils');
  * @typedef {import('./classes/site.js').allowlistName} allowlistName
  */
 
+/**
+ * @typedef {import('./components/abn-experiments').default} AbnExperimentMetrics
+ */
+
 // These tab properties are preserved when a new tab Object replaces an existing
 // one for the same tab ID.
 const persistentTabProperties = ['ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction', 'userRefreshCount'];
 
 class TabManager {
-    constructor() {
+    /**
+     * @param {AbnExperimentMetrics=} abnMetrics
+     */
+    constructor(abnMetrics) {
         /** @type {Record<number, Tab>} */
         this.tabContainer = {};
         /** @type {Record<string, Tab>} */
         this.swContainer = {};
+        /** @type {AbnExperimentMetrics=} */
+        this.abnMetrics = abnMetrics;
     }
 
     /* This overwrites the current tab data for a given
@@ -29,9 +38,9 @@ class TabManager {
      * 1. When a new tab is opened. See onUpdated listener below
      * 2. When we get a new main_frame request
      */
-    create(tabData, components) {
+    create(tabData) {
         const normalizedData = browserWrapper.normalizeTabData(tabData);
-        const newTab = new Tab(normalizedData, components);
+        const newTab = new Tab(normalizedData, this.abnMetrics);
 
         const oldTab = this.tabContainer[newTab.id];
         if (oldTab) {
@@ -229,6 +238,4 @@ class TabManager {
     }
 }
 
-const tabManager = new TabManager();
-
-module.exports = tabManager;
+module.exports = TabManager;

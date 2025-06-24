@@ -30,7 +30,7 @@ const { TabState } = require('./tab-state');
 class Tab {
     /**
      * @param {TabData|TabState} tabData
-     * @param {AbnExperimentMetrics} abnMetrics - Optional abnMetrics instance for experiments (not supported in Firefox)
+     * @param {AbnExperimentMetrics=} abnMetrics - Optional abnMetrics instance for experiments (not supported in Firefox)
      */
     constructor(tabData, abnMetrics) {
         if (tabData instanceof TabState) {
@@ -50,7 +50,7 @@ class Tab {
 
     /**
      * Responsible for storing the experiments that ran on the page, so stale tabs don't report the wrong experiments.
-     * @param {AbnExperimentMetrics} abnMetrics
+     * @param {AbnExperimentMetrics=} abnMetrics
      */
     initExperiments(abnMetrics) {
         if (!abnMetrics) return;

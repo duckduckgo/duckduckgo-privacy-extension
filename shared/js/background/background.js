@@ -32,7 +32,7 @@ import RemoteConfig from './components/remote-config';
 import DashboardMessaging from './components/dashboard-messaging';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
-import tabManager from './tab-manager';
+import TabManager from './tab-manager';
 import AbnExperimentMetrics, { setUpTestExperiment } from './components/abn-experiments';
 import MessageRouter from './components/message-router';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
@@ -112,3 +112,5 @@ self.components = components;
 // If these flags are set to false, the whole function is tree-shaked from the build.
 DEBUG && initDebugBuild();
 RELOADER && initReloader();
+
+const tabManager = new TabManager(abnMetrics);
