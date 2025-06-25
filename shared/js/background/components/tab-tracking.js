@@ -19,6 +19,7 @@ export default class TabTracker extends EventTarget {
     constructor({ tabManager, devtools }) {
         super();
         this.tabManager = tabManager;
+        this.tabManager.abnMetrics = globalThis.components?.abnMetrics;
         this.createdTargets = new Map();
 
         browser.webRequest.onHeadersReceived.addListener(

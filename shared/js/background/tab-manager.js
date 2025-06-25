@@ -26,8 +26,12 @@ class TabManager {
         this.tabContainer = {};
         /** @type {Record<string, Tab>} */
         this.swContainer = {};
+        /**
+         * abnMetrics is set in tab-tracking.js due to initialization order.
+         * It cannot be set here directly because components may not be available yet.
+         */
         /** @type {AbnExperimentMetrics=} */
-        this.abnMetrics = globalThis.components?.abnMetrics;
+        this.abnMetrics;
     }
 
     /* This overwrites the current tab data for a given
