@@ -14,6 +14,9 @@
 import { generateBreakageMetrics } from '../metrics';
 import { sendPixelRequest } from '../pixels';
 
+// Feature name constant for content scope experiments
+const CONTENT_SCOPE_EXPERIMENTS_FEATURE = 'contentScopeExperiments';
+
 /**
  * @returns {ExperimentMetric[]}
  */
@@ -161,9 +164,8 @@ export default class AbnExperimentMetrics {
      * Enroll all current experiments for the 'contentScopeExperiments' feature.
      */
     automaticallyEnrollCurrentContentScopeExperiments() {
-        const featureName = 'contentScopeExperiments';
-        this.remoteConfig.getSubFeatureNames(featureName).forEach((subfeatureName) => {
-            this.markExperimentEnrolled(featureName, subfeatureName);
+        this.remoteConfig.getSubFeatureNames(CONTENT_SCOPE_EXPERIMENTS_FEATURE).forEach((subfeatureName) => {
+            this.markExperimentEnrolled(CONTENT_SCOPE_EXPERIMENTS_FEATURE, subfeatureName);
         });
     }
 
@@ -173,12 +175,11 @@ export default class AbnExperimentMetrics {
      * @returns {Array<{feature: string, subfeature: string, cohort: string | null}>}
      */
     getCurrentCohorts() {
-        const featureName = 'contentScopeExperiments';
-        return this.remoteConfig.getSubFeatureNames(featureName)
+        return this.remoteConfig.getSubFeatureNames(CONTENT_SCOPE_EXPERIMENTS_FEATURE)
             .map((subfeatureName) => {
-                const cohort = this.remoteConfig.getCohortName(featureName, subfeatureName);
+                const cohort = this.remoteConfig.getCohortName(CONTENT_SCOPE_EXPERIMENTS_FEATURE, subfeatureName);
                 return {
-                    feature: featureName,
+                    feature: CONTENT_SCOPE_EXPERIMENTS_FEATURE,
                     subfeature: subfeatureName,
                     cohort,
                 };
