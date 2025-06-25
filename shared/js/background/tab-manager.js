@@ -31,7 +31,7 @@ class TabManager {
          * It cannot be set here directly because components may not be available yet.
          */
         /** @type {AbnExperimentMetrics=} */
-        this.abnMetrics;
+        this.abnMetrics = undefined;
     }
 
     /* This overwrites the current tab data for a given

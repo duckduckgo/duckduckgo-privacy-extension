@@ -175,7 +175,8 @@ export default class AbnExperimentMetrics {
      * @returns {Array<{feature: string, subfeature: string, cohort: string | null}>}
      */
     getCurrentCohorts() {
-        return this.remoteConfig.getSubFeatureNames(CONTENT_SCOPE_EXPERIMENTS_FEATURE)
+        return this.remoteConfig
+            .getSubFeatureNames(CONTENT_SCOPE_EXPERIMENTS_FEATURE)
             .map((subfeatureName) => {
                 const cohort = this.remoteConfig.getCohortName(CONTENT_SCOPE_EXPERIMENTS_FEATURE, subfeatureName);
                 return {
