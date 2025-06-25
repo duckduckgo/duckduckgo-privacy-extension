@@ -65,13 +65,14 @@ class Tab {
 
     /**
      * @param {number} tabId
+     * @param {AbnExperimentMetrics=} abnMetrics
      */
-    static async restore(tabId) {
+    static async restore(tabId, abnMetrics) {
         const state = await TabState.restore(tabId);
         if (!state) {
             return null;
         }
-        return new Tab(state);
+        return new Tab(state, abnMetrics);
     }
 
     set referrer(value) {

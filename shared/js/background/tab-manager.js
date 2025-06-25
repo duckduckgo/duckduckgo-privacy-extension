@@ -65,7 +65,7 @@ class TabManager {
     }
 
     async restore(tabId) {
-        const restoredState = await Tab.restore(tabId);
+        const restoredState = await Tab.restore(tabId, this.abnMetrics);
         if (restoredState) {
             this.tabContainer[tabId] = restoredState;
         }
