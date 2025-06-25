@@ -169,18 +169,21 @@ export default class AbnExperimentMetrics {
 
     /**
      * Get the current cohorts for all subfeatures of 'contentScopeExperiments'.
+     * Ensure that the cohorts are sorted by subfeature name to prevent the order from changing per client.
      * @returns {Array<{feature: string, subfeature: string, cohort: string | null}>}
      */
     getCurrentCohorts() {
         const featureName = 'contentScopeExperiments';
-        return this.remoteConfig.getSubFeatureNames(featureName).map((subfeatureName) => {
-            const cohort = this.remoteConfig.getCohortName(featureName, subfeatureName);
-            return {
-                feature: featureName,
-                subfeature: subfeatureName,
-                cohort,
-            };
-        });
+        return this.remoteConfig.getSubFeatureNames(featureName)
+            .map((subfeatureName) => {
+                const cohort = this.remoteConfig.getCohortName(featureName, subfeatureName);
+                return {
+                    feature: featureName,
+                    subfeature: subfeatureName,
+                    cohort,
+                };
+            })
+            .sort((a, b) => a.subfeature.localeCompare(b.subfeature));
     }
 }
 

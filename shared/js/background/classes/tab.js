@@ -56,8 +56,6 @@ class Tab {
         if (!abnMetrics) return;
         abnMetrics.automaticallyEnrollCurrentContentScopeExperiments();
         const experiments = abnMetrics.getCurrentCohorts();
-        // Order by key
-        experiments.sort((a, b) => a.subfeature.localeCompare(b.subfeature));
         // turn into an object
         this.contentScopeExperiments = {};
         for (const experiment of experiments) {
