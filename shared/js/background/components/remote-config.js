@@ -276,7 +276,7 @@ export function isSubFeatureEnabled(featureName, subFeatureName, config) {
  * @returns {number}
  */
 function getSubFeatureRolloutPercent(subFeature) {
-    if (!subFeature?.rollout?.steps) {
+    if (!subFeature.rollout) {
         return 100;
     }
     const validSteps = subFeature.rollout.steps.filter((v) => v.percent > 0 && v.percent <= 100);
