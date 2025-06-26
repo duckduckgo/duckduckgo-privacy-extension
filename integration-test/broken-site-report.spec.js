@@ -117,3 +117,100 @@ test.describe('Broken site reports', () => {
         });
     });
 });
+
+test.describe('Cohort wiring for breakage reports', () => {
+    /**
+     * Helper to create a mock remoteConfig with a single cohort
+     */
+    function makeMockRemoteConfigWithCohorts() {
+        return {
+            getSubFeatureNames: () => ['test-feature'],
+            getCohortName: () => 'treatment',
+            getCohort: () => ({ name: 'treatment' }),
+            setCohort: () => {},
+            onUpdate: () => {},
+        };
+    }
+
+    test('includes cohorts if abnMetrics is set before tab creation', async ({ context, backgroundPage, page, routeExtensionRequests }) => {
+        // Set up pixel interception
+        const pixels = [];
+        let gotPixel;
+        let pixelResolver = null;
+        gotPixel = new Promise((resolve) => {
+            pixelResolver = resolve;
+        });
+        await backgroundWait.forExtensionLoaded(context);
+        await routeFromLocalhost(page);
+        await routeExtensionRequests(
+            'https://improving.duckduckgo.com/t/*',
+            (route) => {
+                const url = route.request().url();
+                pixels.push(url);
+                pixelResolver();
+                return route.abort();
+            },
+        );
+
+        // Inject abnMetrics before tab creation
+        await backgroundPage.evaluate(() => {
+            const remoteConfig = {
+                getSubFeatureNames: () => ['test-feature'],
+                getCohortName: () => 'treatment',
+                getCohort: () => ({ name: 'treatment' }),
+                setCohort: () => {},
+                onUpdate: () => {},
+            };
+            const AbnExperimentMetrics = require('../shared/js/background/components/abn-experiments').default;
+            globalThis.components.abnMetrics = new AbnExperimentMetrics({ remoteConfig });
+        });
+
+        await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
+        await page.bringToFront();
+        await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
+        await gotPixel;
+        const pixel = _formatPixelRequestForTesting(pixels[0]);
+        expect(pixel.params.contentScopeExperiments).toContain('test-feature:treatment');
+    });
+
+    test('does not include cohorts if abnMetrics is not set at tab creation', async ({ context, backgroundPage, page, routeExtensionRequests }) => {
+        // Set up pixel interception
+        const pixels = [];
+        let gotPixel;
+        let pixelResolver = null;
+        gotPixel = new Promise((resolve) => {
+            pixelResolver = resolve;
+        });
+        await backgroundWait.forExtensionLoaded(context);
+        await routeFromLocalhost(page);
+        await routeExtensionRequests(
+            'https://improving.duckduckgo.com/t/*',
+            (route) => {
+                const url = route.request().url();
+                pixels.push(url);
+                pixelResolver();
+                return route.abort();
+            },
+        );
+
+        // abnMetrics is not set before tab creation
+        await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
+        await page.bringToFront();
+        // Now set abnMetrics, but too late for the tab
+        await backgroundPage.evaluate(() => {
+            const remoteConfig = {
+                getSubFeatureNames: () => ['test-feature'],
+                getCohortName: () => 'treatment',
+                getCohort: () => ({ name: 'treatment' }),
+                setCohort: () => {},
+                onUpdate: () => {},
+            };
+            const AbnExperimentMetrics = require('../shared/js/background/components/abn-experiments').default;
+            globalThis.components.abnMetrics = new AbnExperimentMetrics({ remoteConfig });
+        });
+        await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
+        await gotPixel;
+        const pixel = _formatPixelRequestForTesting(pixels[0]);
+        expect(pixel.params.contentScopeExperiments).toBeUndefined();
+    });
+});
