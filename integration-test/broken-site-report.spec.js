@@ -2,6 +2,7 @@ import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 import { _formatPixelRequestForTesting } from '../shared/js/shared-utils/pixels';
+import AbnExperimentMetrics from '../shared/js/background/components/abn-experiments';
 
 test.describe('Broken site reports', () => {
     const pixels = [];
@@ -144,7 +145,6 @@ test.describe('Cohort wiring for breakage reports', () => {
                 setCohort: () => {},
                 onUpdate: () => {},
             };
-            const AbnExperimentMetrics = require('../shared/js/background/components/abn-experiments').default;
             globalThis.components.abnMetrics = new AbnExperimentMetrics({ remoteConfig });
         });
 
@@ -189,7 +189,6 @@ test.describe('Cohort wiring for breakage reports', () => {
                 setCohort: () => {},
                 onUpdate: () => {},
             };
-            const AbnExperimentMetrics = require('../shared/js/background/components/abn-experiments').default;
             globalThis.components.abnMetrics = new AbnExperimentMetrics({ remoteConfig });
         });
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
