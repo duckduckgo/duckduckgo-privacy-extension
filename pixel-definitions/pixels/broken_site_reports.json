@@ -1,7 +1,7 @@
 {
     "epbf": {
         "description": "User sent broken site report",
-        "owners": ["smacbeth"],
+        "owners": ["sammacbeth"],
         "triggers": ["user_submitted"],
         "suffixes": ["browser"],
         "parameters": [
@@ -154,7 +154,7 @@
     },
     "protection-toggled-off-breakage-report": {
         "description": "User sent broken site report",
-        "owners": ["smacbeth"],
+        "owners": ["sammacbeth"],
         "triggers": ["user_submitted"],
         "suffixes": ["browser"],
         "parameters": [
