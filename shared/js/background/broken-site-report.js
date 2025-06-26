@@ -303,6 +303,7 @@ export async function breakageReportForTab({
     if (reportFlow) brokenSiteParams.set('reportFlow', reportFlow);
     if (contentScopeExperiments && Object.keys(contentScopeExperiments).length > 0) {
         const experiments = Object.entries(contentScopeExperiments)
+            .sort(([a], [b]) => a.localeCompare(b))
             .map(([key, value]) => `${key}:${value}`)
             .join(',');
         brokenSiteParams.set('contentScopeExperiments', experiments);
