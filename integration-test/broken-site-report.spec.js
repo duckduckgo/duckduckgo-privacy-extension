@@ -2,7 +2,6 @@ import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 import { _formatPixelRequestForTesting } from '../shared/js/shared-utils/pixels';
-import AbnExperimentMetrics from '../shared/js/background/components/abn-experiments';
 
 test.describe('Broken site reports', () => {
     const pixels = [];
@@ -145,7 +144,7 @@ test.describe('Cohort wiring for breakage reports', () => {
                 setCohort: () => {},
                 onUpdate: () => {},
             };
-            globalThis.components.abnMetrics = new AbnExperimentMetrics({ remoteConfig });
+            globalThis.components.remoteConfig = remoteConfig;
         });
 
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
@@ -177,10 +176,8 @@ test.describe('Cohort wiring for breakage reports', () => {
             return route.abort();
         });
 
-        // abnMetrics is not set before tab creation
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
         await page.bringToFront();
-        // Now set abnMetrics, but too late for the tab
         await backgroundPage.evaluate(() => {
             const remoteConfig = {
                 getSubFeatureNames: () => ['test-feature'],
@@ -189,7 +186,7 @@ test.describe('Cohort wiring for breakage reports', () => {
                 setCohort: () => {},
                 onUpdate: () => {},
             };
-            globalThis.components.abnMetrics = new AbnExperimentMetrics({ remoteConfig });
+            globalThis.components.remoteConfig = remoteConfig;
         });
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
         await gotPixel;
