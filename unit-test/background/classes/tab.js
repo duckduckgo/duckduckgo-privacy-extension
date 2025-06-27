@@ -60,6 +60,7 @@ describe('Tab', () => {
                 return utils.getEnabledFeatures(url);
             }
             const url = 'http://example.com';
+            // Ordering matters here
             const tabSnapshot = {
                 site: {
                     url: 'http://example.com',
@@ -96,6 +97,7 @@ describe('Tab', () => {
                 webResourceAccess: [],
                 surrogates: {},
                 referrer: null,
+                contentScopeExperiments: {},
                 adClick: null,
                 firstAdAttributionAllowed: false,
                 disabledClickToLoadRuleActions: [],

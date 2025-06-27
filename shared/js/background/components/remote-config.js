@@ -211,6 +211,13 @@ export default class RemoteConfig extends ResourceLoader {
         return configValue;
     }
 
+    getSubFeatureNames(featureName) {
+        if (!this.config || !this.config.features[featureName]) {
+            return [];
+        }
+        return Object.keys(this.config.features[featureName].features || {});
+    }
+
     /**
      *
      * @returns {SubFeatureStatus[]}

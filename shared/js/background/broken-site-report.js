@@ -261,6 +261,7 @@ export async function breakageReportForTab({
     const openerContext = tab.openerContext ? tab.openerContext : undefined;
     const jsPerformance = pageParams.jsPerformance ? pageParams.jsPerformance : undefined;
     const locale = tab.locale;
+    const contentScopeExperiments = tab.contentScopeExperiments;
 
     // Note: Take care to update the `PARAM_IDS` array (see above) when
     //       adding/removing breakage parameters!
@@ -300,6 +301,13 @@ export async function breakageReportForTab({
     if (httpErrorCodes) brokenSiteParams.set('httpErrorCodes', httpErrorCodes);
     if (openerContext) brokenSiteParams.set('openerContext', openerContext);
     if (reportFlow) brokenSiteParams.set('reportFlow', reportFlow);
+    if (contentScopeExperiments && Object.keys(contentScopeExperiments).length > 0) {
+        const experiments = Object.entries(contentScopeExperiments)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([key, value]) => `${key}:${value}`)
+            .join(',');
+        brokenSiteParams.set('contentScopeExperiments', experiments);
+    }
 
     return fire(pixelName, brokenSiteParams.toString());
 }

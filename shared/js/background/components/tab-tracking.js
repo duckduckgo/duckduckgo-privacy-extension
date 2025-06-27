@@ -7,6 +7,7 @@ import { isRedirect } from '../utils';
 /**
  * @typedef {import('./devtools').default} Devtools
  * @typedef {import('../tab-manager.js')} TabManager
+ * @typedef {import('./abn-experiments').default} AbnExperimentMetrics
  */
 
 export default class TabTracker extends EventTarget {
@@ -14,11 +15,13 @@ export default class TabTracker extends EventTarget {
      * @param {{
      *  tabManager: TabManager;
      *  devtools: Devtools;
+     *  abnMetrics: AbnExperimentMetrics;
      * }} options
      */
-    constructor({ tabManager, devtools }) {
+    constructor({ tabManager, devtools, abnMetrics }) {
         super();
         this.tabManager = tabManager;
+        this.tabManager.abnMetrics = abnMetrics;
         this.createdTargets = new Map();
 
         browser.webRequest.onHeadersReceived.addListener(

@@ -67,6 +67,8 @@ export class TabState {
         this.jsPerformance = [];
         /** @type {string} */
         this.locale = getFullUserLocale();
+        /** @type {Record<string, string>} */
+        this.contentScopeExperiments = {}; // Content scope experiments that are active for the tab.
         // Whilst restoring, prevent the tab data being stored
         if (!restoring) {
             Storage.backup(this);

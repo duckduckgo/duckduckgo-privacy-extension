@@ -74,7 +74,7 @@ const components = {
     dashboardMessaging,
     omnibox: new OmniboxSearch(),
     internalUser: new InternalUserDetector({ settings }),
-    tabTracking: new TabTracker({ tabManager, devtools }),
+    tabTracking: new TabTracker({ tabManager, devtools, abnMetrics }),
     tds,
     toggleReports: new ToggleReports({ dashboardMessaging }),
     trackers: new TrackersGlobal({ tds }),
