@@ -1,13 +1,10 @@
 ###--- Shared variables ---###
 # Browser types (browser, but "chrome" adjusted as required)
 BROWSER_TYPE = $(browser)
-LEGACY_BROWSER = $(browser)
-ifeq ('$(browser)','chrome')
-  LEGACY_BROWSER = chrome-mv3
-endif
-ifeq ('$(browser)','chrome-mv2')
+CSS_PLATFORM_NAME = $(browser)
+ifneq ('$(browser)','firefox')
+  CSS_PLATFORM_NAME = chrome-mv3
   BROWSER_TYPE = chrome
-  LEGACY_BROWSER = chrome
 endif
 
 # Output directory for builds.
@@ -254,10 +251,10 @@ $(CONTENT_SCOPE_SCRIPTS)/build/locales: $(CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS)
 	cd $(CONTENT_SCOPE_SCRIPTS)/injected; npm run build-locales
 	touch $@
 
-$(CONTENT_SCOPE_SCRIPTS)/build/$(LEGACY_BROWSER)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
-	cd $(CONTENT_SCOPE_SCRIPTS)/injected; npm run build-$(LEGACY_BROWSER)
+$(CONTENT_SCOPE_SCRIPTS)/build/$(CSS_PLATFORM_NAME)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
+	cd $(CONTENT_SCOPE_SCRIPTS)/injected; npm run build-$(CSS_PLATFORM_NAME)
 
-$(BUILD_DIR)/public/js/inject.js: $(CONTENT_SCOPE_SCRIPTS)/build/$(LEGACY_BROWSER)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
+$(BUILD_DIR)/public/js/inject.js: $(CONTENT_SCOPE_SCRIPTS)/build/$(CSS_PLATFORM_NAME)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
 	node scripts/bundleContentScopeScripts.mjs $@ $^
 
 BUILD_TARGETS += $(BUILD_DIR)/public/js/inject.js

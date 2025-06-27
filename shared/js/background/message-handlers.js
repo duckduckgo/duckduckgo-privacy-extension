@@ -1,3 +1,4 @@
+/* global BUILD_TARGET */
 import browser from 'webextension-polyfill';
 import parseUserAgentString from '../shared-utils/parse-user-agent-string';
 import { getExtensionURL } from './wrapper';
@@ -15,12 +16,21 @@ const browserName = utils.getBrowserName();
 const devtools = require('./devtools');
 const browserWrapper = require('./wrapper');
 
+let injectCode = '';
+
 export async function registeredContentScript(options, sender, req) {
     const sessionKey = await utils.getSessionKey();
     const argumentsObject = getArgumentsObject(sender.tab.id, sender, options?.documentUrl || req.documentUrl, sessionKey);
     if (!argumentsObject) {
         // No info for the tab available, do nothing.
         return;
+    }
+    // On Chrome MV2, send the C-S-S inject payload to the content script.
+    if (BUILD_TARGET === 'chrome-mv2') {
+        if (!injectCode) {
+            injectCode = await (await fetch(getExtensionURL('/public/js/inject.js'))).text();
+        }
+        argumentsObject.code = injectCode;
     }
 
     return argumentsObject;

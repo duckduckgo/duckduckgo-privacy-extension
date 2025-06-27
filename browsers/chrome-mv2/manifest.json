@@ -48,7 +48,7 @@
             "match_about_blank": true,
             "all_frames": true,
             "js": [
-                "public/js/inject.js"
+                "public/js/content-scripts/content-scope-messaging.js"
             ],
             "run_at": "document_start"
         },

@@ -46,6 +46,14 @@ async function init() {
                     }
                 });
             }
+            // Legacy support for injecting code into the main world on Chrome MV2 builds.
+            if (argumentsObject.code) {
+                const scriptTag = document.createElement('script');
+                scriptTag.textContent = argumentsObject.code;
+                scriptTag.id = 'ddg-content-scope-script';
+                (document.head || document.documentElement).appendChild(scriptTag);
+                scriptTag.remove();
+            }
 
             // if we didn't get the secret yet, wait for it
             const secret = await secretPromise;

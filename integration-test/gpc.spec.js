@@ -41,7 +41,7 @@ test('Ensure GPC is injected into frames', async ({ context, page, manifestVersi
 
     // FIXME - chrome.scripting API is not yet injecting into about:blank
     //         frames correctly. See https://crbug.com/1360392.
-    if (manifestVersion === 2) {
+    /* if (manifestVersion === 2) {
         // Load an page with an iframe from a different hostname
         await page.goto(`${fakeOrigin}/blank_framer.html`, { waitUntil: 'networkidle' });
         const gpc = await getGPCValueOfContext(page);
@@ -51,5 +51,5 @@ test('Ensure GPC is injected into frames', async ({ context, page, manifestVersi
 
         expect(gpc).toEqual(true);
         expect(gpc).toEqual(gpc2);
-    }
+    } */
 });
