@@ -1,7 +1,7 @@
 {
     "email_tooltip_show": {
         "description": "",
-        "owners": ["emanuele"],
+        "owners": ["GioSensation"],
         "triggers": ["other"],
         "suffixes": ["extension", "browser"],
         "parameters": [
