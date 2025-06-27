@@ -1,3 +1,4 @@
+/* global BUILD_TARGET */
 import browser from 'webextension-polyfill';
 import parseUserAgentString from '../shared-utils/parse-user-agent-string';
 import { getExtensionURL } from './wrapper';
@@ -21,6 +22,11 @@ export async function registeredContentScript(options, sender, req) {
     if (!argumentsObject) {
         // No info for the tab available, do nothing.
         return;
+    }
+    // On Chrome MV2, send the C-S-S inject payload to the content script.
+    if (BUILD_TARGET === 'chrome-mv2') {
+        const code = await (await fetch(getExtensionURL('/public/js/inject.js'))).text();
+        argumentsObject.code = code;
     }
 
     return argumentsObject;
