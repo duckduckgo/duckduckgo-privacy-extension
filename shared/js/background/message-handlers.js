@@ -16,6 +16,8 @@ const browserName = utils.getBrowserName();
 const devtools = require('./devtools');
 const browserWrapper = require('./wrapper');
 
+let injectCode = '';
+
 export async function registeredContentScript(options, sender, req) {
     const sessionKey = await utils.getSessionKey();
     const argumentsObject = getArgumentsObject(sender.tab.id, sender, options?.documentUrl || req.documentUrl, sessionKey);
@@ -25,8 +27,10 @@ export async function registeredContentScript(options, sender, req) {
     }
     // On Chrome MV2, send the C-S-S inject payload to the content script.
     if (BUILD_TARGET === 'chrome-mv2') {
-        const code = await (await fetch(getExtensionURL('/public/js/inject.js'))).text();
-        argumentsObject.code = code;
+        if (!injectCode) {
+            injectCode = await (await fetch(getExtensionURL('/public/js/inject.js'))).text();
+        }
+        argumentsObject.code = injectCode;
     }
 
     return argumentsObject;
