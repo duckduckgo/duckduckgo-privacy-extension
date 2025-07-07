@@ -1,0 +1,20 @@
+{
+    "defaultSuffixes": ["extension", "browser"],
+    "journeys": {
+        "feedback_click_report_a_problem": {
+            "description": "User clicks on: Report a problem with this site, and sees: What's the problem panel",
+            "errors": [],
+            "latency": [10, 20, 50, 100]
+        },
+        "feedback_click_dislike_site": {
+            "description": "User clicks on: I dislike the content on this site, and sees: I dislike the content",
+            "errors": [],
+            "latency": [10, 20, 50, 100]
+        },
+        "feedback_click_send_report": {
+            "description": "User clicks on: Send report, and sees Thank You confirmation",
+            "errors": [],
+            "latency": [10, 100, 1000, 5000]
+        }
+    }
+}
