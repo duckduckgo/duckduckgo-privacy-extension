@@ -31,6 +31,9 @@ jobs:
                   create_branch: true
                   branch: 'release/beta/${{ env.VERSION }}'
 
+            - name: Push beta branch
+              run: git push origin "release/beta/${{ env.VERSION }}"
+
             - name: Build Chrome Beta
               run: |
                   npm run beta-chrome
