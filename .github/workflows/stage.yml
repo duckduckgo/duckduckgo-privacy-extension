@@ -32,6 +32,9 @@ jobs:
                   create_branch: true
                   branch: 'release/${{ github.event.inputs.version }}'
 
+            - name: Push release branch
+              run: git push origin "release/${{ github.event.inputs.version }}"
+
             - name: Create Pull Request
               run: |
                   gh pr create -B main --title "Prepare release ${{ github.event.inputs.version }}" --body "Updated version and bundled config."
