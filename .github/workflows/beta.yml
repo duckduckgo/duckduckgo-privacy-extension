@@ -24,11 +24,14 @@ jobs:
                   node scripts/bumpVersion.js $(date "+%Y.%m.%d")
                   echo "VERSION=$(jq -r .version ./browsers/chrome/manifest.json)" >> $GITHUB_ENV
 
+            - name: Create and checkout release branch
+              run: |
+                  git checkout -b "release/beta/${{ env.VERSION }}"
+
             - name: Commit config and version updates
               uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0
               with:
                   commit_message: 'Prepare release ${{ env.VERSION }}'
-                  create_branch: true
                   branch: 'release/beta/${{ env.VERSION }}'
 
             - name: Push beta branch
