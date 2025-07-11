@@ -3,8 +3,6 @@ name: Pixel Schema Validation
 on:
     push:
         branches: [main]
-    pull_request:
-     - 'pixel-definitions/**'
 
 jobs:
     pixel-validation:
