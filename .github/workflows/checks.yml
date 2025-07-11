@@ -72,6 +72,14 @@ jobs:
     pixel-validation-1:
         runs-on: ubuntu-latest
         steps:
+          - name: Checkout internal-github-asana-utils repo
+            uses: actions/checkout@v4
+            with:
+                ref: v1.9
+            path: internal-github-asana-utils
+            repository: duckduckgo/internal-github-asana-utils
+
+        steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
