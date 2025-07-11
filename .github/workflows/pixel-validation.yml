@@ -3,7 +3,8 @@ name: Pixel Schema Validation
 on:
     push:
         branches: [main]
-
+    pull_request:
+    
 jobs:
     pixel-validation-2:
         runs-on: ubuntu-latest
