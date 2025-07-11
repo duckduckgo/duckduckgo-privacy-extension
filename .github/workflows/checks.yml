@@ -76,6 +76,7 @@ jobs:
             uses: actions/checkout@v4
             with:
                 ref: v1.9
+                github_pat: ${{ secrets.DAXMOBILE_WINDOWS_AUTOMATION }}
             path: internal-github-asana-utils
             repository: duckduckgo/internal-github-asana-utils
 
