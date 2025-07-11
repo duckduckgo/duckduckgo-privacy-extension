@@ -25,7 +25,6 @@
     },
     "m_ad_click_active": {
         "description": "Fire a pixel on the first instance an allowlist is \"used\", once per registration.",
-        "owners": ["kzar", "englehardt"],
         "triggers": ["page_load"],
         "suffixes": ["extension", "browser"],
         "parameters": ["appVersion"]
