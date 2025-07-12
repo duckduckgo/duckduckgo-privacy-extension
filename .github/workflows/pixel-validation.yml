@@ -34,18 +34,4 @@ jobs:
                   repository: duckduckgo/internal-github-asana-utils
                         
             - run: npm run install-ci
-            - run: ls -la ./internal-github-asana-utils/user_map.yml
-            - name: Debug - Check pixel-schema version
-              run: npm list @duckduckgo/pixel-schema
-            - name: Debug - Test -g flag directly
-              run: |
-                echo "Testing -g flag functionality:"
-                npx validate-ddg-pixel-defs ./pixel-definitions -g ./internal-github-asana-utils/user_map.yml 2>&1 | head -10
-            - name: Debug - Test without -g flag for comparison
-              run: |
-                echo "Testing without -g flag for comparison:"
-                npx validate-ddg-pixel-defs ./pixel-definitions 2>&1 | head -5
-            - name: Debug - Check if help shows -g option
-              run: |
-                echo "Checking if -g option is available:"
-                npx validate-ddg-pixel-defs --help | grep -A 2 -B 2 "githubUserMap\|-g" || echo "No -g option found"
+            - run: npm run validate-pixel-defs-usermap
