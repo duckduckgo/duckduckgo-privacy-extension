@@ -47,6 +47,7 @@ jobs:
                   echo "Response: $RESPONSE"
                   echo "branch=main" >> $GITHUB_OUTPUT
                 fi
+                ls -al
 
             - name: Checkout internal-github-asana-utils repo
               uses: actions/checkout@v4
@@ -54,6 +55,19 @@ jobs:
                   token: ${{ secrets.DAXMOBILE_TOKEN }}
                   path: internal-github-asana-utils  
                   repository: duckduckgo/internal-github-asana-utils
+              run: |
+                echo "Checking out internal-github-asana-utils repository..."
+                git fetch origin ${{ steps.default-branch.outputs.branch }}
+                git checkout ${{ steps.default-branch.outputs.branch }}
+                pwd
+                echo "Current directory:"
+                ls -la .
+                echo "Parent directory:"
+                ls -la ..
+                echo "Contents of internal-github-asana-utils:"
+                ls -la internal-github-asana-utils
+                echo "Using branch: ${{ steps.default-branch.outputs.branch }}"
+                
 
             - name: Debug - Check if user map exists
               run: |
