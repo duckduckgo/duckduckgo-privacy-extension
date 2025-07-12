@@ -35,4 +35,4 @@ jobs:
                         
             - run: npm run install-ci
             - run: ls -la ./internal-github-asana-utils/user_map.yml
-            - run: npm run validate-pixel-defs-usermap -- pixel-definitions -g ./internal-github-asana-utils/user_map.yml
+            - run: npm run validate-pixel-defs-usermap
