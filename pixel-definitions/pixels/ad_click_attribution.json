@@ -1,7 +1,7 @@
 {
     "m_ad_click_detected": {
         "description": "Fire a pixel at the point the conditional allowlist is registered with the app",
-        "owners": ["kzar", "englehardt"],
+        "owners": ["kzarERROR", "englehardt"],
         "triggers": ["page_load"],
         "suffixes": ["extension", "browser"],
         "parameters": [
