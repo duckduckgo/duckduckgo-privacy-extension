@@ -30,12 +30,37 @@ jobs:
                   echo "Testing GitHub API access..."
                   curl -H "Authorization: token ${{ secrets.DAXMOBILE_TOKEN }}" \
                        -f -s https://api.github.com/repos/duckduckgo/internal-github-asana-utils || echo "Repository not found or no access"
-                  
+           
+            - name: Get default branch
+              id: default-branch
+              run: |
+                echo "Getting default branch for repository..."
+                RESPONSE=$(curl -s -H "Authorization: token ${{ secrets.DAXMOBILE_TOKEN }}" \
+                  https://api.github.com/repos/duckduckgo/internal-github-asana-utils)
+                
+                if echo "$RESPONSE" | jq -e '.default_branch' > /dev/null 2>&1; then
+                  DEFAULT_BRANCH=$(echo "$RESPONSE" | jq -r '.default_branch')
+                  echo "Found default branch: $DEFAULT_BRANCH"
+                  echo "branch=$DEFAULT_BRANCH" >> $GITHUB_OUTPUT
+                else
+                  echo "Could not get default branch, using 'main' as fallback"
+                  echo "Response: $RESPONSE"
+                  echo "branch=main" >> $GITHUB_OUTPUT
+                fi
+
             - name: Checkout internal-github-asana-utils repo
               uses: actions/checkout@v4
               with:
                   token: ${{ secrets.DAXMOBILE_TOKEN }}
                   path: internal-github-asana-utils  
                   repository: duckduckgo/internal-github-asana-utils
+
+            - name: Debug - Check if user map exists
+              run: |
+                ls -la .
+                ls -la ..
+                ls -la ../internal-github-asana-utils/
+                ls -la ../internal-github-asana-utils/user_map.yml || echo "File not found"
+                
             - run: npm run install-ci
             - run: npm run validate-pixel-defs-usermap 
