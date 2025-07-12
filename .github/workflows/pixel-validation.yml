@@ -35,4 +35,7 @@ jobs:
                         
             - run: npm run install-ci
             - run: ls -la ./internal-github-asana-utils/user_map.yml
-            - run: npm run validate-pixel-defs-usermap
+            - name: Debug - Show what the npm script will run
+              run: npm run validate-pixel-defs-usermap --dry-run 2>/dev/null || echo "Command: validate-ddg-pixel-defs ./pixel-definitions -g ./internal-github-asana-utils/user_map.yml"
+            - name: Debug - Test the command directly
+              run: npx validate-ddg-pixel-defs ./pixel-definitions -g ./internal-github-asana-utils/user_map.yml
