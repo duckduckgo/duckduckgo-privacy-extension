@@ -68,3 +68,4 @@ jobs:
                   name: ${{ matrix.test }}-report
                   path: playwright-report/
                   retention-days: 1
+                  
