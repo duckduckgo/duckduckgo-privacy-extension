@@ -6,18 +6,7 @@ on:
     pull_request:
     
 jobs:
-    pixel-validation-nousermap:
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 22
-                  cache: 'npm'
-            - run: npm run install-ci
-            - run: npm run validate-pixel-defs
-
-    pixel-validation-withusermap:
+    pixel-validation:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
@@ -34,4 +23,4 @@ jobs:
                   repository: duckduckgo/internal-github-asana-utils
                         
             - run: npm run install-ci
-            - run: npm run validate-pixel-defs-usermap
+            - run: npm run validate-pixel-defs
