@@ -23,4 +23,4 @@ jobs:
                   repository: duckduckgo/internal-github-asana-utils
                         
             - run: npm run install-ci
-            - run: npm run validate-pixel-defs-usermap-github
+            - run: npm run validate-pixel-defs -- -g ./internal-github-asana-utils/user_map.yml
