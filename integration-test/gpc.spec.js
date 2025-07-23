@@ -30,9 +30,14 @@ test('Ensure GPC is injected into frames', async ({ context, page, manifestVersi
         // Load an page with an iframe from a different hostname
         await page.bringToFront();
         await page.goto(`${fakeOrigin}/index.html?host=${iframeHost}`, { waitUntil: 'networkidle' });
+
+        // Wait for GPC injection
+        await page.waitForFunction(() => 'globalPrivacyControl' in navigator);
         const gpc = await getGPCValueOfContext(page);
 
         const iframeInstance = page.frames().find((iframe) => iframe.url() === iframeHost + '/framed.html');
+        // Wait for GPC injection in iframe
+        await iframeInstance.waitForFunction(() => 'globalPrivacyControl' in navigator);
         const gpc2 = await getGPCValueOfContext(iframeInstance);
 
         expect(gpc).toEqual(true);
