@@ -298,12 +298,12 @@ ifeq ('$(browser)','chrome')
 endif
 
 # Generate the list of "surrogate" (stub) scripts.
-$(BUILD_DIR)/data/surrogates.txt: $(BUILD_DIR)/web_accessible_resources $(LAST_COPY)
-	node scripts/generateListOfSurrogates.mjs -i $</ > $@
+$(BUILD_DIR)/data/surrogates.txt: $(LAST_COPY)
+	node scripts/generateListOfSurrogates.mjs -i $(BUILD_DIR)/web_accessible_resources/ > $@
 
 .SECONDARY:
-$(INTERMEDIATES_DIR)/surrogates.json: $(BUILD_DIR)/web_accessible_resources $(LAST_COPY)
-	node scripts/generateListOfSurrogates.mjs --json -i $</ > $@
+$(INTERMEDIATES_DIR)/surrogates.json: $(LAST_COPY)
+	node scripts/generateListOfSurrogates.mjs --json -i $(BUILD_DIR)/web_accessible_resources/ > $@
 
 BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
 
