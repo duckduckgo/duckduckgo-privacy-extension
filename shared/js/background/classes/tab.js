@@ -59,7 +59,8 @@ class Tab {
         // turn into an object
         this.contentScopeExperiments = {};
         for (const experiment of experiments) {
-            this.contentScopeExperiments[experiment.subfeature] = experiment.cohort || '';
+            if (!experiment.cohort) continue;
+            this.contentScopeExperiments[experiment.subfeature] = experiment.cohort;
         }
     }
 
