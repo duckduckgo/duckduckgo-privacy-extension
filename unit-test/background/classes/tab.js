@@ -12,6 +12,70 @@ const config = require('../../data/extension-config.json');
 let tab;
 
 describe('Tab', () => {
+    describe('initExperiments()', () => {
+        it('should skip experiments without cohorts', () => {
+            const mockAbnMetrics = {
+                automaticallyEnrollCurrentContentScopeExperiments: jasmine.createSpy('automaticallyEnrollCurrentContentScopeExperiments'),
+                getCurrentCohorts: jasmine.createSpy('getCurrentCohorts').and.returnValue([
+                    { feature: 'contentScopeExperiments', subfeature: 'feature1', cohort: 'treatment' },
+                    { feature: 'contentScopeExperiments', subfeature: 'feature2', cohort: null },
+                    { feature: 'contentScopeExperiments', subfeature: 'feature3', cohort: 'control' },
+                    { feature: 'contentScopeExperiments', subfeature: 'feature4', cohort: undefined },
+                ]),
+            };
+
+            tab = new Tab(
+                {
+                    id: 123,
+                    requestId: 123,
+                    url: 'http://example.com',
+                    status: 200,
+                },
+                mockAbnMetrics,
+            );
+
+            expect(mockAbnMetrics.automaticallyEnrollCurrentContentScopeExperiments).toHaveBeenCalled();
+            expect(mockAbnMetrics.getCurrentCohorts).toHaveBeenCalled();
+            expect(tab.contentScopeExperiments).toEqual({
+                feature1: 'treatment',
+                feature3: 'control',
+            });
+        });
+
+        it('should handle empty experiments array', () => {
+            const mockAbnMetrics = {
+                automaticallyEnrollCurrentContentScopeExperiments: jasmine.createSpy('automaticallyEnrollCurrentContentScopeExperiments'),
+                getCurrentCohorts: jasmine.createSpy('getCurrentCohorts').and.returnValue([]),
+            };
+
+            tab = new Tab(
+                {
+                    id: 123,
+                    requestId: 123,
+                    url: 'http://example.com',
+                    status: 200,
+                },
+                mockAbnMetrics,
+            );
+
+            expect(tab.contentScopeExperiments).toEqual({});
+        });
+
+        it('should handle null abnMetrics', () => {
+            tab = new Tab(
+                {
+                    id: 123,
+                    requestId: 123,
+                    url: 'http://example.com',
+                    status: 200,
+                },
+                null,
+            );
+
+            expect(tab.contentScopeExperiments).toEqual({});
+        });
+    });
+
     describe('updateSite()', () => {
         beforeEach(() => {
             tab = new Tab({
