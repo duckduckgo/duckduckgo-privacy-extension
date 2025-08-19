@@ -41,6 +41,11 @@
                 ]
             },
             {
+                "key": "contentScopeExperiments",
+                "description": "Experiments that are enabled that impact the page content",
+                "type": "string"
+            },
+            {
                 "key": "ctlFacebookLogin",
                 "description": "",
                 "enum": ["false", "true"]
@@ -192,6 +197,11 @@
                     "shopping",
                     "videos"
                 ]
+            },
+            {
+                "key": "contentScopeExperiments",
+                "description": "Experiments that are enabled that impact the page content",
+                "type": "string"
             },
             {
                 "key": "ctlFacebookLogin",
