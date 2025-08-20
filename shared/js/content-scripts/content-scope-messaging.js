@@ -35,6 +35,8 @@ async function init() {
             },
         },
         async (argumentsObject) => {
+            // Potentially corrupted argumentsObject, don't init
+            if (!argumentsObject) return;
             // Setup debugging messages if necessary.
             if (argumentsObject.debug) {
                 window.addEventListener('message', (message) => {
