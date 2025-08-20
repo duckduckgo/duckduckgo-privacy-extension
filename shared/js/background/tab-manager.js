@@ -92,7 +92,7 @@ class TabManager {
     /**
      * Called using either a chrome tab object or by id
      * get({tabId: ###});
-     * @returns {Tab}
+     * @returns {Tab|undefined}
      */
     get(tabData) {
         if (tabData.tabId === -1 && (tabData.initiator || tabData.documentUrl)) {
@@ -122,7 +122,7 @@ class TabManager {
     async getOrRestoreCurrentTab() {
         const currentTabDetails = await getCurrentTab();
         if (currentTabDetails?.id) {
-            return await tabManager.getOrRestoreTab(currentTabDetails.id);
+            return (await tabManager.getOrRestoreTab(currentTabDetails.id)) || null;
         }
         return null;
     }
