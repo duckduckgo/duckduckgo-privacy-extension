@@ -209,8 +209,6 @@ class TabManager {
                     const hasHttps = !!(tab.url && tab.url.match(/^https:\/\//));
                     tab.site.grade.setHttps(hasHttps, hasHttps);
 
-                    console.info(tab.site.grade);
-
                     if (tab.statusCode === 200 && !tab.site.didIncrementCompaniesData) {
                         if (tab.trackers && Object.keys(tab.trackers).length > 0) {
                             Companies.incrementTotalPagesWithTrackers();
