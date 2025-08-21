@@ -28,6 +28,7 @@ export default class TabTracker extends EventTarget {
             (request) => {
                 this.tabManager.updateTabUrl(request);
                 const tab = tabManager.get({ tabId: request.tabId });
+                if (!tab) return;
 
                 tab.httpErrorCodes.push(request.statusCode);
 

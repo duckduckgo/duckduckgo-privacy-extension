@@ -62,6 +62,7 @@ class DevtoolsConnection {
     setTab({ tabId }) {
         this._tabIdResolver(tabId);
         const tab = tabManager.get({ tabId });
+        if (!tab) return;
         this.postMessage('tabChange', this.devtools.serializeTab(tab));
     }
 
@@ -82,6 +83,7 @@ class DevtoolsConnection {
         } else {
             const tabId = await this.tabId;
             const tab = tabManager.get({ tabId });
+            if (!tab) return;
             const enabled = tab.site?.enabledFeatures.includes(feature);
             const tabDomain = tldts.getDomain(tab.site.domain);
 
@@ -110,6 +112,7 @@ class DevtoolsConnection {
     async toggleProtections() {
         const tabId = await this.tabId;
         const tab = tabManager.get({ tabId });
+        if (!tab) return;
         if (tab.site?.isBroken && tab.url) {
             await this.devtools.tds.remoteConfig.modify((config) => {
                 removeBroken(tab.site.domain, config);

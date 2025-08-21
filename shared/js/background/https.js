@@ -157,6 +157,7 @@ class HTTPS {
     downgradeTab({ tabId, expectedUrl, targetUrl }) {
         // make sure that tab still has expected url (user could have navigated away or been redirected)
         const tab = tabManager.get({ tabId });
+        if (!tab) return;
 
         if (tab.url !== expectedUrl && tab.url !== targetUrl) {
             console.warn(`HTTPS: Not downgrading, expected and actual tab URLs don't match: ${expectedUrl} vs ${tab.url}`);

@@ -32,7 +32,6 @@ export async function registeredContentScript(options, sender, req) {
         }
         argumentsObject.code = injectCode;
     }
-
     return argumentsObject;
 }
 
@@ -160,6 +159,7 @@ export async function getYouTubeVideoDetails(videoURL) {
 
 export async function unblockClickToLoadContent(data, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id });
+    if (!tab) return;
 
     if (!tab.disabledClickToLoadRuleActions.includes(data.action)) {
         tab.disabledClickToLoadRuleActions.push(data.action);
@@ -172,6 +172,7 @@ export async function unblockClickToLoadContent(data, sender) {
 
 export function updateYouTubeCTLAddedFlag(value, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id });
+    if (!tab) return;
     tab.ctlYouTube = Boolean(value);
 }
 
@@ -200,6 +201,7 @@ export function updateFacebookCTLBreakageFlags({ ctlFacebookPlaceholderShown = f
     }
 
     const tab = tabManager.get({ tabId });
+    if (!tab) return;
 
     if (ctlFacebookPlaceholderShown) {
         tab.ctlFacebookPlaceholderShown = true;
@@ -278,6 +280,7 @@ export async function isClickToLoadYoutubeEnabled() {
 
 export function addDebugFlag(message, sender, req) {
     const tab = tabManager.get({ tabId: sender.tab.id });
+    if (!tab) return;
     const flags = new Set(tab.debugFlags);
     flags.add(message.flag);
     tab.debugFlags = [...flags];
