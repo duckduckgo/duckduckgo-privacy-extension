@@ -10,8 +10,6 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
-              with:
-                  token: ${{ secrets.DAXMOBILE_TOKEN }}
             - uses: actions/setup-node@v4
               with:
                   node-version: 22
@@ -20,7 +18,7 @@ jobs:
             - name: Checkout internal-github-asana-utils repo
               uses: actions/checkout@v4
               with:
-                  token: ${{ secrets.DAXMOBILE_TOKEN }}
+                  token: ${{ secrets.GH_RO_PAT }}
                   path: internal-github-asana-utils  
                   repository: duckduckgo/internal-github-asana-utils
                         
