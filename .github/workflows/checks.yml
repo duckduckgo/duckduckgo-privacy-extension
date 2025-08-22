@@ -9,7 +9,7 @@ jobs:
     lint:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: actions/setup-node@v4
               with:
                   node-version: 22
@@ -25,7 +25,7 @@ jobs:
                 target: ['release-firefox', 'release-chrome']
         runs-on: ${{ matrix.os }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: actions/setup-node@v4
               with:
                   node-version: ${{ matrix.version }}
@@ -35,7 +35,7 @@ jobs:
     unit-tests:
         runs-on: ubuntu-22.04
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: actions/setup-node@v4
               with:
                   node-version: 22
@@ -52,7 +52,7 @@ jobs:
                 test: [playwright, playwright-mv2]
                 shard: [1/4, 2/4, 3/4, 4/4]
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
             - uses: actions/setup-node@v4
               with:
                   node-version: 22
