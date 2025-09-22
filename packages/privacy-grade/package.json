@@ -13,7 +13,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "tldts": "^7.0.12"
+    "tldts": "^7.0.15"
   },
   "devDependencies": {
     "esbuild": "^0.25.9"
