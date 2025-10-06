@@ -3,10 +3,13 @@ const fs = require('fs');
 const path = require('path');
 
 const { actualMatchOutcome } = require('./utils/helpers');
+const { generateDNRRule } = require('../lib/utils');
 const { generateSmarterEncryptionRuleset } = require('../lib/smarterEncryption');
 const { generateTdsRuleset } = require('../lib/tds');
 const { generateCookieBlockingRuleset } = require('../lib/cookies');
 const { generateTrackerAllowlistRules } = require('../lib/trackerAllowlist');
+const { generateExtensionConfigurationRuleset } = require('../lib/extensionConfiguration');
+const { USER_ALLOWLISTED_PRIORITY } = require('../lib/rulePriorities');
 
 /**
  * @typedef {import('./utils/helpers').testFunction} testFunction
@@ -197,6 +200,91 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
                 /** @this {testFunction} */ async function () {
                     const { actualAction } = await actualMatchOutcome(this.browser, { requestUrl, websiteUrl });
                     assert.equal(actualAction, isAllowlisted ? 'ignore' : 'block', description);
+                },
+            );
+        }
+    });
+
+    describe('Request Blocklist', /** @this {testFunction} */ async function () {
+        const testPath = 'request-blocklist';
+        const tests = loadReferenceTestJSONFile(testPath, 'tests.json');
+        const userAllowlist = loadReferenceTestJSONFile(testPath, 'user-allowlist-reference.json');
+        const tds = loadReferenceTestJSONFile(testPath, 'tds-reference.json');
+        const config = loadReferenceTestJSONFile(testPath, 'config-reference.json');
+
+        // Note: This should be taken from surrogates.txt, not hardcoded.
+        const supportedSurrogateScripts = new Set(['noop.js']);
+
+        const nextId = (ruleset) => (ruleset?.length ? ruleset[ruleset.length - 1].id + 1 : 1);
+
+        let combinedRuleset;
+
+        this.beforeAll(
+            /** @this {testFunction} */ async function () {
+                // Note: Hardcoded since rule generation logic lives outside of ddg2dnr,
+                //       see dnr-user-allowlist.js.
+                const userAllowlistRuleset = [
+                    generateDNRRule({
+                        id: 1,
+                        priority: USER_ALLOWLISTED_PRIORITY,
+                        actionType: 'allowAllRequests',
+                        resourceTypes: ['main_frame'],
+                        requestDomains: userAllowlist,
+                    }),
+                ];
+
+                const isRegexSupported = this.browser.isRegexSupported.bind(this.browser);
+                const { ruleset: tdsRuleset } = await generateTdsRuleset(
+                    tds,
+                    supportedSurrogateScripts,
+                    '/',
+                    isRegexSupported,
+                    nextId(userAllowlistRuleset),
+                );
+                const { ruleset: configRuleset } = await generateExtensionConfigurationRuleset(
+                    config,
+                    [],
+                    isRegexSupported,
+                    nextId(tdsRuleset),
+                );
+
+                combinedRuleset = [...userAllowlistRuleset, ...tdsRuleset, ...configRuleset];
+            },
+        );
+
+        this.beforeEach(
+            /** @this {testFunction} */ async function () {
+                await this.browser.addRules(combinedRuleset);
+            },
+        );
+
+        for (const testSet of Object.values(tests)) {
+            describe(
+                testSet.desc,
+                /** @this {testFunction} */ async function () {
+                    for (const {
+                        name,
+                        requestUrl,
+                        requestType,
+                        websiteUrl,
+                        expectAction: expectedAction,
+                        exceptPlatforms,
+                    } of testSet.tests) {
+                        if (exceptPlatforms?.includes('web-extension-mv3')) {
+                            continue;
+                        }
+
+                        it(
+                            name,
+                            /** @this {testFunction} */ async function () {
+                                let { actualAction } = await actualMatchOutcome(this.browser, { requestUrl, requestType, websiteUrl });
+                                if (actualAction === 'ignore') {
+                                    actualAction = 'allow';
+                                }
+                                assert.equal(actualAction, expectedAction, name);
+                            },
+                        );
+                    }
                 },
             );
         }

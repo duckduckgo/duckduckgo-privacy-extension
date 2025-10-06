@@ -272,10 +272,7 @@ function generateDNRRule({
     // Note: It's not necessary to exclude initiator domains for allowing rules
     //       since first-party requests will be allowed anyway.
     if (excludedInitiatorDomains && excludedInitiatorDomains.length > 0 && actionType !== 'allow') {
-        if (excludedInitiatorDomains.length === 1 && requestDomains && requestDomains.length === 1) {
-            // Assume that if only one initiator domain is excluded (and there
-            // is only one request domain), that the excluded initiator domain
-            // is the same as the request domain.
+        if (excludedInitiatorDomains.length === 1 && requestDomains?.length === 1 && excludedInitiatorDomains[0] === requestDomains[0]) {
             dnrRule.condition.domainType = castDNREnum('thirdParty');
         } else {
             dnrRule.condition.excludedInitiatorDomains = excludedInitiatorDomains;

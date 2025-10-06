@@ -105,3 +105,56 @@ function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutco
         });
     });
 }
+
+/**
+ * Load the Request Blocking privacy test page, run the tests and return the
+ * results.
+ * See https://privacy-test-pages.site/privacy-protections/request-blocking/
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} url
+ *   URL of the test page.
+ * @returns {Promise<{ testCount: number, pageRequests: Object[], pageResults: Object[] }>}
+ */
+export async function runRequestBlockingTest(page, url) {
+    const pageRequests = [];
+    page.on('request', async (req) => {
+        if (!req.url().startsWith('https://bad.third-party.site/')) {
+            return;
+        }
+        let status = 'unknown';
+        const resp = await req.response();
+        if (!resp) {
+            status = 'blocked';
+        } else {
+            status = resp.ok() ? 'allowed' : 'redirected';
+        }
+        pageRequests.push({
+            url: req.url(),
+            method: req.method(),
+            type: req.resourceType(),
+            status,
+        });
+    });
+
+    await page.bringToFront();
+    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.click('#start');
+    const testCount = await page.evaluate(
+        // @ts-ignore
+        // eslint-disable-next-line no-undef
+        () => tests.filter(({ id }) => !id.includes('worker')).length,
+    );
+    while (pageRequests.length < testCount) {
+        await page.waitForTimeout(100);
+    }
+    await page.waitForTimeout(1000);
+
+    const pageResults = await page.evaluate(
+        // @ts-ignore
+        // eslint-disable-next-line no-undef
+        () => results.results,
+    );
+
+    return { testCount, pageRequests, pageResults };
+}

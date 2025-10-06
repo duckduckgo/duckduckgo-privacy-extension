@@ -1,0 +1,19 @@
+{
+    "globalThis.dbg.tds.config.features.requestBlocklist": {
+        "state": "enabled",
+        "settings": {
+            "blockedRequests": {
+                "third-party.site": {
+                    "rules": [
+                        {
+                            "rule": "bad.third-party.site/*.jpg",
+                            "domains": ["<all>"],
+                            "reason": "Test rule"
+                        }
+                    ]
+                }
+            }
+        },
+        "exceptions":[]
+    }
+}

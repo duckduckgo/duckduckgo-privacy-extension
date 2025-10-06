@@ -5,6 +5,7 @@ const { generateTrackerAllowlistRules } = require('./trackerAllowlist');
 const { generateTemporaryAllowlistRules } = require('./temporaryAllowlist');
 const { generateTrackingParameterRules } = require('./trackingParams');
 const { createSmarterEncryptionTemporaryRule } = require('./smarterEncryption');
+const { generateRequestBlocklistRules } = require('./requestBlocklist');
 
 /**
  * Generated an extension configuration declarativeNetRequest ruleset.
@@ -43,6 +44,11 @@ async function generateExtensionConfigurationRuleset(extensionConfig, denylisted
 
     // AMP link protection.
     for (const result of await generateAmpProtectionRules(extensionConfig, isRegexSupported)) {
+        appendRuleResult(result);
+    }
+
+    // Request Blocklist.
+    for (const result of generateRequestBlocklistRules(extensionConfig)) {
         appendRuleResult(result);
     }
 

@@ -437,22 +437,32 @@ describe('generateDNRRule', () => {
         }
 
         {
-            const { condition } = await generateDNRRule({
+            // If one request domain and initiator domain is specified, the rule
+            // can be simplified to `domainType: 'thirdParty'` if the domains
+            // match.
+            let { condition } = await generateDNRRule({
                 priority: 10,
                 actionType: 'block',
                 requestDomains: ['a.example'],
                 excludedInitiatorDomains: ['a.example'],
             });
 
-            // If one request domain and initiator domain is specified, we
-            // assume the domains match and therefore replace the initiator
-            // domain condition with `domainType: 'thirdParty'`
-            // Note: See caveats in corresponding generateDNRRule code, this
-            //       logic was designed for a specific use-case (tds.json) and
-            //       will likely need to be expanded in the future.
             await assert.deepEqual(condition, {
                 requestDomains: ['a.example'],
                 domainType: 'thirdParty',
+            });
+
+            // But not if they don't match
+            ({ condition } = await generateDNRRule({
+                priority: 10,
+                actionType: 'block',
+                requestDomains: ['a.example'],
+                excludedInitiatorDomains: ['b.example'],
+            }));
+
+            await assert.deepEqual(condition, {
+                requestDomains: ['a.example'],
+                excludedInitiatorDomains: ['b.example'],
             });
         }
     });
