@@ -22,6 +22,8 @@ const {
 
 const { CONTENT_BLOCKING_ALLOWLIST_PRIORITY, UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY } = require('../lib/temporaryAllowlist');
 
+const { PRIORITY: REQUEST_BLOCKLIST_PRIORITY } = require('../lib/requestBlocklist');
+
 const {
     AD_ATTRIBUTION_POLICY_PRIORITY,
     SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
@@ -35,6 +37,7 @@ describe('Rule Priorities', () => {
         assert.equal(SMARTER_ENCRYPTION_PRIORITY, 5000);
         assert.equal(TRACKER_BLOCKING_BASELINE_PRIORITY, 10000);
         assert.equal(TRACKER_BLOCKING_CEILING_PRIORITY, 19999);
+        assert.equal(REQUEST_BLOCKLIST_PRIORITY, 20000);
         assert.equal(TRACKER_ALLOWLIST_BASELINE_PRIORITY, 20000);
         assert.equal(TRACKER_ALLOWLIST_CEILING_PRIORITY, 20100);
         assert.equal(AD_ATTRIBUTION_POLICY_PRIORITY, 30000);
@@ -77,10 +80,15 @@ describe('Rule Priorities', () => {
         assert.ok(SMARTER_ENCRYPTION_PRIORITY < USER_ALLOWLISTED_PRIORITY);
         assert.ok(SMARTER_ENCRYPTION_PRIORITY < NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY);
 
-        // Tracker allowlist should take priority over tracker blocking and smarter encryption, but not
-        // other features/allowlists.
+        // Tracker allowlist should take priority over tracker blocking, the request blocklist,
+        // and smarter encryption, but not other features/allowlists.
+        //
+        // Note: TrackerAllowlist baseline priority currently equals RequestBlocklist priority,
+        //       but since allowing rules take precedence over blocking rules of equal priority
+        //       that's OK.
         assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY > SMARTER_ENCRYPTION_PRIORITY);
         assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY > TRACKER_BLOCKING_CEILING_PRIORITY);
+        assert.ok(TRACKER_ALLOWLIST_BASELINE_PRIORITY >= REQUEST_BLOCKLIST_PRIORITY);
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < AD_ATTRIBUTION_POLICY_PRIORITY);
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < CONTENT_BLOCKING_ALLOWLIST_PRIORITY);
         assert.ok(TRACKER_ALLOWLIST_CEILING_PRIORITY < GPC_HEADER_PRIORITY);
@@ -121,6 +129,7 @@ describe('Rule Priorities', () => {
         assert.equal(UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY, SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY);
         assert.equal(UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY, USER_ALLOWLISTED_PRIORITY);
         assert.ok(USER_ALLOWLISTED_PRIORITY > TRACKER_BLOCKING_CEILING_PRIORITY);
+        assert.ok(USER_ALLOWLISTED_PRIORITY > REQUEST_BLOCKLIST_PRIORITY);
         assert.ok(USER_ALLOWLISTED_PRIORITY > TRACKER_ALLOWLIST_CEILING_PRIORITY);
         assert.ok(USER_ALLOWLISTED_PRIORITY > AD_ATTRIBUTION_POLICY_PRIORITY);
         assert.ok(USER_ALLOWLISTED_PRIORITY > CONTENT_BLOCKING_ALLOWLIST_PRIORITY);
