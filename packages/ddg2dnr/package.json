@@ -5,7 +5,7 @@
     "repository": "duckduckgo/ddg2dnr",
     "bin": "cli.js",
     "devDependencies": {
-        "mocha": "11.7.0"
+        "mocha": "11.7.4"
     },
     "scripts": {
         "extension-configuration": "node cli.js extension-configuration",
