@@ -1,4 +1,12 @@
 /**
+ * @typedef {{
+ *  beforeAll: (fn: () => Promise<any>) => Void;
+ *  beforeEach: (fn: () => Promise<any>) => Void;
+ *  browser: import('../../puppeteerInterface').PuppeteerInterface;
+ * }} testFunction
+ */
+
+/**
  * Helper for checking request matching outcomes.
  * Note: The logic around determining action is simplistic, but good enough for
  *       now.
