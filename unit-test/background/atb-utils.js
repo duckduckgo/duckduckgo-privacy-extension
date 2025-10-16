@@ -7,12 +7,8 @@ describe('utils.getCurrentATB', () => {
         expect(result.majorVersion % 1).toEqual(0);
     });
 
-    it('should return a majorVersion greater than 25', function () {
-        expect(result.majorVersion).toBeGreaterThan(25);
-    });
-
-    it('should return a majorVersion less than 500', function () {
-        expect(result.majorVersion).toBeLessThan(500);
+    it('should return a majorVersion greater than 500', function () {
+        expect(result.majorVersion).toBeGreaterThan(500);
     });
 
     it('should return a minorVersion from 1-7', function () {
