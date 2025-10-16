@@ -14,7 +14,8 @@ class PuppeteerInterface {
         // Open the browser, installing the test extension.
         this.browser = await puppeteer.launch({
             headless: 'chrome',
-            args: ['--disable-extensions-except=' + testExtensionPath, '--load-extension=' + testExtensionPath],
+            pipe: true,
+            enableExtensions: [testExtensionPath],
         });
 
         // Find the background ServiceWorker for the extension.
