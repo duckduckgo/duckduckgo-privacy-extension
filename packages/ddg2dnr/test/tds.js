@@ -267,7 +267,6 @@ describe('generateTdsRuleset', () => {
                     condition: {
                         requestDomains: ['example.invalid'],
                         urlFilter: 'plaintext',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -280,6 +279,7 @@ describe('generateTdsRuleset', () => {
                     condition: {
                         requestDomains: ['example.invalid'],
                         regexFilter: '[0-9]+',
+                        isUrlFilterCaseSensitive: true,
                         domainType: 'thirdParty',
                     },
                 },
@@ -297,7 +297,6 @@ describe('generateTdsRuleset', () => {
                     condition: {
                         requestDomains: ['example.invalid'],
                         urlFilter: 'plaintext',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -570,7 +569,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||block.invalid/path',
-                        isUrlFilterCaseSensitive: false,
                     },
                 },
             ],
@@ -595,7 +593,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         regexFilter: 'example[0-9]+regexp',
-                        isUrlFilterCaseSensitive: false,
                         requestDomains: ['allow.invalid'],
                         domainType: 'thirdParty',
                     },
@@ -608,7 +605,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: 'example*urlfilter',
-                        isUrlFilterCaseSensitive: false,
                         requestDomains: ['allow.invalid'],
                         domainType: 'thirdParty',
                     },
@@ -621,7 +617,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||allow.invalid/path',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -632,7 +627,7 @@ describe('generateTdsRuleset', () => {
     it('should handle urlFilters/regexFilters correctly', async () => {
         const blockList = emptyBlockList();
         addDomain(blockList, 'domain.invalid', 'Example entity', 'ignore', [
-            // urlFilter
+            // No filter
             {
                 // Empty.
                 rule: '',
@@ -641,6 +636,7 @@ describe('generateTdsRuleset', () => {
                 // Only contains domain part.
                 rule: 'domain\\.invalid',
             },
+            // urlFilter
             {
                 // Contains wildcard directly after domain part.
                 rule: 'domain\\.invalid.*\\/path',
@@ -666,6 +662,10 @@ describe('generateTdsRuleset', () => {
                 // Note: Perhaps this case could be handled better.
                 rule: 'subdomain\\.domain\\.invalid',
             },
+            {
+                // .* wildcard can be handled by urlFilter.
+                rule: 'domain\\.invalid\\/wild.*card',
+            },
             // regexFilter
             {
                 // Unescaped '.', so does not start with domain + needs regex.
@@ -674,10 +674,6 @@ describe('generateTdsRuleset', () => {
             {
                 // Requires regex.
                 rule: 'domain\\.invalid\\/domainregexp[0-9]+',
-            },
-            {
-                // .* wildcard can be handled by urlFilter.
-                rule: 'domain\\.invalid\\/wild.*card',
             },
             {
                 // * wildcard required regex.
@@ -707,35 +703,32 @@ describe('generateTdsRuleset', () => {
 
         await rulesetEqual(blockList, isRegexSupportedTrue, null, {
             ruleTransform(rule) {
-                return [
-                    rule.condition.urlFilter || '',
-                    rule.condition.regexFilter || '',
-                    rule.condition.isUrlFilterCaseSensitive === false,
-                ];
+                return [rule.condition.urlFilter || '', rule.condition.regexFilter || '', rule.condition.isUrlFilterCaseSensitive];
             },
             rulesetTransform(ruleset) {
                 return ruleset.reverse();
             },
             expectedRuleset: [
+                // No filter
+                ['', '', undefined],
+                ['', '', undefined],
                 // urlFilter
-                ['', '', false],
-                ['', '', false],
-                ['/path', '', true],
-                ['||domain.invalid/domain', '', true],
-                ['||domain.invalid/12345', '', false],
-                ['path', '', true],
-                ['12345', '', false],
-                ['subdomain.domain.invalid', '', true],
+                ['/path', '', undefined],
+                ['||domain.invalid/domain', '', undefined],
+                ['||domain.invalid/12345', '', true],
+                ['path', '', undefined],
+                ['12345', '', true],
+                ['subdomain.domain.invalid', '', undefined],
+                ['||domain.invalid/wild*card', '', undefined],
                 // regexFilter
-                ['', 'domain.invalid\\/domainregexp', true],
-                ['', 'domain\\.invalid\\/domainregexp[0-9]+', true],
-                ['||domain.invalid/wild*card', '', true],
-                ['', 'domain\\.invalid\\/regexp*wildcard', true],
-                ['', 'domain\\.invalid\\/regexp.wildcard', true],
-                ['', 'domain\\.invalid\\/escaped\\*wildcard', true],
-                ['', '\\/path[0-9]+', true],
-                ['', 'domain\\.invalid\\/[0-9]+', false],
-                ['', '[0-9]+', false],
+                ['', 'domain.invalid\\/domainregexp', undefined],
+                ['', 'domain\\.invalid\\/domainregexp[0-9]+', undefined],
+                ['', 'domain\\.invalid\\/regexp*wildcard', undefined],
+                ['', 'domain\\.invalid\\/regexp.wildcard', undefined],
+                ['', 'domain\\.invalid\\/escaped\\*wildcard', undefined],
+                ['', '\\/path[0-9]+', undefined],
+                ['', 'domain\\.invalid\\/[0-9]+', true],
+                ['', '[0-9]+', true],
             ],
         });
     });
@@ -798,7 +791,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||block.invalid/scripts',
-                        isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
                         initiatorDomains: ['scripts.allowed.invalid'],
                     },
@@ -811,7 +803,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||block.invalid/images',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -826,7 +817,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||block.invalid/images',
-                        isUrlFilterCaseSensitive: false,
                         resourceTypes: ['image'],
                     },
                 },
@@ -838,7 +828,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||block.invalid/domain',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -850,7 +839,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||block.invalid/domain',
-                        isUrlFilterCaseSensitive: false,
                         initiatorDomains: ['allowed.invalid'],
                     },
                 },
@@ -907,7 +895,6 @@ describe('generateTdsRuleset', () => {
                     condition: {
                         resourceTypes: ['image'],
                         domainType: 'thirdParty',
-                        isUrlFilterCaseSensitive: false,
                         urlFilter: '||block.invalid/image',
                     },
                 },
@@ -920,7 +907,6 @@ describe('generateTdsRuleset', () => {
                     condition: {
                         resourceTypes: ['script'],
                         domainType: 'thirdParty',
-                        isUrlFilterCaseSensitive: false,
                         initiatorDomains: ['block-this-domain.invalid'],
                         urlFilter: '||block.invalid/scripts',
                     },
@@ -934,7 +920,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         domainType: 'thirdParty',
-                        isUrlFilterCaseSensitive: false,
                         initiatorDomains: ['block-this-domain.invalid'],
                         urlFilter: '||block.invalid/with-surrogate',
                     },
@@ -947,7 +932,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         domainType: 'thirdParty',
-                        isUrlFilterCaseSensitive: false,
                         initiatorDomains: ['block-this-domain.invalid', 'also-block-this-one.invalid'],
                         urlFilter: '||block.invalid/with-type-exception',
                     },
@@ -959,7 +943,6 @@ describe('generateTdsRuleset', () => {
                         type: 'allow',
                     },
                     condition: {
-                        isUrlFilterCaseSensitive: false,
                         resourceTypes: ['image'],
                         urlFilter: '||block.invalid/with-type-exception',
                     },
@@ -1191,6 +1174,7 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '1234',
+                        isUrlFilterCaseSensitive: true,
                         requestDomains: ['a.invalid'],
                     },
                 },
@@ -1333,7 +1317,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||entity.invalid/path',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -1346,7 +1329,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||entity.invalid/*foo.js',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                         resourceTypes: ['script'],
                     },
@@ -1359,7 +1341,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||entity.invalid/bar.js',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                         resourceTypes: ['script'],
                     },
@@ -1373,7 +1354,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||entity.invalid/cabbage.js',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                         resourceTypes: ['script'],
                     },
@@ -1386,7 +1366,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||entity.invalid/cabbage.js',
-                        isUrlFilterCaseSensitive: false,
                         initiatorDomains: ['exception.invalid'],
                     },
                 },
@@ -1485,7 +1464,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         domainType: 'thirdParty',
-                        isUrlFilterCaseSensitive: false,
                         urlFilter: '||default-ignore.invalid/known-action-3',
                     },
                 },
@@ -1496,7 +1474,6 @@ describe('generateTdsRuleset', () => {
                         type: 'allow',
                     },
                     condition: {
-                        isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
                         urlFilter: '||default-ignore.invalid/known-action-3',
                     },
@@ -1509,7 +1486,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         domainType: 'thirdParty',
-                        isUrlFilterCaseSensitive: false,
                         urlFilter: '||default-ignore.invalid/known-action-1',
                     },
                 },
@@ -1531,7 +1507,6 @@ describe('generateTdsRuleset', () => {
                         type: 'allow',
                     },
                     condition: {
-                        isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
                         urlFilter: '||default-block.invalid/known-action-2',
                     },
@@ -1544,7 +1519,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         domainType: 'thirdParty',
-                        isUrlFilterCaseSensitive: false,
                         urlFilter: '||default-block.invalid/known-action-1',
                     },
                 },
@@ -1603,7 +1577,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -1615,7 +1588,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
-                        isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
                     },
                 },
@@ -1627,7 +1599,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/known-action-2',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -1639,7 +1610,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/known-action-2',
-                        isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
                     },
                 },
@@ -1651,7 +1621,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -1663,7 +1632,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-ignore.invalid/known-action-1',
-                        isUrlFilterCaseSensitive: false,
                         domainType: 'thirdParty',
                     },
                 },
@@ -1686,7 +1654,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/block-ctl-yt-1',
-                        isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
                     },
                 },
@@ -1698,7 +1665,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/known-action-2',
-                        isUrlFilterCaseSensitive: false,
                         excludedInitiatorDomains: ['default-block.invalid', 'another-default-block.invalid'],
                     },
                 },
@@ -1710,7 +1676,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/known-action-2',
-                        isUrlFilterCaseSensitive: false,
                         resourceTypes: ['script'],
                     },
                 },
@@ -1725,7 +1690,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/block-ctl-fb-1',
-                        isUrlFilterCaseSensitive: false,
                         excludedInitiatorDomains: ['default-block.invalid', 'another-default-block.invalid'],
                         resourceTypes: ['script'],
                     },
@@ -1738,7 +1702,6 @@ describe('generateTdsRuleset', () => {
                     },
                     condition: {
                         urlFilter: '||default-block.invalid/known-action-1',
-                        isUrlFilterCaseSensitive: false,
                         excludedInitiatorDomains: ['default-block.invalid', 'another-default-block.invalid'],
                     },
                 },
@@ -1750,7 +1713,6 @@ describe('generateTdsRuleset', () => {
                         action: { type: 'allow' },
                         condition: {
                             urlFilter: '||default-ignore.invalid/block-ctl-fb-1',
-                            isUrlFilterCaseSensitive: false,
                         },
                     },
                     {
@@ -1758,7 +1720,6 @@ describe('generateTdsRuleset', () => {
                         action: { type: 'allow' },
                         condition: {
                             urlFilter: '||default-block.invalid/block-ctl-fb-1',
-                            isUrlFilterCaseSensitive: false,
                             resourceTypes: ['script'],
                         },
                     },
@@ -1769,7 +1730,6 @@ describe('generateTdsRuleset', () => {
                         action: { type: 'allow' },
                         condition: {
                             urlFilter: '||default-ignore.invalid/block-ctl-yt-1',
-                            isUrlFilterCaseSensitive: false,
                         },
                     },
                 ],

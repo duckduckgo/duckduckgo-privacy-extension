@@ -8,6 +8,10 @@ const { generateTdsRuleset } = require('../lib/tds');
 const { generateCookieBlockingRuleset } = require('../lib/cookies');
 const { generateTrackerAllowlistRules } = require('../lib/trackerAllowlist');
 
+/**
+ * @typedef {import('./utils/helpers').testFunction} testFunction
+ */
+
 function referenceTestPath(...args) {
     return require.resolve(path.join('@duckduckgo/privacy-reference-tests', ...args));
 }
@@ -28,14 +32,6 @@ function* testCases(referenceTests) {
         }
     }
 }
-
-/**
- * @typedef {{
- *  beforeAll: (fn: () => Promise<any>) => Void;
- *  beforeEach: (fn: () => Promise<any>) => Void;
- *  browser: import('../puppeteerInterface').PuppeteerInterface;
- * }} testFunction
- */
 
 describe('Reference Tests', /** @this {testFunction} */ () => {
     it('TR-domain-matching', /** @this {testFunction} */ async function () {
