@@ -2,6 +2,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 
+const { actualMatchOutcome } = require('./utils/helpers');
 const { generateSmarterEncryptionRuleset } = require('../lib/smarterEncryption');
 const { generateTdsRuleset } = require('../lib/tds');
 const { generateCookieBlockingRuleset } = require('../lib/cookies');
@@ -49,40 +50,14 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
 
         await this.browser.addRules(ruleset);
 
-        for (const {
-            testDescription,
-            requestURL: initialUrl,
-            requestType,
-            siteURL: initiatorUrl,
-            expectAction: expectedAction,
-        } of testCases(referenceTests)) {
-            const actualMatchedRules = await this.browser.testMatchOutcome({
-                url: initialUrl,
-                initiator: initiatorUrl,
-                type: requestType,
-            });
+        for (const { testDescription, requestURL: requestUrl, requestType, siteURL: websiteUrl, expectAction: expectedAction } of testCases(
+            referenceTests,
+        )) {
+            const { actualAction } = await actualMatchOutcome(this.browser, { requestUrl, requestType, websiteUrl });
 
-            let actualAction = 'ignore';
-            const actualRedirects = [];
-            for (const rule of actualMatchedRules) {
-                if (rule.action.type === 'block') {
-                    actualAction = 'block';
-                    continue;
-                }
-
-                if (rule.action.type === 'redirect') {
-                    actualRedirects.push(rule.action.redirect.extensionPath);
-                }
-            }
-
-            if (actualAction === 'ignore' && actualRedirects.length > 0) {
-                actualAction = 'redirect';
-
-                // Note - Check the redirection path is correct. Not possible
-                //        currently, since the expected redirect path is a data
-                //        URI instead of the script filename/path.
-            }
-
+            // TODO: Check the redirection path is correct. Not possible
+            //       currently, since the expected redirect path is a data URI
+            //       instead of the script filename/path.
             assert.equal(actualAction, expectedAction || 'ignore', testDescription);
         }
     });
@@ -96,20 +71,15 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
 
         await this.browser.addRules(generateSmarterEncryptionRuleset(domains));
 
-        for (const { testDescription, requestURL: initialUrl, siteURL: initiatorUrl, expectURL: expectedUrl, requestType } of testCases(
+        for (const { testDescription, requestURL: requestUrl, siteURL: websiteUrl, expectURL: expectedUrl, requestType } of testCases(
             referenceTests,
         )) {
-            const { protocol: initialProtocol } = new URL(initialUrl);
+            const { protocol: initialProtocol } = new URL(requestUrl);
             const { protocol: expectedProtocol } = new URL(expectedUrl);
             const expectedUpgrade = initialProtocol.length < expectedProtocol.length;
 
-            const actualMatchedRules = await this.browser.testMatchOutcome({
-                url: initialUrl,
-                initiator: initiatorUrl,
-                type: requestType,
-            });
-
-            let actualUpgrade = actualMatchedRules.length === 1 && actualMatchedRules[0].action.type === 'upgradeScheme';
+            const { actualAction } = await actualMatchOutcome(this.browser, { requestUrl, requestType, websiteUrl });
+            let actualUpgrade = actualAction === 'upgradeScheme';
 
             // Note: Stop skipping these test cases once support for
             //       Smarter Encryption Allowlisting has been added.
@@ -151,8 +121,8 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
 
         for (const {
             testDescription,
-            requestURL: initialUrl,
-            siteURL: initiatorUrl,
+            requestURL: requestUrl,
+            siteURL: websiteUrl,
             expectCookieHeadersRemoved,
             expectSetCookieHeadersRemoved,
         } of testCases(referenceTests)) {
@@ -161,12 +131,7 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
                 it(
                     testDescription,
                     /** @this {testFunction} */ async function () {
-                        const actualMatchedRules = await this.browser.testMatchOutcome({
-                            url: initialUrl,
-                            initiator: initiatorUrl,
-                            type: 'xmlhttprequest',
-                            tabId: 1,
-                        });
+                        const { actualMatchedRules } = await actualMatchOutcome(this.browser, { requestUrl, websiteUrl });
                         if (expectCookieHeadersRemoved || expectSetCookieHeadersRemoved) {
                             assert.equal(actualMatchedRules.length, 1);
                             const firstMatch = actualMatchedRules[0];
@@ -227,37 +192,14 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
             },
         );
 
-        for (const { description, site, request, isAllowlisted, exceptPlatforms } of referenceTests) {
+        for (const { description, request: requestUrl, site: websiteUrl, isAllowlisted, exceptPlatforms } of referenceTests) {
             if (exceptPlatforms && exceptPlatforms.includes('web-extension-mv3')) {
                 continue;
             }
             it(
                 description,
                 /** @this {testFunction} */ async function () {
-                    const actualMatchedRules = await this.browser.testMatchOutcome({
-                        url: request,
-                        initiator: site,
-                        type: 'script',
-                    });
-                    // console.log('xxx', actualMatchedRules)
-
-                    let actualAction = 'ignore';
-                    const actualRedirects = [];
-                    for (const rule of actualMatchedRules) {
-                        if (rule.action.type === 'block') {
-                            actualAction = 'block';
-                            continue;
-                        }
-                    }
-
-                    if (actualAction === 'ignore' && actualRedirects.length > 0) {
-                        actualAction = 'redirect';
-
-                        // Note - Check the redirection path is correct. Not possible
-                        //        currently, since the expected redirect path is a data
-                        //        URI instead of the script filename/path.
-                    }
-
+                    const { actualAction } = await actualMatchOutcome(this.browser, { requestUrl, websiteUrl });
                     assert.equal(actualAction, isAllowlisted ? 'ignore' : 'block', description);
                 },
             );
