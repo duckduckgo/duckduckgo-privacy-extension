@@ -38,7 +38,7 @@
         "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.8",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
         "@fingerprintjs/fingerprintjs": "^4.6.2",
-        "@playwright/test": "^1.51.0",
+        "@playwright/test": "^1.56.1",
         "@types/chrome": "^0.0.269",
         "@types/jasmine": "^5.1.9",
         "@types/node": "^22.1.0",
