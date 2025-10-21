@@ -170,7 +170,6 @@ describe('Tracker Allowlist', () => {
                     },
                     condition: {
                         urlFilter: '||domain.invalid/path',
-                        isUrlFilterCaseSensitive: false,
                         excludedRequestDomains: ['subdomain.domain.invalid', 'another.subdomain.domain.invalid'],
                     },
                 },
@@ -182,10 +181,6 @@ describe('Tracker Allowlist', () => {
                     },
                     condition: {
                         urlFilter: '||subdomain.domain.invalid',
-                        // Note: Case-insensitive matching isn't required
-                        //       here. It would be nice to improve this case
-                        //       in the future.
-                        isUrlFilterCaseSensitive: false,
                         excludedRequestDomains: ['another.subdomain.domain.invalid'],
                     },
                 },
@@ -197,10 +192,6 @@ describe('Tracker Allowlist', () => {
                     },
                     condition: {
                         urlFilter: '12345',
-                        // Note: Case-insensitive matching isn't required
-                        //       here. It would be nice to improve this case
-                        //       in the future.
-                        isUrlFilterCaseSensitive: false,
                         requestDomains: ['another.subdomain.domain.invalid'],
                         initiatorDomains: ['different-initiator.invalid'],
                     },
@@ -213,7 +204,6 @@ describe('Tracker Allowlist', () => {
                     },
                     condition: {
                         urlFilter: '||another.subdomain.domain.invalid',
-                        isUrlFilterCaseSensitive: false,
                         initiatorDomains: ['initiator1.invalid', 'initiator2.invalid'],
                     },
                 },
@@ -225,7 +215,6 @@ describe('Tracker Allowlist', () => {
                     },
                     condition: {
                         urlFilter: 'subdomain.different-tracker.invalid/path',
-                        isUrlFilterCaseSensitive: false,
                         requestDomains: ['different-tracker.invalid'],
                     },
                 },

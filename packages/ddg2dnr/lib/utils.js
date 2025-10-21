@@ -237,14 +237,19 @@ function generateDNRRule({
             delete dnrRule.condition.requestDomains;
         }
 
-        if (!matchCase) {
-            dnrRule.condition.isUrlFilterCaseSensitive = false;
+        // urlFilter rules default to case insensitive matching.
+        if (matchCase) {
+            dnrRule.condition.isUrlFilterCaseSensitive = true;
         }
     } else if (regexFilter) {
         dnrRule.condition.regexFilter = regexFilter;
 
-        if (!matchCase) {
-            dnrRule.condition.isUrlFilterCaseSensitive = false;
+        // regexFilter rules also default to case insensitive matching, despite
+        // the API docs implying otherwise. Also note that
+        // isUrlFilterCaseSensitive applies to both urlFilter and regexFilter
+        // conditions.
+        if (matchCase) {
+            dnrRule.condition.isUrlFilterCaseSensitive = true;
         }
     }
 

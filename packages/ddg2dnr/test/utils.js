@@ -265,12 +265,9 @@ describe('generateDNRRule', () => {
                 urlFilter: 'abc',
             });
 
-            // By default, Tracker Blocking rules are case insensitive, and by
-            // default declarativeNetRequest rules are case sensitive. So,
-            // unless specified the `isUrlFilterCaseSensitive: false` option
-            // must be included.
+            // By default, Tracker Blocking rules match case insensitively, and
+            // so do declarativeNetRequest urlFilter rule conditions.
             await assert.deepEqual(condition, {
-                isUrlFilterCaseSensitive: false,
                 urlFilter: 'abc',
             });
         }
@@ -285,6 +282,7 @@ describe('generateDNRRule', () => {
 
             await assert.deepEqual(condition, {
                 urlFilter: 'abc',
+                isUrlFilterCaseSensitive: true,
             });
         }
 
@@ -297,7 +295,6 @@ describe('generateDNRRule', () => {
             });
 
             await assert.deepEqual(condition, {
-                isUrlFilterCaseSensitive: false,
                 urlFilter: 'abc',
                 requestDomains: ['example.invalid'],
             });
@@ -317,7 +314,6 @@ describe('generateDNRRule', () => {
             //       logic was designed for a specific use-case (tds.json) and
             //       will likely need to be expanded in the future.
             await assert.deepEqual(condition, {
-                isUrlFilterCaseSensitive: false,
                 urlFilter: '||example.invalid/abc',
             });
         }
@@ -338,12 +334,12 @@ describe('generateDNRRule', () => {
                 priority: 10,
                 actionType: 'block',
                 regexFilter: 'abc',
+                matchCase: false,
             });
 
-            // Like urlFilter above, the `isUrlFilterCaseSensitive: false`
-            // option is necessary unless case sensitive matching is requested.
+            // As with urlFilter above, `isUrlFilterCaseSensitive: false` is the
+            // the default and can be omitted for regexFilter rules.
             await assert.deepEqual(condition, {
-                isUrlFilterCaseSensitive: false,
                 regexFilter: 'abc',
             });
         }
@@ -358,6 +354,7 @@ describe('generateDNRRule', () => {
 
             await assert.deepEqual(condition, {
                 regexFilter: 'abc',
+                isUrlFilterCaseSensitive: true,
             });
         }
     });

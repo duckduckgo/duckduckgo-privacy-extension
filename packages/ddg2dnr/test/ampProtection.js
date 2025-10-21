@@ -86,7 +86,6 @@ describe('AMP link protection', () => {
                         redirect: { regexSubstitution: 'https://\\1' },
                     },
                     condition: {
-                        isUrlFilterCaseSensitive: false,
                         regexFilter: '^https?:\\/\\/(?:w{3}\\.)?google\\..{2,}\\/amp\\/s\\/(.+)$',
                         resourceTypes: ['main_frame'],
                         excludedInitiatorDomains: ['exception1.example', 'exception2.example'],
@@ -101,7 +100,6 @@ describe('AMP link protection', () => {
                         redirect: { regexSubstitution: 'https://\\1' },
                     },
                     condition: {
-                        isUrlFilterCaseSensitive: false,
                         regexFilter: '^https?:\\/\\/.+ampproject\\.org\\/.\\/s\\/(.+)$',
                         resourceTypes: ['main_frame'],
                         excludedInitiatorDomains: ['exception1.example', 'exception2.example'],
