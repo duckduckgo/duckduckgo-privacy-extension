@@ -29,7 +29,7 @@ jobs:
                   git checkout -b "release/beta/${{ env.VERSION }}"
 
             - name: Commit config and version updates
-              uses: stefanzweifel/git-auto-commit-action@778341af668090896ca464160c2def5d1d1a3eb0
+              uses: stefanzweifel/git-auto-commit-action@28e16e81777b558cc906c8750092100bbb34c5e3
               with:
                   commit_message: 'Prepare release ${{ env.VERSION }}'
                   branch: 'release/beta/${{ env.VERSION }}'
