@@ -35,6 +35,7 @@ import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
 import AbnExperimentMetrics, { setUpTestExperiment } from './components/abn-experiments';
 import MessageRouter from './components/message-router';
+import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
@@ -99,10 +100,14 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
     components.fireButton = new FireButton({ settings, tabManager });
     setUpTestExperiment(abnMetrics);
 }
-// MV3-only components
+
 if (BUILD_TARGET === 'chrome') {
+    // MV3-only components
     components.scriptInjection = new MV3ContentScriptInjection();
     components.dnrListeners = new DNRListeners({ settings, tds });
+} else {
+    // MV2-only components
+    components.requestBlocklist = new RequestBlocklist();
 }
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore

@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill';
 import EventEmitter2 from 'eventemitter2';
 import ATB from './atb';
 import { postPopupMessage } from './popup-messaging';
+import RequestBlocklist from './components/request-blocklist';
 
 const utils = require('./utils');
 const trackers = require('./trackers');
@@ -249,6 +250,18 @@ function blockHandleResponse(thisTab, requestData) {
     if (tracker) {
         if (tracker?.matchedRule?.action?.startsWith('block-ctl-')) {
             displayClickToLoadPlaceholders(thisTab, tracker.matchedRule.action);
+        }
+
+        // Request Blocklist
+        if (thisTab.site.isFeatureEnabled(RequestBlocklist.featureName)) {
+            const blockListed = RequestBlocklist.matchRequest(thisTab.site.url, requestData.url, requestData.type);
+
+            if (blockListed) {
+                console.log('RequestBlocklist:', requestData.url, 'Reason:', blockListed.reason);
+                tracker.action = 'block';
+                tracker.reason = `RequestBlocklist - ${blockListed.reason}`;
+                delete tracker.redirectUrl;
+            }
         }
 
         // temp allowlisted trackers to fix site breakage
