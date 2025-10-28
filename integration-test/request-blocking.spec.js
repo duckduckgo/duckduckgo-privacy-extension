@@ -2,45 +2,10 @@ import { test, expect } from './helpers/playwrightHarness';
 import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN } from './helpers/testPages';
+import { runRequestBlockingTest } from './helpers/requests';
 
 const testHost = 'privacy-test-pages.site';
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`;
-
-async function runRequestBlockingTest(page, url = testSite) {
-    const pageRequests = [];
-    page.on('request', async (req) => {
-        if (!req.url().startsWith('https://bad.third-party.site/')) {
-            return;
-        }
-        let status = 'unknown';
-        const resp = await req.response();
-        if (!resp) {
-            status = 'blocked';
-        } else {
-            status = resp.ok ? 'allowed' : 'redirected';
-        }
-        pageRequests.push({
-            url: req.url(),
-            method: req.method(),
-            type: req.resourceType(),
-            status,
-        });
-    });
-
-    await page.bringToFront();
-    await page.goto(url, { waitUntil: 'networkidle' });
-    await page.click('#start');
-    const testCount = await page.evaluate(
-        // eslint-disable-next-line no-undef
-        () => tests.filter(({ id }) => !id.includes('worker')).length,
-    );
-    while (pageRequests.length < testCount) {
-        await page.waitForTimeout(100);
-    }
-    await page.waitForTimeout(1000);
-
-    return [testCount, pageRequests];
-}
 
 test.describe('Test request blocking', () => {
     test('Should block all the test tracking requests', async ({
@@ -56,7 +21,7 @@ test.describe('Test request blocking', () => {
         if (manifestVersion === 3) {
             await forDynamicDNRRulesLoaded(backgroundPage);
         }
-        const [testCount, pageRequests] = await runRequestBlockingTest(page);
+        const { testCount, pageRequests, pageResults } = await runRequestBlockingTest(page, testSite);
 
         // Verify that no logged requests were allowed.
         for (const { url, method, type, status } of pageRequests) {
@@ -66,9 +31,6 @@ test.describe('Test request blocking', () => {
 
         // Also check that the test page itself agrees that no requests were
         // allowed.
-        const pageResults = await page.evaluate(
-            () => results.results, // eslint-disable-line no-undef
-        );
         for (const { id, category, status } of pageResults) {
             const description = `ID: ${id}, Category: ${category}`;
             expect(status, description).not.toEqual('loaded');
@@ -134,7 +96,7 @@ test.describe('Test request blocking', () => {
                 return config;
             });
         }, testHost);
-        const [, pageRequests] = await runRequestBlockingTest(page);
+        const { pageRequests, pageResults } = await runRequestBlockingTest(page, testSite);
 
         // Verify that no logged requests were allowed.
         for (const { url, method, type, status } of pageRequests) {
@@ -144,9 +106,6 @@ test.describe('Test request blocking', () => {
 
         // Check that the test page itself agrees that no requests were
         // allowed.
-        const pageResults = await page.evaluate(
-            () => results.results, // eslint-disable-line no-undef
-        );
         for (const { id, category, status } of pageResults) {
             const description = `ID: ${id}, Category: ${category}`;
             if (id === 'serviceworker-fetch') {
@@ -176,10 +135,7 @@ test.describe('Test request blocking', () => {
             }
         }
 
-        await runRequestBlockingTest(page, `${TEST_SERVER_ORIGIN}/privacy-protections/request-blocking/`);
-        const pageResults = await page.evaluate(
-            () => results.results, // eslint-disable-line no-undef
-        );
+        const { pageResults } = await runRequestBlockingTest(page, `${TEST_SERVER_ORIGIN}/privacy-protections/request-blocking/`);
         await page.bringToFront();
         for (const { id, category, status } of pageResults) {
             // skip some flakey request types
@@ -200,11 +156,8 @@ test.describe('Test request blocking', () => {
         }
 
         // load with protection enabled
-        await runRequestBlockingTest(page);
+        let { pageResults } = await runRequestBlockingTest(page, testSite);
         // Verify that no logged requests were allowed.
-        let pageResults = await page.evaluate(
-            () => results.results, // eslint-disable-line no-undef
-        );
         for (const { id, category, status } of pageResults) {
             const description = `ID: ${id}, Category: ${category}`;
             expect(status, description).not.toEqual('loaded');
@@ -215,10 +168,7 @@ test.describe('Test request blocking', () => {
             /* global dbg */
             dbg.tabManager.setList({ list: 'allowlisted', domain, value: true });
         }, testHost);
-        await runRequestBlockingTest(page);
-        pageResults = await page.evaluate(
-            () => results.results, // eslint-disable-line no-undef
-        );
+        ({ pageResults } = await runRequestBlockingTest(page, testSite));
         for (const { id, category, status } of pageResults) {
             // skip some flakey request types
             if (['video', 'websocket'].includes(id)) {
