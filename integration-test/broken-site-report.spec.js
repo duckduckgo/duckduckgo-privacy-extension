@@ -16,7 +16,7 @@ test.describe('Broken site reports', () => {
             pixelResolver = resolve;
         });
         await routeExtensionRequests(
-            'https://improving.duckduckgo.com/t/*',
+            'https://improving.duckduckgo.com/t/epbf_*',
             /**
             @param {import('@playwright/test').Route} route
         */ (route) => {
