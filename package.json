@@ -35,7 +35,7 @@
     },
     "devDependencies": {
         "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.1.0",
-        "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.8",
+        "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.9",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
         "@fingerprintjs/fingerprintjs": "^4.6.2",
         "@playwright/test": "^1.51.0",
@@ -70,7 +70,7 @@
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-dashboard": "github:duckduckgo/privacy-dashboard#9.4.0",
         "@duckduckgo/privacy-grade": "file:packages/privacy-grade",
-        "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.8",
+        "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.9",
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#main",
         "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.3.2",
         "deep-freeze": "0.0.1",
