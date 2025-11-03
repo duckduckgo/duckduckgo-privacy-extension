@@ -2,7 +2,7 @@
     "browser": {
         "type": "string",
         "description": "Browser type",
-        "enum": ["chrome", "firefox", "edg", "opera", "brave"]
+        "enum": ["chrome", "firefox", "edg", "opera", "brave", "unknown"]
     },
     "extension": {
         "type": "string",
