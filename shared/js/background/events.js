@@ -11,6 +11,7 @@ import ATB from './atb';
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report';
 import { sendPageloadsWithAdAttributionPixelAndResetCount } from './classes/ad-click-attribution-policy';
 import { postPopupMessage } from './popup-messaging';
+import { IS_BLOCKING_WEBREQUEST_AVAILABLE } from './environment';
 const utils = require('./utils');
 const experiment = require('./experiments');
 const settings = require('./settings');
@@ -203,7 +204,8 @@ const tabManager = require('./tab-manager');
 const https = require('./https');
 
 let additionalOptions = [];
-if (manifestVersion === 2) {
+// Firefox can still block from webRequest
+if (IS_BLOCKING_WEBREQUEST_AVAILABLE) {
     additionalOptions = ['blocking'];
 }
 browser.webRequest.onBeforeRequest.addListener(
@@ -217,7 +219,7 @@ browser.webRequest.onBeforeRequest.addListener(
 // MV2 needs blocking for webRequest
 // MV3 still needs some info from response headers
 const extraInfoSpec = ['responseHeaders'];
-if (manifestVersion === 2) {
+if (IS_BLOCKING_WEBREQUEST_AVAILABLE) {
     extraInfoSpec.push('blocking');
 }
 
@@ -296,7 +298,7 @@ if (browser.runtime.onPerformanceWarning) {
 /*
  * Referrer Trimming
  */
-if (manifestVersion === 2) {
+if (IS_BLOCKING_WEBREQUEST_AVAILABLE) {
     const referrerListenerOptions = ['blocking', 'requestHeaders'];
     if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
         referrerListenerOptions.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS);
@@ -314,7 +316,7 @@ if (browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS) {
     extraInfoSpecSendHeaders.push(browser.webRequest.OnBeforeSendHeadersOptions.EXTRA_HEADERS);
 }
 
-if (manifestVersion === 2) {
+if (IS_BLOCKING_WEBREQUEST_AVAILABLE) {
     extraInfoSpecSendHeaders.push('blocking');
     // Attach GPC header to all requests if enabled.
     browser.webRequest.onBeforeSendHeaders.addListener(
@@ -339,8 +341,8 @@ browser.webRequest.onBeforeSendHeaders.addListener(dropTracking3pCookiesFromRequ
 
 browser.webRequest.onHeadersReceived.addListener(dropTracking3pCookiesFromResponse, { urls: ['<all_urls>'] }, extraInfoSpec);
 
-if (manifestVersion === 3) {
-    browser.webRequest.onCompleted.addListener(validateSetCookieBlock, { urls: ['<all_urls>'] }, extraInfoSpec);
+if (IS_BLOCKING_WEBREQUEST_AVAILABLE) {
+    browser.webRequest.onCompleted.addListener(validateSetCookieBlock, { urls: ['<all_urls>'] }, ['responseHeaders']);
 }
 
 /**

@@ -1,10 +1,9 @@
+import { SHOULD_USE_DNR } from '../environment';
 const utils = require('../utils');
-const browserWrapper = require('../wrapper');
 const { addSmarterEncryptionSessionException } = require('../dnr-smarter-encryption');
 
 const MAINFRAME_RESET_MS = 3000;
 const REQUEST_REDIRECT_LIMIT = 7;
-const manifestVersion = browserWrapper.getManifestVersion();
 
 /**
  * This class protects users from accidentally being sent into a redirect loop
@@ -89,7 +88,7 @@ class HttpsRedirects {
         if (!canRedirect) {
             this.failedUpgradeHosts[hostname] = true;
             console.log(`HTTPS: not upgrading, redirect loop protection kicked in for url: ${request.url}`);
-            if (manifestVersion === 3) {
+            if (SHOULD_USE_DNR) {
                 // Create a temporary exception for the duration of the session
                 addSmarterEncryptionSessionException(hostname);
             }
