@@ -1,3 +1,4 @@
+import { IS_BLOCKING_WEBREQUEST_AVAILABLE } from '../environment';
 const tabManager = require('../tab-manager');
 const trackerutils = require('../tracker-utils');
 const utils = require('../utils');
@@ -5,6 +6,7 @@ const devtools = require('../devtools');
 const browserWrapper = require('../wrapper');
 
 const manifestVersion = browserWrapper.getManifestVersion();
+
 /**
  * Set of requestId that we saw where we expect the cookies to be blocked.
  * Used in MV3 to detect a cookie blocking gap caused by the limitations of DNR.
@@ -68,7 +70,7 @@ function dropTracking3pCookiesFromResponse(request) {
                 requestId: request.requestId,
                 type: request.type,
             });
-            if (manifestVersion === 2) {
+            if (IS_BLOCKING_WEBREQUEST_AVAILABLE) {
                 return { responseHeaders };
             } else {
                 expectedSetCookieBlocked.add(request.requestId);
@@ -106,7 +108,7 @@ function dropTracking3pCookiesFromRequest(request) {
                 requestId: request.requestId,
                 type: request.type,
             });
-            if (manifestVersion === 2) {
+            if (IS_BLOCKING_WEBREQUEST_AVAILABLE) {
                 return { requestHeaders };
             }
         }
