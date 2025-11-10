@@ -30,6 +30,7 @@ import Devtools from './components/devtools';
 import DNRListeners from './components/dnr-listeners';
 import RemoteConfig from './components/remote-config';
 import DashboardMessaging from './components/dashboard-messaging';
+import CookiePromptManagement from './components/cookie-prompt-management';
 import initDebugBuild from './devbuild';
 import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
@@ -85,6 +86,8 @@ const components = {
     abnMetrics,
     messaging: new MessageRouter({ tabManager }),
 };
+
+components.cpm = new CookiePromptManagement({ remoteConfig });
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {

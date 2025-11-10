@@ -220,7 +220,10 @@ $(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/fire/index.js > $@
 
-JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js
+$(BUILD_DIR)/public/js/cpm.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/content-scripts/cpm.js > $@
+
+JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js cpm.js
 
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
