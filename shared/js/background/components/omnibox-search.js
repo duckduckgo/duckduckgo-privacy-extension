@@ -11,8 +11,11 @@ export default class OmniboxSearch {
                     currentWindow: true,
                     active: true,
                 });
+                const url = new URL('https://duckduckgo.com');
+                url.searchParams.set('q', text);
+                url.searchParams.set('bext', getOsName() + 'cl');
                 browser.tabs.update(tabs[0].id, {
-                    url: 'https://duckduckgo.com/?q=' + encodeURIComponent(text) + '&bext=' + getOsName() + 'cl',
+                    url: url.toString(),
                 });
             });
         }
