@@ -46,6 +46,24 @@ test.describe('Test Request Blocklist feature', () => {
                 );
             }
 
+            // Verify that the requests blocked by Request Blocklist were not
+            // logged as blocked _tracking_ requests.
+            const tabManagerTrackerCount = await backgroundPage.evaluate(async () => {
+                const currentTab = await globalThis.dbg.utils.getCurrentTab();
+                const trackers = globalThis.dbg.tabManager.get({ tabId: currentTab.id })?.trackers;
+
+                let total = 0;
+                for (const { urls: entry } of Object.values(trackers)) {
+                    for (const { action } of Object.values(entry)) {
+                        if (action === 'block') {
+                            ++total;
+                        }
+                    }
+                }
+                return total;
+            });
+            expect(tabManagerTrackerCount).toEqual(0);
+
             await page.reload();
         }
 
