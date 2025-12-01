@@ -248,6 +248,8 @@ function blockHandleResponse(thisTab, requestData) {
     const serviceWorkerInitiated = requestData.tabId === -1;
 
     if (tracker) {
+        let blockedNonTrackingRequest = false;
+
         if (tracker?.matchedRule?.action?.startsWith('block-ctl-')) {
             displayClickToLoadPlaceholders(thisTab, tracker.matchedRule.action);
         }
@@ -260,6 +262,13 @@ function blockHandleResponse(thisTab, requestData) {
                 console.log('RequestBlocklist:', requestData.url, 'Reason:', blockListed.reason);
                 tracker.action = 'block';
                 tracker.reason = `RequestBlocklist - ${blockListed.reason}`;
+
+                // Note: The request _might_ be a tracker even if blocked by the
+                //       request blocklist, but it is likely not, so best not to
+                //       include it in the list of blocked trackers shown to the
+                //       user.
+                blockedNonTrackingRequest = true;
+
                 delete tracker.redirectUrl;
             }
         }
@@ -272,6 +281,7 @@ function blockHandleResponse(thisTab, requestData) {
                 console.log(`Allowlisted: ${requestData.url} Reason: ${allowListed.reason}`);
                 tracker.action = 'ignore';
                 tracker.reason = `tracker allowlist - ${allowListed.reason}`;
+                blockedNonTrackingRequest = false;
             }
         }
 
@@ -325,7 +335,7 @@ function blockHandleResponse(thisTab, requestData) {
         // request anyway but deciding to show it in the popup or not. If we have a documentUrl, use it, otherwise
         // just default to true.
         const sameDomainDocument = isSameDomainRequest(thisTab, requestData);
-        if (sameDomainDocument) {
+        if (!blockedNonTrackingRequest && sameDomainDocument) {
             // record all tracker urls on a site even if we don't block them
             thisTab.site.addTracker(tracker);
 
@@ -340,12 +350,14 @@ function blockHandleResponse(thisTab, requestData) {
         postPopupMessage({ messageType: 'updateTabData' });
         // Block the request if the site is not allowlisted
         if (['block', 'redirect'].includes(tracker.action)) {
-            // @ts-ignore
-            Companies.add(tracker.tracker.owner);
+            if (!blockedNonTrackingRequest) {
+                // @ts-ignore
+                Companies.add(tracker.tracker.owner);
 
-            // publish the parent's display name only
-            const displayName = utils.findParentDisplayName(requestData.url);
-            emitter.emit(TrackerBlockedEvent.eventName, new TrackerBlockedEvent({ companyDisplayName: displayName }));
+                // publish the parent's display name only
+                const displayName = utils.findParentDisplayName(requestData.url);
+                emitter.emit(TrackerBlockedEvent.eventName, new TrackerBlockedEvent({ companyDisplayName: displayName }));
+            }
 
             console.info(
                 'blocked ' +
