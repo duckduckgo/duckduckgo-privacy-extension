@@ -256,6 +256,14 @@ class Tab {
         this._tabState.setValue('debugFlags', value);
     }
 
+    get breakageReportData() {
+        return this._tabState.breakageReportData;
+    }
+
+    set breakageReportData(value) {
+        this._tabState.setValue('breakageReportData', value);
+    }
+
     get errorDescriptions() {
         return this._tabState.errorDescriptions;
     }
