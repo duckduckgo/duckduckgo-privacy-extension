@@ -93,11 +93,6 @@ export default class DashboardMessaging {
             pageParams.detectorData = tab.breakageReportData.detectorData;
         }
 
-        // Extract performance metrics if available
-        if (tab.breakageReportData?.jsPerformance) {
-            pageParams.jsPerformance = tab.breakageReportData.jsPerformance;
-        }
-
         const tds = this.tds.tds.etag;
         const remoteConfigEtag = this.tds.remoteConfig.etag;
         const remoteConfigVersion = this.tds.remoteConfig.config?.version || '';
