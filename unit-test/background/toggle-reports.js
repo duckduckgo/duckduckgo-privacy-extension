@@ -89,6 +89,7 @@ describe('ToggleReports', () => {
                 { id: 'openerContext' },
                 { id: 'requests' },
                 { id: 'userRefreshCount' },
+                { id: 'detectorData' },
             ],
         });
 
@@ -107,6 +108,7 @@ describe('ToggleReports', () => {
                 { id: 'openerContext' },
                 { id: 'requests' },
                 { id: 'userRefreshCount' },
+                { id: 'detectorData' },
             ],
         });
     });

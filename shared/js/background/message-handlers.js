@@ -287,6 +287,26 @@ export function addDebugFlag(message, sender, req) {
 }
 
 /**
+ * Handler for breakage report data received from content-scope-scripts
+ * Stores detector data and performance metrics on the tab object
+ * @param {Object} data - Breakage report data from content-scope-scripts
+ * @param {Object} sender - Message sender information
+ */
+export function breakageReportResult(data, sender) {
+    const tab = tabManager.get({ tabId: sender.tab.id });
+    if (!tab) return;
+
+    // Store the breakage report data from content-scope-scripts
+    tab.breakageReportData = {
+        jsPerformance: data.jsPerformance,
+        referrer: data.referrer,
+        detectorData: data.detectorData,
+        expandedPerformanceMetrics: data.expandedPerformanceMetrics,
+        timestamp: Date.now(),
+    };
+}
+
+/**
  * Add a new message handler.
  * @param {string} name
  * @param {(options: any, sender: any, req: any) => any} func
@@ -328,5 +348,6 @@ const messageHandlers = {
     openShareFeedbackPage,
     isClickToLoadYoutubeEnabled,
     addDebugFlag,
+    breakageReportResult,
 };
 export default messageHandlers;
