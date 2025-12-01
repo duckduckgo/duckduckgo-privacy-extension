@@ -42,6 +42,10 @@ describe('DashboardMessaging component', () => {
                 if (message.getBreakagePageParams) {
                     return Promise.resolve({});
                 }
+                if (message.messageType === 'getBreakageReportValues') {
+                    // Simulate content-scope-scripts not responding (extension handles gracefully)
+                    return Promise.resolve(undefined);
+                }
             });
             spyOn(load, 'url').and.callFake((url) => {
                 const pixel = _formatPixelRequestForTesting(url);
