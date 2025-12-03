@@ -295,6 +295,9 @@ export function addDebugFlag(message, sender, req) {
 export function breakageReportResult(data, sender) {
     const tab = tabManager.get({ tabId: sender.tab.id });
     if (!tab) return;
+    
+    // Guard against undefined data parameter
+    if (!data) return;
 
     // Store the breakage report data from content-scope-scripts
     tab.breakageReportData = {

@@ -362,6 +362,8 @@ class Tab {
         this.url = url;
         this.site = new Site(url, this._tabState);
         this.userRefreshCount = 0;
+        // Clear breakage report data when navigating to prevent stale data
+        this.breakageReportData = null;
     }
 
     // Store all trackers for a given tab even if we don't block them.

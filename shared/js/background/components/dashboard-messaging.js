@@ -70,7 +70,8 @@ export default class DashboardMessaging {
             return;
         }
 
-        // Try to get breakage data from content-scope-scripts
+        // Try to get breakage data from content-scope-scripts, with fallback to legacy
+        let pageParams = {};
         try {
             // Send message to content-scope-scripts via content script
             // Note: must use messageType format for content-scope-scripts messaging
@@ -86,7 +87,12 @@ export default class DashboardMessaging {
         }
 
         // Get page params (legacy approach fallback)
-        const pageParams = (await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })) || {};
+        try {
+            pageParams = (await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })) || {};
+        } catch (e) {
+            // Both content-scope-scripts and legacy fallback failed (e.g., on restricted pages)
+            console.warn('Failed to get breakage page params:', e);
+        }
 
         // Extract detector data from tab if available (from breakageReportResult handler)
         if (tab.breakageReportData?.detectorData) {
