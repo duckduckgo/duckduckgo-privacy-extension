@@ -80,7 +80,7 @@ export default class DashboardMessaging {
             });
 
             // Wait briefly for the breakageReportResult handler to receive and store data
-            await new Promise((resolve) => setTimeout(resolve, 500));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
         } catch (e) {
             // Content-scope-scripts not available or timed out, will fallback to legacy
             console.log('Content-scope-scripts breakage reporting not available, using legacy approach');
