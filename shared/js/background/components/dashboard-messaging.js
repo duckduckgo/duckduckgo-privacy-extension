@@ -1,8 +1,7 @@
-import browser from 'webextension-polyfill';
 import { breakageReportForTab, getDisclosureDetails } from '../broken-site-report';
 import { dashboardDataFromTab } from '../classes/privacy-dashboard-data';
 import { registerMessageHandler } from '../message-handlers';
-import { getCurrentTab } from '../utils';
+import { getCurrentTab, sendTabMessage } from '../utils';
 import { isFireButtonEnabled } from './fire-button';
 
 /**
@@ -73,14 +72,10 @@ export default class DashboardMessaging {
         // Get breakage data from content-scope-scripts
         let pageParams = {};
         try {
-            // Only send to main frame (frameId: 0) to avoid duplicate responses from iframes
-            await browser.tabs.sendMessage(
-                tab.id,
-                { messageType: 'getBreakageReportValues' },
-                { frameId: 0 },
-            );
-
-            // Wait for the breakageReportResult handler to receive and store data
+            // Send request to content-scope-scripts (main frame only to avoid duplicate iframe responses).
+            // The response comes back asynchronously via breakageReportResult message handler,
+            // so we wait to give it time to arrive and be stored in tab.breakageReportData.
+            await sendTabMessage(tab.id, { messageType: 'getBreakageReportValues' }, { frameId: 0 });
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
             // Build pageParams from content-scope-scripts data

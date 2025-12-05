@@ -69,7 +69,7 @@ export class TabState {
         this.locale = getFullUserLocale();
         /** @type {Record<string, string>} */
         this.contentScopeExperiments = {}; // Content scope experiments that are active for the tab.
-        /** @type {{detectorData?: object, jsPerformance?: number[], referrer?: string, opener?: boolean, pageReloaded?: boolean, expandedPerformanceMetrics?: object, timestamp?: number} | null} */
+        /** @type {object | null} */
         this.breakageReportData = null; // Data from content-scope-scripts breakage reporting
         // Whilst restoring, prevent the tab data being stored
         if (!restoring) {
