@@ -70,33 +70,28 @@ export default class DashboardMessaging {
             return;
         }
 
-        // Try to get breakage data from content-scope-scripts, with fallback to legacy
+        // Get breakage data from content-scope-scripts
         let pageParams = {};
         try {
-            // Send message to content-scope-scripts via content script
-            // Note: must use messageType format for content-scope-scripts messaging
             await browser.tabs.sendMessage(tab.id, {
                 messageType: 'getBreakageReportValues',
             });
 
-            // Wait briefly for the breakageReportResult handler to receive and store data
+            // Wait for the breakageReportResult handler to receive and store data
             await new Promise((resolve) => setTimeout(resolve, 1000));
-        } catch (e) {
-            // Content-scope-scripts not available or timed out, will fallback to legacy
-            console.log('Content-scope-scripts breakage reporting not available, using legacy approach');
-        }
 
-        // Get page params (legacy approach fallback)
-        try {
-            pageParams = (await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })) || {};
+            // Build pageParams from content-scope-scripts data
+            if (tab.breakageReportData) {
+                pageParams = {
+                    jsPerformance: tab.breakageReportData.jsPerformance,
+                    docReferrer: tab.breakageReportData.referrer,
+                    opener: tab.breakageReportData.opener,
+                    detectorData: tab.breakageReportData.detectorData,
+                };
+            }
         } catch (e) {
-            // Both content-scope-scripts and legacy fallback failed (e.g., on restricted pages)
-            console.warn('Failed to get breakage page params:', e);
-        }
-
-        // Extract detector data from tab if available (from breakageReportResult handler)
-        if (tab.breakageReportData?.detectorData) {
-            pageParams.detectorData = tab.breakageReportData.detectorData;
+            // Content-scope-scripts not available (e.g., on restricted pages)
+            console.warn('Failed to get breakage report data:', e);
         }
 
         const tds = this.tds.tds.etag;

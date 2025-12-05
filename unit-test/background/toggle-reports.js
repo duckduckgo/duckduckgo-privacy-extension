@@ -50,8 +50,9 @@ describe('ToggleReports', () => {
         });
         spyOn(browser.tabs, 'reload').and.returnValue(Promise.resolve());
         spyOn(browser.tabs, 'sendMessage').and.callFake((tabId, message) => {
-            if (message.getBreakagePageParams) {
-                return Promise.resolve({});
+            if (message.messageType === 'getBreakageReportValues') {
+                // Simulate content-scope-scripts responding
+                return Promise.resolve(undefined);
             }
         });
 

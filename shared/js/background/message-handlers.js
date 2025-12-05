@@ -303,6 +303,8 @@ export function breakageReportResult(data, sender) {
     tab.breakageReportData = {
         jsPerformance: data.jsPerformance,
         referrer: data.referrer,
+        opener: data.opener,
+        pageReloaded: data.pageReloaded,
         detectorData: data.detectorData,
         expandedPerformanceMetrics: data.expandedPerformanceMetrics,
         timestamp: Date.now(),

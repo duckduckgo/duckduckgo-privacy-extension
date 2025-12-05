@@ -39,11 +39,8 @@ describe('DashboardMessaging component', () => {
             currentTabDetails = null;
             actualSentReports.length = 0;
             spyOn(browser.tabs, 'sendMessage').and.callFake((tabId, message) => {
-                if (message.getBreakagePageParams) {
-                    return Promise.resolve({});
-                }
                 if (message.messageType === 'getBreakageReportValues') {
-                    // Simulate content-scope-scripts not responding (extension handles gracefully)
+                    // Simulate content-scope-scripts responding (data stored via breakageReportResult handler)
                     return Promise.resolve(undefined);
                 }
             });
