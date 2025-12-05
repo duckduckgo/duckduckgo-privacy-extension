@@ -293,6 +293,11 @@ export function addDebugFlag(message, sender, req) {
  * @param {Object} sender - Message sender information
  */
 export function breakageReportResult(data, sender) {
+    // Only accept data from main frame (frameId 0) to avoid iframe data overwriting main frame data
+    if (sender?.frameId !== 0) {
+        return;
+    }
+
     const tab = tabManager.get({ tabId: sender.tab.id });
     if (!tab) return;
 

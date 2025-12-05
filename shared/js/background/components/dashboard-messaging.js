@@ -73,9 +73,12 @@ export default class DashboardMessaging {
         // Get breakage data from content-scope-scripts
         let pageParams = {};
         try {
-            await browser.tabs.sendMessage(tab.id, {
-                messageType: 'getBreakageReportValues',
-            });
+            // Only send to main frame (frameId: 0) to avoid duplicate responses from iframes
+            await browser.tabs.sendMessage(
+                tab.id,
+                { messageType: 'getBreakageReportValues' },
+                { frameId: 0 },
+            );
 
             // Wait for the breakageReportResult handler to receive and store data
             await new Promise((resolve) => setTimeout(resolve, 1000));
