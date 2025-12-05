@@ -76,7 +76,6 @@ export default class DashboardMessaging {
             // The response comes back asynchronously via breakageReportResult message handler,
             // so we wait to give it time to arrive and be stored in tab.breakageReportData.
             await sendTabMessage(tab.id, { messageType: 'getBreakageReportValues' }, { frameId: 0 });
-            await new Promise((resolve) => setTimeout(resolve, 1000));
 
             // Build pageParams from content-scope-scripts data
             if (tab.breakageReportData) {
