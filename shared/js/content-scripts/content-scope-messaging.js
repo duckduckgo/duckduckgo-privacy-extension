@@ -8,6 +8,8 @@ const allowedMessages = [
     'updateYouTubeCTLAddedFlag',
     'updateFacebookCTLBreakageFlags',
     'pageReloaded',
+    'getBreakageReportValues',
+    'breakageReportResult',
 ];
 
 function getSecret() {

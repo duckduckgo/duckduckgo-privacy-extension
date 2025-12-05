@@ -53,6 +53,7 @@ const PARAM_IDS = [
     'openerContext',
     'requests',
     'userRefreshCount',
+    'detectorData',
 ];
 
 /**
@@ -262,6 +263,7 @@ export async function breakageReportForTab({
     const jsPerformance = pageParams.jsPerformance ? pageParams.jsPerformance : undefined;
     const locale = tab.locale;
     const contentScopeExperiments = tab.contentScopeExperiments;
+    const detectorData = pageParams.detectorData ? JSON.stringify(pageParams.detectorData) : undefined;
 
     // Note: Take care to update the `PARAM_IDS` array (see above) when
     //       adding/removing breakage parameters!
@@ -301,6 +303,7 @@ export async function breakageReportForTab({
     if (httpErrorCodes) brokenSiteParams.set('httpErrorCodes', httpErrorCodes);
     if (openerContext) brokenSiteParams.set('openerContext', openerContext);
     if (reportFlow) brokenSiteParams.set('reportFlow', reportFlow);
+    if (detectorData) brokenSiteParams.set('detectorData', detectorData);
     if (contentScopeExperiments && Object.keys(contentScopeExperiments).length > 0) {
         const experiments = Object.entries(contentScopeExperiments)
             .sort(([a], [b]) => a.localeCompare(b))

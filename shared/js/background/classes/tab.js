@@ -256,6 +256,14 @@ class Tab {
         this._tabState.setValue('debugFlags', value);
     }
 
+    get breakageReportData() {
+        return this._tabState.breakageReportData;
+    }
+
+    set breakageReportData(value) {
+        this._tabState.setValue('breakageReportData', value);
+    }
+
     get errorDescriptions() {
         return this._tabState.errorDescriptions;
     }
@@ -354,6 +362,8 @@ class Tab {
         this.url = url;
         this.site = new Site(url, this._tabState);
         this.userRefreshCount = 0;
+        // Clear breakage report data when navigating to prevent stale data
+        this.breakageReportData = null;
     }
 
     // Store all trackers for a given tab even if we don't block them.

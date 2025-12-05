@@ -1,8 +1,7 @@
-import browser from 'webextension-polyfill';
 import { breakageReportForTab, getDisclosureDetails } from '../broken-site-report';
 import { dashboardDataFromTab } from '../classes/privacy-dashboard-data';
 import { registerMessageHandler } from '../message-handlers';
-import { getCurrentTab } from '../utils';
+import { getCurrentTab, sendTabMessage } from '../utils';
 import { isFireButtonEnabled } from './fire-button';
 
 /**
@@ -69,7 +68,29 @@ export default class DashboardMessaging {
         if (!tab) {
             return;
         }
-        const pageParams = (await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })) || {};
+
+        // Get breakage data from content-scope-scripts
+        let pageParams = {};
+        try {
+            // Send request to content-scope-scripts (main frame only to avoid duplicate iframe responses).
+            // The response comes back asynchronously via breakageReportResult message handler,
+            // so we wait to give it time to arrive and be stored in tab.breakageReportData.
+            await sendTabMessage(tab.id, { messageType: 'getBreakageReportValues' }, { frameId: 0 });
+
+            // Build pageParams from content-scope-scripts data
+            if (tab.breakageReportData) {
+                pageParams = {
+                    jsPerformance: tab.breakageReportData.jsPerformance,
+                    docReferrer: tab.breakageReportData.referrer,
+                    opener: tab.breakageReportData.opener,
+                    detectorData: tab.breakageReportData.detectorData,
+                };
+            }
+        } catch (e) {
+            // Content-scope-scripts not available (e.g., on restricted pages)
+            console.warn('Failed to get breakage report data:', e);
+        }
+
         const tds = this.tds.tds.etag;
         const remoteConfigEtag = this.tds.remoteConfig.etag;
         const remoteConfigVersion = this.tds.remoteConfig.config?.version || '';

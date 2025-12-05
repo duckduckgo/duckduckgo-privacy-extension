@@ -35,6 +35,7 @@ describe('broke-site-report', () => {
                 { id: 'openerContext' },
                 { id: 'requests' },
                 { id: 'userRefreshCount' },
+                { id: 'detectorData' },
             ],
         });
 
@@ -53,6 +54,7 @@ describe('broke-site-report', () => {
                 { id: 'openerContext' },
                 { id: 'requests' },
                 { id: 'userRefreshCount' },
+                { id: 'detectorData' },
             ],
         });
     });

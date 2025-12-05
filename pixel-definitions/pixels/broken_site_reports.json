@@ -69,6 +69,10 @@
                 "description": "User-provided description of the breakage."
             },
             {
+                "key": "detectorData",
+                "description": "JSON-encoded data about detected page elements (e.g., CAPTCHAs, security challenges) that may be related to site issues."
+            },
+            {
                 "key": "errorDescriptions",
                 "description": "List of main frame status error on page. URL encoded JSON array."
             },
@@ -225,6 +229,10 @@
             {
                 "key": "description",
                 "description": "User-provided description of the breakage."
+            },
+            {
+                "key": "detectorData",
+                "description": "JSON-encoded data about detected page elements (e.g., CAPTCHAs, security challenges) that may be related to site issues."
             },
             {
                 "key": "errorDescriptions",
