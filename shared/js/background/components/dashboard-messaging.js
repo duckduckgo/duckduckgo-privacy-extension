@@ -73,9 +73,11 @@ export default class DashboardMessaging {
         let pageParams = {};
         try {
             // Send request to content-scope-scripts (main frame only to avoid duplicate iframe responses).
-            // The response comes back asynchronously via breakageReportResult message handler,
-            // so we wait to give it time to arrive and be stored in tab.breakageReportData.
+            // The response comes back asynchronously via breakageReportResult message handler.
             await sendTabMessage(tab.id, { messageType: 'getBreakageReportValues' }, { frameId: 0 });
+
+            // Wait for the async response to arrive
+            await new Promise((resolve) => setTimeout(resolve, 100));
 
             // Build pageParams from content-scope-scripts data
             if (tab.breakageReportData) {
