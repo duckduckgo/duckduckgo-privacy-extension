@@ -1,8 +1,9 @@
 import { breakageReportForTab, getDisclosureDetails } from '../broken-site-report';
 import { dashboardDataFromTab } from '../classes/privacy-dashboard-data';
 import { registerMessageHandler } from '../message-handlers';
-import { getCurrentTab, sendTabMessage } from '../utils';
+import { getCurrentTab } from '../utils';
 import { isFireButtonEnabled } from './fire-button';
+import { requestBreakageReportData } from '../breakage-report-request';
 
 /**
  * Message handlers for communication from the dashboard to the extension background.
@@ -72,20 +73,16 @@ export default class DashboardMessaging {
         // Get breakage data from content-scope-scripts
         let pageParams = {};
         try {
-            // Send request to content-scope-scripts (main frame only to avoid duplicate iframe responses).
-            // The response comes back asynchronously via breakageReportResult message handler.
-            await sendTabMessage(tab.id, { messageType: 'getBreakageReportValues' }, { frameId: 0 });
-
-            // Wait for the async response to arrive
-            await new Promise((resolve) => setTimeout(resolve, 100));
+            // Request data from content-scope-scripts and wait for response
+            const breakageData = await requestBreakageReportData(tab.id);
 
             // Build pageParams from content-scope-scripts data
-            if (tab.breakageReportData) {
+            if (breakageData) {
                 pageParams = {
-                    jsPerformance: tab.breakageReportData.jsPerformance,
-                    docReferrer: tab.breakageReportData.referrer,
-                    opener: tab.breakageReportData.opener,
-                    detectorData: tab.breakageReportData.detectorData,
+                    jsPerformance: breakageData.jsPerformance,
+                    docReferrer: breakageData.referrer,
+                    opener: breakageData.opener,
+                    detectorData: breakageData.detectorData,
                 };
             }
         } catch (e) {

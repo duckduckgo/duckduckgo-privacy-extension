@@ -6,6 +6,7 @@ import { isFeatureEnabled, reloadCurrentTab } from './utils';
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load';
 import tdsStorage from './storage/tds';
 import { getArgumentsObject } from './helpers/arguments-object';
+import { resolveBreakageReportRequest } from './breakage-report-request';
 import { postPopupMessage } from './popup-messaging';
 import ToggleReports from './components/toggle-reports';
 const utils = require('./utils');
@@ -304,6 +305,9 @@ export function breakageReportResult(data, sender) {
     if (!data) return;
 
     tab.breakageReportData = data;
+
+    // Resolve any pending request for this tab
+    resolveBreakageReportRequest(sender.tab.id, data);
 }
 
 /**
