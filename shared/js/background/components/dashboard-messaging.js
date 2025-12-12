@@ -84,6 +84,11 @@ export default class DashboardMessaging {
                     opener: breakageData.opener,
                     detectorData: breakageData.detectorData,
                 };
+
+                // Set userRefreshCount from pageReloaded: 0 if not reloaded, 1 if reloaded
+                if (breakageData.pageReloaded !== undefined) {
+                    tab.userRefreshCount = breakageData.pageReloaded ? 1 : 0;
+                }
             }
         } catch (e) {
             // Content-scope-scripts not available (e.g., on restricted pages)
