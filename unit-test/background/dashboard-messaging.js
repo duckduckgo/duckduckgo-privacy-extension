@@ -13,7 +13,6 @@ const defaultBrokenSitePixelParams = {
     ctlFacebookLogin: 'false',
     performanceWarning: 'false',
     userRefreshCount: '0',
-    jsPerformance: 'undefined',
     locale: 'en-US',
     errorDescriptions: '[]',
     openerContext: 'external',
