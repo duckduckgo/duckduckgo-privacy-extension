@@ -279,7 +279,6 @@ export async function breakageReportForTab({
         ctlFacebookLogin,
         performanceWarning,
         userRefreshCount,
-        jsPerformance,
         locale,
     });
 
@@ -301,6 +300,7 @@ export async function breakageReportForTab({
     if (description) brokenSiteParams.set('description', description);
     if (errorDescriptions) brokenSiteParams.set('errorDescriptions', errorDescriptions);
     if (httpErrorCodes) brokenSiteParams.set('httpErrorCodes', httpErrorCodes);
+    if (jsPerformance) brokenSiteParams.set('jsPerformance', jsPerformance);
     if (openerContext) brokenSiteParams.set('openerContext', openerContext);
     if (reportFlow) brokenSiteParams.set('reportFlow', reportFlow);
     if (detectorData) brokenSiteParams.set('detectorData', detectorData);
