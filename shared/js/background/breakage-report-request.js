@@ -50,4 +50,3 @@ export function resolveBreakageReportRequest(tabId, data) {
     }
     return false;
 }
-
