@@ -69,7 +69,7 @@ test.describe('Broken site reports', () => {
             },
         });
         // jsPerformance may be undefined if content-scope-scripts breakageReporting feature isn't enabled
-        if (pixel.params.jsPerformance && pixel.params.jsPerformance !== 'undefined') {
+        if (pixel.params.jsPerformance) {
             expect(pixel.params.jsPerformance).toMatch(/^[0-9]+$/);
         }
         expect(pixel.params.locale).toMatch(/^[a-z]{2}-[A-Z]{2}$/);
