@@ -183,6 +183,7 @@ describe('Tab', () => {
                 ctlFacebookPlaceholderShown: false,
                 ctlFacebookLogin: false,
                 debugFlags: [],
+                breakageReportData: null,
                 errorDescriptions: [],
                 httpErrorCodes: [],
                 performanceWarning: false,

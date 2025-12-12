@@ -1,9 +1,9 @@
-import browser from 'webextension-polyfill';
 import { breakageReportForTab, getDisclosureDetails } from '../broken-site-report';
 import { dashboardDataFromTab } from '../classes/privacy-dashboard-data';
 import { registerMessageHandler } from '../message-handlers';
 import { getCurrentTab } from '../utils';
 import { isFireButtonEnabled } from './fire-button';
+import { requestBreakageReportData } from '../breakage-report-request';
 
 /**
  * Message handlers for communication from the dashboard to the extension background.
@@ -69,7 +69,32 @@ export default class DashboardMessaging {
         if (!tab) {
             return;
         }
-        const pageParams = (await browser.tabs.sendMessage(tab.id, { getBreakagePageParams: true })) || {};
+
+        // Get breakage data from content-scope-scripts
+        let pageParams = {};
+        try {
+            // Request data from content-scope-scripts and wait for response
+            const breakageData = await requestBreakageReportData(tab.id);
+
+            // Build pageParams from content-scope-scripts data
+            if (breakageData) {
+                pageParams = {
+                    jsPerformance: breakageData.jsPerformance,
+                    docReferrer: breakageData.referrer,
+                    opener: breakageData.opener,
+                    detectorData: breakageData.detectorData,
+                };
+
+                // Set userRefreshCount from pageReloaded: 0 if not reloaded, 1 if reloaded
+                if (breakageData.pageReloaded !== undefined) {
+                    tab.userRefreshCount = breakageData.pageReloaded ? 1 : 0;
+                }
+            }
+        } catch (e) {
+            // Content-scope-scripts not available (e.g., on restricted pages)
+            console.warn('Failed to get breakage report data:', e);
+        }
+
         const tds = this.tds.tds.etag;
         const remoteConfigEtag = this.tds.remoteConfig.etag;
         const remoteConfigVersion = this.tds.remoteConfig.config?.version || '';
