@@ -1,1 +1,7 @@
-{}
+{
+      "sm_au": {
+        "key": "_sm_au_",
+        "description": "Injected by a 3rd party extension",
+        "type": "string"
+    }
+}
