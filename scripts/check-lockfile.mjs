@@ -28,8 +28,9 @@ function normalizeSpecifier(spec) {
 }
 
 function checkDeps(pkgDeps, lockDepsMap, type) {
-    if (!pkgDeps) return;
-    for (const [name, specifier] of Object.entries(pkgDeps)) {
+    const pkgDepsMap = pkgDeps || {};
+
+    for (const [name, specifier] of Object.entries(pkgDepsMap)) {
         // Skip workspace packages
         if (specifier.startsWith('file:')) continue;
 
@@ -41,15 +42,15 @@ function checkDeps(pkgDeps, lockDepsMap, type) {
         } else if (lockSpecifier !== normalizedPkgSpec) {
             errors.push(
                 `${type} "${name}" version mismatch:\n` +
-                `    package.json:      ${specifier}\n` +
-                `    package-lock.json: ${lockSpecifier}`
+                    `    package.json:      ${specifier}\n` +
+                    `    package-lock.json: ${lockSpecifier}`,
             );
         }
     }
 
     // Check for deps in lockfile that aren't in package.json
     for (const name of Object.keys(lockDepsMap)) {
-        if (!pkgDeps[name]) {
+        if (!pkgDepsMap[name]) {
             errors.push(`${type} "${name}" in package-lock.json but not in package.json`);
         }
     }
@@ -60,7 +61,7 @@ checkDeps(pkg.devDependencies, lockDevDeps, 'devDependency');
 
 if (errors.length > 0) {
     console.error('❌ package-lock.json is out of sync with package.json:\n');
-    errors.forEach(e => console.error(`  - ${e}\n`));
+    errors.forEach((e) => console.error(`  - ${e}\n`));
     console.error('Run `npm install` to update package-lock.json');
     process.exit(1);
 }
