@@ -27,13 +27,13 @@ function normalizeSpecifier(spec) {
     return spec;
 }
 
-function checkDeps(pkgDeps, lockDeps, type) {
+function checkDeps(pkgDeps, lockDepsMap, type) {
     if (!pkgDeps) return;
     for (const [name, specifier] of Object.entries(pkgDeps)) {
         // Skip workspace packages
         if (specifier.startsWith('file:')) continue;
 
-        const lockSpecifier = lockDeps[name];
+        const lockSpecifier = lockDepsMap[name];
         const normalizedPkgSpec = normalizeSpecifier(specifier);
 
         if (!lockSpecifier) {
@@ -48,7 +48,7 @@ function checkDeps(pkgDeps, lockDeps, type) {
     }
 
     // Check for deps in lockfile that aren't in package.json
-    for (const name of Object.keys(lockDeps)) {
+    for (const name of Object.keys(lockDepsMap)) {
         if (!pkgDeps[name]) {
             errors.push(`${type} "${name}" in package-lock.json but not in package.json`);
         }
