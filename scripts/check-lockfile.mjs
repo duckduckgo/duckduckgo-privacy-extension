@@ -138,15 +138,26 @@ async function checkGitDependencyPinnedCommits() {
     if (!process.env.CI) return;
 
     const pkgDepsMap = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
-    const lockDepsSection = lock.dependencies || {};
+    const lockDepsSection = lock.dependencies || {}; // legacy/v1/v2 shape
+    const lockPackagesSection = lock.packages || {}; // v2/v3 shape
 
     for (const [name, specifier] of Object.entries(pkgDepsMap)) {
         const parsed = parseGithubSpecifier(specifier);
         if (!parsed?.ref) continue;
         if (!looksLikeSemverTag(parsed.ref)) continue;
 
-        const lockEntry = lockDepsSection[name];
-        if (!lockEntry) continue; // already handled by sync check above
+        // Prefer lock.packages node_modules entries (works for lockfileVersion 2 and 3),
+        // fall back to legacy lock.dependencies for older lockfile shapes.
+        const lockPackagesKey = `node_modules/${name}`;
+        const lockEntry = lockPackagesSection[lockPackagesKey] || lockDepsSection[name];
+
+        // If the root package entry has the dep but we can't find any resolved entry to
+        // validate, that's a lockfile integrity issue (and would defeat the purpose of
+        // validating tag->commit alignment).
+        if (!lockEntry) {
+            errors.push(`dependency "${name}" missing from package-lock.json packages/dependencies entries`);
+            continue;
+        }
 
         const pinnedSha = extractGitShaFromLockEntry(lockEntry);
         if (!pinnedSha) continue; // non-git or not pinned in this lock section
