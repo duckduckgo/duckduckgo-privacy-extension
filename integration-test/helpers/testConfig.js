@@ -26,7 +26,7 @@ export async function overridePrivacyConfig(networkContext, testConfigFilename) 
             }
             target[lastPart] = testConfig[pathString];
         }
-        route.fulfill({
+        return route.fulfill({
             status: 200,
             body: JSON.stringify(localConfig),
             headers: {
@@ -43,7 +43,7 @@ export async function overridePrivacyConfig(networkContext, testConfigFilename) 
  */
 export async function overridePrivacyConfigFromContent(networkContext, testConfig) {
     await networkContext.route('https://staticcdn.duckduckgo.com/trackerblocking/config/**/*', async (route) => {
-        route.fulfill({
+        return route.fulfill({
             status: 200,
             body: JSON.stringify(testConfig),
             headers: {
@@ -61,7 +61,7 @@ export async function overridePrivacyConfigFromContent(networkContext, testConfi
 export async function overrideTds(networkContext, tdsFilePath) {
     await networkContext.route('https://staticcdn.duckduckgo.com/trackerblocking/v6/**/*', async (route) => {
         const tds = await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8');
-        route.fulfill({
+        return route.fulfill({
             status: 200,
             body: tds,
             headers: {
