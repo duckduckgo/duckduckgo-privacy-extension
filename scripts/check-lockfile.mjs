@@ -59,6 +59,124 @@ function checkDeps(pkgDeps, lockDepsMap, type) {
 checkDeps(pkg.dependencies, lockDeps, 'dependency');
 checkDeps(pkg.devDependencies, lockDevDeps, 'devDependency');
 
+function parseGithubSpecifier(specifier) {
+    // Examples:
+    // - github:duckduckgo/content-scope-scripts#12.13.0
+    // - github:duckduckgo/pixel-schema#v1.0.8
+    // - github:duckduckgo/privacy-configuration (no ref)
+    if (!specifier?.startsWith('github:')) return null;
+    const raw = specifier.slice('github:'.length);
+    const [ownerRepo, ref] = raw.split('#');
+    const [owner, repo] = ownerRepo.split('/');
+    if (!owner || !repo) return null;
+    return { owner, repo, ref };
+}
+
+function looksLikeSemverTag(ref) {
+    // Only enforce tags that look like released semver, optionally prefixed with v.
+    // Examples: 12.13.0, v1.0.8, 12.13.0-beta.1
+    return typeof ref === 'string' && /^v?\d+\.\d+\.\d+([-.].+)?$/.test(ref);
+}
+
+function extractGitShaFromLockEntry(entry) {
+    // npm lock entries for git deps typically look like:
+    // - version: git+ssh://git@github.com/org/repo.git#<sha>
+    // - resolved: git+ssh://git@github.com/org/repo.git#<sha>
+    const candidates = [entry?.version, entry?.resolved].filter(Boolean);
+    for (const str of candidates) {
+        const m = /#([0-9a-f]{40})$/i.exec(str);
+        if (m) return m[1].toLowerCase();
+    }
+    return null;
+}
+
+async function githubApi(path) {
+    const headers = {
+        accept: 'application/vnd.github+json',
+        'user-agent': 'duckduckgo-privacy-extension-lockfile-check',
+    };
+    if (process.env.GITHUB_TOKEN) {
+        headers.authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+    }
+
+    const res = await fetch(`https://api.github.com${path}`, { headers });
+    if (res.status === 404) return null;
+    if (!res.ok) {
+        const text = await res.text().catch(() => '');
+        throw new Error(`GitHub API error ${res.status} for ${path}${text ? `: ${text}` : ''}`);
+    }
+    return await res.json();
+}
+
+async function resolveTagToCommitSha({ owner, repo, tag }) {
+    // Try both "vX.Y.Z" and "X.Y.Z" because DDG repos are inconsistent here.
+    const candidates = [tag];
+    if (tag.startsWith('v')) candidates.push(tag.slice(1));
+    else candidates.push(`v${tag}`);
+
+    for (const candidate of candidates) {
+        const ref = await githubApi(`/repos/${owner}/${repo}/git/ref/tags/${encodeURIComponent(candidate)}`);
+        if (!ref) continue;
+
+        // ref.object can be "commit" or "tag" (annotated tag)
+        let obj = ref.object;
+        // Follow annotated tags to the underlying commit
+        for (let i = 0; i < 5; i++) {
+            if (obj.type === 'commit') return obj.sha.toLowerCase();
+            if (obj.type !== 'tag') break;
+            const tagObj = await githubApi(`/repos/${owner}/${repo}/git/tags/${obj.sha}`);
+            if (!tagObj?.object) break;
+            obj = tagObj.object;
+        }
+        break;
+    }
+    return null;
+}
+
+async function checkGitDependencyPinnedCommits() {
+    // Only enforce this in CI to avoid surprising local network calls during linting.
+    if (!process.env.CI) return;
+
+    const pkgDepsMap = { ...(pkg.dependencies || {}), ...(pkg.devDependencies || {}) };
+    const lockDepsSection = lock.dependencies || {};
+
+    for (const [name, specifier] of Object.entries(pkgDepsMap)) {
+        const parsed = parseGithubSpecifier(specifier);
+        if (!parsed?.ref) continue;
+        if (!looksLikeSemverTag(parsed.ref)) continue;
+
+        const lockEntry = lockDepsSection[name];
+        if (!lockEntry) continue; // already handled by sync check above
+
+        const pinnedSha = extractGitShaFromLockEntry(lockEntry);
+        if (!pinnedSha) continue; // non-git or not pinned in this lock section
+
+        const expectedSha = await resolveTagToCommitSha({
+            owner: parsed.owner,
+            repo: parsed.repo,
+            tag: parsed.ref,
+        });
+
+        if (!expectedSha) {
+            errors.push(
+                `dependency "${name}" cannot resolve tag "${parsed.owner}/${parsed.repo}#${parsed.ref}" via GitHub API (needed to validate lockfile pin)`,
+            );
+            continue;
+        }
+
+        if (pinnedSha !== expectedSha) {
+            errors.push(
+                `dependency "${name}" git pin mismatch:\n` +
+                    `    package.json tag:  github:${parsed.owner}/${parsed.repo}#${parsed.ref}\n` +
+                    `    expected commit:   ${expectedSha}\n` +
+                    `    package-lock.json: ${pinnedSha}`,
+            );
+        }
+    }
+}
+
+await checkGitDependencyPinnedCommits();
+
 if (errors.length > 0) {
     console.error('❌ package-lock.json is out of sync with package.json:\n');
     errors.forEach((e) => console.error(`  - ${e}\n`));
