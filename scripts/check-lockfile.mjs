@@ -151,11 +151,19 @@ async function checkGitDependencyPinnedCommits() {
         const pinnedSha = extractGitShaFromLockEntry(lockEntry);
         if (!pinnedSha) continue; // non-git or not pinned in this lock section
 
-        const expectedSha = await resolveTagToCommitSha({
-            owner: parsed.owner,
-            repo: parsed.repo,
-            tag: parsed.ref,
-        });
+        let expectedSha = null;
+        try {
+            expectedSha = await resolveTagToCommitSha({
+                owner: parsed.owner,
+                repo: parsed.repo,
+                tag: parsed.ref,
+            });
+        } catch (e) {
+            errors.push(
+                `dependency "${name}" failed to resolve tag "${parsed.owner}/${parsed.repo}#${parsed.ref}" via GitHub API: ${e?.message || String(e)}`,
+            );
+            continue;
+        }
 
         if (!expectedSha) {
             errors.push(
@@ -178,7 +186,7 @@ async function checkGitDependencyPinnedCommits() {
 await checkGitDependencyPinnedCommits();
 
 if (errors.length > 0) {
-    console.error('❌ package-lock.json is out of sync with package.json:\n');
+    console.error('❌ lockfile validation failed:\n');
     errors.forEach((e) => console.error(`  - ${e}\n`));
     console.error('Run `npm install` to update package-lock.json');
     process.exit(1);
