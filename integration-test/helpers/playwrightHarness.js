@@ -18,7 +18,7 @@ async function routeLocalResources(route) {
     try {
         const body = await fs.readFile(localPath);
         // console.log('request served from disk', route.request().url())
-        route.fulfill({
+        return route.fulfill({
             status: 200,
             body,
             headers: {
@@ -27,7 +27,7 @@ async function routeLocalResources(route) {
         });
     } catch (e) {
         // console.log('request served from network', route.request().url())
-        route.continue();
+        return route.continue();
     }
 }
 
@@ -54,25 +54,48 @@ export const test = base.extend({
             args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
         });
         // intercept extension install page and use HAR
-        context.on('page', (page) => {
+        const onPage = (page) => {
             // console.log('page', page.url())
             if (page.url().includes('duckduckgo.com/extension-success')) {
                 // HAR file generated with the following command:
                 // npx playwright open --save-har=data/har/duckduckgo.com/extension-success.har https://duckduckgo.com/extension-success
                 page.routeFromHAR(getHARPath('duckduckgo.com/extension-success.har'), {
                     notFound: 'abort',
+                }).catch(() => {
+                    // Ignore errors if the page is already closing.
                 });
             }
-        });
+        };
+        context.on('page', onPage);
         //
         await use(context);
+        // Prevent route callbacks from failing after teardown.
+        try {
+            // Unroute any context-level handlers (MV3 + any test-added context routes).
+            await context.unrouteAll({ behavior: 'ignoreErrors' });
+            // Unroute any page-level handlers registered during tests (e.g. routeFromHAR/page.route helpers).
+            for (const page of context.pages()) {
+                try {
+                    await page.unrouteAll({ behavior: 'ignoreErrors' });
+                } catch {
+                    // page might already be closed
+                }
+            }
+        } catch {
+            // ignore
+        } finally {
+            context.off('page', onPage);
+            await context.close().catch(() => {
+                // ignore close errors during teardown
+            });
+        }
     },
     /**
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
      */
     async backgroundPage({ context, manifestVersion }, use) {
         // let background: Page | Worker
-        const routeHandler = (route) => {
+        const routeHandler = async (route) => {
             const url = route.request().url();
             if (url.startsWith('https://staticcdn.duckduckgo.com/')) {
                 return routeLocalResources(route);
@@ -102,7 +125,7 @@ export const test = base.extend({
                     body: '',
                 });
             }
-            route.continue();
+            return route.continue();
         };
         if (manifestVersion === 3) {
             let [background] = context.serviceWorkers();
@@ -119,6 +142,12 @@ export const test = base.extend({
             // Serve extension background requests from local cache
             background.route('**/*', routeHandler);
             await use(background);
+            // Prevent route callbacks from failing after teardown.
+            try {
+                await background.unrouteAll({ behavior: 'ignoreErrors' });
+            } catch {
+                // ignore
+            }
         }
     },
     /**
