@@ -6,6 +6,7 @@ const tabManager = require('./tab-manager');
 const browserWrapper = require('./wrapper');
 const tldts = require('tldts');
 const { addSmarterEncryptionSessionRule } = require('./dnr-smarter-encryption');
+const { IS_BLOCKING_WEBREQUEST_AVAILABLE, SHOULD_USE_DNR } = require('./environment');
 // as defined in https://tools.ietf.org/html/rfc6761
 const PRIVATE_TLDS = ['example', 'invalid', 'localhost', 'test'];
 
@@ -140,7 +141,7 @@ class HTTPS {
         }
 
         const serviceCheck = httpsService.checkInService(host);
-        if (manifestVersion === 3) {
+        if (SHOULD_USE_DNR) {
             // Once we get the result from the service, ensure we add a session upgrade rule
             serviceCheck.then(
                 (result) => {
@@ -273,7 +274,7 @@ class HTTPS {
 
             tab.mainFrameUpgraded = true;
             this.incrementUpgradeCount('totalUpgrades');
-            if (manifestVersion === 3) {
+            if (!IS_BLOCKING_WEBREQUEST_AVAILABLE) {
                 // returning from webRequest won't cause the upgrade, so we have to do it manually with webNavigation
                 browserWrapper.changeTabURL(tab.id, upgradedUrl);
             }

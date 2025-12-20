@@ -3,6 +3,7 @@
  * Please see https://duck.co/help/privacy/atb for more information.
  */
 import browser from 'webextension-polyfill';
+import { SHOULD_USE_DNR } from './environment';
 
 const settings = require('./settings');
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string');
@@ -213,7 +214,7 @@ const ATB = (() => {
          * @param {string} atb
          */
         setOrUpdateATBdnrRule: (atb) => {
-            if (!atb || manifestVersion !== 3) {
+            if (!atb || !SHOULD_USE_DNR) {
                 return;
             }
 

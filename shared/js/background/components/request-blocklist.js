@@ -2,6 +2,7 @@ import { getBaseDomain, isFeatureEnabled } from '../utils';
 import tdsStorage from '../storage/tds';
 import { getHostname } from 'tldts';
 import { validRule } from '@duckduckgo/ddg2dnr/lib/requestBlocklist';
+import { IS_BLOCKING_WEBREQUEST_AVAILABLE } from '../environment';
 
 const browserWrapper = require('../wrapper');
 
@@ -70,7 +71,7 @@ export default class RequestBlocklist {
     static featureName = 'requestBlocklist';
 
     constructor() {
-        if (browserWrapper.getManifestVersion() === 2) {
+        if (IS_BLOCKING_WEBREQUEST_AVAILABLE) {
             tdsStorage.onUpdate('config', (name, etag, config) => {
                 updateRequestBlocklistLookup(config);
             });
