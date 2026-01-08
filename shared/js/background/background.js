@@ -87,7 +87,7 @@ const components = {
     messaging: new MessageRouter({ tabManager }),
 };
 
-components.cpm = new CookiePromptManagement({ remoteConfig });
+components.cpm = new CookiePromptManagement({ settings, remoteConfig, tabManager });
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {

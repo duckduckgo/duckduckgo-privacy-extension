@@ -64,7 +64,7 @@
         "yargs": "^18.0.0"
     },
     "dependencies": {
-        "@duckduckgo/autoconsent": "^14.36.0",
+        "@duckduckgo/autoconsent": "^14.46.0",
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#17.0.1",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#11.46.0",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",
