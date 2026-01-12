@@ -310,6 +310,16 @@ export function breakageReportResult(data, sender) {
     resolveBreakageReportRequest(sender.tab.id, data);
 }
 
+export function healthCheckRequest() {
+    return true;
+}
+
+export async function rescheduleCounterMessagingRequest() {
+    await settings.ready();
+    settings.updateSetting('rescheduleCounterMessagingOnStart', true);
+    return true;
+}
+
 /**
  * Add a new message handler.
  * @param {string} name
@@ -353,5 +363,7 @@ const messageHandlers = {
     isClickToLoadYoutubeEnabled,
     addDebugFlag,
     breakageReportResult,
+    healthCheckRequest,
+    rescheduleCounterMessagingRequest,
 };
 export default messageHandlers;

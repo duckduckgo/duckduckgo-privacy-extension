@@ -174,16 +174,6 @@ browser.webNavigation.onCommitted.addListener(onboardingMessaging, {
  * (Chrome only)
  */
 if (browserName === 'chrome') {
-    chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-        if (request === 'healthCheckRequest') {
-            sendResponse(true);
-        } else if (request === 'rescheduleCounterMessagingRequest') {
-            await settings.ready();
-            settings.updateSetting('rescheduleCounterMessagingOnStart', true);
-            sendResponse(true);
-        }
-    });
-
     browser.runtime.onStartup.addListener(async () => {
         await settings.ready();
 
