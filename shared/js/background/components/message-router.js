@@ -35,6 +35,11 @@ export default class MessageRouter extends EventTarget {
         browser.runtime.onMessage.addListener((req, sender) => {
             if (sender.id !== getExtensionId()) return;
 
+            // TODO clean up legacy onboarding messaging
+            if (browserName === 'chrome' && (req === 'healthCheckRequest' || req === 'rescheduleCounterMessagingRequest')) {
+                req = { messageType: req };
+            }
+
             // TODO clean up message passing
             const legacyMessageTypes = [
                 'addUserData',
@@ -59,22 +64,6 @@ export default class MessageRouter extends EventTarget {
             if (req.messageType && req.messageType in messageHandlers) {
                 this.dispatchEvent(new MessageReceivedEvent(req));
                 return Promise.resolve(messageHandlers[req.messageType](req.options, sender, req));
-            }
-
-            // Count refreshes per page
-            if (req.pageReloaded && sender.tab !== undefined) {
-                const tab = tabManager.get({ tabId: sender.tab.id });
-                if (tab) {
-                    tab.userRefreshCount += 1;
-                }
-                return;
-            }
-
-            // TODO clean up legacy onboarding messaging
-            if (browserName === 'chrome') {
-                if (req === 'healthCheckRequest' || req === 'rescheduleCounterMessagingRequest') {
-                    return;
-                }
             }
 
             console.error('Unrecognized message to background:', req, sender);

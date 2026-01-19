@@ -6,6 +6,7 @@ import { isFeatureEnabled, reloadCurrentTab } from './utils';
 import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load';
 import tdsStorage from './storage/tds';
 import { getArgumentsObject } from './helpers/arguments-object';
+import { resolveBreakageReportRequest } from './breakage-report-request';
 import { postPopupMessage } from './popup-messaging';
 import ToggleReports from './components/toggle-reports';
 const utils = require('./utils');
@@ -287,6 +288,39 @@ export function addDebugFlag(message, sender, req) {
 }
 
 /**
+ * Handler for breakage report data received from content-scope-scripts
+ * Stores detector data and performance metrics on the tab object
+ * @param {Object} data - Breakage report data from content-scope-scripts
+ * @param {Object} sender - Message sender information
+ */
+export function breakageReportResult(data, sender) {
+    // Only accept data from main frame (frameId 0) to avoid iframe data overwriting main frame data
+    if (sender?.frameId !== 0) {
+        return;
+    }
+
+    const tab = tabManager.get({ tabId: sender.tab.id });
+    if (!tab) return;
+
+    if (!data) return;
+
+    tab.breakageReportData = data;
+
+    // Resolve any pending request for this tab
+    resolveBreakageReportRequest(sender.tab.id, data);
+}
+
+export function healthCheckRequest() {
+    return true;
+}
+
+export async function rescheduleCounterMessagingRequest() {
+    await settings.ready();
+    settings.updateSetting('rescheduleCounterMessagingOnStart', true);
+    return true;
+}
+
+/**
  * Add a new message handler.
  * @param {string} name
  * @param {(options: any, sender: any, req: any) => any} func
@@ -328,5 +362,8 @@ const messageHandlers = {
     openShareFeedbackPage,
     isClickToLoadYoutubeEnabled,
     addDebugFlag,
+    breakageReportResult,
+    healthCheckRequest,
+    rescheduleCounterMessagingRequest,
 };
 export default messageHandlers;

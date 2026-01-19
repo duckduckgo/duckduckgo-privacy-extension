@@ -68,7 +68,10 @@ test.describe('Broken site reports', () => {
                 userRefreshCount: '0',
             },
         });
-        expect(pixel.params.jsPerformance).toMatch(/^[0-9]+$/);
+        // jsPerformance may be undefined if content-scope-scripts breakageReporting feature isn't enabled
+        if (pixel.params.jsPerformance) {
+            expect(pixel.params.jsPerformance).toMatch(/^[0-9]+$/);
+        }
         expect(pixel.params.locale).toMatch(/^[a-z]{2}-[A-Z]{2}$/);
     });
 
