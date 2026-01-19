@@ -74,9 +74,9 @@ export default class CookiePromptManagement {
         if (!autoconsentSettings || !tabId) {
             return;
         }
-        // TODO: get this state from native
+        // TODO: get this state from native: check user site allowlist and user settings
         // const isEnabled = tab.site.isFeatureEnabled('autoconsent');
-        const isEnabled = true;
+        const isEnabled = this.remoteConfig.isFeatureEnabled('autoconsent');
         if (!isEnabled) {
             this.firePixel('disabled-for-site');
         }
