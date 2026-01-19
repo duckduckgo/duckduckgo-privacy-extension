@@ -41,7 +41,7 @@ async function findFreePort() {
 }
 
 /**
- * Simple RDP client for Firefox extension installation.
+ * Simple RDP client for Firefox extension installation and debugging.
  * Based on web-ext's RDP client implementation.
  */
 class FirefoxRDPClient {
@@ -50,6 +50,7 @@ class FirefoxRDPClient {
         this._pending = [];
         this._active = new Map();
         this._conn = null;
+        this._eventHandlers = [];
     }
 
     async connect(port, maxRetries = 50, retryInterval = 100) {
@@ -85,6 +86,14 @@ class FirefoxRDPClient {
             this._conn.end();
             this._conn = null;
         }
+        this._eventHandlers = [];
+    }
+
+    /**
+     * Register an event handler for unsolicited messages
+     */
+    onEvent(handler) {
+        this._eventHandlers.push(handler);
     }
 
     async request(requestProps) {
@@ -161,16 +170,28 @@ class FirefoxRDPClient {
                 }
 
                 this._flushPendingRequests();
+            } else {
+                // Unsolicited event - notify handlers
+                this._eventHandlers.forEach((h) => h(msg));
             }
         }
     }
 }
 
 /**
- * Install a temporary extension in Firefox via RDP
+ * Install a temporary extension in Firefox via RDP and get background page access
  */
-async function installExtensionViaRDP(rdpPort, extensionPath) {
+async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
     const client = new FirefoxRDPClient();
+
+    // Set up event handlers for eval results
+    const evalResults = new Map();
+    client.onEvent((msg) => {
+        if (msg.type === 'evaluationResult') {
+            evalResults.set(msg.resultID, msg);
+        }
+    });
+
     await client.connect(rdpPort);
 
     try {
@@ -183,16 +204,204 @@ async function installExtensionViaRDP(rdpPort, extensionPath) {
         }
 
         // Install the temporary addon
-        const result = await client.request({
+        const installResult = await client.request({
             to: addonsActor,
             type: 'installTemporaryAddon',
             addonPath: extensionPath,
         });
 
-        return { addon: result.addon, client };
+        // Wait for extension to initialize
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        // Get the addon's actor from listAddons
+        const addonsResponse = await client.request('listAddons');
+        const ourAddon = addonsResponse.addons.find((a) => a.id === addonId);
+
+        if (!ourAddon) {
+            throw new Error(`Could not find addon ${addonId} in listAddons`);
+        }
+
+        // Get watcher for the addon
+        const watcherResult = await client.request({
+            to: ourAddon.actor,
+            type: 'getWatcher',
+        });
+
+        // Watch frame targets first (required before worker targets work)
+        await client.request({
+            to: watcherResult.actor,
+            type: 'watchTargets',
+            targetType: 'frame',
+        });
+
+        // Watch worker targets to get the background page
+        const workerResult = await client.request({
+            to: watcherResult.actor,
+            type: 'watchTargets',
+            targetType: 'worker',
+        });
+
+        let backgroundConsoleActor = null;
+        if (workerResult.target && workerResult.target.url.includes('_generated_background_page')) {
+            backgroundConsoleActor = workerResult.target.consoleActor;
+
+            // Start listening for evaluation results
+            await client.request({
+                to: backgroundConsoleActor,
+                type: 'startListeners',
+                listeners: ['evaluationResult'],
+            });
+        }
+
+        return {
+            addon: installResult.addon,
+            client,
+            backgroundConsoleActor,
+            evalResults,
+        };
     } catch (err) {
         client.disconnect();
         throw err;
+    }
+}
+
+/**
+ * Evaluate code in the Firefox extension's background page via RDP.
+ * Uses JSON serialization for proper value transfer.
+ */
+async function evaluateInFirefoxBackground(client, consoleActor, evalResults, code) {
+    if (!consoleActor) {
+        throw new Error('No background console actor available - cannot evaluate in background');
+    }
+
+    // Wrap code in JSON.stringify to properly serialize the result
+    // This handles objects, arrays, and primitives correctly
+    const wrappedCode = `
+        (function() {
+            try {
+                const __result__ = (function() { return ${code}; })();
+                return JSON.stringify({ __ok__: true, __value__: __result__ });
+            } catch (e) {
+                return JSON.stringify({ __ok__: false, __error__: e.message, __stack__: e.stack });
+            }
+        })()
+    `;
+
+    const evalRequest = await client.request({
+        to: consoleActor,
+        type: 'evaluateJSAsync',
+        text: wrappedCode,
+    });
+
+    // Wait for result (with timeout)
+    const timeout = 10000;
+    const startTime = Date.now();
+    while (!evalResults.has(evalRequest.resultID)) {
+        if (Date.now() - startTime > timeout) {
+            throw new Error(`Timeout waiting for evaluation result`);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    const result = evalResults.get(evalRequest.resultID);
+    evalResults.delete(evalRequest.resultID);
+
+    if (result.hasException) {
+        throw new Error(`Evaluation error: ${result.exceptionMessage}`);
+    }
+
+    // Parse the JSON result
+    const jsonStr = result.result;
+    if (typeof jsonStr !== 'string') {
+        // Handle case where result is already parsed or undefined
+        if (jsonStr && jsonStr.type === 'undefined') {
+            return undefined;
+        }
+        throw new Error(`Unexpected result type: ${typeof jsonStr}`);
+    }
+
+    const parsed = JSON.parse(jsonStr);
+    if (!parsed.__ok__) {
+        throw new Error(`Evaluation error: ${parsed.__error__}\n${parsed.__stack__}`);
+    }
+
+    return parsed.__value__;
+}
+
+/**
+ * Wrapper class providing background page functionality for Firefox via RDP.
+ * Provides an API similar to Playwright's Page/Worker for evaluate() calls.
+ */
+class FirefoxBackgroundPage {
+    constructor(rdpClient, consoleActor, evalResults) {
+        this._client = rdpClient;
+        this._consoleActor = consoleActor;
+        this._evalResults = evalResults;
+    }
+
+    /**
+     * Evaluate JavaScript code in the Firefox extension's background page context.
+     * @param {Function|string} pageFunction - Function or string to evaluate
+     * @param {...any} args - Arguments to pass to the function
+     * @returns {Promise<any>} - Result of the evaluation
+     */
+    async evaluate(pageFunction, ...args) {
+        if (!this._consoleActor) {
+            throw new Error('Firefox background page not available - consoleActor is null');
+        }
+
+        // Convert function to string if needed
+        let code;
+        if (typeof pageFunction === 'function') {
+            const fnStr = pageFunction.toString();
+            if (args.length > 0) {
+                // Serialize arguments and pass them to the function
+                const serializedArgs = args.map((arg) => JSON.stringify(arg)).join(', ');
+                code = `(${fnStr})(${serializedArgs})`;
+            } else {
+                code = `(${fnStr})()`;
+            }
+        } else {
+            code = String(pageFunction);
+        }
+
+        return evaluateInFirefoxBackground(this._client, this._consoleActor, this._evalResults, code);
+    }
+
+    /**
+     * Wait for a function to return a truthy value in the background page.
+     * Similar to Playwright's page.waitForFunction().
+     * @param {Function|string} pageFunction - Function to evaluate
+     * @param {Object} options - Options (timeout, polling)
+     * @param {...any} args - Arguments to pass to the function
+     */
+    async waitForFunction(pageFunction, options = {}, ...args) {
+        const { timeout = 30000, polling = 100 } = options;
+        const startTime = Date.now();
+
+        while (true) {
+            try {
+                const result = await this.evaluate(pageFunction, ...args);
+                if (result) {
+                    return result;
+                }
+            } catch (e) {
+                // Ignore errors during polling, just retry
+            }
+
+            if (Date.now() - startTime > timeout) {
+                throw new Error(`Timeout waiting for function: ${pageFunction.toString().slice(0, 100)}`);
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, polling));
+        }
+    }
+
+    /**
+     * Check if the background page is available for evaluation
+     */
+    isAvailable() {
+        return this._consoleActor !== null;
     }
 }
 
@@ -267,6 +476,7 @@ export const test = base.extend({
         if (isFirefoxTest()) {
             // Firefox extension testing
             const extensionPath = path.join(projectRoot, 'build/firefox/dev');
+            const addonId = 'jid1-ZAdIEUB7XOzOJw@jetpack'; // From manifest.json
             const userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'firefox-test-'));
 
             context = await firefox.launchPersistentContext(userDataDir, {
@@ -286,19 +496,20 @@ export const test = base.extend({
             // Wait for Firefox to be ready
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
-            // Install the extension via RDP
+            // Install the extension via RDP and get background page access
             try {
-                const result = await installExtensionViaRDP(rdpPort, extensionPath);
+                const result = await installExtensionViaRDP(rdpPort, extensionPath, addonId);
                 rdpClient = result.client;
                 console.log(`Installed Firefox extension: ${result.addon.id}`);
+
+                // Store Firefox-specific context for background evaluation
+                context._firefoxBackgroundConsoleActor = result.backgroundConsoleActor;
+                context._firefoxEvalResults = result.evalResults;
             } catch (err) {
                 console.error('Failed to install Firefox extension:', err);
                 await context.close();
                 throw err;
             }
-
-            // Wait for extension to initialize
-            await new Promise((resolve) => setTimeout(resolve, 2000));
 
             // Store cleanup info
             context._firefoxUserDataDir = userDataDir;
@@ -333,7 +544,7 @@ export const test = base.extend({
         }
     },
     /**
-     * @type {import('@playwright/test').Page | import('@playwright/test').Worker | null}
+     * @type {import('@playwright/test').Page | import('@playwright/test').Worker | FirefoxBackgroundPage | null}
      */
     async backgroundPage({ context, manifestVersion }, use) {
         const routeHandler = (route) => {
@@ -370,11 +581,17 @@ export const test = base.extend({
         };
 
         if (isFirefoxTest()) {
-            // Firefox: Set up context-level routing since we can't access background pages directly
-            // Note: Playwright's Firefox doesn't expose extension background pages
+            // Firefox: Set up context-level routing
             await context.route('**/*', routeHandler);
-            // Return null - tests that need backgroundPage.evaluate() will need Firefox-specific handling
-            await use(null);
+
+            // Create a Firefox background page wrapper with evaluate() support
+            const firefoxBg = new FirefoxBackgroundPage(
+                context._rdpClient,
+                context._firefoxBackgroundConsoleActor,
+                context._firefoxEvalResults,
+            );
+
+            await use(firefoxBg);
         } else if (manifestVersion === 3) {
             let [background] = context.serviceWorkers();
             if (!background) background = await context.waitForEvent('serviceworker');
