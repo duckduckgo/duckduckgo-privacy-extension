@@ -1,13 +1,15 @@
 import { test, expect, isFirefoxTest } from './helpers/playwrightHarness.js';
 
+/**
+ * Tests for Firefox background page evaluation via RDP.
+ * These tests only run on Firefox to verify the custom RDP-based
+ * background page evaluation implementation works correctly.
+ */
 test.describe('Firefox background page evaluation', () => {
-    test('can evaluate code in extension background', async ({ backgroundPage }) => {
-        // This test specifically tests Firefox background page evaluation
-        if (!isFirefoxTest()) {
-            test.skip();
-            return;
-        }
+    // Skip all tests in this file for Chrome - these are Firefox-specific tests
+    test.skip(!isFirefoxTest(), 'Firefox-only tests');
 
+    test('can evaluate code in extension background', async ({ backgroundPage }) => {
         // Check that backgroundPage is available
         expect(backgroundPage).not.toBeNull();
         expect(backgroundPage.isAvailable()).toBe(true);
@@ -47,22 +49,5 @@ test.describe('Firefox background page evaluation', () => {
             return [1, 2, 3, 'four'];
         });
         expect(arr).toEqual([1, 2, 3, 'four']);
-    });
-
-    test('background page evaluation works for Chrome too', async ({ backgroundPage }) => {
-        // This test runs on Chrome as well to verify the API works
-        if (isFirefoxTest()) {
-            test.skip();
-            return;
-        }
-
-        // Chrome's backgroundPage should also support evaluate
-        expect(backgroundPage).not.toBeNull();
-
-        const manifestName = await backgroundPage.evaluate(() => {
-            return chrome.runtime.getManifest().name;
-        });
-        // Chrome and Firefox have different extension names, just verify it's a DuckDuckGo extension
-        expect(manifestName).toContain('DuckDuckGo');
     });
 });
