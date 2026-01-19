@@ -1,13 +1,10 @@
 import AutoConsent from '@duckduckgo/autoconsent';
 
 const consent = new AutoConsent(async (msg) => {
-    const response = await chrome.runtime.sendMessage({
+    await chrome.runtime.sendMessage({
         messageType: 'autoconsent',
-        ...msg,
+        autoconsentPayload: msg,
     });
-    if (response) {
-        consent.receiveMessageCallback(response);
-    }
 });
 
 chrome.runtime.onMessage.addListener((message) => {

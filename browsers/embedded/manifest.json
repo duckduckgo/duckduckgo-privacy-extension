@@ -1,0 +1,22 @@
+{
+    "name": "DuckDukGo Internal Extension",
+    "description": "Embedded extension for native app integration",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "background": {
+        "service_worker": "public/js/background-embedded.js"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'"
+    },
+    "permissions": [
+        "alarms",
+        "scripting",
+        "storage",
+        "tabs",
+        "webNavigation"
+    ],
+    "host_permissions": [
+        "*://*/*"
+    ]
+}

@@ -21,6 +21,11 @@ export function sendPixelRequest(pixelName, params = {}) {
         return;
     }
 
+    if (BUILD_TARGET === 'embedded') {
+        // TODO: send this via native
+        return;
+    }
+
     const browserName = getBrowserName() || 'unknown';
 
     const randomNum = Math.ceil(Math.random() * 1e7);

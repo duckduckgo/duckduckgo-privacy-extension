@@ -135,11 +135,15 @@ setup-artifacts-dir:
 
 ###--- Mkdir targets ---#
 # Note: Intermediate directories can be omitted.
-MKDIR_TARGETS = $(BUILD_DIR)/_locales $(BUILD_DIR)/data/bundled $(BUILD_DIR)/html \
+MKDIR_TARGETS = $(BUILD_DIR)/data/bundled $(BUILD_DIR)/html \
                 $(BUILD_DIR)/img $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources \
                 $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css \
                 $(BUILD_DIR)/public/font \
                 $(INTERMEDIATES_DIR)
+# _locales is only needed for non-embedded browsers
+ifneq ($(browser),embedded)
+  MKDIR_TARGETS += $(BUILD_DIR)/_locales
+endif
 
 $(MKDIR_TARGETS):
 	mkdir -p $@
@@ -154,12 +158,15 @@ LAST_COPY = build/.last-copy-$(browser)-$(type)
 RSYNC = rsync -ra --exclude="*~"
 
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
-	$(RSYNC) browsers/$(browser)/* browsers/chrome/_locales shared/data shared/html shared/img $(BUILD_DIR)
+	$(RSYNC) browsers/$(browser)/* shared/data $(BUILD_DIR)
+ifneq ($(browser),embedded)
+	$(RSYNC) browsers/chrome/_locales shared/html shared/img $(BUILD_DIR)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill.css $(BUILD_DIR)/public/css/autofill.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill-host-styles_$(BROWSER_TYPE).css $(BUILD_DIR)/public/css/autofill-host-styles.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js shared/js/content-scripts/*.js $(BUILD_DIR)/public/js/content-scripts
 	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
+endif
 	touch $@
 
 copy: $(LAST_COPY)
@@ -189,6 +196,9 @@ endif
 
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/background/background.js > $@
+
+$(BUILD_DIR)/public/js/background-embedded.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/background/background-embedded.js > $@
 
 ## Locale resources for UI
 shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
@@ -223,7 +233,7 @@ $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/cpm.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/content-scripts/cpm.js > $@
 
-JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js cpm.js
+JS_BUNDLES = background.js background-embedded.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js cpm.js
 
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
