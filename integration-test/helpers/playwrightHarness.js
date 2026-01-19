@@ -4,7 +4,7 @@ import fs from 'fs/promises';
 import net from 'net';
 import os from 'os';
 
-const testRoot = path.join(import.meta.dirname, '..');
+const testRoot = path.join(__dirname, '..');
 const projectRoot = path.join(testRoot, '..');
 
 export function getHARPath(harFile) {
