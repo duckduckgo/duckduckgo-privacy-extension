@@ -13,7 +13,8 @@
  */
 
 import { getFeatureSettings, isFeatureEnabled } from '../utils';
-import bundledConfig from '../../../data/bundled/extension-config.json';
+// FIXME: THIS IS ONLY ADDED FOR TESTING, REMOVE BEFORE MERGING
+import bundledConfig from '../../../data/bundled/macos-config.json';
 import { isSubFeatureEnabled } from './remote-config';
 
 /**
