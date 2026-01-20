@@ -784,7 +784,21 @@ export const test = base.extend({
         }
         if (context._firefoxUserDataDir) {
             firefoxDebug('context fixture: removing user data dir');
-            await fs.rm(context._firefoxUserDataDir, { recursive: true, force: true });
+            // Wait a bit for Firefox to fully release file handles before removing
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            try {
+                await fs.rm(context._firefoxUserDataDir, { recursive: true, force: true });
+            } catch (e) {
+                // If first attempt fails, wait longer and retry
+                firefoxDebug('context fixture: first rm attempt failed, retrying...');
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+                try {
+                    await fs.rm(context._firefoxUserDataDir, { recursive: true, force: true });
+                } catch (e2) {
+                    // Ignore if we can't delete - it's a temp directory anyway
+                    firefoxDebug('context fixture: could not remove user data dir:', e2.message);
+                }
+            }
         }
         firefoxDebug('context fixture: cleanup complete');
     },
