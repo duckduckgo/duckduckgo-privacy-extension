@@ -1,4 +1,4 @@
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN } from './helpers/testPages';
@@ -8,11 +8,6 @@ const testHost = 'privacy-test-pages.site';
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`;
 
 test.describe('Test request blocking', () => {
-    // Skip for Firefox due to Playwright architectural limitation:
-    // - route.fulfill() bypasses Firefox's webRequest API (extension can't block)
-    // - route.continue() sends to real network (test domains don't exist)
-    // The extension's request blocking works, but can't be tested via Playwright in Firefox.
-    test.skip(isFirefoxTest(), 'Firefox: Playwright routing bypasses webRequest API');
     test('Should block all the test tracking requests', async ({
         page,
         backgroundPage,

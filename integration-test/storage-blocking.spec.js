@@ -1,12 +1,7 @@
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages';
-
-// Skip for Firefox due to Playwright architectural limitation:
-// - route.fulfill() bypasses Firefox's webRequest API (extension can't block cookies)
-// - route.continue() sends to real network (test domains don't exist)
-test.skip(isFirefoxTest(), 'Firefox: Playwright routing bypasses webRequest API');
 
 const testPageDomain = 'privacy-test-pages.site';
 const thirdPartyDomain = 'good.third-party.site';
