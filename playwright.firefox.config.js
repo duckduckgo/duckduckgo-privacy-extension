@@ -12,8 +12,9 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
     testDir: './integration-test',
-    /* Maximum time one test can run for */
-    timeout: 45 * 1000,
+    /* Maximum time one test can run for - Firefox tests need more time
+       due to RDP-based TDS/config overrides */
+    timeout: 120 * 1000,
     expect: {
         /**
          * Maximum time expect() should wait for the condition to be met.
@@ -32,8 +33,8 @@ export default defineConfig({
     reporter: process.env.CI ? 'github' : 'html',
     /* Shared settings */
     use: {
-        /* Maximum time each action can take */
-        actionTimeout: 10000,
+        /* Maximum time each action can take - Firefox actions may be slower */
+        actionTimeout: 30000,
         /* Collect trace when retrying the failed test */
         trace: 'on-first-retry',
     },
