@@ -502,12 +502,12 @@ class FirefoxBackgroundPage {
                 return evaluateInFirefoxBackground(client, consoleActor, evalResults, evalCode);
             },
             async jsonValue() {
-                const code = `globalThis.__playwrightHandles.get(${JSON.stringify(handleId)})`;
-                return evaluateInFirefoxBackground(client, consoleActor, evalResults, code);
+                const getCode = `globalThis.__playwrightHandles.get(${JSON.stringify(handleId)})`;
+                return evaluateInFirefoxBackground(client, consoleActor, evalResults, getCode);
             },
             async dispose() {
-                const code = `globalThis.__playwrightHandles.delete(${JSON.stringify(handleId)})`;
-                await evaluateInFirefoxBackground(client, consoleActor, evalResults, code);
+                const deleteCode = `globalThis.__playwrightHandles.delete(${JSON.stringify(handleId)})`;
+                await evaluateInFirefoxBackground(client, consoleActor, evalResults, deleteCode);
             },
         };
     }
