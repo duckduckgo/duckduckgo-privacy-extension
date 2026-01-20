@@ -1,11 +1,4 @@
-import { isFirefoxTest } from './playwrightHarness';
-
-// Hosts that serve test pages - these get proxied to the local test server
 const testPageHosts = new Set(['privacy-test-pages.site', 'broken.third-party.site', 'good.third-party.site', 'bad.third-party.site']);
-
-// Tracker/third-party hosts that should NOT be proxied on Firefox so the extension can block them
-// These are domains that the extension should be able to intercept and block/modify
-const trackerHosts = new Set(['bad.third-party.site', 'broken.third-party.site', 'convert.ad-company.site']);
 
 export const TEST_SERVER_ORIGIN = 'http://127.0.0.1:3000';
 
@@ -27,15 +20,6 @@ export function routeFromLocalhost(page, overrideHandler) {
             // skip requests for other hosts
             if (DEBUG_ROUTING) {
                 console.log('[routeFromLocalhost] continue (not test host):', url.hostname, url.pathname.substring(0, 50));
-            }
-            return route.continue();
-        }
-
-        // For Firefox: Don't proxy tracker hosts - let the extension handle them
-        // This allows Firefox's webRequest API to see and block these requests
-        if (isFirefoxTest() && trackerHosts.has(url.hostname)) {
-            if (DEBUG_ROUTING) {
-                console.log('[routeFromLocalhost] continue (Firefox tracker host):', url.hostname, url.pathname.substring(0, 50));
             }
             return route.continue();
         }
