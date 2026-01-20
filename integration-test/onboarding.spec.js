@@ -1,4 +1,4 @@
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 
 function stubOnFirstSearchPostExtensionInstallOnInit(page) {
@@ -68,6 +68,7 @@ test.describe('onboarding', () => {
     });
 
     test('should allow the site to perform extension health checks (Chrome only)', async ({ context, page }) => {
+        test.skip(isFirefoxTest(), 'Chrome-only test');
         await backgroundWait.forExtensionLoaded(context);
 
         await page.bringToFront();
@@ -92,6 +93,7 @@ test.describe('onboarding', () => {
     });
 
     test('should allow the site to reschedule the counter messaging (Chrome only)', async ({ context, backgroundPage, page }) => {
+        test.skip(isFirefoxTest(), 'Chrome-only test');
         await backgroundWait.forExtensionLoaded(context);
 
         await stubOnFirstSearchPostExtensionInstallOnInit(page);
