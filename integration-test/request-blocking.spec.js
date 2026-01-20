@@ -1,17 +1,16 @@
 import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait';
-import { overridePrivacyConfig } from './helpers/testConfig';
+import { overridePrivacyConfig, overrideTdsViaBackground, overridePrivacyConfigViaBackground } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN } from './helpers/testPages';
 import { runRequestBlockingTest } from './helpers/requests';
 
 const testHost = 'privacy-test-pages.site';
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`;
 
+// Path to the TDS file that includes bad.third-party.site as a tracker
+const TEST_TDS_PATH = 'staticcdn/trackerblocking/v6/current/extension-tds.json';
+
 test.describe('Test request blocking', () => {
-    // Firefox extension background requests bypass Playwright's routing, so the extension
-    // loads its TDS from the real CDN instead of our test data. Since bad.third-party.site
-    // is only in test TDS (not real CDN), the extension doesn't block these requests in Firefox.
-    test.skip(isFirefoxTest(), 'Firefox: Extension background requests bypass Playwright routing');
     test('Should block all the test tracking requests', async ({
         page,
         backgroundPage,
@@ -19,11 +18,20 @@ test.describe('Test request blocking', () => {
         backgroundNetworkContext,
         manifestVersion,
     }) => {
-        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
-        await forExtensionLoaded(context);
-        await forAllConfiguration(backgroundPage);
-        if (manifestVersion === 3) {
-            await forDynamicDNRRulesLoaded(backgroundPage);
+        if (isFirefoxTest()) {
+            // For Firefox: override TDS and config via background page evaluation
+            // since extension background requests bypass Playwright routing
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+            await overrideTdsViaBackground(backgroundPage, TEST_TDS_PATH);
+            await overridePrivacyConfigViaBackground(backgroundPage, 'serviceworker-blocking.json');
+        } else {
+            await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+            if (manifestVersion === 3) {
+                await forDynamicDNRRulesLoaded(backgroundPage);
+            }
         }
         const { testCount, pageRequests, pageResults } = await runRequestBlockingTest(page, testSite);
 
@@ -83,11 +91,18 @@ test.describe('Test request blocking', () => {
         backgroundNetworkContext,
         manifestVersion,
     }) => {
-        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
-        await forExtensionLoaded(context);
-        await forAllConfiguration(backgroundPage);
-        if (manifestVersion === 3) {
-            await forDynamicDNRRulesLoaded(backgroundPage);
+        if (isFirefoxTest()) {
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+            await overrideTdsViaBackground(backgroundPage, TEST_TDS_PATH);
+            await overridePrivacyConfigViaBackground(backgroundPage, 'serviceworker-blocking.json');
+        } else {
+            await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+            if (manifestVersion === 3) {
+                await forDynamicDNRRulesLoaded(backgroundPage);
+            }
         }
         await backgroundPage.evaluate(async (domain) => {
             /** @type {import('../shared/js/background/components/resource-loader').default} */
@@ -121,9 +136,16 @@ test.describe('Test request blocking', () => {
     });
 
     test('Blocking should not run on localhost', async ({ page, backgroundPage, context, manifestVersion, backgroundNetworkContext }) => {
-        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
-        await forExtensionLoaded(context);
-        await forAllConfiguration(backgroundPage);
+        if (isFirefoxTest()) {
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+            await overrideTdsViaBackground(backgroundPage, TEST_TDS_PATH);
+            await overridePrivacyConfigViaBackground(backgroundPage, 'serviceworker-blocking.json');
+        } else {
+            await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+        }
         // On MV3 config rules are only created some time after the config is loaded. We can query
         // declarativeNetRequest rules periodically until we see the expected rule.
         if (manifestVersion === 3) {
@@ -152,11 +174,18 @@ test.describe('Test request blocking', () => {
     });
 
     test('protection toggle disables blocking', async ({ page, backgroundPage, context, manifestVersion, backgroundNetworkContext }) => {
-        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
-        await forExtensionLoaded(context);
-        await forAllConfiguration(backgroundPage);
-        if (manifestVersion === 3) {
-            await forDynamicDNRRulesLoaded(backgroundPage);
+        if (isFirefoxTest()) {
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+            await overrideTdsViaBackground(backgroundPage, TEST_TDS_PATH);
+            await overridePrivacyConfigViaBackground(backgroundPage, 'serviceworker-blocking.json');
+        } else {
+            await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+            if (manifestVersion === 3) {
+                await forDynamicDNRRulesLoaded(backgroundPage);
+            }
         }
 
         // load with protection enabled

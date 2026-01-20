@@ -1,6 +1,6 @@
 import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait';
-import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
+import { overridePrivacyConfig, overrideTds, overrideTdsViaBackground, overridePrivacyConfigViaBackground } from './helpers/testConfig';
 import { runRequestBlockingTest } from './helpers/requests';
 
 const testHost = 'privacy-test-pages.site';
@@ -11,16 +11,21 @@ function expectBlocked(protectionsEnabled, url) {
 }
 
 test.describe('Test Request Blocklist feature', () => {
-    // Firefox extension background requests bypass Playwright's routing, so overrideTds
-    // doesn't work - the extension loads its TDS from the real CDN.
-    test.skip(isFirefoxTest(), 'Firefox: Extension background requests bypass Playwright routing');
     test('Should block the .jpg requests', async ({ page, backgroundPage, context, backgroundNetworkContext, manifestVersion }) => {
-        await overrideTds(backgroundNetworkContext, 'empty-tds.json');
-        await overridePrivacyConfig(backgroundNetworkContext, 'request-blocklist.json');
-        await forExtensionLoaded(context);
-        await forAllConfiguration(backgroundPage);
-        if (manifestVersion === 3) {
-            await forDynamicDNRRulesLoaded(backgroundPage);
+        if (isFirefoxTest()) {
+            // For Firefox: override TDS and config via background page evaluation
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+            await overrideTdsViaBackground(backgroundPage, 'empty-tds.json');
+            await overridePrivacyConfigViaBackground(backgroundPage, 'request-blocklist.json');
+        } else {
+            await overrideTds(backgroundNetworkContext, 'empty-tds.json');
+            await overridePrivacyConfig(backgroundNetworkContext, 'request-blocklist.json');
+            await forExtensionLoaded(context);
+            await forAllConfiguration(backgroundPage);
+            if (manifestVersion === 3) {
+                await forDynamicDNRRulesLoaded(backgroundPage);
+            }
         }
 
         for (const protectionsEnabled of [true, false]) {

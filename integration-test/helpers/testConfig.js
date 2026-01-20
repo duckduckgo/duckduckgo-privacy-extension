@@ -2,6 +2,51 @@ import fs from 'fs';
 import path from 'path';
 
 /**
+ * Override TDS data for Firefox by directly setting the data via background page evaluation.
+ * This bypasses the network entirely since Firefox extension requests don't go through Playwright routing.
+ * @param {import('./playwrightHarness').FirefoxBackgroundPage} backgroundPage
+ * @param {string} tdsFilePath - Path to the TDS JSON file (relative to data directory)
+ */
+export async function overrideTdsViaBackground(backgroundPage, tdsFilePath) {
+    const tdsData = JSON.parse(await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8'));
+    await backgroundPage.evaluate(async (data) => {
+        await globalThis.components.tds.tds.overrideDataValue(data);
+    }, tdsData);
+}
+
+/**
+ * Override privacy config for Firefox by directly modifying the config via background page evaluation.
+ * @param {import('./playwrightHarness').FirefoxBackgroundPage} backgroundPage
+ * @param {string} testConfigFilename - Config file with patches to apply
+ */
+export async function overridePrivacyConfigViaBackground(backgroundPage, testConfigFilename) {
+    const filePath = path.resolve(__dirname, '..', 'data', 'configs', testConfigFilename);
+    const testConfig = JSON.parse(fs.readFileSync(filePath).toString());
+
+    // Read the base config to apply patches
+    const localPath = path.join(__dirname, '..', 'data', 'staticcdn', 'trackerblocking', 'config', 'v4', 'extension-firefox-config.json');
+    const localConfig = JSON.parse(fs.readFileSync(localPath));
+
+    // Apply patches from testConfig
+    for (const pathString of Object.keys(testConfig)) {
+        const pathParts = pathString.split('.');
+        if (pathParts[0] !== 'globalThis' || pathParts[1] !== 'dbg' || pathParts[2] !== 'tds' || pathParts[3] !== 'config') {
+            throw new Error(`unknown config patch path: ${pathString}`);
+        }
+        let target = localConfig;
+        const lastPart = pathParts.pop();
+        for (const p of pathParts.slice(4)) {
+            target = target[p];
+        }
+        target[lastPart] = testConfig[pathString];
+    }
+
+    await backgroundPage.evaluate(async (config) => {
+        await globalThis.components.tds.remoteConfig.overrideDataValue(config);
+    }, localConfig);
+}
+
+/**
  * Rewrites the config received from the server with the changes specified in testConfigFilename
  * @param {import('@playwright/test').Page | import('@playwright/test').BrowserContext} networkContext
  * @param {string} testConfigFilename

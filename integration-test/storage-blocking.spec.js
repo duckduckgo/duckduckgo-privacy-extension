@@ -1,11 +1,7 @@
 import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
-import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
+import { overridePrivacyConfig, overrideTds, overrideTdsViaBackground, overridePrivacyConfigViaBackground } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages';
-
-// Firefox extension background requests bypass Playwright's routing, so overrideTds
-// doesn't work - the extension loads its TDS from the real CDN.
-test.skip(isFirefoxTest(), 'Firefox: Extension background requests bypass Playwright routing');
 
 const testPageDomain = 'privacy-test-pages.site';
 const thirdPartyDomain = 'good.third-party.site';
@@ -25,10 +21,17 @@ test.describe('Storage blocking Tests', () => {
         context,
         backgroundNetworkContext,
     }) => {
-        await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
-        await overrideTds(backgroundNetworkContext, 'mock-tds.json');
-        await backgroundWait.forExtensionLoaded(context);
-        await backgroundWait.forAllConfiguration(backgroundPage);
+        if (isFirefoxTest()) {
+            await backgroundWait.forExtensionLoaded(context);
+            await backgroundWait.forAllConfiguration(backgroundPage);
+            await overrideTdsViaBackground(backgroundPage, 'mock-tds.json');
+            await overridePrivacyConfigViaBackground(backgroundPage, 'storage-blocking.json');
+        } else {
+            await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
+            await overrideTds(backgroundNetworkContext, 'mock-tds.json');
+            await backgroundWait.forExtensionLoaded(context);
+            await backgroundWait.forAllConfiguration(backgroundPage);
+        }
         await routeFromLocalhost(page);
         await page.bringToFront();
         await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle' });
@@ -103,10 +106,17 @@ test.describe('Storage blocking Tests', () => {
         }
 
         test.beforeEach(async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
-            await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
-            await overrideTds(backgroundNetworkContext, 'mock-tds.json');
-            await backgroundWait.forExtensionLoaded(context);
-            await backgroundWait.forAllConfiguration(backgroundPage);
+            if (isFirefoxTest()) {
+                await backgroundWait.forExtensionLoaded(context);
+                await backgroundWait.forAllConfiguration(backgroundPage);
+                await overrideTdsViaBackground(backgroundPage, 'mock-tds.json');
+                await overridePrivacyConfigViaBackground(backgroundPage, 'storage-blocking.json');
+            } else {
+                await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
+                await overrideTds(backgroundNetworkContext, 'mock-tds.json');
+                await backgroundWait.forExtensionLoaded(context);
+                await backgroundWait.forAllConfiguration(backgroundPage);
+            }
             await routeFromLocalhost(page);
 
             // reset allowlists
