@@ -131,6 +131,9 @@ test.describe('install workflow', () => {
 });
 
 test.describe('search workflow', () => {
+    // Skip for Firefox - search workflow relies on request interception and content script injection
+    test.skip(isFirefoxTest(), 'Search workflow tests require Chrome-specific request interception');
+
     let todaysAtb;
     let lastWeeksAtb;
     let twoWeeksAgoAtb;
