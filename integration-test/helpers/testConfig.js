@@ -10,9 +10,15 @@ import path from 'path';
 export async function overrideTdsViaBackground(backgroundPage, tdsFilePath) {
     const tdsData = JSON.parse(await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8'));
 
-    // Use modify() to merge the test TDS data into the existing data.
-    // This is more reliable than overrideDataValue with large data.
-    await backgroundPage.evaluate(async (newData) => {
+    // Set the TDS data as a global first to avoid passing large data as function arguments
+    // which can cause RDP timeouts.
+    const dataJson = JSON.stringify(tdsData);
+    await backgroundPage.evaluate(`globalThis.__testTdsData = ${dataJson}`);
+
+    // Now use modify() to merge the test TDS data into the existing data
+    await backgroundPage.evaluate(async () => {
+        const newData = globalThis.__testTdsData;
+        delete globalThis.__testTdsData;
         const tdsLoader = globalThis.components.tds.tds;
         await tdsLoader.modify((currentData) => {
             // Merge trackers, entities, domains from newData into currentData
@@ -24,7 +30,7 @@ export async function overrideTdsViaBackground(backgroundPage, tdsFilePath) {
                 cnames: [...(currentData.cnames || []), ...(newData.cnames || [])],
             };
         });
-    }, tdsData);
+    });
 }
 
 /**
@@ -49,8 +55,14 @@ export async function overridePrivacyConfigViaBackground(backgroundPage, testCon
         patches[configPath.join('.')] = testConfig[pathString];
     }
 
+    // Set patches as a global to avoid passing data as function arguments
+    const patchJson = JSON.stringify(patches);
+    await backgroundPage.evaluate(`globalThis.__testConfigPatches = ${patchJson}`);
+
     // Use modify() to apply patches to existing config
-    await backgroundPage.evaluate(async (patchObj) => {
+    await backgroundPage.evaluate(async () => {
+        const patchObj = globalThis.__testConfigPatches;
+        delete globalThis.__testConfigPatches;
         const configLoader = globalThis.components.tds.remoteConfig;
         await configLoader.modify((config) => {
             // Apply each patch
@@ -67,7 +79,7 @@ export async function overridePrivacyConfigViaBackground(backgroundPage, testCon
             }
             return config;
         });
-    }, patches);
+    });
 }
 
 /**
