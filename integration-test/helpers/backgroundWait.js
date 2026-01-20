@@ -1,4 +1,5 @@
 import { errors } from '@playwright/test';
+import { isFirefoxTest } from './playwrightHarness';
 
 // Helpers that aid in waiting for the background page's state.
 function manuallyWaitForFunction(bgPage, func, { polling, timeout }, ...args) {
@@ -65,6 +66,14 @@ export async function forAllConfiguration(bgPage) {
  * @param {import('@playwright/test').BrowserContext} context
  */
 export async function forExtensionLoaded(context) {
+    // For Firefox, the extension is installed via RDP and doesn't open the post-install page automatically.
+    // The extension is already loaded by the time the context fixture completes, so we can skip this wait.
+    if (isFirefoxTest()) {
+        // Wait a bit for the extension to fully initialize
+        await new Promise((resolve) => setTimeout(resolve, 500));
+        return;
+    }
+
     return /** @type {Promise<string>} */ (
         new Promise((resolve) => {
             const postInstallPage = 'https://duckduckgo.com/extension-success';

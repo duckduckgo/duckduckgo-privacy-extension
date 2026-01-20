@@ -470,6 +470,14 @@ class FirefoxBackgroundPage {
     isAvailable() {
         return this._consoleActor !== null;
     }
+
+    /**
+     * Stub for routeFromHAR - not supported for Firefox background page.
+     * This exists to satisfy the check in backgroundWait.forFunction().
+     */
+    routeFromHAR() {
+        throw new Error('routeFromHAR is not supported for Firefox background page');
+    }
 }
 
 async function routeLocalResources(route) {
