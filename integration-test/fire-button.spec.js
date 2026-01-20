@@ -2,10 +2,10 @@ import { forExtensionLoaded } from './helpers/backgroundWait';
 import { test, expect, getManifestVersion, isFirefoxTest } from './helpers/playwrightHarness';
 import { routeFromLocalhost } from './helpers/testPages';
 
-// Firefox uses moz-extension:// URLs, Chrome uses chrome-extension://
-const burnAnimationRegex = isFirefoxTest()
-    ? /^moz-extension:\/\/[a-z0-9-]*\/html\/fire.html$/
-    : /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/;
+// Skip for Firefox - Fire Button is a Chrome-only feature (see background.js BUILD_TARGET check)
+test.skip(isFirefoxTest(), 'Fire Button is not available on Firefox');
+
+const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/;
 
 async function loadPageInNewTab(context, url) {
     const page = await context.newPage();
