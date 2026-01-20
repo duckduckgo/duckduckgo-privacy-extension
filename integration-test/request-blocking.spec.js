@@ -1,4 +1,4 @@
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN } from './helpers/testPages';
@@ -8,6 +8,10 @@ const testHost = 'privacy-test-pages.site';
 const testSite = `https://${testHost}/privacy-protections/request-blocking/`;
 
 test.describe('Test request blocking', () => {
+    // Firefox extension background requests bypass Playwright's routing, so the extension
+    // loads its TDS from the real CDN instead of our test data. Since bad.third-party.site
+    // is only in test TDS (not real CDN), the extension doesn't block these requests in Firefox.
+    test.skip(isFirefoxTest(), 'Firefox: Extension background requests bypass Playwright routing');
     test('Should block all the test tracking requests', async ({
         page,
         backgroundPage,

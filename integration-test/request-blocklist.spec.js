@@ -1,4 +1,4 @@
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait';
 import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
 import { runRequestBlockingTest } from './helpers/requests';
@@ -11,6 +11,9 @@ function expectBlocked(protectionsEnabled, url) {
 }
 
 test.describe('Test Request Blocklist feature', () => {
+    // Firefox extension background requests bypass Playwright's routing, so overrideTds
+    // doesn't work - the extension loads its TDS from the real CDN.
+    test.skip(isFirefoxTest(), 'Firefox: Extension background requests bypass Playwright routing');
     test('Should block the .jpg requests', async ({ page, backgroundPage, context, backgroundNetworkContext, manifestVersion }) => {
         await overrideTds(backgroundNetworkContext, 'empty-tds.json');
         await overridePrivacyConfig(backgroundNetworkContext, 'request-blocklist.json');

@@ -1,7 +1,11 @@
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages';
+
+// Firefox extension background requests bypass Playwright's routing, so overrideTds
+// doesn't work - the extension loads its TDS from the real CDN.
+test.skip(isFirefoxTest(), 'Firefox: Extension background requests bypass Playwright routing');
 
 const testPageDomain = 'privacy-test-pages.site';
 const thirdPartyDomain = 'good.third-party.site';
