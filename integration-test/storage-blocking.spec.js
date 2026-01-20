@@ -1,13 +1,9 @@
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages';
 
 const testPageDomain = 'privacy-test-pages.site';
-
-// Skip for Firefox - cookie blocking requires webRequest interception which
-// doesn't work properly with Playwright's route.fulfill() in Firefox
-test.skip(isFirefoxTest(), 'Storage blocking tests require Chrome-specific request interception');
 const thirdPartyDomain = 'good.third-party.site';
 const thirdPartyTracker = 'broken.third-party.site';
 const thirdPartyAd = 'convert.ad-company.site';
