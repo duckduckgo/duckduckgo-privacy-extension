@@ -308,15 +308,22 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
 
     firefoxDebug('evaluateInFirefoxBackground: evaluating code (length:', code.length, ')');
 
-    // Wrap code in JSON.stringify to properly serialize the result
-    // This handles objects, arrays, primitives, and async/Promise results correctly
+    // Wrap code in a function that handles async/Promise results
+    // We use a global callback mechanism since RDP doesn't natively await async IIFEs
+    const callbackId = `__evalCallback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const wrappedCode = `
-        (async function() {
+        (function() {
             try {
                 let __result__ = (function() { return ${code}; })();
-                // If result is a Promise, await it
+                // If result is a Promise, set up a callback
                 if (__result__ && typeof __result__.then === 'function') {
-                    __result__ = await __result__;
+                    globalThis.${callbackId} = { pending: true };
+                    __result__.then(function(val) {
+                        globalThis.${callbackId} = { pending: false, value: JSON.stringify({ __ok__: true, __value__: val }) };
+                    }).catch(function(e) {
+                        globalThis.${callbackId} = { pending: false, value: JSON.stringify({ __ok__: false, __error__: e.message, __stack__: e.stack }) };
+                    });
+                    return JSON.stringify({ __pending__: true, __callbackId__: ${JSON.stringify(callbackId)} });
                 }
                 return JSON.stringify({ __ok__: true, __value__: __result__ });
             } catch (e) {
@@ -363,6 +370,64 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
     }
 
     const parsed = JSON.parse(jsonStr);
+
+    // Handle pending async result
+    if (parsed.__pending__) {
+        const pendingCallbackId = parsed.__callbackId__;
+        firefoxDebug('evaluateInFirefoxBackground: waiting for async result callback:', pendingCallbackId);
+
+        // Poll for the callback result
+        const asyncTimeout = 30000;
+        const asyncStartTime = Date.now();
+        while (Date.now() - asyncStartTime < asyncTimeout) {
+            // Check if callback has completed
+            const checkCode = `JSON.stringify(globalThis.${pendingCallbackId})`;
+            const checkRequest = await client.request({
+                to: consoleActor,
+                type: 'evaluateJSAsync',
+                text: checkCode,
+            });
+
+            // Wait for check result
+            while (!evalResults.has(checkRequest.resultID)) {
+                if (Date.now() - asyncStartTime > asyncTimeout) {
+                    throw new Error('Timeout waiting for async evaluation result');
+                }
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+
+            const checkResult = evalResults.get(checkRequest.resultID);
+            evalResults.delete(checkRequest.resultID);
+
+            if (checkResult.hasException) {
+                throw new Error(`Async check error: ${checkResult.exceptionMessage}`);
+            }
+
+            const checkStr = checkResult.result;
+            if (typeof checkStr === 'string') {
+                const checkParsed = JSON.parse(checkStr);
+                if (!checkParsed.pending) {
+                    // Clean up callback
+                    client.request({
+                        to: consoleActor,
+                        type: 'evaluateJSAsync',
+                        text: `delete globalThis.${pendingCallbackId}`,
+                    });
+
+                    // Parse and return the actual result
+                    const finalParsed = JSON.parse(checkParsed.value);
+                    if (!finalParsed.__ok__) {
+                        throw new Error(`Evaluation error: ${finalParsed.__error__}\n${finalParsed.__stack__}`);
+                    }
+                    return finalParsed.__value__;
+                }
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+        throw new Error('Timeout waiting for async evaluation result');
+    }
+
     if (!parsed.__ok__) {
         throw new Error(`Evaluation error: ${parsed.__error__}\n${parsed.__stack__}`);
     }
