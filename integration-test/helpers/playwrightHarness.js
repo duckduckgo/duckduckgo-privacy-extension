@@ -398,6 +398,35 @@ class FirefoxBackgroundPage {
     }
 
     /**
+     * Evaluate and return a handle to the result.
+     * Note: This is a simplified implementation that doesn't return a true JSHandle,
+     * but wraps the result in an object with similar methods for compatibility.
+     * @param {Function|string} pageFunction - Function to evaluate
+     * @param {...any} args - Arguments to pass to the function
+     * @returns {Promise<Object>} - A handle-like object
+     */
+    async evaluateHandle(pageFunction, ...args) {
+        const value = await this.evaluate(pageFunction, ...args);
+        // Return a simple handle-like wrapper
+        return {
+            async evaluate(fn, ...evalArgs) {
+                // For evaluateHandle results, we need to evaluate against the stored value
+                // This is a simplified version - pass the value as the first argument
+                if (typeof fn === 'function') {
+                    return fn(value, ...evalArgs);
+                }
+                return value;
+            },
+            async jsonValue() {
+                return value;
+            },
+            async dispose() {
+                // No-op for our simple implementation
+            },
+        };
+    }
+
+    /**
      * Check if the background page is available for evaluation
      */
     isAvailable() {
