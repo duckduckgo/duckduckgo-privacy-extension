@@ -1,13 +1,10 @@
+import fs from 'fs';
 import { test, expect, getHARPath, isFirefoxTest } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 
-// Skip for Firefox:
-// 1. productSub expected value '20030107' is Chrome-specific; Firefox uses different native value
-// 2. page.addScriptTag() is blocked by CSP on duckduckgo.com in Firefox
-// 3. Fingerprint randomization behavior may differ between browsers
-test.skip(isFirefoxTest(), 'Fingerprint tests use Chrome-specific expected values');
-
+// Expected fingerprint values differ between browsers
+// Chrome: productSub is '20030107', Firefox: productSub is '20100101' (frozen per spec)
 const expectedFingerprintValues = {
     availTop: 0,
     availLeft: 0,
@@ -15,7 +12,7 @@ const expectedFingerprintValues = {
     wAvailLeft: 0,
     colorDepth: 24,
     pixelDepth: 24,
-    productSub: '20030107',
+    productSub: isFirefoxTest() ? '20100101' : '20030107',
     vendorSub: '',
 };
 
@@ -67,15 +64,19 @@ test.describe('First Party Fingerprint Randomization', () => {
     async function runTest(testCase, page) {
         await page.routeFromHAR(testCase.har);
         await page.goto(`https://${testCase.url}`);
-        await page.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' });
 
-        const fingerprint = await page.evaluate(() => {
+        // Read FingerprintJS and inject via evaluate() to bypass CSP restrictions
+        // (page.addScriptTag is blocked by CSP in Firefox)
+        const fpScript = fs.readFileSync('node_modules/@fingerprintjs/fingerprintjs/dist/fp.js', 'utf8');
+        const fingerprint = await page.evaluate(async (scriptContent) => {
+            // Create and execute the script in page context
+            // eslint-disable-next-line no-eval
+            eval(scriptContent);
             /* global FingerprintJS */
-            return (async () => {
-                const fp = await FingerprintJS.load();
-                return fp.get();
-            })();
-        });
+            const fp = await FingerprintJS.load();
+            return fp.get();
+        }, fpScript);
+
         return {
             canvas: fingerprint.components.canvas.value,
             plugin: fingerprint.components.plugins.value,
