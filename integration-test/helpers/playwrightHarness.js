@@ -639,10 +639,15 @@ export const test = base.extend({
     async backgroundPage({ context, manifestVersion }, use) {
         const routeHandler = (route) => {
             const url = route.request().url();
+            if (DEBUG_FIREFOX) {
+                firefoxDebug('routeHandler:', url.substring(0, 80));
+            }
             if (url.startsWith('https://staticcdn.duckduckgo.com/')) {
+                if (DEBUG_FIREFOX) firefoxDebug('routeHandler: serving from local resources');
                 return routeLocalResources(route);
             }
             if (url.startsWith('https://duckduckgo.com/atb.js')) {
+                if (DEBUG_FIREFOX) firefoxDebug('routeHandler: mocking ATB endpoint');
                 // mock ATB endpoint
                 const params = new URL(url).searchParams;
                 if (params.has('atb')) {
@@ -662,11 +667,13 @@ export const test = base.extend({
                 });
             }
             if (url.startsWith('https://duckduckgo.com/exti') || url.startsWith('https://improving.duckduckgo.com/')) {
+                if (DEBUG_FIREFOX) firefoxDebug('routeHandler: mocking pixel endpoint');
                 return route.fulfill({
                     status: 200,
                     body: '',
                 });
             }
+            if (DEBUG_FIREFOX) firefoxDebug('routeHandler: continuing request');
             route.continue();
         };
 

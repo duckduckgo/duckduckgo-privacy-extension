@@ -73,9 +73,14 @@ export async function logPageRequests(page, requests, requestFilter, transform, 
     };
 }
 
+const DEBUG_REQUESTS = process.env.CI === 'true' || process.env.DEBUG_REQUESTS === '1';
+
 function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutcome) {
     page.on('request', (request) => {
         const url = request.url();
+        if (DEBUG_REQUESTS) {
+            console.log('[logRequestsPlaywright] request event:', url.substring(0, 100));
+        }
         const requestDetails = {
             url,
             method: request.method(),
@@ -88,14 +93,20 @@ function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutco
         requestDetailsByRequestId.set(url, requestDetails);
     });
     page.on('requestfinished', (request) => {
+        if (DEBUG_REQUESTS) {
+            console.log('[logRequestsPlaywright] requestfinished event:', request.url().substring(0, 100));
+        }
         saveRequestOutcome(request.url(), (details) => {
             details.status = details.redirectUrl ? 'redirected' : 'allowed';
         });
     });
     page.on('requestfailed', (request) => {
+        const failure = request.failure();
+        const errorText = failure?.errorText || '';
+        if (DEBUG_REQUESTS) {
+            console.log('[logRequestsPlaywright] requestfailed event:', request.url().substring(0, 100), 'error:', errorText);
+        }
         saveRequestOutcome(request.url(), (details) => {
-            const failure = request.failure();
-            const errorText = failure?.errorText || '';
             // Check for blocked error messages (Chrome and Firefox variants)
             if (
                 errorText === 'net::ERR_BLOCKED_BY_CLIENT' ||
