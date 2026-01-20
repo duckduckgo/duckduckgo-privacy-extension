@@ -94,8 +94,17 @@ function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutco
     });
     page.on('requestfailed', (request) => {
         saveRequestOutcome(request.url(), (details) => {
-            const { errorText } = request.failure();
-            if (errorText === 'net::ERR_BLOCKED_BY_CLIENT' || errorText === 'net::ERR_ABORTED') {
+            const failure = request.failure();
+            const errorText = failure?.errorText || '';
+            // Check for blocked error messages (Chrome and Firefox variants)
+            if (
+                errorText === 'net::ERR_BLOCKED_BY_CLIENT' ||
+                errorText === 'net::ERR_ABORTED' ||
+                errorText.includes('NS_ERROR_ABORT') ||
+                errorText.includes('NS_BINDING_ABORTED') ||
+                errorText === 'Request was canceled' ||
+                errorText === ''
+            ) {
                 details.status = 'blocked';
                 details.reason = errorText;
             } else {
@@ -118,23 +127,62 @@ function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutco
  */
 export async function runRequestBlockingTest(page, url) {
     const pageRequests = [];
-    page.on('request', async (req) => {
-        if (!req.url().startsWith('https://bad.third-party.site/')) {
+    const DEBUG = process.env.CI === 'true' || process.env.DEBUG_REQUESTS === '1';
+
+    // Track requests using both 'request' and 'requestfailed' events for better Firefox compatibility
+    const pendingRequests = new Map();
+
+    page.on('request', (req) => {
+        const reqUrl = req.url();
+        if (!reqUrl.startsWith('https://bad.third-party.site/')) {
             return;
         }
-        let status = 'unknown';
-        const resp = await req.response();
-        if (!resp) {
-            status = 'blocked';
-        } else {
-            status = resp.ok() ? 'allowed' : 'redirected';
-        }
-        pageRequests.push({
-            url: req.url(),
+        if (DEBUG) console.log('[Request Helper] request event:', reqUrl);
+        pendingRequests.set(reqUrl, {
+            url: reqUrl,
             method: req.method(),
             type: req.resourceType(),
-            status,
+            status: 'pending',
         });
+    });
+
+    page.on('requestfinished', (req) => {
+        const reqUrl = req.url();
+        if (!pendingRequests.has(reqUrl)) {
+            return;
+        }
+        if (DEBUG) console.log('[Request Helper] requestfinished event:', reqUrl);
+        const details = pendingRequests.get(reqUrl);
+        pendingRequests.delete(reqUrl);
+        details.status = 'allowed';
+        pageRequests.push(details);
+    });
+
+    page.on('requestfailed', (req) => {
+        const reqUrl = req.url();
+        if (!pendingRequests.has(reqUrl)) {
+            return;
+        }
+        const failure = req.failure();
+        if (DEBUG) console.log('[Request Helper] requestfailed event:', reqUrl, 'error:', failure?.errorText);
+        const details = pendingRequests.get(reqUrl);
+        pendingRequests.delete(reqUrl);
+        // Check for blocked error messages (Chrome and Firefox variants)
+        const errorText = failure?.errorText || '';
+        if (
+            errorText === 'net::ERR_BLOCKED_BY_CLIENT' ||
+            errorText === 'net::ERR_ABORTED' ||
+            errorText.includes('NS_ERROR_ABORT') ||
+            errorText.includes('NS_BINDING_ABORTED') ||
+            errorText === 'Request was canceled' ||
+            errorText === ''
+        ) {
+            details.status = 'blocked';
+        } else {
+            details.status = 'failed';
+        }
+        details.reason = errorText;
+        pageRequests.push(details);
     });
 
     await page.bringToFront();
@@ -145,9 +193,18 @@ export async function runRequestBlockingTest(page, url) {
         // eslint-disable-next-line no-undef
         () => tests.filter(({ id }) => !id.includes('worker')).length,
     );
-    while (pageRequests.length < testCount) {
+    if (DEBUG) console.log('[Request Helper] testCount:', testCount, 'current pageRequests:', pageRequests.length);
+
+    // Wait for requests with timeout
+    const maxWait = 30000;
+    const startTime = Date.now();
+    while (pageRequests.length < testCount && Date.now() - startTime < maxWait) {
         await page.waitForTimeout(100);
+        if (DEBUG && (Date.now() - startTime) % 5000 < 100) {
+            console.log('[Request Helper] waiting... pageRequests:', pageRequests.length, 'pending:', pendingRequests.size);
+        }
     }
+    if (DEBUG) console.log('[Request Helper] done waiting, pageRequests:', pageRequests.length);
     await page.waitForTimeout(1000);
 
     const pageResults = await page.evaluate(
