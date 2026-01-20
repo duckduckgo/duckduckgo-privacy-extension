@@ -7,65 +7,78 @@ import path from 'path';
  * Uses chunked RDP transfer for large data.
  * @param {import('./playwrightHarness').FirefoxBackgroundPage} backgroundPage
  * @param {string} tdsFilePath - Path to the TDS JSON file (relative to data directory)
+ * @param {Object} options - Options
+ * @param {boolean} options.replace - If true, replace TDS entirely instead of merging
  */
-export async function overrideTdsViaBackground(backgroundPage, tdsFilePath) {
+export async function overrideTdsViaBackground(backgroundPage, tdsFilePath, options = {}) {
     const tdsData = JSON.parse(await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8'));
+    const { replace = false } = options;
 
     // Use overrideDataValue() to set the test TDS data directly
     // The chunked RDP mechanism handles large function arguments automatically
     // Note: This function is synchronous, not async, to avoid callback handling complexity
-    await backgroundPage.evaluate((newData) => {
-        const tdsLoader = globalThis.components.tds.tds;
-        // Get current data and merge with new data
-        const currentData = tdsLoader.data || {};
+    await backgroundPage.evaluate(
+        ({ newData, shouldReplace }) => {
+            const tdsLoader = globalThis.components.tds.tds;
 
-        // Merge cnames - handle both array and object formats carefully
-        // The extension may transform cnames internally, so we need to handle mixed types
-        let mergedCnames;
-        const currentCnames = currentData.cnames;
-        const newCnames = newData.cnames;
-        const currentIsArray = Array.isArray(currentCnames);
-        const newIsArray = Array.isArray(newCnames);
-
-        if (!currentCnames && !newCnames) {
-            mergedCnames = undefined;
-        } else if (!currentCnames) {
-            mergedCnames = newCnames;
-        } else if (!newCnames) {
-            mergedCnames = currentCnames;
-        } else if (currentIsArray && newIsArray) {
-            // Both arrays - concatenate
-            mergedCnames = [...currentCnames, ...newCnames];
-        } else if (!currentIsArray && !newIsArray) {
-            // Both objects - spread merge
-            mergedCnames = { ...currentCnames, ...newCnames };
-        } else if (currentIsArray && !newIsArray) {
-            // Current is array, new is object - convert object to entries and add
-            mergedCnames = [...currentCnames];
-            for (const [key, value] of Object.entries(newCnames)) {
-                mergedCnames.push({ host: key, cname: value });
+            // If replacing, just use the new data directly
+            if (shouldReplace) {
+                tdsLoader.overrideDataValue(newData);
+                return true;
             }
-        } else {
-            // Current is object, new is array - convert to object format and merge
-            mergedCnames = { ...currentCnames };
-            for (const entry of newCnames) {
-                if (entry.host && entry.cname) {
-                    mergedCnames[entry.host] = entry.cname;
+
+            // Get current data and merge with new data
+            const currentData = tdsLoader.data || {};
+
+            // Merge cnames - handle both array and object formats carefully
+            // The extension may transform cnames internally, so we need to handle mixed types
+            let mergedCnames;
+            const currentCnames = currentData.cnames;
+            const newCnames = newData.cnames;
+            const currentIsArray = Array.isArray(currentCnames);
+            const newIsArray = Array.isArray(newCnames);
+
+            if (!currentCnames && !newCnames) {
+                mergedCnames = undefined;
+            } else if (!currentCnames) {
+                mergedCnames = newCnames;
+            } else if (!newCnames) {
+                mergedCnames = currentCnames;
+            } else if (currentIsArray && newIsArray) {
+                // Both arrays - concatenate
+                mergedCnames = [...currentCnames, ...newCnames];
+            } else if (!currentIsArray && !newIsArray) {
+                // Both objects - spread merge
+                mergedCnames = { ...currentCnames, ...newCnames };
+            } else if (currentIsArray && !newIsArray) {
+                // Current is array, new is object - convert object to entries and add
+                mergedCnames = [...currentCnames];
+                for (const [key, value] of Object.entries(newCnames)) {
+                    mergedCnames.push({ host: key, cname: value });
+                }
+            } else {
+                // Current is object, new is array - convert to object format and merge
+                mergedCnames = { ...currentCnames };
+                for (const entry of newCnames) {
+                    if (entry.host && entry.cname) {
+                        mergedCnames[entry.host] = entry.cname;
+                    }
                 }
             }
-        }
 
-        const mergedData = {
-            ...currentData,
-            trackers: { ...currentData.trackers, ...newData.trackers },
-            entities: { ...currentData.entities, ...newData.entities },
-            domains: { ...currentData.domains, ...newData.domains },
-            cnames: mergedCnames,
-        };
-        // Use overrideDataValue which sets the data synchronously
-        tdsLoader.overrideDataValue(mergedData);
-        return true; // Return a value to indicate success
-    }, tdsData);
+            const mergedData = {
+                ...currentData,
+                trackers: { ...currentData.trackers, ...newData.trackers },
+                entities: { ...currentData.entities, ...newData.entities },
+                domains: { ...currentData.domains, ...newData.domains },
+                cnames: mergedCnames,
+            };
+            // Use overrideDataValue which sets the data synchronously
+            tdsLoader.overrideDataValue(mergedData);
+            return true; // Return a value to indicate success
+        },
+        { newData: tdsData, shouldReplace: replace },
+    );
 }
 
 /**

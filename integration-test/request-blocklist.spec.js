@@ -15,7 +15,8 @@ test.describe('Test Request Blocklist feature', () => {
         if (isFirefoxTest()) {
             await forExtensionLoaded(context);
             await forAllConfiguration(backgroundPage);
-            await overrideTdsViaBackground(backgroundPage, 'empty-tds.json');
+            // Replace TDS entirely with empty one (don't merge with existing data)
+            await overrideTdsViaBackground(backgroundPage, 'empty-tds.json', { replace: true });
             await overridePrivacyConfigViaBackground(backgroundPage, 'request-blocklist.json');
         } else {
             await overrideTds(backgroundNetworkContext, 'empty-tds.json');
