@@ -1,4 +1,4 @@
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait';
 import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
 import { runRequestBlockingTest } from './helpers/requests';
@@ -11,6 +11,8 @@ function expectBlocked(protectionsEnabled, url) {
 }
 
 test.describe('Test Request Blocklist feature', () => {
+    // Skip for Firefox - Playwright's route.fulfill() bypasses Firefox's webRequest API
+    test.skip(isFirefoxTest(), 'Request blocking tests require Chrome-specific request observation');
     test('Should block the .jpg requests', async ({ page, backgroundPage, context, backgroundNetworkContext, manifestVersion }) => {
         await overrideTds(backgroundNetworkContext, 'empty-tds.json');
         await overridePrivacyConfig(backgroundNetworkContext, 'request-blocklist.json');
