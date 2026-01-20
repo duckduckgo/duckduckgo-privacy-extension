@@ -1,4 +1,4 @@
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 import { overridePrivacyConfig } from './helpers/testConfig';
@@ -6,8 +6,6 @@ import { overridePrivacyConfig } from './helpers/testConfig';
 const testSite = 'https://privacy-test-pages.site/privacy-protections/request-blocking/';
 
 test.describe('Test privacy dashboard', () => {
-    // Skip for Firefox - chrome.runtime.getURL returns different format in Firefox
-    test.skip(isFirefoxTest(), 'Privacy dashboard tests require Chrome-specific extension URLs');
     test('Should load the dashboard with correct link text', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
         await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
         await backgroundWait.forExtensionLoaded(context);
@@ -18,9 +16,11 @@ test.describe('Test privacy dashboard', () => {
         await page.bringToFront();
         await page.click('#start');
 
+        // Use browser.runtime.getURL for Firefox, chrome.runtime.getURL for Chrome
         const panelUrl = await backgroundPage.evaluate(async () => {
             const currentTab = await globalThis.dbg.utils.getCurrentTab();
-            return chrome.runtime.getURL(`dashboard/html/browser.html?tabId=${currentTab.id}`);
+            const getURL = typeof browser !== 'undefined' && browser.runtime ? browser.runtime.getURL : chrome.runtime.getURL;
+            return getURL(`dashboard/html/browser.html?tabId=${currentTab.id}`);
         });
 
         const panel = await context.newPage();
