@@ -1,12 +1,16 @@
 import { getDomain } from 'tldts';
 import { EventEmitter } from 'node:events';
 
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { waitForNetworkIdle } from './helpers/pageWait';
 import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
 import { routeFromLocalhost } from './helpers/testPages';
 import { logPageRequests } from './helpers/requests';
+
+// Skip for Firefox - test relies on counting blocked requests via page.on('requestfailed'),
+// but Playwright's page.route() intercepts requests before Firefox's webRequest API can block them
+test.skip(isFirefoxTest(), 'Click-to-load tests require request blocking observation');
 
 const testSite = 'https://privacy-test-pages.site/privacy-protections/click-to-load/';
 const facebookDomains = new Set(['facebook.com', 'facebook.net', 'fbcdn.net']);

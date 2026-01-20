@@ -1,6 +1,12 @@
-import { test, expect, getHARPath } from './helpers/playwrightHarness';
+import { test, expect, getHARPath, isFirefoxTest } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
+
+// Skip for Firefox:
+// 1. productSub expected value '20030107' is Chrome-specific; Firefox uses different native value
+// 2. page.addScriptTag() is blocked by CSP on duckduckgo.com in Firefox
+// 3. Fingerprint randomization behavior may differ between browsers
+test.skip(isFirefoxTest(), 'Fingerprint tests use Chrome-specific expected values');
 
 const expectedFingerprintValues = {
     availTop: 0,
