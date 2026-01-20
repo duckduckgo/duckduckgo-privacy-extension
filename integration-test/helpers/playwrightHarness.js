@@ -309,11 +309,15 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
     firefoxDebug('evaluateInFirefoxBackground: evaluating code (length:', code.length, ')');
 
     // Wrap code in JSON.stringify to properly serialize the result
-    // This handles objects, arrays, and primitives correctly
+    // This handles objects, arrays, primitives, and async/Promise results correctly
     const wrappedCode = `
-        (function() {
+        (async function() {
             try {
-                const __result__ = (function() { return ${code}; })();
+                let __result__ = (function() { return ${code}; })();
+                // If result is a Promise, await it
+                if (__result__ && typeof __result__.then === 'function') {
+                    __result__ = await __result__;
+                }
                 return JSON.stringify({ __ok__: true, __value__: __result__ });
             } catch (e) {
                 return JSON.stringify({ __ok__: false, __error__: e.message, __stack__: e.stack });
