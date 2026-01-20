@@ -12,8 +12,8 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
     testDir: './integration-test',
-    /* Maximum time one test can run for - increased for Firefox */
-    timeout: 60 * 1000,
+    /* Maximum time one test can run for */
+    timeout: 45 * 1000,
     expect: {
         /**
          * Maximum time expect() should wait for the condition to be met.
@@ -24,8 +24,8 @@ export default defineConfig({
     fullyParallel: false,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
-    /* Retry on CI only - more retries for Firefox */
-    retries: process.env.CI ? 3 : 1,
+    /* Retry on CI only */
+    retries: process.env.CI ? 1 : 0,
     /* Single worker for Firefox extension tests */
     workers: 1,
     /* Reporter to use */
