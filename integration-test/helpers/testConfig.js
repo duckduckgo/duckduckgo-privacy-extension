@@ -10,14 +10,21 @@ import path from 'path';
 export async function overrideTdsViaBackground(backgroundPage, tdsFilePath) {
     const tdsData = JSON.parse(await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8'));
 
-    // For large data, we use a chunked approach to avoid RDP message size limits.
-    // First set the data as a global, then call the override function.
-    const dataJson = JSON.stringify(tdsData);
-    await backgroundPage.evaluate(`globalThis.__testTdsOverride = ${dataJson}`);
-    await backgroundPage.evaluate(async () => {
-        await globalThis.components.tds.tds.overrideDataValue(globalThis.__testTdsOverride);
-        delete globalThis.__testTdsOverride;
-    });
+    // Use modify() to merge the test TDS data into the existing data.
+    // This is more reliable than overrideDataValue with large data.
+    await backgroundPage.evaluate(async (newData) => {
+        const tdsLoader = globalThis.components.tds.tds;
+        await tdsLoader.modify((currentData) => {
+            // Merge trackers, entities, domains from newData into currentData
+            return {
+                ...currentData,
+                trackers: { ...currentData.trackers, ...newData.trackers },
+                entities: { ...currentData.entities, ...newData.entities },
+                domains: { ...currentData.domains, ...newData.domains },
+                cnames: [...(currentData.cnames || []), ...(newData.cnames || [])],
+            };
+        });
+    }, tdsData);
 }
 
 /**
@@ -29,31 +36,38 @@ export async function overridePrivacyConfigViaBackground(backgroundPage, testCon
     const filePath = path.resolve(__dirname, '..', 'data', 'configs', testConfigFilename);
     const testConfig = JSON.parse(fs.readFileSync(filePath).toString());
 
-    // Read the base config to apply patches
-    const localPath = path.join(__dirname, '..', 'data', 'staticcdn', 'trackerblocking', 'config', 'v4', 'extension-firefox-config.json');
-    const localConfig = JSON.parse(fs.readFileSync(localPath));
-
-    // Apply patches from testConfig
+    // Build a patch object from the test config
+    // The testConfig has paths like "globalThis.dbg.tds.config.features.X" = value
+    const patches = {};
     for (const pathString of Object.keys(testConfig)) {
         const pathParts = pathString.split('.');
         if (pathParts[0] !== 'globalThis' || pathParts[1] !== 'dbg' || pathParts[2] !== 'tds' || pathParts[3] !== 'config') {
             throw new Error(`unknown config patch path: ${pathString}`);
         }
-        let target = localConfig;
-        const lastPart = pathParts.pop();
-        for (const p of pathParts.slice(4)) {
-            target = target[p];
-        }
-        target[lastPart] = testConfig[pathString];
+        // Convert path to nested object structure
+        const configPath = pathParts.slice(4); // e.g., ['features', 'trackerAllowlist', 'state']
+        patches[configPath.join('.')] = testConfig[pathString];
     }
 
-    // For large config data, set as global first then call override
-    const configJson = JSON.stringify(localConfig);
-    await backgroundPage.evaluate(`globalThis.__testConfigOverride = ${configJson}`);
-    await backgroundPage.evaluate(async () => {
-        await globalThis.components.tds.remoteConfig.overrideDataValue(globalThis.__testConfigOverride);
-        delete globalThis.__testConfigOverride;
-    });
+    // Use modify() to apply patches to existing config
+    await backgroundPage.evaluate(async (patchObj) => {
+        const configLoader = globalThis.components.tds.remoteConfig;
+        await configLoader.modify((config) => {
+            // Apply each patch
+            for (const [patchPath, value] of Object.entries(patchObj)) {
+                const parts = patchPath.split('.');
+                let target = config;
+                for (let i = 0; i < parts.length - 1; i++) {
+                    if (!target[parts[i]]) {
+                        target[parts[i]] = {};
+                    }
+                    target = target[parts[i]];
+                }
+                target[parts[parts.length - 1]] = value;
+            }
+            return config;
+        });
+    }, patches);
 }
 
 /**
