@@ -691,6 +691,44 @@ export const test = base.extend({
             });
             firefoxDebug('context fixture: Firefox launched');
 
+            // Set up routes BEFORE installing the extension, so the extension
+            // loads its TDS and config from our local test data.
+            firefoxDebug('context fixture: setting up default routes...');
+            await context.route('**/*', async (route) => {
+                const url = route.request().url();
+                if (url.startsWith('https://staticcdn.duckduckgo.com/')) {
+                    firefoxDebug('context fixture: serving from local resources:', url.substring(0, 80));
+                    return routeLocalResources(route);
+                }
+                if (url.startsWith('https://duckduckgo.com/atb.js')) {
+                    firefoxDebug('context fixture: mocking ATB endpoint');
+                    const params = new URL(url).searchParams;
+                    if (params.has('atb')) {
+                        const version = params.get('atb');
+                        const [majorVersion, minorVersion] = version.slice(1).split('-');
+                        if (majorVersion < 360 && minorVersion > 1) {
+                            return route.fulfill({
+                                body: JSON.stringify({
+                                    ...mockAtb,
+                                    updateVersion: `v${majorVersion}-1`,
+                                }),
+                            });
+                        }
+                    }
+                    return route.fulfill({
+                        body: JSON.stringify(mockAtb),
+                    });
+                }
+                if (url.startsWith('https://duckduckgo.com/exti') || url.startsWith('https://improving.duckduckgo.com/')) {
+                    return route.fulfill({
+                        status: 200,
+                        body: '',
+                    });
+                }
+                route.continue();
+            });
+            firefoxDebug('context fixture: default routes set up');
+
             // Wait for Firefox to be ready
             firefoxDebug('context fixture: waiting 1s for Firefox to be ready...');
             await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -795,8 +833,8 @@ export const test = base.extend({
         };
 
         if (isFirefoxTest()) {
-            // Firefox: Set up context-level routing
-            await context.route('**/*', routeHandler);
+            // Firefox: Routes are already set up in the context fixture before extension install.
+            // We don't need to set them up again here.
 
             // Create a Firefox background page wrapper with evaluate() support
             const firefoxBg = new FirefoxBackgroundPage(
