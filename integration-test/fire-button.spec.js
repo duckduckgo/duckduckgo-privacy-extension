@@ -1,6 +1,10 @@
 import { forExtensionLoaded } from './helpers/backgroundWait';
-import { test, expect, getManifestVersion } from './helpers/playwrightHarness';
+import { test, expect, getManifestVersion, isFirefoxTest } from './helpers/playwrightHarness';
 import { routeFromLocalhost } from './helpers/testPages';
+
+// Skip for Firefox - Fire Button tests use evaluateHandle() with subsequent .evaluate() calls
+// which require proper JSHandle semantics that aren't fully supported in Firefox RDP
+test.skip(isFirefoxTest(), 'Fire Button tests require Chrome-specific JSHandle support');
 
 const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/;
 
