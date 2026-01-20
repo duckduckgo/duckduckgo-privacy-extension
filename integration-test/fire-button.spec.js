@@ -2,11 +2,10 @@ import { forExtensionLoaded } from './helpers/backgroundWait';
 import { test, expect, getManifestVersion, isFirefoxTest } from './helpers/playwrightHarness';
 import { routeFromLocalhost } from './helpers/testPages';
 
-// Skip for Firefox - Fire Button tests use evaluateHandle() with subsequent .evaluate() calls
-// which require proper JSHandle semantics that aren't fully supported in Firefox RDP
-test.skip(isFirefoxTest(), 'Fire Button tests require Chrome-specific JSHandle support');
-
-const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/;
+// Firefox uses moz-extension:// URLs, Chrome uses chrome-extension://
+const burnAnimationRegex = isFirefoxTest()
+    ? /^moz-extension:\/\/[a-z0-9-]*\/html\/fire.html$/
+    : /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/;
 
 async function loadPageInNewTab(context, url) {
     const page = await context.newPage();
@@ -73,7 +72,11 @@ test.describe('Fire Button', () => {
         // wait for the animation to complete
         await new Promise((resolve) => setTimeout(resolve, 3000));
         // check that we're redirected to the newtab page after the animation completes
-        expect(burnAnimationPage.url()).toMatch(/^(https:\/\/duckduckgo.com\/chrome_newtab|chrome:\/\/new-tab-page\/$)/);
+        // Firefox uses about:blank or about:newtab, Chrome uses chrome://new-tab-page or duckduckgo newtab
+        const expectedNewTabPattern = isFirefoxTest()
+            ? /^(about:blank|about:newtab|about:home)$/
+            : /^(https:\/\/duckduckgo.com\/chrome_newtab|chrome:\/\/new-tab-page\/$)/;
+        expect(burnAnimationPage.url()).toMatch(expectedNewTabPattern);
     });
 
     test.describe('Tab clearing', () => {

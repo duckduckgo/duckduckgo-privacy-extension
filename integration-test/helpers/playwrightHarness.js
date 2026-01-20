@@ -437,29 +437,77 @@ class FirefoxBackgroundPage {
 
     /**
      * Evaluate and return a handle to the result.
-     * Note: This is a simplified implementation that doesn't return a true JSHandle,
-     * but wraps the result in an object with similar methods for compatibility.
+     * This stores the object reference in the browser using a unique ID,
+     * allowing subsequent evaluate() calls on the handle to access the actual object.
      * @param {Function|string} pageFunction - Function to evaluate
      * @param {...any} args - Arguments to pass to the function
      * @returns {Promise<Object>} - A handle-like object
      */
     async evaluateHandle(pageFunction, ...args) {
-        const value = await this.evaluate(pageFunction, ...args);
-        // Return a simple handle-like wrapper
+        // Generate a unique handle ID
+        const handleId = `__pw_handle_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+        // Convert function to string if needed
+        let code;
+        if (typeof pageFunction === 'function') {
+            const fnStr = pageFunction.toString();
+            if (args.length > 0) {
+                const serializedArgs = args.map((arg) => JSON.stringify(arg)).join(', ');
+                code = `(${fnStr})(${serializedArgs})`;
+            } else {
+                code = `(${fnStr})()`;
+            }
+        } else {
+            code = String(pageFunction);
+        }
+
+        // Store the result in a global map in the browser
+        const storeCode = `
+            (function() {
+                globalThis.__playwrightHandles = globalThis.__playwrightHandles || new Map();
+                globalThis.__playwrightHandles.set(${JSON.stringify(handleId)}, ${code});
+                return true;
+            })()
+        `;
+
+        await evaluateInFirefoxBackground(this._client, this._consoleActor, this._evalResults, storeCode);
+
+        // Return a handle object that knows how to evaluate against the stored reference
+        const client = this._client;
+        const consoleActor = this._consoleActor;
+        const evalResults = this._evalResults;
+
         return {
+            _handleId: handleId,
             async evaluate(fn, ...evalArgs) {
-                // For evaluateHandle results, we need to evaluate against the stored value
-                // This is a simplified version - pass the value as the first argument
-                if (typeof fn === 'function') {
-                    return fn(value, ...evalArgs);
+                // Build code that retrieves the handle from the map and passes it to the function
+                const fnStr = typeof fn === 'function' ? fn.toString() : String(fn);
+                let evalCode;
+                if (evalArgs.length > 0) {
+                    const serializedArgs = evalArgs.map((arg) => JSON.stringify(arg)).join(', ');
+                    evalCode = `
+                        (function() {
+                            const __h = globalThis.__playwrightHandles.get(${JSON.stringify(handleId)});
+                            return (${fnStr})(__h, ${serializedArgs});
+                        })()
+                    `;
+                } else {
+                    evalCode = `
+                        (function() {
+                            const __h = globalThis.__playwrightHandles.get(${JSON.stringify(handleId)});
+                            return (${fnStr})(__h);
+                        })()
+                    `;
                 }
-                return value;
+                return evaluateInFirefoxBackground(client, consoleActor, evalResults, evalCode);
             },
             async jsonValue() {
-                return value;
+                const code = `globalThis.__playwrightHandles.get(${JSON.stringify(handleId)})`;
+                return evaluateInFirefoxBackground(client, consoleActor, evalResults, code);
             },
             async dispose() {
-                // No-op for our simple implementation
+                const code = `globalThis.__playwrightHandles.delete(${JSON.stringify(handleId)})`;
+                await evaluateInFirefoxBackground(client, consoleActor, evalResults, code);
             },
         };
     }
