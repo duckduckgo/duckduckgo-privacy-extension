@@ -341,7 +341,8 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
     firefoxDebug('evaluateInFirefoxBackground: got resultID:', evalRequest.resultID);
 
     // Wait for result (with timeout)
-    const timeout = 10000;
+    // Large data operations (like setting TDS/config) may take longer
+    const timeout = 60000;
     const startTime = Date.now();
     while (!evalResults.has(evalRequest.resultID)) {
         if (Date.now() - startTime > timeout) {

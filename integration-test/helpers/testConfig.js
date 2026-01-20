@@ -9,9 +9,15 @@ import path from 'path';
  */
 export async function overrideTdsViaBackground(backgroundPage, tdsFilePath) {
     const tdsData = JSON.parse(await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8'));
-    await backgroundPage.evaluate(async (data) => {
-        await globalThis.components.tds.tds.overrideDataValue(data);
-    }, tdsData);
+
+    // For large data, we use a chunked approach to avoid RDP message size limits.
+    // First set the data as a global, then call the override function.
+    const dataJson = JSON.stringify(tdsData);
+    await backgroundPage.evaluate(`globalThis.__testTdsOverride = ${dataJson}`);
+    await backgroundPage.evaluate(async () => {
+        await globalThis.components.tds.tds.overrideDataValue(globalThis.__testTdsOverride);
+        delete globalThis.__testTdsOverride;
+    });
 }
 
 /**
@@ -41,9 +47,13 @@ export async function overridePrivacyConfigViaBackground(backgroundPage, testCon
         target[lastPart] = testConfig[pathString];
     }
 
-    await backgroundPage.evaluate(async (config) => {
-        await globalThis.components.tds.remoteConfig.overrideDataValue(config);
-    }, localConfig);
+    // For large config data, set as global first then call override
+    const configJson = JSON.stringify(localConfig);
+    await backgroundPage.evaluate(`globalThis.__testConfigOverride = ${configJson}`);
+    await backgroundPage.evaluate(async () => {
+        await globalThis.components.tds.remoteConfig.overrideDataValue(globalThis.__testConfigOverride);
+        delete globalThis.__testConfigOverride;
+    });
 }
 
 /**
