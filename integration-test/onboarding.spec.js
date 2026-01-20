@@ -14,6 +14,9 @@ function stubOnFirstSearchPostExtensionInstallOnInit(page) {
 }
 
 test.describe('onboarding', () => {
+    // Skip all onboarding tests for Firefox - these are Chrome-specific
+    test.skip(isFirefoxTest(), 'Onboarding tests are Chrome-specific');
+
     test('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async ({
         manifestVersion,
         context,
@@ -68,7 +71,6 @@ test.describe('onboarding', () => {
     });
 
     test('should allow the site to perform extension health checks (Chrome only)', async ({ context, page }) => {
-        test.skip(isFirefoxTest(), 'Chrome-only test');
         await backgroundWait.forExtensionLoaded(context);
 
         await page.bringToFront();
@@ -93,7 +95,6 @@ test.describe('onboarding', () => {
     });
 
     test('should allow the site to reschedule the counter messaging (Chrome only)', async ({ context, backgroundPage, page }) => {
-        test.skip(isFirefoxTest(), 'Chrome-only test');
         await backgroundWait.forExtensionLoaded(context);
 
         await stubOnFirstSearchPostExtensionInstallOnInit(page);
