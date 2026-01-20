@@ -1,10 +1,12 @@
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 
 const loopProtectionPage = 'https://good.third-party.site/privacy-protections/https-loop-protection/';
 
 test.describe('Loop protection', () => {
+    // Skip for Firefox - HTTPS loop protection requires webRequest interception
+    test.skip(isFirefoxTest(), 'HTTPS loop protection tests require Chrome-specific request interception');
     test('Loop protection page should prevent loading https:// infinately', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);

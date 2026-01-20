@@ -1,8 +1,10 @@
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { TEST_SERVER_ORIGIN } from './helpers/testPages';
 
 test.describe('navigatorInterface', () => {
+    // Skip for Firefox - navigator interface injection requires content script timing
+    test.skip(isFirefoxTest(), 'Navigator interface tests require Chrome-specific content script injection');
     test('injects navigator.duckduckgo interface into pages', async ({ backgroundPage, page, context, manifestVersion }) => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
