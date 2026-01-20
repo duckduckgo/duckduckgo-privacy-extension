@@ -4,33 +4,68 @@ import path from 'path';
 /**
  * Override TDS data for Firefox by directly setting the data via background page evaluation.
  * This bypasses the network entirely since Firefox extension requests don't go through Playwright routing.
+ * Uses chunked RDP transfer for large data.
  * @param {import('./playwrightHarness').FirefoxBackgroundPage} backgroundPage
  * @param {string} tdsFilePath - Path to the TDS JSON file (relative to data directory)
  */
 export async function overrideTdsViaBackground(backgroundPage, tdsFilePath) {
     const tdsData = JSON.parse(await fs.promises.readFile(path.join(__dirname, '..', 'data', tdsFilePath), 'utf-8'));
 
-    // Set the TDS data as a global first to avoid passing large data as function arguments
-    // which can cause RDP timeouts.
-    const dataJson = JSON.stringify(tdsData);
-    await backgroundPage.evaluate(`globalThis.__testTdsData = ${dataJson}`);
-
-    // Now use modify() to merge the test TDS data into the existing data
-    await backgroundPage.evaluate(async () => {
-        const newData = globalThis.__testTdsData;
-        delete globalThis.__testTdsData;
+    // Use overrideDataValue() to set the test TDS data directly
+    // The chunked RDP mechanism handles large function arguments automatically
+    // Note: This function is synchronous, not async, to avoid callback handling complexity
+    await backgroundPage.evaluate((newData) => {
         const tdsLoader = globalThis.components.tds.tds;
-        await tdsLoader.modify((currentData) => {
-            // Merge trackers, entities, domains from newData into currentData
-            return {
-                ...currentData,
-                trackers: { ...currentData.trackers, ...newData.trackers },
-                entities: { ...currentData.entities, ...newData.entities },
-                domains: { ...currentData.domains, ...newData.domains },
-                cnames: [...(currentData.cnames || []), ...(newData.cnames || [])],
-            };
-        });
-    });
+        // Get current data and merge with new data
+        const currentData = tdsLoader.data || {};
+
+        // Merge cnames - handle both array and object formats carefully
+        // The extension may transform cnames internally, so we need to handle mixed types
+        let mergedCnames;
+        const currentCnames = currentData.cnames;
+        const newCnames = newData.cnames;
+        const currentIsArray = Array.isArray(currentCnames);
+        const newIsArray = Array.isArray(newCnames);
+
+        if (!currentCnames && !newCnames) {
+            mergedCnames = undefined;
+        } else if (!currentCnames) {
+            mergedCnames = newCnames;
+        } else if (!newCnames) {
+            mergedCnames = currentCnames;
+        } else if (currentIsArray && newIsArray) {
+            // Both arrays - concatenate
+            mergedCnames = [...currentCnames, ...newCnames];
+        } else if (!currentIsArray && !newIsArray) {
+            // Both objects - spread merge
+            mergedCnames = { ...currentCnames, ...newCnames };
+        } else if (currentIsArray && !newIsArray) {
+            // Current is array, new is object - convert object to entries and add
+            mergedCnames = [...currentCnames];
+            for (const [key, value] of Object.entries(newCnames)) {
+                mergedCnames.push({ host: key, cname: value });
+            }
+        } else {
+            // Current is object, new is array - convert to object format and merge
+            mergedCnames = { ...currentCnames };
+            for (const entry of newCnames) {
+                if (entry.host && entry.cname) {
+                    mergedCnames[entry.host] = entry.cname;
+                }
+            }
+        }
+
+        const mergedData = {
+            ...currentData,
+            trackers: { ...currentData.trackers, ...newData.trackers },
+            entities: { ...currentData.entities, ...newData.entities },
+            domains: { ...currentData.domains, ...newData.domains },
+            cnames: mergedCnames,
+        };
+        // Use overrideDataValue which sets the data synchronously
+        tdsLoader.overrideDataValue(mergedData);
+        return true; // Return a value to indicate success
+    }, tdsData);
 }
 
 /**
@@ -55,31 +90,26 @@ export async function overridePrivacyConfigViaBackground(backgroundPage, testCon
         patches[configPath.join('.')] = testConfig[pathString];
     }
 
-    // Set patches as a global to avoid passing data as function arguments
-    const patchJson = JSON.stringify(patches);
-    await backgroundPage.evaluate(`globalThis.__testConfigPatches = ${patchJson}`);
-
-    // Use modify() to apply patches to existing config
-    await backgroundPage.evaluate(async () => {
-        const patchObj = globalThis.__testConfigPatches;
-        delete globalThis.__testConfigPatches;
+    // Use overrideDataValue() to apply patches to existing config
+    // The chunked RDP mechanism handles large function arguments automatically
+    await backgroundPage.evaluate((patchObj) => {
         const configLoader = globalThis.components.tds.remoteConfig;
-        await configLoader.modify((config) => {
-            // Apply each patch
-            for (const [patchPath, value] of Object.entries(patchObj)) {
-                const parts = patchPath.split('.');
-                let target = config;
-                for (let i = 0; i < parts.length - 1; i++) {
-                    if (!target[parts[i]]) {
-                        target[parts[i]] = {};
-                    }
-                    target = target[parts[i]];
+        // Get current config and apply patches
+        const config = JSON.parse(JSON.stringify(configLoader.data || {}));
+        for (const [patchPath, value] of Object.entries(patchObj)) {
+            const parts = patchPath.split('.');
+            let target = config;
+            for (let i = 0; i < parts.length - 1; i++) {
+                if (!target[parts[i]]) {
+                    target[parts[i]] = {};
                 }
-                target[parts[parts.length - 1]] = value;
+                target = target[parts[i]];
             }
-            return config;
-        });
-    });
+            target[parts[parts.length - 1]] = value;
+        }
+        // Use overrideDataValue which sets the data synchronously
+        configLoader.overrideDataValue(config);
+    }, patches);
 }
 
 /**

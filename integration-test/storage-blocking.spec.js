@@ -1,12 +1,7 @@
 import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
-import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
+import { overridePrivacyConfig, overrideTds, overrideTdsViaBackground, overridePrivacyConfigViaBackground } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages';
-
-// Firefox: Skip tests that need TDS/config override. The RDP evaluate mechanism
-// can't reliably handle data larger than ~500 bytes.
-// TODO: Find a way to bundle test data in the extension build for Firefox.
-test.skip(isFirefoxTest(), 'Firefox: RDP cannot handle large TDS/config data');
 
 const testPageDomain = 'privacy-test-pages.site';
 const thirdPartyDomain = 'good.third-party.site';
@@ -26,10 +21,17 @@ test.describe('Storage blocking Tests', () => {
         context,
         backgroundNetworkContext,
     }) => {
-        await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
-        await overrideTds(backgroundNetworkContext, 'mock-tds.json');
-        await backgroundWait.forExtensionLoaded(context);
-        await backgroundWait.forAllConfiguration(backgroundPage);
+        if (isFirefoxTest()) {
+            await backgroundWait.forExtensionLoaded(context);
+            await backgroundWait.forAllConfiguration(backgroundPage);
+            await overrideTdsViaBackground(backgroundPage, 'mock-tds.json');
+            await overridePrivacyConfigViaBackground(backgroundPage, 'storage-blocking.json');
+        } else {
+            await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
+            await overrideTds(backgroundNetworkContext, 'mock-tds.json');
+            await backgroundWait.forExtensionLoaded(context);
+            await backgroundWait.forAllConfiguration(backgroundPage);
+        }
         await routeFromLocalhost(page);
         await page.bringToFront();
         await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle' });
@@ -104,10 +106,17 @@ test.describe('Storage blocking Tests', () => {
         }
 
         test.beforeEach(async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
-            await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
-            await overrideTds(backgroundNetworkContext, 'mock-tds.json');
-            await backgroundWait.forExtensionLoaded(context);
-            await backgroundWait.forAllConfiguration(backgroundPage);
+            if (isFirefoxTest()) {
+                await backgroundWait.forExtensionLoaded(context);
+                await backgroundWait.forAllConfiguration(backgroundPage);
+                await overrideTdsViaBackground(backgroundPage, 'mock-tds.json');
+                await overridePrivacyConfigViaBackground(backgroundPage, 'storage-blocking.json');
+            } else {
+                await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
+                await overrideTds(backgroundNetworkContext, 'mock-tds.json');
+                await backgroundWait.forExtensionLoaded(context);
+                await backgroundWait.forAllConfiguration(backgroundPage);
+            }
             await routeFromLocalhost(page);
 
             // reset allowlists

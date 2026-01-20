@@ -1,6 +1,7 @@
 import { test as base, chromium, firefox } from '@playwright/test';
 import path from 'path';
 import fs from 'fs/promises';
+import fsSync from 'fs';
 import net from 'net';
 import os from 'os';
 
@@ -15,7 +16,12 @@ export function getHARPath(harFile) {
  * Check if we're running Firefox tests
  */
 export function isFirefoxTest() {
-    return process.env.npm_lifecycle_event === 'playwright-firefox';
+    // Check npm lifecycle event, or PWTEST_FIREFOX env var for direct invocation
+    return (
+        process.env.npm_lifecycle_event === 'playwright-firefox' ||
+        process.env.PWTEST_FIREFOX === '1' ||
+        process.argv.some((arg) => arg.includes('playwright.firefox.config'))
+    );
 }
 
 export function getManifestVersion() {
@@ -178,11 +184,19 @@ class FirefoxRDPClient {
     }
 }
 
-// Debug logging helper
+// Debug logging helper - always write to file for debugging
 const DEBUG_FIREFOX = process.env.DEBUG_FIREFOX === '1' || process.env.CI === 'true';
+const DEBUG_LOG_FILE = '/tmp/firefox-harness-debug.log';
 function firefoxDebug(...args) {
+    const msg = '[Firefox Harness] ' + args.map(String).join(' ') + '\n';
+    // Always write to file for debugging
+    try {
+        fsSync.appendFileSync(DEBUG_LOG_FILE, `${new Date().toISOString()} ${msg}`);
+    } catch (e) {
+        // ignore
+    }
     if (DEBUG_FIREFOX) {
-        console.log('[Firefox Harness]', ...args);
+        process.stderr.write(msg);
     }
 }
 
@@ -197,6 +211,7 @@ async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
     const evalResults = new Map();
     client.onEvent((msg) => {
         if (msg.type === 'evaluationResult') {
+            firefoxDebug('EVENT: evaluationResult received, resultID:', msg.resultID);
             evalResults.set(msg.resultID, msg);
         }
     });
@@ -296,9 +311,141 @@ async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
     }
 }
 
+// Maximum chunk size for RDP messages
+// Note: Messages under 500 chars work reliably, so we only chunk larger messages
+const RDP_CHUNK_SIZE = 500;
+
+/**
+ * Send a large string to the browser in chunks, then reassemble it.
+ * Returns the global variable name where the assembled string is stored.
+ *
+ * @param {FirefoxRDPClient} client
+ * @param {string} consoleActor
+ * @param {Map} evalResults
+ * @param {string} data - The large string to send
+ * @returns {Promise<string>} - The global variable name containing the data
+ */
+async function sendChunkedData(client, consoleActor, evalResults, data) {
+    const messageId = `__chunk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const chunks = [];
+
+    // Split data into chunks
+    for (let i = 0; i < data.length; i += RDP_CHUNK_SIZE) {
+        chunks.push(data.slice(i, i + RDP_CHUNK_SIZE));
+    }
+
+    firefoxDebug(`sendChunkedData: sending ${chunks.length} chunks for message ${messageId}`);
+
+    // Initialize the chunk storage on the browser side
+    const initCode = `globalThis.${messageId} = { chunks: [], total: ${chunks.length} }`;
+    await evaluateSmallCode(client, consoleActor, evalResults, initCode);
+
+    // Send each chunk
+    for (let i = 0; i < chunks.length; i++) {
+        // Escape the chunk for JavaScript string literal
+        const escapedChunk = JSON.stringify(chunks[i]);
+        const chunkCode = `globalThis.${messageId}.chunks[${i}] = ${escapedChunk}`;
+        await evaluateSmallCode(client, consoleActor, evalResults, chunkCode);
+    }
+
+    // Assemble the chunks into a single string
+    const assembleCode = `globalThis.${messageId}.assembled = globalThis.${messageId}.chunks.join('')`;
+    await evaluateSmallCode(client, consoleActor, evalResults, assembleCode);
+
+    firefoxDebug(`sendChunkedData: all chunks sent and assembled for ${messageId}`);
+
+    return messageId;
+}
+
+/**
+ * Clean up a chunked data message after use.
+ */
+async function cleanupChunkedData(client, consoleActor, evalResults, messageId) {
+    const cleanupCode = `delete globalThis.${messageId}`;
+    await evaluateSmallCode(client, consoleActor, evalResults, cleanupCode);
+}
+
+/**
+ * Evaluate small code synchronously via RDP.
+ * This is a simpler version that doesn't handle async results - used for chunk operations.
+ */
+async function evaluateSmallCode(client, consoleActor, evalResults, code) {
+    firefoxDebug('evaluateSmallCode: sending code (length:', code.length, ')');
+
+    const evalRequest = await client.request({
+        to: consoleActor,
+        type: 'evaluateJSAsync',
+        text: code,
+    });
+
+    firefoxDebug('evaluateSmallCode: got response:', JSON.stringify(evalRequest).slice(0, 200));
+
+    const timeout = 10000;
+    const startTime = Date.now();
+    while (!evalResults.has(evalRequest.resultID)) {
+        if (Date.now() - startTime > timeout) {
+            firefoxDebug('evaluateSmallCode: TIMEOUT waiting for result, evalResults keys:', Array.from(evalResults.keys()).join(', '));
+            throw new Error(`Timeout waiting for small code evaluation: ${code.slice(0, 50)}...`);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+
+    firefoxDebug('evaluateSmallCode: got result');
+    const result = evalResults.get(evalRequest.resultID);
+    evalResults.delete(evalRequest.resultID);
+
+    if (result.hasException) {
+        throw new Error(`Small code evaluation error: ${result.exceptionMessage}`);
+    }
+
+    return result.result;
+}
+
+/**
+ * Send large data to the browser in chunks and store it in a global variable.
+ * The data is JSON serialized and can be retrieved with globalThis[varName].
+ * Returns the variable name used.
+ *
+ * @param {FirefoxRDPClient} client
+ * @param {string} consoleActor
+ * @param {Map} evalResults
+ * @param {any} data - The data to send (will be JSON serialized)
+ * @returns {Promise<string>} - The global variable name containing the data
+ */
+async function sendLargeDataToGlobal(client, consoleActor, evalResults, data) {
+    const dataStr = JSON.stringify(data);
+    const varName = `__data_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    firefoxDebug(`sendLargeDataToGlobal: sending ${dataStr.length} chars for ${varName}`);
+
+    // Send the data in chunks
+    const chunkMessageId = await sendChunkedData(client, consoleActor, evalResults, dataStr);
+
+    // Parse the assembled JSON into the global variable
+    const parseCode = `globalThis.${varName} = JSON.parse(globalThis.${chunkMessageId}.assembled)`;
+    await evaluateSmallCode(client, consoleActor, evalResults, parseCode);
+
+    // Clean up the chunk storage
+    await cleanupChunkedData(client, consoleActor, evalResults, chunkMessageId);
+
+    firefoxDebug(`sendLargeDataToGlobal: data stored in ${varName}`);
+    return varName;
+}
+
+/**
+ * Clean up a global variable created by sendLargeDataToGlobal
+ */
+async function cleanupGlobalData(client, consoleActor, evalResults, varName) {
+    const cleanupCode = `delete globalThis.${varName}`;
+    await evaluateSmallCode(client, consoleActor, evalResults, cleanupCode);
+}
+
 /**
  * Evaluate code in the Firefox extension's background page via RDP.
  * Uses JSON serialization for proper value transfer.
+ *
+ * Note: For large code/arguments, use the FirefoxBackgroundPage.evaluate() method
+ * which handles large arguments by sending them via chunked data mechanism.
  */
 async function evaluateInFirefoxBackground(client, consoleActor, evalResults, code) {
     if (!consoleActor) {
@@ -356,18 +503,47 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
     const result = evalResults.get(evalRequest.resultID);
     evalResults.delete(evalRequest.resultID);
 
+    firefoxDebug('evaluateInFirefoxBackground: result object:', JSON.stringify(result).slice(0, 300));
+
     if (result.hasException) {
         throw new Error(`Evaluation error: ${result.exceptionMessage}`);
     }
 
     // Parse the JSON result
-    const jsonStr = result.result;
-    if (typeof jsonStr !== 'string') {
-        // Handle case where result is already parsed or undefined
-        if (jsonStr && jsonStr.type === 'undefined') {
+    let jsonStr = result.result;
+
+    // Handle RDP object types
+    if (typeof jsonStr === 'object' && jsonStr !== null) {
+        if (jsonStr.type === 'undefined') {
             return undefined;
         }
-        throw new Error(`Unexpected result type: ${typeof jsonStr}`);
+        if (jsonStr.type === 'longString') {
+            // For long strings, we need to fetch the full content from the server
+            // The actor property has the substring actor we need to request
+            if (jsonStr.actor) {
+                firefoxDebug('evaluateInFirefoxBackground: fetching full longString from actor:', jsonStr.actor);
+                const substringResult = await client.request({
+                    to: jsonStr.actor,
+                    type: 'substring',
+                    start: 0,
+                    end: jsonStr.length,
+                });
+                jsonStr = substringResult.substring;
+            } else if (jsonStr.initial) {
+                // Fallback to initial if no actor (shouldn't happen but be safe)
+                jsonStr = jsonStr.initial;
+            } else {
+                throw new Error('LongString result without actor or initial value');
+            }
+        } else if (typeof jsonStr.value !== 'undefined') {
+            // Handle direct primitive results (boolean, number)
+            firefoxDebug('evaluateInFirefoxBackground: direct result type:', jsonStr.type, 'value:', jsonStr.value);
+            return jsonStr.value;
+        }
+    }
+
+    if (typeof jsonStr !== 'string') {
+        throw new Error(`Unexpected result type: ${typeof jsonStr}, value: ${JSON.stringify(jsonStr).slice(0, 100)}`);
     }
 
     const parsed = JSON.parse(jsonStr);
@@ -375,11 +551,12 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
     // Handle pending async result
     if (parsed.__pending__) {
         const pendingCallbackId = parsed.__callbackId__;
-        firefoxDebug('evaluateInFirefoxBackground: waiting for async result callback:', pendingCallbackId);
+        firefoxDebug('evaluateInFirefoxBackground: async pending, will poll for callback:', pendingCallbackId);
 
         // Poll for the callback result
         const asyncTimeout = 30000;
         const asyncStartTime = Date.now();
+        let pollCount = 0;
         while (Date.now() - asyncStartTime < asyncTimeout) {
             // Check if callback has completed
             const checkCode = `JSON.stringify(globalThis.${pendingCallbackId})`;
@@ -408,12 +585,22 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
             if (typeof checkStr === 'string') {
                 const checkParsed = JSON.parse(checkStr);
                 if (!checkParsed.pending) {
-                    // Clean up callback
-                    client.request({
+                    // Clean up callback - await to prevent interference with subsequent requests
+                    const cleanupRequest = await client.request({
                         to: consoleActor,
                         type: 'evaluateJSAsync',
                         text: `delete globalThis.${pendingCallbackId}`,
                     });
+                    // Wait for cleanup result
+                    const cleanupTimeout = 5000;
+                    const cleanupStart = Date.now();
+                    while (!evalResults.has(cleanupRequest.resultID)) {
+                        if (Date.now() - cleanupStart > cleanupTimeout) {
+                            break; // Don't fail on cleanup timeout, just proceed
+                        }
+                        await new Promise((resolve) => setTimeout(resolve, 20));
+                    }
+                    evalResults.delete(cleanupRequest.resultID);
 
                     // Parse and return the actual result
                     const finalParsed = JSON.parse(checkParsed.value);
@@ -460,12 +647,30 @@ class FirefoxBackgroundPage {
 
         // Convert function to string if needed
         let code;
+        const globalVars = []; // Track global variables created for large args
+
         if (typeof pageFunction === 'function') {
             const fnStr = pageFunction.toString();
             if (args.length > 0) {
-                // Serialize arguments and pass them to the function
-                const serializedArgs = args.map((arg) => JSON.stringify(arg)).join(', ');
-                code = `(${fnStr})(${serializedArgs})`;
+                // Check if any argument is large (> 400 chars when serialized)
+                const serializedArgs = [];
+                for (const arg of args) {
+                    const serialized = JSON.stringify(arg);
+                    if (serialized.length > 400) {
+                        // Send large data via chunked mechanism and reference it
+                        const varName = await sendLargeDataToGlobal(
+                            this._client,
+                            this._consoleActor,
+                            this._evalResults,
+                            arg,
+                        );
+                        globalVars.push(varName);
+                        serializedArgs.push(`globalThis.${varName}`);
+                    } else {
+                        serializedArgs.push(serialized);
+                    }
+                }
+                code = `(${fnStr})(${serializedArgs.join(', ')})`;
             } else {
                 code = `(${fnStr})()`;
             }
@@ -473,7 +678,18 @@ class FirefoxBackgroundPage {
             code = String(pageFunction);
         }
 
-        return evaluateInFirefoxBackground(this._client, this._consoleActor, this._evalResults, code);
+        try {
+            return await evaluateInFirefoxBackground(this._client, this._consoleActor, this._evalResults, code);
+        } finally {
+            // Clean up any global variables created for large arguments
+            for (const varName of globalVars) {
+                try {
+                    await cleanupGlobalData(this._client, this._consoleActor, this._evalResults, varName);
+                } catch (e) {
+                    // Ignore cleanup errors
+                }
+            }
+        }
     }
 
     /**
@@ -666,7 +882,11 @@ export const test = base.extend({
         let context;
         let rdpClient = null;
 
+        firefoxDebug('context fixture: starting for test:', testInfo.title);
+        firefoxDebug('context fixture: isFirefoxTest:', isFirefoxTest());
+
         if (isFirefoxTest()) {
+            firefoxDebug('context fixture: Firefox branch entered');
             firefoxDebug('context fixture: starting Firefox test setup');
             firefoxDebug('context fixture: test name:', testInfo.title);
             // Firefox extension testing

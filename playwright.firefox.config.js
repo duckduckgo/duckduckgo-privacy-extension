@@ -1,5 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Set environment variable to indicate Firefox tests
+process.env.PWTEST_FIREFOX = '1';
+
 /**
  * Firefox-specific Playwright configuration for integration tests.
  *
