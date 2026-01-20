@@ -178,10 +178,19 @@ class FirefoxRDPClient {
     }
 }
 
+// Debug logging helper
+const DEBUG_FIREFOX = process.env.DEBUG_FIREFOX === '1' || process.env.CI === 'true';
+function firefoxDebug(...args) {
+    if (DEBUG_FIREFOX) {
+        console.log('[Firefox Harness]', ...args);
+    }
+}
+
 /**
  * Install a temporary extension in Firefox via RDP and get background page access
  */
 async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
+    firefoxDebug('installExtensionViaRDP: starting, port:', rdpPort);
     const client = new FirefoxRDPClient();
 
     // Set up event handlers for eval results
@@ -192,67 +201,88 @@ async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
         }
     });
 
+    firefoxDebug('installExtensionViaRDP: connecting to RDP...');
     await client.connect(rdpPort);
+    firefoxDebug('installExtensionViaRDP: connected to RDP');
 
     try {
         // Get the addons actor
+        firefoxDebug('installExtensionViaRDP: getting root info...');
         const rootInfo = await client.request('getRoot');
         const addonsActor = rootInfo.addonsActor;
+        firefoxDebug('installExtensionViaRDP: got addonsActor:', addonsActor);
 
         if (!addonsActor) {
             throw new Error('Firefox does not provide an addons actor');
         }
 
         // Install the temporary addon
+        firefoxDebug('installExtensionViaRDP: installing addon from:', extensionPath);
         const installResult = await client.request({
             to: addonsActor,
             type: 'installTemporaryAddon',
             addonPath: extensionPath,
         });
+        firefoxDebug('installExtensionViaRDP: addon installed:', installResult.addon?.id);
 
         // Wait for extension to initialize
+        firefoxDebug('installExtensionViaRDP: waiting 2s for extension init...');
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         // Get the addon's actor from listAddons
+        firefoxDebug('installExtensionViaRDP: listing addons...');
         const addonsResponse = await client.request('listAddons');
         const ourAddon = addonsResponse.addons.find((a) => a.id === addonId);
+        firefoxDebug('installExtensionViaRDP: found addon:', ourAddon?.id);
 
         if (!ourAddon) {
             throw new Error(`Could not find addon ${addonId} in listAddons`);
         }
 
         // Get watcher for the addon
+        firefoxDebug('installExtensionViaRDP: getting watcher...');
         const watcherResult = await client.request({
             to: ourAddon.actor,
             type: 'getWatcher',
         });
+        firefoxDebug('installExtensionViaRDP: got watcher:', watcherResult.actor);
 
         // Watch frame targets first (required before worker targets work)
+        firefoxDebug('installExtensionViaRDP: watching frame targets...');
         await client.request({
             to: watcherResult.actor,
             type: 'watchTargets',
             targetType: 'frame',
         });
+        firefoxDebug('installExtensionViaRDP: frame targets watched');
 
         // Watch worker targets to get the background page
+        firefoxDebug('installExtensionViaRDP: watching worker targets...');
         const workerResult = await client.request({
             to: watcherResult.actor,
             type: 'watchTargets',
             targetType: 'worker',
         });
+        firefoxDebug('installExtensionViaRDP: worker result:', workerResult.target?.url);
 
         let backgroundConsoleActor = null;
         if (workerResult.target && workerResult.target.url.includes('_generated_background_page')) {
             backgroundConsoleActor = workerResult.target.consoleActor;
+            firefoxDebug('installExtensionViaRDP: got background consoleActor:', backgroundConsoleActor);
 
             // Start listening for evaluation results
+            firefoxDebug('installExtensionViaRDP: starting listeners...');
             await client.request({
                 to: backgroundConsoleActor,
                 type: 'startListeners',
                 listeners: ['evaluationResult'],
             });
+            firefoxDebug('installExtensionViaRDP: listeners started');
+        } else {
+            firefoxDebug('installExtensionViaRDP: WARNING - no background page found!');
         }
 
+        firefoxDebug('installExtensionViaRDP: complete');
         return {
             addon: installResult.addon,
             client,
@@ -260,6 +290,7 @@ async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
             evalResults,
         };
     } catch (err) {
+        firefoxDebug('installExtensionViaRDP: ERROR:', err.message);
         client.disconnect();
         throw err;
     }
@@ -271,8 +302,11 @@ async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
  */
 async function evaluateInFirefoxBackground(client, consoleActor, evalResults, code) {
     if (!consoleActor) {
+        firefoxDebug('evaluateInFirefoxBackground: ERROR - no consoleActor');
         throw new Error('No background console actor available - cannot evaluate in background');
     }
+
+    firefoxDebug('evaluateInFirefoxBackground: evaluating code (length:', code.length, ')');
 
     // Wrap code in JSON.stringify to properly serialize the result
     // This handles objects, arrays, and primitives correctly
@@ -287,21 +321,25 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
         })()
     `;
 
+    firefoxDebug('evaluateInFirefoxBackground: sending evaluateJSAsync request...');
     const evalRequest = await client.request({
         to: consoleActor,
         type: 'evaluateJSAsync',
         text: wrappedCode,
     });
+    firefoxDebug('evaluateInFirefoxBackground: got resultID:', evalRequest.resultID);
 
     // Wait for result (with timeout)
     const timeout = 10000;
     const startTime = Date.now();
     while (!evalResults.has(evalRequest.resultID)) {
         if (Date.now() - startTime > timeout) {
+            firefoxDebug('evaluateInFirefoxBackground: TIMEOUT waiting for result');
             throw new Error(`Timeout waiting for evaluation result`);
         }
         await new Promise((resolve) => setTimeout(resolve, 50));
     }
+    firefoxDebug('evaluateInFirefoxBackground: got result');
 
     const result = evalResults.get(evalRequest.resultID);
     evalResults.delete(evalRequest.resultID);
@@ -503,11 +541,16 @@ export const test = base.extend({
         let rdpClient = null;
 
         if (isFirefoxTest()) {
+            firefoxDebug('context fixture: starting Firefox test setup');
+            firefoxDebug('context fixture: test name:', testInfo.title);
             // Firefox extension testing
             const extensionPath = path.join(projectRoot, 'build/firefox/dev');
             const addonId = 'jid1-ZAdIEUB7XOzOJw@jetpack'; // From manifest.json
             const userDataDir = await fs.mkdtemp(path.join(os.tmpdir(), 'firefox-test-'));
+            firefoxDebug('context fixture: userDataDir:', userDataDir);
+            firefoxDebug('context fixture: rdpPort:', rdpPort);
 
+            firefoxDebug('context fixture: launching Firefox...');
             context = await firefox.launchPersistentContext(userDataDir, {
                 headless: false,
                 firefoxUserPrefs: {
@@ -521,21 +564,26 @@ export const test = base.extend({
                 },
                 args: [`-start-debugger-server=${rdpPort}`],
             });
+            firefoxDebug('context fixture: Firefox launched');
 
             // Wait for Firefox to be ready
+            firefoxDebug('context fixture: waiting 1s for Firefox to be ready...');
             await new Promise((resolve) => setTimeout(resolve, 1000));
 
             // Install the extension via RDP and get background page access
             try {
+                firefoxDebug('context fixture: installing extension via RDP...');
                 const result = await installExtensionViaRDP(rdpPort, extensionPath, addonId);
                 rdpClient = result.client;
                 console.log(`Installed Firefox extension: ${result.addon.id}`);
+                firefoxDebug('context fixture: extension installed successfully');
 
                 // Store Firefox-specific context for background evaluation
                 context._firefoxBackgroundConsoleActor = result.backgroundConsoleActor;
                 context._firefoxEvalResults = result.evalResults;
             } catch (err) {
                 console.error('Failed to install Firefox extension:', err);
+                firefoxDebug('context fixture: ERROR installing extension:', err.message);
                 await context.close();
                 throw err;
             }
@@ -543,6 +591,7 @@ export const test = base.extend({
             // Store cleanup info
             context._firefoxUserDataDir = userDataDir;
             context._rdpClient = rdpClient;
+            firefoxDebug('context fixture: setup complete, running test...');
         } else {
             // Chrome extension testing (existing logic)
             const extensionPath = manifestVersion === 3 ? 'build/chrome/dev' : 'build/chrome-mv2/dev';
@@ -565,12 +614,16 @@ export const test = base.extend({
         await use(context);
 
         // Cleanup for Firefox
+        firefoxDebug('context fixture: test complete, cleaning up...');
         if (context._rdpClient) {
+            firefoxDebug('context fixture: disconnecting RDP client');
             context._rdpClient.disconnect();
         }
         if (context._firefoxUserDataDir) {
+            firefoxDebug('context fixture: removing user data dir');
             await fs.rm(context._firefoxUserDataDir, { recursive: true, force: true });
         }
+        firefoxDebug('context fixture: cleanup complete');
     },
     /**
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker | FirefoxBackgroundPage | null}
