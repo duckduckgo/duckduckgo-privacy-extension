@@ -186,8 +186,11 @@ export default class NativeMessaging {
      * @param {Record<string, any>} [params] - Optional parameters to send
      * @returns {Promise<any>} - The result from the native side
      */
-    request(method, params = {}) {
-        return this._messaging.request(method, params);
+    async request(method, params = {}) {
+        DEBUG && console.log('[NativeMessaging] request', method, params);
+        const response = await this._messaging.request(method, params);
+        DEBUG && console.log('[NativeMessaging] response', response);
+        return response;
     }
 
     /**
@@ -197,6 +200,7 @@ export default class NativeMessaging {
      * @param {Record<string, any>} [params] - Optional parameters to send
      */
     notify(method, params = {}) {
+        DEBUG && console.log('[NativeMessaging] notify', method, params);
         this._messaging.notify(method, params);
     }
 

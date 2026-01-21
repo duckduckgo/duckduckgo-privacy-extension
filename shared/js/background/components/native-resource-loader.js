@@ -17,6 +17,8 @@ import ResourceLoaderBase from './resource-loader-base.js';
 /**
  * Resource loader that fetches data from the native app via messaging APIs.
  */
+
+/* global DEBUG */
 export default class NativeResourceLoader extends ResourceLoaderBase {
     /**
      * @param {NativeResourceConfig} config
@@ -74,7 +76,7 @@ export default class NativeResourceLoader extends ResourceLoaderBase {
                 await this._updateData(result);
                 break;
             } catch (e) {
-                console.log(e.message);
+                DEBUG && console.log(`Error fetching ${this.name} from ${loader.name}: ${e}`);
                 continue;
             }
         }
