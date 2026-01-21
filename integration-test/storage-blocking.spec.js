@@ -1,6 +1,6 @@
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
-import { overridePrivacyConfig, overrideTds, overrideTdsViaBackground, overridePrivacyConfigViaBackground } from './helpers/testConfig';
+import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages';
 
 const testPageDomain = 'privacy-test-pages.site';
@@ -21,17 +21,10 @@ test.describe('Storage blocking Tests', () => {
         context,
         backgroundNetworkContext,
     }) => {
-        if (isFirefoxTest()) {
-            await backgroundWait.forExtensionLoaded(context);
-            await backgroundWait.forAllConfiguration(backgroundPage);
-            await overrideTdsViaBackground(backgroundPage, 'mock-tds.json');
-            await overridePrivacyConfigViaBackground(backgroundPage, 'storage-blocking.json');
-        } else {
-            await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
-            await overrideTds(backgroundNetworkContext, 'mock-tds.json');
-            await backgroundWait.forExtensionLoaded(context);
-            await backgroundWait.forAllConfiguration(backgroundPage);
-        }
+        await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
+        await overrideTds(backgroundNetworkContext, 'mock-tds.json');
+        await backgroundWait.forExtensionLoaded(context);
+        await backgroundWait.forAllConfiguration(backgroundPage);
         await routeFromLocalhost(page);
         await page.bringToFront();
         await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle' });
@@ -106,17 +99,10 @@ test.describe('Storage blocking Tests', () => {
         }
 
         test.beforeEach(async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
-            if (isFirefoxTest()) {
-                await backgroundWait.forExtensionLoaded(context);
-                await backgroundWait.forAllConfiguration(backgroundPage);
-                await overrideTdsViaBackground(backgroundPage, 'mock-tds.json');
-                await overridePrivacyConfigViaBackground(backgroundPage, 'storage-blocking.json');
-            } else {
-                await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
-                await overrideTds(backgroundNetworkContext, 'mock-tds.json');
-                await backgroundWait.forExtensionLoaded(context);
-                await backgroundWait.forAllConfiguration(backgroundPage);
-            }
+            await overridePrivacyConfig(backgroundNetworkContext, 'storage-blocking.json');
+            await overrideTds(backgroundNetworkContext, 'mock-tds.json');
+            await backgroundWait.forExtensionLoaded(context);
+            await backgroundWait.forAllConfiguration(backgroundPage);
             await routeFromLocalhost(page);
 
             // reset allowlists
@@ -204,9 +190,6 @@ test.describe('Storage blocking Tests', () => {
         });
 
         test('denylisting reenables cookie blocking for the site', async ({ page, backgroundPage }) => {
-            // Firefox: Cookie blocking timing differs from Chrome, making this test flaky
-            test.skip(isFirefoxTest(), 'Firefox: Flaky due to cookie blocking timing');
-
             await backgroundPage.evaluate(async (domain) => {
                 await dbg.tabManager.setList({
                     list: 'denylisted',

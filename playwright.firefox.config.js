@@ -6,43 +6,46 @@ process.env.PWTEST_FIREFOX = '1';
 /**
  * Firefox-specific Playwright configuration for integration tests.
  *
- * This configuration is used to run integration tests against Firefox.
- * It uses a custom test harness that installs the extension via Firefox's
- * Remote Debugging Protocol.
+ * This runs a subset of integration tests that are compatible with Firefox.
+ * See integration-test/FIREFOX.md for details on Firefox testing limitations.
  *
- * Note: Some tests may need Firefox-specific adaptations due to differences
- * in how Playwright handles Firefox extensions vs Chrome extensions.
+ * Tests that require Chrome-specific features (request interception for
+ * extension background requests, content script timing, etc.) are excluded.
  */
+
+// Test files that work on Firefox
+// Limited set due to request interception not working for extension background requests
+const firefoxTestFiles = [
+    // Firefox-specific tests for background page evaluation
+    'integration-test/firefox-background-eval.spec.js',
+    // Schema tests that don't require the extension
+    'integration-test/facebook-sdk-schema.spec.js',
+    'integration-test/youtube-sdk-schema.spec.js',
+];
+
 export default defineConfig({
     testDir: './integration-test',
-    /* Maximum time one test can run for - Firefox tests need more time
-       due to RDP-based TDS/config overrides */
-    timeout: 120 * 1000,
+    testMatch: firefoxTestFiles.map((f) => f.replace('integration-test/', '')),
+
+    /* Maximum time one test can run */
+    timeout: 60 * 1000,
     expect: {
-        /**
-         * Maximum time expect() should wait for the condition to be met.
-         */
         timeout: 10000,
     },
-    /* Run tests in files in parallel - disabled for Firefox stability */
+
+    /* Run tests sequentially for stability */
     fullyParallel: false,
-    /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
-    /* Retry failed tests - Firefox tests can be flaky when running together */
-    retries: process.env.CI ? 2 : 1,
-    /* Single worker for Firefox extension tests */
+    retries: process.env.CI ? 1 : 0,
     workers: 1,
-    /* Reporter to use */
+
     reporter: process.env.CI ? 'github' : 'html',
-    /* Shared settings */
+
     use: {
-        /* Maximum time each action can take - Firefox actions may be slower */
-        actionTimeout: 30000,
-        /* Collect trace when retrying the failed test */
+        actionTimeout: 15000,
         trace: 'on-first-retry',
     },
 
-    /* Configure Firefox project */
     projects: [
         {
             name: 'firefox',
@@ -50,7 +53,6 @@ export default defineConfig({
         },
     ],
 
-    /* Run your local dev server before starting the tests */
     webServer: {
         command: 'cd node_modules/privacy-test-pages && node server.js',
         port: 3000,

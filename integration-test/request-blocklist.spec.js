@@ -1,6 +1,6 @@
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait';
-import { overridePrivacyConfig, overrideTds, overrideTdsViaBackground, overridePrivacyConfigViaBackground } from './helpers/testConfig';
+import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
 import { runRequestBlockingTest } from './helpers/requests';
 
 const testHost = 'privacy-test-pages.site';
@@ -12,20 +12,12 @@ function expectBlocked(protectionsEnabled, url) {
 
 test.describe('Test Request Blocklist feature', () => {
     test('Should block the .jpg requests', async ({ page, backgroundPage, context, backgroundNetworkContext, manifestVersion }) => {
-        if (isFirefoxTest()) {
-            await forExtensionLoaded(context);
-            await forAllConfiguration(backgroundPage);
-            // Replace TDS entirely with empty one (don't merge with existing data)
-            await overrideTdsViaBackground(backgroundPage, 'empty-tds.json', { replace: true });
-            await overridePrivacyConfigViaBackground(backgroundPage, 'request-blocklist.json');
-        } else {
-            await overrideTds(backgroundNetworkContext, 'empty-tds.json');
-            await overridePrivacyConfig(backgroundNetworkContext, 'request-blocklist.json');
-            await forExtensionLoaded(context);
-            await forAllConfiguration(backgroundPage);
-            if (manifestVersion === 3) {
-                await forDynamicDNRRulesLoaded(backgroundPage);
-            }
+        await overrideTds(backgroundNetworkContext, 'empty-tds.json');
+        await overridePrivacyConfig(backgroundNetworkContext, 'request-blocklist.json');
+        await forExtensionLoaded(context);
+        await forAllConfiguration(backgroundPage);
+        if (manifestVersion === 3) {
+            await forDynamicDNRRulesLoaded(backgroundPage);
         }
 
         for (const protectionsEnabled of [true, false]) {

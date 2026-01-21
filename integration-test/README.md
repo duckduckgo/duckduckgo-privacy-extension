@@ -22,57 +22,13 @@ If you want to re-run tests without rebuilding the extension, you can subsequent
 
 ### Firefox Testing (Experimental)
 
-Firefox extension testing uses Firefox's Remote Debugging Protocol (RDP) to install the extension
-as a temporary addon at runtime. This includes full support for evaluating code in the extension's
-background page context.
+Firefox integration tests are available for a subset of tests. The Firefox harness uses the
+Remote Debugging Protocol (RDP) to install the extension and evaluate code in its background page.
 
-#### Background Page Evaluation
-
-For Firefox, `backgroundPage` is a wrapper object that supports `evaluate()` via RDP:
-
-```js
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness'
-
-test('my test', async ({ backgroundPage }) => {
-    // Works for both Chrome and Firefox!
-    const result = await backgroundPage.evaluate(() => {
-        return browser.runtime.getManifest().name;
-    });
-    
-    // With arguments
-    const sum = await backgroundPage.evaluate((a, b) => a + b, 2, 3);
-    
-    // Firefox-specific: check if background page is available
-    if (isFirefoxTest() && backgroundPage.isAvailable()) {
-        // Firefox background page is ready
-    }
-})
-```
-
-#### Limitations
-
-1. **Content script limitations**: Some content script features may not work as expected in
-   Playwright's patched Firefox (Juggler).
-
-2. **Requires headed mode**: Firefox extension testing requires a display (or xvfb on CI).
-
-3. **API differences**: The Firefox `backgroundPage` wrapper provides `evaluate()` and 
-   `waitForFunction()`, but not all Page/Worker methods are available.
-
-4. **Browser-specific behavior**: Some extension behaviors differ between Chrome and Firefox,
-   so tests may need conditional logic using `isFirefoxTest()`.
-
-```js
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness'
-
-test('my test', async ({ backgroundPage, context }) => {
-    if (isFirefoxTest()) {
-        // Firefox-specific test expectations
-    } else {
-        // Chrome-specific test expectations
-    }
-})
-```
+See [FIREFOX.md](./FIREFOX.md) for details on:
+- Which tests are compatible with Firefox
+- Known limitations
+- How to add new Firefox-compatible tests
 
 ## Writing tests
 
