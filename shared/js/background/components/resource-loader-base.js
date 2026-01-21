@@ -1,3 +1,4 @@
+import Dexie from 'dexie';
 import { alarms } from 'webextension-polyfill';
 import { createAlarm } from '../wrapper';
 
@@ -20,6 +21,8 @@ const AFTER_UPDATE_EVENT_NAME = 'afterUpdate';
  * Subclasses must implement `_fetchResource()` to provide the actual data fetching mechanism.
  */
 export default class ResourceLoaderBase extends EventTarget {
+    /** @type {Dexie?} */
+    static dbc = null;
     /**
      * @param {ResourceConfig} config
      * @param {{
@@ -157,12 +160,44 @@ export default class ResourceLoaderBase extends EventTarget {
     }
 
     /**
-     * Persist data to storage. Override in subclasses that need persistence.
+     * Get the shared IndexedDB database instance.
+     * @returns {Promise<Dexie>}
+     * @protected
+     */
+    async _getDb() {
+        if (!ResourceLoaderBase.dbc) {
+            const dbc = new Dexie('tdsStorage');
+            dbc.version(1).stores({
+                tdsStorage: 'name,data',
+            });
+            ResourceLoaderBase.dbc = dbc;
+            await dbc.open();
+        }
+        return ResourceLoaderBase.dbc;
+    }
+
+    /**
+     * Load resource data from IndexedDB cache.
+     * @returns {Promise<{contents: any}>}
+     * @protected
+     */
+    async _loadFromDB() {
+        console.log(`Load ${this.name} from DB`);
+        const dbc = await this._getDb();
+        const list = await dbc.table('tdsStorage').get({ name: this.name });
+        return {
+            contents: list.data,
+        };
+    }
+
+    /**
+     * Persist data to IndexedDB.
      * @param {{contents: any, etag?: string}} result
      * @protected
      */
     async _persistData(result) {
-        // Default: no persistence. Subclasses can override.
+        const dbc = await this._getDb();
+        await dbc.table('tdsStorage').put({ name: this.name, data: result.contents });
     }
 
     /**

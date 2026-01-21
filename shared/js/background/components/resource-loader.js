@@ -1,4 +1,3 @@
-import Dexie from 'dexie';
 import bundledEtags from '../../../data/etags.json';
 import ResourceLoaderBase from './resource-loader-base.js';
 
@@ -19,8 +18,6 @@ import ResourceLoaderBase from './resource-loader-base.js';
  * Resource loader that fetches data from network URLs with IndexedDB caching.
  */
 export default class ResourceLoader extends ResourceLoaderBase {
-    /** @type {Dexie?} */
-    static dbc = null;
 
     /**
      * @param {NetworkResourceConfig} config
@@ -82,15 +79,6 @@ export default class ResourceLoader extends ResourceLoaderBase {
         }
     }
 
-    async _loadFromDB() {
-        console.log(`Load ${this.name} from DB`);
-        const dbc = await this._getDb();
-        const list = await dbc.table('tdsStorage').get({ name: this.name });
-        return {
-            contents: list.data,
-        };
-    }
-
     async _loadFromURL(url, local = false, nocache = false) {
         console.log(`Load ${this.name} from url`);
         const request = new Request(url);
@@ -111,27 +99,5 @@ export default class ResourceLoader extends ResourceLoaderBase {
             contents,
             etag: local ? bundledEtags[`${this.name}-etag`] : response.headers.get('etag'),
         };
-    }
-
-    async _getDb() {
-        if (!ResourceLoader.dbc) {
-            const dbc = new Dexie('tdsStorage');
-            dbc.version(1).stores({
-                tdsStorage: 'name,data',
-            });
-            ResourceLoader.dbc = dbc;
-            await dbc.open();
-        }
-        return ResourceLoader.dbc;
-    }
-
-    /**
-     * Persist data to IndexedDB
-     * @param {{contents: any, etag?: string}} result
-     * @protected
-     */
-    async _persistData(result) {
-        const dbc = await this._getDb();
-        await dbc.table('tdsStorage').put({ name: this.name, data: result.contents });
     }
 }
