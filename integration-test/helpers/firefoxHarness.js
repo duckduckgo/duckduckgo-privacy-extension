@@ -184,17 +184,31 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
         })()
     `;
 
-    const evalRequest = await client.request({
-        to: consoleActor,
-        type: 'evaluateJSAsync',
-        text: wrappedCode,
-    });
+    let evalRequest;
+    try {
+        evalRequest = await client.request({
+            to: consoleActor,
+            type: 'evaluateJSAsync',
+            text: wrappedCode,
+        });
+    } catch (e) {
+        throw new Error(`RDP evaluateJSAsync request failed: ${e.message}`);
+    }
+
+    if (!evalRequest.resultID) {
+        throw new Error(`RDP evaluateJSAsync did not return a resultID: ${JSON.stringify(evalRequest)}`);
+    }
 
     const timeout = 30000;
     const startTime = Date.now();
     while (!evalResults.has(evalRequest.resultID)) {
         if (Date.now() - startTime > timeout) {
-            throw new Error('Timeout waiting for evaluation result');
+            // Check if connection is still active
+            const connState = client._conn ? 'connected' : 'disconnected';
+            const pendingCount = evalResults.size;
+            throw new Error(
+                `Timeout waiting for evaluation result (resultID: ${evalRequest.resultID}, conn: ${connState}, pendingResults: ${pendingCount})`,
+            );
         }
         await new Promise((resolve) => setTimeout(resolve, 50));
     }
@@ -244,8 +258,8 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
             if (typeof checkStr === 'string') {
                 const checkParsed = JSON.parse(checkStr);
                 if (!checkParsed.pending) {
-                    // Clean up
-                    client.request({
+                    // Clean up - must await to ensure RDP state is clean before next request
+                    await client.request({
                         to: consoleActor,
                         type: 'evaluateJSAsync',
                         text: `delete globalThis.${pendingCallbackId}`,

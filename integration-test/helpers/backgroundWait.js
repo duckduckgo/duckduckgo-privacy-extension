@@ -11,6 +11,7 @@ function manuallyWaitForFunction(bgPage, func, { polling, timeout }, ...args) {
                 result = await bgPage.evaluate(func, ...args);
             } catch (e) {
                 reject(e);
+                return; // Stop execution after rejection
             }
             if (result) {
                 resolve(result);
