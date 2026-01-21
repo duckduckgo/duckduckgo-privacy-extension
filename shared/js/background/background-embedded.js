@@ -28,6 +28,9 @@ const settings = require('./settings');
 
 const nativeMessaging = new NativeMessaging();
 const remoteConfig = new RemoteConfigEmbedded({ nativeMessaging, settings });
+// trigger config refresh
+// eslint-disable-next-line no-unused-expressions
+remoteConfig.ready;
 
 const cpm = new CookiePromptManagement({
     remoteConfig,

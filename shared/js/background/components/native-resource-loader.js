@@ -74,6 +74,7 @@ export default class NativeResourceLoader extends ResourceLoaderBase {
                 await this._updateData(result);
                 break;
             } catch (e) {
+                console.log(e.message);
                 continue;
             }
         }
