@@ -78,14 +78,6 @@ To add a new test:
 1. Add the test file path to `firefoxTestFiles` in `playwright.firefox.config.js`
 2. Verify it passes: `npx playwright test --config=playwright.firefox.config.js integration-test/your-test.spec.js`
 
-## Debugging
-
-Enable debug logging by setting `DEBUG_FIREFOX=1`:
-
-```bash
-DEBUG_FIREFOX=1 npm run playwright-firefox
-```
-
 ## Removing Firefox Support
 
 If Firefox testing is no longer needed:

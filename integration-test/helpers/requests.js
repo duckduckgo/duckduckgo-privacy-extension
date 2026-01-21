@@ -107,10 +107,11 @@ function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutco
             console.log('[logRequestsPlaywright] requestfailed event:', request.url().substring(0, 100), 'error:', errorText);
         }
         saveRequestOutcome(request.url(), (details) => {
-            // Check for blocked error messages (Chrome and Firefox variants)
             if (
+                // Chrome
                 errorText === 'net::ERR_BLOCKED_BY_CLIENT' ||
                 errorText === 'net::ERR_ABORTED' ||
+                // Firefox
                 errorText.includes('NS_ERROR_ABORT') ||
                 errorText.includes('NS_BINDING_ABORTED') ||
                 errorText === 'Request was canceled' ||
@@ -178,11 +179,12 @@ export async function runRequestBlockingTest(page, url) {
         if (DEBUG) console.log('[Request Helper] requestfailed event:', reqUrl, 'error:', failure?.errorText);
         const details = pendingRequests.get(reqUrl);
         pendingRequests.delete(reqUrl);
-        // Check for blocked error messages (Chrome and Firefox variants)
         const errorText = failure?.errorText || '';
         if (
+            // Chrome
             errorText === 'net::ERR_BLOCKED_BY_CLIENT' ||
             errorText === 'net::ERR_ABORTED' ||
+            // Firefox
             errorText.includes('NS_ERROR_ABORT') ||
             errorText.includes('NS_BINDING_ABORTED') ||
             errorText === 'Request was canceled' ||

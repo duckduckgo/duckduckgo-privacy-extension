@@ -16,11 +16,9 @@ test.describe('Test privacy dashboard', () => {
         await page.bringToFront();
         await page.click('#start');
 
-        // Use browser.runtime.getURL for Firefox, chrome.runtime.getURL for Chrome
         const panelUrl = await backgroundPage.evaluate(async () => {
             const currentTab = await globalThis.dbg.utils.getCurrentTab();
-            const getURL = typeof browser !== 'undefined' && browser.runtime ? browser.runtime.getURL : chrome.runtime.getURL;
-            return getURL(`dashboard/html/browser.html?tabId=${currentTab.id}`);
+            return chrome.runtime.getURL(`dashboard/html/browser.html?tabId=${currentTab.id}`);
         });
 
         const panel = await context.newPage();
