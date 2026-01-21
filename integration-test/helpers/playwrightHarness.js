@@ -556,7 +556,6 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
         // Poll for the callback result
         const asyncTimeout = 30000;
         const asyncStartTime = Date.now();
-        let pollCount = 0;
         while (Date.now() - asyncStartTime < asyncTimeout) {
             // Check if callback has completed
             const checkCode = `JSON.stringify(globalThis.${pendingCallbackId})`;
@@ -658,12 +657,7 @@ class FirefoxBackgroundPage {
                     const serialized = JSON.stringify(arg);
                     if (serialized.length > 400) {
                         // Send large data via chunked mechanism and reference it
-                        const varName = await sendLargeDataToGlobal(
-                            this._client,
-                            this._consoleActor,
-                            this._evalResults,
-                            arg,
-                        );
+                        const varName = await sendLargeDataToGlobal(this._client, this._consoleActor, this._evalResults, arg);
                         globalVars.push(varName);
                         serializedArgs.push(`globalThis.${varName}`);
                     } else {
