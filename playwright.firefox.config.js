@@ -18,8 +18,10 @@ process.env.PWTEST_FIREFOX = '1';
 const firefoxTestFiles = [
     // Firefox-specific tests for background page evaluation
     'integration-test/firefox-background-eval.spec.js',
-    // Extension functionality test - fingerprint randomization
+    // Extension functionality tests - content script injection
     'integration-test/fingerprint-randomization.spec.js',
+    'integration-test/gpc.spec.js',
+    'integration-test/navigator-interface.spec.js',
     // Schema tests that don't require the extension
     'integration-test/facebook-sdk-schema.spec.js',
     'integration-test/youtube-sdk-schema.spec.js',
