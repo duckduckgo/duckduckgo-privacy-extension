@@ -16,8 +16,6 @@
  */
 
 import { getFeatureSettings, isFeatureEnabled } from '../utils';
-// TODO: FIXME: THIS IS ONLY ADDED FOR TESTING, REMOVE BEFORE MERGING
-import bundledConfig from '../../../data/bundled/macos-config.json';
 import { isSubFeatureEnabled } from './remote-config';
 import NativeResourceLoader from './native-resource-loader';
 
@@ -37,7 +35,6 @@ export default class RemoteConfigEmbedded extends NativeResourceLoader {
         super(
             {
                 name: 'config',
-                initialData: bundledConfig,
                 updateIntervalMinutes: 15, // note that we _also_ check on every service worker "wake"
             },
             {
@@ -75,7 +72,7 @@ export default class RemoteConfigEmbedded extends NativeResourceLoader {
      * @returns {boolean}
      */
     isFeatureEnabled(featureName) {
-        return isFeatureEnabled(featureName, this.config || structuredClone(bundledConfig));
+        return isFeatureEnabled(featureName, this.config);
     }
 
     /**
@@ -84,7 +81,7 @@ export default class RemoteConfigEmbedded extends NativeResourceLoader {
      * @returns {object}
      */
     getFeatureSettings(featureName) {
-        return getFeatureSettings(featureName, this.config || structuredClone(bundledConfig));
+        return getFeatureSettings(featureName, this.config);
     }
 
     /**

@@ -37,12 +37,11 @@ export default class NativeResourceLoader extends ResourceLoaderBase {
             { settings: opts.settings },
         );
         this._nativeMessaging = opts.nativeMessaging;
-        this._initialData = config.initialData;
     }
 
     async _loadFromNative() {
         console.log(`NativeResourceLoader: fetching ${this.name} from native`);
-        const result = await this._nativeMessaging.request('getResourceIfNew', { name: this.name, version: this.etag });
+        const result = await this._nativeMessaging.request('getPrivacyConfigIfNew', { name: this.name, version: this.etag });
         if (result.status === 'success') {
             if (result.data.updated) {
                 return { contents: result.data.data, etag: `${result.data.version}` };
@@ -55,11 +54,6 @@ export default class NativeResourceLoader extends ResourceLoaderBase {
         }
     }
 
-    async _loadFromInitialData() {
-        console.log(`NativeResourceLoader: fetching ${this.name} from initial data`);
-        return { contents: this._initialData };
-    }
-
     /**
      * Check for updates by requesting data from native app.
      */
@@ -68,8 +62,7 @@ export default class NativeResourceLoader extends ResourceLoaderBase {
 
         const loadFromNative = this._loadFromNative.bind(this);
         const loadFromDb = this._loadFromDB.bind(this);
-        const loadFromInitialData = this._loadFromInitialData.bind(this);
-        const loadOrder = [loadFromNative, loadFromDb, loadFromInitialData];
+        const loadOrder = [loadFromNative, loadFromDb];
         for (const loader of loadOrder) {
             try {
                 const result = await loader();
