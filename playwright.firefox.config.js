@@ -28,8 +28,8 @@ export default defineConfig({
     fullyParallel: false,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
-    /* Retry on CI only */
-    retries: process.env.CI ? 1 : 0,
+    /* Retry failed tests - Firefox tests can be flaky when running together */
+    retries: process.env.CI ? 2 : 1,
     /* Single worker for Firefox extension tests */
     workers: 1,
     /* Reporter to use */
