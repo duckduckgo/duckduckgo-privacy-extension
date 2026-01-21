@@ -1,8 +1,36 @@
-import { isFirefoxTest } from './playwrightHarness';
+import { errors } from '@playwright/test';
+
+/**
+ * Manual polling implementation of waitForFunction.
+ * Required for Chrome MV3 ServiceWorkers which don't have native waitForFunction.
+ */
+function manuallyWaitForFunction(bgPage, func, { polling, timeout }, ...args) {
+    return new Promise((resolve, reject) => {
+        const startTime = Date.now();
+        const waitForFunction = async () => {
+            let result;
+            try {
+                result = await bgPage.evaluate(func, ...args);
+            } catch (e) {
+                reject(e);
+                return;
+            }
+            if (result) {
+                resolve(result);
+            } else {
+                if (Date.now() - startTime > timeout) {
+                    reject(new errors.TimeoutError('Manually waiting for function timed out: ' + func.toString()));
+                } else {
+                    setTimeout(waitForFunction, polling);
+                }
+            }
+        };
+        waitForFunction();
+    });
+}
 
 /**
  * Wait for a function to return a truthy value in the background page.
- * Works with both Playwright's native Page/Worker and our FirefoxBackgroundPage.
  *
  * @param {import('@playwright/test').Page | import('@playwright/test').Worker} bgPage
  * @param {Function} func - Function to evaluate
@@ -10,8 +38,18 @@ import { isFirefoxTest } from './playwrightHarness';
  * @returns {Promise<any>}
  */
 export function forFunction(bgPage, func, arg) {
-    // Both Playwright and our FirefoxBackgroundPage now have compatible waitForFunction signatures
-    return bgPage.waitForFunction(func, arg, { polling: 100, timeout: 15000 });
+    // Firefox: Use our FirefoxBackgroundPage.waitForFunction (has isAvailable method)
+    if (bgPage.isAvailable) {
+        return bgPage.waitForFunction(func, arg, { polling: 100, timeout: 15000 });
+    }
+
+    // Chrome MV2: Use native Playwright waitForFunction (has routeFromHAR)
+    if (bgPage.waitForFunction && bgPage.routeFromHAR) {
+        return bgPage.waitForFunction(func, arg);
+    }
+
+    // Chrome MV3 ServiceWorker: Use manual polling (no routeFromHAR)
+    return manuallyWaitForFunction(bgPage, func, { polling: 100, timeout: 15000 }, arg);
 }
 
 export async function forSetting(bgPage, key) {
