@@ -67,7 +67,34 @@ jobs:
             - uses: actions/upload-artifact@v4
               if: always()
               with:
-                  name: ${{ matrix.test }}-report
+                  name: ${{ matrix.test }}-report-${{ strategy.job-index }}
                   path: playwright-report/
                   retention-days: 1
-                  
+
+    playwright-tests-firefox:
+        timeout-minutes: 30
+        runs-on: ubuntu-latest
+        # Firefox tests are experimental - don't block CI on failures
+        continue-on-error: true
+        strategy:
+            fail-fast: false
+            matrix:
+                shard: [1/4, 2/4, 3/4, 4/4]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'npm'
+            - run: npm run install-ci
+            - name: Install Playwright Browsers
+              run: npx playwright install --with-deps firefox
+            - name: Run Firefox tests
+              run: xvfb-run --auto-servernum -- npm run playwright-firefox -- --shard ${{ matrix.shard }}
+            - uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: playwright-firefox-report-${{ strategy.job-index }}
+                  path: playwright-report/
+                  retention-days: 1
+

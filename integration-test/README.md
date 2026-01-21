@@ -12,11 +12,18 @@ We use [Playwright](https://playwright.dev/) as a test runner. Tests are defined
 
 Playwright tests can be run with the following npm commands:
  - `npm run playwright` to test the Chrome MV3 extension
- - `npm run playwright-mv2` to test the Chrome MV2 extension (closest thing to testing Firefox MV2 extension we have until Playwright adds support for testing Firefox extensions)
+ - `npm run playwright-mv2` to test the Chrome MV2 extension
 
 If you want to re-run tests without rebuilding the extension, you can subsequently run:
  - `npx playwright test` to run all tests
- - `npx playright test integration-test/<file>.spec.js` to just run tests in a single file.
+ - `npx playwright test integration-test/<file>.spec.js` to just run tests in a single file.
+
+### Firefox Testing (Experimental)
+
+Firefox integration tests are available for a subset of tests. The Firefox harness uses the
+Remote Debugging Protocol (RDP) to install the extension and evaluate code in its background page.
+So far many tests can't run because request interception is not working correctly.
+ - `npm run playwright-firefox`
 
 ## Writing tests
 
@@ -40,7 +47,7 @@ test('my test', async ({ manifestVersion, page, backgroundPage, backgroundNetwor
 The arguments to the test function are:
  - `manifestVersion`: `2` or `3`. Allows you to check which version of the extension is being tested.
  - `page`: A [Page](https://playwright.dev/docs/api/class-page) instance for loading web pages.
- - `backgroundPage`: The extension's background page, which is a `Page` for MV2, or `Worker` for MV3. Use `backgroundPage.evaluate` to run code in the extension's background context.
+ - `backgroundPage`: The extension's background page. For Chrome MV2, this is a `Page`. For Chrome MV3, this is a `Worker`. For Firefox, this is a `FirefoxBackgroundPage` wrapper that supports `evaluate()` via RDP. Use `backgroundPage.evaluate()` to run code in the extension's background context.
  - `backgroundNetworkContext`: A context for listening to and intercepting requests from the extension's background context with Playwright's [Network](https://playwright.dev/docs/network) APIs. 
  - `context`: The [BrowserContext](https://playwright.dev/docs/api/class-browsercontext) for the test run.
 
