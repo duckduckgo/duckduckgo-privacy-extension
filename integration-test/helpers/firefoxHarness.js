@@ -198,7 +198,6 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
     if (!evalRequest.resultID) {
         throw new Error(`RDP evaluateJSAsync did not return a resultID: ${JSON.stringify(evalRequest)}`);
     }
-    console.log(`[RDP] Sent evaluateJSAsync, waiting for resultID: ${evalRequest.resultID}`);
 
     const timeout = 30000;
     const startTime = Date.now();
@@ -418,7 +417,6 @@ export async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
 
     client.onEvent((msg) => {
         if (msg.type === 'evaluationResult') {
-            console.log(`[RDP] Received evaluationResult: ${msg.resultID}`);
             evalResults.set(msg.resultID, msg);
         }
     });
