@@ -47,9 +47,6 @@ export default class ResourceLoader extends ResourceLoaderBase {
      * @param {boolean} [force]
      */
     async checkForUpdates(force) {
-        if (!this.settings) {
-            throw new Error('ResourceLoader requires settings');
-        }
         await this.settings.ready();
         const remoteUrl = this.remoteUrl instanceof Function ? await this.remoteUrl() : this.remoteUrl;
         const loadFromDb = this._loadFromDB.bind(this);

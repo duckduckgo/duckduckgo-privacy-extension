@@ -26,19 +26,17 @@ export default class ResourceLoaderBase extends EventTarget {
     /**
      * @param {ResourceConfig} config
      * @param {{
-     *  settings?: Settings
+     *  settings: Settings
      * }} opts
      */
-    constructor(config, { settings } = {}) {
+    constructor(config, { settings }) {
         super();
-        this.settings = settings || null;
+        this.settings = settings;
         this.name = config.name;
         this.updateIntervalMinutes = config.updateIntervalMinutes || 0;
         this.format = config.format || 'json';
         this.data = null;
         this._onUpdateProcessing = [];
-        this._etag = '';
-        this._lastUpdate = 0;
         this._ready = null;
 
         /**
@@ -73,44 +71,30 @@ export default class ResourceLoaderBase extends EventTarget {
     }
 
     get lastUpdate() {
-        if (this.settings) {
-            return this.settings.getSetting(`${this.name}-lastUpdate`) || 0;
-        }
-        return this._lastUpdate;
+        return this.settings.getSetting(`${this.name}-lastUpdate`) || 0;
     }
 
     set lastUpdate(value) {
-        if (this.settings) {
-            this.settings.updateSetting(`${this.name}-lastUpdate`, value);
-        } else {
-            this._lastUpdate = value;
-        }
+        this.settings.updateSetting(`${this.name}-lastUpdate`, value);
     }
 
     get etag() {
-        if (this.settings) {
-            return this.settings.getSetting(`${this.name}-etag`) || '';
-        }
-        return this._etag;
+        return this.settings.getSetting(`${this.name}-etag`) || '';
     }
 
     set etag(value) {
-        if (this.settings) {
-            this.settings.updateSetting(`${this.name}-etag`, value);
-        } else {
-            this._etag = value;
-        }
+        this.settings.updateSetting(`${this.name}-etag`, value);
     }
 
     /**
      * Check for updates and call _updateData() with updated data.
-     * Subclasses must implement this method.
-     * @param {boolean} [force] - Force update even if cache is fresh
+     * Default implementation fetches the data from IndexedDB.
+     * Subclasses can override.
      * @returns {Promise<void>}
-     * @abstract
      */
-    async checkForUpdates(force) {
-        throw new Error('checkForUpdates must be implemented by subclass');
+    async checkForUpdates() {
+        await this.settings.ready();
+        await this._updateData(await this._loadFromDB());
     }
 
     /**
@@ -129,8 +113,6 @@ export default class ResourceLoaderBase extends EventTarget {
 
         if (result.etag) {
             await this._persistData(result);
-            this.etag = result.etag;
-            this.lastUpdate = Date.now();
         }
         if (updated) {
             this.dispatchEvent(
@@ -198,6 +180,8 @@ export default class ResourceLoaderBase extends EventTarget {
     async _persistData(result) {
         const dbc = await this._getDb();
         await dbc.table('tdsStorage').put({ name: this.name, data: result.contents });
+        this.etag = result.etag;
+        this.lastUpdate = Date.now();
     }
 
     /**

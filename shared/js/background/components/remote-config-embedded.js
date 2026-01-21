@@ -12,6 +12,7 @@
  * @typedef {import('./remote-config').Config} Config
  * @typedef {import('./remote-config').default} RemoteConfigInterface
  * @typedef {import('./native-messaging.js').NativeMessaging} NativeMessaging
+ * @typedef {import('../settings.js')} Settings
  */
 
 import { getFeatureSettings, isFeatureEnabled } from '../utils';
@@ -29,6 +30,7 @@ export default class RemoteConfigEmbedded extends NativeResourceLoader {
     /**
      * @param {{
      *  nativeMessaging: NativeMessaging
+     *  settings: Settings
      * }} opts
      */
     constructor(opts) {
@@ -40,6 +42,7 @@ export default class RemoteConfigEmbedded extends NativeResourceLoader {
             },
             {
                 nativeMessaging: opts.nativeMessaging,
+                settings: opts.settings,
             },
         );
 
@@ -47,7 +50,6 @@ export default class RemoteConfigEmbedded extends NativeResourceLoader {
         this.config = null;
 
         // the embedded version no-ops these entries for now
-        this.settings = null;
         this.targetEnvironment = null;
 
         // Process config when data is loaded/updated
