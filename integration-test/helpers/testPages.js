@@ -2,8 +2,6 @@ const testPageHosts = new Set(['privacy-test-pages.site', 'broken.third-party.si
 
 export const TEST_SERVER_ORIGIN = 'http://127.0.0.1:3000';
 
-const DEBUG_ROUTING = process.env.CI === 'true' || process.env.DEBUG_REQUESTS === '1';
-
 /**
  * Route requests to the local test service (privacy-test-pages)
  * @param {import("@playwright/test").Page} page
@@ -17,15 +15,7 @@ export function routeFromLocalhost(page, overrideHandler) {
         }
         const url = new URL(route.request().url());
         if (!testPageHosts.has(url.hostname)) {
-            // skip requests for other hosts
-            if (DEBUG_ROUTING) {
-                console.log('[routeFromLocalhost] continue (not test host):', url.hostname, url.pathname.substring(0, 50));
-            }
             return route.continue();
-        }
-
-        if (DEBUG_ROUTING) {
-            console.log('[routeFromLocalhost] proxying to localhost:', url.hostname, url.pathname.substring(0, 50));
         }
 
         const headers = await route.request().allHeaders();
@@ -45,13 +35,7 @@ export function routeFromLocalhost(page, overrideHandler) {
         if (url.hostname === 'broken.third-party.site' && url.pathname === '/set-cookie') {
             // There is an issue that proxying somehow bypasses extension cookie protection,
             // so we have to route this request to the real server.
-            if (DEBUG_ROUTING) {
-                console.log('[routeFromLocalhost] continue (set-cookie exception):', url.hostname);
-            }
             return route.continue();
-        }
-        if (DEBUG_ROUTING) {
-            console.log('[routeFromLocalhost] fulfilled:', url.hostname, url.pathname.substring(0, 50), 'status:', response.status);
         }
         return route.fulfill({
             status: response.status,

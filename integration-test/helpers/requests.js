@@ -73,14 +73,9 @@ export async function logPageRequests(page, requests, requestFilter, transform, 
     };
 }
 
-const DEBUG_REQUESTS = process.env.CI === 'true' || process.env.DEBUG_REQUESTS === '1';
-
 function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutcome) {
     page.on('request', (request) => {
         const url = request.url();
-        if (DEBUG_REQUESTS) {
-            console.log('[logRequestsPlaywright] request event:', url.substring(0, 100));
-        }
         const requestDetails = {
             url,
             method: request.method(),
@@ -93,9 +88,6 @@ function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutco
         requestDetailsByRequestId.set(url, requestDetails);
     });
     page.on('requestfinished', (request) => {
-        if (DEBUG_REQUESTS) {
-            console.log('[logRequestsPlaywright] requestfinished event:', request.url().substring(0, 100));
-        }
         saveRequestOutcome(request.url(), (details) => {
             details.status = details.redirectUrl ? 'redirected' : 'allowed';
         });
@@ -103,9 +95,6 @@ function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutco
     page.on('requestfailed', (request) => {
         const failure = request.failure();
         const errorText = failure?.errorText || '';
-        if (DEBUG_REQUESTS) {
-            console.log('[logRequestsPlaywright] requestfailed event:', request.url().substring(0, 100), 'error:', errorText);
-        }
         saveRequestOutcome(request.url(), (details) => {
             if (
                 // Chrome
@@ -139,9 +128,6 @@ function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutco
  */
 export async function runRequestBlockingTest(page, url) {
     const pageRequests = [];
-    const DEBUG = process.env.CI === 'true' || process.env.DEBUG_REQUESTS === '1';
-
-    // Track requests using both 'request' and 'requestfailed' events for better Firefox compatibility
     const pendingRequests = new Map();
 
     page.on('request', (req) => {
@@ -149,7 +135,6 @@ export async function runRequestBlockingTest(page, url) {
         if (!reqUrl.startsWith('https://bad.third-party.site/')) {
             return;
         }
-        if (DEBUG) console.log('[Request Helper] request event:', reqUrl);
         pendingRequests.set(reqUrl, {
             url: reqUrl,
             method: req.method(),
@@ -163,7 +148,6 @@ export async function runRequestBlockingTest(page, url) {
         if (!pendingRequests.has(reqUrl)) {
             return;
         }
-        if (DEBUG) console.log('[Request Helper] requestfinished event:', reqUrl);
         const details = pendingRequests.get(reqUrl);
         pendingRequests.delete(reqUrl);
         details.status = 'allowed';
@@ -176,7 +160,6 @@ export async function runRequestBlockingTest(page, url) {
             return;
         }
         const failure = req.failure();
-        if (DEBUG) console.log('[Request Helper] requestfailed event:', reqUrl, 'error:', failure?.errorText);
         const details = pendingRequests.get(reqUrl);
         pendingRequests.delete(reqUrl);
         const errorText = failure?.errorText || '';
@@ -206,18 +189,13 @@ export async function runRequestBlockingTest(page, url) {
         // eslint-disable-next-line no-undef
         () => tests.filter(({ id }) => !id.includes('worker')).length,
     );
-    if (DEBUG) console.log('[Request Helper] testCount:', testCount, 'current pageRequests:', pageRequests.length);
 
     // Wait for requests with timeout
     const maxWait = 30000;
     const startTime = Date.now();
     while (pageRequests.length < testCount && Date.now() - startTime < maxWait) {
         await page.waitForTimeout(100);
-        if (DEBUG && (Date.now() - startTime) % 5000 < 100) {
-            console.log('[Request Helper] waiting... pageRequests:', pageRequests.length, 'pending:', pendingRequests.size);
-        }
     }
-    if (DEBUG) console.log('[Request Helper] done waiting, pageRequests:', pageRequests.length);
     await page.waitForTimeout(1000);
 
     const pageResults = await page.evaluate(
