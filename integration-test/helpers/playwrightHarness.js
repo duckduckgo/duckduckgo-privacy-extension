@@ -1,6 +1,7 @@
 import { test as base, chromium } from '@playwright/test';
 import path from 'path';
 import fs from 'fs/promises';
+import fsSync from 'fs';
 
 // Firefox-specific imports (only used when running Firefox tests)
 import { findFreePort, createFirefoxContext, cleanupFirefoxContext, FirefoxBackgroundPage } from './firefoxHarness.js';
@@ -29,6 +30,46 @@ export function getManifestVersion() {
         return 2;
     }
     return process.env.npm_lifecycle_event === 'playwright-mv2' ? 2 : 3;
+}
+
+/**
+ * Add a script tag to a page or frame context.
+ * On Firefox, uses evaluate() to inject the script content directly to bypass CSP restrictions.
+ * On Chrome, uses the native addScriptTag() method.
+ *
+ * @param {import('@playwright/test').Page | import('@playwright/test').Frame} context - Page or frame to inject script into
+ * @param {Object} options - Script options
+ * @param {string} [options.path] - Path to the script file
+ * @param {string} [options.content] - Script content to inject
+ * @param {string} [options.url] - URL to load script from
+ */
+export async function addScriptTag(context, options) {
+    if (isFirefoxTest()) {
+        // Firefox: Use evaluate() to inject script content directly to bypass CSP
+        let scriptContent;
+        if (options.path) {
+            scriptContent = fsSync.readFileSync(options.path, 'utf8');
+        } else if (options.content) {
+            scriptContent = options.content;
+        } else if (options.url) {
+            // For URL-based scripts, we need to fetch and inject
+            scriptContent = await context.evaluate(async (scriptUrl) => {
+                const response = await fetch(scriptUrl);
+                return response.text();
+            }, options.url);
+        } else {
+            throw new Error('addScriptTag requires path, content, or url option');
+        }
+
+        await context.evaluate((code) => {
+            const script = document.createElement('script');
+            script.textContent = code;
+            document.head.appendChild(script);
+        }, scriptContent);
+    } else {
+        // Chrome: Use native addScriptTag
+        await context.addScriptTag(options);
+    }
 }
 
 async function routeLocalResources(route) {

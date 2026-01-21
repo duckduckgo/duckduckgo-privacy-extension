@@ -1,5 +1,4 @@
-import fs from 'fs';
-import { test, expect, getHARPath } from './helpers/playwrightHarness';
+import { test, expect, getHARPath, addScriptTag } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 
@@ -63,17 +62,14 @@ test.describe('First Party Fingerprint Randomization', () => {
         await page.routeFromHAR(testCase.har);
         await page.goto(`https://${testCase.url}`);
 
-        // Read FingerprintJS and inject via evaluate() to bypass CSP restrictions
-        // (page.addScriptTag is blocked by CSP in Firefox)
-        const fpScript = fs.readFileSync('node_modules/@fingerprintjs/fingerprintjs/dist/fp.js', 'utf8');
-        const fingerprint = await page.evaluate(async (scriptContent) => {
-            // Create and execute the script in page context
-            // eslint-disable-next-line no-eval
-            eval(scriptContent);
+        // Use helper to add script tag (handles Firefox CSP workaround)
+        await addScriptTag(page, { path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' });
+
+        const fingerprint = await page.evaluate(async () => {
             /* global FingerprintJS */
             const fp = await FingerprintJS.load();
             return fp.get();
-        }, fpScript);
+        });
 
         return {
             canvas: fingerprint.components.canvas.value,
