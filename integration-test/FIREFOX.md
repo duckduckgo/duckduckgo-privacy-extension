@@ -32,7 +32,6 @@ The Firefox test configuration currently includes:
 
 - `firefox-background-eval.spec.js` - Tests for Firefox background page evaluation via RDP
 - `fingerprint-randomization.spec.js` - Tests fingerprint randomization via content scripts
-- `gpc.spec.js` - Tests Global Privacy Control injection via content scripts
 - `navigator-interface.spec.js` - Tests navigator.duckduckgo interface injection
 - `facebook-sdk-schema.spec.js` - Facebook SDK schema tests
 - `youtube-sdk-schema.spec.js` - YouTube SDK schema tests
