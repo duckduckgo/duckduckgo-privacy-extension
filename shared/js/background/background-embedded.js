@@ -18,7 +18,7 @@
  * This is a stripped-down version of the extension for embedding in native apps.
  * Much of the functionality is offloaded to the native app.
  */
-/* global RELOADER, BUILD_TARGET */
+/* global RELOADER */
 
 import RemoteConfigEmbedded from './components/remote-config-embedded';
 import CookiePromptManagement from './components/cookie-prompt-management';
@@ -39,6 +39,7 @@ const cpm = new CookiePromptManagement({
 /**
  * Components exposed for debugging and native app integration
  * @type {{
+ *  nativeMessaging: NativeMessaging;
  *  remoteConfig: RemoteConfigEmbedded;
  *  cpm: CookiePromptManagement;
  * }}

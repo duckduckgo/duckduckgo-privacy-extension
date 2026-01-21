@@ -10,16 +10,16 @@
 
 /**
  * @typedef {import('./remote-config').Config} Config
- * @typedef {import('./remote-config').default} RemoteConfigInterface
- * @typedef {import('./native-messaging.js').NativeMessaging} NativeMessaging
- * @typedef {import('../settings.js')} Settings
+ * @typedef {import('./remote-config').RemoteConfigInterface} RemoteConfigInterface
+ * @typedef {import('./native-messaging').default} NativeMessaging
+ * @typedef {import('../settings')} Settings
  */
 
 import { getFeatureSettings, isFeatureEnabled } from '../utils';
 // TODO: FIXME: THIS IS ONLY ADDED FOR TESTING, REMOVE BEFORE MERGING
 import bundledConfig from '../../../data/bundled/macos-config.json';
 import { isSubFeatureEnabled } from './remote-config';
-import NativeResourceLoader from './native-resource-loader.js';
+import NativeResourceLoader from './native-resource-loader';
 
 /**
  * @implements {RemoteConfigInterface}

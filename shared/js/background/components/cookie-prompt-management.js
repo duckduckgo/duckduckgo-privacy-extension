@@ -26,7 +26,7 @@ export default class CookiePromptManagement {
     /**
      *
      * @param {{
-     *  remoteConfig: import('./remote-config').default
+     *  remoteConfig: import('./remote-config').RemoteConfigInterface
      * }} opts
      */
     constructor({ remoteConfig }) {
@@ -67,7 +67,7 @@ export default class CookiePromptManagement {
         const isMainFrame = frameId === 0;
         const senderUrl = sender.url || `${sender.origin}/`;
         await this.remoteConfig.ready;
-        const autoconsentRemoteConfig = this.remoteConfig.config.features.autoconsent;
+        const autoconsentRemoteConfig = this.remoteConfig.config?.features.autoconsent;
         const autoconsentSettings = autoconsentRemoteConfig?.settings;
         console.log('received autoconsent message', msg.type, msg, 'sender:', sender, 'autoconsentRemoteConfig:', autoconsentRemoteConfig, 'defaultCompactRuleList:', defaultCompactRuleList);
 
