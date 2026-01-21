@@ -1,11 +1,9 @@
-import { test, expect, mockAtb, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 import { _formatPixelRequestForTesting } from '../shared/js/shared-utils/pixels';
 
 test.describe('Broken site reports', () => {
-    // Skip for Firefox - broken site reports rely on request interception
-    test.skip(isFirefoxTest(), 'Broken site report tests require Chrome-specific request interception');
     const pixels = [];
     let gotPixel;
 

@@ -31,8 +31,9 @@ The Firefox test harness consists of:
 The Firefox test configuration currently includes:
 
 - `firefox-background-eval.spec.js` - Tests for Firefox background page evaluation via RDP
-- `facebook-sdk-schema.spec.js` - Facebook SDK schema tests (doesn't require extension)
-- `youtube-sdk-schema.spec.js` - YouTube SDK schema tests (doesn't require extension)
+- `fingerprint-randomization.spec.js` - Tests fingerprint randomization (actual extension functionality)
+- `facebook-sdk-schema.spec.js` - Facebook SDK schema tests
+- `youtube-sdk-schema.spec.js` - YouTube SDK schema tests
 
 ## Known Limitations
 

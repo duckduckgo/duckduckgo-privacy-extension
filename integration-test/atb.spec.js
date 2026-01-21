@@ -1,10 +1,7 @@
-import { test, expect, mockAtb, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait, { forSetting } from './helpers/backgroundWait';
 
 test.describe('install workflow', () => {
-    // Skip for Firefox - post-install page doesn't open when extension is installed via RDP
-    test.skip(isFirefoxTest(), 'Post-install page not supported for Firefox RDP installation');
-
     test('postinstall page: should open the postinstall page correctly', async ({ context, page }) => {
         // wait for post install page to open
         // we leverage the extension loaded helper, which returns the extension success URL when it is opened
@@ -131,9 +128,6 @@ test.describe('install workflow', () => {
 });
 
 test.describe('search workflow', () => {
-    // Skip for Firefox - search workflow relies on request interception and content script injection
-    test.skip(isFirefoxTest(), 'Search workflow tests require Chrome-specific request interception');
-
     let todaysAtb;
     let lastWeeksAtb;
     let twoWeeksAgoAtb;

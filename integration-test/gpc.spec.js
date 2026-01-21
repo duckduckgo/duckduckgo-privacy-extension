@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 
 function getGPCValueOfContext(ctx) {
@@ -13,9 +13,6 @@ function getGPCValueOfContext(ctx) {
 }
 
 const fakeOrigin = 'http://test.example';
-
-// Skip for Firefox - GPC injection requires content script injection which has timing issues
-test.skip(isFirefoxTest(), 'GPC tests require Chrome-specific content script injection');
 
 test('Ensure GPC is injected into frames', async ({ context, page, manifestVersion }) => {
     const frameTests = [`${fakeOrigin}:8081`, `${fakeOrigin}:8080`];

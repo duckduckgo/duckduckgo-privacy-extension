@@ -1,9 +1,6 @@
 import { forExtensionLoaded } from './helpers/backgroundWait';
-import { test, expect, getManifestVersion, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect, getManifestVersion } from './helpers/playwrightHarness';
 import { routeFromLocalhost } from './helpers/testPages';
-
-// Skip for Firefox - Fire Button is a Chrome-only feature (see background.js BUILD_TARGET check)
-test.skip(isFirefoxTest(), 'Fire Button is not available on Firefox');
 
 const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/;
 
@@ -72,10 +69,7 @@ test.describe('Fire Button', () => {
         // wait for the animation to complete
         await new Promise((resolve) => setTimeout(resolve, 3000));
         // check that we're redirected to the newtab page after the animation completes
-        // Firefox uses about:blank or about:newtab, Chrome uses chrome://new-tab-page or duckduckgo newtab
-        const expectedNewTabPattern = isFirefoxTest()
-            ? /^(about:blank|about:newtab|about:home)$/
-            : /^(https:\/\/duckduckgo.com\/chrome_newtab|chrome:\/\/new-tab-page\/$)/;
+        const expectedNewTabPattern = /^(https:\/\/duckduckgo.com\/chrome_newtab|chrome:\/\/new-tab-page\/$)/;
         expect(burnAnimationPage.url()).toMatch(expectedNewTabPattern);
     });
 

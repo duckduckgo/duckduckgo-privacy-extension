@@ -1,10 +1,8 @@
 import fs from 'fs';
-import { test, expect, getHARPath, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect, getHARPath } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 
-// Expected fingerprint values differ between browsers
-// Chrome: productSub is '20030107', Firefox: productSub is '20100101' (frozen per spec)
 const expectedFingerprintValues = {
     availTop: 0,
     availLeft: 0,
@@ -12,7 +10,7 @@ const expectedFingerprintValues = {
     wAvailLeft: 0,
     colorDepth: 24,
     pixelDepth: 24,
-    productSub: isFirefoxTest() ? '20100101' : '20030107',
+    productSub: '20030107',
     vendorSub: '',
 };
 
@@ -93,10 +91,6 @@ test.describe('First Party Fingerprint Randomization', () => {
         });
     }
 
-    // Skip for Firefox - canvas fingerprint randomization per first-party behaves differently
-    // in Firefox. The content-scope-scripts may not randomize canvas per-domain the same way.
-    // TODO: Investigate if this is expected behavior or a bug in content-scope-scripts for Firefox.
-    test.skip(isFirefoxTest(), 'Canvas randomization per first-party differs in Firefox');
     test('Fingerprints should not match across first parties', async ({ page }) => {
         const canvas = new Set();
         const plugin = new Set();

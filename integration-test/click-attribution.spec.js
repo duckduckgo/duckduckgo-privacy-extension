@@ -1,4 +1,4 @@
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { logPixels } from './helpers/pixels';
 import testCases from 'privacy-test-pages/adClickFlow/shared/testCases.json';
@@ -8,9 +8,6 @@ if (testCases.length === 0) {
 }
 
 test.describe('Ad click blocking', () => {
-    // Skip for Firefox - ad click blocking relies on webRequest interception which
-    // doesn't work properly with Playwright's routing in Firefox
-    test.skip(isFirefoxTest(), 'Ad click blocking tests require Chrome-specific request interception');
     let extensionVersion;
     const backgroundPixels = [];
     let clearBackgroundPixels;

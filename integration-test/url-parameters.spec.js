@@ -1,10 +1,7 @@
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 import { overridePrivacyConfig } from './helpers/testConfig';
-
-// Skip for Firefox - URL parameter stripping requires webRequest interception
-test.skip(isFirefoxTest(), 'URL parameter tests require Chrome-specific request interception');
 
 const testSite = 'https://privacy-test-pages.site/privacy-protections/query-parameters/';
 

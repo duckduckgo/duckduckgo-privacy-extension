@@ -1,4 +1,4 @@
-import { test, expect, isFirefoxTest } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 
 function stubOnFirstSearchPostExtensionInstallOnInit(page) {
@@ -14,9 +14,6 @@ function stubOnFirstSearchPostExtensionInstallOnInit(page) {
 }
 
 test.describe('onboarding', () => {
-    // Skip all onboarding tests for Firefox - these are Chrome-specific
-    test.skip(isFirefoxTest(), 'Onboarding tests are Chrome-specific');
-
     test('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async ({
         manifestVersion,
         context,
