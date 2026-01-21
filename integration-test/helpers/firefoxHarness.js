@@ -198,6 +198,7 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
     if (!evalRequest.resultID) {
         throw new Error(`RDP evaluateJSAsync did not return a resultID: ${JSON.stringify(evalRequest)}`);
     }
+    console.log(`[RDP] Sent evaluateJSAsync, waiting for resultID: ${evalRequest.resultID}`);
 
     const timeout = 30000;
     const startTime = Date.now();
@@ -206,8 +207,9 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
             // Check if connection is still active
             const connState = client._conn ? 'connected' : 'disconnected';
             const pendingCount = evalResults.size;
+            const existingResultIds = Array.from(evalResults.keys()).join(', ');
             throw new Error(
-                `Timeout waiting for evaluation result (resultID: ${evalRequest.resultID}, conn: ${connState}, pendingResults: ${pendingCount})`,
+                `Timeout waiting for evaluation result (resultID: ${evalRequest.resultID}, conn: ${connState}, pendingResults: ${pendingCount}, existingIds: [${existingResultIds}])`,
             );
         }
         await new Promise((resolve) => setTimeout(resolve, 50));
@@ -258,12 +260,20 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
             if (typeof checkStr === 'string') {
                 const checkParsed = JSON.parse(checkStr);
                 if (!checkParsed.pending) {
-                    // Clean up - must await to ensure RDP state is clean before next request
-                    await client.request({
+                    // Clean up - must await and consume the evaluationResult to avoid leftover results
+                    const cleanupRequest = await client.request({
                         to: consoleActor,
                         type: 'evaluateJSAsync',
                         text: `delete globalThis.${pendingCallbackId}`,
                     });
+                    // Wait for and consume the cleanup's evaluationResult
+                    const cleanupTimeout = Date.now() + 5000;
+                    while (!evalResults.has(cleanupRequest.resultID)) {
+                        if (Date.now() > cleanupTimeout) break; // Don't block forever on cleanup
+                        await new Promise((resolve) => setTimeout(resolve, 50));
+                    }
+                    evalResults.delete(cleanupRequest.resultID);
+
                     const finalParsed = JSON.parse(checkParsed.value);
                     if (!finalParsed.__ok__) {
                         throw new Error(`Evaluation error: ${finalParsed.__error__}`);
@@ -408,6 +418,7 @@ export async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
 
     client.onEvent((msg) => {
         if (msg.type === 'evaluationResult') {
+            console.log(`[RDP] Received evaluationResult: ${msg.resultID}`);
             evalResults.set(msg.resultID, msg);
         }
     });
