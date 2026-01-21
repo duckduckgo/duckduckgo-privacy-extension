@@ -74,40 +74,47 @@ export default class CookiePromptManagement {
         if (!autoconsentSettings || !tabId) {
             return;
         }
-        // TODO: get this state from native: check user site allowlist and user settings
-        // const isEnabled = tab.site.isFeatureEnabled('autoconsent');
-        const isEnabled = this.remoteConfig.isFeatureEnabled('autoconsent');
-        if (!isEnabled) {
-            this.firePixel('disabled-for-site');
-        }
-
-        // TODO: get this state from native
-        const heuristicActionEnabled = true;
-        const visualTest = DEBUG;
-
-        /**
-         * @type {Partial<import('@duckduckgo/autoconsent/lib/types').Config>}
-         */
-        const config = {
-            enabled: isEnabled,
-            autoAction: 'optOut',
-            detectRetries: 20,
-            isMainWorld: false,
-            disabledCmps: autoconsentSettings.disabledCMPs || [],
-            enablePrehide: true,
-            prehideTimeout: 2000,
-            enableCosmeticRules: true,
-            enableGeneratedRules: true,
-            enableFilterList: false,
-            enableHeuristicDetection: true,
-            enableHeuristicAction: heuristicActionEnabled,
-            visualTest,
-            logs: logsConfig,
-        };
 
         switch (msg.type) {
             case 'init': {
-                const compactRuleList = autoconsentRemoteConfig?.compactRuleList || defaultCompactRuleList;
+                const isEnabled = this.checkAutoconsentEnabledForSite(senderUrl);
+                if (!isEnabled) {
+                    this.firePixel('disabled-for-site');
+                    return;
+                }
+
+                // FIXME: do a navigation check here for reload loop prevention
+
+                if (isMainFrame) {
+                    // FIXME: reset dashboard state
+                    this.firePixel('init')
+                }
+
+                const heuristicActionEnabled = this.checkSubfeatureEnabled('heuristicAction');
+                const visualTest = DEBUG;
+                // FIXME: implement reload loop prevention
+                const autoAction = 'optOut';
+
+                /**
+                 * @type {Partial<import('@duckduckgo/autoconsent/lib/types').Config>}
+                 */
+                const autoconsentConfig = {
+                    enabled: isEnabled,
+                    autoAction,
+                    detectRetries: 20,
+                    isMainWorld: false,
+                    disabledCmps: autoconsentSettings.disabledCMPs || [],
+                    enablePrehide: true,
+                    prehideTimeout: 2000,
+                    enableCosmeticRules: true,
+                    enableGeneratedRules: true,
+                    enableFilterList: false,
+                    enableHeuristicDetection: true,
+                    enableHeuristicAction: heuristicActionEnabled,
+                    visualTest,
+                    logs: logsConfig,
+                };
+                const compactRuleList = autoconsentSettings.compactRuleList || defaultCompactRuleList;
                 const rules = {
                     autoconsent: [],
                     consentomatic: [],
@@ -116,15 +123,13 @@ export default class CookiePromptManagement {
                             ? filterCompactRules(compactRuleList, { url: senderUrl, mainFrame: isMainFrame })
                             : compactRuleList,
                 };
-                if (isMainFrame) {
-                    this.firePixel('init')
-                }
+
                 chrome.tabs.sendMessage(
                     tabId,
                     {
                         type: 'initResp',
                         rules,
-                        config,
+                        autoconsentConfig,
                     },
                     {
                         frameId,
@@ -137,17 +142,23 @@ export default class CookiePromptManagement {
             }
             case 'popupFound': {
                 this.firePixel('popup-found');
+                // FIXME: reload loop prevention here
                 break;
             }
             case 'optOutResult': {
                 if (!msg.result) {
                     this.firePixel('error_optout');
+                    // FIXME: refresh dashboard state here
                 } else {
                     // TODO: implement self-tests
                 }
                 break;
             }
             case 'autoconsentDone': {
+                // FIXME: reload loop prevention here
+                // FIXME: refresh dashboard state here
+                // FIXME: request address bar animation here
+                // FIXME: send a counter for NTP stats here
                 if (msg.cmp === 'HEURISTIC') {
                     this.firePixel('done_heuristic');
                 } else {
@@ -199,6 +210,7 @@ export default class CookiePromptManagement {
                 break;
             }
             case 'autoconsentError': {
+                // FIXME: validate the error type
                 this.firePixel('error_multiple-popups');
                 break;
             }
@@ -228,6 +240,16 @@ export default class CookiePromptManagement {
             world: 'MAIN',
             func: evalSnippets[snippetId],
         });
+    }
+
+    checkAutoconsentEnabledForSite(url) {
+        // FIXME: implement this
+        return true;
+    }
+
+    checkSubfeatureEnabled(subfeatureName) {
+        // FIXME: implement this
+        return true;
     }
 
     firePixel(eventName) {
