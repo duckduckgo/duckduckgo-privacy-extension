@@ -518,11 +518,30 @@ export async function createFirefoxContext(rdpPort, extensionPath, addonId) {
  * Clean up Firefox context resources
  */
 export async function cleanupFirefoxContext(context) {
+    // Disconnect RDP first
     if (context._rdpClient) {
         context._rdpClient.disconnect();
+        context._rdpClient = null;
     }
+
+    // Clear the evalResults map to prevent any stale state
+    if (context._firefoxEvalResults) {
+        context._firefoxEvalResults.clear();
+        context._firefoxEvalResults = null;
+    }
+
+    // Close the browser context
+    try {
+        await context.close();
+    } catch (e) {
+        // Context might already be closed
+    }
+
+    // Wait for browser to fully shut down
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Clean up temp directory
     if (context._firefoxUserDataDir) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
         try {
             await fs.rm(context._firefoxUserDataDir, { recursive: true, force: true });
         } catch (e) {

@@ -104,6 +104,7 @@ export const test = base.extend({
 
     /**
      * RDP port for Firefox debugging (only used for Firefox tests)
+     * Each test gets a fresh port to ensure complete isolation.
      * @type {number}
      */
     rdpPort: [
@@ -116,7 +117,7 @@ export const test = base.extend({
                 await use(0);
             }
         },
-        { scope: 'worker' },
+        { scope: 'test' },
     ],
 
     /**
