@@ -18,6 +18,11 @@ test('Ensure GPC is injected into frames', async ({ context, page, backgroundPag
     const frameTests = [`${fakeOrigin}:8081`, `${fakeOrigin}:8080`];
     await backgroundWait.forExtensionLoaded(context);
     await backgroundWait.forAllConfiguration(backgroundPage);
+
+    // Verify GPC is enabled in extension settings
+    const gpcSetting = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('GPC'));
+    expect(gpcSetting, 'GPC should be enabled in extension settings').toEqual(true);
+
     await page.route('**/*', async (route) => {
         const url = new URL(route.request().url());
         const data = await fs.promises.readFile(path.join(__dirname, 'data', 'pages', url.pathname));
