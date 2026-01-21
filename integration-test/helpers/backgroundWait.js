@@ -33,8 +33,11 @@ function manuallyWaitForFunction(bgPage, func, { polling, timeout }, ...args) {
  * @returns {Promise<any>}
  */
 export function forFunction(bgPage, func, ...args) {
-    if (bgPage.waitForFunction && bgPage.routeFromHAR) {
-        // In Playwright, the waitForFunction signature differs from the puppeteer one
+    // For Firefox (FirefoxBackgroundPage), always use manuallyWaitForFunction
+    // because our RDP-based waitForFunction has different async handling behavior.
+    // For Playwright's native Page/Worker, use their waitForFunction.
+    if (bgPage.waitForFunction && bgPage.routeFromHAR && !bgPage.isAvailable) {
+        // Native Playwright page/worker (has routeFromHAR that works, no isAvailable method)
         return bgPage.waitForFunction(func, ...args);
     }
     const waitForFunction = manuallyWaitForFunction.bind(null, bgPage);
