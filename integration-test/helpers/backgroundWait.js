@@ -1,48 +1,17 @@
-import { errors } from '@playwright/test';
 import { isFirefoxTest } from './playwrightHarness';
 
-// Helpers that aid in waiting for the background page's state.
-function manuallyWaitForFunction(bgPage, func, { polling, timeout }, ...args) {
-    return new Promise((resolve, reject) => {
-        const startTime = Date.now();
-        const waitForFunction = async () => {
-            let result;
-            try {
-                result = await bgPage.evaluate(func, ...args);
-            } catch (e) {
-                reject(e);
-                return; // Stop execution after rejection
-            }
-            if (result) {
-                resolve(result);
-            } else {
-                if (Date.now() - startTime > timeout) {
-                    reject(new errors.TimeoutError('Manually waiting for function timed out: ' + func.toString()));
-                } else {
-                    setTimeout(waitForFunction, polling);
-                }
-            }
-        };
-        waitForFunction();
-    });
-}
-
 /**
+ * Wait for a function to return a truthy value in the background page.
+ * Works with both Playwright's native Page/Worker and our FirefoxBackgroundPage.
+ *
  * @param {import('@playwright/test').Page | import('@playwright/test').Worker} bgPage
- * @param {*} func
- * @param  {...any} args
+ * @param {Function} func - Function to evaluate
+ * @param {*} [arg] - Optional argument to pass to the function
  * @returns {Promise<any>}
  */
-export function forFunction(bgPage, func, ...args) {
-    // For Firefox (FirefoxBackgroundPage), always use manuallyWaitForFunction
-    // because our RDP-based waitForFunction has different async handling behavior.
-    // For Playwright's native Page/Worker, use their waitForFunction.
-    if (bgPage.waitForFunction && bgPage.routeFromHAR && !bgPage.isAvailable) {
-        // Native Playwright page/worker (has routeFromHAR that works, no isAvailable method)
-        return bgPage.waitForFunction(func, ...args);
-    }
-    const waitForFunction = manuallyWaitForFunction.bind(null, bgPage);
-    return waitForFunction(func, { polling: 10, timeout: 15000 }, ...args);
+export function forFunction(bgPage, func, arg) {
+    // Both Playwright and our FirefoxBackgroundPage now have compatible waitForFunction signatures
+    return bgPage.waitForFunction(func, arg, { polling: 100, timeout: 15000 });
 }
 
 export async function forSetting(bgPage, key) {

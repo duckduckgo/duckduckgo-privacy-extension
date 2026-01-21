@@ -321,13 +321,18 @@ export class FirefoxBackgroundPage {
         return evaluateInFirefoxBackground(this._client, this._consoleActor, this._evalResults, code);
     }
 
-    async waitForFunction(pageFunction, options = {}, ...args) {
+    /**
+     * Wait for a function to return a truthy value.
+     * Matches Playwright's waitForFunction signature: waitForFunction(pageFunction, arg?, options?)
+     */
+    async waitForFunction(pageFunction, arg, options = {}) {
         const { timeout = 30000, polling = 100 } = options;
         const startTime = Date.now();
         while (true) {
             try {
-                const result = await this.evaluate(pageFunction, ...args);
-                if (result) return result;
+                // Pass arg to evaluate if provided
+                const result = arg !== undefined ? await this.evaluate(pageFunction, arg) : await this.evaluate(pageFunction);
+                if (result) return { jsonValue: () => Promise.resolve(result) }; // Match Playwright's return type
             } catch (e) {
                 // Ignore errors during polling
             }
