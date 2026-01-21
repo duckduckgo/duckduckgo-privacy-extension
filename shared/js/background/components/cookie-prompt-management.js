@@ -53,11 +53,10 @@ export default class CookiePromptManagement {
 
         // Embedded builds don't use MessageRouter, so we need to set up a direct message listener
         if (BUILD_TARGET === 'embedded') {
-            chrome.runtime.onMessage.addListener((req, sender) => {
+            chrome.runtime.onMessage.addListener(async (req, sender) => {
                 if (req.messageType === 'autoconsent') {
-                    this.handleAutoConsentMessage(req.autoconsentPayload, sender);
+                    return this.handleAutoConsentMessage(req.autoconsentPayload, sender);
                 }
-                return true;
             });
         }
     }

@@ -23,9 +23,10 @@
 import RemoteConfigEmbedded from './components/remote-config-embedded';
 import CookiePromptManagement from './components/cookie-prompt-management';
 import initReloader from './devbuild-reloader';
+import NativeMessaging from './components/native-messaging';
 
-
-const remoteConfig = new RemoteConfigEmbedded({});
+const nativeMessaging = new NativeMessaging();
+const remoteConfig = new RemoteConfigEmbedded({ nativeMessaging });
 
 const cpm = new CookiePromptManagement({
     remoteConfig,
@@ -39,6 +40,7 @@ const cpm = new CookiePromptManagement({
  * }}
  */
 const components = {
+    nativeMessaging,
     remoteConfig,
     cpm,
 };

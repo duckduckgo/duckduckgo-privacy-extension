@@ -1,91 +1,70 @@
 /**
- * RemoteConfigEmbedded - Simplified config management for embedded extension
+ * RemoteConfigEmbedded - Config management for embedded extension
  *
  * This version:
- * - Only loads bundled config (no remote fetching)
- * - Removes cohort/rollout/experiment handling (will be managed by native app later)
+ * - Loads initial bundled config
+ * - Receives updates from native app via NativeResourceLoader
+ * - Removes cohort/rollout/experiment handling (managed by native app)
  * - Provides config parsing for feature enabled checks
  */
 
 /**
  * @typedef {import('./remote-config').Config} Config
  * @typedef {import('./remote-config').default} RemoteConfigInterface
+ * @typedef {import('./native-messaging.js').NativeMessaging} NativeMessaging
  */
 
 import { getFeatureSettings, isFeatureEnabled } from '../utils';
-// FIXME: THIS IS ONLY ADDED FOR TESTING, REMOVE BEFORE MERGING
+// TODO: FIXME: THIS IS ONLY ADDED FOR TESTING, REMOVE BEFORE MERGING
 import bundledConfig from '../../../data/bundled/macos-config.json';
 import { isSubFeatureEnabled } from './remote-config';
+import NativeResourceLoader from './native-resource-loader.js';
 
 /**
  * @implements {RemoteConfigInterface}
+ * Embedded version of RemoteConfig that receives config from native app.
+ * Provides the same public API as RemoteConfig for feature/subfeature checks.
  */
-export default class RemoteConfigEmbedded extends EventTarget {
+export default class RemoteConfigEmbedded extends NativeResourceLoader {
     /**
-     * @param {object} opts
+     * @param {{
+     *  nativeMessaging: NativeMessaging
+     * }} opts
      */
     constructor(opts) {
-        super();
+        super(
+            {
+                name: 'config',
+                initialData: bundledConfig,
+                updateIntervalMinutes: 15, // note that we _also_ check on every service worker "wake"
+            },
+            {
+                nativeMessaging: opts.nativeMessaging,
+            },
+        );
+
         /** @type {Config | null} */
         this.config = null;
-
-        // Load bundled config immediately
-        this.ready = this._loadBundledConfig();
 
         // the embedded version no-ops these entries for now
         this.settings = null;
         this.targetEnvironment = null;
-        /** @type {import('./resource-loader').ResourceName} */
-        this.name = 'config';
-        this.remoteUrl = null;
-        this.localUrl = null;
-        this.updateIntervalMinutes = 0;
-        this.format = 'json';
-        this.data = null;
-        this._onUpdateProcessing = [];
-        this.lastUpdate = 0;
-        this.etag = '';
-        this.allLoadingFinished = this.ready;
+
+        // Process config when data is loaded/updated
+        this.onUpdate(this._updateCallback.bind(this));
     }
 
     /**
-     * Load config from bundled data
-     * @returns {Promise<void>}
-     */
-    async _loadBundledConfig() {
-        console.log('RemoteConfigEmbedded: Loading bundled config');
-
-        // Clone to avoid mutations affecting the original
-        const configCopy = structuredClone(bundledConfig);
-        this.config = configCopy;
-        this._emitUpdate();
-
-        console.log('RemoteConfigEmbedded: Config loaded', this.config);
-    }
-
-    /**
-     * Allow native app to provide config updates
+     * Process and store the config data
+     * @param {Config} configValue
+     * @param {string} etag
      * @param {Config} configValue
      */
-    updateConfig(configValue) {
+    _updateCallback(name, etag, configValue) {
+        // Clone to avoid mutations affecting the original
         const configCopy = structuredClone(configValue);
         this.config = configCopy;
-        this._emitUpdate();
-    }
-
-    /**
-     * @private
-     */
-    _emitUpdate() {
-        this.dispatchEvent(
-            new CustomEvent('update', {
-                detail: {
-                    name: 'config',
-                    version: this.config.version,
-                    data: this.config,
-                },
-            }),
-        );
+        console.log('RemoteConfigEmbedded: Config processed', this.config);
     }
 
     /**
@@ -148,7 +127,7 @@ export default class RemoteConfigEmbedded extends EventTarget {
                     subFeature: name,
                     state: subfeature.state,
                     hasTargets: !!subfeature.targets,
-                    // values below are stubbed in the embedded version
+                    // values below are stubbed in the embedded version (cohorts/rollouts are handled by native app)
                     hasRollout: false,
                     rolloutRoll: null,
                     rolloutPercent: null,
@@ -162,87 +141,23 @@ export default class RemoteConfigEmbedded extends EventTarget {
     }
 
     /**
-     * Register callback for config updates
-     * @param {import('./resource-loader').OnUpdatedCallback} cb
-     */
-    onUpdate(cb) {
-        this.addEventListener('update', (ev) => {
-            if (ev instanceof CustomEvent) {
-                const { name, version, data } = ev.detail;
-                cb(name, version, data);
-            }
-        });
-    }
-
-    /**
-     * no-op in the embedded extension
+     * no-op in the embedded extension (cohorts managed by native)
+     * @returns {null}
      */
     getCohort() {
         return null;
     }
 
     /**
-     *no-op in the embedded extension
+     * no-op in the embedded extension (cohorts managed by native)
+     * @returns {null}
      */
     getCohortName() {
         return null;
     }
 
     /**
-     * no-op in the embedded extension
+     * no-op in the embedded extension (cohorts managed by native)
      */
-    setCohort() {
-    }
-
-    /**
-     * no-op in the embedded extension
-     */
-    _processRawConfig() {
-    }
-
-    /**
-     * no-op in the embedded extension
-     * @returns {Promise<void>}
-     */
-    async checkForUpdates() {
-    }
-
-    /**
-     * no-op in the embedded extension
-     */
-    async _loadFromDB() {
-        return { contents: null };
-    }
-
-    /**
-     * no-op in the embedded extension
-     */
-    async _loadFromURL() {
-        return { contents: null };
-    }
-
-    /**
-     * no-op in the embedded extension
-     */
-    async _getDb() {
-        return null;
-    }
-
-    /**
-     * no-op in the embedded extension
-     */
-    async _updateData() {
-    }
-
-    /**
-     * no-op in the embedded extension
-     */
-    async overrideDataValue() {
-    }
-
-    /**
-     * no-op in the embedded extension
-     */
-    async modify() {
-    }
+    setCohort() { }
 }

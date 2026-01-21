@@ -36,12 +36,8 @@ export default class ResourceLoaderBase extends EventTarget {
         this._onUpdateProcessing = [];
         this._etag = '';
         this._lastUpdate = 0;
+        this._ready = null;
 
-        /**
-         * @type {Promise<void>} Promise that resolves once this resource has been loaded
-         * (i.e. `this.data` contains the resource contents)
-         */
-        this.ready = this.checkForUpdates();
         /**
          * @type {Promise} Promise that resolves after resource is loaded, and all `onUpdate`
          * callbacks have resolved.
@@ -59,6 +55,18 @@ export default class ResourceLoaderBase extends EventTarget {
                 }
             });
         }
+    }
+
+    /**
+     * @type {Promise<void>} Promise that resolves once this resource has been loaded
+     * (i.e. `this.data` contains the resource contents)
+     */
+    get ready() {
+        if (this._ready) {
+            return this._ready;
+        }
+        this._ready = this.checkForUpdates();
+        return this._ready;
     }
 
     get lastUpdate() {
@@ -92,7 +100,7 @@ export default class ResourceLoaderBase extends EventTarget {
     }
 
     /**
-     * Check for updates and load the resource.
+     * Check for updates and call _updateData() with updated data.
      * Subclasses must implement this method.
      * @param {boolean} [force] - Force update even if cache is fresh
      * @returns {Promise<void>}
