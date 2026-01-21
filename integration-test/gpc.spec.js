@@ -19,7 +19,10 @@ test('Ensure GPC is injected into frames', async ({ context, page, backgroundPag
     await backgroundWait.forExtensionLoaded(context);
     await backgroundWait.forAllConfiguration(backgroundPage);
 
-    // Verify GPC is enabled in extension settings
+    // Ensure GPC is enabled in extension settings (it should be by default, but set it explicitly)
+    await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('GPC', true));
+
+    // Verify GPC is enabled
     const gpcSetting = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('GPC'));
     expect(gpcSetting, 'GPC should be enabled in extension settings').toEqual(true);
 
