@@ -14,9 +14,10 @@ function getGPCValueOfContext(ctx) {
 
 const fakeOrigin = 'http://test.example';
 
-test('Ensure GPC is injected into frames', async ({ context, page, manifestVersion }) => {
+test('Ensure GPC is injected into frames', async ({ context, page, backgroundPage, manifestVersion }) => {
     const frameTests = [`${fakeOrigin}:8081`, `${fakeOrigin}:8080`];
     await backgroundWait.forExtensionLoaded(context);
+    await backgroundWait.forAllConfiguration(backgroundPage);
     await page.route('**/*', async (route) => {
         const url = new URL(route.request().url());
         const data = await fs.promises.readFile(path.join(__dirname, 'data', 'pages', url.pathname));

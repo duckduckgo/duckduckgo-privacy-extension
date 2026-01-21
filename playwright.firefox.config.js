@@ -20,6 +20,7 @@ const firefoxTestFiles = [
     'integration-test/firefox-background-eval.spec.js',
     // Extension functionality tests - content script injection
     'integration-test/fingerprint-randomization.spec.js',
+    'integration-test/gpc.spec.js',
     'integration-test/navigator-interface.spec.js',
     // Schema tests that don't require the extension
     'integration-test/facebook-sdk-schema.spec.js',
