@@ -158,6 +158,11 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
         throw new Error('No background console actor available');
     }
 
+    // Check if the client is still connected
+    if (!client._conn) {
+        throw new Error('RDP client is not connected');
+    }
+
     const callbackId = `__evalCallback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const wrappedCode = `
         (function() {

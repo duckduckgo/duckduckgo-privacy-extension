@@ -17,13 +17,20 @@ const fakeOrigin = 'http://test.example';
 test('Ensure GPC is injected into frames', async ({ context, page, backgroundPage, manifestVersion }) => {
     const frameTests = [`${fakeOrigin}:8081`, `${fakeOrigin}:8080`];
     await backgroundWait.forExtensionLoaded(context);
-    await backgroundWait.forAllConfiguration(backgroundPage);
 
-    // Check GPC setting value (for debugging)
-    const gpcSetting = await backgroundPage.evaluate(() => {
-        return globalThis.dbg.settings.getSetting('GPC');
+    // Wait for settings to be ready (simpler check than forAllConfiguration)
+    await backgroundPage.evaluate(() => {
+        return new Promise((resolve) => {
+            const check = () => {
+                if (globalThis.dbg?.settings?.getSetting) {
+                    resolve(true);
+                } else {
+                    setTimeout(check, 100);
+                }
+            };
+            check();
+        });
     });
-    console.log('GPC setting value:', gpcSetting);
 
     await page.route('**/*', async (route) => {
         const url = new URL(route.request().url());
