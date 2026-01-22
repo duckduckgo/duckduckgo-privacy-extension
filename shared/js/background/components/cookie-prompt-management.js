@@ -8,6 +8,15 @@ import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.
  * @typedef {import('../tab-manager.js')} TabManager
  */
 
+/**
+ * @typedef {Object} CpmState
+ * @property {Record<number, {
+ *  lastHandledCMPName: string | null,
+ *  reloadLoopDetected: boolean,
+ * }} tabState
+ * @property {string[]} sitesNotifiedCache
+ */
+
 /* global DEBUG, BUILD_TARGET */
 
 /**
@@ -43,9 +52,6 @@ export default class CookiePromptManagement {
             both: new Set(),
             onlyRules: new Set(),
         };
-        this.sitesNotifiedCachePromise = getFromSessionStorage('cpmSitesNotifiedCache').then((cachedSites) => {
-            return new Set(cachedSites || []);
-        });
 
         registerContentScripts([
             {
@@ -59,6 +65,11 @@ export default class CookiePromptManagement {
             },
         ])
 
+        // restore the current CPM state from storage
+        this.getCpmState().then((cpmState) => {
+            this._cpmState = cpmState;
+        });
+
         // Embedded builds don't use MessageRouter, so we need to set up a direct message listener
         if (BUILD_TARGET === 'embedded') {
             chrome.runtime.onMessage.addListener(async (req, sender) => {
@@ -70,6 +81,28 @@ export default class CookiePromptManagement {
     }
 
     /**
+     * @returns {Promise<CpmState>}
+     */
+    async getCpmState() {
+        if (this._cpmState) return this._cpmState;
+        this._cpmState = await getFromSessionStorage('cpmState').then((cpmState) => {
+            return cpmState || {
+                tabState: {},
+                sitesNotifiedCache: [],
+            };
+        });
+        return this._cpmState;
+    }
+
+    /**
+     * @param {CpmState} newState
+     */
+    async updateCpmState(newState) {
+        this._cpmState = newState;
+        await setToSessionStorage('cpmState', this._cpmState);
+    }
+
+    /**
      *
      * @param {import('@duckduckgo/autoconsent/lib/messages').ContentScriptMessage} msg
      * @param {chrome.runtime.MessageSender} sender
@@ -78,6 +111,10 @@ export default class CookiePromptManagement {
     async handleAutoConsentMessage(msg, sender) {
         const tabId = sender.tab?.id;
         const frameId = sender.frameId;
+        if (typeof frameId !== 'number') {
+            console.error('frameId is not a number', frameId);
+            return;
+        }
         const isMainFrame = frameId === 0;
         const senderUrl = sender.url || `${sender.origin}/`;
         let senderDomain = null;
@@ -96,7 +133,8 @@ export default class CookiePromptManagement {
             return;
         }
         const heuristicActionEnabled = await this.checkSubfeatureEnabled('heuristicAction');
-        const sitesNotifiedCache = await this.sitesNotifiedCachePromise;
+        const cpmState = await this.getCpmState();
+        const sitesNotifiedSet = new Set(cpmState.sitesNotifiedCache);
 
         switch (msg.type) {
             case 'init': {
@@ -118,7 +156,7 @@ export default class CookiePromptManagement {
                         tabId,
                         {
                             // keep "cookies managed" if we did it for this site since app launch
-                            consentManaged: sitesNotifiedCache.has(senderDomain),
+                            consentManaged: sitesNotifiedSet.has(senderDomain),
                             cosmetic: null,
                             optoutFailed: null,
                             selftestFailed: null,
@@ -215,9 +253,12 @@ export default class CookiePromptManagement {
                         consentHeuristicEnabled: heuristicActionEnabled
                     }
                 )
-                sitesNotifiedCache.add(senderDomain);
-                await setToSessionStorage('cpmSitesNotifiedCache', Array.from(sitesNotifiedCache));
-                // FIXME: request address bar animation here
+                sitesNotifiedSet.add(senderDomain)
+                await this.updateCpmState({
+                    ...cpmState,
+                    sitesNotifiedCache: Array.from(sitesNotifiedSet),
+                });
+                this.requestAddressBarAnimation(tabId, msg.url, msg.isCosmetic);
                 // FIXME: send a counter for NTP stats here
                 if (msg.cmp === 'HEURISTIC') {
                     this.firePixel('done_heuristic');
@@ -317,7 +358,7 @@ export default class CookiePromptManagement {
      */
     async refreshDashboardState(tabId, { consentManaged, cosmetic, optoutFailed, selftestFailed, consentReloadLoop, consentRule, consentHeuristicEnabled }) {
         if (BUILD_TARGET === 'embedded') {
-            await this.nativeMessaging.request('refreshCpmDashboardState', {
+            await this.nativeMessaging.notify('refreshCpmDashboardState', {
                 tabId,
                 consentStatus: {
                     consentManaged,
@@ -330,6 +371,14 @@ export default class CookiePromptManagement {
                 },
             });
         }
+    }
+
+    async requestAddressBarAnimation(tabId, topUrl, isCosmetic) {
+        await this.nativeMessaging.notify('showCpmAnimation', {
+            tabId,
+            topUrl,
+            isCosmetic,
+        });
     }
 
     async checkAutoconsentEnabledForSite(url) {
