@@ -14,7 +14,12 @@ import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.
  *  lastHandledCMPName: string | null,
  *  reloadLoopDetected: boolean,
  * }} tabState
- * @property {string[]} sitesNotifiedCache
+ * @property {Set<string>} sitesNotifiedCache
+ * @property {{
+ *  patterns: Set<string>,
+ *  onlyRules: Set<string>,
+ *  both: Set<string>,
+ * }} detectionCache
  */
 
 /* global DEBUG, BUILD_TARGET */
@@ -47,11 +52,6 @@ export default class CookiePromptManagement {
         this.settings = settings;
         this.summaryEvents = {};
         this.summaryTimer = null;
-        this.detectionCache = {
-            patterns: new Set(),
-            both: new Set(),
-            onlyRules: new Set(),
-        };
 
         registerContentScripts([
             {
@@ -66,9 +66,7 @@ export default class CookiePromptManagement {
         ])
 
         // restore the current CPM state from storage
-        this.getCpmState().then((cpmState) => {
-            this._cpmState = cpmState;
-        });
+        this.getCpmState();
 
         // Embedded builds don't use MessageRouter, so we need to set up a direct message listener
         if (BUILD_TARGET === 'embedded') {
@@ -81,25 +79,61 @@ export default class CookiePromptManagement {
     }
 
     /**
+     * @param {object} jsonCpmState
+     * @returns {CpmState}
+     */
+    _deserializeCpmState(jsonCpmState) {
+        return {
+            tabState: structuredClone(jsonCpmState.tabState || {}),
+            sitesNotifiedCache: new Set(jsonCpmState.sitesNotifiedCache || []),
+            detectionCache: {
+                patterns: new Set(jsonCpmState.detectionCache?.patterns || []),
+                both: new Set(jsonCpmState.detectionCache?.both || []),
+                onlyRules: new Set(jsonCpmState.detectionCache?.onlyRules || []),
+            },
+        }
+    }
+
+    /**
+     * @param {CpmState} cpmState
+     * @returns {object}
+     */
+    _serializeCpmState(cpmState) {
+        return {
+            tabState: structuredClone(cpmState.tabState),
+            sitesNotifiedCache: Array.from(cpmState.sitesNotifiedCache),
+            detectionCache: {
+                patterns: Array.from(cpmState.detectionCache.patterns),
+                both: Array.from(cpmState.detectionCache.both),
+                onlyRules: Array.from(cpmState.detectionCache.onlyRules),
+            },
+        }
+    }
+
+    /**
      * @returns {Promise<CpmState>}
      */
     async getCpmState() {
-        if (this._cpmState) return this._cpmState;
-        this._cpmState = await getFromSessionStorage('cpmState').then((cpmState) => {
-            return cpmState || {
+        if (!this._jsonCpmState) {
+            this._jsonCpmState = (await getFromSessionStorage('cpmState')) || {
                 tabState: {},
                 sitesNotifiedCache: [],
+                detectionCache: {
+                    patterns: [],
+                    both: [],
+                    onlyRules: [],
+                },
             };
-        });
-        return this._cpmState;
+        }
+        return this._deserializeCpmState(this._jsonCpmState);
     }
 
     /**
      * @param {CpmState} newState
      */
     async updateCpmState(newState) {
-        this._cpmState = newState;
-        await setToSessionStorage('cpmState', this._cpmState);
+        this._jsonCpmState = this._serializeCpmState(newState);
+        await setToSessionStorage('cpmState', this._jsonCpmState);
     }
 
     /**
@@ -134,7 +168,6 @@ export default class CookiePromptManagement {
         }
         const heuristicActionEnabled = await this.checkSubfeatureEnabled('heuristicAction');
         const cpmState = await this.getCpmState();
-        const sitesNotifiedSet = new Set(cpmState.sitesNotifiedCache);
 
         switch (msg.type) {
             case 'init': {
@@ -156,7 +189,7 @@ export default class CookiePromptManagement {
                         tabId,
                         {
                             // keep "cookies managed" if we did it for this site since app launch
-                            consentManaged: sitesNotifiedSet.has(senderDomain),
+                            consentManaged: cpmState.sitesNotifiedCache.has(senderDomain),
                             cosmetic: null,
                             optoutFailed: null,
                             selftestFailed: null,
@@ -253,11 +286,8 @@ export default class CookiePromptManagement {
                         consentHeuristicEnabled: heuristicActionEnabled
                     }
                 )
-                sitesNotifiedSet.add(senderDomain)
-                await this.updateCpmState({
-                    ...cpmState,
-                    sitesNotifiedCache: Array.from(sitesNotifiedSet),
-                });
+                cpmState.sitesNotifiedCache.add(senderDomain)
+                await this.updateCpmState(cpmState);
                 this.requestAddressBarAnimation(tabId, msg.url, msg.isCosmetic);
                 this.notifyPopupHandled(tabId, msg);
 
@@ -269,46 +299,54 @@ export default class CookiePromptManagement {
                 break;
             }
             case 'report': {
-                // TODO: verify this logic
                 const state = msg.state || {};
                 const detectedByPatterns = state.heuristicPatterns?.length > 0;
                 const detectedBySnippets = state.heuristicSnippets?.length > 0;
                 const detectedPopups = state.detectedPopups?.length > 0;
                 const heuristicMatch = detectedByPatterns || detectedBySnippets;
-                if (isMainFrame && heuristicMatch && !this.detectionCache.patterns.has(msg.instanceId)) {
-                    this.detectionCache.patterns.add(msg.instanceId);
+                let updatedCpmState = false;
+                if (isMainFrame && heuristicMatch && !cpmState.detectionCache.patterns.has(msg.instanceId)) {
+                    cpmState.detectionCache.patterns.add(msg.instanceId);
+                    updatedCpmState = true;
                     this.firePixel('detected-by-patterns');
                 }
                 if (isMainFrame && detectedPopups) {
-                    if (heuristicMatch && !this.detectionCache.both.has(msg.instanceId)) {
-                        this.detectionCache.both.add(msg.instanceId);
+                    if (heuristicMatch && !cpmState.detectionCache.both.has(msg.instanceId)) {
+                        cpmState.detectionCache.both.add(msg.instanceId);
+                        updatedCpmState = true;
                         this.firePixel('detected-by-both');
-                    } else if (!heuristicMatch && !this.detectionCache.onlyRules.has(msg.instanceId)) {
-                        this.detectionCache.onlyRules.add(msg.instanceId);
+                    } else if (!heuristicMatch && !cpmState.detectionCache.onlyRules.has(msg.instanceId)) {
+                        cpmState.detectionCache.onlyRules.add(msg.instanceId);
+                        updatedCpmState = true;
                         this.firePixel('detected-only-rules');
                     }
+                }
+                if (updatedCpmState) {
+                    await this.updateCpmState(cpmState);
                 }
                 break;
             }
             case 'eval': {
-                this.evalInTab(tabId, frameId, msg.snippetId).then(([result]) => {
-                    if (logsConfig.evals) {
-                        console.groupCollapsed(`eval result for ${senderUrl}`);
-                        console.log(msg.code, result.result);
-                        console.groupEnd();
-                    }
-                    chrome.tabs.sendMessage(
-                        tabId,
-                        {
-                            id: msg.id,
-                            type: 'evalResp',
-                            result: result.result,
-                        },
-                        {
-                            frameId,
-                        },
-                    );
-                });
+                if (typeof msg.snippetId !== 'undefined') {
+                    this.evalInTab(tabId, frameId, msg.snippetId).then(([result]) => {
+                        if (logsConfig.evals) {
+                            console.groupCollapsed(`eval result for ${senderUrl}`);
+                            console.log(msg.code, result.result);
+                            console.groupEnd();
+                        }
+                        chrome.tabs.sendMessage(
+                            tabId,
+                            {
+                                id: msg.id,
+                                type: 'evalResp',
+                                result: result.result,
+                            },
+                            {
+                                frameId,
+                            },
+                        );
+                    });
+                }
                 break;
             }
             case 'autoconsentError': {
@@ -331,7 +369,7 @@ export default class CookiePromptManagement {
      * @param {number} tabId
      * @param {number} frameId
      * @param {keyof typeof evalSnippets} snippetId
-     * @returns
+     * @returns {Promise<chrome.scripting.InjectionResult<boolean>[]>}
      */
     async evalInTab(tabId, frameId, snippetId) {
         return chrome.scripting.executeScript({
@@ -389,7 +427,7 @@ export default class CookiePromptManagement {
 
     /**
      * @param {number} tabId
-     * @param {import('@duckduckgo/autoconsent/lib/messages').AutoconsentDoneMessage} msg
+     * @param {import('@duckduckgo/autoconsent/lib/messages').DoneMessage} msg
      */
     async notifyPopupHandled(tabId, msg) {
         await this.nativeMessaging.notify('cookiePopupHandled', {
