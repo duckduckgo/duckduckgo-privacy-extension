@@ -259,7 +259,8 @@ export default class CookiePromptManagement {
                     sitesNotifiedCache: Array.from(sitesNotifiedSet),
                 });
                 this.requestAddressBarAnimation(tabId, msg.url, msg.isCosmetic);
-                // FIXME: send a counter for NTP stats here
+                this.notifyPopupHandled(tabId, msg);
+
                 if (msg.cmp === 'HEURISTIC') {
                     this.firePixel('done_heuristic');
                 } else {
@@ -373,11 +374,27 @@ export default class CookiePromptManagement {
         }
     }
 
+    /**
+     * @param {number} tabId
+     * @param {string} topUrl
+     * @param {boolean} isCosmetic
+     */
     async requestAddressBarAnimation(tabId, topUrl, isCosmetic) {
         await this.nativeMessaging.notify('showCpmAnimation', {
             tabId,
             topUrl,
             isCosmetic,
+        });
+    }
+
+    /**
+     * @param {number} tabId
+     * @param {import('@duckduckgo/autoconsent/lib/messages').AutoconsentDoneMessage} msg
+     */
+    async notifyPopupHandled(tabId, msg) {
+        await this.nativeMessaging.notify('cookiePopupHandled', {
+            tabId,
+            msg,
         });
     }
 
