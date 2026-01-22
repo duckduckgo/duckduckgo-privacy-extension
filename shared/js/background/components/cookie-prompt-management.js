@@ -1,6 +1,7 @@
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
 import { registerContentScripts } from './mv3-content-script-injection';
 import { sendPixelRequest } from '../pixels';
+import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.json';
 
 /**
@@ -27,10 +28,14 @@ export default class CookiePromptManagement {
      *
      * @param {{
      *  remoteConfig: import('./remote-config').RemoteConfigInterface
+     *  nativeMessaging: import('./native-messaging').default
+     *  settings: import('../settings')
      * }} opts
      */
-    constructor({ remoteConfig }) {
+    constructor({ remoteConfig, nativeMessaging, settings }) {
         this.remoteConfig = remoteConfig;
+        this.nativeMessaging = nativeMessaging;
+        this.settings = settings;
         this.summaryEvents = {};
         this.summaryTimer = null;
         this.detectionCache = {
@@ -38,6 +43,9 @@ export default class CookiePromptManagement {
             both: new Set(),
             onlyRules: new Set(),
         };
+        this.sitesNotifiedCachePromise = getFromSessionStorage('cpmSitesNotifiedCache').then((cachedSites) => {
+            return new Set(cachedSites || []);
+        });
 
         registerContentScripts([
             {
@@ -61,11 +69,24 @@ export default class CookiePromptManagement {
         }
     }
 
+    /**
+     *
+     * @param {import('@duckduckgo/autoconsent/lib/messages').ContentScriptMessage} msg
+     * @param {chrome.runtime.MessageSender} sender
+     * @returns
+     */
     async handleAutoConsentMessage(msg, sender) {
-        const tabId = sender.tab.id;
+        const tabId = sender.tab?.id;
         const frameId = sender.frameId;
         const isMainFrame = frameId === 0;
         const senderUrl = sender.url || `${sender.origin}/`;
+        let senderDomain = null;
+        try {
+            senderDomain = new URL(senderUrl).hostname;
+        } catch (e) {
+            console.error('error getting sender domain', e);
+            return;
+        }
         await this.remoteConfig.ready;
         const autoconsentRemoteConfig = this.remoteConfig.config?.features.autoconsent;
         const autoconsentSettings = autoconsentRemoteConfig?.settings;
@@ -74,10 +95,12 @@ export default class CookiePromptManagement {
         if (!autoconsentSettings || !tabId) {
             return;
         }
+        const heuristicActionEnabled = await this.checkSubfeatureEnabled('heuristicAction');
+        const sitesNotifiedCache = await this.sitesNotifiedCachePromise;
 
         switch (msg.type) {
             case 'init': {
-                const isEnabled = this.checkAutoconsentEnabledForSite(senderUrl);
+                const isEnabled = await this.checkAutoconsentEnabledForSite(senderUrl);
                 if (!isEnabled) {
                     this.firePixel('disabled-for-site');
                     return;
@@ -85,15 +108,28 @@ export default class CookiePromptManagement {
 
                 // FIXME: do a navigation check here for reload loop prevention
 
-                if (isMainFrame) {
-                    // FIXME: reset dashboard state
-                    this.firePixel('init')
-                }
-
-                const heuristicActionEnabled = this.checkSubfeatureEnabled('heuristicAction');
                 const visualTest = DEBUG;
                 // FIXME: implement reload loop prevention
                 const autoAction = 'optOut';
+
+                if (isMainFrame) {
+                    // no await
+                    this.refreshDashboardState(
+                        tabId,
+                        {
+                            // keep "cookies managed" if we did it for this site since app launch
+                            consentManaged: sitesNotifiedCache.has(senderDomain),
+                            cosmetic: null,
+                            optoutFailed: null,
+                            selftestFailed: null,
+                            consentReloadLoop: false, // FIXME: reloadLoopDetected,
+                            consentRule: '', // FIXME: lastHandledCMPName, // this will be non-null in case of a reload loop
+                            consentHeuristicEnabled: heuristicActionEnabled
+                        }
+                    );
+                    // no await
+                    this.firePixel('init');
+                }
 
                 /**
                  * @type {Partial<import('@duckduckgo/autoconsent/lib/types').Config>}
@@ -148,15 +184,39 @@ export default class CookiePromptManagement {
             case 'optOutResult': {
                 if (!msg.result) {
                     this.firePixel('error_optout');
-                    // FIXME: refresh dashboard state here
+                    this.refreshDashboardState(
+                        tabId,
+                        {
+                            consentManaged: true,
+                            cosmetic: null,
+                            optoutFailed: true,
+                            selftestFailed: null,
+                            consentReloadLoop: false, // FIXME: reloadLoopDetected,
+                            consentRule: msg.cmp,
+                            consentHeuristicEnabled: heuristicActionEnabled
+                        }
+                    )
                 } else {
                     // TODO: implement self-tests
                 }
                 break;
             }
             case 'autoconsentDone': {
-                // FIXME: reload loop prevention here
-                // FIXME: refresh dashboard state here
+                // FIXME: remember last CMP for reload loop prevention here
+                this.refreshDashboardState(
+                    tabId,
+                    {
+                        consentManaged: true,
+                        cosmetic: msg.isCosmetic,
+                        optoutFailed: false,
+                        selftestFailed: null,
+                        consentReloadLoop: false, // FIXME: reloadLoopDetected,
+                        consentRule: msg.cmp,
+                        consentHeuristicEnabled: heuristicActionEnabled
+                    }
+                )
+                sitesNotifiedCache.add(senderDomain);
+                await setToSessionStorage('cpmSitesNotifiedCache', Array.from(sitesNotifiedCache));
                 // FIXME: request address bar animation here
                 // FIXME: send a counter for NTP stats here
                 if (msg.cmp === 'HEURISTIC') {
@@ -242,17 +302,47 @@ export default class CookiePromptManagement {
         });
     }
 
-    checkAutoconsentEnabledForSite(url) {
+    /**
+     * send a message to the dashboard to refresh the state
+     * @param {number} tabId
+     * @param {{
+     *  consentManaged: boolean,
+     *  cosmetic: boolean?,
+     *  optoutFailed: boolean?,
+     *  selftestFailed: boolean?,
+     *  consentReloadLoop: boolean?,
+     *  consentRule: string?,
+     *  consentHeuristicEnabled: boolean?
+     * }} state
+     */
+    async refreshDashboardState(tabId, { consentManaged, cosmetic, optoutFailed, selftestFailed, consentReloadLoop, consentRule, consentHeuristicEnabled }) {
+        if (BUILD_TARGET === 'embedded') {
+            await this.nativeMessaging.request('refreshCpmDashboardState', {
+                tabId,
+                consentStatus: {
+                    consentManaged,
+                    cosmetic,
+                    optoutFailed,
+                    selftestFailed,
+                    consentReloadLoop,
+                    consentRule,
+                    consentHeuristicEnabled,
+                },
+            });
+        }
+    }
+
+    async checkAutoconsentEnabledForSite(url) {
         // FIXME: implement this
         return true;
     }
 
-    checkSubfeatureEnabled(subfeatureName) {
+    async checkSubfeatureEnabled(subfeatureName) {
         // FIXME: implement this
         return true;
     }
 
-    firePixel(eventName) {
+    async firePixel(eventName) {
         const pixel = `autoconsent_${eventName}_daily`;
         // TODO: send this via native
         // const lastSent = this.settings.getSetting('pixelsLastSent') || {}

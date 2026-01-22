@@ -76,6 +76,8 @@ remoteConfig.ready;
 
 const cpm = new CookiePromptManagement({
     remoteConfig,
+    nativeMessaging,
+    settings,
 });
 
 /**
