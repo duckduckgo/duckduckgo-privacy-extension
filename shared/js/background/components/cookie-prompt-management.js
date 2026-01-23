@@ -1,6 +1,6 @@
 // @ts-ignore - autoconsent doesn't export types
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
-import { alarms } from 'webextension-polyfill';
+import browser from 'webextension-polyfill';
 import { registerContentScripts } from './mv3-content-script-injection';
 import { sendPixelRequest } from '../pixels';
 import { getFromSessionStorage, setToSessionStorage, createAlarm } from '../wrapper';
@@ -15,7 +15,7 @@ import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.
  * @property {Record<number, {
  *  lastHandledCMPName: string | null,
  *  reloadLoopDetected: boolean,
- * }} tabState
+ * }>} tabState
  * @property {Set<string>} sitesNotifiedCache
  * @property {{
  *  patterns: Set<string>,
@@ -74,7 +74,7 @@ export default class CookiePromptManagement {
         this.getCpmState();
 
         // Set up alarm listener for summary pixel
-        alarms.onAlarm.addListener((alarm) => {
+        browser.alarms.onAlarm.addListener((alarm) => {
             if (alarm.name === CookiePromptManagement.SUMMARY_ALARM_NAME) {
                 this.sendSummaryPixel();
             }
@@ -82,7 +82,7 @@ export default class CookiePromptManagement {
 
         // Embedded builds don't use MessageRouter, so we need to set up a direct message listener
         if (BUILD_TARGET === 'embedded') {
-            chrome.runtime.onMessage.addListener(async (req, sender) => {
+            browser.runtime.onMessage.addListener(async (req, sender) => {
                 if (req.messageType === 'autoconsent') {
                     return this.handleAutoConsentMessage(req.autoconsentPayload, sender);
                 }
@@ -162,7 +162,7 @@ export default class CookiePromptManagement {
     /**
      *
      * @param {import('@duckduckgo/autoconsent/lib/messages').ContentScriptMessage} msg
-     * @param {chrome.runtime.MessageSender} sender
+     * @param {browser.Runtime.MessageSender} sender
      * @returns
      */
     async handleAutoConsentMessage(msg, sender) {
@@ -173,6 +173,7 @@ export default class CookiePromptManagement {
             return;
         }
         const isMainFrame = frameId === 0;
+        // @ts-expect-error - origin is not available in the type
         const senderUrl = sender.url || `${sender.origin}/`;
         let senderDomain = null;
         try {
