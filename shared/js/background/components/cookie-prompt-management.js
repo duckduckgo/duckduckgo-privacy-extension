@@ -296,16 +296,16 @@ export default class CookiePromptManagement {
                         consentHeuristicEnabled: heuristicActionEnabled
                     }
                 )
-                cpmState.sitesNotifiedCache.add(senderDomain)
-                await this.updateCpmState(cpmState);
-                this.requestAddressBarAnimation(tabId, msg.url, msg.isCosmetic);
-                this.notifyPopupHandled(tabId, msg);
-
                 if (msg.cmp === 'HEURISTIC') {
                     this.firePixel('done_heuristic');
                 } else {
                     this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done');
                 }
+                cpmState.sitesNotifiedCache.add(senderDomain)
+                await this.updateCpmState(cpmState);
+                this.requestAddressBarAnimation(tabId, msg.url, msg.isCosmetic);
+                this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown');
+                this.notifyPopupHandled(tabId, msg);
                 break;
             }
             case 'report': {
@@ -360,8 +360,9 @@ export default class CookiePromptManagement {
                 break;
             }
             case 'autoconsentError': {
-                // FIXME: validate the error type
-                this.firePixel('error_multiple-popups');
+                if (msg.details?.msg?.includes('Found multiple CMPs')) {
+                    this.firePixel('error_multiple-popups');
+                }
                 break;
             }
             case 'visualDelay': {
