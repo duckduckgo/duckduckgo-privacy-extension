@@ -1,3 +1,4 @@
+// @ts-ignore - autoconsent doesn't export types
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
 import { alarms } from 'webextension-polyfill';
 import { registerContentScripts } from './mv3-content-script-injection';
@@ -471,16 +472,19 @@ export default class CookiePromptManagement {
     }
 
     async firePixel(eventName) {
-        const dailyPixelName = `autoconsent_${eventName}_daily`;
-        const lastSent = this.settings.getSetting('pixelsLastSent') || {}
         const cpmState = await this.getCpmState();
         cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
         await this.updateCpmState(cpmState);
+
         // schedule summary alarm if not already scheduled (createAlarm checks for existing alarm)
         createAlarm(CookiePromptManagement.SUMMARY_ALARM_NAME, {
             delayInMinutes: CookiePromptManagement.SUMMARY_DELAY_MINUTES,
         });
-        // daily pixels are sent at most once per day
+
+        // emulate "daily" pixel firing
+        const dailyPixelName = `autoconsent_${eventName}_daily`;
+        const lastSent = this.settings.getSetting('pixelsLastSent') || {}
+
         if (lastSent[dailyPixelName] && lastSent[dailyPixelName] > Date.now() - 1000 * 60 * 60 * 24) {
             return;
         }
@@ -488,7 +492,7 @@ export default class CookiePromptManagement {
         this.settings.updateSetting('pixelsLastSent', lastSent);
         sendPixelRequest(dailyPixelName, {
             consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
-        });
+        }, this.nativeMessaging);
     }
 
     async sendSummaryPixel() {
@@ -496,7 +500,7 @@ export default class CookiePromptManagement {
         sendPixelRequest('autoconsent_summary', {
             ...cpmState.summaryEvents,
             consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
-        });
+        }, this.nativeMessaging);
         cpmState.summaryEvents = {};
         // clear the detection cache
         cpmState.detectionCache.patterns.clear();

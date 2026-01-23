@@ -15,14 +15,27 @@ export function getURL(pixelName) {
     return url + pixelName;
 }
 
-export function sendPixelRequest(pixelName, params = {}) {
+/**
+ * Send a pixel request.
+ * @param {string} pixelName
+ * @param {Record<string, any>} [params]
+ * @param {import('./components/native-messaging').default} [nativeMessaging]
+ */
+export function sendPixelRequest(pixelName, params = {}, nativeMessaging = undefined) {
+    console.log('sendPixelRequest', pixelName, params);
+
     // Pixel requests should never fire for Firefox users.
     if (BUILD_TARGET === 'firefox') {
         return;
     }
 
     if (BUILD_TARGET === 'embedded') {
-        // TODO: send this via native
+        if (nativeMessaging) {
+            nativeMessaging.notify('sendPixel', {
+                pixelName,
+                params,
+            });
+        }
         return;
     }
 
