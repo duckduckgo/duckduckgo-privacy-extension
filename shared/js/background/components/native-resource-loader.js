@@ -41,7 +41,7 @@ export default class NativeResourceLoader extends ResourceLoaderBase {
 
     async _loadFromNative() {
         console.log(`NativeResourceLoader: fetching ${this.name} from native`);
-        const result = await this._nativeMessaging.request('getPrivacyConfigIfNew', { name: this.name, version: this.etag });
+        const result = await this._nativeMessaging.request('getResourceIfNew', { name: this.name, version: this.etag });
         if (result.status === 'success') {
             if (result.data.updated) {
                 return { contents: result.data.data, etag: `${result.data.version}` };

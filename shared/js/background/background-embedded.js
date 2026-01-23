@@ -36,7 +36,7 @@ class NativeMessagingMock extends NativeMessaging {
         DEBUG && console.log('[NativeMessaging] request', method, params);
         let response = {};
         switch (method) {
-            case 'getPrivacyConfigIfNew':
+            case 'getResourceIfNew':
                 if (params.version && params.version === `${bundledConfig.version}`) {
                     response = {
                         status: 'success',
