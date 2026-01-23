@@ -259,7 +259,7 @@ export default class CookiePromptManagement {
                     {
                         type: 'initResp',
                         rules,
-                        autoconsentConfig,
+                        config: autoconsentConfig,
                     },
                     {
                         frameId,
