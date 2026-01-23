@@ -1,7 +1,8 @@
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
+import { alarms } from 'webextension-polyfill';
 import { registerContentScripts } from './mv3-content-script-injection';
 import { sendPixelRequest } from '../pixels';
-import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
+import { getFromSessionStorage, setToSessionStorage, createAlarm } from '../wrapper';
 import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.json';
 
 /**
@@ -20,6 +21,7 @@ import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.
  *  onlyRules: Set<string>,
  *  both: Set<string>,
  * }} detectionCache
+ * @property {Record<string, number>} summaryEvents
  */
 
 /* global DEBUG, BUILD_TARGET */
@@ -38,6 +40,9 @@ const logsConfig = {
 };
 
 export default class CookiePromptManagement {
+    static SUMMARY_ALARM_NAME = 'cpm-summary';
+    static SUMMARY_DELAY_MINUTES = 2;
+
     /**
      *
      * @param {{
@@ -50,8 +55,6 @@ export default class CookiePromptManagement {
         this.remoteConfig = remoteConfig;
         this.nativeMessaging = nativeMessaging;
         this.settings = settings;
-        this.summaryEvents = {};
-        this.summaryTimer = null;
         this._heuristicActionEnabled = null;
 
         registerContentScripts([
@@ -68,6 +71,13 @@ export default class CookiePromptManagement {
 
         // restore the current CPM state from storage
         this.getCpmState();
+
+        // Set up alarm listener for summary pixel
+        alarms.onAlarm.addListener((alarm) => {
+            if (alarm.name === CookiePromptManagement.SUMMARY_ALARM_NAME) {
+                this.sendSummaryPixel();
+            }
+        });
 
         // Embedded builds don't use MessageRouter, so we need to set up a direct message listener
         if (BUILD_TARGET === 'embedded') {
@@ -92,6 +102,7 @@ export default class CookiePromptManagement {
                 both: new Set(jsonCpmState.detectionCache?.both || []),
                 onlyRules: new Set(jsonCpmState.detectionCache?.onlyRules || []),
             },
+            summaryEvents: structuredClone(jsonCpmState.summaryEvents || {}),
         }
     }
 
@@ -108,6 +119,7 @@ export default class CookiePromptManagement {
                 both: Array.from(cpmState.detectionCache.both),
                 onlyRules: Array.from(cpmState.detectionCache.onlyRules),
             },
+            summaryEvents: structuredClone(cpmState.summaryEvents),
         }
     }
 
@@ -124,6 +136,7 @@ export default class CookiePromptManagement {
                     both: [],
                     onlyRules: [],
                 },
+                summaryEvents: {},
             };
         }
         return this._deserializeCpmState(this._jsonCpmState);
@@ -458,27 +471,37 @@ export default class CookiePromptManagement {
     }
 
     async firePixel(eventName) {
-        const pixel = `autoconsent_${eventName}_daily`;
-        // TODO: send this via native
-        // const lastSent = this.settings.getSetting('pixelsLastSent') || {}
-        // this.summaryEvents[eventName] = (this.summaryEvents[eventName] || 0) + 1;
-        // check if the summary timer is active
-        // if (!this.summaryTimer) {
-        //     this.summaryTimer = setTimeout(() => {
-        //         this.summaryTimer = null;
-        //         sendPixelRequest('autoconsent_summary', this.summaryEvents);
-        //         this.summaryEvents = {};
-        //         // clear the detection cache
-        //         this.detectionCache.patterns.clear();
-        //         this.detectionCache.both.clear();
-        //         this.detectionCache.onlyRules.clear();
-        //     }, 20_000);
-        // }
-        // if (lastSent[pixel] && lastSent[pixel] > Date.now() - 1000 * 60 * 60 * 24) {
-        //     return;
-        // }
-        // lastSent[pixel] = Date.now();
-        // this.settings.updateSetting('pixelsLastSent', lastSent);
-        sendPixelRequest(pixel);
+        const dailyPixelName = `autoconsent_${eventName}_daily`;
+        const lastSent = this.settings.getSetting('pixelsLastSent') || {}
+        const cpmState = await this.getCpmState();
+        cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
+        await this.updateCpmState(cpmState);
+        // schedule summary alarm if not already scheduled (createAlarm checks for existing alarm)
+        createAlarm(CookiePromptManagement.SUMMARY_ALARM_NAME, {
+            delayInMinutes: CookiePromptManagement.SUMMARY_DELAY_MINUTES,
+        });
+        // daily pixels are sent at most once per day
+        if (lastSent[dailyPixelName] && lastSent[dailyPixelName] > Date.now() - 1000 * 60 * 60 * 24) {
+            return;
+        }
+        lastSent[dailyPixelName] = Date.now();
+        this.settings.updateSetting('pixelsLastSent', lastSent);
+        sendPixelRequest(dailyPixelName, {
+            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
+        });
+    }
+
+    async sendSummaryPixel() {
+        const cpmState = await this.getCpmState();
+        sendPixelRequest('autoconsent_summary', {
+            ...cpmState.summaryEvents,
+            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
+        });
+        cpmState.summaryEvents = {};
+        // clear the detection cache
+        cpmState.detectionCache.patterns.clear();
+        cpmState.detectionCache.both.clear();
+        cpmState.detectionCache.onlyRules.clear();
+        await this.updateCpmState(cpmState);
     }
 }
