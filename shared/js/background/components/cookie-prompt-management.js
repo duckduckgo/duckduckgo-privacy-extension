@@ -52,6 +52,7 @@ export default class CookiePromptManagement {
         this.settings = settings;
         this.summaryEvents = {};
         this.summaryTimer = null;
+        this._heuristicActionEnabled = null;
 
         registerContentScripts([
             {
@@ -128,6 +129,14 @@ export default class CookiePromptManagement {
         return this._deserializeCpmState(this._jsonCpmState);
     }
 
+
+    async checkHeuristicActionEnabled(force = false) {
+        if (this._heuristicActionEnabled === null || force) {
+            this._heuristicActionEnabled = await this.checkSubfeatureEnabled('heuristicAction');
+        }
+        return this._heuristicActionEnabled;
+    }
+
     /**
      * @param {CpmState} newState
      */
@@ -166,8 +175,9 @@ export default class CookiePromptManagement {
         if (!autoconsentSettings || !tabId) {
             return;
         }
-        const heuristicActionEnabled = await this.checkSubfeatureEnabled('heuristicAction');
         const cpmState = await this.getCpmState();
+        // force refresh the subfeature state on every 'init'
+        const heuristicActionEnabled = await this.checkHeuristicActionEnabled(msg.type === 'init');
 
         switch (msg.type) {
             case 'init': {
