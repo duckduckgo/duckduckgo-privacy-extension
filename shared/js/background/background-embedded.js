@@ -49,6 +49,18 @@ class NativeMessagingMock extends NativeMessaging {
                     };
                 }
                 break;
+            case 'isFeatureEnabled':
+                response = {
+                    status: 'success',
+                    data: { enabled: true },
+                };
+                break;
+            case 'isSubFeatureEnabled':
+                response = {
+                    status: 'success',
+                    data: { enabled: true },
+                };
+                break;
             default:
                 throw new Error(`[NativeMessaging] request: unknown method ${method}`);
         }

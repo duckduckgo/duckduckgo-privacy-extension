@@ -461,12 +461,34 @@ export default class CookiePromptManagement {
         });
     }
 
+    /**
+     * @param {string} url
+     * @returns {Promise<boolean>}
+     */
     async checkAutoconsentEnabledForSite(url) {
+        if (BUILD_TARGET === 'embedded') {
+            const result = await this.nativeMessaging.request('isFeatureEnabled', {
+                featureName: 'autoconsent',
+                url,
+            });
+            return result.status === 'success' && result.data.enabled;
+        }
         // FIXME: implement this
         return true;
     }
 
+    /**
+     * @param {string} subfeatureName
+     * @returns {Promise<boolean>}
+     */
     async checkSubfeatureEnabled(subfeatureName) {
+        if (BUILD_TARGET === 'embedded') {
+            const result = await this.nativeMessaging.request('isSubFeatureEnabled', {
+                featureName: 'autoconsent',
+                subfeatureName,
+            });
+            return result.status === 'success' && result.data.enabled;
+        }
         // FIXME: implement this
         return true;
     }
