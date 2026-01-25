@@ -15,7 +15,7 @@ import {
  * @property {string} [method]
  * @property {string} type
  * @property {string} [reason]
- * @property {'redirected' | 'allowed' | 'blocked' | 'failed'} [status]
+ * @property {'allowed' | 'blocked' | 'failed'} [status]
  * @property {URL} [redirectUrl]
  * @property {string} [initiator]
  */
@@ -110,7 +110,8 @@ function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, saveReques
     });
     page.on('requestfinished', (request) => {
         saveRequestOutcome(request.url(), (details) => {
-            details.status = details.redirectUrl ? 'redirected' : 'allowed';
+            // Successful requests (including redirects) are "allowed"
+            details.status = 'allowed';
         });
     });
     page.on('requestfailed', (request) => {

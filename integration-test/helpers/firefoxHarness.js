@@ -20,7 +20,7 @@
  */
 
 /**
- * @typedef {'allowed' | 'blocked' | 'failed' | 'redirected'} RequestOutcomeStatus
+ * @typedef {'allowed' | 'blocked' | 'failed'} RequestOutcomeStatus
  */
 
 /**
@@ -627,9 +627,7 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
 
         const determineStatus = (outcomeType, statusCode, error) => {
             if (outcomeType === 'completed') {
-                if (statusCode >= 300 && statusCode < 400) {
-                    return 'redirected';
-                }
+                // Successful requests (including redirects) are "allowed"
                 return 'allowed';
             } else {
                 // Error occurred
