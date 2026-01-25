@@ -250,7 +250,7 @@ async function runRequestBlockingTestChrome(page, url, backgroundPage) {
         status: details.status,
     });
 
-    await logPageRequests(page, pageRequests, requestFilter, transform, null, { backgroundPage });
+    await logPageRequests(page, pageRequests, requestFilter, transform, undefined, { backgroundPage });
 
     await page.bringToFront();
     await page.goto(url, { waitUntil: 'networkidle' });

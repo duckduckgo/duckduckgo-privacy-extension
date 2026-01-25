@@ -13,7 +13,7 @@ test.describe('request event tracking', () => {
         await backgroundWait.forAllConfiguration(backgroundPage);
 
         const requests = [];
-        await logPageRequests(page, requests, null, null, null, { backgroundPage });
+        await logPageRequests(page, requests, undefined, undefined, undefined, { backgroundPage });
 
         // Navigate to a simple page that will make requests
         await page.goto('http://localhost:3000/');
@@ -36,7 +36,7 @@ test.describe('request event tracking', () => {
 
         const requests = [];
         const requestFilter = (details) => details.url.href.includes('bad.third-party.site');
-        await logPageRequests(page, requests, requestFilter, null, null, { backgroundPage });
+        await logPageRequests(page, requests, requestFilter, undefined, undefined, { backgroundPage });
 
         // Navigate to the request blocking test page
         const testUrl = 'http://localhost:3000/privacy-protections/request-blocking/';
@@ -63,7 +63,7 @@ test.describe('request event tracking', () => {
         await backgroundWait.forAllConfiguration(backgroundPage);
 
         const requests = [];
-        await logPageRequests(page, requests, null, null, null, { backgroundPage });
+        await logPageRequests(page, requests, undefined, undefined, undefined, { backgroundPage });
 
         // Navigate to the request blocking test page
         const testUrl = 'http://localhost:3000/privacy-protections/request-blocking/';

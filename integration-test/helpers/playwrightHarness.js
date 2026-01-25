@@ -1,3 +1,4 @@
+// @ts-nocheck - Playwright test.extend() fixtures are complex to type in JSDoc
 import { test as base, chromium } from '@playwright/test';
 import path from 'path';
 import fs from 'fs/promises';
@@ -116,15 +117,11 @@ function routeHandler(route) {
 
 // based off example at https://playwright.dev/docs/chrome-extensions#testing
 export const test = base.extend({
-    /**
-     * @type {2 | 3}
-     */
     manifestVersion: getManifestVersion(),
 
     /**
      * RDP port for Firefox debugging (only used for Firefox tests)
      * Each test gets a fresh port to ensure complete isolation.
-     * @type {number}
      */
     rdpPort: [
         // eslint-disable-next-line no-empty-pattern
@@ -139,9 +136,6 @@ export const test = base.extend({
         { scope: 'test' },
     ],
 
-    /**
-     * @type {import('@playwright/test').BrowserContext}
-     */
     async context({ manifestVersion, rdpPort }, use, testInfo) {
         let context;
 
@@ -184,9 +178,6 @@ export const test = base.extend({
             await cleanupFirefoxContext(context);
         }
     },
-    /**
-     * @type {import('@playwright/test').Page | import('@playwright/test').Worker | FirefoxBackgroundPage | null}
-     */
     async backgroundPage({ context, manifestVersion }, use) {
         if (isFirefox()) {
             // Firefox: Create background page wrapper with evaluate() support
@@ -215,7 +206,6 @@ export const test = base.extend({
     },
     /**
      * wraps the 'route' function in a manifest agnostic way
-     * @type {(url: string | RegExp, handler: (route: Route, request: Request) => any) => Promise<void>}
      */
     async routeExtensionRequests({ manifestVersion, backgroundPage, context }, use) {
         if (isFirefox() || manifestVersion === 3) {
@@ -226,7 +216,6 @@ export const test = base.extend({
     },
     /**
      * Use this for listening and modifying network events for both MV2 and MV3
-     * @type {import('@playwright/test').Page | import('@playwright/test').BrowserContext}
      */
     async backgroundNetworkContext({ manifestVersion, backgroundPage, context }, use) {
         if (isFirefox() || manifestVersion === 3) {
