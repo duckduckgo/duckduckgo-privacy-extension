@@ -92,14 +92,16 @@ function routeHandler(route) {
         const params = new URL(url).searchParams;
         if (params.has('atb')) {
             const version = params.get('atb');
-            const [majorVersion, minorVersion] = version.slice(1).split('-');
-            if (majorVersion < 360 && minorVersion > 1) {
-                return route.fulfill({
-                    body: JSON.stringify({
-                        ...mockAtb,
-                        updateVersion: `v${majorVersion}-1`,
-                    }),
-                });
+            if (version) {
+                const [majorVersion, minorVersion] = version.slice(1).split('-').map(Number);
+                if (majorVersion < 360 && minorVersion > 1) {
+                    return route.fulfill({
+                        body: JSON.stringify({
+                            ...mockAtb,
+                            updateVersion: `v${majorVersion}-1`,
+                        }),
+                    });
+                }
             }
         }
         return route.fulfill({

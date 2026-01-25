@@ -61,6 +61,8 @@ test.describe('Test request blocking', () => {
                 urls: {
                     'bad.third-party.site:block': {
                         action: 'block',
+                        // URL varies by request order, so just check it's from the right domain
+                        url: expect.stringContaining('https://bad.third-party.site/privacy-protections/request-blocking/block-me/'),
                         eTLDplus1: 'third-party.site',
                         pageUrl: 'https://privacy-test-pages.site/privacy-protections/request-blocking/',
                         entityName: 'Bad Third Party Site',
@@ -71,10 +73,6 @@ test.describe('Test request blocking', () => {
                 count: extensionTrackersCount,
             },
         });
-        // Verify the URL is from bad.third-party.site (exact URL varies by request order)
-        expect(extensionTrackers['Test Site for Tracker Blocking'].urls['bad.third-party.site:block'].url).toContain(
-            'bad.third-party.site',
-        );
 
         await page.close();
     });
