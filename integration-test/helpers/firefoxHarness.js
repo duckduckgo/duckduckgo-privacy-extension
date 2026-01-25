@@ -229,7 +229,6 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
 
         // Handle longString type - RDP returns this for large strings
         if (resultValue.type === 'longString' && resultValue.actor) {
-            // Fetch the full string from the RDP actor
             const substringResult = await client.request({
                 to: resultValue.actor,
                 type: 'substring',
@@ -238,28 +237,14 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
             });
             resultString = substringResult.substring;
         } else if (typeof resultValue.value !== 'undefined') {
-            // Handle different result formats from RDP
-            // If value is already a string, use it directly
-            if (typeof resultValue.value === 'string') {
-                resultString = resultValue.value;
-            } else {
-                // Value is an object/array, it's our unwrapped result
-                // This can happen when RDP unwraps our JSON.stringify'd result
-                resultString = JSON.stringify(resultValue.value);
-            }
-        } else if (resultValue.type === 'object' && resultValue.preview) {
-            // RDP returned a preview object - we need to use a different approach
-            // This typically happens with large arrays/objects
-            throw new Error(
-                `RDP returned a preview object instead of full result. Consider using smaller data or explicit JSON.stringify in your code. Preview: ${JSON.stringify(resultValue.preview).slice(0, 200)}`,
-            );
+            resultString = typeof resultValue.value === 'string' ? resultValue.value : JSON.stringify(resultValue.value);
         } else {
-            throw new Error(`Unexpected result object structure: ${JSON.stringify(resultValue).slice(0, 500)}`);
+            throw new Error(`Unexpected result object structure: ${JSON.stringify(resultValue).slice(0, 200)}`);
         }
     } else if (typeof resultValue === 'string') {
         resultString = resultValue;
     } else {
-        throw new Error(`Unexpected result type: ${typeof resultValue}, value: ${JSON.stringify(resultValue).slice(0, 500)}`);
+        throw new Error(`Unexpected result type: ${typeof resultValue}`);
     }
 
     const parsed = JSON.parse(resultString);

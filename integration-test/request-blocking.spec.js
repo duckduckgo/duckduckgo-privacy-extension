@@ -1,7 +1,5 @@
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, isFirefox } from './helpers/playwrightHarness';
 import { forAllConfiguration, forExtensionLoaded, forDynamicDNRRulesLoaded } from './helpers/backgroundWait';
-// Note: overridePrivacyConfig is commented out below because it doesn't work reliably on Firefox.
-// eslint-disable-next-line no-unused-vars
 import { overridePrivacyConfig } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN } from './helpers/testPages';
 import { runRequestBlockingTest } from './helpers/requests';
@@ -17,10 +15,7 @@ test.describe('Test request blocking', () => {
         backgroundNetworkContext,
         manifestVersion,
     }) => {
-        // TODO: Firefox - overridePrivacyConfig doesn't work reliably on Firefox because
-        // Playwright's context.route() doesn't intercept extension background requests.
-        // The default config should have blocking enabled, so we skip this for now.
-        // await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
+        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
         await forExtensionLoaded(context);
         await forAllConfiguration(backgroundPage);
         if (manifestVersion === 3) {
@@ -38,10 +33,7 @@ test.describe('Test request blocking', () => {
         // Also check that the test page itself agrees that no requests were
         // allowed.
         for (const { id, category, status } of pageResults) {
-            // Firefox: CSS @font-face detection reports "loaded" even when the request was blocked.
-            // This is a known quirk with the test page's font detection, not the blocking itself.
-            // We verify blocking via pageRequests above, so we can skip this check for fonts.
-            if (id === 'font') {
+            if (isFirefox() && id === 'font') {
                 continue;
             }
             const description = `ID: ${id}, Category: ${category}`;
@@ -57,7 +49,7 @@ test.describe('Test request blocking', () => {
         const extensionTrackersCount = extensionTrackers['Test Site for Tracker Blocking'].count;
         expect(extensionTrackersCount).toBeGreaterThanOrEqual(testCount);
 
-        expect(extensionTrackers).toEqual({
+        expect(extensionTrackers).toMatchObject({
             'privacy-test-pages.site': {
                 urls: {},
                 count: 0,
@@ -69,7 +61,6 @@ test.describe('Test request blocking', () => {
                 urls: {
                     'bad.third-party.site:block': {
                         action: 'block',
-                        url: 'https://bad.third-party.site/privacy-protections/request-blocking/block-me/script.js',
                         eTLDplus1: 'third-party.site',
                         pageUrl: 'https://privacy-test-pages.site/privacy-protections/request-blocking/',
                         entityName: 'Bad Third Party Site',
@@ -80,6 +71,10 @@ test.describe('Test request blocking', () => {
                 count: extensionTrackersCount,
             },
         });
+        // Verify the URL is from bad.third-party.site (exact URL varies by request order)
+        expect(extensionTrackers['Test Site for Tracker Blocking'].urls['bad.third-party.site:block'].url).toContain(
+            'bad.third-party.site',
+        );
 
         await page.close();
     });
@@ -91,9 +86,7 @@ test.describe('Test request blocking', () => {
         backgroundNetworkContext,
         manifestVersion,
     }) => {
-        // TODO: Firefox - overridePrivacyConfig doesn't work reliably on Firefox because
-        // Playwright's context.route() doesn't intercept extension background requests.
-        // await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
+        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
         await forExtensionLoaded(context);
         await forAllConfiguration(backgroundPage);
         if (manifestVersion === 3) {
@@ -112,11 +105,11 @@ test.describe('Test request blocking', () => {
         }, testHost);
         const { pageRequests, pageResults } = await runRequestBlockingTest(page, testSite, { backgroundPage });
 
-        // Verify that logged requests were blocked, except serviceworker-initiated ones
-        // which should be allowed due to the exception we added.
+        // Verify that no logged requests were allowed.
         for (const { url, method, type, status } of pageRequests) {
             const description = `URL: ${url}, Method: ${method}, Type: ${type}`;
-            if (url.includes('serviceworker')) {
+            // Firefox: serviceworker requests are allowed due to the exception we added above.
+            if (isFirefox() && url.includes('serviceworker')) {
                 expect(status, description).toEqual('allowed');
             } else {
                 expect(status, description).toEqual('blocked');
@@ -124,10 +117,9 @@ test.describe('Test request blocking', () => {
         }
 
         // Check that the test page itself agrees that no requests were
-        // allowed, except for serviceworker-fetch.
+        // allowed.
         for (const { id, category, status } of pageResults) {
-            // Firefox: CSS @font-face detection reports "loaded" even when the request was blocked.
-            if (id === 'font') {
+            if (isFirefox() && id === 'font') {
                 continue;
             }
             const description = `ID: ${id}, Category: ${category}`;
@@ -140,9 +132,7 @@ test.describe('Test request blocking', () => {
     });
 
     test('Blocking should not run on localhost', async ({ page, backgroundPage, context, manifestVersion, backgroundNetworkContext }) => {
-        // TODO: Firefox - overridePrivacyConfig doesn't work reliably on Firefox because
-        // Playwright's context.route() doesn't intercept extension background requests.
-        // await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
+        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
         await forExtensionLoaded(context);
         await forAllConfiguration(backgroundPage);
         // On MV3 config rules are only created some time after the config is loaded. We can query
@@ -175,9 +165,7 @@ test.describe('Test request blocking', () => {
     });
 
     test('protection toggle disables blocking', async ({ page, backgroundPage, context, manifestVersion, backgroundNetworkContext }) => {
-        // TODO: Firefox - overridePrivacyConfig doesn't work reliably on Firefox because
-        // Playwright's context.route() doesn't intercept extension background requests.
-        // await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
+        await overridePrivacyConfig(backgroundNetworkContext, 'serviceworker-blocking.json');
         await forExtensionLoaded(context);
         await forAllConfiguration(backgroundPage);
         if (manifestVersion === 3) {
@@ -188,8 +176,7 @@ test.describe('Test request blocking', () => {
         let { pageResults } = await runRequestBlockingTest(page, testSite, { backgroundPage });
         // Verify that no logged requests were allowed.
         for (const { id, category, status } of pageResults) {
-            // Firefox: CSS @font-face detection reports "loaded" even when the request was blocked.
-            if (id === 'font') {
+            if (isFirefox() && id === 'font') {
                 continue;
             }
             const description = `ID: ${id}, Category: ${category}`;
