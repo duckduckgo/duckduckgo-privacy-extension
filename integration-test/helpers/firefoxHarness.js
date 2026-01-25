@@ -10,6 +10,28 @@
  * - Font blocking: Fonts loaded via inline @font-face may bypass webRequest
  */
 
+/**
+ * @typedef {import('@playwright/test').BrowserContext & {
+ *   _firefoxUserDataDir?: string,
+ *   _rdpClient?: FirefoxRDPClient,
+ *   _firefoxBackgroundConsoleActor?: string,
+ *   _firefoxEvalResults?: Map<string, any>
+ * }} FirefoxBrowserContext
+ */
+
+/**
+ * @typedef {'allowed' | 'blocked' | 'failed' | 'redirected'} RequestOutcomeStatus
+ */
+
+/**
+ * @typedef {{
+ *   url: string,
+ *   status: RequestOutcomeStatus,
+ *   resourceType: string,
+ *   method?: string
+ * }} RequestOutcome
+ */
+
 import net from 'net';
 import { firefox } from '@playwright/test';
 import fs from 'fs/promises';
@@ -17,12 +39,14 @@ import os from 'os';
 
 /**
  * Find an available TCP port for Firefox RDP
+ * @returns {Promise<number>}
  */
 export async function findFreePort() {
     return new Promise((resolve, reject) => {
         const server = net.createServer();
         server.listen(0, '127.0.0.1', () => {
-            const port = server.address().port;
+            const addr = server.address();
+            const port = addr && typeof addr === 'object' ? addr.port : 0;
             server.close(() => resolve(port));
         });
         server.on('error', reject);
@@ -48,7 +72,8 @@ class FirefoxRDPClient {
                 await this._tryConnect(port);
                 return;
             } catch (err) {
-                if (err.code === 'ECONNREFUSED' && i < maxRetries - 1) {
+                const errorCode = /** @type {{ code?: string }} */ (err).code;
+                if (errorCode === 'ECONNREFUSED' && i < maxRetries - 1) {
                     await new Promise((resolve) => setTimeout(resolve, retryInterval));
                 } else {
                     throw err;
@@ -99,7 +124,9 @@ class FirefoxRDPClient {
             try {
                 const str = JSON.stringify(request);
                 const msg = `${Buffer.from(str).length}:${str}`;
-                this._conn.write(msg);
+                if (this._conn) {
+                    this._conn.write(msg);
+                }
                 this._expectReply(request.to, deferred);
             } catch (err) {
                 deferred.reject(err);
@@ -192,7 +219,7 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
             text: wrappedCode,
         });
     } catch (e) {
-        throw new Error(`RDP evaluateJSAsync request failed: ${e.message}`);
+        throw new Error(`RDP evaluateJSAsync request failed: ${/** @type {Error} */ (e).message}`);
     }
 
     if (!evalRequest.resultID) {
@@ -502,6 +529,10 @@ export async function installExtensionViaRDP(rdpPort, extensionPath, addonId) {
 
 /**
  * Create a Firefox browser context with extension support
+ * @param {number} rdpPort
+ * @param {string} extensionPath
+ * @param {string} addonId
+ * @returns {Promise<{context: FirefoxBrowserContext, rdpResult: any}>}
  */
 export async function createFirefoxContext(rdpPort, extensionPath, addonId) {
     const userDataDir = await fs.mkdtemp(`${os.tmpdir()}/firefox-test-`);
@@ -522,29 +553,29 @@ export async function createFirefoxContext(rdpPort, extensionPath, addonId) {
 
     const rdpResult = await installExtensionViaRDP(rdpPort, extensionPath, addonId);
 
-    // Store for cleanup
-    context._firefoxUserDataDir = userDataDir;
-    context._rdpClient = rdpResult.client;
-    context._firefoxBackgroundConsoleActor = rdpResult.backgroundConsoleActor;
-    context._firefoxEvalResults = rdpResult.evalResults;
+    // Store for cleanup - cast to our extended type
+    const ffContext = /** @type {FirefoxBrowserContext} */ (context);
+    ffContext._firefoxUserDataDir = userDataDir;
+    ffContext._rdpClient = rdpResult.client;
+    ffContext._firefoxBackgroundConsoleActor = rdpResult.backgroundConsoleActor;
+    ffContext._firefoxEvalResults = rdpResult.evalResults;
 
-    return { context, rdpResult };
+    return { context: ffContext, rdpResult };
 }
 
 /**
  * Clean up Firefox context resources
+ * @param {FirefoxBrowserContext} context
  */
 export async function cleanupFirefoxContext(context) {
     // Disconnect RDP first
     if (context._rdpClient) {
         context._rdpClient.disconnect();
-        context._rdpClient = null;
     }
 
     // Clear the evalResults map to prevent any stale state
     if (context._firefoxEvalResults) {
         context._firefoxEvalResults.clear();
-        context._firefoxEvalResults = null;
     }
 
     // Close the browser context
@@ -586,6 +617,7 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
             // Already set up, just clear any existing data
             globalThis.__playwright_request_tracking.pendingRequests = new Map();
             globalThis.__playwright_request_tracking.completedOutcomes = [];
+            globalThis.__playwright_request_tracking.debugLogging = debugLogging;
             if (debugLogging) {
                 console.log('[Playwright Request Tracking] Cleared existing data, listeners already active');
             }
@@ -686,7 +718,7 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
  *
  * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
  * @param {string} [urlPrefix] - Optional URL prefix filter
- * @returns {Promise<{url: string, status: string, resourceType: string, method: string} | null>}
+ * @returns {Promise<RequestOutcome | null>}
  */
 export async function popFirefoxRequestOutcome(backgroundPage, urlPrefix) {
     return await backgroundPage.evaluate((prefix) => {
@@ -748,7 +780,7 @@ export async function clearFirefoxTrackedRequests(backgroundPage) {
  * Note: This returns outcomes that have not been popped yet.
  *
  * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
- * @returns {Promise<Array<{url: string, status: string, resourceType: string, method: string}>>}
+ * @returns {Promise<RequestOutcome[]>}
  */
 export async function getFirefoxTrackedRequests(backgroundPage) {
     return await backgroundPage.evaluate(() => {
@@ -771,12 +803,13 @@ export async function getFirefoxTrackedRequests(backgroundPage) {
  * @param {number} [options.timeout=30000] - Timeout in milliseconds
  * @param {number} [options.pollInterval=100] - Polling interval in milliseconds
  * @param {boolean} [options.debug=false] - Enable debug logging
- * @returns {Promise<Array<{url: string, status: 'allowed' | 'blocked' | 'failed' | 'redirected', resourceType: string, method?: string}>>}
+ * @returns {Promise<RequestOutcome[]>}
  */
 export async function waitForFirefoxRequestOutcomes(backgroundPage, options = {}) {
     const { urlPrefix, expectedCount = 1, timeout = 30000, pollInterval = 100, debug = false } = options;
 
     const startTime = Date.now();
+    /** @type {RequestOutcome[]} */
     const results = [];
 
     while (Date.now() - startTime < timeout) {
@@ -805,15 +838,11 @@ export async function waitForFirefoxRequestOutcomes(backgroundPage, options = {}
         await new Promise((resolve) => setTimeout(resolve, pollInterval));
     }
 
-    // Timeout reached
+    // Timeout reached - if we're here, we didn't get enough results
     if (debug) {
         const stats = await getFirefoxRequestTrackingStats(backgroundPage);
         console.log(`[waitForFirefoxRequestOutcomes] Timeout. Got ${results.length}/${expectedCount}. Stats:`, stats);
     }
 
-    if (results.length < expectedCount) {
-        throw new Error(`Timeout waiting for ${expectedCount} request outcomes. Only found ${results.length}.`);
-    }
-
-    return results;
+    throw new Error(`Timeout waiting for ${expectedCount} request outcomes. Only found ${results.length}.`);
 }
