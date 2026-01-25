@@ -10,13 +10,9 @@ import { defineConfig, devices } from '@playwright/test';
 const supportedTests = [
     // Meta tests for test harness.
     'integration-test/background-eval.spec.js',
+    'integration-test/request-events.spec.js',
     // Extension tests.
-    'integration-test/fingerprint-randomization.spec.js',
-    'integration-test/navigator-interface.spec.js',
-    'integration-test/gpc.spec.js',
-    // Non-extension tests.
-    'integration-test/facebook-sdk-schema.spec.js',
-    'integration-test/youtube-sdk-schema.spec.js',
+    'integration-test/request-blocking.spec.js',
 ];
 
 export default defineConfig({

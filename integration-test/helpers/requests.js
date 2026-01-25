@@ -1,3 +1,6 @@
+import { isFirefox } from './playwrightHarness.js';
+import { setupFirefoxRequestTracking, clearFirefoxTrackedRequests, waitForFirefoxRequestOutcomes } from './firefoxHarness.js';
+
 /**
  * @typedef {object} LoggedRequestDetails
  * @property {URL} url
@@ -114,9 +117,28 @@ function logRequestsPlaywright(page, requestDetailsByRequestId, saveRequestOutco
  * @param {import('@playwright/test').Page} page
  * @param {string} url
  *   URL of the test page.
+ * @param {object} [options]
+ * @param {import('./firefoxHarness.js').FirefoxBackgroundPage | import('@playwright/test').Worker} [options.backgroundPage]
+ *   Background page for Firefox request tracking (required for Firefox).
+ * @param {boolean} [options.debug=false]
+ *   Enable debug logging for request tracking.
  * @returns {Promise<{ testCount: number, pageRequests: Object[], pageResults: Object[] }>}
  */
-export async function runRequestBlockingTest(page, url) {
+export async function runRequestBlockingTest(page, url, options = {}) {
+    const { backgroundPage, debug = false } = options;
+
+    if (isFirefox()) {
+        return runRequestBlockingTestFirefox(page, url, backgroundPage, debug);
+    } else {
+        return runRequestBlockingTestChrome(page, url);
+    }
+}
+
+/**
+ * Chrome/Chromium implementation of request blocking test.
+ * Uses Playwright's native request/response events.
+ */
+async function runRequestBlockingTestChrome(page, url) {
     const pageRequests = [];
     page.on('request', async (req) => {
         if (!req.url().startsWith('https://bad.third-party.site/')) {
@@ -148,6 +170,65 @@ export async function runRequestBlockingTest(page, url) {
     while (pageRequests.length < testCount) {
         await page.waitForTimeout(100);
     }
+    await page.waitForTimeout(1000);
+
+    const pageResults = await page.evaluate(
+        // @ts-ignore
+        // eslint-disable-next-line no-undef
+        () => results.results,
+    );
+
+    return { testCount, pageRequests, pageResults };
+}
+
+/**
+ * Firefox implementation of request blocking test.
+ * Uses webRequest API via background page evaluation to track request outcomes,
+ * as Playwright's requestfinished/requestfailed events don't fire reliably on Firefox.
+ */
+async function runRequestBlockingTestFirefox(page, url, backgroundPage, debug = false) {
+    if (!backgroundPage) {
+        throw new Error('backgroundPage is required for Firefox request blocking tests');
+    }
+
+    // Set up request tracking in the extension background
+    await setupFirefoxRequestTracking(backgroundPage, debug);
+    await clearFirefoxTrackedRequests(backgroundPage);
+
+    await page.bringToFront();
+    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.click('#start');
+
+    const testCount = await page.evaluate(
+        // @ts-ignore
+        // eslint-disable-next-line no-undef
+        () => tests.filter(({ id }) => !id.includes('worker')).length,
+    );
+
+    if (debug) {
+        console.log(`[runRequestBlockingTestFirefox] Expecting ${testCount} test requests`);
+    }
+
+    // Wait for request outcomes using the Firefox-specific tracking
+    const urlFilter = (requestUrl) => requestUrl.startsWith('https://bad.third-party.site/');
+
+    const requestOutcomes = await waitForFirefoxRequestOutcomes(backgroundPage, {
+        urlFilter,
+        expectedCount: testCount,
+        timeout: 30000,
+        pollInterval: 100,
+        debug,
+    });
+
+    // Map to the expected format
+    const pageRequests = requestOutcomes.map((outcome) => ({
+        url: outcome.url,
+        method: outcome.method,
+        type: outcome.resourceType,
+        status: outcome.status,
+    }));
+
+    // Wait a bit for the page to update results
     await page.waitForTimeout(1000);
 
     const pageResults = await page.evaluate(
