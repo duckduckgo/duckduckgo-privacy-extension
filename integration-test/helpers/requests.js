@@ -210,10 +210,8 @@ async function runRequestBlockingTestFirefox(page, url, backgroundPage, debug = 
     }
 
     // Wait for request outcomes using the Firefox-specific tracking
-    const urlFilter = (requestUrl) => requestUrl.startsWith('https://bad.third-party.site/');
-
     const requestOutcomes = await waitForFirefoxRequestOutcomes(backgroundPage, {
-        urlFilter,
+        urlPrefix: 'https://bad.third-party.site/',
         expectedCount: testCount,
         timeout: 30000,
         pollInterval: 100,

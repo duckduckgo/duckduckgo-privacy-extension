@@ -222,15 +222,47 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
     }
 
     const resultValue = result.result;
+    let resultString;
+
     if (typeof resultValue === 'object' && resultValue !== null) {
         if (resultValue.type === 'undefined') return undefined;
-        if (typeof resultValue.value !== 'undefined') return resultValue.value;
-    }
-    if (typeof resultValue !== 'string') {
-        throw new Error(`Unexpected result type: ${typeof resultValue}`);
+
+        // Handle longString type - RDP returns this for large strings
+        if (resultValue.type === 'longString' && resultValue.actor) {
+            // Fetch the full string from the RDP actor
+            const substringResult = await client.request({
+                to: resultValue.actor,
+                type: 'substring',
+                start: 0,
+                end: resultValue.length,
+            });
+            resultString = substringResult.substring;
+        } else if (typeof resultValue.value !== 'undefined') {
+            // Handle different result formats from RDP
+            // If value is already a string, use it directly
+            if (typeof resultValue.value === 'string') {
+                resultString = resultValue.value;
+            } else {
+                // Value is an object/array, it's our unwrapped result
+                // This can happen when RDP unwraps our JSON.stringify'd result
+                resultString = JSON.stringify(resultValue.value);
+            }
+        } else if (resultValue.type === 'object' && resultValue.preview) {
+            // RDP returned a preview object - we need to use a different approach
+            // This typically happens with large arrays/objects
+            throw new Error(
+                `RDP returned a preview object instead of full result. Consider using smaller data or explicit JSON.stringify in your code. Preview: ${JSON.stringify(resultValue.preview).slice(0, 200)}`,
+            );
+        } else {
+            throw new Error(`Unexpected result object structure: ${JSON.stringify(resultValue).slice(0, 500)}`);
+        }
+    } else if (typeof resultValue === 'string') {
+        resultString = resultValue;
+    } else {
+        throw new Error(`Unexpected result type: ${typeof resultValue}, value: ${JSON.stringify(resultValue).slice(0, 500)}`);
     }
 
-    const parsed = JSON.parse(resultValue);
+    const parsed = JSON.parse(resultString);
 
     // Handle pending async result
     if (parsed.__pending__) {
@@ -555,6 +587,9 @@ export async function cleanupFirefoxContext(context) {
  * This is used as a workaround for Playwright's requestfinished/requestfailed events not firing
  * reliably on Firefox.
  *
+ * The tracking stores pending requests and completed outcomes separately, matching them up
+ * when outcomes arrive. Outcomes are stored in a queue that can be polled one at a time.
+ *
  * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
  * @param {boolean} [enableDebugLogging=false] - Whether to enable console logging for debugging
  * @returns {Promise<void>}
@@ -563,39 +598,85 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
     await backgroundPage.evaluate((debugLogging) => {
         // Initialize the request tracking storage if not already present
         if (globalThis.__playwright_request_tracking) {
-            // Already set up, just clear any existing events
-            globalThis.__playwright_request_tracking.events = [];
+            // Already set up, just clear any existing data
+            globalThis.__playwright_request_tracking.pendingRequests = new Map();
+            globalThis.__playwright_request_tracking.completedOutcomes = [];
             if (debugLogging) {
-                console.log('[Playwright Request Tracking] Cleared existing events, listeners already active');
+                console.log('[Playwright Request Tracking] Cleared existing data, listeners already active');
             }
             return;
         }
 
         globalThis.__playwright_request_tracking = {
-            events: [],
+            // Map of requestId -> { url, method, resourceType }
+            pendingRequests: new Map(),
+            // Array of completed outcomes: { url, status, resourceType, method }
+            completedOutcomes: [],
             listenersActive: true,
+            debugLogging,
+        };
+
+        const tracking = globalThis.__playwright_request_tracking;
+
+        const determineStatus = (outcomeType, statusCode, error) => {
+            if (outcomeType === 'completed') {
+                if (statusCode >= 300 && statusCode < 400) {
+                    return 'redirected';
+                }
+                return 'allowed';
+            } else {
+                // Error occurred
+                const errorStr = error || '';
+                if (errorStr.includes('NS_ERROR_ABORT') || errorStr.includes('ERR_BLOCKED') || errorStr === 'net::ERR_BLOCKED_BY_CLIENT') {
+                    return 'blocked';
+                }
+                return 'failed';
+            }
+        };
+
+        const recordOutcome = (details, outcomeType) => {
+            const requestId = details.requestId;
+            const pendingRequest = tracking.pendingRequests.get(requestId);
+
+            if (pendingRequest) {
+                tracking.pendingRequests.delete(requestId);
+                const status = determineStatus(outcomeType, details.statusCode, details.error);
+                const outcome = {
+                    url: pendingRequest.url,
+                    status,
+                    resourceType: pendingRequest.resourceType,
+                    method: pendingRequest.method,
+                };
+                tracking.completedOutcomes.push(outcome);
+                if (tracking.debugLogging) {
+                    console.log('[Playwright Request Tracking] Outcome:', outcome.url, '->', status);
+                }
+            }
         };
 
         if (debugLogging) {
             console.log('[Playwright Request Tracking] Setting up webRequest listeners');
         }
 
+        // Track requests as they start
+        chrome.webRequest.onBeforeRequest.addListener(
+            (details) => {
+                tracking.pendingRequests.set(details.requestId, {
+                    url: details.url,
+                    method: details.method,
+                    resourceType: details.type,
+                });
+                if (tracking.debugLogging) {
+                    console.log('[Playwright Request Tracking] Started:', details.url);
+                }
+            },
+            { urls: ['<all_urls>'] },
+        );
+
         // Listen for completed requests (successful requests)
         chrome.webRequest.onCompleted.addListener(
             (details) => {
-                const event = {
-                    type: 'completed',
-                    url: details.url,
-                    requestId: details.requestId,
-                    tabId: details.tabId,
-                    resourceType: details.type,
-                    statusCode: details.statusCode,
-                    timestamp: Date.now(),
-                };
-                globalThis.__playwright_request_tracking.events.push(event);
-                if (debugLogging) {
-                    console.log('[Playwright Request Tracking] onCompleted:', details.url, 'status:', details.statusCode);
-                }
+                recordOutcome(details, 'completed');
             },
             { urls: ['<all_urls>'] },
         );
@@ -603,39 +684,7 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
         // Listen for error/blocked requests
         chrome.webRequest.onErrorOccurred.addListener(
             (details) => {
-                const event = {
-                    type: 'error',
-                    url: details.url,
-                    requestId: details.requestId,
-                    tabId: details.tabId,
-                    resourceType: details.type,
-                    error: details.error,
-                    timestamp: Date.now(),
-                };
-                globalThis.__playwright_request_tracking.events.push(event);
-                if (debugLogging) {
-                    console.log('[Playwright Request Tracking] onErrorOccurred:', details.url, 'error:', details.error);
-                }
-            },
-            { urls: ['<all_urls>'] },
-        );
-
-        // Also track requests as they start, to have a complete picture
-        chrome.webRequest.onBeforeRequest.addListener(
-            (details) => {
-                const event = {
-                    type: 'started',
-                    url: details.url,
-                    requestId: details.requestId,
-                    tabId: details.tabId,
-                    resourceType: details.type,
-                    method: details.method,
-                    timestamp: Date.now(),
-                };
-                globalThis.__playwright_request_tracking.events.push(event);
-                if (debugLogging) {
-                    console.log('[Playwright Request Tracking] onBeforeRequest:', details.url, 'type:', details.type);
-                }
+                recordOutcome(details, 'error');
             },
             { urls: ['<all_urls>'] },
         );
@@ -647,22 +696,55 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
 }
 
 /**
- * Get all tracked request events from the Firefox extension background.
+ * Get and remove the first completed request outcome from the Firefox extension background.
+ * Returns null if no outcomes are available.
  *
  * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
- * @returns {Promise<Array<{type: string, url: string, requestId: string, tabId: number, resourceType: string, statusCode?: number, error?: string, method?: string, timestamp: number}>>}
+ * @param {string} [urlPrefix] - Optional URL prefix filter
+ * @returns {Promise<{url: string, status: string, resourceType: string, method: string} | null>}
  */
-export async function getFirefoxTrackedRequests(backgroundPage) {
-    return await backgroundPage.evaluate(() => {
-        if (!globalThis.__playwright_request_tracking) {
-            return [];
+export async function popFirefoxRequestOutcome(backgroundPage, urlPrefix) {
+    return await backgroundPage.evaluate((prefix) => {
+        const tracking = globalThis.__playwright_request_tracking;
+        if (!tracking || tracking.completedOutcomes.length === 0) {
+            return null;
         }
-        return globalThis.__playwright_request_tracking.events.slice();
+
+        if (prefix) {
+            // Find and remove the first matching outcome
+            const index = tracking.completedOutcomes.findIndex((o) => o.url.startsWith(prefix));
+            if (index === -1) {
+                return null;
+            }
+            return tracking.completedOutcomes.splice(index, 1)[0];
+        } else {
+            // Return and remove the first outcome
+            return tracking.completedOutcomes.shift();
+        }
+    }, urlPrefix || null);
+}
+
+/**
+ * Get the count of pending and completed request outcomes.
+ *
+ * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
+ * @returns {Promise<{pending: number, completed: number}>}
+ */
+export async function getFirefoxRequestTrackingStats(backgroundPage) {
+    return await backgroundPage.evaluate(() => {
+        const tracking = globalThis.__playwright_request_tracking;
+        if (!tracking) {
+            return { pending: 0, completed: 0 };
+        }
+        return {
+            pending: tracking.pendingRequests.size,
+            completed: tracking.completedOutcomes.length,
+        };
     });
 }
 
 /**
- * Clear all tracked request events from the Firefox extension background.
+ * Clear all tracked request data from the Firefox extension background.
  *
  * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
  * @returns {Promise<void>}
@@ -670,18 +752,36 @@ export async function getFirefoxTrackedRequests(backgroundPage) {
 export async function clearFirefoxTrackedRequests(backgroundPage) {
     await backgroundPage.evaluate(() => {
         if (globalThis.__playwright_request_tracking) {
-            globalThis.__playwright_request_tracking.events = [];
+            globalThis.__playwright_request_tracking.pendingRequests = new Map();
+            globalThis.__playwright_request_tracking.completedOutcomes = [];
         }
     });
 }
 
 /**
- * Wait for request outcomes to be tracked for requests matching a filter.
- * This polls the background for request events until the expected number of outcomes are seen.
+ * Get all tracked request events from the Firefox extension background.
+ * Note: This returns outcomes that have not been popped yet.
+ *
+ * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
+ * @returns {Promise<Array<{url: string, status: string, resourceType: string, method: string}>>}
+ */
+export async function getFirefoxTrackedRequests(backgroundPage) {
+    return await backgroundPage.evaluate(() => {
+        const tracking = globalThis.__playwright_request_tracking;
+        if (!tracking) {
+            return [];
+        }
+        return tracking.completedOutcomes.slice();
+    });
+}
+
+/**
+ * Wait for request outcomes by polling and collecting them one at a time.
+ * This avoids the RDP "longString" issue by keeping responses small.
  *
  * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
  * @param {object} options
- * @param {function} [options.urlFilter] - Filter function for URLs to wait for (returns true to include)
+ * @param {string} [options.urlPrefix] - URL prefix filter for requests to collect
  * @param {number} [options.expectedCount] - Number of request outcomes to wait for
  * @param {number} [options.timeout=30000] - Timeout in milliseconds
  * @param {number} [options.pollInterval=100] - Polling interval in milliseconds
@@ -689,84 +789,46 @@ export async function clearFirefoxTrackedRequests(backgroundPage) {
  * @returns {Promise<Array<{url: string, status: 'allowed' | 'blocked' | 'failed' | 'redirected', resourceType: string, method?: string}>>}
  */
 export async function waitForFirefoxRequestOutcomes(backgroundPage, options = {}) {
-    const { urlFilter, expectedCount = 1, timeout = 30000, pollInterval = 100, debug = false } = options;
+    const { urlPrefix, expectedCount = 1, timeout = 30000, pollInterval = 100, debug = false } = options;
 
     const startTime = Date.now();
+    const results = [];
 
     while (Date.now() - startTime < timeout) {
-        const allEvents = await getFirefoxTrackedRequests(backgroundPage);
+        // Try to pop an outcome
+        const outcome = await popFirefoxRequestOutcome(backgroundPage, urlPrefix);
 
-        // Group events by requestId to match started events with their outcomes
-        const requestsById = new Map();
-        for (const event of allEvents) {
-            if (!requestsById.has(event.requestId)) {
-                requestsById.set(event.requestId, { started: null, outcome: null });
+        if (outcome) {
+            results.push(outcome);
+            if (debug) {
+                console.log(
+                    `[waitForFirefoxRequestOutcomes] Got outcome ${results.length}/${expectedCount}:`,
+                    outcome.url,
+                    '->',
+                    outcome.status,
+                );
             }
-            const req = requestsById.get(event.requestId);
-            if (event.type === 'started') {
-                req.started = event;
-            } else {
-                req.outcome = event;
+
+            if (results.length >= expectedCount) {
+                return results;
             }
+            // Continue immediately to check for more
+            continue;
         }
 
-        // Build results for requests that have completed
-        const results = [];
-        for (const [, req] of requestsById) {
-            if (!req.started || !req.outcome) {
-                continue; // Request hasn't completed yet
-            }
-
-            const url = req.started.url;
-
-            // Apply URL filter if provided
-            if (urlFilter && !urlFilter(url)) {
-                continue;
-            }
-
-            let status;
-            if (req.outcome.type === 'completed') {
-                // Check if this was a redirect (3xx status codes)
-                if (req.outcome.statusCode >= 300 && req.outcome.statusCode < 400) {
-                    status = 'redirected';
-                } else {
-                    status = 'allowed';
-                }
-            } else if (req.outcome.type === 'error') {
-                // Check error type to determine if blocked or failed
-                const error = req.outcome.error || '';
-                if (error.includes('NS_ERROR_ABORT') || error.includes('ERR_BLOCKED') || error === 'net::ERR_BLOCKED_BY_CLIENT') {
-                    status = 'blocked';
-                } else {
-                    status = 'failed';
-                }
-            }
-
-            results.push({
-                url,
-                status,
-                resourceType: req.started.resourceType,
-                method: req.started.method,
-                error: req.outcome.error,
-                statusCode: req.outcome.statusCode,
-            });
-        }
-
-        if (debug) {
-            console.log(`[waitForFirefoxRequestOutcomes] Found ${results.length}/${expectedCount} request outcomes`);
-        }
-
-        if (results.length >= expectedCount) {
-            return results;
-        }
-
+        // No outcome available, wait before polling again
         await new Promise((resolve) => setTimeout(resolve, pollInterval));
     }
 
-    // Timeout - return what we have
-    const allEvents = await getFirefoxTrackedRequests(backgroundPage);
+    // Timeout reached
     if (debug) {
-        console.log('[waitForFirefoxRequestOutcomes] Timeout reached. All events:', JSON.stringify(allEvents, null, 2));
+        const stats = await getFirefoxRequestTrackingStats(backgroundPage);
+        console.log(`[waitForFirefoxRequestOutcomes] Timeout. Got ${results.length}/${expectedCount}. Stats:`, stats);
     }
-    throw new Error(`Timeout waiting for ${expectedCount} request outcomes. Only found matching requests in events.`);
+
+    if (results.length < expectedCount) {
+        throw new Error(`Timeout waiting for ${expectedCount} request outcomes. Only found ${results.length}.`);
+    }
+
+    return results;
 }
