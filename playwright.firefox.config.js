@@ -12,7 +12,13 @@ const supportedTests = [
     'integration-test/background-eval.spec.js',
     'integration-test/request-events.spec.js',
     // Extension tests.
+    'integration-test/fingerprint-randomization.spec.js',
+    'integration-test/navigator-interface.spec.js',
+    'integration-test/gpc.spec.js',
     'integration-test/request-blocking.spec.js',
+    // Non-extension tests.
+    'integration-test/facebook-sdk-schema.spec.js',
+    'integration-test/youtube-sdk-schema.spec.js',
 ];
 
 export default defineConfig({
