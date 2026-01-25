@@ -253,17 +253,7 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
 
     if (typeof resultValue === 'object' && resultValue !== null) {
         if (resultValue.type === 'undefined') return undefined;
-
-        // Handle longString type - RDP returns this for large strings
-        if (resultValue.type === 'longString' && resultValue.actor) {
-            const substringResult = await client.request({
-                to: resultValue.actor,
-                type: 'substring',
-                start: 0,
-                end: resultValue.length,
-            });
-            resultString = substringResult.substring;
-        } else if (typeof resultValue.value !== 'undefined') {
+        if (typeof resultValue.value !== 'undefined') {
             resultString = typeof resultValue.value === 'string' ? resultValue.value : JSON.stringify(resultValue.value);
         } else {
             throw new Error(`Unexpected result object structure: ${JSON.stringify(resultValue).slice(0, 200)}`);
