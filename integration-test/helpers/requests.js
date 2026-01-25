@@ -1,10 +1,5 @@
 import { isFirefox } from './playwrightHarness.js';
-import {
-    setupFirefoxRequestTracking,
-    clearFirefoxTrackedRequests,
-    popFirefoxRequestOutcome,
-    waitForFirefoxRequestOutcomes,
-} from './firefoxHarness.js';
+import { setupFirefoxRequestTracking, clearFirefoxTrackedRequests, popFirefoxRequestOutcome } from './firefoxHarness.js';
 
 /**
  * @typedef {object} LoggedRequestDetails
@@ -218,30 +213,19 @@ async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, sav
  * results.
  * See https://privacy-test-pages.site/privacy-protections/request-blocking/
  *
+ * Uses logPageRequests abstraction which handles browser differences internally.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {string} url
  *   URL of the test page.
  * @param {object} [options]
  * @param {import('./firefoxHarness.js').FirefoxBackgroundPage | import('@playwright/test').Worker} [options.backgroundPage]
  *   Background page for Firefox request tracking (required for Firefox).
- * @param {boolean} [options.debug=false]
- *   Enable debug logging for request tracking.
  * @returns {Promise<{ testCount: number, pageRequests: Object[], pageResults: Object[] }>}
  */
 export async function runRequestBlockingTest(page, url, options = {}) {
     const { backgroundPage } = options;
 
-    if (isFirefox()) {
-        return runRequestBlockingTestFirefox(page, url, backgroundPage);
-    } else {
-        return runRequestBlockingTestChrome(page, url, backgroundPage);
-    }
-}
-
-/**
- * Chrome implementation: Uses logPageRequests with Playwright events.
- */
-async function runRequestBlockingTestChrome(page, url, backgroundPage) {
     const pageRequests = [];
     const requestFilter = (details) => details.url.href.startsWith('https://bad.third-party.site/');
     const transform = (details) => ({
@@ -278,55 +262,12 @@ async function runRequestBlockingTestChrome(page, url, backgroundPage) {
         () => results.results,
     );
 
-    return { testCount, pageRequests, pageResults };
-}
-
-/**
- * Firefox implementation: Uses waitForFirefoxRequestOutcomes for reliability.
- * Playwright's events don't fire reliably on Firefox, so we use direct polling.
- */
-async function runRequestBlockingTestFirefox(page, url, backgroundPage) {
-    if (!backgroundPage) {
-        throw new Error('backgroundPage is required for Firefox request blocking tests');
+    // Stop Firefox polling if active
+    // @ts-ignore
+    if (page._firefoxPollingStop) {
+        // @ts-ignore
+        page._firefoxPollingStop();
     }
-
-    // Set up request tracking in the extension background
-    await setupFirefoxRequestTracking(backgroundPage, false);
-    await clearFirefoxTrackedRequests(backgroundPage);
-
-    await page.bringToFront();
-    await page.goto(url, { waitUntil: 'networkidle' });
-    await page.click('#start');
-
-    const testCount = await page.evaluate(
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        () => tests.filter(({ id }) => !id.includes('worker')).length,
-    );
-
-    // Wait for request outcomes using the Firefox-specific tracking
-    const requestOutcomes = await waitForFirefoxRequestOutcomes(backgroundPage, {
-        urlPrefix: 'https://bad.third-party.site/',
-        expectedCount: testCount,
-        timeout: 30000,
-        pollInterval: 100,
-    });
-
-    // Map to the expected format
-    const pageRequests = requestOutcomes.map((outcome) => ({
-        url: outcome.url,
-        method: outcome.method,
-        type: outcome.resourceType,
-        status: outcome.status,
-    }));
-
-    await page.waitForTimeout(1000);
-
-    const pageResults = await page.evaluate(
-        // @ts-ignore
-        // eslint-disable-next-line no-undef
-        () => results.results,
-    );
 
     return { testCount, pageRequests, pageResults };
 }
