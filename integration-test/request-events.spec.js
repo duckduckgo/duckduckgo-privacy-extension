@@ -6,6 +6,8 @@ import { logPageRequests } from './helpers/requests.js';
  * Tests for request event tracking abstractions.
  * These tests verify that we can reliably detect request outcomes (allowed/blocked)
  * on both Chrome and Firefox using the unified logPageRequests abstraction.
+ *
+ * TODO: Add test cases for redirected requests (both server-initiated and extension-initiated surrogates).
  */
 test.describe('request event tracking', () => {
     test('can track successful requests', async ({ context, backgroundPage, page }) => {
