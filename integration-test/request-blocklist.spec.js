@@ -41,9 +41,12 @@ test.describe('Test Request Blocklist feature', () => {
                     continue;
                 }
 
-                expect(status, `URL: ${url}, Allowlisted: ${!protectionsEnabled}`).toEqual(
-                    expectBlocked(protectionsEnabled, url) ? 'blocked' : 'allowed',
-                );
+                if (expectBlocked(protectionsEnabled, url)) {
+                    expect(status, `URL: ${url}, Allowlisted: ${!protectionsEnabled}`).toEqual('blocked');
+                } else {
+                    // Request should not be blocked - it can be 'allowed' or 'redirected'
+                    expect(['allowed', 'redirected'], `URL: ${url}, Allowlisted: ${!protectionsEnabled}`).toContain(status);
+                }
             }
 
             // Verify that the requests blocked by Request Blocklist were not

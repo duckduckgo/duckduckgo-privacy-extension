@@ -10,7 +10,7 @@ import { setupFirefoxRequestTracking, clearFirefoxTrackedRequests, popFirefoxReq
  * @property {string} [method]
  * @property {string} type
  * @property {string} [reason]
- * @property {'allowed' | 'blocked' | 'failed'} [status]
+ * @property {'allowed' | 'blocked' | 'failed' | 'redirected'} [status]
  * @property {URL} [redirectUrl]
  * @property {string} [initiator]
  */
@@ -92,20 +92,30 @@ export async function logPageRequests(page, requests, requestFilter, transform, 
 function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, saveRequestOutcome) {
     page.on('request', (request) => {
         const url = request.url();
+        const redirectedFrom = request.redirectedFrom();
         const requestDetails = {
             url,
             method: request.method(),
             type: request.resourceType(),
         };
-        if (request.redirectedFrom()) {
-            requestDetails.redirectUrl = request.url();
+
+        // Check if this request was redirected from another URL
+        if (redirectedFrom) {
+            const originalUrl = redirectedFrom.url();
+            // Mark the original request as "redirected"
+            saveRequestOutcome(originalUrl, (details) => {
+                details.status = 'redirected';
+                details.redirectUrl = new URL(url);
+            });
+            requestDetails.redirectUrl = new URL(url);
         }
+
         requestDetails.url = new URL(requestDetails.url);
         requestDetailsByRequestId.set(url, requestDetails);
     });
     page.on('requestfinished', (request) => {
         saveRequestOutcome(request.url(), (details) => {
-            // Successful requests (including redirects) are "allowed"
+            // Successful requests are "allowed"
             details.status = 'allowed';
         });
     });

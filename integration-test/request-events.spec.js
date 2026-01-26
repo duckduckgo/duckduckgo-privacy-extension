@@ -86,4 +86,40 @@ test.describe('request event tracking', () => {
             requests.slice(0, 5).map((r) => `${r.type}: ${r.status}`),
         );
     });
+
+    test('can detect extension-initiated redirects (surrogates)', async ({ context, backgroundPage, page }) => {
+        await backgroundWait.forExtensionLoaded(context);
+        await backgroundWait.forAllConfiguration(backgroundPage);
+
+        const requests = [];
+        const requestFilter = (details) => details.url.href.includes('googlesyndication.com');
+        await logPageRequests(page, requests, requestFilter, undefined, undefined, { backgroundPage });
+
+        // Create a page that loads a script that should be redirected to a surrogate
+        // googlesyndication.com/pagead/show_ads.js is expected to be redirected to local noop.js
+        await page.setContent(`
+            <html>
+            <head>
+                <script src="https://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
+            </head>
+            <body>Test page for surrogate redirect</body>
+            </html>
+        `);
+
+        // Wait for the request to complete
+        await page.waitForTimeout(2000);
+
+        console.log(
+            'Googlesyndication requests:',
+            requests.map((r) => `${r.url.href}: ${r.status}`),
+        );
+
+        // We should have tracked the googlesyndication request
+        expect(requests.length).toBeGreaterThan(0);
+
+        // The request should be marked as redirected (to a surrogate)
+        const surrogateRequest = requests.find((r) => r.url.href.includes('show_ads.js'));
+        expect(surrogateRequest).toBeDefined();
+        expect(surrogateRequest.status).toBe('redirected');
+    });
 });

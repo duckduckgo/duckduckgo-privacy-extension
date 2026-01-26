@@ -20,7 +20,7 @@
  */
 
 /**
- * @typedef {'allowed' | 'blocked' | 'failed'} RequestOutcomeStatus
+ * @typedef {'allowed' | 'blocked' | 'failed' | 'redirected'} RequestOutcomeStatus
  */
 
 /**
@@ -673,6 +673,32 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                 });
                 if (tracking.debugLogging) {
                     console.log('[Playwright Request Tracking] Started:', details.url);
+                }
+            },
+            { urls: ['<all_urls>'] },
+        );
+
+        // Listen for redirects (both HTTP 3xx and extension-initiated)
+        chrome.webRequest.onBeforeRedirect.addListener(
+            (details) => {
+                const requestId = details.requestId;
+                const pendingRequest = tracking.pendingRequests.get(requestId);
+
+                if (pendingRequest) {
+                    const redirectUrl = details.redirectUrl || '';
+                    // Mark this as a redirected request
+                    tracking.pendingRequests.delete(requestId);
+                    const outcome = {
+                        url: pendingRequest.url,
+                        status: 'redirected',
+                        resourceType: pendingRequest.resourceType,
+                        method: pendingRequest.method,
+                        redirectUrl,
+                    };
+                    tracking.completedOutcomes.push(outcome);
+                    if (tracking.debugLogging) {
+                        console.log('[Playwright Request Tracking] Redirected:', pendingRequest.url, '->', redirectUrl);
+                    }
                 }
             },
             { urls: ['<all_urls>'] },
