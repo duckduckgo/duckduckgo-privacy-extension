@@ -87,7 +87,7 @@ test.describe('request event tracking', () => {
         );
     });
 
-    test('can track surrogate requests', async ({ context, backgroundPage, page }) => {
+    test('detects extension-initiated redirects (surrogates)', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
 
@@ -97,6 +97,7 @@ test.describe('request event tracking', () => {
 
         // Create a page that loads a script that should be redirected to a surrogate
         // googlesyndication.com/pagead/show_ads.js is expected to be redirected to local noop.js
+        // The default TDS/config has this redirect rule.
         await page.setContent(`
             <html>
             <head>
@@ -117,10 +118,10 @@ test.describe('request event tracking', () => {
         // We should have tracked the googlesyndication request
         expect(requests.length).toBeGreaterThan(0);
 
-        // The surrogate request should be tracked as redirected (extension redirects to local surrogate)
-        // or allowed if the redirect wasn't detected by the tracking mechanism
+        // The surrogate request should be tracked as redirected
+        // (extension redirects https://googlesyndication.com/pagead/show_ads.js to local noop.js)
         const surrogateRequest = requests.find((r) => r.url.href.includes('show_ads.js'));
         expect(surrogateRequest).toBeDefined();
-        expect(['redirected', 'allowed']).toContain(surrogateRequest.status);
+        expect(surrogateRequest.status).toBe('redirected');
     });
 });
