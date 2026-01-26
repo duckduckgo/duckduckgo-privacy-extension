@@ -640,6 +640,7 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                 }
 
                 let status = 'allowed';
+                let debugInfo = null;
 
                 try {
                     // Check if blockHandleResponse is available
@@ -678,14 +679,12 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                         // Call the extension's blocking logic
                         const response = globalThis.dbg.blockHandleResponse(dummyTab, details);
 
-                        if (tracking.debugLogging) {
-                            console.log(
-                                '[Playwright Request Tracking] blockHandleResponse for',
-                                details.url,
-                                ':',
-                                JSON.stringify(response),
-                            );
-                        }
+                        // Store debug info
+                        debugInfo = {
+                            siteUrl,
+                            hasDbg: true,
+                            response: response ? JSON.stringify(response) : 'undefined',
+                        };
 
                         if (response) {
                             if (response.redirectUrl) {
@@ -694,11 +693,11 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                                 status = 'blocked';
                             }
                         }
+                    } else {
+                        debugInfo = { hasDbg: false };
                     }
                 } catch (e) {
-                    if (tracking.debugLogging) {
-                        console.log('[Playwright Request Tracking] Error calling blockHandleResponse:', e);
-                    }
+                    debugInfo = { error: String(e) };
                 }
 
                 const outcome = {
@@ -707,6 +706,10 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                     resourceType: details.type,
                     method: details.method,
                 };
+                // Add debug info for 'allowed' requests when debugging
+                if (tracking.debugLogging && status === 'allowed' && debugInfo) {
+                    outcome._debug = debugInfo;
+                }
                 tracking.completedOutcomes.push(outcome);
 
                 if (tracking.debugLogging) {
