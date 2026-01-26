@@ -28,7 +28,8 @@
  *   url: string,
  *   status: RequestOutcomeStatus,
  *   resourceType: string,
- *   method?: string
+ *   method?: string,
+ *   _debug?: object
  * }} RequestOutcome
  */
 

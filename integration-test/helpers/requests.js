@@ -233,6 +233,11 @@ async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, sav
                 if (outcome && requestDetailsByRequestId.has(outcome.url)) {
                     saveRequestOutcome(outcome.url, (details) => {
                         details.status = outcome.status;
+                        // Include debug info if present
+                        if (outcome._debug) {
+                            // @ts-ignore - _debug is debug-only property
+                            details._debug = outcome._debug;
+                        }
                     });
                 }
             } catch {
