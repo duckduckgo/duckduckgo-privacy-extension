@@ -1,4 +1,4 @@
-import { test, expect, isFirefox } from './helpers/playwrightHarness.js';
+import { test, expect } from './helpers/playwrightHarness.js';
 import backgroundWait from './helpers/backgroundWait';
 import { logPageRequests } from './helpers/requests.js';
 
@@ -85,50 +85,5 @@ test.describe('request event tracking', () => {
             'Sample requests:',
             requests.slice(0, 5).map((r) => `${r.type}: ${r.status}`),
         );
-    });
-
-    test('detects surrogate redirects', async ({ context, backgroundPage, page }) => {
-        await backgroundWait.forExtensionLoaded(context);
-        await backgroundWait.forAllConfiguration(backgroundPage);
-
-        const requests = [];
-        const requestFilter = (details) => details.url.href.includes('googlesyndication.com');
-        await logPageRequests(page, requests, requestFilter, undefined, undefined, { backgroundPage });
-
-        // Create a page that loads a script that should be redirected to a surrogate
-        // googlesyndication.com/pagead/show_ads.js is expected to be redirected to local noop.js
-        // The default TDS/config has this redirect rule.
-        await page.setContent(`
-            <html>
-            <head>
-                <script src="https://pagead2.googlesyndication.com/pagead/show_ads.js"></script>
-            </head>
-            <body>Test page for surrogate redirect</body>
-            </html>
-        `);
-
-        // Wait for the request to complete
-        await page.waitForTimeout(2000);
-
-        console.log(
-            'Googlesyndication requests:',
-            requests.map((r) => `${r.url.href}: ${r.status}`),
-        );
-
-        // We should have tracked the googlesyndication request
-        expect(requests.length).toBeGreaterThan(0);
-
-        // The surrogate request should be detected as 'redirected'
-        // The extension redirects googlesyndication.com/pagead/show_ads.js to a local surrogate script
-        const surrogateRequest = requests.find((r) => r.url.href.includes('show_ads.js'));
-        expect(surrogateRequest).toBeDefined();
-        // Firefox: We reliably detect redirects via blockHandleResponse
-        // Chrome: Extension-initiated redirects are harder to detect via Playwright events
-        if (isFirefox()) {
-            expect(surrogateRequest.status).toBe('redirected');
-        } else {
-            // Chrome may report 'redirected' if TDS check works, or 'allowed' if not
-            expect(['redirected', 'allowed']).toContain(surrogateRequest.status);
-        }
     });
 });

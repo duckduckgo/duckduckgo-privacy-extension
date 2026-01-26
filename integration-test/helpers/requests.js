@@ -78,7 +78,7 @@ export async function logPageRequests(page, requests, requestFilter, transform, 
     if (isFirefox()) {
         await logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, saveRequestOutcome, options.backgroundPage);
     } else {
-        await logRequestsPlaywrightChrome(page, requestDetailsByRequestId, saveRequestOutcome, options.backgroundPage);
+        logRequestsPlaywrightChrome(page, requestDetailsByRequestId, saveRequestOutcome);
     }
 
     return () => {
@@ -88,55 +88,12 @@ export async function logPageRequests(page, requests, requestFilter, transform, 
 }
 
 /**
- * Check if a URL matches a surrogate rule in the TDS (runs in extension background).
- * @param {string} url
- * @returns {boolean}
- */
-function checkSurrogateRuleCode(url) {
-    try {
-        // Only check HTTPS URLs
-        if (!url.startsWith('https://')) {
-            return false;
-        }
-        // Check tracker rules for surrogate actions
-        if (globalThis.dbg && globalThis.dbg.tds && globalThis.dbg.tds.tds) {
-            const tds = globalThis.dbg.tds.tds;
-            if (tds.trackers) {
-                for (const tracker of Object.values(tds.trackers)) {
-                    // @ts-ignore - tracker is dynamic
-                    if (tracker.rules) {
-                        // @ts-ignore - tracker is dynamic
-                        for (const rule of tracker.rules) {
-                            try {
-                                if (rule.surrogate && url.match(new RegExp(rule.rule))) {
-                                    return true;
-                                }
-                            } catch (e) {
-                                // Invalid regex, skip
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    } catch (e) {
-        // Ignore errors
-    }
-    return false;
-}
-
-/**
  * Chrome implementation: Uses Playwright's native request events.
  * @param {import('@playwright/test').Page} page
  * @param {Map<string, LoggedRequestDetails>} requestDetailsByRequestId
  * @param {(requestId: string, updateDetails: (details: LoggedRequestDetails) => void) => void} saveRequestOutcome
- * @param {import('./firefoxHarness.js').FirefoxBackgroundPage | import('@playwright/test').Worker} [backgroundPage]
  */
-async function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, saveRequestOutcome, backgroundPage) {
-    // Track URLs that need surrogate checking after request finishes
-    /** @type {Set<string>} */
-    const pendingFinishedRequests = new Set();
-
+function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, saveRequestOutcome) {
     page.on('request', (request) => {
         const url = request.url();
         /** @type {LoggedRequestDetails} */
@@ -151,38 +108,13 @@ async function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, save
         }
         requestDetailsByRequestId.set(url, requestDetails);
     });
-    page.on('requestfinished', async (request) => {
+    page.on('requestfinished', (request) => {
         const url = request.url();
         const details = requestDetailsByRequestId.get(url);
-
-        // If already detected as redirect via redirectedFrom(), use that
-        if (details && details.redirectUrl) {
-            saveRequestOutcome(url, (d) => {
-                d.status = 'redirected';
-            });
-            return;
-        }
-
-        // If we have a backgroundPage, check if this URL matches a surrogate rule
-        if (backgroundPage && url.startsWith('https://')) {
-            pendingFinishedRequests.add(url);
-            try {
-                const isSurrogate = await backgroundPage.evaluate(checkSurrogateRuleCode, url);
-                if (isSurrogate && pendingFinishedRequests.has(url)) {
-                    pendingFinishedRequests.delete(url);
-                    saveRequestOutcome(url, (d) => {
-                        d.status = 'redirected';
-                    });
-                    return;
-                }
-            } catch (e) {
-                // Ignore errors checking surrogate rules
-            }
-            pendingFinishedRequests.delete(url);
-        }
-
+        // If detected as redirect via redirectedFrom(), mark as redirected
+        const isRedirect = details && details.redirectUrl;
         saveRequestOutcome(url, (d) => {
-            d.status = 'allowed';
+            d.status = isRedirect ? 'redirected' : 'allowed';
         });
     });
     page.on('requestfailed', (request) => {
@@ -233,11 +165,6 @@ async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, sav
                 if (outcome && requestDetailsByRequestId.has(outcome.url)) {
                     saveRequestOutcome(outcome.url, (details) => {
                         details.status = outcome.status;
-                        // Include debug info if present
-                        if (outcome._debug) {
-                            // @ts-ignore - _debug is debug-only property
-                            details._debug = outcome._debug;
-                        }
                     });
                 }
             } catch {

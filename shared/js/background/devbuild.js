@@ -8,7 +8,6 @@ import atb from './atb';
 import tds from './storage/tds';
 import { createNewtabTrackerStatsDebugApi } from './newtab-tracker-stats-debug';
 import { sendPageloadsWithAdAttributionPixelAndResetCount } from './classes/ad-click-attribution-policy';
-import { blockHandleResponse } from './before-request';
 const settings = require('./settings');
 const tabManager = require('./tab-manager');
 const https = require('./https');
@@ -41,7 +40,6 @@ export default function initDebugBuild() {
         companies: Companies,
         ntts: createNewtabTrackerStatsDebugApi(),
         sendPageloadsWithAdAttributionPixelAndResetCount,
-        blockHandleResponse,
         resetToggleReports() {
             settings.updateSetting('toggleReportTimes', []);
         },
