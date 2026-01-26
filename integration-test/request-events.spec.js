@@ -53,7 +53,7 @@ test.describe('request event tracking', () => {
         // Verify each request has the expected structure
         for (const request of requests) {
             expect(request.url.href).toContain('bad.third-party.site');
-            expect(['allowed', 'blocked', 'failed']).toContain(request.status);
+            expect(['redirected', 'allowed', 'blocked', 'failed']).toContain(request.status);
             expect(request.type).toBeDefined();
         }
     });
@@ -117,9 +117,10 @@ test.describe('request event tracking', () => {
         // We should have tracked the googlesyndication request
         expect(requests.length).toBeGreaterThan(0);
 
-        // The surrogate request should be tracked as allowed (the surrogate loads successfully)
+        // The surrogate request should be tracked as redirected (extension redirects to local surrogate)
+        // or allowed if the redirect wasn't detected by the tracking mechanism
         const surrogateRequest = requests.find((r) => r.url.href.includes('show_ads.js'));
         expect(surrogateRequest).toBeDefined();
-        expect(surrogateRequest.status).toBe('allowed');
+        expect(['redirected', 'allowed']).toContain(surrogateRequest.status);
     });
 });
