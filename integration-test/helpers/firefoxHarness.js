@@ -647,7 +647,12 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                         // Create a dummy tab to avoid modifying real state
                         // The dummy tab needs a minimal Site object with the required methods
                         // @ts-ignore - documentUrl/originUrl exist on Firefox webRequest details
-                        const siteUrl = details.documentUrl || details.originUrl || details.url;
+                        let siteUrl = details.documentUrl || details.originUrl || details.url;
+                        // If the site URL is about:blank or data:, use a neutral first-party
+                        // that won't interfere with tracker matching (trackers match by request URL)
+                        if (!siteUrl || siteUrl.startsWith('about:') || siteUrl.startsWith('data:')) {
+                            siteUrl = 'https://example.com/';
+                        }
                         const dummySite = {
                             url: siteUrl,
                             isContentBlockingEnabled: () => true,
