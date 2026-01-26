@@ -22,7 +22,7 @@ test.describe('Test request blocking', () => {
             await forDynamicDNRRulesLoaded(backgroundPage);
         }
 
-        const { testCount, pageRequests, pageResults } = await runRequestBlockingTest(page, testSite, { backgroundPage });
+        const { testCount, pageRequests, pageResults } = await runRequestBlockingTest(backgroundPage, page, testSite);
 
         // Verify that no logged requests were allowed.
         for (const { url, method, type, status } of pageRequests) {
@@ -101,7 +101,7 @@ test.describe('Test request blocking', () => {
                 return config;
             });
         }, testHost);
-        const { pageRequests, pageResults } = await runRequestBlockingTest(page, testSite, { backgroundPage });
+        const { pageRequests, pageResults } = await runRequestBlockingTest(backgroundPage, page, testSite);
 
         // Verify that no logged requests were allowed.
         for (const { url, method, type, status } of pageRequests) {
@@ -148,9 +148,11 @@ test.describe('Test request blocking', () => {
             }
         }
 
-        const { pageResults } = await runRequestBlockingTest(page, `${TEST_SERVER_ORIGIN}/privacy-protections/request-blocking/`, {
+        const { pageResults } = await runRequestBlockingTest(
             backgroundPage,
-        });
+            page,
+            `${TEST_SERVER_ORIGIN}/privacy-protections/request-blocking/`,
+        );
         await page.bringToFront();
         for (const { id, category, status } of pageResults) {
             // skip some flakey request types
@@ -171,7 +173,7 @@ test.describe('Test request blocking', () => {
         }
 
         // load with protection enabled
-        let { pageResults } = await runRequestBlockingTest(page, testSite, { backgroundPage });
+        let { pageResults } = await runRequestBlockingTest(backgroundPage, page, testSite);
         // Verify that no logged requests were allowed.
         for (const { id, category, status } of pageResults) {
             if (isFirefox() && id === 'font') {
@@ -186,7 +188,7 @@ test.describe('Test request blocking', () => {
             /* global dbg */
             dbg.tabManager.setList({ list: 'allowlisted', domain, value: true });
         }, testHost);
-        ({ pageResults } = await runRequestBlockingTest(page, testSite, { backgroundPage }));
+        ({ pageResults } = await runRequestBlockingTest(backgroundPage, page, testSite));
         for (const { id, category, status } of pageResults) {
             // skip some flakey request types
             if (['video', 'websocket'].includes(id)) {

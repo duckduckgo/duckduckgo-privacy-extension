@@ -249,22 +249,15 @@ async function evaluateInFirefoxBackground(client, consoleActor, evalResults, co
     }
 
     const resultValue = result.result;
-    let resultString;
-
     if (typeof resultValue === 'object' && resultValue !== null) {
         if (resultValue.type === 'undefined') return undefined;
-        if (typeof resultValue.value !== 'undefined') {
-            resultString = typeof resultValue.value === 'string' ? resultValue.value : JSON.stringify(resultValue.value);
-        } else {
-            throw new Error(`Unexpected result object structure: ${JSON.stringify(resultValue).slice(0, 200)}`);
-        }
-    } else if (typeof resultValue === 'string') {
-        resultString = resultValue;
-    } else {
+        if (typeof resultValue.value !== 'undefined') return resultValue.value;
+    }
+    if (typeof resultValue !== 'string') {
         throw new Error(`Unexpected result type: ${typeof resultValue}`);
     }
 
-    const parsed = JSON.parse(resultString);
+    const parsed = JSON.parse(resultValue);
 
     // Handle pending async result
     if (parsed.__pending__) {

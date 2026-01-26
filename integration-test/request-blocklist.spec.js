@@ -30,7 +30,7 @@ test.describe('Test Request Blocklist feature', () => {
             }
 
             // Load and run the request blocking test page.
-            const { testCount, pageRequests } = await runRequestBlockingTest(page, testSite);
+            const { testCount, pageRequests } = await runRequestBlockingTest(backgroundPage, page, testSite);
             expect(testCount).toBeGreaterThan(0);
 
             // Verify that the .jpg image requests were blocked as expected.
@@ -41,12 +41,9 @@ test.describe('Test Request Blocklist feature', () => {
                     continue;
                 }
 
-                if (expectBlocked(protectionsEnabled, url)) {
-                    expect(status, `URL: ${url}, Allowlisted: ${!protectionsEnabled}`).toEqual('blocked');
-                } else {
-                    // Request should not be blocked - it can be 'allowed' or 'redirected'
-                    expect(['allowed', 'redirected'], `URL: ${url}, Allowlisted: ${!protectionsEnabled}`).toContain(status);
-                }
+                expect(status, `URL: ${url}, Allowlisted: ${!protectionsEnabled}`).toEqual(
+                    expectBlocked(protectionsEnabled, url) ? 'blocked' : 'allowed',
+                );
             }
 
             // Verify that the requests blocked by Request Blocklist were not

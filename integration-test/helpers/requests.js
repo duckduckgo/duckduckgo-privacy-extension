@@ -225,17 +225,14 @@ async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, sav
  *
  * Uses logPageRequests abstraction which handles browser differences internally.
  *
+ * @param {import('./firefoxHarness.js').FirefoxBackgroundPage | import('@playwright/test').Worker} backgroundPage
+ *   Background page for request tracking.
  * @param {import('@playwright/test').Page} page
- * @param {string} url
+ * @param {string} testSite
  *   URL of the test page.
- * @param {object} [options]
- * @param {import('./firefoxHarness.js').FirefoxBackgroundPage | import('@playwright/test').Worker} [options.backgroundPage]
- *   Background page for Firefox request tracking (required for Firefox).
  * @returns {Promise<{ testCount: number, pageRequests: Object[], pageResults: Object[] }>}
  */
-export async function runRequestBlockingTest(page, url, options = {}) {
-    const { backgroundPage } = options;
-
+export async function runRequestBlockingTest(backgroundPage, page, testSite) {
     const pageRequests = [];
     const requestFilter = (details) => details.url.href.startsWith('https://bad.third-party.site/');
     const transform = (details) => ({
@@ -248,7 +245,7 @@ export async function runRequestBlockingTest(page, url, options = {}) {
     await logPageRequests(page, pageRequests, requestFilter, transform, undefined, { backgroundPage });
 
     await page.bringToFront();
-    await page.goto(url, { waitUntil: 'networkidle' });
+    await page.goto(testSite, { waitUntil: 'networkidle' });
     await page.click('#start');
 
     const testCount = await page.evaluate(
