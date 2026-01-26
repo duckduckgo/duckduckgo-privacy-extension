@@ -639,13 +639,22 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
         // Check if the extension logged a redirect/surrogate action for this URL
         const wasRedirectedByExtension = (url) => {
             try {
+                // Only check HTTPS URLs (surrogates don't apply to localhost/HTTP)
+                if (!url.startsWith('https://')) {
+                    return false;
+                }
+
                 // Check the extension's tds for surrogate rules
                 if (globalThis.dbg && globalThis.dbg.tds && globalThis.dbg.tds.surrogates) {
                     const surrogates = globalThis.dbg.tds.surrogates;
                     // Check if this URL matches a surrogate rule
                     for (const pattern of Object.keys(surrogates)) {
-                        if (url.includes(pattern) || new RegExp(pattern).test(url)) {
-                            return true;
+                        try {
+                            if (url.includes(pattern) || new RegExp(pattern).test(url)) {
+                                return true;
+                            }
+                        } catch (e) {
+                            // Invalid regex pattern, skip
                         }
                     }
                 }
@@ -656,8 +665,12 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                         for (const tracker of Object.values(tds.trackers)) {
                             if (tracker.rules) {
                                 for (const rule of tracker.rules) {
-                                    if (rule.surrogate && url.match(new RegExp(rule.rule))) {
-                                        return true;
+                                    try {
+                                        if (rule.surrogate && url.match(new RegExp(rule.rule))) {
+                                            return true;
+                                        }
+                                    } catch (e) {
+                                        // Invalid regex pattern, skip
                                     }
                                 }
                             }
