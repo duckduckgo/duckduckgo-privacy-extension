@@ -10,8 +10,7 @@ import { setupFirefoxRequestTracking, clearFirefoxTrackedRequests, popFirefoxReq
  * @property {string} [method]
  * @property {string} type
  * @property {string} [reason]
- * @property {'allowed' | 'blocked' | 'failed' | 'redirected'} [status]
- * @property {URL} [redirectUrl]
+ * @property {'allowed' | 'blocked' | 'failed'} [status]
  * @property {string} [initiator]
  */
 
@@ -92,30 +91,14 @@ export async function logPageRequests(page, requests, requestFilter, transform, 
 function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, saveRequestOutcome) {
     page.on('request', (request) => {
         const url = request.url();
-        const redirectedFrom = request.redirectedFrom();
-        const requestDetails = {
-            url,
+        requestDetailsByRequestId.set(url, {
+            url: new URL(url),
             method: request.method(),
             type: request.resourceType(),
-        };
-
-        // Check if this request was redirected from another URL
-        if (redirectedFrom) {
-            const originalUrl = redirectedFrom.url();
-            // Mark the original request as "redirected"
-            saveRequestOutcome(originalUrl, (details) => {
-                details.status = 'redirected';
-                details.redirectUrl = new URL(url);
-            });
-            requestDetails.redirectUrl = new URL(url);
-        }
-
-        requestDetails.url = new URL(requestDetails.url);
-        requestDetailsByRequestId.set(url, requestDetails);
+        });
     });
     page.on('requestfinished', (request) => {
         saveRequestOutcome(request.url(), (details) => {
-            // Successful requests are "allowed"
             details.status = 'allowed';
         });
     });
@@ -138,10 +121,6 @@ function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, saveReques
  * Firefox implementation: Uses webRequest API via background page evaluation.
  * Playwright's requestfinished/requestfailed events don't fire reliably on Firefox,
  * so we use the extension's webRequest API to track request outcomes.
- *
- * For Firefox, we still use page.on('request') to capture initial request details,
- * and then poll the background for outcomes. When an outcome arrives, we match it
- * to the pending request by URL and call saveRequestOutcome.
  */
 async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, saveRequestOutcome, backgroundPage) {
     if (!backgroundPage) {
@@ -155,50 +134,25 @@ async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, sav
     // Track requests via page.on('request') to capture initial details
     page.on('request', (request) => {
         const url = request.url();
-        const requestDetails = {
-            url,
+        requestDetailsByRequestId.set(url, {
+            url: new URL(url),
             method: request.method(),
             type: request.resourceType(),
-        };
-        if (request.redirectedFrom()) {
-            requestDetails.redirectUrl = request.url();
-        }
-        requestDetails.url = new URL(requestDetails.url);
-        requestDetailsByRequestId.set(url, requestDetails);
+        });
     });
 
-    // Store state for async polling
-    let isPolling = true;
-
     // Poll for outcomes from the Firefox background
+    let isPolling = true;
     const pollForOutcomes = async () => {
         while (isPolling) {
             try {
                 const outcome = await popFirefoxRequestOutcome(backgroundPage);
-                if (outcome) {
-                    // Match outcome to pending request and save
-                    if (requestDetailsByRequestId.has(outcome.url)) {
-                        saveRequestOutcome(outcome.url, (details) => {
-                            details.status = outcome.status;
-                            if (outcome.method) {
-                                details.method = outcome.method;
-                            }
-                        });
-                    } else {
-                        // Request was made by extension/not captured by page.on('request')
-                        // Create a new entry for it
-                        const details = {
-                            url: new URL(outcome.url),
-                            method: outcome.method || 'GET',
-                            type: outcome.resourceType,
-                            status: outcome.status,
-                        };
-                        requestDetailsByRequestId.set(outcome.url, details);
-                        saveRequestOutcome(outcome.url, () => {});
-                    }
+                if (outcome && requestDetailsByRequestId.has(outcome.url)) {
+                    saveRequestOutcome(outcome.url, (details) => {
+                        details.status = outcome.status;
+                    });
                 }
-            } catch (e) {
-                // Background page might be closed, stop polling
+            } catch {
                 isPolling = false;
                 break;
             }
@@ -211,8 +165,7 @@ async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, sav
         isPolling = false;
     });
 
-    // Store stop function for cleanup (attached to page for access)
-    // @ts-ignore
+    // @ts-ignore - Store stop function for cleanup
     page._firefoxPollingStop = () => {
         isPolling = false;
     };

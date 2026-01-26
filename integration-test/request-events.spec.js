@@ -27,8 +27,7 @@ test.describe('request event tracking', () => {
             (r) => r.url.href.includes('localhost:3000') && (r.type === 'document' || r.type === 'main_frame'),
         );
         expect(mainFrameRequest).toBeDefined();
-        // Main frame can be 'allowed' or 'redirected' (e.g., trailing slash normalization)
-        expect(['allowed', 'redirected']).toContain(mainFrameRequest.status);
+        expect(mainFrameRequest.status).toBe('allowed');
     });
 
     test('can track third-party requests', async ({ context, backgroundPage, page }) => {
@@ -54,7 +53,7 @@ test.describe('request event tracking', () => {
         // Verify each request has the expected structure
         for (const request of requests) {
             expect(request.url.href).toContain('bad.third-party.site');
-            expect(['allowed', 'blocked', 'failed', 'redirected']).toContain(request.status);
+            expect(['allowed', 'blocked', 'failed']).toContain(request.status);
             expect(request.type).toBeDefined();
         }
     });
@@ -118,11 +117,9 @@ test.describe('request event tracking', () => {
         // We should have tracked the googlesyndication request
         expect(requests.length).toBeGreaterThan(0);
 
-        // The request should be tracked - it may be 'redirected' or 'allowed' depending on
-        // how the browser/Playwright reports extension-initiated redirects
+        // The surrogate request should be tracked as allowed (the surrogate loads successfully)
         const surrogateRequest = requests.find((r) => r.url.href.includes('show_ads.js'));
         expect(surrogateRequest).toBeDefined();
-        // Extension-initiated redirects may not be detected as 'redirected' on all browsers
-        expect(['allowed', 'redirected']).toContain(surrogateRequest.status);
+        expect(surrogateRequest.status).toBe('allowed');
     });
 });
