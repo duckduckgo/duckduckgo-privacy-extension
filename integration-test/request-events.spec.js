@@ -87,7 +87,7 @@ test.describe('request event tracking', () => {
         );
     });
 
-    test('tracks requests that would be surrogate redirects', async ({ context, backgroundPage, page }) => {
+    test('detects surrogate redirects', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
 
@@ -118,13 +118,10 @@ test.describe('request event tracking', () => {
         // We should have tracked the googlesyndication request
         expect(requests.length).toBeGreaterThan(0);
 
-        // The request should be tracked with a valid status.
-        // On Chrome with working TDS: 'redirected' (server-initiated redirect detection works)
-        // On Firefox or without TDS: 'allowed' (surrogate rules may not be applied, or
-        //   extension-initiated redirects don't trigger onBeforeRedirect)
-        // Note: Firefox TDS/config routing is a known limitation (Problem #2 in PR description)
+        // The surrogate request should be detected as 'redirected'
+        // The extension redirects googlesyndication.com/pagead/show_ads.js to a local surrogate script
         const surrogateRequest = requests.find((r) => r.url.href.includes('show_ads.js'));
         expect(surrogateRequest).toBeDefined();
-        expect(['redirected', 'allowed']).toContain(surrogateRequest.status);
+        expect(surrogateRequest.status).toBe('redirected');
     });
 });

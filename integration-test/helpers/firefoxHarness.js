@@ -608,27 +608,57 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
         }
 
         globalThis.__playwright_request_tracking = {
-            // Map of requestId -> { url, method, resourceType, wasRedirected }
+            // Map of requestId -> { url, method, resourceType, wasRedirected, timestamp }
             pendingRequests: new Map(),
             // Array of completed outcomes: { url, status, resourceType, method }
             completedOutcomes: [],
+            // Track recent extension URL requests to detect extension-initiated redirects
+            recentExtensionRequests: [],
+            // Track recently aborted requests that might be redirects
+            recentlyAbortedRequests: [],
             listenersActive: true,
             debugLogging,
         };
 
         const tracking = globalThis.__playwright_request_tracking;
 
-        const determineStatus = (outcomeType, wasRedirected, error) => {
+        // Check if a URL is an extension URL (redirect target for surrogates)
+        const isExtensionUrl = (url) => {
+            return url.startsWith('moz-extension://') || url.startsWith('chrome-extension://');
+        };
+
+        // Check if an aborted request was likely redirected to an extension URL
+        const wasRedirectedToExtension = (url, timestamp) => {
+            // Look for extension URL requests that started shortly after this request
+            const threshold = 500; // 500ms window
+            return tracking.recentExtensionRequests.some(
+                (extReq) => extReq.timestamp >= timestamp && extReq.timestamp - timestamp < threshold,
+            );
+        };
+
+        const determineStatus = (outcomeType, pendingRequest, error) => {
             if (outcomeType === 'completed') {
                 // If this request was the result of a redirect, mark it as redirected
-                return wasRedirected ? 'redirected' : 'allowed';
+                return pendingRequest.wasRedirected ? 'redirected' : 'allowed';
             } else {
                 // Error occurred - check error type
                 const errorStr = error || '';
-                // Extension-initiated redirects may fire onErrorOccurred with redirect-related errors
+
+                // Extension-initiated redirects fire onErrorOccurred with NS_BINDING_ABORTED
+                // Check if this aborted request was followed by an extension URL request
+                if (errorStr.includes('NS_BINDING_ABORTED')) {
+                    if (wasRedirectedToExtension(pendingRequest.url, pendingRequest.timestamp)) {
+                        return 'redirected';
+                    }
+                    // NS_BINDING_ABORTED without extension redirect = blocked
+                    return 'blocked';
+                }
+
+                // Explicit redirect errors
                 if (errorStr.includes('NS_BINDING_REDIRECTED') || errorStr.includes('REDIRECTED')) {
                     return 'redirected';
                 }
+
                 if (errorStr.includes('NS_ERROR_ABORT') || errorStr.includes('ERR_BLOCKED') || errorStr === 'net::ERR_BLOCKED_BY_CLIENT') {
                     return 'blocked';
                 }
@@ -642,7 +672,7 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
 
             if (pendingRequest) {
                 tracking.pendingRequests.delete(requestId);
-                const status = determineStatus(outcomeType, pendingRequest.wasRedirected, details.error);
+                const status = determineStatus(outcomeType, pendingRequest, details.error);
                 const outcome = {
                     url: pendingRequest.url,
                     status,
@@ -663,11 +693,27 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
         // Track requests as they start
         chrome.webRequest.onBeforeRequest.addListener(
             (details) => {
+                const now = Date.now();
+
+                // Track extension URL requests separately to detect redirects
+                if (isExtensionUrl(details.url)) {
+                    tracking.recentExtensionRequests.push({
+                        url: details.url,
+                        timestamp: now,
+                    });
+                    // Keep only recent extension requests (last 2 seconds)
+                    tracking.recentExtensionRequests = tracking.recentExtensionRequests.filter((r) => now - r.timestamp < 2000);
+                    if (tracking.debugLogging) {
+                        console.log('[Playwright Request Tracking] Extension URL:', details.url);
+                    }
+                }
+
                 tracking.pendingRequests.set(details.requestId, {
                     url: details.url,
                     method: details.method,
                     resourceType: details.type,
                     wasRedirected: false,
+                    timestamp: now,
                 });
                 if (tracking.debugLogging) {
                     console.log('[Playwright Request Tracking] Started:', details.url);

@@ -136,8 +136,8 @@ async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, sav
         throw new Error('backgroundPage is required for Firefox request logging');
     }
 
-    // Set up request tracking in the extension background
-    await setupFirefoxRequestTracking(backgroundPage, false);
+    // Set up request tracking in the extension background (debug enabled to diagnose redirect detection)
+    await setupFirefoxRequestTracking(backgroundPage, true);
     await clearFirefoxTrackedRequests(backgroundPage);
 
     // Track requests via page.on('request') to capture initial details
