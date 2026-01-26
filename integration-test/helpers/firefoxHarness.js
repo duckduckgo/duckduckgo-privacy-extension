@@ -693,25 +693,6 @@ export async function popFirefoxRequestOutcome(backgroundPage, urlPrefix) {
 }
 
 /**
- * Get the count of pending and completed request outcomes.
- *
- * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
- * @returns {Promise<{pending: number, completed: number}>}
- */
-export async function getFirefoxRequestTrackingStats(backgroundPage) {
-    return await backgroundPage.evaluate(() => {
-        const tracking = globalThis.__playwright_request_tracking;
-        if (!tracking) {
-            return { pending: 0, completed: 0 };
-        }
-        return {
-            pending: tracking.pendingRequests.size,
-            completed: tracking.completedOutcomes.length,
-        };
-    });
-}
-
-/**
  * Clear all tracked request data from the Firefox extension background.
  *
  * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
@@ -724,76 +705,4 @@ export async function clearFirefoxTrackedRequests(backgroundPage) {
             globalThis.__playwright_request_tracking.completedOutcomes = [];
         }
     });
-}
-
-/**
- * Get all tracked request events from the Firefox extension background.
- * Note: This returns outcomes that have not been popped yet.
- *
- * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
- * @returns {Promise<RequestOutcome[]>}
- */
-export async function getFirefoxTrackedRequests(backgroundPage) {
-    return await backgroundPage.evaluate(() => {
-        const tracking = globalThis.__playwright_request_tracking;
-        if (!tracking) {
-            return [];
-        }
-        return tracking.completedOutcomes.slice();
-    });
-}
-
-/**
- * Wait for request outcomes by polling and collecting them one at a time.
- * This avoids the RDP "longString" issue by keeping responses small.
- *
- * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
- * @param {object} options
- * @param {string} [options.urlPrefix] - URL prefix filter for requests to collect
- * @param {number} [options.expectedCount] - Number of request outcomes to wait for
- * @param {number} [options.timeout=30000] - Timeout in milliseconds
- * @param {number} [options.pollInterval=100] - Polling interval in milliseconds
- * @param {boolean} [options.debug=false] - Enable debug logging
- * @returns {Promise<RequestOutcome[]>}
- */
-export async function waitForFirefoxRequestOutcomes(backgroundPage, options = {}) {
-    const { urlPrefix, expectedCount = 1, timeout = 30000, pollInterval = 100, debug = false } = options;
-
-    const startTime = Date.now();
-    /** @type {RequestOutcome[]} */
-    const results = [];
-
-    while (Date.now() - startTime < timeout) {
-        // Try to pop an outcome
-        const outcome = await popFirefoxRequestOutcome(backgroundPage, urlPrefix);
-
-        if (outcome) {
-            results.push(outcome);
-            if (debug) {
-                console.log(
-                    `[waitForFirefoxRequestOutcomes] Got outcome ${results.length}/${expectedCount}:`,
-                    outcome.url,
-                    '->',
-                    outcome.status,
-                );
-            }
-
-            if (results.length >= expectedCount) {
-                return results;
-            }
-            // Continue immediately to check for more
-            continue;
-        }
-
-        // No outcome available, wait before polling again
-        await new Promise((resolve) => setTimeout(resolve, pollInterval));
-    }
-
-    // Timeout reached - if we're here, we didn't get enough results
-    if (debug) {
-        const stats = await getFirefoxRequestTrackingStats(backgroundPage);
-        console.log(`[waitForFirefoxRequestOutcomes] Timeout. Got ${results.length}/${expectedCount}. Stats:`, stats);
-    }
-
-    throw new Error(`Timeout waiting for ${expectedCount} request outcomes. Only found ${results.length}.`);
 }
