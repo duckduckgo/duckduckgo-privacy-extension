@@ -15,7 +15,8 @@ const supportedTests = [
     'integration-test/fingerprint-randomization.spec.js',
     'integration-test/navigator-interface.spec.js',
     'integration-test/gpc.spec.js',
-    'integration-test/request-blocking.spec.js',
+    // Note: request-blocking.spec.js is NOT included because it requires
+    // overridePrivacyConfig() which doesn't work on Firefox yet (Problem #2).
     // Non-extension tests.
     'integration-test/facebook-sdk-schema.spec.js',
     'integration-test/youtube-sdk-schema.spec.js',
