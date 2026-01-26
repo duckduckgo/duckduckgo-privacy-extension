@@ -87,7 +87,7 @@ test.describe('request event tracking', () => {
         );
     });
 
-    test('tracks surrogate requests', async ({ context, backgroundPage, page }) => {
+    test('detects surrogate redirects', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
 
@@ -118,12 +118,10 @@ test.describe('request event tracking', () => {
         // We should have tracked the googlesyndication request
         expect(requests.length).toBeGreaterThan(0);
 
-        // The surrogate request should be tracked.
-        // Note: Extension-initiated redirects (surrogates) don't trigger webRequest.onBeforeRedirect
-        // (only server-initiated redirects do), so the status may be 'allowed' instead of 'redirected'.
-        // Server-initiated redirects (HTTP 301/302) will correctly report 'redirected'.
+        // The surrogate request should be detected as redirected
+        // (extension redirects googlesyndication.com/pagead/show_ads.js to local noop.js surrogate)
         const surrogateRequest = requests.find((r) => r.url.href.includes('show_ads.js'));
         expect(surrogateRequest).toBeDefined();
-        expect(['redirected', 'allowed']).toContain(surrogateRequest.status);
+        expect(surrogateRequest.status).toBe('redirected');
     });
 });

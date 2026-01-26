@@ -623,8 +623,12 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                 // If this request was the result of a redirect, mark it as redirected
                 return wasRedirected ? 'redirected' : 'allowed';
             } else {
-                // Error occurred
+                // Error occurred - check error type
                 const errorStr = error || '';
+                // Extension-initiated redirects may fire onErrorOccurred with redirect-related errors
+                if (errorStr.includes('NS_BINDING_REDIRECTED') || errorStr.includes('REDIRECTED')) {
+                    return 'redirected';
+                }
                 if (errorStr.includes('NS_ERROR_ABORT') || errorStr.includes('ERR_BLOCKED') || errorStr === 'net::ERR_BLOCKED_BY_CLIENT') {
                     return 'blocked';
                 }
@@ -699,6 +703,9 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
         // Listen for error/blocked requests
         chrome.webRequest.onErrorOccurred.addListener(
             (details) => {
+                if (tracking.debugLogging) {
+                    console.log('[Playwright Request Tracking] Error:', details.url, 'error:', details.error);
+                }
                 recordOutcome(details, 'error');
             },
             { urls: ['<all_urls>'] },
