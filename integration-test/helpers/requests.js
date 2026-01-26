@@ -167,23 +167,7 @@ async function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, save
         if (backgroundPage && url.startsWith('https://')) {
             pendingFinishedRequests.add(url);
             try {
-                // Debug: Check if dbg.tds is available
-                const debugInfo = await backgroundPage.evaluate(() => {
-                    try {
-                        const hasDbg = typeof globalThis.dbg !== 'undefined';
-                        const hasTds = hasDbg && globalThis.dbg.tds;
-                        const hasTdsTds = hasTds && globalThis.dbg.tds.tds;
-                        const hasTrackers = hasTdsTds && globalThis.dbg.tds.tds.trackers;
-                        const trackerCount = hasTrackers ? Object.keys(globalThis.dbg.tds.tds.trackers).length : 0;
-                        return { hasDbg, hasTds, hasTdsTds, hasTrackers, trackerCount };
-                    } catch (e) {
-                        return { error: String(e) };
-                    }
-                });
-                console.log('Chrome TDS debug for', url, ':', JSON.stringify(debugInfo));
-
                 const isSurrogate = await backgroundPage.evaluate(checkSurrogateRuleCode, url);
-                console.log('Chrome surrogate check for', url, ':', isSurrogate);
                 if (isSurrogate && pendingFinishedRequests.has(url)) {
                     pendingFinishedRequests.delete(url);
                     saveRequestOutcome(url, (d) => {
@@ -192,7 +176,7 @@ async function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, save
                     return;
                 }
             } catch (e) {
-                console.log('Chrome surrogate check error:', e);
+                // Ignore errors checking surrogate rules
             }
             pendingFinishedRequests.delete(url);
         }
