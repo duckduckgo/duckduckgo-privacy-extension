@@ -20,7 +20,7 @@
  */
 
 /**
- * @typedef {'allowed' | 'blocked' | 'failed'} RequestOutcomeStatus
+ * @typedef {'redirected' | 'allowed' | 'blocked' | 'failed'} RequestOutcomeStatus
  */
 
 /**
@@ -608,7 +608,7 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
         }
 
         globalThis.__playwright_request_tracking = {
-            // Map of requestId -> { url, method, resourceType }
+            // Map of requestId -> { url, method, resourceType, wasRedirected }
             pendingRequests: new Map(),
             // Array of completed outcomes: { url, status, resourceType, method }
             completedOutcomes: [],
@@ -618,10 +618,10 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
 
         const tracking = globalThis.__playwright_request_tracking;
 
-        const determineStatus = (outcomeType, statusCode, error) => {
+        const determineStatus = (outcomeType, wasRedirected, error) => {
             if (outcomeType === 'completed') {
-                // Successful requests (including redirects) are "allowed"
-                return 'allowed';
+                // If this request was the result of a redirect, mark it as redirected
+                return wasRedirected ? 'redirected' : 'allowed';
             } else {
                 // Error occurred
                 const errorStr = error || '';
@@ -638,7 +638,7 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
 
             if (pendingRequest) {
                 tracking.pendingRequests.delete(requestId);
-                const status = determineStatus(outcomeType, details.statusCode, details.error);
+                const status = determineStatus(outcomeType, pendingRequest.wasRedirected, details.error);
                 const outcome = {
                     url: pendingRequest.url,
                     status,
@@ -663,9 +663,26 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                     url: details.url,
                     method: details.method,
                     resourceType: details.type,
+                    wasRedirected: false,
                 });
                 if (tracking.debugLogging) {
                     console.log('[Playwright Request Tracking] Started:', details.url);
+                }
+            },
+            { urls: ['<all_urls>'] },
+        );
+
+        // Listen for redirects - update the pending request to track it was redirected
+        chrome.webRequest.onBeforeRedirect.addListener(
+            (details) => {
+                const pendingRequest = tracking.pendingRequests.get(details.requestId);
+                if (pendingRequest) {
+                    // Update the URL to the redirect target and mark as redirected
+                    pendingRequest.url = details.redirectUrl;
+                    pendingRequest.wasRedirected = true;
+                    if (tracking.debugLogging) {
+                        console.log('[Playwright Request Tracking] Redirect:', details.url, '->', details.redirectUrl);
+                    }
                 }
             },
             { urls: ['<all_urls>'] },

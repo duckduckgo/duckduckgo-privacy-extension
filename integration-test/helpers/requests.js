@@ -10,7 +10,9 @@ import { setupFirefoxRequestTracking, clearFirefoxTrackedRequests, popFirefoxReq
  * @property {string} [method]
  * @property {string} type
  * @property {string} [reason]
- * @property {'allowed' | 'blocked' | 'failed'} [status]
+ * @property {'redirected' | 'allowed' | 'blocked' | 'failed'} [status]
+ * @property {URL} [redirectUrl]
+ *   If this request was redirected, the URL it was redirected to.
  * @property {string} [initiator]
  */
 
@@ -91,15 +93,22 @@ export async function logPageRequests(page, requests, requestFilter, transform, 
 function logRequestsPlaywrightChrome(page, requestDetailsByRequestId, saveRequestOutcome) {
     page.on('request', (request) => {
         const url = request.url();
-        requestDetailsByRequestId.set(url, {
+        /** @type {LoggedRequestDetails} */
+        const requestDetails = {
             url: new URL(url),
             method: request.method(),
             type: request.resourceType(),
-        });
+        };
+        // Check if this request is a redirect from another request
+        if (request.redirectedFrom()) {
+            requestDetails.redirectUrl = new URL(request.url());
+        }
+        requestDetailsByRequestId.set(url, requestDetails);
     });
     page.on('requestfinished', (request) => {
         saveRequestOutcome(request.url(), (details) => {
-            details.status = 'allowed';
+            // If this request has a redirectUrl, it means it was the result of a redirect
+            details.status = details.redirectUrl ? 'redirected' : 'allowed';
         });
     });
     page.on('requestfailed', (request) => {
