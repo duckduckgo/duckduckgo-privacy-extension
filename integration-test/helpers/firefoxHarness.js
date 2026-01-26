@@ -636,10 +636,51 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
             );
         };
 
+        // Check if the extension logged a redirect/surrogate action for this URL
+        const wasRedirectedByExtension = (url) => {
+            try {
+                // Check the extension's tds for surrogate rules
+                if (globalThis.dbg && globalThis.dbg.tds && globalThis.dbg.tds.surrogates) {
+                    const surrogates = globalThis.dbg.tds.surrogates;
+                    // Check if this URL matches a surrogate rule
+                    for (const pattern of Object.keys(surrogates)) {
+                        if (url.includes(pattern) || new RegExp(pattern).test(url)) {
+                            return true;
+                        }
+                    }
+                }
+                // Also check tracker rules for redirect actions
+                if (globalThis.dbg && globalThis.dbg.tds && globalThis.dbg.tds.tds) {
+                    const tds = globalThis.dbg.tds.tds;
+                    if (tds.trackers) {
+                        for (const tracker of Object.values(tds.trackers)) {
+                            if (tracker.rules) {
+                                for (const rule of tracker.rules) {
+                                    if (rule.surrogate && url.match(new RegExp(rule.rule))) {
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                // Ignore errors querying extension state
+            }
+            return false;
+        };
+
         const determineStatus = (outcomeType, pendingRequest, error) => {
             if (outcomeType === 'completed') {
                 // If this request was the result of a redirect, mark it as redirected
-                return pendingRequest.wasRedirected ? 'redirected' : 'allowed';
+                if (pendingRequest.wasRedirected) {
+                    return 'redirected';
+                }
+                // Check if extension has a surrogate rule for this URL
+                if (wasRedirectedByExtension(pendingRequest.url)) {
+                    return 'redirected';
+                }
+                return 'allowed';
             } else {
                 // Error occurred - check error type
                 const errorStr = error || '';
@@ -647,7 +688,11 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                 // Extension-initiated redirects fire onErrorOccurred with NS_BINDING_ABORTED
                 // Check if this aborted request was followed by an extension URL request
                 if (errorStr.includes('NS_BINDING_ABORTED')) {
-                    if (wasRedirectedToExtension(pendingRequest.url, pendingRequest.timestamp)) {
+                    // Check if extension would redirect this URL (surrogate)
+                    if (
+                        wasRedirectedByExtension(pendingRequest.url) ||
+                        wasRedirectedToExtension(pendingRequest.url, pendingRequest.timestamp)
+                    ) {
                         return 'redirected';
                     }
                     // NS_BINDING_ABORTED without extension redirect = blocked
