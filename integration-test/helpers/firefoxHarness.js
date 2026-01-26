@@ -586,8 +586,9 @@ export async function cleanupFirefoxContext(context) {
  * This is used as a workaround for Playwright's requestfinished/requestfailed events not firing
  * reliably on Firefox.
  *
- * The tracking stores pending requests and completed outcomes separately, matching them up
- * when outcomes arrive. Outcomes are stored in a queue that can be polled one at a time.
+ * This approach uses the extension's own blockHandleResponse function to determine what action
+ * would be taken for each request (redirect, block, or allow). A dummy tab is used to avoid
+ * modifying any real tab state or counters.
  *
  * @param {FirefoxBackgroundPage} backgroundPage - The Firefox background page wrapper
  * @param {boolean} [enableDebugLogging=false] - Whether to enable console logging for debugging
@@ -598,7 +599,6 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
         // Initialize the request tracking storage if not already present
         if (globalThis.__playwright_request_tracking) {
             // Already set up, just clear any existing data
-            globalThis.__playwright_request_tracking.pendingRequests = new Map();
             globalThis.__playwright_request_tracking.completedOutcomes = [];
             globalThis.__playwright_request_tracking.debugLogging = debugLogging;
             if (debugLogging) {
@@ -608,215 +608,102 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
         }
 
         globalThis.__playwright_request_tracking = {
-            // Map of requestId -> { url, method, resourceType, wasRedirected, timestamp }
-            pendingRequests: new Map(),
             // Array of completed outcomes: { url, status, resourceType, method }
             completedOutcomes: [],
-            // Track recent extension URL requests to detect extension-initiated redirects
-            recentExtensionRequests: [],
-            // Track recently aborted requests that might be redirects
-            recentlyAbortedRequests: [],
             listenersActive: true,
             debugLogging,
         };
 
         const tracking = globalThis.__playwright_request_tracking;
 
-        // Check if a URL is an extension URL (redirect target for surrogates)
+        // Check if a URL is an extension URL (e.g., moz-extension://...)
+        // These are redirect targets for surrogates, not original requests to track
         const isExtensionUrl = (url) => {
             return url.startsWith('moz-extension://') || url.startsWith('chrome-extension://');
         };
 
-        // Check if an aborted request was likely redirected to an extension URL
-        const wasRedirectedToExtension = (url, timestamp) => {
-            // Look for extension URL requests that started shortly after this request
-            const threshold = 500; // 500ms window
-            return tracking.recentExtensionRequests.some(
-                (extReq) => extReq.timestamp >= timestamp && extReq.timestamp - timestamp < threshold,
-            );
-        };
+        if (debugLogging) {
+            console.log('[Playwright Request Tracking] Setting up webRequest listener with blockHandleResponse');
+        }
 
-        // Check if the extension logged a redirect/surrogate action for this URL
-        const wasRedirectedByExtension = (url) => {
-            try {
-                // Only check HTTPS URLs (surrogates don't apply to localhost/HTTP)
-                if (!url.startsWith('https://')) {
-                    return false;
+        // Add our own onBeforeRequest listener to determine what the extension would do
+        chrome.webRequest.onBeforeRequest.addListener(
+            (details) => {
+                // Skip extension URLs (these are redirect targets, not original requests)
+                if (isExtensionUrl(details.url)) {
+                    return;
                 }
 
-                // Check the extension's tds for surrogate rules
-                if (globalThis.dbg && globalThis.dbg.tds && globalThis.dbg.tds.surrogates) {
-                    const surrogates = globalThis.dbg.tds.surrogates;
-                    // Check if this URL matches a surrogate rule
-                    for (const pattern of Object.keys(surrogates)) {
-                        try {
-                            if (url.includes(pattern) || new RegExp(pattern).test(url)) {
-                                return true;
+                // Skip non-http(s) URLs
+                if (!details.url.startsWith('http://') && !details.url.startsWith('https://')) {
+                    return;
+                }
+
+                let status = 'allowed';
+
+                try {
+                    // Check if blockHandleResponse is available
+                    if (globalThis.dbg && globalThis.dbg.blockHandleResponse) {
+                        // Create a dummy tab to avoid modifying real state
+                        // The dummy tab needs a minimal Site object with the required methods
+                        // @ts-ignore - documentUrl/originUrl exist on Firefox webRequest details
+                        const siteUrl = details.documentUrl || details.originUrl || details.url;
+                        const dummySite = {
+                            url: siteUrl,
+                            isContentBlockingEnabled: () => true,
+                            isFeatureEnabled: (feature) => {
+                                // Enable standard features but not experimental ones
+                                return ['trackerAllowlist', 'requestBlocklist', 'serviceworkerInitiatedRequests'].includes(feature);
+                            },
+                            isBroken: false,
+                            addTracker: () => {},
+                        };
+
+                        const dummyTab = {
+                            site: dummySite,
+                            url: siteUrl,
+                            disabledClickToLoadRuleActions: [],
+                            surrogates: {},
+                            addToTrackers: () => {},
+                            addWebResourceAccess: () => 'dummy-key',
+                            postDevtoolsMessage: () => {},
+                            allowAdAttribution: () => false,
+                        };
+
+                        // Call the extension's blocking logic
+                        const response = globalThis.dbg.blockHandleResponse(dummyTab, details);
+
+                        if (response) {
+                            if (response.redirectUrl) {
+                                status = 'redirected';
+                            } else if (response.cancel) {
+                                status = 'blocked';
                             }
-                        } catch (e) {
-                            // Invalid regex pattern, skip
                         }
                     }
-                }
-                // Also check tracker rules for redirect actions
-                if (globalThis.dbg && globalThis.dbg.tds && globalThis.dbg.tds.tds) {
-                    const tds = globalThis.dbg.tds.tds;
-                    if (tds.trackers) {
-                        for (const tracker of Object.values(tds.trackers)) {
-                            if (tracker.rules) {
-                                for (const rule of tracker.rules) {
-                                    try {
-                                        if (rule.surrogate && url.match(new RegExp(rule.rule))) {
-                                            return true;
-                                        }
-                                    } catch (e) {
-                                        // Invalid regex pattern, skip
-                                    }
-                                }
-                            }
-                        }
+                } catch (e) {
+                    if (tracking.debugLogging) {
+                        console.log('[Playwright Request Tracking] Error calling blockHandleResponse:', e);
                     }
                 }
-            } catch (e) {
-                // Ignore errors querying extension state
-            }
-            return false;
-        };
 
-        const determineStatus = (outcomeType, pendingRequest, error) => {
-            if (outcomeType === 'completed') {
-                // If this request was the result of a redirect, mark it as redirected
-                if (pendingRequest.wasRedirected) {
-                    return 'redirected';
-                }
-                // Check if extension has a surrogate rule for this URL
-                if (wasRedirectedByExtension(pendingRequest.url)) {
-                    return 'redirected';
-                }
-                return 'allowed';
-            } else {
-                // Error occurred - check error type
-                const errorStr = error || '';
-
-                // Extension-initiated redirects fire onErrorOccurred with NS_BINDING_ABORTED
-                // Check if this aborted request was followed by an extension URL request
-                if (errorStr.includes('NS_BINDING_ABORTED')) {
-                    // Check if extension would redirect this URL (surrogate)
-                    if (
-                        wasRedirectedByExtension(pendingRequest.url) ||
-                        wasRedirectedToExtension(pendingRequest.url, pendingRequest.timestamp)
-                    ) {
-                        return 'redirected';
-                    }
-                    // NS_BINDING_ABORTED without extension redirect = blocked
-                    return 'blocked';
-                }
-
-                // Explicit redirect errors
-                if (errorStr.includes('NS_BINDING_REDIRECTED') || errorStr.includes('REDIRECTED')) {
-                    return 'redirected';
-                }
-
-                if (errorStr.includes('NS_ERROR_ABORT') || errorStr.includes('ERR_BLOCKED') || errorStr === 'net::ERR_BLOCKED_BY_CLIENT') {
-                    return 'blocked';
-                }
-                return 'failed';
-            }
-        };
-
-        const recordOutcome = (details, outcomeType) => {
-            const requestId = details.requestId;
-            const pendingRequest = tracking.pendingRequests.get(requestId);
-
-            if (pendingRequest) {
-                tracking.pendingRequests.delete(requestId);
-                const status = determineStatus(outcomeType, pendingRequest, details.error);
                 const outcome = {
-                    url: pendingRequest.url,
+                    url: details.url,
                     status,
-                    resourceType: pendingRequest.resourceType,
-                    method: pendingRequest.method,
+                    resourceType: details.type,
+                    method: details.method,
                 };
                 tracking.completedOutcomes.push(outcome);
+
                 if (tracking.debugLogging) {
                     console.log('[Playwright Request Tracking] Outcome:', outcome.url, '->', status);
                 }
-            }
-        };
-
-        if (debugLogging) {
-            console.log('[Playwright Request Tracking] Setting up webRequest listeners');
-        }
-
-        // Track requests as they start
-        chrome.webRequest.onBeforeRequest.addListener(
-            (details) => {
-                const now = Date.now();
-
-                // Track extension URL requests separately to detect redirects
-                if (isExtensionUrl(details.url)) {
-                    tracking.recentExtensionRequests.push({
-                        url: details.url,
-                        timestamp: now,
-                    });
-                    // Keep only recent extension requests (last 2 seconds)
-                    tracking.recentExtensionRequests = tracking.recentExtensionRequests.filter((r) => now - r.timestamp < 2000);
-                    if (tracking.debugLogging) {
-                        console.log('[Playwright Request Tracking] Extension URL:', details.url);
-                    }
-                }
-
-                tracking.pendingRequests.set(details.requestId, {
-                    url: details.url,
-                    method: details.method,
-                    resourceType: details.type,
-                    wasRedirected: false,
-                    timestamp: now,
-                });
-                if (tracking.debugLogging) {
-                    console.log('[Playwright Request Tracking] Started:', details.url);
-                }
-            },
-            { urls: ['<all_urls>'] },
-        );
-
-        // Listen for redirects - update the pending request to track it was redirected
-        chrome.webRequest.onBeforeRedirect.addListener(
-            (details) => {
-                const pendingRequest = tracking.pendingRequests.get(details.requestId);
-                if (pendingRequest) {
-                    // Update the URL to the redirect target and mark as redirected
-                    pendingRequest.url = details.redirectUrl;
-                    pendingRequest.wasRedirected = true;
-                    if (tracking.debugLogging) {
-                        console.log('[Playwright Request Tracking] Redirect:', details.url, '->', details.redirectUrl);
-                    }
-                }
-            },
-            { urls: ['<all_urls>'] },
-        );
-
-        // Listen for completed requests (successful requests)
-        chrome.webRequest.onCompleted.addListener(
-            (details) => {
-                recordOutcome(details, 'completed');
-            },
-            { urls: ['<all_urls>'] },
-        );
-
-        // Listen for error/blocked requests
-        chrome.webRequest.onErrorOccurred.addListener(
-            (details) => {
-                if (tracking.debugLogging) {
-                    console.log('[Playwright Request Tracking] Error:', details.url, 'error:', details.error);
-                }
-                recordOutcome(details, 'error');
             },
             { urls: ['<all_urls>'] },
         );
 
         if (debugLogging) {
-            console.log('[Playwright Request Tracking] Listeners set up successfully');
+            console.log('[Playwright Request Tracking] Listener set up successfully');
         }
     }, enableDebugLogging);
 }

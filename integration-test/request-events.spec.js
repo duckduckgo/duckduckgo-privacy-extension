@@ -122,9 +122,8 @@ test.describe('request event tracking', () => {
         // The extension redirects googlesyndication.com/pagead/show_ads.js to a local surrogate script
         const surrogateRequest = requests.find((r) => r.url.href.includes('show_ads.js'));
         expect(surrogateRequest).toBeDefined();
-        // Firefox: We can reliably detect extension-initiated redirects via TDS check
-        // Chrome: Extension-initiated redirects are harder to detect, accept 'allowed' as well
-        // See: https://github.com/nicolo-ribaudo/nicolo-nicolo/nicolo/nicolo-nicolo/nicolo
+        // Firefox: We reliably detect redirects via blockHandleResponse
+        // Chrome: Extension-initiated redirects are harder to detect via Playwright events
         if (isFirefox()) {
             expect(surrogateRequest.status).toBe('redirected');
         } else {
