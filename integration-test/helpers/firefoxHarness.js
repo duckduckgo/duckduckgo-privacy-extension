@@ -673,6 +673,15 @@ export async function setupFirefoxRequestTracking(backgroundPage, enableDebugLog
                         // Call the extension's blocking logic
                         const response = globalThis.dbg.blockHandleResponse(dummyTab, details);
 
+                        if (tracking.debugLogging) {
+                            console.log(
+                                '[Playwright Request Tracking] blockHandleResponse for',
+                                details.url,
+                                ':',
+                                JSON.stringify(response),
+                            );
+                        }
+
                         if (response) {
                             if (response.redirectUrl) {
                                 status = 'redirected';
