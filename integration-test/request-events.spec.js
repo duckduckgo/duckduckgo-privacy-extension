@@ -112,7 +112,7 @@ test.describe('request event tracking', () => {
 
         console.log(
             'Googlesyndication requests:',
-            requests.map((r) => `${r.url.href}: ${r.status}${r._debug ? ' debug:' + JSON.stringify(r._debug) : ''}`),
+            requests.map((r) => `${r.url.href}: ${r.status}`),
         );
 
         // We should have tracked the googlesyndication request
