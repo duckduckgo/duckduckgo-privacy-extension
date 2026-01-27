@@ -14,13 +14,14 @@ permissions:
 
 jobs:
     tests:
-        name: Playwright run ${{ matrix.run }} of 5
+        name: Playwright run ${{ matrix.run }} of 5 (shard ${{ matrix.shard }})
         runs-on: ubuntu-22.04
         timeout-minutes: 20
         strategy:
             fail-fast: false
             matrix:
                 run: [1, 2, 3, 4, 5]
+                shard: [1/4, 2/4, 3/4, 4/4]
         steps:
             - uses: actions/checkout@v4
               with:
@@ -38,4 +39,10 @@ jobs:
             - name: Install Playwright Browsers
               run: npx playwright install --with-deps chromium
             - name: Run Playwright tests (attempt ${{ matrix.run }})
-              run: xvfb-run --auto-servernum -- npm run playwright
+              run: xvfb-run --auto-servernum -- npm run playwright -- --shard ${{ matrix.shard }}
+            - uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: playwright-report-run-${{ matrix.run }}-shard-${{ matrix.shard }}
+                  path: playwright-report/
+                  retention-days: 1
