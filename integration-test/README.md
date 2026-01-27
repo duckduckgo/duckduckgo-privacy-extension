@@ -16,7 +16,29 @@ Playwright tests can be run with the following npm commands:
 
 If you want to re-run tests without rebuilding the extension, you can subsequently run:
  - `npx playwright test` to run all tests
- - `npx playright test integration-test/<file>.spec.js` to just run tests in a single file.
+ - `npx playwright test integration-test/<file>.spec.js` to just run tests in a single file.
+
+### Flakiness Testing
+
+To check if a test is flaky, you can run it repeatedly using Playwright's `--repeat-each` feature:
+
+```bash
+# Run a test 100 times using Chrome MV3
+npm run playwright-repeat -- integration-test/example.spec.js 100
+
+# Run a test 50 times using Chrome MV2
+npm run playwright-mv2-repeat -- integration-test/example.spec.js 50
+```
+
+These commands will:
+1. Build the extension for the specified browser
+2. Run the specified test file repeatedly (N times)
+3. Report success if all runs pass, or failure if any run fails
+
+This is useful for:
+- Verifying that a fix resolves a flakiness issue
+- Checking if a new test is stable before merging
+- Debugging intermittent failures
 
 ## Writing tests
 

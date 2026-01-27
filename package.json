@@ -23,6 +23,8 @@
         "test.node": "make node-test",
         "playwright": "make dev browser=chrome type=dev && PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS=1 playwright test",
         "playwright-mv2": "make dev browser=chrome-mv2 type=dev && playwright test",
+        "playwright-repeat": "node scripts/playwright-repeat.mjs chrome",
+        "playwright-mv2-repeat": "node scripts/playwright-repeat.mjs chrome-mv2",
         "tsc": "tsc",
         "tsc-watch": "tsc --watch",
         "dev-firefox": "make watch browser=firefox type=dev",
