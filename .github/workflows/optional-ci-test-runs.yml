@@ -14,8 +14,9 @@ permissions:
 
 jobs:
     tests:
-        name: Test run ${{ matrix.run }} of 5
+        name: Playwright run ${{ matrix.run }} of 5
         runs-on: ubuntu-22.04
+        timeout-minutes: 20
         strategy:
             fail-fast: false
             matrix:
@@ -34,5 +35,7 @@ jobs:
                   node-version: 22
                   cache: 'npm'
             - run: npm run install-ci
-            - name: Run tests (attempt ${{ matrix.run }})
-              run: npm test
+            - name: Install Playwright Browsers
+              run: npx playwright install --with-deps chromium
+            - name: Run Playwright tests (attempt ${{ matrix.run }})
+              run: xvfb-run --auto-servernum -- npm run playwright
