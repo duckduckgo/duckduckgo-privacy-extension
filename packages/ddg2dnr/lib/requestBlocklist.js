@@ -4,12 +4,13 @@ const { getDomain } = require('tldts');
 
 const { processPlaintextTrackerRule, generateDNRRule } = require('./utils');
 
-const EXPECTED_RULE_KEYS = new Set(['domains', 'reason', 'rule']);
+const EXPECTED_RULE_KEYS = new Set(['domains', 'rule' /* , 'reason' */]);
 const PRIORITY = 20000;
 
 function validRule(rule) {
     // Missing or unknown rule properties.
-    const ruleKeys = Object.keys(rule);
+    // Note: Ignore "reason", since that is optional.
+    const ruleKeys = Object.keys(rule).filter((key) => key !== 'reason');
     if (ruleKeys.length !== EXPECTED_RULE_KEYS.size || !ruleKeys.every((key) => EXPECTED_RULE_KEYS.has(key))) {
         return false;
     }
