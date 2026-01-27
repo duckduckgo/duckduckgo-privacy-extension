@@ -191,9 +191,6 @@ async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, sav
  * results.
  * See https://privacy-test-pages.site/privacy-protections/request-blocking/
  *
- * For Chrome: Uses the original approach with req.response() for accurate status detection.
- * For Firefox: Uses webRequest API via background page for reliable event detection.
- *
  * @param {import('./firefoxHarness.js').FirefoxBackgroundPage | import('@playwright/test').Worker} backgroundPage
  *   Background page for request tracking.
  * @param {import('@playwright/test').Page} page
@@ -204,38 +201,15 @@ async function logRequestsPlaywrightFirefox(page, requestDetailsByRequestId, sav
 export async function runRequestBlockingTest(backgroundPage, page, testSite) {
     const pageRequests = [];
 
-    if (isFirefox()) {
-        // Firefox: Use logPageRequests abstraction with webRequest tracking
-        const requestFilter = (details) => details.url.href.startsWith('https://bad.third-party.site/');
-        const transform = (details) => ({
-            url: details.url.href,
-            method: details.method,
-            type: details.type,
-            status: details.status,
-        });
+    const requestFilter = (details) => details.url.href.startsWith('https://bad.third-party.site/');
+    const transform = (details) => ({
+        url: details.url.href,
+        method: details.method,
+        type: details.type,
+        status: details.status,
+    });
 
-        await logPageRequests(page, pageRequests, requestFilter, transform, undefined, { backgroundPage });
-    } else {
-        // Chrome: Use original approach with req.response() for accurate status
-        page.on('request', async (req) => {
-            if (!req.url().startsWith('https://bad.third-party.site/')) {
-                return;
-            }
-            let status = 'unknown';
-            const resp = await req.response();
-            if (!resp) {
-                status = 'blocked';
-            } else {
-                status = resp.ok() ? 'allowed' : 'redirected';
-            }
-            pageRequests.push({
-                url: req.url(),
-                method: req.method(),
-                type: req.resourceType(),
-                status,
-            });
-        });
-    }
+    await logPageRequests(page, pageRequests, requestFilter, transform, undefined, { backgroundPage });
 
     await page.bringToFront();
     await page.goto(testSite, { waitUntil: 'networkidle' });
@@ -262,7 +236,7 @@ export async function runRequestBlockingTest(backgroundPage, page, testSite) {
         () => results.results,
     );
 
-    // Stop Firefox polling if active
+    // Stop polling if active (used by Firefox implementation)
     // @ts-ignore
     if (page._firefoxPollingStop) {
         // @ts-ignore
