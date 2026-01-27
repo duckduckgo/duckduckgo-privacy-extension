@@ -76,10 +76,10 @@ if (isNaN(repeatCount) || repeatCount < 1) {
 /**
  * Run a command and return a promise that resolves when the command completes.
  */
-function runCommand(command, args, options = {}) {
+function runCommand(command, cmdArgs, options = {}) {
     return new Promise((resolve, reject) => {
-        console.log(`\n> ${command} ${args.join(' ')}\n`);
-        const proc = spawn(command, args, {
+        console.log(`\n> ${command} ${cmdArgs.join(' ')}\n`);
+        const proc = spawn(command, cmdArgs, {
             stdio: 'inherit',
             shell: true,
             ...options,
