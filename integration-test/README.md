@@ -20,22 +20,17 @@ If you want to re-run tests without rebuilding the extension, you can subsequent
 
 ### Flakiness Testing
 
-To check if a test is flaky, you can run it repeatedly using Playwright's `--repeat-each` feature:
+To check if a test is flaky, you can run it repeatedly using Playwright's `--repeat-each` option:
 
 ```bash
 # Run a test 100 times using Chrome MV3
-npm run playwright-repeat -- integration-test/example.spec.js 100
+npm run playwright-repeat -- integration-test/example.spec.js --repeat-each=100
 
 # Run a test 50 times using Chrome MV2
-npm run playwright-mv2-repeat -- integration-test/example.spec.js 50
+npm run playwright-mv2-repeat -- integration-test/example.spec.js --repeat-each=50
 ```
 
-These commands will:
-1. Build the extension for the specified browser
-2. Run the specified test file repeatedly (N times)
-3. Report success if all runs pass, or failure if any run fails
-
-This is useful for:
+These commands build the extension and run the specified test file N times. This is useful for:
 - Verifying that a fix resolves a flakiness issue
 - Checking if a new test is stable before merging
 - Debugging intermittent failures
