@@ -14,9 +14,13 @@ Playwright tests can be run with the following npm commands:
  - `npm run playwright` to test the Chrome MV3 extension
  - `npm run playwright-mv2` to test the Chrome MV2 extension (closest thing to testing Firefox MV2 extension we have until Playwright adds support for testing Firefox extensions)
 
-If you want to re-run tests without rebuilding the extension, you can subsequently run:
- - `npx playwright test` to run all tests
- - `npx playright test integration-test/<file>.spec.js` to just run tests in a single file.
+To run a specific test file, the commands can be called like this:
+ - `npm run playwright -- integration-test/example.spec.js`
+ - `npm run playwright-mv2 -- integration-test/example.spec.js`
+
+To check a test's reliability, it can be run repeatedly like this:
+ - `npm run playwright -- integration-test/example.spec.js --repeat-each=100`
+ - `npm run playwright-mv2 -- integration-test/example.spec.js --repeat-each=100`
 
 ## Writing tests
 
