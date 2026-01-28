@@ -105,9 +105,9 @@ export const test = base.extend({
             route.continue();
         };
         if (manifestVersion === 3) {
+            // See https://playwright.dev/docs/service-workers
             let [background] = context.serviceWorkers();
             if (!background) background = await context.waitForEvent('serviceworker');
-            // SW request routing is experimental: https://playwright.dev/docs/service-workers-experimental
             context.route('**/*', routeHandler);
             await use(background);
         } else {
