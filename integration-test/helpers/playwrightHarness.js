@@ -64,8 +64,8 @@ export const test = base.extend({
                 });
             }
         });
-        //
         await use(context);
+        await context.close();
     },
     /**
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
@@ -104,11 +104,25 @@ export const test = base.extend({
             }
             route.continue();
         };
+
         if (manifestVersion === 3) {
             // See https://playwright.dev/docs/service-workers
             let [background] = context.serviceWorkers();
-            if (!background) background = await context.waitForEvent('serviceworker');
-            context.route('**/*', routeHandler);
+            if (!background) {
+                try {
+                    background = await context.waitForEvent('serviceworker', { timeout: 5000 });
+                } catch (e) {
+                    ([background] = context.serviceWorkers());
+                    if (!background) {
+                        // Playwright sometimes fails in this way, which unfortunately is a common
+                        // source of test flakes.
+                        throw new Error("Failed to find extension's background ServiceWorker.");
+                    }
+                }
+            }
+
+            // Serve extension background requests from local cache
+            await context.route('**/*', routeHandler);
             await use(background);
         } else {
             let [background] = context.backgroundPages();
@@ -117,7 +131,7 @@ export const test = base.extend({
             }
 
             // Serve extension background requests from local cache
-            background.route('**/*', routeHandler);
+            await background.route('**/*', routeHandler);
             await use(background);
         }
     },
