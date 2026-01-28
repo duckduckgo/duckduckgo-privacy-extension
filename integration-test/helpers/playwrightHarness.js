@@ -112,7 +112,7 @@ export const test = base.extend({
                 try {
                     background = await context.waitForEvent('serviceworker', { timeout: 5000 });
                 } catch (e) {
-                    ([background] = context.serviceWorkers());
+                    [background] = context.serviceWorkers();
                     if (!background) {
                         // Playwright sometimes fails in this way, which unfortunately is a common
                         // source of test flakes.
