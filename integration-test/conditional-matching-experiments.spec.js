@@ -24,7 +24,9 @@ test.describe('Conditional Matching Experiments', () => {
         await overridePrivacyConfigFromContent(backgroundNetworkContext, configContent);
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
-        await routeFromLocalhost(page);
+
+        // TODO: Re-enable this when it is working again.
+        // await routeFromLocalhost(page);
 
         await page.goto(testSite, { waitUntil: 'networkidle' });
         await page.bringToFront();
