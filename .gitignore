@@ -1,5 +1,6 @@
 .DS_Store
 .vscode
+.claude
 *.pem
 jshint_log.txt
 node_modules
