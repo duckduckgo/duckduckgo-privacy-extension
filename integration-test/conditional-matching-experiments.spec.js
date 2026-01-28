@@ -1,6 +1,7 @@
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
-import { routeFromLocalhost } from './helpers/testPages';
+// TODO: Re-enable this when it is working again.
+// import { routeFromLocalhost } from './helpers/testPages';
 import { overridePrivacyConfigFromContent } from './helpers/testConfig';
 
 const testSite = 'https://privacy-test-pages.site/content-scope-scripts/infra/pages/conditional-matching-experiments.html?automation=1';
@@ -24,7 +25,9 @@ test.describe('Conditional Matching Experiments', () => {
         await overridePrivacyConfigFromContent(backgroundNetworkContext, configContent);
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
-        await routeFromLocalhost(page);
+
+        // TODO: Re-enable this when it is working again.
+        // await routeFromLocalhost(page);
 
         await page.goto(testSite, { waitUntil: 'networkidle' });
         await page.bringToFront();
