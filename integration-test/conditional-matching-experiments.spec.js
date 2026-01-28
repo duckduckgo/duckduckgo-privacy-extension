@@ -1,6 +1,7 @@
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
-import { routeFromLocalhost } from './helpers/testPages';
+// TODO: Re-enable this when it is working again.
+// import { routeFromLocalhost } from './helpers/testPages';
 import { overridePrivacyConfigFromContent } from './helpers/testConfig';
 
 const testSite = 'https://privacy-test-pages.site/content-scope-scripts/infra/pages/conditional-matching-experiments.html?automation=1';
