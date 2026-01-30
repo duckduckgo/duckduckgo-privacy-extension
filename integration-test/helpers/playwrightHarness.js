@@ -50,7 +50,7 @@ export const test = base.extend({
         const extensionPath = manifestVersion === 3 ? 'build/chrome/dev' : 'build/chrome-mv2/dev';
         const pathToExtension = path.join(projectRoot, extensionPath);
         const context = await chromium.launchPersistentContext('', {
-            headless: false,
+            channel: 'chromium',
             args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
         });
         // intercept extension install page and use HAR
