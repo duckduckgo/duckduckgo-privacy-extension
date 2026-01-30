@@ -14,9 +14,10 @@ function getGPCValueOfContext(ctx) {
 
 const fakeOrigin = 'http://test.example';
 
-test('Ensure GPC is injected into frames', async ({ context, page, manifestVersion }) => {
+test('Ensure GPC is injected into frames', async ({ context, backgroundPage, page }) => {
     const frameTests = [`${fakeOrigin}:8081`, `${fakeOrigin}:8080`];
     await backgroundWait.forExtensionLoaded(context);
+    await backgroundWait.forAllConfiguration(backgroundPage);
     await page.route('**/*', async (route) => {
         const url = new URL(route.request().url());
         const data = await fs.promises.readFile(path.join(__dirname, 'data', 'pages', url.pathname));
@@ -35,7 +36,8 @@ test('Ensure GPC is injected into frames', async ({ context, page, manifestVersi
         await page.waitForFunction(() => 'globalPrivacyControl' in navigator);
         const gpc = await getGPCValueOfContext(page);
 
-        const iframeInstance = page.frames().find((iframe) => iframe.url() === iframeHost + '/framed.html');
+        await page.waitForSelector('iframe');
+        const iframeInstance = page.frames()[1];
         // Wait for GPC injection in iframe
         await iframeInstance.waitForFunction(() => 'globalPrivacyControl' in navigator);
         const gpc2 = await getGPCValueOfContext(iframeInstance);
