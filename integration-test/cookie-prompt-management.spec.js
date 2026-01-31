@@ -115,9 +115,9 @@ test.describe('Cookie Prompt Management', () => {
         await expect(pageLoadCount).toBeVisible();
     });
 
-    test('Fires expected pixels', async ({ page, backgroundNetworkContext }) => {
+    test('Fires expected pixels', async ({ page, backgroundPage, backgroundNetworkContext }) => {
         const pixelRequests = [];
-        await logPixels(backgroundNetworkContext, pixelRequests, (pixel) => pixel.name?.startsWith('autoconsent_'));
+        await logPixels(backgroundPage, backgroundNetworkContext, pixelRequests, (pixel) => pixel.name?.startsWith('autoconsent_'));
 
         await routeFromLocalhost(page);
         await page.goto(autoconsentTestPage, { waitUntil: 'networkidle' });

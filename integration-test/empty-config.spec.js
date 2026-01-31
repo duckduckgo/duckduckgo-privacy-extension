@@ -54,7 +54,7 @@ test.describe('Extension functions with empty configuration', () => {
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
         await page.bringToFront();
 
-        const breakageReport = listenForBreakageReport(backgroundNetworkContext);
+        const breakageReport = listenForBreakageReport(backgroundPage, backgroundNetworkContext);
         await backgroundPage.evaluate(() =>
             globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike', description: 'Hello Dax' }),
         );

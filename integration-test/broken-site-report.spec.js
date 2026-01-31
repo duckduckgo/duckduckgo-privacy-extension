@@ -7,7 +7,7 @@ test.describe('Broken site reports', () => {
     test('Sends broken site reports with current page context', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
         await backgroundWait.forExtensionLoaded(context);
         await routeFromLocalhost(page);
-        const breakageReport = listenForBreakageReport(backgroundNetworkContext);
+        const breakageReport = listenForBreakageReport(backgroundPage, backgroundNetworkContext);
         const extensionVersion = require('../browsers/chrome/manifest.json').version;
 
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
@@ -66,7 +66,7 @@ test.describe('Broken site reports', () => {
         const bundledConfigVersion = String(require('../shared/data/bundled/extension-config.json').version);
         await backgroundWait.forExtensionLoaded(context);
         await routeFromLocalhost(page);
-        const breakageReport = listenForBreakageReport(backgroundNetworkContext);
+        const breakageReport = listenForBreakageReport(backgroundPage, backgroundNetworkContext);
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
         await page.bringToFront();
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));

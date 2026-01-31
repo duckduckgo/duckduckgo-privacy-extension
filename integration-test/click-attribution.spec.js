@@ -10,19 +10,22 @@ if (testCases.length === 0) {
 test.describe('Ad click blocking', () => {
     let extensionVersion;
     const backgroundPixels = [];
-    let clearBackgroundPixels;
+    let cleanup;
 
     test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
-        if (clearBackgroundPixels) {
-            clearBackgroundPixels();
+        if (cleanup) {
+            cleanup();
         }
-        clearBackgroundPixels = await logPixels(
+        backgroundPixels.length = 0;
+        cleanup = await logPixels(
+            backgroundPage,
             backgroundNetworkContext,
             backgroundPixels,
-            ({ name }) => name !== 'page_extensionsuccess_impression' && !name.startsWith('autoconsent_'),
+            ({ name }) => !name.includes('extensionsuccess') && !name.startsWith('experiment_') && !name.startsWith('autoconsent_'),
         );
 
         await backgroundWait.forExtensionLoaded(context);
+        await backgroundWait.forAllConfiguration(backgroundPage);
 
         extensionVersion = await backgroundPage.evaluate(() => chrome.runtime.getManifest().version);
     });
@@ -123,7 +126,7 @@ test.describe('Ad click blocking', () => {
                         `${step.name} expects pixel "${step.expected.pixels[i].name}" to have fired correctly.`,
                     ).toEqual(step.expected.pixels[i]);
                 }
-                clearBackgroundPixels();
+                backgroundPixels.length = 0;
             }
             await page.close();
         });
