@@ -37,6 +37,39 @@ export const mockAtb = {
     version: 'v364-2',
 };
 
+const defaultRouteHandler = (route) => {
+    const url = route.request().url();
+    if (url.startsWith('https://staticcdn.duckduckgo.com/')) {
+        return routeLocalResources(route);
+    }
+    if (url.startsWith('https://duckduckgo.com/atb.js')) {
+        // mock ATB endpoint
+        const params = new URL(url).searchParams;
+        if (params.has('atb')) {
+            const version = params.get('atb');
+            const [majorVersion, minorVersion] = version.slice(1).split('-');
+            if (majorVersion < 360 && minorVersion > 1) {
+                return route.fulfill({
+                    body: JSON.stringify({
+                        ...mockAtb,
+                        updateVersion: `v${majorVersion}-1`,
+                    }),
+                });
+            }
+        }
+        return route.fulfill({
+            body: JSON.stringify(mockAtb),
+        });
+    }
+    if (url.startsWith('https://duckduckgo.com/exti') || url.startsWith('https://improving.duckduckgo.com/')) {
+        return route.fulfill({
+            status: 200,
+            body: '',
+        });
+    }
+    route.continue();
+};
+
 // based off example at https://playwright.dev/docs/chrome-extensions#testing
 export const test = base.extend({
     /**
@@ -53,6 +86,12 @@ export const test = base.extend({
             channel: 'chromium',
             args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
         });
+
+        if (manifestVersion === 3) {
+            // Serve extension background requests from local cache
+            await context.route('**/*', defaultRouteHandler);
+        }
+
         // intercept extension install page and use HAR
         context.on('page', (page) => {
             // console.log('page', page.url())
@@ -71,40 +110,6 @@ export const test = base.extend({
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
      */
     async backgroundPage({ context, manifestVersion }, use) {
-        // let background: Page | Worker
-        const routeHandler = (route) => {
-            const url = route.request().url();
-            if (url.startsWith('https://staticcdn.duckduckgo.com/')) {
-                return routeLocalResources(route);
-            }
-            if (url.startsWith('https://duckduckgo.com/atb.js')) {
-                // mock ATB endpoint
-                const params = new URL(url).searchParams;
-                if (params.has('atb')) {
-                    const version = params.get('atb');
-                    const [majorVersion, minorVersion] = version.slice(1).split('-');
-                    if (majorVersion < 360 && minorVersion > 1) {
-                        return route.fulfill({
-                            body: JSON.stringify({
-                                ...mockAtb,
-                                updateVersion: `v${majorVersion}-1`,
-                            }),
-                        });
-                    }
-                }
-                return route.fulfill({
-                    body: JSON.stringify(mockAtb),
-                });
-            }
-            if (url.startsWith('https://duckduckgo.com/exti') || url.startsWith('https://improving.duckduckgo.com/')) {
-                return route.fulfill({
-                    status: 200,
-                    body: '',
-                });
-            }
-            route.continue();
-        };
-
         if (manifestVersion === 3) {
             // See https://playwright.dev/docs/service-workers
             const getBackgroundServiceWorker = async () => {
@@ -154,8 +159,6 @@ export const test = base.extend({
                 throw new Error("Failed to find extension's background ServiceWorker.");
             }
 
-            // Serve extension background requests from local cache
-            await context.route('**/*', routeHandler);
             await use(background);
         } else {
             let [background] = context.backgroundPages();
@@ -164,7 +167,7 @@ export const test = base.extend({
             }
 
             // Serve extension background requests from local cache
-            await background.route('**/*', routeHandler);
+            await background.route('**/*', defaultRouteHandler);
             await use(background);
         }
     },
