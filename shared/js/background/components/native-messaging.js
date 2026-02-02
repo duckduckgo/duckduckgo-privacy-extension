@@ -12,7 +12,7 @@ import {
     Messaging,
     MessagingContext,
     TestTransportConfig,
-} from '@duckduckgo/content-scope-scripts/messaging/schema';
+} from '@duckduckgo/content-scope-scripts/messaging';
 
 /* global DEBUG */
 

@@ -12,10 +12,6 @@ import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.
 
 /**
  * @typedef {Object} CpmState
- * @property {Record<number, {
- *  lastHandledCMPName: string | null,
- *  reloadLoopDetected: boolean,
- * }>} tabState
  * @property {Set<string>} sitesNotifiedCache
  * @property {{
  *  patterns: Set<string>,
@@ -58,6 +54,14 @@ export default class CookiePromptManagement {
         this.settings = settings;
         this._heuristicActionEnabled = null;
 
+        // Ephemeral state for reload loop prevention. We assume that service worker never sleeps during a reload loop, so we don't persist these.
+        /** @type {Map<number, URL>} */
+        this._tabUrlsCache = new Map(); // top URL per tab
+        /** @type {Map<number, string>} */
+        this._lastHandledCMP = new Map(); // last handled CMP per tab
+        /** @type {Set<number>} */
+        this._reloadLoopDetected = new Set(); // tabs with detected reload loops
+
         registerContentScripts([
             {
                 id: 'cookie-prompt-management-script',
@@ -96,7 +100,6 @@ export default class CookiePromptManagement {
      */
     _deserializeCpmState(jsonCpmState) {
         return {
-            tabState: structuredClone(jsonCpmState.tabState || {}),
             sitesNotifiedCache: new Set(jsonCpmState.sitesNotifiedCache || []),
             detectionCache: {
                 patterns: new Set(jsonCpmState.detectionCache?.patterns || []),
@@ -113,7 +116,6 @@ export default class CookiePromptManagement {
      */
     _serializeCpmState(cpmState) {
         return {
-            tabState: structuredClone(cpmState.tabState),
             sitesNotifiedCache: Array.from(cpmState.sitesNotifiedCache),
             detectionCache: {
                 patterns: Array.from(cpmState.detectionCache.patterns),
@@ -130,7 +132,6 @@ export default class CookiePromptManagement {
     async getCpmState() {
         if (!this._jsonCpmState) {
             this._jsonCpmState = (await getFromSessionStorage('cpmState')) || {
-                tabState: {},
                 sitesNotifiedCache: [],
                 detectionCache: {
                     patterns: [],
@@ -157,6 +158,76 @@ export default class CookiePromptManagement {
     async updateCpmState(newState) {
         this._jsonCpmState = this._serializeCpmState(newState);
         await setToSessionStorage('cpmState', this._jsonCpmState);
+    }
+
+    /**
+     * @param {number} tabId
+     */
+    clearReloadLoopState(tabId) {
+        this._lastHandledCMP.delete(tabId);
+        this._reloadLoopDetected.delete(tabId);
+    }
+
+    /**
+     * @param {number} tabId
+     * @param {string} url
+     */
+    checkMainFrameNavigation(tabId, url) {
+        let newTopUrl = null;
+        try {
+            newTopUrl = new URL(url);
+        } catch (e) {
+            console.error('invalid top URL', url, e);
+            return;
+        }
+        const currentTopUrl = this._tabUrlsCache.get(tabId) || new URL('about:blank');
+        DEBUG && console.log('Main frame navigated from', currentTopUrl, 'to', newTopUrl);
+        if (currentTopUrl.host !== newTopUrl.host
+            || currentTopUrl.pathname !== newTopUrl.pathname
+            || currentTopUrl.protocol !== newTopUrl.protocol
+        ) {
+            // url has changed (as far as reload loop prevention is concerned)
+            this.clearReloadLoopState(tabId);
+        }
+        this._tabUrlsCache.set(tabId, newTopUrl);
+    }
+
+    /**
+     * @param {number} tabId
+     * @param {string} cmp
+     * @param {boolean} isCosmetic
+     */
+    rememberLastHandledCMP(tabId, cmp, isCosmetic) {
+        if (isCosmetic) {
+            // Cosmetic rules can trigger on every page load and never cause reload loops
+            DEBUG && console.log('cosmetic rule handled, not storing for reload loop detection', tabId, cmp);
+            this.clearReloadLoopState(tabId);
+            return;
+        }
+        const lastHandledCMP = this._lastHandledCMP.get(tabId);
+        if (lastHandledCMP !== cmp) {
+            // The last handled CMP is different from the current one, so we need to clear the reload loop state
+            DEBUG && console.log('last handled CMP is changed from', lastHandledCMP, 'to', cmp, 'clearing reload loop state', tabId);
+            this.clearReloadLoopState(tabId);
+        }
+        DEBUG && console.log('recording popup handled: CMP', cmp, 'on', this._tabUrlsCache.get(tabId), 'tabId:', tabId);
+        this._lastHandledCMP.set(tabId, cmp);
+    }
+
+    /**
+     * @param {number} tabId
+     * @param {string} cmp
+     */
+    detectReloadLoop(tabId, cmp) {
+        // Reload loop is when we catch the same CMP from the same top URL without a navigation in between.
+        // At this point we know that the top URL hasn't changed (that's tracked in checkMainFrameNavigation), so we can just check the CMP name.
+        const lastHandledCMP = this._lastHandledCMP.get(tabId);
+        if (!this._reloadLoopDetected.has(tabId) && lastHandledCMP === cmp) {
+            // Same CMP detected on same URL after it was already handled - reload loop detected
+            console.log('reload loop detected:', cmp, 'on', this._tabUrlsCache.get(tabId), 'tabId:', tabId);
+            this._reloadLoopDetected.add(tabId);
+            this.firePixel('error_reload-loop');
+        }
     }
 
     /**
@@ -196,17 +267,26 @@ export default class CookiePromptManagement {
 
         switch (msg.type) {
             case 'init': {
+                // do the navigation check before checking if the domain is allowlisted
+                if (isMainFrame) {
+                    this.checkMainFrameNavigation(tabId, msg.url);
+                }
+
                 const isEnabled = await this.checkAutoconsentEnabledForSite(senderUrl);
                 if (!isEnabled) {
                     this.firePixel('disabled-for-site');
                     return;
                 }
 
-                // FIXME: do a navigation check here for reload loop prevention
-
                 const visualTest = DEBUG;
-                // FIXME: implement reload loop prevention
-                const autoAction = 'optOut';
+
+                /** @type {import('@duckduckgo/autoconsent/lib/types').AutoAction} */
+                let autoAction = 'optOut';
+                // disable autoAction in case of reload loop
+                if (this._reloadLoopDetected.has(tabId)) {
+                    console.log('reload loop detected, disabling autoAction', tabId);
+                    autoAction = null;
+                }
 
                 if (isMainFrame) {
                     // no await
@@ -218,8 +298,8 @@ export default class CookiePromptManagement {
                             cosmetic: null,
                             optoutFailed: null,
                             selftestFailed: null,
-                            consentReloadLoop: false, // FIXME: reloadLoopDetected,
-                            consentRule: '', // FIXME: lastHandledCMPName, // this will be non-null in case of a reload loop
+                            consentReloadLoop: this._reloadLoopDetected.has(tabId),
+                            consentRule: this._lastHandledCMP.get(tabId) || null,
                             consentHeuristicEnabled: heuristicActionEnabled
                         }
                     );
@@ -274,7 +354,8 @@ export default class CookiePromptManagement {
             }
             case 'popupFound': {
                 this.firePixel('popup-found');
-                // FIXME: reload loop prevention here
+                // Check for reload loop
+                this.detectReloadLoop(tabId, msg.cmp);
                 break;
             }
             case 'optOutResult': {
@@ -287,7 +368,7 @@ export default class CookiePromptManagement {
                             cosmetic: null,
                             optoutFailed: true,
                             selftestFailed: null,
-                            consentReloadLoop: false, // FIXME: reloadLoopDetected,
+                            consentReloadLoop: this._reloadLoopDetected.has(tabId),
                             consentRule: msg.cmp,
                             consentHeuristicEnabled: heuristicActionEnabled
                         }
@@ -298,7 +379,12 @@ export default class CookiePromptManagement {
                 break;
             }
             case 'autoconsentDone': {
-                // FIXME: remember last CMP for reload loop prevention here
+                // Remember the last handled CMP for reload loop detection
+                this.rememberLastHandledCMP(
+                    tabId,
+                    msg.cmp,
+                    msg.isCosmetic
+                );
                 this.refreshDashboardState(
                     tabId,
                     {
@@ -306,7 +392,7 @@ export default class CookiePromptManagement {
                         cosmetic: msg.isCosmetic,
                         optoutFailed: false,
                         selftestFailed: null,
-                        consentReloadLoop: false, // FIXME: reloadLoopDetected,
+                        consentReloadLoop: this._reloadLoopDetected.has(tabId),
                         consentRule: msg.cmp,
                         consentHeuristicEnabled: heuristicActionEnabled
                     }
