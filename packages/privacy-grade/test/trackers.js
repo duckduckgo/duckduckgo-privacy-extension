@@ -231,7 +231,7 @@ describe('getTrackerData', () => {
         ];
 
         malformedTests.forEach((test) => {
-            it(`should not block ${test.urlToCheck}`, () => {
+            it(`should not block ${test.urlToCheck} on ${test.siteUrl} (expect result: null)`, () => {
                 const tracker = trackers.getTrackerData(test.urlToCheck, test.siteUrl, { url: test.urlToCheck, type: test.requestType });
 
                 expect(tracker).toEqual(null);
@@ -252,7 +252,7 @@ describe('getTrackerData', () => {
             },
         ];
         nonTrackerTests.forEach((test) => {
-            it(`should not block ${test.urlToCheck}`, () => {
+            it(`should not block ${test.urlToCheck} on ${test.siteUrl} (expect result: none)`, () => {
                 const tracker = trackers.getTrackerData(test.urlToCheck, test.siteUrl, { url: test.urlToCheck, type: test.requestType });
 
                 expect(tracker.action).toEqual('none');
