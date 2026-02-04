@@ -4,7 +4,7 @@ updates:
       directory: '/'
       schedule:
           interval: 'weekly'
-      open-pull-requests-limit: 20
+      open-pull-requests-limit: 40
       target-branch: 'main'
       labels:
           - 'dependencies'
