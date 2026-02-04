@@ -1,6 +1,6 @@
 const httpsService = require('../../shared/js/background/https-service');
 
-describe('Https upgrades', () => {
+describe('Https service', () => {
     let spy;
 
     beforeAll(() => {

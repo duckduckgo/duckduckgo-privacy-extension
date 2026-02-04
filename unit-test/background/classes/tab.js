@@ -222,7 +222,7 @@ describe('Tab', () => {
             expect(fetchedRestoredTab2.url).toEqual('http://example2.com');
         });
 
-        it('should be able to restore the tab and modify state and then restore again', async () => {
+        it('should be able to restore the tab with all setter properties preserved', async () => {
             // Simulate the service worker closing.
             delete tabManager.tabContainer[123];
             const fetchedRestoredTab = await tabManager.getOrRestoreTab(123);

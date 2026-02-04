@@ -119,12 +119,12 @@ describe('utils.isRedirect()', () => {
 
 describe('utils.extractHostFromURL()', () => {
     extractHostFromURLTestCases.forEach((test) => {
-        it(`should return ${test.result} as host for the url: ${test.url}`, () => {
+        it(`should return ${test.result} as host for the url: ${test.url} (strip www)`, () => {
             const result = utils.extractHostFromURL(test.url);
             expect(result).toEqual(test.result);
         });
 
-        it(`should return ${test.resultWithWWW} as host for the url: ${test.url}`, () => {
+        it(`should return ${test.resultWithWWW} as host for the url: ${test.url} (preserve www)`, () => {
             const result = utils.extractHostFromURL(test.url, true);
             expect(result).toEqual(test.resultWithWWW);
         });

@@ -127,10 +127,11 @@ async function submitAndValidateReport(report) {
     }
 }
 function runTests(testSets, supportsMultipleReports = false) {
+    const suffix = supportsMultipleReports ? ' (multiple reports)' : '';
     for (const setName of Object.keys(testSets)) {
         const testSet = testSets[setName];
 
-        describe(`Broken Site Reporting tests / ${testSet.name} /`, () => {
+        describe(`Broken Site Reporting tests / ${testSet.name}${suffix} /`, () => {
             for (const test of testSet.tests) {
                 if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                     return;
