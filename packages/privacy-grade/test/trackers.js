@@ -169,7 +169,7 @@ describe('getTrackerData', () => {
         ];
 
         trackerTests.forEach((test) => {
-            it(`should block ${test.urlToCheck}`, () => {
+            it(`should ${test.action} ${test.urlToCheck} (${test.expectedReason})`, () => {
                 const tracker = trackers.getTrackerData(
                     test.urlToCheck,
                     test.siteUrl,
