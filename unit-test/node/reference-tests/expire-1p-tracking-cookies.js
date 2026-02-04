@@ -46,6 +46,7 @@ for (const setName of Object.keys(testSets)) {
                 });
 
                 const args = getArgumentsObject(1, { url: test.siteURL, frameId: 0 }, test.siteURL, 'abc123');
+                args.bundledConfig = configReference;
 
                 const cookieJar = new jsdom.CookieJar();
                 const dom = new JSDOM('', {
@@ -71,7 +72,7 @@ for (const setName of Object.keys(testSets)) {
                     trackerLookup: [],
                     injectName: 'extensionTest',
                 };
-                const jsCookieProtection = new JsCookieProtection('cookie', importConfig, args);
+                const jsCookieProtection = new JsCookieProtection('cookie', importConfig, {}, args);
 
                 jsCookieProtection.callLoad({
                     platform: constants.platform,

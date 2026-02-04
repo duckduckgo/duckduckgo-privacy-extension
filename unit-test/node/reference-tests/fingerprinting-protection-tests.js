@@ -55,6 +55,7 @@ for (const setName of Object.keys(testSets)) {
                 });
 
                 const args = getArgumentsObject(1, { url: test.siteURL, frameId: 0 }, test.siteURL, 'abc123');
+                args.bundledConfig = configReference;
                 const dom = new JSDOM('', {
                     url: 'https://example.com/',
                     runScripts: 'outside-only',
@@ -69,10 +70,10 @@ for (const setName of Object.keys(testSets)) {
                     trackerLookup: [],
                     injectName: 'extensionTest',
                 };
-                const batteryProtection = new BatteryProtection('fingerprintingBattery', importConfig, args);
-                const hardwareProtection = new HardwareProtection('fingerprintingHardware', importConfig, args);
-                const screenProtection = new ScreenProtection('fingerprintingScreenSize', importConfig, args);
-                const tempStorageProtection = new TempStorageProtection('fingerprintingTemporaryStorage', importConfig, args);
+                const batteryProtection = new BatteryProtection('fingerprintingBattery', importConfig, {}, args);
+                const hardwareProtection = new HardwareProtection('fingerprintingHardware', importConfig, {}, args);
+                const screenProtection = new ScreenProtection('fingerprintingScreenSize', importConfig, {}, args);
+                const tempStorageProtection = new TempStorageProtection('fingerprintingTemporaryStorage', importConfig, {}, args);
 
                 // init protections
                 if (!isFeatureBroken(args, 'fingerprintingBattery')) {

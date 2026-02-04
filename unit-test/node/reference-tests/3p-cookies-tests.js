@@ -96,6 +96,7 @@ function runTestSuite(suiteType, testSet, configReference, blocklistReference) {
                         test.frameURL || test.siteURL,
                         'abc123',
                     );
+                    args.bundledConfig = configReference;
 
                     const cookieJar = new jsdom.CookieJar();
                     const dom = new JSDOM(`<iframe src="${test.frameURL}"></iframe>`, {
@@ -114,7 +115,7 @@ function runTestSuite(suiteType, testSet, configReference, blocklistReference) {
                         trackerLookup: [],
                         injectName: 'extensionTest',
                     };
-                    const jsCookieProtection = new TrackingJsCookieProtection('cookie', importConfig, args);
+                    const jsCookieProtection = new TrackingJsCookieProtection('cookie', importConfig, {}, args);
                     jsCookieProtection.callLoad({
                         platform: constants.platform,
                     });
