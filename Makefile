@@ -81,7 +81,7 @@ node-test:
 
 ## npm: Pull in the external dependencies (npm install).
 npm:
-	npm ci --ignore-scripts
+	npm ci --ignore-scripts --legacy-peer-deps
 	npm rebuild puppeteer
 	## Install the privacy-test-pages package for integration tests
 	cd node_modules/privacy-test-pages && npm install
