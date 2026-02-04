@@ -9,6 +9,10 @@ updates:
       labels:
           - 'dependencies'
       groups:
+          content-scope-scripts:
+              patterns:
+                  - '@duckduckgo/content-scope-scripts'
+                  - '@duckduckgo/privacy-configuration'
           types:
               patterns:
                   - '@types/*'
