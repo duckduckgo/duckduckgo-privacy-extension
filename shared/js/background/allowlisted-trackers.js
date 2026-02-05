@@ -6,7 +6,7 @@ const { getURLWithoutQueryString } = require('./utils');
  * @typedef {Object} TrackerAllowlistRule
  * @property {string} rule
  * @property {string[]} domains
- * @property {string} [reason]
+ * @property {string | string[]} [reason]
  *
  * @typedef {Object} TrackerAllowlistDomainEntry
  * @property {TrackerAllowlistRule[]} rules

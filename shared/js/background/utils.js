@@ -8,7 +8,7 @@ import sha1 from '../shared-utils/sha1';
 const browserInfo = parseUserAgentString();
 
 /**
- * @typedef {import('@duckduckgo/privacy-configuration/schema/config.js').GenericV4Config} Config
+ * @typedef {import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig} Config
  */
 
 /**

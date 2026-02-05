@@ -52,8 +52,9 @@ for (const setName of Object.keys(testSets)) {
                         site: new Site(test.siteURL),
                         globalPrivacyControlValue: test.gpcUserSettingOn,
                         platform: constants.platform,
+                        bundledConfig: config,
                     };
-                    const gpcContentScript = new GpcContentScript('gpc', importConfig, args);
+                    const gpcContentScript = new GpcContentScript('gpc', importConfig, {}, args);
                     const isEnabled = !contentScriptUtils.isFeatureBroken(args, 'gpc');
 
                     expect(isEnabled).toEqual(test.expectGPCAPI);

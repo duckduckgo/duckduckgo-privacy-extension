@@ -24,13 +24,13 @@ function parseRule(requestBlocklistRule) {
 }
 
 /**
- * @typedef {import('@duckduckgo/privacy-configuration/schema/config.js').GenericV4Config} Config
+ * @typedef {import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig} Config
  */
 
 /**
  * Update requestBlocklist lookup, based on the given configuration.
  *
- * @param {import('@duckduckgo/privacy-configuration/schema/config.js').GenericV4Config} config
+ * @param {import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig} config
  */
 function updateRequestBlocklistLookup(config) {
     const configRules = tdsStorage?.config?.features?.requestBlocklist?.settings?.blockedRequests;
