@@ -24,7 +24,7 @@ import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
  *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent/lib/messages').DoneMessage) => Promise<void>;
  *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
  *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;
- *  sendPixel: (pixelName: string, params: Record<string, any>) => Promise<void>;
+ *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig>;
  * }} CPMMessagingBase
  */
@@ -59,6 +59,11 @@ class NativeMessagingMock extends NativeMessaging {
             case 'isSubFeatureEnabled':
                 response = {
                     enabled: true,
+                };
+                break;
+            case 'sendPixel':
+                response = {
+                    success: true,
                 };
                 break;
             default:
@@ -139,9 +144,10 @@ export class CPMEmbeddedMessaging {
         }
     }
 
-    async sendPixel(pixelName, params) {
+    async sendPixel(pixelName, type, params) {
         await this.nativeMessaging.notify('sendPixel', {
             pixelName,
+            type,
             params,
         });
     }

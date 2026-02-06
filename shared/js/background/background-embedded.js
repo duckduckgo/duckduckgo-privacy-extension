@@ -25,8 +25,6 @@ import { CPMEmbeddedMessaging } from './components/cpm-messaging';
 import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
 
-const settings = require('./settings');
-
 const cpmMessaging = new CPMEmbeddedMessaging();
 
 // MessageRouter sets up browser.runtime.onMessage dispatching from the shared
@@ -35,7 +33,6 @@ const messaging = new MessageRouter();
 
 const cpm = new CookiePromptManagement({
     cpmMessaging,
-    settings,
 });
 
 /**

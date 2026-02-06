@@ -44,14 +44,12 @@ export default class CookiePromptManagement {
      *
      * @param {{
      *  cpmMessaging: import('./cpm-messaging').CPMMessagingBase
-     *  settings: import('../settings')
      * }} opts
      */
-    constructor({ cpmMessaging, settings }) {
+    constructor({ cpmMessaging }) {
         /** @type {Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig>} */
         this.remoteConfigJson = cpmMessaging.refreshRemoteConfig();
         this.cpmMessaging = cpmMessaging;
-        this.settings = settings;
         this._heuristicActionEnabled = null;
 
         // Ephemeral state for reload loop prevention. We assume that service worker never sleeps during a reload loop, so we don't persist these.
@@ -258,7 +256,6 @@ export default class CookiePromptManagement {
             console.error('error getting sender domain', e);
             return;
         }
-        await this.settings.ready();
         const remoteConfig = await this.remoteConfigJson;
         const autoconsentRemoteConfig = remoteConfig.features.autoconsent;
         const autoconsentSettings = autoconsentRemoteConfig?.settings;
@@ -514,23 +511,16 @@ export default class CookiePromptManagement {
             delayInMinutes: CookiePromptManagement.SUMMARY_DELAY_MINUTES,
         });
 
-        // emulate "daily" pixel firing
-        const dailyPixelName = `autoconsent_${eventName}_daily`;
-        const lastSent = this.settings.getSetting('pixelsLastSent') || {}
-
-        if (lastSent[dailyPixelName] && lastSent[dailyPixelName] > Date.now() - 1000 * 60 * 60 * 24) {
-            return;
-        }
-        lastSent[dailyPixelName] = Date.now();
-        this.settings.updateSetting('pixelsLastSent', lastSent);
-        this.cpmMessaging.sendPixel(dailyPixelName, {
+        // request "daily" pixel firing
+        const pixelName = `autoconsent_${eventName}`;
+        this.cpmMessaging.sendPixel(pixelName, 'daily', {
             consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
         });
     }
 
     async sendSummaryPixel() {
         const cpmState = await this.getCpmState();
-        this.cpmMessaging.sendPixel('autoconsent_summary', {
+        this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
             ...cpmState.summaryEvents,
             consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
         });
