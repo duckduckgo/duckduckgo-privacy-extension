@@ -13,6 +13,13 @@ test.describe('navigatorInterface', () => {
             });
         }
         await page.goto('https://privacy-test-pages.site/features/navigator-interface.html');
+
+        // Ensure the test page's detection code runs after the content script
+        // injects navigator.duckduckgo. Otherwise, the race condition causes
+        // the test to fail occasionally.
+        await page.waitForFunction(() => 'duckduckgo' in navigator);
+        await page.evaluate(() => window.detectInterface());
+
         expect(await page.locator('#interface').innerText()).toBe('interface: true');
         expect(await page.locator('#isDuckDuckGo').innerText()).toBe('isDuckDuckGo: true');
         expect(await page.locator('#platform').innerText()).toBe('platform: extension');

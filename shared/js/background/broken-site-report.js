@@ -60,22 +60,32 @@ const PARAM_IDS = [
  *
  * Fire a pixel
  *
+ * @param {string} pixelName
  * @param {string} querystring
+ * @param {Record<string, string>} [encodedParams]
  *
  */
-export function fire(pixelName, querystring) {
-    let url = constructUrl(pixelName, querystring, false);
+export function fire(pixelName, querystring, encodedParams = {}) {
+    let url = constructUrl(pixelName, querystring, false, encodedParams);
 
     // If we're over the max pixel length, truncate the less important params
     if (url.length > maxPixelLength) {
-        url = constructUrl(pixelName, querystring, true);
+        url = constructUrl(pixelName, querystring, true, encodedParams);
     }
 
     // Send the request
     load.url(url);
 }
 
-function constructUrl(pixelName, querystring, truncate) {
+/**
+ *
+ * @param {string} pixelName
+ * @param {string} querystring
+ * @param {boolean} truncate
+ * @param {Record<string, string>} [encodedParams]
+ * @returns
+ */
+function constructUrl(pixelName, querystring, truncate, encodedParams = {}) {
     const randomNum = Math.ceil(Math.random() * 1e7);
     const browserInfo = parseUserAgentString();
     const browserName = browserInfo?.browser;
@@ -113,6 +123,11 @@ function constructUrl(pixelName, querystring, truncate) {
             searchParams.delete(key);
         }
     });
+    // encodedParams are pre-encoded. Append directly without re-encoding
+    for (const [key, value] of Object.entries(encodedParams)) {
+        if (truncate && truncatableFields.includes(key)) continue;
+        extraParams += `&${key}=${value}`;
+    }
     url += `${searchParams.toString()}${extraParams}`;
     return url;
 }
@@ -264,6 +279,8 @@ export async function breakageReportForTab({
     const locale = tab.locale;
     const contentScopeExperiments = tab.contentScopeExperiments;
     const detectorData = pageParams.detectorData ? JSON.stringify(pageParams.detectorData) : undefined;
+    // breakageData is pre-encoded by content-scope-scripts, pass as-is without re-encoding
+    const breakageData = pageParams.breakageData !== undefined ? pageParams.breakageData : undefined;
 
     // Note: Take care to update the `PARAM_IDS` array (see above) when
     //       adding/removing breakage parameters!
@@ -312,7 +329,12 @@ export async function breakageReportForTab({
         brokenSiteParams.set('contentScopeExperiments', experiments);
     }
 
-    return fire(pixelName, brokenSiteParams.toString());
+    /** @type {Record<string, string>} */
+    const encodedParams = {};
+    // Add breakageData to encodedParams to avoid re-encoding
+    if (breakageData !== undefined) encodedParams.breakageData = breakageData;
+
+    return fire(pixelName, brokenSiteParams.toString(), encodedParams);
 }
 
 /**

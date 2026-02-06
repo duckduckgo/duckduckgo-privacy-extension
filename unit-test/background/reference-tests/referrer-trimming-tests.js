@@ -95,11 +95,12 @@ for (const setName of Object.keys(testSets)) {
                     spyOnProperty(document, 'referrer', 'get').and.returnValue(test.referrerValue);
                     spyOnProperty(document, 'URL', 'get').and.returnValue(test.frameURL || test.siteURL);
                     const args = getArgumentsObject(1, { url: test.siteURL, frameId: 0 }, test.siteURL, 'abc123');
+                    args.bundledConfig = configReference;
                     const importConfig = {
                         trackerLookup: [],
                         injectName: 'extensionTest',
                     };
-                    const jsReferrerProtection = new JsReferrerProtection('jsReferrer', importConfig, args);
+                    const jsReferrerProtection = new JsReferrerProtection('jsReferrer', importConfig, {}, args);
                     if (!isFeatureBroken(args, 'referrer')) {
                         jsReferrerProtection.callInit(args);
                     }

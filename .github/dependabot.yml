@@ -4,11 +4,15 @@ updates:
       directory: '/'
       schedule:
           interval: 'weekly'
-      open-pull-requests-limit: 20
+      open-pull-requests-limit: 40
       target-branch: 'main'
       labels:
           - 'dependencies'
       groups:
+          content-scope-scripts:
+              patterns:
+                  - '@duckduckgo/content-scope-scripts'
+                  - '@duckduckgo/privacy-configuration'
           types:
               patterns:
                   - '@types/*'

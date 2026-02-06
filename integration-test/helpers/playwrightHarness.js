@@ -50,7 +50,7 @@ export const test = base.extend({
         const extensionPath = manifestVersion === 3 ? 'build/chrome/dev' : 'build/chrome-mv2/dev';
         const pathToExtension = path.join(projectRoot, extensionPath);
         const context = await chromium.launchPersistentContext('', {
-            headless: false,
+            channel: 'chromium',
             args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
         });
         // intercept extension install page and use HAR
@@ -61,11 +61,11 @@ export const test = base.extend({
                 // npx playwright open --save-har=data/har/duckduckgo.com/extension-success.har https://duckduckgo.com/extension-success
                 page.routeFromHAR(getHARPath('duckduckgo.com/extension-success.har'), {
                     notFound: 'abort',
-                });
+                }).catch(() => {});
             }
         });
-        //
         await use(context);
+        await context.close();
     },
     /**
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
@@ -104,11 +104,58 @@ export const test = base.extend({
             }
             route.continue();
         };
+
         if (manifestVersion === 3) {
-            let [background] = context.serviceWorkers();
-            if (!background) background = await context.waitForEvent('serviceworker');
-            // SW request routing is experimental: https://playwright.dev/docs/service-workers-experimental
-            context.route('**/*', routeHandler);
+            // See https://playwright.dev/docs/service-workers
+            const getBackgroundServiceWorker = async () => {
+                let [serviceWorker] = context.serviceWorkers();
+                if (!serviceWorker) {
+                    try {
+                        serviceWorker = await context.waitForEvent('serviceworker', { timeout: 2000 });
+                    } catch {
+                        [serviceWorker] = context.serviceWorkers();
+                    }
+                }
+                return serviceWorker;
+            };
+
+            const restartBackgroundServiceWorker = async () => {
+                // There is a race condition, whereby Playwright sometimes
+                // fails to attach to the extension's background ServiceWorker,
+                // possibly because it was created too early. When that happens,
+                // restart the ServiceWorker via CDP to give Playwright another
+                // chance to spot it.
+                const page = context.pages()[0];
+                if (page) {
+                    const cdp = await context.newCDPSession(page);
+                    try {
+                        // Stop the ServiceWorker
+                        await cdp.send('ServiceWorker.enable');
+                        await cdp.send('ServiceWorker.stopAllWorkers');
+
+                        // Start it again.
+                        const newPage = await context.newPage();
+                        await newPage.goto('https://duckduckgo.com/extension-success');
+
+                        console.log('Restarted ServiceWorker.');
+                    } finally {
+                        await cdp.detach().catch(() => {});
+                    }
+                }
+            };
+
+            let background = await getBackgroundServiceWorker();
+            if (!background) {
+                await restartBackgroundServiceWorker();
+                background = await getBackgroundServiceWorker();
+            }
+
+            if (!background) {
+                throw new Error("Failed to find extension's background ServiceWorker.");
+            }
+
+            // Serve extension background requests from local cache
+            await context.route('**/*', routeHandler);
             await use(background);
         } else {
             let [background] = context.backgroundPages();
@@ -117,7 +164,7 @@ export const test = base.extend({
             }
 
             // Serve extension background requests from local cache
-            background.route('**/*', routeHandler);
+            await background.route('**/*', routeHandler);
             await use(background);
         }
     },

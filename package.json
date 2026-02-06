@@ -39,7 +39,7 @@
         "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.8",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
         "@fingerprintjs/fingerprintjs": "^4.6.2",
-        "@playwright/test": "^1.51.0",
+        "@playwright/test": "1.54.2",
         "@types/chrome": "^0.0.269",
         "@types/jasmine": "^5.1.9",
         "@types/node": "^22.1.0",
@@ -67,7 +67,7 @@
     "dependencies": {
         "@duckduckgo/autoconsent": "^14.50.1",
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#17.0.1",
-        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#12.13.0",
+        "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#13.0.0",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.8",

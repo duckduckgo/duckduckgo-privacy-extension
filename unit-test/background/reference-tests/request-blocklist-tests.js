@@ -54,7 +54,7 @@ describe('Request Blocklist:', () => {
                     continue;
                 }
 
-                it(name + ':', async () => {
+                it(`${name} (${requestUrl} on ${websiteUrl}):`, async () => {
                     const actualResponse = await blockHandleResponse(TabManager.create({ tabId, url: websiteUrl }), {
                         tabId,
                         url: requestUrl,

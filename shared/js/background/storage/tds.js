@@ -15,7 +15,7 @@ export default {
     _config: { features: {} },
     _tds: { entities: {}, trackers: {}, domains: {}, cnames: {} },
     _surrogates: '',
-    /** @type {import('@duckduckgo/privacy-configuration/schema/config').GenericV4Config} */
+    /** @type {import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig} */
     get config() {
         return globalThis.components?.remoteConfig.config || this._config;
     },

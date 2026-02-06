@@ -67,6 +67,7 @@ async function submitAndValidateReport(report) {
     const mockedPageParams = {
         jsPerformance: [Number.parseFloat(report.jsPerformance)],
         docReferrer: 'http://example.com',
+        breakageData: report.breakageData,
     };
 
     await breakageReportForTab({
@@ -126,10 +127,11 @@ async function submitAndValidateReport(report) {
     }
 }
 function runTests(testSets, supportsMultipleReports = false) {
+    const suffix = supportsMultipleReports ? ' (multiple reports)' : '';
     for (const setName of Object.keys(testSets)) {
         const testSet = testSets[setName];
 
-        describe(`Broken Site Reporting tests / ${testSet.name} /`, () => {
+        describe(`Broken Site Reporting tests / ${testSet.name}${suffix} /`, () => {
             for (const test of testSet.tests) {
                 if (test.exceptPlatforms && test.exceptPlatforms.includes('web-extension')) {
                     return;
@@ -248,5 +250,43 @@ describe('Broken Site Reporting tests / contentScopeExperiments (cohorts)', () =
         tab.contentScopeExperiments = {};
         const params = await submit(tab);
         expect(params.get('contentScopeExperiments')).toBeNull();
+    });
+});
+
+describe('Broken Site Reporting tests / breakageData', () => {
+    async function submitWithPageParams(tab, pageParams) {
+        loadPixelSpy = spyOn(loadPixel, 'url').and.returnValue(null);
+        await breakageReportForTab({
+            pixelName: 'epbf',
+            tab,
+            tds: 'abc123',
+            remoteConfigEtag: 'abd142',
+            remoteConfigVersion: '1234',
+            category: 'content',
+            description: 'test',
+            pageParams,
+        });
+        const requestURLString = loadPixelSpy.calls.argsFor(0)[0];
+        return requestURLString;
+    }
+
+    it('includes breakageData param when present', async () => {
+        const tab = new Tab({ url: 'https://example.com' });
+        const preEncodedBreakageData = '%7B%22test%22%3A%22value%22%7D';
+        const urlString = await submitWithPageParams(tab, { breakageData: preEncodedBreakageData });
+        // Check the raw URL string to ensure no double-encoding occurred
+        expect(urlString).toContain(`breakageData=${preEncodedBreakageData}`);
+    });
+
+    it('omits breakageData param when not present', async () => {
+        const tab = new Tab({ url: 'https://example.com' });
+        const urlString = await submitWithPageParams(tab, {});
+        expect(urlString).not.toContain('breakageData=');
+    });
+
+    it('omits breakageData param when undefined', async () => {
+        const tab = new Tab({ url: 'https://example.com' });
+        const urlString = await submitWithPageParams(tab, { breakageData: undefined });
+        expect(urlString).not.toContain('breakageData=');
     });
 });

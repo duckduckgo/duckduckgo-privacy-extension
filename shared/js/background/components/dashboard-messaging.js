@@ -83,6 +83,7 @@ export default class DashboardMessaging {
                     docReferrer: breakageData.referrer,
                     opener: breakageData.opener,
                     detectorData: breakageData.detectorData,
+                    breakageData: breakageData.breakageData,
                 };
 
                 // Set userRefreshCount from pageReloaded: 0 if not reloaded, 1 if reloaded
