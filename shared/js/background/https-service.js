@@ -12,15 +12,11 @@ class HTTPSService {
         this._cache = new Map();
         this._activeRequests = new Map();
         // Pull cache values from session storage (for MV3)
-        getFromSessionStorage(sessionStoreKey)
-            .then((values) => {
-                if (values) {
-                    this._cache = new Map(values);
-                }
-            })
-            .catch(() => {
-                // Intentionally swallowed: cache is optional, will be rebuilt from network
-            });
+        getFromSessionStorage(sessionStoreKey).then((values) => {
+            if (values) {
+                this._cache = new Map(values);
+            }
+        });
     }
 
     _cacheResponse(query, data, expires) {

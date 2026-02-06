@@ -18,14 +18,10 @@ const MANAGED_SETTINGS = ['hasSeenPostInstall'];
  */
 let settings = {};
 let isReady = false;
-const _ready = init()
-    .then(() => {
-        isReady = true;
-        console.log('Settings are loaded');
-    })
-    .catch((e) => {
-        console.error('Settings initialization failed', e);
-    });
+const _ready = init().then(() => {
+    isReady = true;
+    console.log('Settings are loaded');
+});
 
 async function init() {
     buildSettingsFromDefaults();
@@ -132,13 +128,9 @@ function updateSetting(name, value) {
     }
 
     settings[name] = value;
-    syncSettingTolocalStorage()
-        .then(() => {
-            onSettingUpdate.dispatchEvent(new CustomEvent(name, { detail: value }));
-        })
-        .catch((e) => {
-            console.error('Failed to sync setting to local storage', e);
-        });
+    syncSettingTolocalStorage().then(() => {
+        onSettingUpdate.dispatchEvent(new CustomEvent(name, { detail: value }));
+    });
 }
 
 function incrementNumericSetting(name, increment = 1) {

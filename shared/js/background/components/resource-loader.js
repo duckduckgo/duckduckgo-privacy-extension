@@ -105,7 +105,6 @@ export default class ResourceLoader extends EventTarget {
         for (const loader of loadOrder) {
             try {
                 const result = await loader();
-                if (result === null) continue; // Source returned no update (e.g. 304)
                 await this._updateData(result);
                 break;
             } catch (e) {
@@ -133,7 +132,7 @@ export default class ResourceLoader extends EventTarget {
         }
         const response = await fetch(request, { headers });
         if (response.status === 304) {
-            return null; // Not modified — signal caller to try next source
+            throw new Error('304: Not modified');
         }
         if (!response.ok) {
             throw new Error(response.statusText);
