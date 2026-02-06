@@ -2,7 +2,6 @@
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
 import browser from 'webextension-polyfill';
 import { registerContentScripts } from './mv3-content-script-injection';
-import { sendPixelRequest } from '../pixels';
 import { getFromSessionStorage, setToSessionStorage, createAlarm } from '../wrapper';
 import { registerMessageHandler } from '../message-registry';
 import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.json';
@@ -22,7 +21,7 @@ import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.
  * @property {Record<string, number>} summaryEvents
  */
 
-/* global DEBUG, BUILD_TARGET */
+/* global DEBUG */
 
 /**
  * @type {import('@duckduckgo/autoconsent/lib/types').Config['logs']}
@@ -45,13 +44,13 @@ export default class CookiePromptManagement {
      *
      * @param {{
      *  remoteConfig: import('./remote-config').RemoteConfigInterface
-     *  nativeMessaging: import('./native-messaging').default
+     *  cpmMessaging: import('./cpm-messaging').CPMMessagingBase
      *  settings: import('../settings')
      * }} opts
      */
-    constructor({ remoteConfig, nativeMessaging, settings }) {
+    constructor({ remoteConfig, cpmMessaging, settings }) {
         this.remoteConfig = remoteConfig;
-        this.nativeMessaging = nativeMessaging;
+        this.cpmMessaging = cpmMessaging;
         this.settings = settings;
         this._heuristicActionEnabled = null;
 
@@ -145,7 +144,7 @@ export default class CookiePromptManagement {
 
     async checkHeuristicActionEnabled(force = false) {
         if (this._heuristicActionEnabled === null || force) {
-            this._heuristicActionEnabled = await this.checkSubfeatureEnabled('heuristicAction');
+            this._heuristicActionEnabled = await this.cpmMessaging.checkSubfeatureEnabled('heuristicAction');
         }
         return this._heuristicActionEnabled;
     }
@@ -169,25 +168,28 @@ export default class CookiePromptManagement {
     /**
      * @param {number} tabId
      * @param {string} url
+     * @returns {URL}
      */
-    checkMainFrameNavigation(tabId, url) {
+    updateTopUrl(tabId, url) {
+        const oldTopUrl = this._tabUrlsCache.get(tabId) || new URL('about:blank');
         let newTopUrl = null;
         try {
             newTopUrl = new URL(url);
         } catch (e) {
             console.error('invalid top URL', url, e);
-            return;
+            return oldTopUrl;
         }
-        const currentTopUrl = this._tabUrlsCache.get(tabId) || new URL('about:blank');
-        DEBUG && console.log('Main frame navigated from', currentTopUrl, 'to', newTopUrl);
-        if (currentTopUrl.host !== newTopUrl.host
-            || currentTopUrl.pathname !== newTopUrl.pathname
-            || currentTopUrl.protocol !== newTopUrl.protocol
+
+        DEBUG && console.log('Main frame navigated from', oldTopUrl, 'to', newTopUrl);
+        if (oldTopUrl.host !== newTopUrl.host
+            || oldTopUrl.pathname !== newTopUrl.pathname
+            || oldTopUrl.protocol !== newTopUrl.protocol
         ) {
             // url has changed (as far as reload loop prevention is concerned)
             this.clearReloadLoopState(tabId);
         }
         this._tabUrlsCache.set(tabId, newTopUrl);
+        return newTopUrl;
     }
 
     /**
@@ -218,7 +220,7 @@ export default class CookiePromptManagement {
      */
     detectReloadLoop(tabId, cmp) {
         // Reload loop is when we catch the same CMP from the same top URL without a navigation in between.
-        // At this point we know that the top URL hasn't changed (that's tracked in checkMainFrameNavigation), so we can just check the CMP name.
+        // At this point we know that the top URL hasn't changed (that's tracked in updateTopUrl), so we can just check the CMP name.
         const lastHandledCMP = this._lastHandledCMP.get(tabId);
         if (!this._reloadLoopDetected.has(tabId) && lastHandledCMP === cmp) {
             // Same CMP detected on same URL after it was already handled - reload loop detected
@@ -262,15 +264,16 @@ export default class CookiePromptManagement {
         const cpmState = await this.getCpmState();
         // force refresh the subfeature state on every 'init'
         const heuristicActionEnabled = await this.checkHeuristicActionEnabled(msg.type === 'init');
+        let currentTopUrl = this._tabUrlsCache.get(tabId) || new URL('about:blank');
 
         switch (msg.type) {
             case 'init': {
                 // do the navigation check before checking if the domain is allowlisted
                 if (isMainFrame) {
-                    this.checkMainFrameNavigation(tabId, msg.url);
+                    currentTopUrl = this.updateTopUrl(tabId, senderUrl);
                 }
 
-                const isEnabled = await this.checkAutoconsentEnabledForSite(senderUrl);
+                const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(currentTopUrl.toString());
                 if (!isEnabled) {
                     this.firePixel('disabled-for-site');
                     return;
@@ -288,8 +291,9 @@ export default class CookiePromptManagement {
 
                 if (isMainFrame) {
                     // no await
-                    this.refreshDashboardState(
+                    this.cpmMessaging.refreshDashboardState(
                         tabId,
+                        senderUrl,
                         {
                             // keep "cookies managed" if we did it for this site since app launch
                             consentManaged: cpmState.sitesNotifiedCache.has(senderDomain),
@@ -359,8 +363,9 @@ export default class CookiePromptManagement {
             case 'optOutResult': {
                 if (!msg.result) {
                     this.firePixel('error_optout');
-                    this.refreshDashboardState(
+                    this.cpmMessaging.refreshDashboardState(
                         tabId,
+                        senderUrl,
                         {
                             consentManaged: true,
                             cosmetic: null,
@@ -383,8 +388,9 @@ export default class CookiePromptManagement {
                     msg.cmp,
                     msg.isCosmetic
                 );
-                this.refreshDashboardState(
+                this.cpmMessaging.refreshDashboardState(
                     tabId,
+                    senderUrl,
                     {
                         consentManaged: true,
                         cosmetic: msg.isCosmetic,
@@ -402,9 +408,9 @@ export default class CookiePromptManagement {
                 }
                 cpmState.sitesNotifiedCache.add(senderDomain)
                 await this.updateCpmState(cpmState);
-                this.requestAddressBarAnimation(tabId, msg.url, msg.isCosmetic);
+                this.cpmMessaging.showCpmAnimation(tabId, currentTopUrl.toString(), msg.isCosmetic);
                 this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown');
-                this.notifyPopupHandled(tabId, msg);
+                this.cpmMessaging.notifyPopupHandled(tabId, msg);
                 break;
             }
             case 'report': {
@@ -492,100 +498,6 @@ export default class CookiePromptManagement {
         });
     }
 
-    /**
-     * send a message to the dashboard to refresh the state
-     * @param {number} tabId
-     * @param {{
-     *  consentManaged: boolean,
-     *  cosmetic: boolean?,
-     *  optoutFailed: boolean?,
-     *  selftestFailed: boolean?,
-     *  consentReloadLoop: boolean?,
-     *  consentRule: string?,
-     *  consentHeuristicEnabled: boolean?
-     * }} state
-     */
-    async refreshDashboardState(tabId, { consentManaged, cosmetic, optoutFailed, selftestFailed, consentReloadLoop, consentRule, consentHeuristicEnabled }) {
-        if (BUILD_TARGET === 'embedded') {
-            await this.nativeMessaging.notify('refreshCpmDashboardState', {
-                tabId,
-                consentStatus: {
-                    consentManaged,
-                    cosmetic,
-                    optoutFailed,
-                    selftestFailed,
-                    consentReloadLoop,
-                    consentRule,
-                    consentHeuristicEnabled,
-                },
-            });
-        }
-    }
-
-    /**
-     * @param {number} tabId
-     * @param {string} topUrl
-     * @param {boolean} isCosmetic
-     */
-    async requestAddressBarAnimation(tabId, topUrl, isCosmetic) {
-        await this.nativeMessaging.notify('showCpmAnimation', {
-            tabId,
-            topUrl,
-            isCosmetic,
-        });
-    }
-
-    /**
-     * @param {number} tabId
-     * @param {import('@duckduckgo/autoconsent/lib/messages').DoneMessage} msg
-     */
-    async notifyPopupHandled(tabId, msg) {
-        await this.nativeMessaging.notify('cookiePopupHandled', {
-            tabId,
-            msg,
-        });
-    }
-
-    /**
-     * @param {string} url
-     * @returns {Promise<boolean>}
-     */
-    async checkAutoconsentEnabledForSite(url) {
-        if (BUILD_TARGET === 'embedded') {
-            try {
-                const result = await this.nativeMessaging.request('isFeatureEnabled', {
-                    featureName: 'autoconsent',
-                    url,
-                });
-                return result.enabled;
-            } catch (e) {
-                console.error('error checking autoconsent enabled for site', e);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * @param {string} subfeatureName
-     * @returns {Promise<boolean>}
-     */
-    async checkSubfeatureEnabled(subfeatureName) {
-        if (BUILD_TARGET === 'embedded') {
-            try {
-                const result = await this.nativeMessaging.request('isSubFeatureEnabled', {
-                    featureName: 'autoconsent',
-                    subfeatureName,
-                });
-                return result.enabled;
-            } catch (e) {
-                console.error('error checking autoconsent subfeature enabled', e);
-                return false;
-            }
-        }
-        return true;
-    }
-
     async firePixel(eventName) {
         const cpmState = await this.getCpmState();
         cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
@@ -605,17 +517,17 @@ export default class CookiePromptManagement {
         }
         lastSent[dailyPixelName] = Date.now();
         this.settings.updateSetting('pixelsLastSent', lastSent);
-        sendPixelRequest(dailyPixelName, {
+        this.cpmMessaging.sendPixel(dailyPixelName, {
             consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
-        }, this.nativeMessaging);
+        });
     }
 
     async sendSummaryPixel() {
         const cpmState = await this.getCpmState();
-        sendPixelRequest('autoconsent_summary', {
+        this.cpmMessaging.sendPixel('autoconsent_summary', {
             ...cpmState.summaryEvents,
             consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
-        }, this.nativeMessaging);
+        });
         cpmState.summaryEvents = {};
         // clear the detection cache
         cpmState.detectionCache.patterns.clear();
