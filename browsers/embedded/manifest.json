@@ -15,7 +15,8 @@
         "scripting",
         "storage",
         "tabs",
-        "webNavigation"
+        "webNavigation",
+        "nativeMessaging"
     ],
     "host_permissions": [
         "*://*/*"
