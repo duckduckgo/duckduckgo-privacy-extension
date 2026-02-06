@@ -4,6 +4,7 @@ import browser from 'webextension-polyfill';
 import { registerContentScripts } from './mv3-content-script-injection';
 import { sendPixelRequest } from '../pixels';
 import { getFromSessionStorage, setToSessionStorage, createAlarm } from '../wrapper';
+import { registerMessageHandler } from '../message-registry';
 import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.json';
 
 /**
@@ -84,14 +85,11 @@ export default class CookiePromptManagement {
             }
         });
 
-        // Embedded builds don't use MessageRouter, so we need to set up a direct message listener
-        if (BUILD_TARGET === 'embedded') {
-            browser.runtime.onMessage.addListener(async (req, sender) => {
-                if (req.messageType === 'autoconsent') {
-                    return this.handleAutoConsentMessage(req.autoconsentPayload, sender);
-                }
-            });
-        }
+        // Register autoconsent message handler with the shared message registry.
+        // MessageRouter (in both regular and embedded builds) dispatches to this handler.
+        registerMessageHandler('autoconsent', (options, sender, req) => {
+            return this.handleAutoConsentMessage(req.autoconsentPayload, sender);
+        });
     }
 
     /**

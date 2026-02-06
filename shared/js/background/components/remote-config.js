@@ -47,7 +47,7 @@ import { getFeatureSettings, isFeatureEnabled, satisfiesMinVersion } from '../ut
 import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from '../wrapper';
 import ResourceLoader from './resource-loader';
 import constants from '../../../data/constants';
-import { registerMessageHandler } from '../message-handlers';
+import { registerMessageHandler } from '../message-registry';
 
 /**
  * @returns {Promise<string>}

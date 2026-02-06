@@ -1,6 +1,6 @@
 import { buildLivePixelValidator, validateSinglePixel } from '@duckduckgo/pixel-schema';
 
-import messageHandlers from '../../shared/js/background/message-handlers';
+import messageHandlers from '../../shared/js/background/message-registry';
 import RemoteConfig, { choseCohort } from '../../shared/js/background/components/remote-config';
 import AbnExperimentMetrics, { getDateStringEST, startOfDayEST } from '../../shared/js/background/components/abn-experiments';
 import load from '../../shared/js/background/load';

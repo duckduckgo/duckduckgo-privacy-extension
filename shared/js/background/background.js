@@ -37,6 +37,11 @@ import AbnExperimentMetrics, { setUpTestExperiment } from './components/abn-expe
 import MessageRouter from './components/message-router';
 import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
+
+// Trigger registration of default message handlers into the shared registry.
+import { registerStandardHandlers } from './message-handlers';
+registerStandardHandlers();
+
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events');
@@ -83,7 +88,7 @@ const components = {
     devtools,
     remoteConfig,
     abnMetrics,
-    messaging: new MessageRouter({ tabManager }),
+    messaging: new MessageRouter(),
 };
 
 // Chrome-only components

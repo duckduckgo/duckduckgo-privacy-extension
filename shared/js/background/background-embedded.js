@@ -22,6 +22,7 @@
 
 import RemoteConfigEmbedded from './components/remote-config-embedded';
 import CookiePromptManagement from './components/cookie-prompt-management';
+import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
 import NativeMessaging from './components/native-messaging';
 // FIXME: THIS IS ONLY ADDED FOR TESTING, REMOVE BEFORE MERGING
@@ -84,6 +85,10 @@ const remoteConfig = new RemoteConfigEmbedded({ nativeMessaging, settings });
 // eslint-disable-next-line no-unused-expressions
 remoteConfig.ready;
 
+// MessageRouter sets up browser.runtime.onMessage dispatching from the shared
+// message registry. It must be created before components that register handlers.
+const messaging = new MessageRouter();
+
 const cpm = new CookiePromptManagement({
     remoteConfig,
     nativeMessaging,
@@ -95,12 +100,14 @@ const cpm = new CookiePromptManagement({
  * @type {{
  *  nativeMessaging: NativeMessaging;
  *  remoteConfig: RemoteConfigEmbedded;
+ *  messaging: MessageRouter;
  *  cpm: CookiePromptManagement;
  * }}
  */
 const components = {
     nativeMessaging,
     remoteConfig,
+    messaging,
     cpm,
 };
 
