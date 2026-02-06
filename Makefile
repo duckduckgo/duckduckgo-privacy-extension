@@ -229,7 +229,7 @@ $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/content-scripts/cpm.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/content-scripts/cpm.js > $@
 
-JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js
+JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js content-scripts/cpm.js
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Content Scope Scripts

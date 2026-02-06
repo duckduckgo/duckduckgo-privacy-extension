@@ -21,6 +21,31 @@ import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.
  * @property {Record<string, number>} summaryEvents
  */
 
+
+/**
+ * @typedef {Object} CpmDashboardState
+ * @property {boolean} consentManaged
+ * @property {boolean?} cosmetic
+ * @property {boolean?} optoutFailed
+ * @property {boolean?} selftestFailed
+ * @property {boolean?} consentReloadLoop
+ * @property {string?} consentRule
+ * @property {boolean?} consentHeuristicEnabled
+ */
+
+/**
+ * Base interface for CPM communications with the "browser" side.
+ * @typedef {{
+ *  refreshDashboardState: (tabId: number, url: string, dashboardState: Partial<CpmDashboardState>) => Promise<void>;
+ *  showCpmAnimation: (tabId: number, topUrl: string, isCosmetic: boolean) => Promise<void>;
+ *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent/lib/messages').DoneMessage) => Promise<void>;
+ *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
+ *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;
+ *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
+ *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
+ * }} CPMMessagingBase
+ */
+
 /* global DEBUG */
 
 /**
@@ -43,11 +68,11 @@ export default class CookiePromptManagement {
     /**
      *
      * @param {{
-     *  cpmMessaging: import('./cpm-messaging').CPMMessagingBase
+     *  cpmMessaging: CPMMessagingBase
      * }} opts
      */
     constructor({ cpmMessaging }) {
-        /** @type {Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig>} */
+        /** @type {Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>} */
         this.remoteConfigJson = cpmMessaging.refreshRemoteConfig();
         this.cpmMessaging = cpmMessaging;
         this._heuristicActionEnabled = null;
@@ -257,11 +282,16 @@ export default class CookiePromptManagement {
             return;
         }
         const remoteConfig = await this.remoteConfigJson;
+        if (!remoteConfig) {
+            console.error('Remote config not ready');
+            return;
+        }
         const autoconsentRemoteConfig = remoteConfig.features.autoconsent;
         const autoconsentSettings = autoconsentRemoteConfig?.settings;
         console.log('received autoconsent message', msg.type, msg, 'sender:', sender, 'autoconsentRemoteConfig:', autoconsentRemoteConfig, 'defaultCompactRuleList:', defaultCompactRuleList);
 
         if (!autoconsentSettings || !tabId) {
+            console.log('autoconsentSettings or tabId not ready', autoconsentSettings, tabId);
             return;
         }
         const cpmState = await this.getCpmState();
@@ -278,6 +308,7 @@ export default class CookiePromptManagement {
 
                 const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(currentTopUrl.toString());
                 if (!isEnabled) {
+                    console.log('autoconsent disabled for site', senderUrl);
                     this.firePixel('disabled-for-site');
                     return;
                 }
@@ -340,6 +371,7 @@ export default class CookiePromptManagement {
                             ? filterCompactRules(compactRuleList, { url: senderUrl, mainFrame: isMainFrame })
                             : compactRuleList,
                 };
+                DEBUG && console.log('autoconsent config', autoconsentConfig);
 
                 chrome.tabs.sendMessage(
                     tabId,

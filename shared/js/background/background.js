@@ -91,6 +91,11 @@ const components = {
     messaging: new MessageRouter(),
 };
 
+// CPM components
+// const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });
+// const cpm = new CookiePromptManagement({ cpmMessaging });
+// components.cpm = cpm;
+
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
     components.metrics = [

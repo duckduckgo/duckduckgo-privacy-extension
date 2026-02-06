@@ -21,7 +21,7 @@
 /* global RELOADER */
 
 import CookiePromptManagement from './components/cookie-prompt-management';
-import { CPMEmbeddedMessaging } from './components/cpm-messaging';
+import { CPMEmbeddedMessaging } from './components/cpm-embedded-messaging';
 import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
 

@@ -6,29 +6,8 @@ import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 /* global DEBUG */
 
 /**
- * @typedef {Object} CpmDashboardState
- * @property {boolean} consentManaged
- * @property {boolean?} cosmetic
- * @property {boolean?} optoutFailed
- * @property {boolean?} selftestFailed
- * @property {boolean?} consentReloadLoop
- * @property {string?} consentRule
- * @property {boolean?} consentHeuristicEnabled
+ * @typedef {import('./cookie-prompt-management').CPMMessagingBase} CPMMessagingBase
  */
-
-/**
- * Base interface for CPM communications with the "browser" side.
- * @typedef {{
- *  refreshDashboardState: (tabId: number, url: string, dashboardState: Partial<CpmDashboardState>) => Promise<void>;
- *  showCpmAnimation: (tabId: number, topUrl: string, isCosmetic: boolean) => Promise<void>;
- *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent/lib/messages').DoneMessage) => Promise<void>;
- *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
- *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;
- *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
- *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig>;
- * }} CPMMessagingBase
- */
-
 
 /**
  * Mock implementation of NativeMessaging for testing while native side is not ready.
@@ -84,7 +63,6 @@ class NativeMessagingMock extends NativeMessaging {
         // no-op
     }
 }
-
 
 /**
  * CPM messaging for embedded extension.
