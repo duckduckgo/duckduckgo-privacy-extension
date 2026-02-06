@@ -84,6 +84,11 @@ export default class CookiePromptManagement {
             }
         });
 
+        // make sure we send the summary pixels before the extension is unloaded
+        browser.runtime.onSuspend.addListener(() => {
+            this.sendSummaryPixel();
+        });
+
         // Register autoconsent message handler with the shared message registry.
         // MessageRouter (in both regular and embedded builds) dispatches to this handler.
         registerMessageHandler('autoconsent', (options, sender, req) => {
