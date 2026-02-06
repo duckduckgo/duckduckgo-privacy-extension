@@ -154,9 +154,9 @@ LAST_COPY = build/.last-copy-$(browser)-$(type)
 RSYNC = rsync -ra --exclude="*~"
 
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
-	$(RSYNC) browsers/$(browser)/* shared/data $(BUILD_DIR)
+	$(RSYNC) browsers/$(browser)/* $(BUILD_DIR)
 ifneq ($(browser),embedded)
-	$(RSYNC) browsers/chrome/_locales shared/html shared/img $(BUILD_DIR)
+	$(RSYNC) browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill.css $(BUILD_DIR)/public/css/autofill.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill-host-styles_$(BROWSER_TYPE).css $(BUILD_DIR)/public/css/autofill-host-styles.css
@@ -226,11 +226,10 @@ $(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/fire/index.js > $@
 
-$(BUILD_DIR)/public/js/cpm.js: $(WATCHED_FILES)
+$(BUILD_DIR)/public/js/content-scripts/cpm.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/content-scripts/cpm.js > $@
 
-JS_BUNDLES = background.js background-embedded.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js cpm.js
-
+JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Content Scope Scripts
@@ -315,6 +314,13 @@ $(INTERMEDIATES_DIR)/surrogates.json: $(LAST_COPY)
 	node scripts/generateListOfSurrogates.mjs --json -i $(BUILD_DIR)/web_accessible_resources/ > $@
 
 BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
+
+# Embedded builds only need a few files, override the unnecessary ones.
+EMBEDDED_JS_BUNDLES = background-embedded.js content-scripts/cpm.js
+ifeq ($(browser),embedded)
+  BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(EMBEDDED_JS_BUNDLES))
+endif
+
 
 # Update buildtime.txt for development builds, for auto-reloading.
 # Note: Keep this below the other build targets, since it depends on the

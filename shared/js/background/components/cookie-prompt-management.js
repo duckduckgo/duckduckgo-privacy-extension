@@ -65,7 +65,7 @@ export default class CookiePromptManagement {
         registerContentScripts([
             {
                 id: 'cookie-prompt-management-script',
-                js: ['public/js/cpm.js'],
+                js: ['public/js/content-scripts/cpm.js'],
                 matches: ['<all_urls>'],
                 runAt: 'document_end',
                 world: 'ISOLATED',
