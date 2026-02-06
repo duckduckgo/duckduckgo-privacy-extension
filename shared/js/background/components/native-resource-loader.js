@@ -41,16 +41,14 @@ export default class NativeResourceLoader extends ResourceLoaderBase {
 
     async _loadFromNative() {
         console.log(`NativeResourceLoader: fetching ${this.name} from native`);
-        const result = await this._nativeMessaging.request('getResourceIfNew', { name: this.name, version: this.etag });
-        if (result.status === 'success') {
-            if (result.data.updated) {
-                return { contents: result.data.data, etag: `${result.data.version}` };
-            } else {
-                // no updates, fall back to the cached version
-                throw new Error(`NativeResourceLoader: no updates for ${this.name}`);
+        try {
+            const result = await this._nativeMessaging.request('getResourceIfNew', { name: this.name, version: this.etag });
+            if (result.updated) {
+                return { contents: result.data, etag: `${result.version}` };
             }
-        } else {
-            throw new Error(`NativeResourceLoader: Failed to fetch ${this.name} from native: ${result.error}`);
+            throw new Error(`NativeResourceLoader: no updates for ${this.name}`);
+        } catch (e) {
+            throw new Error(`NativeResourceLoader: Failed to fetch ${this.name} from native: ${e}`);
         }
     }
 

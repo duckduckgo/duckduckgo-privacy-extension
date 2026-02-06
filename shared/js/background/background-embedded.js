@@ -39,26 +39,24 @@ class NativeMessagingMock extends NativeMessaging {
             case 'getResourceIfNew':
                 if (params.version && params.version === `${bundledConfig.version}`) {
                     response = {
-                        status: 'success',
-                        data: { updated: false },
+                        updated: false,
                     };
                 } else {
                     response = {
-                        status: 'success',
-                        data: { updated: true, data: bundledConfig, version: `${bundledConfig.version}` },
+                        updated: true,
+                        data: bundledConfig,
+                        version: `${bundledConfig.version}`
                     };
                 }
                 break;
             case 'isFeatureEnabled':
                 response = {
-                    status: 'success',
-                    data: { enabled: true },
+                    enabled: true,
                 };
                 break;
             case 'isSubFeatureEnabled':
                 response = {
-                    status: 'success',
-                    data: { enabled: true },
+                    enabled: true,
                 };
                 break;
             default:
@@ -80,7 +78,7 @@ class NativeMessagingMock extends NativeMessaging {
     }
 }
 
-const nativeMessaging = new NativeMessagingMock();
+const nativeMessaging = new NativeMessagingMock('ddgInternalExtension', 'autoconsent');
 const remoteConfig = new RemoteConfigEmbedded({ nativeMessaging, settings });
 // trigger config refresh
 // eslint-disable-next-line no-unused-expressions

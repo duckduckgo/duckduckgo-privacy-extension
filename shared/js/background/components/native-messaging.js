@@ -1,50 +1,29 @@
-/**
- * Native messaging for WebKit-based browser extensions.
- *
- * This module provides a MessagingTransport for C-S-S messaging that uses
- * `browser.runtime.connectNative()` to communicate with the native macOS/iOS app.
- *
- * Note: Subscriptions are not supported because service workers can sleep,
- * causing the port connection to be lost. Use request/response patterns instead.
- */
 import browser from 'webextension-polyfill';
-import {
-    Messaging,
-    MessagingContext,
-    TestTransportConfig,
-} from '@duckduckgo/content-scope-scripts/messaging';
-
 /* global DEBUG */
 
 const NATIVE_APP_ID = 'com.duckduckgo.macos.browser';
 
 /**
  * @typedef {import('webextension-polyfill').Runtime.Port} RuntimePort
- * @typedef {import('@duckduckgo/content-scope-scripts/messaging/index.js').MessagingTransport} MessagingTransport
- * @typedef {import('@duckduckgo/content-scope-scripts/messaging/index.js').NotificationMessage} NotificationMessage
- * @typedef {import('@duckduckgo/content-scope-scripts/messaging/index.js').RequestMessage} RequestMessage
- * @typedef {import('@duckduckgo/content-scope-scripts/messaging/index.js').Subscription} Subscription
+ * @typedef {import('@duckduckgo/content-scope-scripts/messaging/schema.js').RequestMessage} RequestMessage
+ * @typedef {import('@duckduckgo/content-scope-scripts/messaging/schema.js').NotificationMessage} NotificationMessage
+ * @typedef {import('@duckduckgo/content-scope-scripts/messaging/schema.js').MessageResponse} MessageResponse
  */
 
 /**
- * MessagingTransport implementation for WebKit-based browser extensions.
+ * Messaging for communication with the native app based on Native Messaging API.
+ * It mimics the C-S-S messaging API.
  *
- * Uses `browser.runtime.connectNative()` to establish a port-based connection
- * to the native app.
- *
- * @implements {MessagingTransport}
+ * Note: Subscriptions are not supported because service workers can sleep,
+ * causing the port connection to be lost. Use request/response patterns instead.
  */
-class WebkitExtensionTransport {
-    /**
-     * @param {string} applicationId
-     * @param {MessagingContext} messagingContext
-     */
-    constructor(applicationId, messagingContext) {
-        this._applicationId = applicationId;
-        this._messagingContext = messagingContext;
-
+export default class NativeMessaging {
+    constructor(context, featureName) {
         /** @type {RuntimePort | null} */
         this._port = null;
+
+        this._context = context;
+        this._featureName = featureName;
 
         /** @type {Map<string, {resolve: (value: any) => void, reject: (error: Error) => void}>} */
         this._pendingRequests = new Map();
@@ -60,9 +39,8 @@ class WebkitExtensionTransport {
             return this._port;
         }
 
-        this._port = browser.runtime.connectNative(this._applicationId);
-
-        this._port.onMessage.addListener((message) => {
+        this._port = browser.runtime.connectNative(NATIVE_APP_ID);
+        this._port.onMessage.addListener((/** @type {MessageResponse} */ message) => {
             this._handleMessage(message);
         });
 
@@ -80,7 +58,7 @@ class WebkitExtensionTransport {
 
     /**
      * Handle incoming messages from native.
-     * @param {Record<string, any>} message
+     * @param {MessageResponse} message
      * @private
      */
     _handleMessage(message) {
@@ -99,116 +77,57 @@ class WebkitExtensionTransport {
     }
 
     /**
-     * @param {NotificationMessage} msg
+     * @param {string} method - The method name to call on the native side
+     * @param {Record<string, any>} [params] - Optional parameters to send
      */
-    notify(msg) {
+    notify(method, params = {}) {
         try {
             const port = this._getPort();
-            port.postMessage({
-                method: msg.method,
-                params: msg.params || {},
-            });
+            port.postMessage(
+                /** @type {NotificationMessage} */
+                {
+                    context: this._context,
+                    featureName: this._featureName,
+                    method,
+                    params,
+                }
+            );
         } catch (e) {
-            if (this._messagingContext.env === 'development') {
-                console.error('[NativeMessaging] Failed to send notification:', e);
-            }
+            DEBUG && console.error('[NativeMessaging] Failed to send notification:', e);
         }
     }
 
     /**
-     * @param {RequestMessage} msg
+     * @param {string} method - The method name to call on the native side
+     * @param {Record<string, any>} [params] - Optional parameters to send
      * @returns {Promise<any>}
      */
-    request(msg) {
+    request(method, params = {}) {
         return new Promise((resolve, reject) => {
-            this._pendingRequests.set(msg.id, { resolve, reject });
+            const id = crypto.randomUUID();
+            this._pendingRequests.set(id, { resolve, reject });
 
             try {
                 const port = this._getPort();
-                port.postMessage({
-                    method: msg.method,
-                    id: msg.id,
-                    params: msg.params || {},
-                });
+
+                port.postMessage(
+                    /** @type {RequestMessage} */
+                    {
+                        context: this._context,
+                        featureName: this._featureName,
+                        id,
+                        method,
+                        params,
+                    }
+                );
             } catch (e) {
-                this._pendingRequests.delete(msg.id);
+                this._pendingRequests.delete(id);
                 reject(e);
             }
         });
     }
 
-    /**
-     * @param {Subscription} _msg
-     * @param {(value: unknown) => void} _callback
-     * @returns {() => void}
-     */
     subscribe(_msg, _callback) {
         throw new Error('Subscriptions are not supported in WebkitExtensionTransport');
-    }
-}
-
-/**
- * NativeMessaging provides a simplified interface for communicating with
- * the native app from a WebKit-based browser extension.
- */
-export default class NativeMessaging {
-    /**
-     * @param {object} [config]
-     * @param {string} [config.applicationId] - Native app bundle identifier
-     * @param {string} [config.context] - Message context
-     * @param {string} [config.featureName] - Feature name
-     * @param {'production' | 'development'} [config.env] - Environment
-     */
-    constructor(config = {}) {
-        const {
-            applicationId = NATIVE_APP_ID,
-            context = 'ddgInternalExtension',
-            featureName = 'autoconsent',
-            env = DEBUG ? 'development' : 'production',
-        } = config;
-
-        const messagingContext = new MessagingContext({
-            context,
-            featureName,
-            env,
-        });
-
-        const transport = new WebkitExtensionTransport(applicationId, messagingContext);
-
-        /** @type {Messaging} */
-        this._messaging = new Messaging(messagingContext, new TestTransportConfig(transport));
-    }
-
-    /**
-     * Send a request and wait for a response.
-     *
-     * @param {string} method - The method name to call on the native side
-     * @param {Record<string, any>} [params] - Optional parameters to send
-     * @returns {Promise<any>} - The result from the native side
-     */
-    async request(method, params = {}) {
-        DEBUG && console.log('[NativeMessaging] request', method, params);
-        const response = await this._messaging.request(method, params);
-        DEBUG && console.log('[NativeMessaging] response', response);
-        return response;
-    }
-
-    /**
-     * Send a fire-and-forget notification.
-     *
-     * @param {string} method - The method name to call on the native side
-     * @param {Record<string, any>} [params] - Optional parameters to send
-     */
-    notify(method, params = {}) {
-        DEBUG && console.log('[NativeMessaging] notify', method, params);
-        this._messaging.notify(method, params);
-    }
-
-    /**
-     * Get the underlying Messaging instance for advanced usage.
-     * @returns {Messaging}
-     */
-    get messaging() {
-        return this._messaging;
     }
 }

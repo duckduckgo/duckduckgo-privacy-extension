@@ -554,13 +554,17 @@ export default class CookiePromptManagement {
      */
     async checkAutoconsentEnabledForSite(url) {
         if (BUILD_TARGET === 'embedded') {
-            const result = await this.nativeMessaging.request('isFeatureEnabled', {
-                featureName: 'autoconsent',
-                url,
-            });
-            return result.status === 'success' && result.data.enabled;
+            try {
+                const result = await this.nativeMessaging.request('isFeatureEnabled', {
+                    featureName: 'autoconsent',
+                    url,
+                });
+                return result.enabled;
+            } catch (e) {
+                console.error('error checking autoconsent enabled for site', e);
+                return false;
+            }
         }
-        // FIXME: implement this
         return true;
     }
 
@@ -570,13 +574,17 @@ export default class CookiePromptManagement {
      */
     async checkSubfeatureEnabled(subfeatureName) {
         if (BUILD_TARGET === 'embedded') {
-            const result = await this.nativeMessaging.request('isSubFeatureEnabled', {
-                featureName: 'autoconsent',
-                subfeatureName,
-            });
-            return result.status === 'success' && result.data.enabled;
+            try {
+                const result = await this.nativeMessaging.request('isSubFeatureEnabled', {
+                    featureName: 'autoconsent',
+                    subfeatureName,
+                });
+                return result.enabled;
+            } catch (e) {
+                console.error('error checking autoconsent subfeature enabled', e);
+                return false;
+            }
         }
-        // FIXME: implement this
         return true;
     }
 
