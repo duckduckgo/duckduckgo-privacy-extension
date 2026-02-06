@@ -138,12 +138,8 @@ setup-artifacts-dir:
 MKDIR_TARGETS = $(BUILD_DIR)/data/bundled $(BUILD_DIR)/html \
                 $(BUILD_DIR)/img $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources \
                 $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css \
-                $(BUILD_DIR)/public/font \
+                $(BUILD_DIR)/public/font $(BUILD_DIR)/_locales \
                 $(INTERMEDIATES_DIR)
-# _locales is only needed for non-embedded browsers
-ifneq ($(browser),embedded)
-  MKDIR_TARGETS += $(BUILD_DIR)/_locales
-endif
 
 $(MKDIR_TARGETS):
 	mkdir -p $@

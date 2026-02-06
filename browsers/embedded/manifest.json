@@ -1,8 +1,9 @@
 {
-    "name": "DuckDukGo Internal Extension",
+    "name": "DuckDuckGo Embedded Extension",
     "description": "Embedded extension for native app integration",
-    "version": "1.0.0",
+    "version": "2026.2.6",
     "manifest_version": 3,
+    "default_locale": "en",
     "background": {
         "service_worker": "public/js/background-embedded.js"
     },
