@@ -2,7 +2,6 @@
  * @typedef {import('../settings.js')} Settings
  * @typedef {import('./tds').default} TDSStorage
  * @typedef {import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig} Config
- * @typedef {import('./resource-loader-base').default} ResourceLoaderBase
  * @typedef {{
  *  localeCountry: string;
  *  localeLanguage: string;
@@ -26,20 +25,6 @@
  *  cohort: ChosenCohort?;
  *  availableCohorts: import('@duckduckgo/privacy-configuration/schema/feature').Cohort[] | undefined
  * }} SubFeatureStatus
- *
- * Common interface for RemoteConfig classes.
- * Extends ResourceLoaderBase with config-specific methods.
- * @typedef {ResourceLoaderBase & {
- *  config: Config | null;
- *  isFeatureEnabled: (featureName: string) => boolean;
- *  getFeatureSettings: (featureName: string) => object;
- *  isSubFeatureEnabled: (featureName: string, subFeatureName: string, cohortName?: string) => boolean;
- *  getSubFeatureNames: (featureName: string) => string[];
- *  getSubFeatureStatuses: () => SubFeatureStatus[];
- *  getCohort: (featureName: string, subFeatureName: string) => ChosenCohort | null;
- *  getCohortName: (featureName: string, subFeatureName: string) => string | null;
- *  setCohort: (featureName: string, subFeatureName: string, cohort: ChosenCohort | null) => void;
- * }} RemoteConfigInterface
  */
 
 import { getUserLocaleCountry, getUserLocale } from '../i18n';
@@ -60,9 +45,6 @@ async function getConfigUrl() {
     return constants.tdsLists[2].url;
 }
 
-/**
- * @implements {RemoteConfigInterface}
- */
 export default class RemoteConfig extends ResourceLoader {
     /**
      * @param {{

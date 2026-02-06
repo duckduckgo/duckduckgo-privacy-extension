@@ -43,13 +43,13 @@ export default class CookiePromptManagement {
     /**
      *
      * @param {{
-     *  remoteConfig: import('./remote-config').RemoteConfigInterface
      *  cpmMessaging: import('./cpm-messaging').CPMMessagingBase
      *  settings: import('../settings')
      * }} opts
      */
-    constructor({ remoteConfig, cpmMessaging, settings }) {
-        this.remoteConfig = remoteConfig;
+    constructor({ cpmMessaging, settings }) {
+        /** @type {Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig>} */
+        this.remoteConfigJson = cpmMessaging.refreshRemoteConfig();
         this.cpmMessaging = cpmMessaging;
         this.settings = settings;
         this._heuristicActionEnabled = null;
@@ -253,8 +253,9 @@ export default class CookiePromptManagement {
             console.error('error getting sender domain', e);
             return;
         }
-        await this.remoteConfig.ready;
-        const autoconsentRemoteConfig = this.remoteConfig.config?.features.autoconsent;
+        await this.settings.ready();
+        const remoteConfig = await this.remoteConfigJson;
+        const autoconsentRemoteConfig = remoteConfig.features.autoconsent;
         const autoconsentSettings = autoconsentRemoteConfig?.settings;
         console.log('received autoconsent message', msg.type, msg, 'sender:', sender, 'autoconsentRemoteConfig:', autoconsentRemoteConfig, 'defaultCompactRuleList:', defaultCompactRuleList);
 

@@ -1,6 +1,7 @@
 import NativeMessaging from './native-messaging';
 // FIXME: THIS IS ONLY ADDED FOR TESTING, REMOVE BEFORE MERGING
 import bundledConfig from '../../../data/bundled/macos-config.json';
+import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 
 /* global DEBUG */
 
@@ -24,6 +25,7 @@ import bundledConfig from '../../../data/bundled/macos-config.json';
  *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
  *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;
  *  sendPixel: (pixelName: string, params: Record<string, any>) => Promise<void>;
+ *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig>;
  * }} CPMMessagingBase
  */
 
@@ -142,5 +144,25 @@ export class CPMEmbeddedMessaging {
             pixelName,
             params,
         });
+    }
+
+    async refreshRemoteConfig() {
+        console.log(`fetching config from native`);
+        const cachedConfig = (await getFromSessionStorage('config')) || { version: 'unknown' };
+        const cachedConfigVersion = `${cachedConfig.version}`;
+
+        try {
+            const result = await this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion });
+            if (result.updated) {
+                await setToSessionStorage('config', result.data);
+            }
+            return result.data;
+        } catch (e) {
+            console.error('error refreshing remote config', e);
+            if (cachedConfigVersion !== 'unknown') {
+                return cachedConfig;
+            }
+            throw e;
+        }
     }
 }

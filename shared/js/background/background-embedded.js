@@ -20,7 +20,6 @@
  */
 /* global RELOADER */
 
-import RemoteConfigEmbedded from './components/remote-config-embedded';
 import CookiePromptManagement from './components/cookie-prompt-management';
 import { CPMEmbeddedMessaging } from './components/cpm-messaging';
 import MessageRouter from './components/message-router';
@@ -30,17 +29,11 @@ const settings = require('./settings');
 
 const cpmMessaging = new CPMEmbeddedMessaging();
 
-const remoteConfig = new RemoteConfigEmbedded({ nativeMessaging, settings });
-// trigger config refresh
-// eslint-disable-next-line no-unused-expressions
-remoteConfig.ready;
-
 // MessageRouter sets up browser.runtime.onMessage dispatching from the shared
 // message registry. It must be created before components that register handlers.
 const messaging = new MessageRouter();
 
 const cpm = new CookiePromptManagement({
-    remoteConfig,
     cpmMessaging,
     settings,
 });
@@ -48,13 +41,11 @@ const cpm = new CookiePromptManagement({
 /**
  * Components exposed for debugging and native app integration
  * @type {{
- *  remoteConfig: RemoteConfigEmbedded;
  *  messaging: MessageRouter;
  *  cpm: CookiePromptManagement;
  * }}
  */
 const components = {
-    remoteConfig,
     messaging,
     cpm,
 };
