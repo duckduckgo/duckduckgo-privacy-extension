@@ -119,4 +119,6 @@ async function init() {
     });
 }
 
-init();
+init().catch((e) => {
+    console.error('content-scope-messaging init failed', e);
+});

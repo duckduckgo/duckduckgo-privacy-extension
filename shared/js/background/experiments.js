@@ -68,6 +68,9 @@ class Experiment {
                         this.applySettingsChanges();
                     }
                 }
+            })
+            .catch((e) => {
+                console.error('setActiveExperiment failed', e);
             });
     }
 

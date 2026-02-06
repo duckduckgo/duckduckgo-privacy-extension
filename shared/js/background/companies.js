@@ -126,33 +126,53 @@ const Companies = (() => {
         },
 
         buildFromStorage: () => {
-            browserWrapper.getFromStorage(storageName).then((storageData) => {
-                // uncomment for testing
-                // storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
-                storageData = Companies.sanitizeData(storageData);
+            browserWrapper
+                .getFromStorage(storageName)
+                .then((storageData) => {
+                    // uncomment for testing
+                    // storageData.twitter = {count: 10, name: 'twitter', pagesSeenOn: 10}
+                    storageData = Companies.sanitizeData(storageData);
 
-                for (const company in storageData) {
-                    const newCompany = Companies.add(storageData[company]);
-                    newCompany.set('count', storageData[company].count || 0);
-                    newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0);
-                }
-            });
+                    for (const company in storageData) {
+                        const newCompany = Companies.add(storageData[company]);
+                        newCompany.set('count', storageData[company].count || 0);
+                        newCompany.set('pagesSeenOn', storageData[company].pagesSeenOn || 0);
+                    }
+                })
+                .catch((e) => {
+                    console.error('Failed to load companies from storage', e);
+                });
 
-            browserWrapper.getFromStorage('totalPages').then((n) => {
-                if (n) totalPages = n;
-            });
-            browserWrapper.getFromStorage('totalPagesWithTrackers').then((n) => {
-                if (n) totalPagesWithTrackers = n;
-            });
-            browserWrapper.getFromStorage('lastStatsResetDate').then((d) => {
-                if (d) {
-                    lastStatsResetDate = d;
-                } else {
-                    // if 'lastStatsResetDate' not found, reset all data
-                    // https://app.asana.com/0/0/460622849089890/f
-                    Companies.resetData();
-                }
-            });
+            browserWrapper
+                .getFromStorage('totalPages')
+                .then((n) => {
+                    if (n) totalPages = n;
+                })
+                .catch(() => {
+                    // Intentionally swallowed: non-critical stat loading
+                });
+            browserWrapper
+                .getFromStorage('totalPagesWithTrackers')
+                .then((n) => {
+                    if (n) totalPagesWithTrackers = n;
+                })
+                .catch(() => {
+                    // Intentionally swallowed: non-critical stat loading
+                });
+            browserWrapper
+                .getFromStorage('lastStatsResetDate')
+                .then((d) => {
+                    if (d) {
+                        lastStatsResetDate = d;
+                    } else {
+                        // if 'lastStatsResetDate' not found, reset all data
+                        // https://app.asana.com/0/0/460622849089890/f
+                        Companies.resetData();
+                    }
+                })
+                .catch(() => {
+                    // Intentionally swallowed: non-critical stat loading
+                });
         },
     };
 })();
