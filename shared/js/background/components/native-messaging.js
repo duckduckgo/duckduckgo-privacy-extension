@@ -90,7 +90,7 @@ export default class NativeMessaging {
                     featureName: this._featureName,
                     method,
                     params,
-                }
+                },
             );
         } catch (e) {
             DEBUG && console.error('[NativeMessaging] Failed to send notification:', e);
@@ -118,7 +118,7 @@ export default class NativeMessaging {
                         id,
                         method,
                         params,
-                    }
+                    },
                 );
             } catch (e) {
                 this._pendingRequests.delete(id);

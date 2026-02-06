@@ -21,7 +21,6 @@ import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.
  * @property {Record<string, number>} summaryEvents
  */
 
-
 /**
  * @typedef {Object} CpmDashboardState
  * @property {boolean} consentManaged
@@ -95,7 +94,7 @@ export default class CookiePromptManagement {
                 matchOriginAsFallback: true,
                 allFrames: true,
             },
-        ])
+        ]);
 
         // restore the current CPM state from storage
         this.getCpmState();
@@ -132,7 +131,7 @@ export default class CookiePromptManagement {
                 onlyRules: new Set(jsonCpmState.detectionCache?.onlyRules || []),
             },
             summaryEvents: structuredClone(jsonCpmState.summaryEvents || {}),
-        }
+        };
     }
 
     /**
@@ -148,7 +147,7 @@ export default class CookiePromptManagement {
                 onlyRules: Array.from(cpmState.detectionCache.onlyRules),
             },
             summaryEvents: structuredClone(cpmState.summaryEvents),
-        }
+        };
     }
 
     /**
@@ -168,7 +167,6 @@ export default class CookiePromptManagement {
         }
         return this._deserializeCpmState(this._jsonCpmState);
     }
-
 
     async checkHeuristicActionEnabled(force = false) {
         if (this._heuristicActionEnabled === null || force) {
@@ -209,10 +207,7 @@ export default class CookiePromptManagement {
         }
 
         DEBUG && console.log('Main frame navigated from', oldTopUrl, 'to', newTopUrl);
-        if (oldTopUrl.host !== newTopUrl.host
-            || oldTopUrl.pathname !== newTopUrl.pathname
-            || oldTopUrl.protocol !== newTopUrl.protocol
-        ) {
+        if (oldTopUrl.host !== newTopUrl.host || oldTopUrl.pathname !== newTopUrl.pathname || oldTopUrl.protocol !== newTopUrl.protocol) {
             // url has changed (as far as reload loop prevention is concerned)
             this.clearReloadLoopState(tabId);
         }
@@ -288,7 +283,18 @@ export default class CookiePromptManagement {
         }
         const autoconsentRemoteConfig = remoteConfig.features.autoconsent;
         const autoconsentSettings = autoconsentRemoteConfig?.settings;
-        console.log('received autoconsent message', msg.type, msg, 'sender:', sender, 'autoconsentRemoteConfig:', autoconsentRemoteConfig, 'defaultCompactRuleList:', defaultCompactRuleList);
+        DEBUG &&
+            console.log(
+                'received autoconsent message',
+                msg.type,
+                msg,
+                'sender:',
+                sender,
+                'autoconsentRemoteConfig:',
+                autoconsentRemoteConfig,
+                'defaultCompactRuleList:',
+                defaultCompactRuleList,
+            );
 
         if (!autoconsentSettings || !tabId) {
             console.log('autoconsentSettings or tabId not ready', autoconsentSettings, tabId);
@@ -325,20 +331,16 @@ export default class CookiePromptManagement {
 
                 if (isMainFrame) {
                     // no await
-                    this.cpmMessaging.refreshDashboardState(
-                        tabId,
-                        senderUrl,
-                        {
-                            // keep "cookies managed" if we did it for this site since app launch
-                            consentManaged: cpmState.sitesNotifiedCache.has(senderDomain),
-                            cosmetic: null,
-                            optoutFailed: null,
-                            selftestFailed: null,
-                            consentReloadLoop: this._reloadLoopDetected.has(tabId),
-                            consentRule: this._lastHandledCMP.get(tabId) || null,
-                            consentHeuristicEnabled: heuristicActionEnabled
-                        }
-                    );
+                    this.cpmMessaging.refreshDashboardState(tabId, senderUrl, {
+                        // keep "cookies managed" if we did it for this site since app launch
+                        consentManaged: cpmState.sitesNotifiedCache.has(senderDomain),
+                        cosmetic: null,
+                        optoutFailed: null,
+                        selftestFailed: null,
+                        consentReloadLoop: this._reloadLoopDetected.has(tabId),
+                        consentRule: this._lastHandledCMP.get(tabId) || null,
+                        consentHeuristicEnabled: heuristicActionEnabled,
+                    });
                     // no await
                     this.firePixel('init');
                 }
@@ -398,19 +400,15 @@ export default class CookiePromptManagement {
             case 'optOutResult': {
                 if (!msg.result) {
                     this.firePixel('error_optout');
-                    this.cpmMessaging.refreshDashboardState(
-                        tabId,
-                        senderUrl,
-                        {
-                            consentManaged: true,
-                            cosmetic: null,
-                            optoutFailed: true,
-                            selftestFailed: null,
-                            consentReloadLoop: this._reloadLoopDetected.has(tabId),
-                            consentRule: msg.cmp,
-                            consentHeuristicEnabled: heuristicActionEnabled
-                        }
-                    )
+                    this.cpmMessaging.refreshDashboardState(tabId, senderUrl, {
+                        consentManaged: true,
+                        cosmetic: null,
+                        optoutFailed: true,
+                        selftestFailed: null,
+                        consentReloadLoop: this._reloadLoopDetected.has(tabId),
+                        consentRule: msg.cmp,
+                        consentHeuristicEnabled: heuristicActionEnabled,
+                    });
                 } else {
                     // TODO: implement self-tests
                 }
@@ -418,30 +416,22 @@ export default class CookiePromptManagement {
             }
             case 'autoconsentDone': {
                 // Remember the last handled CMP for reload loop detection
-                this.rememberLastHandledCMP(
-                    tabId,
-                    msg.cmp,
-                    msg.isCosmetic
-                );
-                this.cpmMessaging.refreshDashboardState(
-                    tabId,
-                    senderUrl,
-                    {
-                        consentManaged: true,
-                        cosmetic: msg.isCosmetic,
-                        optoutFailed: false,
-                        selftestFailed: null,
-                        consentReloadLoop: this._reloadLoopDetected.has(tabId),
-                        consentRule: msg.cmp,
-                        consentHeuristicEnabled: heuristicActionEnabled
-                    }
-                )
+                this.rememberLastHandledCMP(tabId, msg.cmp, msg.isCosmetic);
+                this.cpmMessaging.refreshDashboardState(tabId, senderUrl, {
+                    consentManaged: true,
+                    cosmetic: msg.isCosmetic,
+                    optoutFailed: false,
+                    selftestFailed: null,
+                    consentReloadLoop: this._reloadLoopDetected.has(tabId),
+                    consentRule: msg.cmp,
+                    consentHeuristicEnabled: heuristicActionEnabled,
+                });
                 if (msg.cmp === 'HEURISTIC') {
                     this.firePixel('done_heuristic');
                 } else {
                     this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done');
                 }
-                cpmState.sitesNotifiedCache.add(senderDomain)
+                cpmState.sitesNotifiedCache.add(senderDomain);
                 await this.updateCpmState(cpmState);
                 this.cpmMessaging.showCpmAnimation(tabId, currentTopUrl.toString(), msg.isCosmetic);
                 this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown');

@@ -45,7 +45,7 @@ export class CPMStandaloneMessaging {
         if (type === 'daily') {
             // emulate "daily" pixel firing
             pixelName = `${pixelName}_daily`;
-            const lastSent = this.remoteConfig.settings.getSetting('pixelsLastSent') || {}
+            const lastSent = this.remoteConfig.settings.getSetting('pixelsLastSent') || {};
             if (lastSent[pixelName] && lastSent[pixelName] > Date.now() - 1000 * 60 * 60 * 24) {
                 return;
             }

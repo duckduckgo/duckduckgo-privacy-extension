@@ -26,7 +26,7 @@ class NativeMessagingMock extends NativeMessaging {
                     response = {
                         updated: true,
                         data: bundledConfig,
-                        version: `${bundledConfig.version}`
+                        version: `${bundledConfig.version}`,
                     };
                 }
                 break;
@@ -70,7 +70,7 @@ class NativeMessagingMock extends NativeMessaging {
  */
 export class CPMEmbeddedMessaging {
     constructor() {
-        this.nativeMessaging = new NativeMessagingMock('ddgInternalExtension', 'autoconsent');;
+        this.nativeMessaging = new NativeMessagingMock('ddgInternalExtension', 'autoconsent');
     }
 
     async refreshDashboardState(tabId, url, dashboardState) {

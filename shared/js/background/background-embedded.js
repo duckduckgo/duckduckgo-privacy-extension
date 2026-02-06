@@ -51,5 +51,4 @@ console.log(new Date(), 'DuckDuckGo Embedded Extension loaded:', components);
 // @ts-ignore
 self.components = components;
 
-
 RELOADER && initReloader();
