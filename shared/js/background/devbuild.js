@@ -14,6 +14,7 @@ const https = require('./https');
 const browserWrapper = require('./wrapper');
 const utils = require('./utils');
 const Tab = require('./classes/tab');
+const HttpsRedirects = require('./classes/https-redirects');
 const { TabState } = require('./classes/tab-state');
 const Wrapper = require('./wrapper.js');
 const { setListContents, getListContents } = require('./message-handlers');
@@ -28,6 +29,7 @@ export default function initDebugBuild() {
         },
         tabManager,
         Tab,
+        HttpsRedirects,
         TabState,
         Wrapper,
         atb,

@@ -2,8 +2,6 @@ const utils = require('../utils');
 const browserWrapper = require('../wrapper');
 const { addSmarterEncryptionSessionException } = require('../dnr-smarter-encryption');
 
-const MAINFRAME_RESET_MS = 3000;
-const REQUEST_REDIRECT_LIMIT = 7;
 const manifestVersion = browserWrapper.getManifestVersion();
 
 /**
@@ -15,6 +13,9 @@ const manifestVersion = browserWrapper.getManifestVersion();
  */
 
 class HttpsRedirects {
+    static MAINFRAME_RESET_MS = 3000;
+    static REQUEST_REDIRECT_LIMIT = 7;
+
     constructor() {
         this.failedUpgradeHosts = {};
         this.redirectCounts = {};
@@ -38,7 +39,7 @@ class HttpsRedirects {
 
             // @ts-ignore
             clearTimeout(this.clearMainFrameTimeout);
-            this.clearMainFrameTimeout = setTimeout(this.resetMainFrameRedirect, MAINFRAME_RESET_MS);
+            this.clearMainFrameTimeout = setTimeout(this.resetMainFrameRedirect, HttpsRedirects.MAINFRAME_RESET_MS);
         } else {
             this.redirectCounts[request.requestId] = this.redirectCounts[request.requestId] || 0;
             this.redirectCounts[request.requestId] += 1;
@@ -73,7 +74,10 @@ class HttpsRedirects {
             if (this.mainFrameRedirect && this.mainFrameRedirect.url === request.url) {
                 const timeSinceFirstHit = Date.now() - this.mainFrameRedirect.time;
 
-                if (timeSinceFirstHit < MAINFRAME_RESET_MS && this.mainFrameRedirect.count >= REQUEST_REDIRECT_LIMIT) {
+                if (
+                    timeSinceFirstHit < HttpsRedirects.MAINFRAME_RESET_MS &&
+                    this.mainFrameRedirect.count >= HttpsRedirects.REQUEST_REDIRECT_LIMIT
+                ) {
                     canRedirect = false;
                 }
             }
@@ -82,7 +86,7 @@ class HttpsRedirects {
              * For other requests, the server would likely just do a 301 redirect
              * to the HTTP version - so we can use the requestId as an identifier
              */
-            canRedirect = this.redirectCounts[request.requestId] < REQUEST_REDIRECT_LIMIT;
+            canRedirect = this.redirectCounts[request.requestId] < HttpsRedirects.REQUEST_REDIRECT_LIMIT;
         }
 
         // remember this hostname as previously failed, don't try to upgrade it
@@ -113,7 +117,7 @@ class HttpsRedirects {
         this.mainFrameRedirect = Object.assign({}, redirectData);
 
         // setup reset timeout again
-        this.clearMainFrameTimeout = setTimeout(this.resetMainFrameRedirect, MAINFRAME_RESET_MS);
+        this.clearMainFrameTimeout = setTimeout(this.resetMainFrameRedirect, HttpsRedirects.MAINFRAME_RESET_MS);
     }
 
     getMainFrameRedirect() {
