@@ -1,3 +1,4 @@
+import { SHOULD_USE_DNR } from './environment';
 const Companies = require('./companies');
 const settings = require('./settings');
 const Tab = require('./classes/tab');
@@ -77,7 +78,7 @@ class TabManager {
         if (tabToRemove) {
             tabToRemove?.adClick?.removeDNR();
 
-            if (browserWrapper.getManifestVersion() === 3) {
+            if (SHOULD_USE_DNR) {
                 clearClickToLoadDnrRulesForTab(tabToRemove);
             }
         }
@@ -154,7 +155,7 @@ class TabManager {
         // Ensure that user allowlisting/denylisting is honoured for manifest v3
         // builds of the extension, by adding/removing the necessary
         // declarativeNetRequest rules.
-        if (browserWrapper.getManifestVersion() === 3) {
+        if (SHOULD_USE_DNR) {
             if (data.list === 'allowlisted') {
                 await toggleUserAllowlistDomain(data.domain, data.value);
             } else if (data.list === 'denylisted') {

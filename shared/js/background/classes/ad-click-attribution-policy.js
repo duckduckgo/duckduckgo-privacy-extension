@@ -4,6 +4,7 @@ import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils';
 
 import settings from '../settings';
 import { sendPixelRequest } from '../pixels';
+import { IS_BLOCKING_WEBREQUEST_AVAILABLE } from '../environment';
 const { getFeatureSettings, getBaseDomain } = require('../utils');
 const browserWrapper = require('../wrapper');
 const { getNextSessionRuleId } = require('../dnr-session-rule-id');
@@ -84,7 +85,7 @@ export class AdClickAttributionPolicy {
             this.domainDetectionEnabled,
         );
 
-        if (manifestVersion === 3) {
+        if (manifestVersion === 3 && !IS_BLOCKING_WEBREQUEST_AVAILABLE) {
             adClick.createDNR(tab.id);
         }
 

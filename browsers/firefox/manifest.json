@@ -14,8 +14,8 @@
         "48": "img/icon_48.png",
         "128": "img/icon_128.png"
     },
-    "manifest_version": 2,
-    "browser_action": {
+    "manifest_version": 3,
+    "action": {
         "default_icon": "img/icon_browser_action.png",
         "default_popup": "dashboard/html/browser.html"
     },
@@ -29,7 +29,7 @@
     },
     "chrome_settings_overrides": {
         "search_provider": {
-            "favicon_url": "https://duckduckgo.com/favicon.ico",
+            "favicon_url": "/favicon.ico",
             "is_default": true,
             "keyword": "duckduckgo.com",
             "name": "DuckDuckGo",
@@ -96,17 +96,36 @@
         "contextMenus",
         "webRequest",
         "webRequestBlocking",
-        "*://*/*",
         "webNavigation",
         "activeTab",
         "tabs",
         "storage",
-        "<all_urls>",
         "alarms"
     ],
+    "host_permissions": [
+        "*://*/*"
+    ],
     "web_accessible_resources": [
-        "/web_accessible_resources/*",
-        "/public/css/autofill.css",
-        "/public/font/*"
+        {
+            "resources": [
+                "/web_accessible_resources/*",
+                "/img/logo-small-grayscale.svg",
+                "/public/css/autofill.css"
+            ],
+            "use_dynamic_url": true,
+            "matches": [
+                "<all_urls>"
+            ]
+        },
+        {
+            "resources": [
+                "/public/font/*",
+                "/img/logo-small.svg"
+            ],
+            "use_dynamic_url": false,
+            "matches": [
+                "<all_urls>"
+            ]
+        }
     ]
 }

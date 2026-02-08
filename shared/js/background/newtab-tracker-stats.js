@@ -1,12 +1,13 @@
 import browser from 'webextension-polyfill';
 import constants from '../../data/constants';
-import { getManifestVersion, createAlarm, syncToStorage, getFromStorage } from './wrapper.js';
+import { createAlarm, syncToStorage, getFromStorage } from './wrapper.js';
 import tdsStorage from './storage/tds';
 import settings from './settings';
 import { emitter, TrackerBlockedEvent } from './before-request.js';
 import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils';
 import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
 import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils';
+import { IS_BLOCKING_WEBREQUEST_AVAILABLE } from './environment';
 
 /**
  * @typedef {import('./settings.js')} Settings
@@ -77,8 +78,7 @@ export class NewTabTrackerStats {
      * place for this module.
      */
     register() {
-        const manifestVersion = getManifestVersion();
-        if (manifestVersion === 3) {
+        if (!IS_BLOCKING_WEBREQUEST_AVAILABLE) {
             mv3Redirect();
         } else {
             mv2Redirect();
