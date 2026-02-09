@@ -134,6 +134,7 @@ export class CPMEmbeddedMessaging {
         console.log(`fetching config from native`);
         const cachedConfig = (await getFromSessionStorage('config')) || { version: 'unknown' };
         const cachedConfigVersion = `${cachedConfig.version}`;
+        DEBUG && console.log('cachedConfig', cachedConfig);
 
         try {
             const result = await this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion });

@@ -71,10 +71,9 @@ export default class CookiePromptManagement {
      * }} opts
      */
     constructor({ cpmMessaging }) {
-        /** @type {Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>} */
-        this.remoteConfigJson = cpmMessaging.refreshRemoteConfig();
         this.cpmMessaging = cpmMessaging;
         this._heuristicActionEnabled = null;
+        this.scheduleConfigRefresh();
 
         // Ephemeral state for reload loop prevention. We assume that service worker never sleeps during a reload loop, so we don't persist these.
         /** @type {Map<number, URL>} */
@@ -116,6 +115,11 @@ export default class CookiePromptManagement {
         registerMessageHandler('autoconsent', (options, sender, req) => {
             return this.handleAutoConsentMessage(req.autoconsentPayload, sender);
         });
+    }
+
+    scheduleConfigRefresh() {
+        /** @type {Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>} */
+        this.remoteConfigJson = this.cpmMessaging.refreshRemoteConfig();
     }
 
     /**
@@ -276,6 +280,7 @@ export default class CookiePromptManagement {
             console.error('error getting sender domain', e);
             return;
         }
+        // use the cached config
         const remoteConfig = await this.remoteConfigJson;
         if (!remoteConfig) {
             console.error('Remote config not ready');
@@ -310,6 +315,8 @@ export default class CookiePromptManagement {
                 // do the navigation check before checking if the domain is allowlisted
                 if (isMainFrame) {
                     currentTopUrl = this.updateTopUrl(tabId, senderUrl);
+                    // schedule config refresh (will be used next time)
+                    this.scheduleConfigRefresh();
                 }
 
                 const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(currentTopUrl.toString());
