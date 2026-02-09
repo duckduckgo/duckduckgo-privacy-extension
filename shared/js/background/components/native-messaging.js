@@ -45,12 +45,16 @@ export default class NativeMessaging {
             return this._port;
         }
 
-        this._port = browser.runtime.connectNative(NATIVE_APP_ID);
+        DEBUG && console.log('[NativeMessaging] Connecting to native app:', this._appId);
+        this._port = browser.runtime.connectNative(this._appId);
         this._port.onMessage.addListener((/** @type {MessageResponse} */ message) => {
+            DEBUG && console.log('[NativeMessaging] Received from native:', JSON.stringify(message));
             this._handleMessage(message);
         });
 
         this._port.onDisconnect.addListener(() => {
+            const error = browser.runtime.lastError;
+            DEBUG && console.log('[NativeMessaging] Port disconnected', error ? `error: ${error.message}` : '');
             // Reject all pending requests
             for (const { reject } of this._pendingRequests.values()) {
                 reject(new Error('Native connection closed'));
@@ -74,11 +78,17 @@ export default class NativeMessaging {
                 this._pendingRequests.delete(message.id);
 
                 if ('error' in message && message.error) {
+                    DEBUG && console.log('[NativeMessaging] RESPONSE ERROR', `id=${message.id}`, message.error);
                     pending.reject(new Error(message.error.message || 'Unknown error'));
                 } else {
+                    DEBUG && console.log('[NativeMessaging] RESPONSE OK', `id=${message.id}`, message.result);
                     pending.resolve(message.result || {});
                 }
+            } else {
+                DEBUG && console.warn('[NativeMessaging] No pending request for id:', message.id);
             }
+        } else {
+            DEBUG && console.log('[NativeMessaging] Unhandled native message (no id):', message);
         }
     }
 
@@ -89,15 +99,14 @@ export default class NativeMessaging {
     notify(method, params = {}) {
         try {
             const port = this._getPort();
-            port.postMessage(
-                /** @type {NotificationMessage} */
-                {
-                    context: this._context,
-                    featureName: this._featureName,
-                    method,
-                    params,
-                },
-            );
+            const msg = /** @type {NotificationMessage} */ ({
+                context: this._context,
+                featureName: this._featureName,
+                method,
+                params,
+            });
+            DEBUG && console.log('[NativeMessaging] NOTIFY', `${this._context}.${this._featureName}.${method}`, params);
+            port.postMessage(msg);
         } catch (e) {
             DEBUG && console.error('[NativeMessaging] Failed to send notification:', e);
         }
@@ -115,17 +124,15 @@ export default class NativeMessaging {
 
             try {
                 const port = this._getPort();
-
-                port.postMessage(
-                    /** @type {RequestMessage} */
-                    {
-                        context: this._context,
-                        featureName: this._featureName,
-                        id,
-                        method,
-                        params,
-                    },
-                );
+                const msg = /** @type {RequestMessage} */ ({
+                    context: this._context,
+                    featureName: this._featureName,
+                    id,
+                    method,
+                    params,
+                });
+                DEBUG && console.log('[NativeMessaging] REQUEST', `${this._context}.${this._featureName}.${method}`, `id=${id}`, params);
+                port.postMessage(msg);
             } catch (e) {
                 this._pendingRequests.delete(id);
                 reject(e);
