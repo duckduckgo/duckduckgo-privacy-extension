@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 /* global DEBUG */
 
-const NATIVE_APP_ID = 'com.duckduckgo.macos.browser';
+const DEFAULT_NATIVE_APP_ID = 'com.duckduckgo.macos.browser';
 
 /**
  * @typedef {import('webextension-polyfill').Runtime.Port} RuntimePort
@@ -18,10 +18,16 @@ const NATIVE_APP_ID = 'com.duckduckgo.macos.browser';
  * causing the port connection to be lost. Use request/response patterns instead.
  */
 export default class NativeMessaging {
-    constructor(context, featureName) {
+    /**
+     * @param {string} context
+     * @param {string} featureName
+     * @param {string} [appId]
+     */
+    constructor(context, featureName, appId = DEFAULT_NATIVE_APP_ID) {
         /** @type {RuntimePort | null} */
         this._port = null;
 
+        this._appId = appId;
         this._context = context;
         this._featureName = featureName;
 

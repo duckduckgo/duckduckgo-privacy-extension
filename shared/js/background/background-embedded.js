@@ -25,7 +25,7 @@ import { CPMEmbeddedMessaging } from './components/cpm-embedded-messaging';
 import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
 
-const cpmMessaging = new CPMEmbeddedMessaging();
+const cpmMessaging = new CPMEmbeddedMessaging('com.duckduckgo.macos.browser.debug');
 
 // MessageRouter sets up browser.runtime.onMessage dispatching from the shared
 // message registry. It must be created before components that register handlers.

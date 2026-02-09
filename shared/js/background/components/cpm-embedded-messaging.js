@@ -69,8 +69,11 @@ class NativeMessagingMock extends NativeMessaging {
  * @implements {CPMMessagingBase}
  */
 export class CPMEmbeddedMessaging {
-    constructor() {
-        this.nativeMessaging = new NativeMessagingMock('ddgInternalExtension', 'autoconsent');
+    /**
+     * @param {string} appId
+     */
+    constructor(appId) {
+        this.nativeMessaging = new NativeMessaging('ddgInternalExtension', 'autoconsent', appId);
     }
 
     async refreshDashboardState(tabId, url, dashboardState) {
