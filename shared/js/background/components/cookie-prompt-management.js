@@ -95,6 +95,9 @@ export default class CookiePromptManagement {
             },
         ]);
 
+        // queue for CPM state mutations
+        /** @type {Promise<void>} */
+        this._stateQueue = Promise.resolve();
         // restore the current CPM state from storage
         this.getCpmState();
 
@@ -113,7 +116,10 @@ export default class CookiePromptManagement {
         // Register autoconsent message handler with the shared message registry.
         // MessageRouter (in both regular and embedded builds) dispatches to this handler.
         registerMessageHandler('autoconsent', (options, sender, req) => {
-            return this.handleAutoConsentMessage(req.autoconsentPayload, sender);
+            DEBUG && console.log('received autoconsent message', req.autoconsentPayload.type);
+            return this.handleAutoConsentMessage(req.autoconsentPayload, sender).then(() => {
+                DEBUG && console.log('handled autoconsent message', req.autoconsentPayload.type);
+            });
         });
     }
 
@@ -169,6 +175,7 @@ export default class CookiePromptManagement {
                 summaryEvents: {},
             };
         }
+        DEBUG && console.log('deserializing cpmState', JSON.stringify(this._jsonCpmState, null, 2));
         return this._deserializeCpmState(this._jsonCpmState);
     }
 
@@ -184,7 +191,33 @@ export default class CookiePromptManagement {
      */
     async updateCpmState(newState) {
         this._jsonCpmState = this._serializeCpmState(newState);
+        DEBUG && console.log('serializing cpmState', JSON.stringify(this._jsonCpmState, null, 2));
         await setToSessionStorage('cpmState', this._jsonCpmState);
+    }
+
+    /**
+     * Atomically read-modify-write the CPM state.
+     * All state mutations are serialized through this method to prevent race conditions
+     * between parallel message handlers.
+     *
+     * IMPORTANT: The callback must NOT await other methods that call
+     * modifyCpmState (e.g. firePixel), as that would deadlock the queue.
+     * Non-awaited calls are fine -- they simply queue up after the current operation.
+     *
+     * @param {(state: CpmState) => void | Promise<void>} fn
+     * @returns {Promise<void>}
+     */
+    modifyCpmState(fn) {
+        const op = this._stateQueue.then(async () => {
+            const state = await this.getCpmState();
+            await fn(state);
+            await this.updateCpmState(state);
+        });
+        // ignore errors from the queue
+        this._stateQueue = op.catch((e) => {
+            console.error('error in state queue', e);
+        });
+        return op;
     }
 
     /**
@@ -305,7 +338,6 @@ export default class CookiePromptManagement {
             console.log('autoconsentSettings or tabId not ready', autoconsentSettings, tabId);
             return;
         }
-        const cpmState = await this.getCpmState();
         // force refresh the subfeature state on every 'init'
         const heuristicActionEnabled = await this.checkHeuristicActionEnabled(msg.type === 'init');
         let currentTopUrl = this._tabUrlsCache.get(tabId) || new URL('about:blank');
@@ -340,7 +372,7 @@ export default class CookiePromptManagement {
                     // no await
                     this.cpmMessaging.refreshDashboardState(tabId, senderUrl, {
                         // keep "cookies managed" if we did it for this site since app launch
-                        consentManaged: cpmState.sitesNotifiedCache.has(senderDomain),
+                        consentManaged: (await this.getCpmState()).sitesNotifiedCache.has(senderDomain),
                         cosmetic: null,
                         optoutFailed: null,
                         selftestFailed: null,
@@ -438,8 +470,9 @@ export default class CookiePromptManagement {
                 } else {
                     this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done');
                 }
-                cpmState.sitesNotifiedCache.add(senderDomain);
-                await this.updateCpmState(cpmState);
+                await this.modifyCpmState((cpmState) => {
+                    cpmState.sitesNotifiedCache.add(senderDomain);
+                });
                 this.cpmMessaging.showCpmAnimation(tabId, currentTopUrl.toString(), msg.isCosmetic);
                 this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown');
                 this.cpmMessaging.notifyPopupHandled(tabId, msg);
@@ -451,26 +484,24 @@ export default class CookiePromptManagement {
                 const detectedBySnippets = state.heuristicSnippets?.length > 0;
                 const detectedPopups = state.detectedPopups?.length > 0;
                 const heuristicMatch = detectedByPatterns || detectedBySnippets;
-                let updatedCpmState = false;
-                if (isMainFrame && heuristicMatch && !cpmState.detectionCache.patterns.has(msg.instanceId)) {
-                    cpmState.detectionCache.patterns.add(msg.instanceId);
-                    updatedCpmState = true;
-                    this.firePixel('detected-by-patterns');
-                }
-                if (isMainFrame && detectedPopups) {
-                    if (heuristicMatch && !cpmState.detectionCache.both.has(msg.instanceId)) {
-                        cpmState.detectionCache.both.add(msg.instanceId);
-                        updatedCpmState = true;
-                        this.firePixel('detected-by-both');
-                    } else if (!heuristicMatch && !cpmState.detectionCache.onlyRules.has(msg.instanceId)) {
-                        cpmState.detectionCache.onlyRules.add(msg.instanceId);
-                        updatedCpmState = true;
-                        this.firePixel('detected-only-rules');
+                await this.modifyCpmState((cpmState) => {
+                    if (isMainFrame && heuristicMatch && !cpmState.detectionCache.patterns.has(msg.instanceId)) {
+                        cpmState.detectionCache.patterns.add(msg.instanceId);
+                        // no await to avoid deadlock
+                        this.firePixel('detected-by-patterns');
                     }
-                }
-                if (updatedCpmState) {
-                    await this.updateCpmState(cpmState);
-                }
+                    if (isMainFrame && detectedPopups) {
+                        if (heuristicMatch && !cpmState.detectionCache.both.has(msg.instanceId)) {
+                            cpmState.detectionCache.both.add(msg.instanceId);
+                            // no await to avoid deadlock
+                            this.firePixel('detected-by-both');
+                        } else if (!heuristicMatch && !cpmState.detectionCache.onlyRules.has(msg.instanceId)) {
+                            cpmState.detectionCache.onlyRules.add(msg.instanceId);
+                            // no await to avoid deadlock
+                            this.firePixel('detected-only-rules');
+                        }
+                    }
+                });
                 break;
             }
             case 'eval': {
@@ -531,9 +562,9 @@ export default class CookiePromptManagement {
     }
 
     async firePixel(eventName) {
-        const cpmState = await this.getCpmState();
-        cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
-        await this.updateCpmState(cpmState);
+        this.modifyCpmState((cpmState) => {
+            cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
+        });
 
         // schedule summary alarm if not already scheduled (createAlarm checks for existing alarm)
         createAlarm(CookiePromptManagement.SUMMARY_ALARM_NAME, {
@@ -548,16 +579,17 @@ export default class CookiePromptManagement {
     }
 
     async sendSummaryPixel() {
-        const cpmState = await this.getCpmState();
+        let summaryEvents = {};
+        await this.modifyCpmState((cpmState) => {
+            summaryEvents = structuredClone(cpmState.summaryEvents);
+            cpmState.summaryEvents = {};
+            cpmState.detectionCache.patterns.clear();
+            cpmState.detectionCache.both.clear();
+            cpmState.detectionCache.onlyRules.clear();
+        });
         this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
-            ...cpmState.summaryEvents,
+            ...summaryEvents,
             consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
         });
-        cpmState.summaryEvents = {};
-        // clear the detection cache
-        cpmState.detectionCache.patterns.clear();
-        cpmState.detectionCache.both.clear();
-        cpmState.detectionCache.onlyRules.clear();
-        await this.updateCpmState(cpmState);
     }
 }
