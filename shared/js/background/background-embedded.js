@@ -25,7 +25,15 @@ import { CPMEmbeddedMessaging } from './components/cpm-embedded-messaging';
 import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
 
-const cpmMessaging = new CPMEmbeddedMessaging('com.duckduckgo.macos.browser.debug');
+// FIXME: uncomment for production
+// import { NativeMessaging } from './components/native-messaging';
+// const nativeMessaging = new NativeMessaging('ddgInternalExtension', 'autoconsent', 'com.duckduckgo.macos.browser.debug');
+
+// FIXME: remove this once native side is ready
+import { NativeMessagingMock } from './components/native-messaging-mock';
+const nativeMessaging = new NativeMessagingMock();
+
+const cpmMessaging = new CPMEmbeddedMessaging(nativeMessaging);
 
 // MessageRouter sets up browser.runtime.onMessage dispatching from the shared
 // message registry. It must be created before components that register handlers.

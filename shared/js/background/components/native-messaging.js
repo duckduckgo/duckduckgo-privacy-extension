@@ -11,11 +11,22 @@ const DEFAULT_NATIVE_APP_ID = 'com.duckduckgo.macos.browser';
  */
 
 /**
+ * @typedef {{
+ *  notify: (method: string, params: Record<string, any>) => void;
+ *  request: (method: string, params: Record<string, any>) => Promise<any>;
+ *  subscribe: (msg: any, callback: (msg: any) => void) => void;
+ * }} NativeMessagingInterface
+ */
+
+/**
  * Messaging for communication with the native app based on Native Messaging API.
  * It mimics the C-S-S messaging API.
  *
  * Note: Subscriptions are not supported because service workers can sleep,
  * causing the port connection to be lost. Use request/response patterns instead.
+ */
+/**
+ * @implements {NativeMessagingInterface}
  */
 export default class NativeMessaging {
     /**
