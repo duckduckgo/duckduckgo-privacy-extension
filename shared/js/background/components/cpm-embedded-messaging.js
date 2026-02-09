@@ -140,8 +140,9 @@ export class CPMEmbeddedMessaging {
             const result = await this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion });
             if (result.updated) {
                 await setToSessionStorage('config', result.data);
+                return result.data;
             }
-            return result.data;
+            return cachedConfig;
         } catch (e) {
             console.error('error refreshing remote config', e);
             if (cachedConfigVersion !== 'unknown') {
