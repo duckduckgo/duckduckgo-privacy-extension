@@ -1,13 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, addScriptTag } from './helpers/playwrightHarness';
 import { forExtensionLoaded } from './helpers/backgroundWait';
 
 const fakeOrigin = 'http://test.example';
 
 async function getFingerprintOfContext(ctx) {
-    await ctx.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' });
+    await addScriptTag(ctx, { path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' });
     return ctx.evaluate(() => {
         /* global FingerprintJS */
         return (async () => {
