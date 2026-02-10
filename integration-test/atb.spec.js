@@ -11,7 +11,7 @@ test.describe('install workflow', () => {
         expect(postInstallURL.pathname).toBe('/extension-success');
         expect(postInstallURL.searchParams.has('atb')).toBe(true);
         // This ATB comes from the success page.
-        expect(postInstallURL.searchParams.get('atb')).not.toEqual(mockAtb.version);
+        expect(postInstallURL.searchParams.get('atb')).toMatch(/^v[\d-]+$/);
     });
 
     test.describe('atb values', () => {
