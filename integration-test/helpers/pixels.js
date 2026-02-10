@@ -9,6 +9,6 @@ function formatPixelRequest(request) {
     return _formatPixelRequestForTesting(request.url);
 }
 
-export function logPixels(page, pixelRequests, filter) {
-    return logPageRequests(page, pixelRequests, requestIsPixel, formatPixelRequest, filter);
+export function logPixels(backgroundPage, page, pixelRequests, filter) {
+    return logPageRequests(backgroundPage, page, pixelRequests, requestIsPixel, formatPixelRequest, filter);
 }

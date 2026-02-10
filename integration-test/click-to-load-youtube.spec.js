@@ -85,10 +85,10 @@ test.describe('Test YouTube Click To Load', () => {
         await backgroundWait.forAllConfiguration(backgroundPage);
     });
 
-    test('CTL: YouTube request blocking/redirecting', async ({ page }) => {
+    test('CTL: YouTube request blocking/redirecting', async ({ page, backgroundPage }) => {
         await routeFromLocalhost(page, overrideHandler);
         const pageRequests = [];
-        const clearRequests = await logPageRequests(page, pageRequests);
+        const cleanup = await logPageRequests(backgroundPage, page, pageRequests);
 
         // Initially there should be a bunch of requests. The iframe_api should
         // be redirected to our surrogate but otherwise YouTube requests should
@@ -110,7 +110,7 @@ test.describe('Test YouTube Click To Load', () => {
 
         // Once the user clicks to load a video, the iframe_api should be loaded
         // and the video should be unblocked but should not autoplay.
-        clearRequests();
+        pageRequests.length = 0;
         await page.click('main > div:nth-child(2) button.primary');
         await waitForNetworkIdle(page);
         {
@@ -128,7 +128,7 @@ test.describe('Test YouTube Click To Load', () => {
         }
 
         // When the page is reloaded, requests should be blocked again.
-        clearRequests();
+        pageRequests.length = 0;
         await page.reload({ waitUntil: 'networkidle' });
         {
             const { youTubeIframeApi, youTubeStandard, youTubeNocookie } = summariseYouTubeRequests(pageRequests);
@@ -143,7 +143,7 @@ test.describe('Test YouTube Click To Load', () => {
         }
 
         // The header button should also unblock YouTube.
-        clearRequests();
+        pageRequests.length = 0;
         await page.click('#short-container #DuckDuckGoPrivacyEssentialsCTLElementTitleTextButton');
         await waitForNetworkIdle(page);
         {
@@ -155,6 +155,7 @@ test.describe('Test YouTube Click To Load', () => {
             expect(youTubeNocookie.blocked).toEqual(0);
             expect(youTubeNocookie.allowed).toBeGreaterThanOrEqual(1);
         }
+        cleanup();
     });
 
     test('CTL: YouTube interacting with iframe API', async ({ page }) => {
@@ -216,17 +217,17 @@ test.describe('Test YouTube Click To Load', () => {
         }
     });
 
-    test('CTL: YouTube Preview', async ({ page }) => {
+    test('CTL: YouTube Preview', async ({ page, backgroundPage }) => {
         await routeFromLocalhost(page, overrideHandler);
         const pageRequests = [];
-        const clearRequests = await logPageRequests(page, pageRequests);
+        const cleanup = await logPageRequests(backgroundPage, page, pageRequests);
 
         // Navigate to test page
         await page.goto(testSite, { waitUntil: 'networkidle' });
 
         // Once the user clicks to preview a video, should change from blocked state
         // to preview state and request only YouTube Preview images
-        clearRequests();
+        pageRequests.length = 0;
         {
             const totalEmbeddedVideosBlocked = (await page.$$('div[id^=yt-ctl-dialog-]')).length;
 
@@ -255,7 +256,7 @@ test.describe('Test YouTube Click To Load', () => {
 
         // Once the user clicks to load a video, the iframe_api should be loaded
         // and the video should be unblocked and played automatically
-        clearRequests();
+        pageRequests.length = 0;
         await page.click('main > div:nth-child(2) button.primary');
         await waitForNetworkIdle(page);
         {
@@ -272,7 +273,7 @@ test.describe('Test YouTube Click To Load', () => {
         // When the page is reloaded, YouTube Preview should continue enabled,
         // requests should be blocked still
         // and only YouTube Preview images should be requested
-        clearRequests();
+        pageRequests.length = 0;
         await page.reload({ waitUntil: 'networkidle' });
         {
             const { youTubeIframeApi, youTubeStandard, youTubeNocookie, youTubeImage } = summariseYouTubeRequests(pageRequests);
@@ -289,7 +290,7 @@ test.describe('Test YouTube Click To Load', () => {
         }
 
         // The header button should also unblock YouTube.
-        clearRequests();
+        pageRequests.length = 0;
         await page.click('#short-container #DuckDuckGoPrivacyEssentialsCTLElementTitleTextButton');
         await waitForNetworkIdle(page);
         {
@@ -304,7 +305,7 @@ test.describe('Test YouTube Click To Load', () => {
         }
 
         // Pressing "Previews enabled" toggle should block all YT videos again
-        clearRequests();
+        pageRequests.length = 0;
         await page.reload({ waitUntil: 'networkidle' });
         {
             const totalEmbeddedVideosPreviews = (await page.$$('div[id^=yt-ctl-preview-]')).length;
@@ -316,5 +317,6 @@ test.describe('Test YouTube Click To Load', () => {
 
             expect(totalEmbeddedVideosBlocked).toEqual(totalEmbeddedVideosPreviews);
         }
+        cleanup();
     });
 });

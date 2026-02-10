@@ -1,4 +1,11 @@
-const testPageHosts = new Set(['privacy-test-pages.site', 'broken.third-party.site', 'good.third-party.site', 'bad.third-party.site']);
+const testPageHosts = new Set([
+    'privacy-test-pages.site',
+    'allowlisted.third-party.site',
+    'bad.third-party.site',
+    'broken.third-party.site',
+    'good.third-party.site',
+    'convert.ad-company.site',
+]);
 
 export const TEST_SERVER_ORIGIN = 'http://127.0.0.1:3000';
 
