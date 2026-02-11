@@ -12,3 +12,15 @@ function formatPixelRequest(request) {
 export function logPixels(page, pixelRequests, filter) {
     return logPageRequests(page, pixelRequests, requestIsPixel, formatPixelRequest, filter);
 }
+
+export function listenForBreakageReport(backgroundNetworkContext) {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve) => {
+        const cleanup = await logPixels(backgroundNetworkContext, [], (pixel) => {
+            if (pixel.name.startsWith('epbf_')) {
+                resolve(pixel);
+                cleanup();
+            }
+        });
+    });
+}

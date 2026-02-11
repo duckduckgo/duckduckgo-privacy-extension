@@ -1,43 +1,19 @@
 import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
-import { _formatPixelRequestForTesting } from '../shared/js/shared-utils/pixels';
+import { listenForBreakageReport } from './helpers/pixels';
 
 test.describe('Broken site reports', () => {
-    const pixels = [];
-    let gotPixel;
-
-    async function setUpPixelInterception({ context, backgroundPage, page, routeExtensionRequests }) {
-        // set up extension and intercept pixels
+    test('Sends broken site reports with current page context', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
         await backgroundWait.forExtensionLoaded(context);
         await routeFromLocalhost(page);
-        let pixelResolver = null;
-        gotPixel = new Promise((resolve) => {
-            pixelResolver = resolve;
-        });
-        await routeExtensionRequests(
-            'https://improving.duckduckgo.com/t/epbf_*',
-            /**
-            @param {import('@playwright/test').Route} route
-        */ (route) => {
-                const url = route.request().url();
-                pixels.push(url);
-                pixelResolver();
-                return route.abort();
-            },
-        );
-    }
-
-    test('Sends broken site reports with current page context', async ({ context, backgroundPage, page, routeExtensionRequests }) => {
-        await setUpPixelInterception({ context, backgroundPage, page, routeExtensionRequests });
+        const breakageReport = listenForBreakageReport(backgroundNetworkContext);
         const extensionVersion = require('../browsers/chrome/manifest.json').version;
 
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
         await page.bringToFront();
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
-        await gotPixel;
-        expect(pixels).toHaveLength(1);
-        const pixel = _formatPixelRequestForTesting(pixels[0]);
+        const pixel = await breakageReport;
         expect(pixel).toMatchObject({
             name: 'epbf_chrome',
             params: {
@@ -75,20 +51,26 @@ test.describe('Broken site reports', () => {
         expect(pixel.params.locale).toMatch(/^[a-z]{2}-[A-Z]{2}$/);
     });
 
-    test('Includes correct metadata when blocklist fetch fails', async ({ context, backgroundPage, page, routeExtensionRequests }) => {
+    test('Includes correct metadata when blocklist fetch fails', async ({
+        context,
+        backgroundPage,
+        page,
+        backgroundNetworkContext,
+        routeExtensionRequests,
+    }) => {
         // block all CDN requests
         routeExtensionRequests('https://staticcdn.duckduckgo.com/**/*', (route) => {
             return route.abort();
         });
         const bundledConfigEtag = require('../shared/data/etags.json')['config-etag'];
         const bundledConfigVersion = String(require('../shared/data/bundled/extension-config.json').version);
-        await setUpPixelInterception({ context, backgroundPage, page, routeExtensionRequests });
+        await backgroundWait.forExtensionLoaded(context);
+        await routeFromLocalhost(page);
+        const breakageReport = listenForBreakageReport(backgroundNetworkContext);
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
         await page.bringToFront();
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
-        await gotPixel;
-        expect(pixels).toHaveLength(1);
-        const pixel = _formatPixelRequestForTesting(pixels[0]);
+        const pixel = await breakageReport;
         expect(pixel).toMatchObject({
             name: 'epbf_chrome',
             params: {
