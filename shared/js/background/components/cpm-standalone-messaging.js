@@ -34,6 +34,10 @@ export class CPMStandaloneMessaging {
         // no-op
     }
 
+    async checkAutoconsentSettingEnabled() {
+        return true;
+    }
+
     async checkAutoconsentEnabledForSite(url) {
         await this.remoteConfig.ready;
         const site = new Site(url);

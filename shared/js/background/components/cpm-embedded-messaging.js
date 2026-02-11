@@ -49,6 +49,16 @@ export class CPMEmbeddedMessaging {
         });
     }
 
+    async checkAutoconsentSettingEnabled() {
+        try {
+            const result = await this.nativeMessaging.request('isAutoconsentSettingEnabled', {});
+            return result.enabled;
+        } catch (e) {
+            console.error('error checking autoconsent setting enabled', e);
+            return false;
+        }
+    }
+
     async checkAutoconsentEnabledForSite(url) {
         try {
             const result = await this.nativeMessaging.request('isFeatureEnabled', {

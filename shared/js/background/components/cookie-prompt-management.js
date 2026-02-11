@@ -38,6 +38,7 @@ import { registerMessageHandler } from '../message-registry';
  *  refreshDashboardState: (tabId: number, url: string, dashboardState: Partial<CpmDashboardState>) => Promise<void>;
  *  showCpmAnimation: (tabId: number, topUrl: string, isCosmetic: boolean) => Promise<void>;
  *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent/lib/messages').DoneMessage) => Promise<void>;
+ *  checkAutoconsentSettingEnabled: () => Promise<boolean>;
  *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
  *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;
  *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
@@ -333,6 +334,11 @@ export default class CookiePromptManagement {
 
         if (!autoconsentSettings || !tabId) {
             this.cpmMessaging.logMessage(`autoconsentSettings or tabId not ready: ${autoconsentSettings} ${tabId}`);
+            return;
+        }
+        const autoconsentFeatureEnabled = await this.cpmMessaging.checkAutoconsentSettingEnabled();
+        if (!autoconsentFeatureEnabled) {
+            this.cpmMessaging.logMessage('autoconsent setting not enabled');
             return;
         }
         // force refresh the subfeature state on every 'init'
