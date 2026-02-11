@@ -4,7 +4,6 @@ import browser from 'webextension-polyfill';
 import { registerContentScripts } from './mv3-content-script-injection';
 import { getFromSessionStorage, setToSessionStorage, createAlarm } from '../wrapper';
 import { registerMessageHandler } from '../message-registry';
-import defaultCompactRuleList from '@duckduckgo/autoconsent/rules/compact-rules.json';
 
 /**
  * @typedef {import('../tab-manager.js')} TabManager
@@ -330,8 +329,6 @@ export default class CookiePromptManagement {
                 sender,
                 'autoconsentRemoteConfig:',
                 autoconsentRemoteConfig,
-                'defaultCompactRuleList:',
-                defaultCompactRuleList,
             );
 
         if (!autoconsentSettings || !tabId) {
@@ -403,12 +400,12 @@ export default class CookiePromptManagement {
                     visualTest,
                     logs: logsConfig,
                 };
-                const compactRuleList = autoconsentSettings.compactRuleList || defaultCompactRuleList;
+                const compactRuleList = autoconsentSettings.compactRuleList;
                 const rules = {
                     autoconsent: [],
                     consentomatic: [],
                     compact:
-                        compactRuleList.index !== undefined
+                        compactRuleList?.index !== undefined
                             ? filterCompactRules(compactRuleList, { url: senderUrl, mainFrame: isMainFrame })
                             : compactRuleList,
                 };
