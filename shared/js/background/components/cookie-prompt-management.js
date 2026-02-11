@@ -73,7 +73,6 @@ export default class CookiePromptManagement {
      */
     constructor({ cpmMessaging }) {
         this.cpmMessaging = cpmMessaging;
-        this._heuristicActionEnabled = null;
         this.scheduleConfigRefresh();
 
         // Ephemeral state for reload loop prevention. We assume that service worker never sleeps during a reload loop, so we don't persist these.
@@ -180,11 +179,8 @@ export default class CookiePromptManagement {
         return this._deserializeCpmState(this._jsonCpmState);
     }
 
-    async checkHeuristicActionEnabled(force = false) {
-        if (this._heuristicActionEnabled === null || force) {
-            this._heuristicActionEnabled = await this.cpmMessaging.checkSubfeatureEnabled('heuristicAction');
-        }
-        return this._heuristicActionEnabled;
+    checkHeuristicActionEnabled() {
+        return this.cpmMessaging.checkSubfeatureEnabled('heuristicAction');
     }
 
     /**
@@ -341,8 +337,7 @@ export default class CookiePromptManagement {
             this.cpmMessaging.logMessage('autoconsent setting not enabled');
             return;
         }
-        // force refresh the subfeature state on every 'init'
-        const heuristicActionEnabled = await this.checkHeuristicActionEnabled(msg.type === 'init');
+        const heuristicActionEnabled = await this.checkHeuristicActionEnabled();
         let currentTopUrl = this._tabUrlsCache.get(tabId) || new URL('about:blank');
 
         switch (msg.type) {
