@@ -34,6 +34,7 @@ import { registerMessageHandler } from '../message-registry';
 /**
  * Base interface for CPM communications with the "browser" side.
  * @typedef {{
+ *  logMessage: (message: string) => Promise<void>;
  *  refreshDashboardState: (tabId: number, url: string, dashboardState: Partial<CpmDashboardState>) => Promise<void>;
  *  showCpmAnimation: (tabId: number, topUrl: string, isCosmetic: boolean) => Promise<void>;
  *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent/lib/messages').DoneMessage) => Promise<void>;
@@ -116,9 +117,9 @@ export default class CookiePromptManagement {
         // Register autoconsent message handler with the shared message registry.
         // MessageRouter (in both regular and embedded builds) dispatches to this handler.
         registerMessageHandler('autoconsent', (options, sender, req) => {
-            DEBUG && console.log('received autoconsent message', req.autoconsentPayload.type);
+            DEBUG && console.log(`received autoconsent message: ${req.autoconsentPayload.type}`);
             return this.handleAutoConsentMessage(req.autoconsentPayload, sender).then(() => {
-                DEBUG && console.log('handled autoconsent message', req.autoconsentPayload.type);
+                DEBUG && console.log(`handled autoconsent message: ${req.autoconsentPayload.type}`);
             });
         });
     }
@@ -175,7 +176,6 @@ export default class CookiePromptManagement {
                 summaryEvents: {},
             };
         }
-        DEBUG && console.log('deserializing cpmState', JSON.stringify(this._jsonCpmState, null, 2));
         return this._deserializeCpmState(this._jsonCpmState);
     }
 
@@ -191,7 +191,6 @@ export default class CookiePromptManagement {
      */
     async updateCpmState(newState) {
         this._jsonCpmState = this._serializeCpmState(newState);
-        DEBUG && console.log('serializing cpmState', JSON.stringify(this._jsonCpmState, null, 2));
         await setToSessionStorage('cpmState', this._jsonCpmState);
     }
 
@@ -215,7 +214,7 @@ export default class CookiePromptManagement {
         });
         // ignore errors from the queue
         this._stateQueue = op.catch((e) => {
-            console.error('error in state queue', e);
+            this.cpmMessaging.logMessage(`error in state queue: ${e}`);
         });
         return op;
     }
@@ -239,7 +238,7 @@ export default class CookiePromptManagement {
         try {
             newTopUrl = new URL(url);
         } catch (e) {
-            console.error('invalid top URL', url, e);
+            this.cpmMessaging.logMessage(`invalid top URL: ${url}: ${e}`);
             return oldTopUrl;
         }
 
@@ -284,7 +283,7 @@ export default class CookiePromptManagement {
         const lastHandledCMP = this._lastHandledCMP.get(tabId);
         if (!this._reloadLoopDetected.has(tabId) && lastHandledCMP === cmp) {
             // Same CMP detected on same URL after it was already handled - reload loop detected
-            console.log('reload loop detected:', cmp, 'on', this._tabUrlsCache.get(tabId), 'tabId:', tabId);
+            this.cpmMessaging.logMessage(`reload loop detected: ${cmp} on ${this._tabUrlsCache.get(tabId)} tabId: ${tabId}`);
             this._reloadLoopDetected.add(tabId);
             this.firePixel('error_reload-loop');
         }
@@ -300,7 +299,7 @@ export default class CookiePromptManagement {
         const tabId = sender.tab?.id;
         const frameId = sender.frameId;
         if (typeof frameId !== 'number') {
-            console.error('frameId is not a number', frameId);
+            this.cpmMessaging.logMessage(`frameId is not a number: ${frameId}`);
             return;
         }
         const isMainFrame = frameId === 0;
@@ -310,13 +309,13 @@ export default class CookiePromptManagement {
         try {
             senderDomain = new URL(senderUrl).hostname;
         } catch (e) {
-            console.error('error getting sender domain', e);
+            this.cpmMessaging.logMessage(`error getting sender domain: ${e}`);
             return;
         }
         // use the cached config
         const remoteConfig = await this.remoteConfigJson;
         if (!remoteConfig) {
-            console.error('Remote config not ready');
+            this.cpmMessaging.logMessage('Remote config not ready');
             return;
         }
         const autoconsentRemoteConfig = remoteConfig.features.autoconsent;
@@ -333,7 +332,7 @@ export default class CookiePromptManagement {
             );
 
         if (!autoconsentSettings || !tabId) {
-            console.log('autoconsentSettings or tabId not ready', autoconsentSettings, tabId);
+            this.cpmMessaging.logMessage(`autoconsentSettings or tabId not ready: ${autoconsentSettings} ${tabId}`);
             return;
         }
         // force refresh the subfeature state on every 'init'
@@ -351,7 +350,7 @@ export default class CookiePromptManagement {
 
                 const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(currentTopUrl.toString());
                 if (!isEnabled) {
-                    console.log('autoconsent disabled for site', senderUrl);
+                    this.cpmMessaging.logMessage(`autoconsent disabled for site: ${senderUrl}`);
                     this.firePixel('disabled-for-site');
                     return;
                 }
@@ -362,7 +361,7 @@ export default class CookiePromptManagement {
                 let autoAction = 'optOut';
                 // disable autoAction in case of reload loop
                 if (this._reloadLoopDetected.has(tabId)) {
-                    console.log('reload loop detected, disabling autoAction', tabId);
+                    this.cpmMessaging.logMessage(`reload loop detected, disabling autoAction: ${tabId}`);
                     autoAction = null;
                 }
 
@@ -536,7 +535,7 @@ export default class CookiePromptManagement {
                 break;
             }
             default:
-                console.warn(`Unhandled autoconsent message type: ${msg.type}`);
+                this.cpmMessaging.logMessage(`Unhandled autoconsent message type: ${msg.type}`);
                 break;
         }
     }

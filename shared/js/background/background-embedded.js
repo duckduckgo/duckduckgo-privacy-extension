@@ -66,7 +66,7 @@ const components = {
     cpm,
 };
 
-console.log(new Date(), 'DuckDuckGo Embedded Extension loaded:', components);
+cpmMessaging.logMessage(`DuckDuckGo Embedded Extension loaded: ${JSON.stringify(components)}`);
 // @ts-ignore
 self.components = components;
 

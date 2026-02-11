@@ -19,6 +19,13 @@ export class CPMEmbeddedMessaging {
         this.nativeMessaging = nativeMessaging;
     }
 
+    async logMessage(message) {
+        console.log(message);
+        await this.nativeMessaging.notify('extensionLog', {
+            message,
+        });
+    }
+
     async refreshDashboardState(tabId, url, dashboardState) {
         await this.nativeMessaging.notify('refreshCpmDashboardState', {
             tabId,
@@ -80,17 +87,18 @@ export class CPMEmbeddedMessaging {
         console.log(`fetching config from native`);
         const cachedConfig = (await getFromSessionStorage('config')) || { version: 'unknown' };
         const cachedConfigVersion = `${cachedConfig.version}`;
-        DEBUG && console.log('cachedConfig', cachedConfig);
+        DEBUG && console.log(`cachedConfig: ${JSON.stringify(cachedConfig)}`);
 
         try {
             const result = await this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion });
             if (result.updated) {
-                await setToSessionStorage('config', result.data);
-                return result.data;
+                const config = result.data;
+                await setToSessionStorage('config', config);
+                return config;
             }
             return cachedConfig;
         } catch (e) {
-            console.error('error refreshing remote config', e);
+            this.logMessage(`error refreshing remote config: ${e}`);
             if (cachedConfigVersion !== 'unknown') {
                 return cachedConfig;
             }

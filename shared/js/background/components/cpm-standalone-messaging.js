@@ -15,6 +15,10 @@ export class CPMStandaloneMessaging {
         this.remoteConfig = remoteConfig;
     }
 
+    async logMessage(message) {
+        console.log(message);
+    }
+
     async refreshDashboardState(tabId, url, dashboardState) {
         console.log('refreshDashboardState', tabId, url, dashboardState);
         // no-op
