@@ -57,7 +57,7 @@ export default class NativeMessaging {
         });
         DEBUG && console.log('[NativeMessaging] NOTIFY', `${this._context}.${this._featureName}.${method}`, params);
         browser.runtime.sendNativeMessage(this._appId, msg).catch((e) => {
-            DEBUG && console.error('[NativeMessaging] Failed to send notification:', e);
+            DEBUG && console.error('[NativeMessaging] notification error:', e);
         });
     }
 
@@ -80,13 +80,13 @@ export default class NativeMessaging {
         DEBUG && console.log('[NativeMessaging] REQUEST', `${this._context}.${this._featureName}.${method}`, `id=${id}`, params);
 
         const response = /** @type {MessageResponse} */ (await browser.runtime.sendNativeMessage(this._appId, msg).catch((e) => {
-            DEBUG && console.error('[NativeMessaging] Failed to send message to native app:', e);
+            DEBUG && console.error('[NativeMessaging] error:', e);
             return {
                 id,
                 context: this._context,
                 featureName: this._featureName,
                 error: {
-                    message: `Failed to send message to native app: ${e}`
+                    message: `NativeMessaging request-response error: ${e}`
                 }
             };
         }));
