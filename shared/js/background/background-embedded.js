@@ -26,12 +26,23 @@ import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
 
 // FIXME: uncomment for production
-// import { NativeMessaging } from './components/native-messaging';
-// const nativeMessaging = new NativeMessaging('ddgInternalExtension', 'autoconsent', 'com.duckduckgo.macos.browser.debug');
+import NativeMessaging from './components/native-messaging';
+const nativeMessaging = new NativeMessaging('ddgInternalExtension', 'autoconsent', 'com.duckduckgo.macos.browser');
 
-// FIXME: remove this once native side is ready
-import { NativeMessagingMock } from './components/native-messaging-mock';
-const nativeMessaging = new NativeMessagingMock();
+// On Apple, JS console logs don't work in MV3 extensions, so we try to pass them to the native app.
+globalThis.addEventListener('error', (event) => {
+    nativeMessaging.notify('extensionException', {
+        message: `Uncaught error: ${event.error?.message ?? event.message}`,
+        stack: event.error?.stack,
+    });
+});
+
+globalThis.addEventListener('unhandledrejection', (event) => {
+    nativeMessaging.notify('extensionException', {
+        message: `Unhandled promise rejection: ${event.reason}`,
+        stack: event.reason?.stack,
+    });
+});
 
 const cpmMessaging = new CPMEmbeddedMessaging(nativeMessaging);
 
