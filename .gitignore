@@ -21,3 +21,4 @@ shared/data/bundled/smarter-encryption-rules.json
 /test-results/
 /playwright-report/
 /playwright/.cache/
+/pixel-definitions/pixel_processing_results/
