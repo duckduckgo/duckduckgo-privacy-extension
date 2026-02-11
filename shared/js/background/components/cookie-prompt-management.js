@@ -108,7 +108,8 @@ export default class CookiePromptManagement {
         });
 
         // make sure we send the summary pixels before the extension is unloaded
-        browser.runtime.onSuspend.addListener(() => {
+        // Note: browser.runtime.onSuspend is undefined in WebKit
+        browser.runtime.onSuspend?.addListener(() => {
             this.sendSummaryPixel();
         });
 
