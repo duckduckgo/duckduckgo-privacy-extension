@@ -9,9 +9,13 @@
 // 1 - https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/extensions/api/scripting/scripting_api.cc;l=929
 
 export async function registerContentScripts(scripts) {
+    // check if scripts were already registered - registering duplicate scripts will throw an error.
     const existingScripts = await chrome.scripting.getRegisteredContentScripts();
-    const finalScripts = existingScripts.filter((s) => scripts.every((newScript) => newScript.id !== s.id)).concat(scripts);
-    await chrome.scripting.registerContentScripts(finalScripts);
+    const duplicateIds = existingScripts.filter((s) => scripts.some((newScript) => newScript.id === s.id)).map((s) => s.id);
+    if (duplicateIds.length > 0) {
+        await unregisterContentScripts(duplicateIds);
+    }
+    await chrome.scripting.registerContentScripts(scripts);
 }
 
 export async function unregisterContentScripts(scriptIds) {
@@ -24,8 +28,6 @@ export default class MV3ContentScriptInjection {
     }
 
     async registerScripts() {
-        // check if scripts were already registered - in scripts will remain registered under
-        // some startup conditions, and in that case registering the scripts will throw an error.
         await registerContentScripts([
             {
                 id: '1-script-injection-isolated-world',
