@@ -1,4 +1,4 @@
-# Feature Flags (Browser Extension)
+# Feature Flags
 
 This guide covers how feature flags work in the DuckDuckGo browser extension and how they connect to the remote privacy configuration.
 
