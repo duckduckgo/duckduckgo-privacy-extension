@@ -37,7 +37,7 @@ import { registerMessageHandler } from '../message-registry';
  *  logMessage: (message: string) => Promise<void>;
  *  refreshDashboardState: (tabId: number, url: string, dashboardState: Partial<CpmDashboardState>) => Promise<void>;
  *  showCpmAnimation: (tabId: number, topUrl: string, isCosmetic: boolean) => Promise<void>;
- *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent/lib/messages').DoneMessage) => Promise<void>;
+ *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent').DoneMessage) => Promise<void>;
  *  checkAutoconsentSettingEnabled: () => Promise<boolean>;
  *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
  *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;
@@ -49,7 +49,7 @@ import { registerMessageHandler } from '../message-registry';
 /* global DEBUG */
 
 /**
- * @type {import('@duckduckgo/autoconsent/lib/types').Config['logs']}
+ * @type {import('@duckduckgo/autoconsent').Config['logs']}
  */
 const logsConfig = {
     lifecycle: true,
@@ -289,7 +289,7 @@ export default class CookiePromptManagement {
 
     /**
      *
-     * @param {import('@duckduckgo/autoconsent/lib/messages').ContentScriptMessage} msg
+     * @param {import('@duckduckgo/autoconsent').ContentScriptMessage} msg
      * @param {browser.Runtime.MessageSender} sender
      * @returns
      */
@@ -359,7 +359,7 @@ export default class CookiePromptManagement {
 
                 const visualTest = DEBUG;
 
-                /** @type {import('@duckduckgo/autoconsent/lib/types').AutoAction} */
+                /** @type {import('@duckduckgo/autoconsent').Config['autoAction']} */
                 let autoAction = 'optOut';
                 // disable autoAction in case of reload loop
                 if (this._reloadLoopDetected.has(tabId)) {
@@ -384,7 +384,7 @@ export default class CookiePromptManagement {
                 }
 
                 /**
-                 * @type {Partial<import('@duckduckgo/autoconsent/lib/types').Config>}
+                 * @type {Partial<import('@duckduckgo/autoconsent').Config>}
                  */
                 const autoconsentConfig = {
                     enabled: isEnabled,
@@ -406,11 +406,21 @@ export default class CookiePromptManagement {
                 const rules = {
                     autoconsent: [],
                     consentomatic: [],
-                    compact:
-                        compactRuleList?.index !== undefined
-                            ? filterCompactRules(compactRuleList, { url: senderUrl, mainFrame: isMainFrame })
-                            : compactRuleList,
                 };
+                if (compactRuleList) {
+                    if (compactRuleList.index) {
+                        rules.compact = filterCompactRules(
+                            /** @type {import('@duckduckgo/autoconsent').IndexedCMPRuleset} */
+                            (compactRuleList),
+                            {
+                                url: senderUrl,
+                                mainFrame: isMainFrame,
+                            },
+                        );
+                    } else {
+                        rules.compact = compactRuleList;
+                    }
+                }
                 DEBUG && console.log('autoconsent config', autoconsentConfig);
 
                 chrome.tabs.sendMessage(
