@@ -35,11 +35,13 @@ export class CPMEmbeddedMessaging {
      * @param {Record<string, any>} params
      */
     async _notify(method, params) {
-        const result = this._queue.then(() => {
-            return this.nativeMessaging.notify(method, params);
-        }).catch((e) => {
-            console.error('error in notification queue', e);
-        });
+        const result = this._queue
+            .then(() => {
+                return this.nativeMessaging.notify(method, params);
+            })
+            .catch((e) => {
+                console.error('error in notification queue', e);
+            });
         this._queue = result;
         await result;
     }
@@ -56,27 +58,29 @@ export class CPMEmbeddedMessaging {
      * @returns {Promise<any>}
      */
     _request(method, params, cacheKey, ttl) {
-        const job = this._queue.then(async () => {
-            if (cacheKey && ttl) {
-                const cached = this._cache.get(cacheKey);
-                if (cached && Date.now() - cached.time < ttl) {
-                    return cached.value;
+        const job = this._queue
+            .then(async () => {
+                if (cacheKey && ttl) {
+                    const cached = this._cache.get(cacheKey);
+                    if (cached && Date.now() - cached.time < ttl) {
+                        return cached.value;
+                    }
                 }
-            }
-            const result = await this.nativeMessaging.request(method, params);
-            if (cacheKey && ttl) {
-                // evict the oldest entry if the cache is full
-                if (this._cache.size >= MAX_CACHE_SIZE) {
-                    // Map are iterated in insertion order, so the oldest entry is the first one
-                    const oldest = this._cache.keys().next().value;
-                    if (oldest !== undefined) this._cache.delete(oldest);
+                const result = await this.nativeMessaging.request(method, params);
+                if (cacheKey && ttl) {
+                    // evict the oldest entry if the cache is full
+                    if (this._cache.size >= MAX_CACHE_SIZE) {
+                        // Map are iterated in insertion order, so the oldest entry is the first one
+                        const oldest = this._cache.keys().next().value;
+                        if (oldest !== undefined) this._cache.delete(oldest);
+                    }
+                    this._cache.set(cacheKey, { time: Date.now(), value: result });
                 }
-                this._cache.set(cacheKey, { time: Date.now(), value: result });
-            }
-            return result;
-        }).catch((e) => {
-            console.error(`error in request queue for ${method}`, e);
-        });
+                return result;
+            })
+            .catch((e) => {
+                console.error(`error in request queue for ${method}`, e);
+            });
         this._queue = job;
         return job;
     }
@@ -122,7 +126,12 @@ export class CPMEmbeddedMessaging {
     }
 
     async checkSubfeatureEnabled(subfeatureName) {
-        const result = await this._request('isSubFeatureEnabled', { featureName: 'autoconsent', subfeatureName }, `subfeature:${subfeatureName}`, SUBFEATURE_CHECK_TTL);
+        const result = await this._request(
+            'isSubFeatureEnabled',
+            { featureName: 'autoconsent', subfeatureName },
+            `subfeature:${subfeatureName}`,
+            SUBFEATURE_CHECK_TTL,
+        );
         return result?.enabled ?? false;
     }
 

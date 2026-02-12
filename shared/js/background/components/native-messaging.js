@@ -79,17 +79,19 @@ export default class NativeMessaging {
         });
         DEBUG && console.log('[NativeMessaging] REQUEST', `${this._context}.${this._featureName}.${method}`, `id=${id}`, params);
 
-        const response = /** @type {MessageResponse} */ (await browser.runtime.sendNativeMessage(this._appId, msg).catch((e) => {
-            DEBUG && console.error('[NativeMessaging] error:', e);
-            return {
-                id,
-                context: this._context,
-                featureName: this._featureName,
-                error: {
-                    message: `NativeMessaging request-response error: ${e}`
-                }
-            };
-        }));
+        const response = /** @type {MessageResponse} */ (
+            await browser.runtime.sendNativeMessage(this._appId, msg).catch((e) => {
+                DEBUG && console.error('[NativeMessaging] error:', e);
+                return {
+                    id,
+                    context: this._context,
+                    featureName: this._featureName,
+                    error: {
+                        message: `NativeMessaging request-response error: ${e}`,
+                    },
+                };
+            })
+        );
         DEBUG && console.log('[NativeMessaging] Received from native:', JSON.stringify(response));
 
         if ('error' in response && response.error) {
