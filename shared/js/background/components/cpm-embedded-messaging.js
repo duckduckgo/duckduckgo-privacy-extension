@@ -5,12 +5,7 @@ import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 /**
  * @typedef {import('./cookie-prompt-management').CPMMessagingBase} CPMMessagingBase
  * @typedef {import('./native-messaging').NativeMessagingInterface} NativeMessagingInterface
- * @typedef {{ time: number, value: boolean }} CacheEntry
- * @typedef {{
- *  setting: CacheEntry | null,
- *  subfeature: Map<string, CacheEntry>,
- *  site: Map<string, CacheEntry>
- * }} NativeCallCache
+ * @typedef {{ time: number, value: any }} CacheEntry
  */
 
 const SUBFEATURE_CHECK_TTL = 30 * 60 * 1000; // 30 minutes
@@ -28,23 +23,73 @@ export class CPMEmbeddedMessaging {
      */
     constructor(nativeMessaging) {
         this.nativeMessaging = nativeMessaging;
-        /** @type {NativeCallCache} */
-        this._cache = {
-            setting: null,
-            subfeature: new Map(),
-            site: new Map(),
-        };
+        /** @type {Map<string, CacheEntry>} */
+        this._cache = new Map();
+        /** @type {Promise<void>} */
+        this._queue = Promise.resolve();
+    }
+
+    /**
+     * Enqueue a notification message to be sent to the native app.
+     * @param {string} method
+     * @param {Record<string, any>} params
+     */
+    async _notify(method, params) {
+        const result = this._queue.then(() => {
+            return this.nativeMessaging.notify(method, params);
+        }).catch((e) => {
+            console.error('error in notification queue', e);
+        });
+        this._queue = result;
+        await result;
+    }
+
+    /**
+     * Enqueue a request to the native app and wait for a response,
+     * blocking subsequent callers until the request is complete.
+     * If cacheKey and ttl are provided, the result is cached and
+     * returned immediately on subsequent calls within the TTL.
+     * @param {string} method
+     * @param {Record<string, any>} params
+     * @param {string} [cacheKey]
+     * @param {number} [ttl]
+     * @returns {Promise<any>}
+     */
+    _request(method, params, cacheKey, ttl) {
+        const job = this._queue.then(async () => {
+            if (cacheKey && ttl) {
+                const cached = this._cache.get(cacheKey);
+                if (cached && Date.now() - cached.time < ttl) {
+                    return cached.value;
+                }
+            }
+            const result = await this.nativeMessaging.request(method, params);
+            if (cacheKey && ttl) {
+                // evict the oldest entry if the cache is full
+                if (this._cache.size >= MAX_CACHE_SIZE) {
+                    // Map are iterated in insertion order, so the oldest entry is the first one
+                    const oldest = this._cache.keys().next().value;
+                    if (oldest !== undefined) this._cache.delete(oldest);
+                }
+                this._cache.set(cacheKey, { time: Date.now(), value: result });
+            }
+            return result;
+        }).catch((e) => {
+            console.error(`error in request queue for ${method}`, e);
+        });
+        this._queue = job;
+        return job;
     }
 
     async logMessage(message) {
         console.log(message);
-        await this.nativeMessaging.notify('extensionLog', {
+        await this._notify('extensionLog', {
             message,
         });
     }
 
     async refreshDashboardState(tabId, url, dashboardState) {
-        await this.nativeMessaging.notify('refreshCpmDashboardState', {
+        await this._notify('refreshCpmDashboardState', {
             tabId,
             url,
             consentStatus: dashboardState,
@@ -52,7 +97,7 @@ export class CPMEmbeddedMessaging {
     }
 
     async showCpmAnimation(tabId, topUrl, isCosmetic) {
-        await this.nativeMessaging.notify('showCpmAnimation', {
+        await this._notify('showCpmAnimation', {
             tabId,
             topUrl,
             isCosmetic,
@@ -60,76 +105,29 @@ export class CPMEmbeddedMessaging {
     }
 
     async notifyPopupHandled(tabId, msg) {
-        await this.nativeMessaging.notify('cookiePopupHandled', {
+        await this._notify('cookiePopupHandled', {
             tabId,
             msg,
         });
     }
 
     async checkAutoconsentSettingEnabled() {
-        const cached = this._cache.setting;
-        if (cached && Date.now() - cached.time < SETTING_CHECK_TTL) {
-            return cached.value;
-        }
-        try {
-            const result = await this.nativeMessaging.request('isAutoconsentSettingEnabled', {});
-            this._cache.setting = { time: Date.now(), value: result.enabled };
-            return result.enabled;
-        } catch (e) {
-            console.error('error checking autoconsent setting enabled', e);
-            return false;
-        }
+        const result = await this._request('isAutoconsentSettingEnabled', {}, 'userSetting', SETTING_CHECK_TTL);
+        return result?.enabled ?? false;
     }
 
     async checkAutoconsentEnabledForSite(url) {
-        const cached = this._cache.site.get(url);
-        if (cached && Date.now() - cached.time < SITE_CHECK_TTL) {
-            return cached.value;
-        }
-        try {
-            const result = await this.nativeMessaging.request('isFeatureEnabled', {
-                featureName: 'autoconsent',
-                url,
-            });
-            const map = this._cache.site;
-            if (map.size >= MAX_CACHE_SIZE) {
-                // Map iterates in insertion order, so the oldest entry is the first one
-                const oldest = map.keys().next().value;
-                if (oldest !== undefined) map.delete(oldest);
-            }
-            map.set(url, { time: Date.now(), value: result.enabled });
-            return result.enabled;
-        } catch (e) {
-            console.error('error checking autoconsent enabled for site', e);
-            return false;
-        }
+        const result = await this._request('isFeatureEnabled', { featureName: 'autoconsent', url }, `site:${url}`, SITE_CHECK_TTL);
+        return result?.enabled ?? false;
     }
 
     async checkSubfeatureEnabled(subfeatureName) {
-        const cached = this._cache.subfeature.get(subfeatureName);
-        if (cached && Date.now() - cached.time < SUBFEATURE_CHECK_TTL) {
-            return cached.value;
-        }
-        try {
-            const result = await this.nativeMessaging.request('isSubFeatureEnabled', {
-                featureName: 'autoconsent',
-                subfeatureName,
-            });
-            const map = this._cache.subfeature;
-            if (map.size >= MAX_CACHE_SIZE) {
-                const oldest = map.keys().next().value;
-                if (oldest !== undefined) map.delete(oldest);
-            }
-            map.set(subfeatureName, { time: Date.now(), value: result.enabled });
-            return result.enabled;
-        } catch (e) {
-            console.error('error checking autoconsent subfeature enabled', e);
-            return false;
-        }
+        const result = await this._request('isSubFeatureEnabled', { featureName: 'autoconsent', subfeatureName }, `subfeature:${subfeatureName}`, SUBFEATURE_CHECK_TTL);
+        return result?.enabled ?? false;
     }
 
     async sendPixel(pixelName, type, params) {
-        await this.nativeMessaging.notify('sendPixel', {
+        await this._notify('sendPixel', {
             pixelName,
             type,
             params,
@@ -143,6 +141,7 @@ export class CPMEmbeddedMessaging {
         DEBUG && console.log(`cachedConfig: ${JSON.stringify(cachedConfig)}`);
 
         try {
+            // we don't use the request queue here because config fetching should be async
             const result = await this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion });
             if (result.updated) {
                 const config = result.data;
