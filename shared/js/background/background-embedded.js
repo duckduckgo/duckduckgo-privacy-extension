@@ -66,11 +66,10 @@ const components = {
     cpm,
 };
 
-Promise.all([
-    browser.scripting.getRegisteredContentScripts(),
-    browser.alarms.getAll(),
-]).then(([scripts, alarms]) => {
-    cpmMessaging.logMessage(`DuckDuckGo Embedded Extension loaded. Content scripts: ${JSON.stringify(scripts)}. Alarms: ${JSON.stringify(alarms)}. Current time: ${Date.now()}`);
+Promise.all([browser.scripting.getRegisteredContentScripts(), browser.alarms.getAll()]).then(([scripts, alarms]) => {
+    cpmMessaging.logMessage(
+        `DuckDuckGo Embedded Extension loaded. Content scripts: ${JSON.stringify(scripts)}. Alarms: ${JSON.stringify(alarms)}. Current time: ${Date.now()}`,
+    );
 });
 // @ts-ignore
 self.components = components;
