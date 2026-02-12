@@ -37,6 +37,8 @@ import AbnExperimentMetrics, { setUpTestExperiment } from './components/abn-expe
 import MessageRouter from './components/message-router';
 import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
+import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
+import CookiePromptManagement from './components/cookie-prompt-management';
 
 // Trigger registration of default message handlers into the shared registry.
 import { registerStandardHandlers } from './message-handlers';
@@ -91,11 +93,6 @@ const components = {
     messaging: new MessageRouter(),
 };
 
-// CPM components
-// const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });
-// const cpm = new CookiePromptManagement({ cpmMessaging });
-// components.cpm = cpm;
-
 // Chrome-only components
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2') {
     components.metrics = [
@@ -115,6 +112,11 @@ if (BUILD_TARGET === 'chrome') {
     // MV3-only components
     components.scriptInjection = new MV3ContentScriptInjection();
     components.dnrListeners = new DNRListeners({ settings, tds });
+
+    // CPM components
+    const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });
+    const cpm = new CookiePromptManagement({ cpmMessaging });
+    components.cpm = cpm;
 } else {
     // MV2-only components
     components.requestBlocklist = new RequestBlocklist();

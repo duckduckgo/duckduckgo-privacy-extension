@@ -8,18 +8,20 @@
 //       script IDs[1]) and could change in the future.
 // 1 - https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/extensions/api/scripting/scripting_api.cc;l=929
 
+import browser from 'webextension-polyfill';
+
 export async function registerContentScripts(scripts) {
     // check if scripts were already registered - registering duplicate scripts will throw an error.
-    const existingScripts = await chrome.scripting.getRegisteredContentScripts();
+    const existingScripts = await browser.scripting.getRegisteredContentScripts();
     const duplicateIds = existingScripts.filter((s) => scripts.some((newScript) => newScript.id === s.id)).map((s) => s.id);
     if (duplicateIds.length > 0) {
         await unregisterContentScripts(duplicateIds);
     }
-    await chrome.scripting.registerContentScripts(scripts);
+    await browser.scripting.registerContentScripts(scripts);
 }
 
 export async function unregisterContentScripts(scriptIds) {
-    await chrome.scripting.unregisterContentScripts({ ids: scriptIds });
+    await browser.scripting.unregisterContentScripts({ ids: scriptIds });
 }
 
 export default class MV3ContentScriptInjection {
