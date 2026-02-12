@@ -25,7 +25,6 @@ import { CPMEmbeddedMessaging } from './components/cpm-embedded-messaging';
 import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
 
-// FIXME: uncomment for production
 import NativeMessaging from './components/native-messaging';
 const nativeMessaging = new NativeMessaging('ddgInternalExtension', 'autoconsent', 'com.duckduckgo.macos.browser');
 

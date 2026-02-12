@@ -239,7 +239,7 @@ export default class CookiePromptManagement {
             return oldTopUrl;
         }
 
-        DEBUG && console.log('Main frame navigated from', oldTopUrl, 'to', newTopUrl);
+        DEBUG && this.cpmMessaging.logMessage(`${tabId} Main frame navigated from ${oldTopUrl} to ${newTopUrl}`);
         if (oldTopUrl.host !== newTopUrl.host || oldTopUrl.pathname !== newTopUrl.pathname || oldTopUrl.protocol !== newTopUrl.protocol) {
             // url has changed (as far as reload loop prevention is concerned)
             this.clearReloadLoopState(tabId);
