@@ -20,6 +20,7 @@
  */
 /* global RELOADER */
 
+import browser from 'webextension-polyfill';
 import CookiePromptManagement from './components/cookie-prompt-management';
 import { CPMEmbeddedMessaging } from './components/cpm-embedded-messaging';
 import MessageRouter from './components/message-router';
@@ -65,7 +66,12 @@ const components = {
     cpm,
 };
 
-cpmMessaging.logMessage(`DuckDuckGo Embedded Extension loaded: ${JSON.stringify(components)}`);
+Promise.all([
+    browser.scripting.getRegisteredContentScripts(),
+    browser.alarms.getAll(),
+]).then(([scripts, alarms]) => {
+    cpmMessaging.logMessage(`DuckDuckGo Embedded Extension loaded. Content scripts: ${JSON.stringify(scripts)}. Alarms: ${JSON.stringify(alarms)}. Current time: ${Date.now()}`);
+});
 // @ts-ignore
 self.components = components;
 
