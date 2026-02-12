@@ -4,6 +4,7 @@ import { overridePrivacyConfig, overrideTds } from './helpers/testConfig';
 import { TEST_SERVER_ORIGIN, routeFromLocalhost } from './helpers/testPages';
 
 const testPageDomain = 'privacy-test-pages.site';
+const testPageParams = '?timeout=10000';
 const thirdPartyDomain = 'good.third-party.site';
 const thirdPartyTracker = 'broken.third-party.site';
 const thirdPartyAd = 'convert.ad-company.site';
@@ -27,7 +28,9 @@ test.describe('Storage blocking Tests', () => {
         await backgroundWait.forAllConfiguration(backgroundPage);
         await routeFromLocalhost(page);
         await page.bringToFront();
-        await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/?store`, { waitUntil: 'networkidle' });
+        await page.goto(`https://${testPageDomain}/privacy-protections/storage-blocking/${testPageParams}&store`, {
+            waitUntil: 'networkidle',
+        });
         await waitForAllResults(page);
         const cookies = await context.cookies();
         const nowSeconds = Date.now() / 1000;
@@ -78,7 +81,7 @@ test.describe('Storage blocking Tests', () => {
     test.describe('Cookie blocking tests', () => {
         async function runStorageTest(page, origin) {
             await page.bringToFront();
-            await page.goto(`${origin}/privacy-protections/storage-blocking/?store`);
+            await page.goto(`${origin}/privacy-protections/storage-blocking/${testPageParams}&store`);
             await waitForAllResults(page);
             await page.click('#retrive');
             await waitForAllResults(page);
