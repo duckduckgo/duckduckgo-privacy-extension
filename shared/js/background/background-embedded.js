@@ -66,9 +66,21 @@ const components = {
     cpm,
 };
 
-Promise.all([browser.scripting.getRegisteredContentScripts(), browser.alarms.getAll()]).then(([scripts, alarms]) => {
+Promise.all([
+    browser.scripting.getRegisteredContentScripts(),
+    browser.alarms.getAll(),
+    // @ts-ignore - getBytesInUse is not available in the type
+    browser.storage.session.getBytesInUse(null),
+]).then(([scripts, alarms, bytesInSessionStorage]) => {
+    // @ts-ignore - QUOTA_BYTES is not available in the type
+    const quotaBytes = browser.storage.session.QUOTA_BYTES;
     cpmMessaging.logMessage(
-        `DuckDuckGo Embedded Extension loaded. Content scripts: ${JSON.stringify(scripts)}. Alarms: ${JSON.stringify(alarms)}. Current time: ${Date.now()}`,
+        `DuckDuckGo Embedded Extension loaded.
+        Content scripts: ${JSON.stringify(scripts)}
+        Alarms: ${JSON.stringify(alarms)}
+        Current time: ${Date.now()}
+        Bytes in session storage: ${bytesInSessionStorage} (Quota ${quotaBytes})
+        `,
     );
 });
 // @ts-ignore
