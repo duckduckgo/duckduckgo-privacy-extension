@@ -94,6 +94,10 @@ export default class NativeMessaging {
         );
         DEBUG && console.log('[NativeMessaging] Received from native:', JSON.stringify(response));
 
+        if (!response || typeof response !== 'object') {
+            throw new Error(`NativeMessaging: unexpected response type: ${typeof response}`);
+        }
+
         if ('error' in response && response.error) {
             DEBUG && console.log('[NativeMessaging] RESPONSE ERROR', `id=${id}`, response.error);
             throw new Error(response.error.message || 'Unknown error');
