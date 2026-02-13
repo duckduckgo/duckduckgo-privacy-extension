@@ -296,22 +296,24 @@ export default class CookiePromptManagement {
      * @returns
      */
     async handleAutoConsentMessage(msg, sender) {
-        const tabId = sender.tab?.id;
         const frameId = sender.frameId;
-        if (typeof frameId !== 'number') {
-            this.cpmMessaging.logMessage(`frameId is not a number: ${frameId}`);
+        if (!sender.tab || typeof frameId !== 'number') {
+            this.cpmMessaging.logMessage(`Invalid frameId ${frameId} or tab ${sender.tab}`);
             return;
         }
+        const tabId = sender.tab.id;
         const isMainFrame = frameId === 0;
         // @ts-expect-error - origin is not available in the type
-        const senderUrl = sender.url || `${sender.origin}/`;
-        let senderDomain = null;
+        const frameUrl = sender.url || sender.origin || 'about:blank';
+        const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
+        let tabDomain = null;
         try {
-            senderDomain = new URL(senderUrl).hostname;
+            tabDomain = new URL(tabUrl).hostname;
         } catch (e) {
-            this.cpmMessaging.logMessage(`error getting sender domain: ${e}`);
+            this.cpmMessaging.logMessage(`error getting tab domain: ${e}`);
             return;
         }
+
         // use the cached config
         const remoteConfig = await this.remoteConfigJson;
         if (!remoteConfig) {
@@ -342,20 +344,20 @@ export default class CookiePromptManagement {
             return;
         }
         const heuristicActionEnabled = await this.checkHeuristicActionEnabled();
-        let currentTopUrl = this._tabUrlsCache.get(tabId) || new URL(senderUrl); // use sender URL as fallback, in case we don't have a top URL yet
 
         switch (msg.type) {
             case 'init': {
                 // do the navigation check before checking if the domain is allowlisted
                 if (isMainFrame) {
-                    currentTopUrl = this.updateTopUrl(tabId, senderUrl);
+                    // update the cached top url for this tab
+                    this.updateTopUrl(tabId, tabUrl);
                     // schedule config refresh (will be used next time)
                     this.scheduleConfigRefresh();
                 }
 
-                const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(currentTopUrl.toString());
+                const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(tabUrl);
                 if (!isEnabled) {
-                    this.cpmMessaging.logMessage(`autoconsent disabled for site: ${senderUrl}`);
+                    this.cpmMessaging.logMessage(`autoconsent disabled for site: ${tabUrl}`);
                     this.firePixel('disabled-for-site');
                     return;
                 }
@@ -372,9 +374,9 @@ export default class CookiePromptManagement {
 
                 if (isMainFrame) {
                     // no await
-                    this.cpmMessaging.refreshDashboardState(tabId, senderUrl, {
+                    this.cpmMessaging.refreshDashboardState(tabId, tabUrl, {
                         // keep "cookies managed" if we did it for this site since app launch
-                        consentManaged: (await this.getCpmState()).sitesNotifiedCache.has(senderDomain),
+                        consentManaged: (await this.getCpmState()).sitesNotifiedCache.has(tabDomain),
                         cosmetic: null,
                         optoutFailed: null,
                         selftestFailed: null,
@@ -416,7 +418,8 @@ export default class CookiePromptManagement {
                             /** @type {import('@duckduckgo/autoconsent').IndexedCMPRuleset} */
                             (compactRuleList),
                             {
-                                url: senderUrl,
+                                // use the frame URL here because rules are filtered by frame context
+                                url: frameUrl,
                                 mainFrame: isMainFrame,
                             },
                         );
@@ -451,7 +454,7 @@ export default class CookiePromptManagement {
             case 'optOutResult': {
                 if (!msg.result) {
                     this.firePixel('error_optout');
-                    this.cpmMessaging.refreshDashboardState(tabId, senderUrl, {
+                    this.cpmMessaging.refreshDashboardState(tabId, tabUrl, {
                         consentManaged: true,
                         cosmetic: null,
                         optoutFailed: true,
@@ -468,7 +471,7 @@ export default class CookiePromptManagement {
             case 'autoconsentDone': {
                 // Remember the last handled CMP for reload loop detection
                 this.rememberLastHandledCMP(tabId, msg.cmp, msg.isCosmetic);
-                this.cpmMessaging.refreshDashboardState(tabId, senderUrl, {
+                this.cpmMessaging.refreshDashboardState(tabId, tabUrl, {
                     consentManaged: true,
                     cosmetic: msg.isCosmetic,
                     optoutFailed: false,
@@ -483,9 +486,9 @@ export default class CookiePromptManagement {
                     this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done');
                 }
                 await this.modifyCpmState((cpmState) => {
-                    cpmState.sitesNotifiedCache.add(senderDomain);
+                    cpmState.sitesNotifiedCache.add(tabDomain);
                 });
-                this.cpmMessaging.showCpmAnimation(tabId, currentTopUrl.toString(), msg.isCosmetic);
+                this.cpmMessaging.showCpmAnimation(tabId, tabUrl, msg.isCosmetic);
                 this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown');
                 this.cpmMessaging.notifyPopupHandled(tabId, msg);
                 break;
@@ -520,7 +523,7 @@ export default class CookiePromptManagement {
                 if (typeof msg.snippetId !== 'undefined') {
                     this.evalInTab(tabId, frameId, msg.snippetId).then(([result]) => {
                         if (logsConfig.evals) {
-                            console.groupCollapsed(`eval result for ${senderUrl}`);
+                            console.groupCollapsed(`eval result for ${frameUrl}`);
                             console.log(msg.code, result.result);
                             console.groupEnd();
                         }
