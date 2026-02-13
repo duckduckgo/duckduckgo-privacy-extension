@@ -66,10 +66,8 @@ test.describe('Fire Button', () => {
         // trigger the animation
         await fireButton.evaluate((f) => f.showBurnAnimation());
         const burnAnimationPage = await animationLoaded;
-        // wait for the animation to complete
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        // check that we're redirected to the newtab page after the animation completes
-        expect(burnAnimationPage.url()).toMatch(/^(https:\/\/duckduckgo.com\/chrome_newtab|chrome:\/\/new-tab-page\/$)/);
+        // wait for the animation to complete and redirect to newtab
+        await burnAnimationPage.waitForURL(/^(https:\/\/duckduckgo.com\/chrome_newtab|chrome:\/\/new-tab-page\/$)/);
     });
 
     test.describe('Tab clearing', () => {
