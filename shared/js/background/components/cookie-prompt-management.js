@@ -302,6 +302,10 @@ export default class CookiePromptManagement {
             return;
         }
         const tabId = sender.tab.id;
+        if (typeof tabId !== 'number') {
+            this.cpmMessaging.logMessage(`Invalid tabId ${tabId}`);
+            return;
+        }
         const isMainFrame = frameId === 0;
         // @ts-expect-error - origin is not available in the type
         const frameUrl = sender.url || sender.origin || 'about:blank';
@@ -334,8 +338,8 @@ export default class CookiePromptManagement {
                 autoconsentRemoteConfig,
             );
 
-        if (!autoconsentSettings || !tabId) {
-            this.cpmMessaging.logMessage(`autoconsentSettings or tabId not ready: ${autoconsentSettings} ${tabId}`);
+        if (!autoconsentSettings) {
+            this.cpmMessaging.logMessage(`autoconsentSettings not ready: ${autoconsentSettings}`);
             return;
         }
         const autoconsentFeatureEnabled = await this.cpmMessaging.checkAutoconsentSettingEnabled();
