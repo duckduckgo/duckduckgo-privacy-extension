@@ -1,4 +1,3 @@
-// @ts-ignore - autoconsent doesn't export types
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
 import browser from 'webextension-polyfill';
 import { registerContentScripts } from './mv3-content-script-injection';
