@@ -35,6 +35,7 @@ export class CPMStandaloneMessaging {
     }
 
     async checkAutoconsentSettingEnabled() {
+        // there's no Autoconsent setting in the extension yet
         return true;
     }
 
