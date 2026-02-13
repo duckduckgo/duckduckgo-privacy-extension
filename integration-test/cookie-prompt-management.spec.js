@@ -1,4 +1,4 @@
-import { test, expect } from './helpers/playwrightHarness';
+import { test, expect, getManifestVersion } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 import { routeFromLocalhost } from './helpers/testPages';
@@ -10,6 +10,11 @@ const heuristicTestPage = 'https://privacy-test-pages.site/features/autoconsent/
 const reloadLoopTestPage = 'https://privacy-test-pages.site/features/autoconsent/reload-loop.html';
 
 test.describe('Cookie Prompt Management', () => {
+    // CPM is only enabled in the Chrome MV3 build
+    if (getManifestVersion() !== 3) {
+        return;
+    }
+
     test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
         await overridePrivacyConfig(backgroundNetworkContext, 'cookie-prompt-management.json');
         await backgroundWait.forExtensionLoaded(context);
