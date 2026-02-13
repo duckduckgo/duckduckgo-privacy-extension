@@ -1,4 +1,10 @@
-import { CPMEmbeddedMessaging, MAX_CACHE_SIZE, SUBFEATURE_CHECK_TTL, SETTING_CHECK_TTL, SITE_CHECK_TTL } from '../../shared/js/background/components/cpm-embedded-messaging';
+import {
+    CPMEmbeddedMessaging,
+    MAX_CACHE_SIZE,
+    SUBFEATURE_CHECK_TTL,
+    SETTING_CHECK_TTL,
+    SITE_CHECK_TTL,
+} from '../../shared/js/background/components/cpm-embedded-messaging';
 import { sessionStorageFallback } from '../../shared/js/background/wrapper';
 
 /**
