@@ -339,7 +339,7 @@ export default class CookiePromptManagement {
             return;
         }
         const heuristicActionEnabled = await this.checkHeuristicActionEnabled();
-        let currentTopUrl = this._tabUrlsCache.get(tabId) || new URL('about:blank');
+        let currentTopUrl = this._tabUrlsCache.get(tabId) || new URL(senderUrl); // use sender URL as fallback, in case we don't have a top URL yet
 
         switch (msg.type) {
             case 'init': {
