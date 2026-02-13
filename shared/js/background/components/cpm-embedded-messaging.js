@@ -8,10 +8,10 @@ import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
  * @typedef {{ time: number, value: any }} CacheEntry
  */
 
-const SUBFEATURE_CHECK_TTL = 30 * 1000; // 30s
-const SETTING_CHECK_TTL = 10 * 1000; // 10s
-const SITE_CHECK_TTL = 3 * 1000; // 3s (to be able to respond to Protections toggle changes)
-const MAX_CACHE_SIZE = 100;
+export const SUBFEATURE_CHECK_TTL = 30 * 1000; // 30s
+export const SETTING_CHECK_TTL = 10 * 1000; // 10s
+export const SITE_CHECK_TTL = 3 * 1000; // 3s (to be able to respond to Protections toggle changes)
+export const MAX_CACHE_SIZE = 100;
 
 /**
  * CPM messaging for embedded extension.
