@@ -27,6 +27,9 @@ export class CPMEmbeddedMessaging {
         this._cache = new Map();
         /** @type {Promise<void>} */
         this._queue = Promise.resolve();
+        // in-memory cached config, will be lost on extension sleep, in which case we fetch from session storage
+        /** @type {import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig | null} */
+        this._cachedConfig = null;
     }
 
     /**
@@ -144,18 +147,23 @@ export class CPMEmbeddedMessaging {
     }
 
     async refreshRemoteConfig() {
-        console.log(`fetching config from native`);
-        const cachedConfig = (await getFromSessionStorage('config')) || { version: 'unknown' };
+        const cachedConfig = this._cachedConfig || (await getFromSessionStorage('config')) || { version: 'unknown' };
         const cachedConfigVersion = `${cachedConfig.version}`;
         DEBUG && console.log(`cachedConfig: ${JSON.stringify(cachedConfig)}`);
 
         try {
+            console.log(`fetching config from native, cachedConfigVersion: ${cachedConfigVersion}`);
             // we don't use the request queue here because config fetching should be async
             const result = await this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion });
             if (result.updated) {
-                const config = result.data;
-                await setToSessionStorage('config', config);
-                return config;
+                this._cachedConfig = result.data;
+                try {
+                    await setToSessionStorage('config', this._cachedConfig);
+                } catch (e) {
+                    // this can happen if quota is exceeded
+                    this.logMessage(`error setting cached config to session storage: ${e}`);
+                }
+                return this._cachedConfig;
             }
             return cachedConfig;
         } catch (e) {

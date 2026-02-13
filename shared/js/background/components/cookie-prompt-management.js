@@ -191,7 +191,12 @@ export default class CookiePromptManagement {
      */
     async updateCpmState(newState) {
         this._jsonCpmState = this._serializeCpmState(newState);
-        await setToSessionStorage('cpmState', this._jsonCpmState);
+        try {
+            await setToSessionStorage('cpmState', this._jsonCpmState);
+        } catch (e) {
+            // this can happen if quota is exceeded
+            this.cpmMessaging.logMessage(`error setting cpmState to session storage: ${e}`);
+        }
     }
 
     /**
