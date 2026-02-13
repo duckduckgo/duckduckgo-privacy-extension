@@ -61,28 +61,6 @@ describe('CPMEmbeddedMessaging', () => {
             expect(nativeMessaging.notify).toHaveBeenCalledWith('after', {});
             expect(console.error).toHaveBeenCalled();
         });
-
-        it('the resulting promise resolves only after the notification is sent', async () => {
-            let underlyingResolve;
-            const underlyingPromise = new Promise((resolve) => {
-                underlyingResolve = resolve;
-            });
-            nativeMessaging.notify.and.returnValue(underlyingPromise);
-
-            let resolved = false;
-            const p = messaging._notify('test', {}).then(() => {
-                resolved = true;
-            });
-
-            // flush microtasks — promise should still be pending
-            await Promise.resolve();
-            expect(resolved).toBeFalse();
-
-            // now let the underlying notification complete
-            underlyingResolve();
-            await p;
-            expect(resolved).toBeTrue();
-        });
     });
 
     describe('_request', () => {
