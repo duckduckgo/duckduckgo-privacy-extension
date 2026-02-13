@@ -11,7 +11,7 @@ const DEFAULT_NATIVE_APP_ID = 'com.duckduckgo.macos.browser';
 
 /**
  * @typedef {{
- *  notify: (method: string, params: Record<string, any>) => void;
+ *  notify: (method: string, params: Record<string, any>) => Promise<void>;
  *  request: (method: string, params: Record<string, any>) => Promise<any>;
  *  subscribe: (msg: any, callback: (msg: any) => void) => void;
  * }} NativeMessagingInterface
@@ -48,7 +48,7 @@ export default class NativeMessaging {
      * @param {string} method - The method name to call on the native side
      * @param {Record<string, any>} [params] - Optional parameters to send
      */
-    notify(method, params = {}) {
+    async notify(method, params = {}) {
         const msg = /** @type {NotificationMessage} */ ({
             context: this._context,
             featureName: this._featureName,
@@ -56,8 +56,9 @@ export default class NativeMessaging {
             params,
         });
         DEBUG && console.log('[NativeMessaging] NOTIFY', `${this._context}.${this._featureName}.${method}`, params);
-        browser.runtime.sendNativeMessage(this._appId, msg).catch((e) => {
+        await browser.runtime.sendNativeMessage(this._appId, msg).catch((e) => {
             DEBUG && console.error('[NativeMessaging] notification error:', e);
+            throw e;
         });
     }
 
