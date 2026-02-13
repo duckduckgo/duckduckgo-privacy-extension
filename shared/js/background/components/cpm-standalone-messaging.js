@@ -46,7 +46,7 @@ export class CPMStandaloneMessaging {
 
     async checkSubfeatureEnabled(subfeatureName) {
         await this.remoteConfig.ready;
-        return this.remoteConfig.isSubFeatureEnabled('autoconsent', subfeatureName, 'treatment');
+        return this.remoteConfig.isSubFeatureEnabled('autoconsent', subfeatureName);
     }
 
     async sendPixel(pixelName, type, params) {
