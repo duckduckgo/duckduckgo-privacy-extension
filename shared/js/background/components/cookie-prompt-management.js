@@ -325,7 +325,7 @@ export default class CookiePromptManagement {
             this.scheduleConfigRefresh();
             return;
         }
-        const autoconsentRemoteConfig = remoteConfig.features.autoconsent;
+        const autoconsentRemoteConfig = remoteConfig.features?.autoconsent;
         const autoconsentSettings = autoconsentRemoteConfig?.settings;
         DEBUG &&
             console.log(
