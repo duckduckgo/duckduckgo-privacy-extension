@@ -127,7 +127,10 @@ export default class CookiePromptManagement {
 
     scheduleConfigRefresh() {
         /** @type {Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>} */
-        this.remoteConfigJson = this.cpmMessaging.refreshRemoteConfig();
+        this.remoteConfigJson = this.cpmMessaging.refreshRemoteConfig().catch((e) => {
+            // make sure remoteConfigJson is never rejected
+            return null;
+        });
     }
 
     /**
@@ -313,7 +316,8 @@ export default class CookiePromptManagement {
         // use the cached config
         const remoteConfig = await this.remoteConfigJson;
         if (!remoteConfig) {
-            this.cpmMessaging.logMessage('Remote config not ready');
+            this.cpmMessaging.logMessage('Remote config not ready, scheduling retry');
+            this.scheduleConfigRefresh();
             return;
         }
         const autoconsentRemoteConfig = remoteConfig.features.autoconsent;
