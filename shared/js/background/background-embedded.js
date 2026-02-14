@@ -34,14 +34,14 @@ globalThis.addEventListener('error', (event) => {
     nativeMessaging.notify('extensionException', {
         message: `Uncaught error: ${event.error?.message ?? event.message}`,
         stack: event.error?.stack,
-    });
+    }).catch((e) => { /* ignore errors */ });
 });
 
 globalThis.addEventListener('unhandledrejection', (event) => {
     nativeMessaging.notify('extensionException', {
         message: `Unhandled promise rejection: ${event.reason}`,
         stack: event.reason?.stack,
-    });
+    }).catch((e) => { /* ignore errors */ });
 });
 
 const cpmMessaging = new CPMEmbeddedMessaging(nativeMessaging);
