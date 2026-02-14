@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import { sendPixelRequest } from '../pixels';
-import { registerMessageHandler } from '../message-handlers';
+import { registerMessageHandler } from '../message-registry';
 import { getDomain } from 'tldts';
 import tdsStorage from '../storage/tds';
 import { isInstalledWithinDays, sendTabMessage } from '../utils';

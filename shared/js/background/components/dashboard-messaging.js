@@ -1,6 +1,6 @@
 import { breakageReportForTab, getDisclosureDetails } from '../broken-site-report';
 import { dashboardDataFromTab } from '../classes/privacy-dashboard-data';
-import { registerMessageHandler } from '../message-handlers';
+import { registerMessageHandler } from '../message-registry';
 import { getCurrentTab } from '../utils';
 import { isFireButtonEnabled } from './fire-button';
 import { requestBreakageReportData } from '../breakage-report-request';

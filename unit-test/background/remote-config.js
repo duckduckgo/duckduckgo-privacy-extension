@@ -1,7 +1,7 @@
 import browser from 'webextension-polyfill';
 
 import RemoteConfig from '../../shared/js/background/components/remote-config';
-import messageHandlers from '../../shared/js/background/message-handlers';
+import messageHandlers from '../../shared/js/background/message-registry';
 
 class MockSettings {
     constructor() {

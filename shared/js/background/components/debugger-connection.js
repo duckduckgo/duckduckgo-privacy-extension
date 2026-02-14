@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { registerMessageHandler } from '../message-handlers';
+import { registerMessageHandler } from '../message-registry';
 import { getBrowserName } from '../utils';
 import { getExtensionVersion, getFromSessionStorage, removeFromSessionStorage, setToSessionStorage } from '../wrapper';
 

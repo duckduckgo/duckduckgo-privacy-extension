@@ -1,6 +1,6 @@
 /* global BUILD_TARGET */
 import browser from 'webextension-polyfill';
-import { registerMessageHandler } from '../message-handlers';
+import { registerMessageHandler } from '../message-registry';
 import { getCurrentTab } from '../utils';
 import { getExtensionURL } from '../wrapper';
 import { getDomain, parse } from 'tldts';

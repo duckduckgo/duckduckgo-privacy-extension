@@ -1,6 +1,6 @@
 /* global DEBUG */
 import browser from 'webextension-polyfill';
-import { registerMessageHandler } from '../message-handlers';
+import { registerMessageHandler } from '../message-registry';
 
 const VERIFICATION_HOST = 'use-login.duckduckgo.com';
 const SETTINGS_KEY = 'isInternalUser';

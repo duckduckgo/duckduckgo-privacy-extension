@@ -9,6 +9,8 @@ import { getArgumentsObject } from './helpers/arguments-object';
 import { resolveBreakageReportRequest } from './breakage-report-request';
 import { postPopupMessage } from './popup-messaging';
 import ToggleReports from './components/toggle-reports';
+import messageHandlers from './message-registry';
+
 const utils = require('./utils');
 const settings = require('./settings');
 const tabManager = require('./tab-manager');
@@ -321,49 +323,41 @@ export async function rescheduleCounterMessagingRequest() {
 }
 
 /**
- * Add a new message handler.
- * @param {string} name
- * @param {(options: any, sender: any, req: any) => any} func
- */
-export function registerMessageHandler(name, func) {
-    messageHandlers[name] = func;
-}
-
-/**
  * Default set of message handler functions used by the background message handler.
  *
  * Don't add new listeners to this list, instead import and call registerMessageHandler in your
  * feature's initialization code!
  */
-const messageHandlers = {
-    registeredContentScript,
-    resetTrackersData,
-    getExtensionVersion,
-    setList,
-    setLists,
-    allowlistOptIn,
-    getBrowser,
-    openOptions,
-    getTopBlockedByPages,
-    getClickToLoadState,
-    getYouTubeVideoDetails,
-    unblockClickToLoadContent,
-    updateYouTubeCTLAddedFlag,
-    updateFacebookCTLBreakageFlags,
-    setYoutubePreviewsEnabled,
-    updateSetting,
-    getSetting,
-    getTopBlocked,
-    getListContents,
-    setListContents,
-    reloadList,
-    debuggerMessage,
-    search,
-    openShareFeedbackPage,
-    isClickToLoadYoutubeEnabled,
-    addDebugFlag,
-    breakageReportResult,
-    healthCheckRequest,
-    rescheduleCounterMessagingRequest,
-};
-export default messageHandlers;
+export function registerStandardHandlers() {
+    Object.assign(messageHandlers, {
+        registeredContentScript,
+        resetTrackersData,
+        getExtensionVersion,
+        setList,
+        setLists,
+        allowlistOptIn,
+        getBrowser,
+        openOptions,
+        getTopBlockedByPages,
+        getClickToLoadState,
+        getYouTubeVideoDetails,
+        unblockClickToLoadContent,
+        updateYouTubeCTLAddedFlag,
+        updateFacebookCTLBreakageFlags,
+        setYoutubePreviewsEnabled,
+        updateSetting,
+        getSetting,
+        getTopBlocked,
+        getListContents,
+        setListContents,
+        reloadList,
+        debuggerMessage,
+        search,
+        openShareFeedbackPage,
+        isClickToLoadYoutubeEnabled,
+        addDebugFlag,
+        breakageReportResult,
+        healthCheckRequest,
+        rescheduleCounterMessagingRequest,
+    });
+}

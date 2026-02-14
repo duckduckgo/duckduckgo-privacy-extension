@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { registerMessageHandler } from '../message-handlers';
+import { registerMessageHandler } from '../message-registry';
 import { postPopupMessage } from '../popup-messaging';
 import settings from '../settings';
 import { getFeatureSettings, reloadCurrentTab, resolveAfterDelay } from '../utils';

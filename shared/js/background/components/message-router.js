@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 
-import messageHandlers from '../message-handlers';
+import messageHandlers from '../message-registry';
 import { getExtensionId } from '../wrapper';
 import { getBrowserName } from '../utils';
 import { getActivePort, setActivePort } from '../popup-messaging';
@@ -21,7 +21,7 @@ export class MessageReceivedEvent extends CustomEvent {
 }
 
 export default class MessageRouter extends EventTarget {
-    constructor({ tabManager }) {
+    constructor() {
         super();
         const browserName = getBrowserName();
         // Handle popup UI (aka privacy dashboard) messaging.
