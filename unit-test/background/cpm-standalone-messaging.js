@@ -27,6 +27,9 @@ function constructMockComponents(config) {
     Object.keys(messageHandlers).forEach((k) => delete messageHandlers[k]);
     const settings = new MockSettings();
     const remoteConfig = new RemoteConfig({ settings });
+    // Prevent the constructor's async checkForUpdates() from overwriting the
+    // test config via the onUpdate callback (race with DB/network loads).
+    remoteConfig.ready = Promise.resolve();
     remoteConfig.updateConfig(config);
     return { remoteConfig, settings };
 }
@@ -58,6 +61,8 @@ describe('CPMStandaloneMessaging', () => {
         settings = components.settings;
         messaging = new CPMStandaloneMessaging({ remoteConfig });
         loadUrlSpy = spyOn(load, 'url').and.returnValue(Promise.resolve());
+        // Site.isFeatureEnabled reads from the global tdsStorage.config
+        tdsStorage.config = config;
     });
 
     describe('logMessage', () => {
