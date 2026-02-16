@@ -124,6 +124,12 @@ beta-firefox-zip: remove-firefox-id
 
 .PHONY: beta-firefox-zip
 
+embedded-release-zip:
+	rm -f build/embedded/release/embedded-release-*.zip
+	cd build/embedded/release/ && zip -rq embedded-release-$(shell date +"%Y%m%d_%H%M%S").zip *
+
+.PHONY: embedded-release-zip
+
 ###--- Integration test setup ---###
 # Artifacts produced by the integration tests.
 setup-artifacts-dir:

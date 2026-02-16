@@ -30,7 +30,9 @@
         "release-firefox": "make browser=firefox type=release",
         "dev-chrome": "make watch browser=chrome type=dev",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
+        "dev-embedded": "make watch browser=embedded type=dev",
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip",
+        "release-embedded": "make browser=embedded type=release && make embedded-release-zip",
         "beta-chrome": "make chrome-beta browser=chrome type=release",
         "validate-pixel-defs": "validate-ddg-pixel-defs pixel-definitions"
     },
