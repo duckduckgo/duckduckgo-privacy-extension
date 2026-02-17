@@ -20,5 +20,10 @@
     ],
     "host_permissions": [
         "*://*/*"
-    ]
+    ],
+    "browser_specific_settings": {
+        "duckduckgo": {
+            "id": "com.duckduckgo.web-extension.embedded"
+        }
+    }
 }
