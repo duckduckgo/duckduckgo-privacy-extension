@@ -599,6 +599,7 @@ export default class CookiePromptManagement {
         const pixelName = `autoconsent_${eventName}`;
         this.cpmMessaging.sendPixel(pixelName, 'daily', {
             consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
+            fromExtension: '1',
         });
     }
 
@@ -614,6 +615,7 @@ export default class CookiePromptManagement {
         this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
             ...summaryEvents,
             consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
+            fromExtension: '1',
         });
     }
 }
