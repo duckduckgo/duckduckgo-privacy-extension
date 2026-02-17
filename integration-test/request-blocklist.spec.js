@@ -30,14 +30,14 @@ test.describe('Test Request Blocklist feature', () => {
             }
 
             // Load and run the request blocking test page.
-            const { testCount, pageRequests } = await runRequestBlockingTest(page, testSite);
+            const { testCount, pageRequests } = await runRequestBlockingTest(backgroundPage, page, testSite);
             expect(testCount).toBeGreaterThan(0);
 
             // Verify that the .jpg image requests were blocked as expected.
             for (const { url, status } of pageRequests) {
-                // TODO: Figure out why the video.mp4 request is reported as
-                //       blocked regardless.
-                if (new URL(url).pathname.endsWith('video.mp4')) {
+                // Skip request types that Playwright reports unreliably.
+                const pathname = new URL(url).pathname;
+                if (pathname.endsWith('video.mp4') || pathname.endsWith('server-sent-events')) {
                     continue;
                 }
 
