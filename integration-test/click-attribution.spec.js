@@ -19,7 +19,7 @@ test.describe('Ad click blocking', () => {
         clearBackgroundPixels = await logPixels(
             backgroundNetworkContext,
             backgroundPixels,
-            ({ name }) => name !== 'page_extensionsuccess_impression',
+            ({ name }) => name !== 'page_extensionsuccess_impression' && !name.startsWith('autoconsent_'),
         );
 
         await backgroundWait.forExtensionLoaded(context);

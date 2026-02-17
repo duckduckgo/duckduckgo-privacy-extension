@@ -37,6 +37,13 @@ import AbnExperimentMetrics, { setUpTestExperiment } from './components/abn-expe
 import MessageRouter from './components/message-router';
 import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
+import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
+import CookiePromptManagement from './components/cookie-prompt-management';
+
+// Trigger registration of default message handlers into the shared registry.
+import { registerStandardHandlers } from './message-handlers';
+registerStandardHandlers();
+
 // NOTE: this needs to be the first thing that's require()d when the extension loads.
 // otherwise FF might miss the onInstalled event
 require('./events');
@@ -83,7 +90,7 @@ const components = {
     devtools,
     remoteConfig,
     abnMetrics,
-    messaging: new MessageRouter({ tabManager }),
+    messaging: new MessageRouter(),
 };
 
 // Chrome-only components
@@ -105,6 +112,11 @@ if (BUILD_TARGET === 'chrome') {
     // MV3-only components
     components.scriptInjection = new MV3ContentScriptInjection();
     components.dnrListeners = new DNRListeners({ settings, tds });
+
+    // CPM components
+    const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });
+    const cpm = new CookiePromptManagement({ cpmMessaging });
+    components.cpm = cpm;
 } else {
     // MV2-only components
     components.requestBlocklist = new RequestBlocklist();

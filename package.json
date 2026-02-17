@@ -30,7 +30,9 @@
         "release-firefox": "make browser=firefox type=release",
         "dev-chrome": "make watch browser=chrome type=dev",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
+        "dev-embedded": "make watch browser=embedded type=dev",
         "release-chrome": "make browser=chrome type=release && make chrome-release-zip",
+        "release-embedded": "make browser=embedded type=release && make embedded-release-zip",
         "beta-chrome": "make chrome-beta browser=chrome type=release",
         "validate-pixel-defs": "validate-ddg-pixel-defs pixel-definitions"
     },
@@ -65,6 +67,7 @@
         "yargs": "^18.0.0"
     },
     "dependencies": {
+        "@duckduckgo/autoconsent": "^14.54.0",
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#17.0.1",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#13.0.0",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",

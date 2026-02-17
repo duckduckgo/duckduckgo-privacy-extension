@@ -124,6 +124,12 @@ beta-firefox-zip: remove-firefox-id
 
 .PHONY: beta-firefox-zip
 
+embedded-release-zip:
+	rm -f build/embedded/release/embedded-release-*.zip
+	cd build/embedded/release/ && zip -rq embedded-release-$(shell date +"%Y%m%d_%H%M%S").zip *
+
+.PHONY: embedded-release-zip
+
 ###--- Integration test setup ---###
 # Artifacts produced by the integration tests.
 setup-artifacts-dir:
@@ -135,10 +141,10 @@ setup-artifacts-dir:
 
 ###--- Mkdir targets ---#
 # Note: Intermediate directories can be omitted.
-MKDIR_TARGETS = $(BUILD_DIR)/_locales $(BUILD_DIR)/data/bundled $(BUILD_DIR)/html \
+MKDIR_TARGETS = $(BUILD_DIR)/data/bundled $(BUILD_DIR)/html \
                 $(BUILD_DIR)/img $(BUILD_DIR)/dashboard $(BUILD_DIR)/web_accessible_resources \
                 $(BUILD_DIR)/public/js/content-scripts $(BUILD_DIR)/public/css \
-                $(BUILD_DIR)/public/font \
+                $(BUILD_DIR)/public/font $(BUILD_DIR)/_locales \
                 $(INTERMEDIATES_DIR)
 
 $(MKDIR_TARGETS):
@@ -154,12 +160,15 @@ LAST_COPY = build/.last-copy-$(browser)-$(type)
 RSYNC = rsync -ra --exclude="*~"
 
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
-	$(RSYNC) browsers/$(browser)/* browsers/chrome/_locales shared/data shared/html shared/img $(BUILD_DIR)
+	$(RSYNC) browsers/$(browser)/* $(BUILD_DIR)
+ifneq ($(browser),embedded)
+	$(RSYNC) browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill.css $(BUILD_DIR)/public/css/autofill.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill-host-styles_$(BROWSER_TYPE).css $(BUILD_DIR)/public/css/autofill-host-styles.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js shared/js/content-scripts/*.js $(BUILD_DIR)/public/js/content-scripts
 	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
+endif
 	touch $@
 
 copy: $(LAST_COPY)
@@ -189,6 +198,9 @@ endif
 
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/background/background.js > $@
+
+$(BUILD_DIR)/public/js/background-embedded.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/background/background-embedded.js > $@
 
 ## Locale resources for UI
 shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
@@ -220,8 +232,10 @@ $(BUILD_DIR)/public/js/newtab.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/fire/index.js > $@
 
-JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js
+$(BUILD_DIR)/public/js/content-scripts/cpm.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/cpm.js > $@
 
+JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js content-scripts/cpm.js
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Content Scope Scripts
@@ -306,6 +320,13 @@ $(INTERMEDIATES_DIR)/surrogates.json: $(LAST_COPY)
 	node scripts/generateListOfSurrogates.mjs --json -i $(BUILD_DIR)/web_accessible_resources/ > $@
 
 BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
+
+# Embedded builds only need a few files, override the unnecessary ones.
+EMBEDDED_JS_BUNDLES = background-embedded.js content-scripts/cpm.js
+ifeq ($(browser),embedded)
+  BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(EMBEDDED_JS_BUNDLES))
+endif
+
 
 # Update buildtime.txt for development builds, for auto-reloading.
 # Note: Keep this below the other build targets, since it depends on the

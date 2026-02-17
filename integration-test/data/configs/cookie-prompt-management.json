@@ -1,0 +1,61 @@
+{
+    "globalThis.dbg.tds.config.features.autoconsent": {
+        "state": "enabled",
+        "exceptions": [],
+        "features": {
+            "filterlist": {
+                "state": "disabled"
+            },
+            "heuristicAction": {
+                "state": "enabled"
+            }
+        },
+        "settings": {
+            "disabledCMPs": [],
+            "compactRuleList": {
+                "v": 1,
+                "s": [
+                    "#reject-all",
+                    "#privacy-test-page-cmp-test",
+                    "#privacy-test-page-cmp-test-prehide",
+                    "#privacy-test-page-cmp-test-banner"
+                ],
+                "r": [
+                    [
+                        1,
+                        "Test page CMP",
+                        2,
+                        "",
+                        22,
+                        [0],
+                        [{ "e": 1 }],
+                        [{ "v": 1 }],
+                        [{ "w": 0 }, { "eval": "EVAL_TESTCMP_STEP" }, { "k": 0 }],
+                        [{ "eval": "EVAL_TESTCMP_0" }],
+                        {}
+                    ],
+                    [
+                        1,
+                        "Test page cosmetic CMP",
+                        1,
+                        "",
+                        22,
+                        [2],
+                        [{ "e": 3 }],
+                        [{ "v": 3 }],
+                        [{ "h": 3 }],
+                        [{ "wait": 500 }, { "eval": "EVAL_TESTCMP_COSMETIC_0" }],
+                        {}
+                    ]
+                ],
+                "index": {
+                    "genericRuleRange": [0, 2],
+                    "frameRuleRange": [2, 2],
+                    "specificRuleRange": [2, 2],
+                    "genericStringEnd": 4,
+                    "frameStringEnd": 4
+                }
+            }
+        }
+    }
+}
