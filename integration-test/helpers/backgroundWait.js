@@ -9,13 +9,13 @@ function manuallyWaitForFunction(bgPage, func, { polling, timeout }, ...args) {
             try {
                 result = await bgPage.evaluate(func, ...args);
             } catch (e) {
-                reject(e);
+                return reject(e);
             }
             if (result) {
-                resolve(result);
+                return resolve(result);
             } else {
                 if (Date.now() - startTime > timeout) {
-                    reject(new errors.TimeoutError('Manually waiting for function timed out: ' + func.toString()));
+                    return reject(new errors.TimeoutError('Manually waiting for function timed out: ' + func.toString()));
                 } else {
                     setTimeout(waitForFunction, polling);
                 }
