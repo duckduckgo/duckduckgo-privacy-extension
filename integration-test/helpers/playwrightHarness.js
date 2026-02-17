@@ -12,6 +12,18 @@ export function getManifestVersion() {
     return process.env.npm_lifecycle_event === 'playwright-mv2' ? 2 : 3;
 }
 
+/**
+ * Add a script tag to a page or frame context.
+ *
+ * @param {import('@playwright/test').Page | import('@playwright/test').Frame} context
+ *   Page or frame to inject script into.
+ * @param {{path?: string, content?: string, url?: string}} options
+ *   Details of the script to inject.
+ */
+export async function addScriptTag(context, options) {
+    await context.addScriptTag(options);
+}
+
 async function routeLocalResources(route) {
     const url = new URL(route.request().url());
     const localPath = path.join(testRoot, 'data', 'staticcdn', url.pathname);
