@@ -118,12 +118,13 @@ if (BUILD_TARGET === 'chrome') {
     components.cpm = cpm;
 
     // Register the CPM content script only when it is enabled in remote config.
-    const CPM_CONTENT_SCRIPT_ID = 'cpm-content-script';
+    const CPM_CONTENT_SCRIPT_ID = 'cookie-prompt-management-script';
     remoteConfig.onUpdate(async () => {
         const enabled = remoteConfig.isFeatureEnabled('autoconsent');
         const cpmScripts = await chrome.scripting.getRegisteredContentScripts({ ids: [CPM_CONTENT_SCRIPT_ID] });
         const cpmScriptExists = cpmScripts.length > 0;
         if (enabled && !cpmScriptExists) {
+            console.log('registering CPM content script');
             await registerContentScripts([
                 {
                     id: CPM_CONTENT_SCRIPT_ID,
@@ -136,6 +137,7 @@ if (BUILD_TARGET === 'chrome') {
                 },
             ]);
         } else if (!enabled && cpmScriptExists) {
+            console.log('unregistering CPM content script');
             await unregisterContentScripts([CPM_CONTENT_SCRIPT_ID]);
         }
     });
