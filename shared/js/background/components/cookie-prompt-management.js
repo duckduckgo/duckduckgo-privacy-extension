@@ -1,6 +1,5 @@
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
 import browser from 'webextension-polyfill';
-import { registerContentScripts } from './mv3-content-script-injection';
 import { getFromSessionStorage, setToSessionStorage, createAlarm } from '../wrapper';
 import { registerMessageHandler } from '../message-registry';
 
@@ -81,18 +80,6 @@ export default class CookiePromptManagement {
         this._lastHandledCMP = new Map(); // last handled CMP per tab
         /** @type {Set<number>} */
         this._reloadLoopDetected = new Set(); // tabs with detected reload loops
-
-        registerContentScripts([
-            {
-                id: 'cookie-prompt-management-script',
-                js: ['public/js/content-scripts/cpm.js'],
-                matches: ['<all_urls>'],
-                runAt: 'document_end',
-                world: 'ISOLATED',
-                matchOriginAsFallback: true,
-                allFrames: true,
-            },
-        ]);
 
         // queue for CPM state mutations
         /** @type {Promise<void>} */

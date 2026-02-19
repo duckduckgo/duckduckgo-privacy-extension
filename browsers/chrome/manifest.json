@@ -55,6 +55,14 @@
             "run_at": "document_start",
             "match_origin_as_fallback": true,
             "match_about_blank": true
+        },
+        {
+            "matches": ["<all_urls>"],
+            "js": ["public/js/content-scripts/cpm.js"],
+            "run_at": "document_end",
+            "world": "ISOLATED",
+            "match_origin_as_fallback": true,
+            "all_frames": true
         }
     ],
     "permissions": [
