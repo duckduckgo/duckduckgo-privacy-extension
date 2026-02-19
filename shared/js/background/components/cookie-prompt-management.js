@@ -50,13 +50,13 @@ import { registerMessageHandler } from '../message-registry';
  * @type {import('@duckduckgo/autoconsent').Config['logs']}
  */
 const logsConfig = {
-    lifecycle: true,
+    lifecycle: !!DEBUG,
     detectionsteps: false,
-    errors: true,
+    errors: !!DEBUG,
     evals: false,
-    messages: true,
-    rulesteps: true,
-    waits: true,
+    messages: !!DEBUG,
+    rulesteps: !!DEBUG,
+    waits: !!DEBUG,
 };
 
 export default class CookiePromptManagement {
