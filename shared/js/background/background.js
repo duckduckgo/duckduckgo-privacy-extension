@@ -39,6 +39,7 @@ import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
 import CookiePromptManagement from './components/cookie-prompt-management';
+import EventHub from './components/event-hub';
 
 // Trigger registration of default message handlers into the shared registry.
 import { registerStandardHandlers } from './message-handlers';
@@ -119,6 +120,11 @@ if (BUILD_TARGET === 'chrome') {
     // MV2-only components
     components.requestBlocklist = new RequestBlocklist();
 }
+// EventHub telemetry (Chrome-only, same as pixels)
+if (BUILD_TARGET !== 'firefox') {
+    components.eventHub = new EventHub({ remoteConfig, settings });
+}
+
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore
 self.components = components;
