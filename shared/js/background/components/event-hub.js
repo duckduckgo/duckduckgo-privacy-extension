@@ -142,15 +142,6 @@ export default class EventHub {
             this.seenEventsPerTab.delete(tabId);
         });
 
-        this._initFromConfig();
-    }
-
-    /**
-     * Load config once remoteConfig is ready, and subscribe to updates.
-     */
-    async _initFromConfig() {
-        await /** @type {RemoteConfig} */ (this.remoteConfig).ready;
-        this._loadConfig();
         /** @type {RemoteConfig} */ (this.remoteConfig).onUpdate(() => {
             this._loadConfig();
         });
