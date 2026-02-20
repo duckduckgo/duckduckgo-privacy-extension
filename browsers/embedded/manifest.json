@@ -9,7 +9,7 @@
     },
     "content_scripts": [
         {
-            "matches": ["<all_urls>"],
+            "matches": ["*://*/*"],
             "js": ["public/js/content-scripts/cpm.js"],
             "run_at": "document_start",
             "world": "ISOLATED",

@@ -95,7 +95,7 @@ export default class CookiePromptManagement {
                             js: ['public/js/content-scripts/cpm.js'],
                             runAt: 'document_start',
                             world: 'ISOLATED',
-                            matches: ['<all_urls>'],
+                            matches: ['*://*/*'],
                             matchOriginAsFallback: true,
                         },
                     ]);
