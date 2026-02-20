@@ -18,7 +18,7 @@
 import { onStartup } from './startup';
 import FireButton from './components/fire-button';
 import TabTracker from './components/tab-tracking';
-import MV3ContentScriptInjection, { registerContentScripts, unregisterContentScripts } from './components/mv3-content-script-injection';
+import MV3ContentScriptInjection from './components/mv3-content-script-injection';
 import EmailAutofill from './components/email-autofill';
 import OmniboxSearch from './components/omnibox-search';
 import InternalUserDetector from './components/internal-user-detector';
@@ -114,33 +114,7 @@ if (BUILD_TARGET === 'chrome') {
     components.dnrListeners = new DNRListeners({ settings, tds });
 
     const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });
-    const cpm = new CookiePromptManagement({ cpmMessaging });
-    components.cpm = cpm;
-
-    // Register the CPM content script only when it is enabled in remote config.
-    const CPM_CONTENT_SCRIPT_ID = 'cookie-prompt-management-script';
-    remoteConfig.onUpdate(async () => {
-        const enabled = remoteConfig.isFeatureEnabled('autoconsent');
-        const cpmScripts = await chrome.scripting.getRegisteredContentScripts({ ids: [CPM_CONTENT_SCRIPT_ID] });
-        const cpmScriptExists = cpmScripts.length > 0;
-        if (enabled && !cpmScriptExists) {
-            console.log('registering CPM content script');
-            await registerContentScripts([
-                {
-                    id: CPM_CONTENT_SCRIPT_ID,
-                    allFrames: true,
-                    js: ['public/js/content-scripts/cpm.js'],
-                    runAt: 'document_end',
-                    world: 'ISOLATED',
-                    matches: ['<all_urls>'],
-                    matchOriginAsFallback: true,
-                },
-            ]);
-        } else if (!enabled && cpmScriptExists) {
-            console.log('unregistering CPM content script');
-            await unregisterContentScripts([CPM_CONTENT_SCRIPT_ID]);
-        }
-    });
+    components.cpm = new CookiePromptManagement({ cpmMessaging });
 } else {
     // MV2-only components
     components.requestBlocklist = new RequestBlocklist();
