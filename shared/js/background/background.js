@@ -113,10 +113,8 @@ if (BUILD_TARGET === 'chrome') {
     components.scriptInjection = new MV3ContentScriptInjection();
     components.dnrListeners = new DNRListeners({ settings, tds });
 
-    // CPM components
     const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });
-    const cpm = new CookiePromptManagement({ cpmMessaging });
-    components.cpm = cpm;
+    components.cpm = new CookiePromptManagement({ cpmMessaging });
 } else {
     // MV2-only components
     components.requestBlocklist = new RequestBlocklist();

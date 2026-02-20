@@ -20,6 +20,10 @@ test.describe('Cookie Prompt Management', () => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
         await backgroundWait.forDynamicDNRRulesLoaded(backgroundPage);
+        // The CPM content script is only registered when the feature is
+        // enabled in remote config. Force a config reload so the overridden config
+        // (with autoconsent enabled) triggers content script registration.
+        await backgroundPage.evaluate(() => globalThis.components.remoteConfig.checkForUpdates(true));
     });
 
     test('Regular rule clicks the reject button', async ({ page }) => {

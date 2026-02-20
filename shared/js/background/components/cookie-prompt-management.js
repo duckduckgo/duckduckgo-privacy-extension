@@ -1,8 +1,8 @@
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
 import browser from 'webextension-polyfill';
-import { registerContentScripts } from './mv3-content-script-injection';
 import { getFromSessionStorage, setToSessionStorage, createAlarm } from '../wrapper';
 import { registerMessageHandler } from '../message-registry';
+import { registerContentScripts, unregisterContentScripts } from './mv3-content-script-injection';
 
 /**
  * @typedef {import('../tab-manager.js')} TabManager
@@ -45,24 +45,26 @@ import { registerMessageHandler } from '../message-registry';
  * }} CPMMessagingBase
  */
 
-/* global DEBUG */
+/* global DEBUG, BUILD_TARGET */
 
 /**
  * @type {import('@duckduckgo/autoconsent').Config['logs']}
  */
 const logsConfig = {
-    lifecycle: true,
+    lifecycle: !!DEBUG,
     detectionsteps: false,
-    errors: true,
+    errors: !!DEBUG,
     evals: false,
-    messages: true,
-    rulesteps: true,
-    waits: true,
+    messages: !!DEBUG,
+    rulesteps: !!DEBUG,
+    waits: !!DEBUG,
 };
 
 export default class CookiePromptManagement {
     static SUMMARY_ALARM_NAME = 'cpm-summary';
     static SUMMARY_DELAY_MINUTES = 2;
+
+    static CPM_CONTENT_SCRIPT_ID = 'cookie-prompt-management-script';
 
     /**
      *
@@ -74,6 +76,36 @@ export default class CookiePromptManagement {
         this.cpmMessaging = cpmMessaging;
         this.scheduleConfigRefresh();
 
+        // In the standalone Chrome extension, the CPM content script is not in
+        // the manifest. We register it dynamically based on the remote config.
+        if (BUILD_TARGET === 'chrome') {
+            const remoteConfig = /** @type {import('./cpm-standalone-messaging').CPMStandaloneMessaging} */ (cpmMessaging).remoteConfig;
+            remoteConfig.onUpdate(async () => {
+                const enabled = remoteConfig.isFeatureEnabled('autoconsent');
+                const existingScripts = await chrome.scripting.getRegisteredContentScripts({
+                    ids: [CookiePromptManagement.CPM_CONTENT_SCRIPT_ID],
+                });
+                const cpmScriptExists = existingScripts.length > 0;
+                if (enabled && !cpmScriptExists) {
+                    console.log('registering CPM content script');
+                    await registerContentScripts([
+                        {
+                            id: CookiePromptManagement.CPM_CONTENT_SCRIPT_ID,
+                            allFrames: true,
+                            js: ['public/js/content-scripts/cpm.js'],
+                            runAt: 'document_start',
+                            world: 'ISOLATED',
+                            matches: ['*://*/*'],
+                            matchOriginAsFallback: true,
+                        },
+                    ]);
+                } else if (!enabled && cpmScriptExists) {
+                    console.log('unregistering CPM content script');
+                    await unregisterContentScripts([CookiePromptManagement.CPM_CONTENT_SCRIPT_ID]);
+                }
+            });
+        }
+
         // Ephemeral state for reload loop prevention. We assume that service worker never sleeps during a reload loop, so we don't persist these.
         /** @type {Map<number, URL>} */
         this._tabUrlsCache = new Map(); // top URL per tab
@@ -81,18 +113,6 @@ export default class CookiePromptManagement {
         this._lastHandledCMP = new Map(); // last handled CMP per tab
         /** @type {Set<number>} */
         this._reloadLoopDetected = new Set(); // tabs with detected reload loops
-
-        registerContentScripts([
-            {
-                id: 'cookie-prompt-management-script',
-                js: ['public/js/content-scripts/cpm.js'],
-                matches: ['<all_urls>'],
-                runAt: 'document_end',
-                world: 'ISOLATED',
-                matchOriginAsFallback: true,
-                allFrames: true,
-            },
-        ]);
 
         // queue for CPM state mutations
         /** @type {Promise<void>} */
