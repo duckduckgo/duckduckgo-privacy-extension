@@ -90,7 +90,7 @@
         "privacy-test-pages": "github:duckduckgo/privacy-test-pages#1.3.6",
         "punycode": "2.3.1",
         "tldts": "^7.0.12",
-        "web-ext": "^8.9.0",
+        "web-ext": "^9.3.0",
         "zod": "^3.25.67"
     },
     "workspaces": [
