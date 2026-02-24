@@ -23,11 +23,8 @@ test.describe('Cookie Prompt Management', () => {
             cleanup();
         }
         pixelRequests.length = 0;
-        cleanup = await logPixels(
-            backgroundPage,
-            backgroundNetworkContext,
-            pixelRequests,
-            (pixel) => pixel.name?.startsWith('autoconsent_'),
+        cleanup = await logPixels(backgroundPage, backgroundNetworkContext, pixelRequests, (pixel) =>
+            pixel.name?.startsWith('autoconsent_'),
         );
 
         await overridePrivacyConfig(backgroundNetworkContext, 'cookie-prompt-management.json');
