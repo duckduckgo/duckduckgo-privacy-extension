@@ -1,0 +1,76 @@
+name: Release Embedded Extension
+
+on:
+    push:
+        branches:
+            - 'main'
+        paths:
+            - 'browsers/embedded/manifest.json'
+
+env:
+    APPLE_EMBEDDED_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension.zip
+
+jobs:
+    release_embedded:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'npm'
+
+            - name: Read embedded version
+              id: version
+              run: |
+                  VERSION=$(jq -r .version browsers/embedded/manifest.json)
+                  echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+            - name: Install dependencies
+              run: npm run install-ci
+
+            - name: Build embedded extension
+              run: npm run release-embedded
+
+            - name: Locate embedded zip
+              id: find-zip
+              run: |
+                  ZIP_PATH=$(ls build/embedded/release/embedded-release-*.zip)
+                  echo "ZIP_PATH=$ZIP_PATH" >> $GITHUB_OUTPUT
+
+            - name: Resolve Asana task URL
+              id: asana
+              env:
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  TASK_URL=$(gh api "/repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" \
+                      --jq '.[0].body // ""' | grep -oE 'https://app\.asana\.com/[^ ]+' | head -1) || true
+                  echo "TASK_URL=${TASK_URL:-}" >> $GITHUB_OUTPUT
+
+            - name: Checkout Apple monorepo
+              uses: actions/checkout@v4
+              with:
+                  repository: duckduckgo/apple-browsers
+                  path: apple-monorepo/
+                  token: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
+
+            - name: Copy embedded zip to Apple repo
+              run: |
+                  TARGET_PATH="apple-monorepo/${{ env.APPLE_EMBEDDED_PATH }}"
+                  SOURCE_ZIP="${{ steps.find-zip.outputs.ZIP_PATH }}"
+                  cp "$SOURCE_ZIP" "$TARGET_PATH"
+
+            - name: Create PR for Apple embedded extension
+              uses: peter-evans/create-pull-request@v7
+              with:
+                  path: apple-monorepo/
+                  add-paths: |
+                      ${{ env.APPLE_EMBEDDED_PATH }}
+                  commit-message: Update embedded extension to ${{ steps.version.outputs.VERSION }}
+                  branch: update-embedded-extension
+                  title: Update embedded extension to ${{ steps.version.outputs.VERSION }}
+                  body: |
+                      ${{ steps.asana.outputs.TASK_URL != '' && format('Task/Issue URL: {0}', steps.asana.outputs.TASK_URL) || '' }}
+
+                      Updates the embedded web extension to version ${{ steps.version.outputs.VERSION }}.
+                  token: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
