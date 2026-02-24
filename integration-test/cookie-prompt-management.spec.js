@@ -141,6 +141,9 @@ test.describe('Cookie Prompt Management', () => {
         const clickedButton = page.locator('button', { hasText: 'I was clicked!' });
         await expect(clickedButton).toBeVisible({ timeout: 10000 });
 
+        // Wait a bit for pixels to be fired
+        await page.waitForTimeout(2000);
+
         // Verify that at least the init and done pixels were fired.
         // Pixel names include browser suffix, e.g. "autoconsent_init_daily_extension_chrome"
         const pixelNames = pixelRequests.map((p) => p.name);
