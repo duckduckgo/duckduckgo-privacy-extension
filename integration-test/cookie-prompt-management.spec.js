@@ -15,7 +15,21 @@ test.describe('Cookie Prompt Management', () => {
         return;
     }
 
+    let cleanup;
+    const pixelRequests = [];
+
     test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
+        if (cleanup) {
+            cleanup();
+        }
+        pixelRequests.length = 0;
+        cleanup = await logPixels(
+            backgroundPage,
+            backgroundNetworkContext,
+            pixelRequests,
+            (pixel) => pixel.name?.startsWith('autoconsent_'),
+        );
+
         await overridePrivacyConfig(backgroundNetworkContext, 'cookie-prompt-management.json');
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
@@ -120,18 +134,12 @@ test.describe('Cookie Prompt Management', () => {
     });
 
     test('Fires expected pixels', async ({ page, backgroundPage, backgroundNetworkContext }) => {
-        const pixelRequests = [];
-        await logPixels(backgroundPage, backgroundNetworkContext, pixelRequests, (pixel) => pixel.name?.startsWith('autoconsent_'));
-
         await routeFromLocalhost(page);
         await page.goto(autoconsentTestPage, { waitUntil: 'networkidle' });
 
         // Wait for autoconsent to handle the popup
         const clickedButton = page.locator('button', { hasText: 'I was clicked!' });
         await expect(clickedButton).toBeVisible({ timeout: 10000 });
-
-        // Wait a bit for pixels to be fired
-        await page.waitForTimeout(2000);
 
         // Verify that at least the init and done pixels were fired.
         // Pixel names include browser suffix, e.g. "autoconsent_init_daily_extension_chrome"
