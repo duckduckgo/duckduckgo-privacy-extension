@@ -42,6 +42,7 @@ jobs:
               id: asana
               env:
                   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              # extract the task URL from the last merged PR body: https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#list-pull-requests-associated-with-a-commit
               run: |
                   TASK_URL=$(gh api "/repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" \
                       --jq '.[0].body // ""' | grep -oE 'https://app\.asana\.com/[^ ]+' | head -1) || true
