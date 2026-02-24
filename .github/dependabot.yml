@@ -8,6 +8,8 @@ updates:
       target-branch: 'main'
       labels:
           - 'dependencies'
+      ignore:
+          - dependency-name: '@duckduckgo/autoconsent'
       groups:
           content-scope-scripts:
               patterns:
