@@ -16,10 +16,10 @@ test.describe('Cookie Prompt Management', () => {
     }
 
     let cleanup;
-    const pixelRequests = [];
+    let pixelRequests = [];
 
     test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
-        pixelRequests.length = 0;
+        pixelRequests = [];
         cleanup = await logPixels(backgroundPage, backgroundNetworkContext, pixelRequests, (pixel) =>
             pixel.name?.startsWith('autoconsent_'),
         );
