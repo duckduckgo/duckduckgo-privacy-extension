@@ -15,7 +15,15 @@ test.describe('Cookie Prompt Management', () => {
         return;
     }
 
+    let cleanup;
+    let pixelRequests = [];
+
     test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
+        pixelRequests = [];
+        cleanup = await logPixels(backgroundPage, backgroundNetworkContext, pixelRequests, (pixel) =>
+            pixel.name?.startsWith('autoconsent_'),
+        );
+
         await overridePrivacyConfig(backgroundNetworkContext, 'cookie-prompt-management.json');
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
@@ -24,6 +32,12 @@ test.describe('Cookie Prompt Management', () => {
         // enabled in remote config. Force a config reload so the overridden config
         // (with autoconsent enabled) triggers content script registration.
         await backgroundPage.evaluate(() => globalThis.components.remoteConfig.checkForUpdates(true));
+    });
+
+    test.afterEach(() => {
+        if (cleanup) {
+            cleanup();
+        }
     });
 
     test('Regular rule clicks the reject button', async ({ page }) => {
@@ -120,9 +134,6 @@ test.describe('Cookie Prompt Management', () => {
     });
 
     test('Fires expected pixels', async ({ page, backgroundPage, backgroundNetworkContext }) => {
-        const pixelRequests = [];
-        await logPixels(backgroundPage, backgroundNetworkContext, pixelRequests, (pixel) => pixel.name?.startsWith('autoconsent_'));
-
         await routeFromLocalhost(page);
         await page.goto(autoconsentTestPage, { waitUntil: 'networkidle' });
 
