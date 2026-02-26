@@ -78,7 +78,7 @@
         "@duckduckgo/privacy-reference-tests": "github:duckduckgo/privacy-reference-tests#main",
         "@duckduckgo/tracker-surrogates": "github:duckduckgo/tracker-surrogates#1.3.2",
         "deep-freeze": "0.0.1",
-        "dexie": "4.0.11",
+        "dexie": "4.3.0",
         "eventemitter2": "6.4.9",
         "i18next": "^25.2.1",
         "i18next-icu": "^2.3.0",
