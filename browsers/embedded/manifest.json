@@ -1,7 +1,7 @@
 {
     "name": "DuckDuckGo Embedded Extension",
     "description": "Embedded extension for native app integration",
-    "version": "2026.2.6",
+    "version": "2026.2.26",
     "manifest_version": 3,
     "default_locale": "en",
     "background": {
@@ -9,8 +9,12 @@
     },
     "content_scripts": [
         {
-            "matches": ["*://*/*"],
-            "js": ["public/js/content-scripts/cpm.js"],
+            "matches": [
+                "*://*/*"
+            ],
+            "js": [
+                "public/js/content-scripts/cpm.js"
+            ],
             "run_at": "document_start",
             "world": "ISOLATED",
             "match_origin_as_fallback": true,
