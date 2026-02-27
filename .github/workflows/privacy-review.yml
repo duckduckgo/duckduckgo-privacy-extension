@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout native actions repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
             ref: v2.1
             # Do not change the below path (downstream actions expect it)
