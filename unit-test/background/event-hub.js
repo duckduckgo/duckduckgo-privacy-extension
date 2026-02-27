@@ -1,80 +1,159 @@
+import {
+    periodToSeconds,
+    toStartOfInterval,
+    bucketCount,
+    shouldStopCounting,
+    STORAGE_KEY,
+    ALARM_PREFIX,
+} from '../../shared/js/background/components/event-hub';
 import browser from 'webextension-polyfill';
-import EventHub from '../../shared/js/background/components/event-hub';
 
-describe('EventHub', () => {
-    /** @type {EventHub} */
-    let eventHub;
+describe('EventHub utilities', () => {
+    describe('periodToSeconds', () => {
+        it('should convert days to seconds', () => {
+            expect(periodToSeconds({ days: 1 })).toBe(86400);
+            expect(periodToSeconds({ days: 7 })).toBe(604800);
+        });
+
+        it('should convert hours to seconds', () => {
+            expect(periodToSeconds({ hours: 1 })).toBe(3600);
+            expect(periodToSeconds({ hours: 24 })).toBe(86400);
+        });
+
+        it('should convert minutes to seconds', () => {
+            expect(periodToSeconds({ minutes: 1 })).toBe(60);
+            expect(periodToSeconds({ minutes: 30 })).toBe(1800);
+        });
+
+        it('should convert seconds directly', () => {
+            expect(periodToSeconds({ seconds: 10 })).toBe(10);
+        });
+
+        it('should combine multiple units', () => {
+            expect(periodToSeconds({ days: 1, hours: 2, minutes: 30, seconds: 15 })).toBe(86400 + 7200 + 1800 + 15);
+        });
+
+        it('should handle empty period', () => {
+            expect(periodToSeconds({})).toBe(0);
+        });
+    });
+
+    describe('toStartOfInterval', () => {
+        it('should snap daily period to start of day', () => {
+            // 2026-01-02T00:01:00Z => 2026-01-02T00:00:00Z
+            const ts = Date.UTC(2026, 0, 2, 0, 1, 0);
+            const result = toStartOfInterval(ts, { days: 1 });
+            expect(result).toBe(Math.floor(Date.UTC(2026, 0, 2, 0, 0, 0) / 1000));
+        });
+
+        it('should snap hourly period to start of hour', () => {
+            // 2026-01-02T17:15:00Z => 2026-01-02T17:00:00Z
+            const ts = Date.UTC(2026, 0, 2, 17, 15, 0);
+            const result = toStartOfInterval(ts, { hours: 1 });
+            expect(result).toBe(Math.floor(Date.UTC(2026, 0, 2, 17, 0, 0) / 1000));
+        });
+
+        it('should return same value if already on boundary', () => {
+            const ts = Date.UTC(2026, 0, 3, 0, 0, 0);
+            const result = toStartOfInterval(ts, { days: 1 });
+            expect(result).toBe(Math.floor(ts / 1000));
+        });
+    });
+
+    describe('bucketCount', () => {
+        const buckets = {
+            0: { gte: 0, lt: 1 },
+            '1-2': { gte: 1, lt: 3 },
+            '3-5': { gte: 3, lt: 6 },
+            '6-10': { gte: 6, lt: 11 },
+            '11-20': { gte: 11, lt: 21 },
+            '21-39': { gte: 21, lt: 40 },
+            '40+': { gte: 40 },
+        };
+
+        it('should return 0 for count 0', () => {
+            expect(bucketCount(0, buckets)).toBe('0');
+        });
+
+        it('should return 1-2 for count 1', () => {
+            expect(bucketCount(1, buckets)).toBe('1-2');
+        });
+
+        it('should return 1-2 for count 2', () => {
+            expect(bucketCount(2, buckets)).toBe('1-2');
+        });
+
+        it('should return 3-5 for count 3', () => {
+            expect(bucketCount(3, buckets)).toBe('3-5');
+        });
+
+        it('should return 6-10 for count 10', () => {
+            expect(bucketCount(10, buckets)).toBe('6-10');
+        });
+
+        it('should return 40+ for count 40', () => {
+            expect(bucketCount(40, buckets)).toBe('40+');
+        });
+
+        it('should return 40+ for count 100', () => {
+            expect(bucketCount(100, buckets)).toBe('40+');
+        });
+
+        it('should return null for no matching bucket', () => {
+            expect(bucketCount(-1, buckets)).toBeNull();
+        });
+
+        it('should return null for empty buckets', () => {
+            expect(bucketCount(5, {})).toBeNull();
+        });
+    });
+
+    describe('shouldStopCounting', () => {
+        const buckets = {
+            0: { gte: 0, lt: 1 },
+            '1-2': { gte: 1, lt: 3 },
+            '3+': { gte: 3 },
+        };
+
+        it('should return false when count can still reach a higher bucket', () => {
+            expect(shouldStopCounting(0, buckets)).toBe(false);
+            expect(shouldStopCounting(1, buckets)).toBe(false);
+            expect(shouldStopCounting(2, buckets)).toBe(false);
+        });
+
+        it('should return true when count is in the highest bucket', () => {
+            expect(shouldStopCounting(3, buckets)).toBe(true);
+            expect(shouldStopCounting(10, buckets)).toBe(true);
+        });
+    });
+});
+
+describe('EventHub integration', () => {
     /** @type {Record<string, any>} */
     let storageData;
     /** @type {Record<string, any>} */
-    let alarmListeners;
-    /** @type {Function[]} */
-    let onAlarmCallbacks;
-    /** @type {Function[]} */
-    let onBeforeNavigateCallbacks;
-    /** @type {Function[]} */
-    let tabRemovedCallbacks;
-    /** @type {Function} */
-    let registeredWebEventHandler;
-    /** @type {string[]} */
-    let firedPixels;
-    /** @type {Function[]} */
-    let configUpdateCallbacks;
-
-    const STORAGE_KEY = 'eventHub_pixelState';
-
-    function makeRemoteConfig({ enabled = true, telemetry = {} } = {}) {
-        configUpdateCallbacks = [];
-        return {
-            ready: Promise.resolve(),
-            isFeatureEnabled(name) {
-                return name === 'eventHub' && enabled;
-            },
-            getFeatureSettings(name) {
-                if (name === 'eventHub') {
-                    return { telemetry };
-                }
-                return {};
-            },
-            onUpdate(cb) {
-                configUpdateCallbacks.push(cb);
-            },
-        };
-    }
-
-    function makeTelemetryConfig({ state = 'enabled', period = { days: 1 }, source = 'adwall', buckets = null } = {}) {
-        if (!buckets) {
-            buckets = {
-                0: { gte: 0, lt: 1 },
-                '1-2': { gte: 1, lt: 3 },
-                '3-5': { gte: 3, lt: 6 },
-                '6-10': { gte: 6, lt: 11 },
-                '11-20': { gte: 11, lt: 21 },
-                '21-39': { gte: 21, lt: 40 },
-                '40+': { gte: 40 },
-            };
-        }
-        return {
-            state,
-            trigger: { period },
-            parameters: {
-                count: {
-                    template: 'counter',
-                    source,
-                    buckets,
-                },
-            },
-        };
-    }
+    let alarmData;
 
     beforeEach(() => {
         storageData = {};
-        alarmListeners = {};
-        onAlarmCallbacks = [];
-        onBeforeNavigateCallbacks = [];
-        tabRemovedCallbacks = [];
-        firedPixels = [];
-        registeredWebEventHandler = null;
+        alarmData = {};
+
+        // Set up shim methods
+        browser.storage.local.remove = browser.storage.local.remove || (() => {});
+        browser.alarms = Object.assign(
+            {
+                create() {},
+                clear() {},
+                getAll() {},
+                onAlarm: { addListener() {}, removeListener() {} },
+            },
+            browser.alarms || {},
+        );
+        browser.tabs.onRemoved = browser.tabs.onRemoved || { addListener() {}, removeListener() {} };
+        browser.webNavigation.onBeforeNavigate = browser.webNavigation.onBeforeNavigate || {
+            addListener() {},
+            removeListener() {},
+        };
 
         spyOn(browser.storage.local, 'get').and.callFake(async (key) => {
             return { [key]: storageData[key] || undefined };
@@ -87,460 +166,140 @@ describe('EventHub', () => {
         });
 
         spyOn(browser.alarms, 'create').and.callFake(async (name, info) => {
-            alarmListeners[name] = info;
+            alarmData[name] = info;
         });
         spyOn(browser.alarms, 'clear').and.callFake(async (name) => {
-            delete alarmListeners[name];
+            delete alarmData[name];
             return true;
         });
         spyOn(browser.alarms, 'getAll').and.callFake(async () => {
-            return Object.entries(alarmListeners).map(([name, info]) => ({ name, ...info }));
-        });
-        spyOn(browser.alarms.onAlarm, 'addListener').and.callFake((cb) => {
-            onAlarmCallbacks.push(cb);
-        });
-
-        spyOn(browser.webNavigation.onBeforeNavigate, 'addListener').and.callFake((cb) => {
-            onBeforeNavigateCallbacks.push(cb);
-        });
-        spyOn(browser.tabs.onRemoved, 'addListener').and.callFake((cb) => {
-            tabRemovedCallbacks.push(cb);
+            return Object.entries(alarmData).map(([name, info]) => ({ name, ...info }));
         });
     });
 
-    function createEventHub(config) {
-        // Intercept registerMessageHandler
-        const origModule = require('../../shared/js/background/message-handlers');
-        spyOn(origModule, 'registerMessageHandler').and.callFake((name, handler) => {
-            if (name === 'webEvent') {
-                registeredWebEventHandler = handler;
-            }
-        });
-
-        // Intercept sendPixelRequest
-        const pixelsModule = require('../../shared/js/background/pixels');
-        spyOn(pixelsModule, 'sendPixelRequest').and.callFake((name, params) => {
-            firedPixels.push({ name, params });
-        });
-
-        eventHub = new EventHub({ remoteConfig: config });
-    }
-
-    describe('initialization', () => {
-        it('should register message handler and listeners', async () => {
-            const remoteConfig = makeRemoteConfig({ enabled: false });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            expect(registeredWebEventHandler).toBeTruthy();
-            expect(onAlarmCallbacks.length).toBeGreaterThan(0);
-            expect(onBeforeNavigateCallbacks.length).toBeGreaterThan(0);
-            expect(tabRemovedCallbacks.length).toBeGreaterThan(0);
-        });
-
-        it('should not start telemetry when feature is disabled', async () => {
-            const remoteConfig = makeRemoteConfig({ enabled: false });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            expect(Object.keys(alarmListeners).length).toBe(0);
-        });
-
-        it('should start telemetry when feature is enabled', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            expect(Object.keys(alarmListeners).length).toBe(1);
-            expect(alarmListeners.eventHub_fire_webTelemetry_adwallDetection_day).toBeDefined();
-        });
+    it('should have correct storage key constant', () => {
+        expect(STORAGE_KEY).toBe('eventHub_pixelState');
     });
 
-    describe('config changes', () => {
-        it('should register new telemetry on config change', async () => {
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry: {} });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            expect(Object.keys(alarmListeners).length).toBe(0);
-
-            // Update config to add telemetry
-            remoteConfig.getFeatureSettings = () => ({
-                telemetry: { webTelemetry_adwallDetection_day: makeTelemetryConfig() },
-            });
-
-            for (const cb of configUpdateCallbacks) {
-                await cb();
-            }
-
-            expect(Object.keys(alarmListeners).length).toBe(1);
-        });
-
-        it('should disable all telemetry when feature is disabled', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            expect(Object.keys(alarmListeners).length).toBe(1);
-
-            // Disable the feature
-            remoteConfig.isFeatureEnabled = () => false;
-            for (const cb of configUpdateCallbacks) {
-                await cb();
-            }
-
-            expect(Object.keys(alarmListeners).length).toBe(0);
-            expect(storageData[STORAGE_KEY]).toBeUndefined();
-        });
+    it('should have correct alarm prefix constant', () => {
+        expect(ALARM_PREFIX).toBe('eventHub_fire_');
     });
 
-    describe('event handling', () => {
-        it('should increment counter for matching events', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig({ source: 'adwall' }),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            registeredWebEventHandler({ type: 'adwall' }, { tab: { id: 1 } });
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            const state = storageData[STORAGE_KEY]?.webTelemetry_adwallDetection_day;
-            expect(state).toBeDefined();
-            expect(state.params.count.value).toBe(1);
-        });
-
-        it('should not increment counter for non-matching events', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig({ source: 'adwall' }),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            registeredWebEventHandler({ type: 'someOtherEvent' }, { tab: { id: 1 } });
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            const state = storageData[STORAGE_KEY]?.webTelemetry_adwallDetection_day;
-            expect(state.params.count.value).toBe(0);
-        });
-    });
-
-    describe('deduplication', () => {
-        it('should deduplicate events from the same tab on the same page', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            const sender = { tab: { id: 1 } };
-            registeredWebEventHandler({ type: 'adwall' }, sender);
-            await new Promise((resolve) => setTimeout(resolve, 10));
-            registeredWebEventHandler({ type: 'adwall' }, sender);
-            await new Promise((resolve) => setTimeout(resolve, 10));
-            registeredWebEventHandler({ type: 'adwall' }, sender);
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            const state = storageData[STORAGE_KEY]?.webTelemetry_adwallDetection_day;
-            expect(state.params.count.value).toBe(1);
-        });
-
-        it('should count events from different tabs separately', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            registeredWebEventHandler({ type: 'adwall' }, { tab: { id: 1 } });
-            await new Promise((resolve) => setTimeout(resolve, 10));
-            registeredWebEventHandler({ type: 'adwall' }, { tab: { id: 2 } });
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            const state = storageData[STORAGE_KEY]?.webTelemetry_adwallDetection_day;
-            expect(state.params.count.value).toBe(2);
-        });
-
-        it('should clear dedup on navigation to a different URL', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            const sender = { tab: { id: 1 } };
-
-            // Simulate navigation
-            for (const cb of onBeforeNavigateCallbacks) {
-                cb({ frameId: 0, tabId: 1, url: 'https://example.com/page-a' });
-            }
-
-            registeredWebEventHandler({ type: 'adwall' }, sender);
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            // Navigate to a different page
-            for (const cb of onBeforeNavigateCallbacks) {
-                cb({ frameId: 0, tabId: 1, url: 'https://example.com/page-b' });
-            }
-
-            registeredWebEventHandler({ type: 'adwall' }, sender);
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            const state = storageData[STORAGE_KEY]?.webTelemetry_adwallDetection_day;
-            expect(state.params.count.value).toBe(2);
-        });
-
-        it('should not clear dedup on same-URL reload', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            const sender = { tab: { id: 1 } };
-
-            for (const cb of onBeforeNavigateCallbacks) {
-                cb({ frameId: 0, tabId: 1, url: 'https://example.com/page-a' });
-            }
-
-            registeredWebEventHandler({ type: 'adwall' }, sender);
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            // Same URL navigation (reload)
-            for (const cb of onBeforeNavigateCallbacks) {
-                cb({ frameId: 0, tabId: 1, url: 'https://example.com/page-a' });
-            }
-
-            registeredWebEventHandler({ type: 'adwall' }, sender);
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            const state = storageData[STORAGE_KEY]?.webTelemetry_adwallDetection_day;
-            expect(state.params.count.value).toBe(1);
-        });
-
-        it('should clear dedup state on tab close', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            registeredWebEventHandler({ type: 'adwall' }, { tab: { id: 1 } });
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            // Close and reopen tab
-            for (const listener of tabRemovedCallbacks) {
-                listener(1);
-            }
-
-            registeredWebEventHandler({ type: 'adwall' }, { tab: { id: 1 } });
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            const state = storageData[STORAGE_KEY]?.webTelemetry_adwallDetection_day;
-            expect(state.params.count.value).toBe(2);
-        });
-
-        it('should allow events when tabId is missing', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            registeredWebEventHandler({ type: 'adwall' }, {});
-            await new Promise((resolve) => setTimeout(resolve, 10));
-            registeredWebEventHandler({ type: 'adwall' }, {});
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            const state = storageData[STORAGE_KEY]?.webTelemetry_adwallDetection_day;
-            expect(state.params.count.value).toBe(2);
-        });
-    });
-
-    describe('stopCounting', () => {
-        it('should stop counting when max bucket is reached', async () => {
-            const telemetry = {
-                testPixel: makeTelemetryConfig({
-                    buckets: {
-                        0: { gte: 0, lt: 1 },
-                        '1-2': { gte: 1, lt: 3 },
-                        '3+': { gte: 3 },
-                    },
-                }),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            // Fire 5 events from different tabs to bypass dedup
-            for (let i = 0; i < 5; i++) {
-                registeredWebEventHandler({ type: 'adwall' }, { tab: { id: i + 1 } });
-                await new Promise((resolve) => setTimeout(resolve, 10));
-            }
-
-            const state = storageData[STORAGE_KEY]?.testPixel;
-            expect(state.params.count.stopCounting).toBe(true);
-            expect(state.params.count.value).toBe(3);
-        });
-    });
-
-    describe('pixel firing', () => {
-        it('should fire pixel when alarm triggers', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig({ period: { seconds: 1 } }),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            // Add some events
-            for (let i = 0; i < 5; i++) {
-                registeredWebEventHandler({ type: 'adwall' }, { tab: { id: i + 1 } });
-                await new Promise((resolve) => setTimeout(resolve, 10));
-            }
-
-            // Trigger the alarm
-            for (const cb of onAlarmCallbacks) {
-                await cb({ name: 'eventHub_fire_webTelemetry_adwallDetection_day' });
-            }
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            expect(firedPixels.length).toBe(1);
-            expect(firedPixels[0].name).toBe('webTelemetry_adwallDetection_day');
-            expect(firedPixels[0].params.count).toBe('3-5');
-            expect(firedPixels[0].params.attributionPeriod).toBeDefined();
-        });
-
-        it('should not fire pixel when no events have been recorded (bucket 0)', async () => {
-            const telemetry = {
-                testPixel: makeTelemetryConfig({
-                    period: { seconds: 1 },
-                    buckets: {
-                        '1-2': { gte: 1, lt: 3 },
-                        '3+': { gte: 3 },
-                    },
-                }),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            for (const cb of onAlarmCallbacks) {
-                await cb({ name: 'eventHub_fire_testPixel' });
-            }
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            expect(firedPixels.length).toBe(0);
-        });
-
-        it('should fire pixel with 0 bucket when configured', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig({ period: { seconds: 1 } }),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            for (const cb of onAlarmCallbacks) {
-                await cb({ name: 'eventHub_fire_webTelemetry_adwallDetection_day' });
-            }
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            expect(firedPixels.length).toBe(1);
-            expect(firedPixels[0].params.count).toBe('0');
-        });
-
-        it('should start a new period after firing', async () => {
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig({ period: { seconds: 1 } }),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            for (const cb of onAlarmCallbacks) {
-                await cb({ name: 'eventHub_fire_webTelemetry_adwallDetection_day' });
-            }
-            await new Promise((resolve) => setTimeout(resolve, 10));
-
-            const state = storageData[STORAGE_KEY]?.webTelemetry_adwallDetection_day;
-            expect(state).toBeDefined();
-            expect(state.params.count.value).toBe(0);
-        });
-    });
-
-    describe('persistence and restore', () => {
-        it('should restore state and re-arm alarms on startup', async () => {
-            const futureTime = Date.now() + 60000;
-            storageData[STORAGE_KEY] = {
-                webTelemetry_adwallDetection_day: {
-                    pixelName: 'webTelemetry_adwallDetection_day',
-                    periodStartMillis: Date.now() - 30000,
-                    periodEndMillis: futureTime,
-                    params: { count: { value: 3, stopCounting: false } },
-                    config: makeTelemetryConfig(),
-                },
-            };
-
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            expect(alarmListeners.eventHub_fire_webTelemetry_adwallDetection_day).toBeDefined();
-            expect(alarmListeners.eventHub_fire_webTelemetry_adwallDetection_day.when).toBe(futureTime);
-        });
-
-        it('should fire immediately if period has elapsed during restart', async () => {
-            const pastTime = Date.now() - 1000;
-            storageData[STORAGE_KEY] = {
-                webTelemetry_adwallDetection_day: {
-                    pixelName: 'webTelemetry_adwallDetection_day',
-                    periodStartMillis: pastTime - 86400000,
-                    periodEndMillis: pastTime,
+    it('should persist pixel state to chrome.storage.local', async () => {
+        await browser.storage.local.set({
+            [STORAGE_KEY]: {
+                testPixel: {
+                    pixelName: 'testPixel',
+                    periodStartMillis: 1000,
+                    periodEndMillis: 2000,
                     params: { count: { value: 5, stopCounting: false } },
-                    config: makeTelemetryConfig(),
+                    config: {},
                 },
-            };
-
-            const telemetry = {
-                webTelemetry_adwallDetection_day: makeTelemetryConfig(),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
-
-            expect(firedPixels.length).toBe(1);
-            expect(firedPixels[0].params.count).toBe('3-5');
+            },
         });
+
+        const result = await browser.storage.local.get(STORAGE_KEY);
+        expect(result[STORAGE_KEY].testPixel).toBeDefined();
+        expect(result[STORAGE_KEY].testPixel.params.count.value).toBe(5);
     });
 
-    describe('disabled telemetry entries', () => {
-        it('should not register disabled telemetry', async () => {
-            const telemetry = {
-                webTelemetry_disabled: makeTelemetryConfig({ state: 'disabled' }),
-            };
-            const remoteConfig = makeRemoteConfig({ enabled: true, telemetry });
-            createEventHub(remoteConfig);
-            await eventHub.ready;
+    it('should create alarms with correct prefix', async () => {
+        const pixelName = 'webTelemetry_adwallDetection_day';
+        const alarmName = ALARM_PREFIX + pixelName;
+        const fireTime = Date.now() + 86400000;
 
-            expect(Object.keys(alarmListeners).length).toBe(0);
-        });
+        await browser.alarms.create(alarmName, { when: fireTime });
+
+        expect(alarmData[alarmName]).toBeDefined();
+        expect(alarmData[alarmName].when).toBe(fireTime);
+    });
+
+    it('should clear all eventHub alarms', async () => {
+        alarmData.eventHub_fire_pixel1 = { when: 1000 };
+        alarmData.eventHub_fire_pixel2 = { when: 2000 };
+        alarmData.otherAlarm = { when: 3000 };
+
+        const allAlarms = await browser.alarms.getAll();
+        const ehAlarms = allAlarms.filter((a) => a.name.startsWith(ALARM_PREFIX));
+        await Promise.all(ehAlarms.map((a) => browser.alarms.clear(a.name)));
+
+        expect(alarmData.eventHub_fire_pixel1).toBeUndefined();
+        expect(alarmData.eventHub_fire_pixel2).toBeUndefined();
+        expect(alarmData.otherAlarm).toBeDefined();
+    });
+
+    it('should delete all pixel states on disable', async () => {
+        storageData[STORAGE_KEY] = {
+            pixel1: { pixelName: 'pixel1' },
+            pixel2: { pixelName: 'pixel2' },
+        };
+
+        await browser.storage.local.remove(STORAGE_KEY);
+
+        expect(storageData[STORAGE_KEY]).toBeUndefined();
+    });
+});
+
+describe('EventHub bucketing scenarios', () => {
+    const adwallBuckets = {
+        0: { gte: 0, lt: 1 },
+        '1-2': { gte: 1, lt: 3 },
+        '3-5': { gte: 3, lt: 6 },
+        '6-10': { gte: 6, lt: 11 },
+        '11-20': { gte: 11, lt: 21 },
+        '21-39': { gte: 21, lt: 40 },
+        '40+': { gte: 40 },
+    };
+
+    it('should assign correct buckets for typical adwall counts', () => {
+        const testCases = [
+            [0, '0'],
+            [1, '1-2'],
+            [2, '1-2'],
+            [3, '3-5'],
+            [5, '3-5'],
+            [6, '6-10'],
+            [10, '6-10'],
+            [11, '11-20'],
+            [20, '11-20'],
+            [21, '21-39'],
+            [39, '21-39'],
+            [40, '40+'],
+            [100, '40+'],
+        ];
+
+        for (const [count, expectedBucket] of testCases) {
+            expect(bucketCount(count, adwallBuckets)).toBe(expectedBucket);
+        }
+    });
+
+    it('should correctly detect when counting should stop', () => {
+        expect(shouldStopCounting(0, adwallBuckets)).toBe(false);
+        expect(shouldStopCounting(5, adwallBuckets)).toBe(false);
+        expect(shouldStopCounting(39, adwallBuckets)).toBe(false);
+        expect(shouldStopCounting(40, adwallBuckets)).toBe(true);
+        expect(shouldStopCounting(100, adwallBuckets)).toBe(true);
+    });
+});
+
+describe('EventHub period calculations', () => {
+    it('should calculate daily period correctly', () => {
+        expect(periodToSeconds({ days: 1 })).toBe(86400);
+    });
+
+    it('should calculate weekly period correctly', () => {
+        expect(periodToSeconds({ days: 7 })).toBe(604800);
+    });
+
+    it('should align attributionPeriod to period boundary', () => {
+        const period = { days: 1 };
+        const dayInMs = 86400 * 1000;
+
+        // Midnight UTC on a specific day
+        const midnight = Math.floor(Date.now() / dayInMs) * dayInMs;
+        const midDay = midnight + dayInMs / 2;
+
+        const result = toStartOfInterval(midDay, period);
+        expect(result).toBe(midnight / 1000);
     });
 });

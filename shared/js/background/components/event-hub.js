@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import { registerMessageHandler } from '../message-handlers';
+import { registerMessageHandler } from '../message-registry';
 import { sendPixelRequest } from '../pixels';
 
 /**
@@ -39,15 +39,15 @@ import { sendPixelRequest } from '../pixels';
  * @typedef {{ value: number; stopCounting: boolean }} CounterParamState
  */
 
-const STORAGE_KEY = 'eventHub_pixelState';
-const ALARM_PREFIX = 'eventHub_fire_';
+export const STORAGE_KEY = 'eventHub_pixelState';
+export const ALARM_PREFIX = 'eventHub_fire_';
 
 /**
  * Converts a period config to seconds.
  * @param {PeriodConfig} period
  * @returns {number}
  */
-function periodToSeconds(period) {
+export function periodToSeconds(period) {
     return (period.seconds || 0) + (period.minutes || 0) * 60 + (period.hours || 0) * 3600 + (period.days || 0) * 86400;
 }
 
@@ -57,7 +57,7 @@ function periodToSeconds(period) {
  * @param {PeriodConfig} period
  * @returns {number} Unix timestamp in seconds
  */
-function toStartOfInterval(timestampMs, period) {
+export function toStartOfInterval(timestampMs, period) {
     const periodSecs = periodToSeconds(period);
     if (periodSecs <= 0) return Math.floor(timestampMs / 1000);
     const epochSecs = Math.floor(timestampMs / 1000);
@@ -70,7 +70,7 @@ function toStartOfInterval(timestampMs, period) {
  * @param {Record<string, BucketConfig>} buckets
  * @returns {string | null}
  */
-function bucketCount(count, buckets) {
+export function bucketCount(count, buckets) {
     for (const [name, bucket] of Object.entries(buckets)) {
         if (count < bucket.gte) continue;
         if (bucket.lt != null && count >= bucket.lt) continue;
@@ -85,7 +85,7 @@ function bucketCount(count, buckets) {
  * @param {Record<string, BucketConfig>} buckets
  * @returns {boolean}
  */
-function shouldStopCounting(count, buckets) {
+export function shouldStopCounting(count, buckets) {
     return !Object.values(buckets).some((bucket) => count < bucket.gte);
 }
 
