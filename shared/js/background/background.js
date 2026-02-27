@@ -35,6 +35,7 @@ import initReloader from './devbuild-reloader';
 import tabManager from './tab-manager';
 import AbnExperimentMetrics, { setUpTestExperiment } from './components/abn-experiments';
 import MessageRouter from './components/message-router';
+import EventHub from './components/event-hub';
 import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
@@ -75,6 +76,7 @@ const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager })
  *  remoteConfig: RemoteConfig;
  *  abnMetrics: AbnExperimentMetrics?;
  *  messaging: MessageRouter;
+ *  eventHub: EventHub;
  * }}
  */
 const components = {
@@ -91,6 +93,7 @@ const components = {
     remoteConfig,
     abnMetrics,
     messaging: new MessageRouter(),
+    eventHub: new EventHub({ remoteConfig }),
 };
 
 // Chrome-only components

@@ -10,6 +10,7 @@ const allowedMessages = [
     'pageReloaded',
     'getBreakageReportValues',
     'breakageReportResult',
+    'webEvent',
 ];
 
 function getSecret() {
