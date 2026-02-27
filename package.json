@@ -40,7 +40,7 @@
         "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.1.0",
         "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v1.0.8",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
-        "@fingerprintjs/fingerprintjs": "^4.6.2",
+        "@fingerprintjs/fingerprintjs": "^5.1.0",
         "@playwright/test": "1.54.2",
         "@types/chrome": "^0.0.269",
         "@types/jasmine": "^5.1.9",
