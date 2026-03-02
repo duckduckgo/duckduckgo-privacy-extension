@@ -20,10 +20,9 @@ function setupAsana(accessToken) {
  * @returns {Promise<any>}
  */
 async function getMergedPr(githubToken, repo, sha) {
-    const resp = await fetch(
-        `https://api.github.com/repos/${repo}/commits/${sha}/pulls`,
-        { headers: { Authorization: `token ${githubToken}`, Accept: 'application/json' } },
-    );
+    const resp = await fetch(`https://api.github.com/repos/${repo}/commits/${sha}/pulls`, {
+        headers: { Authorization: `token ${githubToken}`, Accept: 'application/json' },
+    });
     const pulls = await resp.json();
     return pulls[0];
 }

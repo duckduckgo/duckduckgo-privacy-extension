@@ -10,11 +10,7 @@ function extractMetadata(prBody) {
 }
 
 async function run() {
-    const pr = await getMergedPr(
-        process.env.GITHUB_TOKEN,
-        process.env.GITHUB_REPOSITORY,
-        process.env.GITHUB_SHA,
-    );
+    const pr = await getMergedPr(process.env.GITHUB_TOKEN, process.env.GITHUB_REPOSITORY, process.env.GITHUB_SHA);
 
     const { appleTaskGid } = extractMetadata(pr?.body ?? '');
 

@@ -25,9 +25,7 @@ async function handleStandaloneFlow(asana) {
     });
 
     const { html_notes } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' });
-    const updatedNotes = html_notes
-        .replace('[[pr_url]]', `<a href="${APPLE_PR_URL}">Apple PR</a>`)
-        .replace('[[version]]', VERSION);
+    const updatedNotes = html_notes.replace('[[pr_url]]', `<a href="${APPLE_PR_URL}">Apple PR</a>`).replace('[[version]]', VERSION);
 
     await asana.tasks.updateTask(new_task.gid, { html_notes: updatedNotes });
 
