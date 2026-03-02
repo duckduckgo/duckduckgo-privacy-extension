@@ -8,6 +8,10 @@ on:
             - 'browsers/embedded/manifest.json'
     # workflow_dispatch for manual testing or debugging
     workflow_dispatch:
+        inputs:
+            apple_task_gid:
+                description: 'Asana Apple task GID (set to test autoconsent flow, leave empty for standalone flow)'
+                required: false
 
 env:
     APPLE_EMBEDDED_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension.zip
@@ -45,7 +49,19 @@ jobs:
               id: pr-metadata
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              run: node scripts/embedded-release-metadata.js
+              run: |
+                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                      TASK_GID="${{ inputs.apple_task_gid }}"
+                      if [ -n "$TASK_GID" ]; then
+                          BRANCH="update-autoconsent"
+                      else
+                          BRANCH="update-embedded-extension"
+                      fi
+                      echo "APPLE_TASK_GID=$TASK_GID" >> $GITHUB_OUTPUT
+                      echo "APPLE_BRANCH=$BRANCH" >> $GITHUB_OUTPUT
+                  else
+                      node scripts/embedded-release-metadata.js
+                  fi
 
             - name: Checkout Apple monorepo
               uses: actions/checkout@v4
