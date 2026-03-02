@@ -118,7 +118,7 @@ jobs:
                   GH_TOKEN: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
                   BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
               run: |
-                  PR_URL=$(gh pr list --head "$BRANCH" --state open --json url --jq '.[0].url' 2>/dev/null || true)
+                  PR_URL=$(gh pr list --head "$BRANCH" --state open --json url --jq '.[0].url // empty' 2>/dev/null || true)
                   if [ -n "$PR_URL" ]; then
                       echo "PULL_REQUEST_URL=$PR_URL" >> $GITHUB_OUTPUT
                       exit 0
