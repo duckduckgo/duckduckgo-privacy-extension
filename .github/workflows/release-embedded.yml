@@ -130,10 +130,11 @@ jobs:
                   BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
               run: gh pr ready "$BRANCH" || true
 
-            - name: Update Apple Asana subtask for the Autoconsent flow
-              if: steps.find-apple-pr.outputs.PULL_REQUEST_URL && steps.pr-metadata.outputs.APPLE_TASK_GID
+            - name: Update Asana
+              if: steps.find-apple-pr.outputs.PULL_REQUEST_URL
               env:
                   ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
                   APPLE_PR_URL: ${{ steps.find-apple-pr.outputs.PULL_REQUEST_URL }}
                   APPLE_TASK_GID: ${{ steps.pr-metadata.outputs.APPLE_TASK_GID }}
+                  VERSION: ${{ steps.version.outputs.VERSION }}
               run: node scripts/embedded-release-update-asana.js
