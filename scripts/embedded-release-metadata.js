@@ -10,13 +10,13 @@ function extractMetadata(prBody) {
 }
 
 async function run() {
-    const { body } = await getMergedPr(
+    const pr = await getMergedPr(
         process.env.GITHUB_TOKEN,
         process.env.GITHUB_REPOSITORY,
         process.env.GITHUB_SHA,
     );
 
-    const { appleTaskGid } = extractMetadata(body);
+    const { appleTaskGid } = extractMetadata(pr?.body ?? '');
 
     // When autoconsent metadata is present, chain onto the same branch as the native Apple PR.
     // Otherwise, use a standalone branch (e.g. triggered by a normal extension release).
