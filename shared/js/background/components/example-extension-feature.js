@@ -1,12 +1,6 @@
 /**
  * Example extension feature demonstrating ConfigFeature usage in the extension background.
  *
- * This shows how to:
- * 1. Extend ExtensionConfigFeature to get C-S-S experiment-aware config processing
- * 2. Read feature settings with conditional overrides (per-domain, per-experiment)
- * 3. Access current experiment cohorts for feature-gating
- * 4. Respond to config updates
- *
  * The feature name ('exampleExtensionFeature') must match a key in remote config `features`.
  * Experiment conditionals work identically to C-S-S: define cohorts under
  * `contentScopeExperiments` and use `conditionalChanges` with `experiment` conditions
@@ -51,6 +45,7 @@
 import ExtensionConfigFeature from './extension-config-feature';
 
 const FEATURE_NAME = 'exampleExtensionFeature';
+const DEFAULT_MAX_ITEMS = 10;
 
 export default class ExampleExtensionFeature extends ExtensionConfigFeature {
     /**
@@ -64,24 +59,13 @@ export default class ExampleExtensionFeature extends ExtensionConfigFeature {
     }
 
     /**
-     * Read a setting with full conditional config support (domain, experiment, version).
-     * If the user is in a matching experiment cohort, conditionalChanges are applied.
-     *
-     * @param {string} key
-     * @returns {any}
+     * Returns the configured maxItems limit.
+     * If the user is in the 'treatment' cohort of the 'newLimit' experiment,
+     * conditionalChanges patches maxItems to 50 via ConfigFeature.getFeatureSetting.
+     * @returns {number}
      */
-    getSetting(key) {
+    get maxItems() {
         // @ts-ignore - inherited from ConfigFeature (maxNodeModuleJsDepth prevents TS resolution)
-        return this.getFeatureSetting(key);
-    }
-
-    /**
-     * Check if a boolean setting is enabled (supports 'enabled'/'disabled'/'internal'/'preview' states).
-     * @param {string} key
-     * @returns {boolean}
-     */
-    isSettingEnabled(key) {
-        // @ts-ignore - inherited from ConfigFeature (maxNodeModuleJsDepth prevents TS resolution)
-        return this.getFeatureSettingEnabled(key);
+        return this.getFeatureSetting('maxItems') ?? DEFAULT_MAX_ITEMS;
     }
 }
