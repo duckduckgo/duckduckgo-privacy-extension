@@ -37,6 +37,7 @@ import AbnExperimentMetrics, { setUpTestExperiment } from './components/abn-expe
 import MessageRouter from './components/message-router';
 import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
+import ExampleExtensionFeature from './components/example-extension-feature';
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
 import CookiePromptManagement from './components/cookie-prompt-management';
 
@@ -75,6 +76,7 @@ const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager })
  *  remoteConfig: RemoteConfig;
  *  abnMetrics: AbnExperimentMetrics?;
  *  messaging: MessageRouter;
+ *  exampleFeature?: ExampleExtensionFeature;
  * }}
  */
 const components = {
@@ -91,6 +93,7 @@ const components = {
     remoteConfig,
     abnMetrics,
     messaging: new MessageRouter(),
+    exampleFeature: new ExampleExtensionFeature({ remoteConfig, abnMetrics }),
 };
 
 // Chrome-only components
