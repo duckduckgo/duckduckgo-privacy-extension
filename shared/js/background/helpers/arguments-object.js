@@ -1,5 +1,7 @@
 import { getUserLocale } from '../i18n';
 import { getExtensionURL } from '../wrapper';
+import { parseFeatureSettings } from '@duckduckgo/content-scope-scripts/injected/src/utils.js';
+import tdsStorage from '../storage/tds';
 const utils = require('../utils');
 const tabManager = require('../tab-manager');
 const trackerutils = require('../tracker-utils');
@@ -34,13 +36,7 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
         return true;
     });
 
-    const featureSettings = {};
-    for (const feature of site.enabledFeatures) {
-        const featureSetting = utils.getFeatureSettings(feature);
-        if (Object.keys(featureSetting).length) {
-            featureSettings[feature] = featureSetting;
-        }
-    }
+    const featureSettings = parseFeatureSettings(tdsStorage.config, site.enabledFeatures);
 
     // Extra contextual data required for cookie protection only send if is enabled here
     if (tab.site.isFeatureEnabled('cookie')) {
