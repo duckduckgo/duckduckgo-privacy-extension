@@ -5,16 +5,16 @@
  * This module provides the same config processing pipeline for the extension background
  * by importing C-S-S's core utilities directly: `computeEnabledFeatures` and `parseFeatureSettings`.
  */
-import { computeEnabledFeatures, parseFeatureSettings } from '@duckduckgo/content-scope-scripts/injected/src/utils.js';
+import { computeEnabledFeatures, parseFeatureSettings } from '@duckduckgo/content-scope-scripts/configuration/index.js';
 import tdsStorage from '../storage/tds';
 import { getExtensionVersion } from '../wrapper';
 
 export { computeEnabledFeatures, parseFeatureSettings };
 
 /**
- * @typedef {import('@duckduckgo/content-scope-scripts/injected/src/utils.js').RemoteConfig} CSSRemoteConfig
- * @typedef {import('@duckduckgo/content-scope-scripts/injected/src/utils.js').Platform} CSSPlatform
- * @typedef {import('@duckduckgo/content-scope-scripts/injected/src/content-scope-features.js').LoadArgs} LoadArgs
+ * @typedef {import('@duckduckgo/content-scope-scripts/configuration/index.js').RemoteConfig} CSSRemoteConfig
+ * @typedef {import('@duckduckgo/content-scope-scripts/configuration/index.js').Platform} CSSPlatform
+ * @typedef {import('@duckduckgo/content-scope-scripts/configuration/index.js').LoadArgs} LoadArgs
  */
 
 /**

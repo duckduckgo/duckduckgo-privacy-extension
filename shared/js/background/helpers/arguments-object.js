@@ -1,6 +1,6 @@
 import { getUserLocale } from '../i18n';
 import { getExtensionURL } from '../wrapper';
-import { parseFeatureSettings } from '@duckduckgo/content-scope-scripts/injected/src/utils.js';
+import { parseFeatureSettings } from '@duckduckgo/content-scope-scripts/configuration/index.js';
 import tdsStorage from '../storage/tds';
 const utils = require('../utils');
 const tabManager = require('../tab-manager');

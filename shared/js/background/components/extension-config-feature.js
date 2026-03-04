@@ -9,7 +9,7 @@
  * to how they work inside C-S-S: currentCohorts are matched via _matchExperimentConditional,
  * and conditionalChanges with experiment conditions are applied via getFeatureSetting.
  */
-import ConfigFeature from '@duckduckgo/content-scope-scripts/injected/src/config-feature.js';
+import { ConfigFeature } from '@duckduckgo/content-scope-scripts/configuration/index.js';
 import { buildConfigFeatureArgs, getExtensionPlatform, parseFeatureSettings } from '../helpers/css-config';
 import tdsStorage from '../storage/tds';
 
@@ -43,7 +43,7 @@ export default class ExtensionConfigFeature extends ConfigFeature {
     /**
      * @param {import('./remote-config').default} remoteConfig
      * @param {import('./abn-experiments').default | null | undefined} abnMetrics
-     * @returns {import('@duckduckgo/content-scope-scripts/injected/src/content-scope-features.js').LoadArgs}
+     * @returns {import('@duckduckgo/content-scope-scripts/configuration/index.js').LoadArgs}
      */
     static #buildArgs(remoteConfig, abnMetrics) {
         const config = remoteConfig.config || tdsStorage.config;
