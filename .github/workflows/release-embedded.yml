@@ -75,8 +75,8 @@ jobs:
               env:
                   BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
               run: |
-                  git config user.name "Maxim Tsoy"
-                  git config user.email "mtsoy@duckduckgo.com"
+                  git config user.name "Dax the Deployer"
+                  git config user.email "dax@duckduckgo.com"
                   # Fetch remote branch if it exists
                   git fetch origin "$BRANCH" 2>/dev/null || true
                   if [ "$BRANCH" = "update-autoconsent" ] && git rev-parse --verify "origin/$BRANCH" >/dev/null 2>&1; then
