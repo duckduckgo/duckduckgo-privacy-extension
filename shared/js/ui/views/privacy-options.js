@@ -26,6 +26,7 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         const value = $el.val();
         console.log(`privacyOptions view change for setting "${key}" to "${value}"`);
         this.model.setSetting(key, value);
+        this.rerender();
     },
 
     setup: function () {
@@ -39,6 +40,9 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
             'firebutton-tabclear-enabled',
             'alternative-search',
         ]);
+        if (this.$alternativesearch) {
+            this.$alternativesearch.val(this.model.alternativeSearch || '');
+        }
         this.bindEvents([
             [this.$blocktrackers, 'click', this._clickSetting],
             [this.$httpseverywhereenabled, 'click', this._clickSetting],

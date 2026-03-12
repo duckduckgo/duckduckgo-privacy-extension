@@ -115,6 +115,10 @@
         "title": "Close Tabs",
         "note": "Title for option toggle."
     },
+    "searchPageTitle": {
+        "title": "Search page",
+        "note": "Label for the dropdown that selects which DuckDuckGo search domain to use"
+    },
     "burnPageTitle": {
         "title": "Burn in progress...",
         "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
