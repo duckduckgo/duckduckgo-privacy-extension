@@ -56,8 +56,8 @@ button:disabled {
 }
 
 .options-dropdown {
-    position: absolute;
-    right: 14px;
+    float: right;
+    margin-right: 14px;
     height: 30px;
     margin-top: -4px;
     padding: 0 8px;
