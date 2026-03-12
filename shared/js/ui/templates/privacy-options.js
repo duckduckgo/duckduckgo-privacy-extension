@@ -7,7 +7,7 @@ module.exports = function () {
     return bel`<section class="options-content__privacy divider-bottom">
     <h2 class="menu-title">${t('shared:options.title')}</h2>
     <ul class="default-list">
-        <li>
+        <li class="options-dropdown-li">
             ${t('options:searchPageTitle.title')}
             <select class="js-options-alternative-search options-dropdown" data-key="alternativeSearch">
                 <option value="">duckduckgo.com</option>

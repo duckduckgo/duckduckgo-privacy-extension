@@ -55,6 +55,11 @@ button:disabled {
     cursor: pointer;
 }
 
+.options-dropdown-li {
+    overflow: hidden;
+    padding-bottom: 8px;
+}
+
 .options-dropdown {
     float: right;
     margin-right: 14px;
