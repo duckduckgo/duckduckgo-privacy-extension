@@ -54,3 +54,27 @@ button:disabled {
     margin-left: 7px;
     cursor: pointer;
 }
+
+.search-page-setting {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.options-dropdown {
+    appearance: auto;
+    height: 30px;
+    padding: 0 8px;
+    border: 1px solid vars.$platinum-dark;
+    border-radius: 4px;
+    background-color: vars.$white;
+    color: vars.$slate;
+    font-size: vars.$font__size--default;
+    font-family: vars.$font__face--default;
+    cursor: pointer;
+
+    &:focus {
+        outline: none;
+        border-color: vars.$blue;
+    }
+}
