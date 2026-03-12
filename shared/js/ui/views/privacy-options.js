@@ -20,6 +20,15 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         this.rerender();
     },
 
+    _changeSetting: function (e) {
+        const $el = window.$(e.target);
+        const key = $el.data('key');
+        const value = $el.val();
+        console.log(`privacyOptions view change for setting "${key}" to "${value}"`);
+        this.model.setSetting(key, value);
+        this.rerender();
+    },
+
     setup: function () {
         this._cacheElems('.js-options', [
             'blocktrackers',
@@ -29,7 +38,11 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
             'youtube-previews-enabled',
             'firebutton-clear-history-enabled',
             'firebutton-tabclear-enabled',
+            'alternative-search',
         ]);
+        if (this.$alternativesearch) {
+            this.$alternativesearch.val(this.model.alternativeSearch || '');
+        }
         this.bindEvents([
             [this.$blocktrackers, 'click', this._clickSetting],
             [this.$httpseverywhereenabled, 'click', this._clickSetting],
@@ -38,6 +51,7 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
             [this.$youtubepreviewsenabled, 'click', this._clickSetting],
             [this.$firebuttonclearhistoryenabled, 'click', this._clickSetting],
             [this.$firebuttontabclearenabled, 'click', this._clickSetting],
+            [this.$alternativesearch, 'change', this._changeSetting],
         ]);
     },
 
