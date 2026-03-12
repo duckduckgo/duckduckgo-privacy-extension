@@ -14,15 +14,13 @@ export default class SearchChoice {
             if (ALTERNATIVE_SEARCH_SUBDOMAINS.includes(subdomain)) {
                 try {
                     const url = new URL(details.url);
-                    const isSerp = url.hostname === 'duckduckgo.com' && url.pathname === '/' && url.searchParams.has('q')
-                    const isStartPage = url.hostname === 'start.duckduckgo.com'
+                    const isSerp = url.hostname === 'duckduckgo.com' && url.pathname === '/' && url.searchParams.has('q');
+                    const isStartPage = url.hostname === 'start.duckduckgo.com';
                     if (isSerp || isStartPage) {
                         url.hostname = `${subdomain}.duckduckgo.com`;
                         browser.tabs.update(details.tabId, { url: url.toString() });
                     }
-                    
-                } catch (e) {
-                }    
+                } catch (e) {}
             }
         });
     }
