@@ -8,6 +8,14 @@ module.exports = function () {
     <h2 class="menu-title">${t('shared:options.title')}</h2>
     <ul class="default-list">
         <li>
+            ${t('options:searchPageTitle.title')}
+            <select class="js-options-alternative-search options-dropdown" data-key="alternativeSearch">
+                <option value="">duckduckgo.com</option>
+                <option value="noai">noai.duckduckgo.com</option>
+                <option value="safe">safe.duckduckgo.com</option>
+            </select>
+        </li>
+        <li>
             ${t('options:showEmbeddedTweets.title')}
             ${toggleButton(this.model.embeddedTweetsEnabled, 'js-options-embedded-tweets-enabled', 'embeddedTweetsEnabled')}
         </li>
@@ -72,16 +80,6 @@ module.exports = function () {
         <li class="fire-button-toggle">
             ${t('options:fireButtonTabClosureTitle.title')}
             ${toggleButton(this.model.fireButtonTabClearEnabled, 'js-options-firebutton-tabclear-enabled', 'fireButtonTabClearEnabled')}
-        </li>
-    </ul>
-    <ul class="default-list">
-        <li>
-            ${t('options:searchPageTitle.title')}
-            <select class="js-options-alternative-search options-dropdown" data-key="alternativeSearch">
-                <option value="">duckduckgo.com</option>
-                <option value="noai">noai.duckduckgo.com</option>
-                <option value="safe">safe.duckduckgo.com</option>
-            </select>
         </li>
     </ul>
 </section>`;
