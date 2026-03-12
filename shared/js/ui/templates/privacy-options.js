@@ -4,6 +4,8 @@ const toggleButton = require('./shared/toggle-button.js');
 const t = window.DDG.base.i18n.t;
 
 module.exports = function () {
+    const alternativeSearch = this.model.alternativeSearch || '';
+
     return bel`<section class="options-content__privacy divider-bottom">
     <h2 class="menu-title">${t('shared:options.title')}</h2>
     <ul class="default-list">
@@ -72,6 +74,16 @@ module.exports = function () {
         <li class="fire-button-toggle">
             ${t('options:fireButtonTabClosureTitle.title')}
             ${toggleButton(this.model.fireButtonTabClearEnabled, 'js-options-firebutton-tabclear-enabled', 'fireButtonTabClearEnabled')}
+        </li>
+    </ul>
+    <ul class="default-list">
+        <li class="search-page-setting">
+            Search page
+            <select class="js-options-alternative-search options-dropdown" data-key="alternativeSearch">
+                <option value="" selected=${alternativeSearch === ''}>duckduckgo.com</option>
+                <option value="noai" selected=${alternativeSearch === 'noai'}>noai.duckduckgo.com</option>
+                <option value="safe" selected=${alternativeSearch === 'safe'}>safe.duckduckgo.com</option>
+            </select>
         </li>
     </ul>
 </section>`;
