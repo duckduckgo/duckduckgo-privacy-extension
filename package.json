@@ -48,7 +48,7 @@
         "@types/webextension-polyfill": "^0.10.7",
         "asana": "github:Asana/node-asana",
         "esbuild": "^0.27.4",
-        "eslint": "^10.0.3",
+        "eslint": "^9.39.4",
         "fake-indexeddb": "^6.0.0",
         "glob": "^11.0.3",
         "jasmine": "^5.9.0",
