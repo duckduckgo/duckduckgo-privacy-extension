@@ -68,15 +68,20 @@ export async function forExtensionLoaded(context) {
     return /** @type {Promise<string>} */ (
         new Promise((resolve) => {
             const postInstallPage = 'https://duckduckgo.com/extension-success';
+
+            // Check if the post-install page was already opened.
+            const existingPage = context.pages().find((p) => p.url().startsWith(postInstallPage));
+            if (existingPage) {
+                return resolve(existingPage.url());
+            }
+
+            // Otherwise, wait for it to be opened.
             const listenForPostinstall = (page) => {
                 if (page.url().startsWith(postInstallPage)) {
                     resolve(page.url());
                     context.off('page', listenForPostinstall);
                 }
             };
-            if (context.pages().find((p) => p.url().startsWith(postInstallPage))) {
-                return resolve();
-            }
             context.on('page', listenForPostinstall);
         })
     );
