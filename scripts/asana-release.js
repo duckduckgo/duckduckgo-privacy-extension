@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 const fs = require('fs');
-const Asana = require('asana');
 const path = require('path');
+const { setupAsana } = require('./asana-utils');
 
 const ASANA_ACCESS_TOKEN = process.env.ASANA_ACCESS_TOKEN;
 const version = process.env.VERSION;
@@ -24,14 +24,6 @@ const extensionReleaseSectionGid = '1201759129227683';
 const extensionVersionCustomFieldGid = '1204270899747122';
 
 let asana;
-
-function setupAsana() {
-    asana = Asana.Client.create({
-        defaultHeaders: {
-            'Asana-Enable': 'new_user_task_lists,new_project_templates,new_goal_memberships',
-        },
-    }).useAccessToken(ASANA_ACCESS_TOKEN);
-}
 
 function duplicateTemplateTask(templateTaskGid) {
     const duplicateOption = {
@@ -60,7 +52,7 @@ const getAssigneeGids = (releaseTasks) =>
     );
 
 const run = async () => {
-    setupAsana();
+    asana = setupAsana(ASANA_ACCESS_TOKEN);
 
     console.info('Getting list of release tasks');
     // get list of tasks in release section
