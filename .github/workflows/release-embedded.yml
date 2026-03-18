@@ -20,7 +20,7 @@ jobs:
     release_embedded:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - uses: actions/setup-node@v4
               with:
                   node-version: 22
@@ -64,7 +64,7 @@ jobs:
                   fi
 
             - name: Checkout Apple monorepo
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                   repository: duckduckgo/apple-browsers
                   path: apple-monorepo/
