@@ -123,8 +123,8 @@ export default class CookiePromptManagement {
 
         // Set up alarm listener for summary pixel
         browser.alarms.onAlarm.addListener((alarm) => {
-            this.cpmMessaging.logMessage(`alarm triggered: ${JSON.stringify(alarm)}`);
             if (alarm.name === CookiePromptManagement.SUMMARY_ALARM_NAME) {
+                this.cpmMessaging.logMessage(`alarm triggered: ${JSON.stringify(alarm)}`);
                 this.sendSummaryPixel();
             }
         });
