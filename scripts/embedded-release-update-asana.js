@@ -19,21 +19,22 @@ async function handleAutoconsentFlow(asana) {
 }
 
 async function handleStandaloneFlow(asana) {
-    const { data: { new_task } } = await asana.tasks.duplicateTask(
+    const {
+        data: { new_task },
+    } = await asana.tasks.duplicateTask(
         { data: { include: ['notes', 'assignee', 'subtasks', 'projects'], name: `Apple Embedded Extension Release ${VERSION}` } },
         embeddedReleaseTemplateTaskGid,
         { opt_fields: 'html_notes' },
     );
 
-    const { data: { html_notes } } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' });
+    const {
+        data: { html_notes },
+    } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' });
     const updatedNotes = html_notes.replace('[[pr_url]]', `<a href="${APPLE_PR_URL}">Apple PR</a>`).replace('[[version]]', VERSION);
 
     await asana.tasks.updateTask({ data: { html_notes: updatedNotes } }, new_task.gid);
 
-    await asana.tasks.addProjectForTask(
-        { data: { project: extensionProjectGid, section: extensionReleaseSectionGid } },
-        new_task.gid,
-    );
+    await asana.tasks.addProjectForTask({ data: { project: extensionProjectGid, section: extensionReleaseSectionGid } }, new_task.gid);
 
     console.info(`Standalone Asana task created: https://app.asana.com/0/0/${new_task.gid}`);
 }

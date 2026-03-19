@@ -65,9 +65,13 @@ const run = async () => {
 
     console.info('Asana on. Duplicating template task...');
 
-    const { data: { new_task } } = await duplicateTemplateTask(extensionTemplateTaskGid);
+    const {
+        data: { new_task },
+    } = await duplicateTemplateTask(extensionTemplateTaskGid);
 
-    const { data: { html_notes: notes } } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' });
+    const {
+        data: { html_notes: notes },
+    } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' });
 
     // create html list with <a>task</a> - @assignee
     const releaseNotes = `<ul>${getTaskList(releaseTasks)}</ul>`;
@@ -80,10 +84,7 @@ const run = async () => {
 
     console.info('Moving task to Release section...');
 
-    await asana.tasks.addProjectForTask(
-        { data: { project: extensionProjectGid, section: extensionReleaseSectionGid } },
-        new_task.gid,
-    );
+    await asana.tasks.addProjectForTask({ data: { project: extensionProjectGid, section: extensionReleaseSectionGid } }, new_task.gid);
 
     console.info('Uploading files...');
 
@@ -120,7 +121,9 @@ const run = async () => {
     const testingSubtask = subtasks.find((task) => task.name.includes('Extension Testing'));
 
     for (const taskAssignee of taskAssignees) {
-        const { data: { new_task: duplicateTestingTask } } = await asana.tasks.duplicateTask(
+        const {
+            data: { new_task: duplicateTestingTask },
+        } = await asana.tasks.duplicateTask(
             { data: { name: 'Extension Testing', include: ['notes', 'parent', 'subtasks'] } },
             testingSubtask.gid,
         );
@@ -129,10 +132,7 @@ const run = async () => {
 
     console.info('Setting release version field for PR tasks...');
     for (const task of releaseTasks) {
-        await asana.tasks.updateTask(
-            { data: { custom_fields: { [extensionVersionCustomFieldGid]: version } } },
-            task.gid,
-        );
+        await asana.tasks.updateTask({ data: { custom_fields: { [extensionVersionCustomFieldGid]: version } } }, task.gid);
     }
 
     console.info('All done. Enjoy! 🎉');
