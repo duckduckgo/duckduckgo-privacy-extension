@@ -9,6 +9,8 @@ jobs:
     pixel-validation:
         if: github.actor != 'dependabot[bot]'
         runs-on: ubuntu-latest
+        env:
+            HAS_INTERNAL_REPO: ${{ secrets.GH_RO_PAT != '' }}
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
@@ -17,6 +19,7 @@ jobs:
                   cache: 'npm'
       
             - name: Checkout internal-github-asana-utils repo
+              if: ${{ env.HAS_INTERNAL_REPO == 'true' }}
               uses: actions/checkout@v4
               with:
                   token: ${{ secrets.GH_RO_PAT }}
@@ -24,4 +27,11 @@ jobs:
                   repository: duckduckgo/internal-github-asana-utils
                         
             - run: npm run install-ci
-            - run: npm run validate-pixel-defs -- -g ./internal-github-asana-utils/user_map.yml
+            - name: Validate pixel definitions
+              run: |
+                  if [ "$HAS_INTERNAL_REPO" = "true" ]; then
+                      npm run validate-pixel-defs -- -g ./internal-github-asana-utils/user_map.yml
+                  else
+                      echo "Owner validation will be skipped because the user map is not available (expected for fork PRs)."
+                      npm run validate-pixel-defs
+                  fi
