@@ -19,7 +19,7 @@ jobs:
                   cache: 'npm'
       
             - name: Checkout internal-github-asana-utils repo
-              if: ${{ secrets.GH_RO_PAT != '' }}
+              if: ${{ env.HAS_INTERNAL_REPO == 'true' }}
               uses: actions/checkout@v4
               with:
                   token: ${{ secrets.GH_RO_PAT }}
