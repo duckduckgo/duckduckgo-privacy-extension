@@ -1,0 +1,118 @@
+{
+    "globalThis.dbg.tds.config.features.autoconsent": {
+        "state": "enabled",
+        "exceptions": [],
+        "features": {
+            "filterlist": {
+                "state": "disabled"
+            },
+            "heuristicAction": {
+                "state": "enabled"
+            }
+        },
+        "settings": {
+            "disabledCMPs": [],
+            "compactRuleList": {
+                "v": 1,
+                "s": [
+                    "dialog.cookie-consent form.cookie-consent__form",
+                    "dialog.cookie-consent form.cookie-consent__form button[value=no]",
+                    "#sp-cc-rejectall-link",
+                    ".cky-overlay,.cky-consent-container",
+                    ".cky-consent-container",
+                    ".cky-consent-container [data-cky-tag=reject-button]",
+                    ".cky-consent-container [data-cky-tag=settings-button]",
+                    ".cky-modal-open input[type=checkbox],.cky-consent-bar-expand input[type=checkbox]",
+                    ".cky-modal-open input[type=checkbox]:checked,.cky-consent-bar-expand input[type=checkbox]:checked",
+                    ".cky-modal [data-cky-tag=detail-save-button],.cky-consent-bar-expand [data-cky-tag=detail-save-button]",
+                    ".cky-consent-container,.cky-overlay,.cky-consent-bar-expand",
+                    "advertisement:no"
+                ],
+                "r": [
+                    [
+                        1,
+                        "cookieyes",
+                        2,
+                        "",
+                        22,
+                        [
+                            3
+                        ],
+                        [
+                            {
+                                "e": 4
+                            }
+                        ],
+                        [
+                            {
+                                "v": 4
+                            }
+                        ],
+                        [
+                            {
+                                "if": {
+                                    "e": 5
+                                },
+                                "then": [
+                                    {
+                                        "c": 5
+                                    }
+                                ],
+                                "else": [
+                                    {
+                                        "if": {
+                                            "e": 6
+                                        },
+                                        "then": [
+                                            {
+                                                "k": 6
+                                            },
+                                            {
+                                                "w": 7
+                                            },
+                                            {
+                                                "all": true,
+                                                "optional": true,
+                                                "k": 8
+                                            },
+                                            {
+                                                "c": 9
+                                            }
+                                        ],
+                                        "else": [
+                                            {
+                                                "h": 10
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ],
+                        [
+                            {
+                                "cc": 11
+                            }
+                        ],
+                        {}
+                    ]
+                ],
+                "index": {
+                    "genericRuleRange": [
+                        0,
+                        1
+                    ],
+                    "frameRuleRange": [
+                        1,
+                        1
+                    ],
+                    "specificRuleRange": [
+                        1,
+                        1
+                    ],
+                    "genericStringEnd": 12,
+                    "frameStringEnd": 12
+                }
+            }
+        }
+    }
+}
