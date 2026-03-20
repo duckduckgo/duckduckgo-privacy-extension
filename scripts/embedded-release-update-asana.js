@@ -24,7 +24,7 @@ async function handleStandaloneFlow(asana) {
     } = await asana.tasks.duplicateTask(
         { data: { include: ['notes', 'assignee', 'subtasks', 'projects'], name: `Apple Embedded Extension Release ${VERSION}` } },
         embeddedReleaseTemplateTaskGid,
-        { opt_fields: 'html_notes' },
+        { opt_fields: 'new_task,new_task.gid' },
     );
 
     const {
