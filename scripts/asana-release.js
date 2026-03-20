@@ -29,7 +29,7 @@ function duplicateTemplateTask(templateTaskGid) {
     return asana.tasks.duplicateTask(
         { data: { include: ['notes', 'assignee', 'subtasks', 'projects'], name: `Extension Release ${version}` } },
         templateTaskGid,
-        { opt_fields: 'html_notes' },
+        { opt_fields: 'new_task,new_task.gid' },
     );
 }
 
@@ -126,6 +126,7 @@ const run = async () => {
         } = await asana.tasks.duplicateTask(
             { data: { name: 'Extension Testing', include: ['notes', 'parent', 'subtasks'] } },
             testingSubtask.gid,
+            { opt_fields: 'new_task,new_task.gid' },
         );
         await asana.tasks.updateTask({ data: { assignee: taskAssignee } }, duplicateTestingTask.gid);
     }
