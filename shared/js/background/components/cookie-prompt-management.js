@@ -607,6 +607,10 @@ export default class CookiePromptManagement {
     }
 
     async firePixel(eventName) {
+        // Recovery: if previous alarm handler failed (events exist but alarm is gone),
+        // send the summary now while the worker is alive for message handling
+        await this.sendPendingSummaryIfNeeded();
+
         this.modifyCpmState((cpmState) => {
             cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
         });
@@ -621,6 +625,22 @@ export default class CookiePromptManagement {
         this.cpmMessaging.sendPixel(pixelName, 'daily', {
             fromExtension: '1',
         });
+    }
+
+    async sendPendingSummaryIfNeeded() {
+        const state = await this.getCpmState();
+        if (Object.keys(state.summaryEvents).length === 0) {
+            return;
+        }
+
+        const existingAlarm = await browser.alarms.get(CookiePromptManagement.SUMMARY_ALARM_NAME);
+        if (existingAlarm) {
+            return; // alarm hasn't fired yet
+        }
+
+        // Alarm has fired but events still present - previous send failed
+        await this.sendSummaryPixel();
+        await this.cpmMessaging.logMessage('Detected a failed summary pixel, sent it again now');
     }
 
     async sendSummaryPixel() {
@@ -638,6 +658,7 @@ export default class CookiePromptManagement {
         });
 
         // clear the summary events only AFTER the pixel is sent, so the data is not lost on failure
+        // NOTE: there's a chance to lose events sent during the pixel sending above
         await this.modifyCpmState((cpmState) => {
             cpmState.summaryEvents = {};
             cpmState.detectionCache.patterns.clear();
