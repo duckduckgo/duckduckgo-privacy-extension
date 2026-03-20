@@ -2,14 +2,18 @@ const Asana = require('asana');
 
 /**
  * @param {string} accessToken
- * @returns {import('asana').Client}
  */
 function setupAsana(accessToken) {
-    return Asana.Client.create({
-        defaultHeaders: {
-            'Asana-Enable': 'new_project_templates,new_user_task_lists,new_goal_memberships',
-        },
-    }).useAccessToken(accessToken);
+    const client = new Asana.ApiClient();
+    client.authentications.token.accessToken = accessToken;
+    client.defaultHeaders['Asana-Enable'] = 'new_project_templates,new_user_task_lists,new_goal_memberships';
+
+    return {
+        tasks: new Asana.TasksApi(client),
+        stories: new Asana.StoriesApi(client),
+        attachments: new Asana.AttachmentsApi(client),
+        apiClient: client,
+    };
 }
 
 /**

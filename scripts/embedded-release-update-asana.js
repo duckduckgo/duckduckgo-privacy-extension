@@ -11,28 +11,30 @@ const extensionProjectGid = '312629933896096';
 const extensionReleaseSectionGid = '1201759129227683';
 
 async function handleAutoconsentFlow(asana) {
-    await asana.stories.createStoryForTask(APPLE_TASK_GID, {
-        text: `Embedded extension ZIP has been added. PR is ready for review: ${APPLE_PR_URL}`,
-    });
+    await asana.stories.createStoryForTask(
+        { data: { text: `Embedded extension ZIP has been added. PR is ready for review: ${APPLE_PR_URL}` } },
+        APPLE_TASK_GID,
+    );
     console.info('Apple Asana subtask updated.');
 }
 
 async function handleStandaloneFlow(asana) {
-    const { new_task } = await asana.tasks.duplicateTask(embeddedReleaseTemplateTaskGid, {
-        include: ['notes', 'assignee', 'subtasks', 'projects'],
-        name: `Apple Embedded Extension Release ${VERSION}`,
-        opt_fields: 'html_notes',
-    });
+    const {
+        data: { new_task },
+    } = await asana.tasks.duplicateTask(
+        { data: { include: ['notes', 'assignee', 'subtasks', 'projects'], name: `Apple Embedded Extension Release ${VERSION}` } },
+        embeddedReleaseTemplateTaskGid,
+        { opt_fields: 'html_notes' },
+    );
 
-    const { html_notes } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' });
+    const {
+        data: { html_notes },
+    } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' });
     const updatedNotes = html_notes.replace('[[pr_url]]', `<a href="${APPLE_PR_URL}">Apple PR</a>`).replace('[[version]]', VERSION);
 
-    await asana.tasks.updateTask(new_task.gid, { html_notes: updatedNotes });
+    await asana.tasks.updateTask({ data: { html_notes: updatedNotes } }, new_task.gid);
 
-    await asana.tasks.addProjectForTask(new_task.gid, {
-        project: extensionProjectGid,
-        section: extensionReleaseSectionGid,
-    });
+    await asana.tasks.addProjectForTask({ data: { project: extensionProjectGid, section: extensionReleaseSectionGid } }, new_task.gid);
 
     console.info(`Standalone Asana task created: https://app.asana.com/0/0/${new_task.gid}`);
 }
