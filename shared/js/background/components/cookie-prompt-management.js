@@ -619,7 +619,6 @@ export default class CookiePromptManagement {
         // request "daily" pixel firing
         const pixelName = `autoconsent_${eventName}`;
         this.cpmMessaging.sendPixel(pixelName, 'daily', {
-            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
             fromExtension: '1',
         });
     }
@@ -632,7 +631,6 @@ export default class CookiePromptManagement {
         }
         await this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
             ...summaryEvents,
-            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
             fromExtension: '1',
             // debug flag to filter extension-generated summaries from native-generated ones
             // see https://app.asana.com/1/137249556945/project/1163321984198618/task/1213726448732691?focus=true
