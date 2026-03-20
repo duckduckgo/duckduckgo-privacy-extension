@@ -125,9 +125,8 @@ export default class CookiePromptManagement {
         browser.alarms.onAlarm.addListener(async (alarm) => {
             if (alarm.name === CookiePromptManagement.SUMMARY_ALARM_NAME) {
                 // WebKit has a bug where the alarm is not cleared automatically, so we have to clear it ourselves
-                browser.alarms.clear(CookiePromptManagement.SUMMARY_ALARM_NAME);
+                await browser.alarms.clear(CookiePromptManagement.SUMMARY_ALARM_NAME);
                 await this.sendSummaryPixel();
-                this.cpmMessaging.logMessage(`alarm triggered: ${JSON.stringify(alarm)}`);
             }
         });
 
