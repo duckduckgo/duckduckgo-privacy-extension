@@ -122,10 +122,10 @@ export default class CookiePromptManagement {
         this.getCpmState();
 
         // Set up alarm listener for summary pixel
-        browser.alarms.onAlarm.addListener((alarm) => {
+        browser.alarms.onAlarm.addListener(async (alarm) => {
             if (alarm.name === CookiePromptManagement.SUMMARY_ALARM_NAME) {
-                this.cpmMessaging.logMessage(`alarm triggered: ${JSON.stringify(alarm)}`);
-                this.sendSummaryPixel();
+                await this.sendSummaryPixel();
+                await this.cpmMessaging.logMessage(`alarm triggered: ${JSON.stringify(alarm)}`);
             }
         });
 
@@ -625,18 +625,26 @@ export default class CookiePromptManagement {
     }
 
     async sendSummaryPixel() {
-        let summaryEvents = {};
+        const state = await this.getCpmState();
+        const summaryEvents = structuredClone(state.summaryEvents);
+        if (Object.keys(summaryEvents).length === 0) {
+            return;
+        }
+        await this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
+            ...summaryEvents,
+            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
+            fromExtension: '1',
+            // debug flag to filter extension-generated summaries from native-generated ones
+            // see https://app.asana.com/1/137249556945/project/1163321984198618/task/1213726448732691?focus=true
+            extensionDbg: '1',
+        });
+
+        // clear the summary events only AFTER the pixel is sent, so the data is not lost on failure
         await this.modifyCpmState((cpmState) => {
-            summaryEvents = structuredClone(cpmState.summaryEvents);
             cpmState.summaryEvents = {};
             cpmState.detectionCache.patterns.clear();
             cpmState.detectionCache.both.clear();
             cpmState.detectionCache.onlyRules.clear();
-        });
-        this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
-            ...summaryEvents,
-            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
-            fromExtension: '1',
         });
     }
 }
