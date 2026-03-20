@@ -652,9 +652,6 @@ export default class CookiePromptManagement {
         await this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
             ...summaryEvents,
             fromExtension: '1',
-            // debug flag to filter extension-generated summaries from native-generated ones
-            // see https://app.asana.com/1/137249556945/project/1163321984198618/task/1213726448732691?focus=true
-            extensionDbg: '1',
         });
 
         // clear the summary events only AFTER the pixel is sent, so the data is not lost on failure
