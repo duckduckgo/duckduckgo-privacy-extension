@@ -131,8 +131,8 @@ export default class CookiePromptManagement {
 
         // make sure we send the summary pixels before the extension is unloaded
         // Note: browser.runtime.onSuspend is undefined in WebKit
-        browser.runtime.onSuspend?.addListener(() => {
-            this.sendSummaryPixel();
+        browser.runtime.onSuspend?.addListener(async () => {
+            await this.sendSummaryPixel();
         });
 
         // Register autoconsent message handler with the shared message registry.
