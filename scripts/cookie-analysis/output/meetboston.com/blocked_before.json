@@ -1,0 +1,102 @@
+[
+  {
+    "url": "https://www.clarity.ms/tag/rq8mllv0pb?ref=gtm",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://tag.yieldoptimizer.com/ps/analytics?pxid=156121&gtmcb=475278554",
+    "domain": "tag.yieldoptimizer.com"
+  },
+  {
+    "url": "https://pixel.zprk.io/v5/pixel/37jSPlcJtK.gif?ssid=1&ut1=&ut2=%2F&ut3=https%3A%2F%2Fwww.meetboston.com%2F&gtmcb=828811074",
+    "domain": "pixel.zprk.io"
+  },
+  {
+    "url": "https://pixel.zprk.io/v5/pixel/v4wLa5UIJj.gif?ssid=1&ut1=&ut2=%2F&ut3=https%3A%2F%2Fwww.meetboston.com%2F&gtmcb=828625208",
+    "domain": "pixel.zprk.io"
+  },
+  {
+    "url": "https://pt.ispot.tv/v2/TC-5137-2.gif?app=web&type=visit&refid=87060&url=URL_PLACEHOLDER",
+    "domain": "pt.ispot.tv"
+  },
+  {
+    "url": "https://px.adentifi.com/Pixels?a_id=22277;rev=[INSERT_REVENUE_MACRO_HERE];p_url=https%3A%2F%2Fwww.meetboston.com%2F;uq=2295407038196.624",
+    "domain": "px.adentifi.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-X9BRM9L71Z&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://bat.bing.com/bat.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://beacon.sojern.com/pixel/p/316814?f_v=v6_js&p_v=1&vid=tou&cid=",
+    "domain": "beacon.sojern.com"
+  },
+  {
+    "url": "https://js.adara.com/index.js",
+    "domain": "js.adara.com"
+  },
+  {
+    "url": "https://collector-44674.us.tvsquared.com/tv2track.js",
+    "domain": "collector-44674.us.tvsquared.com"
+  },
+  {
+    "url": "https://go.affec.tv/j/678029d02b37a2e5c3134fc8?gdpr=[GDPR_APPLIES]&gdpr_consent=[GDPR_TCF_CONSENT_STRING]",
+    "domain": "go.affec.tv"
+  },
+  {
+    "url": "https://tag.yieldoptimizer.com/ps/ps?t=s&p=8232&pg=rtgall&",
+    "domain": "tag.yieldoptimizer.com"
+  },
+  {
+    "url": "https://go.affec.tv/j/68b0bb85e47edb686e401e9e?gdpr=[GDPR_APPLIES]&gdpr_consent=[GDPR_TCF_CONSENT_STRING]",
+    "domain": "go.affec.tv"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-1033727466&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-11036546683&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-16826955483&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-16826870516&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-16830233849&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=DC-14692284&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-X9BRM9L71Z&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://wsmcdn.audioeye.com/aem.js",
+    "domain": "wsmcdn.audioeye.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/rq8mllv0pb?ref=gtm",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-X9BRM9L71Z",
+    "domain": "www.googletagmanager.com"
+  }
+]

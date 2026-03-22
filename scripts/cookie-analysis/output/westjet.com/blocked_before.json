@@ -1,0 +1,34 @@
+[
+  {
+    "url": "https://rum.hlx.page/.rum/@adobe/helix-rum-js@%5E2/dist/micro.js",
+    "domain": "rum.hlx.page"
+  },
+  {
+    "url": "https://rum-static.pingdom.net/pa-5a0d0165bd3729410a7b23c6.js",
+    "domain": "rum-static.pingdom.net"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://adobedc.demdex.net/ee/v1/identity/acquire?configId=4ab6f803-9d0f-43c3-ad01-e78c20b304d2&requestId=908d867c-5dc7-40f4-9f70-fa5ea0d0f782",
+    "domain": "adobedc.demdex.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-920817551&l=dataLayer",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/n47yznihzb",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://dynamic.criteo.com/js/ld/ld.js?a=102177",
+    "domain": "dynamic.criteo.com"
+  },
+  {
+    "url": "https://sc-static.net/scevent.min.js",
+    "domain": "sc-static.net"
+  }
+]

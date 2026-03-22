@@ -1,0 +1,58 @@
+[
+  {
+    "url": "https://servedby.flashtalking.com/container/18268;120217;12810;iframe/?ftXRef=[%INSERT_TRANSACTION_ID_HERE%]&ftXValue=[%INSERT_TRANSACTION_VALUE_HERE%]&ftXType=[%INSERT_TRANSACTION_TYPE_HERE%]&ftXName=[%INSERT_TRANSACTION_NAME_HERE%]&ftXNumItems=[%INSERT_TRANSACTION_QUANTITY_HERE%]&ftXCurrency=[%INSERT_TRANSACTION_CURRENCY_HERE%]&U1=[%INSERT_URL_MACRO_HERE%]&U2=[%INSERT_AREA_STUDY_MACRO_HERE%]&U3=[%INSERT_COURSE_NAME_MACRO_HERE%]&U4=[%INSERT_AREA_STUDY_MACRO_HERE%]&U5=[%INSERT_PLACEHOLDER_MACRO_HERE%]&U6=[%INSERT_PLACEHOLDER_MACRO_HERE%]&U7=[%INSERT_PLACEHOLDER_MACRO_HERE%]&U8=[%INSERT_PLACEHOLDER_MACRO_HERE%]&U9=[%INSERT_U9_HERE%]&U10=[%INSERT_U10_HERE%]&U11=[%INSERT_U11_HERE%]&U12=[%INSERT_U12_HERE%]&U13=[%INSERT_U13_HERE%]&U14=[%INSERT_U14_HERE%]&U15=[%INSERT_U15_HERE%]&U16=[%INSERT_U16_HERE%]&U17=[%INSERT_U17_HERE%]&U18=[%INSERT_U18_HERE%]&U19=[%INSERT_U19_HERE%]&U20=[%INSERT_U20_HERE%]&ft_referrer=https%3A//www.uow.edu.au/&ns=&cb=759790.3811562478",
+    "domain": "servedby.flashtalking.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-11453275015&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=D0CQPIJC77U9QS83GCIG&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://tags.srv.stackadapt.com/events.js",
+    "domain": "tags.srv.stackadapt.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-4147908&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-MNMGFMFX2D&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-W22009YZW9&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-WBB0LFC35B&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://siteimproveanalytics.com/js/siteanalyze_13656.js",
+    "domain": "siteimproveanalytics.com"
+  },
+  {
+    "url": "https://munchkin.marketo.net/munchkin.js",
+    "domain": "munchkin.marketo.net"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=D4NP7FBC77UDQ79J05I0&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-11453275015&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  }
+]

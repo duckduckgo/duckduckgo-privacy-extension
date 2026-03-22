@@ -1,0 +1,54 @@
+[
+  {
+    "url": "https://dpm.demdex.net/id?d_visid_ver=5.5.0&d_fieldgroup=MC&d_rtbd=json&d_ver=2&d_orgid=1E7B833554B8360D0A4C98A5%40AdobeOrg&d_nsid=0&ts=1774203636687",
+    "domain": "dpm.demdex.net"
+  },
+  {
+    "url": "https://worldbankgroup.sc.omtrdc.net/id?d_visid_ver=5.5.0&d_fieldgroup=A&mcorgid=1E7B833554B8360D0A4C98A5%40AdobeOrg&mid=50763641822262627146720497222715795913&ts=1774203636706",
+    "domain": "worldbankgroup.sc.omtrdc.net"
+  },
+  {
+    "url": "https://dpm.demdex.net/id?d_visid_ver=5.5.0&d_fieldgroup=AAM&d_rtbd=json&d_ver=2&d_orgid=1E7B833554B8360D0A4C98A5%40AdobeOrg&d_nsid=0&d_mid=50763641822262627146720497222715795913&ts=1774203636708",
+    "domain": "dpm.demdex.net"
+  },
+  {
+    "url": "https://worldbank.tt.omtrdc.net/m2/worldbank/mbox/json?mbox=target-global-mbox&mboxSession=bc36bc5c802c4007b90c61b17535eb80&mboxPC=&mboxPage=d877e5206f054ae0a460e1a08ef56200&mboxRid=f4bb9f18936c40b4a024f6db021d6895&mboxVersion=1.8.3&mboxCount=1&mboxTime=1774203636725&mboxHost=www.worldbank.org&mboxURL=https%3A%2F%2Fwww.worldbank.org%2Fext%2Fen%2Fhome&mboxReferrer=&browserHeight=800&browserWidth=1265&browserTimeOffset=0&screenHeight=800&screenWidth=1280&colorDepth=24&devicePixelRatio=1&screenOrientation=landscape&webGLRenderer=ANGLE%20%28Google%2C%20Vulkan%201.3.0%20%28SwiftShader%20Device%20%28Subzero%29%20%280x0000C0DE%29%29%2C%20SwiftShader%20driver%29&PageName=homepage&mboxMCSDID=6276CC28646B2619-7D13A0AA5F7CF451&vst.trk=worldbankgroup.sc.omtrdc.net&vst.trks=worldbankgroup.sc.omtrdc.net&mboxMCGVID=50763641822262627146720497222715795913",
+    "domain": "worldbank.tt.omtrdc.net"
+  },
+  {
+    "url": "https://dpm.demdex.net/id?d_visid_ver=5.5.0&d_fieldgroup=AAM&d_rtbd=json&d_ver=2&d_orgid=1E7B833554B8360D0A4C98A5%40AdobeOrg&d_nsid=0&d_mid=50763641822262627146720497222715795913&ts=1774203636731",
+    "domain": "dpm.demdex.net"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-972661263",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://script.crazyegg.com/pages/scripts/0058/1350.js",
+    "domain": "script.crazyegg.com"
+  },
+  {
+    "url": "https://dpm.demdex.net/id?d_visid_ver=5.5.0&d_fieldgroup=AAM&d_rtbd=json&d_ver=2&d_orgid=1E7B833554B8360D0A4C98A5%40AdobeOrg&d_nsid=0&d_mid=50763641822262627146720497222715795913&ts=1774203636895",
+    "domain": "dpm.demdex.net"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=1113290&time=1774203636957&li_adsId=311e8adf-2762-4d4e-a913-83b6ceebf7dc&url=https%3A%2F%2Fwww.worldbank.org%2Fext%2Fen%2Fhome",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=1113290&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22worldbank.org%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA1WPQUvDQBCF%2F0qY88Y0bU10b4paAh7EFj2IyKSZtEM3s%2BvupLWI%2F12qIHj8eI%2BP9z4hcJfAvpRlOZteTl4NpHXkoE8UE3sBO704N6A8ENiyrufTyayaVZdVaaDzA7KAhYOPrmtRdmc%2BbsDAGB1Y2KqGZIviX1rQhxYkxdYPBAYCbmjF6ggsPJ962TXKLltEP4YszxpRioLKXtBlN7Qn58NAoiZ78HuKesxQumw5JkUWbNmxHsHAgdrESkveCLpHeh8padOBBZr0NSLWObX9eV5SX%2BZ93Zb5rKKL%2Bbrrq7bvwQCnVURJDpU6sD26RAYc3%2BGvBU6wYBT9hYHTGuwnhNQuFZXA5vOvk%2BWeZUddI1ch%2FGm2NICV0TkD6Wff6hhO9x%2BuFrdvT82yWcHXN%2B%2FiPmSWAQAA%22%7D&href=https%3A%2F%2Fwww.worldbank.org%2Fext%2Fen%2Fhome",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "url": "https://js-agent.newrelic.com/nr-spa-1.301.0.min.js",
+    "domain": "js-agent.newrelic.com"
+  },
+  {
+    "url": "https://js-agent.newrelic.com/nr-spa-1.301.0.min.js",
+    "domain": "js-agent.newrelic.com"
+  },
+  {
+    "url": "https://bam.nr-data.net/1/704513e63b?a=1835137194&sa=1&v=1.306.0&t=Unnamed%20Transaction&rst=1271&ck=0&s=7f466d28c55818c2&ref=https://osf.io/&ptid=b47bf319658a8b6f&af=err,spa,xhr,stn,ins&be=153&fe=746&dc=738&fsh=1&perf=%7B%22timing%22:%7B%22of%22:1774200881400,%22n%22:0,%22f%22:0,%22dn%22:3,%22dne%22:49,%22c%22:49,%22s%22:50,%22ce%22:96,%22rq%22:96,%22rp%22:153,%22rpe%22:154,%22di%22:239,%22ds%22:890,%22de%22:891,%22dc%22:898,%22l%22:898,%22le%22:899%7D,%22navigation%22:%7B%7D%7D&fp=1036&fcp=1036",
+    "domain": "bam.nr-data.net"
+  },
+  {
+    "url": "https://bam.nr-data.net/jserrors/1/704513e63b?a=1835137194&sa=1&v=1.306.0&t=Unnamed%20Transaction&rst=1276&ck=0&s=7f466d28c55818c2&ref=https://osf.io/&ptid=b47bf319658a8b6f",
+    "domain": "bam.nr-data.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-JMG7YD81TP&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/qwz5axcfwv?ref=gtm",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-963536011&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://googleads.g.doubleclick.net/pagead/id",
+    "domain": "googleads.g.doubleclick.net"
+  }
+]

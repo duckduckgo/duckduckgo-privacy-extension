@@ -1,0 +1,70 @@
+[
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://trkn.us/pixel/conv/ppt=24308;g=sitewide_pixel;gid=60245;ord=1876206499?gtmcb=1533077718",
+    "domain": "trkn.us"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-NYB2RZ4TW3&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://sc-static.net/scevent.min.js",
+    "domain": "sc-static.net"
+  },
+  {
+    "url": "https://tags.srv.stackadapt.com/events.js",
+    "domain": "tags.srv.stackadapt.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-858428948&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=DC-11000922&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-10861721635&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://action.media6degrees.com/orbserv/nsjs?adv=cl165652570818625&ns=7058&nc=UniversityofPittsburgh_SV&ncv=46&dstOrderId=[OrderId]&dstOrderAmount=[OrderAmount]",
+    "domain": "action.media6degrees.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=DC-11000922&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-16520978747&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=CO0UO0RC77U9UU6RVIAG&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://js.ipredictive.com/viant_universal_pixel.js",
+    "domain": "js.ipredictive.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=6780018&time=1774203400462&li_adsId=a457cf05-0b8d-415f-baf0-b6a5dd50fd1c&url=https%3A%2F%2Fadmissions.pitt.edu%2F&tm=gtmv2",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=6780018&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22admissions.pitt.edu%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA22PTW%2FCMBBE%2F0q0ZwdMSEjiG4cWReoBlY9LVVU2XsKqjnHjTStE%2Be9VitRTjyO9eZq5QiAbQb0sykrKWfUqIB56CrzHPtLZg8qqQgBTh6BmZZlncp5LmRe1AHvuNHlQoG1HcaTjJBDzBO0AAobegYITc4hqOv2HmYKAoFvcEjsEBTtvsW97bQfNmCz%2FCsl3svP0OQ7iS3I%2BJmtijmbo2xMI%2BEITiXFDrdfuGT8GjNxYUGCq0tZ5UadVlmFalVmdmsXRpNKU5jCfS1kXBQiguO21j04zWlBH7SIKcPSo7xYYw4q053voKB5AXSFEs2HNCCrNb6Plifw72sYvQ%2FjTnLAD5QfnBMTffdtLGJ%2Bul6uHt32zabZw%2BwEerj64ggEAAA%3D%3D%22%7D&href=https%3A%2F%2Fadmissions.pitt.edu%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  }
+]

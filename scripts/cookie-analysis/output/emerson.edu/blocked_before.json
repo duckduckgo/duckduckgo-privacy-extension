@@ -1,0 +1,46 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-4EJLZRHYE6",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://trkn.us/pixel/conv/ppt=20401;g=sitewide_pixel;gid=47821;ord=1383169386?gtmcb=1432604103",
+    "domain": "trkn.us"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-4EJLZRHYE6&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-953213558&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://tags.srv.stackadapt.com/events.js",
+    "domain": "tags.srv.stackadapt.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-4EJLZRHYE6&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=9084&time=1774200986803&li_adsId=0b7491a0-9a73-4c16-838b-78c9845e8029&url=https%3A%2F%2Femerson.edu%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=9084&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22emerson.edu%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA02PwUvDMByF%2F5XyDp5S13Zd1%2BY2ZY6Ch%2BHqLiKSNb92wTSNSYrI2P8ucyje3seDj%2FdOsEp68JcqKfNXBt86ZcOenFejAc%2FKBUNQA4Gny2WeJUlVFmVSMchxEMqAgwZyfjS3JCcwTE6D4xiC9Xw2%2B9fNwGBFT40KmsCxvlbR%2Fag19cSiZyPJ9U7ISQSKbqLNb9y6sXdi8JEy0d3ow2jA8EkHrwLtVG%2BEfqKPiXyoJTjKoqqKpOzioqu6eJFRG1cyz%2BI2TRfzZdpl5VyCQfnGCeO1CCTBO6E9MWj1IK4WXGCjhAlXGJRvwU%2Bw%2FrALIhB4nJ8vlkdl3knWZmXtn%2BZIA7iZtGbwP%2FuaL3u5vF1t1m%2F7elc3OH8DsMNt%2FHgBAAA%3D%22%7D&href=https%3A%2F%2Femerson.edu%2F",
+    "domain": "px.ads.linkedin.com"
+  }
+]

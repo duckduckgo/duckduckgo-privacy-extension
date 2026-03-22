@@ -1,0 +1,58 @@
+[
+  {
+    "url": "https://shopify-init.blackcrow.ai/js/core/newstatebags.js?shop=newstatebags.myshopify.com&tagSrc=ShopifyThemeAppExtension",
+    "domain": "shopify-init.blackcrow.ai"
+  },
+  {
+    "url": "https://monorail-edge.shopifysvc.com/unstable/produce_batch",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://monorail-edge.shopifysvc.com/v1/produce",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://dx.mountain.com/spx?dxver=4.0.0&shaid=38447&tdr=&plh=https%3A%2F%2Fstatebags.com%2F&cb=51047378184797460term=value",
+    "domain": "dx.mountain.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-5EXBY99YGG",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://cdn.9gtb.com/script.js?rev=0f40484",
+    "domain": "cdn.9gtb.com"
+  },
+  {
+    "url": "https://bat.bing.com/bat.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://cdn.hextom.com/js/quickannouncementbar.js?shop=newstatebags.myshopify.com",
+    "domain": "cdn.hextom.com"
+  },
+  {
+    "url": "https://na.shgcdn3.com/pixel-collector.js?shop=newstatebags.myshopify.com",
+    "domain": "na.shgcdn3.com"
+  },
+  {
+    "url": "https://backinstock.useamp.com/widget/6185_1767153438.js?category=bis&v=6&shop=newstatebags.myshopify.com",
+    "domain": "backinstock.useamp.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/kpws4x365c",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://shopify-init.blackcrow.ai/js/core/newstatebags.js?shopify_app_version=1.0.218&shop=newstatebags.myshopify.com",
+    "domain": "shopify-init.blackcrow.ai"
+  },
+  {
+    "url": "https://sdk.postscript.io/sdk.bundle.js?shopId=386200",
+    "domain": "sdk.postscript.io"
+  },
+  {
+    "url": "https://api.intelligems.io/v3/track",
+    "domain": "api.intelligems.io"
+  }
+]

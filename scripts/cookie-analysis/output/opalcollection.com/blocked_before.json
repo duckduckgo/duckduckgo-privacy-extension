@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=DC-9163167&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=DC-12220564&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-YTS5SYGMH6&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://bat.bing.com/bat.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://cdn.taboola.com/libtrc/unip/1794223/tfa.js",
+    "domain": "cdn.taboola.com"
+  },
+  {
+    "url": "https://script.crazyegg.com/pages/scripts/0011/7567.js",
+    "domain": "script.crazyegg.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=DC-12220564&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid=D5JUD6BC77U894MDB880",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://pixel.sitescout.com/dmp/asyncPixelSync",
+    "domain": "pixel.sitescout.com"
+  },
+  {
+    "url": "https://pixel.sitescout.com/iap/001de9f554661b9e",
+    "domain": "pixel.sitescout.com"
+  }
+]

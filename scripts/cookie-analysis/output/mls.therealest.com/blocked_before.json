@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://static.hotjar.com/c/hotjar-3743651.js?sv=6",
+    "domain": "static.hotjar.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-C3GSBWQZ3C&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  }
+]

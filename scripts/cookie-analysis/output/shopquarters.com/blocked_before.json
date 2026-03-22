@@ -1,0 +1,18 @@
+[
+  {
+    "url": "https://monorail-edge.shopifysvc.com/unstable/produce_batch",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://monorail-edge.shopifysvc.com/v1/produce",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-086BCLBQ76",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://lantern.roeyecdn.com/lantern_global_120349.min.js",
+    "domain": "lantern.roeyecdn.com"
+  }
+]

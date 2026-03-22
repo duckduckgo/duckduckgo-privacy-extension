@@ -1,0 +1,10 @@
+[
+  {
+    "url": "https://api.parsely.com/v2/related?apikey=seventeen.com&section=music&tag=locale:%20US&exclude=tags:content-type:%20default&exclude=tags:displayType:%20gallery&exclude=tags:displayType:%20video&limit=20&pub_date_start=2023-03-22&url=https://www.seventeen.com/celebrity/music/a69122643/sombr-seventeen-cover/",
+    "domain": "api.parsely.com"
+  },
+  {
+    "url": "https://p1.parsely.com/px/?rand=1774203071605&plid=731bcd98-975d-4a2e-9cde-6539f4d94f1d&idsite=seventeen.com&url=https%3A%2F%2Fwww.seventeen.com%2Fcelebrity%2Fmusic%2Fa69122643%2Fsombr-seventeen-cover%2F&urlref=https%3A%2F%2Fwww.seventeen.com%2F&screen=1280x800%7C1280x800%7C24&data=%7B%22login_status%22%3A%22not_logged_in%22%2C%22membership_status%22%3A%22member%22%2C%22parsely%3Ametadata-detection%22%3A%7B%22version%22%3A0%2C%22url%22%3A%22https%3A%2F%2Fwww.seventeen.com%2Fcelebrity%2Fmusic%2Fa69122643%2Fsombr-seventeen-cover%2F%22%2C%22hash%22%3A-906890531%7D%7D&sid=1&surl=https%3A%2F%2Fwww.seventeen.com%2F&sref=&sts=1774203004691&slts=0&title=Sombr+Covers+Seventeen+and+Talks+%E2%80%98I+Barely+Know+Her%2C%E2%80%99+Addison+Rae%2C+and+Dating+With+Newfound+Fame&date=Sun+Mar+22+2026+18%3A11%3A11+GMT%2B0000+(Coordinated+Universal+Time)&action=pageview&sl_xp=%2F%2F*%5B%40id%3D%22main-content%22%5D%2Fsection%5B1%5D%2Fa%5B1%5D&sl_x=40&sl_y=237&sl_h=https%3A%2F%2Fwww.seventeen.com%2Fcelebrity%2Fmusic%2Fa69122643%2Fsombr-seventeen-cover%2F&pvid=732f9be8-13fe-4b17-8cf0-b44c187c6d0d&u=pid%3Dd0ebea80-05ea-47cb-9e71-0ab0b036f369",
+    "domain": "p1.parsely.com"
+  }
+]

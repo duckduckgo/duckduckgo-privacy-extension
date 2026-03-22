@@ -1,0 +1,30 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-3RET6VT9F2",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://cdn.p-n.io/pushly-sdk.min.js?domain_key=2kfRgGFDTwOeshpHs3tW204OrPjZq3JUpy7d",
+    "domain": "cdn.p-n.io"
+  },
+  {
+    "url": "https://cdn.adsafeprotected.com/iasPET.1.js",
+    "domain": "cdn.adsafeprotected.com"
+  },
+  {
+    "url": "https://cdn3.optimizely.com/js/geo4.js",
+    "domain": "cdn3.optimizely.com"
+  },
+  {
+    "url": "https://a21018620252.cdn.optimizely.com/client_storage/a21018620252.html",
+    "domain": "a21018620252.cdn.optimizely.com"
+  },
+  {
+    "url": "https://p1.parsely.com/px/?rand=1774206173619&plid=4262c4b4-e40b-403b-975e-4445ba2dea70&idsite=esquire.com&url=https%3A%2F%2Fwww.esquire.com%2F&urlref=&screen=1280x800%7C1280x800%7C24&data=%7B%22login_status%22%3A%22not_logged_in%22%2C%22membership_status%22%3A%22member%22%2C%22parsely%3Ametadata-detection%22%3A%7B%22version%22%3A0%2C%22url%22%3A%22https%3A%2F%2Fwww.esquire.com%2F%22%2C%22hash%22%3A-1910432452%7D%7D&sid=1&surl=https%3A%2F%2Fwww.esquire.com%2F&sref=&sts=1774206173612&slts=0&title=Esquire+-+Men%27s+Fashion%2C+Cocktails%2C+Politics%2C+Interviews%2C+and+Women&date=Sun+Mar+22+2026+19%3A02%3A53+GMT%2B0000+(Coordinated+Universal+Time)&action=pageview&pvid=f396400c-84d1-496d-886b-f393bb4fc65a&u=pid%3D7c7cbbe5-ab68-40ec-a2a8-f1ec1916b0c0",
+    "domain": "p1.parsely.com"
+  },
+  {
+    "url": "https://s.skimresources.com/js/74968X1525077.skimlinks.js",
+    "domain": "s.skimresources.com"
+  }
+]

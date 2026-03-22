@@ -1,0 +1,78 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-VD9LCVW2ZV&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://cdn.optimizely.com/js/27195450406.js",
+    "domain": "cdn.optimizely.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-11146733413&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://sb.scorecardresearch.com/cs/6687883/beacon.js",
+    "domain": "sb.scorecardresearch.com"
+  },
+  {
+    "url": "https://tags.creativecdn.com/liBPCC6X9DVRTmtKt0a6.js",
+    "domain": "tags.creativecdn.com"
+  },
+  {
+    "url": "https://tags.srv.stackadapt.com/events.js",
+    "domain": "tags.srv.stackadapt.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-963446016&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-VD9LCVW2ZV&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-11146733413&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=4735116%2C34071&time=1774204127007&li_adsId=21d1c527-a303-48e0-80da-4ed699d7217b&conversionId=20220620&url=https%3A%2F%2Fwww.scmp.com%2F&tm=gtmv2",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=4735116%2C34071&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%20(px.ads.linkedin.com)%3B%20ErrorData%3A%20%7B%22domain%22%3A%22scmp.com%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAAz2QTWuDQBRF%2F8rw1mPjqNE4u7S0qfQrVMmmlDLqqI%2FoOPVNCCXNfy82tMvD5R4u9wQWawL5FiXhUoiYh5GfiHcOVE1o3U5PhKMBGayWHBwOGqRIkijwIxEkvh9wqMdBoQEJVA32qhoH4HCYepDQOWdJLhZ%2FwQI4WNXqAl2vQcL1pNUeTctuOjSKszWh4uz%2BgT3rI3H2YtHgaIgpU7PMELadI%2FbN8vHgukuHPY2TmQ3bkRxwOOqS0OkcW6P6V%2F150OSyGiTEjYib0k%2B90g%2BFJ%2BpUeKIpE6%2FRaZwGYb0K0gA4IBWTMtQrp2uQjepJc%2BjxTl0sMMMGlXEXGJAqkCewVOZOOQ3Si86z5RHNXteZWVv7r%2Bn0ANIc%2Bp4D%2Fe4rvuz8wna9uf3YZXlWwPkHwp%2FfHo4BAAA%3D%22%7D&href=https%3A%2F%2Fwww.scmp.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=4735116%2C34071&time=1774204127013&li_adsId=21d1c527-a303-48e0-80da-4ed699d7217b&url=https%3A%2F%2Fwww.scmp.com%2F&tm=gtmv2",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=4735116%2C34071&time=1774204127015&li_adsId=21d1c527-a303-48e0-80da-4ed699d7217b&url=https%3A%2F%2Fwww.scmp.com%2F&tm=gtmv2",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://accounts.google.com/gsi/log?client_id=162566681241-9friud7g8i7e5aj9q6ahfr08sfbct8hg.apps.googleusercontent.com&as=qVW5bGUNrEk6v37N2Q4rFe409TRF2VN47Jluf2SupSc&bs=Itor2cRn7RUAnASUCU8uKBCCV5ECylpht3WaWxCENTw&event=onetap.card.prompt.apiCall&enable_itp_optimization=17",
+    "domain": "accounts.google.com"
+  },
+  {
+    "url": "https://cdn.cxense.com/sp1.html",
+    "domain": "cdn.cxense.com"
+  },
+  {
+    "url": "https://api.cxense.com/profile/user/external/link/update?persisted=9f2cd4f3b3b93bf7040d22fcdef8c128ada283c6&json=%7B%22id%22%3A%22mn23bunpyt6nyrsp%22%2C%22cxid%22%3A%22mn23bunpyt6nyrsp%22%7D",
+    "domain": "api.cxense.com"
+  }
+]

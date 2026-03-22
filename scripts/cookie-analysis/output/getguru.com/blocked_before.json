@@ -1,0 +1,78 @@
+[
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-SJ5QWHMHRQ&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://bat.bing.com/bat.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://tracking.g2crowd.com/attribution_tracking/conversions/158.js?p=https://www.getguru.com/&e=",
+    "domain": "tracking.g2crowd.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/kiqjnhw5e7?ref=gtm2",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://analytics.ahrefs.com/analytics.js",
+    "domain": "analytics.ahrefs.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://edge.fullstory.com/s/fs.js",
+    "domain": "edge.fullstory.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-953598380&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://ppt2emy7nkbhu3nf4fatqm5rpe0ymllj.lambda-url.us-east-1.on.aws/scripts?pk=cm8f8564q0005ib05a6wipam6",
+    "domain": "ppt2emy7nkbhu3nf4fatqm5rpe0ymllj.lambda-url.us-east-1.on.aws"
+  },
+  {
+    "url": "https://js.zi-scripts.com/zi-tag.js",
+    "domain": "js.zi-scripts.com"
+  },
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://pi.pardot.com/analytics?conly=true&visitor_id=150589611&visitor_id_sign=57f8e715f8fbade537de70b20739859725847eaaca23aea11ffdff1fd8efc76f87bab7bdcad08111ef3d101eb282570f266f2133&pi_opt_in=&campaign_id=30334&account_id=1041013&title=AI%20Platform%20for%20Knowledge%20Work%E2%80%94Your%20AI%20Source%20of%20Truth%20|%20Guru&url=https://www.getguru.com/&referrer=",
+    "domain": "pi.pardot.com"
+  },
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=3240897&time=1774202498508&li_adsId=4030f7c7-aa85-4021-bafe-6673b739f6e5&url=https%3A%2F%2Fwww.getguru.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=3240897&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22getguru.com%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA02P3UrDMBiGbyV8x6lLu26tOeuBjqIHw5WJiEjafO3C0qTmhyFz4EV4hV6JzIF4%2BPDCw%2FMeYVLSA3%2BeZzkrr4sXCr5zagpbdF5ZAzwrFxSCGhF4WhR5xrL8ulykcwrSjkIZ4DBgGKKLV50dgUJ0GjjsQpg8n83%2BbTOgMIkBGxU0AoeqJmstQm%2FdSHrryJ2xB41yQPJo3f778%2BvJRkeqmmxsdB0S25PGxbAjH2QVXQQKB2y9CrhRgxH6Ad8i%2BlBL4MDyecF6KRJkbZ4sWV4my7Tvkq4oiyVjskizFigo3zhhvBYBJfBeaI8UtLoVFwucYaWECRcYle%2BAH2Hy7SaIgMCT%2FHS23CuzR1mbapr%2BNDscgZuoNQX%2F29e8T%2BfX62p187qtN3UDpx966BcNfgEAAA%3D%3D%22%7D&href=https%3A%2F%2Fwww.getguru.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  }
+]

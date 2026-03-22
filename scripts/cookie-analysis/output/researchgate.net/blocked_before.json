@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://aim-tag.hcn.health/js/client.js?dl=aimDataLayer",
+    "domain": "aim-tag.hcn.health"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-4P31SJ70EJ",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://ads.pubmatic.com/AdServer/js/pwt/161519/6739/pwt.js",
+    "domain": "ads.pubmatic.com"
+  }
+]

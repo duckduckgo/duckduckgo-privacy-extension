@@ -1,0 +1,46 @@
+[
+  {
+    "url": "https://static.addtoany.com/menu/page.js",
+    "domain": "static.addtoany.com"
+  },
+  {
+    "url": "https://aim-tag.hcn.health/js/client.js?dl=aimDataLayer",
+    "domain": "aim-tag.hcn.health"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-988200886&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://static.ads-twitter.com/uwt.js",
+    "domain": "static.ads-twitter.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://tracking.magnetmail.net/MagnetLeads.js",
+    "domain": "tracking.magnetmail.net"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/nj421t7n3e?ref=gtm2",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-HSDY68YJDC&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://s.adroll.com/j/roundtrip.js",
+    "domain": "s.adroll.com"
+  },
+  {
+    "url": "https://tags.crwdcntrl.net/lt/c/12671/lt.min.js",
+    "domain": "tags.crwdcntrl.net"
+  },
+  {
+    "url": "https://mviewwebtes.112.2o7.net/b/ss/mviewwebtes/1/JS-2.26.0-LEWM/s82879965265935?AQB=1&ndh=1&pf=1&t=22%2F2%2F2026%2018%3A22%3A5%200%200&fid=36EE3A877DF45AB0-1631EE5E5444B88B&ce=UTF-8&g=https%3A%2F%2Fwww.endocrine.org%2F&cc=USD&s=1280x800&c=24&j=1.6&v=N&k=Y&bw=1280&bh=800&AQE=1",
+    "domain": "mviewwebtes.112.2o7.net"
+  }
+]

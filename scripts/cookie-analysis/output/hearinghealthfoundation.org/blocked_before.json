@@ -1,0 +1,34 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=UA-30213855-1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-H2Z5VSRBRR&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=UA-30213855-1&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://googleads.g.doubleclick.net/pagead/id",
+    "domain": "googleads.g.doubleclick.net"
+  },
+  {
+    "url": "https://googleads.g.doubleclick.net/pagead/id",
+    "domain": "googleads.g.doubleclick.net"
+  },
+  {
+    "url": "https://googleads.g.doubleclick.net/pagead/id",
+    "domain": "googleads.g.doubleclick.net"
+  },
+  {
+    "url": "https://googleads.g.doubleclick.net/pagead/id",
+    "domain": "googleads.g.doubleclick.net"
+  }
+]

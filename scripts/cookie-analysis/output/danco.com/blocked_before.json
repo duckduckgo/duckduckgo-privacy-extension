@@ -1,0 +1,22 @@
+[
+  {
+    "url": "https://marvel-b2-cdn.bc0a.com/marvel.js",
+    "domain": "marvel-b2-cdn.bc0a.com"
+  },
+  {
+    "url": "https://app-cf.bc0a.com/corejs/be-app.js",
+    "domain": "app-cf.bc0a.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-NG6KRP2718&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/p4hnfmedtr?ref=gtm2",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-NG6KRP2718&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  }
+]

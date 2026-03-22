@@ -1,0 +1,34 @@
+[
+  {
+    "url": "https://monorail-edge.shopifysvc.com/unstable/produce_batch",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://www.googleoptimize.com/optimize.js?id=GTM-MDL76QW",
+    "domain": "www.googleoptimize.com"
+  },
+  {
+    "url": "https://cdn.attn.tv/spermidinelife/dtag.js?source=app-embed",
+    "domain": "cdn.attn.tv"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-CERZ537BG1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://cdn.attn.tv/attentive/dtag.js",
+    "domain": "cdn.attn.tv"
+  },
+  {
+    "url": "https://cdn.attn.tv/spermidinelife/dtag.js?shop=spermidine-life.myshopify.com",
+    "domain": "cdn.attn.tv"
+  },
+  {
+    "url": "https://x.bidswitch.net/sync?dsp_id=95&user_id=abab5283-9121-496f-b24c-313c67aef103&expires=30&user_group=1",
+    "domain": "x.bidswitch.net"
+  },
+  {
+    "url": "https://dsum-sec.casalemedia.com/rum?cm_dsp_id=208&external_user_id=abab5283-9121-496f-b24c-313c67aef103&expiration=30",
+    "domain": "dsum-sec.casalemedia.com"
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://monorail-edge.shopifysvc.com/unstable/produce_batch",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://shopify-widget.route.com/shopify.widget.js?shop=waitbutwhy.myshopify.com",
+    "domain": "shopify-widget.route.com"
+  }
+]

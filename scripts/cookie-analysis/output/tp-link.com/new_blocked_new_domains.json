@@ -1,0 +1,62 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-218TLZ4XRP",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-8C70Z419LT",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-X5XJFE5K24",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://script.crazyegg.com/pages/scripts/0104/5682.js",
+    "domain": "script.crazyegg.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/ttl60sp8oy?ref=gtm",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-218TLZ4XRP&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-8C70Z419LT&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-X5XJFE5K24&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://static.hotjar.com/c/hotjar-2117166.js?sv=7",
+    "domain": "static.hotjar.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-943346287&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=5424996&time=1774203960936&li_adsId=2dec6350-160b-4845-a00c-5203fa43813b&url=https%3A%2F%2Fwww.tp-link.com%2Fus%2Fhome-networking%2Fcloud-camera%2Ftapo-c465%2F&tm=gtmv2",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=5424996&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22tp-link.com%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA02QUWvbMBRG%2F4q4z9LcOLJT660tWzHsIcymL2MMRb5OLpElTbomhLb%2FfaSFscfDB4fD9wqJpgLmZ6Nr3XXtLwnFZUr8grlQDGDq%2B0YC04JgNrudru%2B2XXvXbbWEKS6WAhjgpDyF8xcXF5CwZg8GTsypmKr6b6vWUp3igiogX2I%2BUzhWzsd1Us4umG3FNkXldNtUICHZI47EHsHAaFMUT7ptxJt4tMyYr2ofL5hxEgO6NRNfxdOHRFyIT%2BJxJc%2BqD2KI3maxtwG9eBPjXn2ncAYJFzwUYhzoGKz%2FgX9WLNxPYKB1nd7cd04dGteoucZZzbtdrRo9zRu31badNiCByphtKN4yTmBm6wtK8PTNflrgBs9kA3%2FCQsWBeYVUDgNbRjBKv98stxyc%2BvCQ0j%2FNCRcwYfVeQvnoG6%2Fp9sL%2B4fnr75d%2B6Ed4%2FwtnBdDguAEAAA%3D%3D%22%7D&href=https%3A%2F%2Fwww.tp-link.com%2Fus%2Fhome-networking%2Fcloud-camera%2Ftapo-c465%2F",
+    "domain": "px.ads.linkedin.com"
+  }
+]

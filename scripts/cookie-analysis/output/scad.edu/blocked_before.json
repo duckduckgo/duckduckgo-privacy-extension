@@ -1,0 +1,70 @@
+[
+  {
+    "url": "https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516",
+    "domain": "static.cloudflareinsights.com"
+  },
+  {
+    "url": "https://pi.pardot.com/pd.js",
+    "domain": "pi.pardot.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=DC-12289349&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-6B73W0YZGG&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://sc-static.net/scevent.min.js",
+    "domain": "sc-static.net"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=CBK4M5JC77UDK33PVSH0&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbds.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=C0NE8LT2BAPH375FNKJG&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/kri18igdpw?ref=gtm2",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://origin.acuityplatform.com/event/v2/pixel.js",
+    "domain": "origin.acuityplatform.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-1069965397&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-415286247&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=DC-12289349&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-10956394856&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-6B73W0YZGG&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://sc-static.net/scevent.min.js",
+    "domain": "sc-static.net"
+  }
+]

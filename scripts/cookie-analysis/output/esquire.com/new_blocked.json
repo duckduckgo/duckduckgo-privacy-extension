@@ -1,0 +1,18 @@
+[
+  {
+    "url": "https://api.parsely.com/v2/related?apikey=esquire.com&section=men%27s%20grooming&tag=locale:%20US&exclude=tags:displayType:%20gallery&exclude=tags:displayType:%20video&exclude=tags:collection:%20Top%20Sales%20and%20Deals%202025&exclude=tags:collection:%20What%20We%27re%20Buying&limit=20&pub_date_start=2025-01-01&url=https://www.esquire.com/style/grooming/a70770493/ai-hair-balding-apps-testing/",
+    "domain": "api.parsely.com"
+  },
+  {
+    "url": "https://config.aps.amazon-adsystem.com/configs/3049",
+    "domain": "config.aps.amazon-adsystem.com"
+  },
+  {
+    "url": "https://client.aps.amazon-adsystem.com/publisher.js",
+    "domain": "client.aps.amazon-adsystem.com"
+  },
+  {
+    "url": "https://p1.parsely.com/px/?rand=1774206235716&plid=f0e27883-b810-484a-8ef9-57d29b9e9c2f&idsite=esquire.com&url=https%3A%2F%2Fwww.esquire.com%2Fstyle%2Fgrooming%2Fa70770493%2Fai-hair-balding-apps-testing%2F&urlref=https%3A%2F%2Fwww.esquire.com%2F&screen=1280x800%7C1280x800%7C24&data=%7B%22login_status%22%3A%22not_logged_in%22%2C%22membership_status%22%3A%22member%22%2C%22parsely%3Ametadata-detection%22%3A%7B%22version%22%3A0%2C%22url%22%3A%22https%3A%2F%2Fwww.esquire.com%2Fstyle%2Fgrooming%2Fa70770493%2Fai-hair-balding-apps-testing%2F%22%2C%22hash%22%3A-347266404%7D%7D&sid=1&surl=https%3A%2F%2Fwww.esquire.com%2F&sref=&sts=1774206173612&slts=0&title=The+Robots+Are+Coming+for+Your+Hair&date=Sun+Mar+22+2026+19%3A03%3A55+GMT%2B0000+(Coordinated+Universal+Time)&action=pageview&sl_xp=%2F%2F*%5B%40id%3D%2289b99ed8-23dc-4c8e-9476-54347839cbbc%22%5D%2Fdiv%5B1%5D%2Fdiv%5B1%5D%2Fdiv%5B1%5D%2Fdiv%5B1%5D%2Fdiv%5B2%5D%2Fdiv%5B1%5D%2Fdiv%5B2%5D%2Fh3%5B1%5D%2Fa%5B1%5D&sl_x=342&sl_y=791&sl_h=https%3A%2F%2Fwww.esquire.com%2Fstyle%2Fgrooming%2Fa70770493%2Fai-hair-balding-apps-testing%2F&pvid=39b4ef2a-a6a5-4d42-a307-4106bab3ce3a&u=pid%3D7c7cbbe5-ab68-40ec-a2a8-f1ec1916b0c0",
+    "domain": "p1.parsely.com"
+  }
+]

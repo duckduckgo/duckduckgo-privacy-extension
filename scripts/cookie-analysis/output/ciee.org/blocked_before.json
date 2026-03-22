@@ -1,0 +1,78 @@
+[
+  {
+    "url": "https://cdn.evgnet.com/beacon/ciee/engage/scripts/evergage.min.js",
+    "domain": "cdn.evgnet.com"
+  },
+  {
+    "url": "https://munchkin.marketo.net/munchkin.js",
+    "domain": "munchkin.marketo.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-1063410982&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-852700187&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-852014300&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-274EJGWFTR&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.googleadservices.com/pagead/conversion.js",
+    "domain": "www.googleadservices.com"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=CDP868RC77U1I7I9B0OG&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/kfp343f2es",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-852700187&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-852014300&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=79953&time=1774198887879&li_adsId=71762281-4cd2-4a57-a56c-fd9b3a287a8d&url=https%3A%2F%2Fwww.ciee.org%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://js-agent.newrelic.com/nr-rum-1.310.1.min.js",
+    "domain": "js-agent.newrelic.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=79953&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22ciee.org%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAAz2OUUvDMBRG%2F8v3nFrXrkuatyFzFHwQV%2FYiIml7u11M09ikiIz9d6lDHw8HDucCz12AfpVlWeRvAqGd2McjTYFHB52pQiDyQNArKderUikllZIC3TgYdtBomehunE4QmCcLjXOMPug0%2FRMpBLw5Uc3REjQeqt0OAl%2FUBI504JMz9oU%2BZwqx6qBhqMjWDVHS561K8o3Mkuy%2BbBPVZE3Wy03eFgoCHOrJuGBNpA66NzaQgOVHc6tggT0bF28wcGihL%2FChOUQTCTpZX5fKE7sP6iq39f4%2Fc6YB2s3WCoTfv%2FrbL%2BvP2%2F3u%2FVgdqhrXH9NAAag7AQAA%22%7D&href=https%3A%2F%2Fwww.ciee.org%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-274EJGWFTR&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://js-agent.newrelic.com/nr-rum-1.310.1.min.js",
+    "domain": "js-agent.newrelic.com"
+  }
+]

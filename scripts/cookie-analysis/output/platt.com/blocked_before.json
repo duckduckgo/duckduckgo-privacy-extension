@@ -1,0 +1,30 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-58CNKDBV9W&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-457670687&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://origin.acuityplatform.com/event/v2/pixel.js",
+    "domain": "origin.acuityplatform.com"
+  },
+  {
+    "url": "https://t.contentsquare.net/uxa/307523dbf0a7a.js",
+    "domain": "t.contentsquare.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-11094899374&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-58CNKDBV9W&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://js.zi-scripts.com/zi-tag.js",
+    "domain": "js.zi-scripts.com"
+  }
+]

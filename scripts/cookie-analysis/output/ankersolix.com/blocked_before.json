@@ -1,0 +1,86 @@
+[
+  {
+    "url": "https://cdn.taboola.com/libtrc/unip/1793312/tfa.js",
+    "domain": "cdn.taboola.com"
+  },
+  {
+    "url": "https://static.hotjar.com/c/hotjar-5349424.js?sv=7",
+    "domain": "static.hotjar.com"
+  },
+  {
+    "url": "https://bat.bing.com/bat.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://static.ads-twitter.com/uwt.js",
+    "domain": "static.ads-twitter.com"
+  },
+  {
+    "url": "https://www.affirm.com/api/v2/session/touch_track",
+    "domain": "www.affirm.com"
+  },
+  {
+    "url": "https://www.affirm.com/api/v2/cookie_sent",
+    "domain": "www.affirm.com"
+  },
+  {
+    "url": "https://stats.g.doubleclick.net/g/collect?v=2&tid=G-79741PKWEG&cid=79611655.1774203968&gtm=45g92e63i0v9202789369z89185155116za20kzb9185155116zd9185155116&aip=1&dma=0&gcs=G111&gcd=13r3r3r3r5l1&npa=0&frm=0&tag_exp=103116026~103200004~115616985~115938466~115938468~116024733~117484252",
+    "domain": "stats.g.doubleclick.net"
+  },
+  {
+    "url": "https://analytics.google.com/g/s/collect?_gsid=S_iPMpWb52Fo68bXZG40CigKe5wG7SifdQ&gtm=45g92e63i0v9202789369z89185155116za20kzb9185155116zd9185155116",
+    "domain": "analytics.google.com"
+  },
+  {
+    "url": "https://www.google-analytics.com/g/s/collect?v=2&_gsid=f5VklFp7gZPfR098RIu3tzWfeLe7oLcDxg&gtm=45g92e63i0v9202789369z89185155116za20kzb9185155116zd9185155116",
+    "domain": "www.google-analytics.com"
+  },
+  {
+    "url": "https://www.googleadservices.com/pagead/conversion/358627497/?random=1774203967695&cv=11&fst=1774203967695&bg=ffffff&guid=ON&async=1&en=conversion&gtm=45892e63i0v9101528031z89185155116za20kzb9185155116zd9185155116xea&gcs=G111&gcd=13r3r3r3r5l1&dma=0&tag_exp=103116026~103200004~115938466~115938469~116024733~117484252&u_w=1280&u_h=800&url=https%3A%2F%2Fwww.ankersolix.com%2F&label=cRS9CJiprvUCEKnxgKsB&capi=1&frm=0&tiba=Anker%20SOLIX%20%7C%20Portable%20Power%20Stations%20%26%20Solar%20Generators%20-%20Anker%20SOLIX%20US&did=dN2ZkMj&edid=dN2ZkMj&bttype=purchase&value=0&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=430246291.1774203967&uaa=x86&uab=64&uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0&uamb=0&uam=&uap=Linux&uapv=6.12.58&uaw=0&ec_mode=a&_tu=CA&gcl_ctr=1~0~0&data=ads_data_redaction%3Dfalse&gap.gtb=2&category=acrcp_v1_512&eme=tv.1~&fmt=7",
+    "domain": "www.googleadservices.com"
+  },
+  {
+    "url": "https://www.googleadservices.com/pagead/conversion/358627497/?random=1774203967706&cv=11&fst=1774203967706&bg=ffffff&guid=ON&async=1&en=conversion&gtm=45892e63i0v9101528031z89185155116za20kzb9185155116zd9185155116xea&gcs=G111&gcd=13r3r3r3r5l1&dma=0&tag_exp=103116026~103200004~115938466~115938469~116024733~117484252&u_w=1280&u_h=800&url=https%3A%2F%2Fwww.ankersolix.com%2F&label=undefined&capi=1&frm=0&tiba=Anker%20SOLIX%20%7C%20Portable%20Power%20Stations%20%26%20Solar%20Generators%20-%20Anker%20SOLIX%20US&did=dN2ZkMj&edid=dN2ZkMj&bttype=purchase&value=0&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=430246291.1774203967&uaa=x86&uab=64&uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0&uamb=0&uam=&uap=Linux&uapv=6.12.58&uaw=0&ec_mode=a&_tu=CA&gcl_ctr=2~0~0&data=ads_data_redaction%3Dfalse&gap.gtb=2&category=acrcp_v1_512&eme=tv.1~&fmt=7",
+    "domain": "www.googleadservices.com"
+  },
+  {
+    "url": "https://www.google.com/pagead/1p-conversion/358627497/?random=1774203967695&cv=11&fst=1774203967695&fmt=3&bg=ffffff&guid=ON&async=1&en=conversion&gtm=45892e63i0v9101528031z89185155116za20kzb9185155116zd9185155116xea&gcs=G111&gcd=13r3r3r3r5l1&dma=0&tag_exp=103116026~103200004~115938466~115938469~116024733~117484252&u_w=1280&u_h=800&url=https%3A%2F%2Fwww.ankersolix.com%2F&label=cRS9CJiprvUCEKnxgKsB&capi=1&frm=0&tiba=Anker%20SOLIX%20%7C%20Portable%20Power%20Stations%20%26%20Solar%20Generators%20-%20Anker%20SOLIX%20US&did=dN2ZkMj&edid=dN2ZkMj&bttype=purchase&value=0&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=430246291.1774203967&uaa=x86&uab=64&uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0&uamb=0&uam=&uap=Linux&uapv=6.12.58&uaw=0&ec_mode=a&_tu=CA&gcl_ctr=1~0~0&data=ads_data_redaction%3Dfalse&gap.gtb=2&category=acrcp_v1_512&eme=tv.1~&gcp=1&sscte=1&ct_cookie_present=1",
+    "domain": "www.google.com"
+  },
+  {
+    "url": "https://www.google.com/pagead/1p-conversion/358627497/?random=1774203967706&cv=11&fst=1774203967706&fmt=3&bg=ffffff&guid=ON&async=1&en=conversion&gtm=45892e63i0v9101528031z89185155116za20kzb9185155116zd9185155116xea&gcs=G111&gcd=13r3r3r3r5l1&dma=0&tag_exp=103116026~103200004~115938466~115938469~116024733~117484252&u_w=1280&u_h=800&url=https%3A%2F%2Fwww.ankersolix.com%2F&label=undefined&capi=1&frm=0&tiba=Anker%20SOLIX%20%7C%20Portable%20Power%20Stations%20%26%20Solar%20Generators%20-%20Anker%20SOLIX%20US&did=dN2ZkMj&edid=dN2ZkMj&bttype=purchase&value=0&hn=www.googleadservices.com&npa=0&pscdl=noapi&auid=430246291.1774203967&uaa=x86&uab=64&uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0&uamb=0&uam=&uap=Linux&uapv=6.12.58&uaw=0&ec_mode=a&_tu=CA&gcl_ctr=2~0~0&data=ads_data_redaction%3Dfalse&gap.gtb=2&category=acrcp_v1_512&eme=tv.1~&gcp=1&sscte=1&ct_cookie_present=1",
+    "domain": "www.google.com"
+  },
+  {
+    "url": "https://15610080.fls.doubleclick.net/activityi;src=15610080;type=alway0;cat=alway00;ord=6919321225498;npa=0;auiddc=430246291.1774203967;u1=%2F;u7=us;uaa=x86;uab=64;uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0;uamb=0;uam=;uap=Linux;uapv=6.12.58;uaw=0;pscdl=noapi;frm=0;_tu=KFA;gtm=45c92e63i0v9227158071z89185155116za20kzb9185155116zd9185155116xea;gcs=G111;gcd=13r3r3X3r5l1;dma=0;dc_fmt=2;tag_exp=103116026~103200004~115616986~115938466~115938468~116024733~117484252~118104771;epver=2;gap.gtb=2;dc_random=1774203967_0Qxlx0KJ40xQHst6DP2ieMvVgmuQ5Xv_bA;_dc_test=1;~oref=https%3A%2F%2Fwww.ankersolix.com%2F?",
+    "domain": "15610080.fls.doubleclick.net"
+  },
+  {
+    "url": "https://ad.doubleclick.net/activity;src=15610080;type=alway0;cat=alway00;ord=6919321225498;npa=0;auiddc=430246291.1774203967;u1=%2F;u7=us;uaa=x86;uab=64;uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0;uamb=0;uam=;uap=Linux;uapv=6.12.58;uaw=0;pscdl=noapi;frm=0;_tu=KFA;gtm=45c92e63i0v9227158071z89185155116za20kzb9185155116zd9185155116xea;gcs=G111;gcd=13r3r3X3r5l1;dma=0;dc_fmt=3;tag_exp=103116026~103200004~115616986~115938466~115938468~116024733~117484252~118104771;epver=2;gap.gtb=2;dc_random=1774203967_0Qxlx0KJ40xQHst6DP2ieMvVgmuQ5Xv_bA;~oref=https%3A%2F%2Fwww.ankersolix.com%2F?",
+    "domain": "ad.doubleclick.net"
+  },
+  {
+    "url": "https://15610080.fls.doubleclick.net/activityi;src=15610080;type=alway0;cat=alway0;ord=5401991966149;npa=0;auiddc=430246291.1774203967;u1=%2F;u3=undefined;u4=undefined;u7=us;uaa=x86;uab=64;uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0;uamb=0;uam=;uap=Linux;uapv=6.12.58;uaw=0;pscdl=noapi;frm=0;_tu=KFA;gtm=45c92e63i0v9227158071z89185155116za20kzb9185155116zd9185155116xea;gcs=G111;gcd=13r3r3X3r5l1;dma=0;dc_fmt=2;tag_exp=103116026~103200004~115616986~115938466~115938468~116024733~117484252~118104771;epver=2;gap.gtb=2;dc_random=1774203967_l2fQP6wG46mwRBSywZinha1gradbCi-S6A;_dc_test=1;~oref=https%3A%2F%2Fwww.ankersolix.com%2F?",
+    "domain": "15610080.fls.doubleclick.net"
+  },
+  {
+    "url": "https://ad.doubleclick.net/activity;src=15610080;type=alway0;cat=alway00;ord=6919321225498;npa=0;auiddc=430246291.1774203967;u1=%2F;u7=us;uaa=x86;uab=64;uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0;uamb=0;uam=;uap=Linux;uapv=6.12.58;uaw=0;pscdl=noapi;frm=0;_tu=KFA;gtm=45c92e63i0v9227158071z89185155116za20kzb9185155116zd9185155116xea;gcs=G111;gcd=13r3r3X3r5l1;dma=0;dc_fmt=11;tag_exp=103116026~103200004~115616986~115938466~115938468~116024733~117484252~118104771;epver=2;gap.gtb=2;dc_random=1774203967_0Qxlx0KJ40xQHst6DP2ieMvVgmuQ5Xv_bA;~oref=https%3A%2F%2Fwww.ankersolix.com%2F?",
+    "domain": "ad.doubleclick.net"
+  },
+  {
+    "url": "https://ad.doubleclick.net/activity;src=15610080;type=alway0;cat=alway0;ord=5401991966149;npa=0;auiddc=430246291.1774203967;u1=%2F;u3=undefined;u4=undefined;u7=us;uaa=x86;uab=64;uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0;uamb=0;uam=;uap=Linux;uapv=6.12.58;uaw=0;pscdl=noapi;frm=0;_tu=KFA;gtm=45c92e63i0v9227158071z89185155116za20kzb9185155116zd9185155116xea;gcs=G111;gcd=13r3r3X3r5l1;dma=0;dc_fmt=3;tag_exp=103116026~103200004~115616986~115938466~115938468~116024733~117484252~118104771;epver=2;gap.gtb=2;dc_random=1774203967_l2fQP6wG46mwRBSywZinha1gradbCi-S6A;~oref=https%3A%2F%2Fwww.ankersolix.com%2F?",
+    "domain": "ad.doubleclick.net"
+  },
+  {
+    "url": "https://ad.doubleclick.net/activity;src=15610080;type=alway0;cat=alway0;ord=5401991966149;npa=0;auiddc=430246291.1774203967;u1=%2F;u3=undefined;u4=undefined;u7=us;uaa=x86;uab=64;uafvl=Chromium%3B139.0.7258.5%7CNot%253BA%253DBrand%3B99.0.0.0;uamb=0;uam=;uap=Linux;uapv=6.12.58;uaw=0;pscdl=noapi;frm=0;_tu=KFA;gtm=45c92e63i0v9227158071z89185155116za20kzb9185155116zd9185155116xea;gcs=G111;gcd=13r3r3X3r5l1;dma=0;dc_fmt=11;tag_exp=103116026~103200004~115616986~115938466~115938468~116024733~117484252~118104771;epver=2;gap.gtb=2;dc_random=1774203967_l2fQP6wG46mwRBSywZinha1gradbCi-S6A;~oref=https%3A%2F%2Fwww.ankersolix.com%2F?",
+    "domain": "ad.doubleclick.net"
+  },
+  {
+    "url": "https://monorail-edge.shopifysvc.com/v1/produce",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://monorail-edge.shopifysvc.com/v1/produce",
+    "domain": "monorail-edge.shopifysvc.com"
+  }
+]

@@ -1,0 +1,82 @@
+[
+  {
+    "url": "https://scripts.webcontentassessor.com/scripts/8a2b2156b673956733dc9eb6dea2cb3232ec91092366dd22409d703744f4e2ff",
+    "domain": "scripts.webcontentassessor.com"
+  },
+  {
+    "url": "https://static.chartbeat.com/js/chartbeat_mab.js",
+    "domain": "static.chartbeat.com"
+  },
+  {
+    "url": "https://applets.ebxcdn.com/ebx.js",
+    "domain": "applets.ebxcdn.com"
+  },
+  {
+    "url": "https://cdn.amplitude.com/libs/analytics-browser-2.8.1-min.js.gz",
+    "domain": "cdn.amplitude.com"
+  },
+  {
+    "url": "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js",
+    "domain": "cdn.onesignal.com"
+  },
+  {
+    "url": "https://visit-server.inmobi-choice.io/visit-event",
+    "domain": "visit-server.inmobi-choice.io"
+  },
+  {
+    "url": "https://cdn.amplitude.com/libs/analytics-browser-gtm-wrapper-2.36.0.min.js.br",
+    "domain": "cdn.amplitude.com"
+  },
+  {
+    "url": "https://uk-script.dotmetrics.net/door.js?d=www.mirror.co.uk&t=home",
+    "domain": "uk-script.dotmetrics.net"
+  },
+  {
+    "url": "https://macro.adnami.io/macro/spec/adsm.macro.dfaef7f9-16ee-4c11-8b4d-93243b778602.js",
+    "domain": "macro.adnami.io"
+  },
+  {
+    "url": "https://tags.crwdcntrl.net/lt/c/9458/lt.min.js",
+    "domain": "tags.crwdcntrl.net"
+  },
+  {
+    "url": "https://btloader.com/tag?o=5751365725323264&upapi=true",
+    "domain": "btloader.com"
+  },
+  {
+    "url": "https://micro.rubiconproject.com/prebid/dynamic/7949.js",
+    "domain": "micro.rubiconproject.com"
+  },
+  {
+    "url": "https://link.rubiconproject.com/magnite/7949.js",
+    "domain": "link.rubiconproject.com"
+  },
+  {
+    "url": "https://gum.criteo.com/sid/json?origin=prebid&topUrl=https%3A%2F%2Fwww.mirror.co.uk%2F&domain=www.mirror.co.uk&cw=1&lsw=1",
+    "domain": "gum.criteo.com"
+  },
+  {
+    "url": "https://pagead2.googlesyndication.com/pagead/managed/js/adsense/m202603170101/show_ads_impl_fy2021.js",
+    "domain": "pagead2.googlesyndication.com"
+  },
+  {
+    "url": "https://ap.lijit.com/readerinfo/v2",
+    "domain": "ap.lijit.com"
+  },
+  {
+    "url": "https://static.hotjar.com/c/hotjar-122479.js?sv=6",
+    "domain": "static.hotjar.com"
+  },
+  {
+    "url": "https://id5-sync.com/g/v2/226.json",
+    "domain": "id5-sync.com"
+  },
+  {
+    "url": "https://id.crwdcntrl.net/id?gdpr_applies=false",
+    "domain": "id.crwdcntrl.net"
+  },
+  {
+    "url": "https://match.adsrvr.org/track/rid?ttd_pid=pubmatic&fmt=json",
+    "domain": "match.adsrvr.org"
+  }
+]

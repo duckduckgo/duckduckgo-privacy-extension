@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cookie Notice Button Behavior Analysis</title>
+<style>
+  :root { --bg: #0f1117; --card: #1a1d27; --border: #2a2d37; --text: #e4e4e7; --muted: #9ca3af; --accent: #3b82f6; --danger: #ef4444; --success: #22c55e; --warning: #f59e0b; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 2rem; }
+  h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.4rem; margin: 2rem 0 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+  h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }
+  .subtitle { color: var(--muted); margin-bottom: 2rem; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem; }
+  .stat-card .number { font-size: 2rem; font-weight: bold; }
+  .stat-card .label { color: var(--muted); font-size: 0.85rem; }
+  .stat-card.highlight { border-color: var(--danger); }
+  .stat-card.highlight .number { color: var(--danger); }
+  .stat-card.success .number { color: var(--success); }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; background: var(--card); border-radius: 8px; overflow: hidden; }
+  th { background: #22252f; text-align: left; padding: 0.75rem 1rem; font-size: 0.85rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; }
+  td { padding: 0.6rem 1rem; border-top: 1px solid var(--border); font-size: 0.9rem; }
+  tr:hover td { background: rgba(59,130,246,0.05); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+  .badge-red { background: rgba(239,68,68,0.15); color: var(--danger); }
+  .badge-green { background: rgba(34,197,94,0.15); color: var(--success); }
+  .badge-yellow { background: rgba(245,158,11,0.15); color: var(--warning); }
+  .badge-gray { background: rgba(156,163,175,0.15); color: var(--muted); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .domain-url { font-size: 0.8rem; color: var(--muted); }
+  .finding-card { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--danger); border-radius: 8px; padding: 1.2rem; margin: 1rem 0; }
+  .finding-card h4 { margin-bottom: 0.5rem; }
+  .finding-card .blocked-list { margin-top: 0.5rem; }
+  .finding-card .blocked-item { font-family: monospace; font-size: 0.8rem; color: var(--muted); padding: 2px 0; word-break: break-all; }
+  .finding-card .blocked-domain { color: var(--danger); font-weight: 600; }
+  .summary-box { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 1rem 0; }
+  footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+
+<h1>Cookie Notice Button Behavior Analysis</h1>
+<p class="subtitle">Analysis of accept-like buttons in non-rejectable cookie notices, with DuckDuckGo extension blocking data. Generated 2026-03-22.</p>
+
+<div class="stats">
+  <div class="stat-card"><div class="number">102</div><div class="label">Total Sites</div></div>
+  <div class="stat-card success"><div class="number">70</div><div class="label">Analyzed (Click Performed)</div></div>
+  <div class="stat-card"><div class="number">32</div><div class="label">Disqualified / Skipped</div></div>
+  <div class="stat-card highlight"><div class="number">10</div><div class="label">Sites with New Blocked Requests</div></div>
+  <div class="stat-card highlight"><div class="number">7</div><div class="label">Sites with Blocked Requests to New Domains</div></div>
+</div>
+
+<div class="summary-box">
+<h3>Key Finding</h3>
+<p>Out of <strong>70</strong> sites with non-rejectable cookie notices where an accept/dismiss button was clicked, 
+<strong>10</strong> (14%) triggered new tracker requests that were blocked by the DuckDuckGo extension.
+Of these, <strong>7</strong> sites sent requests to entirely new tracking domains not previously contacted by the page.</p>
+</div>
+
+<h2>Sites with New Blocked Requests After Clicking Accept</h2>
+<p style="color:var(--muted);margin-bottom:1rem;">These sites triggered new tracking requests after the cookie notice dismiss button was clicked. Requests were blocked by the DuckDuckGo Privacy Extension.</p>
+
+
+<div class="finding-card">
+  <h4><a href="https://www.tp-link.com/" target="_blank">tp-link.com</a>
+    <span class="badge badge-red">15 new blocked</span>
+    <span class="badge badge-red">15 to new domains</span>
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 0 blocked | After click: 15 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">www.googletagmanager.com</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">script.crazyegg.com</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">www.clarity.ms</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">static.hotjar.com</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">connect.facebook.net</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">px.ads.linkedin.com</span> <span class="badge badge-red">NEW DOMAIN</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 15 blocked URLs</summary>
+    <div class="blocked-item">https://www.googletagmanager.com/gtag/js?id=G-218TLZ4XRP</div><div class="blocked-item">https://www.googletagmanager.com/gtag/js?id=G-8C70Z419LT</div><div class="blocked-item">https://www.googletagmanager.com/gtag/js?id=G-X5XJFE5K24</div><div class="blocked-item">https://script.crazyegg.com/pages/scripts/0104/5682.js</div><div class="blocked-item">https://www.clarity.ms/tag/ttl60sp8oy?ref=gtm</div><div class="blocked-item">https://www.googletagmanager.com/gtag/js?id=G-218TLZ4XRP&amp;cx=c&amp;gtm=4e63i0h1</div><div class="blocked-item">https://www.googletagmanager.com/gtag/js?id=G-8C70Z419LT&amp;cx=c&amp;gtm=4e63i0h1</div><div class="blocked-item">https://www.googletagmanager.com/gtag/js?id=G-X5XJFE5K24&amp;cx=c&amp;gtm=4e63i0h1</div><div class="blocked-item">https://static.hotjar.com/c/hotjar-2117166.js?sv=7</div><div class="blocked-item">https://connect.facebook.net/en_US/fbevents.js</div><div class="blocked-item">https://www.googletagmanager.com/gtag/destination?id=AW-943346287&amp;cx=c&amp;gtm=4e63i0h1</div><div class="blocked-item">https://px.ads.linkedin.com/collect?v=2&amp;fmt=js&amp;pid=5424996&amp;time=1774203960936&amp;li_adsId=2dec6350-160b-4845-a00c-5203fa438&hellip;</div><div class="blocked-item">https://px.ads.linkedin.com/wa/?medium=fetch&amp;fmt=g</div><div class="blocked-item">https://px.ads.linkedin.com/wa/?medium=beacon&amp;fmt=g</div><div class="blocked-item">https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&amp;pid=5424996&amp;error=version%3A%20285%20%7C%20WebsiteActions-285-Typ&hellip;</div>
+  </details>
+</div>
+<div class="finding-card">
+  <h4><a href="https://www.worldbank.org/" target="_blank">worldbank.org</a>
+    <span class="badge badge-red">9 new blocked</span>
+    <span class="badge badge-red">1 to new domains</span>
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 13 blocked | After click: 15 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">dpm.demdex.net</span></div><div class="blocked-item"><span class="blocked-domain">px.ads.linkedin.com</span></div><div class="blocked-item"><span class="blocked-domain">rum.hlx.page</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">worldbank.tt.omtrdc.net</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 9 blocked URLs</summary>
+    <div class="blocked-item">https://dpm.demdex.net/id?d_visid_ver=5.5.0&amp;d_fieldgroup=AAM&amp;d_rtbd=json&amp;d_ver=2&amp;d_orgid=1E7B833554B8360D0A4C98A5%40Adob&hellip;</div><div class="blocked-item">https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&amp;pid=1113290&amp;error=version%3A%20285%20%7C%20WebsiteActions-285-Typ&hellip;</div><div class="blocked-item">https://rum.hlx.page/.rum/@adobe/helix-rum-js@%5E2/dist/micro.js</div><div class="blocked-item">https://dpm.demdex.net/id?d_visid_ver=5.5.0&amp;d_fieldgroup=AAM&amp;d_rtbd=json&amp;d_ver=2&amp;d_orgid=1E7B833554B8360D0A4C98A5%40Adob&hellip;</div><div class="blocked-item">https://worldbank.tt.omtrdc.net/m2/worldbank/mbox/json?mbox=target-global-mbox&amp;mboxSession=bc36bc5c802c4007b90c61b17535e&hellip;</div><div class="blocked-item">https://dpm.demdex.net/id?d_visid_ver=5.5.0&amp;d_fieldgroup=AAM&amp;d_rtbd=json&amp;d_ver=2&amp;d_orgid=1E7B833554B8360D0A4C98A5%40Adob&hellip;</div><div class="blocked-item">https://px.ads.linkedin.com/collect?v=2&amp;fmt=js&amp;pid=1113290&amp;time=1774203719017&amp;li_adsId=311e8adf-2762-4d4e-a913-83b6ceebf&hellip;</div><div class="blocked-item">https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&amp;pid=1113290&amp;error=version%3A%20285%20%7C%20WebsiteActions-285-Typ&hellip;</div><div class="blocked-item">https://dpm.demdex.net/id?d_visid_ver=5.5.0&amp;d_fieldgroup=AAM&amp;d_rtbd=json&amp;d_ver=2&amp;d_orgid=1E7B833554B8360D0A4C98A5%40Adob&hellip;</div>
+  </details>
+</div>
+<div class="finding-card">
+  <h4><a href="https://www.esquire.com/" target="_blank">esquire.com</a>
+    <span class="badge badge-red">4 new blocked</span>
+    <span class="badge badge-red">3 to new domains</span>
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 7 blocked | After click: 10 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">api.parsely.com</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">config.aps.amazon-adsystem.com</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">client.aps.amazon-adsystem.com</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">p1.parsely.com</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 4 blocked URLs</summary>
+    <div class="blocked-item">https://api.parsely.com/v2/related?apikey=esquire.com&amp;section=men%27s%20grooming&amp;tag=locale:%20US&amp;exclude=tags:displayTy&hellip;</div><div class="blocked-item">https://config.aps.amazon-adsystem.com/configs/3049</div><div class="blocked-item">https://client.aps.amazon-adsystem.com/publisher.js</div><div class="blocked-item">https://p1.parsely.com/px/?rand=1774206235716&amp;plid=f0e27883-b810-484a-8ef9-57d29b9e9c2f&amp;idsite=esquire.com&amp;url=https%3A%&hellip;</div>
+  </details>
+</div>
+<div class="finding-card">
+  <h4><a href="https://80.lv/" target="_blank">80.lv</a>
+    <span class="badge badge-red">2 new blocked</span>
+    <span class="badge badge-red">1 to new domains</span>
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 2 blocked | After click: 4 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">googleads.g.doubleclick.net</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">www.googletagmanager.com</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 2 blocked URLs</summary>
+    <div class="blocked-item">https://googleads.g.doubleclick.net/pagead/id</div><div class="blocked-item">https://www.googletagmanager.com/gtag/destination?id=G-E9PWFGKFPG&amp;cx=c&amp;gtm=4e63i0</div>
+  </details>
+</div>
+<div class="finding-card">
+  <h4><a href="https://seventeen.com/" target="_blank">seventeen.com</a>
+    <span class="badge badge-red">2 new blocked</span>
+    <span class="badge badge-red">1 to new domains</span>
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 3 blocked | After click: 4 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">api.parsely.com</span> <span class="badge badge-red">NEW DOMAIN</span></div><div class="blocked-item"><span class="blocked-domain">p1.parsely.com</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 2 blocked URLs</summary>
+    <div class="blocked-item">https://api.parsely.com/v2/related?apikey=seventeen.com&amp;section=music&amp;tag=locale:%20US&amp;exclude=tags:content-type:%20defa&hellip;</div><div class="blocked-item">https://p1.parsely.com/px/?rand=1774203071605&amp;plid=731bcd98-975d-4a2e-9cde-6539f4d94f1d&amp;idsite=seventeen.com&amp;url=https%3&hellip;</div>
+  </details>
+</div>
+<div class="finding-card">
+  <h4><a href="https://www.fashionnova.com/" target="_blank">fashionnova.com</a>
+    <span class="badge badge-red">1 new blocked</span>
+    
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 17 blocked | After click: 1 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">monorail-edge.shopifysvc.com</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 1 blocked URLs</summary>
+    <div class="blocked-item">https://monorail-edge.shopifysvc.com/v1/produce</div>
+  </details>
+</div>
+<div class="finding-card">
+  <h4><a href="https://www.ballarddesigns.com/" target="_blank">ballarddesigns.com</a>
+    <span class="badge badge-red">1 new blocked</span>
+    
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 34 blocked | After click: 12 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">ballarddesigns-us.attn.tv</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 1 blocked URLs</summary>
+    <div class="blocked-item">https://ballarddesigns-us.attn.tv/unrenderedCreative?v=2026.03.4&amp;r=https%3A%2F%2Fwww.ballarddesigns.com%2F&amp;id=60c0cb79fb&hellip;</div>
+  </details>
+</div>
+<div class="finding-card">
+  <h4><a href="https://www.summerdiscovery.com/" target="_blank">summerdiscovery.com</a>
+    <span class="badge badge-red">1 new blocked</span>
+    
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 17 blocked | After click: 1 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">www.googletagmanager.com</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 1 blocked URLs</summary>
+    <div class="blocked-item">https://www.googletagmanager.com/gtag/destination?id=G-VSEGEK32V3&amp;cx=c&amp;gtm=4e63i0</div>
+  </details>
+</div>
+<div class="finding-card">
+  <h4><a href="https://www.scad.edu/" target="_blank">scad.edu</a>
+    <span class="badge badge-red">1 new blocked</span>
+    <span class="badge badge-red">1 to new domains</span>
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 17 blocked | After click: 17 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">static.addtoany.com</span> <span class="badge badge-red">NEW DOMAIN</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 1 blocked URLs</summary>
+    <div class="blocked-item">https://static.addtoany.com/menu/page.js</div>
+  </details>
+</div>
+<div class="finding-card">
+  <h4><a href="https://petrapalusova.com/" target="_blank">petrapalusova.com</a>
+    <span class="badge badge-red">1 new blocked</span>
+    <span class="badge badge-red">1 to new domains</span>
+  </h4>
+  <div style="font-size:0.85rem;color:var(--muted);">
+    Before click: 0 blocked | After click: 1 blocked
+  </div>
+  <div class="blocked-list">
+    <strong style="font-size:0.85rem;">New blocked tracker domains:</strong>
+    <div class="blocked-item"><span class="blocked-domain">graph.facebook.com</span> <span class="badge badge-red">NEW DOMAIN</span></div>
+  </div>
+  <details style="margin-top:0.5rem;font-size:0.8rem;">
+    <summary style="cursor:pointer;color:var(--accent);">Show all 1 blocked URLs</summary>
+    <div class="blocked-item">https://graph.facebook.com/?id=https://petrapalusova.com/articles/recursive-strategy-how-intelligent-systems-think-throu&hellip;</div>
+  </details>
+</div>
+
+<h2>All Analyzed Sites</h2>
+<table>
+<thead><tr><th>Domain</th><th>Dismiss Button</th><th>Blocked Before</th><th>Blocked After</th><th>New Blocked</th><th>New Domains</th></tr></thead>
+<tbody>
+
+<tr>
+  <td><a href="https://www.tp-link.com/" target="_blank">tp-link.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>15</td>
+  <td><span class="badge badge-red">15</span></td>
+  <td><span class="badge badge-red">15</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.worldbank.org/" target="_blank">worldbank.org</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>13</td>
+  <td>15</td>
+  <td><span class="badge badge-red">9</span></td>
+  <td><span class="badge badge-red">1</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.esquire.com/" target="_blank">esquire.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>7</td>
+  <td>10</td>
+  <td><span class="badge badge-red">4</span></td>
+  <td><span class="badge badge-red">3</span></td>
+</tr>
+<tr>
+  <td><a href="https://80.lv/" target="_blank">80.lv</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>2</td>
+  <td>4</td>
+  <td><span class="badge badge-red">2</span></td>
+  <td><span class="badge badge-red">1</span></td>
+</tr>
+<tr>
+  <td><a href="https://seventeen.com/" target="_blank">seventeen.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>3</td>
+  <td>4</td>
+  <td><span class="badge badge-red">2</span></td>
+  <td><span class="badge badge-red">1</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.fashionnova.com/" target="_blank">fashionnova.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>17</td>
+  <td>1</td>
+  <td><span class="badge badge-red">1</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.ballarddesigns.com/" target="_blank">ballarddesigns.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>34</td>
+  <td>12</td>
+  <td><span class="badge badge-red">1</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.summerdiscovery.com/" target="_blank">summerdiscovery.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>17</td>
+  <td>1</td>
+  <td><span class="badge badge-red">1</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.scad.edu/" target="_blank">scad.edu</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>17</td>
+  <td>17</td>
+  <td><span class="badge badge-red">1</span></td>
+  <td><span class="badge badge-red">1</span></td>
+</tr>
+<tr>
+  <td><a href="https://petrapalusova.com/" target="_blank">petrapalusova.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>1</td>
+  <td><span class="badge badge-red">1</span></td>
+  <td><span class="badge badge-red">1</span></td>
+</tr>
+<tr>
+  <td><a href="https://rwguildgalleryny.com/" target="_blank">rwguildgalleryny.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>4</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.carraghersnyc.com/" target="_blank">carraghersnyc.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>2</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://wildling.com/" target="_blank">wildling.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>11</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://bluebottlecoffee.myguestaccount.com/" target="_blank">bluebottlecoffee.myguestaccount.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://goodliferesorts.guestybookings.com/en" target="_blank">goodliferesorts.guestybookings.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://modani.com/" target="_blank">modani.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>16</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.ciee.org/" target="_blank">ciee.org</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>19</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://schoolhouse.com/" target="_blank">schoolhouse.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>2</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://thesavannahbananas.com/" target="_blank">thesavannahbananas.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.researchgate.net/" target="_blank">researchgate.net</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>3</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.danco.com/" target="_blank">danco.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>5</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.humandx.org/" target="_blank">humandx.org</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://vowels.net/" target="_blank">vowels.net</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>7</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://shopquarters.com/" target="_blank">shopquarters.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>4</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://cdek.kz/ru/" target="_blank">cdek.kz</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>5</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.scworld.com/" target="_blank">scworld.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>21</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.innerscene.com/" target="_blank">innerscene.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>12</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://mls.therealest.com/" target="_blank">mls.therealest.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>3</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://serpstat.com/" target="_blank">serpstat.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>9</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://wecoach.gg/coaches/valorant" target="_blank">wecoach.gg</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://store.waitbutwhy.com/" target="_blank">store.waitbutwhy.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>3</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://osf.io/" target="_blank">osf.io</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>8</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://acct.ezpassde.com/Login.aspx" target="_blank">acct.ezpassde.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://emerson.edu/" target="_blank">emerson.edu</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>11</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.davidson.edu/" target="_blank">davidson.edu</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>7</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://home.caribbeancinemas.com/" target="_blank">caribbeancinemas.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>1</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.heartmath.org/" target="_blank">heartmath.org</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>12</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.swimjim.com/" target="_blank">swimjim.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>5</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.spencer.org/" target="_blank">spencer.org</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.hatchshowprint.com/" target="_blank">hatchshowprint.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>15</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://spermidinelife.us/" target="_blank">spermidinelife.us</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>9</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.uow.edu.au/" target="_blank">uow.edu.au</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>14</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://posthog.com/" target="_blank">posthog.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.meetboston.com/" target="_blank">meetboston.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>25</td>
+  <td>1</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.poconomountains.com/" target="_blank">poconomountains.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>32</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.bso.org/" target="_blank">bso.org</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>41</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.visitpittsburgh.com/" target="_blank">visitpittsburgh.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>15</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.getguru.com/" target="_blank">getguru.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>19</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.opalcollection.com/" target="_blank">opalcollection.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>12</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://cymbiotika.com/" target="_blank">cymbiotika.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>60</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.risingshadow.net/" target="_blank">risingshadow.net</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>1</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.extrabux.com/" target="_blank">extrabux.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>2</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.garnethill.com/" target="_blank">garnethill.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>26</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.platt.com/" target="_blank">platt.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>7</td>
+  <td>1</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.tufts.edu/" target="_blank">tufts.edu</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>20</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://admissions.pitt.edu/" target="_blank">admissions.pitt.edu</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>17</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.westjet.com/en-ca" target="_blank">westjet.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>9</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://endocrine.org/" target="_blank">endocrine.org</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>11</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://asia.nikkei.com/" target="_blank">asia.nikkei.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>15</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.scmp.com/" target="_blank">scmp.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>19</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://lafollette.wisc.edu/" target="_blank">lafollette.wisc.edu</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>4</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://usv.getproven.com/auth" target="_blank">usv.getproven.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>2</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.aceodds.com/" target="_blank">aceodds.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>1</td>
+  <td>1</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://hearinghealthfoundation.org/" target="_blank">hearinghealthfoundation.org</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>8</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.cyberpower.com/GLOBAL/en" target="_blank">cyberpower.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>3</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://riverandrailkitchen.com/" target="_blank">riverandrailkitchen.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>0</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://mooremerkowitztile.com/" target="_blank">mooremerkowitztile.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>12</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.blueprincegame.com/" target="_blank">blueprincegame.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>6</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.hrparts.com/" target="_blank">hrparts.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>11</td>
+  <td>0</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.rexelusa.com/" target="_blank">rexelusa.com</a></td>
+  <td><span class="badge badge-green">Yes</span></td>
+  <td>8</td>
+  <td>1</td>
+  <td><span class="badge badge-green">0</span></td>
+  <td><span class="badge badge-green">0</span></td>
+</tr>
+</tbody>
+</table>
+
+<h2>Disqualified / Skipped Sites</h2>
+<table>
+<thead><tr><th>Domain</th><th>Reason</th></tr></thead>
+<tbody>
+
+<tr>
+  <td><a href="https://www.mirror.co.uk/" target="_blank">mirror.co.uk</a></td>
+  <td><span class="badge badge-gray">No cookie popup found</span></td>
+</tr>
+<tr>
+  <td><a href="https://shopfavoritedaughter.com/" target="_blank">shopfavoritedaughter.com</a></td>
+  <td><span class="badge badge-gray">Has Manage Preferences link (opt-out mechanism)</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.makitatools.com/" target="_blank">makitatools.com</a></td>
+  <td><span class="badge badge-gray">No cookie popup, only promo popup</span></td>
+</tr>
+<tr>
+  <td><a href="https://storychanges.com/" target="_blank">storychanges.com</a></td>
+  <td><span class="badge badge-gray">Cloudflare challenge - site didnt load</span></td>
+</tr>
+<tr>
+  <td><a href="https://food52.com/" target="_blank">food52.com</a></td>
+  <td><span class="badge badge-gray">Browser verification failed</span></td>
+</tr>
+<tr>
+  <td><a href="https://copaamerica.com/en/match-schedule/" target="_blank">copaamerica.com</a></td>
+  <td><span class="badge badge-gray">Screenshot failed to save</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.givedirectly.org/" target="_blank">givedirectly.org</a></td>
+  <td><span class="badge badge-gray">No cookie popup</span></td>
+</tr>
+<tr>
+  <td><a href="https://statebags.com/" target="_blank">statebags.com</a></td>
+  <td><span class="badge badge-gray">No cookie popup</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.loveantiques.com/" target="_blank">loveantiques.com</a></td>
+  <td><span class="badge badge-gray">Has Reject button</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.foratravel.com/" target="_blank">foratravel.com</a></td>
+  <td><span class="badge badge-gray">Browser verification failed</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.quantamagazine.org/" target="_blank">quantamagazine.org</a></td>
+  <td><span class="badge badge-gray">Has Do Not Share My Personal Information button - opt-out mechanism</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.blanco.com/us-en/" target="_blank">blanco.com</a></td>
+  <td><span class="badge badge-gray">No cookie popup found</span></td>
+</tr>
+<tr>
+  <td><a href="https://event.etix.com/" target="_blank">etix.com</a></td>
+  <td><span class="badge badge-gray">Bot verification challenge - site did not load</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.solvhealth.com/" target="_blank">solvhealth.com</a></td>
+  <td><span class="badge badge-gray">No cookie popup found</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.york.ac.uk/" target="_blank">york.ac.uk</a></td>
+  <td><span class="badge badge-gray">Has Reject optional button - opt-out mechanism</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.build.com/" target="_blank">build.com</a></td>
+  <td><span class="badge badge-gray">Has Cookie Preferences and opt-out mechanism (GPC banner)</span></td>
+</tr>
+<tr>
+  <td><a href="https://fitness-n-health.com/" target="_blank">fitness-n-health.com</a></td>
+  <td><span class="badge badge-gray">Cloudflare security verification - site did not load</span></td>
+</tr>
+<tr>
+  <td><a href="https://tineye.com/" target="_blank">tineye.com</a></td>
+  <td><span class="badge badge-gray">Cloudflare verification - site did not load</span></td>
+</tr>
+<tr>
+  <td><a href="https://aa.com/" target="_blank">aa.com</a></td>
+  <td><span class="badge badge-gray">Access Denied - site blocked automated access</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.ankersolix.com/" target="_blank">ankersolix.com</a></td>
+  <td><span class="badge badge-gray">No cookie popup found</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.ontrac.com/" target="_blank">ontrac.com</a></td>
+  <td><span class="badge badge-gray">Has Customize button - opt-out mechanism</span></td>
+</tr>
+<tr>
+  <td><a href="https://newatlas.com/" target="_blank">newatlas.com</a></td>
+  <td><span class="badge badge-gray">No cookie popup found</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.fanatics.com/" target="_blank">fanatics.com</a></td>
+  <td><span class="badge badge-gray">Access denied (HTTP 403) - site blocked access</span></td>
+</tr>
+<tr>
+  <td><a href="https://leonpaul.com/" target="_blank">leonpaul.com</a></td>
+  <td><span class="badge badge-gray">Cloudflare verification - site did not load</span></td>
+</tr>
+<tr>
+  <td><a href="https://thebeast.com/" target="_blank">thebeast.com</a></td>
+  <td><span class="badge badge-gray">No cookie popup found</span></td>
+</tr>
+<tr>
+  <td><a href="https://timesofagriculture.org/" target="_blank">timesofagriculture.org</a></td>
+  <td><span class="badge badge-gray">Site error - domain not configured</span></td>
+</tr>
+<tr>
+  <td><a href="https://stamma.org/" target="_blank">stamma.org</a></td>
+  <td><span class="badge badge-gray">No cookie popup found</span></td>
+</tr>
+<tr>
+  <td><a href="https://colorsxstudios.com/" target="_blank">colorsxstudios.com</a></td>
+  <td><span class="badge badge-gray">Has Reject All button - opt-out mechanism</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.electricgeneratorsdirect.com/" target="_blank">electricgeneratorsdirect.com</a></td>
+  <td><span class="badge badge-gray">No cookie popup found</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.cinepolisusa.com/" target="_blank">cinepolisusa.com</a></td>
+  <td><span class="badge badge-gray">No cookie popup found</span></td>
+</tr>
+<tr>
+  <td><a href="https://cas.columbia.edu/" target="_blank">cas.columbia.edu</a></td>
+  <td><span class="badge badge-gray">Page not found (404)</span></td>
+</tr>
+<tr>
+  <td><a href="https://www.edmunds.com/" target="_blank">edmunds.com</a></td>
+  <td><span class="badge badge-gray">Access denied - site blocked automated access</span></td>
+</tr>
+</tbody>
+</table>
+
+<footer>
+  <p>Generated by cookie-analysis tool using Playwright + DuckDuckGo Privacy Extension. Cookie notices were identified through visual screenshot analysis (no regex pattern matching).</p>
+  <p>Method: Each site was loaded in Chromium with the DuckDuckGo extension. Network requests blocked by the extension were recorded before and after clicking the cookie notice dismiss button. "New blocked" = requests blocked after click that were not blocked before. "New domains" = blocked requests to domains not previously requested by the page at all.</p>
+</footer>
+
+</body>
+</html>

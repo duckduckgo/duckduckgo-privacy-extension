@@ -1,0 +1,18 @@
+[
+  {
+    "url": "https://monorail-edge.shopifysvc.com/unstable/produce_batch",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://error-analytics-sessions-production.shopifysvc.com/observeonly",
+    "domain": "error-analytics-sessions-production.shopifysvc.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-CDPHLKCGHB",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://monorail-edge.shopifysvc.com/v1/produce",
+    "domain": "monorail-edge.shopifysvc.com"
+  }
+]

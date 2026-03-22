@@ -1,0 +1,138 @@
+[
+  {
+    "url": "https://html-load.com/sdk.js",
+    "domain": "html-load.com"
+  },
+  {
+    "url": "https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516",
+    "domain": "static.cloudflareinsights.com"
+  },
+  {
+    "url": "https://cdn.taboola.com/libtrc/newatlas/loader.js",
+    "domain": "cdn.taboola.com"
+  },
+  {
+    "url": "https://html-load.com/sdk.js",
+    "domain": "html-load.com"
+  },
+  {
+    "url": "https://cloudfront.loggly.com/js/loggly.tracker-latest.min.js",
+    "domain": "cloudfront.loggly.com"
+  },
+  {
+    "url": "https://fb.html-load.com/sdk.js",
+    "domain": "fb.html-load.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-7Z029ERRK6&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://static.getclicky.com/js",
+    "domain": "static.getclicky.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://id5-sync.com/api/config/prebid",
+    "domain": "id5-sync.com"
+  },
+  {
+    "url": "https://cdn.id5-sync.com/api/1.0/id5PrebidModule.js",
+    "domain": "cdn.id5-sync.com"
+  },
+  {
+    "url": "https://api.id5-sync.com/analytics/1906/pbjs",
+    "domain": "api.id5-sync.com"
+  },
+  {
+    "url": "https://fastlane.rubiconproject.com/a/api/fastlane.json?account_id=12270&site_id=143416&zone_id=4026047&size_id=2&rf=https%3A%2F%2Fnewatlas.com%2F&kw=3D%20Printing%2CAircraft%2CArchitecture%2CAround%20The%20Home%2CAtlas%2CAutomotive%2CBicycles%2CBiology%2CChildren%2CCollectibles&tg_i.domain=newatlas.com&tg_i.page=https%3A%2F%2Fnewatlas.com%2F&tg_i.documentLang=en-US&tk_flint=pbjs_lite_v10.23.0&l_pb_bid_id=930543e6-9713-49c4-9e2c-3df2ee4ea8d5&p_screen_res=1280x800&rp_secure=1&m_ch_ua=%22Chromium%22%7Cv%3D%22139%22%2C%22Not%3BA%3DBrand%22%7Cv%3D%2299%22&m_ch_mobile=%3F0&m_ch_platform=Linux&slots=1&rand=0.3342839742392396",
+    "domain": "fastlane.rubiconproject.com"
+  },
+  {
+    "url": "https://mweb-hb.presage.io/api/header-bidding-request",
+    "domain": "mweb-hb.presage.io"
+  },
+  {
+    "url": "https://fastlane.rubiconproject.com/a/api/fastlane.json?account_id=12270&site_id=143416&zone_id=668642&size_id=15&rf=https%3A%2F%2Fnewatlas.com%2F&kw=3D%20Printing%2CAircraft%2CArchitecture%2CAround%20The%20Home%2CAtlas%2CAutomotive%2CBicycles%2CBiology%2CChildren%2CCollectibles&tg_i.domain=newatlas.com&tg_i.page=https%3A%2F%2Fnewatlas.com%2F&tg_i.documentLang=en-US&tk_flint=pbjs_lite_v10.23.0&l_pb_bid_id=999a735a-44f9-4d74-8cc4-4736c4e982a2&p_screen_res=1280x800&rp_secure=1&m_ch_ua=%22Chromium%22%7Cv%3D%22139%22%2C%22Not%3BA%3DBrand%22%7Cv%3D%2299%22&m_ch_mobile=%3F0&m_ch_platform=Linux&slots=1&rand=0.1318948062140356",
+    "domain": "fastlane.rubiconproject.com"
+  },
+  {
+    "url": "https://fastlane.rubiconproject.com/a/api/fastlane.json?account_id=12270&site_id=143416&zone_id=669734&size_id=15&rf=https%3A%2F%2Fnewatlas.com%2F&kw=3D%20Printing%2CAircraft%2CArchitecture%2CAround%20The%20Home%2CAtlas%2CAutomotive%2CBicycles%2CBiology%2CChildren%2CCollectibles&tg_i.domain=newatlas.com&tg_i.page=https%3A%2F%2Fnewatlas.com%2F&tg_i.documentLang=en-US&tk_flint=pbjs_lite_v10.23.0&l_pb_bid_id=682bcbe0-48d6-4b07-8141-575255b7456a&p_screen_res=1280x800&rp_secure=1&m_ch_ua=%22Chromium%22%7Cv%3D%22139%22%2C%22Not%3BA%3DBrand%22%7Cv%3D%2299%22&m_ch_mobile=%3F0&m_ch_platform=Linux&slots=1&rand=0.6738960290737711",
+    "domain": "fastlane.rubiconproject.com"
+  },
+  {
+    "url": "https://fastlane.rubiconproject.com/a/api/fastlane.json?account_id=12270&site_id=143416&zone_id=669736&size_id=15&rf=https%3A%2F%2Fnewatlas.com%2F&kw=3D%20Printing%2CAircraft%2CArchitecture%2CAround%20The%20Home%2CAtlas%2CAutomotive%2CBicycles%2CBiology%2CChildren%2CCollectibles&tg_i.domain=newatlas.com&tg_i.page=https%3A%2F%2Fnewatlas.com%2F&tg_i.documentLang=en-US&tk_flint=pbjs_lite_v10.23.0&l_pb_bid_id=dac2fd51-0814-4215-9321-62f542fc577a&p_screen_res=1280x800&rp_secure=1&m_ch_ua=%22Chromium%22%7Cv%3D%22139%22%2C%22Not%3BA%3DBrand%22%7Cv%3D%2299%22&m_ch_mobile=%3F0&m_ch_platform=Linux&slots=1&rand=0.5755056251026415",
+    "domain": "fastlane.rubiconproject.com"
+  },
+  {
+    "url": "https://htlb.casalemedia.com/openrtb/pbjs?s=199008",
+    "domain": "htlb.casalemedia.com"
+  },
+  {
+    "url": "https://mweb-hb.presage.io/api/header-bidding-request",
+    "domain": "mweb-hb.presage.io"
+  },
+  {
+    "url": "https://htlb.casalemedia.com/openrtb/pbjs?s=199009",
+    "domain": "htlb.casalemedia.com"
+  },
+  {
+    "url": "https://mweb-hb.presage.io/api/header-bidding-request",
+    "domain": "mweb-hb.presage.io"
+  },
+  {
+    "url": "https://mweb-hb.presage.io/api/header-bidding-request",
+    "domain": "mweb-hb.presage.io"
+  },
+  {
+    "url": "https://htlb.casalemedia.com/openrtb/pbjs?s=199010",
+    "domain": "htlb.casalemedia.com"
+  },
+  {
+    "url": "https://hbopenbid.pubmatic.com/translator?source=prebid-client&gzip=1",
+    "domain": "hbopenbid.pubmatic.com"
+  },
+  {
+    "url": "https://hbopenbid.pubmatic.com/translator?source=prebid-client&gzip=1",
+    "domain": "hbopenbid.pubmatic.com"
+  },
+  {
+    "url": "https://hbopenbid.pubmatic.com/translator?source=prebid-client&gzip=1",
+    "domain": "hbopenbid.pubmatic.com"
+  },
+  {
+    "url": "https://hbopenbid.pubmatic.com/translator?source=prebid-client&gzip=1",
+    "domain": "hbopenbid.pubmatic.com"
+  },
+  {
+    "url": "https://htlb.casalemedia.com/openrtb/pbjs?s=199011",
+    "domain": "htlb.casalemedia.com"
+  },
+  {
+    "url": "https://fastlane.rubiconproject.com/a/api/fastlane.json?account_id=12270&site_id=143416&zone_id=669738&size_id=15&rf=https%3A%2F%2Fnewatlas.com%2F&kw=3D%20Printing%2CAircraft%2CArchitecture%2CAround%20The%20Home%2CAtlas%2CAutomotive%2CBicycles%2CBiology%2CChildren%2CCollectibles&tg_i.domain=newatlas.com&tg_i.page=https%3A%2F%2Fnewatlas.com%2F&tg_i.documentLang=en-US&tk_flint=pbjs_lite_v10.23.0&l_pb_bid_id=06a04578-0643-4c81-a57f-ba827f1bd60e&p_screen_res=1280x800&rp_secure=1&m_ch_ua=%22Chromium%22%7Cv%3D%22139%22%2C%22Not%3BA%3DBrand%22%7Cv%3D%2299%22&m_ch_mobile=%3F0&m_ch_platform=Linux&slots=1&rand=0.6616556035471007",
+    "domain": "fastlane.rubiconproject.com"
+  },
+  {
+    "url": "https://mweb-hb.presage.io/api/header-bidding-request",
+    "domain": "mweb-hb.presage.io"
+  },
+  {
+    "url": "https://hbopenbid.pubmatic.com/translator?source=prebid-client&gzip=1",
+    "domain": "hbopenbid.pubmatic.com"
+  },
+  {
+    "url": "https://dsum.casalemedia.com/pbusermatch?origin=prebid&site_id=199011&p=1&i=0&gdpr=0&gdpr_consent=&us_privacy=",
+    "domain": "dsum.casalemedia.com"
+  },
+  {
+    "url": "https://ms-cookie-sync.presage.io/user-sync?source=prebid&gdpr_consent=&gpp=&gpp_sid=",
+    "domain": "ms-cookie-sync.presage.io"
+  },
+  {
+    "url": "https://image8.pubmatic.com/AdServer/ImgSync?p=157658",
+    "domain": "image8.pubmatic.com"
+  }
+]

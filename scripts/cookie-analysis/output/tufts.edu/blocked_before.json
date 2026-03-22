@@ -1,0 +1,82 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-3DDNK3T75D&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-7QHZNYE3J3&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-780980239",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://siteimproveanalytics.com/js/siteanalyze_66356018.js",
+    "domain": "siteimproveanalytics.com"
+  },
+  {
+    "url": "https://js.hs-analytics.net/analytics/1774203300000/3860938.js",
+    "domain": "js.hs-analytics.net"
+  },
+  {
+    "url": "https://js.hs-banner.com/3860938.js",
+    "domain": "js.hs-banner.com"
+  },
+  {
+    "url": "https://arttrk.com/pixel/?ad_log=referer&action=misc&pixid=849dcd4e-5cfc-4ae8-9ea5-402a7da48525",
+    "domain": "arttrk.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=DC-14631269&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-666834536&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-780980239&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://js.ipredictive.com/viant_universal_pixel.js",
+    "domain": "js.ipredictive.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=DC-14631269&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-3DDNK3T75D&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-7QHZNYE3J3&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=8038201&time=1774203337135&li_adsId=205c38fe-5c67-4551-8764-e942d68b6390&url=https%3A%2F%2Fwww.tufts.edu%2F&tm=gtmv2",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=8038201&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22tufts.edu%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAAz2PQUvDQBSE%2F4rMeWOTbGKTvfWgJeBBbOxFRDbdl%2FbhZrtmN0op%2Fe8SCz0OH3wzc4ZnE6Deq1RWeZp9CITdyD5uaQx8dFB5VQpEHggqWy6LPJVSLjOZCZjjoNlBIU59DPdkJghMo4XCIUYf1GJxIwsIeL2nlqMlKLQzuHtz%2FDP3xBMEfqkLHGnDe6ftK31PFGJjoFCXDwXJPk3KvqYkr8ou6aQpkrTIdnValwVJCQEO7ahdsDqSgeq1DSRg%2BUlfLZjDmrWL1zBw2EGd4UO3iToSVFJcZsszuy8yjVt5f9McaIByk7UC4X9fe%2FLzjZfV%2BvFz22yaFpc%2FRmfqCksBAAA%3D%22%7D&href=https%3A%2F%2Fwww.tufts.edu%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  }
+]

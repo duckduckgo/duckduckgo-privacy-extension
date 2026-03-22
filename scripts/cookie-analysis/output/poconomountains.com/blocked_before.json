@@ -1,0 +1,126 @@
+[
+  {
+    "url": "https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516",
+    "domain": "static.cloudflareinsights.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-Z9MN82YTMQ&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://pixel-a.basis.net/dmp/asyncPixelSync",
+    "domain": "pixel-a.basis.net"
+  },
+  {
+    "url": "https://pixel-a.basis.net/dmp/asyncPixelSync",
+    "domain": "pixel-a.basis.net"
+  },
+  {
+    "url": "https://pixel.sitescout.com/dmp/asyncPixelSync",
+    "domain": "pixel.sitescout.com"
+  },
+  {
+    "url": "https://pixel-a.basis.net/iap/74d2895037a18b7a?gtmcb=1068593155",
+    "domain": "pixel-a.basis.net"
+  },
+  {
+    "url": "https://pixel-a.basis.net/iap/4ef5099835bddcc5",
+    "domain": "pixel-a.basis.net"
+  },
+  {
+    "url": "https://pixel.zprk.io/v5/pixel/PlsdANz4Fa.gif?ssid=1&ut1=&ut2=%2F&ut3=https%3A%2F%2Fwww.poconomountains.com%2F&gtmcb=1441064067",
+    "domain": "pixel.zprk.io"
+  },
+  {
+    "url": "https://pixel-a.basis.net/iap/d53ad40f1ccf5fa2",
+    "domain": "pixel-a.basis.net"
+  },
+  {
+    "url": "https://pixel-a.basis.net/up/4c54ee2f1a05f55a?cntr_url=https%3A%2F%2Fwww.poconomountains.com%2F",
+    "domain": "pixel-a.basis.net"
+  },
+  {
+    "url": "https://pixel.sitescout.com/iap/89a45982e794daae",
+    "domain": "pixel.sitescout.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-VLL9GYK436&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://static.ads-twitter.com/uwt.js",
+    "domain": "static.ads-twitter.com"
+  },
+  {
+    "url": "https://bat.bing.com/bat.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://cdn.mouseflow.com/projects/bd54a5ab-5085-4c03-b357-751b8c082780.js",
+    "domain": "cdn.mouseflow.com"
+  },
+  {
+    "url": "https://c.amazon-adsystem.com/aat/amzn.js",
+    "domain": "c.amazon-adsystem.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=CEI89GBC77U4LISTVPI0&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://tags.srv.stackadapt.com/events.js",
+    "domain": "tags.srv.stackadapt.com"
+  },
+  {
+    "url": "https://collector-51300.us.tvsquared.com/tv2track.js",
+    "domain": "collector-51300.us.tvsquared.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/rnpyyh0g71?ref=gtm2",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-Q3027Z5YJW&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=D5MGBGJC77U6J0PHFNF0&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-7K6ZZ7HWF4",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://tag.yieldoptimizer.com/ps/ps?t=s&p=1824&pg=sh&si=803&shcy=Stroudsburg&shst=PA&shcr=United%20States&shid=03/22/2026&shod=03/23/2026&shna=1&ch=Book%E2%80%BADirect",
+    "domain": "tag.yieldoptimizer.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-832253407&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-VLL9GYK436&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-Z9MN82YTMQ&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://tags.w55c.net/ust",
+    "domain": "tags.w55c.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-Q3027Z5YJW&l=gtmDataLayer&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://wsmcdn.audioeye.com/aem.js",
+    "domain": "wsmcdn.audioeye.com"
+  }
+]

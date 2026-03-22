@@ -1,0 +1,5 @@
+[
+  {"domain":"fashionnova.com","url":"https://www.fashionnova.com/","status":"analyzed","popup":true,"rejectButton":false,"dismissButton":"OK","hasManagePrefs":false,"newBlockedCount":1,"newBlockedNewDomains":0},
+  {"domain":"mirror.co.uk","url":"https://www.mirror.co.uk/","status":"disqualified","popup":false,"reason":"No cookie popup found"},
+  {"domain":"shopfavoritedaughter.com","url":"https://shopfavoritedaughter.com/","status":"disqualified","popup":true,"reason":"Has Manage Preferences link (opt-out mechanism)"}
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-H6VG8XLPJN",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=CUMA923C77U27ULH7PN0&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-H6VG8XLPJN&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-847527279&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  }
+]

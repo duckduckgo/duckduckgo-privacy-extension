@@ -1,0 +1,62 @@
+[
+  {
+    "url": "https://platform.twitter.com/oct.js",
+    "domain": "platform.twitter.com"
+  },
+  {
+    "url": "https://static.chartbeat.com/js/chartbeat_mab.js",
+    "domain": "static.chartbeat.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www3.doubleclick.net/",
+    "domain": "www3.doubleclick.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-5H36ZEETNT",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://amplify.outbrain.com/cp/obtp.js",
+    "domain": "amplify.outbrain.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-5H36ZEETNT&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://bat.bing.com/bat.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://s.yimg.jp/images/listing/tool/cv/ytag.js",
+    "domain": "s.yimg.jp"
+  },
+  {
+    "url": "https://cdn.cxense.com/sp1.html",
+    "domain": "cdn.cxense.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-5H36ZEETNT&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=104326&time=1774204052140&li_adsId=a7855ab0-8bd2-45f7-85d4-7019655c1b91&url=https%3A%2F%2Fasia.nikkei.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=104326&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22asia.nikkei.com%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA12PzWrCQBRGX2W4i64m%2FsQYw%2BxSsCIUkRrclFJuZm704mSSekdExHcvKnTR5eHA4fuu0LMTMJ%2FjUTZJ8y8NYo%2Fcxy0dhbsAJi2mGiK3BGY8m2XpKBtN03FWaHBdixzAAArjIPDhQDywXQsaTkcPBvYx9mKGw39%2BCBp63FHF0RMYWD2MKoVRJer1JBxIRKt15zmyFa3mtgtde1EYnKrI7tWKzqJeVBnQX4QFNJypFo604V1A%2F0E%2FJ5K4dGAgRbT5ZFokeZO5pHDOJnVeN8k0nyHVDU6ydAIaWKojBvEYyYFp0Atp8PyGzwrcYcEY4hNaFgvmCr3Um4iRwCTZ7V5553Agtwxl3%2F9l9tSCCSfvNchjX3Xp78fX5WL%2BvV1ulhXcfgGrgGqhiAEAAA%3D%3D%22%7D&href=https%3A%2F%2Fasia.nikkei.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  }
+]

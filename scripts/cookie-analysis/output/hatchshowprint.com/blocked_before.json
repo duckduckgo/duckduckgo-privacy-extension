@@ -1,0 +1,62 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-JYYV3LV7H7&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://tags.srv.stackadapt.com/events.js",
+    "domain": "tags.srv.stackadapt.com"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=CFCK34BC77UCCRP8SV70&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=DC-4384249",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://static.sojern.com/utils/sjrn_autocx.js",
+    "domain": "static.sojern.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=CMBI82RC77U1CH9QTJ00&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://sc-static.net/scevent.min.js",
+    "domain": "sc-static.net"
+  },
+  {
+    "url": "https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=CM1LMGRC77UDG7P6IK4G&lib=ttq",
+    "domain": "analytics.tiktok.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-948162394&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-17055744383&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=7318777&time=1774201491627&li_adsId=84dc8045-2742-4f6e-baf2-d1e6943f078b&url=https%3A%2F%2Fwww.hatchshowprint.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=7318777&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22hatchshowprint.com%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA2WPwWuDMByF%2FxV557hW4xrNrYetFXYoU3oZY0T9WcNizExKGaX%2F%2B3CFXXZ8vI%2BP965wuvOQb4InuRDincG3s3bhSLPXk4VM80eGoEeCTITI0nWSFcmGc4ZuGpW2kBhUaAc%2FTBc3axse2mkEw3k2SxWC83K1%2Bo%2BswODUiWodDEFiP40UxdF%2BAaNqmC7RYUHBcKHG60CVPlllXunrTD6UHSTyIlvzhrfxhvo%2BbvIsiUVWZDGnvuh50aaN4mDQvp6V9UYF6iB7ZTwxGP2s7hYsYaeVDfcwat9CXuF8UwUVCDLObovlRdtP6kq7de5PM9AIac%2FGMPjfffW3W94ctrunj2NZlTVuP5nbfZlkAQAA%22%7D&href=https%3A%2F%2Fwww.hatchshowprint.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  }
+]

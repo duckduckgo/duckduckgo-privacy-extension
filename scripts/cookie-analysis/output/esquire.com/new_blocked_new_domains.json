@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://api.parsely.com/v2/related?apikey=esquire.com&section=men%27s%20grooming&tag=locale:%20US&exclude=tags:displayType:%20gallery&exclude=tags:displayType:%20video&exclude=tags:collection:%20Top%20Sales%20and%20Deals%202025&exclude=tags:collection:%20What%20We%27re%20Buying&limit=20&pub_date_start=2025-01-01&url=https://www.esquire.com/style/grooming/a70770493/ai-hair-balding-apps-testing/",
+    "domain": "api.parsely.com"
+  },
+  {
+    "url": "https://config.aps.amazon-adsystem.com/configs/3049",
+    "domain": "config.aps.amazon-adsystem.com"
+  },
+  {
+    "url": "https://client.aps.amazon-adsystem.com/publisher.js",
+    "domain": "client.aps.amazon-adsystem.com"
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516",
+    "domain": "static.cloudflareinsights.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/fmyts288nb",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-B770HWCNZF",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-852392226&l=dataLayerGoogleAdsGtm",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://us-assets.i.posthog.com/array/phc_sLFy2moeSYfpg41ph0kP50LRS4KmmAAV0fOcbSlnvJD/config.js",
+    "domain": "us-assets.i.posthog.com"
+  },
+  {
+    "url": "https://us.i.posthog.com/flags/?v=2&config=true&ip=0&_=1774200437060&ver=1.290.0&compression=base64",
+    "domain": "us.i.posthog.com"
+  },
+  {
+    "url": "https://us-assets.i.posthog.com/array/phc_sLFy2moeSYfpg41ph0kP50LRS4KmmAAV0fOcbSlnvJD/config?ip=0&_=1774200438267&ver=1.290.0",
+    "domain": "us-assets.i.posthog.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=2617729&time=1774200438290&li_adsId=48081011-feca-432b-8718-7764f0a613bc&url=https%3A%2F%2Fwww.innerscene.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=2617729&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22innerscene.com%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA1XPz2vCMBwF8H%2BlvMNO6ewPNTU3D5sUdhhrcYcxRtqk%2BsU0zZoUEef%2FPpwg7Ph48OG9MxwpD%2FGRLVPOs9Ung29HcmGrR0%2BDhciKBUOgXkOknM%2BzJJnnRZ6sGNTQS7IQIGv16Ftt9WM79GCYRgOBfQjOi9nsfz0Dg5M7XVMwGgLrMVBHLUkTVYeTod0%2B%2BOgh2tIYJmmid7JqOProJyrvDBiOuvEUdEU7K82b%2Fp60D6WCQKfyJecJj7M2L%2BJu1aRxlkoeL6TKeV50sk0aMJCvR2m9kUEriE4arxkMPcubgmvYkLThFnryLcQZzjdVkEFDxPPLVXkhe9CqtGvn7sxe9xB2MobB%2F%2B2rT%2B769HW9efrallVZ4%2FILQ3zQc3gBAAA%3D%22%7D&href=https%3A%2F%2Fwww.innerscene.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  }
+]

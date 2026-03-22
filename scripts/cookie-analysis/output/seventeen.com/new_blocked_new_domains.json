@@ -1,0 +1,6 @@
+[
+  {
+    "url": "https://api.parsely.com/v2/related?apikey=seventeen.com&section=music&tag=locale:%20US&exclude=tags:content-type:%20default&exclude=tags:displayType:%20gallery&exclude=tags:displayType:%20video&limit=20&pub_date_start=2023-03-22&url=https://www.seventeen.com/celebrity/music/a69122643/sombr-seventeen-cover/",
+    "domain": "api.parsely.com"
+  }
+]

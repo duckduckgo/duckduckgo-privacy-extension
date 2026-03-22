@@ -1,0 +1,22 @@
+[
+  {
+    "url": "https://tube.buzzoola.com/js/lib/buzzoola_ufp.js",
+    "domain": "tube.buzzoola.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-J01KSMYW4J",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://top-fwz1.mail.ru/js/code.js",
+    "domain": "top-fwz1.mail.ru"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-J01KSMYW4J&cx=c&gtm=4e63i0h1",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://mc.yandex.ru/metrika/tag.js",
+    "domain": "mc.yandex.ru"
+  }
+]

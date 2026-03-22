@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://script.crazyegg.com/pages/scripts/0022/3709.js",
+    "domain": "script.crazyegg.com"
+  },
+  {
+    "url": "https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516",
+    "domain": "static.cloudflareinsights.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-81VETL5J76&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-984430937&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-17845438383&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=3819900&time=1774201250992&li_adsId=335b9d04-b4c6-49fb-9e8b-aee7b6f79f09&url=https%3A%2F%2Fwww.heartmath.org%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=3819900&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22heartmath.org%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA1WPQUvDQBSE%2F4rMeWOTNGmSvfWgNaAgNvQiIi%2FNa7O42a7ZF0RK%2F7vEguBx5oOPmTO86QL067JMqiqO3xTCfjRedjwGc3LQaZkriBkYOimKLI2TNI%2BrqlDoTgMZB42eaZSBpL89jUcoTKOdWxEf9GLxjy6g4OnIjRHL0HiY4RNJf1O7IEYmYSh8cRuM8NYcHdkX%2Fpw4SN1Bo2UqV8uqi%2BKUllFSJXGUl9UqOpT7rEjjPMvoAAUTmpFcsCTcQR%2FIBlaw5p6uFsxhY8jJNQwm7KHP8KHdCglDR9lltjwa98Fd7dbe%2F2l6HqDdZK1C%2BN3XfPv5yfN6c%2Fe%2Bq7d1g8sPFEqQalYBAAA%3D%22%7D&href=https%3A%2F%2Fwww.heartmath.org%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-984430937&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://pi.pardot.com/pd.js",
+    "domain": "pi.pardot.com"
+  }
+]

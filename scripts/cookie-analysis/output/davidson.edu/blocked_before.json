@@ -1,0 +1,30 @@
+[
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-W1PYXVKHF3&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-17507200899&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/vqm8bo2cfb?ref=gtm",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://siteimproveanalytics.com/js/siteanalyze_66357597.js",
+    "domain": "siteimproveanalytics.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-473393188&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  }
+]

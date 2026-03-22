@@ -1,0 +1,46 @@
+[
+  {
+    "url": "https://rum.hlx.page/.rum/@adobe/helix-rum-js@%5E2/dist/rum-standalone.js",
+    "domain": "rum.hlx.page"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-QDKRE6CND5&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://bat.bing.com/bat.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/6ykpvsoywv",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-987526085&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googleadservices.com/pagead/conversion/987526085/wcm?cc=ZZ&dn=8003330650&cl=NB2fCID35KsBEMXn8dYD&dma=0&npa=0&ct_eid=2",
+    "domain": "www.googleadservices.com"
+  },
+  {
+    "url": "https://commerce.adobedtm.com/recommendations/events/v1/recommendationsEvents.min.js",
+    "domain": "commerce.adobedtm.com"
+  },
+  {
+    "url": "https://googleads.g.doubleclick.net/pagead/id",
+    "domain": "googleads.g.doubleclick.net"
+  },
+  {
+    "url": "https://js-agent.newrelic.com/nr-full-1.310.1.min.js",
+    "domain": "js-agent.newrelic.com"
+  },
+  {
+    "url": "https://js-agent.newrelic.com/nr-full-1.310.1.min.js",
+    "domain": "js-agent.newrelic.com"
+  }
+]

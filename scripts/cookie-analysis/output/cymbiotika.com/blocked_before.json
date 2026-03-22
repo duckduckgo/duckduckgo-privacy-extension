@@ -1,0 +1,222 @@
+[
+  {
+    "url": "https://live.visually-io.com/v/visually.js",
+    "domain": "live.visually-io.com"
+  },
+  {
+    "url": "https://tools.luckyorange.com/core/lo.js?site-id=d66f054f",
+    "domain": "tools.luckyorange.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=mitolife.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://monorail-edge.shopifysvc.com/unstable/produce_batch",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://www.dwin1.com/51909.js",
+    "domain": "www.dwin1.com"
+  },
+  {
+    "url": "https://www.dwin1.com/86347.js",
+    "domain": "www.dwin1.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=mitolife.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=mitolife.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=mitolife.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=mitolife.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=mitolife.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.intelligems.io/v3/track",
+    "domain": "api.intelligems.io"
+  },
+  {
+    "url": "https://j.northbeam.io/ota-sp/b30615b4-6f20-48f5-a084-63811abf9279.js",
+    "domain": "j.northbeam.io"
+  },
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-757618123",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=GT-WPT9FDZS",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-661680154",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://cdn.attn.tv/attentive/dtag.js",
+    "domain": "cdn.attn.tv"
+  },
+  {
+    "url": "https://api.intelligems.io/v3/track",
+    "domain": "api.intelligems.io"
+  },
+  {
+    "url": "https://cdn.attn.tv/cymbiotika/dtag.js",
+    "domain": "cdn.attn.tv"
+  },
+  {
+    "url": "https://cymbiotika-us.attn.tv/d?attn_vid=ac3625c15f0a4234925a26d2fea6f894",
+    "domain": "cymbiotika-us.attn.tv"
+  },
+  {
+    "url": "https://cdn.attn.tv/growth-tag-assets/client-configs/ZOx.js",
+    "domain": "cdn.attn.tv"
+  },
+  {
+    "url": "https://bat.bing.com/p/action/187235382.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-Y3W5PW4M2X",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://trkn.us/pixel/c?ppt=21404&g=sitewide&gid=49769&gtmcb=589708714",
+    "domain": "trkn.us"
+  },
+  {
+    "url": "https://trkn.us/pixel/conv/?ppt=21880&g=sitewide&gid=50878&ord=160627981&gtmcb=1892663220",
+    "domain": "trkn.us"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-757618123&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-Y3W5PW4M2X&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://j.northbeam.io/ota-sp/b30615b4-6f20-48f5-a084-63811abf9279.js",
+    "domain": "j.northbeam.io"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=GT-WPT9FDZS&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-661680154&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://cymbiotika-us.attn.tv/unrenderedCreative?v=2026.03.4&r=&id=ac3625c15f0a4234925a26d2fea6f894&pv=1&l=https%3A%2F%2Fcymbiotika.com%2F&w=1280&h=800&ss_ref=ORGANIC&f=3",
+    "domain": "cymbiotika-us.attn.tv"
+  },
+  {
+    "url": "https://t.contentsquare.net/uxa/b4b3bab035668.js",
+    "domain": "t.contentsquare.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-757618123&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=MC-KR7ZD6X610&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-Y3W5PW4M2X&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.talkable.com/public/mitolife/affiliate_members/create.html?v=3.0.5",
+    "domain": "www.talkable.com"
+  },
+  {
+    "url": "https://cdn-scripts.signifyd.com/shopify/script-tag.js?shop=mitolife.myshopify.com",
+    "domain": "cdn-scripts.signifyd.com"
+  },
+  {
+    "url": "https://cdn.hextom.com/js/eventpromotionbar.js?shop=mitolife.myshopify.com",
+    "domain": "cdn.hextom.com"
+  },
+  {
+    "url": "https://cdn.attn.tv/cymbiotika/dtag.js?shop=mitolife.myshopify.com",
+    "domain": "cdn.attn.tv"
+  },
+  {
+    "url": "https://tag.rmp.rakuten.com/127384.ct.js?shop=mitolife.myshopify.com",
+    "domain": "tag.rmp.rakuten.com"
+  },
+  {
+    "url": "https://sdk.postscript.io/sdk.bundle.js?shopId=273262",
+    "domain": "sdk.postscript.io"
+  },
+  {
+    "url": "https://api.segment.io/v1/p",
+    "domain": "api.segment.io"
+  }
+]

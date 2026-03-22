@@ -1,0 +1,34 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-SZ7X91LNGX&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-960148322&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://origin.acuityplatform.com/event/v2/pixel.js",
+    "domain": "origin.acuityplatform.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://t.contentsquare.net/uxa/8371128aeb51c.js",
+    "domain": "t.contentsquare.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-11094944936&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-SZ7X91LNGX&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://js.zi-scripts.com/zi-tag.js",
+    "domain": "js.zi-scripts.com"
+  }
+]

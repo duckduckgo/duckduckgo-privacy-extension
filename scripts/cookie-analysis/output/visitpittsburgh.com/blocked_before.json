@@ -1,0 +1,62 @@
+[
+  {
+    "url": "https://tag.yieldoptimizer.com/ps/analytics?pxid=12291&",
+    "domain": "tag.yieldoptimizer.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-1060384315&l=dl&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-985959090&l=dl&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-DZJFWGWYR6&l=dl&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://tag.yieldoptimizer.com/ps/ps?t=s&p=5453&sg=y&pg=ot&",
+    "domain": "tag.yieldoptimizer.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-985959090&l=dl&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://ib.adnxs.com/getuid?https://dc.arrivalist.com/pj/proc.php?auid=$UID&rk=ckip-10-0-1-21869c02dc056d126.1878826069c02dc057e511.25404610",
+    "domain": "ib.adnxs.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-6LR6M45LNC",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.instagram.com/embed.js",
+    "domain": "www.instagram.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=9600153&time=1774202304772&li_adsId=7d8bb76b-a6ff-4fac-92a5-b97ee92da067&url=https%3A%2F%2Fwww.visitpittsburgh.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=9600153&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22skillyai.com%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA03PX2vCMBQF8K8i9zld%2F1g1BsbwwUlhDzKLexhjxOTGXpqmWRPZRPzuo3OMPR4O%2FDjnAp50APG6nGdZPpu%2BMQhqIB%2F3OATqHYiCzxhE6hBEvliURVZMs5IXBQPdd5IcCAgtWXuWdKf6DhicBgsCmhh9EGn6v0zxK%2BLgpE0kJaqRMeWIrS3PpNoHM%2FRdZQbZ4VYO6OIL6djc5wXPgIGXR6wpWgQB619ksqomIwIMPvEQKOKOjk7aZ%2Fw4YYiVBgGImHHUPEHNTWJQ5UlZThcJLudGcXNQhi%2BBAYV6kC5YGVGDMNIGZGDpUd4UGMOGpIu30FFQIC7gw2EXZUQQSXkdlSdyLerKrbz%2FYxrsQLiTtQzCz7767Mcb29Vm%2Fb6vdlUN12%2FdTgAzhwEAAA%3D%3D%22%7D&href=https%3A%2F%2Fwww.visitpittsburgh.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  }
+]

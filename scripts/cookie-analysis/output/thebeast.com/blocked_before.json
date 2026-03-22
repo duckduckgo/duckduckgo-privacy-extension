@@ -1,0 +1,138 @@
+[
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=the-beast-health.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://monorail-edge.shopifysvc.com/unstable/produce_batch",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/swst27xkns?ref=shopify",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=the-beast-health.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=the-beast-health.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.intelligems.io/v3/track",
+    "domain": "api.intelligems.io"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=the-beast-health.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/event",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=the-beast-health.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://conf.config-security.com/model",
+    "domain": "conf.config-security.com"
+  },
+  {
+    "url": "https://api.config-security.com/first?host=the-beast-health.myshopify.com&plat=SHOPIFY",
+    "domain": "api.config-security.com"
+  },
+  {
+    "url": "https://api.intelligems.io/v3/track",
+    "domain": "api.intelligems.io"
+  },
+  {
+    "url": "https://cdn.useamp.com/api/conversion/merchant_store/targets/cart/the-beast-health.myshopify.com",
+    "domain": "cdn.useamp.com"
+  },
+  {
+    "url": "https://cdn.useamp.com/api/conversion/merchant_store/targets/pre_purchase/the-beast-health.myshopify.com",
+    "domain": "cdn.useamp.com"
+  },
+  {
+    "url": "https://cdn.useamp.com/api/conversion/merchant_store/targets/embedded_product/the-beast-health.myshopify.com",
+    "domain": "cdn.useamp.com"
+  },
+  {
+    "url": "https://cdn.useamp.com/api/conversion/merchant_store/upsells/has_utm_journey/the-beast-health.myshopify.com",
+    "domain": "cdn.useamp.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/shopify/swst27xkns",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://intg.snapchat.com/shopify/shopify-scevent-init.js?id=b8d106c6-05c6-4382-9287-97c1a628e0d4&shop=the-beast-health.myshopify.com",
+    "domain": "intg.snapchat.com"
+  },
+  {
+    "url": "https://shopify-widget.route.com/shopify.widget.js?shop=the-beast-health.myshopify.com",
+    "domain": "shopify-widget.route.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-0S4R9GX6ES&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-404258237&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-0S4R9GX6ES&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://media.9gtb.com/script.js?rev=0f40484",
+    "domain": "media.9gtb.com"
+  },
+  {
+    "url": "https://lantern.roeyecdn.com/lantern_global_93807.min.js",
+    "domain": "lantern.roeyecdn.com"
+  }
+]

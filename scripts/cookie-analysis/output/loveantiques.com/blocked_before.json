@@ -1,0 +1,30 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-YLM4T8M8PZ&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-972993364&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=AW-972993364&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-YLM4T8M8PZ&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://pagead2.googlesyndication.com/ccm/collect?frm=0&ae=g&en=page_view&dl=https%3A%2F%2Fwww.loveantiques.com%2F&scrsrc=www.googletagmanager.com&rnd=1207046732.1774201147&navt=n&npa=1&ep.ads_data_redaction=0&gtm=45He63i0v832834555za200zd832834555xea&gcs=G100&gcd=13p3p3p3p5l1&dma_cps=-&dma=0&tag_exp=103116026~103200004~115616985~115938465~115938469~116024733~116133313~117484252&apve=1&apvf=f&apvc=1&tft=1774201147382&tfd=1370",
+    "domain": "pagead2.googlesyndication.com"
+  },
+  {
+    "url": "https://pagead2.googlesyndication.com/ccm/collect?frm=0&ae=g&en=page_view&dl=https%3A%2F%2Fwww.loveantiques.com%2F&scrsrc=www.googletagmanager.com&rnd=1207046732.1774201147&navt=n&npa=1&ep.ads_data_redaction=0&gtm=45He63i0v832834555za200zd832834555xea&gcs=G100&gcd=13p3p3p3p5l1&dma_cps=-&dma=0&tag_exp=103116026~103200004~115616985~115938465~115938469~116024733~116133313~117484252&apve=1&apvf=f&apvc=1&tft=1774201147382&tfd=1370",
+    "domain": "pagead2.googlesyndication.com"
+  }
+]

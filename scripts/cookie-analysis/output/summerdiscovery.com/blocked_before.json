@@ -1,0 +1,70 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=DC-12704595",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://static.hotjar.com/c/hotjar-1603398.js?sv=7",
+    "domain": "static.hotjar.com"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.redditstatic.com/ads/pixel.js",
+    "domain": "www.redditstatic.com"
+  },
+  {
+    "url": "https://tags.srv.stackadapt.com/events.js",
+    "domain": "tags.srv.stackadapt.com"
+  },
+  {
+    "url": "https://js.pulseinsights.com/surveys.js",
+    "domain": "js.pulseinsights.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=DC-12704595&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-VSEGEK32V3&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://tag.simpli.fi/sifitag/f12a6280-bf40-013b-67e2-0cc47a8ffaac",
+    "domain": "tag.simpli.fi"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=DC-12704595&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://sp.analytics.yahoo.com/sp.pl?a=10000&d=Sun%2C%2022%20Mar%202026%2017%3A46%3A50%20GMT&n=0&b=Pre-College%20Academic%20Enrichment%20Programs%20%7C%20Summer%20Discovery&.yp=10196351&f=https%3A%2F%2Fwww.summerdiscovery.com%2F&enc=UTF-8&yv=1.16.6&tagmgr=gtm%2Cadobe",
+    "domain": "sp.analytics.yahoo.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-4G5EMB2RKK",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-4G5EMB2RKK&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://fid.agkn.com/f?apiKey=2520642820",
+    "domain": "fid.agkn.com"
+  },
+  {
+    "url": "https://aa.agkn.com/adscores/g.jsonp?sid=9202274878&userid=C58EC6-F42902C3-6167-4C59-AD08-14B392B1C57A",
+    "domain": "aa.agkn.com"
+  },
+  {
+    "url": "https://i.liadm.com/s/63537?bidder_id=242861&bidder_uuid=C58EC6-F42902C3-6167-4C59-AD08-14B392B1C57A",
+    "domain": "i.liadm.com"
+  },
+  {
+    "url": "https://aa.agkn.com/adscores/g.pixel?sid=9202283468&_userID=C58EC6-F42902C3-6167-4C59-AD08-14B392B1C57A&_takID=E90238C58EC6",
+    "domain": "aa.agkn.com"
+  }
+]

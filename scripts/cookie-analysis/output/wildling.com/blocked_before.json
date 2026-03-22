@@ -1,0 +1,46 @@
+[
+  {
+    "url": "https://monorail-edge.shopifysvc.com/unstable/produce_batch",
+    "domain": "monorail-edge.shopifysvc.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-1LMWLP6285",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://shopify-init.blackcrow.ai/js/core/wildling-beauty.js?shop=wildling-beauty.myshopify.com&tagSrc=ShopifyThemeAppExtension",
+    "domain": "shopify-init.blackcrow.ai"
+  },
+  {
+    "url": "https://backend.alia-prod.com/public/launcher.js?shop=wildling-beauty.myshopify.com",
+    "domain": "backend.alia-prod.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-1LMWLP6285",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-745234621",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=GT-KTBKFPGG",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-1LMWLP6285&l=dataLayer",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://trkapi.impact.com/PageLoad",
+    "domain": "trkapi.impact.com"
+  },
+  {
+    "url": "https://backinstock.useamp.com/widget/63194_1767158725.js?category=bis&v=6&shop=wildling-beauty.myshopify.com",
+    "domain": "backinstock.useamp.com"
+  },
+  {
+    "url": "https://media.9gtb.com/script.js?rev=0f40484",
+    "domain": "media.9gtb.com"
+  }
+]

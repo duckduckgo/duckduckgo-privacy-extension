@@ -117,7 +117,11 @@ async function main() {
         await new Promise((r) => setTimeout(r, SETTLE_DELAY));
 
         // Screenshot
-        await page.screenshot({ path: path.join(workDir, 'before.png'), fullPage: false });
+        try {
+            await page.screenshot({ path: path.join(workDir, 'before.png'), fullPage: false, timeout: 15000 });
+        } catch {
+            await page.screenshot({ path: path.join(workDir, 'before.png'), fullPage: false, timeout: 15000, animations: 'disabled' });
+        }
         console.log('Screenshot saved.');
 
         // Save blocked requests
@@ -283,7 +287,11 @@ async function main() {
         await new Promise((r) => setTimeout(r, POST_CLICK_DELAY));
 
         // After screenshot
-        await page.screenshot({ path: path.join(workDir, 'after.png'), fullPage: false });
+        try {
+            await page.screenshot({ path: path.join(workDir, 'after.png'), fullPage: false, timeout: 15000 });
+        } catch {
+            await page.screenshot({ path: path.join(workDir, 'after.png'), fullPage: false, timeout: 15000, animations: 'disabled' }).catch(() => {});
+        }
 
         // Determine which blocked requests are new (not in before set)
         const beforeUrls = new Set(blockedBefore.map((r) => r.url));

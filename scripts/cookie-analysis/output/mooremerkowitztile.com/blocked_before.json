@@ -1,0 +1,50 @@
+[
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-687716505",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-V46SWNRTQF",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://bat.bing.com/bat.js",
+    "domain": "bat.bing.com"
+  },
+  {
+    "url": "https://www.clarity.ms/tag/bq5qidh0aa",
+    "domain": "www.clarity.ms"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=6484378&time=1774205341588&li_adsId=708270bf-a15c-4190-8f71-ba59b2006672&url=https%3A%2F%2Fmooremerkowitztile.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=6484378&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22mooremerkowitztile.com%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA22PTUvDQBRF%2F0q464n9SNrG2RXRGlAQE7sRkdfMa%2FvozCRmphSt%2FnepBRfi7h64HO49ohMToJ%2BneZFns%2BJFITS9dHHJfZDWQ4%2BLiUIUx9Cj2SwfDydZPppcZgqmdSQeGq5te3bc79qDxI8oli%2Ba1kFh31tobGPsgh4M%2Fq8NoNDRhmuJlqFxxT05aZJb8saR4aQWy8nnH74%2FJfFJ3HLyVM2hcOBVkMiVbDzZR37bc4ilgUZumtWQuEmNGU7TiWFKhzxdp6NimhdEbEaUQUFC3ZMPliIb6DXZwApWbuhswQkWQj6ewUlooI%2FowqqKFBk6zb9OljvxOzaln3fdr2bLDtrvrVUIP%2Fvq9%2B709WG%2BuH5dllVZ4%2BsbnBOqDYoBAAA%3D%22%7D&href=https%3A%2F%2Fmooremerkowitztile.com%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=AW-687716505&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-V46SWNRTQF&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://js.hs-analytics.net/analytics/1774205100000/6592682.js",
+    "domain": "js.hs-analytics.net"
+  },
+  {
+    "url": "https://js.hs-banner.com/v2/6592682/banner.js",
+    "domain": "js.hs-banner.com"
+  }
+]

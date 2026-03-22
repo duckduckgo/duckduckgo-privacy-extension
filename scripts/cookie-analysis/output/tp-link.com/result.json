@@ -1,0 +1,9 @@
+{
+  "action": "click",
+  "clickSuccess": true,
+  "clickError": "",
+  "blockedBeforeCount": 0,
+  "blockedAfterCount": 15,
+  "newBlockedCount": 15,
+  "newBlockedNewDomainsCount": 15
+}

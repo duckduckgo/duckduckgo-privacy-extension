@@ -1,0 +1,42 @@
+[
+  {
+    "url": "https://js.hs-banner.com/v2/8542918/banner.js",
+    "domain": "js.hs-banner.com"
+  },
+  {
+    "url": "https://js.hs-analytics.net/analytics/1774200600000/8542918.js",
+    "domain": "js.hs-analytics.net"
+  },
+  {
+    "url": "https://connect.facebook.net/en_US/fbevents.js",
+    "domain": "connect.facebook.net"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/js?id=G-GV8XF9FJ16&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/collect?v=2&fmt=js&pid=5456490&time=1774200785929&li_adsId=34a4af46-67a4-42ed-8013-601654c72ae9&url=https%3A%2F%2Fwww.givedirectly.org%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://sp.analytics.yahoo.com/sp.pl?a=10000&d=Sun%2C%2022%20Mar%202026%2017%3A33%3A05%20GMT&n=0&b=GiveDirectly%3A%20Send%20money%20to%20people%20living%20in%20poverty&.yp=10203833&f=https%3A%2F%2Fwww.givedirectly.org%2F&enc=UTF-8&yv=1.16.6&tagmgr=gtm",
+    "domain": "sp.analytics.yahoo.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=fetch&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/insight_tag_errors.gif?v=2&pid=5456490&error=version%3A%20285%20%7C%20WebsiteActions-285-TypeError%3A%20Failed%20to%20fetch%3B%20ErrorData%3A%20%7B%22domain%22%3A%22givedirectly.org%22%2C%22requestFetcher%22%3A%22fetch-keepalive%22%2C%22body%22%3A%22H4sIAAAAAAAAA12PQUvDQBSE%2F0qY88amTdakeyuoJeBBbOlFRDbd1%2FThZrNmt5FQ%2Bt%2BlKh48fszwMXOGZxOgXmQhb4tl9ioQ9gP7uKMhcO%2BgFpUUiNwR1Lwsi0WWlZVc5lLA9J1mB4WWRzI80D7a6aYfWgicBguFY4w%2BqNnsf2EGAa9b2nK0BIU1j3T3m6tkQ84kXe9oSmKfeOq9pcTyyK5N2CW%2BH2mIEwQ%2BqQkcacOt0%2FaZPk4UYm2gIOcmr%2FIsSw8L2aSmkVmaV2WZNmUx1xUtF4YkBDhsB%2B2C1ZEM1EHbQAKWH%2FSPBVdYs3bxBzoOe6gzfGg2UUeCSovL1fLI7p1M7Vbe%2F2mO1EG5k7UC4XvfdvLXq0%2Br9f3brt7UW1y%2BALSYAYR9AQAA%22%7D&href=https%3A%2F%2Fwww.givedirectly.org%2F",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://px.ads.linkedin.com/wa/?medium=beacon&fmt=g",
+    "domain": "px.ads.linkedin.com"
+  },
+  {
+    "url": "https://www.googletagmanager.com/gtag/destination?id=G-GV8XF9FJ16&cx=c&gtm=4e63i0",
+    "domain": "www.googletagmanager.com"
+  }
+]
