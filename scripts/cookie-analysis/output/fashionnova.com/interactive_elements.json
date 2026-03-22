@@ -1,0 +1,632 @@
+[
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex items-center active",
+    "rect": {
+      "x": 32,
+      "y": 8,
+      "w": 183,
+      "h": 44
+    }
+  },
+  {
+    "tag": "div",
+    "role": "div",
+    "text": "",
+    "ariaLabel": "FashionNova Icon",
+    "title": "",
+    "id": "",
+    "className": "h-[14px] min-[360px]:h-[16px] xs:h-[18px] md:h-[22px]",
+    "rect": {
+      "x": 32,
+      "y": 19,
+      "w": 183,
+      "h": 22
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "WOMEN",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "cursor-pointer",
+    "rect": {
+      "x": 247,
+      "y": 18,
+      "w": 52,
+      "h": 24
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "PLUS+CURVE",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "cursor-pointer",
+    "rect": {
+      "x": 315,
+      "y": 18,
+      "w": 85,
+      "h": 24
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "MEN",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "cursor-pointer",
+    "rect": {
+      "x": 416,
+      "y": 18,
+      "w": 29,
+      "h": 24
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "NEWSPORT",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "cursor-pointer",
+    "rect": {
+      "x": 461,
+      "y": 18,
+      "w": 44,
+      "h": 24
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "KIDS",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "cursor-pointer",
+    "rect": {
+      "x": 521,
+      "y": 18,
+      "w": 30,
+      "h": 24
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "BEAUTY",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "cursor-pointer",
+    "rect": {
+      "x": 567,
+      "y": 18,
+      "w": 52,
+      "h": 24
+    }
+  },
+  {
+    "tag": "div",
+    "role": "button",
+    "text": "Search within Women's Clothing",
+    "ariaLabel": "Search bar",
+    "title": "",
+    "id": "",
+    "className": "relative h-full w-full cursor-text",
+    "rect": {
+      "x": 644,
+      "y": 8,
+      "w": 373,
+      "h": 44
+    }
+  },
+  {
+    "tag": "button",
+    "role": "button",
+    "text": "",
+    "ariaLabel": "Search",
+    "title": "",
+    "id": "",
+    "className": "relative flex",
+    "rect": {
+      "x": 658,
+      "y": 18,
+      "w": 24,
+      "h": 24
+    }
+  },
+  {
+    "tag": "button",
+    "role": "button",
+    "text": "",
+    "ariaLabel": "Search By Image",
+    "title": "",
+    "id": "",
+    "className": "absolute right-0 top-0 flex h-full items-center bg-neutral-100 pl-2",
+    "rect": {
+      "x": 967,
+      "y": 18,
+      "w": 32,
+      "h": 25
+    }
+  },
+  {
+    "tag": "button",
+    "role": "button",
+    "text": "🇺🇸",
+    "ariaLabel": "Selected Country: United States",
+    "title": "",
+    "id": "",
+    "className": "relative w-10 h-11 p-2 flex items-center justify-center before:absolute before:inset-0 before:m-auto before:size-8 before:rounded-full before:transition-all before:-z-10 hover:before:bg-neutral-300 ac",
+    "rect": {
+      "x": 1033,
+      "y": 8,
+      "w": 40,
+      "h": 44
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "",
+    "ariaLabel": "Recently Viewed",
+    "title": "",
+    "id": "",
+    "className": "relative w-10 h-11 p-2 flex items-center justify-center before:absolute before:inset-0 before:m-auto before:size-8 before:rounded-full before:transition-all before:-z-10 hover:before:bg-neutral-300 ac",
+    "rect": {
+      "x": 1073,
+      "y": 8,
+      "w": 40,
+      "h": 44
+    }
+  },
+  {
+    "tag": "div",
+    "role": "button",
+    "text": "",
+    "ariaLabel": "Tooltip button",
+    "title": "",
+    "id": "",
+    "className": "relative w-10 h-11 p-2 flex items-center justify-center before:absolute before:inset-0 before:m-auto before:size-8 before:rounded-full before:transition-all before:-z-10 hover:before:bg-neutral-300 ac",
+    "rect": {
+      "x": 1113,
+      "y": 8,
+      "w": 40,
+      "h": 44
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "",
+    "ariaLabel": "Go to wishlist page",
+    "title": "",
+    "id": "",
+    "className": "relative  relative w-10 h-11 p-2 flex items-center justify-center before:absolute before:inset-0 before:m-auto before:size-8 before:rounded-full before:transition-all before:-z-10 hover:before:bg-neut",
+    "rect": {
+      "x": 1153,
+      "y": 8,
+      "w": 40,
+      "h": 44
+    }
+  },
+  {
+    "tag": "div",
+    "role": "button",
+    "text": "",
+    "ariaLabel": "Tooltip button",
+    "title": "",
+    "id": "",
+    "className": "relative w-10 h-11 p-2 flex items-center justify-center before:absolute before:inset-0 before:m-auto before:size-8 before:rounded-full before:transition-all before:-z-10 hover:before:bg-neutral-300 ac",
+    "rect": {
+      "x": 1193,
+      "y": 8,
+      "w": 40,
+      "h": 44
+    }
+  },
+  {
+    "tag": "div",
+    "role": "div",
+    "text": "",
+    "ariaLabel": "Go to cart",
+    "title": "",
+    "id": "",
+    "className": "",
+    "rect": {
+      "x": 1203,
+      "y": 20,
+      "w": 20,
+      "h": 20
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "New In",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400 ml-4 lgHeader:ml-0",
+    "rect": {
+      "x": 20,
+      "y": 58,
+      "w": 67,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Clothing",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 87,
+      "y": 58,
+      "w": 85,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Novadeals",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 172,
+      "y": 58,
+      "w": 96,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Dresses",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 268,
+      "y": 58,
+      "w": 77,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Matching Sets",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 345,
+      "y": 58,
+      "w": 120,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Tops",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 464,
+      "y": 58,
+      "w": 55,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Graphics",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 520,
+      "y": 58,
+      "w": 85,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Jeans",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 604,
+      "y": 58,
+      "w": 62,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Swim",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 666,
+      "y": 58,
+      "w": 56,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Jumpsuits & Rompers",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 722,
+      "y": 58,
+      "w": 163,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Shoes",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 885,
+      "y": 58,
+      "w": 64,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Formal Shop",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 949,
+      "y": 58,
+      "w": 110,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Bottoms",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 1059,
+      "y": 58,
+      "w": 82,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Accessories",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 1141,
+      "y": 58,
+      "w": 106,
+      "h": 28
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Lingerie & Sleep",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "flex cursor-pointer items-center justify-center rounded-full lgHeader:h-7 lgHeader:px-3 lgHeader:hover:bg-neutral-300 lgHeader:active:bg-neutral-400",
+    "rect": {
+      "x": 1247,
+      "y": 58,
+      "w": 127,
+      "h": 28
+    }
+  },
+  {
+    "tag": "button",
+    "role": "button",
+    "text": "",
+    "ariaLabel": "Scroll button",
+    "title": "",
+    "id": "",
+    "className": "pointer-events-auto flex h-8 w-8 items-center justify-center rounded-full hover:bg-neutral-300",
+    "rect": {
+      "x": 1213,
+      "y": 56,
+      "w": 32,
+      "h": 32
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "",
+    "rect": {
+      "x": 0,
+      "y": 96,
+      "w": 1265,
+      "h": 498
+    }
+  },
+  {
+    "tag": "video",
+    "role": "video",
+    "text": "",
+    "ariaLabel": "40 OFF | 03.17.26 | JRS HERO VIDEO",
+    "title": "",
+    "id": "",
+    "className": "bg-neutral-100",
+    "rect": {
+      "x": 0,
+      "y": 96,
+      "w": 1265,
+      "h": 498
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Sunday’s Best",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "group relative flex w-full flex-grow flex-col",
+    "rect": {
+      "x": 96,
+      "y": 675,
+      "w": 262,
+      "h": 397
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Prom Queen Energy",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "group relative flex w-full flex-grow flex-col",
+    "rect": {
+      "x": 366,
+      "y": 675,
+      "w": 262,
+      "h": 397
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Resort Escape",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "group relative flex w-full flex-grow flex-col",
+    "rect": {
+      "x": 637,
+      "y": 675,
+      "w": 262,
+      "h": 397
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Spring Essentials",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "group relative flex w-full flex-grow flex-col",
+    "rect": {
+      "x": 907,
+      "y": 675,
+      "w": 262,
+      "h": 397
+    }
+  },
+  {
+    "tag": "a",
+    "role": "a",
+    "text": "Privacy Policy",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "text-blue-300 underline hover:underline",
+    "rect": {
+      "x": 695,
+      "y": 754,
+      "w": 72,
+      "h": 12
+    }
+  },
+  {
+    "tag": "button",
+    "role": "button",
+    "text": "Your Privacy Choices",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "text-blue-300 underline hover:underline",
+    "rect": {
+      "x": 839,
+      "y": 752,
+      "w": 110,
+      "h": 16
+    }
+  },
+  {
+    "tag": "button",
+    "role": "button",
+    "text": "OK",
+    "ariaLabel": "",
+    "title": "",
+    "id": "",
+    "className": "h-[32px] w-full rounded-3xl border-neutral-100 bg-neutral-100 text-neutral-900 transition-all hover:border hover:bg-[rgb(var(--neutral-100-rgb)/0)] hover:text-neutral-100 md:w-[152px]",
+    "rect": {
+      "x": 1166,
+      "y": 736,
+      "w": 83,
+      "h": 32
+    }
+  }
+]
