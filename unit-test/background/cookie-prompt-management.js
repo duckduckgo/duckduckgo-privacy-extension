@@ -11,8 +11,12 @@ function createMockMessaging({ autoconsentEnabledForSite = true, autoconsentSett
         refreshDashboardState: jasmine.createSpy('refreshDashboardState').and.returnValue(Promise.resolve()),
         showCpmAnimation: jasmine.createSpy('showCpmAnimation').and.returnValue(Promise.resolve()),
         notifyPopupHandled: jasmine.createSpy('notifyPopupHandled').and.returnValue(Promise.resolve()),
-        checkAutoconsentSettingEnabled: jasmine.createSpy('checkAutoconsentSettingEnabled').and.returnValue(Promise.resolve(autoconsentSettingEnabled)),
-        checkAutoconsentEnabledForSite: jasmine.createSpy('checkAutoconsentEnabledForSite').and.returnValue(Promise.resolve(autoconsentEnabledForSite)),
+        checkAutoconsentSettingEnabled: jasmine
+            .createSpy('checkAutoconsentSettingEnabled')
+            .and.returnValue(Promise.resolve(autoconsentSettingEnabled)),
+        checkAutoconsentEnabledForSite: jasmine
+            .createSpy('checkAutoconsentEnabledForSite')
+            .and.returnValue(Promise.resolve(autoconsentEnabledForSite)),
         checkSubfeatureEnabled: jasmine.createSpy('checkSubfeatureEnabled').and.returnValue(Promise.resolve(subfeatureEnabled)),
         sendPixel: jasmine.createSpy('sendPixel').and.returnValue(Promise.resolve()),
         refreshRemoteConfig: jasmine.createSpy('refreshRemoteConfig').and.returnValue(
