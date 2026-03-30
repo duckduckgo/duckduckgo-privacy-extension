@@ -110,7 +110,7 @@ test.describe('install workflow', () => {
         });
     });
 
-    test.skip('atb storage should retreive stored ATB value on reload', async ({ manifestVersion, context, backgroundPage }) => {
+    test.skip('atb storage should retrieve stored ATB value on reload', async ({ manifestVersion, context, backgroundPage }) => {
         if (manifestVersion === 3) {
             return;
         }
