@@ -389,7 +389,9 @@ export default class CookiePromptManagement {
                 const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(tabUrl);
                 if (!isEnabled) {
                     this.cpmMessaging.logMessage(`autoconsent disabled for site: ${tabUrl}`);
-                    this.firePixel('disabled-for-site');
+                    if (isMainFrame) {
+                        this.firePixel('disabled-for-site');
+                    }
                     return;
                 }
 
