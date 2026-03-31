@@ -7,13 +7,9 @@ module.exports = function () {
     return bel`<section class="options-content__privacy divider-bottom">
     <h2 class="menu-title">${t('shared:options.title')}</h2>
     <ul class="default-list">
-        <li class="options-dropdown-li">
-            ${t('options:searchPageTitle.title')}
-            <select class="js-options-alternative-search options-dropdown" data-key="alternativeSearch">
-                <option value="">duckduckgo.com</option>
-                <option value="noai">noai.duckduckgo.com</option>
-                <option value="safe">safe.duckduckgo.com</option>
-            </select>
+        <li>
+            ${t('options:noAiMode.title')}
+            ${toggleButton(this.model.noAiMode, 'js-options-no-ai-mode', 'noAiMode')}
         </li>
         <li>
             ${t('options:showEmbeddedTweets.title')}
