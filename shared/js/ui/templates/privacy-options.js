@@ -11,10 +11,6 @@ module.exports = function () {
             ${t('options:noAiMode.title')}
             ${toggleButton(this.model.noAiMode, 'js-options-no-ai-mode', 'noAiMode')}
         </li>
-        <li>
-            ${t('options:showEmbeddedTweets.title')}
-            ${toggleButton(this.model.embeddedTweetsEnabled, 'js-options-embedded-tweets-enabled', 'embeddedTweetsEnabled')}
-        </li>
         <li class="options-content__gpc-enabled">
             <h2 class="menu-title">${t('options:globalPrivacyControlAbbr.title')}</h2>
             <p class="menu-paragraph">
