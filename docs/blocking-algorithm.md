@@ -80,14 +80,14 @@ The second rule is limited to blocking all matching requests except for image 't
 
 ```
 {
-    "domain": "doubleclick.net",
+    "domain": "double-click.net",
     "rules": [
         {
-            "rule": "doubleclick\\.net\\/instream\\/(.*\\/)?ad_status\\.js",
+            "rule": "double-click\\.net\\/instream\\/(.*\\/)?ad_status\\.js",
             "surrogate": "ad_status.js"
         },
         {
-            "rule": "doubleclick\\.net\\/ddm\\/",
+            "rule": "double-click\\.net\\/ddm\\/",
             "exceptions": {
                 "types": [
                     "image"
@@ -104,10 +104,10 @@ The second rule is limited to blocking all matching requests except for image 't
 
 |  Site | Request URL  | Request type | Block | Reason |
 |---|---|---|---|---|
-| yahoo.com | doubleclick.net/instream/1234/ad_status.js |  script |  true | matches rule |
-| abc.com | doubleclick.net/ddm/ | script  |  true | matches rule |
-| abc.com | doubleclick.net/ddm/ | image  |  false | matches rule but also matches exception |
-| abc.com | doubleclick.net/adimage.png | image  |  true | defaut is set to 'block' |
+| yahoo.com | double-click.net/instream/1234/ad_status.js |  script |  true | matches rule |
+| abc.com | double-click.net/ddm/ | script  |  true | matches rule |
+| abc.com | double-click.net/ddm/ | image  |  false | matches rule but also matches exception |
+| abc.com | double-click.net/adimage.png | image  |  true | default is set to 'block' |
 
 ### Tracker with options and exceptions
 

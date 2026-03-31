@@ -42,7 +42,7 @@ To find the extension versions:
 <!--
 Provide additional context (optional):
 1. Is the issue repeatable or intermittent?
-2. Did this issue start after an upgrade to a new extension version? If so, can you repeat it using a pervious extension version?
+2. Did this issue start after an upgrade to a new extension version? If so, can you repeat it using a previous extension version?
 3. Are there any errors in the extension debugging console?
 4. Include screenshots if they're helpful.
 -->
