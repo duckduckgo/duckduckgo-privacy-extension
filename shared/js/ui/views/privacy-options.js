@@ -24,7 +24,6 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         this._cacheElems('.js-options', [
             'blocktrackers',
             'https-everywhere-enabled',
-            'embedded-tweets-enabled',
             'gpc-enabled',
             'youtube-previews-enabled',
             'firebutton-clear-history-enabled',
@@ -34,7 +33,6 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         this.bindEvents([
             [this.$blocktrackers, 'click', this._clickSetting],
             [this.$httpseverywhereenabled, 'click', this._clickSetting],
-            [this.$embeddedtweetsenabled, 'click', this._clickSetting],
             [this.$gpcenabled, 'click', this._clickSetting],
             [this.$youtubepreviewsenabled, 'click', this._clickSetting],
             [this.$firebuttonclearhistoryenabled, 'click', this._clickSetting],
