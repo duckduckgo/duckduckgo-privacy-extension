@@ -212,7 +212,7 @@ const ATB = (() => {
          * Creates a DNR rule for ATB parameters
          * @param {string} atb
          */
-        setOrUpdateATBdnrRule: (atb, ) => {
+        setOrUpdateATBdnrRule: (atb) => {
             if (!atb || manifestVersion !== 3) {
                 return;
             }
@@ -226,7 +226,7 @@ const ATB = (() => {
                     transform: {
                         queryTransform: {
                             addOrReplaceParams: [{ key: 'atb', value: atb }],
-                        }
+                        },
                     },
                 },
                 resourceTypes: ['main_frame'],
@@ -235,21 +235,23 @@ const ATB = (() => {
             });
             const addRules = [atbRule];
             if (alternativeSearchSubdomain) {
-                addRules.push(generateDNRRule({
-                    id: SEARCH_REDIRECT_RULE_ID,
-                    priority: ATB_PARAM_PRIORITY,
-                    actionType: 'redirect',
-                    redirect: {
-                        transform: {
-                            host: `${alternativeSearchSubdomain}.duckduckgo.com`
-                        }
-                    },
-                    resourceTypes: ['main_frame'],
-                    requestDomains: ['duckduckgo.com'],
-                    urlFilter: '||duckduckgo.com/?'
-                }));
+                addRules.push(
+                    generateDNRRule({
+                        id: SEARCH_REDIRECT_RULE_ID,
+                        priority: ATB_PARAM_PRIORITY + 1,
+                        actionType: 'redirect',
+                        redirect: {
+                            transform: {
+                                host: `${alternativeSearchSubdomain}.duckduckgo.com`,
+                            },
+                        },
+                        resourceTypes: ['main_frame'],
+                        requestDomains: ['duckduckgo.com'],
+                        urlFilter: '||duckduckgo.com/?',
+                    }),
+                );
             }
-    
+
             chrome.declarativeNetRequest.updateDynamicRules({
                 removeRuleIds: [atbRule.id, SEARCH_REDIRECT_RULE_ID],
                 addRules,
