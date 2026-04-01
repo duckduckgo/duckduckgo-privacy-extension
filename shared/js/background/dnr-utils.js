@@ -22,6 +22,7 @@ export const USER_ALLOWLIST_RULE_ID = 20001;
 export const ATB_PARAM_RULE_ID = 20003;
 export const NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID = 20006;
 export const ALTERNATIVE_SEARCH_RULE_ID = 20008;
+export const SEARCH_REDIRECT_RULE_ID = 20009;
 
 // Rule IDs for static session rules
 export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002;
