@@ -4,12 +4,12 @@ const Parent = window.DDG.base.Model;
 function PrivacyOptions(attrs) {
     // set some default values for the toggle switches in the template
     attrs.httpsEverywhereEnabled = true;
-    attrs.embeddedTweetsEnabled = false;
     attrs.GPC = false;
     attrs.youtubeClickToLoadEnabled = false;
     attrs.youtubePreviewsEnabled = false;
     attrs.fireButtonClearHistoryEnabled = true;
     attrs.fireButtonTabClearEnabled = true;
+    attrs.noAiMode = false;
 
     Parent.call(this, attrs);
 }
@@ -21,7 +21,11 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         if (Object.hasOwnProperty.call(this, k)) {
             this[k] = !this[k];
             console.log(`PrivacyOptions model toggle ${k} is now ${this[k]}`);
-            this.sendMessage('updateSetting', { name: k, value: this[k] });
+            if (k === 'noAiMode') {
+                this.sendMessage('updateSetting', { name: 'alternativeSearch', value: this[k] ? 'noai' : '' });
+            } else {
+                this.sendMessage('updateSetting', { name: k, value: this[k] });
+            }
         }
     },
 
@@ -32,13 +36,13 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         ]);
 
         this.httpsEverywhereEnabled = settings.httpsEverywhereEnabled;
-        this.embeddedTweetsEnabled = settings.embeddedTweetsEnabled;
         this.GPC = settings.GPC;
         this.youtubeClickToLoadEnabled = youtubeClickToLoadEnabled;
         this.youtubePreviewsEnabled = settings.youtubePreviewsEnabled;
         this.fireButtonEnabled = BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2';
         this.fireButtonClearHistoryEnabled = settings.fireButtonClearHistoryEnabled;
         this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled;
+        this.noAiMode = settings.alternativeSearch === 'noai';
     },
 });
 

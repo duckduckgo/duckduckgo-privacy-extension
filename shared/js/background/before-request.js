@@ -140,7 +140,17 @@ function handleRequest(requestData) {
         // add atb params only to main_frame
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL);
 
-        if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded) {
+        // apply alternative search redirect (e.g. noai.duckduckgo.com)
+        const shouldRedirectSearch =
+            mainFrameRequestURL.hostname === 'duckduckgo.com' &&
+            mainFrameRequestURL.pathname === '/' &&
+            mainFrameRequestURL.searchParams.has('q') &&
+            settings.getSetting('alternativeSearch') !== '';
+        if (shouldRedirectSearch) {
+            mainFrameRequestURL.hostname = `${settings.getSetting('alternativeSearch')}.duckduckgo.com`;
+        }
+
+        if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded || shouldRedirectSearch) {
             return { redirectUrl: mainFrameRequestURL.href };
         }
     } else {

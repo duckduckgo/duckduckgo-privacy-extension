@@ -115,6 +115,10 @@
         "title": "Close Tabs",
         "note": "Title for option toggle."
     },
+    "noAiMode": {
+        "title": "No AI Mode",
+        "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+    },
     "burnPageTitle": {
         "title": "Burn in progress...",
         "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."

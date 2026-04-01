@@ -8,8 +8,8 @@ module.exports = function () {
     <h2 class="menu-title">${t('shared:options.title')}</h2>
     <ul class="default-list">
         <li>
-            ${t('options:showEmbeddedTweets.title')}
-            ${toggleButton(this.model.embeddedTweetsEnabled, 'js-options-embedded-tweets-enabled', 'embeddedTweetsEnabled')}
+            ${t('options:noAiMode.title')}
+            ${toggleButton(this.model.noAiMode, 'js-options-no-ai-mode', 'noAiMode')}
         </li>
         <li class="options-content__gpc-enabled">
             <h2 class="menu-title">${t('options:globalPrivacyControlAbbr.title')}</h2>
