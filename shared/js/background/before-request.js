@@ -3,6 +3,7 @@ import EventEmitter2 from 'eventemitter2';
 import ATB from './atb';
 import { postPopupMessage } from './popup-messaging';
 import RequestBlocklist from './components/request-blocklist';
+import { applySearchChoice } from './components/search-choice';
 
 const utils = require('./utils');
 const trackers = require('./trackers');
@@ -140,7 +141,10 @@ function handleRequest(requestData) {
         // add atb params only to main_frame
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL);
 
-        if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded) {
+        // apply alternative search redirect (e.g. noai.duckduckgo.com)
+        const searchRedirected = applySearchChoice(mainFrameRequestURL, settings.getSetting('alternativeSearch') || '');
+
+        if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded || searchRedirected) {
             return { redirectUrl: mainFrameRequestURL.href };
         }
     } else {
