@@ -141,11 +141,16 @@ function handleRequest(requestData) {
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL);
 
         // apply alternative search redirect (e.g. noai.duckduckgo.com)
-        if (atbParametersAdded && settings.getSetting('alternativeSearch')) {
+        const shouldRedirectSearch =
+            mainFrameRequestURL.hostname === 'duckduckgo.com' &&
+            mainFrameRequestURL.pathname === '/' &&
+            mainFrameRequestURL.searchParams.has('q') &&
+            settings.getSetting('alternativeSearch') !== '';
+        if (shouldRedirectSearch) {
             mainFrameRequestURL.hostname = `${settings.getSetting('alternativeSearch')}.duckduckgo.com`;
         }
 
-        if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded) {
+        if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded || shouldRedirectSearch) {
             return { redirectUrl: mainFrameRequestURL.href };
         }
     } else {
