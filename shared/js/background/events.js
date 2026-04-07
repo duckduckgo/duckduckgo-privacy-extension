@@ -327,6 +327,21 @@ if (manifestVersion === 2) {
 
 browser.webRequest.onBeforeSendHeaders.addListener(dropTracking3pCookiesFromRequest, { urls: ['<all_urls>'] }, extraInfoSpecSendHeaders);
 
+if (manifestVersion === 2) {
+    browser.webRequest.onBeforeSendHeaders.addListener(
+        (request) => {
+            const requestHeaders = request.requestHeaders;
+            requestHeaders.push({
+                name: 'X-DuckDuckGo-Extension',
+                value: browserWrapper.getExtensionVersion(),
+            });
+            return { requestHeaders };
+        },
+        { urls: ['*://*.duckduckgo.com/*'] },
+        extraInfoSpecSendHeaders,
+    );
+}
+
 browser.webRequest.onHeadersReceived.addListener(dropTracking3pCookiesFromResponse, { urls: ['<all_urls>'] }, extraInfoSpec);
 
 if (manifestVersion === 3) {

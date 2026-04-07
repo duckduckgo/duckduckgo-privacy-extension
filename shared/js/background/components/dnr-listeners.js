@@ -4,6 +4,7 @@ import { flushSessionRules } from '../dnr-session-rule-id.js';
 import { clearInvalidDynamicRules } from '../dnr-utils.js';
 import { refreshUserAllowlistRules } from '../dnr-user-allowlist.js';
 import { ensureGPCHeaderRule } from '../dnr-gpc.js';
+import { ensureExtensionDetectionHeaderRule } from '../dnr-ext-header.js';
 import { onConfigUpdate } from '../dnr-config-rulesets.js';
 
 /**
@@ -47,6 +48,8 @@ export default class DNRListeners {
         clearInvalidDynamicRules();
         // create ATB rule if there is a stored value in settings
         ATB.setOrUpdateATBdnrRule(this.settings.getSetting('atb'));
+
+        await ensureExtensionDetectionHeaderRule();
 
         // Refresh the user allowlisting declarativeNetRequest rule, only
         // necessary to handle the upgrade between MV2 and MV3 extensions.

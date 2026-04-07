@@ -27,6 +27,7 @@ export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002;
 export const HTTPS_SESSION_ALLOWLIST_RULE_ID = 20004;
 export const HTTPS_SESSION_UPGRADE_RULE_ID = 20005;
 export const GPC_HEADER_RULE_ID = 20007;
+export const EXTENSION_DETECTION_HEADER_RULE_ID = 20008;
 
 export const SETTING_PREFIX = 'declarative_net_request-';
 
@@ -105,6 +106,12 @@ export async function getMatchDetails(ruleId) {
     if (ruleId === GPC_HEADER_RULE_ID) {
         return {
             type: 'gpc',
+        };
+    }
+
+    if (ruleId === EXTENSION_DETECTION_HEADER_RULE_ID) {
+        return {
+            type: 'extensionDetection',
         };
     }
 

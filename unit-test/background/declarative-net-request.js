@@ -13,18 +13,21 @@ import tabManager from '../../shared/js/background/tab-manager';
 import tdsStorage from '../../shared/js/background/storage/tds';
 import trackers from '../../shared/js/background/trackers';
 import { ensureGPCHeaderRule } from '../../shared/js/background/dnr-gpc';
+import { ensureExtensionDetectionHeaderRule } from '../../shared/js/background/dnr-ext-header';
 import { ensureServiceWorkerInitiatedRequestExceptions } from '../../shared/js/background/dnr-service-worker-initiated';
 import { onConfigUpdate } from '../../shared/js/background/dnr-config-rulesets';
 import { refreshUserAllowlistRules, toggleUserAllowlistDomain } from '../../shared/js/background/dnr-user-allowlist';
 import {
     getMatchDetails,
     GPC_HEADER_RULE_ID,
+    EXTENSION_DETECTION_HEADER_RULE_ID,
     SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
     USER_ALLOWLIST_RULE_ID,
     SETTING_PREFIX,
 } from '../../shared/js/background/dnr-utils';
 import { SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY, USER_ALLOWLISTED_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
 import { GPC_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/gpc';
+import { EXTENSION_DETECTION_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/extensionDetection';
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage'];
 const TEST_EXTENION_VERSIONS = ['2023.1.1', '2023.2.1', '2023.3.1'];
@@ -885,5 +888,41 @@ describe('declarativeNetRequest', () => {
 
         // And GPC header redirections.
         expect(await getMatchDetails(GPC_HEADER_RULE_ID)).toEqual({ type: 'gpc' });
+
+        // And extension detection header.
+        expect(await getMatchDetails(EXTENSION_DETECTION_HEADER_RULE_ID)).toEqual({ type: 'extensionDetection' });
+    });
+
+    it('Extension detection header rule', async () => {
+        const ruleId = EXTENSION_DETECTION_HEADER_RULE_ID;
+
+        const rule = {
+            id: ruleId,
+            priority: EXTENSION_DETECTION_HEADER_PRIORITY,
+            action: {
+                type: 'modifyHeaders',
+                requestHeaders: [
+                    { header: 'X-DuckDuckGo-Extension', operation: 'set', value: browser.runtime.getManifest().version },
+                ],
+            },
+            condition: {
+                requestDomains: ['duckduckgo.com'],
+                resourceTypes: ['main_frame', 'sub_frame', 'xmlhttprequest'],
+            },
+        };
+
+        expect(updateSessionRulesObserver.calls.count()).toEqual(0);
+        expect(sessionRulesByRuleId.has(ruleId)).toBeFalse();
+
+        await ensureExtensionDetectionHeaderRule();
+
+        expect(updateSessionRulesObserver.calls.count()).toEqual(1);
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule);
+
+        // Calling again should recreate the rule.
+        await ensureExtensionDetectionHeaderRule();
+
+        expect(updateSessionRulesObserver.calls.count()).toEqual(2);
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule);
     });
 });
