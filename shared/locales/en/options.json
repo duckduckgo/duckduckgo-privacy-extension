@@ -119,6 +119,10 @@
         "title": "No AI Mode",
         "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
     },
+    "noAiModeDesc": {
+        "title": "When enabled, your DuckDuckGo searches will be redirected to a version of search results that does not include AI-generated content. This applies to all searches made from the address bar or duckduckgo.com.",
+        "note": "Description text explaining what the No AI Mode toggle does"
+    },
     "burnPageTitle": {
         "title": "Burn in progress...",
         "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
