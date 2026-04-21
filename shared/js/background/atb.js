@@ -8,7 +8,7 @@ const settings = require('./settings');
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string');
 const load = require('./load');
 const browserWrapper = require('./wrapper');
-const { ATB_PARAM_RULE_ID } = require('./dnr-utils');
+const { ATB_PARAM_RULE_ID, SEARCH_REDIRECT_RULE_ID } = require('./dnr-utils');
 const { ATB_PARAM_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 const { generateDNRRule } = require('@duckduckgo/ddg2dnr/lib/utils');
 
@@ -216,6 +216,7 @@ const ATB = (() => {
             if (!atb || manifestVersion !== 3) {
                 return;
             }
+            const alternativeSearchSubdomain = settings.getSetting('alternativeSearch') || '';
 
             const atbRule = generateDNRRule({
                 id: ATB_PARAM_RULE_ID,
@@ -232,10 +233,28 @@ const ATB = (() => {
                 requestDomains: ['duckduckgo.com'],
                 regexFilter: regExpAboutPage.source,
             });
+            const addRules = [atbRule];
+            if (alternativeSearchSubdomain) {
+                addRules.push(
+                    generateDNRRule({
+                        id: SEARCH_REDIRECT_RULE_ID,
+                        priority: ATB_PARAM_PRIORITY + 1,
+                        actionType: 'redirect',
+                        redirect: {
+                            transform: {
+                                host: `${alternativeSearchSubdomain}.duckduckgo.com`,
+                            },
+                        },
+                        resourceTypes: ['main_frame'],
+                        requestDomains: ['duckduckgo.com'],
+                        urlFilter: '||duckduckgo.com/?',
+                    }),
+                );
+            }
 
             chrome.declarativeNetRequest.updateDynamicRules({
-                removeRuleIds: [atbRule.id],
-                addRules: [atbRule],
+                removeRuleIds: [atbRule.id, SEARCH_REDIRECT_RULE_ID],
+                addRules,
             });
         },
 
@@ -279,6 +298,9 @@ settings.ready().then(() => {
         ATB.setOrUpdateATBdnrRule(atb);
     });
     settings.onSettingUpdate.addEventListener('set_atb', updateUninstallURL);
+    settings.onSettingUpdate.addEventListener('alternativeSearch', () => {
+        ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'));
+    });
 });
 
 export default ATB;

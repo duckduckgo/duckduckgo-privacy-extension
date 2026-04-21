@@ -39,7 +39,6 @@ import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
 import CookiePromptManagement from './components/cookie-prompt-management';
-import SearchChoice from './components/search-choice';
 
 // Trigger registration of default message handlers into the shared registry.
 import { registerStandardHandlers } from './message-handlers';
@@ -92,7 +91,6 @@ const components = {
     remoteConfig,
     abnMetrics,
     messaging: new MessageRouter(),
-    searchChoice: new SearchChoice({ settings }),
 };
 
 // Chrome-only components
