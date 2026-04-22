@@ -38,7 +38,7 @@
     },
     "devDependencies": {
         "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.1.0",
-        "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v2.1.0",
+        "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v2.1.1",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
         "@fingerprintjs/fingerprintjs": "^4.6.2",
         "@playwright/test": "1.54.2",
