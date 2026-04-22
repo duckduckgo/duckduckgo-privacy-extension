@@ -12,7 +12,7 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v6
               with:
                   node-version: 22
                   cache: 'npm'
@@ -28,7 +28,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v6
               with:
                   node-version: ${{ matrix.version }}
                   cache: 'npm'
@@ -38,7 +38,7 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v6
               with:
                   node-version: 22
                   cache: 'npm'
@@ -55,7 +55,7 @@ jobs:
                 shard: [1/4, 2/4, 3/4, 4/4]
         steps:
             - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v6
               with:
                   node-version: 22
                   cache: 'npm'
