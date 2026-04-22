@@ -1,7 +1,7 @@
 name: 'Asana Sync'
 on:
     pull_request_review:
-    pull_request_target:
+    pull_request:
         types:
             - opened
             - edited
@@ -10,11 +10,19 @@ on:
             - synchronize
             - review_requested
 
+permissions:
+    contents: read
+    pull-requests: read
+    issues: read
+
 jobs:
     sync:
+        if: github.event.pull_request.head.repo.full_name == github.repository
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
+              with:
+                  ref: ${{ github.event.pull_request.head.sha }}
             - uses: duckduckgo/action-asana-sync@v11
               with:
                   ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
