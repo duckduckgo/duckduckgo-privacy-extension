@@ -12,7 +12,7 @@ jobs:
         env:
             HAS_INTERNAL_REPO: ${{ secrets.GH_RO_PAT != '' }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v6
             - uses: actions/setup-node@v4
               with:
                   node-version: 22
@@ -20,7 +20,7 @@ jobs:
       
             - name: Checkout internal-github-asana-utils repo
               if: ${{ env.HAS_INTERNAL_REPO == 'true' }}
-              uses: actions/checkout@v4
+              uses: actions/checkout@v6
               with:
                   token: ${{ secrets.GH_RO_PAT }}
                   path: internal-github-asana-utils  
