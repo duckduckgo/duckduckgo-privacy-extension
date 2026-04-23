@@ -397,6 +397,31 @@
             },
             "writable": "true"
         },
+        "FedCM": {
+            "configurable": "true",
+            "enumerable": "true",
+            "value": {
+                "getProviderConfig": {
+                    "configurable": "true",
+                    "enumerable": "true",
+                    "value": "function(0)",
+                    "writable": "true"
+                },
+                "isSupported": {
+                    "configurable": "true",
+                    "enumerable": "true",
+                    "value": "function(0)",
+                    "writable": "true"
+                },
+                "processCredential": {
+                    "configurable": "true",
+                    "enumerable": "true",
+                    "value": "function(0)",
+                    "writable": "true"
+                }
+            },
+            "writable": "true"
+        },
         "Frictionless": {
             "configurable": "true",
             "enumerable": "true",

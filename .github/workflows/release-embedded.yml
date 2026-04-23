@@ -6,6 +6,12 @@ on:
             - 'main'
         paths:
             - 'browsers/embedded/manifest.json'
+    # workflow_dispatch for manual testing or debugging
+    workflow_dispatch:
+        inputs:
+            apple_task_gid:
+                description: 'Asana Apple task GID (set to test autoconsent flow, leave empty for standalone flow)'
+                required: false
 
 env:
     APPLE_EMBEDDED_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension.zip
@@ -38,15 +44,24 @@ jobs:
                   ZIP_PATH=$(ls build/embedded/release/embedded-release-*.zip)
                   echo "ZIP_PATH=$ZIP_PATH" >> $GITHUB_OUTPUT
 
-            - name: Resolve Asana task URL
-              id: asana
+            - name: Extract Autoconsent Apple PR metadata from the latest PR
+              # this will populate APPLE_BRANCH and APPLE_TASK_GID in case of autoconsent-triggered release
+              id: pr-metadata
               env:
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-              # extract the task URL from the last merged PR body: https://docs.github.com/en/rest/commits/commits?apiVersion=2022-11-28#list-pull-requests-associated-with-a-commit
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               run: |
-                  TASK_URL=$(gh api "/repos/${{ github.repository }}/commits/${{ github.sha }}/pulls" \
-                      --jq '.[0].body // ""' | grep -oE 'https://app\.asana\.com/[^ ]+' | head -1) || true
-                  echo "TASK_URL=${TASK_URL:-}" >> $GITHUB_OUTPUT
+                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                      TASK_GID="${{ inputs.apple_task_gid }}"
+                      if [ -n "$TASK_GID" ]; then
+                          BRANCH="update-autoconsent"
+                      else
+                          BRANCH="update-embedded-extension"
+                      fi
+                      echo "APPLE_TASK_GID=$TASK_GID" >> $GITHUB_OUTPUT
+                      echo "APPLE_BRANCH=$BRANCH" >> $GITHUB_OUTPUT
+                  else
+                      node scripts/embedded-release-metadata.js
+                  fi
 
             - name: Checkout Apple monorepo
               uses: actions/checkout@v6
@@ -55,23 +70,89 @@ jobs:
                   path: apple-monorepo/
                   token: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
 
+            - name: Prepare Apple target branch
+              working-directory: apple-monorepo
+              env:
+                  BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
+              run: |
+                  git config user.name "Dax the Deployer"
+                  git config user.email "dax@duckduckgo.com"
+                  # Fetch remote branch if it exists
+                  git fetch origin "$BRANCH" 2>/dev/null || true
+                  if [ "$BRANCH" = "update-autoconsent" ] && git rev-parse --verify "origin/$BRANCH" >/dev/null 2>&1; then
+                      # Autoconsent flow: the branch already has some changes from autoconsent automation
+                      git checkout "$BRANCH"
+                  else
+                      # Non-autoconsent flow: always start fresh from main
+                      git checkout -b "$BRANCH"
+                  fi
+
             - name: Copy embedded zip to Apple repo
               run: |
-                  TARGET_PATH="apple-monorepo/${{ env.APPLE_EMBEDDED_PATH }}"
-                  SOURCE_ZIP="${{ steps.find-zip.outputs.ZIP_PATH }}"
-                  cp "$SOURCE_ZIP" "$TARGET_PATH"
+                  cp "${{ steps.find-zip.outputs.ZIP_PATH }}" \
+                     "apple-monorepo/${{ env.APPLE_EMBEDDED_PATH }}"
 
-            - name: Create PR for Apple embedded extension
-              uses: peter-evans/create-pull-request@v7
-              with:
-                  path: apple-monorepo/
-                  add-paths: |
-                      ${{ env.APPLE_EMBEDDED_PATH }}
-                  commit-message: Update embedded extension to ${{ steps.version.outputs.VERSION }}
-                  branch: update-embedded-extension
-                  title: Update embedded extension to ${{ steps.version.outputs.VERSION }}
-                  body: |
-                      ${{ steps.asana.outputs.TASK_URL != '' && format('Task/Issue URL: {0}', steps.asana.outputs.TASK_URL) || '' }}
+            # we don't use peter-evans/create-pull-request action here because we need to push a new commit to the existing PR
+            - name: Commit and push to Apple target branch
+              id: apple-commit-push
+              working-directory: apple-monorepo
+              env:
+                  BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
+              run: |
+                  git add "${{ env.APPLE_EMBEDDED_PATH }}"
+                  if git diff --cached --quiet; then
+                      echo "No changes to commit"
+                      echo "PUSHED=false" >> $GITHUB_OUTPUT
+                  else
+                      git commit -m "Update embedded extension to ${{ steps.version.outputs.VERSION }}"
+                      # force push to the target branch to avoid conflicts with the existing PR (we want to overwrite)
+                      git push --force-with-lease -u origin "$BRANCH"
+                      echo "PUSHED=true" >> $GITHUB_OUTPUT
+                  fi
 
-                      Updates the embedded web extension to version ${{ steps.version.outputs.VERSION }}.
-                  token: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
+            - name: Find or create Apple PR
+              id: find-apple-pr
+              if: steps.apple-commit-push.outputs.PUSHED == 'true'
+              working-directory: apple-monorepo
+              env:
+                  GH_TOKEN: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
+                  BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
+              run: |
+                  PR_URL=$(gh pr list --head "$BRANCH" --state open --json url --jq '.[0].url // empty' 2>/dev/null || true)
+                  if [ -n "$PR_URL" ]; then
+                      echo "PULL_REQUEST_URL=$PR_URL" >> $GITHUB_OUTPUT
+                      exit 0
+                  fi
+
+                  # For the autoconsent flow, the PR must already exist (created by ddg-release.yml)
+                  if [ "$BRANCH" = "update-autoconsent" ]; then
+                      echo "::error::Expected PR on update-autoconsent branch but none found"
+                      exit 1
+                  fi
+
+                  # Non-autoconsent flow: create a new PR
+                  TITLE="Update embedded extension to ${{ steps.version.outputs.VERSION }}"
+                  COMMIT_URL="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"
+                  BODY=$(printf 'Updates the embedded web extension to version %s.\n\nTriggered by: [%s](%s)' \
+                      "${{ steps.version.outputs.VERSION }}" "$TITLE" "$COMMIT_URL")
+                  PR_URL=$(gh pr create --base main --head "$BRANCH" \
+                      --title "$TITLE" \
+                      --body "$BODY")
+                  echo "PULL_REQUEST_URL=$PR_URL" >> $GITHUB_OUTPUT
+
+            - name: Mark Apple PR as ready
+              if: steps.find-apple-pr.outputs.PULL_REQUEST_URL
+              working-directory: apple-monorepo
+              env:
+                  GH_TOKEN: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
+                  BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
+              run: gh pr ready "$BRANCH" || true
+
+            - name: Update Asana
+              if: steps.find-apple-pr.outputs.PULL_REQUEST_URL
+              env:
+                  ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
+                  APPLE_PR_URL: ${{ steps.find-apple-pr.outputs.PULL_REQUEST_URL }}
+                  APPLE_TASK_GID: ${{ steps.pr-metadata.outputs.APPLE_TASK_GID }}
+                  VERSION: ${{ steps.version.outputs.VERSION }}
+              run: node scripts/embedded-release-update-asana.js

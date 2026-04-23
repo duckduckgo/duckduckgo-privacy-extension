@@ -122,10 +122,11 @@ export default class CookiePromptManagement {
         this.getCpmState();
 
         // Set up alarm listener for summary pixel
-        browser.alarms.onAlarm.addListener((alarm) => {
-            this.cpmMessaging.logMessage(`alarm triggered: ${JSON.stringify(alarm)}`);
+        browser.alarms.onAlarm.addListener(async (alarm) => {
             if (alarm.name === CookiePromptManagement.SUMMARY_ALARM_NAME) {
-                this.sendSummaryPixel();
+                // WebKit has a bug where the alarm is not cleared automatically, so we have to clear it ourselves
+                await browser.alarms.clear(CookiePromptManagement.SUMMARY_ALARM_NAME);
+                await this.sendSummaryPixel();
             }
         });
 
@@ -388,7 +389,9 @@ export default class CookiePromptManagement {
                 const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(tabUrl);
                 if (!isEnabled) {
                     this.cpmMessaging.logMessage(`autoconsent disabled for site: ${tabUrl}`);
-                    this.firePixel('disabled-for-site');
+                    if (isMainFrame) {
+                        this.firePixel('disabled-for-site');
+                    }
                     return;
                 }
 

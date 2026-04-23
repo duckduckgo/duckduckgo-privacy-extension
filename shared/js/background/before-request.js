@@ -422,6 +422,15 @@ function isSameDomainRequest(tab, req) {
                 return lst;
             }, []);
             return ancestors.includes(tab.url);
+        } else if (req.tabId === -1) {
+            // For ServiceWorker initiated requests in Firefox, `documentUrl` is
+            // the URL of the script that created the ServiceWorker (unlike on
+            // Chrome where `initiator` is the script's origin).
+            try {
+                return new URL(req.documentUrl).origin === new URL(tab.url).origin;
+            } catch (e) {
+                return false;
+            }
         } else {
             return req.documentUrl === tab.url;
         }

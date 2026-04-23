@@ -3,10 +3,38 @@ import { test, expect, getManifestVersion } from './helpers/playwrightHarness';
 import { routeFromLocalhost } from './helpers/testPages';
 
 const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/;
+const duckDuckGoMockPage = `<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>DuckDuckGo Mock Page</title>
+    </head>
+    <body>
+        <main>DuckDuckGo mock</main>
+    </body>
+</html>`;
+
+function routeFromLocalhostWithDuckDuckGoMock(page) {
+    return routeFromLocalhost(page, (route) => {
+        const url = new URL(route.request().url());
+        if (url.hostname === 'duckduckgo.com') {
+            route.fulfill({
+                status: 200,
+                contentType: 'text/html; charset=utf-8',
+                body: duckDuckGoMockPage,
+                headers: {
+                    'cache-control': 'no-store',
+                },
+            });
+            return true;
+        }
+        return false;
+    });
+}
 
 async function loadPageInNewTab(context, url) {
     const page = await context.newPage();
-    routeFromLocalhost(page);
+    await routeFromLocalhostWithDuckDuckGoMock(page);
     await page.goto(url, { waitUntil: 'networkidle' });
     return page;
 }

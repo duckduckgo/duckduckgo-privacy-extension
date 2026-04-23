@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 const fs = require('fs');
-const Asana = require('asana');
 const path = require('path');
+const { setupAsana } = require('./asana-utils');
 
 const ASANA_ACCESS_TOKEN = process.env.ASANA_ACCESS_TOKEN;
 const version = process.env.VERSION;
@@ -25,22 +25,12 @@ const extensionVersionCustomFieldGid = '1204270899747122';
 
 let asana;
 
-function setupAsana() {
-    asana = Asana.Client.create({
-        defaultHeaders: {
-            'Asana-Enable': 'new_user_task_lists,new_project_templates,new_goal_memberships',
-        },
-    }).useAccessToken(ASANA_ACCESS_TOKEN);
-}
-
 function duplicateTemplateTask(templateTaskGid) {
-    const duplicateOption = {
-        include: ['notes', 'assignee', 'subtasks', 'projects'],
-        name: `Extension Release ${version}`,
-        opt_fields: 'html_notes',
-    };
-
-    return asana.tasks.duplicateTask(templateTaskGid, duplicateOption);
+    return asana.tasks.duplicateTask(
+        { data: { include: ['notes', 'assignee', 'subtasks', 'projects'], name: `Extension Release ${version}` } },
+        templateTaskGid,
+        { opt_fields: 'new_task,new_task.gid' },
+    );
 }
 
 const getTaskList = (tasks) =>
@@ -60,7 +50,7 @@ const getAssigneeGids = (releaseTasks) =>
     );
 
 const run = async () => {
-    setupAsana();
+    asana = setupAsana(ASANA_ACCESS_TOKEN);
 
     console.info('Getting list of release tasks');
     // get list of tasks in release section
@@ -75,9 +65,13 @@ const run = async () => {
 
     console.info('Asana on. Duplicating template task...');
 
-    const { new_task } = await duplicateTemplateTask(extensionTemplateTaskGid);
+    const {
+        data: { new_task },
+    } = await duplicateTemplateTask(extensionTemplateTaskGid);
 
-    const { html_notes: notes } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' });
+    const {
+        data: { html_notes: notes },
+    } = await asana.tasks.getTask(new_task.gid, { opt_fields: 'html_notes' });
 
     // create html list with <a>task</a> - @assignee
     const releaseNotes = `<ul>${getTaskList(releaseTasks)}</ul>`;
@@ -86,31 +80,30 @@ const run = async () => {
 
     console.info('Updating task html');
 
-    await asana.tasks.updateTask(new_task.gid, { html_notes: updatedNotes });
+    await asana.tasks.updateTask({ data: { html_notes: updatedNotes } }, new_task.gid);
 
     console.info('Moving task to Release section...');
 
-    await asana.tasks.addProjectForTask(new_task.gid, {
-        project: extensionProjectGid,
-        section: extensionReleaseSectionGid,
-    });
+    await asana.tasks.addProjectForTask({ data: { project: extensionProjectGid, section: extensionReleaseSectionGid } }, new_task.gid);
 
     console.info('Uploading files...');
 
     const uploadFile = async (pathString) => {
-        // attachments.createAttachmentForTask won't work, Asana suggests this
-        // https://github.com/Asana/node-asana/issues/220
-        const params = {
+        const fileBuffer = fs.readFileSync(pathString);
+        const fileName = path.basename(pathString);
+        const form = new FormData();
+        form.append('parent', new_task.gid);
+        form.append('file', new File([fileBuffer], fileName, { type: 'application/zip' }));
+
+        const resp = await fetch('https://app.asana.com/api/1.0/attachments', {
             method: 'POST',
-            url: `https://app.asana.com/api/1.0/tasks/${new_task.gid}/attachments`,
-            formData: {
-                file: fs.createReadStream(pathString),
-            },
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        };
-        return asana.dispatcher.dispatch(params, {});
+            headers: { Authorization: `Bearer ${ASANA_ACCESS_TOKEN}` },
+            body: form,
+        });
+        if (!resp.ok) {
+            throw new Error(`Asana attachment upload failed: ${resp.status} ${await resp.text()}`);
+        }
+        return resp.json();
     };
 
     await Promise.all(artifacts.map(uploadFile));
@@ -119,7 +112,7 @@ const run = async () => {
 
     const taskAssignees = getAssigneeGids(releaseTasks);
 
-    await asana.tasks.addFollowersForTask(new_task.gid, { followers: [...taskAssignees] });
+    await asana.tasks.addFollowersForTask({ data: { followers: [...taskAssignees] } }, new_task.gid);
 
     console.info('Assigning testing task to stakeholders...');
 
@@ -128,20 +121,19 @@ const run = async () => {
     const testingSubtask = subtasks.find((task) => task.name.includes('Extension Testing'));
 
     for (const taskAssignee of taskAssignees) {
-        const { new_task: duplicateTestingTask } = await asana.tasks.duplicateTask(testingSubtask.gid, {
-            name: 'Extension Testing',
-            include: ['notes', 'parent', 'subtasks'],
-        });
-        await asana.tasks.updateTask(duplicateTestingTask.gid, { assignee: taskAssignee });
+        const {
+            data: { new_task: duplicateTestingTask },
+        } = await asana.tasks.duplicateTask(
+            { data: { name: 'Extension Testing', include: ['notes', 'parent', 'subtasks'] } },
+            testingSubtask.gid,
+            { opt_fields: 'new_task,new_task.gid' },
+        );
+        await asana.tasks.updateTask({ data: { assignee: taskAssignee } }, duplicateTestingTask.gid);
     }
 
     console.info('Setting release version field for PR tasks...');
     for (const task of releaseTasks) {
-        await asana.tasks.updateTask(task.gid, {
-            custom_fields: {
-                [extensionVersionCustomFieldGid]: version,
-            },
-        });
+        await asana.tasks.updateTask({ data: { custom_fields: { [extensionVersionCustomFieldGid]: version } } }, task.gid);
     }
 
     console.info('All done. Enjoy! 🎉');
