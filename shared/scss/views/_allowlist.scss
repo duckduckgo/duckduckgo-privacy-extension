@@ -78,6 +78,10 @@
     cursor: default;
 }
 
+.allowlist-actions {
+    overflow: hidden;
+}
+
 .allowlist-show-add {
     height: 17px;
     color: vars.$blue;
