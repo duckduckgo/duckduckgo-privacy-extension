@@ -1,7 +1,7 @@
 import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
-import { listenForBreakageReport } from './helpers/pixels';
+import { listenForBreakageReport, pixelBrowserSuffix } from './helpers/pixels';
 
 test.describe('Broken site reports', () => {
     test('Sends broken site reports with current page context', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
@@ -15,7 +15,7 @@ test.describe('Broken site reports', () => {
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
         const pixel = await breakageReport;
         expect(pixel).toMatchObject({
-            name: 'epbf_chrome',
+            name: 'epbf' + pixelBrowserSuffix,
             params: {
                 adAttributionRequests: '',
                 atb: mockAtb.version,
@@ -72,7 +72,7 @@ test.describe('Broken site reports', () => {
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
         const pixel = await breakageReport;
         expect(pixel).toMatchObject({
-            name: 'epbf_chrome',
+            name: 'epbf' + pixelBrowserSuffix,
             params: {
                 adAttributionRequests: '',
                 atb: mockAtb.version,

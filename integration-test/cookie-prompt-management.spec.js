@@ -2,7 +2,7 @@ import { test, expect, getManifestVersion } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 import { routeFromLocalhost } from './helpers/testPages';
-import { logPixels } from './helpers/pixels';
+import { logPixels, pixelSuffix } from './helpers/pixels';
 
 const autoconsentTestPage = 'https://privacy-test-pages.site/features/autoconsent/';
 const bannerTestPage = 'https://privacy-test-pages.site/features/autoconsent/banner.html';
@@ -145,10 +145,9 @@ test.describe('Cookie Prompt Management', () => {
         await page.waitForTimeout(2000);
 
         // Verify that at least the init and done pixels were fired.
-        // Pixel names include browser suffix, e.g. "autoconsent_init_daily_extension_chrome"
-        const pixelNames = pixelRequests.map((p) => p.name);
-        expect(pixelNames.some((n) => n.includes('autoconsent_init_daily'))).toBeTruthy();
-        expect(pixelNames.some((n) => n.includes('autoconsent_popup-found_daily'))).toBeTruthy();
-        expect(pixelNames.some((n) => n.includes('autoconsent_done_daily'))).toBeTruthy();
+        const seenPixels = new Set(pixelRequests.map((p) => p.name));
+        expect(seenPixels.has('autoconsent_init_daily' + pixelSuffix)).toBe(true);
+        expect(seenPixels.has('autoconsent_popup-found_daily' + pixelSuffix)).toBe(true);
+        expect(seenPixels.has('autoconsent_done_daily' + pixelSuffix)).toBe(true);
     });
 });

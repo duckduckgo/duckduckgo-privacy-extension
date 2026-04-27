@@ -1,6 +1,6 @@
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
-import { logPixels } from './helpers/pixels';
+import { logPixels, pixelSuffix } from './helpers/pixels';
 import testCases from 'privacy-test-pages/adClickFlow/shared/testCases.json';
 
 if (testCases.length === 0) {
@@ -113,9 +113,7 @@ test.describe('Ad click blocking', () => {
                     step.expected.pixels.length,
                 );
                 for (let i = 0; i < step.expected.pixels.length; i++) {
-                    // Integration tests only run on Chrome so far, so this is a
-                    // safe assumption for now.
-                    step.expected.pixels[i].name += '_extension_chrome';
+                    step.expected.pixels[i].name += pixelSuffix;
 
                     if (step.expected.pixels[i]?.params?.appVersion === 'APP_VERSION') {
                         step.expected.pixels[i].params.appVersion = extensionVersion;
