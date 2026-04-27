@@ -62,7 +62,7 @@ module.exports = function () {
     <section class="${this.model.fireButtonEnabled ? '' : 'is-hidden'}">
         <ul class="default-list">
             <li>
-                <h2 class="menu-title fire-title">
+                <h2 class="menu-title">
                     ${t('options:fireButtonHeading.title')}
                 </h2>
                 <p class="menu-paragraph">
