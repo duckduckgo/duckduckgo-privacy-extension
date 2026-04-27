@@ -67,12 +67,12 @@ test.describe('Search Choice Tests', () => {
         expect(page.url()).not.toContain('noai.duckduckgo.com');
     });
 
-    // MV3: Playwright's context.route() intercepts start.duckduckgo.com before
-    // Chrome's DNR engine can redirect it (unlike duckduckgo.com/?q= which also
-    // matches ATB's DNR rule and goes through the network stack). The redirect
-    // works in actual Chrome; this is a test infrastructure limitation.
-    test('redirects start.duckduckgo.com when alternativeSearch is enabled', async ({ context, backgroundPage, page, manifestVersion }) => {
-        test.skip(manifestVersion === 3, 'DNR redirect not observable through Playwright context routes for start page');
+    // Playwright's context.route() intercepts start.duckduckgo.com before the
+    // extension's redirect mechanism can fire (DNR on MV3, webRequest on MV2).
+    // Unlike duckduckgo.com/?q= which also matches ATB's rules and goes through
+    // the network stack, start.duckduckgo.com has no other matching rule. The
+    // redirect works in actual Chrome; this is a test infrastructure limitation.
+    test.skip('redirects start.duckduckgo.com when alternativeSearch is enabled', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
         await mockSearchPages(context);
