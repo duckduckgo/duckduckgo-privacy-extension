@@ -4,7 +4,7 @@ const toggleButton = require('./shared/toggle-button.js');
 const t = window.DDG.base.i18n.t;
 
 module.exports = function () {
-    return bel`<section class="options-content__privacy divider-bottom">
+    return bel`<section class="options-content__privacy">
     <section class="divider-bottom">
         <ul class="default-list">
             <li class="options-content__gpc-enabled">
@@ -45,7 +45,7 @@ module.exports = function () {
             </li>
         </ul>
     </section>
-    <section class="divider-bottom${this.model.youtubeClickToLoadEnabled ? '' : ' is-hidden'}">
+    <section class="${this.model.youtubeClickToLoadEnabled ? 'divider-bottom' : 'is-hidden'}">
         <ul class="default-list">
             <li>
                 <h2 class="menu-title">
@@ -59,7 +59,7 @@ module.exports = function () {
             </li>
         </ul>
     </section>
-    <section class="${this.model.fireButtonEnabled ? '' : 'is-hidden'}">
+    <section class="${this.model.fireButtonEnabled ? 'divider-bottom' : 'is-hidden'}">
         <ul class="default-list">
             <li>
                 <h2 class="menu-title">
