@@ -3,7 +3,7 @@ const allowlistItems = require('./allowlist-items.js');
 const t = window.DDG.base.i18n.t;
 
 module.exports = function () {
-    return bel`<section class="options-content__allowlist">
+    return bel`<section class="options-content__allowlist divider-bottom">
     <h2 class="menu-title">${t('options:unprotectedSites.title')}</h2>
     <p class="menu-paragraph">${t('options:unprotectedSitesDesc.title')}</p>
     <ul class="default-list js-allowlist-container">
