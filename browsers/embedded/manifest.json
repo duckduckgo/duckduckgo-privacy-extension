@@ -1,7 +1,7 @@
 {
     "name": "DuckDuckGo Embedded Extension",
     "description": "Embedded extension for native app integration",
-    "version": "2026.4.22",
+    "version": "2026.4.28",
     "manifest_version": 3,
     "default_locale": "en",
     "background": {
