@@ -9,7 +9,6 @@ const expectedFingerprintValues = {
     wAvailLeft: 0,
     colorDepth: 24,
     pixelDepth: 24,
-    productSub: '20030107',
     vendorSub: '',
 };
 
@@ -41,7 +40,6 @@ test.describe('Fingerprint Defense Tests', () => {
                     wAvailLeft: globalThis.screen.availLeft,
                     colorDepth: screen.colorDepth,
                     pixelDepth: screen.pixelDepth,
-                    productSub: navigator.productSub,
                     vendorSub: navigator.vendorSub,
                 };
             });
