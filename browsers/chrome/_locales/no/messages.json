@@ -1,1 +1,11 @@
-{"appName":{"message":"DuckDuckGo Privacy Essentials"},"appDesc":{"message":"Personvern, forenklet. ***Tillatelser brukes til å blokkere skjulte sporingsmekanismer som finnes overalt.***"}}
+{
+    "appName" : {
+      "message" : "DuckDuckGo Privacy Essentials",
+      "description" : "Utvidelsens tittel i nettbutikken"
+    },
+    "appDesc" : {
+      "message" : "Beskytter dataene dine. Privat søk med valgfri AI, privat surfing og annonseblokkering.",
+      "description" : "Utvidelsens korte beskrivelse i nettbutikken"
+    }
+  }
+  

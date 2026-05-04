@@ -4,7 +4,7 @@
     "description" : "De titel van de extensie, weergegeven in de webwinkel"
   },
   "appDesc" : {
-    "message" : "⚡Beschermt je gegevens. Privézoekopdracht met optionele AI, privé browsen en advertentieblokkering.",
+    "message" : "Beschermt je gegevens. Privézoekopdracht met optionele AI, privé browsen en advertentieblokkering.",
     "description" : "De korte beschrijving van de extensie, weergegeven in de webwinkel"
   }
 }

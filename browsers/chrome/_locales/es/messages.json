@@ -4,7 +4,7 @@
     "description" : "El título de la extensión, que se muestra en la tienda web"
   },
   "appDesc" : {
-    "message" : "⚡Protege tus datos. Búsqueda privada con IA opcional, navegación privada y bloqueo de anuncios.",
+    "message" : "Protege tus datos. Búsqueda privada con IA opcional, navegación privada y bloqueo de anuncios.",
     "description" : "La breve descripción de la extensión, que se muestra en la tienda web"
   }
 }
