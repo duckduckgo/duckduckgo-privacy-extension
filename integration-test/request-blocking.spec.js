@@ -57,7 +57,9 @@ test.describe('Test request blocking', () => {
                 urls: {
                     'bad.third-party.site:block': {
                         action: 'block',
-                        url: 'https://bad.third-party.site/privacy-protections/request-blocking/block-me/script.js',
+                        // Note: The exact URL recorded depends on which
+                        //       request's webRequest event happened to fire first.
+                        url: expect.stringMatching(/^https:\/\/bad\.third-party\.site\/privacy-protections\/request-blocking\/block-me\//),
                         eTLDplus1: 'third-party.site',
                         pageUrl: 'https://privacy-test-pages.site/privacy-protections/request-blocking/',
                         entityName: 'Bad Third Party Site',
