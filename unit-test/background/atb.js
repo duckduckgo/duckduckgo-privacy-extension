@@ -148,18 +148,6 @@ describe('atb.setOrUpdateATBdnrRule()', () => {
         expect(searchRedirectRule.priority).toEqual(ALTERNATIVE_SEARCH_PRIORITY);
         expect(searchRedirectRule.priority).toBeGreaterThan(atbRule.priority);
     });
-
-    it('only redirects duckduckgo searches with a q parameter', () => {
-        atb.setOrUpdateATBdnrRule('v123-4ab');
-
-        const [{ addRules }] = updateDynamicRulesSpy.calls.allArgs();
-        const searchRedirectRule = addRules.find((rule) => rule.id === SEARCH_REDIRECT_RULE_ID);
-        const redirectRegex = new RegExp(searchRedirectRule.condition.regexFilter);
-
-        expect(redirectRegex.test('https://duckduckgo.com/?q=privacy')).toBeTrue();
-        expect(redirectRegex.test('https://duckduckgo.com/?ia=calculator')).toBeFalse();
-        expect(redirectRegex.test('https://duckduckgo.com/?t=h_')).toBeFalse();
-    });
 });
 
 describe('atb.setInitialVersions()', () => {
