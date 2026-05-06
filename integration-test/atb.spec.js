@@ -197,4 +197,26 @@ test.describe('search workflow', () => {
         expect(newSetAtb).toEqual(todaysAtb);
         expect(atb).toEqual('v123-1');
     });
+
+    test('should redirect searches to the alternative search subdomain when enabled', async ({ backgroundPage, page }) => {
+        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('alternativeSearch', 'noai'));
+
+        await page.goto('https://duckduckgo.com/?q=alternative-search-test', { waitUntil: 'networkidle' });
+
+        const redirectedUrl = new URL(page.url());
+        expect(redirectedUrl.hostname).toEqual('noai.duckduckgo.com');
+        expect(redirectedUrl.pathname).toEqual('/');
+        expect(redirectedUrl.searchParams.get('q')).toEqual('alternative-search-test');
+    });
+
+    test('should keep searches on duckduckgo.com when alternative search is disabled', async ({ backgroundPage, page }) => {
+        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('alternativeSearch', ''));
+
+        await page.goto('https://duckduckgo.com/?q=alternative-search-disabled-test', { waitUntil: 'networkidle' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/');
+        expect(searchUrl.searchParams.get('q')).toEqual('alternative-search-disabled-test');
+    });
 });
