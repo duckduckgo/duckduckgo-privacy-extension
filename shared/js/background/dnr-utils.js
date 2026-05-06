@@ -21,7 +21,6 @@ import settings from './settings';
 export const USER_ALLOWLIST_RULE_ID = 20001;
 export const ATB_PARAM_RULE_ID = 20003;
 export const NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID = 20006;
-export const ALTERNATIVE_SEARCH_RULE_ID = 20008;
 export const SEARCH_REDIRECT_RULE_ID = 20009;
 
 // Rule IDs for static session rules
@@ -47,7 +46,6 @@ const RESERVED_DYNAMIC_RULE_IDS = [
     USER_ALLOWLIST_RULE_ID,
     ATB_PARAM_RULE_ID,
     NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID,
-    ALTERNATIVE_SEARCH_RULE_ID,
 ];
 
 /**
@@ -124,12 +122,6 @@ export async function getMatchDetails(ruleId) {
     if (ruleId === ATB_PARAM_RULE_ID) {
         return {
             type: 'atbParam',
-        };
-    }
-
-    if (ruleId === ALTERNATIVE_SEARCH_RULE_ID) {
-        return {
-            type: 'alternativeSearch',
         };
     }
 
