@@ -1,5 +1,6 @@
 import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait, { forSetting } from './helpers/backgroundWait';
+import { logPageRequests } from './helpers/requests';
 
 test.describe('install workflow', () => {
     test('postinstall page: should open the postinstall page correctly', async ({ context, page }) => {
@@ -15,51 +16,62 @@ test.describe('install workflow', () => {
     });
 
     test.describe('atb values', () => {
+        let extiRequestFired;
+        let onRequest;
+        let cleanup;
+
         test.beforeEach(async ({ backgroundNetworkContext, backgroundPage }) => {
-            // wait for the exti call to go out
-            await new Promise((resolve) => {
-                const extiListener = (request) => {
-                    if (request.url().match(/exti/)) {
-                        resolve();
-                        backgroundNetworkContext.off('request', extiListener);
-                    }
-                };
-                backgroundNetworkContext.on('request', extiListener);
+            let resolveExti;
+            let initialExtiFired;
+            onRequest = null;
+
+            // Set up the request listener and wait for the initial exti.
+            // Subsequent requests are forwarded to the test's onRequest hook.
+            ({ promise: initialExtiFired, resolve: resolveExti } = Promise.withResolvers());
+            cleanup = await logPageRequests(backgroundPage, backgroundNetworkContext, [], (request) => {
+                if (/exti/.test(request.url.href)) {
+                    resolveExti();
+                }
+                if (onRequest) {
+                    onRequest(request);
+                }
             });
+            await initialExtiFired;
+
             // clear atb settings
             await backgroundPage.evaluate(() => {
                 globalThis.dbg.settings.removeSetting('atb');
                 globalThis.dbg.settings.removeSetting('set_atb');
                 globalThis.dbg.settings.removeSetting('extiSent');
             });
+
+            // Set up the extiRequestFired Promise ready for the tests to use.
+            ({ promise: extiRequestFired, resolve: resolveExti } = Promise.withResolvers());
         });
 
-        test("should get its ATB param from atb.js when there's no install success page", async ({
-            page,
-            backgroundPage,
-            backgroundNetworkContext,
-        }) => {
+        test.afterEach(() => {
+            cleanup();
+        });
+
+        test("should get its ATB param from atb.js when there's no install success page", async ({ backgroundPage }) => {
             // listen for outgoing atb and exti calls
             let numAtbCalled = 0;
             let numExtiCalled = 0;
-            backgroundNetworkContext.on('request', (request) => {
-                const url = request.url();
+            onRequest = (request) => {
+                const url = request.url.href;
                 if (url.match(/atb\.js/)) {
                     numAtbCalled += 1;
                 } else if (url.match(/exti/)) {
                     numExtiCalled += 1;
                     expect(url).toContain(`atb=${mockAtb.version}`);
                 }
-            });
+            };
 
             // try get ATB params
             await backgroundPage.evaluate(async () => globalThis.dbg.atb.updateATBValues(await globalThis.dbg.Wrapper.getDDGTabUrls()));
 
             // wait for an exti call
-            // eslint-disable-next-line no-unmodified-loop-condition
-            while (numExtiCalled < 0) {
-                page.waitForTimeout(100);
-            }
+            await extiRequestFired;
 
             const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'));
             const setAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
@@ -74,29 +86,22 @@ test.describe('install workflow', () => {
             expect(numExtiCalled).toEqual(1);
         });
 
-        test('should get its ATB param from the success page when one is present', async ({
-            page,
-            backgroundNetworkContext,
-            backgroundPage,
-        }) => {
+        test('should get its ATB param from the success page when one is present', async ({ page, backgroundPage }) => {
             let numExtiCalled = 0;
-            backgroundNetworkContext.on('request', (request) => {
-                const url = request.url();
+            onRequest = (request) => {
+                const url = request.url.href;
                 if (url.match(/exti/)) {
                     numExtiCalled += 1;
                     expect(url).toContain('atb=v123-4');
                 }
-            });
+            };
 
             // open a success page and wait for it to have finished loading
             await page.goto('https://duckduckgo.com/?natb=v123-4ab&cp=atbhc', { waitUntil: 'networkidle' });
 
             // try get ATB params again
             await backgroundPage.evaluate(async () => globalThis.dbg.atb.updateATBValues(await globalThis.dbg.Wrapper.getDDGTabUrls()));
-            // eslint-disable-next-line no-unmodified-loop-condition
-            while (numExtiCalled < 0) {
-                page.waitForTimeout(100);
-            }
+            await extiRequestFired;
 
             const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'));
             const setAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
