@@ -9,7 +9,7 @@ const parseUserAgentString = require('../shared-utils/parse-user-agent-string');
 const load = require('./load');
 const browserWrapper = require('./wrapper');
 const { ATB_PARAM_RULE_ID, SEARCH_REDIRECT_RULE_ID } = require('./dnr-utils');
-const { ATB_PARAM_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
+const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 const { generateDNRRule } = require('@duckduckgo/ddg2dnr/lib/utils');
 
 const ATB_ERROR_COHORT = 'v1-1';
@@ -238,7 +238,7 @@ const ATB = (() => {
                 addRules.push(
                     generateDNRRule({
                         id: SEARCH_REDIRECT_RULE_ID,
-                        priority: ATB_PARAM_PRIORITY + 1,
+                        priority: ALTERNATIVE_SEARCH_PRIORITY,
                         actionType: 'redirect',
                         redirect: {
                             transform: {

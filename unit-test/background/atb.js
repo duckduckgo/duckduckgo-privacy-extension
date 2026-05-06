@@ -2,6 +2,8 @@ import browser from 'webextension-polyfill';
 const atb = require('../../shared/js/background/atb').default;
 const settings = require('../../shared/js/background/settings');
 const load = require('../../shared/js/background/load');
+const { ATB_PARAM_RULE_ID, SEARCH_REDIRECT_RULE_ID } = require('../../shared/js/background/dnr-utils');
+const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 
 const settingHelper = require('../helpers/settings');
 
@@ -118,6 +120,45 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
             expect(result).toBeTrue();
             expect(url.href).toEqual(test.expected);
         });
+    });
+});
+
+describe('atb.setOrUpdateATBdnrRule()', () => {
+    let updateDynamicRulesSpy;
+
+    beforeEach(() => {
+        settingHelper.stub({
+            atb: 'v123-4ab',
+            alternativeSearch: 'noai',
+        });
+        updateDynamicRulesSpy = spyOn(chrome.declarativeNetRequest, 'updateDynamicRules').and.resolveTo();
+    });
+
+    it('creates ATB and alternative search rules with explicit precedence', () => {
+        atb.setOrUpdateATBdnrRule('v123-4ab');
+
+        expect(updateDynamicRulesSpy).toHaveBeenCalledTimes(1);
+        const [{ addRules }] = updateDynamicRulesSpy.calls.allArgs();
+        expect(addRules.length).toEqual(2);
+
+        const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
+        const searchRedirectRule = addRules.find((rule) => rule.id === SEARCH_REDIRECT_RULE_ID);
+
+        expect(atbRule.priority).toEqual(ATB_PARAM_PRIORITY);
+        expect(searchRedirectRule.priority).toEqual(ALTERNATIVE_SEARCH_PRIORITY);
+        expect(searchRedirectRule.priority).toBeGreaterThan(atbRule.priority);
+    });
+
+    it('only redirects duckduckgo searches with a q parameter', () => {
+        atb.setOrUpdateATBdnrRule('v123-4ab');
+
+        const [{ addRules }] = updateDynamicRulesSpy.calls.allArgs();
+        const searchRedirectRule = addRules.find((rule) => rule.id === SEARCH_REDIRECT_RULE_ID);
+        const redirectRegex = new RegExp(searchRedirectRule.condition.regexFilter);
+
+        expect(redirectRegex.test('https://duckduckgo.com/?q=privacy')).toBeTrue();
+        expect(redirectRegex.test('https://duckduckgo.com/?ia=calculator')).toBeFalse();
+        expect(redirectRegex.test('https://duckduckgo.com/?t=h_')).toBeFalse();
     });
 });
 

@@ -42,7 +42,12 @@ export const ruleIdRangeByConfigName = {
 };
 
 // Valid dynamic rule IDs - others will be removed on extension start
-const RESERVED_DYNAMIC_RULE_IDS = [USER_ALLOWLIST_RULE_ID, ATB_PARAM_RULE_ID, NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID];
+const RESERVED_DYNAMIC_RULE_IDS = [
+    USER_ALLOWLIST_RULE_ID,
+    ATB_PARAM_RULE_ID,
+    NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID,
+    SEARCH_REDIRECT_RULE_ID,
+];
 
 /**
  * Find an existing session or dynamic declarativeNetRequest rule with the given rule ID
