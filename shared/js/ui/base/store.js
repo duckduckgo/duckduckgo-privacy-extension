@@ -37,9 +37,29 @@
 
 // Dependencies
 const { isPlainObject } = require('is-plain-object');
-const deepFreeze = require('deep-freeze');
 const EventEmitter2 = require('eventemitter2');
 const notifiers = require('./notifiers.js');
+
+/**
+ * Recursively freezes objects and arrays to keep notifications immutable.
+ * Mirrors the behavior we previously relied on from `deep-freeze`.
+ * @param {any} value
+ * @returns {any}
+ */
+function deepFreeze(value) {
+    Object.freeze(value);
+    Object.getOwnPropertyNames(value).forEach((property) => {
+        if (
+            Object.prototype.hasOwnProperty.call(value, property) &&
+            value[property] !== null &&
+            (typeof value[property] === 'object' || typeof value[property] === 'function') &&
+            !Object.isFrozen(value[property])
+        ) {
+            deepFreeze(value[property]);
+        }
+    });
+    return value;
+}
 
 /**
  * .register() creates a notifier function for each caller.

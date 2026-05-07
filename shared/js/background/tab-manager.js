@@ -18,7 +18,14 @@ const { getCurrentTab } = require('./utils');
 
 // These tab properties are preserved when a new tab Object replaces an existing
 // one for the same tab ID.
-const persistentTabProperties = ['ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction', 'userRefreshCount'];
+const persistentTabProperties = [
+    'ampUrl',
+    'cleanAmpUrl',
+    'dnrRuleIdsByDisabledClickToLoadRuleAction',
+    'urlParametersRemoved',
+    'urlParametersRemovedUrl',
+    'userRefreshCount',
+];
 
 class TabManager {
     constructor() {

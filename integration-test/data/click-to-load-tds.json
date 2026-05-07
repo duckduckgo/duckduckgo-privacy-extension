@@ -38,36 +38,6 @@
                     "action": "block-ctl-fb"
                 },
                 {
-                    "rule": "facebook\\.com\\/tr\\/",
-                    "fingerprinting": 0,
-                    "cookies": 0.000543,
-                    "comment": "pixel"
-                },
-                {
-                    "rule": "facebook\\.com\\/tr",
-                    "fingerprinting": 0,
-                    "cookies": 0,
-                    "comment": "pixel"
-                },
-                {
-                    "rule": "facebook\\.com\\/photo\\.php",
-                    "fingerprinting": 0,
-                    "cookies": 0,
-                    "comment": "pixel"
-                },
-                {
-                    "rule": "facebook\\.com\\/ajax\\/bz",
-                    "fingerprinting": 0,
-                    "cookies": 0,
-                    "comment": "pixel"
-                },
-                {
-                    "rule": "facebook\\.com\\/method\\/links\\.getStats",
-                    "fingerprinting": 0,
-                    "cookies": 0,
-                    "comment": "pixel"
-                },
-                {
                     "rule": "facebook\\.com\\/",
                     "action": "block-ctl-fb"
                 }
