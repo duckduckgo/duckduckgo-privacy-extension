@@ -3,7 +3,7 @@
 ## Introduction
 
 This is a library and command line utility to generate the [declarativeNetRequest][1]
-rulesets necessary for the [DuckDuckGo Privacy Essentials extension][2].
+rulesets necessary for the [DuckDuckGo Search & Tracker Protection extension][2].
 
 
 ## Setup
