@@ -1,4 +1,5 @@
 import browser from 'webextension-polyfill';
+chrome.runtime.getManifest = () => ({ version: '1234.56', manifest_version: 3 });
 const atb = require('../../shared/js/background/atb').default;
 const settings = require('../../shared/js/background/settings');
 const load = require('../../shared/js/background/load');
@@ -138,7 +139,7 @@ describe('atb.setOrUpdateATBdnrRule()', () => {
         atb.setOrUpdateATBdnrRule('v123-4ab');
 
         expect(updateDynamicRulesSpy).toHaveBeenCalledTimes(1);
-        const [{ addRules }] = updateDynamicRulesSpy.calls.allArgs();
+        const [[{ addRules }]] = updateDynamicRulesSpy.calls.allArgs();
         expect(addRules.length).toEqual(2);
 
         const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
