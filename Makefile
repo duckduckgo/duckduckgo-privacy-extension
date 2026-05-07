@@ -109,7 +109,7 @@ chrome-beta-zip: prepare-chrome-beta chrome-release-zip
 .PHONY: chrome-beta-zip
 
 prepare-chrome-beta:
-	sed 's/__MSG_appName__/DuckDuckGo Search & Tracker Protection Beta/' ./browsers/chrome/manifest.json > build/chrome/release/manifest.json
+	sed 's/__MSG_appName__/DuckDuckGo Search \& Tracker Protection Beta/' ./browsers/chrome/manifest.json > build/chrome/release/manifest.json
 	cp -r build/chrome/release/img/beta/* build/chrome/release/img/
 
 .PHONY: prepare-chrome-beta
