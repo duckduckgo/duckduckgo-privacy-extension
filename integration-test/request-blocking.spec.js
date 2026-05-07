@@ -100,14 +100,18 @@ test.describe('Test request blocking', () => {
         }, testHost);
         const { pageRequests, pageResults } = await runRequestBlockingTest(backgroundPage, page, testSite);
 
-        // Verify that no logged requests were allowed.
+        // Verify that only ServiceWorker initiated requests were allowed.
         for (const { url, method, type, status } of pageRequests) {
             const description = `URL: ${url}, Method: ${method}, Type: ${type}`;
-            expect(status, description).toEqual('blocked');
+            if (url.search.includes('serviceworker-')) {
+                expect(status, description).toEqual('allowed');
+            } else {
+                expect(status, description).toEqual('blocked');
+            }
         }
 
-        // Check that the test page itself agrees that no requests were
-        // allowed.
+        // Check that the test page itself agrees that only ServiceWorker
+        // initiated requests were allowed.
         for (const { id, category, status } of pageResults) {
             const description = `ID: ${id}, Category: ${category}`;
             if (id === 'serviceworker-fetch') {
