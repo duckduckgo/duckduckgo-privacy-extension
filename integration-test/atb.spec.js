@@ -1,6 +1,7 @@
 import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait, { forSetting } from './helpers/backgroundWait';
 import { logPageRequests } from './helpers/requests';
+import { setUseNoAiSearch } from './search-choice.spec';
 
 test.describe('install workflow', () => {
     test('postinstall page: should open the postinstall page correctly', async ({ context, page }) => {
@@ -204,7 +205,7 @@ test.describe('search workflow', () => {
     });
 
     test('should redirect searches to the no AI search domain when enabled', async ({ backgroundPage, page }) => {
-        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('useNoAiSearch', true));
+        await setUseNoAiSearch(backgroundPage, true);
 
         await page.goto('https://duckduckgo.com/?q=alternative-search-test', { waitUntil: 'networkidle' });
 
@@ -215,7 +216,7 @@ test.describe('search workflow', () => {
     });
 
     test('should keep searches on duckduckgo.com when no AI search is disabled', async ({ backgroundPage, page }) => {
-        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('useNoAiSearch', false));
+        await setUseNoAiSearch(backgroundPage, false);
 
         await page.goto('https://duckduckgo.com/?q=alternative-search-disabled-test', { waitUntil: 'networkidle' });
 

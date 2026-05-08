@@ -22,7 +22,7 @@ function mockSearchPages(context) {
  * The setting update is async (dispatches event after storage sync), so the
  * DNR rule isn't installed immediately.
  */
-async function setUseNoAiSearch(backgroundPage, value) {
+export async function setUseNoAiSearch(backgroundPage, value) {
     await backgroundPage.evaluate(async (val) => {
         globalThis.dbg.settings.updateSetting('useNoAiSearch', val);
         // Wait for the storage sync + event dispatch + DNR rule install to complete.
