@@ -35,6 +35,12 @@
     padding: 0px 0px 1px 0px;
 }
 
+.options-content__fire-button {
+    .default-list > .fire-button-toggle {
+        margin-top: 24px;
+    }
+}
+
 button:disabled {
     background-color: vars.$color--light-slate;
 }

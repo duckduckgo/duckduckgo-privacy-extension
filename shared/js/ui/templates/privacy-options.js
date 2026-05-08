@@ -59,7 +59,7 @@ module.exports = function () {
             </li>
         </ul>
     </section>
-    <section class="${this.model.fireButtonEnabled ? 'divider-bottom' : 'is-hidden'}">
+    <section class="${this.model.fireButtonEnabled ? 'options-content__fire-button divider-bottom' : 'options-content__fire-button is-hidden'}">
         <ul class="default-list">
             <li>
                 <h2 class="menu-title">
