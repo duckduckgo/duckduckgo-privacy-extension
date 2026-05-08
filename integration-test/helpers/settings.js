@@ -1,4 +1,3 @@
-const SEARCH_REDIRECT_RULE_ID = 20009;
 
 /**
  * Update the useNoAiSearch setting and wait for the DNR rule to be applied.
@@ -7,6 +6,7 @@ const SEARCH_REDIRECT_RULE_ID = 20009;
  */
 export async function setUseNoAiSearch(backgroundPage, value) {
     await backgroundPage.evaluate(async (val) => {
+        const SEARCH_REDIRECT_RULE_ID = 20009;
         globalThis.dbg.settings.updateSetting('useNoAiSearch', val);
         // Wait for the storage sync + event dispatch + DNR rule install to complete.
         if (chrome.declarativeNetRequest?.getDynamicRules) {
