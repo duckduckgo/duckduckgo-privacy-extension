@@ -203,8 +203,8 @@ test.describe('search workflow', () => {
         expect(atb).toEqual('v123-1');
     });
 
-    test('should redirect searches to the alternative search subdomain when enabled', async ({ backgroundPage, page }) => {
-        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('alternativeSearch', 'noai'));
+    test('should redirect searches to the no AI search domain when enabled', async ({ backgroundPage, page }) => {
+        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('useNoAiSearch', true));
 
         await page.goto('https://duckduckgo.com/?q=alternative-search-test', { waitUntil: 'networkidle' });
 
@@ -214,8 +214,8 @@ test.describe('search workflow', () => {
         expect(redirectedUrl.searchParams.get('q')).toEqual('alternative-search-test');
     });
 
-    test('should keep searches on duckduckgo.com when alternative search is disabled', async ({ backgroundPage, page }) => {
-        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('alternativeSearch', ''));
+    test('should keep searches on duckduckgo.com when no AI search is disabled', async ({ backgroundPage, page }) => {
+        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('useNoAiSearch', false));
 
         await page.goto('https://duckduckgo.com/?q=alternative-search-disabled-test', { waitUntil: 'networkidle' });
 

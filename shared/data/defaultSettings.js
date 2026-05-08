@@ -16,5 +16,5 @@ module.exports = {
     lastTdsUpdate: 0,
     fireButtonClearHistoryEnabled: true,
     fireButtonTabClearEnabled: true,
-    alternativeSearch: '',
+    useNoAiSearch: false,
 };

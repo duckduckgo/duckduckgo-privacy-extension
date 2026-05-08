@@ -37,7 +37,7 @@ module.exports = function () {
             <li>
                 <h2 class="menu-title">
                     ${t('options:noAiMode.title')}
-                    ${toggleButton(this.model.noAiMode, 'js-options-no-ai-mode', 'noAiMode')}
+                    ${toggleButton(this.model.useNoAiSearch, 'js-options-no-ai-mode', 'useNoAiSearch')}
                 </h2>
                 <p class="menu-paragraph">
                     ${t('options:noAiModeDesc.title')}

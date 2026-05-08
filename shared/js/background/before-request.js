@@ -141,14 +141,14 @@ function handleRequest(requestData) {
         // add atb params only to main_frame
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL);
 
-        // apply alternative search redirect (e.g. noai.duckduckgo.com)
+        // apply no AI search redirect (noai.duckduckgo.com)
         const shouldRedirectSearch =
             mainFrameRequestURL.hostname === 'duckduckgo.com' &&
             mainFrameRequestURL.pathname === '/' &&
             mainFrameRequestURL.searchParams.has('q') &&
-            settings.getSetting('alternativeSearch') !== '';
+            settings.getSetting('useNoAiSearch') === true;
         if (shouldRedirectSearch) {
-            mainFrameRequestURL.hostname = `${settings.getSetting('alternativeSearch')}.duckduckgo.com`;
+            mainFrameRequestURL.hostname = 'noai.duckduckgo.com';
         }
 
         if (urlParametersRemovedForThisRequest || ampRedirected || atbParametersAdded || shouldRedirectSearch) {

@@ -216,7 +216,7 @@ const ATB = (() => {
             if (!atb || manifestVersion !== 3) {
                 return;
             }
-            const alternativeSearchSubdomain = settings.getSetting('alternativeSearch') || '';
+            const useNoAiSearch = settings.getSetting('useNoAiSearch') === true;
 
             const atbRule = generateDNRRule({
                 id: ATB_PARAM_RULE_ID,
@@ -234,7 +234,7 @@ const ATB = (() => {
                 regexFilter: regExpAboutPage.source,
             });
             const addRules = [atbRule];
-            if (alternativeSearchSubdomain) {
+            if (useNoAiSearch) {
                 addRules.push(
                     generateDNRRule({
                         id: SEARCH_REDIRECT_RULE_ID,
@@ -242,7 +242,7 @@ const ATB = (() => {
                         actionType: 'redirect',
                         redirect: {
                             transform: {
-                                host: `${alternativeSearchSubdomain}.duckduckgo.com`,
+                                host: 'noai.duckduckgo.com',
                             },
                         },
                         resourceTypes: ['main_frame'],
@@ -298,7 +298,7 @@ settings.ready().then(() => {
         ATB.setOrUpdateATBdnrRule(atb);
     });
     settings.onSettingUpdate.addEventListener('set_atb', updateUninstallURL);
-    settings.onSettingUpdate.addEventListener('alternativeSearch', () => {
+    settings.onSettingUpdate.addEventListener('useNoAiSearch', () => {
         ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'));
     });
 });

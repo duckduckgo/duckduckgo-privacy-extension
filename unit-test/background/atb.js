@@ -130,7 +130,7 @@ describe('atb.setOrUpdateATBdnrRule()', () => {
     beforeEach(() => {
         settingHelper.stub({
             atb: 'v123-4ab',
-            alternativeSearch: 'noai',
+            useNoAiSearch: true,
         });
         updateDynamicRulesSpy = spyOn(chrome.declarativeNetRequest, 'updateDynamicRules').and.resolveTo();
     });

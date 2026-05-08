@@ -9,7 +9,7 @@ function PrivacyOptions(attrs) {
     attrs.youtubePreviewsEnabled = false;
     attrs.fireButtonClearHistoryEnabled = true;
     attrs.fireButtonTabClearEnabled = true;
-    attrs.noAiMode = false;
+    attrs.useNoAiSearch = false;
 
     Parent.call(this, attrs);
 }
@@ -21,11 +21,7 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         if (Object.hasOwnProperty.call(this, k)) {
             this[k] = !this[k];
             console.log(`PrivacyOptions model toggle ${k} is now ${this[k]}`);
-            if (k === 'noAiMode') {
-                this.sendMessage('updateSetting', { name: 'alternativeSearch', value: this[k] ? 'noai' : '' });
-            } else {
-                this.sendMessage('updateSetting', { name: k, value: this[k] });
-            }
+            this.sendMessage('updateSetting', { name: k, value: this[k] });
         }
     },
 
@@ -42,7 +38,7 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         this.fireButtonEnabled = BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2';
         this.fireButtonClearHistoryEnabled = settings.fireButtonClearHistoryEnabled;
         this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled;
-        this.noAiMode = settings.alternativeSearch === 'noai';
+        this.useNoAiSearch = !!settings.useNoAiSearch;
     },
 });
 

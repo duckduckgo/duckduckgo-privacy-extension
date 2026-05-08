@@ -18,13 +18,13 @@ function mockSearchPages(context) {
 }
 
 /**
- * Update the alternativeSearch setting and wait for the DNR rule to be applied.
+ * Update the useNoAiSearch setting and wait for the DNR rule to be applied.
  * The setting update is async (dispatches event after storage sync), so the
  * DNR rule isn't installed immediately.
  */
-async function setAlternativeSearch(backgroundPage, value) {
+async function setUseNoAiSearch(backgroundPage, value) {
     await backgroundPage.evaluate(async (val) => {
-        globalThis.dbg.settings.updateSetting('alternativeSearch', val);
+        globalThis.dbg.settings.updateSetting('useNoAiSearch', val);
         // Wait for the storage sync + event dispatch + DNR rule install to complete.
         await new Promise((resolve) => setTimeout(resolve, 1000));
     }, value);
@@ -47,21 +47,21 @@ async function gotoAndExpectRedirect(page, url, expectedUrlPattern) {
 }
 
 test.describe('Search Choice Tests', () => {
-    test('redirects search to noai.duckduckgo.com when alternativeSearch is enabled', async ({ context, backgroundPage, page }) => {
+    test('redirects search to noai.duckduckgo.com when useNoAiSearch is enabled', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
         await mockSearchPages(context);
 
-        await setAlternativeSearch(backgroundPage, 'noai');
+        await setUseNoAiSearch(backgroundPage, true);
         await gotoAndExpectRedirect(page, 'https://duckduckgo.com/?q=test', /noai\.duckduckgo\.com\/\?q=test/);
     });
 
-    test('does not redirect when alternativeSearch is disabled', async ({ context, backgroundPage, page }) => {
+    test('does not redirect when useNoAiSearch is disabled', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
         await mockSearchPages(context);
 
-        await setAlternativeSearch(backgroundPage, '');
+        await setUseNoAiSearch(backgroundPage, false);
         await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' });
         expect(page.url()).toContain('duckduckgo.com/?q=test');
         expect(page.url()).not.toContain('noai.duckduckgo.com');
@@ -72,12 +72,12 @@ test.describe('Search Choice Tests', () => {
     // Unlike duckduckgo.com/?q= which also matches ATB's rules and goes through
     // the network stack, start.duckduckgo.com has no other matching rule. The
     // redirect works in actual Chrome; this is a test infrastructure limitation.
-    test.skip('redirects start.duckduckgo.com when alternativeSearch is enabled', async ({ context, backgroundPage, page }) => {
+    test.skip('redirects start.duckduckgo.com when useNoAiSearch is enabled', async ({ context, backgroundPage, page }) => {
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
         await mockSearchPages(context);
 
-        await setAlternativeSearch(backgroundPage, 'noai');
+        await setUseNoAiSearch(backgroundPage, true);
         await gotoAndExpectRedirect(page, 'https://start.duckduckgo.com/', /noai\.duckduckgo\.com/);
     });
 
@@ -86,7 +86,7 @@ test.describe('Search Choice Tests', () => {
         await backgroundWait.forAllConfiguration(backgroundPage);
         await mockSearchPages(context);
 
-        await setAlternativeSearch(backgroundPage, 'noai');
+        await setUseNoAiSearch(backgroundPage, true);
         await page.goto('https://duckduckgo.com/about', { waitUntil: 'networkidle' });
         expect(page.url()).toContain('duckduckgo.com/about');
         expect(page.url()).not.toContain('noai.duckduckgo.com');
