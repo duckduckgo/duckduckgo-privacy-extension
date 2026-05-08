@@ -1,7 +1,7 @@
 import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait, { forSetting } from './helpers/backgroundWait';
 import { logPageRequests } from './helpers/requests';
-import { setUseNoAiSearch } from './search-choice.spec';
+import { setUseNoAiSearch } from './helpers/settings';
 
 test.describe('install workflow', () => {
     test('postinstall page: should open the postinstall page correctly', async ({ context, page }) => {
