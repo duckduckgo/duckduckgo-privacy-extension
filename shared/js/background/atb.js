@@ -246,7 +246,6 @@ const ATB = (() => {
                             },
                         },
                         resourceTypes: ['main_frame'],
-                        requestDomains: ['duckduckgo.com'],
                         urlFilter: '||duckduckgo.com/?',
                     }),
                 );
