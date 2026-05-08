@@ -213,6 +213,7 @@ test.describe('search workflow', () => {
         expect(redirectedUrl.hostname).toEqual('noai.duckduckgo.com');
         expect(redirectedUrl.pathname).toEqual('/');
         expect(redirectedUrl.searchParams.get('q')).toEqual('alternative-search-test');
+        expect(redirectedUrl.searchParams.get('atb')).toEqual(todaysAtb);
     });
 
     test('should keep searches on duckduckgo.com when no AI search is disabled', async ({ backgroundPage, page }) => {
@@ -224,5 +225,6 @@ test.describe('search workflow', () => {
         expect(searchUrl.hostname).toEqual('duckduckgo.com');
         expect(searchUrl.pathname).toEqual('/');
         expect(searchUrl.searchParams.get('q')).toEqual('alternative-search-disabled-test');
+        expect(searchUrl.searchParams.get('atb')).toEqual(todaysAtb);
     });
 });
