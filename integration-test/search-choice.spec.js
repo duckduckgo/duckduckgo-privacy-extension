@@ -1,8 +1,8 @@
-import { SEARCH_REDIRECT_RULE_ID } from '@duckduckgo/ddg2dnr/lib/dnr-utils';
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 
 const searchPage = '<html><body>search</body></html>';
+const SEARCH_REDIRECT_RULE_ID = 20009;
 
 function mockSearchPages(context) {
     return context.route(
