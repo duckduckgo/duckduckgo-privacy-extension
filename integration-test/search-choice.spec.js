@@ -1,3 +1,4 @@
+import { SEARCH_REDIRECT_RULE_ID } from '@duckduckgo/ddg2dnr/lib/dnr-utils';
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 
@@ -28,7 +29,6 @@ export async function setUseNoAiSearch(backgroundPage, value) {
         // Wait for the storage sync + event dispatch + DNR rule install to complete.
         if (chrome.declarativeNetRequest?.getDynamicRules) {
             const want = val;
-            // eslint-disable-next-line no-constant-condition
             while (true) {
                 const rules = await chrome.declarativeNetRequest.getDynamicRules();
                 if (rules.some((r) => r.id === SEARCH_REDIRECT_RULE_ID) === want) return;
