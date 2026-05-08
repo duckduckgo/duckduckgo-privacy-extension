@@ -26,7 +26,15 @@ export async function setUseNoAiSearch(backgroundPage, value) {
     await backgroundPage.evaluate(async (val) => {
         globalThis.dbg.settings.updateSetting('useNoAiSearch', val);
         // Wait for the storage sync + event dispatch + DNR rule install to complete.
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        if (chrome.declarativeNetRequest?.getDynamicRules) {
+            const want = val;
+            // eslint-disable-next-line no-constant-condition
+            while (true) {
+                const rules = await chrome.declarativeNetRequest.getDynamicRules();
+                if (rules.some((r) => r.id === SEARCH_REDIRECT_RULE_ID) === want) return;
+                await new Promise((resolve) => setTimeout(resolve, 25));
+            }
+        }
     }, value);
 }
 
@@ -65,20 +73,6 @@ test.describe('Search Choice Tests', () => {
         await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' });
         expect(page.url()).toContain('duckduckgo.com/?q=test');
         expect(page.url()).not.toContain('noai.duckduckgo.com');
-    });
-
-    // Playwright's context.route() intercepts start.duckduckgo.com before the
-    // extension's redirect mechanism can fire (DNR on MV3, webRequest on MV2).
-    // Unlike duckduckgo.com/?q= which also matches ATB's rules and goes through
-    // the network stack, start.duckduckgo.com has no other matching rule. The
-    // redirect works in actual Chrome; this is a test infrastructure limitation.
-    test.skip('redirects start.duckduckgo.com when useNoAiSearch is enabled', async ({ context, backgroundPage, page }) => {
-        await backgroundWait.forExtensionLoaded(context);
-        await backgroundWait.forAllConfiguration(backgroundPage);
-        await mockSearchPages(context);
-
-        await setUseNoAiSearch(backgroundPage, true);
-        await gotoAndExpectRedirect(page, 'https://start.duckduckgo.com/', /noai\.duckduckgo\.com/);
     });
 
     test('does not redirect non-search pages on duckduckgo.com', async ({ context, backgroundPage, page }) => {
