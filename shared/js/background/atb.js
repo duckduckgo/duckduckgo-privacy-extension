@@ -246,7 +246,7 @@ const ATB = (() => {
                             },
                         },
                         resourceTypes: ['main_frame'],
-                        regexFilter: '^https://duckduckgo.com/\\?.*',
+                        regexFilter: '^https://duckduckgo\\.com/\\?.*',
                     }),
                 );
             }
