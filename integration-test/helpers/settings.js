@@ -1,4 +1,3 @@
-
 /**
  * Update the useNoAiSearch setting and wait for the DNR rule to be applied.
  * The setting update is async (dispatches event after storage sync), so the
