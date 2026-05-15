@@ -38,7 +38,7 @@
     "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
   "globalPrivacyControlDesc": {
-    "title": "Vaše údaje nesmú byť na predaj. V DuckDuckGo s tým súhlasíme. Aktivujte nastavenia „Globálne ovládanie ochrany súkromia” (GPC) a my budeme\nsignalizovať webovým lokalitám vaše preferencie, aby:",
+    "title": "Vaše údaje nesmú byť na predaj. V DuckDuckGo s tým súhlasíme.Aktivujte nastavenia „Globálne ovládanie ochrany súkromia” (GPC) a my budeme\nsignalizovať webovým lokalitám vaše preferencie, aby:",
     "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
   "notSellYourPersonalData": {
@@ -51,7 +51,7 @@
   },
   "globalPrivacyControlDisclaimer": {
     "title": "<b>Pretože „Globálne ovládanie ochrany súkromia” (GPC) je novým štandardom,\nväčšina webových stránok ho ešte nerozpozná, ale usilovne pracujeme na tom,\naby sa stal celosvetovo akceptovaným.</b> Od webových stránok sa však vyžaduje, aby konali na základe signálu\niba v rozsahu, v akom to od nich vyžadujú príslušné zákony.",
-    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+    "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
     "title": "Ochrana e-mailu",
@@ -79,11 +79,11 @@
   },
   "addUnprotectedSite": {
     "title": "Pridanie nechránenej lokality",
-    "note": "Header for the user to add a site to the uprotected list"
+    "note": "Header for the user to add a site to the unprotected list"
   },
   "enterURL": {
     "title": "Zadajte adresu URL",
-    "note": "Promopt to enter the website URL here"
+    "note": "Prompt to enter the website URL here"
   },
   "invalidURL": {
     "title": "Neplatná adresa URL",
@@ -91,11 +91,11 @@
   },
   "fireButtonHeading": {
     "title": "Fire Button",
-    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+    "note": "Header for the settings for the Fire button feature"
   },
   "fireButtonDesc": {
     "title": "Tlačidlo Fire Button uľahčuje vymazanie kariet, histórie prehliadania a údajov. Môžete ovládať, či vymaže históriu prehliadania aj údaje a či sa zatvoria aktuálne karty.",
-    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+    "note": "Describes the Fire button features"
   },
   "fireButtonClearHistoryTitle": {
     "title": "Vymazať históriu",
@@ -107,10 +107,18 @@
   },
   "fireButtonTabClosureTitle": {
     "title": "Zatvoriť karty",
-    "note": "Title for option toggle. Close is a verb."
+    "note": "Title for option toggle."
+  },
+  "noAiMode": {
+    "title": "Bez umelej inteligencie vo vyhľadávaní",
+    "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+  },
+  "noAiModeDesc": {
+    "title": "Zobraziť výsledky vyhľadávania bez odpovedí s umelou inteligenciou (Search Assist) alebo chatov s umelou inteligenciou (Duck.ai), a štandardne filtrovať obrázky generované umelou inteligenciou z výsledkov vyhľadávania obrázkov. Vzťahuje sa to na všetky vyhľadávania z duckduckgo.com a z riadku s adresou.",
+    "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
   },
   "burnPageTitle": {
     "title": "Prebieha vymazávanie...",
-    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+    "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
   }
 }

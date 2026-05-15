@@ -51,7 +51,7 @@
   },
   "globalPrivacyControlDisclaimer": {
     "title": "<b>Dado que el Control Global de Privacidad (GPC) es un nuevo estándar,\nla mayoría de los sitios web no lo reconoce todavía, pero estamos trabajando\npara garantizar que se acepte en todo el mundo.</b> Sin embargo, solo se exige a los sitios web que actúen conforme a esta indicación en la\nmedida en que lo dictamine la legislación aplicable. ",
-    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+    "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
     "title": "Protección del correo electrónico",
@@ -79,11 +79,11 @@
   },
   "addUnprotectedSite": {
     "title": "Añadir sitio no protegido",
-    "note": "Header for the user to add a site to the uprotected list"
+    "note": "Header for the user to add a site to the unprotected list"
   },
   "enterURL": {
     "title": "Introducir URL",
-    "note": "Promopt to enter the website URL here"
+    "note": "Prompt to enter the website URL here"
   },
   "invalidURL": {
     "title": "URL no válida",
@@ -91,11 +91,11 @@
   },
   "fireButtonHeading": {
     "title": "Fire Button",
-    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+    "note": "Header for the settings for the Fire button feature"
   },
   "fireButtonDesc": {
     "title": "El Fire Button facilita el borrado de tus pestañas, historial de navegación y datos. Puedes controlar si se borra el historial de navegación además de los datos y si se cierran o no tus pestañas actuales.",
-    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+    "note": "Describes the Fire button features"
   },
   "fireButtonClearHistoryTitle": {
     "title": "Borrar historial",
@@ -107,10 +107,18 @@
   },
   "fireButtonTabClosureTitle": {
     "title": "Cerrar pestañas",
-    "note": "Title for option toggle. Close is a verb."
+    "note": "Title for option toggle."
+  },
+  "noAiMode": {
+    "title": "Sin IA en la búsqueda",
+    "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+  },
+  "noAiModeDesc": {
+    "title": "Consulta los resultados de búsqueda sin respuestas de IA (Search Assist) ni chats de IA (Duck.ai), y filtra las imágenes generadas por IA de los resultados de imágenes por defecto. Se aplica a todas las búsquedas desde duckduckgo.com y la barra de direcciones.",
+    "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
   },
   "burnPageTitle": {
     "title": "Quema en curso...",
-    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+    "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
   }
 }

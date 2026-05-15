@@ -51,7 +51,7 @@
   },
   "globalPrivacyControlDisclaimer": {
     "title": "<b>Budući da je Globalna kontrola privatnosti (GPC) novi standard,\nvećina web-mjesta još ga neće prepoznati, ali naporno radimo na tome da postane prihvaćen u cijelom svijetu.</b> Međutim, web-mjesta moraju djelovati na signal samo u mjeri u kojoj ih obvezuju važeći zakoni.",
-    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+    "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
     "title": "Zaštita e-pošte",
@@ -79,11 +79,11 @@
   },
   "addUnprotectedSite": {
     "title": "Dodavanje nezaštićenog web-mjesta",
-    "note": "Header for the user to add a site to the uprotected list"
+    "note": "Header for the user to add a site to the unprotected list"
   },
   "enterURL": {
     "title": "Unesi URL",
-    "note": "Promopt to enter the website URL here"
+    "note": "Prompt to enter the website URL here"
   },
   "invalidURL": {
     "title": "URL nije valjan",
@@ -91,11 +91,11 @@
   },
   "fireButtonHeading": {
     "title": "Fire Button",
-    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+    "note": "Header for the settings for the Fire button feature"
   },
   "fireButtonDesc": {
     "title": "Fire Button olakšava brisanje kartica, povijesti pregledavanja i podataka. Možeš kontrolirati hoće li se izbrisati povijest pregledavanja i podaci te hoće li se zatvoriti tvoje aktualne (otvorene) kartice.",
-    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+    "note": "Describes the Fire button features"
   },
   "fireButtonClearHistoryTitle": {
     "title": "Izbriši povijest",
@@ -107,10 +107,18 @@
   },
   "fireButtonTabClosureTitle": {
     "title": "Zatvori kartice",
-    "note": "Title for option toggle. Close is a verb."
+    "note": "Title for option toggle."
+  },
+  "noAiMode": {
+    "title": "Pretraživanje bez AI-ja",
+    "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+  },
+  "noAiModeDesc": {
+    "title": "Pogledaj rezultate pretraživanja bez AI odgovora (Search Assist) ili AI čavrljanja (Duck.ai) i filtriraj slike generirane umjetnom inteligencijom iz rezultata slika prema zadanim postavkama. Odnosi se na sva pretraživanja s duckduckgo.com i adresne trake.",
+    "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
   },
   "burnPageTitle": {
     "title": "Brisanje u tijeku...",
-    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+    "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
   }
 }

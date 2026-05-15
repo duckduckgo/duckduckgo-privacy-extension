@@ -121,7 +121,7 @@
     },
     "noAiModeDesc": {
         "title": "See search results without AI answers (Search Assist) or AI chats (Duck.ai), and filter AI‑generated images from image results by default. Applies to all searches from duckduckgo.com and the address bar.",
-        "note": "Description text explaining what the No AI in Searches toggle does"
+        "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
     },
     "burnPageTitle": {
         "title": "Burn in progress...",

@@ -51,7 +51,7 @@
   },
   "globalPrivacyControlDisclaimer": {
     "title": "<b>Uma vez que o Controlo de Privacidade Global (GPC) é uma norma nova,\na maioria dos sites ainda não o reconhecem. No entanto, estamos a trabalhar arduamente\npara que seja aceite em todo o mundo.</b> Porém, os sites só têm de agir em conformidade com o sinal\nna medida em que a legislação aplicável os obrigar a isso. ",
-    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+    "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
     "title": "Proteção de e-mail",
@@ -79,11 +79,11 @@
   },
   "addUnprotectedSite": {
     "title": "Adicionar site desprotegido",
-    "note": "Header for the user to add a site to the uprotected list"
+    "note": "Header for the user to add a site to the unprotected list"
   },
   "enterURL": {
     "title": "Introduz o URL",
-    "note": "Promopt to enter the website URL here"
+    "note": "Prompt to enter the website URL here"
   },
   "invalidURL": {
     "title": "URL inválido",
@@ -91,11 +91,11 @@
   },
   "fireButtonHeading": {
     "title": "Fire Button",
-    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+    "note": "Header for the settings for the Fire button feature"
   },
   "fireButtonDesc": {
     "title": "O Fire Button facilita a limpeza de separadores, histórico de navegação e dados. Pode decidir se limpa ou não o histórico de navegação e os dados, e se fecha ou não os separadores atuais.",
-    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+    "note": "Describes the Fire button features"
   },
   "fireButtonClearHistoryTitle": {
     "title": "Limpar histórico",
@@ -107,10 +107,18 @@
   },
   "fireButtonTabClosureTitle": {
     "title": "Fechar separadores",
-    "note": "Title for option toggle. Close is a verb."
+    "note": "Title for option toggle."
+  },
+  "noAiMode": {
+    "title": "Não há IA na pesquisa",
+    "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+  },
+  "noAiModeDesc": {
+    "title": "Vê os resultados da pesquisa sem respostas de IA (Search Assist) ou chats de IA (Duck.ai) e filtra imagens geradas por IA a partir dos resultados das imagens por predefinição. Aplica-se a todas as pesquisas a partir do duckduckgo.com e da barra de endereços.",
+    "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
   },
   "burnPageTitle": {
     "title": "Apagamento em curso...",
-    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+    "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
   }
 }
