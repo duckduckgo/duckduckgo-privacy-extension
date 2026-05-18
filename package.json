@@ -68,7 +68,7 @@
     },
     "dependencies": {
         "@duckduckgo/autoconsent": "^14.77.1",
-        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#17.0.1",
+        "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#19.1.0",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#13.34.0",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",
         "@duckduckgo/jsbloom": "^1.0.2",
