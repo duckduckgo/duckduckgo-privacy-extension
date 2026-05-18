@@ -18,6 +18,11 @@ describe('Site', () => {
         const tests = [
             { url: 'https://duckduckgo.com', expected: null },
             { url: 'localhost:3000', expected: 'localhost' },
+            { url: 'http://127.0.0.1:8080', expected: 'localhost' },
+            { url: 'https://127.0.0.1.evil.example', expected: null },
+            { url: 'https://127.0.0.10', expected: null },
+            { url: 'http://0.0.0.0', expected: '0.0.0.0' },
+            { url: 'https://0.0.0.0.evil.example', expected: null },
             { url: '', expected: 'new tab' },
             { url: 'chrome-search://local-ntp/local-ntp.html', expected: 'new tab' },
             { url: 'chrome://extensions', expected: 'extensions' },
