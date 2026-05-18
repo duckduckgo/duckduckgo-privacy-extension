@@ -51,7 +51,7 @@
   },
   "globalPrivacyControlDisclaimer": {
     "title": "<b>Siden Global Privacy Control (GPC) er en ny standard,\nanerkjennes den nok ikke av nettsteder flest ennå, men vi jobber\nhardt for å sørge for at den blir godkjent over hele verden.</b> Mange nettsteder er imidlertid kun pålagt å ta dette signalet til følge når\ngjeldende lover pålegger dem å gjøre det. ",
-    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+    "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
     "title": "E-postbeskyttelse",
@@ -79,11 +79,11 @@
   },
   "addUnprotectedSite": {
     "title": "Legg til ubeskyttet nettsted",
-    "note": "Header for the user to add a site to the uprotected list"
+    "note": "Header for the user to add a site to the unprotected list"
   },
   "enterURL": {
     "title": "Skriv inn URL-adresse",
-    "note": "Promopt to enter the website URL here"
+    "note": "Prompt to enter the website URL here"
   },
   "invalidURL": {
     "title": "Ugyldig URL-adresse",
@@ -91,11 +91,11 @@
   },
   "fireButtonHeading": {
     "title": "Fire Button",
-    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+    "note": "Header for the settings for the Fire button feature"
   },
   "fireButtonDesc": {
     "title": "Fire Button gjør det enkelt å fjerne faner, nettleserhistorikk og data. Du kan kontrollere om den skal fjerne både nettleserhistorikk og data, og hvorvidt den skal lukke åpne faner.",
-    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+    "note": "Describes the Fire button features"
   },
   "fireButtonClearHistoryTitle": {
     "title": "Fjern historikk",
@@ -107,10 +107,18 @@
   },
   "fireButtonTabClosureTitle": {
     "title": "Lukk faner",
-    "note": "Title for option toggle. Close is a verb."
+    "note": "Title for option toggle."
+  },
+  "noAiMode": {
+    "title": "Ingen AI i søk",
+    "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+  },
+  "noAiModeDesc": {
+    "title": "Se søkeresultater uten AI-svar (Search Assist) eller AI-chatter (Duck.ai), og filtrer AI-genererte bilder fra bilderesultater som standard. Gjelder alle søk fra duckduckgo.com og adressefeltet.",
+    "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
   },
   "burnPageTitle": {
     "title": "Brenning pågår…",
-    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+    "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
   }
 }

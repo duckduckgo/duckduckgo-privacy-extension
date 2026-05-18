@@ -1,6 +1,7 @@
 import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait, { forSetting } from './helpers/backgroundWait';
 import { logPageRequests } from './helpers/requests';
+import { setUseNoAiSearch } from './helpers/settings';
 
 test.describe('install workflow', () => {
     test('postinstall page: should open the postinstall page correctly', async ({ context, page }) => {
@@ -161,7 +162,7 @@ test.describe('search workflow', () => {
         await backgroundPage.evaluate((pageTodaysAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageTodaysAtb), todaysAtb);
 
         // run a search
-        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' });
+        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'domcontentloaded' });
 
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
         const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'));
@@ -176,7 +177,7 @@ test.describe('search workflow', () => {
             lastWeeksAtb,
         );
         // run a search
-        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' });
+        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'domcontentloaded' });
 
         await forSetting(backgroundPage, 'set_atb');
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
@@ -194,12 +195,51 @@ test.describe('search workflow', () => {
         await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('atb', 'v123-6'));
 
         // run a search
-        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' });
+        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'domcontentloaded' });
 
         await forSetting(backgroundPage, 'set_atb');
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
         const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'));
         expect(newSetAtb).toEqual(todaysAtb);
         expect(atb).toEqual('v123-1');
+    });
+
+    test('should redirect searches to the no AI search domain when enabled', async ({ backgroundPage, page }) => {
+        await setUseNoAiSearch(backgroundPage, true);
+
+        await page.goto('https://duckduckgo.com/?q=alternative-search-test', { waitUntil: 'domcontentloaded' });
+
+        const redirectedUrl = new URL(page.url());
+        expect(redirectedUrl.hostname).toEqual('noai.duckduckgo.com');
+        expect(redirectedUrl.pathname).toEqual('/');
+        expect(redirectedUrl.searchParams.get('q')).toEqual('alternative-search-test');
+        expect(redirectedUrl.searchParams.get('atb')).toMatch(/^v[\d-]+$/);
+    });
+
+    test('should keep searches on duckduckgo.com when no AI search is disabled', async ({ backgroundPage, page }) => {
+        await setUseNoAiSearch(backgroundPage, false);
+
+        await page.goto('https://duckduckgo.com/?q=alternative-search-disabled-test', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/');
+        expect(searchUrl.searchParams.get('q')).toEqual('alternative-search-disabled-test');
+        expect(searchUrl.searchParams.get('atb')).toMatch(/^v[\d-]+$/);
+    });
+
+    test('should not redirect searches to other subdomains (e.g. safe.duckduckgo.com) when no AI search is enabled', async ({
+        backgroundPage,
+        page,
+    }) => {
+        await setUseNoAiSearch(backgroundPage, true);
+
+        await page.goto('https://safe.duckduckgo.com/?q=alternative-search-disabled-test', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('safe.duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/');
+        expect(searchUrl.searchParams.get('q')).toEqual('alternative-search-disabled-test');
+        expect(searchUrl.searchParams.get('atb')).toMatch(/^v[\d-]+$/);
     });
 });

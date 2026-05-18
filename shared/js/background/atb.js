@@ -8,8 +8,8 @@ const settings = require('./settings');
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string');
 const load = require('./load');
 const browserWrapper = require('./wrapper');
-const { ATB_PARAM_RULE_ID } = require('./dnr-utils');
-const { ATB_PARAM_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
+const { ATB_PARAM_RULE_ID, SEARCH_REDIRECT_RULE_ID } = require('./dnr-utils');
+const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 const { generateDNRRule } = require('@duckduckgo/ddg2dnr/lib/utils');
 
 const ATB_ERROR_COHORT = 'v1-1';
@@ -216,6 +216,7 @@ const ATB = (() => {
             if (!atb || manifestVersion !== 3) {
                 return;
             }
+            const useNoAiSearch = settings.getSetting('useNoAiSearch') === true;
 
             const atbRule = generateDNRRule({
                 id: ATB_PARAM_RULE_ID,
@@ -232,10 +233,27 @@ const ATB = (() => {
                 requestDomains: ['duckduckgo.com'],
                 regexFilter: regExpAboutPage.source,
             });
+            const addRules = [atbRule];
+            if (useNoAiSearch) {
+                addRules.push(
+                    generateDNRRule({
+                        id: SEARCH_REDIRECT_RULE_ID,
+                        priority: ALTERNATIVE_SEARCH_PRIORITY,
+                        actionType: 'redirect',
+                        redirect: {
+                            transform: {
+                                host: 'noai.duckduckgo.com',
+                            },
+                        },
+                        resourceTypes: ['main_frame'],
+                        regexFilter: '^https://duckduckgo\\.com/\\?.*',
+                    }),
+                );
+            }
 
             chrome.declarativeNetRequest.updateDynamicRules({
-                removeRuleIds: [atbRule.id],
-                addRules: [atbRule],
+                removeRuleIds: [atbRule.id, SEARCH_REDIRECT_RULE_ID],
+                addRules,
             });
         },
 
@@ -279,6 +297,9 @@ settings.ready().then(() => {
         ATB.setOrUpdateATBdnrRule(atb);
     });
     settings.onSettingUpdate.addEventListener('set_atb', updateUninstallURL);
+    settings.onSettingUpdate.addEventListener('useNoAiSearch', () => {
+        ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'));
+    });
 });
 
 export default ATB;

@@ -30,6 +30,7 @@ const {
     USER_ALLOWLISTED_PRIORITY,
     ATB_PARAM_PRIORITY,
     NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY,
+    ALTERNATIVE_SEARCH_PRIORITY,
 } = require('../lib/rulePriorities');
 
 describe('Rule Priorities', () => {
@@ -51,6 +52,7 @@ describe('Rule Priorities', () => {
         assert.equal(USER_ALLOWLISTED_PRIORITY, 1000000);
         assert.equal(ATB_PARAM_PRIORITY, 2000000);
         assert.equal(NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY, 2000000);
+        assert.equal(ALTERNATIVE_SEARCH_PRIORITY, 2000001);
     });
 
     it('should have the correct relative rule priorities', () => {
@@ -63,6 +65,9 @@ describe('Rule Priorities', () => {
         assert.ok(NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY > UNPROTECTED_TEMPORARY_ALLOWLIST_PRIORITY);
         assert.ok(NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY > USER_ALLOWLISTED_PRIORITY);
         assert.ok(NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY > SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY);
+
+        // Alternative search redirect should take precedence over the ATB param redirect.
+        assert.ok(ALTERNATIVE_SEARCH_PRIORITY > ATB_PARAM_PRIORITY);
 
         // Ceiling priorities should always be higher than baseline.
         assert.ok(TRACKER_BLOCKING_BASELINE_PRIORITY < TRACKER_BLOCKING_CEILING_PRIORITY);

@@ -4,12 +4,12 @@ const Parent = window.DDG.base.Model;
 function PrivacyOptions(attrs) {
     // set some default values for the toggle switches in the template
     attrs.httpsEverywhereEnabled = true;
-    attrs.embeddedTweetsEnabled = false;
     attrs.GPC = false;
     attrs.youtubeClickToLoadEnabled = false;
     attrs.youtubePreviewsEnabled = false;
     attrs.fireButtonClearHistoryEnabled = true;
     attrs.fireButtonTabClearEnabled = true;
+    attrs.useNoAiSearch = false;
 
     Parent.call(this, attrs);
 }
@@ -32,13 +32,13 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         ]);
 
         this.httpsEverywhereEnabled = settings.httpsEverywhereEnabled;
-        this.embeddedTweetsEnabled = settings.embeddedTweetsEnabled;
         this.GPC = settings.GPC;
         this.youtubeClickToLoadEnabled = youtubeClickToLoadEnabled;
         this.youtubePreviewsEnabled = settings.youtubePreviewsEnabled;
         this.fireButtonEnabled = BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2';
         this.fireButtonClearHistoryEnabled = settings.fireButtonClearHistoryEnabled;
         this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled;
+        this.useNoAiSearch = !!settings.useNoAiSearch;
     },
 });
 

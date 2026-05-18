@@ -44,6 +44,13 @@ Options.prototype = window.$.extend({}, Parent.prototype, mixins.setBrowserClass
             template: privacyOptionsTemplate,
         });
 
+        this.views.allowlist = new AllowlistView({
+            pageView: this,
+            model: new AllowlistModel({}),
+            appendTo: $parent,
+            template: allowlistTemplate,
+        });
+
         this.views.userData = new UserDataView({
             pageView: this,
             model: new UserDataModel({}),
@@ -54,13 +61,6 @@ Options.prototype = window.$.extend({}, Parent.prototype, mixins.setBrowserClass
         this.views.internal = new InternalOptionsView({
             pageView: this,
             appendTo: $parent,
-        });
-
-        this.views.allowlist = new AllowlistView({
-            pageView: this,
-            model: new AllowlistModel({}),
-            appendTo: $parent,
-            template: allowlistTemplate,
         });
 
         this.message = new BackgroundMessageModel({});

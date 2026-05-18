@@ -141,7 +141,17 @@ function handleRequest(requestData) {
         // add atb params only to main_frame
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL);
 
-        if (urlParametersRemovedForThisRequest || ampRedirected || atbParametersAdded) {
+        // apply no AI search redirect (noai.duckduckgo.com)
+        const shouldRedirectSearch =
+            mainFrameRequestURL.hostname === 'duckduckgo.com' &&
+            mainFrameRequestURL.pathname === '/' &&
+            mainFrameRequestURL.search !== '' &&
+            settings.getSetting('useNoAiSearch') === true;
+        if (shouldRedirectSearch) {
+            mainFrameRequestURL.hostname = 'noai.duckduckgo.com';
+        }
+
+        if (urlParametersRemovedForThisRequest || ampRedirected || atbParametersAdded || shouldRedirectSearch) {
             return { redirectUrl: mainFrameRequestURL.href };
         }
     } else {
