@@ -9,11 +9,7 @@ const {
     HOME_PAGE_RULE_ID,
     ATB_EXTENSIONINSTALLED_RULE_ID,
 } = require('../../shared/js/background/dnr-utils');
-const {
-    ATB_PARAM_PRIORITY,
-    ATB_EXTENSIONINSTALLED_ALLOW_PRIORITY,
-    ALTERNATIVE_SEARCH_PRIORITY,
-} = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
+const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 
 const settingHelper = require('../helpers/settings');
 
@@ -160,8 +156,7 @@ describe('atb.setOrUpdateATBdnrRule()', () => {
 
         expect(atbRule.priority).toEqual(ATB_PARAM_PRIORITY);
         expect(extensionInstalledRule.action.type).toEqual('allow');
-        expect(extensionInstalledRule.priority).toEqual(ATB_EXTENSIONINSTALLED_ALLOW_PRIORITY);
-        expect(extensionInstalledRule.priority).toBeGreaterThan(searchRedirectRule.priority);
+        expect(extensionInstalledRule.priority).toBeGreaterThan(ATB_PARAM_PRIORITY);
         expect(homePageRule.priority).toEqual(ATB_PARAM_PRIORITY);
         expect(searchRedirectRule.priority).toEqual(ALTERNATIVE_SEARCH_PRIORITY);
         expect(searchRedirectRule.priority).toBeGreaterThan(atbRule.priority);
