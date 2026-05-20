@@ -8,7 +8,7 @@ const settings = require('./settings');
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string');
 const load = require('./load');
 const browserWrapper = require('./wrapper');
-const { ATB_PARAM_RULE_ID, SEARCH_REDIRECT_RULE_ID } = require('./dnr-utils');
+const { ATB_PARAM_RULE_ID, SEARCH_REDIRECT_RULE_ID, HOME_PAGE_RULE_ID, ATB_EXTENSIONINSTALLED_RULE_ID } = require('./dnr-utils');
 const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 const { generateDNRRule } = require('@duckduckgo/ddg2dnr/lib/utils');
 
@@ -82,8 +82,18 @@ const ATB = (() => {
                 return false;
             }
 
+            if (url.hostname === 'duckduckgo.com' && url.pathname === '/' && url.searchParams.size === 0) {
+                url.searchParams.append('extensioninstalled', '1');
+                return true;
+            }
+
             const atbSetting = settings.getSetting('atb');
             if (!atbSetting || !regExpAboutPage.test(url.href)) {
+                return false;
+            }
+
+            // Exclude URLs with only the extensioninstalled param (handled by HOME_PAGE_RULE_ID).
+            if (url.searchParams.has('extensioninstalled') && url.searchParams.size === 1) {
                 return false;
             }
 
@@ -233,7 +243,31 @@ const ATB = (() => {
                 requestDomains: ['duckduckgo.com'],
                 regexFilter: regExpAboutPage.source,
             });
-            const addRules = [atbRule];
+            // This rule disables the atbRule when only the extensioninstalled param is present (i.e. homepage)
+            const extensionInstalledRule = generateDNRRule({
+                id: ATB_EXTENSIONINSTALLED_RULE_ID,
+                priority: ATB_PARAM_PRIORITY + 1,
+                actionType: 'allow',
+                resourceTypes: ['main_frame'],
+                requestDomains: ['duckduckgo.com'],
+                regexFilter: '^https?:\\/\\/([\\w-]+\\.)?duckduckgo\\.com\\/\\?extensioninstalled(?:=[^&]*)?$',
+            });
+            // This rule adds the extensioninstalled param to the URL when the user is on the homepage
+            const homePageRule = generateDNRRule({
+                id: HOME_PAGE_RULE_ID,
+                priority: ATB_PARAM_PRIORITY,
+                actionType: 'redirect',
+                redirect: {
+                    transform: {
+                        queryTransform: {
+                            addOrReplaceParams: [{ key: 'extensioninstalled', value: '1' }],
+                        },
+                    },
+                },
+                resourceTypes: ['main_frame'],
+                regexFilter: '^https://duckduckgo\\.com/$',
+            });
+            const addRules = [atbRule, extensionInstalledRule, homePageRule];
             if (useNoAiSearch) {
                 addRules.push(
                     generateDNRRule({
@@ -251,9 +285,13 @@ const ATB = (() => {
                 );
             }
 
-            chrome.declarativeNetRequest.updateDynamicRules({
-                removeRuleIds: [atbRule.id, SEARCH_REDIRECT_RULE_ID],
-                addRules,
+            Promise.resolve(
+                chrome.declarativeNetRequest.updateDynamicRules({
+                    removeRuleIds: [atbRule.id, ATB_EXTENSIONINSTALLED_RULE_ID, HOME_PAGE_RULE_ID, SEARCH_REDIRECT_RULE_ID],
+                    addRules,
+                }),
+            ).catch((error) => {
+                console.error('Error updating ATB DNR rules:', error);
             });
         },
 

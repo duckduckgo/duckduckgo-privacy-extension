@@ -20,6 +20,8 @@ import settings from './settings';
 // rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001;
 export const ATB_PARAM_RULE_ID = 20003;
+export const ATB_EXTENSIONINSTALLED_RULE_ID = 20008;
+export const HOME_PAGE_RULE_ID = 20010;
 export const NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID = 20006;
 export const SEARCH_REDIRECT_RULE_ID = 20009;
 
@@ -45,8 +47,10 @@ export const ruleIdRangeByConfigName = {
 const RESERVED_DYNAMIC_RULE_IDS = [
     USER_ALLOWLIST_RULE_ID,
     ATB_PARAM_RULE_ID,
+    ATB_EXTENSIONINSTALLED_RULE_ID,
     NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID,
     SEARCH_REDIRECT_RULE_ID,
+    HOME_PAGE_RULE_ID,
 ];
 
 /**
