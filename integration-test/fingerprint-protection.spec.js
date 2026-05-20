@@ -13,7 +13,7 @@ const expectedFingerprintValues = {
 };
 
 const tests = [
-    { url: 'duckduckgo.com', har: getHARPath('duckduckgo.com/homepage.har') },
+    { url: 'duckduckgo.com/about', har: getHARPath('duckduckgo.com/about.har') },
     { url: 'example.com', har: getHARPath('example.com/example.har') },
 ];
 
