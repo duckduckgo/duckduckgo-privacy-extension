@@ -25,6 +25,7 @@ const ATB = (() => {
     // Matching subdomains, searches, newsletter page and chrome new tab page
     const regExpAboutPage = /^https?:\/\/([\w-]+\.)?duckduckgo\.com\/(\?.*|about#newsletter|chrome_newtab)/;
     const matchPage = /^https:\/\/([\w-]+\.)?duckduckgo.com\/\?/;
+    const matchHomePage = /^https:\/\/((start|noai)\.)?duckduckgo\.com\/$/;
     const ddgAtbURL = 'https://duckduckgo.com/atb.js?';
 
     return {
@@ -82,7 +83,7 @@ const ATB = (() => {
                 return false;
             }
 
-            if (url.hostname === 'duckduckgo.com' && url.pathname === '/' && url.searchParams.size === 0) {
+            if (matchHomePage.test(url.href)) {
                 url.searchParams.append('extensioninstalled', '1');
                 return true;
             }
@@ -265,7 +266,7 @@ const ATB = (() => {
                     },
                 },
                 resourceTypes: ['main_frame'],
-                regexFilter: '^https://((start|noai)\\.)?duckduckgo\\.com/$',
+                regexFilter: matchHomePage.source,
             });
             const addRules = [atbRule, extensionInstalledRule, homePageRule];
             if (useNoAiSearch) {
