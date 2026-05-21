@@ -265,7 +265,7 @@ const ATB = (() => {
                     },
                 },
                 resourceTypes: ['main_frame'],
-                regexFilter: '^https://duckduckgo\\.com/$',
+                regexFilter: '^https://((start|noai)\\.)?duckduckgo\\.com/$',
             });
             const addRules = [atbRule, extensionInstalledRule, homePageRule];
             if (useNoAiSearch) {
