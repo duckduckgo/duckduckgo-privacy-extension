@@ -92,6 +92,9 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
         { url: 'https://dev-testing.duckduckgo.com/chrome_newtab', rewrite: true },
         { url: 'https://duckduckgo.com/?extensioninstalled=', rewrite: false },
         { url: 'https://duckduckgo.com/?extensioninstalled', rewrite: false },
+        { url: 'https://duckduckgo.com/', rewrite: true },
+        { url: 'https://start.duckduckgo.com/', rewrite: true },
+        { url: 'https://noai.duckduckgo.com/', rewrite: true },
     ];
 
     beforeEach(() => {
@@ -112,6 +115,9 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
     });
 
     const correctUrlTests = [
+        { url: 'https://duckduckgo.com/', expected: 'https://duckduckgo.com/?extensioninstalled=1' },
+        { url: 'https://start.duckduckgo.com/', expected: 'https://start.duckduckgo.com/?extensioninstalled=1' },
+        { url: 'https://noai.duckduckgo.com/', expected: 'https://noai.duckduckgo.com/?extensioninstalled=1' },
         { url: 'https://duckduckgo.com/?q=something', expected: 'https://duckduckgo.com/?q=something&atb=v123-4ab' },
         { url: 'https://duckduckgo.com/about#newsletter', expected: 'https://duckduckgo.com/about?atb=v123-4ab#newsletter' },
         { url: 'https://duckduckgo.com/chrome_newtab', expected: 'https://duckduckgo.com/chrome_newtab?atb=v123-4ab' },

@@ -250,6 +250,7 @@ test.describe('search workflow', () => {
         expect(searchUrl.hostname).toEqual('duckduckgo.com');
         expect(searchUrl.pathname).toEqual('/');
         expect(searchUrl.searchParams.get('extensioninstalled')).toEqual('1');
+        expect(searchUrl.searchParams.get('atb')).toBeNull();
     });
 
     test('should add the extensioninstalled param to the URL on the start.duckduckgo.com homepage', async ({ backgroundPage, page }) => {
@@ -259,6 +260,7 @@ test.describe('search workflow', () => {
         expect(searchUrl.hostname).toEqual('start.duckduckgo.com');
         expect(searchUrl.pathname).toEqual('/');
         expect(searchUrl.searchParams.get('extensioninstalled')).toEqual('1');
+        expect(searchUrl.searchParams.get('atb')).toBeNull();
     });
 
     test('should not add the extensioninstalled param to the URL when the user is not on the homepage', async ({
