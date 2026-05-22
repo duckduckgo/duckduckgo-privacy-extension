@@ -145,7 +145,7 @@ function handleRequest(requestData) {
         const shouldRedirectSearch =
             mainFrameRequestURL.hostname === 'duckduckgo.com' &&
             mainFrameRequestURL.pathname === '/' &&
-            mainFrameRequestURL.search !== '' &&
+            mainFrameRequestURL.searchParams.has('q') &&
             settings.getSetting('useNoAiSearch') === true;
         if (shouldRedirectSearch) {
             mainFrameRequestURL.hostname = 'noai.duckduckgo.com';

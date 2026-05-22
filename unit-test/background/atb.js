@@ -3,7 +3,12 @@ chrome.runtime.getManifest = () => ({ version: '1234.56', manifest_version: 3 })
 const atb = require('../../shared/js/background/atb').default;
 const settings = require('../../shared/js/background/settings');
 const load = require('../../shared/js/background/load');
-const { ATB_PARAM_RULE_ID, SEARCH_REDIRECT_RULE_ID } = require('../../shared/js/background/dnr-utils');
+const {
+    ATB_PARAM_RULE_ID,
+    SEARCH_REDIRECT_RULE_ID,
+    HOME_PAGE_RULE_ID,
+    ATB_EXTENSIONINSTALLED_RULE_ID,
+} = require('../../shared/js/background/dnr-utils');
 const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 
 const settingHelper = require('../helpers/settings');
@@ -85,6 +90,11 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
         { url: 'https://beta.duckduckgo.com/?q=something&atb=v70-1', rewrite: false },
         { url: 'https://dev-testing.duckduckgo.com/?q=something', rewrite: true },
         { url: 'https://dev-testing.duckduckgo.com/chrome_newtab', rewrite: true },
+        { url: 'https://duckduckgo.com/?extensioninstalled=', rewrite: false },
+        { url: 'https://duckduckgo.com/?extensioninstalled', rewrite: false },
+        { url: 'https://duckduckgo.com/', rewrite: true },
+        { url: 'https://start.duckduckgo.com/', rewrite: true },
+        { url: 'https://noai.duckduckgo.com/', rewrite: true },
     ];
 
     beforeEach(() => {
@@ -105,6 +115,9 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
     });
 
     const correctUrlTests = [
+        { url: 'https://duckduckgo.com/', expected: 'https://duckduckgo.com/?extensioninstalled=1' },
+        { url: 'https://start.duckduckgo.com/', expected: 'https://start.duckduckgo.com/?extensioninstalled=1' },
+        { url: 'https://noai.duckduckgo.com/', expected: 'https://noai.duckduckgo.com/?extensioninstalled=1' },
         { url: 'https://duckduckgo.com/?q=something', expected: 'https://duckduckgo.com/?q=something&atb=v123-4ab' },
         { url: 'https://duckduckgo.com/about#newsletter', expected: 'https://duckduckgo.com/about?atb=v123-4ab#newsletter' },
         { url: 'https://duckduckgo.com/chrome_newtab', expected: 'https://duckduckgo.com/chrome_newtab?atb=v123-4ab' },
@@ -140,12 +153,17 @@ describe('atb.setOrUpdateATBdnrRule()', () => {
 
         expect(updateDynamicRulesSpy).toHaveBeenCalledTimes(1);
         const [[{ addRules }]] = updateDynamicRulesSpy.calls.allArgs();
-        expect(addRules.length).toEqual(2);
+        expect(addRules.length).toEqual(4);
 
         const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
+        const extensionInstalledRule = addRules.find((rule) => rule.id === ATB_EXTENSIONINSTALLED_RULE_ID);
+        const homePageRule = addRules.find((rule) => rule.id === HOME_PAGE_RULE_ID);
         const searchRedirectRule = addRules.find((rule) => rule.id === SEARCH_REDIRECT_RULE_ID);
 
         expect(atbRule.priority).toEqual(ATB_PARAM_PRIORITY);
+        expect(extensionInstalledRule.action.type).toEqual('allow');
+        expect(extensionInstalledRule.priority).toBeGreaterThan(ATB_PARAM_PRIORITY);
+        expect(homePageRule.priority).toEqual(ATB_PARAM_PRIORITY);
         expect(searchRedirectRule.priority).toEqual(ALTERNATIVE_SEARCH_PRIORITY);
         expect(searchRedirectRule.priority).toBeGreaterThan(atbRule.priority);
     });

@@ -242,4 +242,45 @@ test.describe('search workflow', () => {
         expect(searchUrl.searchParams.get('q')).toEqual('alternative-search-disabled-test');
         expect(searchUrl.searchParams.get('atb')).toMatch(/^v[\d-]+$/);
     });
+
+    test('should add the extensioninstalled param to the URL when the user is on the homepage', async ({ backgroundPage, page }) => {
+        await page.goto('https://duckduckgo.com/', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/');
+        expect(searchUrl.searchParams.get('extensioninstalled')).toEqual('1');
+        expect(searchUrl.searchParams.get('atb')).toBeNull();
+    });
+
+    test('should keep extensioninstalled on homepage if no-ai is enabled', async ({ backgroundPage, page }) => {
+        await setUseNoAiSearch(backgroundPage, true);
+        await page.goto('https://duckduckgo.com/', { waitUntil: 'domcontentloaded' });
+
+        const url = new URL(page.url());
+        expect(url.hostname).toEqual('duckduckgo.com');
+        expect(url.searchParams.get('extensioninstalled')).toEqual('1');
+        expect(url.searchParams.get('atb')).toBeNull();
+    });
+    test('should add the extensioninstalled param to the URL on the start.duckduckgo.com homepage', async ({ backgroundPage, page }) => {
+        await page.goto('https://start.duckduckgo.com/', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('start.duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/');
+        expect(searchUrl.searchParams.get('extensioninstalled')).toEqual('1');
+        expect(searchUrl.searchParams.get('atb')).toBeNull();
+    });
+
+    test('should not add the extensioninstalled param to the URL when the user is not on the homepage', async ({
+        backgroundPage,
+        page,
+    }) => {
+        await page.goto('https://duckduckgo.com/about', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/about');
+        expect(searchUrl.search).toEqual('');
+    });
 });
