@@ -253,6 +253,15 @@ test.describe('search workflow', () => {
         expect(searchUrl.searchParams.get('atb')).toBeNull();
     });
 
+    test('should keep extensioninstalled on homepage if no-ai is enabled', async ({ backgroundPage, page }) => {
+        await setUseNoAiSearch(backgroundPage, true);
+        await page.goto('https://duckduckgo.com/', { waitUntil: 'domcontentloaded' });
+
+        const url = new URL(page.url());
+        expect(url.hostname).toEqual('duckduckgo.com');
+        expect(url.searchParams.get('extensioninstalled')).toEqual('1');
+        expect(url.searchParams.get('atb')).toBeNull();
+    });
     test('should add the extensioninstalled param to the URL on the start.duckduckgo.com homepage', async ({ backgroundPage, page }) => {
         await page.goto('https://start.duckduckgo.com/', { waitUntil: 'domcontentloaded' });
 
