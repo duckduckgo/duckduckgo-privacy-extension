@@ -4,6 +4,7 @@ import { TrackerStats } from './classes/tracker-stats.js';
 import httpsStorage from './storage/https';
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report';
 import { getBrowserName } from './utils';
+import { cleanupExpiredGoogleOAuthDomains } from './events/google-oauth-detector';
 const Companies = require('./companies');
 const experiment = require('./experiments');
 const https = require('./https');
@@ -20,6 +21,8 @@ export async function onStartup() {
     if (BUILD_TARGET === 'chrome') {
         await dnrSessionId.setSessionRuleOffsetFromStorage();
     }
+
+    await cleanupExpiredGoogleOAuthDomains();
 
     await settings.ready();
     experiment.setActiveExperiment();

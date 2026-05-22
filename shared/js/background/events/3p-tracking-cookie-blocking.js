@@ -3,6 +3,7 @@ const trackerutils = require('../tracker-utils');
 const utils = require('../utils');
 const devtools = require('../devtools');
 const browserWrapper = require('../wrapper');
+const { shouldAllowGoogleOAuthCookiesSync } = require('./google-oauth-detector');
 
 const manifestVersion = browserWrapper.getManifestVersion();
 /**
@@ -59,6 +60,9 @@ function dropTracking3pCookiesFromResponse(request) {
 
         // Strip 3rd party cookie response header
         if (!utils.isCookieExcluded(request.url)) {
+            if (shouldAllowGoogleOAuthCookiesSync(request.url, tab.url)) {
+                return;
+            }
             responseHeaders = responseHeaders.filter((header) => header.name.toLowerCase() !== 'set-cookie');
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',
@@ -97,6 +101,9 @@ function dropTracking3pCookiesFromRequest(request) {
 
         // Strip 3rd party response header
         if (!utils.isCookieExcluded(request.url)) {
+            if (shouldAllowGoogleOAuthCookiesSync(request.url, tab.url)) {
+                return;
+            }
             requestHeaders = requestHeaders.filter((header) => header.name.toLowerCase() !== 'cookie');
             devtools.postMessage(request.tabId, 'cookie', {
                 action: 'block',

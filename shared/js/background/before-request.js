@@ -3,6 +3,7 @@ import EventEmitter2 from 'eventemitter2';
 import ATB from './atb';
 import { postPopupMessage } from './popup-messaging';
 import RequestBlocklist from './components/request-blocklist';
+import { onNavigationToGoogleAccounts } from './events/google-oauth-detector';
 
 const utils = require('./utils');
 const trackers = require('./trackers');
@@ -95,6 +96,14 @@ function handleRequest(requestData) {
     // chance that the webRequest.onBeforeRequest event fired before the
     // tabs.onCreated event.
     if (!thisTab) return;
+
+    // Detect Google OAuth flows for the 3p cookie heuristic
+    if (
+        (requestData.type === 'main_frame' || requestData.type === 'sub_frame') &&
+        requestData.url.includes('accounts.google.com')
+    ) {
+        onNavigationToGoogleAccounts(requestData.url);
+    }
 
     if (requestData.type === 'main_frame') {
         let mainFrameRequestURL = new URL(requestData.url);
