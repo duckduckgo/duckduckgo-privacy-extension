@@ -197,6 +197,10 @@
                 color: vars.$slate;
                 padding: 14px 0 10px 0;
                 text-decoration: none;
+                min-width: 0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
         }
     }
