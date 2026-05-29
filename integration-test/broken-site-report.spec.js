@@ -2,6 +2,7 @@ import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 import { listenForBreakageReport, pixelBrowserSuffix } from './helpers/pixels';
+import { isFirefox } from './helpers/platform.js';
 
 test.describe('Broken site reports', () => {
     test('Sends broken site reports with current page context', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
@@ -58,6 +59,10 @@ test.describe('Broken site reports', () => {
         backgroundNetworkContext,
         routeExtensionRequests,
     }) => {
+        // On Firefox the extension fetches and applies its config during context
+        // creation, before the test body can register the abort route below.
+        test.skip(isFirefox(), 'Cannot simulate missing remote config on Firefox');
+
         // block all CDN requests
         routeExtensionRequests('https://staticcdn.duckduckgo.com/**/*', (route) => {
             return route.abort();

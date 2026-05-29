@@ -1,3 +1,7 @@
+import { isFirefox } from './platform.js';
+
+const FIREFOX_SKIP_REQUEST_TYPES = new Set(['font', 'audio', 'server-sent-events', 'favicon']);
+
 /**
  * @typedef {object} LoggedRequestDetails
  * @property {URL} url
@@ -107,7 +111,7 @@ export async function runRequestBlockingTest(backgroundPage, page, url) {
     await page.goto(url, { waitUntil: 'networkidle' });
     await page.click('#start');
 
-    const { testCount, flakeyTestCount } = await page.evaluate(() => {
+    let { testCount, flakeyTestCount } = await page.evaluate(() => {
         // @ts-ignore
         // eslint-disable-next-line no-undef
         const allTests = tests;
@@ -148,13 +152,20 @@ export async function runRequestBlockingTest(backgroundPage, page, url) {
         );
     }
 
-    const pageResults = await page.evaluate(
+    let pageResults = await page.evaluate(
         // @ts-ignore
         // eslint-disable-next-line no-undef
         () => results.results,
     );
 
     cleanup();
+
+    // Firefox consistently reports these requests as failed, filter them out to
+    // make the tests easier to write.
+    if (isFirefox()) {
+        pageResults = pageResults.filter(({ id }) => !FIREFOX_SKIP_REQUEST_TYPES.has(id));
+        testCount = pageResults.length;
+    }
 
     return { testCount, pageRequests, pageResults };
 }
