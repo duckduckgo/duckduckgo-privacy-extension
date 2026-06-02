@@ -63,7 +63,7 @@ test.describe('Test Facebook Click To Load', () => {
         await backgroundWait.forAllConfiguration(backgroundPage);
     });
 
-    test('CTL: Facebook request blocking/redirecting', async ({ page, backgroundPage }) => {
+    test('CTL: Facebook request blocking/redirecting', async ({ page }) => {
         const facebookRequests = new EventEmitter();
         await routeFromLocalhost(page, (route) => {
             const url = route.request().url();
@@ -80,7 +80,7 @@ test.describe('Test Facebook Click To Load', () => {
             return false;
         });
         const pageRequests = [];
-        const cleanup = await logPageRequests(backgroundPage, page, pageRequests);
+        const cleanup = await logPageRequests(page, pageRequests);
 
         await page.goto(testSite, { waitUntil: 'networkidle' });
         await waitForFacebookIframeRequests(page, pageRequests);

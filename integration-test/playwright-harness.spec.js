@@ -58,10 +58,10 @@ test.describe('Background script eval', () => {
     });
 });
 
-async function testLogPageRequests(page, networkContext, backgroundPage, expectedRequests) {
+async function testLogPageRequests(page, networkContext, expectedRequests) {
     const targets = new Set(expectedRequests.map((r) => r.url));
     const actualRequests = [];
-    const cleanup = await logPageRequests(backgroundPage, networkContext, actualRequests, (r) => targets.has(r.url.href));
+    const cleanup = await logPageRequests(networkContext, actualRequests, (r) => targets.has(r.url.href));
 
     await page.evaluate((urls) => Promise.allSettled(urls.map((u) => fetch(u))), Array.from(targets));
 
@@ -89,17 +89,16 @@ test.describe('Request logging', () => {
         await backgroundWait.forAllConfiguration(backgroundPage);
     });
 
-    test('page-initiated requests', async ({ page, backgroundPage }) => {
+    test('page-initiated requests', async ({ page }) => {
         await routeFromLocalhost(page);
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
-        await testLogPageRequests(page, page, backgroundPage, expectedRequests);
+        await testLogPageRequests(page, page, expectedRequests);
     });
 
     test('extension-initiated requests', async ({ backgroundPage, backgroundNetworkContext }) => {
         await testLogPageRequests(
             backgroundPage,
             backgroundNetworkContext,
-            backgroundPage,
             // Note: Skip 'blocked' here since the extension doesn't always
             //       block its own background-initiated requests.
             expectedRequests.filter((r) => r.status !== 'blocked'),

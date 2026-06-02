@@ -1,4 +1,4 @@
-import { test, expect, getManifestVersion } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 import { routeFromLocalhost } from './helpers/testPages';
@@ -10,19 +10,12 @@ const heuristicTestPage = 'https://privacy-test-pages.site/features/autoconsent/
 const reloadLoopTestPage = 'https://privacy-test-pages.site/features/autoconsent/reload-loop.html';
 
 test.describe('Cookie Prompt Management', () => {
-    // CPM is only enabled in the Chrome MV3 build
-    if (getManifestVersion() !== 3) {
-        return;
-    }
-
     let cleanup;
     let pixelRequests = [];
 
     test.beforeEach(async ({ context, backgroundPage, backgroundNetworkContext }) => {
         pixelRequests = [];
-        cleanup = await logPixels(backgroundPage, backgroundNetworkContext, pixelRequests, (pixel) =>
-            pixel.name?.startsWith('autoconsent_'),
-        );
+        cleanup = await logPixels(backgroundNetworkContext, pixelRequests, (pixel) => pixel.name?.startsWith('autoconsent_'));
 
         await overridePrivacyConfig(backgroundNetworkContext, 'cookie-prompt-management.json');
         await backgroundWait.forExtensionLoaded(context);
@@ -133,7 +126,7 @@ test.describe('Cookie Prompt Management', () => {
         await expect(pageLoadCount).toBeVisible();
     });
 
-    test('Fires expected pixels', async ({ page, backgroundPage, backgroundNetworkContext }) => {
+    test('Fires expected pixels', async ({ page }) => {
         await routeFromLocalhost(page);
         await page.goto(autoconsentTestPage, { waitUntil: 'networkidle' });
 

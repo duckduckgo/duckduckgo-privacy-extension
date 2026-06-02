@@ -18,7 +18,6 @@ test.describe('Ad click blocking', () => {
         }
         backgroundPixels.length = 0;
         cleanup = await logPixels(
-            backgroundPage,
             backgroundNetworkContext,
             backgroundPixels,
             ({ name, params }) =>

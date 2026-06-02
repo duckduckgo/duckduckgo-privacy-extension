@@ -118,4 +118,4 @@ The extension imports several DDG-owned modules (see [package.json](https://gith
 
 ### Testing
 - Unit tests: `npm test` (full docs [here](./unit-test/README.md))
-- Integration tests: `npm run playwright` and `npm run playwright-mv2` (full docs [here](./integration-test/README.md))
+- Integration tests: `npm run playwright` (full docs [here](./integration-test/README.md))

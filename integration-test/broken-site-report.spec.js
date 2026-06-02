@@ -8,7 +8,7 @@ test.describe('Broken site reports', () => {
     test('Sends broken site reports with current page context', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
         await backgroundWait.forExtensionLoaded(context);
         await routeFromLocalhost(page);
-        const breakageReport = listenForBreakageReport(backgroundPage, backgroundNetworkContext);
+        const breakageReport = listenForBreakageReport(backgroundNetworkContext);
         const extensionVersion = require('../browsers/chrome/manifest.json').version;
 
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
@@ -52,26 +52,20 @@ test.describe('Broken site reports', () => {
         expect(pixel.params.locale).toMatch(/^[a-z]{2}-[A-Z]{2}$/);
     });
 
-    test('Includes correct metadata when blocklist fetch fails', async ({
-        context,
-        backgroundPage,
-        page,
-        backgroundNetworkContext,
-        routeExtensionRequests,
-    }) => {
+    test('Includes correct metadata when blocklist fetch fails', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
         // On Firefox the extension fetches and applies its config during context
         // creation, before the test body can register the abort route below.
         test.skip(isFirefox(), 'Cannot simulate missing remote config on Firefox');
 
         // block all CDN requests
-        routeExtensionRequests('https://staticcdn.duckduckgo.com/**/*', (route) => {
+        context.route('https://staticcdn.duckduckgo.com/**/*', (route) => {
             return route.abort();
         });
         const bundledConfigEtag = require('../shared/data/etags.json')['config-etag'];
         const bundledConfigVersion = String(require('../shared/data/bundled/extension-config.json').version);
         await backgroundWait.forExtensionLoaded(context);
         await routeFromLocalhost(page);
-        const breakageReport = listenForBreakageReport(backgroundPage, backgroundNetworkContext);
+        const breakageReport = listenForBreakageReport(backgroundNetworkContext);
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
         await page.bringToFront();
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
