@@ -2,6 +2,9 @@ import { test as base, chromium } from '@playwright/test';
 import path from 'path';
 import fs from 'fs/promises';
 
+import { applyFirefoxHarness } from 'firefox-webext-playwright-harness';
+import { isFirefox } from './platform.js';
+
 const testRoot = path.join(__dirname, '..');
 const projectRoot = path.join(testRoot, '..');
 export function getHARPath(harFile) {
@@ -9,7 +12,7 @@ export function getHARPath(harFile) {
 }
 
 export function getManifestVersion() {
-    return process.env.npm_lifecycle_event === 'playwright-mv2' ? 2 : 3;
+    return isFirefox() || process.env.npm_lifecycle_event === 'playwright-mv2' ? 2 : 3;
 }
 
 /**
@@ -83,7 +86,7 @@ const defaultRouteHandler = (route) => {
 };
 
 // based off example at https://playwright.dev/docs/chrome-extensions#testing
-export const test = base.extend({
+let test = base.extend({
     /**
      * @type {2 | 3}
      */
@@ -207,4 +210,9 @@ export const test = base.extend({
     },
 });
 
+if (isFirefox()) {
+    test = applyFirefoxHarness(test, { defaultRouteHandler });
+}
+
+export { test };
 export const expect = test.expect;

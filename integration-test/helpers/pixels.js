@@ -1,7 +1,8 @@
+import { isFirefox } from './platform.js';
 import { logPageRequests } from './requests';
 import { _formatPixelRequestForTesting } from '../../shared/js/shared-utils/pixels';
 
-const expectedBrowserSuffix = /_chrome$/;
+const expectedBrowserSuffix = isFirefox() ? /_firefox$/ : /_chrome$/;
 
 // Most pixel names have a suffix something like "_extension_chrome", the
 // exception being breakage report pixels, which end with just something like

@@ -1,6 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 
+async function triggerFirefoxRefetch(networkContext, resource) {
+    if (!networkContext._firefoxBgPage) {
+        return;
+    }
+
+    await networkContext._firefoxBgPage.evaluate((key) => globalThis.components?.tds?.[key]?.checkForUpdates(true), resource);
+}
+
 /**
  * Rewrites the config received from the server with the changes specified in testConfigFilename
  * @param {import('@playwright/test').Page | import('@playwright/test').BrowserContext} networkContext
@@ -34,6 +42,8 @@ export async function overridePrivacyConfig(networkContext, testConfigFilename) 
             },
         });
     });
+
+    await triggerFirefoxRefetch(networkContext, 'config');
 }
 
 /**
@@ -51,6 +61,8 @@ export async function overridePrivacyConfigFromContent(networkContext, testConfi
             },
         });
     });
+
+    await triggerFirefoxRefetch(networkContext, 'config');
 }
 
 /**
@@ -69,4 +81,6 @@ export async function overrideTds(networkContext, tdsFilePath) {
             },
         });
     });
+
+    await triggerFirefoxRefetch(networkContext, 'tds');
 }
