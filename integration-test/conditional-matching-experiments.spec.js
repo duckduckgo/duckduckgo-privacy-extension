@@ -1,4 +1,5 @@
 import { test, expect } from './helpers/playwrightHarness';
+import { isFirefox } from './helpers/platform';
 import backgroundWait from './helpers/backgroundWait';
 // TODO: Re-enable this when it is working again.
 // import { routeFromLocalhost } from './helpers/testPages';
@@ -10,16 +11,8 @@ const testSite = 'https://privacy-test-pages.site/content-scope-scripts/infra/pa
 const configFile = 'https://privacy-test-pages.site/content-scope-scripts/infra/config/conditional-matching-experiments.json';
 
 test.describe('Conditional Matching Experiments', () => {
-    test('applies correct API manipulation for experiment cohort', async ({
-        context,
-        backgroundPage,
-        page,
-        backgroundNetworkContext,
-        manifestVersion,
-    }) => {
-        // inject.js is outdated in C-S-S meaning this suite doesn't work.
-        // We either should move to using firefox or start building Chrome again.
-        test.skip(manifestVersion === 2, 'MV2 is not supported for this suite, inject.js is outdated');
+    test('applies correct API manipulation for experiment cohort', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
+        test.skip(isFirefox(), 'contentScopeExperiments cohorts are not delivered to inject.js on Firefox (abnMetrics is Chrome-only)');
         const configContent = await fetch(configFile).then((res) => res.json());
         expect(configContent).toBeDefined();
         await overridePrivacyConfigFromContent(backgroundNetworkContext, configContent);

@@ -1,4 +1,4 @@
-import { test, expect, getHARPath, addScriptTag } from './helpers/playwrightHarness';
+import { test, expect, getHARPath } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 
@@ -59,7 +59,7 @@ test.describe('First Party Fingerprint Randomization', () => {
     async function runTest(testCase, page) {
         await page.routeFromHAR(testCase.har);
         await page.goto(`https://${testCase.url}`);
-        await addScriptTag(page, { path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' });
+        await page.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' });
 
         const fingerprint = await page.evaluate(() => {
             /* global FingerprintJS */

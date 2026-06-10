@@ -85,10 +85,10 @@ test.describe('Test YouTube Click To Load', () => {
         await backgroundWait.forAllConfiguration(backgroundPage);
     });
 
-    test('CTL: YouTube request blocking/redirecting', async ({ page, backgroundPage }) => {
+    test('CTL: YouTube request blocking/redirecting', async ({ page }) => {
         await routeFromLocalhost(page, overrideHandler);
         const pageRequests = [];
-        const cleanup = await logPageRequests(backgroundPage, page, pageRequests);
+        const cleanup = await logPageRequests(page, pageRequests);
 
         // Initially there should be a bunch of requests. The iframe_api should
         // be redirected to our surrogate but otherwise YouTube requests should
@@ -217,10 +217,10 @@ test.describe('Test YouTube Click To Load', () => {
         }
     });
 
-    test('CTL: YouTube Preview', async ({ page, backgroundPage }) => {
+    test('CTL: YouTube Preview', async ({ page }) => {
         await routeFromLocalhost(page, overrideHandler);
         const pageRequests = [];
-        const cleanup = await logPageRequests(backgroundPage, page, pageRequests);
+        const cleanup = await logPageRequests(page, pageRequests);
 
         // Navigate to test page
         await page.goto(testSite, { waitUntil: 'networkidle' });

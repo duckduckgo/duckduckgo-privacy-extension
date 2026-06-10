@@ -15,7 +15,6 @@ function stubOnFirstSearchPostExtensionInstallOnInit(page) {
 
 test.describe('onboarding', () => {
     test('should manage the onboarding state and inject a script that calls window.onFirstSearchPostExtensionInstall on the first search post extension', async ({
-        manifestVersion,
         context,
         backgroundPage,
         page,
@@ -36,16 +35,8 @@ test.describe('onboarding', () => {
         await page.bringToFront();
         await page.goto('https://duckduckgo.com/?q=hello');
 
-        if (manifestVersion === 2) {
-            const hasScriptHandle = await page.waitForFunction(
-                () => {
-                    const scripts = document.querySelectorAll('script:not([src])');
-                    return Array.from(scripts).some((s) => s.textContent.includes('window.onFirstSearchPostExtensionInstall'));
-                },
-                { polling: 'mutation' },
-            );
-            expect(hasScriptHandle).toBeTruthy();
-        }
+        // TODO: Add a check that `window.onFirstSearchPostExtensionInstall` is
+        //       injected.
 
         expect(JSON.parse(await page.evaluate(() => window.afterInitCall))).toEqual([
             {

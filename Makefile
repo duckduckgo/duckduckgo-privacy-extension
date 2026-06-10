@@ -30,7 +30,7 @@ endif
 #  - Add check that browser+type are set when necessary.
 
 ## release: Create a release build for a platform in build/$(browser)/release
-## specify browser=(chrome|chrome-mv2|firefox) type=release
+## specify browser=(chrome|firefox) type=release
 release: clean npm copy build
 
 .PHONY: release
@@ -49,7 +49,7 @@ beta-firefox: release beta-firefox-zip
 
 ## dev: Create a debug build for a platform in build/$(browser)/dev.
 ##      Pass reloader=0 to disable automatic extension reloading.
-## specify browser=(chrome|chrome-mv2|firefox) type=dev [reloader=1]
+## specify browser=(chrome|firefox) type=dev [reloader=1]
 dev: copy build $(BUILD_DIR)/buildtime.txt
 
 .PHONY: dev
@@ -57,7 +57,7 @@ dev: copy build $(BUILD_DIR)/buildtime.txt
 ## watch: Create a debug build for a platform in build/$(browser)/dev, and keep
 ##        it up to date as files are changed.
 ##        Pass reloader=0 to disable automatic extension reloading.
-## specify browser=(chrome|chrome-mv2|firefox) type=dev [reloader=1]
+## specify browser=(chrome|firefox) type=dev [reloader=1]
 MAKE = make $(type) browser=$(browser) type=$(type)
 watch:
 	$(MAKE)

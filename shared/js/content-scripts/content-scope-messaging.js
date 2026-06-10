@@ -50,15 +50,6 @@ async function init() {
                     }
                 });
             }
-            // Legacy support for injecting code into the main world on Chrome MV2 builds.
-            if (argumentsObject.code) {
-                const scriptTag = document.createElement('script');
-                scriptTag.textContent = argumentsObject.code;
-                scriptTag.id = 'ddg-content-scope-script';
-                (document.head || document.documentElement).appendChild(scriptTag);
-                scriptTag.remove();
-            }
-
             // if we didn't get the secret yet, wait for it
             const secret = await secretPromise;
             // Init the content-scope-scripts with the argumentsObject.
@@ -78,9 +69,6 @@ async function init() {
     // Content-scope-script messaging proxy, to allow the Click to Load content
     // script to send messages to the extension's background and receive a
     // response.
-    // Note: This event listener is only for Chrome MV3 builds of the extension,
-    //       the equivalent Chrome MV2 event listener lives in
-    //       content-scope-scripts/entry-points/chrome.js.
     window.addEventListener('sendMessageProxy' + secret, (event) => {
         event.stopImmediatePropagation();
 

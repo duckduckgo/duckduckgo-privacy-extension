@@ -11,20 +11,8 @@ export function getHARPath(harFile) {
     return path.join(testRoot, 'data', 'har', harFile);
 }
 
-export function getManifestVersion() {
-    return isFirefox() || process.env.npm_lifecycle_event === 'playwright-mv2' ? 2 : 3;
-}
-
-/**
- * Add a script tag to a page or frame context.
- *
- * @param {import('@playwright/test').Page | import('@playwright/test').Frame} context
- *   Page or frame to inject script into.
- * @param {{path?: string, content?: string, url?: string}} options
- *   Details of the script to inject.
- */
-export async function addScriptTag(context, options) {
-    await context.addScriptTag(options);
+function getManifestVersion() {
+    return isFirefox() ? 2 : 3;
 }
 
 async function routeLocalResources(route) {
@@ -94,18 +82,17 @@ let test = base.extend({
     /**
      * @type {import('@playwright/test').BrowserContext}
      */
-    async context({ manifestVersion }, use) {
-        const extensionPath = manifestVersion === 3 ? 'build/chrome/dev' : 'build/chrome-mv2/dev';
+    // eslint-disable-next-line no-empty-pattern
+    async context({}, use) {
+        const extensionPath = 'build/chrome/dev';
         const pathToExtension = path.join(projectRoot, extensionPath);
         const context = await chromium.launchPersistentContext('', {
             channel: 'chromium',
             args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
         });
 
-        if (manifestVersion === 3) {
-            // Serve extension background requests from local cache
-            await context.route('**/*', defaultRouteHandler);
-        }
+        // Serve extension background requests from local cache
+        await context.route('**/*', defaultRouteHandler);
 
         // intercept extension install page and use HAR
         context.on('page', (page) => {
@@ -124,89 +111,63 @@ let test = base.extend({
     /**
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
      */
-    async backgroundPage({ context, manifestVersion }, use) {
-        if (manifestVersion === 3) {
-            // See https://playwright.dev/docs/service-workers
-            const getBackgroundServiceWorker = async () => {
-                let [serviceWorker] = context.serviceWorkers();
-                if (!serviceWorker) {
-                    try {
-                        serviceWorker = await context.waitForEvent('serviceworker', { timeout: 2000 });
-                    } catch {
-                        [serviceWorker] = context.serviceWorkers();
-                    }
+    async backgroundPage({ context }, use) {
+        // See https://playwright.dev/docs/service-workers
+        const getBackgroundServiceWorker = async () => {
+            let [serviceWorker] = context.serviceWorkers();
+            if (!serviceWorker) {
+                try {
+                    serviceWorker = await context.waitForEvent('serviceworker', { timeout: 2000 });
+                } catch {
+                    [serviceWorker] = context.serviceWorkers();
                 }
-                return serviceWorker;
-            };
+            }
+            return serviceWorker;
+        };
 
-            const restartBackgroundServiceWorker = async () => {
-                // There is a race condition, whereby Playwright sometimes
-                // fails to attach to the extension's background ServiceWorker,
-                // possibly because it was created too early. When that happens,
-                // restart the ServiceWorker via CDP to give Playwright another
-                // chance to spot it.
-                const page = context.pages()[0];
-                if (page) {
-                    const cdp = await context.newCDPSession(page);
-                    try {
-                        // Stop the ServiceWorker
-                        await cdp.send('ServiceWorker.enable');
-                        await cdp.send('ServiceWorker.stopAllWorkers');
+        const restartBackgroundServiceWorker = async () => {
+            // There is a race condition, whereby Playwright sometimes
+            // fails to attach to the extension's background ServiceWorker,
+            // possibly because it was created too early. When that happens,
+            // restart the ServiceWorker via CDP to give Playwright another
+            // chance to spot it.
+            const page = context.pages()[0];
+            if (page) {
+                const cdp = await context.newCDPSession(page);
+                try {
+                    // Stop the ServiceWorker
+                    await cdp.send('ServiceWorker.enable');
+                    await cdp.send('ServiceWorker.stopAllWorkers');
 
-                        // Start it again.
-                        const newPage = await context.newPage();
-                        await newPage.goto('https://duckduckgo.com/extension-success');
+                    // Start it again.
+                    const newPage = await context.newPage();
+                    await newPage.goto('https://duckduckgo.com/extension-success');
 
-                        console.log('Restarted ServiceWorker.');
-                    } finally {
-                        await cdp.detach().catch(() => {});
-                    }
+                    console.log('Restarted ServiceWorker.');
+                } finally {
+                    await cdp.detach().catch(() => {});
                 }
-            };
-
-            let background = await getBackgroundServiceWorker();
-            if (!background) {
-                await restartBackgroundServiceWorker();
-                background = await getBackgroundServiceWorker();
             }
+        };
 
-            if (!background) {
-                throw new Error("Failed to find extension's background ServiceWorker.");
-            }
-
-            await use(background);
-        } else {
-            let [background] = context.backgroundPages();
-            if (!background) {
-                background = await context.waitForEvent('backgroundpage');
-            }
-
-            // Serve extension background requests from local cache
-            await background.route('**/*', defaultRouteHandler);
-            await use(background);
+        let background = await getBackgroundServiceWorker();
+        if (!background) {
+            await restartBackgroundServiceWorker();
+            background = await getBackgroundServiceWorker();
         }
-    },
-    /**
-     * wraps the 'route' function in a manifest agnostic way
-     * @type {(url: string | RegExp, handler: (route: Route, request: Request) => any) => Promise<void>}
-     */
-    async routeExtensionRequests({ manifestVersion, backgroundPage, context }, use) {
-        if (manifestVersion === 3) {
-            await use(context.route.bind(context));
-        } else {
-            await use(backgroundPage.route.bind(backgroundPage));
+
+        if (!background) {
+            throw new Error("Failed to find extension's background ServiceWorker.");
         }
+
+        await use(background);
     },
     /**
      * Use this for listening and modifying network events for both MV2 and MV3
      * @type {import('@playwright/test').Page | import('@playwright/test').BrowserContext}
      */
-    async backgroundNetworkContext({ manifestVersion, backgroundPage, context }, use) {
-        if (manifestVersion === 3) {
-            await use(context);
-        } else {
-            await use(backgroundPage);
-        }
+    async backgroundNetworkContext({ context }, use) {
+        await use(context);
     },
 });
 

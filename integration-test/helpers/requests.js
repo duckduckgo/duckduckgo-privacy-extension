@@ -14,8 +14,6 @@ const FIREFOX_SKIP_REQUEST_TYPES = new Set(['font', 'audio', 'server-sent-events
 
 /**
  * Start logging requests for the given Page.
- * @param {object} _backgroundPage
- *   Background page, reserved for future Firefox request tracking.
  * @param {import('@playwright/test').Page} page
  *   The Playwright page to log requests for.
  * @param {LoggedRequestDetails[]} requests
@@ -33,7 +31,7 @@ const FIREFOX_SKIP_REQUEST_TYPES = new Set(['font', 'audio', 'server-sent-events
  * @returns {Promise<function>}
  *   Function that removes the event listeners (call when done logging).
  */
-export async function logPageRequests(_backgroundPage, page, requests, requestFilter, transform, postTransformFilter) {
+export async function logPageRequests(page, requests, requestFilter, transform, postTransformFilter) {
     const processRequest = (url, method, resourceType, status, reason) => {
         const details = {
             url: new URL(url),
@@ -95,17 +93,15 @@ export async function logPageRequests(_backgroundPage, page, requests, requestFi
  * results.
  * See https://privacy-test-pages.site/privacy-protections/request-blocking/
  *
- * @param {object} backgroundPage
- *   Background page for Firefox request tracking.
  * @param {import('@playwright/test').Page} page
  * @param {string} url
  *   URL of the test page.
  * @returns {Promise<{ testCount: number, pageRequests: Object[], pageResults: Object[] }>}
  */
-export async function runRequestBlockingTest(backgroundPage, page, url) {
+export async function runRequestBlockingTest(page, url) {
     const pageRequests = [];
 
-    const cleanup = await logPageRequests(backgroundPage, page, pageRequests, (r) => r.url.hostname === 'bad.third-party.site');
+    const cleanup = await logPageRequests(page, pageRequests, (r) => r.url.hostname === 'bad.third-party.site');
 
     await page.bringToFront();
     await page.goto(url, { waitUntil: 'networkidle' });

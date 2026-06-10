@@ -1,5 +1,5 @@
 import { forExtensionLoaded } from './helpers/backgroundWait';
-import { test, expect, getManifestVersion } from './helpers/playwrightHarness';
+import { test, expect } from './helpers/playwrightHarness';
 import { routeFromLocalhost } from './helpers/testPages';
 
 const burnAnimationRegex = /^chrome-extension:\/\/[a-z]*\/html\/fire.html$/;
@@ -228,14 +228,9 @@ test.describe('Fire Button', () => {
         }
     });
 
-    test.describe('burn', () => {
-        // Skip these tests on MV3.
-        // For these tests to work, we need to be able to successfully request the optional `browsingData`
-        // permission at runtime (`requestBrowsingDataPermissions`). When running these tests in Playwright,
-        // this works without issue with the MV2 extension, however in MV3 the permission is rejected.
-        if (getManifestVersion() === 3) {
-            return;
-        }
+    // TODO: Re-enable these "burn" tests, once we can figure out how to get the
+    //       optional `browsingData` runtime permission to work.
+    test.describe.skip('burn', () => {
         test('clears tabs and storage', async ({ context, backgroundPage }) => {
             await forExtensionLoaded(context);
             await requestBrowsingDataPermissions(backgroundPage);
