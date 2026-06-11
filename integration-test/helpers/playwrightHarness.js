@@ -125,37 +125,7 @@ let test = base.extend({
             return serviceWorker;
         };
 
-        const restartBackgroundServiceWorker = async () => {
-            // There is a race condition, whereby Playwright sometimes
-            // fails to attach to the extension's background ServiceWorker,
-            // possibly because it was created too early. When that happens,
-            // restart the ServiceWorker via CDP to give Playwright another
-            // chance to spot it.
-            const page = context.pages()[0];
-            if (page) {
-                const cdp = await context.newCDPSession(page);
-                try {
-                    // Stop the ServiceWorker
-                    await cdp.send('ServiceWorker.enable');
-                    await cdp.send('ServiceWorker.stopAllWorkers');
-
-                    // Start it again.
-                    const newPage = await context.newPage();
-                    await newPage.goto('https://duckduckgo.com/extension-success');
-
-                    console.log('Restarted ServiceWorker.');
-                } finally {
-                    await cdp.detach().catch(() => {});
-                }
-            }
-        };
-
-        let background = await getBackgroundServiceWorker();
-        if (!background) {
-            await restartBackgroundServiceWorker();
-            background = await getBackgroundServiceWorker();
-        }
-
+        const background = await getBackgroundServiceWorker();
         if (!background) {
             throw new Error("Failed to find extension's background ServiceWorker.");
         }

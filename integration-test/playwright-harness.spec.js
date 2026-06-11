@@ -92,7 +92,12 @@ test.describe('Request logging', () => {
     test('page-initiated requests', async ({ page }) => {
         await routeFromLocalhost(page);
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
-        await testLogPageRequests(page, page, expectedRequests);
+        // Note: Chrome blocks page-initiated requests to the local network, so
+        //       swap the 'allowed' request for a routed public host here.
+        await testLogPageRequests(page, page, [
+            { url: 'https://good.third-party.site/?allow', method: 'GET', type: 'fetch', status: 'allowed' },
+            ...expectedRequests.filter((r) => r.status !== 'allowed'),
+        ]);
     });
 
     test('extension-initiated requests', async ({ backgroundPage, backgroundNetworkContext }) => {
