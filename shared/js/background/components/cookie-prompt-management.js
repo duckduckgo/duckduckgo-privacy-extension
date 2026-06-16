@@ -330,13 +330,6 @@ export default class CookiePromptManagement {
         // @ts-expect-error - origin is not available in the type
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
-        let tabDomain = '';
-        try {
-            tabDomain = new URL(tabUrl).hostname;
-        } catch (e) {
-            this.cpmMessaging.logMessage(`error getting tab domain: ${e}`);
-            return;
-        }
 
         // use the cached config
         const remoteConfig = await this.remoteConfigJson;
