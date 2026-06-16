@@ -6,10 +6,6 @@ import { registerMessageHandler } from '../message-registry';
 import { registerContentScripts, unregisterContentScripts } from './mv3-content-script-injection';
 
 /**
- * @typedef {import('../tab-manager.js')} TabManager
- */
-
-/**
  * @typedef {Object} CpmState
  * @property {Set<string>} sitesNotifiedCache
  * @property {{
@@ -155,7 +151,7 @@ export default class CookiePromptManagement {
     }
 
     /**
-     * @param {object} jsonCpmState
+     * @param {any} jsonCpmState
      * @returns {CpmState}
      */
     _deserializeCpmState(jsonCpmState) {
@@ -261,6 +257,7 @@ export default class CookiePromptManagement {
      */
     updateTopUrl(tabId, url) {
         const oldTopUrl = this._tabUrlsCache.get(tabId) || new URL('about:blank');
+        /** @type {URL | null} */
         let newTopUrl = null;
         try {
             newTopUrl = new URL(url);
@@ -337,7 +334,7 @@ export default class CookiePromptManagement {
         // @ts-expect-error - origin is not available in the type
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
-        let tabDomain = null;
+        let tabDomain = '';
         try {
             tabDomain = new URL(tabUrl).hostname;
         } catch (e) {
