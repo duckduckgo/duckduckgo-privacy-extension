@@ -7,7 +7,6 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
 
 /**
  * @typedef {Object} CpmState
- * @property {Set<string>} sitesNotifiedCache
  * @property {{
  *  patterns: Set<string>,
  *  onlyRules: Set<string>,
@@ -156,7 +155,6 @@ export default class CookiePromptManagement {
      */
     _deserializeCpmState(jsonCpmState) {
         return {
-            sitesNotifiedCache: new Set(jsonCpmState.sitesNotifiedCache || []),
             detectionCache: {
                 patterns: new Set(jsonCpmState.detectionCache?.patterns || []),
                 both: new Set(jsonCpmState.detectionCache?.both || []),
@@ -172,7 +170,6 @@ export default class CookiePromptManagement {
      */
     _serializeCpmState(cpmState) {
         return {
-            sitesNotifiedCache: Array.from(cpmState.sitesNotifiedCache),
             detectionCache: {
                 patterns: Array.from(cpmState.detectionCache.patterns),
                 both: Array.from(cpmState.detectionCache.both),
@@ -188,7 +185,6 @@ export default class CookiePromptManagement {
     async getCpmState() {
         if (!this._jsonCpmState) {
             this._jsonCpmState = (await getFromSessionStorage('cpmState')) || {
-                sitesNotifiedCache: [],
                 detectionCache: {
                     patterns: [],
                     both: [],
@@ -405,8 +401,7 @@ export default class CookiePromptManagement {
                 if (isMainFrame) {
                     // no await
                     this.cpmMessaging.refreshDashboardState(tabId, tabUrl, {
-                        // keep "cookies managed" if we did it for this site since app launch
-                        consentManaged: (await this.getCpmState()).sitesNotifiedCache.has(tabDomain),
+                        consentManaged: false,
                         cosmetic: null,
                         optoutFailed: null,
                         selftestFailed: null,
@@ -515,9 +510,6 @@ export default class CookiePromptManagement {
                 } else {
                     this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done');
                 }
-                await this.modifyCpmState((cpmState) => {
-                    cpmState.sitesNotifiedCache.add(tabDomain);
-                });
                 this.cpmMessaging.showCpmAnimation(tabId, tabUrl, msg.isCosmetic);
                 this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown');
                 this.cpmMessaging.notifyPopupHandled(tabId, msg);
