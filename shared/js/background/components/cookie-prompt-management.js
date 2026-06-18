@@ -332,9 +332,9 @@ export default class CookiePromptManagement {
     }
 
     /**
-     * 
-     * @param {boolean} heuristicActionEnabled 
-     * @param {'off' | 'default' | 'max'} preference 
+     *
+     * @param {boolean} heuristicActionEnabled
+     * @param {'off' | 'default' | 'max'} preference
      */
     getHeuristicMode(heuristicActionEnabled, preference) {
         if (!heuristicActionEnabled) {
@@ -401,7 +401,11 @@ export default class CookiePromptManagement {
             this.cpmMessaging.logMessage(`autoconsentSettings not ready: ${autoconsentSettings}`);
             return;
         }
-        const { enabled: autoconsentFeatureEnabled, preference, heuristicActionEnabled } = await this.cpmMessaging.checkAutoconsentSetting();
+        const {
+            enabled: autoconsentFeatureEnabled,
+            preference,
+            heuristicActionEnabled,
+        } = await this.cpmMessaging.checkAutoconsentSetting();
         if (!autoconsentFeatureEnabled) {
             this.cpmMessaging.logMessage('autoconsent setting not enabled');
             return;
@@ -432,7 +436,12 @@ export default class CookiePromptManagement {
                 // - default and new settings enabled: Tier1
                 // - default and new settings disabled: Reject
                 // - off: Reject (isEnabled should already be disabling it)
-                const heuristicMode = preference === 'max' ? PopupHandlingModes.Tier2 : preference === 'default' ? PopupHandlingModes.Tier1 : PopupHandlingModes.Reject
+                const heuristicMode =
+                    preference === 'max'
+                        ? PopupHandlingModes.Tier2
+                        : preference === 'default'
+                          ? PopupHandlingModes.Tier1
+                          : PopupHandlingModes.Reject;
 
                 /** @type {import('@duckduckgo/autoconsent').Config['autoAction']} */
                 let autoAction = 'optOut';
@@ -653,7 +662,7 @@ export default class CookiePromptManagement {
             return '-1';
         }
         if (!heuristicActionEnabled) {
-            return '0'
+            return '0';
         }
         if (preference === 'default') {
             return '1';

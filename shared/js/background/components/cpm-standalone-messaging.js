@@ -42,7 +42,7 @@ export class CPMStandaloneMessaging {
     async checkAutoconsentSetting() {
         // there's no Autoconsent setting in the extension yet
         return { enabled: true };
-    }   
+    }
 
     async checkAutoconsentEnabledForSite(url) {
         await this.remoteConfig.ready;
