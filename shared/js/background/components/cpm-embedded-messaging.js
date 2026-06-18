@@ -124,9 +124,11 @@ export class CPMEmbeddedMessaging {
 
     async logMessage(message) {
         console.log(message);
-        await this._notify('extensionLog', {
-            message,
-        });
+        if (DEBUG) {
+            await this._notify('extensionLog', {
+                message,
+            });
+        }
     }
 
     /**

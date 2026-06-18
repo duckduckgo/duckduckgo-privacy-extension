@@ -319,7 +319,7 @@ export default class CookiePromptManagement {
             return oldTopUrl;
         }
 
-        DEBUG && this.cpmMessaging.logMessage(`${tabId} Main frame navigated from ${oldTopUrl} to ${newTopUrl}`);
+        this.cpmMessaging.logMessage(`${tabId} Main frame navigated from ${oldTopUrl} to ${newTopUrl}`);
         if (oldTopUrl.host !== newTopUrl.host || oldTopUrl.pathname !== newTopUrl.pathname || oldTopUrl.protocol !== newTopUrl.protocol) {
             // url has changed (as far as reload loop prevention is concerned)
             this.clearReloadLoopState(tabId);
@@ -513,30 +513,23 @@ export default class CookiePromptManagement {
             }
             return;
         }
-        // FIXME: Cache this or do not request on EVERY message!
-        const autoconsentFeatureEnabled = await this.cpmMessaging.checkAutoconsentSettingEnabled(tabId);
-        if (!autoconsentFeatureEnabled) {
-            this.cpmMessaging.logMessage('autoconsent setting not enabled');
-            if (isMainFrame) {
-                this.cpmMessaging.refreshDashboardState(
-                    tabId,
-                    tabUrl,
-                    await this.updateCpmDashboardState(tabId, {
-                        cpmStage: 'setting_disabled',
-                        cpmConfigVersion,
-                    }),
-                );
-            }
-            return;
-        }
-        // FIXME: Cache this or do not request on EVERY message!
-        const heuristicActionEnabled = await this.checkHeuristicActionEnabled(tabId);
 
         switch (msg.type) {
             case 'init': {
-                if (isMainFrame) {
-                    // schedule config refresh (will be used next time)
-                    this.scheduleConfigRefresh();
+                const autoconsentFeatureEnabled = await this.cpmMessaging.checkAutoconsentSettingEnabled(tabId);
+                if (!autoconsentFeatureEnabled) {
+                    this.cpmMessaging.logMessage('autoconsent setting not enabled');
+                    if (isMainFrame) {
+                        this.cpmMessaging.refreshDashboardState(
+                            tabId,
+                            tabUrl,
+                            await this.updateCpmDashboardState(tabId, {
+                                cpmStage: 'setting_disabled',
+                                cpmConfigVersion,
+                            }),
+                        );
+                    }
+                    return;
                 }
 
                 const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(tabUrl, tabId);
@@ -556,6 +549,12 @@ export default class CookiePromptManagement {
                     return;
                 }
 
+                if (isMainFrame) {
+                    // schedule config refresh (will be used next time)
+                    this.scheduleConfigRefresh();
+                }
+
+                const heuristicActionEnabled = await this.checkHeuristicActionEnabled(tabId);
                 const visualTest = DEBUG;
 
                 /** @type {import('@duckduckgo/autoconsent').Config['autoAction']} */
