@@ -40,13 +40,28 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent').DoneMessage) => Promise<void>;
  *  checkAutoconsentSettingEnabled: () => Promise<boolean>;
  *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
+ *  checkAutoconsentSetting: () => Promise<AutoconsentUserSettings>;
  *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;
  *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
  * }} CPMMessagingBase
+ * @typedef {{
+ *  enabled: boolean,
+ *  preference?: 'off' | 'default' | 'max',
+ *  heuristicActionEnabled?: boolean,
+ *  preferenceSettingEnabled?: boolean,
+ * }} AutoconsentUserSettings
  */
 
 /* global DEBUG, BUILD_TARGET */
+
+// From @duckduckgo/autoconsent/dist/types/types.ts
+const PopupHandlingModes = {
+    None: -1,
+    Reject: 0,
+    Tier1: 1,
+    Tier2: 2,
+};
 
 /**
  * @type {import('@duckduckgo/autoconsent').Config['logs']}
@@ -317,6 +332,23 @@ export default class CookiePromptManagement {
     }
 
     /**
+     * 
+     * @param {boolean} heuristicActionEnabled 
+     * @param {'off' | 'default' | 'max'} preference 
+     */
+    getHeuristicMode(heuristicActionEnabled, preference) {
+        if (!heuristicActionEnabled) {
+            return PopupHandlingModes.None;
+        }
+        if (preference === 'max') {
+            return PopupHandlingModes.Tier2;
+        } else if (preference === 'default') {
+            return PopupHandlingModes.Tier1;
+        }
+        return PopupHandlingModes.Reject;
+    }
+
+    /**
      *
      * @param {import('@duckduckgo/autoconsent').ContentScriptMessage} msg
      * @param {browser.Runtime.MessageSender} sender
@@ -369,12 +401,11 @@ export default class CookiePromptManagement {
             this.cpmMessaging.logMessage(`autoconsentSettings not ready: ${autoconsentSettings}`);
             return;
         }
-        const autoconsentFeatureEnabled = await this.cpmMessaging.checkAutoconsentSettingEnabled();
+        const { enabled: autoconsentFeatureEnabled, preference, heuristicActionEnabled } = await this.cpmMessaging.checkAutoconsentSetting();
         if (!autoconsentFeatureEnabled) {
             this.cpmMessaging.logMessage('autoconsent setting not enabled');
             return;
         }
-        const heuristicActionEnabled = await this.checkHeuristicActionEnabled();
 
         switch (msg.type) {
             case 'init': {
@@ -396,6 +427,12 @@ export default class CookiePromptManagement {
                 }
 
                 const visualTest = DEBUG;
+                // Map preference to heuristic mode:
+                // - max: Tier2
+                // - default and new settings enabled: Tier1
+                // - default and new settings disabled: Reject
+                // - off: Reject (isEnabled should already be disabling it)
+                const heuristicMode = preference === 'max' ? PopupHandlingModes.Tier2 : preference === 'default' ? PopupHandlingModes.Tier1 : PopupHandlingModes.Reject
 
                 /** @type {import('@duckduckgo/autoconsent').Config['autoAction']} */
                 let autoAction = 'optOut';
@@ -437,6 +474,7 @@ export default class CookiePromptManagement {
                     enableFilterList: false,
                     enableHeuristicDetection: true,
                     enableHeuristicAction: heuristicActionEnabled,
+                    heuristicMode,
                     visualTest,
                     logs: logsConfig,
                 };
@@ -609,6 +647,23 @@ export default class CookiePromptManagement {
         });
     }
 
+    async getPixelHeuristicParameter() {
+        const { enabled, preference, heuristicActionEnabled } = await this.cpmMessaging.checkAutoconsentSetting();
+        if (!enabled || preference === 'off') {
+            return '-1';
+        }
+        if (!heuristicActionEnabled) {
+            return '0'
+        }
+        if (preference === 'default') {
+            return '1';
+        }
+        if (preference === 'max') {
+            return '2';
+        }
+        return '';
+    }
+
     async firePixel(eventName) {
         this.modifyCpmState((cpmState) => {
             cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
@@ -622,7 +677,7 @@ export default class CookiePromptManagement {
         // request "daily" pixel firing
         const pixelName = `autoconsent_${eventName}`;
         this.cpmMessaging.sendPixel(pixelName, 'daily', {
-            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
+            consentHeuristicEnabled: await this.getPixelHeuristicParameter(),
             fromExtension: '1',
         });
     }
@@ -638,7 +693,7 @@ export default class CookiePromptManagement {
         });
         this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
             ...summaryEvents,
-            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
+            consentHeuristicEnabled: await this.getPixelHeuristicParameter(),
             fromExtension: '1',
         });
     }
