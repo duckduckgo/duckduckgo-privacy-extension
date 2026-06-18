@@ -13,6 +13,8 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  both: Set<string>,
  * }} detectionCache
  * @property {Record<string, number>} summaryEvents
+ * @property {Record<string, CpmDashboardState>} dashboardStates
+ * @property {Set<string>} globalErrors
  */
 
 /**
@@ -24,6 +26,14 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  * @property {boolean?} consentReloadLoop
  * @property {string?} consentRule
  * @property {boolean?} consentHeuristicEnabled
+ * @property {CpmStage} cpmStage
+ * @property {Set<string>} cpmErrors
+ * @property {number=} cpmQueueSize
+ * @property {string} cpmConfigVersion
+ */
+
+/**
+ * @typedef {'not_started' | 'config_unavailable' | 'settings_missing' | 'setting_disabled' | 'site_disabled' | 'init_received' | 'popup_found'} CpmStage
  */
 
 /**
@@ -33,11 +43,12 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  refreshDashboardState: (tabId: number, url: string, dashboardState: Partial<CpmDashboardState>) => Promise<void>;
  *  showCpmAnimation: (tabId: number, topUrl: string, isCosmetic: boolean) => Promise<void>;
  *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent').DoneMessage) => Promise<void>;
- *  checkAutoconsentSettingEnabled: () => Promise<boolean>;
- *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
- *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;
+ *  checkAutoconsentSettingEnabled: (tabId?: number) => Promise<boolean>;
+ *  checkAutoconsentEnabledForSite: (url: string, tabId?: number) => Promise<boolean>;
+ *  checkSubfeatureEnabled: (subfeatureName: string, tabId?: number) => Promise<boolean>;
  *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
+ *  setDiagnosticsErrorHandler?: (handler: (tabId: number | null, errorName: string) => void) => void;
  * }} CPMMessagingBase
  */
 
@@ -70,6 +81,9 @@ export default class CookiePromptManagement {
      */
     constructor({ cpmMessaging }) {
         this.cpmMessaging = cpmMessaging;
+        this.cpmMessaging.setDiagnosticsErrorHandler?.((tabId, errorName) => {
+            this.recordCpmDiagnosticError(tabId, errorName);
+        });
         this.scheduleConfigRefresh();
 
         // In the standalone Chrome extension, the CPM content script is not in
@@ -150,6 +164,40 @@ export default class CookiePromptManagement {
     }
 
     /**
+     * make sure we deserialize the cpmErrors as a Set
+     * @param {Record<string, any>} jsonDashboardStates
+     * @returns {Record<string, CpmDashboardState>}
+     */
+    _deserializeCpmDashboardStates(jsonDashboardStates) {
+        return Object.fromEntries(
+            Object.entries(jsonDashboardStates || {}).map(([tabId, dashboardState]) => [
+                tabId,
+                {
+                    ...dashboardState,
+                    cpmErrors: new Set(dashboardState.cpmErrors || []),
+                },
+            ]),
+        );
+    }
+
+    /**
+     * make sure we serialize the cpmErrors as an array
+     * @param {Record<string, CpmDashboardState>} dashboardStates
+     * @returns {Record<string, object>}
+     */
+    _serializeCpmDashboardStates(dashboardStates) {
+        return Object.fromEntries(
+            Object.entries(dashboardStates).map(([tabId, dashboardState]) => [
+                tabId,
+                {
+                    ...dashboardState,
+                    cpmErrors: Array.from(dashboardState.cpmErrors),
+                },
+            ]),
+        );
+    }
+
+    /**
      * @param {any} jsonCpmState
      * @returns {CpmState}
      */
@@ -161,6 +209,8 @@ export default class CookiePromptManagement {
                 onlyRules: new Set(jsonCpmState.detectionCache?.onlyRules || []),
             },
             summaryEvents: structuredClone(jsonCpmState.summaryEvents || {}),
+            dashboardStates: this._deserializeCpmDashboardStates(jsonCpmState.dashboardStates || {}),
+            globalErrors: new Set(jsonCpmState.globalErrors || []),
         };
     }
 
@@ -176,6 +226,8 @@ export default class CookiePromptManagement {
                 onlyRules: Array.from(cpmState.detectionCache.onlyRules),
             },
             summaryEvents: structuredClone(cpmState.summaryEvents),
+            dashboardStates: this._serializeCpmDashboardStates(cpmState.dashboardStates),
+            globalErrors: Array.from(cpmState.globalErrors),
         };
     }
 
@@ -191,13 +243,18 @@ export default class CookiePromptManagement {
                     onlyRules: [],
                 },
                 summaryEvents: {},
+                dashboardStates: {},
+                globalErrors: [],
             };
         }
         return this._deserializeCpmState(this._jsonCpmState);
     }
 
-    checkHeuristicActionEnabled() {
-        return this.cpmMessaging.checkSubfeatureEnabled('heuristicAction');
+    /**
+     * @param {number=} tabId
+     */
+    checkHeuristicActionEnabled(tabId) {
+        return this.cpmMessaging.checkSubfeatureEnabled('heuristicAction', tabId);
     }
 
     /**
@@ -266,9 +323,84 @@ export default class CookiePromptManagement {
         if (oldTopUrl.host !== newTopUrl.host || oldTopUrl.pathname !== newTopUrl.pathname || oldTopUrl.protocol !== newTopUrl.protocol) {
             // url has changed (as far as reload loop prevention is concerned)
             this.clearReloadLoopState(tabId);
+            // no await; state mutations are serialized and the next dashboard update will queue after this reset
+            this.resetCpmDashboardState(tabId);
         }
         this._tabUrlsCache.set(tabId, newTopUrl);
         return newTopUrl;
+    }
+
+    /**
+     * @returns {CpmDashboardState}
+     */
+    defaultCpmDashboardState() {
+        return {
+            consentManaged: false,
+            cosmetic: null,
+            optoutFailed: null,
+            selftestFailed: null,
+            consentReloadLoop: false,
+            consentRule: null,
+            consentHeuristicEnabled: null,
+            cpmStage: 'not_started',
+            cpmErrors: new Set(),
+            cpmConfigVersion: '',
+        };
+    }
+
+    /**
+     * @param {number} tabId
+     */
+    resetCpmDashboardState(tabId) {
+        this.modifyCpmState((cpmState) => {
+            cpmState.dashboardStates[`${tabId}`] = this.defaultCpmDashboardState();
+        });
+    }
+
+    /**
+     * Record a diagnostic error in the CPM dashboard state (extension side only).
+     * @param {number | null} tabId
+     * @param {string} errorName
+     * @returns {Promise<CpmDashboardState | null>}
+     */
+    async recordCpmDiagnosticError(tabId, errorName) {
+        /** @type {CpmDashboardState | null} */
+        let updatedDashboardState = null;
+        // just modify the state. We don't trigger the dashboard update to avoid recursive calls.
+        await this.modifyCpmState((cpmState) => {
+            if (typeof tabId === 'number') {
+                const key = `${tabId}`;
+                cpmState.dashboardStates[key] ||= this.defaultCpmDashboardState();
+                const dashboardState = cpmState.dashboardStates[key];
+                dashboardState.cpmErrors.add(errorName);
+                dashboardState.cpmErrors = new Set([...cpmState.globalErrors, ...dashboardState.cpmErrors]);
+                updatedDashboardState = structuredClone(dashboardState);
+            } else {
+                cpmState.globalErrors.add(errorName);
+            }
+        });
+        return updatedDashboardState;
+    }
+
+    /**
+     * Atomically read-modify-write the CPM dashboard state  (extension side only).
+     * @param {number} tabId
+     * @param {Partial<Omit<CpmDashboardState, 'cpmErrors'>>} updates - cpmErrors should be updated with recordCpmDiagnosticError
+     * @returns {Promise<CpmDashboardState>}
+     */
+    async updateCpmDashboardState(tabId, updates) {
+        /** @type {CpmDashboardState} */
+        let updatedDashboardState = this.defaultCpmDashboardState();
+        await this.modifyCpmState((cpmState) => {
+            const key = `${tabId}`;
+            cpmState.dashboardStates[key] ||= this.defaultCpmDashboardState();
+            const dashboardState = cpmState.dashboardStates[key];
+            Object.assign(dashboardState, updates);
+            // add global errors so they get pushed to native in the next update
+            dashboardState.cpmErrors = new Set([...cpmState.globalErrors, ...dashboardState.cpmErrors]);
+            updatedDashboardState = structuredClone(dashboardState);
+        });
+        return updatedDashboardState;
     }
 
     /**
@@ -310,7 +442,8 @@ export default class CookiePromptManagement {
     }
 
     /**
-     *
+     * Called on EVERY message from the content script.
+     * Make sure not to trigger anything heavy (e.g. native messaging) without a message type filter!
      * @param {import('@duckduckgo/autoconsent').ContentScriptMessage} msg
      * @param {browser.Runtime.MessageSender} sender
      * @returns
@@ -330,14 +463,29 @@ export default class CookiePromptManagement {
         // @ts-expect-error - origin is not available in the type
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
+        if (msg.type === 'init' && isMainFrame) {
+            // update the cached top url for this tab
+            this.updateTopUrl(tabId, tabUrl);
+        }
 
         // use the cached config
         const remoteConfig = await this.remoteConfigJson;
         if (!remoteConfig) {
             this.cpmMessaging.logMessage('Remote config not ready, scheduling retry');
             this.scheduleConfigRefresh();
+            if (isMainFrame) {
+                this.cpmMessaging.refreshDashboardState(
+                    tabId,
+                    tabUrl,
+                    await this.updateCpmDashboardState(tabId, {
+                        cpmStage: 'config_unavailable',
+                        cpmConfigVersion: 'unknown',
+                    }),
+                );
+            }
             return;
         }
+        const cpmConfigVersion = `${remoteConfig.version || 'unknown'}`;
         const autoconsentRemoteConfig = remoteConfig.features?.autoconsent;
         const autoconsentSettings = autoconsentRemoteConfig?.settings;
         DEBUG &&
@@ -353,29 +501,56 @@ export default class CookiePromptManagement {
 
         if (!autoconsentSettings) {
             this.cpmMessaging.logMessage(`autoconsentSettings not ready: ${autoconsentSettings}`);
+            if (isMainFrame) {
+                this.cpmMessaging.refreshDashboardState(
+                    tabId,
+                    tabUrl,
+                    await this.updateCpmDashboardState(tabId, {
+                        cpmStage: 'settings_missing',
+                        cpmConfigVersion,
+                    }),
+                );
+            }
             return;
         }
-        const autoconsentFeatureEnabled = await this.cpmMessaging.checkAutoconsentSettingEnabled();
+        // FIXME: Cache this or do not request on EVERY message!
+        const autoconsentFeatureEnabled = await this.cpmMessaging.checkAutoconsentSettingEnabled(tabId);
         if (!autoconsentFeatureEnabled) {
             this.cpmMessaging.logMessage('autoconsent setting not enabled');
+            if (isMainFrame) {
+                this.cpmMessaging.refreshDashboardState(
+                    tabId,
+                    tabUrl,
+                    await this.updateCpmDashboardState(tabId, {
+                        cpmStage: 'setting_disabled',
+                        cpmConfigVersion,
+                    }),
+                );
+            }
             return;
         }
-        const heuristicActionEnabled = await this.checkHeuristicActionEnabled();
+        // FIXME: Cache this or do not request on EVERY message!
+        const heuristicActionEnabled = await this.checkHeuristicActionEnabled(tabId);
 
         switch (msg.type) {
             case 'init': {
-                // do the navigation check before checking if the domain is allowlisted
                 if (isMainFrame) {
-                    // update the cached top url for this tab
-                    this.updateTopUrl(tabId, tabUrl);
                     // schedule config refresh (will be used next time)
                     this.scheduleConfigRefresh();
                 }
 
-                const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(tabUrl);
+                const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(tabUrl, tabId);
                 if (!isEnabled) {
                     this.cpmMessaging.logMessage(`autoconsent disabled for site: ${tabUrl}`);
                     if (isMainFrame) {
+                        this.cpmMessaging.refreshDashboardState(
+                            tabId,
+                            tabUrl,
+                            await this.updateCpmDashboardState(tabId, {
+                                cpmStage: 'site_disabled',
+                                cpmConfigVersion,
+                            }),
+                        );
                         this.firePixel('disabled-for-site');
                     }
                     return;
@@ -393,15 +568,13 @@ export default class CookiePromptManagement {
 
                 if (isMainFrame) {
                     // no await
-                    this.cpmMessaging.refreshDashboardState(tabId, tabUrl, {
-                        consentManaged: false,
-                        cosmetic: null,
-                        optoutFailed: null,
-                        selftestFailed: null,
+                    this.updateCpmDashboardState(tabId, {
                         consentReloadLoop: this._reloadLoopDetected.has(tabId),
                         consentRule: this._lastHandledCMP.get(tabId) || null,
                         consentHeuristicEnabled: heuristicActionEnabled,
-                    });
+                        cpmStage: 'init_received',
+                        cpmConfigVersion,
+                    }).then((dashboardState) => this.cpmMessaging.refreshDashboardState(tabId, tabUrl, dashboardState));
                     // no await
                     this.firePixel('init');
                 }
@@ -464,6 +637,14 @@ export default class CookiePromptManagement {
                 break;
             }
             case 'popupFound': {
+                this.cpmMessaging.refreshDashboardState(
+                    tabId,
+                    tabUrl,
+                    await this.updateCpmDashboardState(tabId, {
+                        cpmStage: 'popup_found',
+                        consentRule: msg.cmp,
+                    }),
+                );
                 this.firePixel('popup-found');
                 // Check for reload loop
                 this.detectReloadLoop(tabId, msg.cmp);
@@ -472,15 +653,16 @@ export default class CookiePromptManagement {
             case 'optOutResult': {
                 if (!msg.result) {
                     this.firePixel('error_optout');
-                    this.cpmMessaging.refreshDashboardState(tabId, tabUrl, {
-                        consentManaged: true,
-                        cosmetic: null,
-                        optoutFailed: true,
-                        selftestFailed: null,
-                        consentReloadLoop: this._reloadLoopDetected.has(tabId),
-                        consentRule: msg.cmp,
-                        consentHeuristicEnabled: heuristicActionEnabled,
-                    });
+                    this.cpmMessaging.refreshDashboardState(
+                        tabId,
+                        tabUrl,
+                        await this.updateCpmDashboardState(tabId, {
+                            consentManaged: true,
+                            optoutFailed: true,
+                            selftestFailed: null,
+                            consentRule: msg.cmp,
+                        }),
+                    );
                 } else {
                     // TODO: implement self-tests
                 }
@@ -489,15 +671,16 @@ export default class CookiePromptManagement {
             case 'autoconsentDone': {
                 // Remember the last handled CMP for reload loop detection
                 this.rememberLastHandledCMP(tabId, msg.cmp, msg.isCosmetic);
-                this.cpmMessaging.refreshDashboardState(tabId, tabUrl, {
-                    consentManaged: true,
-                    cosmetic: msg.isCosmetic,
-                    optoutFailed: false,
-                    selftestFailed: null,
-                    consentReloadLoop: this._reloadLoopDetected.has(tabId),
-                    consentRule: msg.cmp,
-                    consentHeuristicEnabled: heuristicActionEnabled,
-                });
+                this.cpmMessaging.refreshDashboardState(
+                    tabId,
+                    tabUrl,
+                    await this.updateCpmDashboardState(tabId, {
+                        consentManaged: true,
+                        cosmetic: msg.isCosmetic,
+                        optoutFailed: false,
+                        consentRule: msg.cmp,
+                    }),
+                );
                 if (msg.cmp === 'HEURISTIC') {
                     this.firePixel('done_heuristic');
                 } else {
@@ -559,6 +742,10 @@ export default class CookiePromptManagement {
             }
             case 'autoconsentError': {
                 if (msg.details?.msg?.includes('Found multiple CMPs')) {
+                    const dashboardState = await this.recordCpmDiagnosticError(tabId, 'multiple_cmps');
+                    if (dashboardState) {
+                        this.cpmMessaging.refreshDashboardState(tabId, tabUrl, dashboardState);
+                    }
                     this.firePixel('error_multiple-popups');
                 }
                 break;
