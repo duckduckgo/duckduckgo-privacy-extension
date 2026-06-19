@@ -657,18 +657,21 @@ export default class CookiePromptManagement {
     }
 
     async getPixelHeuristicParameter() {
-        const { enabled, preference, heuristicActionEnabled } = await this.cpmMessaging.checkAutoconsentSetting();
+        const { enabled, preference, heuristicActionEnabled, preferenceSettingEnabled } = await this.cpmMessaging.checkAutoconsentSetting();
         if (!enabled || preference === 'off') {
-            return '-1';
+            return 'off';
         }
         if (!heuristicActionEnabled) {
             return '0';
         }
-        if (preference === 'default') {
+        if (!preferenceSettingEnabled) {
             return '1';
         }
+        if (preference === 'default') {
+            return 'tier1';
+        }
         if (preference === 'max') {
-            return '2';
+            return 'tier2';
         }
         return '';
     }
