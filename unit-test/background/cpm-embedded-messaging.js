@@ -494,6 +494,18 @@ describe('CPMEmbeddedMessaging', () => {
             expect(result).toEqual(cachedConfig);
         });
 
+        it('records config request failures for diagnostics', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            const cachedConfig = { version: '1', features: {} };
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            sessionStorageFallback.set('config', cachedConfig);
+            nativeMessaging.request.and.returnValue(Promise.reject(new Error('network error')));
+
+            await messaging.refreshRemoteConfig();
+
+            expect(diagnosticsHandler).toHaveBeenCalledWith(null, 'glob_getResourceIfNew');
+        });
+
         it('throws on error if there is no cached config', async () => {
             const error = new Error('network error');
             nativeMessaging.request.and.returnValue(Promise.reject(error));
