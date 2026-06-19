@@ -47,10 +47,10 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  * }} CPMMessagingBase
  * @typedef {{
  *  enabled: boolean,
- *  preference?: 'off' | 'default' | 'max',
- *  heuristicActionEnabled?: boolean,
- *  preferenceSettingEnabled?: boolean,
+ *  userPreference?: AutoconsentModePreference,
+ *  featureFlags: Record<string, boolean>,
  * }} AutoconsentUserSettings
+ * @typedef {'off' | 'default' | 'max'} AutoconsentModePreference
  */
 
 /* global DEBUG, BUILD_TARGET */
@@ -61,6 +61,14 @@ const PopupHandlingModes = {
     Reject: 0,
     Tier1: 1,
     Tier2: 2,
+};
+
+const heuristicModeNameToValue = {
+    off: PopupHandlingModes.None,
+    0: PopupHandlingModes.None,
+    1: PopupHandlingModes.Reject,
+    tier1: PopupHandlingModes.Tier1,
+    tier2: PopupHandlingModes.Tier2,
 };
 
 /**
@@ -401,18 +409,15 @@ export default class CookiePromptManagement {
             this.cpmMessaging.logMessage(`autoconsentSettings not ready: ${autoconsentSettings}`);
             return;
         }
-        const {
-            enabled: autoconsentFeatureEnabled,
-            preference,
-            heuristicActionEnabled,
-        } = await this.cpmMessaging.checkAutoconsentSetting();
-        if (!autoconsentFeatureEnabled) {
-            this.cpmMessaging.logMessage('autoconsent setting not enabled');
-            return;
-        }
 
         switch (msg.type) {
             case 'init': {
+                const settings = await this.cpmMessaging.checkAutoconsentSetting();
+
+                if (!settings.enabled) {
+                    this.cpmMessaging.logMessage('autoconsent setting not enabled');
+                    return;
+                }
                 // do the navigation check before checking if the domain is allowlisted
                 if (isMainFrame) {
                     // update the cached top url for this tab
@@ -436,12 +441,8 @@ export default class CookiePromptManagement {
                 // - default and new settings enabled: Tier1
                 // - default and new settings disabled: Reject
                 // - off: Reject (isEnabled should already be disabling it)
-                const heuristicMode =
-                    preference === 'max'
-                        ? PopupHandlingModes.Tier2
-                        : preference === 'default'
-                          ? PopupHandlingModes.Tier1
-                          : PopupHandlingModes.Reject;
+                const heuristicMode = heuristicModeNameToValue[this.settingsToHeuristicModeName(settings)];
+                const heuristicActionEnabled = heuristicMode > PopupHandlingModes.None;
 
                 /** @type {import('@duckduckgo/autoconsent').Config['autoAction']} */
                 let autoAction = 'optOut';
@@ -541,7 +542,7 @@ export default class CookiePromptManagement {
                         selftestFailed: null,
                         consentReloadLoop: this._reloadLoopDetected.has(tabId),
                         consentRule: msg.cmp,
-                        consentHeuristicEnabled: heuristicActionEnabled,
+                        consentHeuristicEnabled: await this.cpmMessaging.checkSubfeatureEnabled('heuristicAction'),
                     });
                 } else {
                     // TODO: implement self-tests
@@ -558,7 +559,7 @@ export default class CookiePromptManagement {
                     selftestFailed: null,
                     consentReloadLoop: this._reloadLoopDetected.has(tabId),
                     consentRule: msg.cmp,
-                    consentHeuristicEnabled: heuristicActionEnabled,
+                    consentHeuristicEnabled: await this.cpmMessaging.checkSubfeatureEnabled('heuristicAction'),
                 });
                 if (msg.cmp === 'HEURISTIC') {
                     this.firePixel('done_heuristic');
@@ -656,24 +657,39 @@ export default class CookiePromptManagement {
         });
     }
 
-    async getPixelHeuristicParameter() {
-        const { enabled, preference, heuristicActionEnabled, preferenceSettingEnabled } = await this.cpmMessaging.checkAutoconsentSetting();
-        if (!enabled || preference === 'off') {
+    /**
+     * Determine the autoconsent operating mode from user settings and feature flags.
+     *  - 'off' if autoconsent is disabled.
+     *  - '0' if heuristic action is disabled.
+     *  - '1' if cookie popup preference setting is disabled (this is the old settings UI)
+     *  - 'tier1' if user preference is 'default'.
+     *  - 'tier2' if user preference is 'max'.
+     *  - '' if the operating mode is not determined.
+     * @param {AutoconsentUserSettings} settings
+     * @returns {'off' | '0' | '1' | 'tier1' | 'tier2' | ''}
+     */
+    settingsToHeuristicModeName(settings) {
+        const { enabled, userPreference, featureFlags } = settings;
+        if (!enabled || userPreference === 'off') {
             return 'off';
         }
-        if (!heuristicActionEnabled) {
+        if (!featureFlags.heuristicAction) {
             return '0';
         }
-        if (!preferenceSettingEnabled) {
+        if (!featureFlags.cookiePopupPreferenceSetting) {
             return '1';
         }
-        if (preference === 'default') {
+        if (userPreference === 'default') {
             return 'tier1';
         }
-        if (preference === 'max') {
+        if (userPreference === 'max') {
             return 'tier2';
         }
         return '';
+    }
+
+    async getPixelHeuristicParameter() {
+        return this.settingsToHeuristicModeName(await this.cpmMessaging.checkAutoconsentSetting());
     }
 
     async firePixel(eventName) {
