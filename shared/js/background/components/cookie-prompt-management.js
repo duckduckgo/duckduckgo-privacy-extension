@@ -33,7 +33,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  */
 
 /**
- * @typedef {'not_started' | 'config_unavailable' | 'settings_missing' | 'setting_disabled' | 'site_disabled' | 'init_received' | 'popup_found'} CpmStage
+ * @typedef {'not_started' | 'config_unavailable' | 'settings_missing' | 'setting_disabled' | 'site_disabled' | 'init_received' | 'popup_found' | 'optout_failed' | 'done'} CpmStage
  */
 
 /**
@@ -660,6 +660,7 @@ export default class CookiePromptManagement {
                             optoutFailed: true,
                             selftestFailed: null,
                             consentRule: msg.cmp,
+                            cpmStage: 'optout_failed',
                         }),
                     );
                 } else {
@@ -678,6 +679,7 @@ export default class CookiePromptManagement {
                         cosmetic: msg.isCosmetic,
                         optoutFailed: false,
                         consentRule: msg.cmp,
+                        cpmStage: 'done',
                     }),
                 );
                 if (msg.cmp === 'HEURISTIC') {
