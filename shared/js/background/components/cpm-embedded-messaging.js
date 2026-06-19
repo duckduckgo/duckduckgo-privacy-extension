@@ -122,9 +122,9 @@ export class CPMEmbeddedMessaging {
         return job;
     }
 
-    async logMessage(message) {
+    async logMessage(message, isDebug = DEBUG) {
         console.log(message);
-        if (DEBUG) {
+        if (isDebug) {
             await this._notify('extensionLog', {
                 message,
             });

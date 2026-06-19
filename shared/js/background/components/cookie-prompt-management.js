@@ -358,7 +358,7 @@ export default class CookiePromptManagement {
     }
 
     /**
-     * Record a diagnostic error in the CPM dashboard state (extension side only).
+     * Record a diagnostic error in the CPM dashboard state (no propagation to native side).
      * @param {number | null} tabId
      * @param {string} errorName
      * @returns {Promise<CpmDashboardState | null>}
