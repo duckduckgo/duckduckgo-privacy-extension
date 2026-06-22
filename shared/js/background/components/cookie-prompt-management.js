@@ -638,17 +638,18 @@ export default class CookiePromptManagement {
                 break;
             }
             case 'popupFound': {
+                // Check for reload loop first so the dashboard update reflects it
+                this.detectReloadLoop(tabId, msg.cmp);
                 this.cpmMessaging.refreshDashboardState(
                     tabId,
                     tabUrl,
                     await this.updateCpmDashboardState(tabId, {
                         cpmStage: 'popup_found',
                         consentRule: msg.cmp,
+                        consentReloadLoop: this._reloadLoopDetected.has(tabId),
                     }),
                 );
                 this.firePixel('popup-found');
-                // Check for reload loop
-                this.detectReloadLoop(tabId, msg.cmp);
                 break;
             }
             case 'optOutResult': {
@@ -680,6 +681,8 @@ export default class CookiePromptManagement {
                         consentManaged: true,
                         cosmetic: msg.isCosmetic,
                         optoutFailed: false,
+                        // Re-read after rememberLastHandledCMP, which can clear the loop state, so the done state stays authoritative.
+                        consentReloadLoop: this._reloadLoopDetected.has(tabId),
                         consentRule: msg.cmp,
                         cpmStage: 'done',
                     }),

@@ -389,6 +389,188 @@ describe('CookiePromptManagement', () => {
             );
         });
 
+        // A reload loop is detected on `popupFound` (after the main-frame `init` has already
+        // pushed a dashboard update). The `done`/`optout_failed` updates that follow must
+        // re-read `_reloadLoopDetected`, otherwise the native dashboard keeps showing
+        // `consentReloadLoop: false` even though a loop was detected on the same load.
+        it('reports consentReloadLoop in the done state when a reload loop is detected', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            const handler = messageHandlers.autoconsent;
+
+            // First visit primes the last-handled CMP used for reload-loop detection.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false },
+            });
+
+            // Same-URL reload with the same CMP: popupFound flags the reload loop.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'popupFound', cmp: 'test-cmp' },
+            });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false },
+            });
+
+            expect(cpm._reloadLoopDetected.has(1)).toBe(true);
+            expect(latestDashboardState(mockMessaging)).toEqual(
+                jasmine.objectContaining({
+                    consentManaged: true,
+                    cpmStage: 'done',
+                    consentReloadLoop: true,
+                    consentRule: 'test-cmp',
+                }),
+            );
+        });
+
+        it('reports consentReloadLoop in the optout_failed state when a reload loop is detected', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            const handler = messageHandlers.autoconsent;
+
+            // First visit primes the last-handled CMP used for reload-loop detection.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false },
+            });
+
+            // Same-URL reload with the same CMP: popupFound flags the reload loop.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'popupFound', cmp: 'test-cmp' },
+            });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'optOutResult', result: false, cmp: 'test-cmp' },
+            });
+
+            expect(cpm._reloadLoopDetected.has(1)).toBe(true);
+            expect(latestDashboardState(mockMessaging)).toEqual(
+                jasmine.objectContaining({
+                    consentManaged: true,
+                    optoutFailed: true,
+                    cpmStage: 'optout_failed',
+                    consentReloadLoop: true,
+                    consentRule: 'test-cmp',
+                }),
+            );
+        });
+
+        // The done state must be authoritative: `rememberLastHandledCMP` runs before the done
+        // dashboard update and can clear the reload-loop state (e.g. when a different CMP is
+        // handled). The `true` that popupFound persisted must not leak through.
+        it('clears consentReloadLoop in the done state when a different CMP is handled after a detected loop', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            const handler = messageHandlers.autoconsent;
+
+            // First visit primes the last-handled CMP.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'autoconsentDone', cmp: 'cmp-a', isCosmetic: false },
+            });
+
+            // Same-URL reload: popupFound for the same CMP flags the reload loop...
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'popupFound', cmp: 'cmp-a' },
+            });
+            expect(cpm._reloadLoopDetected.has(1)).toBe(true);
+
+            // ...but a different CMP is then handled, which resets the loop state.
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'autoconsentDone', cmp: 'cmp-b', isCosmetic: false },
+            });
+
+            expect(cpm._reloadLoopDetected.has(1)).toBe(false);
+            expect(latestDashboardState(mockMessaging)).toEqual(
+                jasmine.objectContaining({
+                    consentManaged: true,
+                    cpmStage: 'done',
+                    consentReloadLoop: false,
+                    consentRule: 'cmp-b',
+                }),
+            );
+        });
+
+        // The primary purpose of reload-loop detection: once a loop is detected, the next
+        // init must tell the content script to stop auto-acting (autoAction: null) to break it.
+        it('disables autoAction on the next init after a reload loop is detected', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            const sendMessageSpy = spyOn(chrome.tabs, 'sendMessage');
+            const handler = messageHandlers.autoconsent;
+
+            const lastInitRespAutoAction = () => {
+                const initResps = sendMessageSpy.calls.allArgs().filter(([, message]) => message?.type === 'initResp');
+                return initResps.length ? initResps[initResps.length - 1][1].config.autoAction : undefined;
+            };
+
+            // First visit: opt-out is active, then the CMP is handled (primes last-handled CMP).
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            expect(lastInitRespAutoAction()).toBe('optOut');
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false },
+            });
+
+            // Same-URL reload with the same CMP: the loop is detected on popupFound.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'popupFound', cmp: 'test-cmp' },
+            });
+            expect(cpm._reloadLoopDetected.has(1)).toBe(true);
+
+            // The following init must disable autoAction to break the loop.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            expect(lastInitRespAutoAction()).toBe(null);
+        });
+
+        // When init itself detects the loop (and disables autoAction), its own dashboard update
+        // must report the loop -- there is no popupFound/autoconsentDone to fall back on once
+        // autoAction is disabled.
+        it('reports consentReloadLoop in the init state after a loop was detected on a previous load', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            const handler = messageHandlers.autoconsent;
+
+            // First visit primes the last-handled CMP.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false },
+            });
+
+            // Same-URL reload with the same CMP: the loop is detected on popupFound.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'popupFound', cmp: 'test-cmp' },
+            });
+            expect(cpm._reloadLoopDetected.has(1)).toBe(true);
+
+            // The next init reports the loop in its own (init_received) dashboard update.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            // Flush the queued reset + init dashboard update and the `.then(refreshDashboardState)` callback.
+            await cpm.modifyCpmState(() => {});
+            await Promise.resolve();
+
+            expect(latestDashboardState(mockMessaging)).toEqual(
+                jasmine.objectContaining({
+                    cpmStage: 'init_received',
+                    consentReloadLoop: true,
+                    consentRule: 'test-cmp',
+                }),
+            );
+        });
+
         it('resets stale outcome fields on a same-URL reload (main-frame init)', async () => {
             const mockMessaging = createMockMessaging();
             const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
