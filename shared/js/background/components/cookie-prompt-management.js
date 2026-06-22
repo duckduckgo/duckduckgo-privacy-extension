@@ -323,8 +323,6 @@ export default class CookiePromptManagement {
         if (oldTopUrl.host !== newTopUrl.host || oldTopUrl.pathname !== newTopUrl.pathname || oldTopUrl.protocol !== newTopUrl.protocol) {
             // url has changed (as far as reload loop prevention is concerned)
             this.clearReloadLoopState(tabId);
-            // no await; state mutations are serialized and the next dashboard update will queue after this reset
-            this.resetCpmDashboardState(tabId);
         }
         this._tabUrlsCache.set(tabId, newTopUrl);
         return newTopUrl;
@@ -466,6 +464,10 @@ export default class CookiePromptManagement {
         if (msg.type === 'init' && isMainFrame) {
             // update the cached top url for this tab
             this.updateTopUrl(tabId, tabUrl);
+
+            // reset the dashboard state on each main frame init
+            // no await; state mutations are serialized and the next dashboard update will queue after this reset
+            this.resetCpmDashboardState(tabId);
         }
 
         // use the cached config

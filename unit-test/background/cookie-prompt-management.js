@@ -388,6 +388,53 @@ describe('CookiePromptManagement', () => {
                 }),
             );
         });
+
+        it('resets stale outcome fields on a same-URL reload (main-frame init)', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            const handler = messageHandlers.autoconsent;
+
+            // First visit: init then autoconsentDone, so the popup is reported as managed.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: {
+                    type: 'autoconsentDone',
+                    cmp: 'test-cmp',
+                    isCosmetic: false,
+                },
+            });
+
+            expect(latestDashboardState(mockMessaging)).toEqual(
+                jasmine.objectContaining({
+                    consentManaged: true,
+                    cosmetic: false,
+                    optoutFailed: false,
+                    cpmStage: 'done',
+                }),
+            );
+
+            // Same-URL reload: a new main-frame init must reset the per-tab outcome fields,
+            // otherwise the native dashboard would show consent as already managed before CPM re-runs.
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            // Wait for the queued reset + init dashboard update and the `.then(refreshDashboardState)` callback.
+            await cpm.modifyCpmState(() => {});
+            await Promise.resolve();
+
+            expect(latestDashboardState(mockMessaging)).toEqual(
+                jasmine.objectContaining({
+                    consentManaged: false,
+                    cosmetic: null,
+                    optoutFailed: null,
+                    selftestFailed: null,
+                    cpmStage: 'init_received',
+                    // consentRule is intentionally retained across same-URL reloads for reload-loop detection.
+                    consentRule: 'test-cmp',
+                }),
+            );
+        });
     });
 
     describe('disabled-for-site pixel', () => {
