@@ -55,22 +55,6 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
 
 /* global DEBUG, BUILD_TARGET */
 
-// From @duckduckgo/autoconsent/dist/types/types.ts
-const PopupHandlingModes = {
-    None: -1,
-    Reject: 0,
-    Tier1: 1,
-    Tier2: 2,
-};
-
-const heuristicModeNameToValue = {
-    off: PopupHandlingModes.None,
-    0: PopupHandlingModes.None,
-    1: PopupHandlingModes.Reject,
-    tier1: PopupHandlingModes.Tier1,
-    tier2: PopupHandlingModes.Tier2,
-};
-
 /**
  * @type {import('@duckduckgo/autoconsent').Config['logs']}
  */
@@ -229,8 +213,8 @@ export default class CookiePromptManagement {
 
     async checkHeuristicActionEnabled() {
         const settings = await this.cpmMessaging.checkAutoconsentSetting();
-        const heuristicMode = heuristicModeNameToValue[this.settingsToHeuristicModeName(settings)];
-        return heuristicMode > PopupHandlingModes.None;
+        const heuristicMode = this.settingsToHeuristicModeName(settings);
+        return heuristicMode != 'off';
     }
 
     /**
@@ -426,8 +410,8 @@ export default class CookiePromptManagement {
                 // - default and new settings enabled: Tier1
                 // - default and new settings disabled: Reject
                 // - off: Reject (isEnabled should already be disabling it)
-                const heuristicMode = heuristicModeNameToValue[this.settingsToHeuristicModeName(settings)];
-                const heuristicActionEnabled = heuristicMode > PopupHandlingModes.None;
+                const heuristicMode = this.settingsToHeuristicModeName(settings);
+                const heuristicActionEnabled = heuristicMode != 'off';
 
                 /** @type {import('@duckduckgo/autoconsent').Config['autoAction']} */
                 let autoAction = 'optOut';
@@ -468,7 +452,6 @@ export default class CookiePromptManagement {
                     enableGeneratedRules: true,
                     enableFilterList: false,
                     enableHeuristicDetection: true,
-                    enableHeuristicAction: heuristicActionEnabled,
                     heuristicMode,
                     visualTest,
                     logs: logsConfig,
@@ -651,18 +634,15 @@ export default class CookiePromptManagement {
      *  - 'tier2' if user preference is 'max'.
      *  - '' if the operating mode is not determined.
      * @param {AutoconsentUserSettings} settings
-     * @returns {'off' | '0' | '1' | 'tier1' | 'tier2' | ''}
+     * @returns {'off' | 'reject' | 'tier1' | 'tier2'}
      */
     settingsToHeuristicModeName(settings) {
         const { enabled, userPreference, featureFlags } = settings;
-        if (!enabled || userPreference === 'off') {
+        if (!enabled || userPreference === 'off' || !featureFlags.heuristicAction) {
             return 'off';
         }
-        if (!featureFlags.heuristicAction) {
-            return '0';
-        }
         if (!featureFlags.cookiePopupPreferenceSetting) {
-            return '1';
+            return 'reject';
         }
         if (userPreference === 'default') {
             return 'tier1';
