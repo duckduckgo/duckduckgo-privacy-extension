@@ -227,8 +227,10 @@ export default class CookiePromptManagement {
         return this._deserializeCpmState(this._jsonCpmState);
     }
 
-    checkHeuristicActionEnabled() {
-        return this.cpmMessaging.checkSubfeatureEnabled('heuristicAction');
+    async checkHeuristicActionEnabled() {
+        const settings = await this.cpmMessaging.checkAutoconsentSetting();
+        const heuristicMode = heuristicModeNameToValue[this.settingsToHeuristicModeName(settings)];
+        return heuristicMode > PopupHandlingModes.None;
     }
 
     /**
@@ -337,23 +339,6 @@ export default class CookiePromptManagement {
             this._reloadLoopDetected.add(tabId);
             this.firePixel('error_reload-loop');
         }
-    }
-
-    /**
-     *
-     * @param {boolean} heuristicActionEnabled
-     * @param {'off' | 'default' | 'max'} preference
-     */
-    getHeuristicMode(heuristicActionEnabled, preference) {
-        if (!heuristicActionEnabled) {
-            return PopupHandlingModes.None;
-        }
-        if (preference === 'max') {
-            return PopupHandlingModes.Tier2;
-        } else if (preference === 'default') {
-            return PopupHandlingModes.Tier1;
-        }
-        return PopupHandlingModes.Reject;
     }
 
     /**
@@ -542,7 +527,7 @@ export default class CookiePromptManagement {
                         selftestFailed: null,
                         consentReloadLoop: this._reloadLoopDetected.has(tabId),
                         consentRule: msg.cmp,
-                        consentHeuristicEnabled: await this.cpmMessaging.checkSubfeatureEnabled('heuristicAction'),
+                        consentHeuristicEnabled: await this.checkHeuristicActionEnabled(),
                     });
                 } else {
                     // TODO: implement self-tests
@@ -559,7 +544,7 @@ export default class CookiePromptManagement {
                     selftestFailed: null,
                     consentReloadLoop: this._reloadLoopDetected.has(tabId),
                     consentRule: msg.cmp,
-                    consentHeuristicEnabled: await this.cpmMessaging.checkSubfeatureEnabled('heuristicAction'),
+                    consentHeuristicEnabled: await this.checkHeuristicActionEnabled(),
                 });
                 if (msg.cmp === 'HEURISTIC') {
                     this.firePixel('done_heuristic');
@@ -685,7 +670,7 @@ export default class CookiePromptManagement {
         if (userPreference === 'max') {
             return 'tier2';
         }
-        return '';
+        return 'off';
     }
 
     async getPixelHeuristicParameter() {
