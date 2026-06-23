@@ -214,7 +214,7 @@ export default class CookiePromptManagement {
     async checkHeuristicActionEnabled() {
         const settings = await this.cpmMessaging.checkAutoconsentSetting();
         const heuristicMode = this.settingsToHeuristicModeName(settings);
-        return heuristicMode != 'off' && heuristicMode != '';
+        return heuristicMode !== 'off' && heuristicMode !== '';
     }
 
     /**
@@ -388,9 +388,9 @@ export default class CookiePromptManagement {
                 // - default and new settings disabled: Reject
                 // - off: Reject (isEnabled should already be disabling it)
                 const heuristicMode = this.settingsToHeuristicModeName(settings);
-                const heuristicActionEnabled = heuristicMode != 'off';
+                const heuristicActionEnabled = heuristicMode !== 'off';
 
-                if (heuristicMode == '') {
+                if (heuristicMode === '') {
                     this.cpmMessaging.logMessage('autoconsent setting not enabled');
                     return;
                 }
