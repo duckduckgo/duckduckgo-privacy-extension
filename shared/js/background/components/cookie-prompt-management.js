@@ -627,18 +627,21 @@ export default class CookiePromptManagement {
 
     /**
      * Determine the autoconsent operating mode from user settings and feature flags.
-     *  - 'off' if autoconsent is disabled.
-     *  - '0' if heuristic action is disabled.
-     *  - '1' if cookie popup preference setting is disabled (this is the old settings UI)
+     *  - '' if autoconsent is disabled.
+     *  - 'off' if heuristic action is disabled.
+     *  - 'reject' if cookie popup preference setting is disabled (this is the old settings UI)
      *  - 'tier1' if user preference is 'default'.
      *  - 'tier2' if user preference is 'max'.
      *  - '' if the operating mode is not determined.
      * @param {AutoconsentUserSettings} settings
-     * @returns {'off' | 'reject' | 'tier1' | 'tier2'}
+     * @returns {'' | 'off' | 'reject' | 'tier1' | 'tier2'}
      */
     settingsToHeuristicModeName(settings) {
         const { enabled, userPreference, featureFlags } = settings;
-        if (!enabled || userPreference === 'off' || !featureFlags.heuristicAction) {
+        if (!enabled || userPreference === 'off') {
+            return '';
+        }
+        if (!featureFlags.heuristicAction) {
             return 'off';
         }
         if (!featureFlags.cookiePopupPreferenceSetting) {
