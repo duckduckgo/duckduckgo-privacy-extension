@@ -118,11 +118,6 @@ export class CPMEmbeddedMessaging {
         });
     }
 
-    async checkAutoconsentSettingEnabled() {
-        const result = await this.checkAutoconsentSetting();
-        return result.enabled;
-    }
-
     /**
      * Check autoconsent enabled state and user preference.
      * @returns {Promise<import('./cookie-prompt-management').AutoconsentUserSettings>}

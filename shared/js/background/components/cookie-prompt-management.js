@@ -38,7 +38,6 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  refreshDashboardState: (tabId: number, url: string, dashboardState: Partial<CpmDashboardState>) => Promise<void>;
  *  showCpmAnimation: (tabId: number, topUrl: string, isCosmetic: boolean) => Promise<void>;
  *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent').DoneMessage) => Promise<void>;
- *  checkAutoconsentSettingEnabled: () => Promise<boolean>;
  *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
  *  checkAutoconsentSetting: () => Promise<AutoconsentUserSettings>;
  *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;

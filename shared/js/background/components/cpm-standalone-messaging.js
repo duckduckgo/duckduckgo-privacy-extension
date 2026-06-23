@@ -34,11 +34,6 @@ export class CPMStandaloneMessaging {
         // no-op
     }
 
-    async checkAutoconsentSettingEnabled() {
-        // there's no Autoconsent setting in the extension yet
-        return true;
-    }
-
     async checkAutoconsentSetting() {
         // there's no Autoconsent setting in the extension yet
         /** @type {import('./cookie-prompt-management').AutoconsentModePreference} */
