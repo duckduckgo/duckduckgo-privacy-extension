@@ -386,7 +386,7 @@ export default class CookiePromptManagement {
                 // - max: Tier2
                 // - default and new settings enabled: Tier1
                 // - default and new settings disabled: Reject
-                // - off: Reject (isEnabled should already be disabling it)
+                // - off: disabled.
                 const heuristicMode = this.settingsToHeuristicModeName(settings);
                 const heuristicActionEnabled = heuristicMode !== 'off';
 
