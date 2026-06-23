@@ -382,8 +382,15 @@ export default class CookiePromptManagement {
         switch (msg.type) {
             case 'init': {
                 const settings = await this.cpmMessaging.checkAutoconsentSetting();
+                // Map preference to heuristic mode:
+                // - max: Tier2
+                // - default and new settings enabled: Tier1
+                // - default and new settings disabled: Reject
+                // - off: Reject (isEnabled should already be disabling it)
+                const heuristicMode = this.settingsToHeuristicModeName(settings);
+                const heuristicActionEnabled = heuristicMode != 'off';
 
-                if (!settings.enabled) {
+                if (heuristicMode == '') {
                     this.cpmMessaging.logMessage('autoconsent setting not enabled');
                     return;
                 }
@@ -405,13 +412,6 @@ export default class CookiePromptManagement {
                 }
 
                 const visualTest = DEBUG;
-                // Map preference to heuristic mode:
-                // - max: Tier2
-                // - default and new settings enabled: Tier1
-                // - default and new settings disabled: Reject
-                // - off: Reject (isEnabled should already be disabling it)
-                const heuristicMode = this.settingsToHeuristicModeName(settings);
-                const heuristicActionEnabled = heuristicMode != 'off';
 
                 /** @type {import('@duckduckgo/autoconsent').Config['autoAction']} */
                 let autoAction = 'optOut';
