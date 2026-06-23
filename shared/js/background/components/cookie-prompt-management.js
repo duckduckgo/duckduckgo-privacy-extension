@@ -1,5 +1,4 @@
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
-import { consentomatic } from '@duckduckgo/autoconsent/rules/consentomatic.json';
 import browser from 'webextension-polyfill';
 import { getFromSessionStorage, setToSessionStorage, createAlarm } from '../wrapper';
 import { registerMessageHandler } from '../message-registry';
@@ -449,7 +448,6 @@ export default class CookiePromptManagement {
                     prehideTimeout: 2000,
                     enableCosmeticRules: true,
                     enableGeneratedRules: true,
-                    enableFilterList: false,
                     enableHeuristicDetection: true,
                     heuristicMode,
                     visualTest,
@@ -458,7 +456,6 @@ export default class CookiePromptManagement {
                 const compactRuleList = autoconsentSettings.compactRuleList;
                 const rules = {
                     autoconsent: [],
-                    consentomatic,
                 };
                 if (compactRuleList) {
                     if (compactRuleList.index) {
