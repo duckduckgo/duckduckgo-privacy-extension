@@ -1,5 +1,4 @@
 import { filterCompactRules, evalSnippets } from '@duckduckgo/autoconsent';
-import { consentomatic } from '@duckduckgo/autoconsent/rules/consentomatic.json';
 import browser from 'webextension-polyfill';
 import { getFromSessionStorage, setToSessionStorage, createAlarm } from '../wrapper';
 import { registerMessageHandler } from '../message-registry';
@@ -33,12 +32,18 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  refreshDashboardState: (tabId: number, url: string, dashboardState: Partial<CpmDashboardState>) => Promise<void>;
  *  showCpmAnimation: (tabId: number, topUrl: string, isCosmetic: boolean) => Promise<void>;
  *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent').DoneMessage) => Promise<void>;
- *  checkAutoconsentSettingEnabled: () => Promise<boolean>;
  *  checkAutoconsentEnabledForSite: (url: string) => Promise<boolean>;
+ *  checkAutoconsentSetting: () => Promise<AutoconsentUserSettings>;
  *  checkSubfeatureEnabled: (subfeatureName: string) => Promise<boolean>;
  *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
  * }} CPMMessagingBase
+ * @typedef {{
+ *  enabled: boolean,
+ *  userPreference?: AutoconsentModePreference,
+ *  featureFlags: Record<string, boolean>,
+ * }} AutoconsentUserSettings
+ * @typedef {'off' | 'default' | 'max'} AutoconsentModePreference
  */
 
 /* global DEBUG, BUILD_TARGET */
@@ -196,8 +201,10 @@ export default class CookiePromptManagement {
         return this._deserializeCpmState(this._jsonCpmState);
     }
 
-    checkHeuristicActionEnabled() {
-        return this.cpmMessaging.checkSubfeatureEnabled('heuristicAction');
+    async checkHeuristicActionEnabled() {
+        const settings = await this.cpmMessaging.checkAutoconsentSetting();
+        const heuristicMode = this.settingsToHeuristicModeName(settings);
+        return heuristicMode !== 'off' && heuristicMode !== '';
     }
 
     /**
@@ -355,15 +362,22 @@ export default class CookiePromptManagement {
             this.cpmMessaging.logMessage(`autoconsentSettings not ready: ${autoconsentSettings}`);
             return;
         }
-        const autoconsentFeatureEnabled = await this.cpmMessaging.checkAutoconsentSettingEnabled();
-        if (!autoconsentFeatureEnabled) {
-            this.cpmMessaging.logMessage('autoconsent setting not enabled');
-            return;
-        }
-        const heuristicActionEnabled = await this.checkHeuristicActionEnabled();
 
         switch (msg.type) {
             case 'init': {
+                const settings = await this.cpmMessaging.checkAutoconsentSetting();
+                // Map preference to heuristic mode:
+                // - max: Tier2
+                // - default and new settings enabled: Tier1
+                // - default and new settings disabled: Reject
+                // - off: disabled.
+                const heuristicMode = this.settingsToHeuristicModeName(settings);
+                const heuristicActionEnabled = heuristicMode !== 'off';
+
+                if (heuristicMode === '') {
+                    this.cpmMessaging.logMessage('autoconsent setting not enabled');
+                    return;
+                }
                 // do the navigation check before checking if the domain is allowlisted
                 if (isMainFrame) {
                     // update the cached top url for this tab
@@ -419,16 +433,14 @@ export default class CookiePromptManagement {
                     prehideTimeout: 2000,
                     enableCosmeticRules: true,
                     enableGeneratedRules: true,
-                    enableFilterList: false,
                     enableHeuristicDetection: true,
-                    enableHeuristicAction: heuristicActionEnabled,
+                    heuristicMode,
                     visualTest,
                     logs: logsConfig,
                 };
                 const compactRuleList = autoconsentSettings.compactRuleList;
                 const rules = {
                     autoconsent: [],
-                    consentomatic,
                 };
                 if (compactRuleList) {
                     if (compactRuleList.index) {
@@ -479,7 +491,7 @@ export default class CookiePromptManagement {
                         selftestFailed: null,
                         consentReloadLoop: this._reloadLoopDetected.has(tabId),
                         consentRule: msg.cmp,
-                        consentHeuristicEnabled: heuristicActionEnabled,
+                        consentHeuristicEnabled: await this.checkHeuristicActionEnabled(),
                     });
                 } else {
                     // TODO: implement self-tests
@@ -496,7 +508,7 @@ export default class CookiePromptManagement {
                     selftestFailed: null,
                     consentReloadLoop: this._reloadLoopDetected.has(tabId),
                     consentRule: msg.cmp,
-                    consentHeuristicEnabled: heuristicActionEnabled,
+                    consentHeuristicEnabled: await this.checkHeuristicActionEnabled(),
                 });
                 if (msg.cmp === 'HEURISTIC') {
                     this.firePixel('done_heuristic');
@@ -591,6 +603,41 @@ export default class CookiePromptManagement {
         });
     }
 
+    /**
+     * Determine the autoconsent operating mode from user settings and feature flags.
+     *  - '' if autoconsent is disabled.
+     *  - 'off' if heuristic action is disabled.
+     *  - 'reject' if cookie popup preference setting is disabled (this is the old settings UI)
+     *  - 'tier1' if user preference is 'default'.
+     *  - 'tier2' if user preference is 'max'.
+     *  - '' if the operating mode is not determined.
+     * @param {AutoconsentUserSettings} settings
+     * @returns {'' | 'off' | 'reject' | 'tier1' | 'tier2'}
+     */
+    settingsToHeuristicModeName(settings) {
+        const { enabled, userPreference, featureFlags } = settings;
+        if (!enabled || userPreference === 'off') {
+            return '';
+        }
+        if (!featureFlags.heuristicAction) {
+            return 'off';
+        }
+        if (!featureFlags.cookiePopupPreferenceSetting) {
+            return 'reject';
+        }
+        if (userPreference === 'default') {
+            return 'tier1';
+        }
+        if (userPreference === 'max') {
+            return 'tier2';
+        }
+        return 'off';
+    }
+
+    async getPixelHeuristicParameter() {
+        return this.settingsToHeuristicModeName(await this.cpmMessaging.checkAutoconsentSetting());
+    }
+
     async firePixel(eventName) {
         this.modifyCpmState((cpmState) => {
             cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
@@ -604,7 +651,7 @@ export default class CookiePromptManagement {
         // request "daily" pixel firing
         const pixelName = `autoconsent_${eventName}`;
         this.cpmMessaging.sendPixel(pixelName, 'daily', {
-            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
+            consentHeuristicEnabled: await this.getPixelHeuristicParameter(),
             fromExtension: '1',
         });
     }
@@ -620,7 +667,7 @@ export default class CookiePromptManagement {
         });
         this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
             ...summaryEvents,
-            consentHeuristicEnabled: (await this.checkHeuristicActionEnabled()) ? '1' : '0',
+            consentHeuristicEnabled: await this.getPixelHeuristicParameter(),
             fromExtension: '1',
         });
     }

@@ -73,10 +73,17 @@ describe('CPMStandaloneMessaging', () => {
         });
     });
 
-    describe('checkAutoconsentSettingEnabled', () => {
-        it('always returns true', async () => {
-            const result = await messaging.checkAutoconsentSettingEnabled();
-            expect(result).toBeTrue();
+    describe('checkAutoconsentSetting', () => {
+        it('returns enabled with default user preference and feature flags', async () => {
+            const result = await messaging.checkAutoconsentSetting();
+            expect(result).toEqual({
+                enabled: true,
+                userPreference: 'default',
+                featureFlags: {
+                    heuristicAction: true,
+                    cookiePopupPreferenceSetting: true,
+                },
+            });
         });
     });
 
