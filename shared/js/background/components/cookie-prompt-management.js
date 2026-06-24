@@ -39,7 +39,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
 /**
  * Base interface for CPM communications with the "browser" side.
  * @typedef {{
- *  logMessage: (message: string) => Promise<void>;
+ *  logMessage: (message: string, isDebug?: boolean) => Promise<void>;
  *  refreshDashboardState: (tabId: number, url: string, dashboardState: Partial<CpmDashboardState>) => Promise<void>;
  *  showCpmAnimation: (tabId: number, topUrl: string, isCosmetic: boolean) => Promise<void>;
  *  notifyPopupHandled: (tabId: number, msg: import('@duckduckgo/autoconsent').DoneMessage) => Promise<void>;
