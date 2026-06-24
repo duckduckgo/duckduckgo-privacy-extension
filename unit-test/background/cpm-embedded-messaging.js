@@ -321,38 +321,41 @@ describe('CPMEmbeddedMessaging', () => {
         });
     });
 
-    describe('checkAutoconsentSettingEnabled', () => {
-        it('returns true when native response has enabled: true', async () => {
-            nativeMessaging.request.and.returnValue(Promise.resolve({ enabled: true }));
-            const result = await messaging.checkAutoconsentSettingEnabled();
-            expect(result).toBeTrue();
+    describe('checkAutoconsentSetting', () => {
+        it('returns the native response when autoconsent is enabled', async () => {
+            const settings = {
+                enabled: true,
+                userPreference: 'default',
+                featureFlags: { heuristicAction: true },
+            };
+            nativeMessaging.request.and.returnValue(Promise.resolve(settings));
+            const result = await messaging.checkAutoconsentSetting();
+            expect(result).toEqual(settings);
             expect(nativeMessaging.request).toHaveBeenCalledWith('isAutoconsentSettingEnabled', {});
         });
 
-        it('returns false when native response has enabled: false', async () => {
-            nativeMessaging.request.and.returnValue(Promise.resolve({ enabled: false }));
-            const result = await messaging.checkAutoconsentSettingEnabled();
-            expect(result).toBeFalse();
+        it('returns the native response when autoconsent is disabled', async () => {
+            const settings = { enabled: false, featureFlags: {} };
+            nativeMessaging.request.and.returnValue(Promise.resolve(settings));
+            const result = await messaging.checkAutoconsentSetting();
+            expect(result).toEqual(settings);
         });
 
-        it('returns false when native response is null/undefined', async () => {
-            nativeMessaging.request.and.returnValue(Promise.resolve(null));
-            const result = await messaging.checkAutoconsentSettingEnabled();
-            expect(result).toBeFalse();
+        it('returns { enabled: false } when native response is null/undefined', async () => {
+            nativeMessaging.request.and.returnValue(Promise.resolve(undefined));
+            const result = await messaging.checkAutoconsentSetting();
+            expect(result).toEqual({ enabled: false });
         });
 
         it('caches the result with SETTING_CHECK_TTL', async () => {
-            nativeMessaging.request.and.returnValue(Promise.resolve({ enabled: true }));
+            nativeMessaging.request.and.returnValue(Promise.resolve({ enabled: true, featureFlags: {} }));
 
-            await messaging.checkAutoconsentSettingEnabled();
-            await messaging.checkAutoconsentSettingEnabled();
-
-            // Only one actual request due to caching
+            await messaging.checkAutoconsentSetting();
+            await messaging.checkAutoconsentSetting();
             expect(nativeMessaging.request).toHaveBeenCalledTimes(1);
 
-            // After TTL expires, request is made again
             jasmine.clock().tick(SETTING_CHECK_TTL + 1);
-            await messaging.checkAutoconsentSettingEnabled();
+            await messaging.checkAutoconsentSetting();
             expect(nativeMessaging.request).toHaveBeenCalledTimes(2);
         });
     });

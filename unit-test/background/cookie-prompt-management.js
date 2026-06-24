@@ -11,9 +11,16 @@ function createMockMessaging({ autoconsentEnabledForSite = true, autoconsentSett
         refreshDashboardState: jasmine.createSpy('refreshDashboardState').and.returnValue(Promise.resolve()),
         showCpmAnimation: jasmine.createSpy('showCpmAnimation').and.returnValue(Promise.resolve()),
         notifyPopupHandled: jasmine.createSpy('notifyPopupHandled').and.returnValue(Promise.resolve()),
-        checkAutoconsentSettingEnabled: jasmine
-            .createSpy('checkAutoconsentSettingEnabled')
-            .and.returnValue(Promise.resolve(autoconsentSettingEnabled)),
+        checkAutoconsentSetting: jasmine.createSpy('checkAutoconsentSetting').and.returnValue(
+            Promise.resolve({
+                enabled: autoconsentSettingEnabled,
+                userPreference: 'default',
+                featureFlags: {
+                    heuristicAction: true,
+                    cookiePopupPreferenceSetting: true,
+                },
+            }),
+        ),
         checkAutoconsentEnabledForSite: jasmine
             .createSpy('checkAutoconsentEnabledForSite')
             .and.returnValue(Promise.resolve(autoconsentEnabledForSite)),

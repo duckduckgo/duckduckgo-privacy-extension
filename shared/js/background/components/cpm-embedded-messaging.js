@@ -169,9 +169,14 @@ export class CPMEmbeddedMessaging {
         });
     }
 
-    async checkAutoconsentSettingEnabled(tabId) {
+    /**
+     * Check autoconsent enabled state and user preference.
+     * @param {number} [tabId]
+     * @returns {Promise<import('./cookie-prompt-management').AutoconsentUserSettings>}
+     */
+    async checkAutoconsentSetting(tabId) {
         const result = await this._request('isAutoconsentSettingEnabled', {}, 'userSetting', SETTING_CHECK_TTL, tabId);
-        return result?.enabled ?? false;
+        return result ?? { enabled: false };
     }
 
     async checkAutoconsentEnabledForSite(url, tabId) {
