@@ -147,7 +147,7 @@ describe('CookiePromptManagement', () => {
             expect(latestDashboardState(mockMessaging)).toEqual(
                 jasmine.objectContaining({
                     consentManaged: false,
-                    consentHeuristicEnabled: null,
+                    consentHeuristicEnabled: true,
                     cpmStage: 'setting_disabled',
                     cpmErrors: new Set(),
                     cpmConfigVersion: '1',
@@ -166,7 +166,7 @@ describe('CookiePromptManagement', () => {
             expect(latestDashboardState(mockMessaging)).toEqual(
                 jasmine.objectContaining({
                     consentManaged: false,
-                    consentHeuristicEnabled: null,
+                    consentHeuristicEnabled: true,
                     cpmStage: 'site_disabled',
                     cpmErrors: new Set(),
                     cpmConfigVersion: '1',
