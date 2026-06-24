@@ -26,7 +26,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  * @property {string?} consentRule
  * @property {boolean?} consentHeuristicEnabled
  * @property {CpmStage} cpmStage
- * @property {Set<string>} cpmErrors
+ * @property {string[]} cpmErrors
  * @property {number=} cpmQueueSize
  * @property {string} cpmConfigVersion
  */
@@ -169,40 +169,6 @@ export default class CookiePromptManagement {
     }
 
     /**
-     * make sure we deserialize the cpmErrors as a Set
-     * @param {Record<string, any>} jsonDashboardStates
-     * @returns {Record<string, CpmDashboardState>}
-     */
-    _deserializeCpmDashboardStates(jsonDashboardStates) {
-        return Object.fromEntries(
-            Object.entries(jsonDashboardStates || {}).map(([tabId, dashboardState]) => [
-                tabId,
-                {
-                    ...dashboardState,
-                    cpmErrors: new Set(dashboardState.cpmErrors || []),
-                },
-            ]),
-        );
-    }
-
-    /**
-     * make sure we serialize the cpmErrors as an array
-     * @param {Record<string, CpmDashboardState>} dashboardStates
-     * @returns {Record<string, object>}
-     */
-    _serializeCpmDashboardStates(dashboardStates) {
-        return Object.fromEntries(
-            Object.entries(dashboardStates).map(([tabId, dashboardState]) => [
-                tabId,
-                {
-                    ...dashboardState,
-                    cpmErrors: Array.from(dashboardState.cpmErrors),
-                },
-            ]),
-        );
-    }
-
-    /**
      * @param {any} jsonCpmState
      * @returns {CpmState}
      */
@@ -214,7 +180,7 @@ export default class CookiePromptManagement {
                 onlyRules: new Set(jsonCpmState.detectionCache?.onlyRules || []),
             },
             summaryEvents: structuredClone(jsonCpmState.summaryEvents || {}),
-            dashboardStates: this._deserializeCpmDashboardStates(jsonCpmState.dashboardStates || {}),
+            dashboardStates: structuredClone(jsonCpmState.dashboardStates || {}),
             globalErrors: new Set(jsonCpmState.globalErrors || []),
         };
     }
@@ -231,7 +197,7 @@ export default class CookiePromptManagement {
                 onlyRules: Array.from(cpmState.detectionCache.onlyRules),
             },
             summaryEvents: structuredClone(cpmState.summaryEvents),
-            dashboardStates: this._serializeCpmDashboardStates(cpmState.dashboardStates),
+            dashboardStates: structuredClone(cpmState.dashboardStates),
             globalErrors: Array.from(cpmState.globalErrors),
         };
     }
@@ -348,7 +314,7 @@ export default class CookiePromptManagement {
             consentRule: null,
             consentHeuristicEnabled: null,
             cpmStage: 'not_started',
-            cpmErrors: new Set(),
+            cpmErrors: [],
             cpmConfigVersion: '',
         };
     }
@@ -377,8 +343,7 @@ export default class CookiePromptManagement {
                 const key = `${tabId}`;
                 cpmState.dashboardStates[key] ||= this.defaultCpmDashboardState();
                 const dashboardState = cpmState.dashboardStates[key];
-                dashboardState.cpmErrors.add(errorName);
-                dashboardState.cpmErrors = new Set([...cpmState.globalErrors, ...dashboardState.cpmErrors]);
+                dashboardState.cpmErrors = [...new Set([...cpmState.globalErrors, ...dashboardState.cpmErrors, errorName])];
                 updatedDashboardState = structuredClone(dashboardState);
             } else {
                 cpmState.globalErrors.add(errorName);
@@ -402,7 +367,7 @@ export default class CookiePromptManagement {
             const dashboardState = cpmState.dashboardStates[key];
             Object.assign(dashboardState, updates);
             // add global errors so they get pushed to native in the next update
-            dashboardState.cpmErrors = new Set([...cpmState.globalErrors, ...dashboardState.cpmErrors]);
+            dashboardState.cpmErrors = [...new Set([...cpmState.globalErrors, ...dashboardState.cpmErrors])];
             updatedDashboardState = structuredClone(dashboardState);
         });
         return updatedDashboardState;

@@ -141,11 +141,11 @@ export class CPMEmbeddedMessaging {
             url,
             consentStatus: {
                 ...rest,
-                // convert cpmErrors from Set to a comma-separated string
+                // convert cpmErrors from an array to a comma-separated string
                 ...(cpmErrors
                     ? {
                           // limit the length to avoid overflows in breakage pixel
-                          cpmErrors: Array.from(cpmErrors).join(',').substring(0, 255),
+                          cpmErrors: cpmErrors.join(',').substring(0, 255),
                       }
                     : {}),
                 // add the current queue size

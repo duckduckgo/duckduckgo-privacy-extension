@@ -98,7 +98,7 @@ describe('CookiePromptManagement', () => {
                     consentRule: null,
                     consentHeuristicEnabled: null,
                     cpmStage: 'config_unavailable',
-                    cpmErrors: new Set(),
+                    cpmErrors: [],
                     cpmConfigVersion: 'unknown',
                 }),
             );
@@ -130,7 +130,7 @@ describe('CookiePromptManagement', () => {
                     consentManaged: false,
                     consentHeuristicEnabled: null,
                     cpmStage: 'settings_missing',
-                    cpmErrors: new Set(),
+                    cpmErrors: [],
                     cpmConfigVersion: '7',
                 }),
             );
@@ -149,7 +149,7 @@ describe('CookiePromptManagement', () => {
                     consentManaged: false,
                     consentHeuristicEnabled: true,
                     cpmStage: 'setting_disabled',
-                    cpmErrors: new Set(),
+                    cpmErrors: [],
                     cpmConfigVersion: '1',
                 }),
             );
@@ -168,7 +168,7 @@ describe('CookiePromptManagement', () => {
                     consentManaged: false,
                     consentHeuristicEnabled: true,
                     cpmStage: 'site_disabled',
-                    cpmErrors: new Set(),
+                    cpmErrors: [],
                     cpmConfigVersion: '1',
                 }),
             );
@@ -191,7 +191,7 @@ describe('CookiePromptManagement', () => {
                     consentManaged: false,
                     consentHeuristicEnabled: true,
                     cpmStage: 'init_received',
-                    cpmErrors: new Set(),
+                    cpmErrors: [],
                     cpmConfigVersion: '1',
                 }),
             );
@@ -215,7 +215,7 @@ describe('CookiePromptManagement', () => {
                 jasmine.objectContaining({
                     consentManaged: false,
                     cpmStage: 'popup_found',
-                    cpmErrors: new Set(),
+                    cpmErrors: [],
                     cpmConfigVersion: '1',
                 }),
             );
@@ -241,7 +241,7 @@ describe('CookiePromptManagement', () => {
                 jasmine.objectContaining({
                     consentManaged: false,
                     cpmStage: 'init_received',
-                    cpmErrors: new Set(['multiple_cmps']),
+                    cpmErrors: ['multiple_cmps'],
                     cpmConfigVersion: '1',
                 }),
             );
@@ -265,7 +265,7 @@ describe('CookiePromptManagement', () => {
             expect(latestDashboardState(mockMessaging)).toEqual(
                 jasmine.objectContaining({
                     cpmStage: 'popup_found',
-                    cpmErrors: new Set(['tab_isFeatureEnabled']),
+                    cpmErrors: ['tab_isFeatureEnabled'],
                     cpmConfigVersion: '1',
                 }),
             );
@@ -293,12 +293,12 @@ describe('CookiePromptManagement', () => {
 
             expect(latestDashboardState(mockMessaging)).toEqual(
                 jasmine.objectContaining({
-                    cpmErrors: new Set(['tab_isFeatureEnabled', 'multiple_cmps']),
+                    cpmErrors: ['tab_isFeatureEnabled', 'multiple_cmps'],
                 }),
             );
         });
 
-        it('restores persisted dashboard errors as Sets', async () => {
+        it('restores persisted dashboard errors as arrays', async () => {
             const mockMessaging = createMockMessaging();
             const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
             await cpm.remoteConfigJson;
@@ -317,7 +317,7 @@ describe('CookiePromptManagement', () => {
             const restoredCpm = new CookiePromptManagement({ cpmMessaging: createMockMessaging() });
             const restoredState = await restoredCpm.getCpmState();
 
-            expect(restoredState.dashboardStates['1'].cpmErrors).toEqual(new Set(['glob_getResourceIfNew', 'tab_isFeatureEnabled']));
+            expect(restoredState.dashboardStates['1'].cpmErrors).toEqual(['glob_getResourceIfNew', 'tab_isFeatureEnabled']);
             expect(restoredState.globalErrors).toEqual(new Set(['glob_getResourceIfNew']));
         });
 
@@ -337,7 +337,7 @@ describe('CookiePromptManagement', () => {
             expect(latestDashboardState(mockMessaging)).toEqual(
                 jasmine.objectContaining({
                     cpmStage: 'init_received',
-                    cpmErrors: new Set(['glob_getResourceIfNew']),
+                    cpmErrors: ['glob_getResourceIfNew'],
                     cpmConfigVersion: '1',
                 }),
             );

@@ -283,7 +283,7 @@ describe('CPMEmbeddedMessaging', () => {
 
         it('serializes cpmErrors before sending to native', async () => {
             await messaging.refreshDashboardState(1, 'https://example.com', {
-                cpmErrors: new Set(['tab_isFeatureEnabled', 'multiple_cmps']),
+                cpmErrors: ['tab_isFeatureEnabled', 'multiple_cmps'],
             });
 
             expect(nativeMessaging.notify).toHaveBeenCalledWith('refreshCpmDashboardState', {
