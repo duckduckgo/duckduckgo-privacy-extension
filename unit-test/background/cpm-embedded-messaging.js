@@ -39,6 +39,27 @@ describe('CPMEmbeddedMessaging', () => {
             expect(nativeMessaging.notify).toHaveBeenCalledWith('testMethod', { key: 'value' });
         });
 
+        it('records native notification failures for diagnostics', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.notify.and.returnValue(Promise.reject(new Error('test error')));
+            spyOn(console, 'error');
+
+            await messaging._notify('testMethod', { tabId: 7 });
+
+            expect(diagnosticsHandler).toHaveBeenCalledWith(7, 'tab_testMethod');
+        });
+
+        it('records global native notification failures for diagnostics', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.notify.and.returnValue(Promise.reject(new Error('test error')));
+            spyOn(console, 'error');
+
+            await messaging._notify('testMethod', {});
+            expect(diagnosticsHandler).toHaveBeenCalledWith(null, 'glob_testMethod');
+        });
+
         it('serializes multiple notifications in order', async () => {
             const callOrder = [];
             nativeMessaging.notify.and.callFake(async (method) => {
@@ -75,6 +96,28 @@ describe('CPMEmbeddedMessaging', () => {
             const result = await messaging._request('testMethod', { key: 'value' });
             expect(nativeMessaging.request).toHaveBeenCalledWith('testMethod', { key: 'value' });
             expect(result).toEqual({ data: 42 });
+        });
+
+        it('records native request failures for diagnostics', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.request.and.returnValue(Promise.reject(new Error('test error')));
+            spyOn(console, 'error');
+
+            await messaging._request('testMethod', {}, undefined, undefined, 8);
+
+            expect(diagnosticsHandler).toHaveBeenCalledWith(8, 'tab_testMethod');
+        });
+
+        it('records global native request failures for diagnostics', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.request.and.returnValue(Promise.reject(new Error('test error')));
+            spyOn(console, 'error');
+
+            await messaging._request('testMethod', {});
+
+            expect(diagnosticsHandler).toHaveBeenCalledWith(null, 'glob_testMethod');
         });
 
         it('serializes multiple requests in order', async () => {
@@ -210,7 +253,7 @@ describe('CPMEmbeddedMessaging', () => {
 
     describe('logMessage', () => {
         it('sends a notification', async () => {
-            await messaging.logMessage('hello world');
+            await messaging.logMessage('hello world', true);
             expect(nativeMessaging.notify).toHaveBeenCalledWith('extensionLog', { message: 'hello world' });
         });
     });
@@ -222,7 +265,34 @@ describe('CPMEmbeddedMessaging', () => {
             expect(nativeMessaging.notify).toHaveBeenCalledWith('refreshCpmDashboardState', {
                 tabId: 1,
                 url: 'https://example.com',
-                consentStatus: { cosmetic: true },
+                consentStatus: { cosmetic: true, cpmQueueSize: 0 },
+            });
+        });
+
+        it('includes pending native messages in dashboard queue size', async () => {
+            messaging._queueSize = 1;
+
+            await messaging.refreshDashboardState(1, 'https://example.com', {});
+
+            expect(nativeMessaging.notify).toHaveBeenCalledWith('refreshCpmDashboardState', {
+                tabId: 1,
+                url: 'https://example.com',
+                consentStatus: { cpmQueueSize: 1 },
+            });
+        });
+
+        it('serializes cpmErrors before sending to native', async () => {
+            await messaging.refreshDashboardState(1, 'https://example.com', {
+                cpmErrors: ['tab_isFeatureEnabled', 'multiple_cmps'],
+            });
+
+            expect(nativeMessaging.notify).toHaveBeenCalledWith('refreshCpmDashboardState', {
+                tabId: 1,
+                url: 'https://example.com',
+                consentStatus: {
+                    cpmErrors: 'tab_isFeatureEnabled,multiple_cmps',
+                    cpmQueueSize: 0,
+                },
             });
         });
     });
@@ -425,6 +495,18 @@ describe('CPMEmbeddedMessaging', () => {
             const result = await messaging.refreshRemoteConfig();
 
             expect(result).toEqual(cachedConfig);
+        });
+
+        it('records config request failures for diagnostics', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            const cachedConfig = { version: '1', features: {} };
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            sessionStorageFallback.set('config', cachedConfig);
+            nativeMessaging.request.and.returnValue(Promise.reject(new Error('network error')));
+
+            await messaging.refreshRemoteConfig();
+
+            expect(diagnosticsHandler).toHaveBeenCalledWith(null, 'glob_getResourceIfNew');
         });
 
         it('throws on error if there is no cached config', async () => {

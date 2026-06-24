@@ -4,6 +4,7 @@ import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 
 /**
  * @typedef {import('./cookie-prompt-management').CPMMessagingBase} CPMMessagingBase
+ * @typedef {import('./cookie-prompt-management').CpmDashboardState} CpmDashboardState
  * @typedef {import('./native-messaging').NativeMessagingInterface} NativeMessagingInterface
  * @typedef {{ time: number, value: any }} CacheEntry
  */
@@ -27,9 +28,30 @@ export class CPMEmbeddedMessaging {
         this._cache = new Map();
         /** @type {Promise<void>} */
         this._queue = Promise.resolve();
+        this._queueSize = 0;
+        /** @type {((tabId: number | null, errorName: string) => void) | null} */
+        this._diagnosticsErrorHandler = null; // callback to record diagnostics errors in CPM state
         // in-memory cached config, will be lost on extension sleep, in which case we fetch from session storage
         /** @type {import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig | null} */
         this._cachedConfig = null;
+    }
+
+    /**
+     * @param {(tabId: number | null, errorName: string) => void} handler
+     */
+    setDiagnosticsErrorHandler(handler) {
+        this._diagnosticsErrorHandler = handler;
+    }
+
+    /**
+     * @param {number | null} tabId
+     * @param {string} method
+     */
+    _recordDiagnosticsError(tabId, method) {
+        // generate a diagnostic error name for a native message, e.g. 'tab_getResourceIfNew'
+        const scope = typeof tabId === 'number' ? 'tab' : 'glob';
+        const errorName = `${scope}_${method}`;
+        this._diagnosticsErrorHandler?.(tabId, errorName);
     }
 
     /**
@@ -38,12 +60,18 @@ export class CPMEmbeddedMessaging {
      * @param {Record<string, any>} params
      */
     async _notify(method, params) {
+        const diagnosticsTabId = typeof params.tabId === 'number' ? params.tabId : null;
+        this._queueSize += 1;
         const result = this._queue
             .then(() => {
                 return this.nativeMessaging.notify(method, params);
             })
             .catch((e) => {
                 console.error('error in notification queue', e);
+                this._recordDiagnosticsError(diagnosticsTabId, method);
+            })
+            .finally(() => {
+                this._queueSize -= 1;
             });
         this._queue = result;
         await result;
@@ -58,9 +86,11 @@ export class CPMEmbeddedMessaging {
      * @param {Record<string, any>} params
      * @param {string} [cacheKey]
      * @param {number} [ttl]
+     * @param {number=} diagnosticsTabId
      * @returns {Promise<any>}
      */
-    _request(method, params, cacheKey, ttl) {
+    _request(method, params, cacheKey, ttl, diagnosticsTabId) {
+        this._queueSize += 1;
         const job = this._queue
             .then(async () => {
                 if (cacheKey && ttl) {
@@ -83,23 +113,44 @@ export class CPMEmbeddedMessaging {
             })
             .catch((e) => {
                 console.error(`error in request queue for ${method}`, e);
+                this._recordDiagnosticsError(diagnosticsTabId ?? null, method);
+            })
+            .finally(() => {
+                this._queueSize -= 1;
             });
         this._queue = job;
         return job;
     }
 
-    async logMessage(message) {
+    async logMessage(message, isDebug = DEBUG) {
         console.log(message);
-        await this._notify('extensionLog', {
-            message,
-        });
+        if (isDebug) {
+            await this._notify('extensionLog', {
+                message,
+            });
+        }
     }
 
+    /**
+     * @param {Partial<CpmDashboardState>} dashboardState
+     */
     async refreshDashboardState(tabId, url, dashboardState) {
+        const { cpmErrors, ...rest } = dashboardState;
         await this._notify('refreshCpmDashboardState', {
             tabId,
             url,
-            consentStatus: dashboardState,
+            consentStatus: {
+                ...rest,
+                // convert cpmErrors from an array to a comma-separated string
+                ...(cpmErrors
+                    ? {
+                          // limit the length to avoid overflows in breakage pixel
+                          cpmErrors: cpmErrors.join(',').substring(0, 255),
+                      }
+                    : {}),
+                // add the current queue size
+                cpmQueueSize: this._queueSize,
+            },
         });
     }
 
@@ -120,24 +171,26 @@ export class CPMEmbeddedMessaging {
 
     /**
      * Check autoconsent enabled state and user preference.
+     * @param {number} [tabId]
      * @returns {Promise<import('./cookie-prompt-management').AutoconsentUserSettings>}
      */
-    async checkAutoconsentSetting() {
-        const result = await this._request('isAutoconsentSettingEnabled', {}, 'userSetting', SETTING_CHECK_TTL);
+    async checkAutoconsentSetting(tabId) {
+        const result = await this._request('isAutoconsentSettingEnabled', {}, 'userSetting', SETTING_CHECK_TTL, tabId);
         return result ?? { enabled: false };
     }
 
-    async checkAutoconsentEnabledForSite(url) {
-        const result = await this._request('isFeatureEnabled', { featureName: 'autoconsent', url }, `site:${url}`, SITE_CHECK_TTL);
+    async checkAutoconsentEnabledForSite(url, tabId) {
+        const result = await this._request('isFeatureEnabled', { featureName: 'autoconsent', url }, `site:${url}`, SITE_CHECK_TTL, tabId);
         return result?.enabled ?? false;
     }
 
-    async checkSubfeatureEnabled(subfeatureName) {
+    async checkSubfeatureEnabled(subfeatureName, tabId) {
         const result = await this._request(
             'isSubFeatureEnabled',
             { featureName: 'autoconsent', subfeatureName },
             `subfeature:${subfeatureName}`,
             SUBFEATURE_CHECK_TTL,
+            tabId,
         );
         return result?.enabled ?? false;
     }
@@ -171,6 +224,7 @@ export class CPMEmbeddedMessaging {
             }
             return cachedConfig;
         } catch (e) {
+            this._recordDiagnosticsError(null, 'getResourceIfNew');
             this.logMessage(`error refreshing remote config: ${e}`);
             if (cachedConfigVersion !== 'unknown') {
                 return cachedConfig;
