@@ -82,7 +82,7 @@ node-test:
 ## npm: Pull in the external dependencies (npm install).
 npm:
 	npm ci --ignore-scripts
-	npm rebuild puppeteer
+	npx playwright install --with-deps chromium firefox
 	## Install the privacy-test-pages package for integration tests
 	cd node_modules/privacy-test-pages && npm install
 
