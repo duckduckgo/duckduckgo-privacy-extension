@@ -4,6 +4,7 @@ import {
     SUBFEATURE_CHECK_TTL,
     SETTING_CHECK_TTL,
     SITE_CHECK_TTL,
+    NATIVE_MESSAGE_TIMEOUT_MS,
 } from '../../shared/js/background/components/cpm-embedded-messaging';
 import { sessionStorageFallback } from '../../shared/js/background/wrapper';
 
@@ -16,6 +17,23 @@ function createMockNativeMessaging() {
         request: jasmine.createSpy('request').and.returnValue(Promise.resolve({})),
         subscribe: jasmine.createSpy('subscribe'),
     };
+}
+
+/**
+ * A promise that never settles, used to simulate a hung native call.
+ */
+function neverSettles() {
+    return new Promise(() => {});
+}
+
+/**
+ * Flush pending microtasks so a queued job can start and schedule its timeout timer
+ * before the mocked clock is advanced.
+ */
+async function flushMicrotasks() {
+    for (let i = 0; i < 10; i++) {
+        await Promise.resolve();
+    }
 }
 
 describe('CPMEmbeddedMessaging', () => {
@@ -87,6 +105,28 @@ describe('CPMEmbeddedMessaging', () => {
 
             expect(nativeMessaging.notify).toHaveBeenCalledWith('after', {});
             expect(console.error).toHaveBeenCalled();
+        });
+
+        it('times out a hung notification instead of blocking the queue forever', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            spyOn(console, 'error');
+
+            // native notification never settles
+            nativeMessaging.notify.and.returnValue(neverSettles());
+            const hung = messaging._notify('hang', { tabId: 7 });
+
+            // let the job start and schedule its timeout, then advance past it
+            await flushMicrotasks();
+            jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS + 1);
+            await hung;
+
+            expect(diagnosticsHandler).toHaveBeenCalledWith(7, 'tab_hang');
+
+            // the queue is not blocked: a subsequent notification still goes through
+            nativeMessaging.notify.and.returnValue(Promise.resolve());
+            await messaging._notify('after', {});
+            expect(nativeMessaging.notify).toHaveBeenCalledWith('after', {});
         });
     });
 
@@ -224,6 +264,46 @@ describe('CPMEmbeddedMessaging', () => {
 
             expect(result).toEqual({ ok: true });
             expect(console.error).toHaveBeenCalled();
+        });
+
+        it('times out a hung request instead of blocking the queue forever', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            spyOn(console, 'error');
+
+            // native request never settles
+            nativeMessaging.request.and.returnValue(neverSettles());
+            const hung = messaging._request('hang', {}, undefined, undefined, 5);
+
+            // let the job start and schedule its timeout, then advance past it
+            await flushMicrotasks();
+            jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS + 1);
+            await hung;
+
+            expect(diagnosticsHandler).toHaveBeenCalledWith(5, 'tab_hang');
+
+            // the queue is not blocked: a subsequent request still resolves
+            nativeMessaging.request.and.returnValue(Promise.resolve({ ok: true }));
+            const result = await messaging._request('after', {});
+            expect(result).toEqual({ ok: true });
+        });
+
+        it('does not cache a timed-out request', async () => {
+            spyOn(console, 'error');
+
+            nativeMessaging.request.and.returnValue(neverSettles());
+            const hung = messaging._request('test', {}, 'myKey', 60000);
+            await flushMicrotasks();
+            jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS + 1);
+            await hung;
+
+            expect(messaging._cache.size).toBe(0);
+
+            // next call actually hits native again (nothing was cached)
+            nativeMessaging.request.and.returnValue(Promise.resolve({ enabled: true }));
+            const result = await messaging._request('test', {}, 'myKey', 60000);
+            expect(result).toEqual({ enabled: true });
+            expect(messaging._cache.get('myKey')).toBeDefined();
         });
 
         it('the resulting promise resolves only after the request is complete', async () => {
@@ -514,6 +594,22 @@ describe('CPMEmbeddedMessaging', () => {
             nativeMessaging.request.and.returnValue(Promise.reject(error));
 
             await expectAsync(messaging.refreshRemoteConfig()).toBeRejectedWith(error);
+        });
+
+        it('falls back to cached config when the native request hangs past the timeout', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            const cachedConfig = { version: '1', features: {} };
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            sessionStorageFallback.set('config', cachedConfig);
+            nativeMessaging.request.and.returnValue(neverSettles());
+
+            const promise = messaging.refreshRemoteConfig();
+            await flushMicrotasks();
+            jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS + 1);
+            const result = await promise;
+
+            expect(result).toEqual(cachedConfig);
+            expect(diagnosticsHandler).toHaveBeenCalledWith(null, 'glob_getResourceIfNew');
         });
     });
 });

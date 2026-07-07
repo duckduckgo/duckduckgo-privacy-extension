@@ -14,6 +14,29 @@ export const SETTING_CHECK_TTL = 10 * 1000; // 10s
 export const SITE_CHECK_TTL = 3 * 1000; // 3s (to be able to respond to Protections toggle changes)
 export const MAX_CACHE_SIZE = 100;
 
+// Upper bound for a single native message round-trip. Native messages are local IPC and normally
+// complete in milliseconds, but a dropped reply may leave the promise pending forever.
+export const NATIVE_MESSAGE_TIMEOUT_MS = 10 * 1000; // 10s
+
+/**
+ * Reject if `promise` does not settle within `timeoutMs`
+ * @template T
+ * @param {Promise<T>} promise
+ * @param {number} timeoutMs
+ * @param {string} label - method name, included in the timeout error for diagnostics
+ * @returns {Promise<T>}
+ */
+function withTimeout(promise, timeoutMs, label) {
+    /** @type {ReturnType<typeof setTimeout>} */
+    let timer;
+    const timeout = new Promise((_resolve, reject) => {
+        timer = setTimeout(() => {
+            reject(new Error(`native message "${label}" timed out after ${timeoutMs}ms`));
+        }, timeoutMs);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
 /**
  * CPM messaging for embedded extension.
  * @implements {CPMMessagingBase}
@@ -64,7 +87,11 @@ export class CPMEmbeddedMessaging {
         this._queueSize += 1;
         const result = this._queue
             .then(() => {
-                return this.nativeMessaging.notify(method, params);
+                return withTimeout(
+                    this.nativeMessaging.notify(method, params),
+                    NATIVE_MESSAGE_TIMEOUT_MS,
+                    method,
+                );
             })
             .catch((e) => {
                 console.error('error in notification queue', e);
@@ -99,7 +126,11 @@ export class CPMEmbeddedMessaging {
                         return cached.value;
                     }
                 }
-                const result = await this.nativeMessaging.request(method, params);
+                const result = await withTimeout(
+                    this.nativeMessaging.request(method, params),
+                    NATIVE_MESSAGE_TIMEOUT_MS,
+                    method,
+                );
                 if (cacheKey && ttl) {
                     // evict the oldest entry if the cache is full
                     if (this._cache.size >= MAX_CACHE_SIZE) {
@@ -211,7 +242,11 @@ export class CPMEmbeddedMessaging {
         try {
             console.log(`fetching config from native, cachedConfigVersion: ${cachedConfigVersion}`);
             // we don't use the request queue here because config fetching should be async
-            const result = await this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion });
+            const result = await withTimeout(
+                this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion }),
+                NATIVE_MESSAGE_TIMEOUT_MS,
+                'getResourceIfNew',
+            );
             if (result.updated) {
                 this._cachedConfig = result.data;
                 try {
