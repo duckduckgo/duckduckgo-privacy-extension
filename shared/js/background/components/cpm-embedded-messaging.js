@@ -87,11 +87,7 @@ export class CPMEmbeddedMessaging {
         this._queueSize += 1;
         const result = this._queue
             .then(() => {
-                return withTimeout(
-                    this.nativeMessaging.notify(method, params),
-                    NATIVE_MESSAGE_TIMEOUT_MS,
-                    method,
-                );
+                return withTimeout(this.nativeMessaging.notify(method, params), NATIVE_MESSAGE_TIMEOUT_MS, method);
             })
             .catch((e) => {
                 console.error('error in notification queue', e);
@@ -126,11 +122,7 @@ export class CPMEmbeddedMessaging {
                         return cached.value;
                     }
                 }
-                const result = await withTimeout(
-                    this.nativeMessaging.request(method, params),
-                    NATIVE_MESSAGE_TIMEOUT_MS,
-                    method,
-                );
+                const result = await withTimeout(this.nativeMessaging.request(method, params), NATIVE_MESSAGE_TIMEOUT_MS, method);
                 if (cacheKey && ttl) {
                     // evict the oldest entry if the cache is full
                     if (this._cache.size >= MAX_CACHE_SIZE) {
