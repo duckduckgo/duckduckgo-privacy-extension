@@ -3,7 +3,7 @@
 const fs = require('fs');
 const process = require('process');
 
-const { PuppeteerInterface } = require('./puppeteerInterface');
+const { BrowserInterface } = require('./browserInterface');
 
 const { generateSmarterEncryptionRuleset } = require('./lib/smarterEncryption');
 const { generateTdsRuleset } = require('./lib/tds');
@@ -40,7 +40,7 @@ async function main() {
             } else {
                 const [tdsFilePath, supportedSurrogatesPath, rulesetFilePath, allowingRulesByCtlActionFilePath, mappingFilePath] = args;
 
-                const browser = new PuppeteerInterface();
+                const browser = new BrowserInterface();
                 const isRegexSupported = browser.isRegexSupported.bind(browser);
 
                 const { allowingRulesByClickToLoadAction, ruleset, matchDetailsByRuleId } = await generateTdsRuleset(
@@ -73,7 +73,7 @@ async function main() {
             } else {
                 const [extensionConfigFilePath, rulesetFilePath, mappingFilePath] = args;
 
-                const browser = new PuppeteerInterface();
+                const browser = new BrowserInterface();
                 const isRegexSupported = browser.isRegexSupported.bind(browser);
 
                 const { ruleset, matchDetailsByRuleId } = await generateExtensionConfigurationRuleset(

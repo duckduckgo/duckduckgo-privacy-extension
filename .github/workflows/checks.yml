@@ -60,8 +60,6 @@ jobs:
                   node-version: 22
                   cache: 'npm'
             - run: npm run install-ci
-            - name: Install Playwright Browsers
-              run: npx playwright install --with-deps ${{ matrix.test == 'playwright-firefox' && 'firefox' || 'chromium' }}
             - name: Run tests
               run: xvfb-run --auto-servernum -- npm run ${{ matrix.test }} -- --shard ${{ matrix.shard }}
             - uses: actions/upload-artifact@v4

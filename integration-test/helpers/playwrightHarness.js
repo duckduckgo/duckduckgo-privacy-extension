@@ -3,7 +3,8 @@ import path from 'path';
 import fs from 'fs/promises';
 
 import { applyFirefoxHarness } from 'firefox-webext-playwright-harness';
-import { isFirefox } from './platform.js';
+import { isFirefox } from './platform';
+import { getBackgroundServiceWorker } from './playwrightHelpers';
 
 const testRoot = path.join(__dirname, '..');
 const projectRoot = path.join(testRoot, '..');
@@ -112,25 +113,7 @@ let test = base.extend({
      * @type {import('@playwright/test').Page | import('@playwright/test').Worker}
      */
     async backgroundPage({ context }, use) {
-        // See https://playwright.dev/docs/service-workers
-        const getBackgroundServiceWorker = async () => {
-            let [serviceWorker] = context.serviceWorkers();
-            if (!serviceWorker) {
-                try {
-                    serviceWorker = await context.waitForEvent('serviceworker', { timeout: 2000 });
-                } catch {
-                    [serviceWorker] = context.serviceWorkers();
-                }
-            }
-            return serviceWorker;
-        };
-
-        const background = await getBackgroundServiceWorker();
-        if (!background) {
-            throw new Error("Failed to find extension's background ServiceWorker.");
-        }
-
-        await use(background);
+        await use(await getBackgroundServiceWorker(context));
     },
     /**
      * Use this for listening and modifying network events for both MV2 and MV3

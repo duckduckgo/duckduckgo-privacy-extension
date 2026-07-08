@@ -7,7 +7,7 @@ const {
 } = require('../lib/smarterEncryption');
 
 /**
- * @typedef {{ browser: import('../puppeteerInterface').PuppeteerInterface}} testFunction
+ * @typedef {{ browser: import('../browserInterface').BrowserInterface}} testFunction
  */
 
 describe('generateSmarterEncryptionRuleset', () => {

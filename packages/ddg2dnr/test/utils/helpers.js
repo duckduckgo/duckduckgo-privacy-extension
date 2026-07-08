@@ -2,7 +2,7 @@
  * @typedef {{
  *  beforeAll: (fn: () => Promise<any>) => Void;
  *  beforeEach: (fn: () => Promise<any>) => Void;
- *  browser: import('../../puppeteerInterface').PuppeteerInterface;
+ *  browser: import('../../browserInterface').BrowserInterface;
  * }} testFunction
  */
 
@@ -11,7 +11,7 @@
  * Note: The logic around determining action is simplistic, but good enough for
  *       now.
  *
- * @param {import('../../puppeteerInterface').PuppeteerInterface} browser
+ * @param {import('../../browserInterface').BrowserInterface} browser
  * @param {Object} requestDetails
  * @param {string} requestDetails.requestUrl
  * @param {string} requestDetails.websiteUrl
