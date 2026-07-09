@@ -47,7 +47,7 @@
         "@types/node": "^22.1.0",
         "@types/webextension-polyfill": "^0.10.7",
         "asana": "^3.1.10",
-        "esbuild": "^0.25.9",
+        "esbuild": "^0.28.1",
         "eslint": "^9.13.0",
         "fake-indexeddb": "^6.0.0",
         "firefox-webext-playwright-harness": "github:kzar/firefox-webext-playwright-harness#0.2.0",
