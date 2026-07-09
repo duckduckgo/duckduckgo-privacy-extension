@@ -4,33 +4,29 @@
 //               ServiceWorker context for the extension is cumbersome to type
 //               hint with JSDoc comments.
 
-const path = require('path');
-
-const { chromium } = require('@playwright/test');
-
-const { getBackgroundServiceWorker } = require('../../integration-test/helpers/playwrightHelpers');
+const { launchSimpleExtensionContext } = require('../../integration-test/helpers/playwrightHelpers');
 
 class BrowserInterface {
-    async setupBrowser() {
-        const testExtensionPath = path.join(__dirname, 'test', 'data', 'chrome-extension');
-
+    /**
+     * @param {('chrome'|'firefox')} platform
+     */
+    async setupBrowser(platform) {
         // Open the browser, installing the test extension.
-        this.browser = await chromium.launchPersistentContext('', {
-            channel: 'chromium',
-            args: [`--disable-extensions-except=${testExtensionPath}`, `--load-extension=${testExtensionPath}`],
-        });
-
-        // Find the background ServiceWorker for the extension.
-        this.backgroundWorker = await getBackgroundServiceWorker(this.browser);
+        const { background, close } = await launchSimpleExtensionContext(platform);
+        this.backgroundWorker = background;
+        this._close = close;
     }
 
     async closeBrowser() {
         await this.ready;
-        await this.browser?.close();
+        await this._close?.();
     }
 
-    constructor() {
-        this.ready = this.setupBrowser();
+    /**
+     * @param {('chrome'|'firefox')} platform
+     */
+    constructor(platform) {
+        this.ready = this.setupBrowser(platform);
     }
 
     /**

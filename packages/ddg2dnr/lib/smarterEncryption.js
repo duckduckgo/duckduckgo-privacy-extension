@@ -43,6 +43,10 @@ function generateSmarterEncryptionRuleset(domains, startingRuleId = 1) {
     const domainsToMatchWithWwwPrefix = new Set();
     const nonWwwDomains = [];
     for (const domain of domains) {
+        if (domain.length === 0) {
+            continue;
+        }
+
         if (domain.startsWith('www.')) {
             domainsToMatchWithWwwPrefix.add(domain.substr(4));
         } else {
