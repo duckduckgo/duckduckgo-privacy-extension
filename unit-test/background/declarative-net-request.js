@@ -24,6 +24,7 @@ import {
     SETTING_PREFIX,
 } from '../../shared/js/background/dnr-utils';
 import { SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY, USER_ALLOWLISTED_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
+import { resourceTypes } from '@duckduckgo/ddg2dnr/lib/utils';
 import { GPC_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/gpc';
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage'];
@@ -741,23 +742,7 @@ describe('declarativeNetRequest', () => {
                 requestHeaders: [{ header: 'Sec-GPC', operation: 'set', value: '1' }],
             },
             condition: {
-                resourceTypes: [
-                    'main_frame',
-                    'sub_frame',
-                    'stylesheet',
-                    'script',
-                    'image',
-                    'font',
-                    'object',
-                    'xmlhttprequest',
-                    'ping',
-                    'csp_report',
-                    'media',
-                    'websocket',
-                    'webtransport',
-                    'webbundle',
-                    'other',
-                ],
+                resourceTypes,
                 excludedInitiatorDomains: ['exception1.example', 'exception2.example'],
                 excludedRequestDomains: ['exception1.example', 'exception2.example'],
             },
