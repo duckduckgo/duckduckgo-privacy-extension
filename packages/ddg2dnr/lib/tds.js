@@ -61,6 +61,8 @@ const trackerDomainSymbol = Symbol('trackerDomain');
 // and stored for that action.
 const clickToLoadActionSymbol = Symbol('clickToLoadActionSymbol');
 
+const resourceTypesSet = new Set(resourceTypes);
+
 function normalizeTypesCondition(types) {
     if (!types || types.length === 0) {
         return [];
@@ -77,7 +79,7 @@ function normalizeTypesCondition(types) {
                 normalizedTypes.add('image');
                 break;
             default:
-                if (resourceTypes.has(type)) {
+                if (resourceTypesSet.has(type)) {
                     normalizedTypes.add(type);
                 } else {
                     normalizedTypes.add('other');
