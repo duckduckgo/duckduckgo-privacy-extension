@@ -673,7 +673,7 @@ export default class CookiePromptManagement {
                         cpmStage: 'done',
                     }),
                 );
-                if (msg.cmp === 'HEURISTIC') {
+                if (msg.cmp.startsWith('HEURISTIC')) {
                     this.firePixel('done_heuristic');
                 } else {
                     this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done');
