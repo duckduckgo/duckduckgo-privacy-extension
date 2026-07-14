@@ -15,7 +15,9 @@
         "tsc": "tsc",
         "lint": "npm run eslint && npm run tsc",
         "smarter-encryption": "node cli.js smarter-encryption",
-        "test": "mocha",
+        "test": "npm run test:chrome && npm run test:firefox",
+        "test:chrome": "DDG_PLATFORM=chrome mocha",
+        "test:firefox": "DDG_PLATFORM=firefox mocha",
         "tds": "node cli.js tds"
     },
     "mocha": {

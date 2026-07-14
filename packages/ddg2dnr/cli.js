@@ -40,7 +40,7 @@ async function main() {
             } else {
                 const [tdsFilePath, supportedSurrogatesPath, rulesetFilePath, allowingRulesByCtlActionFilePath, mappingFilePath] = args;
 
-                const browser = new BrowserInterface();
+                const browser = new BrowserInterface('chrome');
                 const isRegexSupported = browser.isRegexSupported.bind(browser);
 
                 const { allowingRulesByClickToLoadAction, ruleset, matchDetailsByRuleId } = await generateTdsRuleset(
@@ -73,7 +73,7 @@ async function main() {
             } else {
                 const [extensionConfigFilePath, rulesetFilePath, mappingFilePath] = args;
 
-                const browser = new BrowserInterface();
+                const browser = new BrowserInterface('chrome');
                 const isRegexSupported = browser.isRegexSupported.bind(browser);
 
                 const { ruleset, matchDetailsByRuleId } = await generateExtensionConfigurationRuleset(
