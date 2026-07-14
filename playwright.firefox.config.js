@@ -32,7 +32,6 @@ export default defineConfig({
         actionTimeout: 15000,
         trace: 'on-first-retry',
         firefoxHarnessConfig: {
-            addonId: 'jid1-ZAdIEUB7XOzOJw@jetpack',
             extensionPath: path.join(process.cwd(), 'build/firefox/dev'),
             rewriteStaticRules: [['extension-firefox-config.json', 'extension-chrome-config.json']],
             postInstallPages: ['https://duckduckgo.com/extension-success'],

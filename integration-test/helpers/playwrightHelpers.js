@@ -6,7 +6,6 @@ const { launchExtensionBackground } = require('firefox-webext-playwright-harness
 const STUB_EXT_PATH = path.join(__dirname, '..', 'data', 'stub-extensions');
 const CHROME_STUB_EXT_PATH = path.join(STUB_EXT_PATH, 'chrome-extension');
 const FIREFOX_STUB_EXT_PATH = path.join(STUB_EXT_PATH, 'firefox-extension');
-const FIREFOX_STUB_EXT_ID = 'stub-firefox-extension@duckduckgo.com';
 
 /**
  * Get the extension's background ServiceWorker.
@@ -60,7 +59,6 @@ async function launchSimpleExtensionContext(platform) {
     if (platform === 'firefox') {
         return launchExtensionBackground({
             extensionPath: FIREFOX_STUB_EXT_PATH,
-            addonId: FIREFOX_STUB_EXT_ID,
             firefoxUserPrefs: { 'extensions.dnr.feedback': true },
         });
     }
