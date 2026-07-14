@@ -72,6 +72,8 @@ const logsConfig = {
     waits: !!DEBUG,
 };
 
+export const REMOTE_CONFIG_TIMEOUT_MS = 20 * 1000;
+
 export default class CookiePromptManagement {
     static SUMMARY_ALARM_NAME = 'cpm-summary';
     static SUMMARY_DELAY_MINUTES = 2;
@@ -161,11 +163,21 @@ export default class CookiePromptManagement {
     }
 
     scheduleConfigRefresh() {
-        /** @type {Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>} */
-        this.remoteConfigJson = this.cpmMessaging.refreshRemoteConfig().catch((e) => {
-            // make sure remoteConfigJson is never rejected
-            return null;
+        /** @type {ReturnType<typeof setTimeout> | undefined} */
+        let timeoutId;
+        const timeout = new Promise((resolve) => {
+            timeoutId = setTimeout(() => resolve(null), REMOTE_CONFIG_TIMEOUT_MS);
         });
+
+        /** @type {Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>} */
+        this.remoteConfigJson = Promise.race([this.cpmMessaging.refreshRemoteConfig(), timeout])
+            .catch((e) => {
+                // make sure remoteConfigJson is never rejected
+                return null;
+            })
+            .finally(() => {
+                if (timeoutId !== undefined) clearTimeout(timeoutId);
+            });
     }
 
     /**

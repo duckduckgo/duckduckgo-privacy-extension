@@ -1,4 +1,4 @@
-import CookiePromptManagement from '../../shared/js/background/components/cookie-prompt-management';
+import CookiePromptManagement, { REMOTE_CONFIG_TIMEOUT_MS } from '../../shared/js/background/components/cookie-prompt-management';
 import messageHandlers from '../../shared/js/background/message-registry';
 import { sessionStorageFallback } from '../../shared/js/background/wrapper';
 
@@ -74,6 +74,30 @@ describe('CookiePromptManagement', () => {
     beforeEach(() => {
         Object.keys(messageHandlers).forEach((k) => delete messageHandlers[k]);
         sessionStorageFallback.clear();
+    });
+
+    describe('remote config refresh', () => {
+        it('resolves to null after the timeout when the refresh does not settle', async () => {
+            jasmine.clock().install();
+            try {
+                const mockMessaging = createMockMessaging();
+                mockMessaging.refreshRemoteConfig.and.returnValue(new Promise(() => {}));
+                const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+                let settled = false;
+                cpm.remoteConfigJson.then(() => {
+                    settled = true;
+                });
+
+                jasmine.clock().tick(REMOTE_CONFIG_TIMEOUT_MS - 1);
+                await Promise.resolve();
+                expect(settled).toBeFalse();
+
+                jasmine.clock().tick(1);
+                expect(await cpm.remoteConfigJson).toBeNull();
+            } finally {
+                jasmine.clock().uninstall();
+            }
+        });
     });
 
     describe('CPM diagnostics', () => {
