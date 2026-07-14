@@ -60,21 +60,32 @@ describe('CPMEmbeddedMessaging', () => {
             expect(diagnosticsHandler).toHaveBeenCalledWith(null, 'glob_testMethod');
         });
 
-        it('serializes multiple notifications in order', async () => {
-            const callOrder = [];
-            nativeMessaging.notify.and.callFake(async (method) => {
-                callOrder.push(method);
+        it('sends notifications in parallel', async () => {
+            let resolveFirst;
+            const firstNativeNotification = new Promise((resolve) => {
+                resolveFirst = resolve;
+            });
+            nativeMessaging.notify.and.callFake((method) => {
+                return method === 'first' ? firstNativeNotification : Promise.resolve();
             });
 
-            const p1 = messaging._notify('first', {});
-            const p2 = messaging._notify('second', {});
-            const p3 = messaging._notify('third', {});
-            await Promise.all([p1, p2, p3]);
+            let firstResolved = false;
+            const first = messaging._notify('first', {}).then(() => {
+                firstResolved = true;
+            });
+            await messaging._notify('second', {});
 
-            expect(callOrder).toEqual(['first', 'second', 'third']);
+            expect(nativeMessaging.notify.calls.allArgs()).toEqual([
+                ['first', {}],
+                ['second', {}],
+            ]);
+            expect(firstResolved).toBeFalse();
+
+            resolveFirst();
+            await first;
         });
 
-        it('continues the queue even if a notification fails', async () => {
+        it('sends other notifications when one fails', async () => {
             nativeMessaging.notify.and.callFake(async (method) => {
                 if (method === 'fail') {
                     throw new Error('test error');
@@ -82,9 +93,9 @@ describe('CPMEmbeddedMessaging', () => {
             });
             spyOn(console, 'error');
 
-            await messaging._notify('fail', {});
-            await messaging._notify('after', {});
+            await Promise.all([messaging._notify('fail', {}), messaging._notify('after', {})]);
 
+            expect(nativeMessaging.notify).toHaveBeenCalledTimes(2);
             expect(nativeMessaging.notify).toHaveBeenCalledWith('after', {});
             expect(console.error).toHaveBeenCalled();
         });
@@ -120,19 +131,30 @@ describe('CPMEmbeddedMessaging', () => {
             expect(diagnosticsHandler).toHaveBeenCalledWith(null, 'glob_testMethod');
         });
 
-        it('serializes multiple requests in order', async () => {
-            const callOrder = [];
-            nativeMessaging.request.and.callFake(async (method) => {
-                callOrder.push(method);
-                return {};
+        it('sends requests in parallel', async () => {
+            let resolveFirst;
+            const firstNativeRequest = new Promise((resolve) => {
+                resolveFirst = resolve;
+            });
+            nativeMessaging.request.and.callFake((method) => {
+                return method === 'first' ? firstNativeRequest : Promise.resolve({ method });
             });
 
-            const p1 = messaging._request('first', {});
-            const p2 = messaging._request('second', {});
-            const p3 = messaging._request('third', {});
-            await Promise.all([p1, p2, p3]);
+            let firstResolved = false;
+            const first = messaging._request('first', {}).then(() => {
+                firstResolved = true;
+            });
+            const secondResult = await messaging._request('second', {});
 
-            expect(callOrder).toEqual(['first', 'second', 'third']);
+            expect(nativeMessaging.request.calls.allArgs()).toEqual([
+                ['first', {}],
+                ['second', {}],
+            ]);
+            expect(secondResult).toEqual({ method: 'second' });
+            expect(firstResolved).toBeFalse();
+
+            resolveFirst({ method: 'first' });
+            await first;
         });
 
         it('caches results when cacheKey and ttl are provided', async () => {
@@ -210,7 +232,7 @@ describe('CPMEmbeddedMessaging', () => {
             expect(messaging._cache.size).toBe(MAX_CACHE_SIZE);
         });
 
-        it('continues the queue even if a request fails', async () => {
+        it('completes other requests when one fails', async () => {
             nativeMessaging.request.and.callFake(async (method) => {
                 if (method === 'fail') {
                     throw new Error('test error');
@@ -219,9 +241,9 @@ describe('CPMEmbeddedMessaging', () => {
             });
             spyOn(console, 'error');
 
-            await messaging._request('fail', {});
-            const result = await messaging._request('succeed', {});
+            const [, result] = await Promise.all([messaging._request('fail', {}), messaging._request('succeed', {})]);
 
+            expect(nativeMessaging.request).toHaveBeenCalledTimes(2);
             expect(result).toEqual({ ok: true });
             expect(console.error).toHaveBeenCalled();
         });
@@ -265,19 +287,7 @@ describe('CPMEmbeddedMessaging', () => {
             expect(nativeMessaging.notify).toHaveBeenCalledWith('refreshCpmDashboardState', {
                 tabId: 1,
                 url: 'https://example.com',
-                consentStatus: { cosmetic: true, cpmQueueSize: 0 },
-            });
-        });
-
-        it('includes pending native messages in dashboard queue size', async () => {
-            messaging._queueSize = 1;
-
-            await messaging.refreshDashboardState(1, 'https://example.com', {});
-
-            expect(nativeMessaging.notify).toHaveBeenCalledWith('refreshCpmDashboardState', {
-                tabId: 1,
-                url: 'https://example.com',
-                consentStatus: { cpmQueueSize: 1 },
+                consentStatus: { cosmetic: true },
             });
         });
 
@@ -291,7 +301,6 @@ describe('CPMEmbeddedMessaging', () => {
                 url: 'https://example.com',
                 consentStatus: {
                     cpmErrors: 'tab_isFeatureEnabled,multiple_cmps',
-                    cpmQueueSize: 0,
                 },
             });
         });
