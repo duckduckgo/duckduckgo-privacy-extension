@@ -72,7 +72,11 @@ const logsConfig = {
     waits: !!DEBUG,
 };
 
-export const REMOTE_CONFIG_TIMEOUT_MS = 20 * 1000;
+// Safety timeout for scheduleConfigRefresh: must be strictly greater than the
+// native message timeout (NATIVE_MESSAGE_TIMEOUT_MS) used inside embedded
+// refreshRemoteConfig, so that its cached-config fallback wins the race and we
+// only fall back to `null` when the whole refresh call truly hangs.
+export const REMOTE_CONFIG_TIMEOUT_MS = 30 * 1000;
 
 export default class CookiePromptManagement {
     static SUMMARY_ALARM_NAME = 'cpm-summary';
