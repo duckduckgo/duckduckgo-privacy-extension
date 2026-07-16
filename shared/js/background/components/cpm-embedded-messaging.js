@@ -27,6 +27,9 @@ export class CPMEmbeddedMessaging {
         this.nativeMessaging = nativeMessaging;
         /** @type {Map<string, CacheEntry>} */
         this._cache = new Map();
+        // per-tab chains of dashboard notifications, to make sure the dashboard state is updated in order
+        /** @type {Map<number, Promise<void>>} */
+        this._dashboardNotifyChains = new Map();
         /** @type {((tabId: number | null, errorName: string) => void) | null} */
         this._diagnosticsErrorHandler = null; // callback to record diagnostics errors in CPM state
         // in-memory cached config, will be lost on extension sleep, in which case we fetch from session storage
@@ -141,20 +144,32 @@ export class CPMEmbeddedMessaging {
      */
     async refreshDashboardState(tabId, url, dashboardState) {
         const { cpmErrors, ...rest } = dashboardState;
-        await this._notify('refreshCpmDashboardState', {
-            tabId,
-            url,
-            consentStatus: {
-                ...rest,
-                // convert cpmErrors from an array to a comma-separated string
-                ...(cpmErrors
-                    ? {
-                          // limit the length to avoid overflows in breakage pixel
-                          cpmErrors: cpmErrors.join(',').substring(0, 255),
-                      }
-                    : {}),
-            },
-        });
+        const currentChain = this._dashboardNotifyChains.get(tabId);
+        const previous = currentChain ?? Promise.resolve();
+        const notification = previous.then(() =>
+            this._notify('refreshCpmDashboardState', {
+                tabId,
+                url,
+                consentStatus: {
+                    ...rest,
+                    // convert cpmErrors from an array to a comma-separated string
+                    ...(cpmErrors
+                        ? {
+                              // limit the length to avoid overflows in breakage pixel
+                              cpmErrors: cpmErrors.join(',').substring(0, 255),
+                          }
+                        : {}),
+                },
+            }),
+        );
+        this._dashboardNotifyChains.set(tabId, notification);
+        try {
+            await notification;
+        } finally {
+            if (this._dashboardNotifyChains.get(tabId) === notification) {
+                this._dashboardNotifyChains.delete(tabId);
+            }
+        }
     }
 
     async showCpmAnimation(tabId, topUrl, isCosmetic) {
