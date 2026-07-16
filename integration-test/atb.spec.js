@@ -37,7 +37,11 @@ test.describe('install workflow', () => {
                     onRequest(request);
                 }
             });
-            await initialExtiFired;
+
+            // Wait for the first exti request, but include a timeout as it will
+            // sometimes complete before we start listening for requests.
+            await backgroundWait.forSetting(backgroundPage, 'extiSent');
+            await Promise.race([initialExtiFired, new Promise((resolve) => setTimeout(resolve, 2000))]);
 
             // clear atb settings
             await backgroundPage.evaluate(() => {
