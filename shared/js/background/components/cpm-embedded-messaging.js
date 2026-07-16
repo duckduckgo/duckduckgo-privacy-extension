@@ -13,6 +13,7 @@ export const SUBFEATURE_CHECK_TTL = 30 * 1000; // 30s
 export const SETTING_CHECK_TTL = 10 * 1000; // 10s
 export const SITE_CHECK_TTL = 3 * 1000; // 3s (to be able to respond to Protections toggle changes)
 export const MAX_CACHE_SIZE = 100;
+export const NATIVE_MESSAGE_TIMEOUT_MS = 20 * 1000;
 
 /**
  * CPM messaging for embedded extension.
@@ -59,7 +60,7 @@ export class CPMEmbeddedMessaging {
     async _notify(method, params) {
         const diagnosticsTabId = typeof params.tabId === 'number' ? params.tabId : null;
         try {
-            await this.nativeMessaging.notify(method, params);
+            await this._withTimeout(this.nativeMessaging.notify(method, params), method);
         } catch (e) {
             console.error('error sending native notification', e);
             this._recordDiagnosticsError(diagnosticsTabId, method);
@@ -86,7 +87,7 @@ export class CPMEmbeddedMessaging {
         }
 
         try {
-            const result = await this.nativeMessaging.request(method, params);
+            const result = await this._withTimeout(this.nativeMessaging.request(method, params), method);
             if (cacheKey && ttl) {
                 // evict the oldest entry if the cache is full
                 if (this._cache.size >= MAX_CACHE_SIZE) {
@@ -100,6 +101,29 @@ export class CPMEmbeddedMessaging {
         } catch (e) {
             console.error(`error sending native request for ${method}`, e);
             this._recordDiagnosticsError(diagnosticsTabId ?? null, method);
+        }
+    }
+
+    /**
+     * @param {Promise<any>} operation
+     * @param {string} method
+     * @returns {Promise<any>}
+     */
+    async _withTimeout(operation, method) {
+        /** @type {ReturnType<typeof setTimeout> | undefined} */
+        let timeoutId;
+        try {
+            return await Promise.race([
+                operation,
+                new Promise((_resolve, reject) => {
+                    timeoutId = setTimeout(
+                        () => reject(new Error(`${method} timed out after ${NATIVE_MESSAGE_TIMEOUT_MS}ms`)),
+                        NATIVE_MESSAGE_TIMEOUT_MS,
+                    );
+                }),
+            ]);
+        } finally {
+            if (timeoutId !== undefined) clearTimeout(timeoutId);
         }
     }
 
@@ -189,7 +213,10 @@ export class CPMEmbeddedMessaging {
 
         try {
             console.log(`fetching config from native, cachedConfigVersion: ${cachedConfigVersion}`);
-            const result = await this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion });
+            const result = await this._withTimeout(
+                this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion }),
+                'getResourceIfNew',
+            );
             if (result.updated) {
                 this._cachedConfig = result.data;
                 try {

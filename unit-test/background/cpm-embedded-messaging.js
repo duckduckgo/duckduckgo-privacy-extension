@@ -4,6 +4,7 @@ import {
     SUBFEATURE_CHECK_TTL,
     SETTING_CHECK_TTL,
     SITE_CHECK_TTL,
+    NATIVE_MESSAGE_TIMEOUT_MS,
 } from '../../shared/js/background/components/cpm-embedded-messaging';
 import { sessionStorageFallback } from '../../shared/js/background/wrapper';
 
@@ -98,6 +99,19 @@ describe('CPMEmbeddedMessaging', () => {
             expect(nativeMessaging.notify).toHaveBeenCalledTimes(2);
             expect(nativeMessaging.notify).toHaveBeenCalledWith('after', {});
             expect(console.error).toHaveBeenCalled();
+        });
+
+        it('times out a notification and records diagnostics', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.notify.and.returnValue(new Promise(() => {}));
+            spyOn(console, 'error');
+
+            const notification = messaging._notify('testMethod', { tabId: 7 });
+            jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS);
+
+            await expectAsync(notification).toBeResolvedTo(undefined);
+            expect(diagnosticsHandler).toHaveBeenCalledWith(7, 'tab_testMethod');
         });
     });
 
