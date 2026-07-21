@@ -345,7 +345,7 @@ describe('CPMEmbeddedMessaging', () => {
             });
         });
 
-        it('delivers dashboard snapshots in order within a tab', async () => {
+        it('sends dashboard updates in parallel without waiting for the previous one', async () => {
             let resolveFirst;
             nativeMessaging.notify.and.callFake((_method, params) => {
                 if (params.consentStatus.cpmStage === 'init_received') {
@@ -357,60 +357,16 @@ describe('CPMEmbeddedMessaging', () => {
             });
 
             const first = messaging.refreshDashboardState(1, 'https://example.com', { cpmStage: 'init_received' });
-            const second = messaging.refreshDashboardState(1, 'https://example.com', { cpmStage: 'done' });
-            await Promise.resolve();
-
-            expect(nativeMessaging.notify).toHaveBeenCalledTimes(1);
-            resolveFirst();
-            await Promise.all([first, second]);
+            // The second update is sent even though the first is still in flight (no serialization).
+            await messaging.refreshDashboardState(1, 'https://example.com', { cpmStage: 'done' });
 
             expect(nativeMessaging.notify.calls.allArgs().map(([, params]) => params.consentStatus.cpmStage)).toEqual([
                 'init_received',
                 'done',
             ]);
-            expect(messaging._dashboardNotifyChains.size).toBe(0);
-        });
-
-        it('delivers dashboard snapshots for different tabs in parallel', async () => {
-            let resolveFirst;
-            nativeMessaging.notify.and.callFake((_method, params) => {
-                if (params.tabId === 1) {
-                    return new Promise((resolve) => {
-                        resolveFirst = resolve;
-                    });
-                }
-                return Promise.resolve();
-            });
-
-            let firstResolved = false;
-            const first = messaging.refreshDashboardState(1, 'https://example.com', { cpmStage: 'init_received' }).then(() => {
-                firstResolved = true;
-            });
-            await messaging.refreshDashboardState(2, 'https://example.com', { cpmStage: 'done' });
-
-            expect(nativeMessaging.notify.calls.allArgs().map(([, params]) => params.tabId)).toEqual([1, 2]);
-            expect(firstResolved).toBeFalse();
 
             resolveFirst();
             await first;
-        });
-
-        it('continues a tab dashboard chain after a failed notification', async () => {
-            nativeMessaging.notify.and.callFake((_method, params) => {
-                return params.consentStatus.cpmStage === 'init_received' ? Promise.reject(new Error('test error')) : Promise.resolve();
-            });
-            spyOn(console, 'error');
-
-            await Promise.all([
-                messaging.refreshDashboardState(1, 'https://example.com', { cpmStage: 'init_received' }),
-                messaging.refreshDashboardState(1, 'https://example.com', { cpmStage: 'done' }),
-            ]);
-
-            expect(nativeMessaging.notify.calls.allArgs().map(([, params]) => params.consentStatus.cpmStage)).toEqual([
-                'init_received',
-                'done',
-            ]);
-            expect(messaging._dashboardNotifyChains.size).toBe(0);
         });
 
         it('serializes cpmErrors before sending to native', async () => {
