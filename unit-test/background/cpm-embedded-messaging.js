@@ -101,7 +101,7 @@ describe('CPMEmbeddedMessaging', () => {
             expect(console.error).toHaveBeenCalled();
         });
 
-        it('times out a notification and records diagnostics', async () => {
+        it('times out a hung notification and records diagnostics', async () => {
             const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
             messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
             nativeMessaging.notify.and.returnValue(new Promise(() => {}));
@@ -209,6 +209,25 @@ describe('CPMEmbeddedMessaging', () => {
             resolveTimedOutRequest({ value: 'stale' });
             await Promise.resolve();
             expect(messaging._cache.has('sharedKey')).toBeFalse();
+        });
+
+        it('honors a custom timeout', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            spyOn(console, 'error');
+            nativeMessaging.request.and.returnValue(new Promise(() => {}));
+
+            const customTimeout = 5000;
+            const request = messaging._request('test', {}, undefined, undefined, 1, customTimeout);
+
+            // Not timed out yet just before the custom timeout elapses.
+            jasmine.clock().tick(customTimeout - 1);
+            await Promise.resolve();
+            expect(diagnosticsHandler).not.toHaveBeenCalled();
+
+            jasmine.clock().tick(1);
+            await expectAsync(request).toBeResolvedTo(undefined);
+            expect(diagnosticsHandler).toHaveBeenCalledWith(1, 'tab_test');
         });
 
         it('caches results when cacheKey and ttl are provided', async () => {

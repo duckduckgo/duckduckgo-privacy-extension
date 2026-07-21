@@ -53,14 +53,14 @@ export class CPMEmbeddedMessaging {
     }
 
     /**
-     * Send a notification message to the native app.
+     * Send a fire-and-forget notification message to the native app. May reject if the native side didn't acknowledge the message.
      * @param {string} method
      * @param {Record<string, any>} params
      */
-    async _notify(method, params) {
+    async _notify(method, params, timeout = NATIVE_MESSAGE_TIMEOUT_MS) {
         const diagnosticsTabId = typeof params.tabId === 'number' ? params.tabId : null;
         try {
-            await this._withTimeout(this.nativeMessaging.notify(method, params), method);
+            await this._withTimeout(this.nativeMessaging.notify(method, params), timeout);
         } catch (e) {
             console.error('error sending native notification', e);
             this._recordDiagnosticsError(diagnosticsTabId, method);
@@ -76,9 +76,10 @@ export class CPMEmbeddedMessaging {
      * @param {string} [cacheKey]
      * @param {number} [ttl]
      * @param {number=} diagnosticsTabId
+     * @param {number} [timeout] - milliseconds to wait before abandoning the native request
      * @returns {Promise<any>}
      */
-    async _request(method, params, cacheKey, ttl, diagnosticsTabId) {
+    async _request(method, params, cacheKey, ttl, diagnosticsTabId, timeout = NATIVE_MESSAGE_TIMEOUT_MS) {
         if (cacheKey && ttl) {
             const cached = this._cache.get(cacheKey);
             if (cached && Date.now() - cached.time < ttl) {
@@ -87,7 +88,7 @@ export class CPMEmbeddedMessaging {
         }
 
         try {
-            const result = await this._withTimeout(this.nativeMessaging.request(method, params), method);
+            const result = await this._withTimeout(this.nativeMessaging.request(method, params), timeout);
             if (cacheKey && ttl) {
                 // evict the oldest entry if the cache is full
                 if (this._cache.size >= MAX_CACHE_SIZE) {
@@ -105,21 +106,19 @@ export class CPMEmbeddedMessaging {
     }
 
     /**
+     * Race a native operation against a timeout so a hung native side cannot leave the promise pending forever. Rejects with a timeout error.
      * @param {Promise<any>} operation
-     * @param {string} method
+     * @param {number} [timeout] - milliseconds before the operation is rejected
      * @returns {Promise<any>}
      */
-    async _withTimeout(operation, method) {
+    async _withTimeout(operation, timeout = NATIVE_MESSAGE_TIMEOUT_MS) {
         /** @type {ReturnType<typeof setTimeout> | undefined} */
         let timeoutId;
         try {
             return await Promise.race([
                 operation,
                 new Promise((_resolve, reject) => {
-                    timeoutId = setTimeout(
-                        () => reject(new Error(`${method} timed out after ${NATIVE_MESSAGE_TIMEOUT_MS}ms`)),
-                        NATIVE_MESSAGE_TIMEOUT_MS,
-                    );
+                    timeoutId = setTimeout(() => reject(new Error(`native message timed out after ${timeout}ms`)), timeout);
                 }),
             ]);
         } finally {
@@ -215,7 +214,6 @@ export class CPMEmbeddedMessaging {
             console.log(`fetching config from native, cachedConfigVersion: ${cachedConfigVersion}`);
             const result = await this._withTimeout(
                 this.nativeMessaging.request('getResourceIfNew', { name: 'config', version: cachedConfigVersion }),
-                'getResourceIfNew',
             );
             if (result.updated) {
                 this._cachedConfig = result.data;
