@@ -4,6 +4,7 @@ import {
     SUBFEATURE_CHECK_TTL,
     SETTING_CHECK_TTL,
     SITE_CHECK_TTL,
+    NATIVE_MESSAGE_TIMEOUT_MS,
 } from '../../shared/js/background/components/cpm-embedded-messaging';
 import { sessionStorageFallback } from '../../shared/js/background/wrapper';
 
@@ -60,21 +61,32 @@ describe('CPMEmbeddedMessaging', () => {
             expect(diagnosticsHandler).toHaveBeenCalledWith(null, 'glob_testMethod');
         });
 
-        it('serializes multiple notifications in order', async () => {
-            const callOrder = [];
-            nativeMessaging.notify.and.callFake(async (method) => {
-                callOrder.push(method);
+        it('sends notifications in parallel', async () => {
+            let resolveFirst;
+            const firstNativeNotification = new Promise((resolve) => {
+                resolveFirst = resolve;
+            });
+            nativeMessaging.notify.and.callFake((method) => {
+                return method === 'first' ? firstNativeNotification : Promise.resolve();
             });
 
-            const p1 = messaging._notify('first', {});
-            const p2 = messaging._notify('second', {});
-            const p3 = messaging._notify('third', {});
-            await Promise.all([p1, p2, p3]);
+            let firstResolved = false;
+            const first = messaging._notify('first', {}).then(() => {
+                firstResolved = true;
+            });
+            await messaging._notify('second', {});
 
-            expect(callOrder).toEqual(['first', 'second', 'third']);
+            expect(nativeMessaging.notify.calls.allArgs()).toEqual([
+                ['first', {}],
+                ['second', {}],
+            ]);
+            expect(firstResolved).toBeFalse();
+
+            resolveFirst();
+            await first;
         });
 
-        it('continues the queue even if a notification fails', async () => {
+        it('sends other notifications when one fails', async () => {
             nativeMessaging.notify.and.callFake(async (method) => {
                 if (method === 'fail') {
                     throw new Error('test error');
@@ -82,11 +94,24 @@ describe('CPMEmbeddedMessaging', () => {
             });
             spyOn(console, 'error');
 
-            await messaging._notify('fail', {});
-            await messaging._notify('after', {});
+            await Promise.all([messaging._notify('fail', {}), messaging._notify('after', {})]);
 
+            expect(nativeMessaging.notify).toHaveBeenCalledTimes(2);
             expect(nativeMessaging.notify).toHaveBeenCalledWith('after', {});
             expect(console.error).toHaveBeenCalled();
+        });
+
+        it('times out a hung notification and records diagnostics', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.notify.and.returnValue(new Promise(() => {}));
+            spyOn(console, 'error');
+
+            const notification = messaging._notify('testMethod', { tabId: 7 });
+            jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS);
+
+            await expectAsync(notification).toBeResolvedTo(undefined);
+            expect(diagnosticsHandler).toHaveBeenCalledWith(7, 'tab_testMethod');
         });
     });
 
@@ -120,19 +145,89 @@ describe('CPMEmbeddedMessaging', () => {
             expect(diagnosticsHandler).toHaveBeenCalledWith(null, 'glob_testMethod');
         });
 
-        it('serializes multiple requests in order', async () => {
-            const callOrder = [];
-            nativeMessaging.request.and.callFake(async (method) => {
-                callOrder.push(method);
-                return {};
+        it('sends requests in parallel', async () => {
+            let resolveFirst;
+            const firstNativeRequest = new Promise((resolve) => {
+                resolveFirst = resolve;
+            });
+            nativeMessaging.request.and.callFake((method) => {
+                return method === 'first' ? firstNativeRequest : Promise.resolve({ method });
             });
 
-            const p1 = messaging._request('first', {});
-            const p2 = messaging._request('second', {});
-            const p3 = messaging._request('third', {});
-            await Promise.all([p1, p2, p3]);
+            let firstResolved = false;
+            const first = messaging._request('first', {}).then(() => {
+                firstResolved = true;
+            });
+            const secondResult = await messaging._request('second', {});
 
-            expect(callOrder).toEqual(['first', 'second', 'third']);
+            expect(nativeMessaging.request.calls.allArgs()).toEqual([
+                ['first', {}],
+                ['second', {}],
+            ]);
+            expect(secondResult).toEqual({ method: 'second' });
+            expect(firstResolved).toBeFalse();
+
+            resolveFirst({ method: 'first' });
+            await first;
+        });
+
+        it('keeps concurrent cache misses for the same key parallel', async () => {
+            const resolvers = [];
+            nativeMessaging.request.and.callFake(
+                () =>
+                    new Promise((resolve) => {
+                        resolvers.push(resolve);
+                    }),
+            );
+
+            const first = messaging._request('test', {}, 'sharedKey', 5000);
+            const second = messaging._request('test', {}, 'sharedKey', 5000);
+
+            expect(nativeMessaging.request).toHaveBeenCalledTimes(2);
+            resolvers.forEach((resolve) => resolve({ enabled: true }));
+            await expectAsync(Promise.all([first, second])).toBeResolvedTo([{ enabled: true }, { enabled: true }]);
+        });
+
+        it('times out a request, records diagnostics, and ignores its late result', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            spyOn(console, 'error');
+            let resolveTimedOutRequest;
+            nativeMessaging.request.and.returnValue(
+                new Promise((resolve) => {
+                    resolveTimedOutRequest = resolve;
+                }),
+            );
+
+            const request = messaging._request('test', {}, 'sharedKey', 5000, 1);
+            jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS);
+
+            await expectAsync(request).toBeResolvedTo(undefined);
+            expect(diagnosticsHandler).toHaveBeenCalledWith(1, 'tab_test');
+            expect(messaging._cache.has('sharedKey')).toBeFalse();
+
+            resolveTimedOutRequest({ value: 'stale' });
+            await Promise.resolve();
+            expect(messaging._cache.has('sharedKey')).toBeFalse();
+        });
+
+        it('honors a custom timeout', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            spyOn(console, 'error');
+            nativeMessaging.request.and.returnValue(new Promise(() => {}));
+
+            const customTimeout = 5000;
+            const request = messaging._request('test', {}, undefined, undefined, 1, customTimeout);
+
+            // Not timed out yet just before the custom timeout elapses.
+            jasmine.clock().tick(customTimeout - 1);
+            await Promise.resolve();
+            expect(diagnosticsHandler).not.toHaveBeenCalled();
+
+            jasmine.clock().tick(1);
+            await expectAsync(request).toBeResolvedTo(undefined);
+            expect(diagnosticsHandler).toHaveBeenCalledWith(1, 'tab_test');
         });
 
         it('caches results when cacheKey and ttl are provided', async () => {
@@ -210,7 +305,7 @@ describe('CPMEmbeddedMessaging', () => {
             expect(messaging._cache.size).toBe(MAX_CACHE_SIZE);
         });
 
-        it('continues the queue even if a request fails', async () => {
+        it('completes other requests when one fails', async () => {
             nativeMessaging.request.and.callFake(async (method) => {
                 if (method === 'fail') {
                     throw new Error('test error');
@@ -219,9 +314,9 @@ describe('CPMEmbeddedMessaging', () => {
             });
             spyOn(console, 'error');
 
-            await messaging._request('fail', {});
-            const result = await messaging._request('succeed', {});
+            const [, result] = await Promise.all([messaging._request('fail', {}), messaging._request('succeed', {})]);
 
+            expect(nativeMessaging.request).toHaveBeenCalledTimes(2);
             expect(result).toEqual({ ok: true });
             expect(console.error).toHaveBeenCalled();
         });
@@ -265,20 +360,32 @@ describe('CPMEmbeddedMessaging', () => {
             expect(nativeMessaging.notify).toHaveBeenCalledWith('refreshCpmDashboardState', {
                 tabId: 1,
                 url: 'https://example.com',
-                consentStatus: { cosmetic: true, cpmQueueSize: 0 },
+                consentStatus: { cosmetic: true },
             });
         });
 
-        it('includes pending native messages in dashboard queue size', async () => {
-            messaging._queueSize = 1;
-
-            await messaging.refreshDashboardState(1, 'https://example.com', {});
-
-            expect(nativeMessaging.notify).toHaveBeenCalledWith('refreshCpmDashboardState', {
-                tabId: 1,
-                url: 'https://example.com',
-                consentStatus: { cpmQueueSize: 1 },
+        it('sends dashboard updates in parallel without waiting for the previous one', async () => {
+            let resolveFirst;
+            nativeMessaging.notify.and.callFake((_method, params) => {
+                if (params.consentStatus.cpmStage === 'init_received') {
+                    return new Promise((resolve) => {
+                        resolveFirst = resolve;
+                    });
+                }
+                return Promise.resolve();
             });
+
+            const first = messaging.refreshDashboardState(1, 'https://example.com', { cpmStage: 'init_received' });
+            // The second update is sent even though the first is still in flight (no serialization).
+            await messaging.refreshDashboardState(1, 'https://example.com', { cpmStage: 'done' });
+
+            expect(nativeMessaging.notify.calls.allArgs().map(([, params]) => params.consentStatus.cpmStage)).toEqual([
+                'init_received',
+                'done',
+            ]);
+
+            resolveFirst();
+            await first;
         });
 
         it('serializes cpmErrors before sending to native', async () => {
@@ -291,7 +398,6 @@ describe('CPMEmbeddedMessaging', () => {
                 url: 'https://example.com',
                 consentStatus: {
                     cpmErrors: 'tab_isFeatureEnabled,multiple_cmps',
-                    cpmQueueSize: 0,
                 },
             });
         });
