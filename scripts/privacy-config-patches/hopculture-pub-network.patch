@@ -1,0 +1,75 @@
+diff --git a/features/tracker-allowlist.json b/features/tracker-allowlist.json
+index 241d6ff..66a8620 100644
+--- a/features/tracker-allowlist.json
++++ b/features/tracker-allowlist.json
+@@ -4245,7 +4245,8 @@
+                             "smithsonianmag.com",
+                             "stockcharts.com",
+                             "thenation.com",
+-                            "titantv.com"
++                            "titantv.com",
++                            "hopculture.com"
+                         ],
+                         "reason": [
+                             "newrepublic.com - https://github.com/duckduckgo/privacy-configuration/pull/2807",
+@@ -4256,7 +4257,8 @@
+                             "stockcharts.com - https://github.com/duckduckgo/privacy-configuration/pull/2478",
+                             "titantv.com - https://github.com/duckduckgo/privacy-configuration/issues/1925",
+                             "thenation.com - https://github.com/duckduckgo/privacy-configuration/pull/2846",
+-                            "pc-builds.com - https://github.com/duckduckgo/privacy-configuration/pull/4092"
++                            "pc-builds.com - https://github.com/duckduckgo/privacy-configuration/pull/4092",
++                            "hopculture.com - Anti-adblock wall. https://github.com/duckduckgo/privacy-configuration/issues/5642"
+                         ]
+                     },
+                     {
+@@ -4292,6 +4294,50 @@
+                             "pc-builds.com - https://github.com/duckduckgo/privacy-configuration/pull/4092"
+                         ]
+                     },
++                    {
++                        "rule": "a.pub.network/hopculture-com/",
++                        "domains": [
++                            "hopculture.com",
++                            "pc-builds.com"
++                        ],
++                        "reason": [
++                            "hopculture.com - Anti-adblock wall. https://github.com/duckduckgo/privacy-configuration/issues/5642",
++                            "pc-builds.com - domain propagation from pub.network/ catch-all"
++                        ]
++                    },
++                    {
++                        "rule": "a.pub.network/core/imgs/",
++                        "domains": [
++                            "hopculture.com",
++                            "pc-builds.com"
++                        ],
++                        "reason": [
++                            "hopculture.com - Freestar bait image used for adblock detection. https://github.com/duckduckgo/privacy-configuration/issues/5642",
++                            "pc-builds.com - domain propagation from pub.network/ catch-all"
++                        ]
++                    },
++                    {
++                        "rule": "d.pub.network/",
++                        "domains": [
++                            "hopculture.com",
++                            "pc-builds.com"
++                        ],
++                        "reason": [
++                            "hopculture.com - Freestar site config required to clear adblock wall. https://github.com/duckduckgo/privacy-configuration/issues/5642",
++                            "pc-builds.com - domain propagation from pub.network/ catch-all"
++                        ]
++                    },
++                    {
++                        "rule": "c.pub.network/",
++                        "domains": [
++                            "hopculture.com",
++                            "pc-builds.com"
++                        ],
++                        "reason": [
++                            "hopculture.com - Freestar endpoint required to clear adblock wall. https://github.com/duckduckgo/privacy-configuration/issues/5642",
++                            "pc-builds.com - domain propagation from pub.network/ catch-all"
++                        ]
++                    },
+                     {
+                         "rule": "pub.network/",
+                         "domains": [
