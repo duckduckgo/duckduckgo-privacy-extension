@@ -37,7 +37,7 @@
         "validate-pixel-defs": "validate-ddg-pixel-defs pixel-definitions"
     },
     "devDependencies": {
-        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.1.0",
+        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.2.1",
         "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v2.1.0",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
         "@fingerprintjs/fingerprintjs": "^4.6.2",
@@ -47,7 +47,7 @@
         "@types/node": "^22.1.0",
         "@types/webextension-polyfill": "^0.10.7",
         "asana": "^3.1.10",
-        "esbuild": "^0.25.9",
+        "esbuild": "^0.28.1",
         "eslint": "^9.13.0",
         "fake-indexeddb": "^6.0.0",
         "firefox-webext-playwright-harness": "github:duckduckgo/firefox-webext-playwright-harness#0.3.0",
@@ -60,7 +60,7 @@
         "karma-source-map-support": "1.4.0",
         "node-fetch": "^3.3.2",
         "prettier": "3.6.2",
-        "sass": "^1.90.0",
+        "sass": "^1.101.0",
         "timekeeper": "^2.3.1",
         "typescript": "^5.8.3",
         "webextension-polyfill": "^0.12.0",
@@ -88,7 +88,7 @@
         "privacy-test-pages": "github:duckduckgo/privacy-test-pages#1.3.6",
         "punycode": "2.3.1",
         "tldts": "^7.0.12",
-        "web-ext": "^8.9.0",
+        "web-ext": "^10.5.0",
         "zod": "^3.25.67"
     },
     "workspaces": [
