@@ -31,6 +31,11 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
 
         // Disable referrer trimming when we're not changing the referrer for the tab
         if (feature === 'referrer' && !tab.referrer?.referrer) return false;
+
+        // Ensure Click to Load is always turned off, the extension-side
+        // implementation has been removed.
+        if (feature === 'clickToLoad') return false;
+
         return true;
     });
 

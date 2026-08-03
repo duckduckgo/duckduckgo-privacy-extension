@@ -50,7 +50,6 @@ Most bug fixes are handled internally, but we will accept pull requests for bug 
 
 Note: Development builds of the extension have a few differences from the release builds and are more convenient to use during development:
  - The background page/ServiceWorker has an `dbg` Object that provides access to some of the extension's internal configuration and other state.
- - Click to Load placeholders are created with an open shadowRoot, instead of a closed shadowRoot. This allows the integration tests to click the placeholder's buttons reliably.
  - `test=1` parameter is added to the uninstall URL and to requests for the extension configuration.
 
 #### Release builds

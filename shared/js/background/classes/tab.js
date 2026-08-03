@@ -108,22 +108,6 @@ class Tab {
         return this._tabState.firstAdAttributionAllowed;
     }
 
-    set disabledClickToLoadRuleActions(value) {
-        this._tabState.setValue('disabledClickToLoadRuleActions', value);
-    }
-
-    get disabledClickToLoadRuleActions() {
-        return this._tabState.disabledClickToLoadRuleActions;
-    }
-
-    set dnrRuleIdsByDisabledClickToLoadRuleAction(value) {
-        this._tabState.setValue('dnrRuleIdsByDisabledClickToLoadRuleAction', value);
-    }
-
-    get dnrRuleIdsByDisabledClickToLoadRuleAction() {
-        return this._tabState.dnrRuleIdsByDisabledClickToLoadRuleAction;
-    }
-
     set trackers(value) {
         this._tabState.setValue('trackers', value);
     }
@@ -222,30 +206,6 @@ class Tab {
 
     set statusCode(value) {
         this._tabState.setValue('statusCode', value);
-    }
-
-    get ctlYouTube() {
-        return this._tabState.ctlYouTube;
-    }
-
-    set ctlYouTube(value) {
-        this._tabState.setValue('ctlYouTube', value);
-    }
-
-    get ctlFacebookPlaceholderShown() {
-        return this._tabState.ctlFacebookPlaceholderShown;
-    }
-
-    set ctlFacebookPlaceholderShown(value) {
-        this._tabState.setValue('ctlFacebookPlaceholderShown', value);
-    }
-
-    get ctlFacebookLogin() {
-        return this._tabState.ctlFacebookLogin;
-    }
-
-    set ctlFacebookLogin(value) {
-        this._tabState.setValue('ctlFacebookLogin', value);
     }
 
     get debugFlags() {

@@ -107,16 +107,6 @@
             },
             "exceptions": []
         },
-        "clickToLoad": {
-            "state": "enabled",
-            "exceptions": [],
-            "settings": {
-                "Facebook, Inc.": {
-                    "state": "enabled",
-                    "ruleActions": ["block-ctl-fb"]
-                }
-            }
-        },
         "fingerprintingCanvas": {
             "state": "enabled",
             "exceptions": [

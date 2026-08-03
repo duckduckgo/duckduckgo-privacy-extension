@@ -45,20 +45,6 @@ module.exports = function () {
             </li>
         </ul>
     </section>
-    <section class="${this.model.youtubeClickToLoadEnabled ? 'divider-bottom' : 'is-hidden'}">
-        <ul class="default-list">
-            <li>
-                <h2 class="menu-title">
-                    ${t('options:enableYoutubePreviews.title')}
-                    ${toggleButton(this.model.youtubePreviewsEnabled, 'js-options-youtube-previews-enabled', 'youtubePreviewsEnabled')}
-                </h2>
-                <p class="menu-paragraph">
-                    ${raw(t('options:enableYoutubePreviewsDesc.title'))}
-                    <a href="https://help.duckduckgo.com/duckduckgo-help-pages/privacy/embedded-content-protection/">${t('shared:learnMore.title')}</a>
-                </p>
-            </li>
-        </ul>
-    </section>
     <section class="${this.model.fireButtonEnabled ? 'options-content__fire-button divider-bottom' : 'options-content__fire-button is-hidden'}">
         <ul class="default-list">
             <li>

@@ -1,16 +1,4 @@
-const allowedMessages = [
-    'getClickToLoadState',
-    'getYouTubeVideoDetails',
-    'openShareFeedbackPage',
-    'addDebugFlag',
-    'setYoutubePreviewsEnabled',
-    'unblockClickToLoadContent',
-    'updateYouTubeCTLAddedFlag',
-    'updateFacebookCTLBreakageFlags',
-    'pageReloaded',
-    'getBreakageReportValues',
-    'breakageReportResult',
-];
+const allowedMessages = ['openShareFeedbackPage', 'addDebugFlag', 'pageReloaded', 'getBreakageReportValues', 'breakageReportResult'];
 
 function getSecret() {
     return new Promise((resolve) => {
@@ -66,9 +54,8 @@ async function init() {
 
     const secret = await secretPromise;
 
-    // Content-scope-script messaging proxy, to allow the Click to Load content
-    // script to send messages to the extension's background and receive a
-    // response.
+    // Content-scope-script messaging proxy, to allow content script features to
+    // send messages to the extension's background and receive a response.
     window.addEventListener('sendMessageProxy' + secret, (event) => {
         event.stopImmediatePropagation();
 

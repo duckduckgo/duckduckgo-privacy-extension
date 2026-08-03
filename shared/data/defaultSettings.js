@@ -2,7 +2,6 @@ module.exports = {
     httpsEverywhereEnabled: true,
     embeddedTweetsEnabled: false,
     GPC: true,
-    youtubePreviewsEnabled: false,
     atb: null,
     set_atb: null,
     'config-etag': null,

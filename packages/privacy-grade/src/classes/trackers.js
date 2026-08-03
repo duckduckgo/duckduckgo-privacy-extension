@@ -308,8 +308,8 @@ class Trackers {
      *   actions.
      *   Note: Standard block/ignore rule actions are always supported, and do
      *         not need to be included here. Custom rule actions are only
-     *         necessary for features like Click to Load that have their own
-     *         special rule actions.
+     *         necessary for features like (the now removed) Click to Load that
+     *         have their own special rule actions.
      *         @see {Trackers.prototype.standardRuleActions}.
      * @returns {TrackerData | null}
      */

@@ -1,6 +1,4 @@
-/* global BUILD_TARGET */
 import browser from 'webextension-polyfill';
-import { restoreDefaultClickToLoadRuleActions } from '../dnr-click-to-load';
 import Companies from '../companies';
 import { isRedirect } from '../utils';
 
@@ -75,17 +73,6 @@ export default class TabTracker extends EventTarget {
             const newTab = tabManager.create({ tabId: details.tabId, url: details.url });
             if (currentTab && currentTab.site.url === details.url) {
                 this.dispatchEvent(new CustomEvent('tabRefresh', { detail: details }));
-            }
-
-            if (BUILD_TARGET === 'chrome') {
-                // Ensure that the correct declarativeNetRequest allowing rules are
-                // added for this tab.
-                // Note: The webNavigation.onBeforeCommitted event would be better,
-                //       since onBeforeNavigate can be fired for a navigation that is
-                //       not later committed. But since there is a race-condition
-                //       between the page loading and the rules being added, let's use
-                //       onBeforeNavigate for now as it fires sooner.
-                restoreDefaultClickToLoadRuleActions(newTab);
             }
 
             // persist the last URL the tab was trying to upgrade to HTTPS
