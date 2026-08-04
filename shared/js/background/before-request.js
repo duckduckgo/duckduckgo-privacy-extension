@@ -15,7 +15,6 @@ const devtools = require('./devtools');
 const trackerAllowlist = require('./allowlisted-trackers');
 const { stripTrackingParameters, trackingParametersStrippingEnabled } = require('./url-parameters');
 const ampProtection = require('./amp-protection');
-const { displayClickToLoadPlaceholders, getDefaultEnabledClickToLoadRuleActionsForTab } = require('./click-to-load');
 
 function buildResponse(url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -247,23 +246,12 @@ export class TrackerBlockedEvent {
 function blockHandleResponse(thisTab, requestData) {
     const blockingEnabled = thisTab.site.isContentBlockingEnabled();
 
-    // Find the supported and enabled Click to Load rule actions for this tab.
-    const enabledRuleActions = new Set(
-        getDefaultEnabledClickToLoadRuleActionsForTab(thisTab).filter(
-            (ruleAction) => !thisTab.disabledClickToLoadRuleActions.includes(ruleAction),
-        ),
-    );
-
-    const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData, enabledRuleActions);
+    const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData);
     const baseDomain = trackers.getBaseDomain(requestData.url);
     const serviceWorkerInitiated = requestData.tabId === -1;
 
     if (tracker) {
         let blockedNonTrackingRequest = false;
-
-        if (tracker?.matchedRule?.action?.startsWith('block-ctl-')) {
-            displayClickToLoadPlaceholders(thisTab, tracker.matchedRule.action);
-        }
 
         // Request Blocklist
         if (thisTab.site.isFeatureEnabled(RequestBlocklist.featureName)) {

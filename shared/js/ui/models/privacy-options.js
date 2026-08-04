@@ -5,8 +5,6 @@ function PrivacyOptions(attrs) {
     // set some default values for the toggle switches in the template
     attrs.httpsEverywhereEnabled = true;
     attrs.GPC = false;
-    attrs.youtubeClickToLoadEnabled = false;
-    attrs.youtubePreviewsEnabled = false;
     attrs.fireButtonClearHistoryEnabled = true;
     attrs.fireButtonTabClearEnabled = true;
     attrs.useNoAiSearch = false;
@@ -26,15 +24,10 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
     },
 
     async getState() {
-        const [settings, youtubeClickToLoadEnabled] = await Promise.all([
-            this.sendMessage('getSetting', 'all'),
-            this.sendMessage('isClickToLoadYoutubeEnabled'),
-        ]);
+        const settings = await this.sendMessage('getSetting', 'all');
 
         this.httpsEverywhereEnabled = settings.httpsEverywhereEnabled;
         this.GPC = settings.GPC;
-        this.youtubeClickToLoadEnabled = youtubeClickToLoadEnabled;
-        this.youtubePreviewsEnabled = settings.youtubePreviewsEnabled;
         this.fireButtonEnabled = BUILD_TARGET === 'chrome';
         this.fireButtonClearHistoryEnabled = settings.fireButtonClearHistoryEnabled;
         this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled;

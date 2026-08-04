@@ -1,8 +1,7 @@
 import browser from 'webextension-polyfill';
 import parseUserAgentString from '../shared-utils/parse-user-agent-string';
 import { getExtensionURL } from './wrapper';
-import { isFeatureEnabled, reloadCurrentTab } from './utils';
-import { ensureClickToLoadRuleActionDisabled } from './dnr-click-to-load';
+import { reloadCurrentTab } from './utils';
 import tdsStorage from './storage/tds';
 import { getArgumentsObject } from './helpers/arguments-object';
 import { resolveBreakageReportRequest } from './breakage-report-request';
@@ -102,113 +101,6 @@ export function getTopBlockedByPages(options) {
     return Companies.getTopBlockedByPages(options);
 }
 
-/**
- * @typedef getClickToLoadStateResponse
- * @property {boolean} devMode
- *   True if developer mode is enabled (e.g. this is a development build or a
- *   test run), false if this is a release build.
- * @property {boolean} youtubePreviewsEnabled
- *   True if the user has enabled YouTube video previews, false otherwise.
- */
-
-/**
- * Returns the current state of the Click to Load feature.
- * @returns {Promise<getClickToLoadStateResponse>}
- */
-export async function getClickToLoadState() {
-    const devMode = (await browserWrapper.getFromSessionStorage('dev')) || false;
-
-    await settings.ready();
-    const youtubePreviewsEnabled = (await settings.getSetting('youtubePreviewsEnabled')) || false;
-
-    return { devMode, youtubePreviewsEnabled };
-}
-
-export async function getYouTubeVideoDetails(videoURL) {
-    const endpointURL = new URL('https://www.youtube.com/oembed?format=json');
-    const parsedVideoURL = new URL(videoURL);
-
-    const playlistID = parsedVideoURL.searchParams.get('list');
-    const videoId = parsedVideoURL.pathname.split('/').pop();
-
-    if (playlistID) {
-        parsedVideoURL.hostname = endpointURL.hostname;
-        endpointURL.searchParams.set('url', parsedVideoURL.href);
-    } else {
-        endpointURL.searchParams.set('url', 'https://youtu.be/' + videoId);
-    }
-
-    try {
-        const youTubeVideoResponse = await fetch(endpointURL.href, {
-            referrerPolicy: 'no-referrer',
-            credentials: 'omit',
-        }).then((response) => response.json());
-        const { title, thumbnail_url: previewImage } = youTubeVideoResponse;
-        return { status: 'success', videoURL, title, previewImage };
-    } catch (e) {
-        return { status: 'failed', videoURL };
-    }
-}
-
-export async function unblockClickToLoadContent(data, sender) {
-    const tab = tabManager.get({ tabId: sender.tab.id });
-    if (!tab) return;
-
-    if (!tab.disabledClickToLoadRuleActions.includes(data.action)) {
-        tab.disabledClickToLoadRuleActions.push(data.action);
-    }
-
-    if (browserWrapper.getManifestVersion() === 3) {
-        await ensureClickToLoadRuleActionDisabled(data.action, tab);
-    }
-}
-
-export function updateYouTubeCTLAddedFlag(value, sender) {
-    const tab = tabManager.get({ tabId: sender.tab.id });
-    if (!tab) return;
-    tab.ctlYouTube = Boolean(value);
-}
-
-/**
- * @typedef updateFacebookCTLBreakageFlagsRequest
- * @property {boolean} [ctlFacebookPlaceholderShown=false]
- *   True if at least one Facebook Click to Load placeholder was shown on the
- *   page.
- * @property {boolean} [ctlFacebookLogin=false]
- *   True if the user clicked to use a Facebook Click to Load login button.
- */
-
-/**
- * Sets the Facebook Click to Load breakage flag(s) to true for the page, which
- * are then included should the user report the webpage as broken.
- * Note: False values are ignored, the flags are only updated if value is true.
- *       The flags are reset automatically when the user navigates away from
- *       the page.
- * @param {updateFacebookCTLBreakageFlagsRequest} flags
- * @param {browser.Runtime.MessageSender} sender
- */
-export function updateFacebookCTLBreakageFlags({ ctlFacebookPlaceholderShown = false, ctlFacebookLogin = false }, sender) {
-    const tabId = sender?.tab?.id;
-    if (typeof tabId === 'undefined') {
-        return;
-    }
-
-    const tab = tabManager.get({ tabId });
-    if (!tab) return;
-
-    if (ctlFacebookPlaceholderShown) {
-        tab.ctlFacebookPlaceholderShown = true;
-    }
-
-    if (ctlFacebookLogin) {
-        tab.ctlFacebookLogin = true;
-    }
-}
-
-export function setYoutubePreviewsEnabled(value, sender) {
-    return updateSetting({ name: 'youtubePreviewsEnabled', value });
-}
-
 export async function updateSetting({ name, value }) {
     await settings.ready();
     settings.updateSetting(name, value);
@@ -263,12 +155,6 @@ export function search({ term }) {
 
 export function openShareFeedbackPage() {
     return browserWrapper.openExtensionPage('/html/feedback.html');
-}
-
-export async function isClickToLoadYoutubeEnabled() {
-    await tdsStorage.ready('config');
-
-    return isFeatureEnabled('clickToLoad') && tdsStorage?.config?.features?.clickToLoad?.settings?.Youtube?.state === 'enabled';
 }
 
 export function addDebugFlag(message, sender, req) {
@@ -329,12 +215,6 @@ export function registerStandardHandlers() {
         getBrowser,
         openOptions,
         getTopBlockedByPages,
-        getClickToLoadState,
-        getYouTubeVideoDetails,
-        unblockClickToLoadContent,
-        updateYouTubeCTLAddedFlag,
-        updateFacebookCTLBreakageFlags,
-        setYoutubePreviewsEnabled,
         updateSetting,
         getSetting,
         getTopBlocked,
@@ -344,7 +224,6 @@ export function registerStandardHandlers() {
         debuggerMessage,
         search,
         openShareFeedbackPage,
-        isClickToLoadYoutubeEnabled,
         addDebugFlag,
         breakageReportResult,
         healthCheckRequest,

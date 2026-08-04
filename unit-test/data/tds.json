@@ -16,15 +16,6 @@
                 "displayName": "Facebook"
             },
             "rules": [
-                {
-                    "rule": "facebook\\.net/tracker",
-                    "action": "block-ctl-fb"
-                },
-                {
-                    "rule": "facebook\\.net/script\\.js",
-                    "surrogate": "sdk.js",
-                    "action": "block-ctl-fb"
-                }
             ]
         },
         "google-analytics.com": {

@@ -46,21 +46,6 @@
                 "type": "string"
             },
             {
-                "key": "ctlFacebookLogin",
-                "description": "",
-                "enum": ["false", "true"]
-            },
-            {
-                "key": "ctlFacebookPlaceholderShown",
-                "description": "",
-                "enum": ["false", "true"]
-            },
-            {
-                "key": "ctlYouTube",
-                "description": "",
-                "enum": ["false", "true"]
-            },
-            {
                 "key": "debugFlags",
                 "description": "Comma separated list of C-S-S features active."
             },
@@ -206,21 +191,6 @@
                 "key": "contentScopeExperiments",
                 "description": "Experiments that are enabled that impact the page content",
                 "type": "string"
-            },
-            {
-                "key": "ctlFacebookLogin",
-                "description": "",
-                "enum": ["false", "true"]
-            },
-            {
-                "key": "ctlFacebookPlaceholderShown",
-                "description": "",
-                "enum": ["false", "true"]
-            },
-            {
-                "key": "ctlYouTube",
-                "description": "",
-                "enum": ["false", "true"]
             },
             {
                 "key": "debugFlags",

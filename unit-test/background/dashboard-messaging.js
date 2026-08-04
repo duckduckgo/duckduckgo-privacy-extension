@@ -8,9 +8,6 @@ import { _formatPixelRequestForTesting } from '../../shared/js/shared-utils/pixe
 const defaultBrokenSitePixelParams = {
     upgradedHttps: 'false',
     urlParametersRemoved: 'false',
-    ctlYouTube: 'false',
-    ctlFacebookPlaceholderShown: 'false',
-    ctlFacebookLogin: 'false',
     performanceWarning: 'false',
     userRefreshCount: '0',
     locale: 'en-US',

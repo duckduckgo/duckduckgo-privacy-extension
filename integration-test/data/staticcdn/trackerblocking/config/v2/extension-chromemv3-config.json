@@ -117,20 +117,6 @@
             "state": "enabled",
             "hash": "1d0a16849cc442172310d2206cf181a1"
         },
-        "clickToPlay": {
-            "exceptions": [],
-            "settings": {
-                "Facebook": {
-                    "clicksBeforeSimpleVersion": 3,
-                    "ruleActions": [
-                        "block-ctl-fb"
-                    ],
-                    "state": "enabled"
-                }
-            },
-            "state": "enabled",
-            "hash": "4985f6f0ef952fe140d1afa9fa74ea5b"
-        },
         "contentBlocking": {
             "state": "enabled",
             "exceptions": [
