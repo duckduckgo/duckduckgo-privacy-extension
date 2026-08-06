@@ -37,7 +37,7 @@
         "validate-pixel-defs": "validate-ddg-pixel-defs pixel-definitions"
     },
     "devDependencies": {
-        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.1.0",
+        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.2.1",
         "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v2.1.0",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
         "@fingerprintjs/fingerprintjs": "^4.6.2",
