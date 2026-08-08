@@ -11,7 +11,7 @@ function generateTrackingParameterRules(config) {
     const allowedDomains = config.features.trackingParameters.exceptions?.map((e) => e.domain);
 
     // Skip any wildcard or regex parameters, we can't support these in MV3
-    const trackingParams = config.features.trackingParameters.settings?.parameters?.filter((param) => !param.match(/[*+?{}[\]]/, 'g'));
+    const trackingParams = config.features.trackingParameters.settings?.parameters?.filter((param) => !String(param).match(/[*+?{}[\]]/));
 
     if (!trackingParams) {
         return [];

@@ -21,7 +21,9 @@ export default function initReloader() {
         try {
             const response = await fetch('/buildtime.txt', { cache: 'no-store' });
             buildTime = await response.text();
-        } catch (e) {}
+        } catch (e) {
+            console.warn('Failed to fetch build time:', e);
+        }
 
         if (buildTime) {
             const previousBuildTime = await getFromSessionStorage('buildTime');
