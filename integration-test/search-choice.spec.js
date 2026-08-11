@@ -1,8 +1,11 @@
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
+import { isFirefox } from './helpers/platform';
 import { setUseNoAiSearch } from './helpers/settings';
 
 const searchPage = '<html><body>search</body></html>';
+
+const NEW_TAB_CHROME_ONLY_DESC = 'noai=1 on the new tab page is applied by an MV3 DNR rule (Chrome only)';
 
 function mockSearchPages(context) {
     return context.route(
@@ -67,6 +70,7 @@ test.describe('Search Choice Tests', () => {
     });
 
     test('adds noai=1 to the new tab page when useNoAiSearch is enabled', async ({ context, backgroundPage, page }) => {
+        test.skip(isFirefox(), NEW_TAB_CHROME_ONLY_DESC);
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
         await mockSearchPages(context);
@@ -80,6 +84,7 @@ test.describe('Search Choice Tests', () => {
         backgroundPage,
         page,
     }) => {
+        test.skip(isFirefox(), NEW_TAB_CHROME_ONLY_DESC);
         await backgroundWait.forExtensionLoaded(context);
         await backgroundWait.forAllConfiguration(backgroundPage);
         await mockSearchPages(context);

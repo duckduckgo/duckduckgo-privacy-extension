@@ -194,9 +194,11 @@ describe('atb.setOrUpdateATBdnrRule()', () => {
     });
 
     it('omits the new tab page noai=1 rule while the no-AI setting is off, handing atb back to atbRule', () => {
-        const { addRules } = installRules({ useNoAiSearch: false });
+        const { addRules, removeRuleIds } = installRules({ useNoAiSearch: false });
 
         expect(addRules.some((rule) => rule.id === NEWTAB_NO_AI_PARAM_RULE_ID)).toBeFalse();
+        // Still cleared, or a rule installed while the setting was on would stay forever.
+        expect(removeRuleIds).toContain(NEWTAB_NO_AI_PARAM_RULE_ID);
 
         // Nothing else applies atb to the new tab page, so atbRule has to still match it.
         const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
