@@ -8,8 +8,14 @@ const settings = require('./settings');
 const parseUserAgentString = require('../shared-utils/parse-user-agent-string');
 const load = require('./load');
 const browserWrapper = require('./wrapper');
-const { ATB_PARAM_RULE_ID, SEARCH_REDIRECT_RULE_ID, HOME_PAGE_RULE_ID, ATB_EXTENSIONINSTALLED_RULE_ID } = require('./dnr-utils');
-const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
+const {
+    ATB_PARAM_RULE_ID,
+    SEARCH_REDIRECT_RULE_ID,
+    HOME_PAGE_RULE_ID,
+    ATB_EXTENSIONINSTALLED_RULE_ID,
+    NEWTAB_NO_AI_PARAM_RULE_ID,
+} = require('./dnr-utils');
+const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY, NEWTAB_NO_AI_PARAM_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 const { generateDNRRule } = require('@duckduckgo/ddg2dnr/lib/utils');
 
 const ATB_ERROR_COHORT = 'v1-1';
@@ -229,6 +235,7 @@ const ATB = (() => {
             }
             const useNoAiSearch = settings.getSetting('useNoAiSearch') === true;
 
+            const atbParam = { key: 'atb', value: atb };
             const atbRule = generateDNRRule({
                 id: ATB_PARAM_RULE_ID,
                 priority: ATB_PARAM_PRIORITY,
@@ -236,7 +243,7 @@ const ATB = (() => {
                 redirect: {
                     transform: {
                         queryTransform: {
-                            addOrReplaceParams: [{ key: 'atb', value: atb }],
+                            addOrReplaceParams: [atbParam],
                         },
                     },
                 },
@@ -284,11 +291,37 @@ const ATB = (() => {
                         regexFilter: '^https://duckduckgo\\.com/\\?.*',
                     }),
                 );
+                // This rule adds noai=1 to the new tab page URL params.
+                // It overrules the atbRule for /chrome_newtab: only one redirect rule wins per request, so
+                // this one re-applies `atb` too — otherwise the new tab page would lose it.
+                addRules.push(
+                    generateDNRRule({
+                        id: NEWTAB_NO_AI_PARAM_RULE_ID,
+                        priority: NEWTAB_NO_AI_PARAM_PRIORITY,
+                        actionType: 'redirect',
+                        redirect: {
+                            transform: {
+                                queryTransform: {
+                                    addOrReplaceParams: [{ key: 'noai', value: '1' }, atbParam],
+                                },
+                            },
+                        },
+                        resourceTypes: ['main_frame'],
+                        requestDomains: ['duckduckgo.com'],
+                        regexFilter: '^https://duckduckgo\\.com/chrome_newtab(?:[?#]|$)',
+                    }),
+                );
             }
 
             Promise.resolve(
                 chrome.declarativeNetRequest.updateDynamicRules({
-                    removeRuleIds: [atbRule.id, ATB_EXTENSIONINSTALLED_RULE_ID, HOME_PAGE_RULE_ID, SEARCH_REDIRECT_RULE_ID],
+                    removeRuleIds: [
+                        atbRule.id,
+                        ATB_EXTENSIONINSTALLED_RULE_ID,
+                        HOME_PAGE_RULE_ID,
+                        SEARCH_REDIRECT_RULE_ID,
+                        NEWTAB_NO_AI_PARAM_RULE_ID,
+                    ],
                     addRules,
                 }),
             ).catch((error) => {

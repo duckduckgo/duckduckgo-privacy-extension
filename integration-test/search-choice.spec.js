@@ -65,4 +65,30 @@ test.describe('Search Choice Tests', () => {
         expect(page.url()).toContain('duckduckgo.com/about');
         expect(page.url()).not.toContain('noai.duckduckgo.com');
     });
+
+    test('adds noai=1 to the new tab page when useNoAiSearch is enabled', async ({ context, backgroundPage, page }) => {
+        await backgroundWait.forExtensionLoaded(context);
+        await backgroundWait.forAllConfiguration(backgroundPage);
+        await mockSearchPages(context);
+
+        await setUseNoAiSearch(backgroundPage, true);
+        await gotoAndExpectRedirect(page, 'https://duckduckgo.com/chrome_newtab', /chrome_newtab\?(?=.*atb=)(?=.*noai=1)/);
+    });
+
+    test('removes noai=1 from the new tab page, keeping atb, when useNoAiSearch is turned off', async ({
+        context,
+        backgroundPage,
+        page,
+    }) => {
+        await backgroundWait.forExtensionLoaded(context);
+        await backgroundWait.forAllConfiguration(backgroundPage);
+        await mockSearchPages(context);
+
+        await setUseNoAiSearch(backgroundPage, true);
+        await gotoAndExpectRedirect(page, 'https://duckduckgo.com/chrome_newtab', /chrome_newtab\?.*noai=1/);
+
+        await setUseNoAiSearch(backgroundPage, false);
+        await gotoAndExpectRedirect(page, 'https://duckduckgo.com/chrome_newtab', /chrome_newtab\?atb=/);
+        expect(page.url()).not.toContain('noai=1');
+    });
 });
