@@ -500,6 +500,8 @@ describe('rollouts', () => {
         expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
 
         const rolloutThreshold = config.settings.getSetting('rollouts.testFeature.fooFeature.roll');
+        // Clamp to 100 minimum; it was possible to go over 100 before which broke rollout logic
+        const aboveThreshold = Math.min(rolloutThreshold + 1.0, 100);
         // increment rollout but just disabled
         config.updateConfig({
             features: {
@@ -557,7 +559,7 @@ describe('rollouts', () => {
                             rollout: {
                                 steps: [
                                     {
-                                        percent: rolloutThreshold + 1.0,
+                                        percent: aboveThreshold,
                                     },
                                 ],
                             },
@@ -580,7 +582,7 @@ describe('rollouts', () => {
                             rollout: {
                                 steps: [
                                     {
-                                        percent: rolloutThreshold + 1.0,
+                                        percent: aboveThreshold,
                                     },
                                 ],
                             },
@@ -604,7 +606,7 @@ describe('rollouts', () => {
                             rollout: {
                                 steps: [
                                     {
-                                        percent: rolloutThreshold + 1.0,
+                                        percent: aboveThreshold,
                                     },
                                 ],
                             },
@@ -629,7 +631,7 @@ describe('rollouts', () => {
                             rollout: {
                                 steps: [
                                     {
-                                        percent: rolloutThreshold + 1.0,
+                                        percent: aboveThreshold,
                                     },
                                 ],
                             },
@@ -653,7 +655,7 @@ describe('rollouts', () => {
                             rollout: {
                                 steps: [
                                     {
-                                        percent: rolloutThreshold + 1.0,
+                                        percent: aboveThreshold,
                                     },
                                     {
                                         percent: 100,
