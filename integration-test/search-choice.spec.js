@@ -1,8 +1,11 @@
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
+import { isFirefox } from './helpers/platform';
 import { setUseNoAiSearch } from './helpers/settings';
 
 const searchPage = '<html><body>search</body></html>';
+
+const NEW_TAB_CHROME_ONLY_DESC = 'noai=1 on the new tab page is applied by an MV3 DNR rule (Chrome only)';
 
 function mockSearchPages(context) {
     return context.route(
@@ -64,5 +67,33 @@ test.describe('Search Choice Tests', () => {
         await page.goto('https://duckduckgo.com/about', { waitUntil: 'networkidle' });
         expect(page.url()).toContain('duckduckgo.com/about');
         expect(page.url()).not.toContain('noai.duckduckgo.com');
+    });
+
+    test('adds noai=1 to the new tab page when useNoAiSearch is enabled', async ({ context, backgroundPage, page }) => {
+        test.skip(isFirefox(), NEW_TAB_CHROME_ONLY_DESC);
+        await backgroundWait.forExtensionLoaded(context);
+        await backgroundWait.forAllConfiguration(backgroundPage);
+        await mockSearchPages(context);
+
+        await setUseNoAiSearch(backgroundPage, true);
+        await gotoAndExpectRedirect(page, 'https://duckduckgo.com/chrome_newtab', /chrome_newtab\?(?=.*atb=)(?=.*noai=1)/);
+    });
+
+    test('removes noai=1 from the new tab page, keeping atb, when useNoAiSearch is turned off', async ({
+        context,
+        backgroundPage,
+        page,
+    }) => {
+        test.skip(isFirefox(), NEW_TAB_CHROME_ONLY_DESC);
+        await backgroundWait.forExtensionLoaded(context);
+        await backgroundWait.forAllConfiguration(backgroundPage);
+        await mockSearchPages(context);
+
+        await setUseNoAiSearch(backgroundPage, true);
+        await gotoAndExpectRedirect(page, 'https://duckduckgo.com/chrome_newtab', /chrome_newtab\?.*noai=1/);
+
+        await setUseNoAiSearch(backgroundPage, false);
+        await gotoAndExpectRedirect(page, 'https://duckduckgo.com/chrome_newtab', /chrome_newtab\?atb=/);
+        expect(page.url()).not.toContain('noai=1');
     });
 });

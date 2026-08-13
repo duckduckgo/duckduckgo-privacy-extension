@@ -8,6 +8,7 @@ const {
     SEARCH_REDIRECT_RULE_ID,
     HOME_PAGE_RULE_ID,
     ATB_EXTENSIONINSTALLED_RULE_ID,
+    NEWTAB_NO_AI_PARAM_RULE_ID,
 } = require('../../shared/js/background/dnr-utils');
 const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 
@@ -138,22 +139,25 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
 });
 
 describe('atb.setOrUpdateATBdnrRule()', () => {
-    let updateDynamicRulesSpy;
+    const NEW_TAB_URL = 'https://duckduckgo.com/chrome_newtab';
+    const paramsOf = (rule) => rule.action.redirect.transform.queryTransform.addOrReplaceParams;
+    const matchesUrl = (rule, url) => new RegExp(rule.condition.regexFilter).test(url);
 
-    beforeEach(() => {
-        settingHelper.stub({
-            atb: 'v123-4ab',
-            useNoAiSearch: true,
-        });
-        updateDynamicRulesSpy = spyOn(chrome.declarativeNetRequest, 'updateDynamicRules').and.resolveTo();
-    });
+    function installRules(settingOverrides = {}) {
+        const values = { atb: 'v123-4ab', useNoAiSearch: false, ...settingOverrides };
+        settingHelper.stub(values);
+        const updateDynamicRules = spyOn(chrome.declarativeNetRequest, 'updateDynamicRules').and.resolveTo();
+
+        atb.setOrUpdateATBdnrRule(values.atb);
+
+        expect(updateDynamicRules).toHaveBeenCalledTimes(1);
+        return updateDynamicRules.calls.mostRecent().args[0];
+    }
 
     it('creates ATB and alternative search rules with explicit precedence', () => {
-        atb.setOrUpdateATBdnrRule('v123-4ab');
+        const { addRules } = installRules({ useNoAiSearch: true });
 
-        expect(updateDynamicRulesSpy).toHaveBeenCalledTimes(1);
-        const [[{ addRules }]] = updateDynamicRulesSpy.calls.allArgs();
-        expect(addRules.length).toEqual(4);
+        expect(addRules.length).toEqual(5);
 
         const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
         const extensionInstalledRule = addRules.find((rule) => rule.id === ATB_EXTENSIONINSTALLED_RULE_ID);
@@ -166,6 +170,40 @@ describe('atb.setOrUpdateATBdnrRule()', () => {
         expect(homePageRule.priority).toEqual(ATB_PARAM_PRIORITY);
         expect(searchRedirectRule.priority).toEqual(ALTERNATIVE_SEARCH_PRIORITY);
         expect(searchRedirectRule.priority).toBeGreaterThan(atbRule.priority);
+    });
+
+    it('adds a noai=1 rule for the new tab page, outranking the ATB rule', () => {
+        const { addRules } = installRules({ useNoAiSearch: true });
+
+        const noAiRule = addRules.find((rule) => rule.id === NEWTAB_NO_AI_PARAM_RULE_ID);
+        const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
+
+        expect(matchesUrl(noAiRule, NEW_TAB_URL)).toBeTrue();
+        expect(matchesUrl(noAiRule, `${NEW_TAB_URL}_foo`)).toBeFalse();
+
+        expect(paramsOf(noAiRule)).toContain({ key: 'noai', value: '1' });
+        // Carries atb as well, because it outranks atbRule and only one redirect rule gets to run.
+        expect(paramsOf(noAiRule)).toContain({ key: 'atb', value: 'v123-4ab' });
+        expect(noAiRule.priority).toBeGreaterThan(atbRule.priority);
+    });
+
+    it('clears every rule it adds, so repeat calls replace them instead of clashing', () => {
+        const { addRules, removeRuleIds } = installRules({ useNoAiSearch: true });
+
+        addRules.forEach((rule) => expect(removeRuleIds).toContain(rule.id));
+    });
+
+    it('omits the new tab page noai=1 rule while the no-AI setting is off, handing atb back to atbRule', () => {
+        const { addRules, removeRuleIds } = installRules({ useNoAiSearch: false });
+
+        expect(addRules.some((rule) => rule.id === NEWTAB_NO_AI_PARAM_RULE_ID)).toBeFalse();
+        // Still cleared, or a rule installed while the setting was on would stay forever.
+        expect(removeRuleIds).toContain(NEWTAB_NO_AI_PARAM_RULE_ID);
+
+        // Nothing else applies atb to the new tab page, so atbRule has to still match it.
+        const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
+        expect(paramsOf(atbRule)).toContain({ key: 'atb', value: 'v123-4ab' });
+        expect(matchesUrl(atbRule, NEW_TAB_URL)).toBeTrue();
     });
 });
 
