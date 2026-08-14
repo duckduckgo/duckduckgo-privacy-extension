@@ -13,6 +13,8 @@ import {
     getNextResetTime,
     getRemainingSeconds,
     hostnameFromUrl,
+    isAlwaysBlockGroup,
+    isGroupSettingsLocked,
     removeDomainFromGroup,
 } from '../../shared-utils/site-groups';
 import { normalizeBlockedSite } from '../../shared-utils/blocked-sites';
@@ -36,7 +38,9 @@ function decorateGroup(group, usage, now) {
         ...group,
         remainingSeconds,
         alwaysBlocked: group.maxSecondsPerDay <= 0,
+        isAlwaysBlock: isAlwaysBlockGroup(group),
         isBlocked: remainingSeconds <= 0,
+        settingsLocked: isGroupSettingsLocked(group, usage, now),
     };
 }
 
@@ -368,6 +372,36 @@ export default class SiteGroups {
         };
     }
 
+    /**
+     * Name, time, delete, and site removal are locked after a timed group expires.
+     * Adding sites to an expired group is still allowed.
+     *
+     * @param {string | null | undefined} groupId
+     * @returns {Promise<object | null>}
+     */
+    async rejectLockedMutation(groupId) {
+        const group = getSiteGroups().find((item) => item.id === groupId);
+        if (group && isGroupSettingsLocked(group, getGroupUsage())) {
+            return { saved: false, locked: true, ...(await this.getState()) };
+        }
+        return null;
+    }
+
+    /**
+     * A site already on an expired group cannot be moved to a different group.
+     *
+     * @param {string | null | undefined} groupId
+     * @param {string} domain
+     * @returns {Promise<object | null>}
+     */
+    async rejectMovingFromLockedGroup(groupId, domain) {
+        const owner = getSiteGroups().find((item) => item.domains.includes(domain));
+        if (owner && owner.id !== groupId && isGroupSettingsLocked(owner, getGroupUsage())) {
+            return { saved: false, locked: true, ...(await this.getState()) };
+        }
+        return null;
+    }
+
     async handleCreate() {
         await this._ready;
         const group = createSiteGroup();
@@ -382,6 +416,13 @@ export default class SiteGroups {
         await this._ready;
         if (!id) {
             return { saved: false, ...(await this.getState()) };
+        }
+        if (isAlwaysBlockGroup(id)) {
+            return { saved: false, protected: true, ...(await this.getState()) };
+        }
+        const locked = await this.rejectLockedMutation(id);
+        if (locked) {
+            return locked;
         }
         const updated = updateSiteGroup(id, { name, maxSecondsPerDay });
         if (!updated) {
@@ -402,6 +443,13 @@ export default class SiteGroups {
     async handleDelete(options = {}) {
         const { id } = options;
         await this._ready;
+        if (isAlwaysBlockGroup(id)) {
+            return { saved: false, protected: true, ...(await this.getState()) };
+        }
+        const locked = await this.rejectLockedMutation(id);
+        if (locked) {
+            return locked;
+        }
         if (this.activeGroupId === id) {
             this.activeGroupId = null;
             this.lastTickAt = null;
@@ -424,6 +472,10 @@ export default class SiteGroups {
         const normalized = normalizeBlockedSite(domain);
         if (!groupId || !normalized) {
             return { saved: false, invalid: true, ...(await this.getState()) };
+        }
+        const lockedMove = await this.rejectMovingFromLockedGroup(groupId, normalized);
+        if (lockedMove) {
+            return lockedMove;
         }
         const groups = addDomainToGroup(getSiteGroups(), groupId, normalized);
         const group = groups.find((item) => item.id === groupId);
@@ -448,6 +500,10 @@ export default class SiteGroups {
         await this._ready;
         if (!groupId || !domain) {
             return { saved: false, ...(await this.getState()) };
+        }
+        const locked = await this.rejectLockedMutation(groupId);
+        if (locked) {
+            return locked;
         }
         saveSiteGroups(removeDomainFromGroup(getSiteGroups(), groupId, domain));
         await this.syncBlockedRules();

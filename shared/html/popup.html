@@ -16,17 +16,75 @@
       display: none;
     }
 
+    .openfocusd-popup-chrome {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 8px 0;
+      background: #ffffff;
+    }
+
+    .body--theme-dark .openfocusd-popup-chrome {
+      background-color: #333333;
+    }
+
+    .openfocusd-popup-tabs {
+      display: flex;
+      min-width: 0;
+      flex: 1;
+      gap: 4px;
+    }
+
+    .openfocusd-popup-tab {
+      flex: 1;
+      height: 32px;
+      padding: 0 8px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: #666666;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .openfocusd-popup-tab.is-active {
+      background: #de5833;
+      color: #ffffff;
+    }
+
+    .body--theme-dark .openfocusd-popup-tab {
+      color: #aaaaaa;
+    }
+
+    .body--theme-dark .openfocusd-popup-tab.is-active {
+      background: #de5833;
+      color: #ffffff;
+    }
+
     .openfocusd-popup-options {
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      height: 56px;
-      padding: 8px;
-      background: #ffffff;
+      height: 40px;
+      padding: 0 4px 0 0;
+      background: transparent;
     }
 
-    .body--theme-dark .openfocusd-popup-options {
-      background-color: #333333;
+    .page-inner.openfocusd-tab-blocker > :not(.openfocusd-popup-chrome):not(.openfocusd-group-status) {
+      display: none !important;
+    }
+
+    .page-inner.openfocusd-tab-trackers > .openfocusd-group-status {
+      display: none !important;
+    }
+
+    .page-inner[data-openfocusd-search-engine="brave"] .search-form__input {
+      background-image: none;
+      padding-left: 14px;
     }
 
     .openfocusd-group-status {
@@ -95,8 +153,25 @@
       font-size: 12px;
     }
 
+    .openfocusd-group-status__row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .openfocusd-group-status__details {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .openfocusd-group-status__time {
+      flex: 0 0 auto;
+      text-align: right;
+    }
+
     .openfocusd-group-status__remaining-label {
-      margin-top: 10px;
+      margin-top: 0;
     }
 
     .openfocusd-group-status__remaining {

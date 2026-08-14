@@ -26,27 +26,39 @@ test.describe('Test privacy dashboard', () => {
         const panel = await context.newPage();
         await panel.goto(panelUrl);
         await panel.bringToFront();
-
         await expect(panel).toHaveTitle('OpenFocusd');
+
+        const pageInner = panel.locator('.site-info > .page-inner');
+        const chromeBar = pageInner.locator('.openfocusd-popup-chrome');
+        const groupStatus = pageInner.locator('.openfocusd-group-status');
+        const optionsBar = chromeBar.locator('.openfocusd-popup-options');
+        const search = pageInner.locator('.search');
+        const websiteTab = chromeBar.locator('[data-openfocusd-tab="blocker"]');
+        const trackerTab = chromeBar.locator('[data-openfocusd-tab="trackers"]');
+
+        await expect(chromeBar).toBeVisible();
+        await expect(websiteTab).toHaveAttribute('aria-selected', 'true');
+        await expect(groupStatus).toBeVisible();
+        await expect(optionsBar.locator('.cog-button')).toBeVisible();
+        await expect(search).toBeHidden();
+
+        await trackerTab.click();
+        await expect(trackerTab).toHaveAttribute('aria-selected', 'true');
+        await expect(groupStatus).toBeHidden();
+        await expect(search).toBeVisible();
+        await expect(search.locator('.cog-button')).toHaveCount(0);
+        await expect(pageInner).toHaveAttribute('data-openfocusd-search-engine', 'ddg');
+        await expect(search.locator('.search-form__input')).toHaveAttribute('placeholder', 'Search DuckDuckGo');
+
         const links = await linksText(panel);
         expect(links).toEqual(['Connection Is Encrypted', 'Requests Blocked from Loading', 'No Third-Party Requests Found']);
 
-        const pageInner = panel.locator('.site-info > .page-inner');
-        const groupStatus = pageInner.locator('.openfocusd-group-status');
-        const optionsBar = pageInner.locator('.openfocusd-popup-options');
-        const search = pageInner.locator('.search');
-
-        await expect(groupStatus).toBeVisible();
-        await expect(optionsBar).toBeVisible();
-        await expect(optionsBar.locator('.cog-button')).toBeVisible();
-        expect(await groupStatus.evaluate((element) => element === element.parentElement?.firstElementChild)).toBe(true);
-        expect(await optionsBar.evaluate((element) => element.previousElementSibling?.classList.contains('openfocusd-group-status'))).toBe(
-            true,
-        );
-
-        await expect(search).toBeVisible();
-        await expect(search.locator('.cog-button')).toHaveCount(0);
-        expect(await search.evaluate((element) => element === element.parentElement?.lastElementChild)).toBe(true);
+        await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('searchEngine', 'brave'));
+        await panel.reload();
+        await panel.bringToFront();
+        await panel.locator('[data-openfocusd-tab="trackers"]').click();
+        await expect(pageInner).toHaveAttribute('data-openfocusd-search-engine', 'brave');
+        await expect(search.locator('.search-form__input')).toHaveAttribute('placeholder', 'Search Brave');
 
         const spreadPromotionDisplay = await panel.evaluate(() => {
             const screen = document.createElement('div');

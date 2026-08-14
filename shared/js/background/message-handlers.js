@@ -1,5 +1,6 @@
 import browser from 'webextension-polyfill';
 import parseUserAgentString from '../shared-utils/parse-user-agent-string';
+import { buildSearchUrl } from '../shared-utils/search-engine';
 import { getExtensionURL } from './wrapper';
 import { reloadCurrentTab } from './utils';
 import tdsStorage from './storage/tds';
@@ -144,14 +145,14 @@ export function debuggerMessage(message, sender) {
     devtools.postMessage(sender.tab?.id, message.action, message.message);
 }
 
-export function search({ term }) {
+export async function search({ term }) {
+    await settings.ready();
     const browserInfo = parseUserAgentString();
-    if (browserInfo?.os) {
-        const url = new URL('https://duckduckgo.com');
-        url.searchParams.set('q', term);
-        url.searchParams.set('bext', browserInfo.os + 'cr');
-        browser.tabs.create({ url: url.toString() });
-    }
+    const url = buildSearchUrl(term, settings.getSetting('searchEngine'), {
+        osName: browserInfo?.os,
+        bextSuffix: 'cr',
+    });
+    browser.tabs.create({ url });
 }
 
 export function openShareFeedbackPage() {

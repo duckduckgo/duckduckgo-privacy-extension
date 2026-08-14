@@ -1,6 +1,6 @@
 import settings from './settings';
 import { normalizeBlockedSite } from '../shared-utils/blocked-sites';
-import { createDefaultGroups, normalizeGroup, normalizeGroups } from '../shared-utils/site-groups';
+import { createDefaultGroups, ensureAlwaysBlockGroup, isAlwaysBlockGroup, normalizeGroup, normalizeGroups } from '../shared-utils/site-groups';
 
 function clone(value) {
     return value == null ? value : JSON.parse(JSON.stringify(value));
@@ -25,22 +25,26 @@ function legacyBlockedDomains() {
 }
 
 /**
- * Create Default + Always Block on first run, and move any pre-groups
- * `blockedSites` entries into Always Block.
+ * Create Default + Always Block on first run, restore Always Block if it is
+ * missing, and move any pre-groups `blockedSites` entries into Always Block.
  *
  * @returns {Promise<import('../shared-utils/site-groups').SiteGroup[]>}
  */
 export async function ensureSiteGroups() {
     await settings.ready();
-    if (settings.getSetting('siteGroupsInitialized')) {
-        return getSiteGroups();
-    }
+    const groups = getSiteGroups();
+    const initialized = Boolean(settings.getSetting('siteGroupsInitialized'));
+    const nextGroups = initialized
+        ? ensureAlwaysBlockGroup(groups, legacyBlockedDomains())
+        : createDefaultGroups(legacyBlockedDomains());
 
-    const groups = createDefaultGroups(legacyBlockedDomains());
-    settings.updateSetting('siteGroups', groups);
-    settings.updateSetting('groupUsage', settings.getSetting('groupUsage') || {});
-    settings.updateSetting('siteGroupsInitialized', true);
-    return groups;
+    const changed = !initialized || JSON.stringify(groups) !== JSON.stringify(nextGroups);
+    if (changed) {
+        settings.updateSetting('siteGroups', nextGroups);
+        settings.updateSetting('groupUsage', settings.getSetting('groupUsage') || {});
+        settings.updateSetting('siteGroupsInitialized', true);
+    }
+    return getSiteGroups();
 }
 
 /**
@@ -90,7 +94,7 @@ export function createSiteGroup(attrs = {}) {
         return null;
     }
     const groups = getSiteGroups();
-    groups.push(group);
+    groups.unshift(group);
     saveSiteGroups(groups);
     return group;
 }
@@ -103,7 +107,7 @@ export function createSiteGroup(attrs = {}) {
 export function updateSiteGroup(groupId, updates) {
     const groups = getSiteGroups();
     const index = groups.findIndex((group) => group.id === groupId);
-    if (index === -1) {
+    if (index === -1 || isAlwaysBlockGroup(groupId)) {
         return null;
     }
     const next = normalizeGroup({
@@ -125,6 +129,9 @@ export function updateSiteGroup(groupId, updates) {
  * @returns {boolean}
  */
 export function deleteSiteGroup(groupId) {
+    if (isAlwaysBlockGroup(groupId)) {
+        return false;
+    }
     const groups = getSiteGroups();
     const next = groups.filter((group) => group.id !== groupId);
     if (next.length === groups.length) {

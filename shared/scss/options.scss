@@ -151,6 +151,31 @@
     }
 }
 
+.search-engine-choice {
+    display: flex;
+    gap: 8px;
+    margin: 4px 0 8px;
+}
+
+.search-engine-choice__option {
+    flex: 1;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid vars.$platinum-dark;
+    border-radius: 8px;
+    background: vars.$white;
+    color: vars.$slate-light;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.search-engine-choice__option.is-active {
+    border-color: vars.$red;
+    background: vars.$red;
+    color: vars.$white;
+}
+
 .fire-button-toggle {
     height: 30px;
     padding: 0px 0px 1px 0px;

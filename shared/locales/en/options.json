@@ -163,6 +163,26 @@
         "title": "Remove website",
         "note": "Accessible label for removing a website from a group"
     },
+    "removeWebsiteConfirm": {
+        "title": "To remove {domain}, solve this:",
+        "note": "Prompt before removing a website. {domain} is the website address. The user must answer an addition problem."
+    },
+    "removeWebsiteMath": {
+        "title": "{a} + {b} =",
+        "note": "Two-digit addition problem shown before a website can be removed"
+    },
+    "removeWebsiteMathWrong": {
+        "title": "That's not the right answer.",
+        "note": "Error shown when the removal math problem is answered incorrectly"
+    },
+    "confirmCancel": {
+        "title": "Cancel",
+        "note": "Closes the website removal confirmation without removing the site"
+    },
+    "confirmRemove": {
+        "title": "Remove",
+        "note": "Submits the math answer and removes the website if it is correct"
+    },
     "noGroupedWebsites": {
         "title": "No websites in this group yet.",
         "note": "Empty state for a group with no assigned websites"
@@ -170,6 +190,14 @@
     "timeLeft": {
         "title": "Time left",
         "note": "Label inside the remaining-time indicator for a group"
+    },
+    "groupLockedUntilReset": {
+        "title": "Time is up. Name, time, and existing sites are locked until 6:00. You can still add websites.",
+        "note": "Shown on a group that has used its daily time. Time and existing sites cannot be changed until 6:00, but new websites can still be added."
+    },
+    "groupLockedError": {
+        "title": "This group cannot be changed until 6:00.",
+        "note": "Error shown when a locked group is edited"
     },
     "invalidWebsite": {
         "title": "Enter a valid website address.",
@@ -194,6 +222,22 @@
     "fireButtonTabClosureTitle": {
         "title": "Close Tabs",
         "note": "Title for option toggle."
+    },
+    "searchEngine": {
+        "title": "Search engine",
+        "note": "Header for choosing DuckDuckGo or Brave as the private search engine"
+    },
+    "searchEngineDesc": {
+        "title": "Choose where searches from the popup and address bar keyword go.",
+        "note": "Explains that the selected search engine is used by the extension popup and omnibox keyword"
+    },
+    "searchEngineDuckDuckGo": {
+        "title": "DuckDuckGo",
+        "note": "Label for the DuckDuckGo search engine option. Product name, do not translate."
+    },
+    "searchEngineBrave": {
+        "title": "Brave Search",
+        "note": "Label for the Brave Search engine option. Product name, do not translate."
     },
     "noAiMode": {
         "title": "No AI in Search",

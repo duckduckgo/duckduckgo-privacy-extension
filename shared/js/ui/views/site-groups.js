@@ -4,6 +4,16 @@ const { formatRemainingLong, hoursMinutesToSeconds } = require('../../shared-uti
 
 const isHiddenClass = 'is-hidden';
 
+function randomTwoDigit() {
+    return 10 + Math.floor(Math.random() * 90);
+}
+
+function createRemovalChallenge() {
+    const a = randomTwoDigit();
+    const b = randomTwoDigit();
+    return { a, b, answer: a + b };
+}
+
 function SiteGroups(ops) {
     this.model = ops.model;
     this.pageView = ops.pageView;
@@ -61,10 +71,14 @@ SiteGroups.prototype = window.$.extend({}, Parent.prototype, {
 
     _updateTimers() {
         const groupsById = new Map((this.model.groups || []).map((group) => [group.id, group]));
+        let lockChanged = false;
         this.$el.find('.js-site-group').each((_, card) => {
             const group = groupsById.get(card.getAttribute('data-group-id'));
             if (!group) {
                 return;
+            }
+            if (Boolean(group.settingsLocked) !== card.classList.contains('is-locked')) {
+                lockChanged = true;
             }
             const remaining = card.querySelector('.js-site-group-remaining');
             const timer = card.querySelector('.js-site-group-timer');
@@ -78,9 +92,14 @@ SiteGroups.prototype = window.$.extend({}, Parent.prototype, {
                 timer.style.setProperty('--progress', String(progress));
             }
         });
+        if (lockChanged) {
+            this._updatingTimersOnly = false;
+            this._rerenderPreservingFocus();
+        }
     },
 
     _rerenderPreservingFocus() {
+        this._hideRemoveDialog();
         const active = document.activeElement;
         const card = active?.closest?.('.js-site-group');
         const groupId = card?.getAttribute('data-group-id');
@@ -108,7 +127,7 @@ SiteGroups.prototype = window.$.extend({}, Parent.prototype, {
             return;
         }
         const input = nextCard.find(selector).get(0);
-        if (input) {
+        if (input && !input.disabled) {
             if (value != null) {
                 input.value = value;
             }
@@ -126,6 +145,10 @@ SiteGroups.prototype = window.$.extend({}, Parent.prototype, {
 
     _onClick(event) {
         const target = window.$(event.target).closest('button');
+        if (event.target.classList?.contains('js-site-group-remove-dialog')) {
+            this._hideRemoveDialog();
+            return;
+        }
         if (!target.length) {
             return;
         }
@@ -133,22 +156,45 @@ SiteGroups.prototype = window.$.extend({}, Parent.prototype, {
             this._createGroup();
             return;
         }
+        if (target.hasClass('js-site-group-remove-cancel')) {
+            this._hideRemoveDialog();
+            return;
+        }
+        if (target.hasClass('js-site-group-remove-submit')) {
+            this._confirmRemoveDomain();
+            return;
+        }
         const $card = this._card(event);
         if (!$card.length) {
+            return;
+        }
+        if (target.hasClass('js-site-group-add-domain')) {
+            this._addDomain($card);
+            return;
+        }
+        if ($card.hasClass('is-locked')) {
             return;
         }
         if (target.hasClass('js-site-group-save')) {
             this._saveGroup($card);
         } else if (target.hasClass('js-site-group-delete')) {
             this._deleteGroup($card);
-        } else if (target.hasClass('js-site-group-add-domain')) {
-            this._addDomain($card);
         } else if (target.hasClass('js-site-group-remove-domain')) {
-            this._removeDomain($card, target.attr('data-domain'));
+            this._showRemoveDialog($card.attr('data-group-id'), target.attr('data-domain'));
         }
     },
 
     _onKeydown(event) {
+        if (event.key === 'Escape' && this._pendingRemove) {
+            event.preventDefault();
+            this._hideRemoveDialog();
+            return;
+        }
+        if (event.key === 'Enter' && this._pendingRemove && window.$(event.target).hasClass('js-site-group-remove-answer')) {
+            event.preventDefault();
+            this._confirmRemoveDomain();
+            return;
+        }
         if (event.key !== 'Enter') {
             return;
         }
@@ -178,6 +224,10 @@ SiteGroups.prototype = window.$.extend({}, Parent.prototype, {
         try {
             const result = await this.model.updateGroup(id, { name, maxSecondsPerDay });
             const $next = this.$el.find(`.js-site-group[data-group-id="${id}"]`);
+            if (result?.locked) {
+                this._showError($next, t('options:groupLockedError.title'));
+                return;
+            }
             if (!result?.saved) {
                 this._showError($next, t('options:groupSaveError.title'));
                 return;
@@ -198,11 +248,16 @@ SiteGroups.prototype = window.$.extend({}, Parent.prototype, {
 
     async _addDomain($card) {
         this._hideMessages($card);
+        this._updatingTimersOnly = false;
         const id = $card.attr('data-group-id');
         const domain = $card.find('.js-site-group-domain-input').val();
         try {
             const result = await this.model.addDomain(id, domain);
             const $next = this.$el.find(`.js-site-group[data-group-id="${id}"]`);
+            if (result?.locked) {
+                this._showError($next, t('options:groupLockedError.title'));
+                return;
+            }
             if (result?.invalid || !result?.saved) {
                 this._showError($next, t('options:invalidWebsite.title'));
             }
@@ -213,8 +268,56 @@ SiteGroups.prototype = window.$.extend({}, Parent.prototype, {
         }
     },
 
-    async _removeDomain($card, domain) {
-        await this.model.removeDomain($card.attr('data-group-id'), domain);
+    async _removeDomain(groupId, domain) {
+        this._updatingTimersOnly = false;
+        await this.model.removeDomain(groupId, domain);
+    },
+
+    _showRemoveDialog(groupId, domain) {
+        if (!groupId || !domain) {
+            return;
+        }
+        this._pendingRemove = { groupId, domain, challenge: createRemovalChallenge() };
+        const $dialog = this.$el.find('.js-site-group-remove-dialog');
+        $dialog.find('.js-site-group-remove-dialog-text').text(t('options:removeWebsiteConfirm.title', { domain }));
+        $dialog.find('.js-site-group-remove-math').text(
+            t('options:removeWebsiteMath.title', {
+                a: this._pendingRemove.challenge.a,
+                b: this._pendingRemove.challenge.b,
+            }),
+        );
+        $dialog.find('.js-site-group-remove-error').addClass(isHiddenClass).text('');
+        $dialog.find('.js-site-group-remove-answer').val('');
+        $dialog.removeClass(isHiddenClass);
+        $dialog.find('.js-site-group-remove-answer').trigger('focus');
+    },
+
+    _hideRemoveDialog() {
+        this._pendingRemove = null;
+        this.$el.find('.js-site-group-remove-dialog').addClass(isHiddenClass);
+    },
+
+    async _confirmRemoveDomain() {
+        const pending = this._pendingRemove;
+        if (!pending?.groupId || !pending.domain || !pending.challenge) {
+            return;
+        }
+        const $dialog = this.$el.find('.js-site-group-remove-dialog');
+        const guess = Number($dialog.find('.js-site-group-remove-answer').val());
+        if (!Number.isInteger(guess) || guess !== pending.challenge.answer) {
+            pending.challenge = createRemovalChallenge();
+            $dialog.find('.js-site-group-remove-math').text(
+                t('options:removeWebsiteMath.title', {
+                    a: pending.challenge.a,
+                    b: pending.challenge.b,
+                }),
+            );
+            $dialog.find('.js-site-group-remove-error').text(t('options:removeWebsiteMathWrong.title')).removeClass(isHiddenClass);
+            $dialog.find('.js-site-group-remove-answer').val('').trigger('focus');
+            return;
+        }
+        this._hideRemoveDialog();
+        await this._removeDomain(pending.groupId, pending.domain);
     },
 
     _showStatus($card, message) {

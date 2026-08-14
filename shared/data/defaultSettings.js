@@ -15,6 +15,7 @@ module.exports = {
     fireButtonClearHistoryEnabled: true,
     fireButtonTabClearEnabled: true,
     useNoAiSearch: false,
+    searchEngine: 'ddg',
     blockedSites: {},
     siteGroups: null,
     groupUsage: {},

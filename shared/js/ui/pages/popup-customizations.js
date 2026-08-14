@@ -1,8 +1,20 @@
 import { formatRemaining } from '../../shared-utils/site-groups';
+import { SEARCH_ENGINE_DDG, normalizeSearchEngine, searchPlaceholder } from '../../shared-utils/search-engine';
 
 const app = document.getElementById('app');
+const CHROME_CLASS = 'openfocusd-popup-chrome';
+const TABS_CLASS = 'openfocusd-popup-tabs';
 const OPTIONS_BAR_CLASS = 'openfocusd-popup-options';
 const STATUS_CLASS = 'openfocusd-group-status';
+const TAB_BLOCKER = 'blocker';
+const TAB_TRACKERS = 'trackers';
+const TAB_BLOCKER_CLASS = 'openfocusd-tab-blocker';
+const TAB_TRACKERS_CLASS = 'openfocusd-tab-trackers';
+const SEARCH_ENGINE_ATTR = 'data-openfocusd-search-engine';
+
+let activeTab = TAB_BLOCKER;
+let searchEngine = SEARCH_ENGINE_DDG;
+let searchEngineRequest = null;
 
 function getTabId() {
     const value = Number(new URLSearchParams(location.search).get('tabId'));
@@ -27,14 +39,89 @@ function displayedRemaining(status) {
     return Math.max(0, status.remainingSeconds - (Date.now() - status.serverNow) / 1000);
 }
 
-function ensureStatusCard(page) {
+function createTabButton(id, label) {
+    const button = el('button', 'openfocusd-popup-tab', label);
+    button.type = 'button';
+    button.setAttribute('role', 'tab');
+    button.setAttribute('data-openfocusd-tab', id);
+    return button;
+}
+
+function applyActiveTab(page) {
+    page.classList.toggle(TAB_BLOCKER_CLASS, activeTab === TAB_BLOCKER);
+    page.classList.toggle(TAB_TRACKERS_CLASS, activeTab === TAB_TRACKERS);
+    page.querySelectorAll('[data-openfocusd-tab]').forEach((button) => {
+        const selected = button.getAttribute('data-openfocusd-tab') === activeTab;
+        button.classList.toggle('is-active', selected);
+        button.setAttribute('aria-selected', String(selected));
+        button.tabIndex = selected ? 0 : -1;
+    });
+}
+
+function applySearchEngine(page, search) {
+    page.setAttribute(SEARCH_ENGINE_ATTR, searchEngine);
+    const input = search.querySelector('.search-form__input');
+    if (input) {
+        input.setAttribute('placeholder', searchPlaceholder(searchEngine));
+    }
+}
+
+function refreshSearchEngine(page, search) {
+    applySearchEngine(page, search);
+    if (!searchEngineRequest) {
+        searchEngineRequest = chrome.runtime
+            .sendMessage({
+                messageType: 'getSetting',
+                options: { name: 'searchEngine' },
+            })
+            .then((value) => {
+                searchEngine = normalizeSearchEngine(value);
+            })
+            .catch(() => {
+                searchEngine = SEARCH_ENGINE_DDG;
+            });
+    }
+
+    return searchEngineRequest.then(() => applySearchEngine(page, search));
+}
+
+function ensureChrome(page) {
+    let chromeBar = page.querySelector(`:scope > .${CHROME_CLASS}`);
+    if (!chromeBar) {
+        chromeBar = el('div', CHROME_CLASS);
+
+        const tabs = el('nav', TABS_CLASS);
+        tabs.setAttribute('role', 'tablist');
+        tabs.setAttribute('aria-label', 'Popup sections');
+        tabs.append(createTabButton(TAB_BLOCKER, 'Website Blocker'), createTabButton(TAB_TRACKERS, 'Tracker Blocker'));
+        tabs.addEventListener('click', (event) => {
+            const button = event.target.closest('[data-openfocusd-tab]');
+            if (!button) {
+                return;
+            }
+            activeTab = button.getAttribute('data-openfocusd-tab') || TAB_BLOCKER;
+            applyActiveTab(page);
+        });
+
+        const optionsBar = el('div', OPTIONS_BAR_CLASS);
+        chromeBar.append(tabs, optionsBar);
+        page.prepend(chromeBar);
+    } else if (chromeBar !== page.firstElementChild) {
+        page.prepend(chromeBar);
+    }
+
+    applyActiveTab(page);
+    return chromeBar;
+}
+
+function ensureStatusCard(page, afterNode) {
     let card = page.querySelector(`:scope > .${STATUS_CLASS}`);
     if (!card) {
         card = document.createElement('section');
         card.className = STATUS_CLASS;
-        page.prepend(card);
-    } else if (card !== page.firstElementChild) {
-        page.prepend(card);
+        afterNode.after(card);
+    } else if (card.previousElementSibling !== afterNode) {
+        afterNode.after(card);
     }
     return card;
 }
@@ -48,10 +135,10 @@ function renderStatus(card, status) {
     card.append(current);
 
     const box = el('div', 'openfocusd-group-status__box');
-    box.append(el('div', 'openfocusd-group-status__group-label', 'Group'));
 
     if (!status || status.ungrouped) {
         box.classList.add('is-empty');
+        box.append(el('div', 'openfocusd-group-status__group-label', 'Group'));
         box.append(el('div', 'openfocusd-group-status__group-name', 'Not in a group'));
         card.append(box);
         return;
@@ -61,10 +148,19 @@ function renderStatus(card, status) {
         box.classList.add('is-blocked');
     }
 
-    box.append(el('div', 'openfocusd-group-status__group-name', status.groupName));
-    box.append(el('div', 'openfocusd-group-status__allowance', status.allowanceLabel));
-    box.append(el('div', 'openfocusd-group-status__remaining-label', 'Time remaining'));
-    box.append(el('div', 'openfocusd-group-status__remaining', formatRemaining(displayedRemaining(status))));
+    const row = el('div', 'openfocusd-group-status__row');
+    const details = el('div', 'openfocusd-group-status__details');
+    details.append(el('div', 'openfocusd-group-status__group-label', 'Group'));
+    details.append(el('div', 'openfocusd-group-status__group-name', status.groupName));
+    details.append(el('div', 'openfocusd-group-status__allowance', status.allowanceLabel));
+
+    const remaining = el('div', 'openfocusd-group-status__time');
+    remaining.append(el('div', 'openfocusd-group-status__remaining-label', 'Time remaining'));
+    remaining.append(el('div', 'openfocusd-group-status__remaining', formatRemaining(displayedRemaining(status))));
+
+    row.append(details);
+    row.append(remaining);
+    box.append(row);
     card.append(box);
 }
 
@@ -111,25 +207,19 @@ function customizePopupLayout() {
         return;
     }
 
-    const statusCard = ensureStatusCard(page);
-
-    let optionsBar = page.querySelector(`:scope > .${OPTIONS_BAR_CLASS}`);
-    if (!optionsBar) {
-        optionsBar = document.createElement('div');
-        optionsBar.className = OPTIONS_BAR_CLASS;
-        statusCard.after(optionsBar);
-    } else if (optionsBar.previousElementSibling !== statusCard) {
-        statusCard.after(optionsBar);
+    const chromeBar = ensureChrome(page);
+    if (search.previousElementSibling !== chromeBar) {
+        chromeBar.after(search);
     }
+    const statusCard = ensureStatusCard(page, search);
+    const optionsBar = chromeBar.querySelector(`.${OPTIONS_BAR_CLASS}`);
 
     const cogButton = search.querySelector(':scope > .cog-button');
-    if (cogButton && cogButton.parentElement !== optionsBar) {
+    if (cogButton && optionsBar && cogButton.parentElement !== optionsBar) {
         optionsBar.append(cogButton);
     }
 
-    if (search !== page.lastElementChild) {
-        page.append(search);
-    }
+    refreshSearchEngine(page, search);
 
     if (!statusCard._refreshing) {
         statusCard._refreshing = true;

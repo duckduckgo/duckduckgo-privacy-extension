@@ -5,6 +5,7 @@ import {
     createDefaultGroups,
     DEFAULT_GROUP_ID,
     DEFAULT_GROUP_MAX_SECONDS,
+    ensureAlwaysBlockGroup,
     findGroupForHostname,
     formatAllowance,
     formatRemaining,
@@ -16,6 +17,7 @@ import {
     hostnameFromUrl,
     hostnameMatchesDomain,
     hoursMinutesToSeconds,
+    isGroupSettingsLocked,
     normalizeGroup,
     removeDomainFromGroup,
     secondsToHoursMinutes,
@@ -50,6 +52,19 @@ describe('site groups helpers', () => {
                 domains: ['example.com', 'news.example.com'],
             },
         ]);
+    });
+
+    it('adds Always Block when it is missing from an existing list', () => {
+        expect(ensureAlwaysBlockGroup([youtubeGroup])).toEqual([
+            youtubeGroup,
+            {
+                id: ALWAYS_BLOCK_GROUP_ID,
+                name: 'Always Block',
+                maxSecondsPerDay: 0,
+                domains: [],
+            },
+        ]);
+        expect(ensureAlwaysBlockGroup([youtubeGroup, alwaysGroup])).toEqual([youtubeGroup, alwaysGroup]);
     });
 
     it('uses a 6:00 local-time day boundary', () => {
@@ -100,6 +115,18 @@ describe('site groups helpers', () => {
         expect(getRemainingSeconds(youtubeGroup, usage, morning)).toBe(3000);
     });
 
+    it('locks timed groups after the budget is used, but not always-block groups', () => {
+        const now = new Date(2026, 7, 14, 12, 0, 0).getTime();
+        const exhausted = {
+            [DEFAULT_GROUP_ID]: { periodKey: '2026-08-14', usedSeconds: 3000 },
+        };
+
+        expect(isGroupSettingsLocked(youtubeGroup, exhausted, now)).toBeTrue();
+        expect(isGroupSettingsLocked(youtubeGroup, {}, now)).toBeFalse();
+        expect(isGroupSettingsLocked(alwaysGroup, {}, now)).toBeFalse();
+        expect(isGroupSettingsLocked(alwaysGroup, exhausted, now)).toBeFalse();
+    });
+
     it('blocks always-block and exhausted groups only', () => {
         const now = new Date(2026, 7, 14, 12, 0, 0).getTime();
         const groups = [youtubeGroup, alwaysGroup];
@@ -139,6 +166,19 @@ describe('site groups helpers', () => {
             name: 'News',
             maxSecondsPerDay: 90,
             domains: ['example.com'],
+        });
+        expect(
+            normalizeGroup({
+                id: ALWAYS_BLOCK_GROUP_ID,
+                name: 'Something else',
+                maxSecondsPerDay: 600,
+                domains: ['ads.example'],
+            }),
+        ).toEqual({
+            id: ALWAYS_BLOCK_GROUP_ID,
+            name: 'Always Block',
+            maxSecondsPerDay: 0,
+            domains: ['ads.example'],
         });
         expect(hoursMinutesToSeconds(1, 5)).toBe(3900);
         expect(secondsToHoursMinutes(3900)).toEqual({ hours: 1, minutes: 5 });

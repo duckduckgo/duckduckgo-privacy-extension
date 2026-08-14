@@ -7,6 +7,7 @@ function PrivacyOptions(ops) {
 
     Parent.call(this, ops);
 
+    this.setup();
     this.model.getState().then(() => {
         this.rerender();
     });
@@ -20,6 +21,12 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         this.rerender();
     },
 
+    _clickSearchEngine: function (e) {
+        const engine = window.$(e.currentTarget).attr('data-engine');
+        this.model.setSearchEngine(engine);
+        this.rerender();
+    },
+
     setup: function () {
         this._cacheElems('.js-options', [
             'blocktrackers',
@@ -28,6 +35,7 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
             'firebutton-clear-history-enabled',
             'firebutton-tabclear-enabled',
             'no-ai-mode',
+            'search-engine',
         ]);
         this.bindEvents([
             [this.$blocktrackers, 'click', this._clickSetting],
@@ -36,6 +44,7 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
             [this.$firebuttonclearhistoryenabled, 'click', this._clickSetting],
             [this.$firebuttontabclearenabled, 'click', this._clickSetting],
             [this.$noaimode, 'click', this._clickSetting],
+            [this.$searchengine, 'click', this._clickSearchEngine],
         ]);
     },
 

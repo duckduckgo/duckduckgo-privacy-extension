@@ -1,5 +1,6 @@
 /* global BUILD_TARGET */
 const Parent = window.DDG.base.Model;
+const { SEARCH_ENGINE_DDG, normalizeSearchEngine } = require('../../shared-utils/search-engine');
 
 function PrivacyOptions(attrs) {
     // set some default values for the toggle switches in the template
@@ -8,6 +9,7 @@ function PrivacyOptions(attrs) {
     attrs.fireButtonClearHistoryEnabled = true;
     attrs.fireButtonTabClearEnabled = true;
     attrs.useNoAiSearch = false;
+    attrs.searchEngine = SEARCH_ENGINE_DDG;
 
     Parent.call(this, attrs);
 }
@@ -23,6 +25,15 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         }
     },
 
+    setSearchEngine: function (engine) {
+        const next = normalizeSearchEngine(engine);
+        if (this.searchEngine === next) {
+            return;
+        }
+        this.searchEngine = next;
+        this.sendMessage('updateSetting', { name: 'searchEngine', value: next });
+    },
+
     async getState() {
         const settings = await this.sendMessage('getSetting', 'all');
 
@@ -32,6 +43,7 @@ PrivacyOptions.prototype = window.$.extend({}, Parent.prototype, {
         this.fireButtonClearHistoryEnabled = settings.fireButtonClearHistoryEnabled;
         this.fireButtonTabClearEnabled = settings.fireButtonTabClearEnabled;
         this.useNoAiSearch = !!settings.useNoAiSearch;
+        this.searchEngine = normalizeSearchEngine(settings.searchEngine);
     },
 });
 

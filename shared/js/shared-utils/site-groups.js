@@ -3,6 +3,7 @@ import { normalizeBlockedSite } from './blocked-sites';
 export const RESET_HOUR = 6;
 export const DEFAULT_GROUP_ID = 'default';
 export const ALWAYS_BLOCK_GROUP_ID = 'always-block';
+export const ALWAYS_BLOCK_GROUP_NAME = 'Always Block';
 export const DEFAULT_GROUP_MAX_SECONDS = 50 * 60;
 export const MAX_GROUP_SECONDS_PER_DAY = 24 * 60 * 60;
 export const MAX_GROUP_NAME_LENGTH = 60;
@@ -48,7 +49,7 @@ export function createDefaultGroups(legacyDomains = []) {
         },
         {
             id: ALWAYS_BLOCK_GROUP_ID,
-            name: 'Always Block',
+            name: ALWAYS_BLOCK_GROUP_NAME,
             maxSecondsPerDay: 0,
             domains: Array.from(new Set(domains)).sort(),
         },
@@ -96,8 +97,7 @@ export function normalizeGroup(group) {
 
     const raw = /** @type {Record<string, unknown>} */ (group);
     const id = typeof raw.id === 'string' ? raw.id.trim() : '';
-    const name = typeof raw.name === 'string' ? raw.name.trim().slice(0, MAX_GROUP_NAME_LENGTH) : '';
-    if (!id || !name) {
+    if (!id) {
         return null;
     }
 
@@ -112,8 +112,53 @@ export function normalizeGroup(group) {
             }
         }
     }
+    const uniqueDomains = Array.from(new Set(domains)).sort();
 
-    return { id, name, maxSecondsPerDay, domains: Array.from(new Set(domains)).sort() };
+    if (id === ALWAYS_BLOCK_GROUP_ID) {
+        return {
+            id,
+            name: ALWAYS_BLOCK_GROUP_NAME,
+            maxSecondsPerDay: 0,
+            domains: uniqueDomains,
+        };
+    }
+
+    const name = typeof raw.name === 'string' ? raw.name.trim().slice(0, MAX_GROUP_NAME_LENGTH) : '';
+    if (!name) {
+        return null;
+    }
+
+    return { id, name, maxSecondsPerDay, domains: uniqueDomains };
+}
+
+/**
+ * @param {string | { id?: string } | null | undefined} groupOrId
+ * @returns {boolean}
+ */
+export function isAlwaysBlockGroup(groupOrId) {
+    const id = typeof groupOrId === 'string' ? groupOrId : groupOrId?.id;
+    return id === ALWAYS_BLOCK_GROUP_ID;
+}
+
+/**
+ * Keep Always Block present after install and upgrades.
+ *
+ * @param {SiteGroup[]} groups
+ * @param {string[]} [legacyDomains]
+ * @returns {SiteGroup[]}
+ */
+export function ensureAlwaysBlockGroup(groups, legacyDomains = []) {
+    const normalized = normalizeGroups(groups);
+    if (normalized.some(isAlwaysBlockGroup)) {
+        return normalized;
+    }
+    const always = normalizeGroup({
+        id: ALWAYS_BLOCK_GROUP_ID,
+        name: ALWAYS_BLOCK_GROUP_NAME,
+        maxSecondsPerDay: 0,
+        domains: legacyDomains,
+    });
+    return always ? [...normalized, always] : normalized;
 }
 
 /**
@@ -219,6 +264,22 @@ export function getRemainingSeconds(group, usage, now = Date.now()) {
         return 0;
     }
     return Math.max(0, group.maxSecondsPerDay - getUsedSeconds(group, usage, now));
+}
+
+/**
+ * Timed groups that have used today's budget cannot be edited until 6:00.
+ * Always-block groups (0 hr / 0 min) stay editable.
+ *
+ * @param {SiteGroup | null | undefined} group
+ * @param {Record<string, GroupUsageEntry | undefined>} usage
+ * @param {number | Date} [now]
+ * @returns {boolean}
+ */
+export function isGroupSettingsLocked(group, usage, now = Date.now()) {
+    if (!group || group.maxSecondsPerDay <= 0) {
+        return false;
+    }
+    return getRemainingSeconds(group, usage, now) <= 0;
 }
 
 /**

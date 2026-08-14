@@ -29,6 +29,16 @@ const {
 const manifestVersion = browserWrapper.getManifestVersion();
 
 async function onInstalled(details) {
+    if (browserName === 'chrome') {
+        try {
+            await settings.ready();
+            const { ensureSiteGroups } = await import('./site-groups-store');
+            await ensureSiteGroups();
+        } catch (error) {
+            console.warn('Failed to initialize site groups on install', error);
+        }
+    }
+
     if (details.reason.match(/install/)) {
         // Capture any open DuckDuckGo URLs before install initialization.
         const ddgTabUrls = await browserWrapper.getDDGTabUrls();
