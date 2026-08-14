@@ -8,7 +8,7 @@
         }]
     },
     "optionsHeader": {
-        "title": "DuckDuckGo Options",
+        "title": "OpenFocusd Options",
         "note": "Header for options (settings) page"
     },
     "optionsSubHeader": {

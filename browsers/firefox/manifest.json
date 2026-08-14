@@ -1,5 +1,5 @@
 {
-    "name": "DuckDuckGo Search & Tracker Protection",
+    "name": "OpenFocusd",
     "applications": {
         "gecko": {
             "id": "jid1-ZAdIEUB7XOzOJw@jetpack",
@@ -17,7 +17,7 @@
     "manifest_version": 2,
     "browser_action": {
         "default_icon": "img/icon_browser_action.png",
-        "default_popup": "dashboard/html/browser.html"
+        "default_popup": "html/popup.html"
     },
     "omnibox": {
         "keyword": "ddg"
@@ -26,16 +26,6 @@
         "scripts": [
             "public/js/background.js"
         ]
-    },
-    "chrome_settings_overrides": {
-        "search_provider": {
-            "favicon_url": "https://duckduckgo.com/favicon.ico",
-            "is_default": true,
-            "keyword": "duckduckgo.com",
-            "name": "DuckDuckGo",
-            "search_url": "https://duckduckgo.com/?q={searchTerms}&t=newext",
-            "suggest_url": "https://duckduckgo.com/ac/?q={searchTerms}&type=list"
-        }
     },
     "content_scripts": [
         {

@@ -18,13 +18,16 @@ test.describe('Test privacy dashboard', () => {
 
         const panelUrl = await backgroundPage.evaluate(async () => {
             const currentTab = await globalThis.dbg.utils.getCurrentTab();
-            return chrome.runtime.getURL(`dashboard/html/browser.html?tabId=${currentTab.id}`);
+            const manifest = chrome.runtime.getManifest();
+            const popupPath = manifest.action?.default_popup || manifest.browser_action?.default_popup;
+            return chrome.runtime.getURL(`${popupPath}?tabId=${currentTab.id}`);
         });
 
         const panel = await context.newPage();
         await panel.goto(panelUrl);
         await panel.bringToFront();
 
+        await expect(panel).toHaveTitle('OpenFocusd');
         const links = await linksText(panel);
         expect(links).toEqual(['Connection Is Encrypted', 'Requests Blocked from Loading', 'No Third-Party Requests Found']);
     });

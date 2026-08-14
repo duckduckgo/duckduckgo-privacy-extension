@@ -54,7 +54,12 @@ test.describe('Background script eval', () => {
 
     test('can read the extension manifest', async ({ backgroundPage }) => {
         const name = await backgroundPage.evaluate(() => chrome.runtime.getManifest().name);
-        expect(name).toMatch(/^DuckDuckGo/);
+        expect(name).toBe('OpenFocusd');
+    });
+
+    test('does not override the default search provider', async ({ backgroundPage }) => {
+        const settingsOverride = await backgroundPage.evaluate(() => chrome.runtime.getManifest().chrome_settings_overrides);
+        expect(settingsOverride).toBeUndefined();
     });
 });
 
