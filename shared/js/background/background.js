@@ -112,7 +112,11 @@ if (BUILD_TARGET === 'chrome') {
 if (BUILD_TARGET === 'chrome') {
     // MV3-only components
     components.scriptInjection = new MV3ContentScriptInjection();
-    components.siteGroups = new SiteGroups({ settings });
+    try {
+        components.siteGroups = new SiteGroups({ settings });
+    } catch (error) {
+        console.error('Failed to start site groups', error);
+    }
     components.dnrListeners = new DNRListeners({ settings, tds });
 
     const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });

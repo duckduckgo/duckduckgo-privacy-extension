@@ -50,10 +50,10 @@ export default class SiteGroups {
         this.activeGroupId = null;
         this.lastTickAt = null;
         this._tickChain = Promise.resolve();
-        this._ready = this.init();
         this._redirectingTabs = new Set();
-        this.attachNavigationGuards();
 
+        // Register handlers before attaching listeners so a guard failure
+        // cannot leave the options page and popup without a Groups backend.
         registerMessageHandler('getSiteGroupsState', () => this.getState());
         registerMessageHandler('createSiteGroup', () => this.handleCreate());
         registerMessageHandler('updateSiteGroup', (options) => this.handleUpdate(options));
@@ -61,25 +61,37 @@ export default class SiteGroups {
         registerMessageHandler('addSiteToGroup', (options) => this.handleAddDomain(options));
         registerMessageHandler('removeSiteFromGroup', (options) => this.handleRemoveDomain(options));
         registerMessageHandler('getPopupGroupStatus', (options) => this.getPopupStatus(options));
+
+        try {
+            this.attachNavigationGuards();
+        } catch (error) {
+            console.error('Failed to attach site group navigation guards', error);
+        }
+
+        this._ready = this.init();
     }
 
     async init() {
-        await this.settings.ready();
-        await ensureSiteGroups();
-        await this.syncBlockedRules();
-        await this.redirectOpenBlockedTabs();
-        await this.scheduleDailyReset();
+        try {
+            await this.settings.ready();
+            await ensureSiteGroups();
+            await this.syncBlockedRules();
+            await this.scheduleDailyReset();
 
-        chrome.tabs.onActivated.addListener(() => this.queueSync());
-        chrome.windows.onFocusChanged.addListener(() => this.queueSync());
-        chrome.alarms.onAlarm.addListener((alarm) => this.onAlarm(alarm));
-        browser.runtime.onStartup.addListener(() => {
-            this.scheduleDailyReset();
+            chrome.tabs.onActivated.addListener(() => this.queueSync());
+            chrome.windows.onFocusChanged.addListener(() => this.queueSync());
+            chrome.alarms.onAlarm.addListener((alarm) => this.onAlarm(alarm));
+            browser.runtime.onStartup.addListener(() => {
+                this.scheduleDailyReset();
+                this.queueSync();
+                this.redirectOpenBlockedTabs();
+            });
+
             this.queueSync();
             this.redirectOpenBlockedTabs();
-        });
-
-        this.queueSync();
+        } catch (error) {
+            console.error('Site groups failed to initialize', error);
+        }
     }
 
     blockedPageUrl() {
@@ -133,7 +145,10 @@ export default class SiteGroups {
             return;
         }
 
-        await this._ready;
+        // Do not await this._ready here: init() itself calls redirectOpenBlockedTabs(),
+        // which would deadlock and prevent groups/popup status from ever loading.
+        await this.settings.ready();
+        await ensureSiteGroups();
         const hostname = hostnameFromUrl(url);
         if (!hostname) {
             return;
@@ -344,7 +359,7 @@ export default class SiteGroups {
 
     async getState() {
         await this._ready;
-        await this.queueSync();
+        this.queueSync();
         const now = Date.now();
         const usage = getGroupUsage();
         return {
@@ -487,7 +502,7 @@ export default class SiteGroups {
                 await this.startCounting(group, Date.now(), remaining);
             }
         } else {
-            await this.queueSync();
+            this.queueSync();
         }
 
         const usage = getGroupUsage();
