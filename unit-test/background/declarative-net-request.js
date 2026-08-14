@@ -16,14 +16,21 @@ import { ensureGPCHeaderRule } from '../../shared/js/background/dnr-gpc';
 import { ensureServiceWorkerInitiatedRequestExceptions } from '../../shared/js/background/dnr-service-worker-initiated';
 import { onConfigUpdate } from '../../shared/js/background/dnr-config-rulesets';
 import { refreshUserAllowlistRules, toggleUserAllowlistDomain } from '../../shared/js/background/dnr-user-allowlist';
+import { refreshUserBlockedSitesRules, setBlockedSites } from '../../shared/js/background/dnr-user-blocklist';
 import {
     getMatchDetails,
     GPC_HEADER_RULE_ID,
     SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID,
     USER_ALLOWLIST_RULE_ID,
+    USER_BLOCKED_SITES_RULE_ID,
+    USER_BLOCKED_SITES_SUBRESOURCE_RULE_ID,
     SETTING_PREFIX,
 } from '../../shared/js/background/dnr-utils';
-import { SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY, USER_ALLOWLISTED_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
+import {
+    SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY,
+    USER_ALLOWLISTED_PRIORITY,
+    USER_BLOCKED_SITES_PRIORITY,
+} from '@duckduckgo/ddg2dnr/lib/rulePriorities';
 import { resourceTypes } from '@duckduckgo/ddg2dnr/lib/utils';
 import { GPC_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/gpc';
 
@@ -501,6 +508,77 @@ describe('declarativeNetRequest', () => {
         await toggleUserAllowlistDomain('EXAMPLE.invalid', false);
         expectState([]);
         await toggleUserAllowlistDomain('another-unknown.invalid', false);
+        expectState([]);
+    });
+
+    it('User blocked sites updates', async () => {
+        const expectState = (expectedBlockedDomains) => {
+            const redirectRule = dynamicRulesByRuleId.get(USER_BLOCKED_SITES_RULE_ID);
+            const subresourceRule = dynamicRulesByRuleId.get(USER_BLOCKED_SITES_SUBRESOURCE_RULE_ID);
+            if (expectedBlockedDomains.length === 0) {
+                expect(redirectRule).toBeUndefined();
+                expect(subresourceRule).toBeUndefined();
+                return;
+            }
+
+            expect(redirectRule.id).toEqual(USER_BLOCKED_SITES_RULE_ID);
+            expect(redirectRule.priority).toEqual(USER_BLOCKED_SITES_PRIORITY);
+            expect(redirectRule.priority).toBeGreaterThan(USER_ALLOWLISTED_PRIORITY);
+            expect(redirectRule.action).toEqual({
+                type: 'redirect',
+                redirect: {
+                    extensionPath: '/html/blocked.html',
+                },
+            });
+            expect(redirectRule.condition.requestDomains).toEqual(expectedBlockedDomains);
+            expect(redirectRule.condition.resourceTypes).toEqual(['main_frame']);
+
+            expect(subresourceRule.id).toEqual(USER_BLOCKED_SITES_SUBRESOURCE_RULE_ID);
+            expect(subresourceRule.priority).toEqual(USER_BLOCKED_SITES_PRIORITY);
+            expect(subresourceRule.action.type).toEqual('block');
+            expect(subresourceRule.condition.requestDomains).toEqual(expectedBlockedDomains);
+            expect(new Set(subresourceRule.condition.resourceTypes)).toEqual(
+                new Set(resourceTypes.filter((resourceType) => resourceType !== 'main_frame')),
+            );
+        };
+
+        expectState([]);
+
+        await refreshUserBlockedSitesRules(['Example.INVALID', '/', 'sub.example.invalid']);
+        expectState(['example.invalid', 'sub.example.invalid']);
+
+        const saved = await setBlockedSites({
+            text: 'example.invalid\nhttps://news.example.invalid/path\nEXAMPLE.INVALID',
+        });
+        expect(saved).toEqual({
+            saved: true,
+            domains: ['example.invalid', 'news.example.invalid'],
+            invalidLines: [],
+        });
+        expect(settingsStorage.get('blockedSites')).toEqual({
+            'example.invalid': true,
+            'news.example.invalid': true,
+        });
+        expectState(['example.invalid', 'news.example.invalid']);
+
+        const rejected = await setBlockedSites({
+            text: 'replacement.invalid\n*.invalid-entry.example',
+        });
+        expect(rejected).toEqual({
+            saved: false,
+            domains: ['example.invalid', 'news.example.invalid'],
+            invalidLines: ['*.invalid-entry.example'],
+        });
+        expectState(['example.invalid', 'news.example.invalid']);
+
+        expect(await getMatchDetails(USER_BLOCKED_SITES_RULE_ID)).toEqual({
+            type: 'userBlockedSites',
+        });
+        expect(await getMatchDetails(USER_BLOCKED_SITES_SUBRESOURCE_RULE_ID)).toEqual({
+            type: 'userBlockedSites',
+        });
+
+        await refreshUserBlockedSitesRules([]);
         expectState([]);
     });
 

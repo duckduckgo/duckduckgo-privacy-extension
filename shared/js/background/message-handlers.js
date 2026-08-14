@@ -8,6 +8,7 @@ import { resolveBreakageReportRequest } from './breakage-report-request';
 import { postPopupMessage } from './popup-messaging';
 import ToggleReports from './components/toggle-reports';
 import messageHandlers from './message-registry';
+import { getBlockedSites, setBlockedSites } from './dnr-user-blocklist';
 
 const utils = require('./utils');
 const settings = require('./settings');
@@ -228,5 +229,7 @@ export function registerStandardHandlers() {
         breakageReportResult,
         healthCheckRequest,
         rescheduleCounterMessagingRequest,
+        getBlockedSites,
+        setBlockedSites,
     });
 }

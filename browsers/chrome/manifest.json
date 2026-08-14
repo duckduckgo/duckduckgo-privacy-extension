@@ -92,7 +92,8 @@
         {
             "resources": [
                 "/public/font/*",
-                "/img/logo-small.svg"
+                "/img/logo-small.svg",
+                "/html/blocked.html"
             ],
             "use_dynamic_url": false,
             "matches": [

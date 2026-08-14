@@ -5,6 +5,7 @@ import { clearInvalidDynamicRules } from '../dnr-utils.js';
 import { refreshUserAllowlistRules } from '../dnr-user-allowlist.js';
 import { ensureGPCHeaderRule } from '../dnr-gpc.js';
 import { onConfigUpdate } from '../dnr-config-rulesets.js';
+import { getBlockedSites, refreshUserBlockedSitesRules } from '../dnr-user-blocklist.js';
 
 /**
  * @typedef {import('./tds.js').default} TDS
@@ -60,5 +61,6 @@ export default class DNRListeners {
             }
         }
         await refreshUserAllowlistRules(allowlistedDomains);
+        await refreshUserBlockedSitesRules(await getBlockedSites());
     }
 }

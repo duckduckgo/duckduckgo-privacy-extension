@@ -16,4 +16,5 @@ module.exports = {
     fireButtonClearHistoryEnabled: true,
     fireButtonTabClearEnabled: true,
     useNoAiSearch: false,
+    blockedSites: {},
 };

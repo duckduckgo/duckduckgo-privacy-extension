@@ -24,6 +24,8 @@ export const ATB_EXTENSIONINSTALLED_RULE_ID = 20008;
 export const HOME_PAGE_RULE_ID = 20010;
 export const NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID = 20006;
 export const SEARCH_REDIRECT_RULE_ID = 20009;
+export const USER_BLOCKED_SITES_RULE_ID = 20011;
+export const USER_BLOCKED_SITES_SUBRESOURCE_RULE_ID = 20012;
 
 // Rule IDs for static session rules
 export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002;
@@ -51,6 +53,8 @@ const RESERVED_DYNAMIC_RULE_IDS = [
     NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID,
     SEARCH_REDIRECT_RULE_ID,
     HOME_PAGE_RULE_ID,
+    USER_BLOCKED_SITES_RULE_ID,
+    USER_BLOCKED_SITES_SUBRESOURCE_RULE_ID,
 ];
 
 /**
@@ -109,6 +113,12 @@ export async function getMatchDetails(ruleId) {
     if (ruleId === USER_ALLOWLIST_RULE_ID) {
         return {
             type: 'userAllowlist',
+        };
+    }
+
+    if (ruleId === USER_BLOCKED_SITES_RULE_ID || ruleId === USER_BLOCKED_SITES_SUBRESOURCE_RULE_ID) {
+        return {
+            type: 'userBlockedSites',
         };
     }
 

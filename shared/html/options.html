@@ -23,35 +23,97 @@
   <link rel="stylesheet" type="text/css" href="../public/css/options.css">
 </head>
 
-<body>
+<body class="options-page">
 
 <div class="page-container">
+  <aside class="options-sidebar">
+    <div class="options-brand">
+      <h1 class="options-brand__name">OpenFocusd</h1>
+      <span class="options-brand__badge">WIP</span>
+    </div>
+    <nav class="options-tabs" role="tablist" aria-label="Options sections" aria-orientation="vertical">
+      <button
+        class="options-tab js-options-tab is-active"
+        id="options-tab-block-sites"
+        type="button"
+        role="tab"
+        aria-selected="true"
+        aria-controls="options-panel-block-sites"
+        data-options-tab="block-sites"
+      >
+        <span data-text="options:blockSitesTab.title"></span>
+      </button>
+      <button
+        class="options-tab js-options-tab"
+        id="options-tab-allowed-sites"
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls="options-panel-allowed-sites"
+        tabindex="-1"
+        data-options-tab="allowed-sites"
+      >
+        <span data-text="options:allowedSitesTab.title"></span>
+      </button>
+      <button
+        class="options-tab js-options-tab"
+        id="options-tab-block-trackers"
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls="options-panel-block-trackers"
+        tabindex="-1"
+        data-options-tab="block-trackers"
+      >
+        <span data-text="options:blockTrackersTab.title"></span>
+      </button>
+    </nav>
+  </aside>
 
-  <h1 class="ddg-logo"><span>DuckDuckGo.com</span></h1>
+  <main class="options-main">
+    <section
+      class="options-panel js-options-panel"
+      id="options-panel-block-sites"
+      role="tabpanel"
+      aria-labelledby="options-tab-block-sites"
+      data-options-panel="block-sites"
+    >
+      <div id="blocked-sites-content"></div>
+    </section>
 
-  <section class="divider-bottom">
+    <section
+      class="options-panel js-options-panel"
+      id="options-panel-allowed-sites"
+      role="tabpanel"
+      aria-labelledby="options-tab-allowed-sites"
+      data-options-panel="allowed-sites"
+      hidden
+    ></section>
 
-    <p class="options-info" data-text="options:optionsSubHeader.title"></p>
-
-    <p class="options-info" data-text="options:optionsDesc.title"></p>
-
-    <p class="options-info">
-      <a href="https://duckduckgo.com/extension-success" data-text="shared:learnMore.title"></a>
-    </p>
-
-    <p class="options-info">
-      <a href="#" target="_blank" class="js-feedback-link"  data-text="options:shareFeedback.title"></a>
-    </p>
-
-    <p class="options-info">
-      <a href="#" target="_blank" class="js-report-site-link" data-text="options:reportBrokenSite.title"></a>
-    </p>
-
-  </section>
-
-  <div id="options-content">
-  </div>
-
+    <section
+      class="options-panel js-options-panel"
+      id="options-panel-block-trackers"
+      role="tabpanel"
+      aria-labelledby="options-tab-block-trackers"
+      data-options-panel="block-trackers"
+      hidden
+    >
+      <section class="options-intro divider-bottom">
+        <p class="options-info" data-text="options:optionsSubHeader.title"></p>
+        <p class="options-info" data-text="options:optionsDesc.title"></p>
+        <p class="options-info">
+          <a href="https://duckduckgo.com/extension-success" data-text="shared:learnMore.title"></a>
+        </p>
+        <p class="options-info">
+          <a href="#" target="_blank" class="js-feedback-link" data-text="options:shareFeedback.title"></a>
+        </p>
+        <p class="options-info">
+          <a href="#" target="_blank" class="js-report-site-link" data-text="options:reportBrokenSite.title"></a>
+        </p>
+      </section>
+      <div id="block-trackers-content"></div>
+    </section>
+  </main>
 </div>
 
 <script src="../public/js/base.js" type="text/javascript"></script>

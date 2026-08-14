@@ -15,6 +15,18 @@
         "title": "Search and browse the web without being tracked.",
         "note": "We allow the user to browse the web without being followed by trackers"
     },
+    "blockSitesTab": {
+        "title": "Block Sites",
+        "note": "Navigation tab for managing completely blocked websites"
+    },
+    "allowedSitesTab": {
+        "title": "Allowed Sites",
+        "note": "Navigation tab for managing websites that are explicitly allowed"
+    },
+    "blockTrackersTab": {
+        "title": "Block Trackers",
+        "note": "Navigation tab for DuckDuckGo tracker-blocking and privacy options"
+    },
     "optionsDesc": {
         "title": "DuckDuckGo protects your privacy online with\nprivate search,\ntracker blocking,\nand site encryption.",
         "note": "This describes how we protect the user from being tracked online"
@@ -86,6 +98,34 @@
     "invalidURL": {
         "title": "Invalid URL",
         "note": "The URL the user entered is not a valid website address"
+    },
+    "blockedSites": {
+        "title": "Blocked Websites",
+        "note": "Header for the list of websites the user wants to block completely"
+    },
+    "blockedSitesDesc": {
+        "title": "Enter one domain per line. The domain and all of its subdomains will be blocked.",
+        "note": "Explains how to enter websites that should be blocked"
+    },
+    "blockedSitesPlaceholder": {
+        "title": "example.com\nnews.example.org",
+        "note": "Example newline-separated domains for the blocked websites field"
+    },
+    "saveBlockedSites": {
+        "title": "Save blocked websites",
+        "note": "Button that saves the blocked websites list"
+    },
+    "blockedSitesSaved": {
+        "title": "Blocked websites saved.",
+        "note": "Confirmation shown after the blocked websites list is saved"
+    },
+    "blockedSitesInvalid": {
+        "title": "Fix these invalid entries before saving: {entries}",
+        "note": "Error shown when one or more blocked website entries are invalid"
+    },
+    "blockedSitesSaveError": {
+        "title": "The blocked websites list could not be saved.",
+        "note": "Error shown when saving the blocked websites list fails"
     },
     "fireButtonHeading": {
         "title": "Fire Button",

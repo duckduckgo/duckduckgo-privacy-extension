@@ -12,6 +12,127 @@
 
 /* allowlist */
 @include meta.load-css('views/allowlist');
+@include meta.load-css('views/blocked-sites');
+
+.options-page {
+    min-height: 100vh;
+    background: vars.$silver;
+    color: vars.$slate;
+
+    .page-container {
+        display: grid;
+        grid-template-columns: 220px minmax(0, 1fr);
+        gap: 40px;
+        width: min(1040px, calc(100% - 48px));
+        margin: 0 auto;
+        padding: 48px 0;
+    }
+}
+
+.options-sidebar {
+    position: sticky;
+    top: 32px;
+    align-self: start;
+}
+
+.options-brand {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.options-brand__name {
+    color: vars.$slate;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 30px;
+}
+
+.options-brand__badge {
+    margin-top: 2px;
+    padding: 3px 7px;
+    border-radius: 999px;
+    background: vars.$platinum-light;
+    color: vars.$slate-light;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    line-height: 14px;
+    text-transform: uppercase;
+}
+
+.options-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.options-tab {
+    width: 100%;
+    padding: 14px 18px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: vars.$slate-light;
+    cursor: pointer;
+    font: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.options-tab:hover {
+    background: vars.$silver-dark;
+    color: vars.$slate;
+}
+
+.options-tab:focus-visible {
+    outline: 2px solid vars.$blue;
+    outline-offset: 2px;
+}
+
+.options-tab.is-active {
+    background: vars.$white;
+    color: vars.$blue-dark;
+}
+
+.options-main {
+    min-width: 0;
+    min-height: 560px;
+    padding: 0 32px 32px;
+    border-radius: 10px;
+    background: vars.$white;
+}
+
+.options-panel[hidden] {
+    display: none;
+}
+
+.options-intro {
+    padding-top: 24px;
+}
+
+@media (max-width: 760px) {
+    .options-page .page-container {
+        grid-template-columns: 170px minmax(0, 1fr);
+        gap: 20px;
+        width: calc(100% - 32px);
+        padding: 24px 0;
+    }
+
+    .options-main {
+        padding-right: 20px;
+        padding-left: 20px;
+    }
+
+    .options-tab {
+        padding-right: 12px;
+        padding-left: 12px;
+        font-size: 15px;
+    }
+}
 
 .options-info {
     font-weight: bold;

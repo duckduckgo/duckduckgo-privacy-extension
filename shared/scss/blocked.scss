@@ -1,0 +1,87 @@
+@use 'vars';
+
+.blocked-page {
+    display: grid;
+    min-height: 100vh;
+    place-items: center;
+    background: vars.$silver;
+    color: vars.$slate;
+}
+
+.blocked-card {
+    box-sizing: border-box;
+    width: min(480px, calc(100% - 40px));
+    padding: 48px;
+    border: 1px solid vars.$platinum;
+    border-radius: 16px;
+    background: vars.$white;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+
+.blocked-card__icon {
+    display: grid;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 24px;
+    border-radius: 50%;
+    background: rgba(vars.$red, 0.12);
+    place-items: center;
+
+    span {
+        display: block;
+        width: 28px;
+        height: 6px;
+        border-radius: 999px;
+        background: vars.$red;
+    }
+}
+
+.blocked-card__eyebrow {
+    margin-bottom: 10px;
+    color: vars.$slate-light;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.blocked-card__title {
+    margin-bottom: 14px;
+    color: vars.$slate;
+    font-size: 30px;
+    line-height: 36px;
+}
+
+.blocked-card__message {
+    margin-bottom: 28px;
+    color: vars.$slate-light;
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.blocked-card__settings-link {
+    display: inline-block;
+    padding: 11px 18px;
+    border-radius: 8px;
+    background: vars.$blue-dark;
+    color: vars.$white;
+    font-size: 15px;
+    font-weight: 600;
+
+    &:hover {
+        text-decoration: none;
+        background: vars.$blue;
+    }
+
+    &:focus-visible {
+        outline: 2px solid vars.$blue;
+        outline-offset: 3px;
+    }
+}
+
+@media (max-width: 520px) {
+    .blocked-card {
+        padding: 36px 24px;
+    }
+}
