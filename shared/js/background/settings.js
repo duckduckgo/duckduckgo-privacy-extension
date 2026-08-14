@@ -9,7 +9,7 @@ if (typeof CustomEvent === 'undefined') globalThis.CustomEvent = Event;
 /**
  * Settings whose defaults can by managed by the system administrator
  */
-const MANAGED_SETTINGS = ['hasSeenPostInstall'];
+const MANAGED_SETTINGS = [];
 /**
  * Public api
  * Usage:

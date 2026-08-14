@@ -216,6 +216,9 @@ $(BUILD_DIR)/public/js/feedback.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/options.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/ui/pages/options.js > $@
 
+$(BUILD_DIR)/public/js/popup-customizations.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/ui/pages/popup-customizations.js > $@
+
 $(BUILD_DIR)/public/js/devtools-panel.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/devtools/panel.js > $@
 
@@ -234,7 +237,7 @@ $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/content-scripts/cpm.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/cpm.js > $@
 
-JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js content-scripts/cpm.js
+JS_BUNDLES = background.js base.js feedback.js options.js popup-customizations.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js content-scripts/cpm.js
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Content Scope Scripts

@@ -59,7 +59,7 @@ test.describe('Background script eval', () => {
 
     test('does not override the default search provider', async ({ backgroundPage }) => {
         const settingsOverride = await backgroundPage.evaluate(() => chrome.runtime.getManifest().chrome_settings_overrides);
-        expect(settingsOverride).toBeUndefined();
+        expect(settingsOverride == null).toBe(true);
     });
 });
 

@@ -13,9 +13,9 @@ test.describe('Extension functions with empty configuration', () => {
         await backgroundWait.forAllConfiguration(backgroundPage);
     });
 
-    test('Post-install page opens successfully', async ({ context }) => {
+    test('Post-install page does not open', async ({ context }) => {
         const postInstallPage = context.pages().find((p) => p.url().startsWith('https://duckduckgo.com/extension-success'));
-        expect(postInstallPage).toBeDefined();
+        expect(postInstallPage).toBeUndefined();
     });
 
     test('There are no injected page exceptions', async ({ page }) => {

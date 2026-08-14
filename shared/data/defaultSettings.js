@@ -9,7 +9,6 @@ module.exports = {
     'httpsDontUpgradeBloomFilters-etag': null,
     'httpsUpgradeList-etag': null,
     'httpsDontUpgradeList-etag': null,
-    hasSeenPostInstall: false,
     extiSent: false,
     'tds-etag': null,
     lastTdsUpdate: 0,

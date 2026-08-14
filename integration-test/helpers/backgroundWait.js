@@ -1,4 +1,5 @@
 import { errors } from '@playwright/test';
+import { getBackgroundServiceWorker } from './playwrightHelpers';
 
 // Helpers that aid in waiting for the background page's state.
 function manuallyWaitForFunction(bgPage, func, { polling, timeout }, ...args) {
@@ -65,26 +66,13 @@ export async function forAllConfiguration(bgPage) {
  * @param {import('@playwright/test').BrowserContext} context
  */
 export async function forExtensionLoaded(context) {
-    return /** @type {Promise<string>} */ (
-        new Promise((resolve) => {
-            const postInstallPage = 'https://duckduckgo.com/extension-success';
+    const firefoxBackgroundPage = /** @type {any} */ (context)._firefoxBgPage;
+    if (firefoxBackgroundPage) {
+        return firefoxBackgroundPage.evaluate(() => browser.runtime.getURL('/'));
+    }
 
-            // Check if the post-install page was already opened.
-            const existingPage = context.pages().find((p) => p.url().startsWith(postInstallPage));
-            if (existingPage) {
-                return resolve(existingPage.url());
-            }
-
-            // Otherwise, wait for it to be opened.
-            const listenForPostinstall = (page) => {
-                if (page.url().startsWith(postInstallPage)) {
-                    resolve(page.url());
-                    context.off('page', listenForPostinstall);
-                }
-            };
-            context.on('page', listenForPostinstall);
-        })
-    );
+    const serviceWorker = await getBackgroundServiceWorker(context);
+    return serviceWorker.url();
 }
 
 export async function forDynamicDNRRulesLoaded(backgroundPage) {

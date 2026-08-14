@@ -30,6 +30,23 @@ test.describe('Test privacy dashboard', () => {
         await expect(panel).toHaveTitle('OpenFocusd');
         const links = await linksText(panel);
         expect(links).toEqual(['Connection Is Encrypted', 'Requests Blocked from Loading', 'No Third-Party Requests Found']);
+
+        const search = panel.locator('.site-info > .page-inner > .search');
+        await expect(search).toBeVisible();
+        expect(await search.evaluate((element) => element === element.parentElement?.lastElementChild)).toBe(true);
+
+        const spreadPromotionDisplay = await panel.evaluate(() => {
+            const screen = document.createElement('div');
+            screen.className = 'cta-screen';
+            const promotion = document.createElement('div');
+            promotion.className = 'cta';
+            screen.append(promotion);
+            document.body.append(screen);
+            const display = getComputedStyle(promotion).display;
+            screen.remove();
+            return display;
+        });
+        expect(spreadPromotionDisplay).toBe('none');
     });
 });
 

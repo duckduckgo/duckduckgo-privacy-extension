@@ -192,33 +192,6 @@ const ATB = (() => {
                 });
         },
 
-        openPostInstallPage: async () => {
-            // only show post install page on install if:
-            // - the user wasn't already looking at the app install page
-            // - the user hasn't seen the page before
-            await settings.ready();
-            const tabs = await browser.tabs.query({ currentWindow: true, active: true });
-            const domain = tabs && tabs[0] ? tabs[0].url : '';
-            if (ATB.canShowPostInstall(domain)) {
-                settings.updateSetting('hasSeenPostInstall', true);
-                let postInstallURL = 'https://duckduckgo.com/extension-success';
-                const atb = settings.getSetting('atb');
-                postInstallURL += atb ? `?atb=${atb}` : '';
-                browser.tabs.create({
-                    url: postInstallURL,
-                });
-            }
-        },
-
-        canShowPostInstall: (domain) => {
-            const regExpPostInstall = /duckduckgo\.com\/app/;
-            const regExpSoftwarePage = /duckduckgo\.com\/software/;
-
-            if (!(domain && settings)) return false;
-
-            return !settings.getSetting('hasSeenPostInstall') && !domain.match(regExpPostInstall) && !domain.match(regExpSoftwarePage);
-        },
-
         /**
          * Creates a DNR rule for ATB parameters
          * @param {string} atb

@@ -29,42 +29,6 @@ const stubLoadURL = () => {
     });
 };
 
-// ACTUAL TESTS
-
-describe('atb.canShowPostInstall()', () => {
-    const canShowAtbCases = [
-        {
-            domain: 'duckduckgo.com/software',
-            result: false,
-        },
-        {
-            domain: 'duckduckgo.com/app',
-            result: false,
-        },
-        {
-            domain: undefined,
-            result: false,
-        },
-        {
-            domain: 'duckduckgo.com/about',
-            result: true,
-        },
-        {
-            domain: 'duckduckgo.com',
-            result: true,
-        },
-    ];
-
-    canShowAtbCases.forEach((test) => {
-        it(`should return ${test.result} when the domain is: '${test.domain}'`, () => {
-            settingHelper.stub({ hasSeenPostInstall: false });
-
-            const result = atb.canShowPostInstall(test.domain);
-            expect(result).toBe(test.result);
-        });
-    });
-});
-
 describe('atb.addParametersMainFrameRequestUrl()', () => {
     const tests = [
         { url: 'http://duckduckgo.com/?q=something', rewrite: true },

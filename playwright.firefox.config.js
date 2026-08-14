@@ -34,7 +34,6 @@ export default defineConfig({
         firefoxHarnessConfig: {
             extensionPath: path.join(process.cwd(), 'build/firefox/dev'),
             rewriteStaticRules: [['extension-firefox-config.json', 'extension-chrome-config.json']],
-            postInstallPages: ['https://duckduckgo.com/extension-success'],
         },
     },
 

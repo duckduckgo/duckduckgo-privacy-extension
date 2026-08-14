@@ -4,11 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <title>OpenFocusd</title>
+  <link rel="icon" type="image/png" href="../img/icon_16.png">
   <style>
     body {
       --loading-color: #ffffff;
 
       background: var(--loading-color);
+    }
+
+    .cta-screen .cta {
+      display: none;
     }
   </style>
   <script src="../dashboard/public/js/polyfill-loader.js"></script>
@@ -19,5 +24,6 @@
 <body class="environment--browser">
   <div id="app"></div>
   <script src="../dashboard/public/js/base.js"></script>
+  <script src="../public/js/popup-customizations.js"></script>
 </body>
 </html>

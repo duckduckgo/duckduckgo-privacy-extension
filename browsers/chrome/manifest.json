@@ -89,9 +89,6 @@
             ]
         }
     ],
-    "storage": {
-        "managed_schema": "managed-schema.json"
-    },
     "declarative_net_request": {
         "rule_resources": [
             {

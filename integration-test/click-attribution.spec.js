@@ -20,11 +20,7 @@ test.describe('Ad click blocking', () => {
         cleanup = await logPixels(
             backgroundNetworkContext,
             backgroundPixels,
-            ({ name, params }) =>
-                !name.includes('extensionsuccess') &&
-                params?.path !== '/extension-success' &&
-                !name.startsWith('experiment_') &&
-                !name.startsWith('autoconsent_'),
+            ({ name, params }) => !name.startsWith('experiment_') && !name.startsWith('autoconsent_'),
         );
 
         await backgroundWait.forExtensionLoaded(context);

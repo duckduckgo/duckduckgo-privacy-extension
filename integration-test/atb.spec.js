@@ -4,16 +4,24 @@ import { logPageRequests } from './helpers/requests';
 import { setUseNoAiSearch } from './helpers/settings';
 
 test.describe('install workflow', () => {
-    test('postinstall page: should open the postinstall page correctly', async ({ context, page }) => {
-        // wait for post install page to open
-        // we leverage the extension loaded helper, which returns the extension success URL when it is opened
-        const postInstallOpened = await backgroundWait.forExtensionLoaded(context);
-        const postInstallURL = new URL(postInstallOpened);
-        expect(postInstallOpened).toBeTruthy();
-        expect(postInstallURL.pathname).toBe('/extension-success');
-        expect(postInstallURL.searchParams.has('atb')).toBe(true);
-        // This ATB comes from the success page.
-        expect(postInstallURL.searchParams.get('atb')).toMatch(/^v[\d-]+$/);
+    test('does not open a postinstall page', async ({ context, backgroundPage }) => {
+        const extensionUrl = await backgroundWait.forExtensionLoaded(context);
+        expect(extensionUrl).toMatch(/^(chrome|moz)-extension:/);
+        await forSetting(backgroundPage, 'atb');
+
+        const isPostInstallPage = (page) => page.url().startsWith('https://duckduckgo.com/extension-success');
+        expect(context.pages().some(isPostInstallPage)).toBe(false);
+
+        const postInstallPageOpened = await context
+            .waitForEvent('page', {
+                predicate: isPostInstallPage,
+                timeout: 1000,
+            })
+            .then(
+                () => true,
+                () => false,
+            );
+        expect(postInstallPageOpened).toBe(false);
     });
 
     test.describe('atb values', () => {
