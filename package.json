@@ -1,5 +1,5 @@
 {
-    "name": "duckduckgo-privacy-extension",
+    "name": "openfocusd-browser-extension",
     "engines": {
         "node": ">=20.0.0",
         "npm": ">=10.0.0"
