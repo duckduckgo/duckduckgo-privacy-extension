@@ -28,6 +28,7 @@ import TrackersGlobal from './components/trackers';
 import DebuggerConnection from './components/debugger-connection';
 import Devtools from './components/devtools';
 import DNRListeners from './components/dnr-listeners';
+import SiteGroups from './components/site-groups';
 import RemoteConfig from './components/remote-config';
 import DashboardMessaging from './components/dashboard-messaging';
 import initDebugBuild from './devbuild';
@@ -111,6 +112,7 @@ if (BUILD_TARGET === 'chrome') {
 if (BUILD_TARGET === 'chrome') {
     // MV3-only components
     components.scriptInjection = new MV3ContentScriptInjection();
+    components.siteGroups = new SiteGroups({ settings });
     components.dnrListeners = new DNRListeners({ settings, tds });
 
     const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });

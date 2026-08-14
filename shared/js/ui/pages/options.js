@@ -7,9 +7,9 @@ const privacyOptionsTemplate = require('./../templates/privacy-options.js');
 const AllowlistView = require('./../views/allowlist.js');
 const AllowlistModel = require('./../models/allowlist.js');
 const allowlistTemplate = require('./../templates/allowlist.js');
-const BlockedSitesView = require('./../views/blocked-sites.js');
-const BlockedSitesModel = require('./../models/blocked-sites.js');
-const blockedSitesTemplate = require('./../templates/blocked-sites.js');
+const SiteGroupsView = require('./../views/site-groups.js');
+const SiteGroupsModel = require('./../models/site-groups.js');
+const siteGroupsTemplate = require('./../templates/site-groups.js');
 const UserDataView = require('./../views/user-data.js');
 const UserDataModel = require('./../models/user-data.js');
 const userDataTemplate = require('./../templates/user-data.js');
@@ -26,7 +26,7 @@ Options.prototype = window.$.extend({}, Parent.prototype, mixins.setBrowserClass
     pageName: 'options',
 
     ready: function () {
-        const $blockedSitesParent = window.$('#blocked-sites-content');
+        const $siteGroupsParent = window.$('#blocked-sites-content');
         const $blockTrackersParent = window.$('#block-trackers-content');
         Parent.prototype.ready.call(this);
 
@@ -59,11 +59,11 @@ Options.prototype = window.$.extend({}, Parent.prototype, mixins.setBrowserClass
         });
 
         if (BUILD_TARGET === 'chrome') {
-            this.views.blockedSites = new BlockedSitesView({
+            this.views.siteGroups = new SiteGroupsView({
                 pageView: this,
-                model: new BlockedSitesModel({}),
-                appendTo: $blockedSitesParent,
-                template: blockedSitesTemplate,
+                model: new SiteGroupsModel({}),
+                appendTo: $siteGroupsParent,
+                template: siteGroupsTemplate,
             });
         }
 

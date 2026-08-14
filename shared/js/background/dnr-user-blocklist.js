@@ -1,6 +1,7 @@
 import { generateDNRRule, resourceTypes } from '@duckduckgo/ddg2dnr/lib/utils';
 import { USER_BLOCKED_SITES_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
 import { normalizeBlockedSite, parseBlockedSitesInput } from '../shared-utils/blocked-sites';
+import { getCurrentlyBlockedDomains, normalizeGroups } from '../shared-utils/site-groups';
 import settings from './settings';
 import { USER_BLOCKED_SITES_RULE_ID, USER_BLOCKED_SITES_SUBRESOURCE_RULE_ID } from './dnr-utils';
 import { getManifestVersion } from './wrapper';
@@ -26,6 +27,11 @@ function normalizeDomains(domains) {
  */
 export async function getBlockedSites() {
     await settings.ready();
+    const groups = normalizeGroups(settings.getSetting('siteGroups'));
+    if (groups.length > 0) {
+        return getCurrentlyBlockedDomains(groups, settings.getSetting('groupUsage') || {}, Date.now());
+    }
+
     const blockedSites = settings.getSetting('blockedSites') || {};
     const values = Array.isArray(blockedSites)
         ? blockedSites

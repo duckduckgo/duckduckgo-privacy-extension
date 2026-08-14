@@ -103,29 +103,77 @@
         "title": "Blocked Websites",
         "note": "Header for the list of websites the user wants to block completely"
     },
-    "blockedSitesDesc": {
-        "title": "Enter one domain per line. The domain and all of its subdomains will be blocked.",
-        "note": "Explains how to enter websites that should be blocked"
+    "groupsTitle": {
+        "title": "Groups",
+        "note": "Header for website groups that share a daily time limit"
     },
-    "blockedSitesPlaceholder": {
-        "title": "example.com\nnews.example.org",
-        "note": "Example newline-separated domains for the blocked websites field"
+    "groupsDesc": {
+        "title": "Each group has a shared daily time limit. While you are on a site in that group, the time counts down. When it reaches zero, every site in the group is blocked until 6:00.",
+        "note": "Explains that grouped websites share one daily allowance"
     },
-    "saveBlockedSites": {
-        "title": "Save blocked websites",
-        "note": "Button that saves the blocked websites list"
+    "addGroup": {
+        "title": "Add group",
+        "note": "Button that creates a new website group"
     },
-    "blockedSitesSaved": {
-        "title": "Blocked websites saved.",
-        "note": "Confirmation shown after the blocked websites list is saved"
+    "groupName": {
+        "title": "Name",
+        "note": "Label for the website group name field"
     },
-    "blockedSitesInvalid": {
-        "title": "Fix these invalid entries before saving: {entries}",
-        "note": "Error shown when one or more blocked website entries are invalid"
+    "maxTimeAllowed": {
+        "title": "Max Time Allowed per Day",
+        "note": "Label for the shared daily time limit"
     },
-    "blockedSitesSaveError": {
-        "title": "The blocked websites list could not be saved.",
-        "note": "Error shown when saving the blocked websites list fails"
+    "hoursAbbr": {
+        "title": "hr",
+        "note": "Abbreviation for hours"
+    },
+    "minutesAbbr": {
+        "title": "min",
+        "note": "Abbreviation for minutes"
+    },
+    "saveGroup": {
+        "title": "Save changes",
+        "note": "Button that saves a group's name and daily time limit"
+    },
+    "groupSaved": {
+        "title": "Group saved.",
+        "note": "Confirmation shown after a group is saved"
+    },
+    "groupSaveError": {
+        "title": "The group could not be saved.",
+        "note": "Error shown when saving a group fails"
+    },
+    "deleteGroup": {
+        "title": "Delete group",
+        "note": "Button that deletes a website group"
+    },
+    "groupBlockedWebsites": {
+        "title": "Blocked websites",
+        "note": "Header for websites assigned to a group"
+    },
+    "addBlockedWebsite": {
+        "title": "Add website",
+        "note": "Button that adds a website to the current group"
+    },
+    "addWebsitePlaceholder": {
+        "title": "example.com",
+        "note": "Placeholder for the website field in a group"
+    },
+    "removeWebsite": {
+        "title": "Remove website",
+        "note": "Accessible label for removing a website from a group"
+    },
+    "noGroupedWebsites": {
+        "title": "No websites in this group yet.",
+        "note": "Empty state for a group with no assigned websites"
+    },
+    "timeLeft": {
+        "title": "Time left",
+        "note": "Label inside the remaining-time indicator for a group"
+    },
+    "invalidWebsite": {
+        "title": "Enter a valid website address.",
+        "note": "Error shown when a grouped website entry is invalid"
     },
     "fireButtonHeading": {
         "title": "Fire Button",

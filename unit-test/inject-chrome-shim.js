@@ -2,6 +2,7 @@ const chrome = {
     alarms: {
         create() {},
         get() {},
+        clear() {},
         onAlarm: {
             addListener() {},
             removeListener() {},
@@ -60,6 +61,7 @@ const chrome = {
             addListener() {},
             removeListener() {},
         },
+        getContexts: () => Promise.resolve([]),
     },
     storage: {
         local: {
@@ -82,11 +84,21 @@ const chrome = {
             addListener() {},
             removeListener() {},
         },
+        onUpdated: {
+            addListener() {},
+            removeListener() {},
+        },
         sendMessage: () => {},
         query: () => Promise.resolve([]),
+        get: () => Promise.resolve(null),
+        update: () => Promise.resolve(),
         reload: () => Promise.resolve(),
     },
     webNavigation: {
+        onBeforeNavigate: {
+            addListener() {},
+            removeListener() {},
+        },
         onCommitted: {
             addListener() {},
             removeListener() {},
@@ -125,10 +137,12 @@ const chrome = {
         },
     },
     windows: {
+        WINDOW_ID_NONE: -1,
         onFocusChanged: {
             addListener() {},
             removeListener() {},
         },
+        getLastFocused: () => Promise.resolve({ id: 1, focused: true }),
     },
 };
 export { chrome as 'globalThis.chrome', chrome };

@@ -32,12 +32,17 @@ export default class DNRListeners {
         this.settings = settings;
         this.tds = tds;
         browser.runtime.onInstalled.addListener(this.postInstall.bind(this));
+        this.refreshBlockedSitesRules();
         tds.remoteConfig.onUpdate(onConfigUpdate);
         tds.tds.onUpdate(onConfigUpdate);
         this.settings.onSettingUpdate.addEventListener('GPC', async () => {
             await this.tds.remoteConfig.ready;
             ensureGPCHeaderRule(this.tds.remoteConfig.config);
         });
+    }
+
+    async refreshBlockedSitesRules() {
+        await refreshUserBlockedSitesRules(await getBlockedSites());
     }
 
     async postInstall() {
@@ -61,6 +66,6 @@ export default class DNRListeners {
             }
         }
         await refreshUserAllowlistRules(allowlistedDomains);
-        await refreshUserBlockedSitesRules(await getBlockedSites());
+        await this.refreshBlockedSitesRules();
     }
 }

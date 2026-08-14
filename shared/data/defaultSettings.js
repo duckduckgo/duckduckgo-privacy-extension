@@ -16,4 +16,7 @@ module.exports = {
     fireButtonTabClearEnabled: true,
     useNoAiSearch: false,
     blockedSites: {},
+    siteGroups: null,
+    groupUsage: {},
+    siteGroupsInitialized: false,
 };

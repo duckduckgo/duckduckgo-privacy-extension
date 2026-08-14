@@ -12,7 +12,7 @@
 
 /* allowlist */
 @include meta.load-css('views/allowlist');
-@include meta.load-css('views/blocked-sites');
+@include meta.load-css('views/site-groups');
 
 .options-page {
     min-height: 100vh;

@@ -15,6 +15,96 @@
     .cta-screen .cta {
       display: none;
     }
+
+    .openfocusd-popup-options {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 56px;
+      padding: 8px;
+      background: #ffffff;
+    }
+
+    .body--theme-dark .openfocusd-popup-options {
+      background-color: #333333;
+    }
+
+    .openfocusd-group-status {
+      display: grid;
+      gap: 10px;
+      padding: 12px 12px 4px;
+      background: #ffffff;
+    }
+
+    .body--theme-dark .openfocusd-group-status {
+      background-color: #333333;
+    }
+
+    .openfocusd-group-status__label,
+    .openfocusd-group-status__group-label,
+    .openfocusd-group-status__remaining-label {
+      color: #666666;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .openfocusd-group-status__host,
+    .openfocusd-group-status__group-name {
+      color: #333333;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 20px;
+      word-break: break-word;
+    }
+
+    .openfocusd-group-status__box {
+      padding: 12px;
+      border-radius: 10px;
+      background: #de5833;
+      color: #ffffff;
+    }
+
+    .openfocusd-group-status__box.is-empty {
+      background: #f2f2f2;
+      color: #333333;
+    }
+
+    .openfocusd-group-status__box.is-blocked {
+      background: #333333;
+    }
+
+    .openfocusd-group-status__box .openfocusd-group-status__group-label,
+    .openfocusd-group-status__box .openfocusd-group-status__remaining-label {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .openfocusd-group-status__box.is-empty .openfocusd-group-status__group-label {
+      color: #666666;
+    }
+
+    .openfocusd-group-status__group-name,
+    .openfocusd-group-status__allowance,
+    .openfocusd-group-status__remaining {
+      color: inherit;
+    }
+
+    .openfocusd-group-status__allowance {
+      margin-top: 2px;
+      font-size: 12px;
+    }
+
+    .openfocusd-group-status__remaining-label {
+      margin-top: 10px;
+    }
+
+    .openfocusd-group-status__remaining {
+      font-size: 28px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      line-height: 32px;
+    }
   </style>
   <script src="../dashboard/public/js/polyfill-loader.js"></script>
   <link rel="stylesheet" href="../dashboard/public/css/android.css">

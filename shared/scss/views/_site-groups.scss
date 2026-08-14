@@ -1,0 +1,240 @@
+@use '../vars';
+
+.options-content__site-groups {
+    padding-top: 8px;
+    font-size: 14px;
+}
+
+.site-groups-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    .menu-title {
+        padding: 24px 0 4px;
+    }
+
+    .menu-paragraph {
+        max-width: 52em;
+        margin-bottom: 0;
+        color: vars.$grey-dark;
+        font-weight: normal;
+        text-align: left;
+    }
+}
+
+.site-groups-add,
+.site-group-save,
+.site-group-add button {
+    height: 36px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 4px;
+    background-color: vars.$blue;
+    color: vars.$white;
+    cursor: pointer;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.site-groups-add {
+    margin-top: 24px;
+}
+
+.site-group-card {
+    margin-bottom: 16px;
+    padding: 20px;
+    border: 1px solid vars.$platinum;
+    border-radius: 12px;
+    background: vars.$white;
+}
+
+.site-group-card__main {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.site-group-timer {
+    display: grid;
+    flex: 0 0 96px;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: conic-gradient(#2aa8a0 calc(var(--progress, 0) * 1%), vars.$platinum-light 0);
+    place-items: center;
+}
+
+.site-group-timer__inner {
+    display: grid;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: vars.$white;
+    color: vars.$slate;
+    place-items: center;
+    text-align: center;
+}
+
+.site-group-timer__label {
+    display: block;
+    color: vars.$slate-light;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.site-group-timer__value {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+
+.site-group-card__fields {
+    flex: 1;
+    min-width: 0;
+}
+
+.site-group-field,
+.site-group-time {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.site-group-field span,
+.site-group-time__label {
+    min-width: 72px;
+    color: vars.$slate-light;
+    font-weight: 600;
+}
+
+.site-group-field input,
+.site-group-time__unit input,
+.site-group-add input {
+    box-sizing: border-box;
+    height: 36px;
+    padding: 0 10px;
+    border: 1px solid vars.$color--dark-silver;
+    border-radius: 4px;
+    color: vars.$slate;
+    font: inherit;
+}
+
+.site-group-field input {
+    width: min(320px, 100%);
+}
+
+.site-group-time__unit {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.site-group-time__unit input {
+    width: 64px;
+}
+
+.site-group-card__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.site-group-delete {
+    height: 36px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: vars.$red;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.site-group-status {
+    color: vars.$slate-light;
+    font-weight: normal;
+}
+
+.site-group-sites {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid vars.$platinum-light;
+}
+
+.site-group-sites__header h3 {
+    margin: 0 0 10px;
+    color: vars.$slate-light;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.site-group-add {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.site-group-add input {
+    flex: 1;
+    min-width: 0;
+}
+
+.site-group-domain-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.site-group-domain-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    color: vars.$slate;
+    font-weight: 600;
+}
+
+.site-group-domain-empty {
+    color: vars.$slate-light;
+    font-weight: normal;
+}
+
+.site-group-domain-remove {
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: vars.$red;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 20px;
+}
+
+.site-group-error {
+    margin-top: 8px;
+    color: vars.$red;
+    font-weight: normal;
+}
+
+@media (max-width: 720px) {
+    .site-groups-header,
+    .site-group-card__main {
+        flex-direction: column;
+    }
+
+    .site-groups-add {
+        margin-top: 0;
+    }
+}

@@ -31,8 +31,21 @@ test.describe('Test privacy dashboard', () => {
         const links = await linksText(panel);
         expect(links).toEqual(['Connection Is Encrypted', 'Requests Blocked from Loading', 'No Third-Party Requests Found']);
 
-        const search = panel.locator('.site-info > .page-inner > .search');
+        const pageInner = panel.locator('.site-info > .page-inner');
+        const groupStatus = pageInner.locator('.openfocusd-group-status');
+        const optionsBar = pageInner.locator('.openfocusd-popup-options');
+        const search = pageInner.locator('.search');
+
+        await expect(groupStatus).toBeVisible();
+        await expect(optionsBar).toBeVisible();
+        await expect(optionsBar.locator('.cog-button')).toBeVisible();
+        expect(await groupStatus.evaluate((element) => element === element.parentElement?.firstElementChild)).toBe(true);
+        expect(await optionsBar.evaluate((element) => element.previousElementSibling?.classList.contains('openfocusd-group-status'))).toBe(
+            true,
+        );
+
         await expect(search).toBeVisible();
+        await expect(search.locator('.cog-button')).toHaveCount(0);
         expect(await search.evaluate((element) => element === element.parentElement?.lastElementChild)).toBe(true);
 
         const spreadPromotionDisplay = await panel.evaluate(() => {

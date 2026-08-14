@@ -7,7 +7,7 @@ const blockedSitesRuleId = 20011;
 const blockedSitesSubresourceRuleId = 20012;
 
 test.describe('User blocked websites', () => {
-    test('options form installs and removes a complete domain block', async ({ backgroundPage, context, manifestVersion }) => {
+    test('group form installs and removes a complete domain block', async ({ backgroundPage, context, manifestVersion }) => {
         test.skip(manifestVersion !== 3, 'User blocked websites currently uses Chrome MV3 DNR');
 
         await forExtensionLoaded(context);
@@ -23,6 +23,8 @@ test.describe('User blocked websites', () => {
 
         await expect(blockSitesTab).toHaveAttribute('aria-selected', 'true');
         await expect(optionsPage.locator('[data-options-panel="block-sites"]')).toBeVisible();
+        await expect(optionsPage.locator('.js-site-group[data-group-id="default"]')).toBeVisible();
+        await expect(optionsPage.locator('.js-site-group[data-group-id="always-block"]')).toBeVisible();
 
         await blockTrackersTab.click();
         await expect(optionsPage.locator('[data-options-panel="block-trackers"]')).toBeVisible();
@@ -35,10 +37,10 @@ test.describe('User blocked websites', () => {
         await expect(allowedSitesPanel).toBeEmpty();
 
         await blockSitesTab.click();
-        const input = optionsPage.locator('.js-blocked-sites-input');
-        await input.fill(blockedDomain);
-        await optionsPage.locator('.js-blocked-sites-save').click();
-        await expect(optionsPage.locator('.js-blocked-sites-status')).toHaveText('Blocked websites saved.');
+        const alwaysBlock = optionsPage.locator('.js-site-group[data-group-id="always-block"]');
+        await alwaysBlock.locator('.js-site-group-domain-input').fill(blockedDomain);
+        await alwaysBlock.locator('.js-site-group-add-domain').click();
+        await expect(alwaysBlock.locator('.js-site-group-domain-list')).toContainText(blockedDomain);
 
         await forFunction(
             backgroundPage,
@@ -70,14 +72,47 @@ test.describe('User blocked websites', () => {
         expect(subresourceRule.condition.requestDomains).toEqual([blockedDomain]);
         expect(subresourceRule.condition.resourceTypes).not.toContain('main_frame');
 
+        await backgroundPage.evaluate(
+            async ({ domain, redirectRuleId, subresourceRuleId }) => {
+                await chrome.declarativeNetRequest.updateDynamicRules({
+                    removeRuleIds: [redirectRuleId, subresourceRuleId],
+                    addRules: [
+                        {
+                            id: redirectRuleId,
+                            priority: 3000000,
+                            action: { type: 'block' },
+                            condition: {
+                                requestDomains: [domain],
+                                resourceTypes: ['main_frame'],
+                            },
+                        },
+                    ],
+                });
+                await globalThis.components.dnrListeners.refreshBlockedSitesRules();
+            },
+            {
+                domain: blockedDomain,
+                redirectRuleId: blockedSitesRuleId,
+                subresourceRuleId: blockedSitesSubresourceRuleId,
+            },
+        );
+
+        await forFunction(
+            backgroundPage,
+            async (ruleId) => {
+                const rules = await chrome.declarativeNetRequest.getDynamicRules();
+                return rules.some((rule) => rule.id === ruleId && rule.action.type === 'redirect');
+            },
+            blockedSitesRuleId,
+        );
+
         const blockedPage = await context.newPage();
         await blockedPage.goto(blockedUrl);
         await expect(blockedPage).toHaveURL(`chrome-extension://${extensionId}/html/blocked.html`);
         await expect(blockedPage.locator('h1')).toHaveText('This site is blocked');
 
-        await input.fill('');
-        await optionsPage.locator('.js-blocked-sites-save').click();
-        await expect(optionsPage.locator('.js-blocked-sites-status')).toHaveText('Blocked websites saved.');
+        await alwaysBlock.locator(`.js-site-group-remove-domain[data-domain="${blockedDomain}"]`).click();
+        await expect(alwaysBlock.locator('.js-site-group-domain-list')).not.toContainText(blockedDomain);
 
         await forFunction(
             backgroundPage,
