@@ -54,30 +54,9 @@
 }
 
 .blocked-card__message {
-    margin-bottom: 28px;
     color: vars.$slate-light;
     font-size: 16px;
     line-height: 24px;
-}
-
-.blocked-card__settings-link {
-    display: inline-block;
-    padding: 11px 18px;
-    border-radius: 8px;
-    background: vars.$blue-dark;
-    color: vars.$white;
-    font-size: 15px;
-    font-weight: 600;
-
-    &:hover {
-        text-decoration: none;
-        background: vars.$blue;
-    }
-
-    &:focus-visible {
-        outline: 2px solid vars.$blue;
-        outline-offset: 3px;
-    }
 }
 
 @media (max-width: 520px) {
