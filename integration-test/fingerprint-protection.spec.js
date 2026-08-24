@@ -1,4 +1,4 @@
-import { test, expect, getHARPath, addScriptTag } from './helpers/playwrightHarness';
+import { test, expect, getHARPath } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 
@@ -9,12 +9,11 @@ const expectedFingerprintValues = {
     wAvailLeft: 0,
     colorDepth: 24,
     pixelDepth: 24,
-    productSub: '20030107',
     vendorSub: '',
 };
 
 const tests = [
-    { url: 'duckduckgo.com', har: getHARPath('duckduckgo.com/homepage.har') },
+    { url: 'duckduckgo.com/about', har: getHARPath('duckduckgo.com/about.har') },
     { url: 'example.com', har: getHARPath('example.com/example.har') },
 ];
 
@@ -41,7 +40,6 @@ test.describe('Fingerprint Defense Tests', () => {
                     wAvailLeft: globalThis.screen.availLeft,
                     colorDepth: screen.colorDepth,
                     pixelDepth: screen.pixelDepth,
-                    productSub: navigator.productSub,
                     vendorSub: navigator.vendorSub,
                 };
             });
@@ -61,7 +59,7 @@ test.describe('First Party Fingerprint Randomization', () => {
     async function runTest(testCase, page) {
         await page.routeFromHAR(testCase.har);
         await page.goto(`https://${testCase.url}`);
-        await addScriptTag(page, { path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' });
+        await page.addScriptTag({ path: 'node_modules/@fingerprintjs/fingerprintjs/dist/fp.js' });
 
         const fingerprint = await page.evaluate(() => {
             /* global FingerprintJS */

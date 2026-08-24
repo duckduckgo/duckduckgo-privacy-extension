@@ -1,5 +1,5 @@
 module.exports = function (config) {
-    process.env.CHROME_BIN = require('puppeteer').executablePath();
+    process.env.CHROME_BIN = require('@playwright/test').chromium.executablePath();
 
     const configuration = {
         basePath: 'build/test/',

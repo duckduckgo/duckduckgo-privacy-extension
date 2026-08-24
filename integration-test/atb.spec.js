@@ -1,5 +1,7 @@
 import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait, { forSetting } from './helpers/backgroundWait';
+import { logPageRequests } from './helpers/requests';
+import { setUseNoAiSearch } from './helpers/settings';
 
 test.describe('install workflow', () => {
     test('postinstall page: should open the postinstall page correctly', async ({ context, page }) => {
@@ -15,51 +17,66 @@ test.describe('install workflow', () => {
     });
 
     test.describe('atb values', () => {
+        let extiRequestFired;
+        let onRequest;
+        let cleanup;
+
         test.beforeEach(async ({ backgroundNetworkContext, backgroundPage }) => {
-            // wait for the exti call to go out
-            await new Promise((resolve) => {
-                const extiListener = (request) => {
-                    if (request.url().match(/exti/)) {
-                        resolve();
-                        backgroundNetworkContext.off('request', extiListener);
-                    }
-                };
-                backgroundNetworkContext.on('request', extiListener);
+            let resolveExti;
+            let initialExtiFired;
+            onRequest = null;
+
+            // Set up the request listener and wait for the initial exti.
+            // Subsequent requests are forwarded to the test's onRequest hook.
+            ({ promise: initialExtiFired, resolve: resolveExti } = Promise.withResolvers());
+            cleanup = await logPageRequests(backgroundNetworkContext, [], (request) => {
+                if (/exti/.test(request.url.href)) {
+                    resolveExti();
+                }
+                if (onRequest) {
+                    onRequest(request);
+                }
             });
+
+            // Wait for the first exti request, but include a timeout as it will
+            // sometimes complete before we start listening for requests.
+            await backgroundWait.forSetting(backgroundPage, 'extiSent');
+            await Promise.race([initialExtiFired, new Promise((resolve) => setTimeout(resolve, 2000))]);
+
             // clear atb settings
             await backgroundPage.evaluate(() => {
                 globalThis.dbg.settings.removeSetting('atb');
                 globalThis.dbg.settings.removeSetting('set_atb');
                 globalThis.dbg.settings.removeSetting('extiSent');
             });
+
+            // Set up the extiRequestFired Promise ready for the tests to use.
+            ({ promise: extiRequestFired, resolve: resolveExti } = Promise.withResolvers());
         });
 
-        test("should get its ATB param from atb.js when there's no install success page", async ({
-            page,
-            backgroundPage,
-            backgroundNetworkContext,
-        }) => {
+        test.afterEach(() => {
+            cleanup();
+        });
+
+        test("should get its ATB param from atb.js when there's no install success page", async ({ backgroundPage }) => {
             // listen for outgoing atb and exti calls
             let numAtbCalled = 0;
             let numExtiCalled = 0;
-            backgroundNetworkContext.on('request', (request) => {
-                const url = request.url();
+            onRequest = (request) => {
+                const url = request.url.href;
                 if (url.match(/atb\.js/)) {
                     numAtbCalled += 1;
                 } else if (url.match(/exti/)) {
                     numExtiCalled += 1;
                     expect(url).toContain(`atb=${mockAtb.version}`);
                 }
-            });
+            };
 
             // try get ATB params
             await backgroundPage.evaluate(async () => globalThis.dbg.atb.updateATBValues(await globalThis.dbg.Wrapper.getDDGTabUrls()));
 
             // wait for an exti call
-            // eslint-disable-next-line no-unmodified-loop-condition
-            while (numExtiCalled < 0) {
-                page.waitForTimeout(100);
-            }
+            await extiRequestFired;
 
             const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'));
             const setAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
@@ -74,29 +91,22 @@ test.describe('install workflow', () => {
             expect(numExtiCalled).toEqual(1);
         });
 
-        test('should get its ATB param from the success page when one is present', async ({
-            page,
-            backgroundNetworkContext,
-            backgroundPage,
-        }) => {
+        test('should get its ATB param from the success page when one is present', async ({ page, backgroundPage }) => {
             let numExtiCalled = 0;
-            backgroundNetworkContext.on('request', (request) => {
-                const url = request.url();
+            onRequest = (request) => {
+                const url = request.url.href;
                 if (url.match(/exti/)) {
                     numExtiCalled += 1;
                     expect(url).toContain('atb=v123-4');
                 }
-            });
+            };
 
             // open a success page and wait for it to have finished loading
             await page.goto('https://duckduckgo.com/?natb=v123-4ab&cp=atbhc', { waitUntil: 'networkidle' });
 
             // try get ATB params again
             await backgroundPage.evaluate(async () => globalThis.dbg.atb.updateATBValues(await globalThis.dbg.Wrapper.getDDGTabUrls()));
-            // eslint-disable-next-line no-unmodified-loop-condition
-            while (numExtiCalled < 0) {
-                page.waitForTimeout(100);
-            }
+            await extiRequestFired;
 
             const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'));
             const setAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
@@ -156,7 +166,7 @@ test.describe('search workflow', () => {
         await backgroundPage.evaluate((pageTodaysAtb) => globalThis.dbg.settings.updateSetting('set_atb', pageTodaysAtb), todaysAtb);
 
         // run a search
-        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' });
+        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'domcontentloaded' });
 
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
         const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'));
@@ -171,7 +181,7 @@ test.describe('search workflow', () => {
             lastWeeksAtb,
         );
         // run a search
-        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' });
+        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'domcontentloaded' });
 
         await forSetting(backgroundPage, 'set_atb');
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
@@ -189,12 +199,89 @@ test.describe('search workflow', () => {
         await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('atb', 'v123-6'));
 
         // run a search
-        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'networkidle' });
+        await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'domcontentloaded' });
 
         await forSetting(backgroundPage, 'set_atb');
         const newSetAtb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('set_atb'));
         const atb = await backgroundPage.evaluate(() => globalThis.dbg.settings.getSetting('atb'));
         expect(newSetAtb).toEqual(todaysAtb);
         expect(atb).toEqual('v123-1');
+    });
+
+    test('should redirect searches to the no AI search domain when enabled', async ({ backgroundPage, page }) => {
+        await setUseNoAiSearch(backgroundPage, true);
+
+        await page.goto('https://duckduckgo.com/?q=alternative-search-test', { waitUntil: 'domcontentloaded' });
+
+        const redirectedUrl = new URL(page.url());
+        expect(redirectedUrl.hostname).toEqual('noai.duckduckgo.com');
+        expect(redirectedUrl.pathname).toEqual('/');
+        expect(redirectedUrl.searchParams.get('q')).toEqual('alternative-search-test');
+        expect(redirectedUrl.searchParams.get('atb')).toMatch(/^v[\d-]+$/);
+    });
+
+    test('should keep searches on duckduckgo.com when no AI search is disabled', async ({ backgroundPage, page }) => {
+        await setUseNoAiSearch(backgroundPage, false);
+
+        await page.goto('https://duckduckgo.com/?q=alternative-search-disabled-test', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/');
+        expect(searchUrl.searchParams.get('q')).toEqual('alternative-search-disabled-test');
+        expect(searchUrl.searchParams.get('atb')).toMatch(/^v[\d-]+$/);
+    });
+
+    test('should not redirect searches to other subdomains (e.g. safe.duckduckgo.com) when no AI search is enabled', async ({
+        backgroundPage,
+        page,
+    }) => {
+        await setUseNoAiSearch(backgroundPage, true);
+
+        await page.goto('https://safe.duckduckgo.com/?q=alternative-search-disabled-test', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('safe.duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/');
+        expect(searchUrl.searchParams.get('q')).toEqual('alternative-search-disabled-test');
+        expect(searchUrl.searchParams.get('atb')).toMatch(/^v[\d-]+$/);
+    });
+
+    test('should add the extensioninstalled param to the URL when the user is on the homepage', async ({ page }) => {
+        await page.goto('https://duckduckgo.com/', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/');
+        expect(searchUrl.searchParams.get('extensioninstalled')).toEqual('1');
+        expect(searchUrl.searchParams.get('atb')).toBeNull();
+    });
+
+    test('should keep extensioninstalled on homepage if no-ai is enabled', async ({ backgroundPage, page }) => {
+        await setUseNoAiSearch(backgroundPage, true);
+        await page.goto('https://duckduckgo.com/', { waitUntil: 'domcontentloaded' });
+
+        const url = new URL(page.url());
+        expect(url.hostname).toEqual('duckduckgo.com');
+        expect(url.searchParams.get('extensioninstalled')).toEqual('1');
+        expect(url.searchParams.get('atb')).toBeNull();
+    });
+    test('should add the extensioninstalled param to the URL on the start.duckduckgo.com homepage', async ({ page }) => {
+        await page.goto('https://start.duckduckgo.com/', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('start.duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/');
+        expect(searchUrl.searchParams.get('extensioninstalled')).toEqual('1');
+        expect(searchUrl.searchParams.get('atb')).toBeNull();
+    });
+
+    test('should not add the extensioninstalled param to the URL when the user is not on the homepage', async ({ page }) => {
+        await page.goto('https://duckduckgo.com/about', { waitUntil: 'domcontentloaded' });
+
+        const searchUrl = new URL(page.url());
+        expect(searchUrl.hostname).toEqual('duckduckgo.com');
+        expect(searchUrl.pathname).toEqual('/about');
+        expect(searchUrl.search).toEqual('');
     });
 });

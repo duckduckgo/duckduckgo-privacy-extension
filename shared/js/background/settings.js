@@ -42,6 +42,7 @@ function checkForLegacyKeys() {
 
         // Keys to remove
         advanced_options: null,
+        allowingDnrRulesByClickToLoadRuleAction: null,
         clickToLoadClicks: null,
         cookieExcludeList: null,
         dev: null,
@@ -57,6 +58,7 @@ function checkForLegacyKeys() {
         trackerBlockingEnabled: null,
         use_post: null,
         version: null,
+        youtubePreviewsEnabled: null,
         zeroclick_google_right: null,
 
         'surrogates-etag': null,

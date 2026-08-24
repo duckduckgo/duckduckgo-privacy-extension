@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Test extension",
+  "name": "Stub Chrome extension",
   "background": {
     "service_worker": "background.js"
   },

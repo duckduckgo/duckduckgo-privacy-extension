@@ -9,13 +9,6 @@ const {
     generateRequestDomainsByTrackerDomain,
 } = require('./utils');
 
-// Tracker entry rules with an action starting with this prefix relate to the
-// "Click to Load" feature. The feature blocks third-party embedded content, but
-// provides the user an option to load the content again. To facilitate that,
-// both the blocking/redirecting declarativeNetRequest rules and inverse
-// allowing declarativeNetRequest rules are generated.
-const clickToLoadActionPrefix = 'block-ctl-';
-
 // Priority that the Tracker Blocking declarativeNetRequest rules start from.
 const BASELINE_PRIORITY = 10000;
 
@@ -55,11 +48,7 @@ const MAXIMUM_REGEX_RULES = 900;
 // lookup.
 const trackerDomainSymbol = Symbol('trackerDomain');
 
-// The special "Click to Load" action for a tracker entry rule is stored with
-// each blocking/redirection declarativeNetRequest rule generated for the
-// "Click to Load" feature. That way, an inverse allowing rule can be created
-// and stored for that action.
-const clickToLoadActionSymbol = Symbol('clickToLoadActionSymbol');
+const resourceTypesSet = new Set(resourceTypes);
 
 function normalizeTypesCondition(types) {
     if (!types || types.length === 0) {
@@ -77,7 +66,7 @@ function normalizeTypesCondition(types) {
                 normalizedTypes.add('image');
                 break;
             default:
-                if (resourceTypes.has(type)) {
+                if (resourceTypesSet.has(type)) {
                     normalizedTypes.add(type);
                 } else {
                     normalizedTypes.add('other');
@@ -240,18 +229,8 @@ async function generateDNRRulesForTrackerEntry(
 
         ruleAction = normalizeAction(ruleAction, 'block');
 
-        // Handle the special "Click to Load" tracker entry rule actions. They
-        // act like other tracker entry rules with the 'block' action, except
-        // that their inverse allowing declarativeNetRequest rule is also
-        // generated.
-        let clickToLoadAction = null;
-        if (ruleAction.startsWith(clickToLoadActionPrefix)) {
-            clickToLoadAction = ruleAction;
-            ruleAction = 'block';
-        }
-
-        // Only 'block', 'allow' (aka 'ignore') and "Click to Load" tracker
-        // entry rule actions are supported.
+        // Only 'block' and 'allow' (aka 'ignore') tracker entry rule actions
+        // are supported.
         if (ruleAction !== 'block' && ruleAction !== 'allow') {
             continue;
         }
@@ -319,10 +298,6 @@ async function generateDNRRulesForTrackerEntry(
                 resourceTypes: ruleResourceTypes,
             });
 
-            if (clickToLoadAction) {
-                newRule[clickToLoadActionSymbol] = clickToLoadAction;
-            }
-
             dnrRules.push(newRule);
         }
 
@@ -356,7 +331,6 @@ function finalizeDNRRulesAndLookup(startingRuleId, dnrRules) {
     const trackerDomainsByRuleId = new Map();
     /** @type {import('./utils').MatchDetailsByRuleId} */
     const matchDetailsByRuleId = {};
-    const allowingRulesByClickToLoadAction = {};
 
     // Combine similar rules and create the ruleset.
     const ruleset = [];
@@ -366,38 +340,18 @@ function finalizeDNRRulesAndLookup(startingRuleId, dnrRules) {
         const trackerDomain = rule[trackerDomainSymbol];
         delete rule[trackerDomainSymbol];
 
-        // If this is a "Click to Load" blocking/redirecting rule, take note of
-        // its inverse allowing rule and "Click to Load" action.
-        const clickToLoadAction = rule[clickToLoadActionSymbol];
-        delete rule[clickToLoadActionSymbol];
-        if (clickToLoadAction) {
-            // Create the inverse allowing rule. Note that domainType and
-            // excludedInitiatorDomains conditions can be stripped since
-            // first-party requests are never blocked anyway.
-            const inverseAllowingRule = JSON.parse(JSON.stringify(rule));
-            inverseAllowingRule.action.type = 'allow';
-            delete inverseAllowingRule.action.redirect;
-            delete inverseAllowingRule.condition.domainType;
-            delete inverseAllowingRule.condition.excludedInitiatorDomains;
-
-            storeInLookup(allowingRulesByClickToLoadAction, clickToLoadAction, [inverseAllowingRule]);
-        }
-
         // Rules without a requestDomains condition definitely can't be
         // combined. Rules other than basic default allow/block almost never
-        // will be in practice. Surrogate script redirection rules and "Click to
-        // Load" rules can't be combined since the match details type is
-        // different. For those cases just add the rule to the ruleset and match
-        // details to the lookup now.
-        if (!rule.condition.requestDomains || rule.priority !== BASELINE_PRIORITY || rule.action === 'redirect' || clickToLoadAction) {
+        // will be in practice. Surrogate script redirection rules can't be
+        // combined since the match details type is different. For those cases
+        // just add the rule to the ruleset and match details to the lookup now.
+        if (!rule.condition.requestDomains || rule.priority !== BASELINE_PRIORITY || rule.action.type === 'redirect') {
             const ruleId = nextRuleId++;
             rule.id = ruleId;
             ruleset.push(rule);
 
             let matchType = 'trackerBlocking';
-            if (clickToLoadAction) {
-                matchType = 'clickToLoad';
-            } else if (rule.action.type === 'redirect') {
+            if (rule.action.type === 'redirect') {
                 matchType = 'surrogateScript';
             }
 
@@ -457,7 +411,7 @@ function finalizeDNRRulesAndLookup(startingRuleId, dnrRules) {
         };
     }
 
-    return { ruleset, matchDetailsByRuleId, allowingRulesByClickToLoadAction };
+    return { ruleset, matchDetailsByRuleId };
 }
 
 /**
@@ -466,8 +420,6 @@ function finalizeDNRRulesAndLookup(startingRuleId, dnrRules) {
  *   The generated Tracker Blocking declarativeNetRequest ruleset.
  * @property {object} matchDetailsByRuleId
  *   Rule ID -> match details.
- * @property {object} allowingRulesByClickToLoadAction
- *   Inverse allowing declarativeNetRequest rules by "Click to Load" action.
  */
 
 /**

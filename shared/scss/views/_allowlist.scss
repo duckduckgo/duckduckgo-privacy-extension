@@ -6,7 +6,7 @@
     font-weight: 600;
 
     .menu-title {
-        padding: 20px 0 4px;
+        padding: 24px 0 4px;
     }
 
     .menu-paragraph {
@@ -76,6 +76,10 @@
     background-color: vars.$silver;
     color: vars.$grey-light;
     cursor: default;
+}
+
+.allowlist-actions {
+    overflow: hidden;
 }
 
 .allowlist-show-add {

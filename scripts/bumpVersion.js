@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const allBrowsers = ['chrome', 'firefox', 'chrome-mv2', 'embedded'];
+const allBrowsers = ['chrome', 'firefox', 'embedded'];
 const newVersion = process.argv[2];
 const browserFilter = process.argv[3];
 

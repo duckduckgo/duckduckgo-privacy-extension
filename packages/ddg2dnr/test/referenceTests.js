@@ -37,56 +37,80 @@ function* testCases(referenceTests) {
 }
 
 describe('Reference Tests', /** @this {testFunction} */ () => {
-    it('TR-domain-matching', /** @this {testFunction} */ async function () {
-        const blockList = loadReferenceTestJSONFile('tracker-radar-tests', 'TR-domain-matching', 'tracker_radar_reference.json');
+    describe('TR-domain-matching', /** @this {testFunction} */ function () {
         const referenceTests = loadReferenceTestJSONFile('tracker-radar-tests', 'TR-domain-matching', 'domain_matching_tests.json');
+        let ruleset = [];
 
-        // Note - This should be taken from surrogates.txt, not hardcoded.
-        const supportedSurrogateScripts = new Set(['tracker', 'script.js']);
+        this.beforeAll(
+            /** @this {testFunction} */ async function () {
+                const blockList = loadReferenceTestJSONFile('tracker-radar-tests', 'TR-domain-matching', 'tracker_radar_reference.json');
 
-        const isRegexSupported = this.browser.isRegexSupported.bind(this.browser);
-        const { ruleset } = await generateTdsRuleset(blockList, supportedSurrogateScripts, '/', isRegexSupported);
+                // Note - This should be taken from surrogates.txt, not hardcoded.
+                const supportedSurrogateScripts = new Set(['tracker', 'script.js']);
 
-        await this.browser.addRules(ruleset);
+                const isRegexSupported = this.browser.isRegexSupported.bind(this.browser);
+                ({ ruleset } = await generateTdsRuleset(blockList, supportedSurrogateScripts, '/', isRegexSupported));
+            },
+        );
+
+        this.beforeEach(
+            /** @this {testFunction} */ async function () {
+                await this.browser.addRules(ruleset);
+            },
+        );
 
         for (const { testDescription, requestURL: requestUrl, requestType, siteURL: websiteUrl, expectAction: expectedAction } of testCases(
             referenceTests,
         )) {
-            const { actualAction } = await actualMatchOutcome(this.browser, { requestUrl, requestType, websiteUrl });
+            it(
+                testDescription,
+                /** @this {testFunction} */ async function () {
+                    const { actualAction } = await actualMatchOutcome(this.browser, { requestUrl, requestType, websiteUrl });
 
-            // TODO: Check the redirection path is correct. Not possible
-            //       currently, since the expected redirect path is a data URI
-            //       instead of the script filename/path.
-            assert.equal(actualAction, expectedAction || 'ignore', testDescription);
+                    // TODO: Check the redirection path is correct. Not possible
+                    //       currently, since the expected redirect path is a data URI
+                    //       instead of the script filename/path.
+                    assert.equal(actualAction, expectedAction || 'ignore', testDescription);
+                },
+            );
         }
     });
 
-    it('http-upgrades', /** @this {testFunction} */ async function () {
+    describe('http-upgrades', /** @this {testFunction} */ function () {
+        const referenceTests = loadReferenceTestJSONFile('https-upgrades', 'tests.json');
         const domains = fs
             .readFileSync(referenceTestPath('https-upgrades', 'https_upgrade_hostnames.txt'), { encoding: 'utf8', flag: 'r' })
             .split('\n');
+        const ruleset = generateSmarterEncryptionRuleset(domains);
 
-        const referenceTests = loadReferenceTestJSONFile('https-upgrades', 'tests.json');
-
-        await this.browser.addRules(generateSmarterEncryptionRuleset(domains));
+        this.beforeEach(
+            /** @this {testFunction} */ async function () {
+                await this.browser.addRules(ruleset);
+            },
+        );
 
         for (const { testDescription, requestURL: requestUrl, siteURL: websiteUrl, expectURL: expectedUrl, requestType } of testCases(
             referenceTests,
         )) {
-            const { protocol: initialProtocol } = new URL(requestUrl);
-            const { protocol: expectedProtocol } = new URL(expectedUrl);
-            const expectedUpgrade = initialProtocol.length < expectedProtocol.length;
+            it(
+                testDescription,
+                /** @this {testFunction} */ async function () {
+                    const { protocol: initialProtocol } = new URL(requestUrl);
+                    const { protocol: expectedProtocol } = new URL(expectedUrl);
+                    const expectedUpgrade = initialProtocol.length < expectedProtocol.length;
 
-            const { actualAction } = await actualMatchOutcome(this.browser, { requestUrl, requestType, websiteUrl });
-            let actualUpgrade = actualAction === 'upgradeScheme';
+                    const { actualAction } = await actualMatchOutcome(this.browser, { requestUrl, requestType, websiteUrl });
+                    let actualUpgrade = actualAction === 'upgradeScheme';
 
-            // Note: Stop skipping these test cases once support for
-            //       Smarter Encryption Allowlisting has been added.
-            if (actualUpgrade && testDescription.includes('remote config')) {
-                actualUpgrade = false;
-            }
+                    // Note: Stop skipping these test cases once support for
+                    //       Smarter Encryption Allowlisting has been added.
+                    if (actualUpgrade && testDescription.includes('remote config')) {
+                        actualUpgrade = false;
+                    }
 
-            assert.equal(actualUpgrade, expectedUpgrade, testDescription);
+                    assert.equal(actualUpgrade, expectedUpgrade, testDescription);
+                },
+            );
         }
     });
 

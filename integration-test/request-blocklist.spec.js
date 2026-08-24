@@ -30,7 +30,7 @@ test.describe('Test Request Blocklist feature', () => {
             }
 
             // Load and run the request blocking test page.
-            const { testCount, pageRequests } = await runRequestBlockingTest(backgroundPage, page, testSite);
+            const { testCount, pageRequests } = await runRequestBlockingTest(page, testSite);
             expect(testCount).toBeGreaterThan(0);
 
             // Verify that the .jpg image requests were blocked as expected.

@@ -38,7 +38,7 @@
     "note": "Global Privacy Control is the name of the feature that lets users set a preference to not have their information sold"
   },
   "globalPrivacyControlDesc": {
-    "title": "Личные данные не должны продаваться. Мы, сотрудники DuckDuckGo, с этим полностью согласны.\nВключите настройку «Глобальный контроль конфиденциальности» (Global Privacy Control или GPC), и мы передадим сайтам ваши предпочтения:",
+    "title": "Личные данные не должны продаваться. Мы, сотрудники DuckDuckGo, с этим полностью согласны.\nАктивируйте настройку «Глобальный контроль конфиденциальности» (Global Privacy Control или GPC), и мы передадим сайтам ваши предпочтения:",
     "note": "This describes the GPC feature, which lets the user set a preference to not have their personal information sold by websites to other parties. The string is followed by a list of actions like 'Not sell your personal data'. These are translated separately."
   },
   "notSellYourPersonalData": {
@@ -51,7 +51,7 @@
   },
   "globalPrivacyControlDisclaimer": {
     "title": "<b>Поскольку глобальный контроль конфиденциальности (GPC) — новый стандарт, пока что он не признаётся на большинстве сайтов, но мы прилагаем все усилия, чтобы он был принят во всём мире.</b> Также хотим подчеркнуть, что сайты обязаны реагировать на сигнал только в той мере, в какой это требует применимое законодательство.",
-    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+    "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
     "title": "Защита электронной почты",
@@ -66,11 +66,11 @@
     "note": "When we do help populate email addresses for (your email address here)"
   },
   "noUnprotectedSitesAdded": {
-    "title": "Незащищённые сайты не добавлены",
+    "title": "Незащищенные сайты не добавлены",
     "note": "Currently there are no websites on the list of websites where our privacy protections are disabled"
   },
   "unprotectedSites": {
-    "title": "Незащищённые сайты",
+    "title": "Незащищенные сайты",
     "note": "Header for the list of websites where our privacy protections are disabled"
   },
   "unprotectedSitesDesc": {
@@ -78,12 +78,12 @@
     "note": "Describes that the user will not be protected by our privacy features when visiting these websites"
   },
   "addUnprotectedSite": {
-    "title": "Добавить незащищённый сайт",
-    "note": "Header for the user to add a site to the uprotected list"
+    "title": "Добавить незащищенный сайт",
+    "note": "Header for the user to add a site to the unprotected list"
   },
   "enterURL": {
     "title": "Введите URL",
-    "note": "Promopt to enter the website URL here"
+    "note": "Prompt to enter the website URL here"
   },
   "invalidURL": {
     "title": "Неправильный URL",
@@ -91,11 +91,11 @@
   },
   "fireButtonHeading": {
     "title": "Fire Button",
-    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+    "note": "Header for the settings for the Fire button feature"
   },
   "fireButtonDesc": {
     "title": "Кнопка Fire Button («Тревога») позволяет моментально закрыть вкладки и очистить историю просмотров и данные браузера. Предусмотрена настройка действий при нажатии кнопки: очистка истории просмотров, данных и закрытие текущих вкладок.",
-    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+    "note": "Describes the Fire button features"
   },
   "fireButtonClearHistoryTitle": {
     "title": "Очистить историю",
@@ -107,10 +107,18 @@
   },
   "fireButtonTabClosureTitle": {
     "title": "Закрыть вкладки",
-    "note": "Title for option toggle. Close is a verb."
+    "note": "Title for option toggle."
+  },
+  "noAiMode": {
+    "title": "Поиск без ИИ",
+    "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+  },
+  "noAiModeDesc": {
+    "title": "Результаты поиска выдаются без ответов от ИИ (Search Assist) и ИИ-чатов (Duck.ai), а из картинок по умолчанию исключаются изображения, созданные искусственным интеллектом. Настройка применяется ко всем запросам с сайта duckduckgo.com и из адресной строки.",
+    "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
   },
   "burnPageTitle": {
     "title": "Сжигаем данные...",
-    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+    "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
   }
 }

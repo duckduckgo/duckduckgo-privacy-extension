@@ -1,3 +1,7 @@
+import { isFirefox } from './platform.js';
+
+const FIREFOX_SKIP_REQUEST_TYPES = new Set(['font', 'audio', 'server-sent-events', 'favicon']);
+
 /**
  * @typedef {object} LoggedRequestDetails
  * @property {URL} url
@@ -10,8 +14,6 @@
 
 /**
  * Start logging requests for the given Page.
- * @param {object} _backgroundPage
- *   Background page, reserved for future Firefox request tracking.
  * @param {import('@playwright/test').Page} page
  *   The Playwright page to log requests for.
  * @param {LoggedRequestDetails[]} requests
@@ -29,7 +31,7 @@
  * @returns {Promise<function>}
  *   Function that removes the event listeners (call when done logging).
  */
-export async function logPageRequests(_backgroundPage, page, requests, requestFilter, transform, postTransformFilter) {
+export async function logPageRequests(page, requests, requestFilter, transform, postTransformFilter) {
     const processRequest = (url, method, resourceType, status, reason) => {
         const details = {
             url: new URL(url),
@@ -86,28 +88,37 @@ export async function logPageRequests(_backgroundPage, page, requests, requestFi
     };
 }
 
+async function waitFor(page, predicate, { timeout, interval = 100 }) {
+    const deadline = Date.now() + timeout;
+    while (Date.now() < deadline) {
+        if (await predicate()) {
+            return true;
+        }
+        await page.waitForTimeout(interval);
+    }
+    return false;
+}
+
 /**
  * Load the Request Blocking privacy test page, run the tests and return the
  * results.
  * See https://privacy-test-pages.site/privacy-protections/request-blocking/
  *
- * @param {object} backgroundPage
- *   Background page for Firefox request tracking.
  * @param {import('@playwright/test').Page} page
  * @param {string} url
  *   URL of the test page.
  * @returns {Promise<{ testCount: number, pageRequests: Object[], pageResults: Object[] }>}
  */
-export async function runRequestBlockingTest(backgroundPage, page, url) {
+export async function runRequestBlockingTest(page, url) {
     const pageRequests = [];
 
-    const cleanup = await logPageRequests(backgroundPage, page, pageRequests, (r) => r.url.hostname === 'bad.third-party.site');
+    const cleanup = await logPageRequests(page, pageRequests, (r) => r.url.hostname === 'bad.third-party.site');
 
     await page.bringToFront();
     await page.goto(url, { waitUntil: 'networkidle' });
     await page.click('#start');
 
-    const { testCount, flakeyTestCount } = await page.evaluate(() => {
+    let { testCount, flakeyTestCount } = await page.evaluate(() => {
         // @ts-ignore
         // eslint-disable-next-line no-undef
         const allTests = tests;
@@ -123,24 +134,24 @@ export async function runRequestBlockingTest(backgroundPage, page, url) {
     // Wait for up to 15 seconds for all the requests to be made, but only wait
     // two seconds after the reliable requests.
     const reliableTestCount = testCount - flakeyTestCount;
-    const timeout = 15000;
     const flakeyTimeout = 2000;
-
-    const deadline = Date.now() + timeout;
     let flakeyDeadline = null;
-    while (Date.now() < deadline) {
-        if (pageRequests.length >= testCount) break;
-
-        if (pageRequests.length >= reliableTestCount) {
-            if (!flakeyDeadline) {
-                flakeyDeadline = Date.now() + flakeyTimeout;
-            } else if (Date.now() >= flakeyDeadline) {
-                break;
+    await waitFor(
+        page,
+        () => {
+            if (pageRequests.length >= testCount) {
+                return true;
             }
-        }
-
-        await page.waitForTimeout(100);
-    }
+            if (pageRequests.length >= reliableTestCount) {
+                if (flakeyDeadline === null) {
+                    flakeyDeadline = Date.now() + flakeyTimeout;
+                }
+                return Date.now() >= flakeyDeadline;
+            }
+            return false;
+        },
+        { timeout: 15000 },
+    );
 
     if (pageRequests.length < reliableTestCount) {
         throw new Error(
@@ -148,13 +159,43 @@ export async function runRequestBlockingTest(backgroundPage, page, url) {
         );
     }
 
-    const pageResults = await page.evaluate(
+    // Page results for iframe and worker initiated requests settle a little
+    // while the requests are fired. Reading those results immediately gives us
+    // stale "not loaded" results, so wait until `results.results` has stopped
+    // changing before checking the final results.
+    let prevSnapshot = null;
+    let stableSince = Date.now();
+    await waitFor(
+        page,
+        async () => {
+            // @ts-ignore
+            // eslint-disable-next-line no-undef
+            const snapshot = await page.evaluate(() => JSON.stringify(results.results));
+            if (snapshot === prevSnapshot) {
+                return Date.now() - stableSince >= 1500;
+            }
+
+            prevSnapshot = snapshot;
+            stableSince = Date.now();
+            return false;
+        },
+        { timeout: 10000, interval: 150 },
+    );
+
+    let pageResults = await page.evaluate(
         // @ts-ignore
         // eslint-disable-next-line no-undef
         () => results.results,
     );
 
     cleanup();
+
+    // Firefox consistently reports these requests as failed, filter them out to
+    // make the tests easier to write.
+    if (isFirefox()) {
+        pageResults = pageResults.filter(({ id }) => !FIREFOX_SKIP_REQUEST_TYPES.has(id));
+        testCount = pageResults.length;
+    }
 
     return { testCount, pageRequests, pageResults };
 }

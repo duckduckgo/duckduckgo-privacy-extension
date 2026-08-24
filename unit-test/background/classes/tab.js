@@ -164,8 +164,6 @@ describe('Tab', () => {
                 contentScopeExperiments: {},
                 adClick: null,
                 firstAdAttributionAllowed: false,
-                disabledClickToLoadRuleActions: [],
-                dnrRuleIdsByDisabledClickToLoadRuleAction: {},
                 trackers: {},
                 url: 'http://example.com',
                 id: 123,
@@ -179,9 +177,6 @@ describe('Tab', () => {
                 requestId: 123,
                 status: 200,
                 statusCode: null,
-                ctlYouTube: false,
-                ctlFacebookPlaceholderShown: false,
-                ctlFacebookLogin: false,
                 debugFlags: [],
                 breakageReportData: null,
                 errorDescriptions: [],
@@ -192,7 +187,7 @@ describe('Tab', () => {
                 jsPerformance: [],
                 locale: 'en-US',
             };
-            expect(tabClone.site.enabledFeatures.length).toBe(15);
+            expect(tabClone.site.enabledFeatures.length).toBe(14);
             expect(JSON.stringify(tabClone, null, 4)).toEqual(JSON.stringify(tabSnapshot, null, 4));
         });
         it('should be able to get the tab from tab manager', () => {

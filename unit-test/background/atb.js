@@ -1,7 +1,16 @@
 import browser from 'webextension-polyfill';
+chrome.runtime.getManifest = () => ({ version: '1234.56', manifest_version: 3 });
 const atb = require('../../shared/js/background/atb').default;
 const settings = require('../../shared/js/background/settings');
 const load = require('../../shared/js/background/load');
+const {
+    ATB_PARAM_RULE_ID,
+    SEARCH_REDIRECT_RULE_ID,
+    HOME_PAGE_RULE_ID,
+    ATB_EXTENSIONINSTALLED_RULE_ID,
+    NEWTAB_NO_AI_PARAM_RULE_ID,
+} = require('../../shared/js/background/dnr-utils');
+const { ATB_PARAM_PRIORITY, ALTERNATIVE_SEARCH_PRIORITY } = require('@duckduckgo/ddg2dnr/lib/rulePriorities');
 
 const settingHelper = require('../helpers/settings');
 
@@ -82,6 +91,11 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
         { url: 'https://beta.duckduckgo.com/?q=something&atb=v70-1', rewrite: false },
         { url: 'https://dev-testing.duckduckgo.com/?q=something', rewrite: true },
         { url: 'https://dev-testing.duckduckgo.com/chrome_newtab', rewrite: true },
+        { url: 'https://duckduckgo.com/?extensioninstalled=', rewrite: false },
+        { url: 'https://duckduckgo.com/?extensioninstalled', rewrite: false },
+        { url: 'https://duckduckgo.com/', rewrite: true },
+        { url: 'https://start.duckduckgo.com/', rewrite: true },
+        { url: 'https://noai.duckduckgo.com/', rewrite: true },
     ];
 
     beforeEach(() => {
@@ -102,6 +116,9 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
     });
 
     const correctUrlTests = [
+        { url: 'https://duckduckgo.com/', expected: 'https://duckduckgo.com/?extensioninstalled=1' },
+        { url: 'https://start.duckduckgo.com/', expected: 'https://start.duckduckgo.com/?extensioninstalled=1' },
+        { url: 'https://noai.duckduckgo.com/', expected: 'https://noai.duckduckgo.com/?extensioninstalled=1' },
         { url: 'https://duckduckgo.com/?q=something', expected: 'https://duckduckgo.com/?q=something&atb=v123-4ab' },
         { url: 'https://duckduckgo.com/about#newsletter', expected: 'https://duckduckgo.com/about?atb=v123-4ab#newsletter' },
         { url: 'https://duckduckgo.com/chrome_newtab', expected: 'https://duckduckgo.com/chrome_newtab?atb=v123-4ab' },
@@ -118,6 +135,75 @@ describe('atb.addParametersMainFrameRequestUrl()', () => {
             expect(result).toBeTrue();
             expect(url.href).toEqual(test.expected);
         });
+    });
+});
+
+describe('atb.setOrUpdateATBdnrRule()', () => {
+    const NEW_TAB_URL = 'https://duckduckgo.com/chrome_newtab';
+    const paramsOf = (rule) => rule.action.redirect.transform.queryTransform.addOrReplaceParams;
+    const matchesUrl = (rule, url) => new RegExp(rule.condition.regexFilter).test(url);
+
+    function installRules(settingOverrides = {}) {
+        const values = { atb: 'v123-4ab', useNoAiSearch: false, ...settingOverrides };
+        settingHelper.stub(values);
+        const updateDynamicRules = spyOn(chrome.declarativeNetRequest, 'updateDynamicRules').and.resolveTo();
+
+        atb.setOrUpdateATBdnrRule(values.atb);
+
+        expect(updateDynamicRules).toHaveBeenCalledTimes(1);
+        return updateDynamicRules.calls.mostRecent().args[0];
+    }
+
+    it('creates ATB and alternative search rules with explicit precedence', () => {
+        const { addRules } = installRules({ useNoAiSearch: true });
+
+        expect(addRules.length).toEqual(5);
+
+        const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
+        const extensionInstalledRule = addRules.find((rule) => rule.id === ATB_EXTENSIONINSTALLED_RULE_ID);
+        const homePageRule = addRules.find((rule) => rule.id === HOME_PAGE_RULE_ID);
+        const searchRedirectRule = addRules.find((rule) => rule.id === SEARCH_REDIRECT_RULE_ID);
+
+        expect(atbRule.priority).toEqual(ATB_PARAM_PRIORITY);
+        expect(extensionInstalledRule.action.type).toEqual('allow');
+        expect(extensionInstalledRule.priority).toBeGreaterThan(ATB_PARAM_PRIORITY);
+        expect(homePageRule.priority).toEqual(ATB_PARAM_PRIORITY);
+        expect(searchRedirectRule.priority).toEqual(ALTERNATIVE_SEARCH_PRIORITY);
+        expect(searchRedirectRule.priority).toBeGreaterThan(atbRule.priority);
+    });
+
+    it('adds a noai=1 rule for the new tab page, outranking the ATB rule', () => {
+        const { addRules } = installRules({ useNoAiSearch: true });
+
+        const noAiRule = addRules.find((rule) => rule.id === NEWTAB_NO_AI_PARAM_RULE_ID);
+        const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
+
+        expect(matchesUrl(noAiRule, NEW_TAB_URL)).toBeTrue();
+        expect(matchesUrl(noAiRule, `${NEW_TAB_URL}_foo`)).toBeFalse();
+
+        expect(paramsOf(noAiRule)).toContain({ key: 'noai', value: '1' });
+        // Carries atb as well, because it outranks atbRule and only one redirect rule gets to run.
+        expect(paramsOf(noAiRule)).toContain({ key: 'atb', value: 'v123-4ab' });
+        expect(noAiRule.priority).toBeGreaterThan(atbRule.priority);
+    });
+
+    it('clears every rule it adds, so repeat calls replace them instead of clashing', () => {
+        const { addRules, removeRuleIds } = installRules({ useNoAiSearch: true });
+
+        addRules.forEach((rule) => expect(removeRuleIds).toContain(rule.id));
+    });
+
+    it('omits the new tab page noai=1 rule while the no-AI setting is off, handing atb back to atbRule', () => {
+        const { addRules, removeRuleIds } = installRules({ useNoAiSearch: false });
+
+        expect(addRules.some((rule) => rule.id === NEWTAB_NO_AI_PARAM_RULE_ID)).toBeFalse();
+        // Still cleared, or a rule installed while the setting was on would stay forever.
+        expect(removeRuleIds).toContain(NEWTAB_NO_AI_PARAM_RULE_ID);
+
+        // Nothing else applies atb to the new tab page, so atbRule has to still match it.
+        const atbRule = addRules.find((rule) => rule.id === ATB_PARAM_RULE_ID);
+        expect(paramsOf(atbRule)).toContain({ key: 'atb', value: 'v123-4ab' });
+        expect(matchesUrl(atbRule, NEW_TAB_URL)).toBeTrue();
     });
 });
 

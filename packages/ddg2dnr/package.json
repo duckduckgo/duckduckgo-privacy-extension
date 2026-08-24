@@ -1,11 +1,12 @@
 {
     "name": "@duckduckgo/ddg2dnr",
-    "description": "Scripts to generate declarativeNetRequest rulesets for the DuckDuckGo Privacy Essentials extension",
+    "description": "Scripts to generate declarativeNetRequest rulesets for the DuckDuckGo Search & Tracker Protection extension",
     "license": "Apache-2.0",
     "repository": "duckduckgo/ddg2dnr",
     "bin": "cli.js",
     "devDependencies": {
-        "mocha": "11.7.0"
+        "mocha": "11.7.0",
+        "@playwright/test": "*"
     },
     "scripts": {
         "extension-configuration": "node cli.js extension-configuration",
@@ -14,7 +15,9 @@
         "tsc": "tsc",
         "lint": "npm run eslint && npm run tsc",
         "smarter-encryption": "node cli.js smarter-encryption",
-        "test": "mocha",
+        "test": "npm run test:chrome && npm run test:firefox",
+        "test:chrome": "DDG_PLATFORM=chrome mocha",
+        "test:firefox": "DDG_PLATFORM=firefox mocha",
         "tds": "node cli.js tds"
     },
     "mocha": {

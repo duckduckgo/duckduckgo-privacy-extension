@@ -34,11 +34,7 @@ div {
 
     &.menu-title {
         font-weight: bold;
-        padding: 14px 0;
-
-        &.fire-title {
-            padding-top: 0px;
-        }
+        padding: 24px 0 14px;
     }
 }
 
@@ -56,7 +52,7 @@ li {
         // Handle space between the last element in the container and the divider
         > :last-child {
             padding-bottom: 0;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
         }
     }
 }
@@ -96,7 +92,7 @@ select {
 
 /* Links */
 a {
-    color: vars.$blue;
+    color: #3969ef;
     text-decoration: none;
 
     &:hover {

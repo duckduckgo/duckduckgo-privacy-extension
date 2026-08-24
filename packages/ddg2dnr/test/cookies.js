@@ -146,7 +146,7 @@ describe('cookie rules', () => {
     });
 
     describe('matchDetailsByRuleId', function () {
-        it('returns a list of possible domains for a matched rule', /** @this {{ browser: import('../puppeteerInterface').PuppeteerInterface }} */ async function () {
+        it('returns a list of possible domains for a matched rule', /** @this {{ browser: import('../browserInterface').BrowserInterface }} */ async function () {
             const { ruleset, matchDetailsByRuleId } = generateCookieBlockingRuleset(mockTds, [], []);
             await this.browser.addRules(ruleset);
             const matchedRules = await this.browser.testMatchOutcome({

@@ -30,7 +30,7 @@ endif
 #  - Add check that browser+type are set when necessary.
 
 ## release: Create a release build for a platform in build/$(browser)/release
-## specify browser=(chrome|chrome-mv2|firefox) type=release
+## specify browser=(chrome|firefox) type=release
 release: clean npm copy build
 
 .PHONY: release
@@ -49,7 +49,7 @@ beta-firefox: release beta-firefox-zip
 
 ## dev: Create a debug build for a platform in build/$(browser)/dev.
 ##      Pass reloader=0 to disable automatic extension reloading.
-## specify browser=(chrome|chrome-mv2|firefox) type=dev [reloader=1]
+## specify browser=(chrome|firefox) type=dev [reloader=1]
 dev: copy build $(BUILD_DIR)/buildtime.txt
 
 .PHONY: dev
@@ -57,7 +57,7 @@ dev: copy build $(BUILD_DIR)/buildtime.txt
 ## watch: Create a debug build for a platform in build/$(browser)/dev, and keep
 ##        it up to date as files are changed.
 ##        Pass reloader=0 to disable automatic extension reloading.
-## specify browser=(chrome|chrome-mv2|firefox) type=dev [reloader=1]
+## specify browser=(chrome|firefox) type=dev [reloader=1]
 MAKE = make $(type) browser=$(browser) type=$(type)
 watch:
 	$(MAKE)
@@ -82,7 +82,7 @@ node-test:
 ## npm: Pull in the external dependencies (npm install).
 npm:
 	npm ci --ignore-scripts
-	npm rebuild puppeteer
+	npx playwright install --with-deps chromium firefox
 	## Install the privacy-test-pages package for integration tests
 	cd node_modules/privacy-test-pages && npm install
 
@@ -109,7 +109,7 @@ chrome-beta-zip: prepare-chrome-beta chrome-release-zip
 .PHONY: chrome-beta-zip
 
 prepare-chrome-beta:
-	sed 's/__MSG_appName__/DuckDuckGo Privacy Essentials Beta/' ./browsers/chrome/manifest.json > build/chrome/release/manifest.json
+	sed 's/__MSG_appName__/DuckDuckGo Search \& Tracker Protection Beta/' ./browsers/chrome/manifest.json > build/chrome/release/manifest.json
 	cp -r build/chrome/release/img/beta/* build/chrome/release/img/
 
 .PHONY: prepare-chrome-beta
@@ -135,7 +135,6 @@ embedded-release-zip:
 setup-artifacts-dir:
 	rm -rf integration-test/artifacts
 	mkdir -p integration-test/artifacts/screenshots
-	mkdir -p integration-test/artifacts/api_schemas
 
 .PHONY: setup-artifacts-dir
 

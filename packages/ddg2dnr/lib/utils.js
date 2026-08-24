@@ -135,8 +135,7 @@ function castDNREnum(s) {
 }
 
 /**
- * @typedef {`${chrome.declarativeNetRequest.ResourceType}` |
- *           'webbundle' | 'webtransport'} ResourceType
+ * @typedef {`${chrome.declarativeNetRequest.ResourceType}`} ResourceType
  *
  * @typedef {object} generateDNRRuleDetails
  * @property {number} [id]
@@ -589,24 +588,26 @@ function generateRequestDomainsByTrackerDomain(tds) {
     return requestDomainsByTrackerDomain;
 }
 
-/** @type Set<ResourceType> */
-const resourceTypes = new Set([
-    'main_frame',
-    'sub_frame',
-    'stylesheet',
-    'script',
-    'image',
-    'font',
-    'object',
-    'xmlhttprequest',
-    'ping',
-    'csp_report',
-    'media',
-    'websocket',
-    'webtransport',
-    'webbundle',
-    'other',
-]);
+const actualResourceTypes = globalThis?.browser?.declarativeNetRequest?.ResourceType;
+const resourceTypes = /** @type ResourceType[] */ (
+    actualResourceTypes
+        ? Object.values(actualResourceTypes)
+        : [
+              'main_frame',
+              'sub_frame',
+              'stylesheet',
+              'script',
+              'image',
+              'font',
+              'object',
+              'xmlhttprequest',
+              'ping',
+              'csp_report',
+              'media',
+              'websocket',
+              'other',
+          ]
+);
 
 exports.castDNREnum = castDNREnum;
 exports.generateDNRRule = generateDNRRule;

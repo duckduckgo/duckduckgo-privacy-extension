@@ -1,6 +1,6 @@
 /** @module smarterEncryption */
 
-const { storeInLookup } = require('./utils');
+const { resourceTypes, storeInLookup } = require('./utils');
 
 const SMARTER_ENCRYPTION_PRIORITY = 5000;
 
@@ -16,23 +16,7 @@ function generateRule(id, subdomainCount, domains, matchWwwSubdomain) {
             type: 'upgradeScheme',
         },
         condition: {
-            resourceTypes: [
-                'main_frame',
-                'sub_frame',
-                'stylesheet',
-                'script',
-                'image',
-                'font',
-                'object',
-                'xmlhttprequest',
-                'ping',
-                'csp_report',
-                'media',
-                'websocket',
-                'webtransport',
-                'webbundle',
-                'other',
-            ],
+            resourceTypes,
             requestDomains: domains,
             regexFilter: generateRegexFilter(subdomainCount, matchWwwSubdomain),
         },
@@ -59,6 +43,10 @@ function generateSmarterEncryptionRuleset(domains, startingRuleId = 1) {
     const domainsToMatchWithWwwPrefix = new Set();
     const nonWwwDomains = [];
     for (const domain of domains) {
+        if (domain.length === 0) {
+            continue;
+        }
+
         if (domain.startsWith('www.')) {
             domainsToMatchWithWwwPrefix.add(domain.substr(4));
         } else {
@@ -155,23 +143,7 @@ function createSmarterEncryptionTemporaryRule(domains, type = 'allow', id) {
             },
             condition: {
                 requestDomains: domains,
-                resourceTypes: [
-                    'main_frame',
-                    'sub_frame',
-                    'stylesheet',
-                    'script',
-                    'image',
-                    'font',
-                    'object',
-                    'xmlhttprequest',
-                    'ping',
-                    'csp_report',
-                    'media',
-                    'websocket',
-                    'webtransport',
-                    'webbundle',
-                    'other',
-                ],
+                resourceTypes,
             },
         },
         matchDetails: {

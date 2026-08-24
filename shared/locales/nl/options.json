@@ -50,8 +50,8 @@
     "note": "Part of the GPC description, this communicates that the user would signal to not SHARE their personal data"
   },
   "globalPrivacyControlDisclaimer": {
-    "title": "<b>Global Privacy Control (GPC) is een nieuwe standaard.\n Daarom herkennen de meeste websites deze nog niet. We werken er hard aan om ervoor te zorgen dat GCP wereldwijd wordt geaccepteerd.</b> Maar websites zijn alleen verplicht om op dit signaal te reageren voor zover de toepasselijke wetgeving dat vereist.&nbsp;",
-    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+    "title": "<b>Global Privacy Control (GPC) is een nieuwe standaard.\n Daarom herkennen de meeste websites deze nog niet. We werken er hard aan om ervoor te zorgen dat GCP wereldwijd wordt geaccepteerd.</b> Maar websites zijn alleen verplicht om op dit signaal te reageren voor zover de toepasselijke wetgeving dat vereist. ",
+    "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
     "title": "E-mailbescherming",
@@ -79,11 +79,11 @@
   },
   "addUnprotectedSite": {
     "title": "Onbeveiligde site toevoegen",
-    "note": "Header for the user to add a site to the uprotected list"
+    "note": "Header for the user to add a site to the unprotected list"
   },
   "enterURL": {
     "title": "URL invoeren",
-    "note": "Promopt to enter the website URL here"
+    "note": "Prompt to enter the website URL here"
   },
   "invalidURL": {
     "title": "Ongeldige URL",
@@ -91,11 +91,11 @@
   },
   "fireButtonHeading": {
     "title": "Fire Button",
-    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+    "note": "Header for the settings for the Fire button feature"
   },
   "fireButtonDesc": {
     "title": "Met de Fire Button kun je eenvoudig tabbladen, browsegeschiedenis en gegevens wissen. Je kunt bepalen of zowel de browsegeschiedenis als de gegevens worden gewist en of je huidige tabbladen worden gesloten of niet.",
-    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+    "note": "Describes the Fire button features"
   },
   "fireButtonClearHistoryTitle": {
     "title": "Geschiedenis wissen",
@@ -107,10 +107,18 @@
   },
   "fireButtonTabClosureTitle": {
     "title": "Tabbladen sluiten",
-    "note": "Title for option toggle. Close is a verb."
+    "note": "Title for option toggle."
+  },
+  "noAiMode": {
+    "title": "Geen AI in de zoekfunctie",
+    "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+  },
+  "noAiModeDesc": {
+    "title": "Bekijk zoekresultaten zonder AI-antwoorden (Search Assist) of AI-chats (Duck.ai), en filter standaard door AI gegenereerde afbeeldingen uit de zoekresultaten van afbeeldingen. Geldt voor alle zoekopdrachten vanuit duckduckgo.com en de adresbalk.",
+    "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
   },
   "burnPageTitle": {
     "title": "Bezig met verbranden...",
-    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+    "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
   }
 }

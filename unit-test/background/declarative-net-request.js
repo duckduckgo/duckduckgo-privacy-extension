@@ -24,6 +24,7 @@ import {
     SETTING_PREFIX,
 } from '../../shared/js/background/dnr-utils';
 import { SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY, USER_ALLOWLISTED_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
+import { resourceTypes } from '@duckduckgo/ddg2dnr/lib/utils';
 import { GPC_HEADER_PRIORITY } from '@duckduckgo/ddg2dnr/lib/gpc';
 
 const TEST_ETAGS = ['flib', 'flob', 'cabbage'];
@@ -40,7 +41,7 @@ config.features.trackerAllowlist = {
 };
 
 const expectedRuleIdsByConfigName = {
-    tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 21001, 21002, 21003, 21004],
+    tds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 21001, 21002, 21003, 21004],
     config: [10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010],
 };
 
@@ -51,12 +52,12 @@ const expectedLookupByConfigName = {
             possibleTrackerDomains: ['facebook.com'],
         },
         3: {
-            type: 'clickToLoad',
-            possibleTrackerDomains: ['facebook.net'],
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['google-analytics.com'],
         },
         4: {
-            type: 'clickToLoad',
-            possibleTrackerDomains: ['facebook.net'],
+            type: 'trackerBlocking',
+            possibleTrackerDomains: ['google-analytics.com'],
         },
         5: {
             type: 'trackerBlocking',
@@ -67,7 +68,7 @@ const expectedLookupByConfigName = {
             possibleTrackerDomains: ['google-analytics.com'],
         },
         7: {
-            type: 'trackerBlocking',
+            type: 'surrogateScript',
             possibleTrackerDomains: ['google-analytics.com'],
         },
         8: {
@@ -75,18 +76,10 @@ const expectedLookupByConfigName = {
             possibleTrackerDomains: ['google-analytics.com'],
         },
         9: {
-            type: 'surrogateScript',
+            type: 'trackerBlocking',
             possibleTrackerDomains: ['google-analytics.com'],
         },
         10: {
-            type: 'trackerBlocking',
-            possibleTrackerDomains: ['google-analytics.com'],
-        },
-        11: {
-            type: 'trackerBlocking',
-            possibleTrackerDomains: ['google-analytics.com'],
-        },
-        12: {
             type: 'trackerBlocking',
             possibleTrackerDomains: ['yahoo.com'],
         },
@@ -741,23 +734,7 @@ describe('declarativeNetRequest', () => {
                 requestHeaders: [{ header: 'Sec-GPC', operation: 'set', value: '1' }],
             },
             condition: {
-                resourceTypes: [
-                    'main_frame',
-                    'sub_frame',
-                    'stylesheet',
-                    'script',
-                    'image',
-                    'font',
-                    'object',
-                    'xmlhttprequest',
-                    'ping',
-                    'csp_report',
-                    'media',
-                    'websocket',
-                    'webtransport',
-                    'webbundle',
-                    'other',
-                ],
+                resourceTypes,
                 excludedInitiatorDomains: ['exception1.example', 'exception2.example'],
                 excludedRequestDomains: ['exception1.example', 'exception2.example'],
             },

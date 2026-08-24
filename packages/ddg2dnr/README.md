@@ -3,7 +3,7 @@
 ## Introduction
 
 This is a library and command line utility to generate the [declarativeNetRequest][1]
-rulesets necessary for the [DuckDuckGo Privacy Essentials extension][2].
+rulesets necessary for the [DuckDuckGo Search & Tracker Protection extension][2].
 
 
 ## Setup
@@ -28,7 +28,7 @@ Generate the TDS ruleset:
 
 ```bash
 npm run tds ../tds-input.json ../supported-surrogates-input.json ../tds-ruleset-output.json \
-        [../allowing-rules-by-ctl-action-output.json] [../match-details-by-rule-id-output.json]
+        [../match-details-by-rule-id-output.json]
 ```
 
 Note:

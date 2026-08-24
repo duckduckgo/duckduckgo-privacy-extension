@@ -51,7 +51,7 @@
   },
   "globalPrivacyControlDisclaimer": {
     "title": "<b>Kuna ülemaailmne privaatsuskontroll (GPC) on uus standard,\n ei tunne enamik veebisaite seda veel ära, kuid me töötame selle nimel, et seda aktsepteeritaks üleilmselt.</b> Kuid veebisaidid peavad reageerima signaalile ainult niivõrd,\nkuivõrd kehtivad seadused neid selleks sunnivad. ",
-    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+    "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
     "title": "E-posti kaitse",
@@ -79,11 +79,11 @@
   },
   "addUnprotectedSite": {
     "title": "Kaitseta saidi lisamine",
-    "note": "Header for the user to add a site to the uprotected list"
+    "note": "Header for the user to add a site to the unprotected list"
   },
   "enterURL": {
     "title": "Sisestage URL",
-    "note": "Promopt to enter the website URL here"
+    "note": "Prompt to enter the website URL here"
   },
   "invalidURL": {
     "title": "Vale URL",
@@ -91,11 +91,11 @@
   },
   "fireButtonHeading": {
     "title": "Fire Button",
-    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+    "note": "Header for the settings for the Fire button feature"
   },
   "fireButtonDesc": {
     "title": "Fire Button teeb vahekaartide, sirvimisajaloo ja andmete kustutamise lihtsaks. Saad määrata, kas see kustutab nii sirvimisajaloo kui ka andmed ja kas see sulgeb sinu praegused vahekaardid või mitte.",
-    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+    "note": "Describes the Fire button features"
   },
   "fireButtonClearHistoryTitle": {
     "title": "Kustuta ajalugu",
@@ -107,10 +107,18 @@
   },
   "fireButtonTabClosureTitle": {
     "title": "Sule vahekaardid",
-    "note": "Title for option toggle. Close is a verb."
+    "note": "Title for option toggle."
+  },
+  "noAiMode": {
+    "title": "Otsingus ei kasutata tehisintellekti",
+    "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+  },
+  "noAiModeDesc": {
+    "title": "Kuva otsingutulemused ilma tehisintellekti vastusteta (Search Assist) või tehisintellekti vestlusteta (Duck.ai), ja filtreeri pilditulemuste hulgast vaikimisi tehisintellekti loodud pildid. Kehtib kõigi otsingute puhul, mis tehakse veebisaidil duckduckgo.com ja aadressiribalt.",
+    "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
   },
   "burnPageTitle": {
     "title": "Tühjendamine on käimas ...",
-    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+    "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
   }
 }

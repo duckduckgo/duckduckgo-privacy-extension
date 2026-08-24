@@ -219,12 +219,12 @@ export default class Site {
 
         // Both 'localhost' and the loopback IP have to be specified
         // since they're treated as different domains.
-        if (domain === localhostName || domain.match(/^127\.0\.0\.1/) || publicSuffix === localhostName) {
+        if (domain === localhostName || domain.match(/^127\.0\.0\.1$/) || publicSuffix === localhostName) {
             return localhostName;
         }
 
         // Handle non-routable meta-address.
-        if (domain.match(/^0\.0\.0\.0/)) {
+        if (domain.match(/^0\.0\.0\.0$/)) {
             return domain;
         }
 

@@ -87,14 +87,6 @@
         "title": "Invalid URL",
         "note": "The URL the user entered is not a valid website address"
     },
-    "enableYoutubePreviews": {
-        "title": "Enable YouTube Previews",
-        "note": "Whether the user wants to see YouTube Previews on embedded videos or if all YouTube embedded videos are completely blocked by default"
-    },
-    "enableYoutubePreviewsDesc": {
-        "title": "DuckDuckGo automatically blocks embedded YouTube videos, along with their title and preview, from being loaded to improve your privacy. You can choose to enable previews, but doing so will allow Google to see some of your device’s information when you visit any page with an embedded video.&nbsp;",
-        "note": "Describes that DDG automatically blocks embedded YouTube videos to improve privacy, but users can choose to see the video preview and this will cause Google to see some device information"
-    },
     "fireButtonHeading": {
         "title": "Fire Button",
         "note": "Header for the settings for the Fire button feature"
@@ -114,6 +106,14 @@
     "fireButtonTabClosureTitle": {
         "title": "Close Tabs",
         "note": "Title for option toggle."
+    },
+    "noAiMode": {
+        "title": "No AI in Search",
+        "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+    },
+    "noAiModeDesc": {
+        "title": "See search results without AI answers (Search Assist) or AI chats (Duck.ai), and filter AI‑generated images from image results by default. Applies to all searches from duckduckgo.com and the address bar.",
+        "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
     },
     "burnPageTitle": {
         "title": "Burn in progress...",

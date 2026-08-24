@@ -15,7 +15,6 @@ const devtools = require('./devtools');
 const trackerAllowlist = require('./allowlisted-trackers');
 const { stripTrackingParameters, trackingParametersStrippingEnabled } = require('./url-parameters');
 const ampProtection = require('./amp-protection');
-const { displayClickToLoadPlaceholders, getDefaultEnabledClickToLoadRuleActionsForTab } = require('./click-to-load');
 
 function buildResponse(url, requestData, tab, isMainFrame) {
     if (url.toLowerCase() !== requestData.url.toLowerCase()) {
@@ -118,19 +117,20 @@ function handleRequest(requestData) {
 
         // Tracking parameter stripping.
 
-        thisTab.urlParametersRemoved =
-            // Tracking parameters were stripped previously, this is the request
-            // event that fired after the redirection to strip the parameters.
-            (thisTab.urlParametersRemovedUrl && thisTab.urlParametersRemovedUrl === requestData.url) ||
-            // Strip tracking parameters if 1. there are any and 2. the feature
-            // is enabled for both the request URL and the initiator URL.
-            (trackingParametersStrippingEnabled(thisTab.site, requestData.initiator || requestData.originUrl) &&
-                stripTrackingParameters(mainFrameRequestURL));
+        // Strip tracking parameters if 1. there are any and 2. the feature is
+        // enabled for both the request URL and the initiator URL.
+        const urlParametersRemovedForThisRequest =
+            trackingParametersStrippingEnabled(thisTab.site, requestData.initiator || requestData.originUrl) &&
+            stripTrackingParameters(mainFrameRequestURL);
 
-        // To strip tracking parameters, the request is redirected and this event
-        // listener fires again for the redirected request. Take note of the URL
-        // before redirecting the request, so that  the `urlParametersRemoved`
-        // breakage flag persists after the redirection.
+        // Ensure the urlParametersRemoved flag is preserved for the tab after
+        // the redirection to remove the parameters has happened. That is needed
+        // for inclusion in breakage reports.
+        thisTab.urlParametersRemoved =
+            (thisTab.urlParametersRemovedUrl && thisTab.urlParametersRemovedUrl === requestData.url) || urlParametersRemovedForThisRequest;
+
+        // Note the redirection URL for the above urlParametersRemoved check,
+        // and ensure the flag is cleared for subsequent navigations.
         if (thisTab.urlParametersRemoved && !thisTab.urlParametersRemovedUrl) {
             thisTab.urlParametersRemovedUrl = mainFrameRequestURL.href;
         } else {
@@ -140,7 +140,17 @@ function handleRequest(requestData) {
         // add atb params only to main_frame
         const atbParametersAdded = ATB.addParametersMainFrameRequestUrl(mainFrameRequestURL);
 
-        if (thisTab.urlParametersRemoved || ampRedirected || atbParametersAdded) {
+        // apply no AI search redirect (noai.duckduckgo.com)
+        const shouldRedirectSearch =
+            mainFrameRequestURL.hostname === 'duckduckgo.com' &&
+            mainFrameRequestURL.pathname === '/' &&
+            mainFrameRequestURL.searchParams.has('q') &&
+            settings.getSetting('useNoAiSearch') === true;
+        if (shouldRedirectSearch) {
+            mainFrameRequestURL.hostname = 'noai.duckduckgo.com';
+        }
+
+        if (urlParametersRemovedForThisRequest || ampRedirected || atbParametersAdded || shouldRedirectSearch) {
             return { redirectUrl: mainFrameRequestURL.href };
         }
     } else {
@@ -236,23 +246,12 @@ export class TrackerBlockedEvent {
 function blockHandleResponse(thisTab, requestData) {
     const blockingEnabled = thisTab.site.isContentBlockingEnabled();
 
-    // Find the supported and enabled Click to Load rule actions for this tab.
-    const enabledRuleActions = new Set(
-        getDefaultEnabledClickToLoadRuleActionsForTab(thisTab).filter(
-            (ruleAction) => !thisTab.disabledClickToLoadRuleActions.includes(ruleAction),
-        ),
-    );
-
-    const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData, enabledRuleActions);
+    const tracker = trackers.getTrackerData(requestData.url, thisTab.site.url, requestData);
     const baseDomain = trackers.getBaseDomain(requestData.url);
     const serviceWorkerInitiated = requestData.tabId === -1;
 
     if (tracker) {
         let blockedNonTrackingRequest = false;
-
-        if (tracker?.matchedRule?.action?.startsWith('block-ctl-')) {
-            displayClickToLoadPlaceholders(thisTab, tracker.matchedRule.action);
-        }
 
         // Request Blocklist
         if (thisTab.site.isFeatureEnabled(RequestBlocklist.featureName)) {

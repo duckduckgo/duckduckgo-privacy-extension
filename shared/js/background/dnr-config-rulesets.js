@@ -104,7 +104,7 @@ function minimalConfig({ unprotectedTemporary, features }) {
  * @param {Object} matchDetailsByRuleId
  * @returns {Promise<>}
  */
-async function updateConfigRules(configName, latestState, rules, matchDetailsByRuleId, allowingRulesByClickToLoadAction = {}) {
+async function updateConfigRules(configName, latestState, rules, matchDetailsByRuleId) {
     const [ruleIdStart, ruleIdEnd] = ruleIdRangeByConfigName[configName];
     const etagRuleId = ruleIdStart;
     const maxNumberOfRules = ruleIdEnd - ruleIdStart;
@@ -153,9 +153,6 @@ async function updateConfigRules(configName, latestState, rules, matchDetailsByR
         settingValue[key] = latestState[key];
     }
 
-    if (Object.keys(allowingRulesByClickToLoadAction).length) {
-        settings.updateSetting('allowingDnrRulesByClickToLoadRuleAction', allowingRulesByClickToLoadAction);
-    }
     settings.updateSetting(settingName, settingValue);
 }
 
@@ -256,7 +253,7 @@ export async function onConfigUpdate(configName, etag, configValue) {
             await tdsStorage.ready();
             const supportedSurrogates = new Set(Object.keys(trackers.surrogateList));
 
-            const { ruleset, matchDetailsByRuleId, allowingRulesByClickToLoadAction } = await generateTdsRuleset(
+            const { ruleset, matchDetailsByRuleId } = await generateTdsRuleset(
                 configValue,
                 supportedSurrogates,
                 '/web_accessible_resources/',
@@ -264,7 +261,7 @@ export async function onConfigUpdate(configName, etag, configValue) {
                 ruleIdStart + 1,
             );
 
-            await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId, allowingRulesByClickToLoadAction);
+            await updateConfigRules(configName, latestState, ruleset, matchDetailsByRuleId);
             // Extension configuration.
         } else if (configName === 'config') {
             await updateExtensionConfigRules(etag, configValue);

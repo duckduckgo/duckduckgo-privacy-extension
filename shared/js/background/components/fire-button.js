@@ -20,7 +20,7 @@ import { getDomain, parse } from 'tldts';
 
 const tldtsOptions = { allowPrivateDomains: true };
 
-export const isFireButtonEnabled = BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chrome-mv2';
+export const isFireButtonEnabled = BUILD_TARGET === 'chrome';
 
 export default class FireButton {
     /**

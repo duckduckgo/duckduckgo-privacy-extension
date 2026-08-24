@@ -5,7 +5,6 @@ const ServiceWorkerTab = require('./classes/sw-tab');
 const { TabState } = require('./classes/tab-state');
 const browserWrapper = require('./wrapper');
 const { toggleUserAllowlistDomain, updateUserDenylist } = require('./dnr-user-allowlist.js');
-const { clearClickToLoadDnrRulesForTab } = require('./dnr-click-to-load');
 const { getCurrentTab } = require('./utils');
 
 /**
@@ -18,7 +17,7 @@ const { getCurrentTab } = require('./utils');
 
 // These tab properties are preserved when a new tab Object replaces an existing
 // one for the same tab ID.
-const persistentTabProperties = ['ampUrl', 'cleanAmpUrl', 'dnrRuleIdsByDisabledClickToLoadRuleAction', 'userRefreshCount'];
+const persistentTabProperties = ['ampUrl', 'cleanAmpUrl', 'urlParametersRemoved', 'urlParametersRemovedUrl', 'userRefreshCount'];
 
 class TabManager {
     constructor() {
@@ -76,10 +75,6 @@ class TabManager {
         const tabToRemove = this.tabContainer[id];
         if (tabToRemove) {
             tabToRemove?.adClick?.removeDNR();
-
-            if (browserWrapper.getManifestVersion() === 3) {
-                clearClickToLoadDnrRulesForTab(tabToRemove);
-            }
         }
         delete this.tabContainer[id];
         TabState.delete(id);

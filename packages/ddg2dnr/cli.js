@@ -3,7 +3,7 @@
 const fs = require('fs');
 const process = require('process');
 
-const { PuppeteerInterface } = require('./puppeteerInterface');
+const { BrowserInterface } = require('./browserInterface');
 
 const { generateSmarterEncryptionRuleset } = require('./lib/smarterEncryption');
 const { generateTdsRuleset } = require('./lib/tds');
@@ -29,21 +29,20 @@ async function main() {
             }
             break;
         case 'tds':
-            if (args.length < 3 || args.length > 5) {
+            if (args.length < 3 || args.length > 4) {
                 console.error(
                     'Usage: npm run tds',
                     './tds-input.json ./supported-surrogates-input.json ',
                     './tds-ruleset-output.json ',
-                    '[./allowing-rules-by-ctl-action-output.json]',
                     '[./match-details-by-rule-id-output.json]',
                 );
             } else {
-                const [tdsFilePath, supportedSurrogatesPath, rulesetFilePath, allowingRulesByCtlActionFilePath, mappingFilePath] = args;
+                const [tdsFilePath, supportedSurrogatesPath, rulesetFilePath, mappingFilePath] = args;
 
-                const browser = new PuppeteerInterface();
+                const browser = new BrowserInterface('chrome');
                 const isRegexSupported = browser.isRegexSupported.bind(browser);
 
-                const { allowingRulesByClickToLoadAction, ruleset, matchDetailsByRuleId } = await generateTdsRuleset(
+                const { ruleset, matchDetailsByRuleId } = await generateTdsRuleset(
                     JSON.parse(fs.readFileSync(tdsFilePath, { encoding: 'utf8' })),
                     new Set(JSON.parse(fs.readFileSync(supportedSurrogatesPath, { encoding: 'utf8' }))),
                     '/web_accessible_resources/',
@@ -53,10 +52,6 @@ async function main() {
                 browser.closeBrowser();
 
                 fs.writeFileSync(rulesetFilePath, JSON.stringify(ruleset, null, '\t'));
-
-                if (allowingRulesByCtlActionFilePath) {
-                    fs.writeFileSync(allowingRulesByCtlActionFilePath, JSON.stringify(allowingRulesByClickToLoadAction, null, '\t'));
-                }
 
                 if (mappingFilePath) {
                     fs.writeFileSync(mappingFilePath, JSON.stringify(matchDetailsByRuleId, null, '\t'));
@@ -73,7 +68,7 @@ async function main() {
             } else {
                 const [extensionConfigFilePath, rulesetFilePath, mappingFilePath] = args;
 
-                const browser = new PuppeteerInterface();
+                const browser = new BrowserInterface('chrome');
                 const isRegexSupported = browser.isRegexSupported.bind(browser);
 
                 const { ruleset, matchDetailsByRuleId } = await generateExtensionConfigurationRuleset(

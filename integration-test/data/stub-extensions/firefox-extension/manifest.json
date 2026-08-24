@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Stub Firefox extension",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "stub-firefox-extension@duckduckgo.com"
+    }
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "permissions": [
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback"
+  ],
+  "version": "0.0.1"
+}

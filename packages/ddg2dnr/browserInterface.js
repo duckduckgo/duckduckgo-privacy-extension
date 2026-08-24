@@ -1,35 +1,32 @@
-/** @module puppeteerInterface */
+/** @module browserInterface */
 
 // @ts-nocheck - ruleById property on self Object inside background
 //               ServiceWorker context for the extension is cumbersome to type
 //               hint with JSDoc comments.
 
-const path = require('path');
-const puppeteer = require('puppeteer');
+const { launchSimpleExtensionContext } = require('../../integration-test/helpers/playwrightHelpers');
 
-class PuppeteerInterface {
-    async setupBrowser() {
-        const testExtensionPath = path.join(__dirname, 'test', 'data', 'chrome-extension');
-
+class BrowserInterface {
+    /**
+     * @param {('chrome'|'firefox')} platform
+     */
+    async setupBrowser(platform) {
         // Open the browser, installing the test extension.
-        this.browser = await puppeteer.launch({
-            headless: 'chrome',
-            pipe: true,
-            enableExtensions: [testExtensionPath],
-        });
-
-        // Find the background ServiceWorker for the extension.
-        const backgroundWorkerTarget = await this.browser.waitForTarget((target) => target.type() === 'service_worker', { timeout: 2000 });
-        this.backgroundWorker = await backgroundWorkerTarget.worker();
+        const { background, close } = await launchSimpleExtensionContext(platform);
+        this.backgroundWorker = background;
+        this._close = close;
     }
 
     async closeBrowser() {
         await this.ready;
-        await this.browser?.close();
+        await this._close?.();
     }
 
-    constructor() {
-        this.ready = this.setupBrowser();
+    /**
+     * @param {('chrome'|'firefox')} platform
+     */
+    constructor(platform) {
+        this.ready = this.setupBrowser(platform);
     }
 
     /**
@@ -163,4 +160,4 @@ class PuppeteerInterface {
     }
 }
 
-exports.PuppeteerInterface = PuppeteerInterface;
+exports.BrowserInterface = BrowserInterface;

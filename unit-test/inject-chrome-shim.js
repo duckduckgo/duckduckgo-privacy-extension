@@ -66,14 +66,14 @@ const chrome = {
             set: (value) => {
                 chrome.storage.local._setCalls.push(value);
             },
-            get: (args, cb) => {
-                cb({});
+            get: (args, respond) => {
+                respond({});
             },
             _setCalls: [],
         },
         managed: {
-            get: (args, cb) => {
-                cb({});
+            get: (args, respond) => {
+                respond({});
             },
         },
     },

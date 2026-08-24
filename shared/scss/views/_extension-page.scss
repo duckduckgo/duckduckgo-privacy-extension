@@ -4,6 +4,7 @@
 .page-container {
     width: 400px;
     margin: 3em auto auto auto;
+    padding-bottom: 40px;
     position: relative;
 
     p {
@@ -23,8 +24,6 @@
 }
 
 .options-content__privacy {
-    padding-bottom: 8px;
-
     .menu-paragraph {
         font-weight: normal;
         line-height: 1.4;
@@ -37,13 +36,6 @@
 }
 
 .options-content__gpc-enabled {
-    margin: 20px 0 0;
-    border-top: 1px solid vars.$platinum;
-
-    h2 {
-        padding: 20px 0 10px;
-    }
-
     p {
         font-weight: normal;
         line-height: 1.4;
@@ -52,7 +44,7 @@
 
     ul {
         list-style: none;
-        padding-bottom: 20px;
+        padding-bottom: 6px;
     }
 
     li {

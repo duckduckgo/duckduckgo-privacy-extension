@@ -51,7 +51,7 @@
   },
   "globalPrivacyControlDisclaimer": {
     "title": "<b>Koska Global Privacy Control (GPC) on uusi standardi,\nuseimmat verkkosivustot eivät vielä tunnista sitä, mutta teemme parhaamme, että\nstandardi hyväksyttäisiin kaikkialla maailmassa.</b> Verkkosivujen täytyy kuitenkin noudattaa kehotusta vain siinä laajuudessa kuin sovellettavat lait määräävät.",
-    "note": "Explains to the user that we can communiate their choice to the website, but the website needs to choose to support this signal"
+    "note": "Explains to the user that we can communicate their choice to the website, but the website needs to choose to support this signal"
   },
   "emailProtection": {
     "title": "Sähköpostisuojaus",
@@ -79,11 +79,11 @@
   },
   "addUnprotectedSite": {
     "title": "Lisää suojaamaton sivusto",
-    "note": "Header for the user to add a site to the uprotected list"
+    "note": "Header for the user to add a site to the unprotected list"
   },
   "enterURL": {
     "title": "Kirjoita URL-osoite",
-    "note": "Promopt to enter the website URL here"
+    "note": "Prompt to enter the website URL here"
   },
   "invalidURL": {
     "title": "Virheellinen URL-osoite",
@@ -91,11 +91,11 @@
   },
   "fireButtonHeading": {
     "title": "Fire-painike",
-    "note": "Header for the settings for the Fire button feature. As per glossary, please do not translate Fire Button."
+    "note": "Header for the settings for the Fire button feature"
   },
   "fireButtonDesc": {
     "title": "Fire Button -painikkeen avulla välilehtien, selaushistorian ja tietojen tyhjentäminen on helppoa. Voit hallita, tyhjennetäänkö selaushistoria ja tiedot, ja suljetaanko nykyiset välilehdet.",
-    "note": "Describes the Fire button features. As per glossary, please do not translate Fire Button."
+    "note": "Describes the Fire button features"
   },
   "fireButtonClearHistoryTitle": {
     "title": "Tyhjennä historia",
@@ -107,10 +107,18 @@
   },
   "fireButtonTabClosureTitle": {
     "title": "Sulje välilehdet",
-    "note": "Title for option toggle. Close is a verb."
+    "note": "Title for option toggle."
+  },
+  "noAiMode": {
+    "title": "Ei tekoälyä haussa",
+    "note": "Toggle to redirect DuckDuckGo searches to the no-AI variant (noai.duckduckgo.com)"
+  },
+  "noAiModeDesc": {
+    "title": "Näe hakutulokset ilman tekoälyn vastauksia (Search Assist) tai tekoälykeskusteluja (Duck.ai) ja suodata tekoälyn luomat kuvat kuvatuloksista oletusarvoisesti. Koskee kaikkia duckduckgo.com-sivustolta ja osoiteriviltä tehtyjä hakuja.",
+    "note": "Description text explaining what the No AI in Searches toggle does. 'Search Assist' and 'Duck.ai' are product names and should not be translated."
   },
   "burnPageTitle": {
     "title": "Poltto käynnissä...",
-    "note": "Title of the page opened after starting the data clearing process. Indicates to the user that we're in the process of clearing website data."
+    "note": "Title of the page opened after starting the data clearing process. Indicates the user that we're in the process of clearing website data."
   }
 }

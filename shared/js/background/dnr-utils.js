@@ -20,7 +20,11 @@ import settings from './settings';
 // rule IDs here.
 export const USER_ALLOWLIST_RULE_ID = 20001;
 export const ATB_PARAM_RULE_ID = 20003;
+export const ATB_EXTENSIONINSTALLED_RULE_ID = 20008;
+export const HOME_PAGE_RULE_ID = 20010;
 export const NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID = 20006;
+export const SEARCH_REDIRECT_RULE_ID = 20009;
+export const NEWTAB_NO_AI_PARAM_RULE_ID = 20011;
 
 // Rule IDs for static session rules
 export const SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID = 20002;
@@ -41,7 +45,15 @@ export const ruleIdRangeByConfigName = {
 };
 
 // Valid dynamic rule IDs - others will be removed on extension start
-const RESERVED_DYNAMIC_RULE_IDS = [USER_ALLOWLIST_RULE_ID, ATB_PARAM_RULE_ID, NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID];
+const RESERVED_DYNAMIC_RULE_IDS = [
+    USER_ALLOWLIST_RULE_ID,
+    ATB_PARAM_RULE_ID,
+    ATB_EXTENSIONINSTALLED_RULE_ID,
+    NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID,
+    SEARCH_REDIRECT_RULE_ID,
+    HOME_PAGE_RULE_ID,
+    NEWTAB_NO_AI_PARAM_RULE_ID,
+];
 
 /**
  * Find an existing session or dynamic declarativeNetRequest rule with the given rule ID

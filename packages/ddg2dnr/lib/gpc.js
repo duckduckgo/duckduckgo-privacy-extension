@@ -18,7 +18,7 @@ function generateGPCheaderRule(ruleId, allowedDomains) {
         priority: GPC_HEADER_PRIORITY,
         actionType: 'modifyHeaders',
         requestHeaders: [{ header: 'Sec-GPC', operation: 'set', value: '1' }],
-        resourceTypes: [...resourceTypes],
+        resourceTypes,
         excludedInitiatorDomains: allowedDomains,
         excludedRequestDomains: allowedDomains,
     });

@@ -51,7 +51,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                test: [playwright, playwright-mv2]
+                test: [playwright, playwright-firefox]
                 shard: [1/4, 2/4, 3/4, 4/4]
         steps:
             - uses: actions/checkout@v6
@@ -60,14 +60,12 @@ jobs:
                   node-version: 22
                   cache: 'npm'
             - run: npm run install-ci
-            - name: Install Playwright Browsers
-              run: npx playwright install --with-deps chromium
             - name: Run tests
               run: xvfb-run --auto-servernum -- npm run ${{ matrix.test }} -- --shard ${{ matrix.shard }}
             - uses: actions/upload-artifact@v4
               if: always()
               with:
-                  name: ${{ matrix.test }}-report
+                  name: ${{ matrix.test }}-report-${{ strategy.job-index }}
                   path: playwright-report/
                   retention-days: 1
-                  
+
