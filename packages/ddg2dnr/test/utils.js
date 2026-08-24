@@ -518,6 +518,24 @@ describe('generateDNRRule', () => {
             });
         }
     });
+
+    it('should enclose bare IPv6 addresses in domain conditions in brackets', async () => {
+        const { condition } = await generateDNRRule({
+            priority: 10,
+            actionType: 'block',
+            requestDomains: ['::1', 'domain.example'],
+            excludedRequestDomains: ['::1', 'localhost', '127.0.0.1'],
+            initiatorDomains: ['2001:db8::8a2e:370:7334', '[::1]'],
+            excludedInitiatorDomains: ['::1', 'other.example'],
+        });
+
+        await assert.deepEqual(condition, {
+            requestDomains: ['[::1]', 'domain.example'],
+            excludedRequestDomains: ['[::1]', 'localhost', '127.0.0.1'],
+            initiatorDomains: ['[2001:db8::8a2e:370:7334]', '[::1]'],
+            excludedInitiatorDomains: ['[::1]', 'other.example'],
+        });
+    });
 });
 
 describe('generateRequestDomainsByTrackerDomain', () => {
