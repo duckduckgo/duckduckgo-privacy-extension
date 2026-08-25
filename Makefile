@@ -201,6 +201,9 @@ $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/background-embedded.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/background/background-embedded.js > $@
 
+$(BUILD_DIR)/public/js/background-chromium-embedded.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/background/background-chromium-embedded.js > $@
+
 ## Locale resources for UI
 shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
 	node scripts/bundleLocales.mjs > $@
@@ -235,6 +238,9 @@ $(BUILD_DIR)/public/js/content-scripts/cpm.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/cpm.js > $@
 
 JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js content-scripts/cpm.js
+ifeq ('$(browser)','chromium-embedded')
+	JS_BUNDLES = background-chromium-embedded.js devtools-panel.js
+endif
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Content Scope Scripts
