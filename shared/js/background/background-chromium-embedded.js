@@ -1,4 +1,5 @@
-/* global DEBUG, RELOADER, BUILD_TARGET */
+/* global DEBUG, RELOADER */
+import { onStartup } from './startup';
 import TabTracker from './components/tab-tracking';
 import TDSStorage from './components/tds';
 import ToggleReports from './components/toggle-reports';
@@ -7,6 +8,7 @@ import DNRListeners from './components/dnr-listeners';
 import RemoteConfig from './components/remote-config';
 import DashboardMessaging from './components/dashboard-messaging';
 import initReloader from './devbuild-reloader';
+import initDebugBuild from './devbuild';
 import Devtools from './components/devtools';
 import tabManager from './tab-manager';
 import MessageRouter from './components/message-router';
@@ -20,6 +22,10 @@ registerStandardHandlers();
 require('./events');
 const settings = require('./settings');
 require('./dnr-config-rulesets');
+
+settings.ready().then(() => {
+    onStartup();
+});
 
 const remoteConfig = new RemoteConfig({ settings });
 const tds = new TDSStorage({ settings, remoteConfig, abnMetrics: null });
@@ -38,7 +44,10 @@ const components = {
     dnrListeners: new DNRListeners({ settings, tds }),
 };
 
+// @ts-ignore
+self.components = components;
 
 // Optional features controlled by build flags.
 // If these flags are set to false, the whole function is tree-shaked from the build.
+DEBUG && initDebugBuild();
 RELOADER && initReloader();
