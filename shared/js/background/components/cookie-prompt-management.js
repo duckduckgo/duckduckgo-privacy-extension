@@ -789,9 +789,6 @@ export default class CookiePromptManagement {
         if (!featureFlags.heuristicAction) {
             return 'off';
         }
-        if (!featureFlags.cookiePopupPreferenceSetting) {
-            return 'reject';
-        }
         if (userPreference === 'default') {
             return 'tier1';
         }

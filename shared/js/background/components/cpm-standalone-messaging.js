@@ -38,7 +38,7 @@ export class CPMStandaloneMessaging {
         // there's no Autoconsent setting in the extension yet
         /** @type {import('./cookie-prompt-management').AutoconsentModePreference} */
         const userPreference = 'default';
-        return { enabled: true, userPreference, featureFlags: { heuristicAction: true, cookiePopupPreferenceSetting: true } };
+        return { enabled: true, userPreference, featureFlags: { heuristicAction: true } };
     }
 
     async checkAutoconsentEnabledForSite(url) {

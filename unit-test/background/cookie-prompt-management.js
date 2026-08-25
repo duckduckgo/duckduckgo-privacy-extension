@@ -17,7 +17,6 @@ function createMockMessaging({ autoconsentEnabledForSite = true, autoconsentSett
                 userPreference: 'default',
                 featureFlags: {
                     heuristicAction: true,
-                    cookiePopupPreferenceSetting: true,
                 },
             }),
         ),
