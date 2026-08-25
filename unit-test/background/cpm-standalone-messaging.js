@@ -81,7 +81,6 @@ describe('CPMStandaloneMessaging', () => {
                 userPreference: 'default',
                 featureFlags: {
                     heuristicAction: true,
-                    cookiePopupPreferenceSetting: true,
                 },
             });
         });
