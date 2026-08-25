@@ -1,5 +1,6 @@
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
+import { isChromiumEmbedded } from './helpers/platform';
 import { routeFromLocalhost } from './helpers/testPages';
 import { overridePrivacyConfigFromContent, overrideTds } from './helpers/testConfig';
 import { listenForBreakageReport } from './helpers/pixels';
@@ -27,6 +28,7 @@ test.describe('Extension functions with empty configuration', () => {
     });
 
     test('Settings page can add an unprotected site', async ({ context, backgroundPage }) => {
+        test.skip(isChromiumEmbedded(), 'chromium-embedded build does not include the options page');
         const allowlistedDomain = 'bad.third-party.site';
         const isAllowlisted = () =>
             backgroundPage.evaluate((domain) => globalThis.dbg.settings.getSetting('allowlisted')?.[domain], allowlistedDomain);
@@ -64,6 +66,7 @@ test.describe('Extension functions with empty configuration', () => {
     });
 
     test('Configuration updates are applied', async ({ backgroundPage, backgroundNetworkContext, page }) => {
+        test.skip(isChromiumEmbedded(), 'chromium-embedded build does not inject content-scope-scripts (navigatorInterface)');
         const checkConfigState = () =>
             backgroundPage.evaluate(() => ({
                 configVersion: globalThis.components.tds.config.data?.version,

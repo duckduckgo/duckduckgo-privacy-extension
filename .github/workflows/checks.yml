@@ -53,6 +53,10 @@ jobs:
             matrix:
                 test: [playwright, playwright-firefox]
                 shard: [1/4, 2/4, 3/4, 4/4]
+                include:
+                    # chromium-embedded runs a small test subset, so a single shard is enough
+                    - test: playwright-chromium-embedded
+                      shard: 1/1
         steps:
             - uses: actions/checkout@v6
             - uses: actions/setup-node@v4
