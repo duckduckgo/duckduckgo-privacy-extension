@@ -160,6 +160,20 @@ function castDNREnum(s) {
  */
 
 /**
+ * Normalizes a list of domains for use in a declarativeNetRequest rule
+ * condition. Bare IPv6 addresses (e.g. '::1', which appears in the privacy
+ * configuration's localhost exceptions) are enclosed in square brackets (e.g.
+ * '[::1]'), to match the host portion of URLs as required. Firefox rejects
+ * rules containing the bare form outright, while Chrome accepts the bare form
+ * but never matches it against requests.
+ * @param {string[]} [domains]
+ * @returns {string[]|undefined}
+ */
+function normalizeDomainList(domains) {
+    return domains?.map((domain) => (domain.includes(':') && !domain.startsWith('[') ? '[' + domain + ']' : domain));
+}
+
+/**
  * Generates a declarativeNetRequest rule with the given details.
  *
  * @overload
@@ -191,6 +205,11 @@ function generateDNRRule({
     requestMethods,
     excludedRequestMethods,
 }) {
+    requestDomains = normalizeDomainList(requestDomains);
+    excludedRequestDomains = normalizeDomainList(excludedRequestDomains);
+    initiatorDomains = normalizeDomainList(initiatorDomains);
+    excludedInitiatorDomains = normalizeDomainList(excludedInitiatorDomains);
+
     /** @type {Omit<chrome.declarativeNetRequest.Rule, 'id'> & {id?: number}} */
     const dnrRule = {
         priority,
@@ -611,6 +630,7 @@ const resourceTypes = /** @type ResourceType[] */ (
 
 exports.castDNREnum = castDNREnum;
 exports.generateDNRRule = generateDNRRule;
+exports.normalizeDomainList = normalizeDomainList;
 exports.generateRequestDomainsByTrackerDomain = generateRequestDomainsByTrackerDomain;
 exports.getTrackerEntryDomain = getTrackerEntryDomain;
 exports.processRegexTrackerRule = processRegexTrackerRule;

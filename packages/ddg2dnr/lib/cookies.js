@@ -1,4 +1,10 @@
-const { castDNREnum, generateRequestDomainsByTrackerDomain, getTrackerEntryDomain, storeInLookup } = require('./utils');
+const {
+    castDNREnum,
+    generateRequestDomainsByTrackerDomain,
+    getTrackerEntryDomain,
+    normalizeDomainList,
+    storeInLookup,
+} = require('./utils');
 
 const COOKIE_PRIORITY = 40000;
 
@@ -81,9 +87,9 @@ function generateCookieBlockingRuleset(tds, excludedCookieDomains, siteAllowlist
                 ],
             },
             condition: {
-                requestDomains: Array.from(trackerDomains),
-                excludedInitiatorDomains: [...domains, ...siteAllowlist],
-                excludedRequestDomains,
+                requestDomains: normalizeDomainList(Array.from(trackerDomains)),
+                excludedInitiatorDomains: normalizeDomainList([...domains, ...siteAllowlist]),
+                excludedRequestDomains: normalizeDomainList(excludedRequestDomains),
             },
         });
         matchDetailsByRuleId[startingRuleId] = {
@@ -112,8 +118,8 @@ function generateCookieBlockingRuleset(tds, excludedCookieDomains, siteAllowlist
                 ],
             },
             condition: {
-                requestDomains: singleDomainEntityDomains,
-                excludedInitiatorDomains: siteAllowlist,
+                requestDomains: normalizeDomainList(singleDomainEntityDomains),
+                excludedInitiatorDomains: normalizeDomainList(siteAllowlist),
                 domainType: castDNREnum('thirdParty'),
             },
         });

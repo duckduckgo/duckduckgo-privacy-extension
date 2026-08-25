@@ -129,6 +129,16 @@ describe('cookie rules', () => {
             assert.ok(ruleset.every((r) => r.condition.excludedInitiatorDomains?.includes('safe.site')));
         });
 
+        it('bare IPv6 site allowlist domains are bracketed and the ruleset loads', /** @this {{ browser: import('../browserInterface').BrowserInterface }} */ async function () {
+            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], ['::1', 'localhost', '127.0.0.1']);
+            assert.ok(ruleset.every((r) => r.condition.excludedInitiatorDomains?.includes('[::1]')));
+            assert.ok(ruleset.every((r) => !r.condition.excludedInitiatorDomains?.includes('::1')));
+
+            // Firefox rejects rules containing the bare '::1' form, so
+            // check the generated rules actually load.
+            await this.browser.addRules(ruleset);
+        });
+
         it('groups single domain entities', () => {
             const { ruleset } = generateCookieBlockingRuleset(mockTds, [], []);
             const thirdPartyRules = ruleset.filter((r) => r.condition.domainType === 'thirdParty');
