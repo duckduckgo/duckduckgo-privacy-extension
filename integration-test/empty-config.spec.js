@@ -15,6 +15,7 @@ test.describe('Extension functions with empty configuration', () => {
     });
 
     test('Post-install page opens successfully', async ({ context }) => {
+        test.skip(isChromiumEmbedded(), 'chromium-embedded build does not open the post-install page (see atb-disabled.spec.js)');
         const postInstallPage = context.pages().find((p) => p.url().startsWith('https://duckduckgo.com/extension-success'));
         expect(postInstallPage).toBeDefined();
     });
