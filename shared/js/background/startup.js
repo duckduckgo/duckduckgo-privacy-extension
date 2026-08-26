@@ -34,12 +34,12 @@ export async function onStartup() {
     Companies.buildFromStorage();
 
     /**
-     * in Chrome, try to initiate the `NewTabTrackerStats` feature for the
-     * duckduckgo.com New Tab Page. The chromium-embedded build collects the
-     * same stats, but they power the embedded New Tab Page instead (see
-     * components/ntp-messaging.js).
+     * in Chrome only, try to initiate the `NewTabTrackerStats` feature for
+     * the duckduckgo.com New Tab Page. (The chromium-embedded build collects
+     * the same stats for its embedded New Tab Page, wired up with the other
+     * NTP components in background.js.)
      */
-    if ((BUILD_TARGET === 'chrome' && getBrowserName() === 'chrome') || BUILD_TARGET === 'chromium-embedded') {
+    if (BUILD_TARGET === 'chrome' && getBrowserName() === 'chrome') {
         try {
             // build up dependencies
             const trackerStats = new TrackerStats();
@@ -53,11 +53,7 @@ export async function onStartup() {
             await newTabTrackerStats.restoreFromStorage();
 
             // now setup extension listeners
-            if (BUILD_TARGET === 'chromium-embedded') {
-                newTabTrackerStats.registerDataCollection();
-            } else {
-                newTabTrackerStats.register();
-            }
+            newTabTrackerStats.register();
         } catch (e) {
             console.warn('an error occurred setting up TrackerStats', e);
         }

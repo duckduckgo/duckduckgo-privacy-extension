@@ -1,8 +1,9 @@
 import browser from 'webextension-polyfill';
 import { NTPActivityStore } from '../classes/ntp-activity-store';
 import { emitter, TrackerBlockedEvent } from '../before-request';
-import { getBaseDomain } from '../utils';
+import { getBaseDomain, extractHostFromURL } from '../utils';
 import { createAlarm } from '../wrapper';
+import { trailingThrottle } from '../../shared-utils/trailing-throttle';
 
 const PRUNE_ALARM_NAME = 'pruneNtpActivity';
 const PRUNE_PERIOD_MINUTES = 60;
@@ -23,27 +24,26 @@ const FLUSH_INTERVAL_MS = 1000;
  * buffered in memory and flushed on a trailing throttle. Consumers (see
  * components/ntp-messaging.js) can register an onChange callback to be told
  * which sites' data changed after each write.
+ *
+ * TODO: this store overlaps with the aggregated NewTabTrackerStats data (the
+ * summary feed) - the summary could eventually be derived from this store so
+ * the two feeds cannot drift.
  */
 export default class NTPActivityCollection {
     /**
      * Sites currently loaded in each (non-incognito) tab. Blocked-tracker
      * events are only counted while the event's tab still shows the same
      * host, mirroring the sameDomainDocument check in before-request.js.
-     * @type {Map<number, { host: string, etldPlusOne: string }>}
+     * `lastTitle` avoids redundant store writes for repeated title updates.
+     * @type {Map<number, { host: string, etldPlusOne: string, lastTitle?: string }>}
      */
     tabSites = new Map();
 
     /**
-     * Buffered blocked-tracker counts: host -> company displayName -> count.
-     * @type {Map<string, Record<string, number>>}
+     * Buffered blocked-tracker counts by host.
+     * @type {Map<string, { etldPlusOne: string, counts: Record<string, number> }>}
      */
     pendingCounts = new Map();
-
-    /** @type {Map<string, string>} etldPlusOne for hosts with pending counts */
-    pendingSiteInfo = new Map();
-
-    /** @type {ReturnType<typeof setTimeout>?} */
-    _flushTimer = null;
 
     /** @type {((hosts: string[]) => void)[]} */
     _changeCallbacks = [];
@@ -54,6 +54,7 @@ export default class NTPActivityCollection {
      */
     constructor({ store } = {}) {
         this.store = store || new NTPActivityStore();
+        this.scheduleFlush = trailingThrottle(() => this.flushPendingCounts(), FLUSH_INTERVAL_MS);
 
         browser.webNavigation.onCommitted.addListener((details) => {
             if (details.frameId !== 0) return;
@@ -81,6 +82,24 @@ export default class NTPActivityCollection {
                 this.store.prune();
             }
         });
+
+        // tabSites is in-memory only, so seed it with the currently open tabs
+        // after a service worker restart - otherwise blocked trackers on
+        // already-open tabs would go unattributed until their next navigation.
+        // No store writes here: the visits were recorded when they happened.
+        this.ready = this.restoreTabSites();
+    }
+
+    async restoreTabSites() {
+        const tabs = await browser.tabs.query({});
+        for (const tab of tabs) {
+            if (tab.id === undefined || tab.incognito || !tab.url) continue;
+            const host = siteHost(tab.url);
+            if (host === '') continue;
+            if (!this.tabSites.has(tab.id)) {
+                this.tabSites.set(tab.id, { host, etldPlusOne: getBaseDomain(tab.url) || host });
+            }
+        }
     }
 
     /**
@@ -106,13 +125,8 @@ export default class NTPActivityCollection {
      * @param {string} url
      */
     async handleNavigation(tabId, url) {
-        let parsedUrl;
-        try {
-            parsedUrl = new URL(url);
-        } catch (e) {
-            return;
-        }
-        if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+        const host = siteHost(url);
+        if (host === '') {
             this.tabSites.delete(tabId);
             return;
         }
@@ -126,7 +140,6 @@ export default class NTPActivityCollection {
             this.tabSites.delete(tabId);
             return;
         }
-        const host = parsedUrl.hostname.toLowerCase();
         const etldPlusOne = getBaseDomain(url) || host;
         this.tabSites.set(tabId, { host, etldPlusOne });
         // The page title usually isn't known at commit time; it's filled in
@@ -142,14 +155,8 @@ export default class NTPActivityCollection {
      */
     async handleTitleChange(tabId, url, title) {
         const site = this.tabSites.get(tabId);
-        if (!site) return;
-        let host;
-        try {
-            host = new URL(url).hostname.toLowerCase();
-        } catch (e) {
-            return;
-        }
-        if (host !== site.host) return;
+        if (!site || siteHost(url) !== site.host || site.lastTitle === title) return;
+        site.lastTitle = title;
         const updated = await this.store.updateTitle(site.host, url, title);
         if (updated) {
             this._notifyChange([site.host]);
@@ -166,32 +173,31 @@ export default class NTPActivityCollection {
         // a regular window), and only while the tab still shows that site.
         if (!site || site.host !== event.tabHost) return;
 
-        const counts = this.pendingCounts.get(site.host) || {};
-        counts[event.companyDisplayName] = (counts[event.companyDisplayName] || 0) + 1;
-        this.pendingCounts.set(site.host, counts);
-        this.pendingSiteInfo.set(site.host, site.etldPlusOne);
-
-        if (!this._flushTimer) {
-            this._flushTimer = setTimeout(() => {
-                this._flushTimer = null;
-                this.flushPendingCounts();
-            }, FLUSH_INTERVAL_MS);
-        }
+        const pending = this.pendingCounts.get(site.host) || { etldPlusOne: site.etldPlusOne, counts: {} };
+        pending.counts[event.companyDisplayName] = (pending.counts[event.companyDisplayName] || 0) + 1;
+        this.pendingCounts.set(site.host, pending);
+        this.scheduleFlush();
     }
 
     async flushPendingCounts() {
+        if (this.pendingCounts.size === 0) return;
         const pending = this.pendingCounts;
-        const siteInfo = this.pendingSiteInfo;
         this.pendingCounts = new Map();
-        this.pendingSiteInfo = new Map();
-        const hosts = [];
-        for (const [host, companyCounts] of pending) {
-            const etldPlusOne = siteInfo.get(host) || host;
-            await this.store.recordBlockedTrackers({ host, etldPlusOne }, companyCounts);
-            hosts.push(host);
-        }
-        if (hosts.length) {
-            this._notifyChange(hosts);
-        }
+        const updates = [...pending].map(([host, { etldPlusOne, counts }]) => ({ host, etldPlusOne, counts }));
+        await this.store.recordBlockedTrackers(updates);
+        this._notifyChange(updates.map(({ host }) => host));
     }
+}
+
+/**
+ * The full hostname (www. kept, lowercase) a page's activity is grouped
+ * under, or '' for non-http(s)/invalid URLs. The same derivation is used by
+ * the store's url->host mapping and (via Site.domainWWW) the tabHost carried
+ * on TrackerBlockedEvent.
+ * @param {string} url
+ * @returns {string}
+ */
+function siteHost(url) {
+    if (!/^https?:\/\//.test(url)) return '';
+    return extractHostFromURL(url, true).toLowerCase();
 }
