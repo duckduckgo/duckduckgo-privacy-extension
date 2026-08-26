@@ -1,3 +1,4 @@
+/** global BUILD_TARGET */
 const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string');
 const browserInfo = parseUserAgentString();
 
@@ -18,6 +19,9 @@ function getConfigFileName() {
         browserName = '';
     } else {
         browserName = '-' + browserName + (isMV3() ? 'mv3' : '');
+    }
+    if (BUILD_TARGET === 'chrome-embedded') {
+        browserName = 'windows'
     }
     return `${trackerBlockingEndpointBase}/config/v4/extension${browserName}-config.json`;
 }
