@@ -73,7 +73,7 @@ const devtools = new Devtools({ tds });
 const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager });
 /**
  * @type {{
- *  autofill: EmailAutofill;
+ *  autofill: EmailAutofill?;
  *  dashboardMessaging: DashboardMessaging
  *  omnibox: OmniboxSearch;
  *  fireButton?: FireButton;
@@ -88,7 +88,6 @@ const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager })
  * }}
  */
 const components = {
-    autofill: new EmailAutofill({ settings }),
     dashboardMessaging,
     omnibox: new OmniboxSearch(),
     internalUser: new InternalUserDetector({ settings }),
@@ -102,6 +101,11 @@ const components = {
     abnMetrics,
     messaging: new MessageRouter(),
 };
+
+// Excluded on embedded build
+if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'firefox') {
+    components.autofill = new EmailAutofill({ settings });
+}
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome') {
