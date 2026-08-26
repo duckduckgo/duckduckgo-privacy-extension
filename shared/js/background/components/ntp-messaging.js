@@ -1,6 +1,8 @@
 import browser from 'webextension-polyfill';
 import { NewTabTrackerStats } from '../newtab-tracker-stats';
 import { emitter, TrackerBlockedEvent } from '../before-request';
+import { getUserLocale, getFullUserLocale } from '../i18n';
+import { trailingThrottle } from '../../shared-utils/trailing-throttle';
 import { NTP_PORT_NAME, NTP_MESSAGING_CONTEXT, NTP_FEATURE_NAME, NTP_OTHER_COMPANY_IDENTIFIER } from '../../ntp/constants';
 
 /**
@@ -47,15 +49,14 @@ export default class NTPMessaging {
     /** @type {Set<Port>} */
     ports = new Set();
 
-    /** @type {ReturnType<typeof setTimeout>?} */
-    _pushTimer = null;
-
     /**
-     * @param {{ settings: Settings, ntpActivity: NTPActivityCollection }} options
+     * @param {{ settings: Settings, ntpActivity: NTPActivityCollection, newTabTrackerStats: NewTabTrackerStats }} options
      */
-    constructor({ settings, ntpActivity }) {
+    constructor({ settings, ntpActivity, newTabTrackerStats }) {
         this.settings = settings;
         this.ntpActivity = ntpActivity;
+        this.newTabTrackerStats = newTabTrackerStats;
+        this.schedulePushDataUpdate = trailingThrottle(() => this.pushDataUpdate(), 1000);
 
         browser.runtime.onConnect.addListener((port) => {
             if (port.name !== NTP_PORT_NAME) return;
@@ -70,7 +71,9 @@ export default class NTPMessaging {
 
         // Push updated summary stats to any open NTPs as trackers are blocked.
         emitter.on(TrackerBlockedEvent.eventName, () => {
-            this.schedulePushDataUpdate();
+            if (this.ports.size > 0) {
+                this.schedulePushDataUpdate();
+            }
         });
 
         // Push per-site patches to the activity feed as data is collected.
@@ -117,7 +120,7 @@ export default class NTPMessaging {
                     widgetConfigs: this.settings.getSetting(WIDGET_CONFIGS_SETTING) || DEFAULT_WIDGET_CONFIGS,
                     platform: { name: 'windows' },
                     env: 'production',
-                    locale: getLocale().split('-')[0],
+                    locale: getUserLocale(),
                     updateNotification: null,
                 };
             }
@@ -195,18 +198,14 @@ export default class NTPMessaging {
      * @returns {{ totalCount: number }}
      */
     getProtectionsData() {
-        return { totalCount: NewTabTrackerStats.shared?.stats.totalCount ?? 0 };
+        return { totalCount: this.newTabTrackerStats.stats.totalCount };
     }
 
     /**
      * @returns {{ trackerCompanies: { displayName: string, count: number }[] }}
      */
     getPrivacyStatsData() {
-        const shared = NewTabTrackerStats.shared;
-        if (!shared) {
-            return { trackerCompanies: [] };
-        }
-        const trackerCompanies = shared.stats.sorted(Date.now()).map(({ key, count }) => ({
+        const trackerCompanies = this.newTabTrackerStats.stats.sorted(Date.now()).map(({ key, count }) => ({
             displayName: key === NewTabTrackerStats.otherCompaniesKey ? NTP_OTHER_COMPANY_IDENTIFIER : key,
             count,
         }));
@@ -222,10 +221,11 @@ export default class NTPMessaging {
      * The site URL list + total for the activity feed's batched API. The
      * total is the last-7-days count (the store's retention window), unlike
      * protections_getData's install-time total.
+     * @param {SiteActivityRow[]} [rows] - pass the rows if already fetched
      * @returns {Promise<{ urls: string[], totalTrackersBlocked: number }>}
      */
-    async getActivityUrlInfo() {
-        const rows = await this.ntpActivity.store.getAll();
+    async getActivityUrlInfo(rows) {
+        rows = rows || (await this.ntpActivity.store.getAll());
         return {
             urls: rows.map((row) => row.url),
             totalTrackersBlocked: rows.reduce((total, row) => total + row.totalCount, 0),
@@ -233,14 +233,17 @@ export default class NTPMessaging {
     }
 
     /**
-     * Push single-site activity patches to connected NTP pages.
+     * Push single-site activity patches to connected NTP pages. The page's
+     * patch protocol carries one site per event, so multiple changed hosts
+     * result in one event each (all derived from a single store read).
      * @param {string[]} hosts
      */
     async pushActivityPatches(hosts) {
         if (this.ports.size === 0) return;
-        const urlInfo = await this.getActivityUrlInfo();
+        const rows = await this.ntpActivity.store.getAll();
+        const urlInfo = await this.getActivityUrlInfo(rows);
         for (const host of hosts) {
-            const row = await this.ntpActivity.store.get(host);
+            const row = rows.find((r) => r.host === host);
             this.pushSubscriptionEvent('activity_onDataPatch', {
                 ...urlInfo,
                 patch: row ? toDomainActivity(row) : null,
@@ -260,17 +263,10 @@ export default class NTPMessaging {
     }
 
     /**
-     * Trailing throttle for summary data update pushes, so a burst of blocked
-     * trackers results in a single update to the page.
+     * Push the summary feed's data (scheduled via the trailing-throttled
+     * schedulePushDataUpdate, so bursts of blocked trackers result in a
+     * single update to the page).
      */
-    schedulePushDataUpdate() {
-        if (this.ports.size === 0 || this._pushTimer) return;
-        this._pushTimer = setTimeout(() => {
-            this._pushTimer = null;
-            this.pushDataUpdate();
-        }, 1000);
-    }
-
     pushDataUpdate() {
         this.pushSubscriptionEvent('protections_onDataUpdate', this.getProtectionsData());
         this.pushSubscriptionEvent('stats_onDataUpdate', this.getPrivacyStatsData());
@@ -339,7 +335,7 @@ let relativeTimeFormatter = null;
  */
 export function formatRelativeTime(timestamp, now = Date.now()) {
     if (!relativeTimeFormatter) {
-        relativeTimeFormatter = new Intl.RelativeTimeFormat(getLocale(), { numeric: 'auto' });
+        relativeTimeFormatter = new Intl.RelativeTimeFormat(getFullUserLocale(), { numeric: 'auto' });
     }
     const seconds = Math.max(0, Math.round((now - timestamp) / 1000));
     if (seconds < 60) {
@@ -352,12 +348,4 @@ export function formatRelativeTime(timestamp, now = Date.now()) {
         return relativeTimeFormatter.format(-Math.round(seconds / (60 * 60)), 'hour');
     }
     return relativeTimeFormatter.format(-Math.round(seconds / (24 * 60 * 60)), 'day');
-}
-
-function getLocale() {
-    try {
-        return browser.i18n.getUILanguage();
-    } catch (e) {
-        return 'en';
-    }
 }

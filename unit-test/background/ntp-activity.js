@@ -37,10 +37,9 @@ describe('NTPActivityCollection component', () => {
         jasmine.clock().tick(1001);
         await Promise.resolve();
 
-        expect(fakeStore.recordBlockedTrackers).toHaveBeenCalledOnceWith(
-            { host: 'example.com', etldPlusOne: 'example.com' },
-            { Google: 2, Facebook: 1 },
-        );
+        expect(fakeStore.recordBlockedTrackers).toHaveBeenCalledOnceWith([
+            { host: 'example.com', etldPlusOne: 'example.com', counts: { Google: 2, Facebook: 1 } },
+        ]);
         expect(changed).toEqual(['example.com']);
     });
 

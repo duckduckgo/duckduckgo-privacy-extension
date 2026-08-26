@@ -365,7 +365,8 @@ function blockHandleResponse(thisTab, requestData) {
                     new TrackerBlockedEvent({
                         companyDisplayName: displayName,
                         tabId: thisTab.id,
-                        tabHost: thisTab.site.domain,
+                        // full hostname (www. kept), matching how ntp-activity groups sites
+                        tabHost: thisTab.site.domainWWW,
                     }),
                 );
             }
