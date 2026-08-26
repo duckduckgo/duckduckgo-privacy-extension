@@ -17,7 +17,7 @@ const readyPromise = new Promise((resolve) => {
 });
 
 export async function onStartup() {
-    if (['chrome', 'chromium-embedded'].includes(BUILD_TARGET)) {
+    if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
         await dnrSessionId.setSessionRuleOffsetFromStorage();
     }
 
