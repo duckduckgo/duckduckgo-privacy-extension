@@ -64,13 +64,17 @@ describe('NTPActivityStore', () => {
     });
 
     it('accumulates blocked tracker counts per company, creating the row if needed', async () => {
-        await store.recordBlockedTrackers({ host: 'example.com', etldPlusOne: 'example.com' }, { Google: 2, Facebook: 1 });
-        await store.recordBlockedTrackers({ host: 'example.com', etldPlusOne: 'example.com' }, { Google: 3 });
+        await store.recordBlockedTrackers([{ host: 'example.com', etldPlusOne: 'example.com', counts: { Google: 2, Facebook: 1 } }]);
+        await store.recordBlockedTrackers([
+            { host: 'example.com', etldPlusOne: 'example.com', counts: { Google: 3 } },
+            { host: 'other.com', etldPlusOne: 'other.com', counts: { Google: 1 } },
+        ]);
 
         const row = await store.get('example.com');
         expect(row?.totalCount).toBe(6);
         expect(row?.companies).toEqual({ Google: 5, Facebook: 1 });
         expect(row?.url).toBe('https://example.com/');
+        expect((await store.get('other.com'))?.totalCount).toBe(1);
     });
 
     it('lists sites by recency and resolves them by url', async () => {

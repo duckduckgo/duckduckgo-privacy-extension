@@ -14,9 +14,7 @@ const trackingTestHost = 'privacy-test-pages.site';
 const trackingTestSite = `https://${trackingTestHost}/privacy-protections/request-blocking/`;
 
 function getNtpUrl(backgroundPage) {
-    // Note: URL.origin is 'null' for chrome-extension: URLs, so cannot be used here.
-    const extensionOrigin = backgroundPage.url().split('/').slice(0, 3).join('/');
-    return `${extensionOrigin}/ntp/index.html`;
+    return backgroundPage.evaluate(() => chrome.runtime.getURL('ntp/index.html'));
 }
 
 test.describe('Embedded New Tab Page', () => {
@@ -31,7 +29,7 @@ test.describe('Embedded New Tab Page', () => {
     });
 
     test('renders the protections widget via extension messaging', async ({ page, backgroundPage }) => {
-        await page.goto(getNtpUrl(backgroundPage));
+        await page.goto(await getNtpUrl(backgroundPage));
 
         // the protections widget only renders once initialSetup,
         // protections_getConfig and protections_getData have all round-tripped
@@ -40,7 +38,7 @@ test.describe('Embedded New Tab Page', () => {
     });
 
     test('shows blocked tracker stats pushed from the background', async ({ page, backgroundPage }) => {
-        await page.goto(getNtpUrl(backgroundPage));
+        await page.goto(await getNtpUrl(backgroundPage));
         await expect(page.locator('[data-entry-point="protections"]')).toBeVisible();
 
         // Seed some blocked tracker stats and push the update to the open
@@ -77,7 +75,7 @@ test.describe('Embedded New Tab Page', () => {
 
         // The details feed on the NTP should show the visited site.
         const ntp = await context.newPage();
-        await ntp.goto(getNtpUrl(backgroundPage));
+        await ntp.goto(await getNtpUrl(backgroundPage));
         await expect(ntp.locator('[data-entry-point="protections"]')).toBeVisible();
         await ntp.getByRole('button', { name: 'Details' }).click();
         // one row per site, with the recent page visits listed under it
