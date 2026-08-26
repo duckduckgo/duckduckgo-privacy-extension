@@ -158,8 +158,9 @@ describe('NTPMessaging component', () => {
         expect(activity.title).toBe('www.example.com');
         expect(activity.url).toBe('https://www.example.com/');
         expect(activity.etldPlusOne).toBe('example.com');
+        // the trailing '&' absorbs the '?preferredSize=N' suffix the page appends
         expect(activity.favicon).toEqual({
-            src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.com%2F&size=32',
+            src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.com%2F&size=32&',
             maxAvailableSize: 32,
         });
         expect(activity.trackersFound).toBe(true);
