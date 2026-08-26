@@ -41,6 +41,7 @@ import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from '.
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
 import CookiePromptManagement from './components/cookie-prompt-management';
 import NTPMessaging from './components/ntp-messaging';
+import NTPActivityCollection from './components/ntp-activity';
 
 // Trigger registration of default message handlers into the shared registry.
 import { registerStandardHandlers } from './message-handlers';
@@ -136,9 +137,11 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
 }
 
 if (BUILD_TARGET === 'chromium-embedded') {
-    // Messaging for the embedded New Tab Page, which is served as an
-    // extension page in this build (see chrome_url_overrides in the manifest).
-    components.ntpMessaging = new NTPMessaging({ settings });
+    // The embedded New Tab Page is served as an extension page in this build
+    // (see chrome_url_overrides in the manifest): per-site activity collection
+    // for its details feed, and the messaging endpoint the page talks to.
+    components.ntpActivity = new NTPActivityCollection();
+    components.ntpMessaging = new NTPMessaging({ settings, ntpActivity: components.ntpActivity });
 }
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore
