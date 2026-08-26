@@ -48,7 +48,7 @@ registerStandardHandlers();
 // otherwise FF might miss the onInstalled event
 require('./events');
 const settings = require('./settings');
-if (['chrome', 'chromium-embedded'].includes(BUILD_TARGET)) {
+if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
     require('./dnr-config-rulesets');
 }
 
@@ -108,7 +108,7 @@ if (BUILD_TARGET === 'chrome') {
     setUpTestExperiment(abnMetrics);
 }
 
-if (['chrome', 'chromium-embedded'].includes(BUILD_TARGET)) {
+if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
     // MV3-only components
     components.scriptInjection = new MV3ContentScriptInjection();
     components.dnrListeners = new DNRListeners({ settings, tds });
