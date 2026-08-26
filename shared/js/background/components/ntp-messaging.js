@@ -5,6 +5,8 @@ import { NTP_PORT_NAME, NTP_MESSAGING_CONTEXT, NTP_FEATURE_NAME, NTP_OTHER_COMPA
 
 /**
  * @typedef {import('../settings.js')} Settings
+ * @typedef {import('./ntp-activity.js').default} NTPActivityCollection
+ * @typedef {import('../classes/ntp-activity-store.js').SiteActivityRow} SiteActivityRow
  * @typedef {import('webextension-polyfill').Runtime.Port} Port
  */
 
@@ -36,10 +38,10 @@ const DEFAULT_WIDGET_CONFIGS = [{ id: 'protections', visibility: 'visible' }];
  *    `{context, featureName, subscriptionName, params}` - the page registers
  *    no subscriptions with us, it simply filters incoming events.
  *
- * For now only the 'protections' widget is enabled, backed by the same
- * aggregated tracker stats that power the duckduckgo.com New Tab Page on
- * Chrome (see NewTabTrackerStats). Activity/history data and bridging to
- * native data sources will follow.
+ * For now only the 'protections' widget is enabled. Its summary feed is
+ * backed by the same aggregated tracker stats that power the duckduckgo.com
+ * New Tab Page on Chrome (see NewTabTrackerStats), and its activity
+ * ("Details") feed by the per-site stats collected in NTPActivityCollection.
  */
 export default class NTPMessaging {
     /** @type {Set<Port>} */
@@ -49,10 +51,11 @@ export default class NTPMessaging {
     _pushTimer = null;
 
     /**
-     * @param {{ settings: Settings }} options
+     * @param {{ settings: Settings, ntpActivity: NTPActivityCollection }} options
      */
-    constructor({ settings }) {
+    constructor({ settings, ntpActivity }) {
         this.settings = settings;
+        this.ntpActivity = ntpActivity;
 
         browser.runtime.onConnect.addListener((port) => {
             if (port.name !== NTP_PORT_NAME) return;
@@ -65,9 +68,14 @@ export default class NTPMessaging {
             });
         });
 
-        // Push updated stats to any open NTPs as trackers are blocked.
+        // Push updated summary stats to any open NTPs as trackers are blocked.
         emitter.on(TrackerBlockedEvent.eventName, () => {
             this.schedulePushDataUpdate();
+        });
+
+        // Push per-site patches to the activity feed as data is collected.
+        this.ntpActivity.onChange((hosts) => {
+            this.pushActivityPatches(hosts);
         });
     }
 
@@ -109,7 +117,7 @@ export default class NTPMessaging {
                     widgetConfigs: this.settings.getSetting(WIDGET_CONFIGS_SETTING) || DEFAULT_WIDGET_CONFIGS,
                     platform: { name: 'windows' },
                     env: 'production',
-                    locale: getLocale(),
+                    locale: getLocale().split('-')[0],
                     updateNotification: null,
                 };
             }
@@ -121,14 +129,19 @@ export default class NTPMessaging {
                 return this.getProtectionsData();
             case 'stats_getData':
                 return this.getPrivacyStatsData();
-            // The activity feed is not populated yet: return valid, empty
-            // responses for both the plain and batched activity APIs.
-            case 'activity_getData':
-                return { activity: [] };
+            case 'activity_getData': {
+                const rows = await this.ntpActivity.store.getAll();
+                return { activity: rows.map((row) => toDomainActivity(row)) };
+            }
             case 'activity_getUrls':
-                return { urls: [], totalTrackersBlocked: this.getProtectionsData().totalCount };
-            case 'activity_getDataForUrls':
-                return { activity: [] };
+                return await this.getActivityUrlInfo();
+            case 'activity_getDataForUrls': {
+                const rows = await this.ntpActivity.store.getForUrls(params?.urls || []);
+                return { activity: rows.map((row) => toDomainActivity(row)) };
+            }
+            case 'activity_confirmBurn':
+                // Burning (fire button) is not wired up yet.
+                return { action: 'none' };
             default:
                 throw new Error(`unhandled NTP request: ${method}`);
         }
@@ -149,6 +162,13 @@ export default class NTPMessaging {
                 await this.settings.ready();
                 this.settings.updateSetting(WIDGET_CONFIGS_SETTING, params);
                 break;
+            case 'activity_removeItem': {
+                if (typeof params?.url === 'string') {
+                    await this.ntpActivity.store.removeByUrl(params.url);
+                    await this.pushActivityDataUpdate();
+                }
+                break;
+            }
             case 'open': {
                 const tabId = port?.sender?.tab?.id;
                 if (typeof params?.url === 'string') {
@@ -165,8 +185,8 @@ export default class NTPMessaging {
                 console.error(`NTP ${method}:`, params?.message);
                 break;
             default:
-                // telemetryEvent, contextMenu, stats_showMore/showLess etc. -
-                // accepted but not acted upon yet.
+                // telemetryEvent, contextMenu, favorites, stats_showMore/showLess
+                // etc. - accepted but not acted upon yet.
                 console.log(`NTP notification (ignored): ${method}`, params);
         }
     }
@@ -199,7 +219,48 @@ export default class NTPMessaging {
     }
 
     /**
-     * Trailing throttle for data update pushes, so a burst of blocked
+     * The site URL list + total for the activity feed's batched API. The
+     * total is the last-7-days count (the store's retention window), unlike
+     * protections_getData's install-time total.
+     * @returns {Promise<{ urls: string[], totalTrackersBlocked: number }>}
+     */
+    async getActivityUrlInfo() {
+        const rows = await this.ntpActivity.store.getAll();
+        return {
+            urls: rows.map((row) => row.url),
+            totalTrackersBlocked: rows.reduce((total, row) => total + row.totalCount, 0),
+        };
+    }
+
+    /**
+     * Push single-site activity patches to connected NTP pages.
+     * @param {string[]} hosts
+     */
+    async pushActivityPatches(hosts) {
+        if (this.ports.size === 0) return;
+        const urlInfo = await this.getActivityUrlInfo();
+        for (const host of hosts) {
+            const row = await this.ntpActivity.store.get(host);
+            this.pushSubscriptionEvent('activity_onDataPatch', {
+                ...urlInfo,
+                patch: row ? toDomainActivity(row) : null,
+            });
+        }
+    }
+
+    /**
+     * Push a full activity data update (e.g. after an item was removed).
+     */
+    async pushActivityDataUpdate() {
+        if (this.ports.size === 0) return;
+        const rows = await this.ntpActivity.store.getAll();
+        this.pushSubscriptionEvent('activity_onDataUpdate', {
+            activity: rows.map((row) => toDomainActivity(row)),
+        });
+    }
+
+    /**
+     * Trailing throttle for summary data update pushes, so a burst of blocked
      * trackers results in a single update to the page.
      */
     schedulePushDataUpdate() {
@@ -232,9 +293,70 @@ export default class NTPMessaging {
     }
 }
 
+/**
+ * Map a stored site row to the NTP's DomainActivity format.
+ * @param {SiteActivityRow} row
+ * @param {number} [now] - current timestamp, overridable for tests
+ */
+export function toDomainActivity(row, now = Date.now()) {
+    const trackerCompanies = Object.entries(row.companies)
+        .sort((a, b) => b[1] - a[1])
+        .map(([displayName]) => ({ displayName }));
+    return {
+        title: row.host,
+        url: row.url,
+        etldPlusOne: row.etldPlusOne,
+        favicon: {
+            // Chromium's favicon API, relative to the NTP extension page.
+            // Requires the 'favicon' permission in the manifest.
+            src: `/_favicon/?pageUrl=${encodeURIComponent(row.url)}&size=32`,
+            maxAvailableSize: 32,
+        },
+        trackingStatus: {
+            totalCount: row.totalCount,
+            trackerCompanies,
+        },
+        trackersFound: row.totalCount > 0,
+        history: row.history.map((entry) => ({
+            title: entry.title,
+            url: entry.url,
+            relativeTime: formatRelativeTime(entry.visitedAt, now),
+        })),
+        favorite: false,
+        cookiePopUpBlocked: null,
+    };
+}
+
+/** @type {Intl.RelativeTimeFormat?} */
+let relativeTimeFormatter = null;
+
+/**
+ * Format a timestamp as a localized, human readable relative time
+ * (e.g. "now", "5 minutes ago", "yesterday").
+ * @param {number} timestamp
+ * @param {number} [now]
+ * @returns {string}
+ */
+export function formatRelativeTime(timestamp, now = Date.now()) {
+    if (!relativeTimeFormatter) {
+        relativeTimeFormatter = new Intl.RelativeTimeFormat(getLocale(), { numeric: 'auto' });
+    }
+    const seconds = Math.max(0, Math.round((now - timestamp) / 1000));
+    if (seconds < 60) {
+        return relativeTimeFormatter.format(0, 'second');
+    }
+    if (seconds < 60 * 60) {
+        return relativeTimeFormatter.format(-Math.round(seconds / 60), 'minute');
+    }
+    if (seconds < 24 * 60 * 60) {
+        return relativeTimeFormatter.format(-Math.round(seconds / (60 * 60)), 'hour');
+    }
+    return relativeTimeFormatter.format(-Math.round(seconds / (24 * 60 * 60)), 'day');
+}
+
 function getLocale() {
     try {
-        return browser.i18n.getUILanguage().split('-')[0];
+        return browser.i18n.getUILanguage();
     } catch (e) {
         return 'en';
     }
