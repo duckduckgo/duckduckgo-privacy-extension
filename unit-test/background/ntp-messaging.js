@@ -8,6 +8,8 @@ describe('NTPMessaging component', () => {
     let ntpMessaging;
     /** @type {MockSettings} */
     let settings;
+    /** @type {NewTabTrackerStats} */
+    let newTabTrackerStats;
     /** Fake NTPActivityCollection with an in-memory store. */
     let fakeActivity;
 
@@ -82,15 +84,9 @@ describe('NTPMessaging component', () => {
     beforeEach(() => {
         settings = new MockSettings();
         fakeActivity = createFakeActivity();
+        newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
         // @ts-ignore - MockSettings/fakeActivity stand in for the real dependencies
-        ntpMessaging = new NTPMessaging({ settings, ntpActivity: fakeActivity });
-
-        const trackerStats = new TrackerStats();
-        NewTabTrackerStats.shared = new NewTabTrackerStats(trackerStats);
-    });
-
-    afterEach(() => {
-        NewTabTrackerStats.shared = null;
+        ntpMessaging = new NTPMessaging({ settings, ntpActivity: fakeActivity, newTabTrackerStats });
     });
 
     it('answers initialSetup with a valid minimal payload', async () => {
@@ -106,9 +102,9 @@ describe('NTPMessaging component', () => {
 
     it('answers protections_getData with the total blocked count', async () => {
         const now = Date.now();
-        NewTabTrackerStats.shared?.stats.increment('Google', now);
-        NewTabTrackerStats.shared?.stats.increment('Google', now);
-        NewTabTrackerStats.shared?.stats.increment('Facebook', now);
+        newTabTrackerStats.stats.increment('Google', now);
+        newTabTrackerStats.stats.increment('Google', now);
+        newTabTrackerStats.stats.increment('Facebook', now);
 
         const result = await ntpMessaging.handleRequest('protections_getData');
         expect(result).toEqual({ totalCount: 3 });
@@ -116,14 +112,14 @@ describe('NTPMessaging component', () => {
 
     it('answers stats_getData with per-company counts, mapping "other" to the NTP identifier and placing it last', async () => {
         const now = Date.now();
-        const stats = NewTabTrackerStats.shared?.stats;
+        const stats = newTabTrackerStats.stats;
         // 'other' has the highest count, but must still be listed last
         for (let i = 0; i < 5; i++) {
-            stats?.increment(NewTabTrackerStats.otherCompaniesKey, now);
+            stats.increment(NewTabTrackerStats.otherCompaniesKey, now);
         }
-        stats?.increment('Google', now);
-        stats?.increment('Google', now);
-        stats?.increment('Facebook', now);
+        stats.increment('Google', now);
+        stats.increment('Google', now);
+        stats.increment('Facebook', now);
 
         const result = await ntpMessaging.handleRequest('stats_getData');
         expect(result.trackerCompanies).toEqual([
@@ -285,7 +281,7 @@ describe('NTPMessaging component', () => {
         // @ts-ignore - fake port
         ntpMessaging.ports.add(port);
 
-        NewTabTrackerStats.shared?.stats.increment('Google', Date.now());
+        newTabTrackerStats.stats.increment('Google', Date.now());
         ntpMessaging.pushDataUpdate();
 
         expect(port.posted).toEqual([

@@ -1,4 +1,5 @@
 import Dexie from 'dexie';
+import { extractHostFromURL } from '../utils';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 /** Activity is only kept for the last 7 days, matching the NTP's "Past 7 days" framing. */
@@ -109,34 +110,36 @@ export class NTPActivityStore {
     }
 
     /**
-     * Add blocked tracker counts for a site.
-     * @param {object} site
-     * @param {string} site.host
-     * @param {string} site.etldPlusOne
-     * @param {Record<string, number>} companyCounts - blocked count per company displayName
-     * @param {number} [timestamp]
+     * Add blocked tracker counts for one or more sites, in a single transaction.
+     * @param {{ host: string, etldPlusOne: string, counts: Record<string, number> }[]} updates
+     *   blocked count per company displayName, per site
      */
-    async recordBlockedTrackers({ host, etldPlusOne }, companyCounts, timestamp = Date.now()) {
+    async recordBlockedTrackers(updates) {
+        const timestamp = Date.now();
         await this.db.transaction('rw', this.sites, async () => {
-            // The row is normally created by recordVisit first; creating it
-            // here covers blocked requests racing the navigation bookkeeping.
-            const row = (await this.sites.get(host)) || NTPActivityStore.emptyRow(host, etldPlusOne);
-            row.lastVisit = Math.max(row.lastVisit, timestamp);
-            for (const [displayName, count] of Object.entries(companyCounts)) {
-                row.companies[displayName] = (row.companies[displayName] || 0) + count;
-                row.totalCount += count;
-            }
-            await this.sites.put(row);
+            const rows = await this.sites.bulkGet(updates.map(({ host }) => host));
+            await this.sites.bulkPut(
+                updates.map(({ host, etldPlusOne, counts }, i) => {
+                    // The row is normally created by recordVisit first; creating it
+                    // here covers blocked requests racing the navigation bookkeeping.
+                    const row = rows[i] || NTPActivityStore.emptyRow(host, etldPlusOne);
+                    row.lastVisit = Math.max(row.lastVisit, timestamp);
+                    for (const [displayName, count] of Object.entries(counts)) {
+                        row.companies[displayName] = (row.companies[displayName] || 0) + count;
+                        row.totalCount += count;
+                    }
+                    return row;
+                }),
+            );
         });
     }
 
     /**
      * All rows, most recently visited first.
-     * @param {number} [limit]
      * @returns {Promise<SiteActivityRow[]>}
      */
-    async getAll(limit = MAX_SITES) {
-        return await this.sites.orderBy('lastVisit').reverse().limit(limit).toArray();
+    async getAll() {
+        return await this.sites.orderBy('lastVisit').reverse().limit(MAX_SITES).toArray();
     }
 
     /**
@@ -153,18 +156,9 @@ export class NTPActivityStore {
      * @returns {Promise<SiteActivityRow[]>}
      */
     async getForUrls(urls) {
-        const hosts = urls.map((url) => hostForUrl(url)).filter((host) => host !== null);
-        const rows = await this.sites.bulkGet(/** @type {string[]} */ (hosts));
+        const hosts = urls.map((url) => hostForUrl(url)).filter((host) => host !== '');
+        const rows = await this.sites.bulkGet(hosts);
         return rows.filter((row) => !!row);
-    }
-
-    /**
-     * Total number of blocked tracking attempts across all (7-day retained) rows.
-     * @returns {Promise<number>}
-     */
-    async getTotalTrackersBlocked() {
-        const rows = await this.sites.toArray();
-        return rows.reduce((total, row) => total + row.totalCount, 0);
     }
 
     /**
@@ -174,7 +168,7 @@ export class NTPActivityStore {
      */
     async removeByUrl(url) {
         const host = hostForUrl(url);
-        if (!host) return false;
+        if (host === '') return false;
         const existed = !!(await this.sites.get(host));
         await this.sites.delete(host);
         return existed;
@@ -200,13 +194,11 @@ export class NTPActivityStore {
 }
 
 /**
+ * The full hostname (www. kept) that a site URL's activity is stored under.
+ * Must match how hosts are derived when recording (see components/ntp-activity.js).
  * @param {string} url
- * @returns {string|null}
+ * @returns {string}
  */
 function hostForUrl(url) {
-    try {
-        return new URL(url).hostname.toLowerCase();
-    } catch (e) {
-        return null;
-    }
+    return extractHostFromURL(url, true).toLowerCase();
 }
