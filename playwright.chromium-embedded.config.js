@@ -23,6 +23,7 @@ const includedTests = [
     'gpc.spec.js',
     'https-loop-protection.spec.js',
     'navigator-interface.spec.js',
+    'ntp.spec.js',
 ];
 
 export default defineConfig({

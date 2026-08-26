@@ -40,6 +40,7 @@ import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
 import CookiePromptManagement from './components/cookie-prompt-management';
+import NTPMessaging from './components/ntp-messaging';
 
 // Trigger registration of default message handlers into the shared registry.
 import { registerStandardHandlers } from './message-handlers';
@@ -132,6 +133,12 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
 } else {
     // MV2-only components
     components.requestBlocklist = new RequestBlocklist();
+}
+
+if (BUILD_TARGET === 'chromium-embedded') {
+    // Messaging for the embedded New Tab Page, which is served as an
+    // extension page in this build (see chrome_url_overrides in the manifest).
+    components.ntpMessaging = new NTPMessaging({ settings });
 }
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore

@@ -16,6 +16,9 @@
         "default_icon": "img/icon_browser_action.png",
         "default_popup": "dashboard/html/browser.html"
     },
+    "chrome_url_overrides": {
+        "newtab": "ntp/index.html"
+    },
     "content_scripts": [
         {
             "matches": [
