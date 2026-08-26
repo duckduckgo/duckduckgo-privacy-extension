@@ -12,6 +12,7 @@ process.env.DDG_PLATFORM = 'chromium-embedded';
  */
 const includedTests = [
     'atb-disabled.spec.js',
+    'cookie-prompt-management.spec.js',
     'playwright-harness.spec.js',
     'request-blocking.spec.js',
     'request-blocklist.spec.js',
@@ -19,6 +20,9 @@ const includedTests = [
     'privacy-dashboard.spec.js',
     'empty-config.spec.js',
     'broken-site-report.spec.js',
+    'gpc.spec.js',
+    'https-loop-protection.spec.js',
+    'navigator-interface.spec.js',
 ];
 
 export default defineConfig({

@@ -32,9 +32,30 @@ test.describe('ATB is disabled', () => {
     });
 
     test('does not append the atb parameter to search queries', async ({ page, backgroundPage }) => {
-        // Even with an atb setting present, searches should not be redirected
-        // to append the atb parameter.
+        // Even with an atb setting present (e.g. carried over in a profile
+        // that previously ran a build with ATB included), searches should not
+        // be redirected to append the atb parameter.
         await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('atb', 'v123-1'));
+
+        // Re-run the extension's install/update handling with that value in
+        // place. On Chrome builds, DNRListeners.postInstall recreates the ATB
+        // DNR rules from the stored setting - this build must not.
+        await backgroundPage.evaluate(() => globalThis.components.dnrListeners.postInstall());
+
+        // The ATB DNR rules are added without being awaited, so allow time for
+        // them to (incorrectly) show up before checking.
+        const atbDnrRules = await backgroundPage.evaluate(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            // Rule IDs used by ATB.setOrUpdateATBdnrRule, see dnr-utils.js.
+            const atbRuleIds = [20003, 20008, 20009, 20010, 20011];
+            const rules = await chrome.declarativeNetRequest.getDynamicRules();
+            return rules.filter(
+                (rule) =>
+                    atbRuleIds.includes(rule.id) ||
+                    (rule.action?.redirect?.transform?.queryTransform?.addOrReplaceParams || []).some((param) => param.key === 'atb'),
+            );
+        });
+        expect(atbDnrRules).toEqual([]);
 
         await page.goto('https://duckduckgo.com/?q=test', { waitUntil: 'domcontentloaded' });
 
