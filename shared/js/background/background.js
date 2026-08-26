@@ -45,8 +45,8 @@ import CookiePromptManagement from './components/cookie-prompt-management';
 import { registerStandardHandlers } from './message-handlers';
 registerStandardHandlers();
 
-// NOTE: this needs to be the first thing that's require()d when the extension loads.
-// otherwise FF might miss the onInstalled event
+// NOTE: event listeners must be registered on the first tick of background
+// execution, so keep these registrations at the top.
 require('./events');
 const settings = require('./settings');
 

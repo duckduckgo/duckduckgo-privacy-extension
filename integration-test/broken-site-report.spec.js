@@ -6,7 +6,9 @@ import { isChromiumEmbedded, isFirefox } from './helpers/platform.js';
 
 // The chromium-embedded build does not include ATB, so no atb parameter is
 // expected in its breakage reports.
-const expectedAtbParams = isChromiumEmbedded() ? {} : { atb: mockAtb.version };
+function expectCorrectAtbParam(pixel) {
+    expect(pixel.params.atb).toBe(isChromiumEmbedded() ? undefined : mockAtb.version);
+}
 
 test.describe('Broken site reports', () => {
     test('Sends broken site reports with current page context', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
@@ -19,10 +21,10 @@ test.describe('Broken site reports', () => {
         await page.bringToFront();
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
         const pixel = await breakageReport;
+        expectCorrectAtbParam(pixel);
         expect(pixel).toMatchObject({
             name: 'epbf' + pixelBrowserSuffix,
             params: {
-                ...expectedAtbParams,
                 adAttributionRequests: '',
                 blockedTrackers: '',
                 category: 'dislike',
@@ -46,9 +48,6 @@ test.describe('Broken site reports', () => {
                 userRefreshCount: '0',
             },
         });
-        if (isChromiumEmbedded()) {
-            expect(pixel.params.atb).toBeUndefined();
-        }
         // jsPerformance may be undefined if content-scope-scripts breakageReporting feature isn't enabled
         if (pixel.params.jsPerformance) {
             expect(pixel.params.jsPerformance).toMatch(/^[0-9]+$/);
@@ -74,10 +73,10 @@ test.describe('Broken site reports', () => {
         await page.bringToFront();
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
         const pixel = await breakageReport;
+        expectCorrectAtbParam(pixel);
         expect(pixel).toMatchObject({
             name: 'epbf' + pixelBrowserSuffix,
             params: {
-                ...expectedAtbParams,
                 adAttributionRequests: '',
                 blockedTrackers: '',
                 category: 'dislike',
