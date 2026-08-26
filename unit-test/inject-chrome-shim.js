@@ -82,6 +82,15 @@ const chrome = {
             addListener() {},
             removeListener() {},
         },
+        onUpdated: {
+            addListener() {},
+            removeListener() {},
+        },
+        onRemoved: {
+            addListener() {},
+            removeListener() {},
+        },
+        get: () => Promise.resolve({}),
         sendMessage: () => {},
         query: () => Promise.resolve([]),
         reload: () => Promise.resolve(),
