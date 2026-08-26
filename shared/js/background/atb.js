@@ -353,25 +353,4 @@ const ATB = (() => {
     };
 })();
 
-settings.ready().then(() => {
-    const updateUninstallURL = async () => {
-        browserWrapper.setUninstallURL(await ATB.getSurveyURL());
-    };
-
-    // set initial uninstall url
-    updateUninstallURL();
-
-    // Ensure the uninstall URL and the ATB declarativeNetRequest rules are also
-    // kept up to date as the ATB values are updated.
-    settings.onSettingUpdate.addEventListener('atb', (event) => {
-        const atb = event instanceof CustomEvent ? event.detail : undefined;
-        updateUninstallURL();
-        ATB.setOrUpdateATBdnrRule(atb);
-    });
-    settings.onSettingUpdate.addEventListener('set_atb', updateUninstallURL);
-    settings.onSettingUpdate.addEventListener('useNoAiSearch', () => {
-        ATB.setOrUpdateATBdnrRule(settings.getSetting('atb'));
-    });
-});
-
 export default ATB;

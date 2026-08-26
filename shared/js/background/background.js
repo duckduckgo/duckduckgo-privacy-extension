@@ -16,6 +16,7 @@
 /* global DEBUG, RELOADER, BUILD_TARGET */
 
 import { onStartup } from './startup';
+import setupAtb from './components/setup-atb';
 import FireButton from './components/fire-button';
 import TabTracker from './components/tab-tracking';
 import MV3ContentScriptInjection from './components/mv3-content-script-injection';
@@ -48,6 +49,15 @@ registerStandardHandlers();
 // otherwise FF might miss the onInstalled event
 require('./events');
 const settings = require('./settings');
+
+// ATB and onboarding events, per build target. Set up as early as possible so that
+// the onInstalled listener is registered before FF can drop the event.
+// Not included at all in the chromium-embedded build.
+if (BUILD_TARGET === 'firefox') {
+    setupAtb({ settings });
+} else if (BUILD_TARGET === 'chrome') {
+    setupAtb({ settings }, { counterMessaging: true, emailInjection: true });
+}
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
     require('./dnr-config-rulesets');
 }
