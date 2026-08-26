@@ -109,6 +109,17 @@ export class NewTabTrackerStats {
             });
         });
 
+        this.registerDataCollection();
+    }
+
+    /**
+     * Register just the stats data collection (blocked tracker counting,
+     * pruning and persistence), without the duckduckgo.com New Tab Page
+     * integration set up by {@link register}. Used by the chromium-embedded
+     * build, where the stats power the embedded New Tab Page instead (see
+     * components/ntp-messaging.js).
+     */
+    registerDataCollection() {
         /**
          * Register an alarm and handle when it fires.
          * For now, we're pruning data every 10 min
@@ -131,9 +142,17 @@ export class NewTabTrackerStats {
         });
 
         /**
-         * Assign the entities from the initial `tds` data
+         * Assign the entities once the initial `tds` data has loaded. Note
+         * this cannot be done synchronously here: the data may not have
+         * loaded yet, and the `onUpdate` callback below only fires for loads
+         * that happen after it is registered (a few microtasks from now) - so
+         * an initial load landing in between would otherwise be missed,
+         * leaving `top100Companies` empty and every blocked tracker counted
+         * as 'other' for the rest of the session.
          */
-        this.assignTopCompanies(tdsStorage.tds.entities);
+        tdsStorage.ready('tds').then(() => {
+            this.assignTopCompanies(tdsStorage.tds.entities);
+        });
 
         /**
          * Observe changes to the 'tds' data and update the topCompanies

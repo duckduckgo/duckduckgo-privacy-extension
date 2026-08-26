@@ -185,6 +185,11 @@ endif
 ifeq ($(browser),chromium-embedded)
 	echo '.cog-button { display: none; }' >> $(BUILD_DIR)/dashboard/public/css/popup.css
 endif
+ifeq ($(browser),chromium-embedded)
+	## New Tab Page, reusing the windows platform build from content-scope-scripts.
+	$(RSYNC) $(CONTENT_SCOPE_SCRIPTS)/build/windows/pages/new-tab/ $(BUILD_DIR)/ntp/
+	node scripts/prepareNtpHtml.mjs $(BUILD_DIR)/ntp/index.html
+endif
 	touch $@
 
 copy: $(LAST_COPY)
@@ -350,6 +355,17 @@ BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
 EMBEDDED_JS_BUNDLES = background-embedded.js content-scripts/cpm.js
 ifeq ($(browser),embedded)
   BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(EMBEDDED_JS_BUNDLES))
+endif
+
+# Chromium-embedded builds include the New Tab Page (copied from the
+# content-scope-scripts windows build, see the copy step above) along with an
+# interop shim that bridges the page's messaging to the extension background.
+$(BUILD_DIR)/ntp/interop-shim.js: $(WATCHED_FILES)
+	mkdir -p `dirname $@`
+	$(ESBUILD) shared/js/ntp/interop-shim.js > $@
+
+ifeq ($(browser),chromium-embedded)
+  BUILD_TARGETS += $(BUILD_DIR)/ntp/interop-shim.js
 endif
 
 
