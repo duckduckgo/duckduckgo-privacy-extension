@@ -44,6 +44,7 @@ import NTPMessaging from './components/ntp-messaging';
 import NTPActivityCollection from './components/ntp-activity';
 import { NewTabTrackerStats } from './newtab-tracker-stats';
 import { TrackerStats } from './classes/tracker-stats';
+import { NTPFavoritesStore } from './classes/ntp-favorites-store';
 
 // Trigger registration of default message handlers into the shared registry.
 import { registerStandardHandlers } from './message-handlers';
@@ -148,7 +149,12 @@ if (BUILD_TARGET === 'chromium-embedded') {
     NewTabTrackerStats.shared = newTabTrackerStats;
     newTabTrackerStats.restoreFromStorage().then(() => newTabTrackerStats.registerDataCollection());
     components.ntpActivity = new NTPActivityCollection();
-    components.ntpMessaging = new NTPMessaging({ settings, ntpActivity: components.ntpActivity, newTabTrackerStats });
+    components.ntpMessaging = new NTPMessaging({
+        settings,
+        ntpActivity: components.ntpActivity,
+        newTabTrackerStats,
+        favoritesStore: new NTPFavoritesStore(),
+    });
 }
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore

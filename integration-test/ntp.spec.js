@@ -28,13 +28,14 @@ test.describe('Embedded New Tab Page', () => {
         expect(newtabOverride).toBe('ntp/index.html');
     });
 
-    test('renders the protections widget via extension messaging', async ({ page, backgroundPage }) => {
+    test('renders the omnibar, favorites and protections widgets via extension messaging', async ({ page, backgroundPage }) => {
         await page.goto(await getNtpUrl(backgroundPage));
 
-        // the protections widget only renders once initialSetup,
-        // protections_getConfig and protections_getData have all round-tripped
-        // through the background.
+        // each widget only renders once initialSetup and its own
+        // getConfig/getData requests have round-tripped through the background.
         await expect(page.locator('[data-entry-point="protections"]')).toBeVisible();
+        await expect(page.locator('[data-entry-point="favorites"]')).toBeVisible();
+        await expect(page.locator('[data-entry-point="omnibar"]')).toBeVisible();
     });
 
     test('shows blocked tracker stats pushed from the background', async ({ page, backgroundPage }) => {
@@ -53,6 +54,9 @@ test.describe('Embedded New Tab Page', () => {
         });
 
         await expect(page.getByText('3 tracking attempts blocked')).toBeVisible();
+        // the company breakdown lives in the summary feed (the default feed is
+        // the activity view)
+        await page.getByRole('button', { name: 'Summary' }).click();
         await expect(page.getByText('Ad Company', { exact: true })).toBeVisible();
     });
 
@@ -81,5 +85,11 @@ test.describe('Embedded New Tab Page', () => {
         // one row per site, with the recent page visits listed under it
         await expect(ntp.getByRole('link', { name: trackingTestHost })).toBeVisible();
         await expect(ntp.getByRole('link', { name: 'Request blocking test page' })).toBeVisible();
+
+        // starring the site in the activity feed adds it to the favorites
+        // widget, and the pushed patch flips the star
+        await ntp.getByRole('button', { name: `Add ${trackingTestHost} to favorites` }).click();
+        await expect(ntp.locator('[data-entry-point="favorites"]').getByText(trackingTestHost)).toBeVisible();
+        await expect(ntp.getByRole('button', { name: `Remove ${trackingTestHost} from favorites` })).toBeVisible();
     });
 });
