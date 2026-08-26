@@ -305,7 +305,11 @@ export function toDomainActivity(row, now = Date.now()) {
         favicon: {
             // Chromium's favicon API, relative to the NTP extension page.
             // Requires the 'favicon' permission in the manifest.
-            src: `/_favicon/?pageUrl=${encodeURIComponent(row.url)}&size=32`,
+            // Note: the page appends '?preferredSize=N' verbatim to this src
+            // (see FaviconWithState in content-scope-scripts), which would
+            // corrupt the size parameter - the trailing '&' absorbs it as an
+            // extra (ignored) query parameter instead.
+            src: `/_favicon/?pageUrl=${encodeURIComponent(row.url)}&size=32&`,
             maxAvailableSize: 32,
         },
         trackingStatus: {
