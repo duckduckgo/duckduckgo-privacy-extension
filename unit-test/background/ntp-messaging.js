@@ -1,4 +1,4 @@
-import NTPMessaging from '../../shared/js/background/components/ntp-messaging';
+import NTPMessaging, { toDomainActivity, formatRelativeTime } from '../../shared/js/background/components/ntp-messaging';
 import { NewTabTrackerStats } from '../../shared/js/background/newtab-tracker-stats';
 import { TrackerStats } from '../../shared/js/background/classes/tracker-stats';
 import { MockSettings } from '../helpers/mocks';
@@ -8,6 +8,49 @@ describe('NTPMessaging component', () => {
     let ntpMessaging;
     /** @type {MockSettings} */
     let settings;
+    /** Fake NTPActivityCollection with an in-memory store. */
+    let fakeActivity;
+
+    const NOW = Date.now();
+
+    function makeRow(host, overrides = {}) {
+        return {
+            host,
+            url: `https://${host}/`,
+            etldPlusOne: host,
+            lastVisit: NOW,
+            totalCount: 0,
+            companies: {},
+            history: [],
+            ...overrides,
+        };
+    }
+
+    function createFakeActivity(rows = []) {
+        return {
+            _changeCallback: null,
+            onChange(cb) {
+                this._changeCallback = cb;
+            },
+            store: {
+                rows,
+                async getAll() {
+                    return this.rows;
+                },
+                async get(host) {
+                    return this.rows.find((r) => r.host === host);
+                },
+                async getForUrls(urls) {
+                    return urls.map((url) => this.rows.find((r) => r.url === url)).filter(Boolean);
+                },
+                async removeByUrl(url) {
+                    const before = this.rows.length;
+                    this.rows = this.rows.filter((r) => r.url !== url);
+                    return this.rows.length < before;
+                },
+            },
+        };
+    }
 
     /**
      * Minimal stand-in for a runtime Port connected to the NTP page.
@@ -38,8 +81,9 @@ describe('NTPMessaging component', () => {
 
     beforeEach(() => {
         settings = new MockSettings();
-        // @ts-ignore - MockSettings stands in for the settings module
-        ntpMessaging = new NTPMessaging({ settings });
+        fakeActivity = createFakeActivity();
+        // @ts-ignore - MockSettings/fakeActivity stand in for the real dependencies
+        ntpMessaging = new NTPMessaging({ settings, ntpActivity: fakeActivity });
 
         const trackerStats = new TrackerStats();
         NewTabTrackerStats.shared = new NewTabTrackerStats(trackerStats);
@@ -89,10 +133,102 @@ describe('NTPMessaging component', () => {
         ]);
     });
 
-    it('returns empty activity data for both plain and batched activity APIs', async () => {
-        expect(await ntpMessaging.handleRequest('activity_getData')).toEqual({ activity: [] });
-        expect(await ntpMessaging.handleRequest('activity_getUrls')).toEqual({ urls: [], totalTrackersBlocked: 0 });
-        expect(await ntpMessaging.handleRequest('activity_getDataForUrls', { urls: [] })).toEqual({ activity: [] });
+    it('answers the batched activity API from the activity store', async () => {
+        fakeActivity.store.rows = [
+            makeRow('example.com', { totalCount: 5, companies: { Google: 3, Facebook: 2 } }),
+            makeRow('other.com', { totalCount: 2, companies: { Google: 2 } }),
+        ];
+
+        const urlInfo = await ntpMessaging.handleRequest('activity_getUrls');
+        expect(urlInfo).toEqual({
+            urls: ['https://example.com/', 'https://other.com/'],
+            totalTrackersBlocked: 7,
+        });
+
+        const data = await ntpMessaging.handleRequest('activity_getDataForUrls', { urls: ['https://other.com/'] });
+        expect(data.activity.length).toBe(1);
+        expect(data.activity[0].url).toBe('https://other.com/');
+    });
+
+    it('maps stored site rows to the DomainActivity format', () => {
+        const row = makeRow('www.example.com', {
+            etldPlusOne: 'example.com',
+            totalCount: 3,
+            companies: { Facebook: 1, Google: 2 },
+            history: [{ title: 'Example Page', url: 'https://www.example.com/page', visitedAt: NOW - 5 * 60 * 1000 }],
+        });
+
+        const activity = toDomainActivity(row, NOW);
+        expect(activity.title).toBe('www.example.com');
+        expect(activity.url).toBe('https://www.example.com/');
+        expect(activity.etldPlusOne).toBe('example.com');
+        expect(activity.favicon).toEqual({
+            src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.com%2F&size=32',
+            maxAvailableSize: 32,
+        });
+        expect(activity.trackersFound).toBe(true);
+        // companies ordered by blocked count, names only
+        expect(activity.trackingStatus).toEqual({
+            totalCount: 3,
+            trackerCompanies: [{ displayName: 'Google' }, { displayName: 'Facebook' }],
+        });
+        expect(activity.history).toEqual([
+            { title: 'Example Page', url: 'https://www.example.com/page', relativeTime: formatRelativeTime(NOW - 5 * 60 * 1000, NOW) },
+        ]);
+        expect(activity.favorite).toBe(false);
+    });
+
+    it('formats relative times as localized strings', () => {
+        // exact strings depend on the locale; check shape and ordering only
+        const justNow = formatRelativeTime(NOW - 10 * 1000, NOW);
+        const minutes = formatRelativeTime(NOW - 5 * 60 * 1000, NOW);
+        const hours = formatRelativeTime(NOW - 3 * 60 * 60 * 1000, NOW);
+        const days = formatRelativeTime(NOW - 2 * 24 * 60 * 60 * 1000, NOW);
+        for (const value of [justNow, minutes, hours, days]) {
+            expect(typeof value).toBe('string');
+            expect(value.length).toBeGreaterThan(0);
+        }
+        expect(minutes).toContain('5');
+        expect(hours).toContain('3');
+        expect(days).toContain('2');
+    });
+
+    it('removes activity items and pushes a full data update', async () => {
+        fakeActivity.store.rows = [makeRow('example.com'), makeRow('other.com')];
+        const port = createFakePort();
+        // @ts-ignore - fake port
+        ntpMessaging.ports.add(port);
+
+        // @ts-ignore - fake port
+        await ntpMessaging.onMessage({ ...requestMessage('activity_removeItem', { url: 'https://example.com/' }), Id: undefined }, port);
+
+        expect(fakeActivity.store.rows.map((r) => r.host)).toEqual(['other.com']);
+        expect(port.posted.length).toBe(1);
+        expect(port.posted[0].subscriptionName).toBe('activity_onDataUpdate');
+        expect(port.posted[0].params.activity.map((a) => a.url)).toEqual(['https://other.com/']);
+    });
+
+    it('pushes single-site patches when the activity collection reports changes', async () => {
+        fakeActivity.store.rows = [makeRow('example.com', { totalCount: 4, companies: { Google: 4 } })];
+        const port = createFakePort();
+        // @ts-ignore - fake port
+        ntpMessaging.ports.add(port);
+
+        await ntpMessaging.pushActivityPatches(['example.com']);
+
+        expect(port.posted.length).toBe(1);
+        expect(port.posted[0].subscriptionName).toBe('activity_onDataPatch');
+        expect(port.posted[0].params.urls).toEqual(['https://example.com/']);
+        expect(port.posted[0].params.totalTrackersBlocked).toBe(4);
+        expect(port.posted[0].params.patch.url).toBe('https://example.com/');
+    });
+
+    it('registers for activity change notifications', () => {
+        expect(typeof fakeActivity._changeCallback).toBe('function');
+    });
+
+    it('answers activity_confirmBurn with no action', async () => {
+        expect(await ntpMessaging.handleRequest('activity_confirmBurn', { url: 'https://example.com/' })).toEqual({ action: 'none' });
     });
 
     it('responds to requests on the port with a matching id', async () => {

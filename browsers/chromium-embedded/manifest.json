@@ -58,7 +58,8 @@
         "webNavigation",
         "cookies",
         "history",
-        "browsingData"
+        "browsingData",
+        "favicon"
     ],
     "host_permissions": [
         "*://*/*"
