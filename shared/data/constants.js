@@ -20,7 +20,7 @@ function getConfigFileName() {
     } else {
         browserName = '-' + browserName + (isMV3() ? 'mv3' : '');
     }
-    if (BUILD_TARGET === 'chrome-embedded') {
+    if (BUILD_TARGET === 'chromium-embedded') {
         browserName = 'windows'
     }
     return `${trackerBlockingEndpointBase}/config/v4/extension${browserName}-config.json`;
