@@ -1,4 +1,4 @@
-/** global BUILD_TARGET */
+/* global BUILD_TARGET */
 const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string');
 const browserInfo = parseUserAgentString();
 
@@ -12,19 +12,24 @@ function isMV3() {
 }
 
 function getConfigFileName() {
-    if (BUILD_TARGET === 'chromium-embedded') {
-        return `${trackerBlockingEndpointBase}/config/v4/windows-config.json`;
-    }
-
-    let browserName = browserInfo?.browser?.toLowerCase() || '';
-
-    // clamp to known browsers
-    if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
-        browserName = '';
+    let configName;
+    // Note: BUILD_TARGET is only defined for esbuild bundles; this module is
+    // also imported by node scripts (e.g. scripts/bundleConfig.mjs).
+    if (typeof BUILD_TARGET !== 'undefined' && BUILD_TARGET === 'chromium-embedded') {
+        // The chromium-embedded build uses the Windows browser's config.
+        configName = 'windows-config';
     } else {
-        browserName = '-' + browserName + (isMV3() ? 'mv3' : '');
+        let browserName = browserInfo?.browser?.toLowerCase() || '';
+
+        // clamp to known browsers
+        if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
+            browserName = '';
+        } else {
+            browserName = '-' + browserName + (isMV3() ? 'mv3' : '');
+        }
+        configName = `extension${browserName}-config`;
     }
-    return `${trackerBlockingEndpointBase}/config/v4/extension${browserName}-config.json`;
+    return `${trackerBlockingEndpointBase}/config/v4/${configName}.json`;
 }
 
 /**

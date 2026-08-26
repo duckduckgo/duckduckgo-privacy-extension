@@ -1,3 +1,4 @@
+/* global BUILD_TARGET */
 import browser from 'webextension-polyfill';
 import ATB from '../atb';
 import { getBrowserName } from '../utils';
@@ -5,6 +6,9 @@ import constants from '../../../data/constants';
 import experiment from '../experiments';
 import onboarding from '../onboarding';
 import { executeScript, getDDGTabUrls, getExtensionId, getManifestVersion, setUninstallURL } from '../wrapper';
+
+/** Whether this build includes the ATB (install attribution) feature. */
+export const isAtbEnabled = BUILD_TARGET !== 'chromium-embedded';
 
 /**
  * Sets up the extension's install and onboarding flow:
@@ -160,7 +164,7 @@ export default function setupAtb({ settings }, { counterMessaging = false, email
                 ATB.updateSetAtb();
             }
         },
-        { urls: ['https://*.duckduckgo.com/*'] },
+        { urls: ['https://*.duckduckgo.com/*'], types: ['main_frame'] },
     );
 
     browser.webNavigation.onCommitted.addListener(onboardingMessaging, {

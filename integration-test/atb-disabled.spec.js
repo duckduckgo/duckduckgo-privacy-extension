@@ -8,11 +8,10 @@ import backgroundWait from './helpers/backgroundWait';
 import { isChromiumEmbedded } from './helpers/platform';
 
 test.describe('ATB is disabled', () => {
-    test.beforeEach(async ({ context, backgroundPage }) => {
+    test.beforeEach(async ({ backgroundPage }) => {
         test.skip(!isChromiumEmbedded(), 'Only applies to the chromium-embedded build, which excludes ATB');
-        // Wait for the extension to be fully started, so that the install
-        // workflow would have run by now if it was included in the build.
-        await backgroundWait.forExtensionLoaded(context);
+        // Wait for the extension to be fully started; if the install workflow
+        // was included in this build, it would have run by now.
         await backgroundWait.forAllConfiguration(backgroundPage);
     });
 
@@ -42,10 +41,11 @@ test.describe('ATB is disabled', () => {
         // DNR rules from the stored setting - this build must not.
         await backgroundPage.evaluate(() => globalThis.components.dnrListeners.postInstall());
 
-        // The ATB DNR rules are added without being awaited, so allow time for
-        // them to (incorrectly) show up before checking.
+        // The ATB DNR rules are added without being awaited, so flush the
+        // (sequentially processed) rule update queue with an empty update
+        // before checking.
         const atbDnrRules = await backgroundPage.evaluate(async () => {
-            await new Promise((resolve) => setTimeout(resolve, 1000));
+            await chrome.declarativeNetRequest.updateDynamicRules({});
             // Rule IDs used by ATB.setOrUpdateATBdnrRule, see dnr-utils.js.
             const atbRuleIds = [20003, 20008, 20009, 20010, 20011];
             const rules = await chrome.declarativeNetRequest.getDynamicRules();

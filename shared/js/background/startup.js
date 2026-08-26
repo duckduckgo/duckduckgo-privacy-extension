@@ -36,7 +36,7 @@ export async function onStartup() {
     /**
      * in Chrome only, try to initiate the `NewTabTrackerStats` feature
      */
-    if (BUILD_TARGET !== 'firefox' && BUILD_TARGET !== 'chromium-embedded' && getBrowserName() === 'chrome') {
+    if (BUILD_TARGET === 'chrome' && getBrowserName() === 'chrome') {
         try {
             // build up dependencies
             const trackerStats = new TrackerStats();
