@@ -12,6 +12,10 @@ function isMV3() {
 }
 
 function getConfigFileName() {
+    if (BUILD_TARGET === 'chromium-embedded') {
+        return `${trackerBlockingEndpointBase}/config/v4/windows-config.json`;
+    }
+
     let browserName = browserInfo?.browser?.toLowerCase() || '';
 
     // clamp to known browsers
@@ -19,9 +23,6 @@ function getConfigFileName() {
         browserName = '';
     } else {
         browserName = '-' + browserName + (isMV3() ? 'mv3' : '');
-    }
-    if (BUILD_TARGET === 'chromium-embedded') {
-        browserName = 'windows'
     }
     return `${trackerBlockingEndpointBase}/config/v4/extension${browserName}-config.json`;
 }
