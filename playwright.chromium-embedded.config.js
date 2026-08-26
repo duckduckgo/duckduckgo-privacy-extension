@@ -5,12 +5,13 @@ process.env.DDG_PLATFORM = 'chromium-embedded';
 
 /**
  * The chromium-embedded build only includes a subset of the extension's
- * features (see shared/js/background/background-chromium-embedded.js), so
- * tests are opted-in via an explicit allowlist rather than an ignore list.
+ * features (see the BUILD_TARGET checks in shared/js/background/background.js),
+ * so tests are opted-in via an explicit allowlist rather than an ignore list.
  * That way new specs written for the full extension don't silently start
  * running against this build.
  */
 const includedTests = [
+    'atb-disabled.spec.js',
     'playwright-harness.spec.js',
     'request-blocking.spec.js',
     'request-blocklist.spec.js',

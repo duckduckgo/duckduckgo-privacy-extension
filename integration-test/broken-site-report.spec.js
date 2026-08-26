@@ -2,7 +2,11 @@ import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 import { listenForBreakageReport, pixelBrowserSuffix } from './helpers/pixels';
-import { isFirefox } from './helpers/platform.js';
+import { isChromiumEmbedded, isFirefox } from './helpers/platform.js';
+
+// The chromium-embedded build does not include ATB, so no atb parameter is
+// expected in its breakage reports.
+const expectedAtbParams = isChromiumEmbedded() ? {} : { atb: mockAtb.version };
 
 test.describe('Broken site reports', () => {
     test('Sends broken site reports with current page context', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
@@ -18,8 +22,8 @@ test.describe('Broken site reports', () => {
         expect(pixel).toMatchObject({
             name: 'epbf' + pixelBrowserSuffix,
             params: {
+                ...expectedAtbParams,
                 adAttributionRequests: '',
-                atb: mockAtb.version,
                 blockedTrackers: '',
                 category: 'dislike',
                 errorDescriptions: '[]',
@@ -42,6 +46,9 @@ test.describe('Broken site reports', () => {
                 userRefreshCount: '0',
             },
         });
+        if (isChromiumEmbedded()) {
+            expect(pixel.params.atb).toBeUndefined();
+        }
         // jsPerformance may be undefined if content-scope-scripts breakageReporting feature isn't enabled
         if (pixel.params.jsPerformance) {
             expect(pixel.params.jsPerformance).toMatch(/^[0-9]+$/);
@@ -70,8 +77,8 @@ test.describe('Broken site reports', () => {
         expect(pixel).toMatchObject({
             name: 'epbf' + pixelBrowserSuffix,
             params: {
+                ...expectedAtbParams,
                 adAttributionRequests: '',
-                atb: mockAtb.version,
                 blockedTrackers: '',
                 category: 'dislike',
                 errorDescriptions: '[]',
