@@ -1,0 +1,84 @@
+name: Optional CI Playwright Runs
+
+on:
+    workflow_dispatch:
+        inputs:
+            branch:
+                description: 'Branch name to test (e.g. main)'
+                required: true
+                type: string
+                default: main
+            runs:
+                description: 'Number of times to repeat the test suite'
+                required: true
+                type: number
+                default: 5
+
+permissions:
+    contents: read
+
+jobs:
+    prepare:
+        name: Prepare run matrix
+        runs-on: ubuntu-latest
+        outputs:
+            run_matrix: ${{ steps.set-matrix.outputs.run_matrix }}
+        steps:
+            - id: set-matrix
+              env:
+                  RUNS: ${{ inputs.runs }}
+              run: |
+                  python - <<'PY'
+                  import json
+                  import os
+                  import sys
+
+                  raw_runs = os.environ.get("RUNS", "")
+                  try:
+                      runs = int(raw_runs)
+                  except ValueError:
+                      print(f"Invalid runs value: {raw_runs}", file=sys.stderr)
+                      sys.exit(1)
+                  if runs < 1:
+                      print("Runs must be >= 1", file=sys.stderr)
+                      sys.exit(1)
+
+                  matrix = json.dumps(list(range(1, runs + 1)))
+                  with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as output:
+                      output.write(f"run_matrix={matrix}\n")
+                  PY
+
+    tests:
+        name: Playwright run ${{ matrix.run }} of ${{ inputs.runs }} (shard ${{ matrix.shard }})
+        runs-on: ubuntu-22.04
+        timeout-minutes: 20
+        needs: prepare
+        strategy:
+            fail-fast: false
+            matrix:
+                run: ${{ fromJSON(needs.prepare.outputs.run_matrix) }}
+                shard: [1/4, 2/4, 3/4, 4/4]
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  ref: ${{ inputs.branch }}
+            - name: Validate branch input
+              run: |
+                  branch="${{ inputs.branch }}"
+                  branch="${branch#refs/heads/}"
+                  git ls-remote --exit-code --heads origin "refs/heads/${branch}"
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'npm'
+            - run: npm run install-ci
+            - name: Install Playwright Browsers
+              run: npx playwright install --with-deps chromium
+            - name: Run Playwright tests (attempt ${{ matrix.run }})
+              run: xvfb-run --auto-servernum -- npm run playwright -- --shard ${{ matrix.shard }}
+            - uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  name: playwright-report-run-${{ matrix.run }}-shard-${{ matrix.shard }}
+                  path: playwright-report/
+                  retention-days: 1
