@@ -18,7 +18,7 @@ module.exports = function () {
     } else {
         fields = bel`<div>
             <label class='frm__label'>${t('feedback:feedbackHeaderLabel.title')}</label>
-            <textarea class='frm__text js-feedback-message' placeholder='${t('feedback:feedbackPlaceholder.title')}'></textarea>
+            <textarea class='frm__text js-feedback-message' required placeholder='${t('feedback:feedbackPlaceholder.title')}'></textarea>
         </div>`;
     }
 
