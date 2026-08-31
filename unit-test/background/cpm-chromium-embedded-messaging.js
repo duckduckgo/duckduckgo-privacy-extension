@@ -69,12 +69,23 @@ describe('CPMChromiumEmbeddedMessaging', () => {
             expect(settings.enabled).toBeFalse();
         });
 
-        it('stays off on a malformed reply rather than defaulting on', async () => {
-            installDdgApi(async () => ({ userPreference: 'max' }));
+        it('honours an explicit disable', async () => {
+            installDdgApi(async () => ({ enabled: false, userPreference: 'off', featureFlags: {} }));
 
             const settings = await messaging.checkAutoconsentSetting();
 
             expect(settings.enabled).toBeFalse();
+        });
+
+        it('falls back to the defaults when the browser echoes instead of routing', async () => {
+            // What `ddg.send()` does today, before anything browser-side handles
+            // this method: vendoring the extension first must not disable CPM.
+            installDdgApi(async (message) => ({ received: message, browserVersion: '148.0.0.0' }));
+
+            const settings = await messaging.checkAutoconsentSetting();
+
+            expect(settings.enabled).toBeTrue();
+            expect(settings.userPreference).toEqual('default');
         });
 
         it('asks the browser once per TTL, then asks again', async () => {
