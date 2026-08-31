@@ -66,10 +66,15 @@ export class CPMChromiumEmbeddedMessaging extends CPMStandaloneMessaging {
             // means we ask again shortly.
             return { enabled: false, featureFlags: {} };
         }
+        if (typeof result.enabled !== 'boolean') {
+            // The browser answered but is not speaking this protocol: with no
+            // routing behind `ddg.send()` it simply echoes what it was sent.
+            // Behave as if there were no browser at all, so vendoring this
+            // extension ahead of the browser-side handler is not a regression.
+            return super.checkAutoconsentSetting();
+        }
         return {
-            // Anything but an explicit `true` is treated as off, so a malformed
-            // reply cannot switch CPM on.
-            enabled: result.enabled === true,
+            enabled: result.enabled,
             userPreference: result.userPreference,
             featureFlags: result.featureFlags ?? {},
         };
