@@ -53,7 +53,7 @@
         "firefox-webext-playwright-harness": "github:duckduckgo/firefox-webext-playwright-harness#0.3.0",
         "glob": "^11.0.3",
         "jasmine": "^5.9.0",
-        "jsdom": "^26.0.0",
+        "jsdom": "^30.0.1",
         "karma": "6.4.4",
         "karma-chrome-launcher": "3.2.0",
         "karma-jasmine": "1.1.1",
