@@ -6,7 +6,7 @@ import settings from './settings';
 import { emitter, TrackerBlockedEvent } from './before-request.js';
 import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils';
 import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
-import { NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils';
+import { NEWTAB_BLOCKED_STATS_REDIRECT_RULE_ID, NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID } from './dnr-utils';
 
 /**
  * @typedef {import('./settings.js')} Settings
@@ -373,11 +373,10 @@ export class NewTabTrackerStats {
  * Respond to requests for `tracker-stats.html` - if we determine
  * that the request was from an allowed origin, re-direct the
  * request to the web_accessible_resource file 'html/tracker-stats.html'
- *
- * @param details
  */
 export function mv2Redirect() {
-    const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin);
+    const { allowedOrigin, allowedPathname, legacyPathname, redirectTarget } = constants.trackerStats;
+    const pathnames = [allowedPathname, legacyPathname];
     /**
      * This listener will redirect the request for tracker-stats.html
      * on the new tab page to our own HTML file under `web_accessible_resources`
@@ -387,10 +386,10 @@ export function mv2Redirect() {
             // Only do the redirect if we're being iframed into a known origin
             if (details.type === 'sub_frame') {
                 const parsed = new URL(details.url);
-                if (parsed.origin === constants.trackerStats.allowedOrigin) {
-                    if (parsed.pathname.includes(constants.trackerStats.allowedPathname)) {
+                if (parsed.origin === allowedOrigin) {
+                    if (pathnames.some((pathname) => parsed.pathname.includes(pathname))) {
                         return {
-                            redirectUrl: chrome.runtime.getURL(constants.trackerStats.redirectTarget),
+                            redirectUrl: chrome.runtime.getURL(redirectTarget),
                         };
                     }
                 }
@@ -398,7 +397,7 @@ export function mv2Redirect() {
             return undefined;
         },
         {
-            urls: [incomingUrl.toString()],
+            urls: pathnames.map((pathname) => new URL(pathname, allowedOrigin).toString()),
             types: ['sub_frame'],
         },
         ['blocking'],
@@ -406,20 +405,25 @@ export function mv2Redirect() {
 }
 
 function mv3Redirect() {
-    const targetUrl = chrome.runtime.getURL(constants.trackerStats.redirectTarget);
-    const incomingUrl = new URL(constants.trackerStats.allowedPathname, constants.trackerStats.allowedOrigin);
-    const redirectRule = generateDNRRule({
-        id: NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID,
-        priority: NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY,
-        actionType: 'redirect',
-        redirect: {
-            url: targetUrl,
-        },
-        urlFilter: incomingUrl.toString(),
-        resourceTypes: ['sub_frame'],
-    });
+    const { allowedOrigin, allowedPathname, legacyPathname, redirectTarget } = constants.trackerStats;
+    const targetUrl = chrome.runtime.getURL(redirectTarget);
+    const redirectRules = [
+        { id: NEWTAB_BLOCKED_STATS_REDIRECT_RULE_ID, pathname: allowedPathname },
+        { id: NEWTAB_TRACKER_STATS_REDIRECT_RULE_ID, pathname: legacyPathname },
+    ].map(({ id, pathname }) =>
+        generateDNRRule({
+            id,
+            priority: NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY,
+            actionType: 'redirect',
+            redirect: {
+                url: targetUrl,
+            },
+            urlFilter: new URL(pathname, allowedOrigin).toString(),
+            resourceTypes: ['sub_frame'],
+        }),
+    );
     chrome.declarativeNetRequest.updateDynamicRules({
-        removeRuleIds: [redirectRule.id],
-        addRules: [redirectRule],
+        removeRuleIds: redirectRules.map((rule) => rule.id),
+        addRules: redirectRules,
     });
 }

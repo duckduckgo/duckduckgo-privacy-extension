@@ -159,7 +159,8 @@ module.exports = {
     },
     trackerStats: /** @type {const} */ ({
         allowedOrigin: 'https://duckduckgo.com',
-        allowedPathname: 'ntp-tracker-stats.html',
+        allowedPathname: 'ntp-blocked-stats.html',
+        legacyPathname: 'ntp-tracker-stats.html',
         redirectTarget: 'html/tracker-stats.html',
         clientPortName: 'newtab-tracker-stats',
         /** @type {ReadonlyArray<string>} */
