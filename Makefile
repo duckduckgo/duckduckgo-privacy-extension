@@ -168,6 +168,10 @@ ifneq ($(browser),embedded)
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js shared/js/content-scripts/*.js $(BUILD_DIR)/public/js/content-scripts
 	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
 endif
+# No options page in this build, so hide the dashboard's settings cog (matches Windows).
+ifeq ($(browser),chromium-embedded)
+	echo '.cog-button { display: none; }' >> $(BUILD_DIR)/dashboard/public/css/popup.css
+endif
 	touch $@
 
 copy: $(LAST_COPY)
@@ -200,6 +204,9 @@ $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 
 $(BUILD_DIR)/public/js/background-embedded.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/background/background-embedded.js > $@
+
+$(BUILD_DIR)/public/js/background-chromium-embedded.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/background/background-chromium-embedded.js > $@
 
 ## Locale resources for UI
 shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)

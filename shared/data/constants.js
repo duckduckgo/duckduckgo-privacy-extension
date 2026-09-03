@@ -1,3 +1,4 @@
+/* global BUILD_TARGET */
 const parseUserAgentString = require('../js/shared-utils/parse-user-agent-string');
 const browserInfo = parseUserAgentString();
 
@@ -11,15 +12,44 @@ function isMV3() {
 }
 
 function getConfigFileName() {
-    let browserName = browserInfo?.browser?.toLowerCase() || '';
-
-    // clamp to known browsers
-    if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
-        browserName = '';
+    let configName;
+    // Note: BUILD_TARGET is only defined for esbuild bundles; this module is
+    // also imported by node scripts (e.g. scripts/bundleConfig.mjs).
+    if (typeof BUILD_TARGET !== 'undefined' && BUILD_TARGET === 'chromium-embedded') {
+        // The chromium-embedded build uses the Windows browser's config.
+        configName = 'windows-config';
     } else {
-        browserName = '-' + browserName + (isMV3() ? 'mv3' : '');
+        let browserName = browserInfo?.browser?.toLowerCase() || '';
+
+        // clamp to known browsers
+        if (!['chrome', 'firefox', 'brave', 'edg'].includes(browserName)) {
+            browserName = '';
+        } else {
+            browserName = '-' + browserName + (isMV3() ? 'mv3' : '');
+        }
+        configName = `extension${browserName}-config`;
     }
-    return `${trackerBlockingEndpointBase}/config/v4/extension${browserName}-config.json`;
+    return `${trackerBlockingEndpointBase}/config/v4/${configName}.json`;
+}
+
+/**
+ * The platform name reported to content-scope-scripts, which surfaces it as
+ * `navigator.duckduckgo.platform`.
+ *
+ * The chromium-embedded build ships as part of a DuckDuckGo-branded browser on
+ * Windows rather than as a third-party extension, so it names the browser it is
+ * part of — the same reasoning that makes it use the Windows config above.
+ * Valid values are fixed by content-scope-scripts:
+ * 'windows' | 'macos' | 'android' | 'ios' | 'extension'.
+ *
+ * @returns {'windows' | 'extension'}
+ */
+function getPlatformName() {
+    // Note: see getConfigFileName above for why BUILD_TARGET is guarded.
+    if (typeof BUILD_TARGET !== 'undefined' && BUILD_TARGET === 'chromium-embedded') {
+        return 'windows';
+    }
+    return 'extension';
 }
 
 /**
@@ -155,7 +185,7 @@ module.exports = {
         withSpecialState: '/img/icon_browser_action_special.png',
     }),
     platform: {
-        name: 'extension',
+        name: getPlatformName(),
     },
     trackerStats: /** @type {const} */ ({
         allowedOrigin: 'https://duckduckgo.com',

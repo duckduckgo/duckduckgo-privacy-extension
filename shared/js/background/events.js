@@ -1,21 +1,12 @@
-/**
- * NOTE: this needs to be the first listener that's added
- *
- * on FF, we might actually miss the onInstalled event
- * if we do too much before adding it
- */
 import browser from 'webextension-polyfill';
 import { updateActionIcon } from './events/privacy-icon-indicator';
 import httpsStorage from './storage/https';
-import ATB from './atb';
 import { clearExpiredBrokenSiteReportTimes } from './broken-site-report';
 import { sendPageloadsWithAdAttributionPixelAndResetCount } from './classes/ad-click-attribution-policy';
 import { postPopupMessage } from './popup-messaging';
 const utils = require('./utils');
-const experiment = require('./experiments');
 const settings = require('./settings');
 const constants = require('../../data/constants');
-const onboarding = require('./onboarding');
 const cspProtection = require('./csp-blocking');
 const browserName = utils.getBrowserName();
 const browserWrapper = require('./wrapper');
@@ -27,162 +18,6 @@ const {
 } = require('./events/3p-tracking-cookie-blocking');
 
 const manifestVersion = browserWrapper.getManifestVersion();
-
-async function onInstalled(details) {
-    if (details.reason.match(/install/)) {
-        // get tab URLs immediately to prevent race with install page
-        const ddgTabUrls = await browserWrapper.getDDGTabUrls();
-        await settings.ready();
-        settings.updateSetting('showWelcomeBanner', true);
-        if (browserName === 'chrome') {
-            settings.updateSetting('showCounterMessaging', true);
-            settings.updateSetting('shouldFireIncontextEligibilityPixel', true);
-        }
-        await ATB.updateATBValues(ddgTabUrls);
-        await ATB.openPostInstallPage();
-
-        if (browserName === 'chrome') {
-            experiment.setActiveExperiment();
-        }
-    } else if (details.reason.match(/update/) && browserName === 'chrome') {
-        experiment.setActiveExperiment();
-    }
-
-    // Inject the email content script on all tabs upon installation (not needed on Firefox)
-    // FIXME the below code throws an unhandled exception in MV3
-    try {
-        if (browserName !== 'moz') {
-            const tabs = await browser.tabs.query({});
-            for (const tab of tabs) {
-                // Ignore URLs that we aren't permitted to access
-                if (tab.url.startsWith('chrome://')) {
-                    continue;
-                }
-                await browserWrapper.executeScript({
-                    target: { tabId: tab.id },
-                    files: ['public/js/content-scripts/autofill.js'],
-                });
-            }
-        }
-    } catch (e) {
-        console.warn('Failed to inject email content script at startup:', e);
-    }
-}
-
-browser.runtime.onInstalled.addListener(onInstalled);
-
-/**
- * ONBOARDING
- * Logic to allow the SERP to display onboarding UI
- */
-async function onboardingMessaging({ transitionQualifiers, tabId }) {
-    await settings.ready();
-    const showWelcomeBanner = settings.getSetting('showWelcomeBanner');
-    const showCounterMessaging = settings.getSetting('showCounterMessaging');
-
-    // If the onboarding messaging has already been displayed, there's no need
-    // to trigger this event listener any longer.
-    if (!showWelcomeBanner && !showCounterMessaging) {
-        browser.webNavigation.onCommitted.removeListener(onboardingMessaging);
-        return;
-    }
-
-    // The counter messaging should only be active for the very first search
-    // navigation observed.
-    const isAddressBarQuery = transitionQualifiers.includes('from_address_bar');
-    if (isAddressBarQuery && showCounterMessaging) {
-        settings.removeSetting('showCounterMessaging');
-    }
-
-    // Clear the showWelcomeBanner setting to ensure that the welcome banner
-    // isn't shown again in the future.
-    if (showWelcomeBanner) {
-        settings.removeSetting('showWelcomeBanner');
-    }
-
-    // Display the onboarding messaging.
-
-    if (browserName === 'chrome') {
-        browserWrapper.executeScript({
-            target: { tabId },
-            func: onboarding.onDocumentStart,
-            args: [
-                {
-                    duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
-                },
-            ],
-            injectImmediately: true,
-        });
-    }
-
-    if (manifestVersion === 3) {
-        browserWrapper.executeScript({
-            target: { tabId },
-            func: onboarding.onDocumentEndMainWorld,
-            args: [
-                {
-                    isAddressBarQuery,
-                    showWelcomeBanner,
-                    showCounterMessaging,
-                },
-            ],
-            injectImmediately: false,
-            world: 'MAIN',
-        });
-    }
-
-    browserWrapper.executeScript({
-        target: { tabId },
-        func: onboarding.onDocumentEnd,
-        args: [
-            {
-                isAddressBarQuery,
-                showWelcomeBanner,
-                showCounterMessaging,
-                browserName,
-                duckDuckGoSerpHostname: constants.duckDuckGoSerpHostname,
-                extensionId: browserWrapper.getExtensionId(),
-                manifestVersion,
-            },
-        ],
-        injectImmediately: false,
-    });
-}
-
-browser.webNavigation.onCommitted.addListener(onboardingMessaging, {
-    // We only target the search results page (SERP), which has a 'q' query
-    // parameter. Two filters are required since the parameter is not
-    // necessarily first.
-    url: [
-        {
-            schemes: ['https'],
-            hostEquals: constants.duckDuckGoSerpHostname,
-            pathEquals: '/',
-            queryContains: '?q=',
-        },
-        {
-            schemes: ['https'],
-            hostEquals: constants.duckDuckGoSerpHostname,
-            pathEquals: '/',
-            queryContains: '&q=',
-        },
-    ],
-});
-
-/**
- * Health checks + `showCounterMessaging` mutation
- * (Chrome only)
- */
-if (browserName === 'chrome') {
-    browser.runtime.onStartup.addListener(async () => {
-        await settings.ready();
-
-        if (settings.getSetting('rescheduleCounterMessagingOnStart')) {
-            settings.removeSetting('rescheduleCounterMessagingOnStart');
-            settings.updateSetting('showCounterMessaging', true);
-        }
-    });
-}
 
 /**
  * REQUESTS
@@ -223,11 +58,6 @@ const isTopicsEnabled = manifestVersion === 2 && 'browsingTopics' in document &&
 
 browser.webRequest.onHeadersReceived.addListener(
     (request) => {
-        if (ATB.shouldUpdateSetAtb(request)) {
-            // returns a promise
-            return ATB.updateSetAtb();
-        }
-
         const responseHeaders = request.responseHeaders;
 
         if (isTopicsEnabled && responseHeaders && (request.type === 'main_frame' || request.type === 'sub_frame')) {

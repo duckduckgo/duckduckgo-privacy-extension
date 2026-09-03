@@ -17,7 +17,7 @@ const readyPromise = new Promise((resolve) => {
 });
 
 export async function onStartup() {
-    if (BUILD_TARGET === 'chrome') {
+    if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
         await dnrSessionId.setSessionRuleOffsetFromStorage();
     }
 
@@ -36,7 +36,7 @@ export async function onStartup() {
     /**
      * in Chrome only, try to initiate the `NewTabTrackerStats` feature
      */
-    if (BUILD_TARGET !== 'firefox' && getBrowserName() === 'chrome') {
+    if (BUILD_TARGET === 'chrome' && getBrowserName() === 'chrome') {
         try {
             // build up dependencies
             const trackerStats = new TrackerStats();

@@ -2,7 +2,13 @@ import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 import { listenForBreakageReport, pixelBrowserSuffix } from './helpers/pixels';
-import { isFirefox } from './helpers/platform.js';
+import { isChromiumEmbedded, isFirefox } from './helpers/platform.js';
+
+// The chromium-embedded build does not include ATB, so no atb parameter is
+// expected in its breakage reports.
+function expectCorrectAtbParam(pixel) {
+    expect(pixel.params.atb).toBe(isChromiumEmbedded() ? undefined : mockAtb.version);
+}
 
 test.describe('Broken site reports', () => {
     test('Sends broken site reports with current page context', async ({ context, backgroundPage, page, backgroundNetworkContext }) => {
@@ -15,11 +21,11 @@ test.describe('Broken site reports', () => {
         await page.bringToFront();
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
         const pixel = await breakageReport;
+        expectCorrectAtbParam(pixel);
         expect(pixel).toMatchObject({
             name: 'epbf' + pixelBrowserSuffix,
             params: {
                 adAttributionRequests: '',
-                atb: mockAtb.version,
                 blockedTrackers: '',
                 category: 'dislike',
                 errorDescriptions: '[]',
@@ -67,11 +73,11 @@ test.describe('Broken site reports', () => {
         await page.bringToFront();
         await backgroundPage.evaluate(() => globalThis.components.dashboardMessaging.submitBrokenSiteReport({ category: 'dislike' }));
         const pixel = await breakageReport;
+        expectCorrectAtbParam(pixel);
         expect(pixel).toMatchObject({
             name: 'epbf' + pixelBrowserSuffix,
             params: {
                 adAttributionRequests: '',
-                atb: mockAtb.version,
                 blockedTrackers: '',
                 category: 'dislike',
                 errorDescriptions: '[]',
