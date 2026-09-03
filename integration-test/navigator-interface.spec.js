@@ -1,6 +1,11 @@
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { TEST_SERVER_ORIGIN } from './helpers/testPages';
+import { isChromiumEmbedded } from './helpers/platform';
+
+// The chromium-embedded build is part of a DDG-branded browser, so it names the
+// browser rather than calling itself an extension. See shared/data/constants.js.
+const expectedPlatform = isChromiumEmbedded() ? 'windows' : 'extension';
 
 test.describe('navigatorInterface', () => {
     test('injects navigator.duckduckgo interface into pages', async ({ backgroundPage, page, context, manifestVersion }) => {
@@ -22,7 +27,7 @@ test.describe('navigatorInterface', () => {
 
         expect(await page.locator('#interface').innerText()).toBe('interface: true');
         expect(await page.locator('#isDuckDuckGo').innerText()).toBe('isDuckDuckGo: true');
-        expect(await page.locator('#platform').innerText()).toBe('platform: extension');
+        expect(await page.locator('#platform').innerText()).toBe(`platform: ${expectedPlatform}`);
     });
 
     test('does not inject into localhost', async ({ page, context }) => {
