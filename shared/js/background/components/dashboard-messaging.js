@@ -139,6 +139,10 @@ export default class DashboardMessaging {
         const fireButtonData = {
             enabled: isFireButtonEnabled,
         };
-        return dashboardDataFromTab(tab, userData, fireButtonData);
+        // Read at call time rather than injected: CPM is constructed after this
+        // component, and it is absent entirely from the MV2 builds.
+        const cpm = globalThis.components?.cpm;
+        const cpmDashboardState = cpm ? (await cpm.getCpmState()).dashboardStates[`${tabId}`] : undefined;
+        return dashboardDataFromTab(tab, userData, fireButtonData, cpmDashboardState);
     }
 }
