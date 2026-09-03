@@ -11,10 +11,6 @@ import { createAlarm } from '../wrapper';
  * @property {string} [localUrl]
  * @property {number} [updateIntervalMinutes]
  * @property {'json'|'text'} [format]
- * @property {(currentEtag: string) => Promise<{contents: any, etag?: string}>} [loadFromBrowser] -
- *   Ask the embedding browser for a copy it already has, given the etag of the
- *   copy we hold. Tried before the network, and expected to reject when there
- *   is no browser to ask or it has no copy.
  *
  * @typedef {(resourceName: ResourceName, etag: string, value: any) => Promise<any> | void} OnUpdatedCallback
  * @typedef {import('../settings.js')} Settings
@@ -38,7 +34,6 @@ export default class ResourceLoader extends EventTarget {
         this.name = config.name;
         this.remoteUrl = config.remoteUrl;
         this.localUrl = config.localUrl;
-        this.loadFromBrowser = config.loadFromBrowser;
         this.updateIntervalMinutes = config.updateIntervalMinutes || 0;
         this.format = config.format || 'json';
         this.data = null;
@@ -101,12 +96,6 @@ export default class ResourceLoader extends EventTarget {
             loadOrder = [loadFromDb, loadFromRemoteNoCache];
         } else if (this.remoteUrl) {
             loadOrder = [loadFromRemote, loadFromDb];
-        }
-        // The browser, when there is one, has already downloaded this and knows
-        // when it changed, so prefer it over fetching a second copy ourselves.
-        if (this.loadFromBrowser) {
-            const loadFromBrowser = this.loadFromBrowser;
-            loadOrder.unshift(() => loadFromBrowser(this.etag));
         }
         // The last backup is the local file
         if (this.localUrl) {
