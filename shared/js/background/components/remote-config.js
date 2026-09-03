@@ -1,4 +1,3 @@
-/* global BUILD_TARGET */
 /**
  * @typedef {import('../settings.js')} Settings
  * @typedef {import('./tds').default} TDSStorage
@@ -34,16 +33,6 @@ import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from 
 import ResourceLoader from './resource-loader';
 import constants from '../../../data/constants';
 import { registerMessageHandler } from '../message-registry';
-import { sendToBrowser } from './ddg-api-messaging';
-
-/** Feature name for privacy config traffic over `chrome.ddg`. */
-const CONFIG_FEATURE = 'config';
-
-/**
- * Much shorter than the transport's 20s default: startup blocks on the config
- * being loaded, so a browser that goes quiet must cost a pause, not a stall.
- */
-const CONFIG_MESSAGE_TIMEOUT_MS = 5 * 1000;
 
 /**
  * @returns {Promise<string>}
@@ -54,36 +43,6 @@ async function getConfigUrl() {
         return override;
     }
     return constants.tdsLists[2].url;
-}
-
-/**
- * Ask the embedding browser for the privacy config it already downloaded.
- *
- * In the chromium-embedded build the browser fetches the Windows config for its
- * own features, so downloading a second copy costs a request and lets the two
- * drift apart: the extension can be acting on a different config version than
- * the browser around it.
- *
- * Throws whenever the browser does not hand one over — no `chrome.ddg` at all
- * (dev builds, the integration tests), a browser that goes quiet, or one that
- * echoes the request back because it has no config handler yet. The caller
- * treats that as "try the next source", so the CDN download stays the fallback.
- *
- * @param {string} currentEtag - etag of the config we already hold
- * @returns {Promise<{contents: any, etag?: string}>}
- */
-export async function loadConfigFromBrowser(currentEtag) {
-    const reply = await sendToBrowser(CONFIG_FEATURE, 'get', {}, CONFIG_MESSAGE_TIMEOUT_MS);
-    const config = reply?.config;
-    if (!config?.features) {
-        throw new Error('browser did not supply a config');
-    }
-    // Fall back to the config's own version when the browser sends no etag: it
-    // only has to tell one config apart from the next.
-    const etag = reply.etag || `version-${config.version}`;
-    // Omitting an unchanged etag skips the needless re-store, exactly as the
-    // cached-database path does.
-    return etag === currentEtag ? { contents: config } : { contents: config, etag };
 }
 
 export default class RemoteConfig extends ResourceLoader {
@@ -99,9 +58,6 @@ export default class RemoteConfig extends ResourceLoader {
                 remoteUrl: getConfigUrl,
                 localUrl: '/data/bundled/extension-config.json',
                 updateIntervalMinutes: 15,
-                // Only the embedded build has a browser to ask; naming the
-                // function conditionally lets it tree-shake out of the others.
-                loadFromBrowser: BUILD_TARGET === 'chromium-embedded' ? loadConfigFromBrowser : undefined,
             },
             { settings },
         );
@@ -116,17 +72,6 @@ export default class RemoteConfig extends ResourceLoader {
             localeCountry: getUserLocaleCountry(),
             localeLanguage: getUserLocale(),
         };
-
-        // The browser tells us when its copy changed, rather than us polling for
-        // it. Registered here, on the first tick of the service worker, so that
-        // delivery wakes the worker when it has been shut down.
-        if (BUILD_TARGET === 'chromium-embedded') {
-            chrome.ddg?.onMessage.addListener((message) => {
-                if (message?.featureName === CONFIG_FEATURE && message?.method === 'changed') {
-                    this.checkForUpdates(true);
-                }
-            });
-        }
 
         registerMessageHandler('getSubfeatureStatuses', this.getSubFeatureStatuses.bind(this));
         registerMessageHandler('forceReprocessConfig', async () => {
