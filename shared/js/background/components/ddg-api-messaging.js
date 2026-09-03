@@ -37,9 +37,15 @@ export function hasDdgApi() {
 /**
  * Send one message to the browser and wait for its reply.
  *
- * Never throws. Returns null if the API is absent, the browser reports an
- * error, or it does not answer within `timeout` — deciding what an unanswered
- * call means is the caller's job, not the transport's.
+ * Never throws. Returns null if the API is absent, the call fails, or the
+ * browser does not answer within `timeout` — deciding what an unanswered call
+ * means is the caller's job, not the transport's.
+ *
+ * A browser that *can* answer but does not implement the method replies with
+ * `{ error: { code, message } }` instead, which is a value, not a failure.
+ * That distinction is the point: an unsupported method means fall back to what
+ * the extension can do alone, while a null means the browser went quiet and
+ * the safe default applies. Callers check the reply's shape before using it.
  *
  * @param {string} featureName
  * @param {string} method

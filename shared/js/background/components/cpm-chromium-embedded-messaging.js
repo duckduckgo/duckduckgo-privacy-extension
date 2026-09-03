@@ -67,10 +67,11 @@ export class CPMChromiumEmbeddedMessaging extends CPMStandaloneMessaging {
             return { enabled: false, featureFlags: {} };
         }
         if (typeof result.enabled !== 'boolean') {
-            // The browser answered but is not speaking this protocol: with no
-            // routing behind `ddg.send()` it simply echoes what it was sent.
-            // Behave as if there were no browser at all, so vendoring this
-            // extension ahead of the browser-side handler is not a regression.
+            // The browser answered but cannot serve this method — today that is
+            // an `{ error: { code: 'unsupported-method' } }` from the router,
+            // because the setting has no browser-side home yet. Behave as if
+            // there were no browser at all, so vendoring this extension ahead
+            // of the browser-side handler is not a regression.
             return super.checkAutoconsentSetting();
         }
         return {
@@ -82,9 +83,13 @@ export class CPMChromiumEmbeddedMessaging extends CPMStandaloneMessaging {
 
     /**
      * Report a handled cookie popup. What the browser does with it is the
-     * browser's business - today it draws the animation in its own chrome,
-     * which is why `showCpmAnimation` stays the inherited no-op instead of
-     * being a second message about the same event.
+     * browser's business - today it records it against the tab for its own
+     * chrome to read, which is why `showCpmAnimation` stays the inherited
+     * no-op instead of being a second message about the same event.
+     *
+     * The tab id is the one `chrome.tabs.*` uses; the browser resolves it
+     * against the profile rather than trusting it, and silently drops ids that
+     * name no tab of its own.
      *
      * @param {number} tabId
      * @param {import('@duckduckgo/autoconsent').DoneMessage} msg
