@@ -33,6 +33,26 @@ function getConfigFileName() {
 }
 
 /**
+ * The platform name reported to content-scope-scripts, which surfaces it as
+ * `navigator.duckduckgo.platform`.
+ *
+ * The chromium-embedded build ships as part of a DuckDuckGo-branded browser on
+ * Windows rather than as a third-party extension, so it names the browser it is
+ * part of — the same reasoning that makes it use the Windows config above.
+ * Valid values are fixed by content-scope-scripts:
+ * 'windows' | 'macos' | 'android' | 'ios' | 'extension'.
+ *
+ * @returns {'windows' | 'extension'}
+ */
+function getPlatformName() {
+    // Note: see getConfigFileName above for why BUILD_TARGET is guarded.
+    if (typeof BUILD_TARGET !== 'undefined' && BUILD_TARGET === 'chromium-embedded') {
+        return 'windows';
+    }
+    return 'extension';
+}
+
+/**
  * Get the TDS endpoint associated with the current extension and given version.
  *
  * @param {`v6/${'current' | 'previous' | 'next'}` | 'beta'} version
@@ -165,7 +185,7 @@ module.exports = {
         withSpecialState: '/img/icon_browser_action_special.png',
     }),
     platform: {
-        name: 'extension',
+        name: getPlatformName(),
     },
     trackerStats: /** @type {const} */ ({
         allowedOrigin: 'https://duckduckgo.com',
