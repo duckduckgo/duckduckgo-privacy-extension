@@ -16,7 +16,7 @@
     "tldts": "^7.0.12"
   },
   "devDependencies": {
-    "esbuild": "^0.28.1",
+    "esbuild": "^0.28.2",
     "@playwright/test": "*"
   }
 }
