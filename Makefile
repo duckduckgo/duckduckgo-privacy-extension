@@ -158,15 +158,30 @@ LAST_COPY = build/.last-copy-$(browser)-$(type)
 
 RSYNC = rsync -ra --exclude="*~"
 
+# Pages the chromium-embedded build cannot reach, so shipping them inside the
+# browser is dead weight: the browser owns the fire button and the new tab page,
+# this build declares no options_page, and MV3 has no background page.
+# The devtools pages stay - they are reached by typing their URL, which is how
+# we debug protections in DDG-Chromium.
+HTML_EXCLUDES =
+ifeq ($(browser),chromium-embedded)
+  HTML_EXCLUDES = --exclude=background.html --exclude=feedback.html --exclude=fire.html \
+                  --exclude=options.html --exclude=tracker-stats.html
+endif
+
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 	$(RSYNC) browsers/$(browser)/* $(BUILD_DIR)
 ifneq ($(browser),embedded)
-	$(RSYNC) browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
+	$(RSYNC) $(HTML_EXCLUDES) browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
+	$(RSYNC) shared/js/content-scripts/*.js $(BUILD_DIR)/public/js/content-scripts
+	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
+endif
+# Autofill is excluded from both embedded builds, so its assets are dead there.
+ifeq (,$(filter $(browser),embedded chromium-embedded))
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill.css $(BUILD_DIR)/public/css/autofill.css
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/autofill-host-styles_$(BROWSER_TYPE).css $(BUILD_DIR)/public/css/autofill-host-styles.css
-	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js shared/js/content-scripts/*.js $(BUILD_DIR)/public/js/content-scripts
-	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
+	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js $(BUILD_DIR)/public/js/content-scripts
 endif
 # No options page in this build, so hide the dashboard's settings cog (matches Windows).
 ifeq ($(browser),chromium-embedded)
@@ -242,6 +257,11 @@ $(BUILD_DIR)/public/js/content-scripts/cpm.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/cpm.js > $@
 
 JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js content-scripts/cpm.js
+# Only the bundles the pages this build still ships actually load. base.js goes
+# with the options and feedback pages; the devtools pages only need base.css.
+ifeq ($(browser),chromium-embedded)
+  JS_BUNDLES = background.js devtools-panel.js list-editor.js rollouts.js content-scripts/cpm.js
+endif
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
 ## Content Scope Scripts
@@ -283,6 +303,11 @@ BUILD_TARGETS += $(BUILD_DIR)/public/js/inject.js
 SASS = node_modules/.bin/sass
 SCSS_SOURCE = $(shell find shared/scss/ -type f)
 OUTPUT_CSS_FILES = $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
+# Stylesheets for the options and feedback pages, neither of which this build
+# ships. base.css stays: the devtools pages use it.
+ifeq ($(browser),chromium-embedded)
+  OUTPUT_CSS_FILES =
+endif
 $(BUILD_DIR)/public/css/base.css: shared/scss/base/base.scss $(SCSS_SOURCE)
 	$(SASS) $< $@
 $(BUILD_DIR)/public/css/%.css: shared/scss/%.scss $(SCSS_SOURCE)
