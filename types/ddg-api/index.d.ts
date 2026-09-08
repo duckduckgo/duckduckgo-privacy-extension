@@ -16,6 +16,20 @@ declare namespace chrome {
         | {
               /** extension -> browser; resolves with the browser's reply. */
               send(message: unknown): Promise<any>;
+
+              /**
+               * browser -> extension; announced once when a burn is accepted,
+               * before the burn destroys anything. That ordering is the only
+               * guarantee: there is no reply channel, the burn does not wait for
+               * listeners, and the worker may still be waking while the browser
+               * is already clearing storage.
+               *
+               * Optional because a browser older than the event does not define
+               * it, so listeners must optional-chain through this too.
+               */
+              onBurnStarted?: {
+                  addListener(callback: (details: { trigger: 'in-session' | 'on-exit' | 'on-startup' }) => void): void;
+              };
           }
         | undefined;
 }
