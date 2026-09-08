@@ -67,7 +67,6 @@ test.describe('Extension functions with empty configuration', () => {
     });
 
     test('Configuration updates are applied', async ({ backgroundPage, backgroundNetworkContext, page }) => {
-        test.skip(isChromiumEmbedded(), 'chromium-embedded build does not inject content-scope-scripts (navigatorInterface)');
         const checkConfigState = () =>
             backgroundPage.evaluate(() => ({
                 configVersion: globalThis.components.tds.config.data?.version,
