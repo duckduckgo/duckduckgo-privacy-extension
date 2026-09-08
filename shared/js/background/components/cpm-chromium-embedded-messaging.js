@@ -29,7 +29,7 @@ export class CPMChromiumEmbeddedMessaging extends CPMStandaloneMessaging {
     /** @param {{ remoteConfig: import('./remote-config').default }} opts */
     constructor(opts) {
         super(opts);
-        /** @type {{ time: number, value: AutoconsentUserSettings } | null} */
+        /** @type {{ time: number, value: Promise<AutoconsentUserSettings> } | null} */
         this._settingsCache = null;
     }
 
@@ -39,15 +39,21 @@ export class CPMChromiumEmbeddedMessaging extends CPMStandaloneMessaging {
      * for the same window the macOS embedded build uses. Failures are cached
      * too — otherwise a browser that is not answering gets asked once per frame.
      *
+     * What is cached is the in-flight promise, not the settled answer. The
+     * content script runs in every frame, so a page's frames all reach `init`
+     * before any reply arrives; caching only on resolve would let one cold cache
+     * fan out a browser call per frame, each holding its own 20s timeout while
+     * the browser is quiet. Neither path below rejects, so a cached promise
+     * cannot poison the window.
+     *
      * @returns {Promise<AutoconsentUserSettings>}
      */
     async checkAutoconsentSetting() {
         if (this._settingsCache && Date.now() - this._settingsCache.time < SETTING_CHECK_TTL) {
             return this._settingsCache.value;
         }
-        const value = await this._fetchAutoconsentSetting();
-        this._settingsCache = { time: Date.now(), value };
-        return value;
+        this._settingsCache = { time: Date.now(), value: this._fetchAutoconsentSetting() };
+        return this._settingsCache.value;
     }
 
     /**

@@ -100,6 +100,26 @@ describe('CPMChromiumEmbeddedMessaging', () => {
             expect(send).toHaveBeenCalledTimes(2);
         });
 
+        it('asks once for frames that all ask before the browser answers', async () => {
+            // Every frame on a page reaches CPM's `init` at about the same time,
+            // so a cold cache must not fan out one browser call per frame.
+            let answer;
+            const send = installDdgApi(() => new Promise((resolve) => (answer = resolve)));
+
+            const inFlight = [
+                messaging.checkAutoconsentSetting(),
+                messaging.checkAutoconsentSetting(),
+                messaging.checkAutoconsentSetting(),
+            ];
+            expect(send).toHaveBeenCalledTimes(1);
+
+            answer({ enabled: true, userPreference: 'max', featureFlags: {} });
+            for (const settings of await Promise.all(inFlight)) {
+                expect(settings.userPreference).toEqual('max');
+            }
+            expect(send).toHaveBeenCalledTimes(1);
+        });
+
         it('caches a failure too, so a silent browser is not asked once per frame', async () => {
             const send = installDdgApi(() => Promise.reject(new Error('browser is unhappy')));
             spyOn(console, 'error');
