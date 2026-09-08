@@ -313,7 +313,7 @@ build/.smarter_encryption.txt:
 $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json: build/.smarter_encryption.txt
 	npx ddg2dnr smarter-encryption $< $@
 
-ifeq ('$(browser)','chrome')
+ifneq (,$(filter $(browser),chrome chromium-embedded))
   BUILD_TARGETS += $(BUILD_DIR)/data/bundled/smarter-encryption-rules.json
 endif
 
