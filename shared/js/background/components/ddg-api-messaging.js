@@ -2,31 +2,19 @@
 
 /**
  * Messaging over `chrome.ddg`, the custom extension API that DuckDuckGo-branded
- * Chromium exposes to component extensions.
- *
- * This is the chromium-embedded build's counterpart to `native-messaging.js`,
- * which the macOS embedded build uses. The envelope is deliberately the same
- * `{ context, featureName, method, params }` shape, so a method means the same
- * thing on both sides of the port and only the transport call differs.
- *
- * See `ddg_privacy_tooling_messaging.md` in the chromium repo for the API
- * itself, and `ddg_cpm_messaging.md` for the methods CPM sends over it.
+ * Chromium exposes to component extensions. Messages use the same
+ * `{ context, featureName, method, params }` envelope as the macOS embedded
+ * build's native messaging.
  */
 
-/** Context shared with the macOS embedded build's native messages. */
 const CONTEXT = 'ddgInternalExtension';
 
-/**
- * Matches the 20s the macOS embedded build allows a native message. A browser
- * that never answers must not leave a promise pending for the life of the
- * service worker.
- */
 export const DDG_MESSAGE_TIMEOUT_MS = 20 * 1000;
 
 /**
  * True when running as a component extension inside DDG-branded Chromium, and
  * false everywhere else — plain Chromium, an unpacked dev build, the
- * integration tests. Callers fall back to extension-side behaviour when false.
+ * integration tests.
  *
  * @returns {boolean}
  */
@@ -38,14 +26,9 @@ export function hasDdgApi() {
  * Send one message to the browser and wait for its reply.
  *
  * Never throws. Returns null if the API is absent, the call fails, or the
- * browser does not answer within `timeout` — deciding what an unanswered call
- * means is the caller's job, not the transport's.
- *
- * A browser that *can* answer but does not implement the method replies with
- * `{ error: { code, message } }` instead, which is a value, not a failure.
- * That distinction is the point: an unsupported method means fall back to what
- * the extension can do alone, while a null means the browser went quiet and
- * the safe default applies. Callers check the reply's shape before using it.
+ * browser does not answer within `timeout`. A browser that answers but does not
+ * implement the method returns `{ error: { code, message } }`, which is a reply,
+ * not a failure — callers check the reply's shape before using it.
  *
  * @param {string} featureName
  * @param {string} method

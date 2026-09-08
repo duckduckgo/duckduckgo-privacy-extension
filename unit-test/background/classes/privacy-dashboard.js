@@ -246,8 +246,7 @@ describe('Tab -> Privacy Dashboard conversion', () => {
                 cpmErrors: [],
                 cpmConfigVersion: '1234',
             });
-            // `selftestFailed` was null, which the dashboard's schema has no room
-            // for; the rest of CPM's state is ours, not the dashboard's.
+            // `selftestFailed` was null, which the schema expects to be absent.
             expect(data.tab.cookiePromptManagementStatus).toEqual({
                 consentManaged: true,
                 cosmetic: true,

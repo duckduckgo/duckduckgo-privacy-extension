@@ -3,8 +3,7 @@ import backgroundWait from './helpers/backgroundWait';
 import { TEST_SERVER_ORIGIN } from './helpers/testPages';
 import { isChromiumEmbedded } from './helpers/platform';
 
-// The chromium-embedded build is part of a DDG-branded browser, so it names the
-// browser rather than calling itself an extension. See shared/data/constants.js.
+// The chromium-embedded build names the browser it is part of, not itself.
 const expectedPlatform = isChromiumEmbedded() ? 'windows' : 'extension';
 
 test.describe('navigatorInterface', () => {

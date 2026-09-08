@@ -64,9 +64,8 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
     require('./dnr-config-rulesets');
 }
 
-// The browser owns burning in the embedded build and announces when one starts,
-// so we can clear the state it cannot reach. Registered here, on the first tick
-// and before any await, so the browser will wake the worker to deliver it.
+// Must register on the first tick, before any await, so the browser will wake
+// the worker to deliver the event.
 if (BUILD_TARGET === 'chromium-embedded') {
     setupBurn();
 }

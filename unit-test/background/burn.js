@@ -24,13 +24,11 @@ describe('burn', () => {
         expect(tabManager.swContainer).toEqual({});
         // Ad-click attribution allowlisting outlives the tab object otherwise.
         expect(removeDNR).toHaveBeenCalled();
-        // Session-storage backups go too, keyed by the numeric tab id.
+        // Session-storage backups, keyed by the numeric tab id.
         expect(TabState.delete).toHaveBeenCalledWith(1);
         expect(TabState.delete).toHaveBeenCalledWith(2);
     });
 
-    // The browser does not wait for us and may burn again before we run, so a
-    // second burn over already-cleared state must not throw.
     it('is safe to run twice, and with nothing to clear', () => {
         expect(() => {
             clearBurnedState('on-startup');

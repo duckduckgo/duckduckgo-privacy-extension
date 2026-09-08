@@ -1,7 +1,6 @@
 /**
- * The opposite of atb.spec.js: the chromium-embedded build does not include
- * the ATB component (see setupAtb in background.js), so the install and
- * search workflows should leave no ATB traces.
+ * The chromium-embedded build excludes ATB, so its install and search
+ * workflows should leave no ATB traces.
  */
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
@@ -31,22 +30,19 @@ test.describe('ATB is disabled', () => {
     });
 
     test('does not append the atb parameter to search queries', async ({ page, backgroundPage }) => {
-        // Even with an atb setting present (e.g. carried over in a profile
-        // that previously ran a build with ATB included), searches should not
-        // be redirected to append the atb parameter.
+        // An atb setting can be carried over in a profile that previously ran a
+        // build with ATB included; searches still must not append the parameter.
         await backgroundPage.evaluate(() => globalThis.dbg.settings.updateSetting('atb', 'v123-1'));
 
-        // Re-run the extension's install/update handling with that value in
-        // place. On Chrome builds, DNRListeners.postInstall recreates the ATB
-        // DNR rules from the stored setting - this build must not.
+        // On Chrome builds this recreates the ATB DNR rules from the stored
+        // setting. This build must not.
         await backgroundPage.evaluate(() => globalThis.components.dnrListeners.postInstall());
 
-        // The ATB DNR rules are added without being awaited, so flush the
-        // (sequentially processed) rule update queue with an empty update
-        // before checking.
+        // Rules are added without being awaited, so flush the sequential rule
+        // queue with an empty update before checking.
         const atbDnrRules = await backgroundPage.evaluate(async () => {
             await chrome.declarativeNetRequest.updateDynamicRules({});
-            // Rule IDs used by ATB.setOrUpdateATBdnrRule, see dnr-utils.js.
+            // Rule IDs used by ATB.setOrUpdateATBdnrRule.
             const atbRuleIds = [20003, 20008, 20009, 20010, 20011];
             const rules = await chrome.declarativeNetRequest.getDynamicRules();
             return rules.filter(

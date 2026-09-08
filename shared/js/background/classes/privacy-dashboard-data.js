@@ -63,12 +63,9 @@ export function dashboardDataFromTab(tab, userData, fireButtonData, cpmDashboard
     };
 
     if (cpmDashboardState) {
-        // The dashboard renders the "Cookies Managed" row from this on its other
-        // platforms, but its extension integration neither declares it on `Tab`
-        // nor forwards it: it parses our reply with a zod schema that drops
-        // unknown keys, then picks fields off the result by name. Sending it is
-        // the half we own; the row stays hidden until
-        // @duckduckgo/privacy-dashboard passes it through.
+        // The dashboard's extension integration currently drops this field: it
+        // parses our reply with a zod schema that strips unknown keys. The
+        // "Cookies Managed" row stays hidden until it passes the field through.
         dashboardTab.cookiePromptManagementStatus = convertCpmState(cpmDashboardState);
     }
 
@@ -83,16 +80,12 @@ export function dashboardDataFromTab(tab, userData, fireButtonData, cpmDashboard
 }
 
 /**
- * Narrow CPM's own per-tab state down to the handful of fields the dashboard
- * renders the "Cookies Managed" row from.
+ * Narrow CPM's per-tab state to the fields the dashboard's "Cookies Managed"
+ * row needs. CPM uses `null` for "not known yet" where the dashboard's schema
+ * expects the field to be absent, so nulls become undefined.
  *
- * CPM uses `null` for "not known yet" where the dashboard's schema expects the
- * field to be absent, so nulls become undefined here.
- *
- * `configurable` says whether that row is a link to a setting the user can
- * change. It is false on every build we ship today: the standalone extension
- * has no cookie-popup setting at all, and in the chromium-embedded build the
- * setting lives in browser prefs, with no extension UI to reach it.
+ * `configurable` marks the row as a link to a setting the user can change. No
+ * build has extension UI for it, so it is always false.
  *
  * @param {import('../components/cookie-prompt-management').CpmDashboardState} state
  * @returns {CookiePromptManagementStatus}

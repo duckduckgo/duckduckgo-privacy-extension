@@ -16,13 +16,12 @@ export const isAtbEnabled = BUILD_TARGET !== 'chromium-embedded';
  *  - Opening the post-install page.
  *  - Keeping the uninstall URL and ATB declarativeNetRequest rules up to date.
  *  - Onboarding messaging on the SERP (welcome banner).
- *  - With `counterMessaging` enabled (Chrome builds): counter messaging on the SERP.
- *  - With `emailInjection` enabled (Chrome builds): injecting the email content script
- *    into existing tabs on install.
+ *  - With `counterMessaging`: counter messaging on the SERP.
+ *  - With `emailInjection`: injecting the email content script into existing
+ *    tabs on install.
  *
- * NOTE: This function must be called on the first tick of extension startup, and as
- * early as possible: on Firefox we might miss the onInstalled event if we do too much
- * before adding the listener.
+ * Must be called on the first tick of extension startup: on Firefox we might miss
+ * the onInstalled event if we do too much before adding the listener.
  *
  * @param {{
  *  settings: import('../settings.js');

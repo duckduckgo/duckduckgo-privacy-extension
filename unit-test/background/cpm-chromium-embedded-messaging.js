@@ -78,8 +78,7 @@ describe('CPMChromiumEmbeddedMessaging', () => {
         });
 
         it('falls back to the defaults when the browser echoes instead of routing', async () => {
-            // What `ddg.send()` does today, before anything browser-side handles
-            // this method: vendoring the extension first must not disable CPM.
+            // A browser with no handler for this method echoes the message back.
             installDdgApi(async (message) => ({ received: message, browserVersion: '148.0.0.0' }));
 
             const settings = await messaging.checkAutoconsentSetting();
@@ -101,8 +100,7 @@ describe('CPMChromiumEmbeddedMessaging', () => {
         });
 
         it('asks once for frames that all ask before the browser answers', async () => {
-            // Every frame on a page reaches CPM's `init` at about the same time,
-            // so a cold cache must not fan out one browser call per frame.
+            // A page's frames all reach CPM's `init` at about the same time.
             let answer;
             const send = installDdgApi(() => new Promise((resolve) => (answer = resolve)));
 

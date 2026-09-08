@@ -158,11 +158,9 @@ LAST_COPY = build/.last-copy-$(browser)-$(type)
 
 RSYNC = rsync -ra --exclude="*~"
 
-# Pages the chromium-embedded build cannot reach, so shipping them inside the
-# browser is dead weight: the browser owns the fire button and the new tab page,
-# this build declares no options_page, and MV3 has no background page.
-# The devtools pages stay - they are reached by typing their URL, which is how
-# we debug protections in DDG-Chromium.
+# Pages the chromium-embedded build cannot reach: the browser owns the fire
+# button and the new tab page, this build declares no options_page, and MV3 has
+# no background page. The devtools pages stay - they are reached by URL.
 HTML_EXCLUDES =
 ifeq ($(browser),chromium-embedded)
   HTML_EXCLUDES = --exclude=background.html --exclude=feedback.html --exclude=fire.html \
@@ -257,8 +255,8 @@ $(BUILD_DIR)/public/js/content-scripts/cpm.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/cpm.js > $@
 
 JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js content-scripts/cpm.js
-# Only the bundles the pages this build still ships actually load. base.js goes
-# with the options and feedback pages; the devtools pages only need base.css.
+# Only the bundles the remaining pages load. base.js went with the options and
+# feedback pages; the devtools pages need only base.css.
 ifeq ($(browser),chromium-embedded)
   JS_BUNDLES = background.js devtools-panel.js list-editor.js rollouts.js content-scripts/cpm.js
 endif
@@ -303,8 +301,7 @@ BUILD_TARGETS += $(BUILD_DIR)/public/js/inject.js
 SASS = node_modules/.bin/sass
 SCSS_SOURCE = $(shell find shared/scss/ -type f)
 OUTPUT_CSS_FILES = $(BUILD_DIR)/public/css/options.css $(BUILD_DIR)/public/css/feedback.css
-# Stylesheets for the options and feedback pages, neither of which this build
-# ships. base.css stays: the devtools pages use it.
+# base.css is kept for the devtools pages; these two are not.
 ifeq ($(browser),chromium-embedded)
   OUTPUT_CSS_FILES =
 endif

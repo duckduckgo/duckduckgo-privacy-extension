@@ -4,11 +4,8 @@ import { defineConfig, devices } from '@playwright/test';
 process.env.DDG_PLATFORM = 'chromium-embedded';
 
 /**
- * The chromium-embedded build only includes a subset of the extension's
- * features (see the BUILD_TARGET checks in shared/js/background/background.js),
- * so tests are opted-in via an explicit allowlist rather than an ignore list.
- * That way new specs written for the full extension don't silently start
- * running against this build.
+ * The chromium-embedded build includes only a subset of the extension's
+ * features, so specs are opted in explicitly rather than ignored by exception.
  */
 const includedTests = [
     'atb-disabled.spec.js',
