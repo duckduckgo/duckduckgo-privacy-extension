@@ -17,6 +17,7 @@
 
 import { onStartup } from './startup';
 import setupAtb from './components/setup-atb';
+import setupBurn from './components/burn';
 import FireButton from './components/fire-button';
 import TabTracker from './components/tab-tracking';
 import MV3ContentScriptInjection from './components/mv3-content-script-injection';
@@ -61,6 +62,13 @@ if (BUILD_TARGET === 'firefox') {
 }
 if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
     require('./dnr-config-rulesets');
+}
+
+// The browser owns burning in the embedded build and announces when one starts,
+// so we can clear the state it cannot reach. Registered here, on the first tick
+// and before any await, so the browser will wake the worker to deliver it.
+if (BUILD_TARGET === 'chromium-embedded') {
+    setupBurn();
 }
 
 settings.ready().then(() => {

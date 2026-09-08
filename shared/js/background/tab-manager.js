@@ -80,6 +80,20 @@ class TabManager {
         TabState.delete(id);
     }
 
+    /**
+     * Drop every tab's state: the in-memory tabs, their session-storage backups
+     * and any ad-click attribution DNR rules, plus the service worker tabs,
+     * which are keyed by origin and so are not cleaned up when a tab closes.
+     *
+     * Used when the browser burns. Safe to call repeatedly and when empty.
+     */
+    clearAll() {
+        for (const id of Object.keys(this.tabContainer)) {
+            this.delete(Number(id));
+        }
+        this.swContainer = {};
+    }
+
     has(id) {
         return id in this.tabContainer;
     }
