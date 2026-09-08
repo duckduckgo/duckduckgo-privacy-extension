@@ -12,10 +12,12 @@ process.env.DDG_PLATFORM = 'chromium-embedded';
  */
 const includedTests = [
     'atb-disabled.spec.js',
+    'click-attribution.spec.js',
     'cookie-prompt-management.spec.js',
     'playwright-harness.spec.js',
     'request-blocking.spec.js',
     'request-blocklist.spec.js',
+    'storage-blocking.spec.js',
     'url-parameters.spec.js',
     'privacy-dashboard.spec.js',
     'empty-config.spec.js',
