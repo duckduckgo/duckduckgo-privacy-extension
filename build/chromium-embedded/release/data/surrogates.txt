@@ -1,0 +1,38 @@
+domain.com/ad_status.js application/javascript
+
+domain.com/adsbygoogle.js application/javascript
+
+domain.com/amzn_ads.js application/javascript
+
+domain.com/amzn_apstag.js application/javascript
+
+domain.com/analytics.js application/javascript
+
+domain.com/api.js application/javascript
+
+domain.com/beacon.js application/javascript
+
+domain.com/chartbeat.js application/javascript
+
+domain.com/criteo.js application/javascript
+
+domain.com/fb-sdk-new.js application/javascript
+
+domain.com/ga.js application/javascript
+
+domain.com/google-ima.js application/javascript
+
+domain.com/gpt.js application/javascript
+
+domain.com/gtm.js application/javascript
+
+domain.com/inpage_linkid.js application/javascript
+
+domain.com/nielsen.js application/javascript
+
+domain.com/noop.js application/javascript
+
+domain.com/outbrain.js application/javascript
+
+domain.com/youtube-iframe-api.js application/javascript
+

@@ -1,0 +1,10 @@
+{
+  "appName" : {
+    "message" : "DuckDuckGo Search & Tracker Protection",
+    "description" : "Název rozšíření zobrazený ve webovém obchodě"
+  },
+  "appDesc" : {
+    "message" : "Ochrana dat. Soukromé vyhledávání s volitelnou umělou inteligencí, soukromé prohlížení a blokování reklam.",
+    "description" : "Krátký popis rozšíření zobrazený ve webovém obchodě"
+  }
+}

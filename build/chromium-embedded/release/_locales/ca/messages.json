@@ -1,0 +1,10 @@
+{
+  "appName" : {
+    "message" : "DuckDuckGo Search & Tracker Protection",
+    "description" : "El títol de l'extensió, que es mostra a la botiga web"
+  },
+  "appDesc" : {
+    "message" : "Protegeix les teves dades. Cerca privada amb opcions d'IA, navegació privada i bloqueig d'anuncis.",
+    "description" : "La breu descripció de l'extensió, que es mostra a la botiga web"
+  }
+}

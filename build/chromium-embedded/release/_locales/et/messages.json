@@ -1,0 +1,10 @@
+{
+  "appName" : {
+    "message" : "DuckDuckGo Search & Tracker Protection",
+    "description" : "Laienduse nimetus, mis kuvatakse veebipoes"
+  },
+  "appDesc" : {
+    "message" : "Kaitseb sinu andmeid. Privaatne otsing valikulise tehisintellekti, privaatse sirvimise ja reklaamide blokeerimisega.",
+    "description" : "Laienduse lühikirjeldus, mis kuvatakse veebipoes"
+  }
+}

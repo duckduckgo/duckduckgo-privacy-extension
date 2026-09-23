@@ -1,0 +1,10 @@
+{
+  "appName" : {
+    "message" : "DuckDuckGo Search & Tracker Protection",
+    "description" : "Tytuł rozszerzenia wyświetlany w sklepie internetowym"
+  },
+  "appDesc" : {
+    "message" : "Chroni Twoje dane. Prywatne wyszukiwanie z opcjonalną sztuczną inteligencją, przeglądaniem prywatnym i blokowaniem reklam.",
+    "description" : "Krótki opis rozszerzenia wyświetlany w sklepie internetowym"
+  }
+}

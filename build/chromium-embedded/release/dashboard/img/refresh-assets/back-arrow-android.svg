@@ -1,0 +1,10 @@
+<svg fill="none" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#Arrow-Left-16_svg__a)">
+    <path fill="#000" fill-opacity="0.84" d="M7.813 1.689a.625.625 0 1 0-.884-.884L1.617 6.121a2.125 2.125 0 0 0 0 3.004l5.311 5.315a.625.625 0 0 0 .885-.884L2.508 8.248h12.867a.625.625 0 1 0 0-1.25H2.508z"/>
+  </g>
+  <defs>
+    <clipPath id="Arrow-Left-16_svg__a">
+      <path fill="#fff" d="M0 0h16v16H0z"/>
+    </clipPath>
+  </defs>
+</svg>
