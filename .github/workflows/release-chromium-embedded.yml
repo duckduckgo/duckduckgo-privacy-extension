@@ -1,0 +1,86 @@
+name: Release Chromium Embedded Extension
+
+# Publishes the built chromium-embedded target to the `build-artifacts` orphan
+# branch, which the DDG-Chromium fork consumes as a submodule. See that
+# branch's README, and the tech design "DDG-Chromium component extension
+# bundling".
+#
+# Unlike release-embedded.yml, nothing is pushed to another repository: the
+# fork pulls, rather than being pushed to, so a bump lands there when someone
+# chooses to move the submodule pin.
+
+on:
+    push:
+        branches:
+            - 'main'
+        paths:
+            - 'browsers/chromium-embedded/manifest.json'
+    # For the first run, and for rebuilding a version without bumping it.
+    workflow_dispatch:
+
+env:
+    ARTIFACTS_BRANCH: build-artifacts
+    BUILD_PATH: build/chromium-embedded/release
+
+jobs:
+    release_chromium_embedded:
+        runs-on: ubuntu-latest
+        permissions:
+            # Committing to ARTIFACTS_BRANCH in this repository.
+            contents: write
+        steps:
+            - uses: actions/checkout@v6
+
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: 'npm'
+
+            - name: Read embedded version
+              id: version
+              run: |
+                  VERSION=$(jq -r .version browsers/chromium-embedded/manifest.json)
+                  echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+
+            - name: Install dependencies
+              run: npm run install-ci
+
+            - name: Build chromium-embedded extension
+              run: npm run release-chromium-embedded
+
+            # Checked out beside the source tree so the build output above is
+            # untouched by the checkout.
+            - name: Check out the artifacts branch
+              uses: actions/checkout@v6
+              with:
+                  ref: ${{ env.ARTIFACTS_BRANCH }}
+                  path: artifacts
+
+            - name: Stage the build
+              run: |
+                  # Replaced wholesale rather than copied over: a file dropped
+                  # upstream has to disappear here too, or the fork keeps
+                  # bundling it forever.
+                  rm -rf "artifacts/$BUILD_PATH"
+                  mkdir -p "artifacts/$BUILD_PATH"
+                  cp -R "$BUILD_PATH/." "artifacts/$BUILD_PATH/"
+
+            - name: Commit and push
+              working-directory: artifacts
+              run: |
+                  git config user.name "Dax the Deployer"
+                  git config user.email "dax@duckduckgo.com"
+                  git add --all "$BUILD_PATH"
+                  if git diff --cached --quiet; then
+                      echo "Build output is unchanged; nothing to commit."
+                      exit 0
+                  fi
+                  # The source sha is the only thing tying these bytes back to
+                  # the code that produced them - the branches share no history.
+                  git commit -m "chromium-embedded ${{ steps.version.outputs.VERSION }}
+
+                  Source commit: ${{ github.sha }}
+                  Built by: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  # Appended, never forced: the fork pins commits on this
+                  # branch, and rewriting it would strand those pins.
+                  git push origin "HEAD:$ARTIFACTS_BRANCH"
