@@ -1,7 +1,11 @@
 # Build artifacts
 
-Orphan branch. It carries **built output only** — no source, no history shared
-with `main`.
+Orphan branch `build/chromium-embedded/release`. It carries **built output
+only** — no source, no history shared with `main`.
+
+The branch is named after the path it carries, so the two look alike and are
+not the same thing: the branch name is a ref, and `build/chromium-embedded/
+release/` below is a directory inside it.
 
 DDG-Chromium bundles the privacy extension as a component extension, and a
 component extension is loaded from an unpacked directory that has to exist
