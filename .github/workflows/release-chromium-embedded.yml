@@ -1,9 +1,9 @@
 name: Release Chromium Embedded Extension
 
-# Publishes the built chromium-embedded target to the `build-artifacts` orphan
-# branch, which the DDG-Chromium fork consumes as a submodule. See that
-# branch's README, and the tech design "DDG-Chromium component extension
-# bundling".
+# Publishes the built chromium-embedded target to the orphan branch
+# `build/chromium-embedded/release`, which the DDG-Chromium fork consumes as
+# a submodule. See that branch's README, and the tech design "DDG-Chromium
+# component extension bundling".
 #
 # Unlike release-embedded.yml, nothing is pushed to another repository: the
 # fork pulls, rather than being pushed to, so a bump lands there when someone
@@ -19,7 +19,11 @@ on:
     workflow_dispatch:
 
 env:
-    ARTIFACTS_BRANCH: build-artifacts
+    # Deliberately the same string, and deliberately two variables: the branch
+    # is named after the directory it carries. Git reads a bare
+    # build/chromium-embedded/release as ambiguous wherever that directory
+    # exists, so every ref below is spelled refs/heads/.
+    ARTIFACTS_BRANCH: build/chromium-embedded/release
     BUILD_PATH: build/chromium-embedded/release
 
 jobs:
@@ -53,7 +57,7 @@ jobs:
             - name: Check out the artifacts branch
               uses: actions/checkout@v6
               with:
-                  ref: ${{ env.ARTIFACTS_BRANCH }}
+                  ref: refs/heads/${{ env.ARTIFACTS_BRANCH }}
                   path: artifacts
 
             - name: Stage the build
@@ -87,4 +91,4 @@ jobs:
                   Built by: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   # Appended, never forced: the fork pins commits on this
                   # branch, and rewriting it would strand those pins.
-                  git push origin "HEAD:$ARTIFACTS_BRANCH"
+                  git push origin "HEAD:refs/heads/$ARTIFACTS_BRANCH"
