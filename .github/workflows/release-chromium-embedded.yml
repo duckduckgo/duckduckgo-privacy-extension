@@ -64,13 +64,17 @@ jobs:
                   rm -rf "artifacts/$BUILD_PATH"
                   mkdir -p "artifacts/$BUILD_PATH"
                   cp -R "$BUILD_PATH/." "artifacts/$BUILD_PATH/"
+                  # The fork consumes this branch as a third_party submodule,
+                  # and a third_party entry needs a License File to point at.
+                  # The build output carries none, so it comes from source.
+                  cp LICENSE.md artifacts/LICENSE.md
 
             - name: Commit and push
               working-directory: artifacts
               run: |
                   git config user.name "Dax the Deployer"
                   git config user.email "dax@duckduckgo.com"
-                  git add --all "$BUILD_PATH"
+                  git add --all "$BUILD_PATH" LICENSE.md
                   if git diff --cached --quiet; then
                       echo "Build output is unchanged; nothing to commit."
                       exit 0
