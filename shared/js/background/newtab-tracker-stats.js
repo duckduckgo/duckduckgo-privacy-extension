@@ -420,6 +420,7 @@ function mv3Redirect() {
             },
             urlFilter: new URL(pathname, allowedOrigin).toString(),
             resourceTypes: ['sub_frame'],
+            requestDomains: [new URL(allowedOrigin).hostname],
         }),
     );
     chrome.declarativeNetRequest.updateDynamicRules({
