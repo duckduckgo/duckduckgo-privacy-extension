@@ -7,17 +7,25 @@ on:
 
 jobs:
     lint:
-        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                os: [ubuntu-latest, windows-latest]
+        runs-on: ${{ matrix.os }}
         env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        defaults:
+            run:
+                shell: bash
         steps:
             - uses: actions/checkout@v6
             - uses: actions/setup-node@v4
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
-            - run: npm run install-ci
-            - run: npm run lint && echo 'No lint issues!' || (npm run lint-fix; git diff; echo 'Lint check failed, review diff above or run "npm run lint-fix"'; return 1)
+            # Lint only needs the npm packages, not Playwright browsers or the
+            # privacy-test-pages install that `install-ci` also performs.
+            - run: npm ci --ignore-scripts
+            - run: npm run lint && echo 'No lint issues!' || (npm run lint-fix; git diff; echo 'Lint check failed, review diff above or run "npm run lint-fix"'; exit 1)
 
     build:
         strategy:
@@ -31,6 +39,7 @@ jobs:
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
+            - run: npm run install-ci
             - run: npm run ${{ matrix.target }}
 
     unit-tests:
