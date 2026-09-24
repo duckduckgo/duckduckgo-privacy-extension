@@ -29,7 +29,6 @@ updates:
                   - 'eslint*'
                   - 'sass'
                   - 'esbuild'
-                  - 'web-ext'
     - package-ecosystem: 'github-actions'
       directory: '/'
       schedule:
