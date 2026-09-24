@@ -1,16 +1,18 @@
 /**
  * `chrome.ddg` — the custom extension API that DuckDuckGo-branded Chromium
- * exposes to component extensions.
- *
- * Possibly undefined: the API is gated on `"location": "component"`, so it is
- * absent in plain Chromium, in a dev-loaded unpacked build, and in the
- * integration tests. Only the parts this extension uses are declared here.
+ * exposes to the bundled extension. Undefined everywhere else: plain Chromium,
+ * an unpacked dev build, the integration tests.
  */
 declare namespace chrome {
     const ddg:
         | {
-              /** extension -> browser; resolves with the browser's reply. */
-              send(message: unknown): Promise<any>;
+              /** Test call, extension -> browser; resolves once the browser has handled it. */
+              ping(): Promise<void>;
+
+              /** Test event, browser -> extension. */
+              onPong: {
+                  addListener(callback: () => void): void;
+              };
 
               /**
                * browser -> extension; fires once when a burn is accepted,

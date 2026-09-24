@@ -40,7 +40,6 @@ import MessageRouter from './components/message-router';
 import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
-import { CPMChromiumEmbeddedMessaging } from './components/cpm-chromium-embedded-messaging';
 import CookiePromptManagement from './components/cookie-prompt-management';
 
 // Trigger registration of default message handlers into the shared registry.
@@ -134,15 +133,9 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
     // MV3-only components
     components.scriptInjection = new MV3ContentScriptInjection();
     components.dnrListeners = new DNRListeners({ settings, tds });
-
-    // Bundled into DDG Chromium, the user's cookie-popup setting lives in
-    // browser prefs, so CPM has to ask for it. The standalone extension has no
-    // browser to ask and decides for itself.
-    const cpmMessaging =
-        BUILD_TARGET === 'chromium-embedded'
-            ? new CPMChromiumEmbeddedMessaging({ remoteConfig })
-            : new CPMStandaloneMessaging({ remoteConfig });
+    const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });
     components.cpm = new CookiePromptManagement({ cpmMessaging });
+    components.dashboardMessaging.cpm = components.cpm;
 } else {
     // MV2-only components
     components.requestBlocklist = new RequestBlocklist();
