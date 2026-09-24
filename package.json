@@ -26,7 +26,7 @@
         "tsc": "tsc",
         "tsc-watch": "tsc --watch",
         "dev-firefox": "make watch browser=firefox type=dev",
-        "open-dev-firefox": "web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.site/ -u https://www.search-company.site -u about:debugging",
+        "open-dev-firefox": "npx --yes web-ext run -s build/firefox/dev/ -u https://privacy-test-pages.site/ -u https://www.search-company.site -u about:debugging",
         "release-firefox": "make browser=firefox type=release",
         "dev-chrome": "make watch browser=chrome type=dev",
         "beta-firefox": "make beta-firefox browser=firefox type=release",
@@ -63,7 +63,6 @@
         "sass": "^1.102.0",
         "timekeeper": "^2.3.1",
         "typescript": "^5.8.3",
-        "web-ext": "^10.5.0",
         "webextension-polyfill": "^0.12.0",
         "yargs": "^18.1.0"
     },
