@@ -120,7 +120,7 @@ remove-firefox-id:
 .PHONY: remove-firefox-id
 
 beta-firefox-zip: remove-firefox-id
-	cd build/firefox/release/ && web-ext build
+	cd build/firefox/release/ && npx --yes web-ext build
 
 .PHONY: beta-firefox-zip
 

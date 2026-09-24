@@ -30,7 +30,6 @@ updates:
                   - 'sass'
                   - 'esbuild'
                   - 'yargs'
-                  - 'web-ext'
     - package-ecosystem: 'github-actions'
       directory: '/'
       schedule:
