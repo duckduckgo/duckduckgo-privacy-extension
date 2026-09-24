@@ -29,7 +29,6 @@ updates:
                   - 'eslint*'
                   - 'sass'
                   - 'esbuild'
-                  - 'yargs'
                   - 'web-ext'
     - package-ecosystem: 'github-actions'
       directory: '/'
