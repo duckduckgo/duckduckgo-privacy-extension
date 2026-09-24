@@ -29,7 +29,6 @@
     background-color: vars.$silver-light;
     border: 1px solid #e6e6e6;
     color: vars.$slate;
-    outline: none;
     margin-bottom: 10px;
 }
 
@@ -69,7 +68,6 @@
     box-sizing: content-box;
     user-select: none;
 
-    outline: none !important;
     background-color: vars.$blue-light;
     border: 1px solid vars.$blue-light;
     line-height: 2;
