@@ -1,3 +1,17 @@
+# Normalise line endings to LF on checkout for every platform. Windows clones
+# with core.autocrlf=true would otherwise check out CRLF, which fails the
+# Prettier check (endOfLine defaults to "lf") before anything is built.
+* text=auto eol=lf
+
+# Binary assets.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.zip binary
+
 shared/data/bundled/extension-config.json linguist-generated binary
 shared/data/etags.json linguist-generated binary
-

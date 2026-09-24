@@ -1,5 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
+// Chromium only reports network events for requests made by service workers
+// (the MV3 background) when this is set. It used to be passed as a shell
+// environment prefix in the `playwright` npm script, which does not work in
+// cmd.exe or PowerShell, so it is set here instead.
+process.env.PW_EXPERIMENTAL_SERVICE_WORKER_NETWORK_EVENTS = '1';
+
 /**
  * Read environment variables from file.
  * https://github.com/motdotla/dotenv
