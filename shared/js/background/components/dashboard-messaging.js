@@ -48,6 +48,11 @@ export default class DashboardMessaging {
         this.settings = settings;
         this.tds = tds;
         this.tabManager = tabManager;
+        /**
+         * Set by background.js once CPM exists; absent from the MV2 builds.
+         * @type {import('./cookie-prompt-management').default | undefined}
+         */
+        this.cpm = undefined;
 
         registerMessageHandler('submitBrokenSiteReport', (report) => this.submitBrokenSiteReport(report));
         registerMessageHandler('getPrivacyDashboardData', this.getPrivacyDashboardData.bind(this));
@@ -139,6 +144,7 @@ export default class DashboardMessaging {
         const fireButtonData = {
             enabled: isFireButtonEnabled,
         };
-        return dashboardDataFromTab(tab, userData, fireButtonData);
+        const cpmDashboardState = this.cpm ? (await this.cpm.getCpmState()).dashboardStates[`${tabId}`] : undefined;
+        return dashboardDataFromTab(tab, userData, fireButtonData, cpmDashboardState);
     }
 }

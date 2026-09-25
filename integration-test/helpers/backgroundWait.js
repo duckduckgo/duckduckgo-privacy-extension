@@ -1,4 +1,6 @@
 import { errors } from '@playwright/test';
+import { isChromiumEmbedded } from './platform';
+import { getBackgroundServiceWorker } from './playwrightHelpers';
 
 // Helpers that aid in waiting for the background page's state.
 function manuallyWaitForFunction(bgPage, func, { polling, timeout }, ...args) {
@@ -63,8 +65,16 @@ export async function forAllConfiguration(bgPage) {
 
 /**
  * @param {import('@playwright/test').BrowserContext} context
+ * @returns {Promise<string?>} The URL of the post-install page, or null for
+ *   builds that don't open one.
  */
 export async function forExtensionLoaded(context) {
+    if (isChromiumEmbedded()) {
+        // The chromium-embedded build doesn't include ATB, so no post-install
+        // page is opened. Wait for the background ServiceWorker instead.
+        await getBackgroundServiceWorker(context);
+        return null;
+    }
     return /** @type {Promise<string>} */ (
         new Promise((resolve) => {
             const postInstallPage = 'https://duckduckgo.com/extension-success';

@@ -1,3 +1,6 @@
+// @ts-nocheck
+// These functions run in the context of the SERP, not the background: they are serialized
+// and injected as content scripts, so they cannot be usefully typechecked here.
 /**
  * This is injected programatically on the DuckDuckGo SERP (mostly during the first search
  * post extension install) to assist with user onboarding

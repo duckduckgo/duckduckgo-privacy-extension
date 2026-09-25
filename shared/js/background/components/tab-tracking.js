@@ -13,7 +13,7 @@ export default class TabTracker extends EventTarget {
      * @param {{
      *  tabManager: TabManager;
      *  devtools: Devtools;
-     *  abnMetrics: AbnExperimentMetrics;
+     *  abnMetrics: AbnExperimentMetrics | undefined;
      * }} options
      */
     constructor({ tabManager, devtools, abnMetrics }) {

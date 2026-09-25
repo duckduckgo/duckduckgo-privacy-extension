@@ -226,4 +226,34 @@ describe('Tab -> Privacy Dashboard conversion', () => {
         expect(data.requestData.requests[0].state).toEqual({ blocked: {} });
         expect(data.requestData.requests[0].url).toEqual('https://subdomain.abc.com/b.jpg');
     });
+
+    describe('cookiePromptManagementStatus', () => {
+        it('is omitted entirely when CPM has no state for the tab', () => {
+            const data = dashboardDataFromTab(baseTab(), undefined);
+            expect('cookiePromptManagementStatus' in data.tab).toBeFalse();
+        });
+
+        it("reports a managed prompt, dropping CPM's extension-only fields", () => {
+            const data = dashboardDataFromTab(baseTab(), undefined, undefined, {
+                consentManaged: true,
+                cosmetic: true,
+                optoutFailed: false,
+                selftestFailed: null,
+                consentReloadLoop: false,
+                consentRule: 'SomeCMP',
+                consentHeuristicEnabled: true,
+                cpmStage: 'done',
+                cpmErrors: [],
+                cpmConfigVersion: '1234',
+            });
+            // `selftestFailed` was null, which the schema expects to be absent.
+            expect(data.tab.cookiePromptManagementStatus).toEqual({
+                consentManaged: true,
+                cosmetic: true,
+                optoutFailed: false,
+                selftestFailed: undefined,
+                configurable: false,
+            });
+        });
+    });
 });

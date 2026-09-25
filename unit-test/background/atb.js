@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 chrome.runtime.getManifest = () => ({ version: '1234.56', manifest_version: 3 });
 const atb = require('../../shared/js/background/atb').default;
+const setupAtb = require('../../shared/js/background/components/setup-atb').default;
 const settings = require('../../shared/js/background/settings');
 const load = require('../../shared/js/background/load');
 const {
@@ -373,6 +374,12 @@ describe('complex install workflow cases', () => {
 describe('atb.getUninstallURL()', () => {
     it('should update the uninstall URL correctly as the ATB values are updated', async () => {
         settingHelper.stub({ atb: null });
+
+        // Sets the initial uninstall URL and registers the setting listeners
+        // that keep it up to date. Await a tick so that the initial
+        // setUninstallURL call has happened before the spy is installed.
+        setupAtb({ settings });
+        await new Promise((resolve) => setTimeout(resolve, 0));
 
         let uninstallUrl = null;
         const setUninstallURLSpy = spyOn(browser.runtime, 'setUninstallURL').and.callFake((url) => {

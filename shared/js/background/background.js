@@ -16,6 +16,8 @@
 /* global DEBUG, RELOADER, BUILD_TARGET */
 
 import { onStartup } from './startup';
+import setupAtb from './components/setup-atb';
+import setupBurn from './components/burn';
 import FireButton from './components/fire-button';
 import TabTracker from './components/tab-tracking';
 import MV3ContentScriptInjection from './components/mv3-content-script-injection';
@@ -44,12 +46,27 @@ import CookiePromptManagement from './components/cookie-prompt-management';
 import { registerStandardHandlers } from './message-handlers';
 registerStandardHandlers();
 
-// NOTE: this needs to be the first thing that's require()d when the extension loads.
-// otherwise FF might miss the onInstalled event
+// NOTE: event listeners must be registered on the first tick of background
+// execution, so keep these registrations at the top.
 require('./events');
 const settings = require('./settings');
-if (BUILD_TARGET === 'chrome') {
+
+// ATB and onboarding events, per build target. Set up as early as possible so that
+// the onInstalled listener is registered before FF can drop the event.
+// Not included at all in the chromium-embedded build.
+if (BUILD_TARGET === 'firefox') {
+    setupAtb({ settings });
+} else if (BUILD_TARGET === 'chrome') {
+    setupAtb({ settings }, { counterMessaging: true, emailInjection: true });
+}
+if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
     require('./dnr-config-rulesets');
+}
+
+// Must register on the first tick, before any await, so the browser will wake
+// the worker to deliver the event.
+if (BUILD_TARGET === 'chromium-embedded') {
+    setupBurn();
 }
 
 settings.ready().then(() => {
@@ -63,7 +80,7 @@ const devtools = new Devtools({ tds });
 const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager });
 /**
  * @type {{
- *  autofill: EmailAutofill;
+ *  autofill: EmailAutofill?;
  *  dashboardMessaging: DashboardMessaging
  *  omnibox: OmniboxSearch;
  *  fireButton?: FireButton;
@@ -78,7 +95,6 @@ const dashboardMessaging = new DashboardMessaging({ settings, tds, tabManager })
  * }}
  */
 const components = {
-    autofill: new EmailAutofill({ settings }),
     dashboardMessaging,
     omnibox: new OmniboxSearch(),
     internalUser: new InternalUserDetector({ settings }),
@@ -92,6 +108,11 @@ const components = {
     abnMetrics,
     messaging: new MessageRouter(),
 };
+
+// Excluded on embedded build
+if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'firefox') {
+    components.autofill = new EmailAutofill({ settings });
+}
 
 // Chrome-only components
 if (BUILD_TARGET === 'chrome') {
@@ -108,13 +129,13 @@ if (BUILD_TARGET === 'chrome') {
     setUpTestExperiment(abnMetrics);
 }
 
-if (BUILD_TARGET === 'chrome') {
+if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
     // MV3-only components
     components.scriptInjection = new MV3ContentScriptInjection();
     components.dnrListeners = new DNRListeners({ settings, tds });
-
     const cpmMessaging = new CPMStandaloneMessaging({ remoteConfig });
     components.cpm = new CookiePromptManagement({ cpmMessaging });
+    components.dashboardMessaging.cpm = components.cpm;
 } else {
     // MV2-only components
     components.requestBlocklist = new RequestBlocklist();

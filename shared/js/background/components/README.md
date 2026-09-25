@@ -14,6 +14,8 @@ Component initialization is done in [background.js](../background.js). Depending
 
 ## List of components
 
+ - `setupAtb` (setup-atb.js): Install and onboarding flow: getting/setting ATB values, the post-install page, the uninstall URL, SERP onboarding messaging and (on Chrome only) counter messaging and email content-script injection on install. A setup function rather than a class, as it holds no state. Not included in chromium-embedded builds.
+ - `setupBurn` (burn.js): Clears extension-owned state when DDG-Chromium reports a burn. chromium-embedded only.
  - `FireButton`: Registers event listeners needed for the Fire button. Included on Chrome only.
  - `MV3ContentScriptInjection`: MV3-specific content-script registration. Exposes a `ready` property, which is a Promise that resolved when scripts are registered.
  - `TabTracker`: Registers event listeners to track tab metadata and updates the legacy `tabManager` singleton.

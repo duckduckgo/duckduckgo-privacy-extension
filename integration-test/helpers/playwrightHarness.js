@@ -81,11 +81,15 @@ let test = base.extend({
      */
     manifestVersion: getManifestVersion(),
     /**
+     * Path to the extension build to load, relative to the project root.
+     * Override per-config via `use: { extensionPath: ... }`.
+     * @type {string}
+     */
+    extensionPath: ['build/chrome/dev', { option: true }],
+    /**
      * @type {import('@playwright/test').BrowserContext}
      */
-    // eslint-disable-next-line no-empty-pattern
-    async context({}, use) {
-        const extensionPath = 'build/chrome/dev';
+    async context({ extensionPath }, use) {
         const pathToExtension = path.join(projectRoot, extensionPath);
         const context = await chromium.launchPersistentContext('', {
             channel: 'chromium',
