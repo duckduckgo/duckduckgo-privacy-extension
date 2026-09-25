@@ -20,15 +20,18 @@ module.exports = function () {
     <input class="is-hidden allowlist-url float-left js-allowlist-url" type="text" placeholder="${t('options:enterURL.title')}">
     <div class="is-hidden allowlist-add is-disabled float-right js-allowlist-add">${t('shared:add.title')}</div>
 
-    <div class="is-hidden modal-box js-allowlist-error float-right">
+    <div class="is-hidden modal-box js-allowlist-error float-right"
+         role="alertdialog"
+         aria-modal="true"
+         aria-labelledby="allowlist-error-text">
         <div class="modal-box__popout">
             <div class="modal-box__popout__body">
             </div>
         </div>
-        <div class="modal-box__body">
+        <div class="modal-box__body" tabindex="-1">
             <span class="icon icon__error">
             </span>
-            <span class="modal__body__text">
+            <span class="modal__body__text" id="allowlist-error-text">
                 ${t('options:invalidURL.title')}
             </span>
         </div>
