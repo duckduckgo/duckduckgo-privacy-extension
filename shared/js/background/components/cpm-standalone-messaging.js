@@ -21,7 +21,8 @@ export class CPMStandaloneMessaging {
 
     async refreshDashboardState(tabId, url, dashboardState) {
         console.log('refreshDashboardState', tabId, url, dashboardState);
-        // no-op
+        // in standalone and windows builds, dashboard pulls the state directly whenever it's opened. But we can still notify it here if the state changes while dashboard is open
+        postPopupMessage({ messageType: 'updateTabData' });
     }
 
     async showCpmAnimation(tabId, topUrl, isCosmetic) {
