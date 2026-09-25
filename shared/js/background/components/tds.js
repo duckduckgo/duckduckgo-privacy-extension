@@ -61,7 +61,7 @@ export default class TDSStorage {
     }
 
     checkShouldOverrideTDS() {
-        const contentBlockingSubFeatures = this.config.config?.features[CONTENT_BLOCKING].features || {};
+        const contentBlockingSubFeatures = this.config.config?.features[CONTENT_BLOCKING]?.features || {};
         const enabledBlocklistOverrides = Object.keys(contentBlockingSubFeatures).filter(
             (k) => k.startsWith('TDS') && this.config.isSubFeatureEnabled(CONTENT_BLOCKING, k),
         );
