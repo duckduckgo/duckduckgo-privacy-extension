@@ -1,7 +1,7 @@
 /**
  * Removes build output.
  *
- *   node scripts/build-tools/clean.mjs --browser <chrome|firefox|embedded> --type <dev|release>
+ *   node scripts/build-tools/clean.mjs --browser <chrome|firefox|embedded|chromium-embedded> --type <dev|release>
  *   node scripts/build-tools/clean.mjs --all
  *
  * Like the Makefile's `clean` target this also removes the cached Smarter

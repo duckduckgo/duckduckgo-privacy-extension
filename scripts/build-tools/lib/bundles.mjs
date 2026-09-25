@@ -8,7 +8,6 @@
  * build.
  */
 import { build as esbuildBuild, context as esbuildContext } from 'esbuild';
-import { EMBEDDED_JS_BUNDLES, JS_BUNDLES } from './config.mjs';
 
 /**
  * @param {import('./config.mjs').BuildConfig} config
@@ -35,13 +34,8 @@ export function esbuildOptions({ browser, buildDir, dev, reloader }, entryPoint)
 }
 
 /** @param {import('./config.mjs').BuildConfig} config */
-function entryPoints({ embedded }) {
-    return embedded ? EMBEDDED_JS_BUNDLES : JS_BUNDLES;
-}
-
-/** @param {import('./config.mjs').BuildConfig} config */
 export async function bundleJs(config) {
-    await Promise.all(entryPoints(config).map((entryPoint) => esbuildBuild(esbuildOptions(config, entryPoint))));
+    await Promise.all(config.jsBundles.map((entryPoint) => esbuildBuild(esbuildOptions(config, entryPoint))));
 }
 
 /**
@@ -63,7 +57,7 @@ export async function watchJs(config, onRebuild) {
         },
     };
     const contexts = await Promise.all(
-        entryPoints(config).map((entryPoint) => esbuildContext({ ...esbuildOptions(config, entryPoint), plugins: [notifyPlugin] })),
+        config.jsBundles.map((entryPoint) => esbuildContext({ ...esbuildOptions(config, entryPoint), plugins: [notifyPlugin] })),
     );
     await Promise.all(contexts.map((context) => context.watch()));
     return contexts;

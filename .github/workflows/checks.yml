@@ -48,7 +48,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                browser: [chrome, firefox, embedded]
+                browser: [chrome, firefox, embedded, chromium-embedded]
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
@@ -71,7 +71,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                browser: [chrome, firefox]
+                browser: [chrome, firefox, chromium-embedded]
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v6

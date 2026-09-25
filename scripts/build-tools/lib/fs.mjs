@@ -21,12 +21,13 @@ export function ensureDir(dir) {
  * exists), a file is copied *to* `dest`.
  * @param {string} src
  * @param {string} dest
+ * @param {(source: string) => boolean} [include] Optional extra filter on source paths.
  */
-export function copy(src, dest) {
+export function copy(src, dest, include = () => true) {
     fs.cpSync(src, dest, {
         recursive: true,
         dereference: true,
-        filter: (source) => !isExcluded(source),
+        filter: (source) => !isExcluded(source) && include(source),
     });
 }
 

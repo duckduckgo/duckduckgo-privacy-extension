@@ -1,7 +1,7 @@
 /**
  * Builds the extension.
  *
- *   node scripts/build-tools/build.mjs --browser <chrome|firefox|embedded> --type <dev|release> [--watch] [--no-reloader]
+ *   node scripts/build-tools/build.mjs --browser <chrome|firefox|embedded|chromium-embedded> --type <dev|release> [--watch] [--no-reloader]
  *
  * Output goes to build/<browser>/<type>. This is the Node replacement for the
  * Makefile's `dev`, `release` (minus `clean` and `npm`) and `watch` targets,
@@ -52,8 +52,12 @@ function writeBuildTime({ buildDir, dev }) {
 async function buildStaticParts(config) {
     buildDirectories(config).forEach(ensureDir);
     copyStaticFiles(config);
-    if (!config.embedded) {
+    // The committed locale-resources.js is regenerated whenever a bundle
+    // imports it (base.js), like the Makefile does.
+    if (config.jsBundles.some(({ out }) => out === 'base')) {
         writeLocaleResources();
+    }
+    if (!config.embedded) {
         buildInjectScript(config);
         compileStyles(config);
         writeSurrogatesList(config);
@@ -62,7 +66,7 @@ async function buildStaticParts(config) {
     if (!config.embedded) {
         downloads.push(copyFonts(config));
     }
-    if (config.browser === 'chrome') {
+    if (config.smarterEncryption) {
         downloads.push(generateSmarterEncryptionRules(config));
     }
     await Promise.all(downloads);

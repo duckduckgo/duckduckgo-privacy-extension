@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 
 export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
-export const BROWSERS = ['chrome', 'firefox', 'embedded'];
+export const BROWSERS = ['chrome', 'firefox', 'embedded', 'chromium-embedded'];
 export const TYPES = ['dev', 'release'];
 
 export const INTERMEDIATES_DIR = 'build/.intermediates';
@@ -35,11 +35,29 @@ export const EMBEDDED_JS_BUNDLES = [
     { in: 'shared/js/cpm.js', out: 'content-scripts/cpm' },
 ];
 
+/**
+ * chromium-embedded: only the bundles the remaining pages load. base.js went
+ * with the options and feedback pages; the devtools pages need only base.css.
+ */
+export const CHROMIUM_EMBEDDED_JS_BUNDLES = JS_BUNDLES.filter(({ out }) =>
+    ['background', 'devtools-panel', 'list-editor', 'rollouts', 'content-scripts/cpm'].includes(out),
+);
+
 export const SCSS_BUNDLES = [
     { in: 'shared/scss/base/base.scss', out: 'base.css' },
     { in: 'shared/scss/options.scss', out: 'options.css' },
     { in: 'shared/scss/feedback.scss', out: 'feedback.css' },
 ];
+
+/** base.css is kept for the devtools pages; the other two are not. */
+export const CHROMIUM_EMBEDDED_SCSS_BUNDLES = SCSS_BUNDLES.filter(({ out }) => out === 'base.css');
+
+/**
+ * Pages the chromium-embedded build cannot reach: the browser owns the fire
+ * button and the new tab page, this build declares no options_page, and MV3
+ * has no background page. The devtools pages stay - they are reached by URL.
+ */
+export const CHROMIUM_EMBEDDED_HTML_EXCLUDES = ['background.html', 'feedback.html', 'fire.html', 'options.html', 'tracker-stats.html'];
 
 export const FONT_FILES = [
     'ProximaNova-Reg-webfont.woff',
@@ -54,14 +72,20 @@ export const SMARTER_ENCRYPTION_URL = 'https://staticcdn.duckduckgo.com/https/sm
 
 /**
  * @typedef {object} BuildConfig
- * @property {'chrome'|'firefox'|'embedded'} browser
+ * @property {'chrome'|'firefox'|'embedded'|'chromium-embedded'} browser
  * @property {'dev'|'release'} type
  * @property {'chrome'|'firefox'} browserType Used for autofill host styles.
  * @property {'chrome-mv3'|'firefox'} cssPlatform content-scope-scripts build name.
  * @property {string} buildDir e.g. build/chrome/dev
  * @property {boolean} dev
  * @property {boolean} reloader Include the auto-reload module.
- * @property {boolean} embedded
+ * @property {boolean} embedded The minimal `embedded` build: manifest plus two bundles.
+ * @property {boolean} chromiumEmbedded
+ * @property {boolean} autofill Include the autofill assets (not in either embedded build).
+ * @property {boolean} smarterEncryption Bundle Smarter Encryption declarativeNetRequest rules.
+ * @property {{in: string, out: string}[]} jsBundles
+ * @property {{in: string, out: string}[]} scssBundles
+ * @property {string[]} htmlExcludes Files under shared/html not to copy.
  */
 
 /**
@@ -76,6 +100,11 @@ export function resolveConfig({ browser, type, reloader = true }) {
         throw new Error(`Unknown build type "${type}". Expected one of: ${TYPES.join(', ')}`);
     }
     const dev = type === 'dev';
+    const embedded = browser === 'embedded';
+    const chromiumEmbedded = browser === 'chromium-embedded';
+    let jsBundles = JS_BUNDLES;
+    if (embedded) jsBundles = EMBEDDED_JS_BUNDLES;
+    if (chromiumEmbedded) jsBundles = CHROMIUM_EMBEDDED_JS_BUNDLES;
     return {
         // @ts-ignore - validated above
         browser,
@@ -86,7 +115,13 @@ export function resolveConfig({ browser, type, reloader = true }) {
         buildDir: `build/${browser}/${type}`,
         dev,
         reloader: dev && reloader,
-        embedded: browser === 'embedded',
+        embedded,
+        chromiumEmbedded,
+        autofill: !embedded && !chromiumEmbedded,
+        smarterEncryption: browser === 'chrome' || chromiumEmbedded,
+        jsBundles,
+        scssBundles: chromiumEmbedded ? CHROMIUM_EMBEDDED_SCSS_BUNDLES : SCSS_BUNDLES,
+        htmlExcludes: chromiumEmbedded ? CHROMIUM_EMBEDDED_HTML_EXCLUDES : [],
     };
 }
 
