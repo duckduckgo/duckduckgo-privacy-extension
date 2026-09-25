@@ -1,6 +1,7 @@
 /** creates surrogates.txt file that contains names of all available surrogates files in a legacy format */
 import { parseArgs } from 'node:util';
 import fs from 'fs';
+import { generateSurrogatesList, listSurrogates } from './build-tools/lib/surrogates.mjs';
 
 const { values: argv } = parseArgs({
     options: {
@@ -14,13 +15,9 @@ if (!argv.input || !fs.existsSync(argv.input)) {
     process.exit(1);
 }
 
-const files = fs.readdirSync(argv.input);
-
 if (argv.json) {
-    console.log(JSON.stringify(files, null, 2));
+    console.log(JSON.stringify(listSurrogates(argv.input), null, 2));
 } else {
     // Legacy format used by the extension at runtime.
-    files.forEach((file) => {
-        console.log(`domain.com/${file} application/javascript\n`);
-    });
+    process.stdout.write(generateSurrogatesList(argv.input));
 }

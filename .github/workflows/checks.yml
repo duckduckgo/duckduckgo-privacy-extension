@@ -42,6 +42,47 @@ jobs:
             - run: npm run install-ci
             - run: npm run ${{ matrix.target }}
 
+    # The Node build scripts (scripts/build-tools/) are replacing the Makefile. Until
+    # the Makefile is removed, check that both produce identical output.
+    build-parity:
+        strategy:
+            fail-fast: false
+            matrix:
+                browser: [chrome, firefox, embedded]
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+                  cache: 'npm'
+            - run: npm run install-ci
+            - name: Build with make
+              run: |
+                  make copy build browser=${{ matrix.browser }} type=release
+                  mv build/${{ matrix.browser }}/release /tmp/make-release
+            - name: Build with node
+              run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type release
+            - name: Compare
+              run: diff -r /tmp/make-release build/${{ matrix.browser }}/release
+
+    # Windows has no make; the Node build scripts are the only way to build there.
+    build-windows:
+        strategy:
+            fail-fast: false
+            matrix:
+                browser: [chrome, firefox]
+        runs-on: windows-latest
+        steps:
+            - uses: actions/checkout@v6
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+                  cache: 'npm'
+            - run: npm ci --ignore-scripts
+            - run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type release
+            - run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type dev
+
     unit-tests:
         runs-on: ubuntu-22.04
         steps:
