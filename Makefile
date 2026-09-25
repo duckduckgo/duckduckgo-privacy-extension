@@ -218,9 +218,6 @@ $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/background-embedded.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/background/background-embedded.js > $@
 
-$(BUILD_DIR)/public/js/background-chromium-embedded.js: $(WATCHED_FILES)
-	$(ESBUILD) shared/js/background/background-chromium-embedded.js > $@
-
 ## Locale resources for UI
 shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
 	node scripts/bundleLocales.mjs > $@
