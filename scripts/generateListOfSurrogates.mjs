@@ -1,16 +1,20 @@
 /** creates surrogates.txt file that contains names of all available surrogates files in a legacy format */
-import yargs from 'yargs/yargs';
-import { hideBin } from 'yargs/helpers';
+import { parseArgs } from 'node:util';
 import fs from 'fs';
 
-const argv = yargs(hideBin(process.argv)).argv;
+const { values: argv } = parseArgs({
+    options: {
+        input: { type: 'string', short: 'i' },
+        json: { type: 'boolean' },
+    },
+});
 
-if (!fs.existsSync(argv.i)) {
+if (!argv.input || !fs.existsSync(argv.input)) {
     console.error('Input folder (-i) must exist.');
     process.exit(1);
 }
 
-const files = fs.readdirSync(argv.i);
+const files = fs.readdirSync(argv.input);
 
 if (argv.json) {
     console.log(JSON.stringify(files, null, 2));
