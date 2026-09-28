@@ -9,7 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { CONTENT_SCOPE_SCRIPTS_DIR as CSS_DIR } from './config.mjs';
-import { ensureDir, exists, isStale } from './fs.mjs';
+import { isStale, touch } from './fs.mjs';
 import { runNpm } from './run.mjs';
 
 const TRACKER_LOOKUP = 'shared/data/bundled/tracker-lookup.json';
@@ -26,26 +26,22 @@ const BUNDLE_INPUTS = [
 ];
 
 export function isLocalCheckout() {
-    return exists(`${CSS_DIR}/.git`);
+    return fs.existsSync(`${CSS_DIR}/.git`);
 }
 
 /**
  * Rebuilds a local content-scope-scripts checkout if needed.
  * @param {import('./config.mjs').BuildConfig} config
  */
-export function rebuildLocalCheckout({ cssPlatform }) {
-    if (!isLocalCheckout()) {
-        return;
-    }
+function rebuildLocalCheckout({ cssPlatform }) {
     const injectedDir = `${CSS_DIR}/injected`;
     if (isStale(`${CSS_DIR}/node_modules`, [`${CSS_DIR}/package.json`])) {
         runNpm(['install'], CSS_DIR);
-        // Match `touch`, so that node_modules is newer than package.json.
-        fs.utimesSync(`${CSS_DIR}/node_modules`, new Date(), new Date());
+        touch(`${CSS_DIR}/node_modules`);
     }
     if (isStale(`${CSS_DIR}/build/locales`, LOCALE_INPUTS)) {
         runNpm(['run', 'build-locales'], injectedDir);
-        fs.utimesSync(`${CSS_DIR}/build/locales`, new Date(), new Date());
+        touch(`${CSS_DIR}/build/locales`);
     }
     if (isStale(`${CSS_DIR}/build/${cssPlatform}/inject.js`, BUNDLE_INPUTS)) {
         runNpm(['run', `build-${cssPlatform}`], injectedDir);
@@ -70,7 +66,7 @@ export function bundleContentScopeScripts(targetPath, sourcePath, trackerLookupP
         cookie: config.features.cookie,
         adClickAttribution: config.features.adClickAttribution,
     };
-    ensureDir(path.dirname(targetPath));
+    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
     fs.writeFileSync(
         targetPath,
         source.replace('$TRACKER_LOOKUP$', trackerLookup).replace('$BUNDLED_CONFIG$', JSON.stringify(config)),
@@ -80,6 +76,8 @@ export function bundleContentScopeScripts(targetPath, sourcePath, trackerLookupP
 
 /** @param {import('./config.mjs').BuildConfig} config */
 export function buildInjectScript(config) {
-    rebuildLocalCheckout(config);
-    bundleContentScopeScripts(`${config.buildDir}/public/js/inject.js`, `${CSS_DIR}/build/${config.cssPlatform}/inject.js`);
+    if (isLocalCheckout()) {
+        rebuildLocalCheckout(config);
+    }
+    bundleContentScopeScripts(`${config.out.js}/inject.js`, `${CSS_DIR}/build/${config.cssPlatform}/inject.js`);
 }

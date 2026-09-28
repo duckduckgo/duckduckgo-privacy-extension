@@ -5,14 +5,19 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-/** Files rsync was told to skip in the Makefile (editor backup files). */
-function isExcluded(filePath) {
-    return path.basename(filePath).endsWith('~');
+/** Editor backup files, which rsync was told to skip in the Makefile. */
+export function isBackupFile(filePath) {
+    return filePath.endsWith('~');
 }
 
 /** @param {string} dir */
 export function ensureDir(dir) {
     fs.mkdirSync(dir, { recursive: true });
+}
+
+/** Directory entries, skipping dotfiles like a shell glob does. */
+export function listVisible(dir) {
+    return fs.readdirSync(dir).filter((name) => !name.startsWith('.'));
 }
 
 /**
@@ -27,61 +32,72 @@ export function copy(src, dest, include = () => true) {
     fs.cpSync(src, dest, {
         recursive: true,
         dereference: true,
-        filter: (source) => !isExcluded(source) && include(source),
+        filter: (source) => !isBackupFile(source) && include(source),
     });
 }
 
 /**
  * Equivalent of `rsync -ra --exclude="*~" src/* dest/`: copies each visible
- * entry of the directory into dest. Like a shell glob, dotfiles are skipped.
+ * entry of the directory into dest.
  * @param {string} srcDir
  * @param {string} destDir
  * @param {(name: string) => boolean} [match] Optional filter on entry names.
  */
 export function copyEntries(srcDir, destDir, match = () => true) {
     ensureDir(destDir);
-    for (const name of fs.readdirSync(srcDir)) {
-        if (name.startsWith('.') || !match(name)) {
-            continue;
-        }
+    for (const name of listVisible(srcDir).filter(match)) {
         copy(path.join(srcDir, name), path.join(destDir, name));
     }
 }
 
 /**
- * Writes the file only when its contents differ. Keeps mtimes stable, which
- * matters for files under watched source directories such as the generated
- * locale-resources.js.
+ * Writes the file only when its contents differ, so its mtime stays stable.
  * @param {string} filePath
- * @param {string|Buffer} contents
- * @returns {boolean} true if the file was written.
+ * @param {string} contents
  */
 export function writeIfChanged(filePath, contents) {
     try {
-        const existing = fs.readFileSync(filePath);
-        if (Buffer.isBuffer(contents) ? existing.equals(contents) : existing.toString('utf8') === contents) {
-            return false;
+        if (fs.readFileSync(filePath, 'utf8') === contents) {
+            return;
         }
     } catch (e) {
         // File does not exist yet.
     }
-    ensureDir(path.dirname(filePath));
     fs.writeFileSync(filePath, contents);
-    return true;
 }
 
-/** @param {string} filePath */
-export function exists(filePath) {
-    return fs.existsSync(filePath);
+/** Same as `touch`: bump the mtime of an existing path. */
+export function touch(p) {
+    const now = new Date();
+    fs.utimesSync(p, now, now);
 }
 
 /**
- * Newest modification time (ms) of the given paths, descending into
- * directories. Missing paths are ignored.
- * @param {string[]} paths
- * @returns {number}
+ * Downloads a URL to a file unless the file already exists. Used for inputs
+ * that should be fetched once per checkout (fonts) or once per release build
+ * (the Smarter Encryption list, which `clean` removes).
+ * @param {string} url
+ * @param {string} dest
+ * @param {(body: Buffer) => Buffer} [transform]
  */
-export function newestMtime(paths) {
+export async function fetchCached(url, dest, transform = (body) => body) {
+    if (fs.existsSync(dest)) {
+        return;
+    }
+    const response = await fetch(url);
+    if (!response.ok) {
+        throw new Error(`Failed to download ${url}: HTTP ${response.status}`);
+    }
+    ensureDir(path.dirname(dest));
+    fs.writeFileSync(dest, transform(Buffer.from(await response.arrayBuffer())));
+}
+
+/**
+ * Newest modification time (ms) under the given paths. Missing paths are
+ * ignored, as are node_modules and .git directories.
+ * @param {string[]} paths
+ */
+function newestMtime(paths) {
     let newest = 0;
     const visit = (p) => {
         let stat;
@@ -92,8 +108,7 @@ export function newestMtime(paths) {
         }
         if (stat.isDirectory()) {
             for (const name of fs.readdirSync(p)) {
-                if (name === 'node_modules' || name === '.git') continue;
-                visit(path.join(p, name));
+                if (name !== 'node_modules' && name !== '.git') visit(path.join(p, name));
             }
         } else if (stat.mtimeMs > newest) {
             newest = stat.mtimeMs;
@@ -104,9 +119,9 @@ export function newestMtime(paths) {
 }
 
 /**
- * True when `output` is missing or older than any of `inputs`. This is the
- * one piece of Make-style dependency tracking the build keeps, used only for
- * steps that are slow (rebuilding a linked content-scope-scripts checkout).
+ * True when `output` is missing or older than anything under `inputs`. This
+ * is the one piece of Make-style dependency tracking the build keeps, for the
+ * few steps that are slow or that read a cached download.
  * @param {string} output
  * @param {string[]} inputs
  */

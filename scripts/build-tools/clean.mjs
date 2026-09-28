@@ -21,15 +21,22 @@ const { values } = parseArgs({
     },
 });
 
-process.chdir(ROOT_DIR);
-remove(SMARTER_ENCRYPTION_LIST);
-remove('integration-test/artifacts/attribution.json');
-
+let target;
 if (values.all) {
-    remove('build');
+    target = 'build';
 } else if (values.browser && values.type) {
-    remove(resolveConfig({ browser: values.browser, type: values.type }).buildDir);
+    try {
+        target = resolveConfig({ browser: values.browser, type: values.type }).buildDir;
+    } catch (e) {
+        console.error(e.message);
+        process.exit(1);
+    }
 } else {
     console.error(USAGE);
     process.exit(1);
 }
+
+process.chdir(ROOT_DIR);
+remove(target);
+remove(SMARTER_ENCRYPTION_LIST);
+remove('integration-test/artifacts/attribution.json');

@@ -14,10 +14,10 @@ import { build as esbuildBuild, context as esbuildContext } from 'esbuild';
  * @param {{in: string, out: string}} entryPoint
  * @returns {import('esbuild').BuildOptions}
  */
-export function esbuildOptions({ browser, buildDir, dev, reloader }, entryPoint) {
+function esbuildOptions({ browser, dev, reloader, out }, entryPoint) {
     return {
         entryPoints: [entryPoint],
-        outdir: `${buildDir}/public/js`,
+        outdir: out.js,
         bundle: true,
         target: ['firefox91', 'chrome92'],
         // The Makefile pipes esbuild to stdout, which makes source maps inline.
@@ -39,26 +39,33 @@ export async function bundleJs(config) {
 }
 
 /**
- * Starts esbuild in watch mode, one context per bundle. Returns the contexts
- * so the caller can dispose of them. `onRebuild` runs after each successful
- * rebuild of any bundle.
+ * Bundles once, then keeps the bundles up to date as their sources change.
+ * Resolves after the initial build of every bundle; `onRebuild` runs after
+ * each successful build, the initial ones included.
  * @param {import('./config.mjs').BuildConfig} config
  * @param {() => void} onRebuild
  */
 export async function watchJs(config, onRebuild) {
-    const notifyPlugin = {
-        name: 'notify-rebuild',
-        setup(build) {
-            build.onEnd((result) => {
-                if (result.errors.length === 0) {
-                    onRebuild();
-                }
+    await Promise.all(
+        config.jsBundles.map(async (entryPoint) => {
+            let initialBuild;
+            const initialBuildDone = new Promise((resolve) => {
+                initialBuild = resolve;
             });
-        },
-    };
-    const contexts = await Promise.all(
-        config.jsBundles.map((entryPoint) => esbuildContext({ ...esbuildOptions(config, entryPoint), plugins: [notifyPlugin] })),
+            const plugin = {
+                name: 'notify-rebuild',
+                setup(build) {
+                    build.onEnd((result) => {
+                        initialBuild();
+                        if (result.errors.length === 0) {
+                            onRebuild();
+                        }
+                    });
+                },
+            };
+            const context = await esbuildContext({ ...esbuildOptions(config, entryPoint), plugins: [plugin] });
+            await context.watch();
+            await initialBuildDone;
+        }),
     );
-    await Promise.all(contexts.map((context) => context.watch()));
-    return contexts;
 }

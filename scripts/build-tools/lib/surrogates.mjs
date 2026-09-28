@@ -4,22 +4,18 @@
  */
 import fs from 'node:fs';
 
-/** @param {string} surrogatesDir */
-export function listSurrogates(surrogatesDir) {
-    return fs.readdirSync(surrogatesDir);
-}
-
 /**
  * @param {string} surrogatesDir
  * @returns {string} File contents in the legacy format.
  */
 export function generateSurrogatesList(surrogatesDir) {
-    return listSurrogates(surrogatesDir)
+    return fs
+        .readdirSync(surrogatesDir)
         .map((file) => `domain.com/${file} application/javascript\n\n`)
         .join('');
 }
 
 /** @param {import('./config.mjs').BuildConfig} config */
-export function writeSurrogatesList({ buildDir }) {
-    fs.writeFileSync(`${buildDir}/data/surrogates.txt`, generateSurrogatesList(`${buildDir}/web_accessible_resources/`));
+export function writeSurrogatesList({ out }) {
+    fs.writeFileSync(`${out.data}/surrogates.txt`, generateSurrogatesList(out.surrogates));
 }

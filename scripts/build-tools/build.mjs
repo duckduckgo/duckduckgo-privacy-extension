@@ -12,11 +12,21 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { bundleJs, watchJs } from './lib/bundles.mjs';
-import { BROWSERS, CONTENT_SCOPE_SCRIPTS_DIR, ROOT_DIR, TYPES, buildDirectories, resolveConfig } from './lib/config.mjs';
+import {
+    AUTOFILL_DIR,
+    BROWSERS,
+    CONTENT_SCOPE_SCRIPTS_DIR,
+    DASHBOARD_DIR,
+    ROOT_DIR,
+    SURROGATES_DIR,
+    TYPES,
+    buildDirectories,
+    resolveConfig,
+} from './lib/config.mjs';
 import { buildInjectScript, isLocalCheckout } from './lib/contentScopeScripts.mjs';
 import { copyStaticFiles } from './lib/copy.mjs';
 import { copyFonts } from './lib/fonts.mjs';
-import { ensureDir, exists } from './lib/fs.mjs';
+import { ensureDir, isBackupFile } from './lib/fs.mjs';
 import { writeLocaleResources } from './lib/locales.mjs';
 import { generateSmarterEncryptionRules } from './lib/smarterEncryption.mjs';
 import { compileStyles } from './lib/styles.mjs';
@@ -24,127 +34,152 @@ import { writeSurrogatesList } from './lib/surrogates.mjs';
 
 const USAGE = `Usage: node scripts/build-tools/build.mjs --browser <${BROWSERS.join('|')}> --type <${TYPES.join('|')}> [--watch] [--no-reloader]`;
 
+/** @typedef {import('./lib/config.mjs').BuildConfig} BuildConfig */
+
 /** Same format as the Makefile's \`date +"%Y%m%d_%H%M%S"\`. */
-function buildTimestamp(date = new Date()) {
+function buildTimestamp() {
+    const now = new Date();
     const pad = (n) => String(n).padStart(2, '0');
     return (
-        `${date.getFullYear()}${pad(date.getMonth() + 1)}${pad(date.getDate())}` +
-        `_${pad(date.getHours())}${pad(date.getMinutes())}${pad(date.getSeconds())}`
+        `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}` +
+        `_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
     );
 }
 
 /**
  * Update buildtime.txt for development builds. The devbuild-reloader module
  * polls it and reloads the extension when it changes.
- * @param {import('./lib/config.mjs').BuildConfig} config
+ * @param {BuildConfig} config
  */
-function writeBuildTime({ buildDir, dev }) {
+function writeBuildTime({ dev, out }) {
     if (dev) {
-        fs.writeFileSync(`${buildDir}/buildtime.txt`, `${buildTimestamp()}\n`);
+        fs.writeFileSync(`${out.root}/buildtime.txt`, `${buildTimestamp()}\n`);
     }
 }
 
 /**
- * Everything except the esbuild bundles, which are handled separately so
- * that watch mode can use esbuild's incremental rebuilds.
- * @param {import('./lib/config.mjs').BuildConfig} config
+ * The steps other than JS bundling. Each is independent of the bundles, so a
+ * caller can run just the ones affected by a change.
+ * @type {Record<string, (config: BuildConfig) => void | Promise<void>>}
  */
-async function buildStaticParts(config) {
-    buildDirectories(config).forEach(ensureDir);
-    copyStaticFiles(config);
-    // The committed locale-resources.js is regenerated whenever a bundle
-    // imports it (base.js), like the Makefile does.
-    if (config.jsBundles.some(({ out }) => out === 'base')) {
-        writeLocaleResources();
-    }
-    if (!config.embedded) {
-        buildInjectScript(config);
-        compileStyles(config);
-        writeSurrogatesList(config);
-    }
-    const downloads = [];
-    if (!config.embedded) {
-        downloads.push(copyFonts(config));
-    }
-    if (config.smarterEncryption) {
-        downloads.push(generateSmarterEncryptionRules(config));
-    }
-    await Promise.all(downloads);
+const STEPS = {
+    // The committed locale-resources.js, imported by the base.js bundle.
+    locales: ({ ui }) => ui && writeLocaleResources(),
+    copy: (config) => {
+        copyStaticFiles(config);
+        if (config.ui) writeSurrogatesList(config);
+    },
+    inject: (config) => config.ui && buildInjectScript(config),
+    styles: (config) => compileStyles(config),
+    fonts: (config) => config.ui && copyFonts(config),
+    smarterEncryption: (config) => config.smarterEncryption && generateSmarterEncryptionRules(config),
+};
+
+/**
+ * @param {BuildConfig} config
+ * @param {Iterable<string>} steps Names from STEPS.
+ */
+async function runSteps(config, steps) {
+    // Locale resources first, since the JS bundles import them.
+    STEPS.locales(config);
+    await Promise.all([...steps].filter((name) => name !== 'locales').map((name) => STEPS[name](config)));
 }
 
-/** @param {import('./lib/config.mjs').BuildConfig} config */
+/** @param {BuildConfig} config */
 async function build(config) {
     const started = Date.now();
-    await Promise.all([buildStaticParts(config), bundleJs(config)]);
+    buildDirectories(config).forEach(ensureDir);
+    await Promise.all([runSteps(config, Object.keys(STEPS)), bundleJs(config)]);
     writeBuildTime(config);
-    console.log(`Built ${config.browser} ${config.type} in ${config.buildDir} (${Date.now() - started}ms)`);
+    console.log(`Built ${config.browser} ${config.type} in ${config.out.root} (${Date.now() - started}ms)`);
 }
 
 /**
- * Directories whose changes should trigger a rebuild of the static parts.
- * esbuild tracks the dependencies of the JS bundles itself.
+ * Which steps a changed source file affects. esbuild tracks the bundles' own
+ * dependencies, so a change under shared/js needs nothing here unless it is a
+ * content script that gets copied as-is.
+ * @param {string} changedPath
+ * @returns {string[]}
+ */
+function stepsAffectedBy(changedPath) {
+    const p = changedPath.split(path.sep).join('/');
+    if (p.startsWith('shared/scss/')) return ['styles'];
+    if (p.startsWith('shared/locales/')) return ['locales'];
+    if (p.startsWith('shared/data/bundled/')) return ['copy', 'inject'];
+    if (p.startsWith(CONTENT_SCOPE_SCRIPTS_DIR)) return ['inject'];
+    if (p.startsWith('shared/js/') && !p.startsWith('shared/js/content-scripts/')) return [];
+    return ['copy'];
+}
+
+/**
+ * Source directories whose changes need a step re-run. Only the parts of the
+ * dependencies that the build actually copies are watched, resolving symlinks
+ * (npm link) so that the real directories are watched.
  */
 function watchedDirectories() {
-    const dirs = ['browsers', 'shared', 'packages'];
-    if (exists('node_modules/@duckduckgo')) {
-        for (const name of fs.readdirSync('node_modules/@duckduckgo')) {
-            dirs.push(path.join('node_modules/@duckduckgo', name));
-        }
+    const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, `${CONTENT_SCOPE_SCRIPTS_DIR}/build`];
+    if (isLocalCheckout()) {
+        dirs.push(`${CONTENT_SCOPE_SCRIPTS_DIR}/injected`);
     }
-    // Resolve symlinks (npm link) so that the real directories are watched.
-    return dirs.filter(exists).map((dir) => fs.realpathSync(dir));
+    return dirs.filter((dir) => fs.existsSync(dir));
 }
 
 function shouldIgnore(filename) {
-    if (!filename) return false;
     const parts = filename.split(/[\\/]/);
-    return parts.includes('node_modules') || parts.includes('.git') || parts.includes('build') || filename.endsWith('~');
+    return parts.includes('node_modules') || parts.includes('.git') || isBackupFile(filename);
 }
 
-/** @param {import('./lib/config.mjs').BuildConfig} config */
-async function watch(config) {
-    await build(config);
+/** Runs `fn` at most once per `ms` of quiet, collecting the arguments passed meanwhile. */
+function debounce(fn, ms) {
+    let timer;
+    let queued = [];
+    return (arg) => {
+        queued.push(arg);
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            const args = queued;
+            queued = [];
+            fn(args);
+        }, ms);
+    };
+}
 
-    // Rebuilding a linked content-scope-scripts checkout is slow, so only do
-    // it when its own sources change, and note that in the output.
+/** @param {BuildConfig} config */
+async function watch(config) {
+    const started = Date.now();
+    buildDirectories(config).forEach(ensureDir);
+
+    let rebuilding = Promise.resolve();
+    const rebuild = debounce((changedPaths) => {
+        const steps = new Set(changedPaths.flatMap(stepsAffectedBy));
+        if (steps.size === 0) return;
+        rebuilding = rebuilding
+            .then(async () => {
+                const rebuildStarted = Date.now();
+                await runSteps(config, steps);
+                writeBuildTime(config);
+                console.log(`Rebuilt ${[...steps].join(', ')} (${Date.now() - rebuildStarted}ms)`);
+            })
+            .catch(console.error);
+    }, 250);
+
+    for (const dir of watchedDirectories()) {
+        const realDir = fs.realpathSync(dir);
+        fs.watch(realDir, { recursive: true }, (_, filename) => {
+            if (filename && !shouldIgnore(filename)) {
+                rebuild(path.join(dir, filename));
+            }
+        }).on('error', (e) => console.error(`Stopped watching ${dir}:`, e.message));
+    }
+
+    // esbuild rebuilds the bundles itself (and does the initial build here).
+    // Bump buildtime.txt afterwards so the extension reloads.
+    const bumpBuildTime = debounce(() => writeBuildTime(config), 100);
+    await Promise.all([runSteps(config, Object.keys(STEPS)), watchJs(config, bumpBuildTime)]);
+    console.log(`Built ${config.browser} ${config.type} in ${config.out.root} (${Date.now() - started}ms)`);
     if (isLocalCheckout()) {
         console.log(`Note: ${CONTENT_SCOPE_SCRIPTS_DIR} is a local checkout and will be rebuilt when its sources change.`);
     }
-
-    let pending = null;
-    let building = false;
-    const rebuildStatic = async () => {
-        pending = null;
-        if (building) {
-            // A change arrived mid-build; run again once it finishes.
-            pending = setTimeout(rebuildStatic, 250);
-            return;
-        }
-        building = true;
-        const started = Date.now();
-        try {
-            await buildStaticParts(config);
-            writeBuildTime(config);
-            console.log(`Rebuilt static files (${Date.now() - started}ms)`);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            building = false;
-        }
-    };
-    const scheduleRebuild = (eventType, filename) => {
-        if (shouldIgnore(filename)) return;
-        clearTimeout(pending);
-        pending = setTimeout(rebuildStatic, 250);
-    };
-
-    for (const dir of watchedDirectories()) {
-        fs.watch(dir, { recursive: true }, scheduleRebuild);
-    }
-    // esbuild rebuilds the bundles itself. Bump buildtime.txt afterwards so
-    // the extension reloads.
-    await watchJs(config, () => writeBuildTime(config));
-
     console.log('\n** Build ready - Watching for changes **\n');
 }
 
@@ -165,17 +200,13 @@ async function main() {
     }
 
     process.chdir(ROOT_DIR);
-    if (!exists('node_modules/esbuild')) {
+    if (!fs.existsSync('node_modules/esbuild')) {
         console.error('Dependencies are not installed. Run `npm run install-ci` (or `npm ci --ignore-scripts`) first.');
         process.exit(1);
     }
 
     const config = resolveConfig({ browser: values.browser, type: values.type, reloader: values.reloader });
-    if (values.watch) {
-        await watch(config);
-    } else {
-        await build(config);
-    }
+    await (values.watch ? watch(config) : build(config));
 }
 
 main().catch((e) => {

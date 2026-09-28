@@ -1,22 +1,37 @@
 /**
- * Shared configuration for the build scripts. Mirrors the variables at the top
- * of the Makefile so that both produce identical output while they coexist.
+ * Build configuration. What differs between browser targets is described once,
+ * in BROWSER_PROFILES, so the build steps only ever test semantic fields
+ * (`ui`, `autofill`, ...) rather than browser names.
+ *
+ * The output layout mirrors the Makefile so both produce identical builds
+ * while they coexist.
  */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
 
-export const BROWSERS = ['chrome', 'firefox', 'embedded', 'chromium-embedded'];
 export const TYPES = ['dev', 'release'];
 
 export const INTERMEDIATES_DIR = 'build/.intermediates';
 export const SMARTER_ENCRYPTION_LIST = 'build/.smarter_encryption.txt';
+export const SMARTER_ENCRYPTION_URL = 'https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz';
 
 export const CONTENT_SCOPE_SCRIPTS_DIR = 'node_modules/@duckduckgo/content-scope-scripts';
+export const DASHBOARD_DIR = 'node_modules/@duckduckgo/privacy-dashboard/build/app';
+export const AUTOFILL_DIR = 'node_modules/@duckduckgo/autofill/dist';
+export const SURROGATES_DIR = 'node_modules/@duckduckgo/tracker-surrogates/surrogates';
 
-/** esbuild entry points shared by the chrome and firefox builds. */
-export const JS_BUNDLES = [
+export const FONT_URL = 'https://duckduckgo.com/font/all/';
+export const FONT_FILES = [
+    'ProximaNova-Reg-webfont.woff',
+    'ProximaNova-Sbold-webfont.woff',
+    'ProximaNova-Bold-webfont.woff',
+    'ProximaNova-Reg-webfont.woff2',
+    'ProximaNova-Bold-webfont.woff2',
+];
+
+const JS_BUNDLES = [
     { in: 'shared/js/background/background.js', out: 'background' },
     { in: 'shared/js/ui/base/index.js', out: 'base' },
     { in: 'shared/js/ui/pages/feedback.js', out: 'feedback' },
@@ -29,119 +44,141 @@ export const JS_BUNDLES = [
     { in: 'shared/js/cpm.js', out: 'content-scripts/cpm' },
 ];
 
-/** Embedded builds only need a couple of bundles. */
-export const EMBEDDED_JS_BUNDLES = [
-    { in: 'shared/js/background/background-embedded.js', out: 'background-embedded' },
-    { in: 'shared/js/cpm.js', out: 'content-scripts/cpm' },
-];
-
-/**
- * chromium-embedded: only the bundles the remaining pages load. base.js went
- * with the options and feedback pages; the devtools pages need only base.css.
- */
-export const CHROMIUM_EMBEDDED_JS_BUNDLES = JS_BUNDLES.filter(({ out }) =>
-    ['background', 'devtools-panel', 'list-editor', 'rollouts', 'content-scripts/cpm'].includes(out),
-);
-
-export const SCSS_BUNDLES = [
+const SCSS_BUNDLES = [
     { in: 'shared/scss/base/base.scss', out: 'base.css' },
     { in: 'shared/scss/options.scss', out: 'options.css' },
     { in: 'shared/scss/feedback.scss', out: 'feedback.css' },
 ];
 
-/** base.css is kept for the devtools pages; the other two are not. */
-export const CHROMIUM_EMBEDDED_SCSS_BUNDLES = SCSS_BUNDLES.filter(({ out }) => out === 'base.css');
+const only = (bundles, names) => bundles.filter(({ out }) => names.includes(out));
 
 /**
- * Pages the chromium-embedded build cannot reach: the browser owns the fire
- * button and the new tab page, this build declares no options_page, and MV3
- * has no background page. The devtools pages stay - they are reached by URL.
- */
-export const CHROMIUM_EMBEDDED_HTML_EXCLUDES = ['background.html', 'feedback.html', 'fire.html', 'options.html', 'tracker-stats.html'];
-
-export const FONT_FILES = [
-    'ProximaNova-Reg-webfont.woff',
-    'ProximaNova-Sbold-webfont.woff',
-    'ProximaNova-Bold-webfont.woff',
-    'ProximaNova-Reg-webfont.woff2',
-    'ProximaNova-Bold-webfont.woff2',
-];
-export const FONT_URL = 'https://duckduckgo.com/font/all/';
-
-export const SMARTER_ENCRYPTION_URL = 'https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz';
-
-/**
- * @typedef {object} BuildConfig
- * @property {'chrome'|'firefox'|'embedded'|'chromium-embedded'} browser
- * @property {'dev'|'release'} type
- * @property {'chrome'|'firefox'} browserType Used for autofill host styles.
- * @property {'chrome-mv3'|'firefox'} cssPlatform content-scope-scripts build name.
- * @property {string} buildDir e.g. build/chrome/dev
- * @property {boolean} dev
- * @property {boolean} reloader Include the auto-reload module.
- * @property {boolean} embedded The minimal `embedded` build: manifest plus two bundles.
- * @property {boolean} chromiumEmbedded
- * @property {boolean} autofill Include the autofill assets (not in either embedded build).
- * @property {boolean} smarterEncryption Bundle Smarter Encryption declarativeNetRequest rules.
+ * @typedef {object} BrowserProfile
+ * @property {'chrome'|'firefox'} platform Chrome-like or Firefox, for platform-specific dependencies.
+ * @property {boolean} ui Ships the shared pages, dashboard, styles, fonts and surrogates.
+ * @property {boolean} autofill Ships the autofill assets.
+ * @property {boolean} smarterEncryption Bundles Smarter Encryption declarativeNetRequest rules.
  * @property {{in: string, out: string}[]} jsBundles
  * @property {{in: string, out: string}[]} scssBundles
- * @property {string[]} htmlExcludes Files under shared/html not to copy.
+ * @property {string[]} htmlExcludes Pages under shared/html not to ship.
+ * @property {string} [dashboardCss] Extra CSS appended to the dashboard popup stylesheet.
  */
+
+const CHROME = {
+    platform: 'chrome',
+    ui: true,
+    autofill: true,
+    smarterEncryption: true,
+    jsBundles: JS_BUNDLES,
+    scssBundles: SCSS_BUNDLES,
+    htmlExcludes: [],
+};
+
+/** @type {Record<string, BrowserProfile>} */
+export const BROWSER_PROFILES = {
+    chrome: CHROME,
+    firefox: { ...CHROME, platform: 'firefox', smarterEncryption: false },
+    // The minimal embedded build: manifest plus two bundles.
+    embedded: {
+        platform: 'chrome',
+        ui: false,
+        autofill: false,
+        smarterEncryption: false,
+        jsBundles: [
+            { in: 'shared/js/background/background-embedded.js', out: 'background-embedded' },
+            { in: 'shared/js/cpm.js', out: 'content-scripts/cpm' },
+        ],
+        scssBundles: [],
+        htmlExcludes: [],
+    },
+    // A cut-down Chrome build. The browser owns the fire button and the new
+    // tab page, there is no options page and MV3 has no background page, so
+    // only the devtools pages (reached by URL) and their bundles remain.
+    'chromium-embedded': {
+        ...CHROME,
+        autofill: false,
+        jsBundles: only(JS_BUNDLES, ['background', 'devtools-panel', 'list-editor', 'rollouts', 'content-scripts/cpm']),
+        scssBundles: only(SCSS_BUNDLES, ['base.css']),
+        htmlExcludes: ['background.html', 'feedback.html', 'fire.html', 'options.html', 'tracker-stats.html'],
+        // No options page, so hide the dashboard's settings cog (matches Windows).
+        dashboardCss: '.cog-button { display: none; }\n',
+    },
+};
+
+export const BROWSERS = Object.keys(BROWSER_PROFILES);
+
+/**
+ * @typedef {BrowserProfile & {
+ *   browser: string,
+ *   type: 'dev'|'release',
+ *   dev: boolean,
+ *   reloader: boolean,
+ *   buildDir: string,
+ *   cssPlatform: 'chrome-mv3'|'firefox',
+ *   out: ReturnType<typeof outputPaths>,
+ * }} BuildConfig
+ */
+
+/** Where each kind of output goes, relative to the working directory. */
+function outputPaths(buildDir) {
+    return {
+        root: buildDir,
+        js: `${buildDir}/public/js`,
+        contentScripts: `${buildDir}/public/js/content-scripts`,
+        css: `${buildDir}/public/css`,
+        font: `${buildDir}/public/font`,
+        data: `${buildDir}/data`,
+        dataBundled: `${buildDir}/data/bundled`,
+        html: `${buildDir}/html`,
+        img: `${buildDir}/img`,
+        locales: `${buildDir}/_locales`,
+        dashboard: `${buildDir}/dashboard`,
+        surrogates: `${buildDir}/web_accessible_resources`,
+    };
+}
 
 /**
  * @param {{browser: string, type: string, reloader?: boolean}} options
  * @returns {BuildConfig}
  */
 export function resolveConfig({ browser, type, reloader = true }) {
-    if (!BROWSERS.includes(browser)) {
+    const profile = BROWSER_PROFILES[browser];
+    if (!profile) {
         throw new Error(`Unknown browser "${browser}". Expected one of: ${BROWSERS.join(', ')}`);
     }
-    if (!TYPES.includes(type)) {
+    if (type !== 'dev' && type !== 'release') {
         throw new Error(`Unknown build type "${type}". Expected one of: ${TYPES.join(', ')}`);
     }
     const dev = type === 'dev';
-    const embedded = browser === 'embedded';
-    const chromiumEmbedded = browser === 'chromium-embedded';
-    let jsBundles = JS_BUNDLES;
-    if (embedded) jsBundles = EMBEDDED_JS_BUNDLES;
-    if (chromiumEmbedded) jsBundles = CHROMIUM_EMBEDDED_JS_BUNDLES;
+    const buildDir = `build/${browser}/${type}`;
     return {
-        // @ts-ignore - validated above
+        ...profile,
         browser,
-        // @ts-ignore - validated above
         type,
-        browserType: browser === 'firefox' ? 'firefox' : 'chrome',
-        cssPlatform: browser === 'firefox' ? 'firefox' : 'chrome-mv3',
-        buildDir: `build/${browser}/${type}`,
         dev,
         reloader: dev && reloader,
-        embedded,
-        chromiumEmbedded,
-        autofill: !embedded && !chromiumEmbedded,
-        smarterEncryption: browser === 'chrome' || chromiumEmbedded,
-        jsBundles,
-        scssBundles: chromiumEmbedded ? CHROMIUM_EMBEDDED_SCSS_BUNDLES : SCSS_BUNDLES,
-        htmlExcludes: chromiumEmbedded ? CHROMIUM_EMBEDDED_HTML_EXCLUDES : [],
+        buildDir,
+        cssPlatform: profile.platform === 'firefox' ? 'firefox' : 'chrome-mv3',
+        out: outputPaths(buildDir),
     };
 }
 
 /**
- * Directories the Makefile creates up front (MKDIR_TARGETS). Created for every
- * build so that the output tree matches exactly, even where a directory ends
- * up empty.
+ * Directories created up front for every build (the Makefile's MKDIR_TARGETS),
+ * so that the output tree matches exactly even where a directory ends up empty.
  * @param {BuildConfig} config
  */
-export function buildDirectories({ buildDir }) {
+export function buildDirectories({ out }) {
     return [
-        `${buildDir}/data/bundled`,
-        `${buildDir}/html`,
-        `${buildDir}/img`,
-        `${buildDir}/dashboard`,
-        `${buildDir}/web_accessible_resources`,
-        `${buildDir}/public/js/content-scripts`,
-        `${buildDir}/public/css`,
-        `${buildDir}/public/font`,
-        `${buildDir}/_locales`,
+        out.dataBundled,
+        out.html,
+        out.img,
+        out.dashboard,
+        out.surrogates,
+        out.contentScripts,
+        out.css,
+        out.font,
+        out.locales,
         INTERMEDIATES_DIR,
     ];
 }
