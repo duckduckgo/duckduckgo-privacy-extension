@@ -9,9 +9,8 @@
  * tools beyond Node and the npm dependencies.
  */
 import fs from 'node:fs';
-import path from 'node:path';
 import { parseArgs } from 'node:util';
-import { bundleJs, watchJs } from './lib/bundles.mjs';
+import { bundleJs } from './lib/bundles.mjs';
 import {
     AUTOFILL_DIR,
     BROWSERS,
@@ -58,63 +57,36 @@ function writeBuildTime({ dev, out }) {
 }
 
 /**
- * The steps other than JS bundling. Each is independent of the bundles, so a
- * caller can run just the ones affected by a change.
- * @type {Record<string, (config: BuildConfig) => void | Promise<void>>}
- */
-const STEPS = {
-    // The committed locale-resources.js, imported by the base.js bundle.
-    locales: ({ ui }) => ui && writeLocaleResources(),
-    copy: (config) => {
-        copyStaticFiles(config);
-        if (config.ui) writeSurrogatesList(config);
-    },
-    inject: (config) => config.ui && buildInjectScript(config),
-    styles: (config) => compileStyles(config),
-    fonts: (config) => config.ui && copyFonts(config),
-    smarterEncryption: (config) => config.smarterEncryption && generateSmarterEncryptionRules(config),
-};
-
-/**
+ * A full build. Everything runs concurrently, except that the committed
+ * locale-resources.js is written first because the base.js bundle imports it.
+ * A warm rebuild takes well under a second, so watch mode simply calls this
+ * on every change rather than working out which steps a change affects.
  * @param {BuildConfig} config
- * @param {Iterable<string>} steps Names from STEPS.
  */
-async function runSteps(config, steps) {
-    // Locale resources first, since the JS bundles import them.
-    STEPS.locales(config);
-    await Promise.all([...steps].filter((name) => name !== 'locales').map((name) => STEPS[name](config)));
-}
-
-/** @param {BuildConfig} config */
 async function build(config) {
     const started = Date.now();
     buildDirectories(config).forEach(ensureDir);
-    await Promise.all([runSteps(config, Object.keys(STEPS)), bundleJs(config)]);
+    const steps = [bundleJs(config), compileStyles(config)];
+    copyStaticFiles(config);
+    if (config.ui) {
+        writeLocaleResources();
+        writeSurrogatesList(config);
+        buildInjectScript(config);
+        steps.push(copyFonts(config));
+    }
+    if (config.smarterEncryption) {
+        steps.push(generateSmarterEncryptionRules(config));
+    }
+    await Promise.all(steps);
     writeBuildTime(config);
     console.log(`Built ${config.browser} ${config.type} in ${config.out.root} (${Date.now() - started}ms)`);
 }
 
 /**
- * Which steps a changed source file affects. esbuild tracks the bundles' own
- * dependencies, so a change under shared/js needs nothing here unless it is a
- * content script that gets copied as-is.
- * @param {string} changedPath
- * @returns {string[]}
- */
-function stepsAffectedBy(changedPath) {
-    const p = changedPath.split(path.sep).join('/');
-    if (p.startsWith('shared/scss/')) return ['styles'];
-    if (p.startsWith('shared/locales/')) return ['locales'];
-    if (p.startsWith('shared/data/bundled/')) return ['copy', 'inject'];
-    if (p.startsWith(CONTENT_SCOPE_SCRIPTS_DIR)) return ['inject'];
-    if (p.startsWith('shared/js/') && !p.startsWith('shared/js/content-scripts/')) return [];
-    return ['copy'];
-}
-
-/**
- * Source directories whose changes need a step re-run. Only the parts of the
- * dependencies that the build actually copies are watched, resolving symlinks
- * (npm link) so that the real directories are watched.
+ * Source directories whose changes trigger a rebuild. Only the parts of the
+ * dependencies that the build actually consumes are watched: a linked
+ * checkout's own build output, plus its sources for content-scope-scripts,
+ * which this build rebuilds itself.
  */
 function watchedDirectories() {
     const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, `${CONTENT_SCOPE_SCRIPTS_DIR}/build`];
@@ -129,54 +101,33 @@ function shouldIgnore(filename) {
     return parts.includes('node_modules') || parts.includes('.git') || isBackupFile(filename);
 }
 
-/** Runs `fn` at most once per `ms` of quiet, collecting the arguments passed meanwhile. */
-function debounce(fn, ms) {
+/**
+ * Builds, then rebuilds whenever a watched file changes. Changes are debounced
+ * (editors often write a file several times), and a change arriving mid-build
+ * queues one more build after it.
+ * @param {BuildConfig} config
+ */
+async function watch(config) {
+    await build(config);
+
+    let building = Promise.resolve();
     let timer;
-    let queued = [];
-    return (arg) => {
-        queued.push(arg);
+    const scheduleBuild = () => {
         clearTimeout(timer);
         timer = setTimeout(() => {
-            const args = queued;
-            queued = [];
-            fn(args);
-        }, ms);
+            building = building.then(() => build(config)).catch(console.error);
+        }, 250);
     };
-}
-
-/** @param {BuildConfig} config */
-async function watch(config) {
-    const started = Date.now();
-    buildDirectories(config).forEach(ensureDir);
-
-    let rebuilding = Promise.resolve();
-    const rebuild = debounce((changedPaths) => {
-        const steps = new Set(changedPaths.flatMap(stepsAffectedBy));
-        if (steps.size === 0) return;
-        rebuilding = rebuilding
-            .then(async () => {
-                const rebuildStarted = Date.now();
-                await runSteps(config, steps);
-                writeBuildTime(config);
-                console.log(`Rebuilt ${[...steps].join(', ')} (${Date.now() - rebuildStarted}ms)`);
-            })
-            .catch(console.error);
-    }, 250);
 
     for (const dir of watchedDirectories()) {
-        const realDir = fs.realpathSync(dir);
-        fs.watch(realDir, { recursive: true }, (_, filename) => {
+        // Resolve symlinks (npm link) so that the real directory is watched.
+        fs.watch(fs.realpathSync(dir), { recursive: true }, (_, filename) => {
             if (filename && !shouldIgnore(filename)) {
-                rebuild(path.join(dir, filename));
+                scheduleBuild();
             }
         }).on('error', (e) => console.error(`Stopped watching ${dir}:`, e.message));
     }
 
-    // esbuild rebuilds the bundles itself (and does the initial build here).
-    // Bump buildtime.txt afterwards so the extension reloads.
-    const bumpBuildTime = debounce(() => writeBuildTime(config), 100);
-    await Promise.all([runSteps(config, Object.keys(STEPS)), watchJs(config, bumpBuildTime)]);
-    console.log(`Built ${config.browser} ${config.type} in ${config.out.root} (${Date.now() - started}ms)`);
     if (isLocalCheckout()) {
         console.log(`Note: ${CONTENT_SCOPE_SCRIPTS_DIR} is a local checkout and will be rebuilt when its sources change.`);
     }
