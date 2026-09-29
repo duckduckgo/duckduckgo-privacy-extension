@@ -63,7 +63,7 @@ export function normalizeTabData(tabData) {
     const url = tabData.url;
     const status = 'status' in tabData ? tabData.status : null;
     const requestId = 'requestId' in tabData ? tabData.requestId : undefined;
-    const incognito = 'incognito' in tabData ? !!tabData.incognito : false;
+    const incognito = 'incognito' in tabData && !!tabData.incognito;
     return {
         tabId,
         url,

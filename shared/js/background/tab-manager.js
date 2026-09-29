@@ -17,7 +17,16 @@ const { getCurrentTab } = require('./utils');
 
 // These tab properties are preserved when a new tab Object replaces an existing
 // one for the same tab ID.
-const persistentTabProperties = ['ampUrl', 'cleanAmpUrl', 'urlParametersRemoved', 'urlParametersRemovedUrl', 'userRefreshCount'];
+// Navigation events don't say whether the tab is incognito, so that is carried
+// over too.
+const persistentTabProperties = [
+    'ampUrl',
+    'cleanAmpUrl',
+    'urlParametersRemoved',
+    'urlParametersRemovedUrl',
+    'userRefreshCount',
+    'incognito',
+];
 
 class TabManager {
     constructor() {
@@ -40,14 +49,9 @@ class TabManager {
      */
     create(tabData) {
         const normalizedData = browserWrapper.normalizeTabData(tabData);
-        const oldTab = this.tabContainer[normalizedData.tabId];
-        // A tab can't move in or out of incognito, but navigation events don't
-        // say whether the tab is incognito, so carry the flag over.
-        if (oldTab?.incognito) {
-            normalizedData.incognito = true;
-        }
         const newTab = new Tab(normalizedData, this.abnMetrics);
 
+        const oldTab = this.tabContainer[newTab.id];
         if (oldTab) {
             for (const property of persistentTabProperties) {
                 newTab[property] = oldTab[property];
@@ -65,9 +69,9 @@ class TabManager {
         const restored = await this.restore(tabData.id);
         if (!restored) {
             await this.create(tabData);
-        } else if (tabData.incognito && !restored.incognito) {
-            // Tab state saved before the incognito flag was tracked
-            restored.incognito = true;
+        } else {
+            // The saved state may predate learning the tab is incognito
+            restored.incognito = tabData.incognito;
         }
     }
 
@@ -205,16 +209,14 @@ class TabManager {
      * an intital tab instance here. We'll update this instance
      * later on when webrequests start coming in.
      */
-    createOrUpdateTab(id, info, tabDetails = info) {
-        const incognito = !!tabDetails?.incognito;
+    createOrUpdateTab(id, info) {
         if (!tabManager.get({ tabId: id })) {
             info.id = id;
-            info.incognito = incognito;
             return tabManager.create(info);
         } else {
             const tab = tabManager.get({ tabId: id });
-            if (tab && incognito && !tab.incognito) {
-                tab.incognito = true;
+            if (tab) {
+                tab.incognito = info.incognito;
             }
             if (tab && info.status) {
                 tab.status = info.status;

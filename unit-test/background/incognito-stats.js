@@ -43,14 +43,20 @@ describe('Incognito tabs', () => {
             expect(newTab.incognito).toBe(true);
         });
 
-        it('is set on an existing tab from the full tab passed to createOrUpdateTab', () => {
+        it('cannot be cleared once set', () => {
+            const tab = tabManager.create({ id: tabId, url: 'https://example.com/', incognito: true });
+            tab.incognito = false;
+            expect(tab.incognito).toBe(true);
+        });
+
+        it('is set on an existing tab by createOrUpdateTab', () => {
             tabManager.create({ tabId, url: 'https://example.com/' });
-            const tab = tabManager.createOrUpdateTab(tabId, { status: 'loading' }, { id: tabId, incognito: true });
+            const tab = tabManager.createOrUpdateTab(tabId, { status: 'loading', incognito: true });
             expect(tab.incognito).toBe(true);
         });
 
         it('is set when createOrUpdateTab creates the tab', () => {
-            const tab = tabManager.createOrUpdateTab(tabId, { status: 'loading' }, { id: tabId, incognito: true });
+            const tab = tabManager.createOrUpdateTab(tabId, { status: 'loading', incognito: true });
             expect(tab.incognito).toBe(true);
         });
 
@@ -99,38 +105,26 @@ describe('Incognito tabs', () => {
             emitter.off(TrackerBlockedEvent.eventName, onBlocked);
         });
 
-        it('records blocked trackers for normal tabs', () => {
-            const tab = tabManager.create({ id: tabId, url: 'https://example.com/', incognito: false });
-            const response = blockHandleResponse(tab, trackerRequest);
-            expect(response?.cancel).toBe(true);
-            expect(Companies.add).toHaveBeenCalled();
-            expect(blockedEvents.length).toBe(1);
-        });
+        for (const incognito of [false, true]) {
+            const recorded = !incognito;
 
-        it('blocks but does not record trackers for incognito tabs', () => {
-            const tab = tabManager.create({ id: tabId, url: 'https://example.com/', incognito: true });
-            const response = blockHandleResponse(tab, trackerRequest);
-            expect(response?.cancel).toBe(true);
-            expect(Companies.add).not.toHaveBeenCalled();
-            expect(blockedEvents.length).toBe(0);
-            // The tab's own tracker list is still updated for the dashboard
-            expect(Object.keys(tab.trackers).length).toBe(1);
-        });
+            it(`blocks trackers and ${recorded ? 'records' : 'does not record'} them when incognito is ${incognito}`, () => {
+                const tab = tabManager.create({ id: tabId, url: 'https://example.com/', incognito });
+                const response = blockHandleResponse(tab, trackerRequest);
+                expect(response?.cancel).toBe(true);
+                expect(Companies.add).toHaveBeenCalledTimes(recorded ? 1 : 0);
+                expect(blockedEvents.length).toBe(recorded ? 1 : 0);
+                // The tab's own tracker list is always updated for the dashboard
+                expect(Object.keys(tab.trackers).length).toBe(1);
+            });
 
-        it('does not count incognito page loads', () => {
-            spyOn(Companies, 'incrementTotalPages');
-            const tab = tabManager.create({ id: tabId, url: 'https://example.com/', incognito: true });
-            tab.statusCode = 200;
-            tabManager.createOrUpdateTab(tabId, { status: 'complete' });
-            expect(Companies.incrementTotalPages).not.toHaveBeenCalled();
-        });
-
-        it('counts normal page loads', () => {
-            spyOn(Companies, 'incrementTotalPages');
-            const tab = tabManager.create({ id: tabId, url: 'https://example.com/' });
-            tab.statusCode = 200;
-            tabManager.createOrUpdateTab(tabId, { status: 'complete' });
-            expect(Companies.incrementTotalPages).toHaveBeenCalled();
-        });
+            it(`${recorded ? 'counts' : 'does not count'} page loads when incognito is ${incognito}`, () => {
+                spyOn(Companies, 'incrementTotalPages');
+                const tab = tabManager.create({ id: tabId, url: 'https://example.com/', incognito });
+                tab.statusCode = 200;
+                tabManager.createOrUpdateTab(tabId, { status: 'complete' });
+                expect(Companies.incrementTotalPages).toHaveBeenCalledTimes(recorded ? 1 : 0);
+            });
+        }
     });
 });

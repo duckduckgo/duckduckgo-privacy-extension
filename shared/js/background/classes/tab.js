@@ -204,8 +204,14 @@ class Tab {
         return this._tabState.incognito;
     }
 
+    /**
+     * A tab can't leave incognito, so once set the flag stays set.
+     * @param {boolean} value
+     */
     set incognito(value) {
-        this._tabState.setValue('incognito', value);
+        if (value && !this.incognito) {
+            this._tabState.setValue('incognito', true);
+        }
     }
 
     get statusCode() {
