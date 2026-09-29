@@ -21,7 +21,7 @@ const webResourceKeyRegex = /.*\?key=(.*)/;
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy');
 const { TabState } = require('./tab-state');
 
-/** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
+/** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined, incognito?: boolean}} TabData */
 
 /**
  * @typedef {import('../components/abn-experiments').default} AbnExperimentMetrics
@@ -198,6 +198,14 @@ class Tab {
 
     set status(value) {
         this._tabState.setValue('status', value);
+    }
+
+    get incognito() {
+        return this._tabState.incognito;
+    }
+
+    set incognito(value) {
+        this._tabState.setValue('incognito', value);
     }
 
     get statusCode() {

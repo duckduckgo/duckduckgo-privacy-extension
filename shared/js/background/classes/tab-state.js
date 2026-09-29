@@ -26,6 +26,8 @@ export class TabState {
         this.cleanAmpUrl = null;
         this.requestId = tabData.requestId;
         this.status = tabData.status;
+        /** @type {boolean} */
+        this.incognito = !!tabData.incognito; // Incognito tabs are excluded from the persisted tracker stats
         this.statusCode = null; // statusCode is set when headers are recieved in tabManager.js
         /** @type {null | import('./ad-click-attribution-policy').AdClick} */
         this.adClick = null;

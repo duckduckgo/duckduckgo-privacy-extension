@@ -40,9 +40,14 @@ class TabManager {
      */
     create(tabData) {
         const normalizedData = browserWrapper.normalizeTabData(tabData);
+        const oldTab = this.tabContainer[normalizedData.tabId];
+        // A tab can't move in or out of incognito, but navigation events don't
+        // say whether the tab is incognito, so carry the flag over.
+        if (oldTab?.incognito) {
+            normalizedData.incognito = true;
+        }
         const newTab = new Tab(normalizedData, this.abnMetrics);
 
-        const oldTab = this.tabContainer[newTab.id];
         if (oldTab) {
             for (const property of persistentTabProperties) {
                 newTab[property] = oldTab[property];
@@ -60,6 +65,9 @@ class TabManager {
         const restored = await this.restore(tabData.id);
         if (!restored) {
             await this.create(tabData);
+        } else if (tabData.incognito && !restored.incognito) {
+            // Tab state saved before the incognito flag was tracked
+            restored.incognito = true;
         }
     }
 
@@ -197,12 +205,17 @@ class TabManager {
      * an intital tab instance here. We'll update this instance
      * later on when webrequests start coming in.
      */
-    createOrUpdateTab(id, info) {
+    createOrUpdateTab(id, info, tabDetails = info) {
+        const incognito = !!tabDetails?.incognito;
         if (!tabManager.get({ tabId: id })) {
             info.id = id;
+            info.incognito = incognito;
             return tabManager.create(info);
         } else {
             const tab = tabManager.get({ tabId: id });
+            if (tab && incognito && !tab.incognito) {
+                tab.incognito = true;
+            }
             if (tab && info.status) {
                 tab.status = info.status;
 
@@ -218,7 +231,8 @@ class TabManager {
                     const hasHttps = !!(tab.url && tab.url.match(/^https:\/\//));
                     tab.site.grade.setHttps(hasHttps, hasHttps);
 
-                    if (tab.statusCode === 200 && !tab.site.didIncrementCompaniesData) {
+                    // Incognito browsing is left out of the persisted stats
+                    if (tab.statusCode === 200 && !tab.site.didIncrementCompaniesData && !tab.incognito) {
                         if (tab.trackers && Object.keys(tab.trackers).length > 0) {
                             Companies.incrementTotalPagesWithTrackers();
                         }

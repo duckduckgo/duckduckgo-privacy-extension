@@ -349,7 +349,8 @@ function blockHandleResponse(thisTab, requestData) {
         postPopupMessage({ messageType: 'updateTabData' });
         // Block the request if the site is not allowlisted
         if (['block', 'redirect'].includes(tracker.action)) {
-            if (!blockedNonTrackingRequest) {
+            // Incognito browsing is left out of the persisted stats
+            if (!blockedNonTrackingRequest && !thisTab.incognito) {
                 // @ts-ignore
                 Companies.add(tracker.tracker.owner);
 
