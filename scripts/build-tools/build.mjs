@@ -11,27 +11,18 @@
 import fs from 'node:fs';
 import { parseArgs } from 'node:util';
 import { bundleJs } from './lib/bundles.mjs';
-import {
-    AUTOFILL_DIR,
-    BROWSERS,
-    CONTENT_SCOPE_SCRIPTS_DIR,
-    DASHBOARD_DIR,
-    ROOT_DIR,
-    SURROGATES_DIR,
-    TYPES,
-    buildDirectories,
-    resolveConfig,
-} from './lib/config.mjs';
-import { buildInjectScript, isLocalCheckout } from './lib/contentScopeScripts.mjs';
+import { TARGET_OPTIONS, TARGET_USAGE, resolveTarget } from './lib/cli.mjs';
+import { AUTOFILL_DIR, CONTENT_SCOPE_SCRIPTS_DIR, DASHBOARD_DIR, ROOT_DIR, SURROGATES_DIR, buildDirectories } from './lib/config.mjs';
+import { buildInjectScript, isLocalCheckout, watchedPaths as contentScopeScriptsPaths } from './lib/contentScopeScripts.mjs';
 import { copyStaticFiles } from './lib/copy.mjs';
 import { copyFonts } from './lib/fonts.mjs';
-import { ensureDir, isBackupFile } from './lib/fs.mjs';
+import { ensureDir, isBackupFile, isSkippedDir } from './lib/fs.mjs';
 import { writeLocaleResources } from './lib/locales.mjs';
 import { generateSmarterEncryptionRules } from './lib/smarterEncryption.mjs';
 import { compileStyles } from './lib/styles.mjs';
 import { writeSurrogatesList } from './lib/surrogates.mjs';
 
-const USAGE = `Usage: node scripts/build-tools/build.mjs --browser <${BROWSERS.join('|')}> --type <${TYPES.join('|')}> [--watch] [--no-reloader]`;
+const USAGE = `Usage: node scripts/build-tools/build.mjs ${TARGET_USAGE} [--watch] [--no-reloader]`;
 
 /** @typedef {import('./lib/config.mjs').BuildConfig} BuildConfig */
 
@@ -66,10 +57,12 @@ function writeBuildTime({ dev, out }) {
 async function build(config) {
     const started = Date.now();
     buildDirectories(config).forEach(ensureDir);
+    if (config.ui) {
+        writeLocaleResources();
+    }
     const steps = [bundleJs(config), compileStyles(config)];
     copyStaticFiles(config);
     if (config.ui) {
-        writeLocaleResources();
         writeSurrogatesList(config);
         buildInjectScript(config);
         steps.push(copyFonts(config));
@@ -89,16 +82,12 @@ async function build(config) {
  * which this build rebuilds itself.
  */
 function watchedDirectories() {
-    const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, `${CONTENT_SCOPE_SCRIPTS_DIR}/build`];
-    if (isLocalCheckout()) {
-        dirs.push(`${CONTENT_SCOPE_SCRIPTS_DIR}/injected`);
-    }
+    const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, ...contentScopeScriptsPaths()];
     return dirs.filter((dir) => fs.existsSync(dir));
 }
 
 function shouldIgnore(filename) {
-    const parts = filename.split(/[\\/]/);
-    return parts.includes('node_modules') || parts.includes('.git') || isBackupFile(filename);
+    return filename.split(/[\\/]/).some(isSkippedDir) || isBackupFile(filename);
 }
 
 /**
@@ -137,18 +126,18 @@ async function watch(config) {
 async function main() {
     const { values } = parseArgs({
         options: {
-            browser: { type: 'string' },
-            type: { type: 'string' },
-            watch: { type: 'boolean', default: false },
+            ...TARGET_OPTIONS,
+            watch: { type: 'boolean' },
             reloader: { type: 'boolean', default: true },
-            help: { type: 'boolean', short: 'h', default: false },
+            help: { type: 'boolean', short: 'h' },
         },
         allowNegative: true,
     });
-    if (values.help || !values.browser || !values.type) {
-        console.error(USAGE);
-        process.exit(values.help ? 0 : 1);
+    if (values.help) {
+        console.log(USAGE);
+        process.exit(0);
     }
+    const config = resolveTarget(values, USAGE);
 
     process.chdir(ROOT_DIR);
     if (!fs.existsSync('node_modules/esbuild')) {
@@ -156,7 +145,6 @@ async function main() {
         process.exit(1);
     }
 
-    const config = resolveConfig({ browser: values.browser, type: values.type, reloader: values.reloader });
     await (values.watch ? watch(config) : build(config));
 }
 

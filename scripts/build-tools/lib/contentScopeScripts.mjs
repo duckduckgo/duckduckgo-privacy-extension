@@ -9,24 +9,34 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { CONTENT_SCOPE_SCRIPTS_DIR as CSS_DIR } from './config.mjs';
-import { isStale, touch } from './fs.mjs';
+import { ensureDir, isStale, touch } from './fs.mjs';
 import { runNpm } from './run.mjs';
 
 const TRACKER_LOOKUP = 'shared/data/bundled/tracker-lookup.json';
 const EXTENSION_CONFIG = 'shared/data/bundled/extension-config.json';
 
+// Layout of the content-scope-scripts package.
+const PACKAGE_JSON = `${CSS_DIR}/package.json`;
+const INJECTED_DIR = `${CSS_DIR}/injected`;
+const BUILD_DIR = `${CSS_DIR}/build`;
+const LOCALES_BUILD = `${BUILD_DIR}/locales`;
+const prebuiltInject = (cssPlatform) => `${BUILD_DIR}/${cssPlatform}/inject.js`;
+
 /** Sources that a rebuild of a linked checkout depends on. */
-const LOCALE_INPUTS = [`${CSS_DIR}/injected/src/locales`, `${CSS_DIR}/injected/scripts`, `${CSS_DIR}/package.json`];
-const BUNDLE_INPUTS = [
-    `${CSS_DIR}/injected/src`,
-    `${CSS_DIR}/injected/entry-points`,
-    `${CSS_DIR}/injected/scripts`,
-    `${CSS_DIR}/package.json`,
-    `${CSS_DIR}/build/locales`,
-];
+const LOCALE_INPUTS = [`${INJECTED_DIR}/src/locales`, `${INJECTED_DIR}/scripts`, PACKAGE_JSON];
+const BUNDLE_INPUTS = [`${INJECTED_DIR}/src`, `${INJECTED_DIR}/entry-points`, `${INJECTED_DIR}/scripts`, PACKAGE_JSON, LOCALES_BUILD];
 
 export function isLocalCheckout() {
     return fs.existsSync(`${CSS_DIR}/.git`);
+}
+
+/**
+ * What watch mode should watch for this package: the sources of a local
+ * checkout (which this build rebuilds itself, so watching its output too
+ * would only queue a redundant rebuild), otherwise the prebuilt bundles.
+ */
+export function watchedPaths() {
+    return [isLocalCheckout() ? INJECTED_DIR : BUILD_DIR];
 }
 
 /**
@@ -34,17 +44,16 @@ export function isLocalCheckout() {
  * @param {import('./config.mjs').BuildConfig} config
  */
 function rebuildLocalCheckout({ cssPlatform }) {
-    const injectedDir = `${CSS_DIR}/injected`;
-    if (isStale(`${CSS_DIR}/node_modules`, [`${CSS_DIR}/package.json`])) {
+    if (isStale(`${CSS_DIR}/node_modules`, [PACKAGE_JSON])) {
         runNpm(['install'], CSS_DIR);
         touch(`${CSS_DIR}/node_modules`);
     }
-    if (isStale(`${CSS_DIR}/build/locales`, LOCALE_INPUTS)) {
-        runNpm(['run', 'build-locales'], injectedDir);
-        touch(`${CSS_DIR}/build/locales`);
+    if (isStale(LOCALES_BUILD, LOCALE_INPUTS)) {
+        runNpm(['run', 'build-locales'], INJECTED_DIR);
+        touch(LOCALES_BUILD);
     }
-    if (isStale(`${CSS_DIR}/build/${cssPlatform}/inject.js`, BUNDLE_INPUTS)) {
-        runNpm(['run', `build-${cssPlatform}`], injectedDir);
+    if (isStale(prebuiltInject(cssPlatform), BUNDLE_INPUTS)) {
+        runNpm(['run', `build-${cssPlatform}`], INJECTED_DIR);
     }
 }
 
@@ -66,7 +75,7 @@ export function bundleContentScopeScripts(targetPath, sourcePath, trackerLookupP
         cookie: config.features.cookie,
         adClickAttribution: config.features.adClickAttribution,
     };
-    fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+    ensureDir(path.dirname(targetPath));
     fs.writeFileSync(
         targetPath,
         source.replace('$TRACKER_LOOKUP$', trackerLookup).replace('$BUNDLED_CONFIG$', JSON.stringify(config)),
@@ -79,5 +88,5 @@ export function buildInjectScript(config) {
     if (isLocalCheckout()) {
         rebuildLocalCheckout(config);
     }
-    bundleContentScopeScripts(`${config.out.js}/inject.js`, `${CSS_DIR}/build/${config.cssPlatform}/inject.js`);
+    bundleContentScopeScripts(`${config.out.js}/inject.js`, prebuiltInject(config.cssPlatform));
 }

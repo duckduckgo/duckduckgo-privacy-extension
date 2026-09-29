@@ -21,14 +21,7 @@ function resolveBin(packageName) {
     return path.join(packageDir, relative);
 }
 
-function checkExit(label, { error, status }) {
-    if (error) {
-        throw error;
-    }
-    if (status !== 0) {
-        throw new Error(`${label} exited with status ${status}`);
-    }
-}
+const exitError = (label, status) => new Error(`${label} exited with status ${status}`);
 
 /**
  * Runs a Node based tool asynchronously, so it can overlap with other work.
@@ -39,14 +32,7 @@ export function runNodeBin(packageName, args) {
     return new Promise((resolve, reject) => {
         const child = spawn(process.execPath, [resolveBin(packageName), ...args], { stdio: 'inherit' });
         child.on('error', reject);
-        child.on('exit', (status) => {
-            try {
-                checkExit(`${packageName} ${args.join(' ')}`, { status });
-                resolve();
-            } catch (e) {
-                reject(e);
-            }
-        });
+        child.on('exit', (status) => (status === 0 ? resolve() : reject(exitError(`${packageName} ${args.join(' ')}`, status))));
     });
 }
 
@@ -57,5 +43,11 @@ export function runNodeBin(packageName, args) {
  * @param {string} cwd
  */
 export function runNpm(args, cwd) {
-    checkExit(`npm ${args.join(' ')} (in ${cwd})`, spawnSync('npm', args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' }));
+    const { error, status } = spawnSync('npm', args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' });
+    if (error) {
+        throw error;
+    }
+    if (status !== 0) {
+        throw exitError(`npm ${args.join(' ')} (in ${cwd})`, status);
+    }
 }

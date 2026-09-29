@@ -5,36 +5,18 @@
  *   node scripts/build-tools/clean.mjs --all
  *
  * Like the Makefile's `clean` target this also removes the cached Smarter
- * Encryption domain list, so that the next release build fetches a fresh copy.
+ * Encryption domain list, so that the next release build fetches a fresh copy,
+ * and an artifact left behind by the integration tests.
  */
 import { parseArgs } from 'node:util';
-import { BROWSERS, ROOT_DIR, SMARTER_ENCRYPTION_LIST, TYPES, resolveConfig } from './lib/config.mjs';
+import { TARGET_OPTIONS, TARGET_USAGE, resolveTarget } from './lib/cli.mjs';
+import { BUILD_ROOT, ROOT_DIR, SMARTER_ENCRYPTION_LIST } from './lib/config.mjs';
 import { remove } from './lib/fs.mjs';
 
-const USAGE = `Usage: node scripts/build-tools/clean.mjs (--browser <${BROWSERS.join('|')}> --type <${TYPES.join('|')}> | --all)`;
+const USAGE = `Usage: node scripts/build-tools/clean.mjs (${TARGET_USAGE} | --all)`;
 
-const { values } = parseArgs({
-    options: {
-        browser: { type: 'string' },
-        type: { type: 'string' },
-        all: { type: 'boolean', default: false },
-    },
-});
-
-let target;
-if (values.all) {
-    target = 'build';
-} else if (values.browser && values.type) {
-    try {
-        target = resolveConfig({ browser: values.browser, type: values.type }).buildDir;
-    } catch (e) {
-        console.error(e.message);
-        process.exit(1);
-    }
-} else {
-    console.error(USAGE);
-    process.exit(1);
-}
+const { values } = parseArgs({ options: { ...TARGET_OPTIONS, all: { type: 'boolean' } } });
+const target = values.all ? BUILD_ROOT : resolveTarget(values, USAGE).out.root;
 
 process.chdir(ROOT_DIR);
 remove(target);

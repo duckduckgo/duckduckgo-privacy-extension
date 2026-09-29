@@ -13,8 +13,9 @@ export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)
 
 export const TYPES = ['dev', 'release'];
 
-export const INTERMEDIATES_DIR = 'build/.intermediates';
-export const SMARTER_ENCRYPTION_LIST = 'build/.smarter_encryption.txt';
+export const BUILD_ROOT = 'build';
+export const INTERMEDIATES_DIR = `${BUILD_ROOT}/.intermediates`;
+export const SMARTER_ENCRYPTION_LIST = `${BUILD_ROOT}/.smarter_encryption.txt`;
 export const SMARTER_ENCRYPTION_URL = 'https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz';
 
 export const CONTENT_SCOPE_SCRIPTS_DIR = 'node_modules/@duckduckgo/content-scope-scripts';
@@ -52,6 +53,9 @@ const SCSS_BUNDLES = [
 
 const only = (bundles, names) => bundles.filter(({ out }) => names.includes(out));
 
+/** The content-scope-scripts build used by each platform. */
+const CONTENT_SCOPE_SCRIPTS_BUILDS = { chrome: 'chrome-mv3', firefox: 'firefox' };
+
 /**
  * @typedef {object} BrowserProfile
  * @property {'chrome'|'firefox'} platform Chrome-like or Firefox, for platform-specific dependencies.
@@ -60,7 +64,7 @@ const only = (bundles, names) => bundles.filter(({ out }) => names.includes(out)
  * @property {boolean} smarterEncryption Bundles Smarter Encryption declarativeNetRequest rules.
  * @property {{in: string, out: string}[]} jsBundles
  * @property {{in: string, out: string}[]} scssBundles
- * @property {string[]} htmlExcludes Pages under shared/html not to ship.
+ * @property {string[]} [htmlExcludes] Pages under shared/html not to ship.
  * @property {string} [dashboardCss] Extra CSS appended to the dashboard popup stylesheet.
  */
 
@@ -71,11 +75,10 @@ const CHROME = {
     smarterEncryption: true,
     jsBundles: JS_BUNDLES,
     scssBundles: SCSS_BUNDLES,
-    htmlExcludes: [],
 };
 
 /** @type {Record<string, BrowserProfile>} */
-export const BROWSER_PROFILES = {
+const BROWSER_PROFILES = {
     chrome: CHROME,
     firefox: { ...CHROME, platform: 'firefox', smarterEncryption: false },
     // The minimal embedded build: manifest plus two bundles.
@@ -89,7 +92,6 @@ export const BROWSER_PROFILES = {
             { in: 'shared/js/cpm.js', out: 'content-scripts/cpm' },
         ],
         scssBundles: [],
-        htmlExcludes: [],
     },
     // A cut-down Chrome build. The browser owns the fire button and the new
     // tab page, there is no options page and MV3 has no background page, so
@@ -113,7 +115,6 @@ export const BROWSERS = Object.keys(BROWSER_PROFILES);
  *   type: 'dev'|'release',
  *   dev: boolean,
  *   reloader: boolean,
- *   buildDir: string,
  *   cssPlatform: 'chrome-mv3'|'firefox',
  *   out: ReturnType<typeof outputPaths>,
  * }} BuildConfig
@@ -146,20 +147,18 @@ export function resolveConfig({ browser, type, reloader = true }) {
     if (!profile) {
         throw new Error(`Unknown browser "${browser}". Expected one of: ${BROWSERS.join(', ')}`);
     }
-    if (type !== 'dev' && type !== 'release') {
+    if (!TYPES.includes(type)) {
         throw new Error(`Unknown build type "${type}". Expected one of: ${TYPES.join(', ')}`);
     }
     const dev = type === 'dev';
-    const buildDir = `build/${browser}/${type}`;
     return {
         ...profile,
         browser,
         type,
         dev,
         reloader: dev && reloader,
-        buildDir,
-        cssPlatform: profile.platform === 'firefox' ? 'firefox' : 'chrome-mv3',
-        out: outputPaths(buildDir),
+        cssPlatform: CONTENT_SCOPE_SCRIPTS_BUILDS[profile.platform],
+        out: outputPaths(`${BUILD_ROOT}/${browser}/${type}`),
     };
 }
 

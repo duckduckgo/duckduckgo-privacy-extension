@@ -10,6 +10,11 @@ export function isBackupFile(filePath) {
     return filePath.endsWith('~');
 }
 
+/** Directories never treated as build inputs. */
+export function isSkippedDir(name) {
+    return name === 'node_modules' || name === '.git';
+}
+
 /** @param {string} dir */
 export function ensureDir(dir) {
     fs.mkdirSync(dir, { recursive: true });
@@ -108,7 +113,7 @@ function newestMtime(paths) {
         }
         if (stat.isDirectory()) {
             for (const name of fs.readdirSync(p)) {
-                if (name !== 'node_modules' && name !== '.git') visit(path.join(p, name));
+                if (!isSkippedDir(name)) visit(path.join(p, name));
             }
         } else if (stat.mtimeMs > newest) {
             newest = stat.mtimeMs;

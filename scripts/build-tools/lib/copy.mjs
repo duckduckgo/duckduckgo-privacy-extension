@@ -10,7 +10,7 @@ import { copy, copyEntries } from './fs.mjs';
 const isJs = (name) => name.endsWith('.js');
 
 /** @param {import('./config.mjs').BuildConfig} config */
-export function copyStaticFiles({ browser, platform, ui, autofill, htmlExcludes, dashboardCss, out }) {
+export function copyStaticFiles({ browser, platform, ui, autofill, htmlExcludes = [], dashboardCss, out }) {
     copyEntries(`browsers/${browser}`, out.root);
 
     if (!ui) {
