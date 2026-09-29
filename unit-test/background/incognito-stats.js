@@ -99,6 +99,7 @@ describe('Incognito tabs', () => {
             blockedEvents = [];
             emitter.on(TrackerBlockedEvent.eventName, onBlocked);
             spyOn(Companies, 'add');
+            spyOn(Companies, 'countCompanyOnPage');
         });
 
         afterEach(() => {
@@ -113,6 +114,7 @@ describe('Incognito tabs', () => {
                 const response = blockHandleResponse(tab, trackerRequest);
                 expect(response?.cancel).toBe(true);
                 expect(Companies.add).toHaveBeenCalledTimes(recorded ? 1 : 0);
+                expect(Companies.countCompanyOnPage).toHaveBeenCalledTimes(recorded ? 1 : 0);
                 expect(blockedEvents.length).toBe(recorded ? 1 : 0);
                 // The tab's own tracker list is always updated for the dashboard
                 expect(Object.keys(tab.trackers).length).toBe(1);

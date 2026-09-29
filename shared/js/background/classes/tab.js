@@ -359,7 +359,8 @@ class Tab {
             this.trackers[t.tracker.owner.name] = newTracker;
 
             // first time we have seen this network tracker on the page
-            if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner);
+            // (incognito browsing is left out of the persisted stats)
+            if (t.tracker.owner.name !== 'unknown' && !this.incognito) Companies.countCompanyOnPage(t.tracker.owner);
         }
         // Set the trackers on the tab which will trigger a state update
         this.trackers = trackers;
