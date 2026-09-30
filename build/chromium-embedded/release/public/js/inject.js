@@ -12,7 +12,11 @@
   };
   var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
   var __commonJS = (cb, mod) => function __require() {
-    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+    try {
+      return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+    } catch (e) {
+      throw mod = 0, e;
+    }
   };
   var __export = (target, all) => {
     for (var name in all)
@@ -785,6 +789,7 @@
   __export(captured_globals_exports, {
     Arrayfrom: () => Arrayfrom,
     CustomEvent: () => CustomEvent2,
+    DOMException: () => DOMException2,
     Error: () => Error2,
     JSONparse: () => JSONparse,
     JSONstringify: () => JSONstringify,
@@ -792,6 +797,7 @@
     Promise: () => Promise2,
     Proxy: () => Proxy2,
     Reflect: () => Reflect2,
+    ReflectApply: () => ReflectApply,
     ReflectDeleteProperty: () => ReflectDeleteProperty,
     Set: () => Set2,
     String: () => String2,
@@ -804,6 +810,8 @@
     Uint32Array: () => Uint32Array2,
     Uint8Array: () => Uint8Array2,
     addEventListener: () => addEventListener,
+    atob: () => atob,
+    charCodeAt: () => charCodeAt,
     console: () => console2,
     consoleError: () => consoleError,
     consoleLog: () => consoleLog,
@@ -823,7 +831,9 @@
     importKey: () => importKey,
     objectDefineProperty: () => objectDefineProperty,
     objectEntries: () => objectEntries,
+    objectFromEntries: () => objectFromEntries,
     objectKeys: () => objectKeys,
+    performanceNow: () => performanceNow,
     randomUUID: () => randomUUID,
     removeEventListener: () => removeEventListener,
     toString: () => toString
@@ -837,6 +847,7 @@
   var toString = Object.prototype.toString;
   var objectKeys = Object.keys;
   var objectEntries = Object.entries;
+  var objectFromEntries = Object.fromEntries;
   var objectDefineProperty = Object.defineProperty;
   var URL2 = globalThis.URL;
   var Proxy2 = globalThis.Proxy;
@@ -845,6 +856,7 @@
   var Symbol2 = globalThis.Symbol;
   var hasOwnProperty = Object.prototype.hasOwnProperty;
   var dispatchEvent = globalThis.dispatchEvent?.bind(globalThis);
+  var performanceNow = globalThis.performance?.now?.bind(globalThis.performance) ?? Date.now;
   var addEventListener = globalThis.addEventListener?.bind(globalThis);
   var removeEventListener = globalThis.removeEventListener?.bind(globalThis);
   var CustomEvent2 = globalThis.CustomEvent;
@@ -865,7 +877,11 @@
   var JSONstringify = JSON.stringify;
   var JSONparse = JSON.parse;
   var Arrayfrom = Array.from;
+  var atob = globalThis.atob?.bind(globalThis);
+  var DOMException2 = globalThis.DOMException;
+  var charCodeAt = globalThis.String.prototype.charCodeAt;
   var ReflectDeleteProperty = Reflect2.deleteProperty.bind(Reflect2);
+  var ReflectApply = Reflect2.apply.bind(Reflect2);
   var getRandomValues = globalThis.crypto?.getRandomValues?.bind(globalThis.crypto);
   var generateKey = globalThis.crypto?.subtle?.generateKey?.bind(globalThis.crypto?.subtle);
   var exportKey = globalThis.crypto?.subtle?.exportKey?.bind(globalThis.crypto?.subtle);
@@ -1068,6 +1084,9 @@
     }
   };
   function processAttr(configSetting, defaultValue) {
+    if (typeof defaultValue === "number" && isNaN(defaultValue)) {
+      defaultValue = void 0;
+    }
     if (configSetting === void 0) {
       return defaultValue;
     }
@@ -1215,6 +1234,9 @@
       return false;
     }
     const domainParts = topLevelHostname.split(".");
+    if (domainParts.length === 1) {
+      return featureList.some((entry) => entry.domain === topLevelHostname);
+    }
     while (domainParts.length > 1 && !unprotectedDomain) {
       const partialDomain = domainParts.join(".");
       unprotectedDomain = featureList.filter((domain) => domain.domain === partialDomain).length > 0;
@@ -1299,6 +1321,9 @@
           return false;
         }
       }
+      if (isSelfGatingFeature(featureName)) {
+        return isStateEnabled(feature.state, platform);
+      }
       return isStateEnabled(feature.state, platform) && !isUnprotectedDomain(topLevelHostname, feature.exceptions);
     }).concat(platformSpecificFeaturesNotInRemoteConfig);
     return enabledFeatures;
@@ -1330,11 +1355,24 @@
     "webInterferenceDetection",
     "webDetection",
     "webEvents",
+    "detectorPerf",
     "pageObserver",
-    "hover"
+    "hover",
+    "trackerProtection",
+    // only enabled on apple platforms
+    "textSelection",
+    "uaChBrands",
+    "chromeWebstorePatching"
   ];
+  var selfGatingFeatures = ["trackerProtection", "uaChBrands"];
   function isPlatformSpecificFeature(featureName) {
     return platformSpecificFeatures.includes(
+      /** @type {import('./features.js').FeatureName} */
+      featureName
+    );
+  }
+  function isSelfGatingFeature(featureName) {
+    return selfGatingFeatures.includes(
       /** @type {import('./features.js').FeatureName} */
       featureName
     );
@@ -1383,6 +1421,7 @@
       "webDetection",
       "webEvents",
       "webInterferenceDetection",
+      "detectorPerf",
       "windowsPermissionUsage",
       "uaChBrands",
       "brokerProtection",
@@ -1396,7 +1435,11 @@
       "pageObserver",
       "hover",
       "browserUiLock",
-      "trackerProtection"
+      "trackerProtection",
+      "tabSuspension",
+      "autofillPasskeys",
+      "textSelection",
+      "chromeWebstorePatching"
     ]
   );
   var platformSupport = {
@@ -1414,8 +1457,12 @@
       "webDetection",
       "webEvents",
       "webInterferenceDetection",
+      "detectorPerf",
+      "webTelemetry",
       "pageObserver",
-      "hover"
+      "hover",
+      "tabSuspension",
+      "textSelection"
     ],
     "apple-ai-clear": ["duckAiDataClearing"],
     "apple-ai-history": ["duckAiChatHistory"],
@@ -1425,6 +1472,7 @@
       "webDetection",
       "webEvents",
       "webInterferenceDetection",
+      "detectorPerf",
       "breakageReporting",
       "duckPlayer",
       "messageBridge",
@@ -1454,6 +1502,7 @@
       "webDetection",
       "webEvents",
       "webInterferenceDetection",
+      "detectorPerf",
       "webTelemetry",
       "windowsPermissionUsage",
       "uaChBrands",
@@ -1465,7 +1514,9 @@
       "pageContext",
       "duckAiDataClearing",
       "performanceMetrics",
-      "duckAiChatHistory"
+      "duckAiChatHistory",
+      "autofillPasskeys",
+      "chromeWebstorePatching"
     ],
     firefox: ["cookie", ...baseFeatures, "clickToLoad", "webDetection", "webEvents", "webInterferenceDetection", "breakageReporting"],
     chrome: ["cookie", ...baseFeatures, "clickToLoad", "webDetection", "webEvents", "webInterferenceDetection", "breakageReporting"],
@@ -1624,6 +1675,35 @@
       return Reflect.get(target, prop, receiver);
     };
   }
+  function mergePropertyDescriptors(origDescriptor, partialDescriptor) {
+    if ("value" in origDescriptor && "value" in partialDescriptor || "get" in origDescriptor && "get" in partialDescriptor || "set" in origDescriptor && "set" in partialDescriptor) {
+      const merged = {
+        ...origDescriptor,
+        ...partialDescriptor
+      };
+      if ("value" in merged) {
+        return (
+          /** @type {import('./wrapper-utils').StrictPropertyDescriptor} */
+          {
+            value: merged.value,
+            writable: typeof merged.writable === "boolean" ? merged.writable : true,
+            configurable: typeof merged.configurable === "boolean" ? merged.configurable : true,
+            enumerable: typeof merged.enumerable === "boolean" ? merged.enumerable : true
+          }
+        );
+      }
+      return (
+        /** @type {import('./wrapper-utils').StrictPropertyDescriptor} */
+        {
+          get: merged.get,
+          set: merged.set,
+          configurable: typeof merged.configurable === "boolean" ? merged.configurable : true,
+          enumerable: typeof merged.enumerable === "boolean" ? merged.enumerable : true
+        }
+      );
+    }
+    return void 0;
+  }
   function wrapProperty(object, propertyName, descriptor, definePropertyFn) {
     if (!object) {
       return;
@@ -1632,15 +1712,12 @@
     if (!origDescriptor) {
       return;
     }
-    if ("value" in origDescriptor && "value" in descriptor || "get" in origDescriptor && "get" in descriptor || "set" in origDescriptor && "set" in descriptor) {
-      definePropertyFn(object, propertyName, {
-        ...origDescriptor,
-        ...descriptor
-      });
-      return origDescriptor;
-    } else {
+    const merged = mergePropertyDescriptors(origDescriptor, descriptor);
+    if (!merged) {
       throw new Error(`Property descriptor for ${propertyName} may only include the following keys: ${objectKeys(origDescriptor)}`);
     }
+    definePropertyFn(object, propertyName, merged);
+    return origDescriptor;
   }
   function wrapMethod(object, propertyName, wrapperFn, definePropertyFn) {
     if (!object) {
@@ -2062,21 +2139,27 @@
      * @param {import('../index.js').MessagingContext} messagingContext
      */
     constructor(config2, messagingContext) {
-      /** @type {Record<string, any>} */
-      __publicField(this, "capturedWebkitHandlers", {});
       /**
-       * @type {{name: string, length: number}}
-       * @internal
+       * Null-prototype cache so a hostile page that pollutes `Object.prototype`
+       * cannot supply a callable from there if `capture` ever misses a handler.
+       *
+       * Uses the `{ __proto__: null }` literal rather than `Object.create(null)`
+       * because the latter is a method dispatch through `globalThis.Object`, which
+       * page JS could replace before this class field runs if transport
+       * construction is deferred (`Messaging` is lazy on `ContentFeature.messaging`).
+       * The `__proto__: null` literal is a syntactic construct, not method
+       * dispatch, so it always yields a true null-prototype object.
+       * @type {Record<string, { handler: any, postMessage: Function }>}
        */
-      __publicField(this, "algoObj", {
-        name: "AES-GCM",
-        length: 256
-      });
+      __publicField(
+        this,
+        "capturedWebkitHandlers",
+        /** @type {any} */
+        { __proto__: null }
+      );
       this.messagingContext = messagingContext;
       this.config = config2;
-      if (!this.config.hasModernWebkitAPI) {
-        this.captureWebkitHandlers(this.config.webkitMessageHandlerNames);
-      }
+      this.captureWebkitHandlers(this.config.webkitMessageHandlerNames);
     }
     /**
      * Sends message to the webkit layer (fire and forget)
@@ -2087,24 +2170,11 @@
      * @internal
      */
     wkSend(handler, data = {}) {
-      if (!(handler in window.webkit.messageHandlers)) {
+      const captured2 = this.capturedWebkitHandlers[handler];
+      if (!captured2 || typeof captured2.postMessage !== "function") {
         throw new MissingHandler(`Missing webkit handler: '${handler}'`, handler);
       }
-      if (!this.config.hasModernWebkitAPI) {
-        const outgoing = {
-          ...data,
-          messageHandling: {
-            ...data.messageHandling,
-            secret: this.config.secret
-          }
-        };
-        if (!(handler in this.capturedWebkitHandlers)) {
-          throw new MissingHandler(`cannot continue, method ${handler} not captured on macos < 11`, handler);
-        } else {
-          return this.capturedWebkitHandlers[handler](outgoing);
-        }
-      }
-      return window.webkit.messageHandlers[handler].postMessage?.(data);
+      return ReflectApply(captured2.postMessage, captured2.handler, [data]);
     }
     /**
      * Sends message to the webkit layer and waits for the specified response
@@ -2114,44 +2184,8 @@
      * @internal
      */
     async wkSendAndWait(handler, data) {
-      if (this.config.hasModernWebkitAPI) {
-        const response = await this.wkSend(handler, data);
-        return JSONparse(response || "{}");
-      }
-      try {
-        const randMethodName = this.createRandMethodName();
-        const key = await this.createRandKey();
-        const iv = this.createRandIv();
-        const { ciphertext, tag } = await new Promise2((resolve) => {
-          this.generateRandomMethod(randMethodName, resolve);
-          data.messageHandling = new SecureMessagingParams({
-            methodName: randMethodName,
-            secret: this.config.secret,
-            key: Arrayfrom(key),
-            iv: Arrayfrom(iv)
-          });
-          this.wkSend(handler, data);
-        });
-        const cipher = new Uint8Array2([...ciphertext, ...tag]);
-        const decrypted = await this.decryptResponse(
-          /** @type {BufferSource} */
-          /** @type {unknown} */
-          cipher,
-          /** @type {BufferSource} */
-          /** @type {unknown} */
-          key,
-          iv
-        );
-        return JSONparse(decrypted || "{}");
-      } catch (e) {
-        if (e instanceof MissingHandler) {
-          throw e;
-        } else {
-          console.error("decryption failed", e);
-          console.error(e);
-          return { error: e };
-        }
-      }
+      const response = await this.wkSend(handler, data);
+      return JSONparse(response || "{}");
     }
     /**
      * @param {import('../index.js').NotificationMessage} msg
@@ -2176,77 +2210,19 @@
       throw new Error2("an unknown error occurred");
     }
     /**
-     * Generate a random method name and adds it to navigator.duckduckgo.messageHandlers
-     * The native layer will use this method to send the response
-     * @param {string | number} randomMethodName
-     * @param {Function} callback
-     * @internal
-     */
-    generateRandomMethod(randomMethodName, callback) {
-      const target = ensureNavigatorDuckDuckGo().messageHandlers;
-      objectDefineProperty(target, randomMethodName, {
-        enumerable: false,
-        configurable: true,
-        writable: false,
-        /**
-         * @param {any[]} args
-         */
-        value: (...args) => {
-          callback(...args);
-          ReflectDeleteProperty(target, randomMethodName);
-        }
-      });
-    }
-    /**
-     * @internal
-     * @return {string}
-     */
-    randomString() {
-      return "" + getRandomValues(new Uint32Array2(1))[0];
-    }
-    /**
-     * @internal
-     * @return {string}
-     */
-    createRandMethodName() {
-      return "_" + this.randomString();
-    }
-    /**
-     * @returns {Promise<Uint8Array>}
-     * @internal
-     */
-    async createRandKey() {
-      const key = await generateKey(this.algoObj, true, ["encrypt", "decrypt"]);
-      const exportedKey = await exportKey("raw", key);
-      return new Uint8Array2(exportedKey);
-    }
-    /**
-     * @returns {Uint8Array}
-     * @internal
-     */
-    createRandIv() {
-      return getRandomValues(new Uint8Array2(12));
-    }
-    /**
-     * @param {BufferSource} ciphertext
-     * @param {BufferSource} key
-     * @param {Uint8Array} iv
-     * @returns {Promise<string>}
-     * @internal
-     */
-    async decryptResponse(ciphertext, key, iv) {
-      const cryptoKey = await importKey("raw", key, "AES-GCM", false, ["decrypt"]);
-      const algo = {
-        name: "AES-GCM",
-        iv
-      };
-      const decrypted = await decrypt(algo, cryptoKey, ciphertext);
-      const dec = new TextDecoder();
-      return dec.decode(decrypted);
-    }
-    /**
-     * When required (such as on macos 10.x), capture the `postMessage` method on
-     * each webkit messageHandler
+     * Capture the `postMessage` method on each webkit messageHandler so the
+     * transport can call them later without re-reading `window.webkit.messageHandlers`.
+     * Makes the transport resilient to later removal or replacement of
+     * `window.webkit.messageHandlers` (e.g. by privacy hardening that nullifies
+     * the namespace for site JS to reduce fingerprinting surface).
+     *
+     * Stores the handler object and its `postMessage` function as a pair so
+     * `wkSend` can dispatch via the captured `ReflectApply` rather than calling
+     * `.bind()` here. `.bind` is a method on the page-mutable
+     * `Function.prototype` — if transport construction is deferred (`Messaging`
+     * is lazy on `ContentFeature.messaging`) page JS could replace
+     * `Function.prototype.bind` first and have the cache store an attacker-
+     * controlled function. Storing the unbound pair sidesteps that.
      *
      * @param {string[]} handlerNames
      */
@@ -2254,11 +2230,12 @@
       const handlers = window.webkit.messageHandlers;
       if (!handlers) throw new MissingHandler("window.webkit.messageHandlers was absent", "all");
       for (const webkitMessageHandlerName of handlerNames) {
-        if (typeof handlers[webkitMessageHandlerName]?.postMessage === "function") {
-          const original = handlers[webkitMessageHandlerName];
-          const bound = handlers[webkitMessageHandlerName].postMessage?.bind(original);
-          this.capturedWebkitHandlers[webkitMessageHandlerName] = bound;
-          delete handlers[webkitMessageHandlerName].postMessage;
+        const handler = handlers[webkitMessageHandlerName];
+        if (typeof handler?.postMessage === "function") {
+          this.capturedWebkitHandlers[webkitMessageHandlerName] = {
+            handler,
+            postMessage: handler.postMessage
+          };
         }
       }
     }
@@ -2291,30 +2268,11 @@
   var WebkitMessagingConfig = class {
     /**
      * @param {object} params
-     * @param {boolean} params.hasModernWebkitAPI
      * @param {string[]} params.webkitMessageHandlerNames
-     * @param {string} params.secret
      * @internal
      */
     constructor(params) {
-      this.hasModernWebkitAPI = params.hasModernWebkitAPI;
       this.webkitMessageHandlerNames = params.webkitMessageHandlerNames;
-      this.secret = params.secret;
-    }
-  };
-  var SecureMessagingParams = class {
-    /**
-     * @param {object} params
-     * @param {string} params.methodName
-     * @param {string} params.secret
-     * @param {number[]} params.key
-     * @param {number[]} params.iv
-     */
-    constructor(params) {
-      this.methodName = params.methodName;
-      this.secret = params.secret;
-      this.key = params.key;
-      this.iv = params.iv;
     }
   };
 
@@ -3111,7 +3069,7 @@
       if (isJSONObject(value)) {
         value = value[path[i]];
       } else if (isJSONArray(value)) {
-        value = value[Number.parseInt(path[i])];
+        value = value[Number.parseInt(path[i], 10)];
       } else {
         value = void 0;
       }
@@ -3119,8 +3077,7 @@
     }
     return value;
   }
-  function setIn(object, path, value) {
-    let createPath = arguments.length > 3 && arguments[3] !== void 0 ? arguments[3] : false;
+  function setIn(object, path, value, createPath = false) {
     if (path.length === 0) {
       return value;
     }
@@ -3162,7 +3119,7 @@
       }
       const updatedObject = shallowClone(object);
       if (isJSONArray(updatedObject)) {
-        updatedObject.splice(Number.parseInt(key2), 1);
+        updatedObject.splice(Number.parseInt(key2, 10), 1);
       }
       if (isJSONObject(updatedObject)) {
         delete updatedObject[key2];
@@ -3181,7 +3138,7 @@
         throw new TypeError(`Array expected at path ${JSON.stringify(parentPath)}`);
       }
       const updatedItems = shallowClone(items);
-      updatedItems.splice(Number.parseInt(index), 0, value);
+      updatedItems.splice(Number.parseInt(index, 10), 0, value);
       return updatedItems;
     });
   }
@@ -4112,7 +4069,6 @@
        *   platform: import('./utils.js').Platform,
        *   desktopModeEnabled?: boolean,
        *   forcedZoomEnabled?: boolean,
-       *   isDdgWebView?: boolean,
        *   featureSettings?: Record<string, unknown>,
        *   assets?: import('./content-feature.js').AssetConfig | undefined,
        *   site: import('./content-feature.js').Site,
@@ -4168,9 +4124,10 @@
       const conditionalChanges = this._getFeatureSettings()?.[featureKeyName] || [];
       return conditionalChanges.filter((rule) => {
         let condition = rule.condition;
-        if (condition === void 0 && "domain" in rule) {
+        if (condition === void 0 && rule.domain !== void 0) {
           condition = this._domainToConditonBlocks(rule.domain);
         }
+        if (condition === void 0) return true;
         return this._matchConditionalBlockOrArray(condition);
       });
     }
@@ -4950,6 +4907,18 @@
     const injectName = "chrome-mv3";
     return injectName === "firefox" || injectName === "chrome-mv3" || injectName === "windows";
   }
+  var DEFAULT_COOKIE_POLICY = {
+    threshold: 604800,
+    // 7 days
+    maxAge: 604800
+    // 7 days
+  };
+  var DEFAULT_TRACKER_COOKIE_POLICY = {
+    threshold: 86400,
+    // 1 day
+    maxAge: 86400
+    // 1 day
+  };
   var cookiePolicy = {
     debug: false,
     isFrame: isBeingFramed(),
@@ -4959,16 +4928,10 @@
     shouldBlockNonTrackerCookie: false,
     isThirdPartyFrame: isThirdPartyFrame(),
     policy: {
-      threshold: 604800,
-      // 7 days
-      maxAge: 604800
-      // 7 days
+      ...DEFAULT_COOKIE_POLICY
     },
     trackerPolicy: {
-      threshold: 86400,
-      // 1 day
-      maxAge: 86400
-      // 1 day
+      ...DEFAULT_TRACKER_COOKIE_POLICY
     },
     allowlist: (
       /** @type {{ host: string }[]} */
@@ -5038,8 +5001,8 @@
           }
         );
         cookiePolicy.shouldBlock = !frameExempted && !tabExempted;
-        cookiePolicy.policy = settings.firstPartyCookiePolicy;
-        cookiePolicy.trackerPolicy = settings.firstPartyTrackerCookiePolicy;
+        cookiePolicy.policy = settings.firstPartyCookiePolicy ?? cookiePolicy.policy ?? DEFAULT_COOKIE_POLICY;
+        cookiePolicy.trackerPolicy = settings.firstPartyTrackerCookiePolicy ?? cookiePolicy.trackerPolicy ?? DEFAULT_TRACKER_COOKIE_POLICY;
         cookiePolicy.allowlist = this.getFeatureSetting("allowlist", "adClickAttribution") || [];
       }
       const document2 = globalThis.document;
@@ -5125,6 +5088,8 @@
      * @param {import('../content-scope-features.js').LoadArgs & { cookie?: ExtensionCookiePolicy }} args
      */
     init(args) {
+      const fallbackPolicy = cookiePolicy.policy ?? DEFAULT_COOKIE_POLICY;
+      const fallbackTrackerPolicy = cookiePolicy.trackerPolicy ?? DEFAULT_TRACKER_COOKIE_POLICY;
       const restOfPolicy = {
         debug: this.isDebug,
         shouldBlockTrackerCookie: this.getFeatureSettingEnabled("trackerCookie"),
@@ -5145,6 +5110,12 @@
       } else {
         const toCopy = Object.fromEntries(Object.entries(restOfPolicy).filter(([, v2]) => v2));
         Object.assign(cookiePolicy, toCopy);
+      }
+      if (cookiePolicy.policy == null) {
+        cookiePolicy.policy = fallbackPolicy;
+      }
+      if (cookiePolicy.trackerPolicy == null) {
+        cookiePolicy.trackerPolicy = fallbackTrackerPolicy;
       }
       loadedPolicyResolve();
     }
@@ -6747,6 +6718,9 @@
   var hideTimeouts = [0, 100, 300, 500, 1e3, 2e3, 3e3];
   var unhideTimeouts = [1250, 2250, 3e3];
   var featureInstance;
+  function hasSelector(rule) {
+    return "selector" in rule;
+  }
   function collapseDomNode(element, rule, previousElement) {
     if (!element) {
       return;
@@ -6888,16 +6862,9 @@
     let selector = "";
     rules.forEach((rule, i) => {
       if (i !== rules.length - 1) {
-        selector = selector.concat(
-          /** @type {ElementHidingRuleHide | ElementHidingRuleModify} */
-          rule.selector,
-          ","
-        );
+        selector = selector.concat(rule.selector, ",");
       } else {
-        selector = selector.concat(
-          /** @type {ElementHidingRuleHide | ElementHidingRuleModify} */
-          rule.selector
-        );
+        selector = selector.concat(rule.selector);
       }
     });
     const styleTagProperties = "display:none!important;min-height:0!important;height:0!important;";
@@ -6907,12 +6874,13 @@
   }
   function hideAdNodes(rules) {
     const document2 = globalThis.document;
-    rules.forEach((rule) => {
-      const selector = forgivingSelector(
-        /** @type {ElementHidingRuleHide | ElementHidingRuleModify} */
-        rule.selector
-      );
-      const matchingElementArray = [...document2.querySelectorAll(selector)];
+    rules.filter(hasSelector).forEach((rule) => {
+      let matchingElementArray;
+      try {
+        matchingElementArray = [...document2.querySelectorAll(querySelectorFor(rule.selector))];
+      } catch {
+        return;
+      }
       matchingElementArray.forEach((element) => {
         collapseDomNode(element, rule);
       });
@@ -6921,8 +6889,12 @@
   function unhideLoadedAds() {
     const document2 = globalThis.document;
     appliedRules.forEach((rule) => {
-      const selector = forgivingSelector(rule.selector);
-      const matchingElementArray = [...document2.querySelectorAll(selector)];
+      let matchingElementArray;
+      try {
+        matchingElementArray = [...document2.querySelectorAll(querySelectorFor(rule.selector))];
+      } catch {
+        return;
+      }
       matchingElementArray.forEach((element) => {
         expandNonEmptyDomNode(element, rule);
       });
@@ -6930,6 +6902,9 @@
   }
   function forgivingSelector(selector) {
     return `:is(${selector})`;
+  }
+  function querySelectorFor(selector) {
+    return selector.includes(",") ? forgivingSelector(selector) : selector;
   }
   var ElementHiding = class extends ContentFeature {
     init() {
@@ -6951,14 +6926,15 @@
         shouldInjectStyleTag = this.matchConditionalFeatureSetting("styleTagExceptions").length === 0;
       }
       const activeDomainRules = this.matchConditionalFeatureSetting("domains").flatMap((item) => {
-        return (
+        return Array.isArray(item.rules) ? (
           /** @type {ElementHidingRule[]} */
-          item.rules || []
-        );
+          item.rules
+        ) : [];
       });
-      const overrideRules = activeDomainRules.filter((rule) => {
-        return rule.type === "override";
-      });
+      const overrideRules = activeDomainRules.filter(
+        /** @returns {rule is ElementHidingRuleHide} */
+        (rule) => rule.type === "override"
+      );
       const disableDefault = activeDomainRules.some((rule) => {
         return rule.type === "disable-default";
       });
@@ -6971,7 +6947,7 @@
       }
       overrideRules.forEach((override) => {
         activeRules = activeRules.filter((rule) => {
-          return rule.selector !== override.selector;
+          return !hasSelector(rule) || rule.selector !== override.selector;
         });
       });
       const applyRules = this.applyRules.bind(this);
@@ -7070,16 +7046,21 @@
         return true;
       }
       if (change.type === "descriptor") {
-        if (change.enumerable && typeof change.enumerable !== "boolean") {
+        if ("enumerable" in change && typeof change.enumerable !== "boolean") {
           return false;
         }
-        if (change.configurable && typeof change.configurable !== "boolean") {
+        if ("configurable" in change && typeof change.configurable !== "boolean") {
           return false;
         }
         if ("define" in change && typeof change.define !== "boolean") {
           return false;
         }
-        return typeof change.getterValue !== "undefined";
+        const hasGetterValue = typeof change.getterValue !== "undefined";
+        const hasSetterValue = typeof change.setterValue !== "undefined";
+        const hasValue = typeof change.value !== "undefined";
+        const isAccessorShape = hasGetterValue || hasSetterValue;
+        const isValueShape = hasValue;
+        return isAccessorShape !== isValueShape;
       }
       return false;
     }
@@ -7090,9 +7071,11 @@
      * @typedef {Object} APIChange
      * @property {"remove"|"descriptor"} type
      * @property {import('../utils.js').ConfigSetting} [getterValue] - The value returned from a getter.
+     * @property {import('../utils.js').ConfigSetting} [setterValue] - The function invoked when the property is assigned. Used alongside (or instead of) getterValue to override accessor-style properties such as event handlers (e.g., `MediaDevices.prototype.ondevicechange`).
+     * @property {import('../utils.js').ConfigSetting} [value] - The value assigned to a value descriptor, including methods.
      * @property {boolean} [enumerable] - Whether the property is enumerable.
      * @property {boolean} [configurable] - Whether the property is configurable.
-     * @property {boolean} [define] - Whether to define the property if it does not exist.
+     * @property {boolean} [define] - When true, define a new own property if the key is absent from `api` and its entire prototype chain. When false (default), skip changes for properties that do not exist at all; override own properties via `wrapProperty`; override inherited properties by shadow-defining an own property on `api`.
      */
     /**
      * Applies a change to DOM APIs.
@@ -7133,27 +7116,163 @@
      */
     wrapApiDescriptor(api, key, change) {
       const getterValue = change.getterValue;
-      if (getterValue) {
-        const descriptor = {
-          get: () => processAttr(getterValue, void 0)
-        };
-        if ("enumerable" in change) {
-          descriptor.enumerable = change.enumerable;
-        }
-        if ("configurable" in change) {
-          descriptor.configurable = change.configurable;
-        }
-        if (change.define === true && !(key in api)) {
-          const defineDescriptor = {
-            ...descriptor,
-            enumerable: typeof descriptor.enumerable !== "boolean" ? true : descriptor.enumerable,
-            configurable: typeof descriptor.configurable !== "boolean" ? true : descriptor.configurable
-          };
-          this.defineProperty(api, key, defineDescriptor);
-          return;
-        }
-        this.wrapProperty(api, key, descriptor);
+      const setterValue = change.setterValue;
+      const value = change.value;
+      const descriptorKind = getterValue !== void 0 || setterValue !== void 0 ? "getter" : value !== void 0 ? "value" : void 0;
+      const configSetting = descriptorKind === "getter" ? getterValue : value;
+      if (!descriptorKind || descriptorKind === "value" && configSetting === void 0) {
+        return;
       }
+      const descriptor = this.createApiDescriptor(descriptorKind, configSetting, change);
+      const origDescriptor = this.findPropertyDescriptor(api, key);
+      if (!origDescriptor) {
+        if (change.define === true) {
+          this.defineProperty(api, key, this.createDefineDescriptor(descriptor, descriptorKind));
+        }
+        return;
+      }
+      if (descriptorKind === "value") {
+        const valueDescriptor = (
+          /** @type {{ value?: any }} */
+          descriptor
+        );
+        if (typeof valueDescriptor.value === "function" && typeof origDescriptor.value === "function") {
+          valueDescriptor.value = this.maskMethodReplacement(valueDescriptor.value, origDescriptor.value);
+        }
+      } else if (descriptorKind === "getter") {
+        const accessorDescriptor = (
+          /** @type {{ get?: () => any, set?: (v: any) => void }} */
+          descriptor
+        );
+        if (typeof accessorDescriptor.set === "function" && typeof origDescriptor.set === "function") {
+          accessorDescriptor.set = /** @type {(v: any) => void} */
+          this.maskMethodReplacement(accessorDescriptor.set, origDescriptor.set);
+        }
+      }
+      if (hasOwnProperty.call(api, key)) {
+        this.wrapProperty(api, key, descriptor);
+      } else {
+        const merged = mergePropertyDescriptors(origDescriptor, descriptor);
+        if (merged) {
+          this.defineProperty(api, key, merged);
+        }
+      }
+    }
+    /**
+     * Returns the property descriptor for `key` on `obj` or an ancestor in its prototype chain.
+     * @param {object} obj
+     * @param {string} key
+     * @returns {PropertyDescriptor | undefined}
+     */
+    findPropertyDescriptor(obj, key) {
+      let current = obj;
+      while (current) {
+        const descriptor = getOwnPropertyDescriptor(current, key);
+        if (descriptor) {
+          return descriptor;
+        }
+        current = Object.getPrototypeOf(current);
+      }
+      return void 0;
+    }
+    /**
+     * Wraps a config-supplied function so its observable identity (`toString`,
+     * `toString.toString`, `name`, `length`) mirrors the original DOM method it is
+     * replacing. The call itself still executes the configured replacement.
+     *
+     * Note: `processAttr` may return a shared function (e.g. `functionMap.noop`),
+     * so we always create a fresh wrapper before redefining `name`/`length` to
+     * avoid mutating module-level singletons.
+     *
+     * @param {Function} replacementFn - configured replacement to invoke
+     * @param {Function} origFn - original DOM method we are masking against
+     * @returns {Function}
+     */
+    maskMethodReplacement(replacementFn, origFn) {
+      const wrapper = function() {
+        return ReflectApply(replacementFn, this, arguments);
+      };
+      objectDefineProperty(wrapper, "name", { value: origFn.name, configurable: true });
+      objectDefineProperty(wrapper, "length", { value: origFn.length, configurable: true });
+      return wrapToString(wrapper, origFn);
+    }
+    /**
+     * @param {'getter' | 'value'} descriptorKind
+     * @param {import('../utils.js').ConfigSetting | import('../utils.js').ConfigSetting[] | undefined} configSetting
+     * @param {APIChange} change
+     * @returns {Partial<import('../wrapper-utils.js').StrictPropertyDescriptor>}
+     */
+    createApiDescriptor(descriptorKind, configSetting, change) {
+      let descriptor;
+      if (descriptorKind === "value") {
+        const valueSetting = (
+          /** @type {import('../utils.js').ConfigSetting | import('../utils.js').ConfigSetting[]} */
+          configSetting
+        );
+        descriptor = { value: processAttr(valueSetting, void 0) };
+      } else {
+        descriptor = {};
+        if (configSetting !== void 0) {
+          const getterSetting = configSetting;
+          descriptor.get = () => processAttr(getterSetting, void 0);
+        }
+        if (change.setterValue !== void 0) {
+          const setterSetting = (
+            /** @type {import('../utils.js').ConfigSetting} */
+            change.setterValue
+          );
+          descriptor.set = function setter(v2) {
+            const fn = processAttr(setterSetting, void 0);
+            if (typeof fn === "function") {
+              ReflectApply(fn, this, [v2]);
+            }
+          };
+        }
+      }
+      if ("enumerable" in change) {
+        descriptor.enumerable = change.enumerable;
+      }
+      if ("configurable" in change) {
+        descriptor.configurable = change.configurable;
+      }
+      return (
+        /** @type {Partial<import('../wrapper-utils.js').StrictPropertyDescriptor>} */
+        descriptor
+      );
+    }
+    /**
+     * @param {Partial<import('../wrapper-utils.js').StrictPropertyDescriptor>} descriptor
+     * @param {'getter' | 'value'} descriptorKind
+     * @returns {import('../wrapper-utils.js').StrictPropertyDescriptor}
+     */
+    createDefineDescriptor(descriptor, descriptorKind) {
+      if (descriptorKind === "value") {
+        const valueDescriptor = (
+          /** @type {{ value: any, enumerable?: boolean, configurable?: boolean }} */
+          descriptor
+        );
+        return {
+          value: valueDescriptor.value,
+          writable: true,
+          enumerable: typeof valueDescriptor.enumerable !== "boolean" ? true : valueDescriptor.enumerable,
+          configurable: typeof valueDescriptor.configurable !== "boolean" ? true : valueDescriptor.configurable
+        };
+      }
+      const getterDescriptor = (
+        /** @type {{ get?: () => any, set?: (v: any) => void, enumerable?: boolean, configurable?: boolean }} */
+        descriptor
+      );
+      const result = {
+        enumerable: typeof getterDescriptor.enumerable !== "boolean" ? true : getterDescriptor.enumerable,
+        configurable: typeof getterDescriptor.configurable !== "boolean" ? true : getterDescriptor.configurable
+      };
+      if (typeof getterDescriptor.get === "function") {
+        result.get = getterDescriptor.get;
+      }
+      if (typeof getterDescriptor.set === "function") {
+        result.set = getterDescriptor.set;
+      }
+      return result;
     }
     /**
      * Looks up a global object from a scope, e.g. 'Navigator.prototype'.
@@ -9926,6 +10045,29 @@
   };
   _messagingContext = new WeakMap();
 
+  // src/features/detector-perf.js
+  var EVENT_PREFIX = "detectorPerf";
+  var SEVERE_EVENT_TYPE = `${EVENT_PREFIX}_severe`;
+  var DEBUG_STATS_EVENT_TYPE = `${EVENT_PREFIX}DebugStats`;
+  function timeDetector(feature, name, fn, detail) {
+    const t0 = performanceNow();
+    let failed = true;
+    try {
+      const result = fn();
+      failed = false;
+      return result;
+    } finally {
+      const durationMs = performanceNow() - t0;
+      void reportDuration(feature, name, durationMs, detail, failed);
+    }
+  }
+  async function reportDuration(feature, name, durationMs, detail, failed) {
+    try {
+      await feature.callFeatureMethod("detectorPerf", "record", name, durationMs, detail, failed);
+    } catch {
+    }
+  }
+
   // src/features/web-detection/parse.js
   var DEFAULT_RUN_CONDITIONS = (
     /** @type {import('../../config-feature.js').ConditionBlock[]} */
@@ -10001,11 +10143,87 @@
     const rect = element.getBoundingClientRect();
     return rect.width > 0.5 && rect.height > 0.5 && style.display !== "none" && style.visibility !== "hidden" && parseFloat(style.opacity) > 0.05;
   }
+  var contentDomParser;
+  var CONTENT_METADATA_SELECTORS = "base,link,meta,script,style,template,title,desc";
+  var CONTENT_MEDIA_SELECTORS = "video,canvas,embed,object,audio,map,form,input,textarea,select,button,img,svg";
+  var CONTENT_TEXT_PARSE_LIMIT = 5e4;
+  function hasContent(element) {
+    if ((element.textContent || "").length > CONTENT_TEXT_PARSE_LIMIT) {
+      return true;
+    }
+    if (!contentDomParser) {
+      contentDomParser = new DOMParser();
+    }
+    const parsed = contentDomParser.parseFromString(element.outerHTML, "text/html").documentElement;
+    parsed.querySelectorAll(CONTENT_METADATA_SELECTORS).forEach((el) => el.remove());
+    if ((parsed.innerText || parsed.textContent || "").trim() !== "") {
+      return true;
+    }
+    if (parsed.querySelector(CONTENT_MEDIA_SELECTORS) !== null) {
+      return true;
+    }
+    return [...parsed.querySelectorAll("iframe")].some((frame) => {
+      return !frame.hidden && frame.src !== "" && frame.src !== "about:blank";
+    });
+  }
+  var ORDERED_NODE_SNAPSHOT_TYPE = 7;
+  var compiledXPaths = /* @__PURE__ */ new WeakMap();
+  function compileXPath(expression) {
+    let cache = compiledXPaths.get(document);
+    if (!cache) {
+      cache = /* @__PURE__ */ new Map();
+      compiledXPaths.set(document, cache);
+    }
+    let compiled = cache.get(expression);
+    if (!compiled) {
+      compiled = document.createExpression(expression, null);
+      cache.set(expression, compiled);
+    }
+    return compiled;
+  }
+  var DEFAULT_CHUNK_SIZE = 8192;
+  var CHUNK_TAIL_RATIO = 16;
+  var MAX_WORD_LENGTH = 64;
+  function isWordCode(code) {
+    return code >= 97 && code <= 122 || // a-z
+    code >= 65 && code <= 90 || // A-Z
+    code >= 48 && code <= 57 || // 0-9
+    code === 95;
+  }
+  function resolveXPathConfig(config2) {
+    const chunkSize = config2?.chunkSize ?? DEFAULT_CHUNK_SIZE;
+    const chunkTail = config2?.chunkTail ?? Math.floor(chunkSize / CHUNK_TAIL_RATIO);
+    return { chunkSize, chunkTail };
+  }
+  function retainTail(buffer, chunkTail) {
+    let cut = buffer.length - chunkTail;
+    if (cut <= 0) return buffer;
+    const limit = Math.max(0, cut - Math.min(chunkTail, MAX_WORD_LENGTH));
+    while (cut > limit && isWordCode(buffer.charCodeAt(cut - 1))) cut--;
+    return buffer.slice(cut);
+  }
+  function xpathMatches(pattern, expression, { chunkSize, chunkTail }) {
+    const snapshot = compileXPath(expression).evaluate(document, ORDERED_NODE_SNAPSHOT_TYPE, null);
+    let buffer = "";
+    let pending = 0;
+    for (let i = 0; i < snapshot.snapshotLength; i++) {
+      const text = snapshot.snapshotItem(i)?.textContent || "";
+      buffer += text;
+      pending += text.length;
+      if (chunkSize > 0 && pending >= chunkSize) {
+        if (pattern.test(buffer)) return true;
+        buffer = retainTail(buffer, chunkTail);
+        pending = 0;
+      }
+    }
+    return pattern.test(buffer);
+  }
   function evaluateSingleTextCondition(condition) {
     const patterns = asArray(condition.pattern);
-    const selectors = asArray(condition.selector, ["body"]);
+    const xpaths = asArray(condition.xpath);
+    const selectors = asArray(condition.selector, xpaths.length > 0 ? [] : ["body"]);
     const patternComb = new RegExp(patterns.join("|"), "i");
-    return selectors.some((selector) => {
+    const selectorMatch = selectors.some((selector) => {
       const elements = document.querySelectorAll(selector);
       for (const element of elements) {
         if (patternComb.test(element.textContent || "")) {
@@ -10014,6 +10232,14 @@
       }
       return false;
     });
+    if (selectorMatch) {
+      return true;
+    }
+    if (xpaths.length === 0) {
+      return false;
+    }
+    const chunking = resolveXPathConfig(condition.xpathConfig);
+    return xpaths.some((expression) => xpathMatches(patternComb, expression, chunking));
   }
   function evaluateSingleElementCondition(config2) {
     const visibility = config2.visibility ?? "any";
@@ -10028,32 +10254,60 @@
         if (visibility === "hidden" && !isVisible(element)) {
           return true;
         }
+        if (visibility === "content" && hasContent(element)) {
+          return true;
+        }
       }
       return false;
     });
   }
-  function evaluateORCondition(condition, singleConditionEvaluator) {
-    if (condition === void 0) return true;
-    if (Array.isArray(condition)) {
-      return condition.some((v2) => singleConditionEvaluator(v2));
+  function evaluateNode(node, evalFinal) {
+    if (node === void 0) return true;
+    if (Array.isArray(node)) {
+      return node.some((n) => evaluateNode(n, evalFinal));
     }
-    return singleConditionEvaluator(condition);
+    if (node === null || typeof node !== "object") {
+      return evalFinal(
+        /** @type {Final} */
+        node
+      );
+    }
+    const operatorKeys = ["any", "all", "none"];
+    const opKeys = operatorKeys.filter((k) => hasOwnProperty.call(node, k));
+    if (opKeys.length === 0) {
+      return evalFinal(
+        /** @type {Final} */
+        node
+      );
+    }
+    const otherKeys = objectKeys(node).filter((k) => !operatorKeys.includes(k));
+    if (otherKeys.length > 0) {
+      throw new Error(`Condition node mixes operator keys [${opKeys.join(", ")}] with leaf fields [${otherKeys.join(", ")}]`);
+    }
+    const block = (
+      /** @type {Partial<Record<'all' | 'any' | 'none', ConditionBranch<Final>>>} */
+      node
+    );
+    if (hasOwnProperty.call(block, "all") && !asArray(block.all).every((n) => evaluateNode(n, evalFinal))) return false;
+    if (hasOwnProperty.call(block, "any") && !asArray(block.any).some((n) => evaluateNode(n, evalFinal))) return false;
+    if (hasOwnProperty.call(block, "none") && asArray(block.none).some((n) => evaluateNode(n, evalFinal))) return false;
+    return true;
   }
   function evaluateSingleMatchCondition(condition) {
-    if (!evaluateORCondition(condition.text, evaluateSingleTextCondition)) {
+    if (!evaluateNode(condition.text, evaluateSingleTextCondition)) {
       return false;
     }
-    if (!evaluateORCondition(condition.element, evaluateSingleElementCondition)) {
+    if (!evaluateNode(condition.element, evaluateSingleElementCondition)) {
       return false;
     }
     return true;
   }
   function evaluateMatch(conditions) {
-    return evaluateORCondition(conditions, evaluateSingleMatchCondition);
+    return evaluateNode(conditions, evaluateSingleMatchCondition);
   }
 
   // src/features/web-detection.js
-  var _detectors, _matchedDetectors;
+  var _detectors, _matchedDetectors, _detectorPerfEnabled;
   var WebDetection = class extends ContentFeature {
     constructor() {
       super(...arguments);
@@ -10061,24 +10315,32 @@
       __privateAdd(this, _detectors, {});
       /** @type {Map<string, boolean>} */
       __privateAdd(this, _matchedDetectors, /* @__PURE__ */ new Map());
+      __privateAdd(this, _detectorPerfEnabled, false);
       __publicField(this, "_exposedMethods", this._declareExposedMethods(["runDetectors"]));
     }
     /**
      * Initialize the feature by loading detector configurations
      */
     init() {
+      __privateSet(this, _detectorPerfEnabled, hasOwnProperty.call(this.featureSettings ?? {}, "detectorPerf"));
       const detectorsConfig = this.getFeatureSetting("detectors");
       __privateSet(this, _detectors, parseDetectors(detectorsConfig));
       this._scheduleAutoRunDetectors();
     }
     /**
+     * Evaluate one configured detector and record its execution time.
      *
      * @param {DetectorConfig} detectorConfig
+     * @param {string} groupName - detector group, e.g. `adwalls`
+     * @param {string} fullDetectorId - `groupName.detectorId`, e.g. `adwalls.generic_en`
      * @returns {DetectorMatchResult}
      */
-    _evaluateMatch(detectorConfig) {
+    _evaluateMatch(detectorConfig, groupName, fullDetectorId) {
       try {
-        return evaluateMatch(detectorConfig.match);
+        if (!__privateGet(this, _detectorPerfEnabled)) {
+          return evaluateMatch(detectorConfig.match);
+        }
+        return timeDetector(this, groupName, () => evaluateMatch(detectorConfig.match), fullDetectorId);
       } catch {
         return "error";
       }
@@ -10096,6 +10358,7 @@
           for (const interval of autoTrigger.when.intervalMs) {
             const atInterval = detectorsByInterval.get(interval) ?? [];
             atInterval.push({
+              groupName,
               detectorId: fullDetectorId,
               config: detectorConfig
             });
@@ -10105,23 +10368,24 @@
       }
       for (const [interval, detectors] of detectorsByInterval.entries()) {
         setTimeout(() => {
-          for (const { detectorId, config: config2 } of detectors) {
-            this._runAutoDetector(detectorId, config2);
+          for (const { groupName, detectorId, config: config2 } of detectors) {
+            this._runAutoDetector(groupName, detectorId, config2);
           }
         }, interval);
       }
     }
     /**
      * Run a single detector with the auto trigger
+     * @param {string} groupName - The detector group
      * @param {string} fullDetectorId - The full detector ID (groupName.detectorId)
      * @param {DetectorConfig} detectorConfig - The detector configuration
      */
-    _runAutoDetector(fullDetectorId, detectorConfig) {
+    _runAutoDetector(groupName, fullDetectorId, detectorConfig) {
       try {
         if (__privateGet(this, _matchedDetectors).get(fullDetectorId)) {
           return;
         }
-        const detected = this._evaluateMatch(detectorConfig);
+        const detected = this._evaluateMatch(detectorConfig, groupName, fullDetectorId);
         if (detected === true) {
           __privateGet(this, _matchedDetectors).set(fullDetectorId, true);
         }
@@ -10183,11 +10447,12 @@
       for (const [groupName, groupDetectors] of Object.entries(__privateGet(this, _detectors))) {
         for (const [detectorId, detectorConfig] of Object.entries(groupDetectors)) {
           if (!this._shouldRunDetector(detectorConfig, options)) continue;
-          const detected = this._evaluateMatch(detectorConfig);
+          const fullDetectorId = `${groupName}.${detectorId}`;
+          const detected = this._evaluateMatch(detectorConfig, groupName, fullDetectorId);
           if (options.trigger === "breakageReport" && this._isStateEnabled(detectorConfig.actions.breakageReportData.state)) {
             if (detected !== false) {
               results.push({
-                detectorId: `${groupName}.${detectorId}`,
+                detectorId: fullDetectorId,
                 detected
               });
             }
@@ -10200,6 +10465,7 @@
   };
   _detectors = new WeakMap();
   _matchedDetectors = new WeakMap();
+  _detectorPerfEnabled = new WeakMap();
 
   // src/features/web-events.js
   var MSG_WEB_EVENT = "webEvent";
@@ -10364,35 +10630,6 @@
     };
   }
 
-  // src/detectors/detections/adwall-detection.js
-  function runAdwallDetection(config2 = {}) {
-    const results = [];
-    for (const [detectorId, detectorConfig] of Object.entries(config2)) {
-      if (detectorConfig?.state !== "enabled") {
-        continue;
-      }
-      const detected = detectAdwall(detectorConfig);
-      if (detected) {
-        results.push({
-          detected: true,
-          detectorId
-        });
-      }
-    }
-    return {
-      detected: results.length > 0,
-      type: "adwallDetection",
-      results
-    };
-  }
-  function detectAdwall(patternConfig) {
-    const { textPatterns, textSources } = patternConfig;
-    if (checkTextPatterns(textPatterns, textSources)) {
-      return true;
-    }
-    return false;
-  }
-
   // src/detectors/detections/youtube-ad-detection.js
   var noopLogger = { info: () => {
   }, warn: () => {
@@ -10402,7 +10639,7 @@
     /**
      * @param {YouTubeDetectorConfig} config - Configuration from privacy-config (required)
      * @param {{info: Function, warn: Function, error: Function}} [logger] - Optional logger from ContentFeature
-     * @param {(type: string) => void} [onEvent] - Callback fired when a new detection occurs (may be async)
+     * @param {(type: string, data?: Record<string, unknown>) => void} [onEvent] - Callback fired when a new detection occurs (may be async)
      */
     constructor(config2, logger, onEvent) {
       this.log = logger || noopLogger;
@@ -10479,6 +10716,27 @@
       };
     }
     /**
+     * Fire an event notification for native telemetry/action handling.
+     * @param {'videoAd'|'staticAd'|'playabilityError'|'adBlocker'|'buffering'} type
+     */
+    fireDetectionEvent(type) {
+      if (this.config.fireDetectionEvents?.[type]) {
+        try {
+          const result = (
+            /** @type {any} */
+            this.onEvent(`youtube_${type}`, {
+              loginState: this.state.loginState?.state || "unknown"
+            })
+          );
+          if (result && typeof result.catch === "function") {
+            result.catch(() => {
+            });
+          }
+        } catch {
+        }
+      }
+    }
+    /**
      * Report a detection event
      * @param {'videoAd'|'staticAd'|'playabilityError'|'adBlocker'} type
      * @param {Object} [details]
@@ -10497,19 +10755,7 @@
       if (details.message && "lastMessage" in typeState) {
         typeState.lastMessage = details.message;
       }
-      if (this.config.fireDetectionEvents?.[type]) {
-        try {
-          const result = (
-            /** @type {any} */
-            this.onEvent(`youtube_${type}`)
-          );
-          if (result && typeof result.catch === "function") {
-            result.catch(() => {
-            });
-          }
-        } catch {
-        }
-      }
+      this.fireDetectionEvent(type);
       return true;
     }
     /**
@@ -10545,7 +10791,7 @@
       } else if (!hasVideoAd && this.state.detections.videoAd.showing) {
         this.clearDetection("videoAd");
       }
-      const hasStaticAd = this.checkForStaticAds();
+      const hasStaticAd = this.checkForStaticAds(root);
       if (hasStaticAd && !this.state.detections.staticAd.showing) {
         this.reportDetection("staticAd");
       } else if (!hasStaticAd && this.state.detections.staticAd.showing) {
@@ -10630,11 +10876,16 @@
     }
     /**
      * Check for static overlay ads (image ads over the player)
+     * @param {Element|null} [root] - Player root already resolved by the sweep, if any
      * @returns {boolean}
      */
-    checkForStaticAds() {
+    checkForStaticAds(root) {
       const selectors = this.config.staticAdSelectors;
       if (!selectors || !selectors.background) {
+        return false;
+      }
+      const player = root ?? this.playerRoot ?? this.findPlayerRoot();
+      if (!player || !/\bad-showing\b|\bad-interrupting\b/.test((player.className || "").toString())) {
         return false;
       }
       const background = document.querySelector(selectors.background);
@@ -10721,6 +10972,9 @@
      * @returns {string|null}
      */
     checkForPlayabilityErrors() {
+      if (!this.isVideoWatchContext()) {
+        return null;
+      }
       return this.checkVisiblePatternMatch(this.config.playabilityErrorSelectors, this.playabilityErrorPatterns, {
         maxLength: 100,
         checkAttributedStrings: true
@@ -10760,6 +11014,17 @@
     getVideoId() {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get("v");
+    }
+    /**
+     * Whether the current page is an actual video-watch surface — a standard watch page
+     * (`?v=<id>`) or a Shorts/live/embed path. Used to avoid firing playability-error
+     * detections on non-playback pages (channel/home), where a featured-preview player
+     * can transiently show an unavailability message for a video the user isn't watching.
+     * @returns {boolean}
+     */
+    isVideoWatchContext() {
+      const pathname = window.location.pathname;
+      return !!this.getVideoId() || pathname === "/watch" || /^\/(shorts|live|embed)\//.test(pathname);
     }
     // =========================================================================
     // Login State Detection
@@ -10845,11 +11110,16 @@
         }
       };
       const onPlaying = () => {
+        let firedBufferingEvent = false;
         if (this.bufferingStartTime) {
           const bufferingDuration = performance.now() - this.bufferingStartTime;
           this.state.buffering.durations.push(Math.round(bufferingDuration));
           if (this.state.buffering.durations.length > 50) {
             this.state.buffering.durations.shift();
+          }
+          if (bufferingDuration > this.config.slowLoadThresholdMs) {
+            this.fireDetectionEvent("buffering");
+            firedBufferingEvent = true;
           }
           this.bufferingStartTime = null;
         }
@@ -10862,6 +11132,9 @@
         if (isSlow && !duringAd && !tabWasHidden && !tooLong) {
           this.state.buffering.count++;
           this.state.buffering.durations.push(Math.round(loadTime));
+          if (!firedBufferingEvent) {
+            this.fireDetectionEvent("buffering");
+          }
           if (this.state.buffering.durations.length > 50) {
             this.state.buffering.durations.shift();
           }
@@ -11020,9 +11293,9 @@
   var WebInterferenceDetection = class extends ContentFeature {
     init() {
       const settings = this.getFeatureSetting("interferenceTypes");
-      const fireEvent = async (type) => {
+      const fireEvent = async (type, data) => {
         try {
-          const result = await this.callFeatureMethod("webEvents", "fireEvent", { type });
+          const result = await this.callFeatureMethod("webEvents", "fireEvent", { type, data });
           if (result instanceof CallFeatureMethodError && this.isDebug) {
             this.log.warn("webEvents.fireEvent failed:", result.message);
           }
@@ -11041,9 +11314,6 @@
         }
         if (types.includes("fraudDetection")) {
           results.fraudDetection = runFraudDetection(settings?.fraudDetection);
-        }
-        if (types.includes("adwallDetection")) {
-          results.adwallDetection = runAdwallDetection(settings?.adwallDetection);
         }
         return results;
       });
@@ -11176,7 +11446,8 @@
           result.detectorData = {
             botDetection: runBotDetection(detectorSettings.botDetection),
             fraudDetection: runFraudDetection(detectorSettings.fraudDetection),
-            adwallDetection: runAdwallDetection(detectorSettings.adwallDetection),
+            // youtubeAds is intentionally not timed: the YouTube detector is
+            // excluded from detectorPerf and keeps its own internal metrics.
             youtubeAds: runYoutubeAdDetection(detectorSettings.youtubeAds)
           };
         }
@@ -11188,6 +11459,10 @@
         }
         if (result.detectorData) {
           breakageDataPayload.detectorData = result.detectorData;
+        }
+        const detectorPerfStats = await this.callFeatureMethod("detectorPerf", "getStats");
+        if (!(detectorPerfStats instanceof CallFeatureMethodError) && detectorPerfStats != null) {
+          breakageDataPayload.detectorPerf = detectorPerfStats;
         }
         if (Object.keys(breakageDataPayload).length > 0) {
           try {

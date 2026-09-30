@@ -373,6 +373,24 @@
       });
       return true;
     },
+    EVAL_SOURCEPOINT_RESTORE_SCROLL: () => {
+      const root = document.documentElement;
+      const saved = root.dataset.previousScrollY;
+      if (saved && saved !== "null") {
+        root.dataset.previousScrollY = "null";
+        const y = -parseInt(saved, 10);
+        if (y > 0 && window.scrollY === 0) {
+          const behavior = root.style.scrollBehavior;
+          root.style.scrollBehavior = "auto";
+          window.scrollTo(0, y);
+          root.style.scrollBehavior = behavior;
+        }
+      }
+      window.addEventListener("pagehide", () => {
+        if (root.dataset.previousScrollY) root.dataset.previousScrollY = "null";
+      });
+      return true;
+    },
     EVAL_STEAMPOWERED_0: () => JSON.parse(
       decodeURIComponent(
         document.cookie.split(";").find((s) => s.trim().startsWith("cookieSettings")).split("=")[1]
@@ -630,7 +648,7 @@
     // essential/necessary/functional-only variants (accepting only necessary → reject)
     /^\s*(nur|ausschließlich|lediglich|weiter\s+mit|mit|akzeptiere?n?|unbedingt|es\s+werden\s+nur)?\s*(technisch\s+)?(notwendige?[nrs]?|essenzielle?[nrs]?|essentielle?[nrs]?|erforderliche?[nrs]?|funktionale?[nrs]?|funktionelle?[nrs]?|wesentliche?[nrs]?)\s*(cookies?|technologien|funktionscookies|dienste)?\s*(akzeptieren|erlauben|zulassen|verwenden|annehmen|setzen|speichern|zustimmen|auswählen)?\.?\s*$/is,
     // continue without consent
-    /(^|\s)(ohne\s+(einwilligung|zustimmung|einverständnis|annahme)|(weiter|fortfahren)\s+ohne)/is,
+    /(^|\s)(ohne\s+(zu\s+)?(einwilligung|zustimmung|einverständnis|annahme|annehmen|akzeptanz|akzeptieren)|(weiter|fortfahren)\s+ohne)/is,
     // negations / refusals not covered by the regexes above
     "nein, danke",
     "nein, bitte nicht",
@@ -2418,65 +2436,6 @@
       return Object.values(value).every((x) => typeof x !== "boolean" || x === false);
     }
   };
-  var Tumblr = class extends AutoConsentCMPBase {
-    constructor() {
-      super(...arguments);
-      this.name = "tumblr-com";
-      this.runContext = {
-        urlPattern: "^https://(www\\.)?tumblr\\.com/"
-      };
-    }
-    get hasSelfTest() {
-      return false;
-    }
-    get isIntermediate() {
-      return false;
-    }
-    get isCosmetic() {
-      return false;
-    }
-    get prehideSelectors() {
-      return ["#cmp-app-container"];
-    }
-    async detectCmp() {
-      return this.elementExists("#cmp-app-container");
-    }
-    async detectPopup() {
-      return this.elementVisible("#cmp-app-container", "any");
-    }
-    async optOut() {
-      let iframe = document.querySelector("#cmp-app-container iframe");
-      let settingsButton = iframe?.contentDocument?.querySelector(".cmp-components-button.is-secondary");
-      if (!settingsButton) {
-        return false;
-      }
-      settingsButton.click();
-      await waitFor(
-        () => {
-          const iframe2 = document.querySelector("#cmp-app-container iframe");
-          return !!iframe2?.contentDocument?.querySelector(".cmp__dialog input");
-        },
-        5,
-        500
-      );
-      iframe = document.querySelector("#cmp-app-container iframe");
-      settingsButton = iframe?.contentDocument?.querySelector(".cmp-components-button.is-secondary");
-      if (!settingsButton) {
-        return false;
-      }
-      settingsButton.click();
-      return true;
-    }
-    async optIn() {
-      const iframe = document.querySelector("#cmp-app-container iframe");
-      const acceptButton = iframe?.contentDocument?.querySelector(".cmp-components-button.is-primary");
-      if (acceptButton) {
-        acceptButton.click();
-        return true;
-      }
-      return false;
-    }
-  };
   var Admiral = class extends AutoConsentCMPBase {
     constructor() {
       super(...arguments);
@@ -2552,7 +2511,6 @@
     Uniconsent,
     Conversant,
     Tiktok,
-    Tumblr,
     Admiral
   ];
   var DEFAULT_CLICK_RETRY_INTERVAL = 300;
