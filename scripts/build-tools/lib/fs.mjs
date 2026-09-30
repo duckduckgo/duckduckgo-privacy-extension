@@ -10,8 +10,8 @@ export function isBackupFile(filePath) {
     return filePath.endsWith('~');
 }
 
-/** Directories never treated as build inputs. */
-export function isSkippedDir(name) {
+/** Directories never treated as build inputs when walking for mtimes. */
+function isSkippedDir(name) {
     return name === 'node_modules' || name === '.git';
 }
 

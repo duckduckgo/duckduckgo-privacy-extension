@@ -13,10 +13,10 @@ import { parseArgs } from 'node:util';
 import { bundleJs } from './lib/bundles.mjs';
 import { TARGET_OPTIONS, TARGET_USAGE, resolveTarget } from './lib/cli.mjs';
 import { AUTOFILL_DIR, CONTENT_SCOPE_SCRIPTS_DIR, DASHBOARD_DIR, ROOT_DIR, SURROGATES_DIR, buildDirectories } from './lib/config.mjs';
-import { buildInjectScript, isLocalCheckout, watchedPaths as contentScopeScriptsPaths } from './lib/contentScopeScripts.mjs';
+import { buildInjectScript, isContentScopeScriptsLinked, watchedPaths as contentScopeScriptsPaths } from './lib/contentScopeScripts.mjs';
 import { copyStaticFiles } from './lib/copy.mjs';
 import { copyFonts } from './lib/fonts.mjs';
-import { ensureDir, isBackupFile, isSkippedDir } from './lib/fs.mjs';
+import { ensureDir, isBackupFile } from './lib/fs.mjs';
 import { writeLocaleResources } from './lib/locales.mjs';
 import { generateSmarterEncryptionRules } from './lib/smarterEncryption.mjs';
 import { compileStyles } from './lib/styles.mjs';
@@ -76,18 +76,21 @@ async function build(config) {
 }
 
 /**
- * Source directories whose changes trigger a rebuild. Only the parts of the
- * dependencies that the build actually consumes are watched: a linked
- * checkout's own build output, plus its sources for content-scope-scripts,
- * which this build rebuilds itself.
+ * Source directories whose changes trigger a rebuild. Of the dependencies,
+ * only the parts the build actually consumes are watched. All of them must
+ * exist; a missing one means the dependencies are not installed.
  */
 function watchedDirectories() {
-    const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, ...contentScopeScriptsPaths()];
-    return dirs.filter((dir) => fs.existsSync(dir));
+    return ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, ...contentScopeScriptsPaths()];
 }
 
+/**
+ * Hidden and backup files are ignored so that editors' and sync tools'
+ * temporary files do not trigger rebuilds. Anything else under a watched
+ * directory does.
+ */
 function shouldIgnore(filename) {
-    return filename.split(/[\\/]/).some(isSkippedDir) || isBackupFile(filename);
+    return filename.split(/[\\/]/).some((part) => part.startsWith('.')) || isBackupFile(filename);
 }
 
 /**
@@ -117,8 +120,8 @@ async function watch(config) {
         }).on('error', (e) => console.error(`Stopped watching ${dir}:`, e.message));
     }
 
-    if (isLocalCheckout()) {
-        console.log(`Note: ${CONTENT_SCOPE_SCRIPTS_DIR} is a local checkout and will be rebuilt when its sources change.`);
+    if (isContentScopeScriptsLinked()) {
+        console.log(`Note: ${CONTENT_SCOPE_SCRIPTS_DIR} is npm-linked to a local checkout, which will be rebuilt when its sources change.`);
     }
     console.log('\n** Build ready - Watching for changes **\n');
 }

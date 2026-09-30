@@ -2,8 +2,8 @@
  * Produces public/js/inject.js from the content-scope-scripts package.
  *
  * Releases of content-scope-scripts ship prebuilt bundles, which are used
- * as-is. When the package is a local checkout instead (e.g. via `npm link`,
- * detected by the presence of a .git directory), it is rebuilt first when its
+ * as-is. When the package is instead npm-linked to a local checkout (detected
+ * by the presence of a .git directory), the checkout is rebuilt first when its
  * sources are newer than its build output, matching the Makefile.
  */
 import fs from 'node:fs';
@@ -26,24 +26,25 @@ const prebuiltInject = (cssPlatform) => `${BUILD_DIR}/${cssPlatform}/inject.js`;
 const LOCALE_INPUTS = [`${INJECTED_DIR}/src/locales`, `${INJECTED_DIR}/scripts`, PACKAGE_JSON];
 const BUNDLE_INPUTS = [`${INJECTED_DIR}/src`, `${INJECTED_DIR}/entry-points`, `${INJECTED_DIR}/scripts`, PACKAGE_JSON, LOCALES_BUILD];
 
-export function isLocalCheckout() {
+/** True when node_modules/@duckduckgo/content-scope-scripts is npm-linked to a local checkout. */
+export function isContentScopeScriptsLinked() {
     return fs.existsSync(`${CSS_DIR}/.git`);
 }
 
 /**
- * What watch mode should watch for this package: the sources of a local
+ * What watch mode should watch for this package: the sources of a linked
  * checkout (which this build rebuilds itself, so watching its output too
  * would only queue a redundant rebuild), otherwise the prebuilt bundles.
  */
 export function watchedPaths() {
-    return [isLocalCheckout() ? INJECTED_DIR : BUILD_DIR];
+    return [isContentScopeScriptsLinked() ? INJECTED_DIR : BUILD_DIR];
 }
 
 /**
- * Rebuilds a local content-scope-scripts checkout if needed.
+ * Rebuilds the linked content-scope-scripts checkout if needed.
  * @param {import('./config.mjs').BuildConfig} config
  */
-function rebuildLocalCheckout({ cssPlatform }) {
+function rebuildLinkedCheckout({ cssPlatform }) {
     if (isStale(`${CSS_DIR}/node_modules`, [PACKAGE_JSON])) {
         runNpm(['install'], CSS_DIR);
         touch(`${CSS_DIR}/node_modules`);
@@ -85,8 +86,8 @@ export function bundleContentScopeScripts(targetPath, sourcePath, trackerLookupP
 
 /** @param {import('./config.mjs').BuildConfig} config */
 export function buildInjectScript(config) {
-    if (isLocalCheckout()) {
-        rebuildLocalCheckout(config);
+    if (isContentScopeScriptsLinked()) {
+        rebuildLinkedCheckout(config);
     }
     bundleContentScopeScripts(`${config.out.js}/inject.js`, prebuiltInject(config.cssPlatform));
 }
