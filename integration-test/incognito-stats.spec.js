@@ -42,7 +42,9 @@ async function waitForExtensionReady(backgroundPage) {
  */
 function getPersistedStats(backgroundPage) {
     return backgroundPage.evaluate(async () => {
-        const { companies } = globalThis.dbg;
+        const { companies, ntts } = globalThis.dbg;
+        // Flush the new tab stats instead of waiting for their throttled sync
+        await ntts.sync();
         const { trackerStats } = await chrome.storage.local.get('trackerStats');
         return {
             totalPages: companies.getTotalPages(),
@@ -104,18 +106,14 @@ test.describe('Incognito tracker stats', () => {
         expect(incognitoTab.extensionIncognito).toBe(true);
         // Trackers are still blocked and shown in the dashboard for the tab
         expect(incognitoTab.trackers).toContain('Test Site for Tracker Blocking');
-        // Give the throttled new tab stats sync a chance to run
-        await new Promise((resolve) => setTimeout(resolve, 1500));
         expect(await getPersistedStats(backgroundPage)).toEqual(initialStats);
 
         // The same page in a normal tab does update the stats
         const normalTab = await runInNewTab(context, backgroundPage, false);
         expect(normalTab.browserIncognito).toBe(false);
         expect(normalTab.extensionIncognito).toBe(false);
-        await expect
-            .poll(() => getPersistedStats(backgroundPage).then((stats) => stats.newTabTrackerCount))
-            .toBeGreaterThan(initialStats.newTabTrackerCount);
         const finalStats = await getPersistedStats(backgroundPage);
+        expect(finalStats.newTabTrackerCount).toBeGreaterThan(initialStats.newTabTrackerCount);
         expect(finalStats.companies['Test Site for Tracker Blocking']?.count).toBeGreaterThan(0);
     });
 });

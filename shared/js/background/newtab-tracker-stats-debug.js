@@ -26,6 +26,14 @@ export function createNewtabTrackerStatsDebugApi() {
 
     return {
         /**
+         * Persist the current stats to storage now, instead of waiting for the throttled sync
+         *
+         * @return {Promise<void>}
+         */
+        sync() {
+            return shared.instance.syncToStorage();
+        },
+        /**
          * Clear current tracking data, but keep the 'totalCount'
          *
          * @return {import("./classes/tracker-stats").TrackerStats}

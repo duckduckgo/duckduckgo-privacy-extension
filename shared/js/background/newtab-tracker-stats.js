@@ -200,6 +200,7 @@ export class NewTabTrackerStats {
 
     /**
      * Persist data into the extensions storage in the following format
+     * @returns {Promise<void>}
      */
     syncToStorage() {
         const serializedData = this.stats.serialize();
@@ -210,7 +211,7 @@ export class NewTabTrackerStats {
                 stats: serializedData,
             },
         };
-        syncToStorage(toSync);
+        return syncToStorage(toSync);
     }
 
     /**
