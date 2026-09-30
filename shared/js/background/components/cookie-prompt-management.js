@@ -11,7 +11,8 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  onlyRules: Set<string>,
  *  both: Set<string>,
  * }} detectionCache
- * @property {Record<string, number>} summaryEvents
+ * @property {Record<string, number>} summaryEvents - event counts without a site rank bucket
+ * @property {Partial<Record<SiteRankBucket, Record<string, number>>>} summaryEventsByRank - event counts per site rank bucket
  * @property {Record<string, CpmDashboardState>} dashboardStates
  * @property {Set<string>} globalErrors
  */
@@ -29,6 +30,10 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  * @property {string[]} cpmErrors
  * @property {number=} cpmQueueSize
  * @property {string} cpmConfigVersion
+ */
+
+/**
+ * @typedef {import('./cpm-site-rank').SiteRankBucket} SiteRankBucket
  */
 
 /**
@@ -81,11 +86,13 @@ export default class CookiePromptManagement {
     /**
      *
      * @param {{
-     *  cpmMessaging: CPMMessagingBase
-     * }} opts
+     *  cpmMessaging: CPMMessagingBase,
+     *  siteRankLookup?: (url: string) => SiteRankBucket,
+     * }} opts - when siteRankLookup is set, summary pixels are split by the site rank bucket of the top-level URL
      */
-    constructor({ cpmMessaging }) {
+    constructor({ cpmMessaging, siteRankLookup }) {
         this.cpmMessaging = cpmMessaging;
+        this.siteRankLookup = siteRankLookup;
         this.cpmMessaging.setDiagnosticsErrorHandler?.((tabId, errorName) => {
             this.recordCpmDiagnosticError(tabId, errorName);
         });
@@ -180,6 +187,7 @@ export default class CookiePromptManagement {
                 onlyRules: new Set(jsonCpmState.detectionCache?.onlyRules || []),
             },
             summaryEvents: structuredClone(jsonCpmState.summaryEvents || {}),
+            summaryEventsByRank: structuredClone(jsonCpmState.summaryEventsByRank || {}),
             dashboardStates: structuredClone(jsonCpmState.dashboardStates || {}),
             globalErrors: new Set(jsonCpmState.globalErrors || []),
         };
@@ -197,6 +205,7 @@ export default class CookiePromptManagement {
                 onlyRules: Array.from(cpmState.detectionCache.onlyRules),
             },
             summaryEvents: structuredClone(cpmState.summaryEvents),
+            summaryEventsByRank: structuredClone(cpmState.summaryEventsByRank),
             dashboardStates: structuredClone(cpmState.dashboardStates),
             globalErrors: Array.from(cpmState.globalErrors),
         };
@@ -214,6 +223,7 @@ export default class CookiePromptManagement {
                     onlyRules: [],
                 },
                 summaryEvents: {},
+                summaryEventsByRank: {},
                 dashboardStates: {},
                 globalErrors: [],
             };
@@ -407,7 +417,7 @@ export default class CookiePromptManagement {
             // Same CMP detected on same URL after it was already handled - reload loop detected
             this.cpmMessaging.logMessage(`reload loop detected: ${cmp} on ${this._tabUrlsCache.get(tabId)} tabId: ${tabId}`);
             this._reloadLoopDetected.add(tabId);
-            this.firePixel('error_reload-loop');
+            this.firePixel('error_reload-loop', this._tabUrlsCache.get(tabId)?.href || 'about:blank');
         }
     }
 
@@ -535,7 +545,7 @@ export default class CookiePromptManagement {
                                 consentHeuristicEnabled: heuristicActionEnabled,
                             }),
                         );
-                        this.firePixel('disabled-for-site');
+                        this.firePixel('disabled-for-site', tabUrl);
                     }
                     return;
                 }
@@ -565,7 +575,7 @@ export default class CookiePromptManagement {
                         cpmConfigVersion,
                     }).then((dashboardState) => this.cpmMessaging.refreshDashboardState(tabId, tabUrl, dashboardState));
                     // no await
-                    this.firePixel('init');
+                    this.firePixel('init', tabUrl);
                 }
 
                 /**
@@ -635,12 +645,12 @@ export default class CookiePromptManagement {
                         consentReloadLoop: this._reloadLoopDetected.has(tabId),
                     }),
                 );
-                this.firePixel('popup-found');
+                this.firePixel('popup-found', tabUrl);
                 break;
             }
             case 'optOutResult': {
                 if (!msg.result) {
-                    this.firePixel('error_optout');
+                    this.firePixel('error_optout', tabUrl);
                     this.cpmMessaging.refreshDashboardState(
                         tabId,
                         tabUrl,
@@ -674,12 +684,12 @@ export default class CookiePromptManagement {
                     }),
                 );
                 if (msg.cmp.startsWith('HEURISTIC')) {
-                    this.firePixel('done_heuristic');
+                    this.firePixel('done_heuristic', tabUrl);
                 } else {
-                    this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done');
+                    this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done', tabUrl);
                 }
                 this.cpmMessaging.showCpmAnimation(tabId, tabUrl, msg.isCosmetic);
-                this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown');
+                this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown', tabUrl);
                 this.cpmMessaging.notifyPopupHandled(tabId, msg);
                 break;
             }
@@ -693,17 +703,17 @@ export default class CookiePromptManagement {
                     if (isMainFrame && heuristicMatch && !cpmState.detectionCache.patterns.has(msg.instanceId)) {
                         cpmState.detectionCache.patterns.add(msg.instanceId);
                         // no await to avoid deadlock
-                        this.firePixel('detected-by-patterns');
+                        this.firePixel('detected-by-patterns', tabUrl);
                     }
                     if (isMainFrame && detectedPopups) {
                         if (heuristicMatch && !cpmState.detectionCache.both.has(msg.instanceId)) {
                             cpmState.detectionCache.both.add(msg.instanceId);
                             // no await to avoid deadlock
-                            this.firePixel('detected-by-both');
+                            this.firePixel('detected-by-both', tabUrl);
                         } else if (!heuristicMatch && !cpmState.detectionCache.onlyRules.has(msg.instanceId)) {
                             cpmState.detectionCache.onlyRules.add(msg.instanceId);
                             // no await to avoid deadlock
-                            this.firePixel('detected-only-rules');
+                            this.firePixel('detected-only-rules', tabUrl);
                         }
                     }
                 });
@@ -738,7 +748,7 @@ export default class CookiePromptManagement {
                     if (dashboardState) {
                         this.cpmMessaging.refreshDashboardState(tabId, tabUrl, dashboardState);
                     }
-                    this.firePixel('error_multiple-popups');
+                    this.firePixel('error_multiple-popups', tabUrl);
                 }
                 break;
             }
@@ -802,9 +812,19 @@ export default class CookiePromptManagement {
         return this.settingsToHeuristicModeName(await this.cpmMessaging.checkAutoconsentSetting());
     }
 
-    async firePixel(eventName) {
+    /**
+     * Count the event for the summary pixel and request the daily pixel.
+     * @param {string} eventName
+     * @param {string} topUrl - top-level URL of the tab. It is only used to find the site rank bucket, and is never sent.
+     */
+    async firePixel(eventName, topUrl) {
+        const siteRank = this.siteRankLookup?.(topUrl);
         this.modifyCpmState((cpmState) => {
-            cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
+            let counts = cpmState.summaryEvents;
+            if (siteRank) {
+                counts = cpmState.summaryEventsByRank[siteRank] ||= {};
+            }
+            counts[eventName] = (counts[eventName] || 0) + 1;
         });
 
         // schedule summary alarm if not already scheduled (createAlarm checks for existing alarm)
@@ -820,19 +840,44 @@ export default class CookiePromptManagement {
         });
     }
 
+    /**
+     * Send the accumulated event counts. Without a site rank lookup, this is one pixel with all counts.
+     * With a lookup, this is one pixel per site rank bucket that has events, each with a `siteRank` parameter.
+     * Counts without a bucket (e.g. from a state saved before the lookup was added) go in a pixel without `siteRank`,
+     * so the totals across all pixels always match the recorded events.
+     */
     async sendSummaryPixel() {
+        /** @type {Record<string, number>} */
         let summaryEvents = {};
+        /** @type {CpmState['summaryEventsByRank']} */
+        let summaryEventsByRank = {};
         await this.modifyCpmState((cpmState) => {
             summaryEvents = structuredClone(cpmState.summaryEvents);
+            summaryEventsByRank = structuredClone(cpmState.summaryEventsByRank);
             cpmState.summaryEvents = {};
+            cpmState.summaryEventsByRank = {};
             cpmState.detectionCache.patterns.clear();
             cpmState.detectionCache.both.clear();
             cpmState.detectionCache.onlyRules.clear();
         });
-        this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
-            ...summaryEvents,
-            consentHeuristicEnabled: await this.getPixelHeuristicParameter(),
-            fromExtension: '1',
-        });
+        const consentHeuristicEnabled = await this.getPixelHeuristicParameter();
+        if (!this.siteRankLookup || Object.keys(summaryEvents).length > 0) {
+            this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
+                ...summaryEvents,
+                consentHeuristicEnabled,
+                fromExtension: '1',
+            });
+        }
+        for (const [siteRank, events] of Object.entries(summaryEventsByRank)) {
+            if (Object.keys(events).length === 0) {
+                continue;
+            }
+            this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
+                ...events,
+                siteRank,
+                consentHeuristicEnabled,
+                fromExtension: '1',
+            });
+        }
     }
 }

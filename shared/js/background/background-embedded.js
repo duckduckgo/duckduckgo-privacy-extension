@@ -23,6 +23,7 @@
 import browser from 'webextension-polyfill';
 import CookiePromptManagement from './components/cookie-prompt-management';
 import { CPMEmbeddedMessaging } from './components/cpm-embedded-messaging';
+import { createBundledSiteRankLookup } from './components/cpm-site-rank';
 import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
 
@@ -60,6 +61,7 @@ const messaging = new MessageRouter();
 
 const cpm = new CookiePromptManagement({
     cpmMessaging,
+    siteRankLookup: createBundledSiteRankLookup(),
 });
 
 /**
