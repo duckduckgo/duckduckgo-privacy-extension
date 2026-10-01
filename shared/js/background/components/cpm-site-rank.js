@@ -4,7 +4,7 @@ import topSitesBloomData from '../../../data/bundled/cpm-top-sites-bloom.json';
 
 /**
  * Coarse site popularity bucket, attached to CPM summary pixels.
- * @typedef {'top' | 'other'} SiteRankBucket
+ * @typedef {'top10k' | 'other'} SiteRankBucket
  */
 
 /**
@@ -37,7 +37,7 @@ export function createSiteRankLookup(bloomData) {
     bloom.importData(base64ToUint8Array(bloomData.data));
     return (url) => {
         const domain = getDomain(url)?.toLowerCase();
-        return domain && bloom.checkEntry(domain) ? 'top' : 'other';
+        return domain && bloom.checkEntry(domain) ? 'top10k' : 'other';
     };
 }
 

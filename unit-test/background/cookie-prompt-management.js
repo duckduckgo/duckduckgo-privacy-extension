@@ -720,7 +720,7 @@ describe('CookiePromptManagement', () => {
         const OTHER_URL = 'https://long-tail.example/page';
 
         function createSiteRankLookup() {
-            return jasmine.createSpy('siteRankLookup').and.callFake((url) => (url.includes('top-site.example') ? 'top' : 'other'));
+            return jasmine.createSpy('siteRankLookup').and.callFake((url) => (url.includes('top-site.example') ? 'top10k' : 'other'));
         }
 
         function summaryPixelParams(mockMessaging) {
@@ -761,7 +761,7 @@ describe('CookiePromptManagement', () => {
             expect(calledUrls.every((url) => url === TOP_URL)).toBeTrue();
             const state = await cpm.getCpmState();
             expect(state.summaryEventsByRank).toEqual({
-                top: { init: 1, 'popup-found': 1, done: 1, 'animation-shown': 1 },
+                top10k: { init: 1, 'popup-found': 1, done: 1, 'animation-shown': 1 },
             });
             expect(state.summaryEvents).toEqual({});
         });
@@ -780,7 +780,7 @@ describe('CookiePromptManagement', () => {
             ]);
 
             const state = await cpm.getCpmState();
-            expect(state.summaryEventsByRank.top?.['error_reload-loop']).toBe(1);
+            expect(state.summaryEventsByRank.top10k?.['error_reload-loop']).toBe(1);
             expect(state.summaryEventsByRank.other).toBeUndefined();
         });
 
@@ -799,7 +799,7 @@ describe('CookiePromptManagement', () => {
 
             const params = summaryPixelParams(mockMessaging);
             expect(params.length).toBe(2);
-            expect(params).toContain({ init: 1, siteRank: 'top', consentHeuristicEnabled: 'tier1', fromExtension: '1' });
+            expect(params).toContain({ init: 1, siteRank: 'top10k', consentHeuristicEnabled: 'tier1', fromExtension: '1' });
             expect(params).toContain({
                 init: 2,
                 'popup-found': 1,
@@ -869,7 +869,7 @@ describe('CookiePromptManagement', () => {
             const params = summaryPixelParams(mockMessaging);
             expect(params.length).toBe(2);
             expect(params).toContain({ init: 3, done: 1, consentHeuristicEnabled: 'tier1', fromExtension: '1' });
-            expect(params).toContain({ init: 1, siteRank: 'top', consentHeuristicEnabled: 'tier1', fromExtension: '1' });
+            expect(params).toContain({ init: 1, siteRank: 'top10k', consentHeuristicEnabled: 'tier1', fromExtension: '1' });
         });
     });
 });

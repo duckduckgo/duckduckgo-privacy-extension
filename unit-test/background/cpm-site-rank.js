@@ -4,10 +4,10 @@ describe('CPM site rank lookup', () => {
     const siteRankLookup = createBundledSiteRankLookup();
 
     it('matches known top sites and their subdomains', () => {
-        expect(siteRankLookup('https://google.com/')).toBe('top');
-        expect(siteRankLookup('https://www.google.com/search?q=test')).toBe('top');
-        expect(siteRankLookup('https://m.youtube.com/watch')).toBe('top');
-        expect(siteRankLookup('https://en.wikipedia.org/wiki/Main_Page')).toBe('top');
+        expect(siteRankLookup('https://google.com/')).toBe('top10k');
+        expect(siteRankLookup('https://www.google.com/search?q=test')).toBe('top10k');
+        expect(siteRankLookup('https://m.youtube.com/watch')).toBe('top10k');
+        expect(siteRankLookup('https://en.wikipedia.org/wiki/Main_Page')).toBe('top10k');
     });
 
     it('gives other for unknown, invalid and blank URLs', () => {
@@ -31,7 +31,7 @@ describe('CPM site rank lookup', () => {
         let matches = 0;
         for (let i = 0; i < samples; i++) {
             const label = random().toString(36).slice(2, 12);
-            if (siteRankLookup(`https://www.${label}.com/`) === 'top') {
+            if (siteRankLookup(`https://www.${label}.com/`) === 'top10k') {
                 matches++;
             }
         }
