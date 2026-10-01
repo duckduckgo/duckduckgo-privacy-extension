@@ -75,6 +75,8 @@ jobs:
 
             - name: Commit and push
               working-directory: artifacts
+              env:
+                  VERSION: ${{ steps.version.outputs.VERSION }}
               run: |
                   git config user.name "Dax the Deployer"
                   git config user.email "dax@duckduckgo.com"
@@ -85,7 +87,7 @@ jobs:
                   fi
                   # The source sha is the only thing tying these bytes back to
                   # the code that produced them - the branches share no history.
-                  git commit -m "chromium-embedded ${{ steps.version.outputs.VERSION }}
+                  git commit -m "chromium-embedded $VERSION
 
                   Source commit: ${{ github.sha }}
                   Built by: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
