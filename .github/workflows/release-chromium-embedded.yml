@@ -18,6 +18,11 @@ on:
     # For the first run, and for rebuilding a version without bumping it.
     workflow_dispatch:
 
+# Runs queue rather than race to push to ARTIFACTS_BRANCH.
+concurrency:
+    group: release-chromium-embedded
+    cancel-in-progress: false
+
 env:
     # Deliberately the same string, and deliberately two variables: the branch
     # is named after the directory it carries. Git reads a bare
