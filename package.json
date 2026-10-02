@@ -9,7 +9,7 @@
     "scripts": {
         "install-ci": "make npm",
         "bundle-config": "node scripts/bundleConfig.mjs && node node_modules/@duckduckgo/content-scope-scripts/injected/scripts/bundleTrackers.mjs > shared/data/bundled/tracker-lookup.json",
-        "build": "echo 'Try npm run release-firefox or npm run release-chrome instead' && exit 0",
+        "build": "node scripts/build-tools/build.mjs",
         "dev": "echo 'Try npm run dev-firefox or npm run dev-chrome instead' && exit 0",
         "eslint": "eslint *.js shared/js shared/data unit-test integration-test scripts",
         "eslint-fix": "npm run eslint -- --fix",
