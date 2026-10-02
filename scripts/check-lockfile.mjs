@@ -162,7 +162,7 @@ async function checkGitDependencyPinnedCommits() {
         const pinnedSha = extractGitShaFromLockEntry(lockEntry);
         if (!pinnedSha) continue; // non-git or not pinned in this lock section
 
-        let expectedSha = null;
+        let expectedSha;
         try {
             expectedSha = await resolveTagToCommitSha({
                 owner: parsed.owner,
