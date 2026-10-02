@@ -38,7 +38,7 @@
         "validate-pixel-defs": "validate-ddg-pixel-defs pixel-definitions"
     },
     "devDependencies": {
-        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.2.1",
+        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.3.1",
         "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v2.1.0",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
         "@fingerprintjs/fingerprintjs": "^4.6.2",
@@ -60,7 +60,7 @@
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
         "prettier": "3.9.8",
-        "sass": "^1.104.1",
+        "sass": "^1.105.0",
         "timekeeper": "^2.3.1",
         "typescript": "^5.8.3",
         "webextension-polyfill": "^0.12.0"
