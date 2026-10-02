@@ -21,7 +21,7 @@ const webResourceKeyRegex = /.*\?key=(.*)/;
 const { AdClickAttributionPolicy } = require('./ad-click-attribution-policy');
 const { TabState } = require('./tab-state');
 
-/** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}} TabData */
+/** @typedef {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined, incognito?: boolean}} TabData */
 
 /**
  * @typedef {import('../components/abn-experiments').default} AbnExperimentMetrics
@@ -200,6 +200,20 @@ class Tab {
         this._tabState.setValue('status', value);
     }
 
+    get incognito() {
+        return this._tabState.incognito;
+    }
+
+    /**
+     * A tab can't leave incognito, so once set the flag stays set.
+     * @param {boolean} value
+     */
+    set incognito(value) {
+        if (value && !this.incognito) {
+            this._tabState.setValue('incognito', true);
+        }
+    }
+
     get statusCode() {
         return this._tabState.statusCode;
     }
@@ -345,7 +359,8 @@ class Tab {
             this.trackers[t.tracker.owner.name] = newTracker;
 
             // first time we have seen this network tracker on the page
-            if (t.tracker.owner.name !== 'unknown') Companies.countCompanyOnPage(t.tracker.owner);
+            // (incognito browsing is left out of the persisted stats)
+            if (t.tracker.owner.name !== 'unknown' && !this.incognito) Companies.countCompanyOnPage(t.tracker.owner);
         }
         // Set the trackers on the tab which will trigger a state update
         this.trackers = trackers;

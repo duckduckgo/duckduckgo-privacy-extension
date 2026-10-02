@@ -223,6 +223,7 @@ export const emitter = new EventEmitter2();
  * Note: this is deliberately conservative about how much information is published,
  * for now it's just the parent company's display name which is enough
  * to power the NewTabTrackerStats module.
+ * It is not emitted for incognito tabs, which are left out of the persisted stats.
  */
 export class TrackerBlockedEvent {
     static eventName = 'tracker-blocked';
@@ -349,7 +350,8 @@ function blockHandleResponse(thisTab, requestData) {
         postPopupMessage({ messageType: 'updateTabData' });
         // Block the request if the site is not allowlisted
         if (['block', 'redirect'].includes(tracker.action)) {
-            if (!blockedNonTrackingRequest) {
+            // Incognito browsing is left out of the persisted stats
+            if (!blockedNonTrackingRequest && !thisTab.incognito) {
                 // @ts-ignore
                 Companies.add(tracker.tracker.owner);
 
