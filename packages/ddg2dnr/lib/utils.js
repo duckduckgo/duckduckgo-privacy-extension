@@ -431,7 +431,8 @@ function processRegexTrackerRule(domain, trackerRule, matchCnames) {
     let { requiresRegexFilter, urlFilter, afterDomainRuleIndex, lastAlphaIndex } = parseRegexTrackerRule(domain, trackerRule);
 
     let regexFilter = trackerRule;
-    let matchCase = false;
+    /** @type {boolean} */
+    let matchCase;
     let usedRegexForWorkaround = false;
 
     if (domain && urlFilter.startsWith(domain)) {

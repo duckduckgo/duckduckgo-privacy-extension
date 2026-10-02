@@ -175,7 +175,8 @@ async function fetchAMPURL(site, url) {
         return null;
     }
 
-    let data = null;
+    /** @type {Response | undefined} */
+    let data;
     const timeoutController = new AbortController();
     setTimeout(() => timeoutController.abort(), ampSettings.deepExtractionTimeout || 1500);
 

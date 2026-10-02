@@ -80,7 +80,6 @@ BaseView.prototype = $.extend({}, mixins.events, {
                         v && v.destroy && v.destroy();
                     }
                 }
-                views = null;
             } else {
                 for (const c in views) {
                     v = views[c];
