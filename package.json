@@ -60,7 +60,7 @@
         "karma-chrome-launcher": "3.2.0",
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
-        "prettier": "3.9.8",
+        "prettier": "3.9.9",
         "sass": "^1.104.1",
         "timekeeper": "^2.3.1",
         "typescript": "^5.8.3",
