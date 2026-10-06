@@ -102,12 +102,13 @@ export default class TabTracker extends EventTarget {
             }
         });
 
-        browser.tabs.onUpdated.addListener((id, info) => {
+        browser.tabs.onUpdated.addListener((id, info, tab) => {
             // sync company data to storage when a tab finishes loading
             if (info.status === 'complete') {
                 Companies.syncToStorage();
             }
-            tabManager.createOrUpdateTab(id, info);
+            // changeInfo doesn't include the incognito flag, so take it from the full tab
+            tabManager.createOrUpdateTab(id, { ...info, incognito: tab.incognito });
         });
 
         browser.tabs.onRemoved.addListener((id, info) => {
