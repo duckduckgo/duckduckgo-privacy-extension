@@ -28,6 +28,7 @@ import DNRListeners from './components/dnr-listeners';
 import SiteGroups from './components/site-groups';
 import AllowedSites from './components/allowed-sites';
 import Sanctuary from './components/sanctuary';
+import SanitizeYoutube from './components/sanitize-youtube';
 import RemoteConfig from './components/remote-config';
 import DashboardMessaging from './components/dashboard-messaging';
 import initDebugBuild from './devbuild';
@@ -100,6 +101,11 @@ if (BUILD_TARGET === 'chrome') {
         components.sanctuary = new Sanctuary({ settings });
     } catch (error) {
         console.error('Failed to start sanctuary', error);
+    }
+    try {
+        components.sanitizeYoutube = new SanitizeYoutube({ settings });
+    } catch (error) {
+        console.error('Failed to start sanitize youtube', error);
     }
     components.dnrListeners = new DNRListeners({ settings, tds });
 

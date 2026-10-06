@@ -3,7 +3,7 @@
     "description": "__MSG_appDesc__",
     "homepage_url": "https://zshanhui.github.io/openfocusd/",
     "default_locale": "en",
-    "version": "2026.9.2",
+    "version": "2026.10.10",
     "minimum_chrome_version": "128.0",
     "icons": {
         "16": "img/icon_16.png",
@@ -25,6 +25,7 @@
     "permissions": [
         "alarms",
         "declarativeNetRequest",
+        "favicon",
         "scripting",
         "storage",
         "tabs",

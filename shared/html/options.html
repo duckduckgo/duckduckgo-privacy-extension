@@ -70,6 +70,30 @@
       >
         <span data-text="options:blockTrackersTab.title"></span>
       </button>
+      <button
+        class="options-tab js-options-tab"
+        id="options-tab-sanitize-youtube"
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls="options-panel-sanitize-youtube"
+        tabindex="-1"
+        data-options-tab="sanitize-youtube"
+      >
+        <span data-text="options:sanitizeYoutubeTab.title"></span>
+      </button>
+      <button
+        class="options-tab js-options-tab"
+        id="options-tab-time-analytics"
+        type="button"
+        role="tab"
+        aria-selected="false"
+        aria-controls="options-panel-time-analytics"
+        tabindex="-1"
+        data-options-tab="time-analytics"
+      >
+        <span data-text="options:timeAnalyticsTab.title"></span> <span class="time-analytics-beta">(beta)</span>
+      </button>
     </nav>
   </aside>
 
@@ -115,6 +139,28 @@
         <p class="options-info options-info--secondary" data-text="options:trackerListManagedBy.title"></p>
       </section>
       <div id="block-trackers-content"></div>
+    </section>
+
+    <section
+      class="options-panel js-options-panel"
+      id="options-panel-sanitize-youtube"
+      role="tabpanel"
+      aria-labelledby="options-tab-sanitize-youtube"
+      data-options-panel="sanitize-youtube"
+      hidden
+    >
+      <div id="sanitize-youtube-content"></div>
+    </section>
+
+    <section
+      class="options-panel js-options-panel"
+      id="options-panel-time-analytics"
+      role="tabpanel"
+      aria-labelledby="options-tab-time-analytics"
+      data-options-panel="time-analytics"
+      hidden
+    >
+      <div id="time-analytics-content"></div>
     </section>
   </main>
 </div>

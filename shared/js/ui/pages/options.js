@@ -13,6 +13,12 @@ const siteGroupsTemplate = require('./../templates/site-groups.js');
 const AllowedSitesView = require('./../views/allowed-sites.js');
 const AllowedSitesModel = require('./../models/allowed-sites.js');
 const allowedSitesTemplate = require('./../templates/allowed-sites.js');
+const SanitizeYoutubeView = require('./../views/sanitize-youtube.js');
+const SanitizeYoutubeModel = require('./../models/sanitize-youtube.js');
+const sanitizeYoutubeTemplate = require('./../templates/sanitize-youtube.js');
+const TimeAnalyticsView = require('./../views/time-analytics.js');
+const TimeAnalyticsModel = require('./../models/time-analytics.js');
+const timeAnalyticsTemplate = require('./../templates/time-analytics.js');
 const BackgroundMessageModel = require('./../models/background-message.js');
 const InternalOptionsView = require('./../views/internal-options.js').default;
 const { sendMessage } = require('./../base/ui-wrapper.js');
@@ -30,6 +36,8 @@ Options.prototype = window.$.extend({}, Parent.prototype, mixins.setBrowserClass
         const $siteGroupsParent = window.$('#blocked-sites-content');
         const $allowedSitesParent = window.$('#allowed-sites-content');
         const $blockTrackersParent = window.$('#block-trackers-content');
+        const $sanitizeYoutubeParent = window.$('#sanitize-youtube-content');
+        const $timeAnalyticsParent = window.$('#time-analytics-content');
         Parent.prototype.ready.call(this);
 
         this.setBrowserClassOnBodyTag();
@@ -73,6 +81,20 @@ Options.prototype = window.$.extend({}, Parent.prototype, mixins.setBrowserClass
                 template: allowedSitesTemplate,
             });
         }
+
+        this.views.sanitizeYoutube = new SanitizeYoutubeView({
+            pageView: this,
+            model: new SanitizeYoutubeModel({}),
+            appendTo: $sanitizeYoutubeParent,
+            template: sanitizeYoutubeTemplate,
+        });
+
+        this.views.timeAnalytics = new TimeAnalyticsView({
+            pageView: this,
+            model: new TimeAnalyticsModel({}),
+            appendTo: $timeAnalyticsParent,
+            template: timeAnalyticsTemplate,
+        });
 
         this.views.internal = new InternalOptionsView({
             pageView: this,

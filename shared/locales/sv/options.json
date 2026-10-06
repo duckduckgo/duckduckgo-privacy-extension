@@ -133,9 +133,117 @@
         "title": "Blockera spårare",
         "note": "Navigation tab for OpenFocusd tracker-blocking and privacy options"
     },
+    "sanitizeYoutubeTab": {
+        "title": "Rensa Youtube",
+        "note": "Navigation tab for YouTube sanitizing options"
+    },
+    "sanitizeYoutubeHeading": {
+        "title": "Rensa Youtube",
+        "note": "Header for the Sanitize Youtube options view"
+    },
+    "hideYoutubeComments": {
+        "title": "Dölj Youtube-kommentarer",
+        "note": "Toggle that hides the comments section on Youtube"
+    },
+    "hideYoutubeCommentsDesc": {
+        "title": "Döljer kommentarsavsnittet på Youtube.",
+        "note": "Explains the Hide Youtube Comments toggle"
+    },
+    "hideYoutubeRecommendations": {
+        "title": "Dölj rekommenderade videor",
+        "note": "Toggle that hides the recommended videos in the Youtube watch-page sidebar"
+    },
+    "hideYoutubeRecommendationsDesc": {
+        "title": "Döljer rekommenderade videor i sidofältet på en Youtube-video.",
+        "note": "Explains the Hide Recommended Videos toggle"
+    },
+    "hideYoutubeShorts": {
+        "title": "Dölj Youtube Shorts",
+        "note": "Toggle that hides Youtube Shorts shelves, results, and the Shorts player"
+    },
+    "hideYoutubeShortsDesc": {
+        "title": "Döljer Shorts på startsidan, i sökningen, i rekommendationerna och i Shorts-spelaren.",
+        "note": "Explains the Hide Youtube Shorts toggle"
+    },
+    "blurYoutubeThumbnails": {
+        "title": "Gör miniatyrer oskarpa",
+        "note": "Toggle that blurs Youtube video thumbnails"
+    },
+    "blurYoutubeThumbnailsDesc": {
+        "title": "Gör videominiatyrer på Youtube oskarpa. Titlarna förblir läsbara.",
+        "note": "Explains the Blur Thumbnails toggle"
+    },
+    "timeAnalyticsTab": {
+        "title": "Tidsanalys",
+        "note": "Navigation tab for site-group time usage over recent days"
+    },
+    "timeAnalyticsHeading": {
+        "title": "Tidsanalys",
+        "note": "Header for the Time Analytics options view"
+    },
+    "timeAnalyticsRange": {
+        "title": "Senaste 7 dagarna",
+        "note": "Dropdown option that shows Time Analytics for the last 7 days. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsRangeToday": {
+        "title": "Idag",
+        "note": "Dropdown option that shows Time Analytics for the current day, from 6:00 to the next 6:00. This is the default."
+    },
+    "timeAnalyticsRangeLabel": {
+        "title": "Period",
+        "note": "Label for the dropdown that switches Time Analytics between Today and Last 7 days"
+    },
+    "timeAnalyticsDesc": {
+        "title": "Tid som använts de senaste 7 dagarna. En dag löper från 6:00 till nästa 6:00.",
+        "note": "Explains the Time Analytics range when Last 7 days is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsDescToday": {
+        "title": "Tid som använts idag. En dag löper från 6:00 till nästa 6:00.",
+        "note": "Explains the Time Analytics range when Today is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsFilterLabel": {
+        "title": "Visa",
+        "note": "Label for the dropdown that switches Time Analytics between Block Sites and Allowed Sites"
+    },
+    "timeAnalyticsGroupsHeading": {
+        "title": "Webbplatsgrupper",
+        "note": "Section heading for timed site groups on Time Analytics"
+    },
+    "timeAnalyticsAllowedHeading": {
+        "title": "Tillåtna webbplatser",
+        "note": "Section heading for time spent on Allowed Sites"
+    },
+    "timeAnalyticsAllowedDesc": {
+        "title": "Tid som den aktiva fliken tillbringade på Tillåtna webbplatser. De här webbplatserna har ingen dagsgräns.",
+        "note": "Explains the Allowed Sites section on Time Analytics"
+    },
+    "timeAnalyticsAllowedEmpty": {
+        "title": "Inga tillåtna webbplatser ännu.",
+        "note": "Empty state when Allowed Sites has no patterns and no recorded time"
+    },
+    "timeAnalyticsEmpty": {
+        "title": "Inga webbplatsgrupper med tidsgräns ännu.",
+        "note": "Empty state when there are no site groups with a daily time limit"
+    },
+    "timeAnalyticsTotalLabel": {
+        "title": "Totalt",
+        "note": "Label for time used across the days shown on Time Analytics"
+    },
+    "timeAnalyticsGroupLabel": {
+        "title": "Grupp {name}",
+        "note": "Heading for one site group on Time Analytics. {name} is the group name."
+    },
+    "timeAnalyticsDailyAllowance": {
+        "title": "Dagsgräns",
+        "note": "Label for a site group's daily time allowance on Time Analytics"
+    },
     "optionsDesc": {
         "title": "OpenFocusd och DuckDuckGo skyddar din integritet på nätet med\nprivat sökning,\nblockering av spårare\noch kryptering av webbplatser.",
         "note": "This describes how we protect the user from being tracked online"
+    },
+    "trackerListManagedBy": {
+        "title": "Tracker block list is remote managed by DuckDuckGo, a privacy first search engine.",
+        "note": "Credit that the tracker blocklist is provided and updated by DuckDuckGo"
     },
     "shareFeedback": {
         "title": "Berätta vad du tycker",
@@ -355,7 +463,7 @@
     },
     "searchEngineDesc": {
         "title": "Välj vart sökningar från popupfönstret och nyckelordet i adressfältet ska gå.",
-        "note": "Explains that the selected search engine is used by the extension popup and omnibox keyword"
+        "note": "Explains that the selected search engine is used by the extension popup"
     },
     "searchEngineDuckDuckGo": {
         "title": "DuckDuckGo",

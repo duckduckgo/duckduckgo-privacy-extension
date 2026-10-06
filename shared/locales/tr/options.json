@@ -133,9 +133,117 @@
         "title": "İzleyicileri engelle",
         "note": "Navigation tab for OpenFocusd tracker-blocking and privacy options"
     },
+    "sanitizeYoutubeTab": {
+        "title": "Youtube'u sadeleştir",
+        "note": "Navigation tab for YouTube sanitizing options"
+    },
+    "sanitizeYoutubeHeading": {
+        "title": "Youtube'u sadeleştir",
+        "note": "Header for the Sanitize Youtube options view"
+    },
+    "hideYoutubeComments": {
+        "title": "Youtube yorumlarını gizle",
+        "note": "Toggle that hides the comments section on Youtube"
+    },
+    "hideYoutubeCommentsDesc": {
+        "title": "Youtube'daki yorumlar bölümünü gizler.",
+        "note": "Explains the Hide Youtube Comments toggle"
+    },
+    "hideYoutubeRecommendations": {
+        "title": "Önerilen videoları gizle",
+        "note": "Toggle that hides the recommended videos in the Youtube watch-page sidebar"
+    },
+    "hideYoutubeRecommendationsDesc": {
+        "title": "Bir Youtube videosunun kenar çubuğundaki önerilen videoları gizler.",
+        "note": "Explains the Hide Recommended Videos toggle"
+    },
+    "hideYoutubeShorts": {
+        "title": "Youtube Shorts'u gizle",
+        "note": "Toggle that hides Youtube Shorts shelves, results, and the Shorts player"
+    },
+    "hideYoutubeShortsDesc": {
+        "title": "Ana sayfadaki, aramadaki, önerilerdeki ve Shorts oynatıcısındaki Shorts'ları gizler.",
+        "note": "Explains the Hide Youtube Shorts toggle"
+    },
+    "blurYoutubeThumbnails": {
+        "title": "Küçük resimleri bulanıklaştır",
+        "note": "Toggle that blurs Youtube video thumbnails"
+    },
+    "blurYoutubeThumbnailsDesc": {
+        "title": "Youtube'daki video küçük resimlerini bulanıklaştırır. Başlıklar okunabilir kalır.",
+        "note": "Explains the Blur Thumbnails toggle"
+    },
+    "timeAnalyticsTab": {
+        "title": "Zaman analizi",
+        "note": "Navigation tab for site-group time usage over recent days"
+    },
+    "timeAnalyticsHeading": {
+        "title": "Zaman analizi",
+        "note": "Header for the Time Analytics options view"
+    },
+    "timeAnalyticsRange": {
+        "title": "Son 7 gün",
+        "note": "Dropdown option that shows Time Analytics for the last 7 days. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsRangeToday": {
+        "title": "Bugün",
+        "note": "Dropdown option that shows Time Analytics for the current day, from 6:00 to the next 6:00. This is the default."
+    },
+    "timeAnalyticsRangeLabel": {
+        "title": "Aralık",
+        "note": "Label for the dropdown that switches Time Analytics between Today and Last 7 days"
+    },
+    "timeAnalyticsDesc": {
+        "title": "Son 7 günde kullanılan süre. Bir gün 6:00'dan sonraki 6:00'a kadar sürer.",
+        "note": "Explains the Time Analytics range when Last 7 days is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsDescToday": {
+        "title": "Bugün kullanılan süre. Bir gün 6:00'dan sonraki 6:00'a kadar sürer.",
+        "note": "Explains the Time Analytics range when Today is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsFilterLabel": {
+        "title": "Göster",
+        "note": "Label for the dropdown that switches Time Analytics between Block Sites and Allowed Sites"
+    },
+    "timeAnalyticsGroupsHeading": {
+        "title": "Site grupları",
+        "note": "Section heading for timed site groups on Time Analytics"
+    },
+    "timeAnalyticsAllowedHeading": {
+        "title": "İzin verilen siteler",
+        "note": "Section heading for time spent on Allowed Sites"
+    },
+    "timeAnalyticsAllowedDesc": {
+        "title": "Etkin sekmenin İzin verilen sitelerde geçirdiği süre. Bu sitelerin günlük sınırı yoktur.",
+        "note": "Explains the Allowed Sites section on Time Analytics"
+    },
+    "timeAnalyticsAllowedEmpty": {
+        "title": "Henüz izin verilen site yok.",
+        "note": "Empty state when Allowed Sites has no patterns and no recorded time"
+    },
+    "timeAnalyticsEmpty": {
+        "title": "Henüz süreli site grubu yok.",
+        "note": "Empty state when there are no site groups with a daily time limit"
+    },
+    "timeAnalyticsTotalLabel": {
+        "title": "Toplam",
+        "note": "Label for time used across the days shown on Time Analytics"
+    },
+    "timeAnalyticsGroupLabel": {
+        "title": "Grup {name}",
+        "note": "Heading for one site group on Time Analytics. {name} is the group name."
+    },
+    "timeAnalyticsDailyAllowance": {
+        "title": "Günlük sınır",
+        "note": "Label for a site group's daily time allowance on Time Analytics"
+    },
     "optionsDesc": {
         "title": "OpenFocusd ve DuckDuckGo,\nözel arama,\nizleyici engelleme\nve site şifreleme ile internette gizliliğinizi korur.",
         "note": "This describes how we protect the user from being tracked online"
+    },
+    "trackerListManagedBy": {
+        "title": "Tracker block list is remote managed by DuckDuckGo, a privacy first search engine.",
+        "note": "Credit that the tracker blocklist is provided and updated by DuckDuckGo"
     },
     "shareFeedback": {
         "title": "Geri bildirim paylaş",
@@ -355,7 +463,7 @@
     },
     "searchEngineDesc": {
         "title": "Açılır pencere ve adres çubuğu anahtar sözcüğündeki aramaların nereye gideceğini seçin.",
-        "note": "Explains that the selected search engine is used by the extension popup and omnibox keyword"
+        "note": "Explains that the selected search engine is used by the extension popup"
     },
     "searchEngineDuckDuckGo": {
         "title": "DuckDuckGo",

@@ -133,9 +133,117 @@
         "title": "Blokiraj alate za praćenje",
         "note": "Navigation tab for OpenFocusd tracker-blocking and privacy options"
     },
+    "sanitizeYoutubeTab": {
+        "title": "Očisti Youtube",
+        "note": "Navigation tab for YouTube sanitizing options"
+    },
+    "sanitizeYoutubeHeading": {
+        "title": "Očisti Youtube",
+        "note": "Header for the Sanitize Youtube options view"
+    },
+    "hideYoutubeComments": {
+        "title": "Sakrij komentare na Youtubeu",
+        "note": "Toggle that hides the comments section on Youtube"
+    },
+    "hideYoutubeCommentsDesc": {
+        "title": "Skriva odjeljak s komentarima na Youtubeu.",
+        "note": "Explains the Hide Youtube Comments toggle"
+    },
+    "hideYoutubeRecommendations": {
+        "title": "Sakrij preporučene videozapise",
+        "note": "Toggle that hides the recommended videos in the Youtube watch-page sidebar"
+    },
+    "hideYoutubeRecommendationsDesc": {
+        "title": "Skriva preporučene videozapise u bočnoj traci Youtube videa.",
+        "note": "Explains the Hide Recommended Videos toggle"
+    },
+    "hideYoutubeShorts": {
+        "title": "Sakrij Youtube Shorts",
+        "note": "Toggle that hides Youtube Shorts shelves, results, and the Shorts player"
+    },
+    "hideYoutubeShortsDesc": {
+        "title": "Skriva Shorts na početnoj stranici, u pretrazi, u preporukama i u Shorts playeru.",
+        "note": "Explains the Hide Youtube Shorts toggle"
+    },
+    "blurYoutubeThumbnails": {
+        "title": "Zamuti sličice",
+        "note": "Toggle that blurs Youtube video thumbnails"
+    },
+    "blurYoutubeThumbnailsDesc": {
+        "title": "Zamagljuje sličice videa na Youtubeu. Naslovi ostaju čitljivi.",
+        "note": "Explains the Blur Thumbnails toggle"
+    },
+    "timeAnalyticsTab": {
+        "title": "Analiza vremena",
+        "note": "Navigation tab for site-group time usage over recent days"
+    },
+    "timeAnalyticsHeading": {
+        "title": "Analiza vremena",
+        "note": "Header for the Time Analytics options view"
+    },
+    "timeAnalyticsRange": {
+        "title": "Zadnjih 7 dana",
+        "note": "Dropdown option that shows Time Analytics for the last 7 days. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsRangeToday": {
+        "title": "Danas",
+        "note": "Dropdown option that shows Time Analytics for the current day, from 6:00 to the next 6:00. This is the default."
+    },
+    "timeAnalyticsRangeLabel": {
+        "title": "Razdoblje",
+        "note": "Label for the dropdown that switches Time Analytics between Today and Last 7 days"
+    },
+    "timeAnalyticsDesc": {
+        "title": "Vrijeme iskorišteno u zadnjih 7 dana. Dan traje od 6:00 do sljedećih 6:00.",
+        "note": "Explains the Time Analytics range when Last 7 days is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsDescToday": {
+        "title": "Vrijeme iskorišteno danas. Dan traje od 6:00 do sljedećih 6:00.",
+        "note": "Explains the Time Analytics range when Today is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsFilterLabel": {
+        "title": "Prikaži",
+        "note": "Label for the dropdown that switches Time Analytics between Block Sites and Allowed Sites"
+    },
+    "timeAnalyticsGroupsHeading": {
+        "title": "Grupe stranica",
+        "note": "Section heading for timed site groups on Time Analytics"
+    },
+    "timeAnalyticsAllowedHeading": {
+        "title": "Dopuštene stranice",
+        "note": "Section heading for time spent on Allowed Sites"
+    },
+    "timeAnalyticsAllowedDesc": {
+        "title": "Vrijeme koje je aktivna kartica provela na Dopuštenim stranicama. Te stranice nemaju dnevno ograničenje.",
+        "note": "Explains the Allowed Sites section on Time Analytics"
+    },
+    "timeAnalyticsAllowedEmpty": {
+        "title": "Još nema dopuštenih stranica.",
+        "note": "Empty state when Allowed Sites has no patterns and no recorded time"
+    },
+    "timeAnalyticsEmpty": {
+        "title": "Još nema grupa stranica s vremenskim ograničenjem.",
+        "note": "Empty state when there are no site groups with a daily time limit"
+    },
+    "timeAnalyticsTotalLabel": {
+        "title": "Ukupno",
+        "note": "Label for time used across the days shown on Time Analytics"
+    },
+    "timeAnalyticsGroupLabel": {
+        "title": "Grupa {name}",
+        "note": "Heading for one site group on Time Analytics. {name} is the group name."
+    },
+    "timeAnalyticsDailyAllowance": {
+        "title": "Dnevno ograničenje",
+        "note": "Label for a site group's daily time allowance on Time Analytics"
+    },
     "optionsDesc": {
         "title": "OpenFocusd i DuckDuckGo štite tvoju privatnost na mreži koristeći\nprivatno pretraživanje,\nblokiranje alata za praćenje\ni enkripciju stranica.",
         "note": "This describes how we protect the user from being tracked online"
+    },
+    "trackerListManagedBy": {
+        "title": "Tracker block list is remote managed by DuckDuckGo, a privacy first search engine.",
+        "note": "Credit that the tracker blocklist is provided and updated by DuckDuckGo"
     },
     "shareFeedback": {
         "title": "Podijeli povratne informacije",
@@ -355,7 +463,7 @@
     },
     "searchEngineDesc": {
         "title": "Odaberi kamo idu pretraživanja iz skočnog prozora i ključne riječi u adresnoj traci.",
-        "note": "Explains that the selected search engine is used by the extension popup and omnibox keyword"
+        "note": "Explains that the selected search engine is used by the extension popup"
     },
     "searchEngineDuckDuckGo": {
         "title": "DuckDuckGo",

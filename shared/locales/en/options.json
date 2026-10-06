@@ -133,6 +133,110 @@
         "title": "Block Trackers",
         "note": "Navigation tab for OpenFocusd tracker-blocking and privacy options"
     },
+    "sanitizeYoutubeTab": {
+        "title": "Sanitize Youtube",
+        "note": "Navigation tab for YouTube sanitizing options"
+    },
+    "sanitizeYoutubeHeading": {
+        "title": "Sanitize Youtube",
+        "note": "Header for the Sanitize Youtube options view"
+    },
+    "hideYoutubeComments": {
+        "title": "Hide Youtube Comments",
+        "note": "Toggle that hides the comments section on Youtube"
+    },
+    "hideYoutubeCommentsDesc": {
+        "title": "Hides the comments section on Youtube.",
+        "note": "Explains the Hide Youtube Comments toggle"
+    },
+    "hideYoutubeRecommendations": {
+        "title": "Hide Recommended Videos",
+        "note": "Toggle that hides the recommended videos in the Youtube watch-page sidebar"
+    },
+    "hideYoutubeRecommendationsDesc": {
+        "title": "Hides the recommended videos in the sidebar on a Youtube video.",
+        "note": "Explains the Hide Recommended Videos toggle"
+    },
+    "hideYoutubeShorts": {
+        "title": "Hide Youtube Shorts",
+        "note": "Toggle that hides Youtube Shorts shelves, results, and the Shorts player"
+    },
+    "hideYoutubeShortsDesc": {
+        "title": "Hides Shorts on the home page, in search, in recommendations, and on the Shorts player.",
+        "note": "Explains the Hide Youtube Shorts toggle"
+    },
+    "blurYoutubeThumbnails": {
+        "title": "Blur Thumbnails",
+        "note": "Toggle that blurs Youtube video thumbnails"
+    },
+    "blurYoutubeThumbnailsDesc": {
+        "title": "Blurs video thumbnails on Youtube. Titles stay readable.",
+        "note": "Explains the Blur Thumbnails toggle"
+    },
+    "timeAnalyticsTab": {
+        "title": "Time Analytics",
+        "note": "Navigation tab for site-group time usage over recent days"
+    },
+    "timeAnalyticsHeading": {
+        "title": "Time Analytics",
+        "note": "Header for the Time Analytics options view"
+    },
+    "timeAnalyticsRange": {
+        "title": "Last 7 days",
+        "note": "Dropdown option that shows Time Analytics for the last 7 days. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsRangeToday": {
+        "title": "Today",
+        "note": "Dropdown option that shows Time Analytics for the current day, from 6:00 to the next 6:00. This is the default."
+    },
+    "timeAnalyticsRangeLabel": {
+        "title": "Range",
+        "note": "Label for the dropdown that switches Time Analytics between Today and Last 7 days"
+    },
+    "timeAnalyticsDesc": {
+        "title": "Time used over the last 7 days. A day runs from 6:00 to the next 6:00.",
+        "note": "Explains the Time Analytics range when Last 7 days is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsDescToday": {
+        "title": "Time used today. A day runs from 6:00 to the next 6:00.",
+        "note": "Explains the Time Analytics range when Today is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsFilterLabel": {
+        "title": "Show",
+        "note": "Label for the dropdown that switches Time Analytics between Block Sites and Allowed Sites"
+    },
+    "timeAnalyticsGroupsHeading": {
+        "title": "Site groups",
+        "note": "Section heading for timed site groups on Time Analytics"
+    },
+    "timeAnalyticsAllowedHeading": {
+        "title": "Allowed Sites",
+        "note": "Section heading for time spent on Allowed Sites"
+    },
+    "timeAnalyticsAllowedDesc": {
+        "title": "Time the active tab spent on Allowed Sites. These sites have no daily limit.",
+        "note": "Explains the Allowed Sites section on Time Analytics"
+    },
+    "timeAnalyticsAllowedEmpty": {
+        "title": "No allowed sites yet.",
+        "note": "Empty state when Allowed Sites has no patterns and no recorded time"
+    },
+    "timeAnalyticsEmpty": {
+        "title": "No timed site groups yet.",
+        "note": "Empty state when there are no site groups with a daily time limit"
+    },
+    "timeAnalyticsTotalLabel": {
+        "title": "Total",
+        "note": "Label for time used across the days shown on Time Analytics"
+    },
+    "timeAnalyticsGroupLabel": {
+        "title": "Group {name}",
+        "note": "Heading for one site group on Time Analytics. {name} is the group name."
+    },
+    "timeAnalyticsDailyAllowance": {
+        "title": "Day limit",
+        "note": "Label for a site group's daily time allowance on Time Analytics"
+    },
     "optionsDesc": {
         "title": "OpenFocusd protects your privacy online with private search, tracker blocking, and site encryption.",
         "note": "This describes how we protect the user from being tracked online"

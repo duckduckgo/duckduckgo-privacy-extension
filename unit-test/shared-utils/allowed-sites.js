@@ -3,6 +3,7 @@ import {
     findAllowedConflict,
     findOverlappingAllowedPatterns,
     isTooBroadAllowedPattern,
+    matchingAllowedPattern,
     normalizeAllowedPattern,
     overlapsGroupDomain,
     parseAllowedSitesInput,
@@ -85,6 +86,13 @@ describe('allowed sites helpers', () => {
         expect(dnrRegexForAllowedPattern('*.youtube.com')).toBeNull();
         expect(dnrRegexForAllowedPattern('*.edu')).toBe('^https?://([^/?#:@]*@)?[^/?#]*\\.edu(:[0-9]+)?([/?#]|$)');
         expect(dnrRegexForAllowedPattern('*docs*')).toBe('^https?://([^/?#:@]*@)?[^/?#]*docs[^/?#]*(:[0-9]+)?([/?#]|$)');
+    });
+
+    it('picks the most specific allowed pattern for a hostname', () => {
+        expect(matchingAllowedPattern('www.wikipedia.org', ['wikipedia.org', '*.edu'])).toBe('wikipedia.org');
+        expect(matchingAllowedPattern('en.wikipedia.org', ['*.wikipedia.org', 'wikipedia.org'])).toBe('wikipedia.org');
+        expect(matchingAllowedPattern('news.example.com', ['example.com', 'news.example.com'])).toBe('news.example.com');
+        expect(matchingAllowedPattern('example.com', ['*.edu'])).toBeNull();
     });
 
     it('parses newline input and keeps rejected lines', () => {

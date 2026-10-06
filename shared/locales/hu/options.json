@@ -133,9 +133,117 @@
         "title": "Nyomkövetők tiltása",
         "note": "Navigation tab for OpenFocusd tracker-blocking and privacy options"
     },
+    "sanitizeYoutubeTab": {
+        "title": "Youtube megtisztítása",
+        "note": "Navigation tab for YouTube sanitizing options"
+    },
+    "sanitizeYoutubeHeading": {
+        "title": "Youtube megtisztítása",
+        "note": "Header for the Sanitize Youtube options view"
+    },
+    "hideYoutubeComments": {
+        "title": "Youtube-hozzászólások elrejtése",
+        "note": "Toggle that hides the comments section on Youtube"
+    },
+    "hideYoutubeCommentsDesc": {
+        "title": "Elrejti a hozzászólások szakaszt a Youtube-on.",
+        "note": "Explains the Hide Youtube Comments toggle"
+    },
+    "hideYoutubeRecommendations": {
+        "title": "Ajánlott videók elrejtése",
+        "note": "Toggle that hides the recommended videos in the Youtube watch-page sidebar"
+    },
+    "hideYoutubeRecommendationsDesc": {
+        "title": "Elrejti az ajánlott videókat egy Youtube-videó oldalsávjában.",
+        "note": "Explains the Hide Recommended Videos toggle"
+    },
+    "hideYoutubeShorts": {
+        "title": "Youtube Shorts elrejtése",
+        "note": "Toggle that hides Youtube Shorts shelves, results, and the Shorts player"
+    },
+    "hideYoutubeShortsDesc": {
+        "title": "Elrejti a Shortsokat a kezdőlapon, a keresésben, az ajánlásokban és a Shorts-lejátszóban.",
+        "note": "Explains the Hide Youtube Shorts toggle"
+    },
+    "blurYoutubeThumbnails": {
+        "title": "Bélyegképek elhomályosítása",
+        "note": "Toggle that blurs Youtube video thumbnails"
+    },
+    "blurYoutubeThumbnailsDesc": {
+        "title": "Elhomályosítja a videók bélyegképeit a Youtube-on. A címek olvashatók maradnak.",
+        "note": "Explains the Blur Thumbnails toggle"
+    },
+    "timeAnalyticsTab": {
+        "title": "Időelemzés",
+        "note": "Navigation tab for site-group time usage over recent days"
+    },
+    "timeAnalyticsHeading": {
+        "title": "Időelemzés",
+        "note": "Header for the Time Analytics options view"
+    },
+    "timeAnalyticsRange": {
+        "title": "Elmúlt 7 nap",
+        "note": "Dropdown option that shows Time Analytics for the last 7 days. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsRangeToday": {
+        "title": "Ma",
+        "note": "Dropdown option that shows Time Analytics for the current day, from 6:00 to the next 6:00. This is the default."
+    },
+    "timeAnalyticsRangeLabel": {
+        "title": "Időszak",
+        "note": "Label for the dropdown that switches Time Analytics between Today and Last 7 days"
+    },
+    "timeAnalyticsDesc": {
+        "title": "Az elmúlt 7 napban felhasznált idő. Egy nap 6:00-tól a következő 6:00-ig tart.",
+        "note": "Explains the Time Analytics range when Last 7 days is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsDescToday": {
+        "title": "A ma felhasznált idő. Egy nap 6:00-tól a következő 6:00-ig tart.",
+        "note": "Explains the Time Analytics range when Today is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsFilterLabel": {
+        "title": "Megjelenítés",
+        "note": "Label for the dropdown that switches Time Analytics between Block Sites and Allowed Sites"
+    },
+    "timeAnalyticsGroupsHeading": {
+        "title": "Webhelycsoportok",
+        "note": "Section heading for timed site groups on Time Analytics"
+    },
+    "timeAnalyticsAllowedHeading": {
+        "title": "Engedélyezett webhelyek",
+        "note": "Section heading for time spent on Allowed Sites"
+    },
+    "timeAnalyticsAllowedDesc": {
+        "title": "Az aktív lap által az Engedélyezett webhelyeken töltött idő. Ezeknek a webhelyeknek nincs napi korlátja.",
+        "note": "Explains the Allowed Sites section on Time Analytics"
+    },
+    "timeAnalyticsAllowedEmpty": {
+        "title": "Még nincsenek engedélyezett webhelyek.",
+        "note": "Empty state when Allowed Sites has no patterns and no recorded time"
+    },
+    "timeAnalyticsEmpty": {
+        "title": "Még nincsenek időkorlátos webhelycsoportok.",
+        "note": "Empty state when there are no site groups with a daily time limit"
+    },
+    "timeAnalyticsTotalLabel": {
+        "title": "Összesen",
+        "note": "Label for time used across the days shown on Time Analytics"
+    },
+    "timeAnalyticsGroupLabel": {
+        "title": "Csoport {name}",
+        "note": "Heading for one site group on Time Analytics. {name} is the group name."
+    },
+    "timeAnalyticsDailyAllowance": {
+        "title": "Napi korlát",
+        "note": "Label for a site group's daily time allowance on Time Analytics"
+    },
     "optionsDesc": {
         "title": "Az OpenFocusd és a DuckDuckGo privát kereséssel,\nnyomkövetők blokkolásával\nés webhelyek titkosításával védi az adataidat online.",
         "note": "This describes how we protect the user from being tracked online"
+    },
+    "trackerListManagedBy": {
+        "title": "Tracker block list is remote managed by DuckDuckGo, a privacy first search engine.",
+        "note": "Credit that the tracker blocklist is provided and updated by DuckDuckGo"
     },
     "shareFeedback": {
         "title": "Visszajelzés megosztása",
@@ -355,7 +463,7 @@
     },
     "searchEngineDesc": {
         "title": "Válaszd ki, hova menjenek a keresések az előugró ablakból és a címsor kulcsszavából.",
-        "note": "Explains that the selected search engine is used by the extension popup and omnibox keyword"
+        "note": "Explains that the selected search engine is used by the extension popup"
     },
     "searchEngineDuckDuckGo": {
         "title": "DuckDuckGo",

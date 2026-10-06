@@ -1,0 +1,217 @@
+@use '../vars';
+
+.options-content__time-analytics {
+    padding-top: 8px;
+    font-size: 14px;
+}
+
+.time-analytics-beta {
+    color: vars.$grey;
+    font-size: 0.75em;
+    font-weight: 600;
+}
+
+.time-analytics-heading {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+}
+
+.time-analytics-heading > .menu-title {
+    padding: 24px 0 4px;
+    color: vars.$blue-dark;
+}
+
+.options-content__time-analytics > .menu-paragraph {
+    max-width: 52em;
+    margin-bottom: 20px;
+    color: vars.$grey-dark;
+    font-weight: normal;
+    text-align: left;
+}
+
+.time-analytics-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    margin: 0 0 8px;
+}
+
+.time-analytics-filter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+}
+
+.time-analytics-filter__label {
+    color: vars.$slate-light;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.time-analytics-filter select {
+    box-sizing: border-box;
+    min-width: 160px;
+    height: 32px;
+    padding: 0 28px 0 10px;
+    border: 1px solid vars.$platinum-dark;
+    border-radius: 8px;
+    background: vars.$white;
+    color: vars.$slate;
+    cursor: pointer;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.time-analytics-section {
+    margin-top: 8px;
+}
+
+.time-analytics-section .menu-paragraph {
+    max-width: 52em;
+    margin-bottom: 12px;
+    color: vars.$grey-dark;
+    font-weight: normal;
+    text-align: left;
+}
+
+.time-analytics-allowed__total {
+    margin-bottom: 8px;
+}
+
+.time-analytics-empty {
+    margin: 0;
+    color: vars.$slate-light;
+}
+
+.time-analytics-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.time-analytics-row {
+    padding: 16px 0;
+    border-top: 1px solid vars.$platinum;
+}
+
+.time-analytics-row__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+}
+
+.time-analytics-row__name {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.time-analytics-duration {
+    color: vars.$slate;
+    font-size: 16px;
+    font-weight: inherit;
+    font-variant-numeric: tabular-nums;
+}
+
+.time-analytics-row__times .time-analytics-duration {
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
+.time-analytics-row__times {
+    display: flex;
+    gap: 16px;
+    margin: 0;
+    color: vars.$slate-light;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.time-analytics-days {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+}
+
+.time-analytics-day {
+    display: grid;
+    grid-template-columns: 8.5em minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 13px;
+}
+
+.time-analytics-day.is-today .time-analytics-day__label {
+    font-weight: 600;
+}
+
+.time-analytics-day__meter,
+.time-analytics-site__meter {
+    height: 6px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: vars.$platinum;
+}
+
+.time-analytics-day__fill,
+.time-analytics-site__fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: vars.$blue;
+}
+
+.time-analytics-day.is-used-up .time-analytics-day__fill {
+    background: vars.$color--red;
+}
+
+.time-analytics-day__time {
+    color: vars.$slate-light;
+    font-variant-numeric: tabular-nums;
+}
+
+.time-analytics-sites {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.time-analytics-site {
+    display: grid;
+    grid-template-columns: minmax(8em, 16em) minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 4px 0 4px 12px;
+    font-size: 13px;
+}
+
+.time-analytics-site__name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.time-analytics-site__name > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.time-analytics-site__icon {
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+}
+
+.time-analytics-site__time {
+    color: vars.$slate-light;
+    font-variant-numeric: tabular-nums;
+}

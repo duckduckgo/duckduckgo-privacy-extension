@@ -12,20 +12,26 @@ import {
     ALARM_CHECKPOINT,
     ALARM_DAILY_RESET,
     ALARM_EXPIRY,
+    applyAllowedElapsed,
     applyElapsed,
     findGroupForHostname,
     formatAllowance,
     getCurrentlyBlockedDomains,
+    getDomainUsage,
     getNextResetTime,
     getRemainingSeconds,
+    getUsageDays,
+    rollAllowedSiteUsage,
+    rollUsageToPeriod,
+    TIME_ANALYTICS_RANGE_DAYS,
     hostnameFromUrl,
     isAlwaysBlockGroup,
     isGroupSettingsLocked,
     removeDomainFromGroup,
 } from '../../shared-utils/site-groups';
 import { normalizeBlockedSite } from '../../shared-utils/blocked-sites';
-import { findOverlappingAllowedPatterns } from '../../shared-utils/allowed-sites';
-import { getAllowedSites, removeAllowedSitePatterns } from '../allowed-sites-store';
+import { findOverlappingAllowedPatterns, matchingAllowedPattern } from '../../shared-utils/allowed-sites';
+import { getAllowedSiteUsage, getAllowedSites, removeAllowedSitePatterns, saveAllowedSiteUsage } from '../allowed-sites-store';
 import { isSanctuaryActive } from '../sanctuary-store';
 import {
     createSiteGroup,
@@ -47,6 +53,8 @@ function decorateGroup(group, usage, now) {
     return {
         ...group,
         remainingSeconds,
+        domainUsage: getDomainUsage(group, usage, now),
+        usageDays: getUsageDays(group, usage, now, TIME_ANALYTICS_RANGE_DAYS),
         alwaysBlocked: group.maxSecondsPerDay <= 0,
         isAlwaysBlock: isAlwaysBlockGroup(group),
         isBlocked: remainingSeconds <= 0,
@@ -62,6 +70,8 @@ export default class SiteGroups {
         this.featureName = 'SiteGroups';
         this.settings = settings;
         this.activeGroupId = null;
+        this.activeAllowedPattern = null;
+        this.activeHostname = null;
         this.lastTickAt = null;
         this._tickChain = Promise.resolve();
         this._redirectingTabs = new Set();
@@ -93,9 +103,9 @@ export default class SiteGroups {
             await this.syncBlockedRules();
             await this.scheduleDailyReset();
 
-            chrome.tabs.onActivated.addListener(() => this.queueSync());
-            chrome.windows.onFocusChanged.addListener(() => this.queueSync());
-            chrome.alarms.onAlarm.addListener((alarm) => this.onAlarm(alarm));
+            browser.tabs.onActivated.addListener(() => this.queueSync());
+            browser.windows.onFocusChanged.addListener(() => this.queueSync());
+            browser.alarms.onAlarm.addListener((alarm) => this.onAlarm(alarm));
             browser.runtime.onStartup.addListener(() => {
                 this.scheduleDailyReset();
                 this.queueSync();
@@ -137,10 +147,10 @@ export default class SiteGroups {
             this.enforceBlockedNavigation(details.tabId, details.url);
         };
 
-        chrome.webNavigation.onBeforeNavigate.addListener(onNavigate);
-        chrome.webNavigation.onCommitted.addListener(onNavigate);
-        chrome.webNavigation.onErrorOccurred.addListener(onNavigate);
-        chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+        browser.webNavigation.onBeforeNavigate.addListener(onNavigate);
+        browser.webNavigation.onCommitted.addListener(onNavigate);
+        browser.webNavigation.onErrorOccurred.addListener(onNavigate);
+        browser.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
             const url = changeInfo.url || tab?.pendingUrl || tab?.url;
             if (url && (changeInfo.url || changeInfo.status === 'loading' || tab?.pendingUrl)) {
                 this.enforceBlockedNavigation(tabId, url);
@@ -181,7 +191,7 @@ export default class SiteGroups {
     }
 
     async redirectOpenBlockedTabs() {
-        const tabs = await chrome.tabs.query({});
+        const tabs = await browser.tabs.query({});
         await Promise.all(
             tabs.map((tab) => (tab.id != null ? this.enforceBlockedNavigation(tab.id, tab.pendingUrl || tab.url) : Promise.resolve())),
         );
@@ -212,8 +222,11 @@ export default class SiteGroups {
     async resetForNewDay() {
         await this.persistElapsed(Date.now());
         this.activeGroupId = null;
+        this.activeAllowedPattern = null;
+        this.activeHostname = null;
         this.lastTickAt = null;
-        saveGroupUsage({});
+        saveGroupUsage(rollUsageToPeriod(getGroupUsage(), Date.now()));
+        saveAllowedSiteUsage(rollAllowedSiteUsage(getAllowedSiteUsage(), Date.now()));
         await this.syncBlockedRules();
         await this.scheduleDailyReset();
         await this.queueSync();
@@ -221,12 +234,19 @@ export default class SiteGroups {
 
     async scheduleDailyReset() {
         const when = getNextResetTime();
-        await chrome.alarms.clear(ALARM_DAILY_RESET);
-        await chrome.alarms.create(ALARM_DAILY_RESET, { when });
+        await browser.alarms.clear(ALARM_DAILY_RESET);
+        await browser.alarms.create(ALARM_DAILY_RESET, { when });
     }
 
     async persistElapsed(now = Date.now()) {
-        if (!this.activeGroupId || !this.lastTickAt) {
+        if (!this.lastTickAt || (!this.activeGroupId && !this.activeAllowedPattern)) {
+            return { expired: false, group: null };
+        }
+
+        if (!this.activeGroupId) {
+            const elapsedSeconds = Math.max(0, (now - this.lastTickAt) / 1000);
+            saveAllowedSiteUsage(applyAllowedElapsed(getAllowedSiteUsage(), elapsedSeconds, now, this.activeAllowedPattern));
+            this.lastTickAt = now;
             return { expired: false, group: null };
         }
 
@@ -234,12 +254,14 @@ export default class SiteGroups {
         const group = groups.find((item) => item.id === this.activeGroupId);
         if (!group) {
             this.activeGroupId = null;
+            this.activeAllowedPattern = null;
+            this.activeHostname = null;
             this.lastTickAt = null;
             return { expired: false, group: null };
         }
 
         const elapsedSeconds = Math.max(0, (now - this.lastTickAt) / 1000);
-        const applied = applyElapsed(group, getGroupUsage(), elapsedSeconds, now);
+        const applied = applyElapsed(group, getGroupUsage(), elapsedSeconds, now, this.activeHostname);
         saveGroupUsage(applied.usage);
         this.lastTickAt = now;
         return { expired: applied.expired, group, remainingSeconds: applied.remainingSeconds };
@@ -252,58 +274,86 @@ export default class SiteGroups {
             await this.expireGroup(previous.group);
         }
 
-        if (isSanctuaryActive()) {
-            this.activeGroupId = null;
-            this.lastTickAt = null;
-            await chrome.alarms.clear(ALARM_EXPIRY);
-            await chrome.alarms.clear(ALARM_CHECKPOINT);
-            return;
-        }
-
         const tab = await this.getFocusedHttpTab();
         const groups = getSiteGroups();
         const hostname = hostnameFromUrl(tab?.url);
-        const group = findGroupForHostname(groups, hostname);
+        const group = isSanctuaryActive() ? null : findGroupForHostname(groups, hostname);
         const remaining = group ? getRemainingSeconds(group, getGroupUsage(), now) : 0;
 
-        if (!group || remaining <= 0) {
+        if (group && remaining > 0) {
+            await this.startCounting(group, now, remaining, hostname);
+            return;
+        }
+
+        if (group && remaining <= 0) {
             this.activeGroupId = null;
+            this.activeAllowedPattern = null;
+            this.activeHostname = null;
             this.lastTickAt = null;
-            await chrome.alarms.clear(ALARM_EXPIRY);
-            await chrome.alarms.clear(ALARM_CHECKPOINT);
-            if (group && remaining <= 0) {
-                await this.syncBlockedRules();
-                if (tab?.id != null) {
-                    await this.redirectTab(tab.id);
-                }
+            await browser.alarms.clear(ALARM_EXPIRY);
+            await browser.alarms.clear(ALARM_CHECKPOINT);
+            await this.syncBlockedRules();
+            if (tab?.id != null) {
+                await this.redirectTab(tab.id);
             }
             return;
         }
 
-        await this.startCounting(group, now, remaining);
+        const allowedPattern = matchingAllowedPattern(hostname, getAllowedSites());
+        if (allowedPattern) {
+            await this.startAllowedCounting(allowedPattern, hostname, now);
+            return;
+        }
+
+        this.activeGroupId = null;
+        this.activeAllowedPattern = null;
+        this.activeHostname = null;
+        this.lastTickAt = null;
+        await browser.alarms.clear(ALARM_EXPIRY);
+        await browser.alarms.clear(ALARM_CHECKPOINT);
     }
 
     /**
      * @param {import('../../shared-utils/site-groups').SiteGroup} group
      * @param {number} now
      * @param {number} remaining
+     * @param {string | null | undefined} hostname
      */
-    async startCounting(group, now, remaining) {
+    async startCounting(group, now, remaining, hostname) {
         this.activeGroupId = group.id;
+        this.activeAllowedPattern = null;
+        this.activeHostname = hostname || null;
         this.lastTickAt = now;
-        await chrome.alarms.clear(ALARM_EXPIRY);
-        await chrome.alarms.create(ALARM_EXPIRY, { when: now + remaining * 1000 });
-        await chrome.alarms.clear(ALARM_CHECKPOINT);
-        await chrome.alarms.create(ALARM_CHECKPOINT, { periodInMinutes: 1 });
+        await browser.alarms.clear(ALARM_EXPIRY);
+        await browser.alarms.create(ALARM_EXPIRY, { when: now + remaining * 1000 });
+        await browser.alarms.clear(ALARM_CHECKPOINT);
+        await browser.alarms.create(ALARM_CHECKPOINT, { periodInMinutes: 1 });
+    }
+
+    /**
+     * @param {string} pattern
+     * @param {string | null | undefined} hostname
+     * @param {number} now
+     */
+    async startAllowedCounting(pattern, hostname, now) {
+        this.activeGroupId = null;
+        this.activeAllowedPattern = pattern;
+        this.activeHostname = hostname || null;
+        this.lastTickAt = now;
+        await browser.alarms.clear(ALARM_EXPIRY);
+        await browser.alarms.clear(ALARM_CHECKPOINT);
+        await browser.alarms.create(ALARM_CHECKPOINT, { periodInMinutes: 1 });
     }
 
     async expireGroup(group) {
         await this.syncBlockedRules();
         await this.redirectGroupTabs(group);
         this.activeGroupId = null;
+        this.activeAllowedPattern = null;
+        this.activeHostname = null;
         this.lastTickAt = null;
-        await chrome.alarms.clear(ALARM_EXPIRY);
-        await chrome.alarms.clear(ALARM_CHECKPOINT);
+        await browser.alarms.clear(ALARM_EXPIRY);
+        await browser.alarms.clear(ALARM_CHECKPOINT);
     }
 
     async syncBlockedRules() {
@@ -314,15 +364,14 @@ export default class SiteGroups {
     }
 
     async isPopupOpen() {
-        if (typeof chrome.runtime.getContexts !== 'function') {
+        const runtime = /** @type {typeof browser.runtime & { getContexts?: (query: { contextTypes: string[] }) => Promise<unknown[]> }} */ (
+            browser.runtime
+        );
+        if (typeof runtime.getContexts !== 'function') {
             return false;
         }
         try {
-            const contexts = await /** @type {Promise<chrome.runtime.ExtensionContext[]>} */ (
-                chrome.runtime.getContexts({
-                    contextTypes: [chrome.runtime.ContextType.POPUP],
-                })
-            );
+            const contexts = await runtime.getContexts({ contextTypes: ['POPUP'] });
             return Array.isArray(contexts) && contexts.length > 0;
         } catch {
             return false;
@@ -332,7 +381,7 @@ export default class SiteGroups {
     async getFocusedHttpTab() {
         let win;
         try {
-            win = await chrome.windows.getLastFocused();
+            win = await browser.windows.getLastFocused();
         } catch {
             return null;
         }
@@ -345,7 +394,7 @@ export default class SiteGroups {
         if (win.focused === false && !(await this.isPopupOpen())) {
             return null;
         }
-        const tabs = await chrome.tabs.query({ active: true, windowId: win.id });
+        const tabs = await browser.tabs.query({ active: true, windowId: win.id });
         const tab = tabs[0];
         if (!tab?.url || !hostnameFromUrl(tab.url)) {
             return null;
@@ -354,7 +403,7 @@ export default class SiteGroups {
     }
 
     async redirectGroupTabs(group) {
-        const tabs = await chrome.tabs.query({});
+        const tabs = await browser.tabs.query({});
         await Promise.all(
             tabs.map(async (tab) => {
                 const hostname = hostnameFromUrl(tab.url);
@@ -371,11 +420,11 @@ export default class SiteGroups {
         }
         this._redirectingTabs.add(tabId);
         try {
-            const tab = await chrome.tabs.get(tabId).catch(() => null);
+            const tab = await browser.tabs.get(tabId).catch(() => null);
             if (this.isBlockedPage(tab?.url) || this.isBlockedPage(tab?.pendingUrl)) {
                 return;
             }
-            await chrome.tabs.update(tabId, { url: this.blockedPageUrl() });
+            await browser.tabs.update(tabId, { url: this.blockedPageUrl() });
         } catch (error) {
             console.warn('Failed to redirect blocked tab', error);
         } finally {
@@ -390,6 +439,10 @@ export default class SiteGroups {
         const usage = getGroupUsage();
         return {
             groups: getSiteGroups().map((group) => decorateGroup(group, usage, now)),
+            allowedSites: {
+                patterns: getAllowedSites(),
+                usageDays: getUsageDays({ id: 'allowed' }, { allowed: getAllowedSiteUsage() }, now, TIME_ANALYTICS_RANGE_DAYS),
+            },
             resetHour: 6,
             categoryBlockSupported: getManifestVersion() === 3,
             blockAdultGamblingSites: isAdultGamblingBlockEnabled(),
@@ -476,6 +529,8 @@ export default class SiteGroups {
         }
         if (this.activeGroupId === id) {
             this.activeGroupId = null;
+            this.activeAllowedPattern = null;
+            this.activeHostname = null;
             this.lastTickAt = null;
         }
         if (!id) {
@@ -570,12 +625,12 @@ export default class SiteGroups {
 
     /**
      * @param {number} [tabId]
-     * @returns {Promise<chrome.tabs.Tab | null>}
+     * @returns {Promise<browser.Tabs.Tab | null>}
      */
     async resolvePopupTab(tabId) {
         if (typeof tabId === 'number') {
             try {
-                const tab = await chrome.tabs.get(tabId);
+                const tab = await browser.tabs.get(tabId);
                 if (tab?.url && hostnameFromUrl(tab.url)) {
                     return tab;
                 }
@@ -589,7 +644,7 @@ export default class SiteGroups {
             return focused;
         }
 
-        const [fallback] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+        const [fallback] = await browser.tabs.query({ active: true, lastFocusedWindow: true });
         return fallback?.url && hostnameFromUrl(fallback.url) ? fallback : null;
     }
 
@@ -612,7 +667,7 @@ export default class SiteGroups {
             }
             const remaining = getRemainingSeconds(group, getGroupUsage(), Date.now());
             if (remaining > 0) {
-                await this.startCounting(group, Date.now(), remaining);
+                await this.startCounting(group, Date.now(), remaining, hostname);
             }
         } else {
             this.queueSync();

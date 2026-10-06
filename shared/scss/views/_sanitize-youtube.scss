@@ -1,0 +1,33 @@
+@use '../vars';
+
+.options-content__sanitize-youtube {
+    padding-top: 8px;
+    font-size: 14px;
+}
+
+.options-content__sanitize-youtube > .menu-title {
+    padding: 24px 0 4px;
+    color: vars.$blue-dark;
+}
+
+.sanitize-youtube-toggle__title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0 4px;
+    font-size: 16px;
+}
+
+.options-content__sanitize-youtube .toggle-button {
+    position: static;
+    flex: 0 0 auto;
+}
+
+.options-content__sanitize-youtube .menu-paragraph {
+    max-width: 52em;
+    margin-bottom: 12px;
+    color: vars.$grey-dark;
+    font-weight: normal;
+    text-align: left;
+}

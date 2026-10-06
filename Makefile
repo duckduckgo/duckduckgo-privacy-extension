@@ -161,6 +161,11 @@ RSYNC = rsync -ra --exclude="*~"
 
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 	$(RSYNC) browsers/$(browser)/* $(BUILD_DIR)
+ifeq ($(browser),chrome)
+ifeq ($(type),dev)
+	node -e "const fs=require('fs'); const p='$(BUILD_DIR)/manifest.json'; const source=fs.readFileSync(p,'utf8'); fs.writeFileSync(p, source.replace('\"name\": \"OpenFocusd\"', '\"name\": \"OpenFocusd (dev)\"'));"
+endif
+endif
 ifneq ($(browser),embedded)
 	$(RSYNC) browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard

@@ -133,9 +133,117 @@
         "title": "Αποκλεισμός ιχνηλατών",
         "note": "Navigation tab for OpenFocusd tracker-blocking and privacy options"
     },
+    "sanitizeYoutubeTab": {
+        "title": "Καθαρισμός Youtube",
+        "note": "Navigation tab for YouTube sanitizing options"
+    },
+    "sanitizeYoutubeHeading": {
+        "title": "Καθαρισμός Youtube",
+        "note": "Header for the Sanitize Youtube options view"
+    },
+    "hideYoutubeComments": {
+        "title": "Απόκρυψη σχολίων Youtube",
+        "note": "Toggle that hides the comments section on Youtube"
+    },
+    "hideYoutubeCommentsDesc": {
+        "title": "Κρύβει την ενότητα σχολίων στο Youtube.",
+        "note": "Explains the Hide Youtube Comments toggle"
+    },
+    "hideYoutubeRecommendations": {
+        "title": "Απόκρυψη προτεινόμενων βίντεο",
+        "note": "Toggle that hides the recommended videos in the Youtube watch-page sidebar"
+    },
+    "hideYoutubeRecommendationsDesc": {
+        "title": "Κρύβει τα προτεινόμενα βίντεο στην πλαϊνή στήλη ενός βίντεο Youtube.",
+        "note": "Explains the Hide Recommended Videos toggle"
+    },
+    "hideYoutubeShorts": {
+        "title": "Απόκρυψη Youtube Shorts",
+        "note": "Toggle that hides Youtube Shorts shelves, results, and the Shorts player"
+    },
+    "hideYoutubeShortsDesc": {
+        "title": "Κρύβει τα Shorts στην αρχική σελίδα, στην αναζήτηση, στις προτάσεις και στη συσκευή αναπαραγωγής Shorts.",
+        "note": "Explains the Hide Youtube Shorts toggle"
+    },
+    "blurYoutubeThumbnails": {
+        "title": "Θόλωμα μικρογραφιών",
+        "note": "Toggle that blurs Youtube video thumbnails"
+    },
+    "blurYoutubeThumbnailsDesc": {
+        "title": "Θολώνει τις μικρογραφίες βίντεο στο Youtube. Οι τίτλοι παραμένουν ευανάγνωστοι.",
+        "note": "Explains the Blur Thumbnails toggle"
+    },
+    "timeAnalyticsTab": {
+        "title": "Ανάλυση χρόνου",
+        "note": "Navigation tab for site-group time usage over recent days"
+    },
+    "timeAnalyticsHeading": {
+        "title": "Ανάλυση χρόνου",
+        "note": "Header for the Time Analytics options view"
+    },
+    "timeAnalyticsRange": {
+        "title": "Τελευταίες 7 ημέρες",
+        "note": "Dropdown option that shows Time Analytics for the last 7 days. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsRangeToday": {
+        "title": "Σήμερα",
+        "note": "Dropdown option that shows Time Analytics for the current day, from 6:00 to the next 6:00. This is the default."
+    },
+    "timeAnalyticsRangeLabel": {
+        "title": "Εύρος",
+        "note": "Label for the dropdown that switches Time Analytics between Today and Last 7 days"
+    },
+    "timeAnalyticsDesc": {
+        "title": "Χρόνος που χρησιμοποιήθηκε τις τελευταίες 7 ημέρες. Μια ημέρα διαρκεί από τις 6:00 έως τις επόμενες 6:00.",
+        "note": "Explains the Time Analytics range when Last 7 days is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsDescToday": {
+        "title": "Χρόνος που χρησιμοποιήθηκε σήμερα. Μια ημέρα διαρκεί από τις 6:00 έως τις επόμενες 6:00.",
+        "note": "Explains the Time Analytics range when Today is selected. Each day runs from 6:00 to the next 6:00."
+    },
+    "timeAnalyticsFilterLabel": {
+        "title": "Εμφάνιση",
+        "note": "Label for the dropdown that switches Time Analytics between Block Sites and Allowed Sites"
+    },
+    "timeAnalyticsGroupsHeading": {
+        "title": "Ομάδες ιστότοπων",
+        "note": "Section heading for timed site groups on Time Analytics"
+    },
+    "timeAnalyticsAllowedHeading": {
+        "title": "Επιτρεπόμενοι ιστότοποι",
+        "note": "Section heading for time spent on Allowed Sites"
+    },
+    "timeAnalyticsAllowedDesc": {
+        "title": "Χρόνος που πέρασε η ενεργή καρτέλα στους Επιτρεπόμενους ιστότοπους. Αυτοί οι ιστότοποι δεν έχουν ημερήσιο όριο.",
+        "note": "Explains the Allowed Sites section on Time Analytics"
+    },
+    "timeAnalyticsAllowedEmpty": {
+        "title": "Δεν υπάρχουν ακόμη επιτρεπόμενοι ιστότοποι.",
+        "note": "Empty state when Allowed Sites has no patterns and no recorded time"
+    },
+    "timeAnalyticsEmpty": {
+        "title": "Δεν υπάρχουν ακόμη ομάδες ιστότοπων με χρονικό όριο.",
+        "note": "Empty state when there are no site groups with a daily time limit"
+    },
+    "timeAnalyticsTotalLabel": {
+        "title": "Σύνολο",
+        "note": "Label for time used across the days shown on Time Analytics"
+    },
+    "timeAnalyticsGroupLabel": {
+        "title": "Ομάδα {name}",
+        "note": "Heading for one site group on Time Analytics. {name} is the group name."
+    },
+    "timeAnalyticsDailyAllowance": {
+        "title": "Ημερήσιο όριο",
+        "note": "Label for a site group's daily time allowance on Time Analytics"
+    },
     "optionsDesc": {
         "title": "Το OpenFocusd και το DuckDuckGo προστατεύουν την ιδιωτικότητά σας στο διαδίκτυο με\nιδιωτική αναζήτηση,\nαποκλεισμό παρακολούθησης\nκαι κρυπτογράφηση ιστότοπων.",
         "note": "This describes how we protect the user from being tracked online"
+    },
+    "trackerListManagedBy": {
+        "title": "Tracker block list is remote managed by DuckDuckGo, a privacy first search engine.",
+        "note": "Credit that the tracker blocklist is provided and updated by DuckDuckGo"
     },
     "shareFeedback": {
         "title": "Κοινοποίηση σχολίου",
@@ -355,7 +463,7 @@
     },
     "searchEngineDesc": {
         "title": "Επιλέξτε πού πηγαίνουν οι αναζητήσεις από το αναδυόμενο παράθυρο και τη λέξη-κλειδί στη γραμμή διευθύνσεων.",
-        "note": "Explains that the selected search engine is used by the extension popup and omnibox keyword"
+        "note": "Explains that the selected search engine is used by the extension popup"
     },
     "searchEngineDuckDuckGo": {
         "title": "DuckDuckGo",

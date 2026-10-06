@@ -13,6 +13,21 @@ export function getAllowedSites() {
 }
 
 /**
+ * @returns {Partial<import('../shared-utils/site-groups').GroupUsageEntry>}
+ */
+export function getAllowedSiteUsage() {
+    const usage = settings.getSetting('allowedSiteUsage');
+    return usage && typeof usage === 'object' && !Array.isArray(usage) ? clone(usage) : {};
+}
+
+/**
+ * @param {Partial<import('../shared-utils/site-groups').GroupUsageEntry> | null | undefined} usage
+ */
+export function saveAllowedSiteUsage(usage) {
+    settings.updateSetting('allowedSiteUsage', usage && typeof usage === 'object' && !Array.isArray(usage) ? usage : {});
+}
+
+/**
  * @param {string[]} patterns
  * @returns {string[]}
  */

@@ -238,6 +238,33 @@ export function isHostnameAllowed(hostname, patterns) {
 }
 
 /**
+ * Most specific allowed pattern for a hostname. A concrete host outranks a glob.
+ *
+ * @param {string | null | undefined} hostname
+ * @param {string[]} patterns
+ * @returns {string | null}
+ */
+export function matchingAllowedPattern(hostname, patterns) {
+    if (!hostname || !Array.isArray(patterns) || patterns.length === 0) {
+        return null;
+    }
+
+    let bestPattern = null;
+    let bestScore = -1;
+    for (const pattern of patterns) {
+        if (!allowedPatternMatchesHostname(pattern, hostname)) {
+            continue;
+        }
+        const score = pattern.length + (isGlobPattern(pattern) ? 0 : 1000);
+        if (score > bestScore) {
+            bestPattern = pattern;
+            bestScore = score;
+        }
+    }
+    return bestPattern;
+}
+
+/**
  * `example.com` and `*.example.com` can use DNR requestDomains. Other globs need a regex.
  *
  * @param {string} pattern

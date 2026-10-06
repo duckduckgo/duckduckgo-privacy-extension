@@ -14,6 +14,10 @@ import {
     getNextResetTime,
     getPeriodKey,
     getRemainingSeconds,
+    applyAllowedElapsed,
+    getUsageDays,
+    rollAllowedSiteUsage,
+    rollUsageToPeriod,
     hostnameFromUrl,
     hostnameMatchesDomain,
     hoursMinutesToSeconds,
@@ -105,6 +109,126 @@ describe('site groups helpers', () => {
         const expired = applyElapsed(youtubeGroup, usage, 5000, now);
         expect(expired.expired).toBeTrue();
         expect(expired.remainingSeconds).toBe(0);
+    });
+
+    it('attributes elapsed time to the matching site and caps it at the daily budget', () => {
+        const now = new Date(2026, 7, 14, 12, 0, 0).getTime();
+        const group = { ...youtubeGroup, domains: ['youtube.com', 'music.youtube.com', 'reddit.com'] };
+
+        const first = applyElapsed(group, {}, 12, now, 'www.youtube.com');
+        expect(first.usage[DEFAULT_GROUP_ID].domains).toEqual({ 'youtube.com': 12 });
+
+        const second = applyElapsed(group, first.usage, 8, now, 'music.youtube.com');
+        expect(second.usage[DEFAULT_GROUP_ID].usedSeconds).toBe(20);
+        expect(second.usage[DEFAULT_GROUP_ID].domains).toEqual({
+            'youtube.com': 12,
+            'music.youtube.com': 8,
+        });
+
+        const reddit = applyElapsed(group, second.usage, 5, now, 'old.reddit.com');
+        expect(reddit.usage[DEFAULT_GROUP_ID].domains['reddit.com']).toBe(5);
+
+        const nearLimit = {
+            [DEFAULT_GROUP_ID]: {
+                periodKey: '2026-08-14',
+                usedSeconds: 2990,
+                domains: { 'youtube.com': 2990 },
+            },
+        };
+        const capped = applyElapsed(youtubeGroup, nearLimit, 50, now, 'youtube.com');
+        expect(capped.usage[DEFAULT_GROUP_ID].usedSeconds).toBe(3000);
+        expect(capped.usage[DEFAULT_GROUP_ID].domains['youtube.com']).toBe(3000);
+
+        const morning = new Date(2026, 7, 14, 7, 0, 0).getTime();
+        const yesterday = {
+            [DEFAULT_GROUP_ID]: {
+                periodKey: '2026-08-13',
+                usedSeconds: 100,
+                domains: { 'youtube.com': 100 },
+            },
+        };
+        const withOlderDay = {
+            [DEFAULT_GROUP_ID]: {
+                ...yesterday[DEFAULT_GROUP_ID],
+                history: {
+                    '2026-08-12': { usedSeconds: 40, domains: { 'youtube.com': 40 } },
+                },
+            },
+        };
+        const reset = applyElapsed(youtubeGroup, withOlderDay, 5, morning, 'youtube.com');
+        expect(reset.usage[DEFAULT_GROUP_ID].usedSeconds).toBe(5);
+        expect(reset.usage[DEFAULT_GROUP_ID].domains).toEqual({ 'youtube.com': 5 });
+        expect(reset.usage[DEFAULT_GROUP_ID].history['2026-08-13']).toEqual({
+            usedSeconds: 100,
+            domains: { 'youtube.com': 100 },
+        });
+        expect(reset.usage[DEFAULT_GROUP_ID].history['2026-08-12'].usedSeconds).toBe(40);
+    });
+
+    it('keeps finished days and returns the last 7 for analytics', () => {
+        const now = new Date(2026, 7, 14, 12, 0, 0).getTime();
+        const usage = {
+            [DEFAULT_GROUP_ID]: {
+                periodKey: '2026-08-13',
+                usedSeconds: 100,
+                domains: { 'youtube.com': 80, 'reddit.com': 20 },
+                history: {
+                    '2026-05-01': { usedSeconds: 9, domains: { 'youtube.com': 9 } },
+                },
+            },
+        };
+
+        const rolled = rollUsageToPeriod(usage, now);
+        expect(rolled[DEFAULT_GROUP_ID].periodKey).toBe('2026-08-14');
+        expect(rolled[DEFAULT_GROUP_ID].usedSeconds).toBe(0);
+        expect(rolled[DEFAULT_GROUP_ID].history['2026-08-13'].usedSeconds).toBe(100);
+        expect(rolled[DEFAULT_GROUP_ID].history['2026-05-01']).toBeUndefined();
+
+        const continued = {
+            ...rolled[DEFAULT_GROUP_ID],
+            usedSeconds: 15,
+            domains: { 'reddit.com': 15 },
+        };
+        const days = getUsageDays(youtubeGroup, { [DEFAULT_GROUP_ID]: continued }, now, 7);
+        expect(days).toHaveSize(7);
+        expect(days[0].periodKey).toBe('2026-08-08');
+        expect(days[0].usedSeconds).toBe(0);
+        expect(days[5]).toEqual(
+            jasmine.objectContaining({
+                periodKey: '2026-08-13',
+                usedSeconds: 100,
+                isToday: false,
+            }),
+        );
+        expect(days[5].domains).toEqual({ 'youtube.com': 80, 'reddit.com': 20 });
+        expect(days[6]).toEqual(
+            jasmine.objectContaining({
+                periodKey: '2026-08-14',
+                usedSeconds: 15,
+                isToday: true,
+            }),
+        );
+    });
+
+    it('records Allowed Sites time without a daily cap and keeps the previous day', () => {
+        const yesterday = new Date(2026, 7, 13, 12, 0, 0).getTime();
+        const today = new Date(2026, 7, 14, 12, 0, 0).getTime();
+        const first = applyAllowedElapsed(null, 5000, yesterday, 'wikipedia.org');
+        expect(first.usedSeconds).toBe(5000);
+        expect(first.domains).toEqual({ 'wikipedia.org': 5000 });
+
+        const second = applyAllowedElapsed(first, 30, today, '*.edu');
+        expect(second.periodKey).toBe('2026-08-14');
+        expect(second.usedSeconds).toBe(30);
+        expect(second.domains).toEqual({ '*.edu': 30 });
+        expect(second.history['2026-08-13']).toEqual({
+            usedSeconds: 5000,
+            domains: { 'wikipedia.org': 5000 },
+        });
+
+        const rolled = rollAllowedSiteUsage(second, today);
+        expect(rolled.usedSeconds).toBe(30);
+        expect(rolled.history['2026-08-13'].usedSeconds).toBe(5000);
     });
 
     it('resets used time after the 6:00 boundary', () => {
