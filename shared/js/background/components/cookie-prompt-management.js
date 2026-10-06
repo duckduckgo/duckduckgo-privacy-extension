@@ -283,8 +283,8 @@ export default class CookiePromptManagement {
      */
     updateTopUrl(tabId, url) {
         const oldTopUrl = this._tabUrlsCache.get(tabId) || new URL('about:blank');
-        /** @type {URL | null} */
-        let newTopUrl = null;
+        /** @type {URL} */
+        let newTopUrl;
         try {
             newTopUrl = new URL(url);
         } catch (e) {
