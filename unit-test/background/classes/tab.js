@@ -176,6 +176,7 @@ describe('Tab', () => {
                 cleanAmpUrl: null,
                 requestId: 123,
                 status: 200,
+                incognito: false,
                 statusCode: null,
                 debugFlags: [],
                 breakageReportData: null,

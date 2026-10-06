@@ -55,7 +55,7 @@ export function getExtensionId() {
 
 /**
  * @param {browser.WebRequest.OnBeforeRedirectDetailsType | browser.Tabs.Tab | browser.Tabs.OnUpdatedChangeInfoType} tabData
- * @returns {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined}}
+ * @returns {{tabId: number, url: string | undefined, requestId?: string, status: string | null | undefined, incognito: boolean}}
  */
 export function normalizeTabData(tabData) {
     // @ts-expect-error - id doesn't exist onUpdatedChangeInfoType but we rectify in onCreateOrUpdateTab
@@ -63,11 +63,13 @@ export function normalizeTabData(tabData) {
     const url = tabData.url;
     const status = 'status' in tabData ? tabData.status : null;
     const requestId = 'requestId' in tabData ? tabData.requestId : undefined;
+    const incognito = 'incognito' in tabData && !!tabData.incognito;
     return {
         tabId,
         url,
         requestId,
         status,
+        incognito,
     };
 }
 

@@ -42,6 +42,15 @@ class ServiceWorkerTab extends Tab {
     }
 
     /**
+     * Service worker requests can't be tied to a single tab, so treat them as
+     * incognito if any tab with the same origin is incognito.
+     * @returns {boolean}
+     */
+    get incognito() {
+        return this._findMatchingTabs().some((tab) => tab.incognito);
+    }
+
+    /**
      * @param t
      * @param {string} baseDomain
      * @param {string} url

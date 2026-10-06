@@ -17,7 +17,16 @@ const { getCurrentTab } = require('./utils');
 
 // These tab properties are preserved when a new tab Object replaces an existing
 // one for the same tab ID.
-const persistentTabProperties = ['ampUrl', 'cleanAmpUrl', 'urlParametersRemoved', 'urlParametersRemovedUrl', 'userRefreshCount'];
+// Navigation events don't say whether the tab is incognito, so that is carried
+// over too.
+const persistentTabProperties = [
+    'ampUrl',
+    'cleanAmpUrl',
+    'urlParametersRemoved',
+    'urlParametersRemovedUrl',
+    'userRefreshCount',
+    'incognito',
+];
 
 class TabManager {
     constructor() {
@@ -60,6 +69,9 @@ class TabManager {
         const restored = await this.restore(tabData.id);
         if (!restored) {
             await this.create(tabData);
+        } else {
+            // The saved state may predate learning the tab is incognito
+            restored.incognito = tabData.incognito;
         }
     }
 
@@ -203,6 +215,9 @@ class TabManager {
             return tabManager.create(info);
         } else {
             const tab = tabManager.get({ tabId: id });
+            if (tab) {
+                tab.incognito = info.incognito;
+            }
             if (tab && info.status) {
                 tab.status = info.status;
 
@@ -218,7 +233,8 @@ class TabManager {
                     const hasHttps = !!(tab.url && tab.url.match(/^https:\/\//));
                     tab.site.grade.setHttps(hasHttps, hasHttps);
 
-                    if (tab.statusCode === 200 && !tab.site.didIncrementCompaniesData) {
+                    // Incognito browsing is left out of the persisted stats
+                    if (tab.statusCode === 200 && !tab.site.didIncrementCompaniesData && !tab.incognito) {
                         if (tab.trackers && Object.keys(tab.trackers).length > 0) {
                             Companies.incrementTotalPagesWithTrackers();
                         }

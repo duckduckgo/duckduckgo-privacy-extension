@@ -17,7 +17,7 @@ jobs:
             run:
                 shell: bash
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
               with:
                   node-version-file: .nvmrc
@@ -34,7 +34,7 @@ jobs:
                 target: ['release-firefox', 'release-chrome']
         runs-on: ${{ matrix.os }}
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
               with:
                   node-version-file: .nvmrc
@@ -45,7 +45,7 @@ jobs:
     unit-tests:
         runs-on: ubuntu-22.04
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
               with:
                   node-version-file: .nvmrc
@@ -66,7 +66,7 @@ jobs:
                     - test: playwright-chromium-embedded
                       shard: 1/1
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
             - uses: actions/setup-node@v7
               with:
                   node-version-file: .nvmrc
