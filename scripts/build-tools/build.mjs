@@ -14,16 +14,12 @@ import { parseArgs } from 'node:util';
 import { bundleJs } from './lib/bundles.mjs';
 import { TARGET_OPTIONS, TARGET_USAGE, resolveTarget } from './lib/cli.mjs';
 import { AUTOFILL_DIR, CONTENT_SCOPE_SCRIPTS_DIR, DASHBOARD_DIR, ROOT_DIR, SURROGATES_DIR, buildDirectories } from './lib/config.mjs';
-import {
-    buildInjectScript,
-    generatedPaths as contentScopeScriptsGeneratedPaths,
-    isContentScopeScriptsLinked,
-    watchedPaths as contentScopeScriptsPaths,
-} from './lib/contentScopeScripts.mjs';
+import { buildInjectScript, isContentScopeScriptsLinked, watchedPaths as contentScopeScriptsPaths } from './lib/contentScopeScripts.mjs';
 import { copyStaticFiles } from './lib/copy.mjs';
 import { copyFonts } from './lib/fonts.mjs';
-import { ensureDir, isBackupFile } from './lib/fs.mjs';
+import { ensureDir, isBackupFile, isWithin } from './lib/fs.mjs';
 import { LOCALE_RESOURCES_FILE, writeLocaleResources } from './lib/locales.mjs';
+import { settleAll } from './lib/run.mjs';
 import { generateSmarterEncryptionRules } from './lib/smarterEncryption.mjs';
 import { compileStyles } from './lib/styles.mjs';
 import { writeSurrogatesList } from './lib/surrogates.mjs';
@@ -63,7 +59,7 @@ function writeBuildTime({ dev, out }) {
  * is thrown, so a failed build never leaves steps writing output while the
  * next build starts.
  * @param {BuildConfig} config
- * @returns {Promise<string[]>} Every source file the JS bundles were built from.
+ * @returns {Promise<string[]>} Every source file the JS bundles were built from (for watch mode).
  */
 async function build(config) {
     const started = Date.now();
@@ -71,9 +67,7 @@ async function build(config) {
     if (config.ui) {
         writeLocaleResources();
     }
-    const bundles = bundleJs(config);
-    const steps = [bundles, compileStyles(config)];
-    let error;
+    const steps = [bundleJs(config), compileStyles(config)];
     try {
         copyStaticFiles(config);
         if (config.ui) {
@@ -85,60 +79,52 @@ async function build(config) {
             steps.push(generateSmarterEncryptionRules(config));
         }
     } catch (e) {
-        error = e;
+        // Reported ahead of any failed step, once every step has finished.
+        steps.unshift(Promise.reject(e));
     }
-    const failed = (await Promise.allSettled(steps)).find((result) => result.status === 'rejected');
-    if (error || failed) {
-        throw error || failed.reason;
-    }
+    const [bundleInputs] = await settleAll(steps);
     writeBuildTime(config);
     console.log(`Built ${config.browser} ${config.type} in ${config.out.root} (${Date.now() - started}ms)`);
-    return await bundles;
+    return bundleInputs;
 }
 
 /**
- * Source directories whose changes trigger a rebuild: the extension's own
- * sources, the dependency assets that are copied as-is, and the directories
- * of every @duckduckgo package file that the JS bundles were built from, so
- * that an npm-linked dependency rebuilds the extension when its build changes.
- * All of them must exist; a missing one means the dependencies are not
- * installed. Symlinks (npm link) are resolved and nested directories dropped,
- * so each real directory is watched once.
+ * Directories whose changes trigger a rebuild: the extension's own sources,
+ * the dependency assets that are copied as-is, and the directories of every
+ * file the JS bundles were built from that resolves outside node_modules,
+ * which is to say inside an npm-linked checkout. (Installed packages only
+ * change on npm install.) All of them must exist; a missing one means the
+ * dependencies are not installed. Symlinks are resolved and directories
+ * nested in another are dropped, so each real directory is watched once.
  * @param {string[]} bundleInputs From the esbuild metafiles.
+ * @returns {[string, string][]} Pairs of directory as named and its real path.
  */
 function watchedDirectories(bundleInputs) {
-    const dependencyDirs = bundleInputs
-        .filter((input) => input.startsWith('node_modules/@duckduckgo/'))
-        .map((input) => path.dirname(input));
-    const dirs = [
-        'browsers',
-        'shared',
-        'packages',
-        DASHBOARD_DIR,
-        AUTOFILL_DIR,
-        SURROGATES_DIR,
-        ...contentScopeScriptsPaths(),
-        ...dependencyDirs,
-    ];
-    const real = new Map(dirs.map((dir) => [dir, fs.realpathSync(dir)]));
-    const isNested = (dir) => [...real.values()].some((other) => other !== real.get(dir) && real.get(dir).startsWith(other + path.sep));
-    return [...new Set(dirs)].filter((dir) => !isNested(dir));
-}
-
-/** Files under the watched directories that the build writes itself. */
-const GENERATED_PATHS = [LOCALE_RESOURCES_FILE, ...contentScopeScriptsGeneratedPaths()].map((p) => path.normalize(p));
-
-function isGeneratedByBuild(filePath) {
-    return GENERATED_PATHS.some((generated) => filePath === generated || filePath.startsWith(generated + path.sep));
+    const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, ...contentScopeScriptsPaths()];
+    const byRealPath = new Map(dirs.map((dir) => [fs.realpathSync(dir), dir]));
+    for (const dir of new Set(bundleInputs.map((input) => path.dirname(input)))) {
+        const real = fs.realpathSync(dir);
+        if (!real.split(path.sep).includes('node_modules') && !byRealPath.has(real)) {
+            byRealPath.set(real, dir);
+        }
+    }
+    const reals = [...byRealPath.keys()];
+    return [...byRealPath].filter(([real]) => !reals.some((other) => isWithin(other, real))).map(([real, dir]) => [dir, real]);
 }
 
 /**
  * Hidden and backup files are ignored so that editors' and sync tools'
- * temporary files do not trigger rebuilds. Anything else under a watched
- * directory does.
+ * temporary files do not trigger rebuilds, and so is the one source file the
+ * build writes itself. Anything else under a watched directory does.
+ * @param {string} dir The watched directory, as named.
+ * @param {string} filename The changed file, relative to it.
  */
-function shouldIgnore(filename) {
-    return filename.split(/[\\/]/).some((part) => part.startsWith('.')) || isBackupFile(filename);
+function shouldIgnore(dir, filename) {
+    return (
+        filename.split(/[\\/]/).some((part) => part.startsWith('.')) ||
+        isBackupFile(filename) ||
+        path.resolve(dir, filename) === path.resolve(LOCALE_RESOURCES_FILE)
+    );
 }
 
 /**
@@ -171,9 +157,9 @@ async function watch(config) {
         timer = setTimeout(rebuild, 250);
     };
 
-    for (const dir of watchedDirectories(bundleInputs)) {
-        fs.watch(fs.realpathSync(dir), { recursive: true }, (_, filename) => {
-            if (filename && !shouldIgnore(filename) && !isGeneratedByBuild(path.join(dir, filename))) {
+    for (const [dir, realDir] of watchedDirectories(bundleInputs)) {
+        fs.watch(realDir, { recursive: true }, (_, filename) => {
+            if (filename && !shouldIgnore(dir, filename)) {
                 scheduleBuild();
             }
         }).on('error', (e) => console.error(`Stopped watching ${dir}:`, e.message));

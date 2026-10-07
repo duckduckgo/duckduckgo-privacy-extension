@@ -23,8 +23,9 @@ const LOCALES_BUILD = `${BUILD_DIR}/locales`;
 const prebuiltInject = (cssPlatform) => `${BUILD_DIR}/${cssPlatform}/inject.js`;
 
 /** Sources that a rebuild of a linked checkout depends on. */
+const SOURCE_DIRS = [`${INJECTED_DIR}/src`, `${INJECTED_DIR}/entry-points`, `${INJECTED_DIR}/scripts`];
 const LOCALE_INPUTS = [`${INJECTED_DIR}/src/locales`, `${INJECTED_DIR}/scripts`, PACKAGE_JSON];
-const BUNDLE_INPUTS = [`${INJECTED_DIR}/src`, `${INJECTED_DIR}/entry-points`, `${INJECTED_DIR}/scripts`, PACKAGE_JSON, LOCALES_BUILD];
+const BUNDLE_INPUTS = [...SOURCE_DIRS, PACKAGE_JSON, LOCALES_BUILD];
 
 /** True when node_modules/@duckduckgo/content-scope-scripts is npm-linked to a local checkout. */
 export function isContentScopeScriptsLinked() {
@@ -32,20 +33,12 @@ export function isContentScopeScriptsLinked() {
 }
 
 /**
- * What watch mode should watch for this package: the sources of a linked
- * checkout, otherwise the prebuilt bundles. A linked checkout's build output
- * is not watched, since this build produces it and would only rebuild again.
+ * What watch mode should watch for this package: the source directories of a
+ * linked checkout (the same ones its rebuild depends on, so nothing the
+ * rebuild writes is watched), otherwise the prebuilt bundles.
  */
 export function watchedPaths() {
-    return [isContentScopeScriptsLinked() ? INJECTED_DIR : BUILD_DIR];
-}
-
-/**
- * Paths under the watched directories that rebuilding a linked checkout
- * writes to, so that watch mode can ignore its own side effects.
- */
-export function generatedPaths() {
-    return [`${INJECTED_DIR}/integration-test`];
+    return isContentScopeScriptsLinked() ? SOURCE_DIRS : [BUILD_DIR];
 }
 
 /**

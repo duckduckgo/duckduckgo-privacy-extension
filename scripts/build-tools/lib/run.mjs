@@ -1,8 +1,8 @@
 /**
- * Helpers for running other tools. Node based tools are run by resolving their
- * bin script and executing it with the current Node binary, which needs no
- * shell and so behaves identically on Windows (where node_modules/.bin holds
- * .cmd shims rather than executables).
+ * Helpers for running other tools and concurrent build steps. Node based tools
+ * are run by resolving their bin script and executing it with the current Node
+ * binary, which needs no shell and so behaves identically on Windows (where
+ * node_modules/.bin holds .cmd shims rather than executables).
  */
 import { spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -22,6 +22,23 @@ function resolveBin(packageName) {
 }
 
 const exitError = (label, status) => new Error(`${label} exited with status ${status}`);
+
+/**
+ * Like Promise.all, but waits for every promise to settle before throwing the
+ * first rejection, so that a failed step never leaves the others writing
+ * output in the background while the caller moves on.
+ * @template T
+ * @param {Promise<T>[]} promises
+ * @returns {Promise<T[]>}
+ */
+export async function settleAll(promises) {
+    const results = await Promise.allSettled(promises);
+    const failed = results.find((result) => result.status === 'rejected');
+    if (failed) {
+        throw failed.reason;
+    }
+    return results.map((result) => result.value);
+}
 
 /**
  * Runs a Node based tool asynchronously, so it can overlap with other work.

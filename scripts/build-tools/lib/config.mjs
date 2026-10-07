@@ -18,10 +18,11 @@ export const INTERMEDIATES_DIR = `${BUILD_ROOT}/.intermediates`;
 export const SMARTER_ENCRYPTION_LIST = `${BUILD_ROOT}/.smarter_encryption.txt`;
 export const SMARTER_ENCRYPTION_URL = 'https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz';
 
-export const CONTENT_SCOPE_SCRIPTS_DIR = 'node_modules/@duckduckgo/content-scope-scripts';
-export const DASHBOARD_DIR = 'node_modules/@duckduckgo/privacy-dashboard/build/app';
-export const AUTOFILL_DIR = 'node_modules/@duckduckgo/autofill/dist';
-export const SURROGATES_DIR = 'node_modules/@duckduckgo/tracker-surrogates/surrogates';
+const DDG_PACKAGES = 'node_modules/@duckduckgo';
+export const CONTENT_SCOPE_SCRIPTS_DIR = `${DDG_PACKAGES}/content-scope-scripts`;
+export const DASHBOARD_DIR = `${DDG_PACKAGES}/privacy-dashboard/build/app`;
+export const AUTOFILL_DIR = `${DDG_PACKAGES}/autofill/dist`;
+export const SURROGATES_DIR = `${DDG_PACKAGES}/tracker-surrogates/surrogates`;
 
 export const FONT_URL = 'https://duckduckgo.com/font/all/';
 export const FONT_FILES = [

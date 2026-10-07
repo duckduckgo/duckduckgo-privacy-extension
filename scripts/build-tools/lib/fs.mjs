@@ -15,6 +15,12 @@ function isSkippedDir(name) {
     return name === 'node_modules' || name === '.git';
 }
 
+/** True when `child` is strictly inside the directory `parent`. */
+export function isWithin(parent, child) {
+    const relative = path.relative(parent, child);
+    return relative !== '' && !relative.startsWith('..') && !path.isAbsolute(relative);
+}
+
 /** @param {string} dir */
 export function ensureDir(dir) {
     fs.mkdirSync(dir, { recursive: true });
