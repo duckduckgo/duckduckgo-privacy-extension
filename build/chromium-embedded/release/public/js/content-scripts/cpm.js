@@ -433,7 +433,7 @@
     // "only necessary" is probably too broad
     /(?:by continuing.{0,100}cookie)|(?:cookie.{0,100}by continuing)/gi,
     /(?:by continuing.{0,100}privacy)|(?:privacy.{0,100}by continuing)/gi,
-    /we (?:use|serve)(?: optional)? cookies/gi,
+    /we (?:use|serve)(?: optional| essential)? cookies/gi,
     /we are using cookies/gi,
     /use of cookies/gi,
     /website uses cookies to enhance your browsing experience/gi,
@@ -2654,7 +2654,7 @@
       if (selector.startsWith("xpath/")) {
         const xpath = selector.slice(6);
         const result = document.evaluate(xpath, parent, null, XPathResult.ANY_TYPE, null);
-        let node = null;
+        let node;
         const elements = [];
         while (node = result.iterateNext()) {
           elements.push(node);
@@ -3026,7 +3026,8 @@
           }
         }
       });
-      const heuristicRules = isTop && this.config.heuristicMode !== "off" && this.state.findCmpAttempts % 2 === 0 ? [new AutoConsentHeuristicCMP(this, this.config.heuristicMode)] : [];
+      const heuristicEnabled = isTop && this.config.heuristicMode !== "off";
+      const heuristicRules = heuristicEnabled && this.state.findCmpAttempts % 2 === 0 ? [new AutoConsentHeuristicCMP(this, this.config.heuristicMode)] : [];
       const rulesPriorityStages = [
         ["site-specific", siteSpecificRules],
         ["generic", genericRules],
@@ -3067,7 +3068,8 @@
       this.detectHeuristics();
       if (foundCMPs.length === 0 && retries > 0) {
         const waitFor2 = [this.domActions.wait(500)];
-        if (this.state.findCmpAttempts > 1) {
+        const heuristicSkipped = heuristicEnabled && heuristicRules.length === 0;
+        if (this.state.findCmpAttempts > 1 && !heuristicSkipped) {
           waitFor2.push(mutationObserver);
         }
         try {
