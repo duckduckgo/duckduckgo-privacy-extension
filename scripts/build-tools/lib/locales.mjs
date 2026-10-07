@@ -7,7 +7,7 @@ import path from 'node:path';
 import { listVisible, writeIfChanged } from './fs.mjs';
 
 const LOCALES_DIR = 'shared/locales';
-const LOCALE_RESOURCES_FILE = 'shared/js/ui/base/locale-resources.js';
+export const LOCALE_RESOURCES_FILE = 'shared/js/ui/base/locale-resources.js';
 
 /** @returns {string} The generated module source. */
 export function generateLocaleResources() {

@@ -33,11 +33,19 @@ export function isContentScopeScriptsLinked() {
 
 /**
  * What watch mode should watch for this package: the sources of a linked
- * checkout (which this build rebuilds itself, so watching its output too
- * would only queue a redundant rebuild), otherwise the prebuilt bundles.
+ * checkout, otherwise the prebuilt bundles. A linked checkout's build output
+ * is not watched, since this build produces it and would only rebuild again.
  */
 export function watchedPaths() {
     return [isContentScopeScriptsLinked() ? INJECTED_DIR : BUILD_DIR];
+}
+
+/**
+ * Paths under the watched directories that rebuilding a linked checkout
+ * writes to, so that watch mode can ignore its own side effects.
+ */
+export function generatedPaths() {
+    return [`${INJECTED_DIR}/integration-test`];
 }
 
 /**

@@ -30,10 +30,21 @@ function esbuildOptions({ browser, dev, reloader, out }, entryPoint) {
             RELOADER: String(reloader),
         },
         logLevel: 'warning',
+        metafile: true,
     };
 }
 
-/** @param {import('./config.mjs').BuildConfig} config */
+/**
+ * Bundles every entry point. Waits for all of them even when one fails, so
+ * that a failed build never leaves esbuild writing output in the background.
+ * @param {import('./config.mjs').BuildConfig} config
+ * @returns {Promise<string[]>} Every source file the bundles were built from.
+ */
 export async function bundleJs(config) {
-    await Promise.all(config.jsBundles.map((entryPoint) => esbuildBuild(esbuildOptions(config, entryPoint))));
+    const results = await Promise.allSettled(config.jsBundles.map((entryPoint) => esbuildBuild(esbuildOptions(config, entryPoint))));
+    const failed = results.find((result) => result.status === 'rejected');
+    if (failed) {
+        throw failed.reason;
+    }
+    return results.flatMap((result) => Object.keys(result.value.metafile.inputs));
 }
