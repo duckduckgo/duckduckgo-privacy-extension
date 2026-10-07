@@ -2,7 +2,7 @@ import { test, expect, mockAtb } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { routeFromLocalhost } from './helpers/testPages';
 import { listenForBreakageReport, pixelBrowserSuffix } from './helpers/pixels';
-import { isChromiumEmbedded, isFirefox } from './helpers/platform.js';
+import { getPlatform, isChromiumEmbedded, isFirefox } from './helpers/platform.js';
 
 // The chromium-embedded build does not include ATB, so no atb parameter is
 // expected in its breakage reports.
@@ -15,7 +15,7 @@ test.describe('Broken site reports', () => {
         await backgroundWait.forExtensionLoaded(context);
         await routeFromLocalhost(page);
         const breakageReport = listenForBreakageReport(backgroundNetworkContext);
-        const extensionVersion = require('../browsers/chrome/manifest.json').version;
+        const extensionVersion = require(`../browsers/${getPlatform()}/manifest.json`).version;
 
         await page.goto('https://privacy-test-pages.site/', { waitUntil: 'networkidle' });
         await page.bringToFront();
