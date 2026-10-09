@@ -33,6 +33,7 @@ export function syncToStorage(data) {
     return browser.storage.local.set(data);
 }
 
+/** @returns {Promise<any>} */
 // @ts-ignore
 export async function getFromStorage(key, cb) {
     const result = await browser.storage.local.get(key);
