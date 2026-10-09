@@ -30,7 +30,7 @@ jobs:
     build:
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-latest]
+                os: [ubuntu-latest, macos-latest, windows-latest]
                 target: ['release-firefox', 'release-chrome']
         runs-on: ${{ matrix.os }}
         steps:
@@ -65,23 +65,6 @@ jobs:
               run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type release
             - name: Compare
               run: diff -r /tmp/make-release build/${{ matrix.browser }}/release
-
-    # Windows has no make; the Node build scripts are the only way to build there.
-    build-windows:
-        strategy:
-            fail-fast: false
-            matrix:
-                browser: [chrome, firefox, chromium-embedded]
-        runs-on: windows-latest
-        steps:
-            - uses: actions/checkout@v6
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
-            - run: npm ci --ignore-scripts
-            - run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type release
-            - run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type dev
 
     unit-tests:
         runs-on: ubuntu-22.04

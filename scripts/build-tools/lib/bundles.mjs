@@ -10,6 +10,9 @@
 import { build as esbuildBuild } from 'esbuild';
 import { settleAll } from './run.mjs';
 
+/** Oldest browser versions the extension's JavaScript is compiled for. */
+export const ESBUILD_TARGET = ['firefox91', 'chrome92'];
+
 /**
  * @param {import('./config.mjs').BuildConfig} config
  * @param {{in: string, out: string}} entryPoint
@@ -20,7 +23,7 @@ function esbuildOptions({ browser, dev, reloader, out }, entryPoint) {
         entryPoints: [entryPoint],
         outdir: out.js,
         bundle: true,
-        target: ['firefox91', 'chrome92'],
+        target: ESBUILD_TARGET,
         // The Makefile pipes esbuild to stdout, which makes source maps inline.
         sourcemap: dev ? 'inline' : false,
         define: {
