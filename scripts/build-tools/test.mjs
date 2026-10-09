@@ -6,18 +6,19 @@
  *   node scripts/build-tools/test.mjs node   Node tests, bundled into build/node and run with Jasmine.
  */
 import { build as esbuildBuild } from 'esbuild';
-import { ESBUILD_TARGET } from './lib/bundles.mjs';
-import { ROOT_DIR } from './lib/config.mjs';
+import { ESBUILD_TARGET, esbuildDefines } from './lib/bundles.mjs';
+import { usageError } from './lib/cli.mjs';
+import { ROOT_DIR, TEST_BUILD_DIRS } from './lib/config.mjs';
 import { listFiles } from './lib/fs.mjs';
 import { runNodeBin } from './lib/run.mjs';
 
 const USAGE = 'Usage: node scripts/build-tools/test.mjs <unit|node>';
 
-/** Shared by both test bundles: same compile target as the extension, no build-specific defines. */
+/** Shared by both test bundles: compiled like the extension, as no particular browser or build type. */
 const OPTIONS = {
     bundle: true,
     target: ESBUILD_TARGET,
-    define: { BUILD_TARGET: '""', DEBUG: 'false', RELOADER: 'false' },
+    define: esbuildDefines({ browser: '', dev: false, reloader: false }),
     inject: ['./unit-test/inject-chrome-shim.js'],
     logLevel: 'warning',
 };
@@ -31,7 +32,7 @@ const SUITES = {
                 ...listFiles('unit-test/ui', '.js', { recursive: true }),
                 ...listFiles('unit-test/shared-utils', '.js'),
             ],
-            outdir: 'build/test',
+            outdir: TEST_BUILD_DIRS.unit,
             sourcemap: 'inline',
         });
         await runNodeBin('karma', ['start', 'karma.conf.js']);
@@ -40,18 +41,14 @@ const SUITES = {
         await esbuildBuild({
             ...OPTIONS,
             entryPoints: listFiles('unit-test/node', '.js', { recursive: true }),
-            outdir: 'build/node',
+            outdir: TEST_BUILD_DIRS.node,
             platform: 'node',
             external: ['jsdom'],
         });
-        await runNodeBin('jasmine', listFiles('build/node', '.js', { recursive: true }));
+        await runNodeBin('jasmine', listFiles(TEST_BUILD_DIRS.node, '.js', { recursive: true }));
     },
 };
 
-const suite = SUITES[process.argv[2]];
-if (!suite) {
-    console.error(USAGE);
-    process.exit(1);
-}
+const suite = SUITES[process.argv[2]] ?? usageError(USAGE);
 process.chdir(ROOT_DIR);
 await suite();

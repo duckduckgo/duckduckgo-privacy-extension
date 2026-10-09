@@ -18,7 +18,7 @@ import { AUTOFILL_DIR, CONTENT_SCOPE_SCRIPTS_DIR, DASHBOARD_DIR, ROOT_DIR, SURRO
 import { buildInjectScript, isContentScopeScriptsLinked, watchedPaths as contentScopeScriptsPaths } from './lib/contentScopeScripts.mjs';
 import { copyStaticFiles } from './lib/copy.mjs';
 import { copyFonts } from './lib/fonts.mjs';
-import { ensureDir, isBackupFile, isWithin } from './lib/fs.mjs';
+import { ensureDir, isBackupFile, isWithin, timestamp } from './lib/fs.mjs';
 import { LOCALE_RESOURCES_FILE, writeLocaleResources } from './lib/locales.mjs';
 import { settleAll } from './lib/run.mjs';
 import { generateSmarterEncryptionRules } from './lib/smarterEncryption.mjs';
@@ -29,16 +29,6 @@ const USAGE = `Usage: node scripts/build-tools/build.mjs ${TARGET_USAGE} [--clea
 
 /** @typedef {import('./lib/config.mjs').BuildConfig} BuildConfig */
 
-/** Same format as the Makefile's \`date +"%Y%m%d_%H%M%S"\`. */
-function buildTimestamp() {
-    const now = new Date();
-    const pad = (n) => String(n).padStart(2, '0');
-    return (
-        `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}` +
-        `_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
-    );
-}
-
 /**
  * Update buildtime.txt for development builds. The devbuild-reloader module
  * polls it and reloads the extension when it changes.
@@ -46,7 +36,7 @@ function buildTimestamp() {
  */
 function writeBuildTime({ dev, out }) {
     if (dev) {
-        fs.writeFileSync(`${out.root}/buildtime.txt`, `${buildTimestamp()}\n`);
+        fs.writeFileSync(`${out.root}/buildtime.txt`, `${timestamp()}\n`);
     }
 }
 

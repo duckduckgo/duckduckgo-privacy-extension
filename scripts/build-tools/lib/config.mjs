@@ -13,9 +13,14 @@ export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)
 
 export const TYPES = ['dev', 'release'];
 
+/** Per-browser sources: manifest and anything else that only one browser ships. */
+export const BROWSERS_DIR = 'browsers';
+
 export const BUILD_ROOT = 'build';
 export const INTERMEDIATES_DIR = `${BUILD_ROOT}/.intermediates`;
 export const SMARTER_ENCRYPTION_LIST = `${BUILD_ROOT}/.smarter_encryption.txt`;
+/** Where the unit tests are bundled to. */
+export const TEST_BUILD_DIRS = { unit: `${BUILD_ROOT}/test`, node: `${BUILD_ROOT}/node` };
 export const SMARTER_ENCRYPTION_URL = 'https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz';
 
 const DDG_PACKAGES = 'node_modules/@duckduckgo';

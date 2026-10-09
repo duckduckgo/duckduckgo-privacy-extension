@@ -44,39 +44,28 @@ export async function settleAll(promises) {
  * Runs a Node based tool asynchronously, so it can overlap with other work.
  * @param {string} packageName e.g. 'sass'
  * @param {string[]} args
- * @param {{cwd?: string}} [options]
  */
-export function runNodeBin(packageName, args, { cwd } = {}) {
+export function runNodeBin(packageName, args) {
     return new Promise((resolve, reject) => {
-        const child = spawn(process.execPath, [resolveBin(packageName), ...args], { stdio: 'inherit', cwd });
+        const child = spawn(process.execPath, [resolveBin(packageName), ...args], { stdio: 'inherit' });
         child.on('error', reject);
         child.on('exit', (status) => (status === 0 ? resolve() : reject(exitError(`${packageName} ${args.join(' ')}`, status))));
     });
 }
 
 /**
- * Runs npm (or npx) and waits for it. These are .cmd files on Windows, so
- * this is the one place a shell is needed there.
+ * Runs npm and waits for it. npm itself is a .cmd file on Windows, so this is
+ * the one place a shell is needed there. (`npm exec --yes -- <tool>` runs a
+ * tool deliberately not kept in devDependencies, such as web-ext, see #3675.)
  * @param {string[]} args
  * @param {string} cwd
- * @param {'npm'|'npx'} [command]
  */
-export function runNpm(args, cwd, command = 'npm') {
-    const { error, status } = spawnSync(command, args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' });
+export function runNpm(args, cwd) {
+    const { error, status } = spawnSync('npm', args, { cwd, stdio: 'inherit', shell: process.platform === 'win32' });
     if (error) {
         throw error;
     }
     if (status !== 0) {
-        throw exitError(`${command} ${args.join(' ')} (in ${cwd})`, status);
+        throw exitError(`npm ${args.join(' ')} (in ${cwd})`, status);
     }
-}
-
-/**
- * Runs a package through npx, for tools deliberately not kept in
- * devDependencies (web-ext, see #3675).
- * @param {string[]} args
- * @param {string} cwd
- */
-export function runNpx(args, cwd) {
-    runNpm(['--yes', ...args], cwd, 'npx');
 }

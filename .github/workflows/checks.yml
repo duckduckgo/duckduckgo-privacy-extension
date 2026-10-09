@@ -42,6 +42,24 @@ jobs:
             - run: npm run install-ci
             - run: npm run ${{ matrix.target }}
 
+    # The release and beta scripts package what they build: zips for chrome
+    # and embedded, and the beta variants (edited manifests, web-ext for
+    # firefox). The release workflows run them for real; this checks them on
+    # every change.
+    package:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+            - uses: actions/setup-node@v7
+              with:
+                  node-version-file: .nvmrc
+                  cache: 'npm'
+            - run: npm run install-ci
+            - run: npm run release-embedded
+            - run: npm run beta-chrome
+            - run: npm run beta-firefox
+            - run: ls build/embedded/release/embedded-release-*.zip build/chrome/release/chrome-release-*.zip build/firefox/release/web-ext-artifacts/*.zip
+
     # The Node build scripts (scripts/build-tools/) are replacing the Makefile. Until
     # the Makefile is removed, check that both produce identical output.
     build-parity:

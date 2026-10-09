@@ -163,6 +163,12 @@ export function isStale(output, inputs) {
     return newestMtime(inputs) > outputStat.mtimeMs;
 }
 
+/** Timestamp for file names and contents, in the format of the Makefile's `date +"%Y%m%d_%H%M%S"`. */
+export function timestamp(now = new Date()) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+}
+
 /** @param {string} p */
 export function remove(p) {
     fs.rmSync(p, { recursive: true, force: true });
