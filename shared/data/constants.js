@@ -28,7 +28,7 @@ function getConfigFileName() {
         }
         configName = `extension${browserName}-config`;
     }
-    return `${trackerBlockingEndpointBase}/config/v4/${configName}.json`;
+    return `${trackerBlockingEndpointBase}/config/v6/${configName}.json`;
 }
 
 /**

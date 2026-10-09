@@ -1,3 +1,4 @@
+const browser = require('webextension-polyfill');
 const utils = require('../../shared/js/background/utils');
 const tdsStorage = require('../../shared/js/background/storage/tds').default;
 const tds = require('./../data/tds');
@@ -234,6 +235,63 @@ describe('utils.satisfiesMinVersion', () => {
             expect(utils.satisfiesMinVersion(versionString, extensionVersionString)).toEqual(expectedOutcome);
         });
     }
+});
+
+describe('utils.satisfiesMaxVersion', () => {
+    // Max version, Extension version, outcome
+    const cases = [
+        ['12', '12', true],
+        ['12', '11', true],
+        ['12', '13', false],
+        ['12.1.1', '12.1.1', true],
+        ['12.1.1', '12.1.0', true],
+        ['12.1.1', '12.1.2', false],
+        ['12.1.1', '12.2.0', false],
+        ['102.12.12', '102.12.12.1', false],
+        ['102.12.12.1', '102.12.12', true],
+        ['102.12.12.1', '102.12.12.1', true],
+        ['102.12.12.1', '102.12.12.1.1', false],
+        ['103', '102.12.12.1', true],
+        ['101', '102.12.12.1', false],
+    ];
+    for (const testCase of cases) {
+        const [versionString, extensionVersionString, expectedOutcome] = testCase;
+        it(`returns ${JSON.stringify(expectedOutcome)} for ${versionString} compared to ${extensionVersionString}`, () => {
+            expect(utils.satisfiesMaxVersion(versionString, extensionVersionString)).toEqual(expectedOutcome);
+        });
+    }
+});
+
+describe('utils.isFeatureEnabled supported versions', () => {
+    beforeEach(() => {
+        spyOn(browser.runtime, 'getManifest').and.returnValue({ version: '2026.10.6' });
+    });
+
+    // Feature version keys, outcome
+    const cases = [
+        [{}, true],
+        [{ minSupportedVersion: '2026.10.6' }, true],
+        [{ minSupportedVersion: '2026.10.7' }, false],
+        [{ maxSupportedVersion: '2026.10.6' }, true],
+        [{ maxSupportedVersion: '2026.10.7' }, true],
+        [{ maxSupportedVersion: '2026.10.5' }, false],
+        [{ minSupportedVersion: '2026.8.24', maxSupportedVersion: '2026.12.1' }, true],
+        [{ minSupportedVersion: '2026.10.7', maxSupportedVersion: '2026.12.1' }, false],
+        [{ minSupportedVersion: '2026.8.24', maxSupportedVersion: '2026.10.5' }, false],
+    ];
+    for (const [versions, expectedOutcome] of cases) {
+        it(`returns ${expectedOutcome} for ${JSON.stringify(versions)}`, () => {
+            const testConfig = { features: { testFeature: { state: 'enabled', exceptions: [], hash: '', ...versions } } };
+            expect(utils.isFeatureEnabled('testFeature', testConfig)).toEqual(expectedOutcome);
+        });
+    }
+
+    it('returns false for a disabled feature within the supported versions', () => {
+        const testConfig = {
+            features: { testFeature: { state: 'disabled', exceptions: [], hash: '', maxSupportedVersion: '2026.10.7' } },
+        };
+        expect(utils.isFeatureEnabled('testFeature', testConfig)).toBeFalse();
+    });
 });
 
 describe('utils.getInstallTimestamp()', () => {
