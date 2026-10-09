@@ -2,6 +2,7 @@ import settings from './settings';
 import tdsStorage from './storage/tds';
 import { GPC_HEADER_RULE_ID } from './dnr-utils';
 import { generateGPCheaderRule } from '@duckduckgo/ddg2dnr/lib/gpc';
+import { isFeatureEnabled } from './utils';
 
 /**
  * Ensure that the rule to add Global Privacy Control (GPC) request headers is
@@ -18,7 +19,7 @@ export async function ensureGPCHeaderRule(config = null) {
         config = tdsStorage.config;
     }
 
-    const gpcEnabled = settings.getSetting('GPC') && config?.features?.gpc?.state === 'enabled';
+    const gpcEnabled = settings.getSetting('GPC') && !!config?.features && isFeatureEnabled('gpc', config);
 
     if (gpcEnabled) {
         addRules.push(
