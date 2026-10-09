@@ -55,7 +55,8 @@ export function runNodeBin(packageName, args) {
 
 /**
  * Runs npm and waits for it. npm itself is a .cmd file on Windows, so this is
- * the one place a shell is needed there.
+ * the one place a shell is needed there. (`npm exec --yes -- <tool>` runs a
+ * tool deliberately not kept in devDependencies, such as web-ext, see #3675.)
  * @param {string[]} args
  * @param {string} cwd
  */

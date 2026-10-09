@@ -1,10 +1,10 @@
 /**
  * Builds the extension.
  *
- *   node scripts/build-tools/build.mjs --browser <chrome|firefox|embedded|chromium-embedded> --type <dev|release> [--watch] [--no-reloader]
+ *   node scripts/build-tools/build.mjs --browser <chrome|firefox|embedded|chromium-embedded> --type <dev|release> [--clean] [--watch] [--no-reloader]
  *
  * Output goes to build/<browser>/<type>. This is the Node replacement for the
- * Makefile's `dev`, `release` (minus `clean` and `npm`) and `watch` targets,
+ * Makefile's `dev`, `release` (with --clean; minus `npm`) and `watch` targets,
  * and produces the same files. It runs on Linux, macOS and Windows with no
  * tools beyond Node and the npm dependencies.
  */
@@ -12,31 +12,22 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { bundleJs } from './lib/bundles.mjs';
+import { clean } from './lib/clean.mjs';
 import { TARGET_OPTIONS, TARGET_USAGE, resolveTarget } from './lib/cli.mjs';
 import { AUTOFILL_DIR, CONTENT_SCOPE_SCRIPTS_DIR, DASHBOARD_DIR, ROOT_DIR, SURROGATES_DIR, buildDirectories } from './lib/config.mjs';
 import { buildInjectScript, isContentScopeScriptsLinked, watchedPaths as contentScopeScriptsPaths } from './lib/contentScopeScripts.mjs';
 import { copyStaticFiles } from './lib/copy.mjs';
 import { copyFonts } from './lib/fonts.mjs';
-import { ensureDir, isBackupFile, isWithin } from './lib/fs.mjs';
+import { ensureDir, isBackupFile, isWithin, timestamp } from './lib/fs.mjs';
 import { LOCALE_RESOURCES_FILE, writeLocaleResources } from './lib/locales.mjs';
 import { settleAll } from './lib/run.mjs';
 import { generateSmarterEncryptionRules } from './lib/smarterEncryption.mjs';
 import { compileStyles } from './lib/styles.mjs';
 import { writeSurrogatesList } from './lib/surrogates.mjs';
 
-const USAGE = `Usage: node scripts/build-tools/build.mjs ${TARGET_USAGE} [--watch] [--no-reloader]`;
+const USAGE = `Usage: node scripts/build-tools/build.mjs ${TARGET_USAGE} [--clean] [--watch] [--no-reloader]`;
 
 /** @typedef {import('./lib/config.mjs').BuildConfig} BuildConfig */
-
-/** Same format as the Makefile's \`date +"%Y%m%d_%H%M%S"\`. */
-function buildTimestamp() {
-    const now = new Date();
-    const pad = (n) => String(n).padStart(2, '0');
-    return (
-        `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}` +
-        `_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
-    );
-}
 
 /**
  * Update buildtime.txt for development builds. The devbuild-reloader module
@@ -45,7 +36,7 @@ function buildTimestamp() {
  */
 function writeBuildTime({ dev, out }) {
     if (dev) {
-        fs.writeFileSync(`${out.root}/buildtime.txt`, `${buildTimestamp()}\n`);
+        fs.writeFileSync(`${out.root}/buildtime.txt`, `${timestamp()}\n`);
     }
 }
 
@@ -175,6 +166,7 @@ async function main() {
     const { values } = parseArgs({
         options: {
             ...TARGET_OPTIONS,
+            clean: { type: 'boolean' },
             watch: { type: 'boolean' },
             reloader: { type: 'boolean', default: true },
             help: { type: 'boolean', short: 'h' },
@@ -193,6 +185,9 @@ async function main() {
         process.exit(1);
     }
 
+    if (values.clean) {
+        clean(config.out.root);
+    }
     await (values.watch ? watch(config) : build(config));
 }
 

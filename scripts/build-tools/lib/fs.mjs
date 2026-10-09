@@ -32,6 +32,23 @@ export function listVisible(dir) {
 }
 
 /**
+ * Files under a directory with the given extension, like a shell glob for
+ * `*.ext` in that directory or (recursive) in it and every directory below.
+ * Paths keep `dir` as their prefix.
+ * @param {string} dir
+ * @param {string} extension e.g. '.js'
+ * @param {{recursive?: boolean}} [options]
+ * @returns {string[]}
+ */
+export function listFiles(dir, extension, { recursive = false } = {}) {
+    return fs
+        .readdirSync(dir, { withFileTypes: true, recursive })
+        .filter((entry) => entry.isFile() && entry.name.endsWith(extension))
+        .map((entry) => path.join(entry.parentPath ?? entry.path, entry.name))
+        .sort();
+}
+
+/**
  * Equivalent of `rsync -ra --exclude="*~" src dest`, where src is a file or a
  * directory: a directory is copied *as* `dest` (merging into it if it already
  * exists), a file is copied *to* `dest`.
@@ -144,6 +161,12 @@ export function isStale(output, inputs) {
         return true;
     }
     return newestMtime(inputs) > outputStat.mtimeMs;
+}
+
+/** Timestamp for file names and contents, in the format of the Makefile's `date +"%Y%m%d_%H%M%S"`. */
+export function timestamp(now = new Date()) {
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
 }
 
 /** @param {string} p */

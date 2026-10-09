@@ -30,7 +30,7 @@ jobs:
     build:
         strategy:
             matrix:
-                os: [ubuntu-latest, macos-latest]
+                os: [ubuntu-latest, macos-latest, windows-latest]
                 target: ['release-firefox', 'release-chrome']
         runs-on: ${{ matrix.os }}
         steps:
@@ -41,6 +41,24 @@ jobs:
                   cache: 'npm'
             - run: npm run install-ci
             - run: npm run ${{ matrix.target }}
+
+    # The release and beta scripts package what they build: zips for chrome
+    # and embedded, and the beta variants (edited manifests, web-ext for
+    # firefox). The release workflows run them for real; this checks them on
+    # every change.
+    package:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v6
+            - uses: actions/setup-node@v7
+              with:
+                  node-version-file: .nvmrc
+                  cache: 'npm'
+            - run: npm run install-ci
+            - run: npm run release-embedded
+            - run: npm run beta-chrome
+            - run: npm run beta-firefox
+            - run: ls build/embedded/release/embedded-release-*.zip build/chrome/release/chrome-release-*.zip build/firefox/release/web-ext-artifacts/*.zip
 
     # The Node build scripts (scripts/build-tools/) are replacing the Makefile. Until
     # the Makefile is removed, check that both produce identical output.
@@ -65,23 +83,6 @@ jobs:
               run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type release
             - name: Compare
               run: diff -r /tmp/make-release build/${{ matrix.browser }}/release
-
-    # Windows has no make; the Node build scripts are the only way to build there.
-    build-windows:
-        strategy:
-            fail-fast: false
-            matrix:
-                browser: [chrome, firefox, chromium-embedded]
-        runs-on: windows-latest
-        steps:
-            - uses: actions/checkout@v6
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
-            - run: npm ci --ignore-scripts
-            - run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type release
-            - run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type dev
 
     unit-tests:
         runs-on: ubuntu-22.04
