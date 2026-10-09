@@ -689,6 +689,68 @@ describe('rollouts', () => {
     });
 });
 
+describe('supported versions', () => {
+    beforeEach(() => {
+        spyOn(browser.runtime, 'getManifest').and.returnValue({ version: '2026.10.6' });
+    });
+
+    function configWithSubFeature(subFeature) {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({
+            features: {
+                testFeature: {
+                    state: 'enabled',
+                    features: {
+                        fooFeature: { state: 'enabled', ...subFeature },
+                    },
+                },
+            },
+        });
+        return config;
+    }
+
+    it('enables a sub-feature when the extension is below maxSupportedVersion', () => {
+        const config = configWithSubFeature({ maxSupportedVersion: '2026.10.7' });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+    });
+
+    it('enables a sub-feature when the extension is at maxSupportedVersion', () => {
+        const config = configWithSubFeature({ maxSupportedVersion: '2026.10.6' });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeTrue();
+    });
+
+    it('disables a sub-feature when the extension is above maxSupportedVersion', () => {
+        const config = configWithSubFeature({ maxSupportedVersion: '2026.10.5' });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+    });
+
+    it('disables a sub-feature when the extension is outside both bounds', () => {
+        expect(
+            configWithSubFeature({ minSupportedVersion: '2026.10.7', maxSupportedVersion: '2026.12.1' }).isSubFeatureEnabled(
+                'testFeature',
+                'fooFeature',
+            ),
+        ).toBeFalse();
+        expect(
+            configWithSubFeature({ minSupportedVersion: '2026.8.24', maxSupportedVersion: '2026.12.1' }).isSubFeatureEnabled(
+                'testFeature',
+                'fooFeature',
+            ),
+        ).toBeTrue();
+    });
+
+    it('keeps a sub-feature above maxSupportedVersion disabled after a winning rollout roll', () => {
+        const config = configWithSubFeature({ maxSupportedVersion: '2026.10.5', rollout: { steps: [{ percent: 100 }] } });
+        expect(config.isSubFeatureEnabled('testFeature', 'fooFeature')).toBeFalse();
+    });
+
+    it('disables a feature when the extension is above maxSupportedVersion', () => {
+        const config = constructMockRemoteConfig();
+        config.updateConfig({ features: { testFeature: { state: 'enabled', maxSupportedVersion: '2026.10.5' } } });
+        expect(config.isFeatureEnabled('testFeature')).toBeFalse();
+    });
+});
+
 describe('targets', () => {
     it('test feature with multiple targets matching', () => {
         spyOn(browser.i18n, 'getUILanguage').and.returnValue('fr-US');
