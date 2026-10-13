@@ -4,20 +4,20 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { AUTOFILL_DIR, DASHBOARD_DIR, SURROGATES_DIR } from './config.mjs';
+import { AUTOFILL_DIR, BROWSERS_DIR, DASHBOARD_DIR, SURROGATES_DIR } from './config.mjs';
 import { copy, copyEntries } from './fs.mjs';
 
 const isJs = (name) => name.endsWith('.js');
 
 /** @param {import('./config.mjs').BuildConfig} config */
 export function copyStaticFiles({ browser, platform, ui, autofill, htmlExcludes = [], dashboardCss, out }) {
-    copyEntries(`browsers/${browser}`, out.root);
+    copyEntries(`${BROWSERS_DIR}/${browser}`, out.root);
 
     if (!ui) {
         return;
     }
 
-    copy('browsers/chrome/_locales', out.locales);
+    copy(`${BROWSERS_DIR}/chrome/_locales`, out.locales);
     copy('shared/html', out.html, (source) => !htmlExcludes.includes(path.basename(source)));
     copy('shared/img', out.img);
     copy('shared/data', out.data);

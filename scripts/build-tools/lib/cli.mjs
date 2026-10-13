@@ -13,6 +13,17 @@ export const TARGET_OPTIONS = {
 export const TARGET_USAGE = `--browser <${BROWSERS.join('|')}> --type <${TYPES.join('|')}>`;
 
 /**
+ * Prints the usage line, with an optional message first, and exits.
+ * @param {string} usage
+ * @param {string} [message]
+ * @returns {never}
+ */
+export function usageError(usage, message) {
+    console.error(message ? `${message}\n${usage}` : usage);
+    process.exit(1);
+}
+
+/**
  * Resolves the build target from parsed arguments, or prints `usage` and exits.
  * @param {{browser?: string, type?: string, reloader?: boolean}} values
  * @param {string} usage Full usage line for this command.
@@ -20,13 +31,11 @@ export const TARGET_USAGE = `--browser <${BROWSERS.join('|')}> --type <${TYPES.j
  */
 export function resolveTarget(values, usage) {
     if (!values.browser || !values.type) {
-        console.error(usage);
-        process.exit(1);
+        return usageError(usage);
     }
     try {
         return resolveConfig({ browser: values.browser, type: values.type, reloader: values.reloader });
     } catch (e) {
-        console.error(`${e.message}\n${usage}`);
-        process.exit(1);
+        return usageError(usage, e.message);
     }
 }
