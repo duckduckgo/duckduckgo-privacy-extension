@@ -31,7 +31,7 @@ jobs:
         strategy:
             matrix:
                 os: [ubuntu-latest, macos-latest, windows-latest]
-                target: ['release-firefox', 'release-chrome']
+                target: ['release-firefox', 'release-chrome', 'release-chromium-embedded']
         runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v7

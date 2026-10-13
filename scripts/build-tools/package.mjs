@@ -35,6 +35,10 @@ async function zipDirectory(dir, prefix) {
         .forEach(remove);
     const zipPath = path.join(dir, `${prefix}-${timestamp()}.zip`);
     const output = fs.createWriteStream(zipPath);
+    // finished(output) below reports errors from either side, but only once it
+    // is awaited; until then an unhandled 'error' on the write stream (disk
+    // full, permissions) would crash the process, so listen from the start.
+    const failure = new Promise((_resolve, reject) => output.on('error', reject));
     const archive = new ZipArchive();
     archive.on('error', (e) => output.destroy(e));
     archive.pipe(output);
@@ -48,8 +52,7 @@ async function zipDirectory(dir, prefix) {
             archive.file(entry, { name });
         }
     }
-    await archive.finalize();
-    await finished(output);
+    await Promise.race([failure, archive.finalize().then(() => finished(output))]);
     console.log(`Packaged ${zipPath}`);
 }
 
