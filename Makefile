@@ -170,7 +170,7 @@ endif
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 	$(RSYNC) browsers/$(browser)/* $(BUILD_DIR)
 ifneq ($(browser),embedded)
-	$(RSYNC) $(HTML_EXCLUDES) browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
+	$(RSYNC) $(HTML_EXCLUDES) --exclude=cpm-top-sites.json browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) shared/js/content-scripts/*.js $(BUILD_DIR)/public/js/content-scripts
 	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
@@ -215,8 +215,15 @@ endif
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/background/background.js > $@
 
-$(BUILD_DIR)/public/js/background-embedded.js: $(WATCHED_FILES)
+$(BUILD_DIR)/public/js/background-embedded.js: $(WATCHED_FILES) shared/data/bundled/cpm-top-sites.json
 	$(ESBUILD) shared/js/background/background-embedded.js > $@
+
+# Top sites for the CPM site rank bucket. Build the real list with scripts/build-cpm-top-sites.mjs; it is gitignored,
+# so without it the build gets an empty list and CPM summary pixels have no site rank.
+# TODO: before release, give CI builds the real list. Release builds currently ship the empty placeholder.
+# See docs/cpm-site-rank.md.
+shared/data/bundled/cpm-top-sites.json:
+	node scripts/build-cpm-top-sites.mjs --empty
 
 ## Locale resources for UI
 shared/js/ui/base/locale-resources.js: $(shell find -L shared/locales/ -type f)
