@@ -1,7 +1,7 @@
 # CPM site rank
 
 > [!WARNING]
-> **Release builds don't include the top sites list yet.** The list is gitignored and built locally. GitHub Actions builds releases (`release-embedded.yml`) from a fresh checkout, where the Makefile writes an empty placeholder instead. With an empty list the lookup is off, so `autoconsent_summary` never carries `siteRank`, and nothing fails or warns. Before this ships, decide how release builds get the list.
+> **Release builds don't include the top sites list yet.** The list is gitignored and built locally. GitHub Actions builds releases (`release-embedded.yml`) from a fresh checkout, where the build writes an empty placeholder instead. With an empty list the lookup is off, so `autoconsent_summary` never carries `siteRank`, and nothing fails or warns. Before this ships, decide how release builds get the list.
 
 The embedded build (`background-embedded.js`) adds `siteRank=top10k|other` to the CPM `autoconsent_summary` pixel. The bucket comes from the tab's top-level URL and is looked up on the device. Chrome and Firefox builds include neither the lookup nor the list.
 
@@ -17,7 +17,7 @@ Every implementation, including the build script, must agree on these:
 
 - Hash the hostname as the browser reports it: lowercase, without a trailing dot, with IDNs in punycode (`xn--…`). Punycode is ASCII, so hashing UTF-16 code units in JS equals hashing bytes.
 - FNV-1a is unsigned 32-bit arithmetic. In JS, multiply with `Math.imul` and finish with `>>> 0`; a plain `*` loses precision. In Swift, use `UInt32` with `&*`.
-- Check suffixes with at least two labels, shortest first, and treat IP addresses as `other`.
+- Check suffixes with at least two labels, shortest first. IP addresses need no special case: the list never contains them.
 
 Test vectors (32-bit FNV-1a):
 
@@ -37,4 +37,4 @@ Test vectors (32-bit FNV-1a):
 node scripts/build-cpm-top-sites.mjs -i <list file>
 ```
 
-The input is a ranked list (`rank,domain` CSV, CrUX `origin,rank`, or one domain per line). The script takes the top 10,000 entries and reduces them to registrable domains. `node scripts/build-cpm-top-sites.mjs --empty` writes the placeholder that the Makefile uses when the file is missing.
+The input is a ranked list (`rank,domain` CSV, CrUX `origin,rank`, or one domain per line). The script takes the top 10,000 entries and reduces them to registrable domains. Private suffixes such as `github.io` count as public suffixes, so a bare `github.io` entry is dropped and its users' sites don't all land in `top10k`. When the file is missing, both the Makefile and `scripts/build-tools` write an empty placeholder.

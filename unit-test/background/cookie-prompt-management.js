@@ -808,7 +808,6 @@ describe('CookiePromptManagement', () => {
                 fromExtension: '1',
             });
 
-            // counters are reset after sending
             const state = await cpm.getCpmState();
             expect(state.summaryEventsByRank).toEqual({});
         });
@@ -832,7 +831,6 @@ describe('CookiePromptManagement', () => {
                 expect(serialized).not.toContain('example');
                 expect(serialized).not.toContain('test-cmp');
                 if (name !== 'autoconsent_summary') {
-                    // daily pixels stay unchanged
                     expect(params.siteRank).toBeUndefined();
                 }
             }
@@ -850,6 +848,16 @@ describe('CookiePromptManagement', () => {
             await cpm.sendSummaryPixel();
 
             expect(summaryPixelParams(mockMessaging)).toEqual([{ init: 2, consentHeuristicEnabled: 'tier1', fromExtension: '1' }]);
+        });
+
+        it('sends no summary pixel when nothing was counted', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await cpm.sendSummaryPixel();
+
+            expect(summaryPixelParams(mockMessaging)).toEqual([]);
         });
 
         it('keeps counts from a stored state without buckets', async () => {

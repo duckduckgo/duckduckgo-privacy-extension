@@ -1,11 +1,8 @@
 /**
- * Builds the top sites data used for the coarse site rank bucket in CPM summary pixels.
- * The output is gitignored and built locally. Release builds in CI don't have it yet and ship an empty list, so the
- * summary pixel never carries siteRank. See docs/cpm-site-rank.md before releasing.
+ * Builds the top sites data for the CPM site rank bucket. See docs/cpm-site-rank.md.
  *
  * Usage:
- *   node scripts/build-cpm-top-sites.mjs -i <list file> [--limit 10000]
- *   node scripts/build-cpm-top-sites.mjs --empty
+ *   node scripts/build-cpm-top-sites.mjs -i <list file> [--limit 10000] [-o <output file>]
  *
  * The input file can be plain text or gzipped (.gz). Accepted formats, one entry per line:
  *  - `rank,domain[,...]` CSV (e.g. Tranco)
@@ -13,12 +10,10 @@
  *  - one domain (or URL) per line, in rank order
  * A header line without a numeric rank is skipped.
  * Entries are sorted by rank (stable, so file order breaks ties), the first `limit` rows are taken,
- * and each one is normalized to its lowercase registrable domain (ICANN suffixes only), with IDNs in punycode.
+ * and each one is normalized to its lowercase registrable domain, with IDNs in punycode.
+ * Private suffixes such as github.io count as public suffixes, so their users' sites stay separate entries.
  *
- * --empty writes a list with no sites, so builds work without the data. The extension then sends summary pixels
- * without a site rank.
- *
- * The output holds only the hashes: it is bundled into the extension, so it must not name the list's source.
+ * The output is bundled into the extension, so it must not name the list's source.
  */
 import { parseArgs } from 'node:util';
 import fs from 'fs';
@@ -33,15 +28,8 @@ const { values: argv } = parseArgs({
         input: { type: 'string', short: 'i' },
         output: { type: 'string', short: 'o', default: DEFAULT_OUTPUT },
         limit: { type: 'string', default: '10000' },
-        empty: { type: 'boolean', default: false },
     },
 });
-
-if (argv.empty) {
-    fs.writeFileSync(argv.output, JSON.stringify(encodeTopSites([]), null, 4) + '\n');
-    console.log(`Wrote an empty top sites list to ${argv.output}`);
-    process.exit(0);
-}
 
 if (!argv.input || !fs.existsSync(argv.input)) {
     console.error('Input list file (-i) must exist.');
@@ -106,7 +94,7 @@ function toHostname(entry) {
 const domains = new Set();
 for (const { entry } of rows.slice(0, limit)) {
     const hostname = toHostname(entry);
-    const domain = hostname && getDomain(hostname);
+    const domain = hostname && getDomain(hostname, { allowPrivateDomains: true });
     if (domain) {
         domains.add(domain);
     }

@@ -63,6 +63,15 @@ describe('CPM site rank lookup', () => {
         expect(createSiteRankLookup(encodeTopSites([]))).toBeUndefined();
     });
 
+    it('gives no lookup for malformed top site data', () => {
+        const { count, data } = encodeTopSites(['google.com', 'youtube.com', 'wikipedia.org']);
+        expect(createSiteRankLookup({ count: count + 1, data })).toBeUndefined();
+        expect(createSiteRankLookup({ count: count - 1, data })).toBeUndefined();
+        expect(createSiteRankLookup({ count, data: data.slice(0, -4) })).toBeUndefined();
+        expect(createSiteRankLookup({ count, data: '!not base64!' })).toBeUndefined();
+        expect(createSiteRankLookup({ count: -1, data })).toBeUndefined();
+    });
+
     it('matches every top site and almost nothing else in a list of 10k', () => {
         const random = seededRandom(42);
         const members = randomDomains(random, 10000);

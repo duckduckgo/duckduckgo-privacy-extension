@@ -26,8 +26,7 @@ import { CPMEmbeddedMessaging } from './components/cpm-embedded-messaging';
 import { createSiteRankLookup } from './components/cpm-site-rank';
 import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
-// TODO: before release, make release builds include the top sites list. The file is gitignored, so CI builds from a fresh
-// checkout get the Makefile's empty placeholder, and the summary pixel never carries siteRank. See docs/cpm-site-rank.md.
+// TODO: before release, give CI release builds the real list; they get an empty one. See docs/cpm-site-rank.md.
 import topSites from '../../data/bundled/cpm-top-sites.json';
 
 import NativeMessaging from './components/native-messaging';

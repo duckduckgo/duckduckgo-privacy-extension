@@ -813,9 +813,8 @@ export default class CookiePromptManagement {
     }
 
     /**
-     * Count the event for the summary pixel and request the daily pixel.
      * @param {string} eventName
-     * @param {string} topUrl - top-level URL of the tab. It is only used to find the site rank bucket, and is never sent.
+     * @param {string} topUrl - only used to find the site rank bucket, never sent
      */
     async firePixel(eventName, topUrl) {
         const siteRank = this.siteRankLookup?.(topUrl);
@@ -841,10 +840,7 @@ export default class CookiePromptManagement {
     }
 
     /**
-     * Send the accumulated event counts. Without a site rank lookup, this is one pixel with all counts.
-     * With a lookup, this is one pixel per site rank bucket that has events, each with a `siteRank` parameter.
-     * Counts without a bucket (e.g. from a state saved before the lookup was added) go in a pixel without `siteRank`,
-     * so the totals across all pixels always match the recorded events.
+     * Counts without a bucket, e.g. from a state saved before the lookup was added, go in a pixel without `siteRank`.
      */
     async sendSummaryPixel() {
         /** @type {Record<string, number>} */

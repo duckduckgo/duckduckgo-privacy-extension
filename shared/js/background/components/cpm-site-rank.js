@@ -66,6 +66,9 @@ function decodeTopSites(topSites) {
         prev += gap;
         hashes[i] = prev;
     }
+    if (pos !== binary.length || prev > 0xffffffff) {
+        throw new Error('Malformed top sites data');
+    }
     return hashes;
 }
 
@@ -92,7 +95,7 @@ function contains(sorted, value) {
 
 /**
  * @param {string} url
- * @returns {string} lowercase hostname without a trailing dot, or '' for URLs without one and for IP addresses
+ * @returns {string} lowercase hostname without a trailing dot, or '' for URLs without one
  */
 function hostnameFromUrl(url) {
     let hostname;
@@ -101,14 +104,7 @@ function hostnameFromUrl(url) {
     } catch {
         return '';
     }
-    if (hostname.endsWith('.')) {
-        hostname = hostname.slice(0, -1);
-    }
-    // IPv6 hosts keep their brackets; IPv4 hosts end in a numeric label
-    if (hostname.startsWith('[') || /\.\d+$/.test(hostname)) {
-        return '';
-    }
-    return hostname;
+    return hostname.endsWith('.') ? hostname.slice(0, -1) : hostname;
 }
 
 /**
@@ -116,13 +112,19 @@ function hostnameFromUrl(url) {
  * Instead of finding the registrable domain with the Public Suffix List, it checks every suffix of the hostname with
  * at least two labels, so `www.example.co.uk` matches when `example.co.uk` is a top site.
  * @param {TopSitesData} topSites
- * @returns {((url: string) => SiteRankBucket) | undefined} undefined when there is no top site data
+ * @returns {((url: string) => SiteRankBucket) | undefined} undefined when there is no valid top site data
  */
 export function createSiteRankLookup(topSites) {
     if (!topSites.count) {
         return undefined;
     }
-    const hashes = decodeTopSites(topSites);
+    let hashes;
+    try {
+        hashes = decodeTopSites(topSites);
+    } catch {
+        // Bad data must not stop the background script from loading.
+        return undefined;
+    }
     return (url) => {
         const hostname = hostnameFromUrl(url);
         const last = hostname.lastIndexOf('.');

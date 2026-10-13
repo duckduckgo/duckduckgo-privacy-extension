@@ -63,6 +63,7 @@ const CONTENT_SCOPE_SCRIPTS_BUILDS = { chrome: 'chrome-mv3', firefox: 'firefox' 
  * @property {boolean} ui Ships the shared pages, dashboard, styles, fonts and surrogates.
  * @property {boolean} autofill Ships the autofill assets.
  * @property {boolean} smarterEncryption Bundles Smarter Encryption declarativeNetRequest rules.
+ * @property {boolean} cpmTopSites Bundles the CPM top sites list.
  * @property {{in: string, out: string}[]} jsBundles
  * @property {{in: string, out: string}[]} scssBundles
  * @property {string[]} [htmlExcludes] Pages under shared/html not to ship.
@@ -74,6 +75,7 @@ const CHROME = {
     ui: true,
     autofill: true,
     smarterEncryption: true,
+    cpmTopSites: false,
     jsBundles: JS_BUNDLES,
     scssBundles: SCSS_BUNDLES,
 };
@@ -88,6 +90,7 @@ const BROWSER_PROFILES = {
         ui: false,
         autofill: false,
         smarterEncryption: false,
+        cpmTopSites: true,
         jsBundles: [
             { in: 'shared/js/background/background-embedded.js', out: 'background-embedded' },
             { in: 'shared/js/cpm.js', out: 'content-scripts/cpm' },
