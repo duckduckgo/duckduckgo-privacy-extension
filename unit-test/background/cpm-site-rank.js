@@ -17,7 +17,7 @@ function randomDomains(random, count) {
 describe('CPM site rank lookup', () => {
     const siteRankLookup = createSiteRankLookup(encodeTopSites(['google.com', 'youtube.com', 'wikipedia.org', 'bbc.co.uk', 'www.gov.uk']));
 
-    // Test vectors for ports of the lookup; keep them in sync with docs/cpm-site-rank.md
+    // Ports of the lookup, such as the native one in apple-browsers, must give the same hashes
     it('hashes with 32-bit FNV-1a', () => {
         expect(fnv1a32('')).toBe(0x811c9dc5);
         expect(fnv1a32('a')).toBe(0xe40c292c);

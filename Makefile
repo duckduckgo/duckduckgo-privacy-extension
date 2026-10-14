@@ -14,8 +14,6 @@ ifeq ($(browser),test)
 endif
 INTERMEDIATES_DIR = build/.intermediates
 
-CPM_TOP_SITES = shared/data/bundled/cpm-top-sites.json
-
 ## All source files that potentially need to be bundled or copied.
 WATCHED_FILES = $(shell find -L browsers/ shared/ packages/ unit-test/ -type f -not -path "packages/*/node_modules/*" -not -name "*~")
 # If the node_modules/@duckduckgo/ directory exists, include those source files
@@ -172,7 +170,7 @@ endif
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 	$(RSYNC) browsers/$(browser)/* $(BUILD_DIR)
 ifneq ($(browser),embedded)
-	$(RSYNC) $(HTML_EXCLUDES) --exclude=$(notdir $(CPM_TOP_SITES)) browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
+	$(RSYNC) $(HTML_EXCLUDES) --exclude=site-buckets.json browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) shared/js/content-scripts/*.js $(BUILD_DIR)/public/js/content-scripts
 	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
@@ -217,10 +215,7 @@ endif
 $(BUILD_DIR)/public/js/background.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/background/background.js > $@
 
-# The CPM top sites list is gitignored; without it, the bundle gets an empty list.
-# TODO: before release, give CI release builds the real list. See docs/cpm-site-rank.md.
 $(BUILD_DIR)/public/js/background-embedded.js: $(WATCHED_FILES)
-	test -f $(CPM_TOP_SITES) || echo '{ "count": 0, "data": "" }' > $(CPM_TOP_SITES)
 	$(ESBUILD) shared/js/background/background-embedded.js > $@
 
 ## Locale resources for UI

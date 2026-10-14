@@ -26,8 +26,7 @@ import { CPMEmbeddedMessaging } from './components/cpm-embedded-messaging';
 import { createSiteRankLookup } from './components/cpm-site-rank';
 import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
-// TODO: before release, give CI release builds the real list; they get an empty one. See docs/cpm-site-rank.md.
-import topSites from '../../data/bundled/cpm-top-sites.json';
+import topSites from '../../data/bundled/site-buckets.json';
 
 import NativeMessaging from './components/native-messaging';
 const nativeMessaging = new NativeMessaging('ddgInternalExtension', 'autoconsent', 'com.duckduckgo.macos.browser');

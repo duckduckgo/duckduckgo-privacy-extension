@@ -5,7 +5,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { AUTOFILL_DIR, DASHBOARD_DIR, SURROGATES_DIR } from './config.mjs';
-import { CPM_TOP_SITES_FILE } from './cpmTopSites.mjs';
 import { copy, copyEntries } from './fs.mjs';
 
 const isJs = (name) => name.endsWith('.js');
@@ -21,7 +20,7 @@ export function copyStaticFiles({ browser, platform, ui, autofill, htmlExcludes 
     copy('browsers/chrome/_locales', out.locales);
     copy('shared/html', out.html, (source) => !htmlExcludes.includes(path.basename(source)));
     copy('shared/img', out.img);
-    copy('shared/data', out.data, (source) => path.basename(source) !== path.basename(CPM_TOP_SITES_FILE));
+    copy('shared/data', out.data, (source) => path.basename(source) !== 'site-buckets.json');
     copyEntries(DASHBOARD_DIR, out.dashboard);
     copyEntries('shared/js/content-scripts', out.contentScripts, isJs);
     copyEntries(SURROGATES_DIR, out.surrogates);

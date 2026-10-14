@@ -1,19 +1,17 @@
 /**
- * Builds the top sites data for the CPM site rank bucket. See docs/cpm-site-rank.md.
+ * Builds the top sites data for the CPM site rank bucket.
  *
  * Usage:
- *   node scripts/build-cpm-top-sites.mjs -i <list file> [--limit 10000] [-o <output file>]
+ *   node scripts/build-site-buckets.mjs -i <list file> [-o <output file>]
  *
  * The input file can be plain text or gzipped (.gz). Accepted formats, one entry per line:
  *  - `rank,domain[,...]` CSV (e.g. Tranco)
  *  - `origin,rank` CSV (e.g. CrUX top lists, where rank is a magnitude bucket)
  *  - one domain (or URL) per line, in rank order
  * A header line without a numeric rank is skipped.
- * Entries are sorted by rank (stable, so file order breaks ties), the first `limit` rows are taken,
+ * Entries are sorted by rank (stable, so file order breaks ties), the first 10,000 rows are taken,
  * and each one is normalized to its lowercase registrable domain, with IDNs in punycode.
  * Private suffixes such as github.io count as public suffixes, so their users' sites stay separate entries.
- *
- * The output is bundled into the extension, so it must not name the list's source.
  */
 import { parseArgs } from 'node:util';
 import fs from 'fs';
@@ -21,24 +19,27 @@ import zlib from 'zlib';
 import { getDomain } from 'tldts';
 import { encodeTopSites } from '../shared/js/background/components/cpm-site-rank.js';
 
-const DEFAULT_OUTPUT = 'shared/data/bundled/cpm-top-sites.json';
+const DEFAULT_OUTPUT = 'shared/data/bundled/site-buckets.json';
+// The `top10k` bucket name depends on this; change both together.
+const LIMIT = 10000;
 
 const { values: argv } = parseArgs({
     options: {
         input: { type: 'string', short: 'i' },
         output: { type: 'string', short: 'o', default: DEFAULT_OUTPUT },
-        limit: { type: 'string', default: '10000' },
     },
 });
 
-if (!argv.input || !fs.existsSync(argv.input)) {
-    console.error('Input list file (-i) must exist.');
+/**
+ * @param {string} message
+ */
+function fail(message) {
+    console.error(message);
     process.exit(1);
 }
-const limit = Number(argv.limit);
-if (!Number.isInteger(limit) || limit <= 0) {
-    console.error('--limit must be a positive integer.');
-    process.exit(1);
+
+if (!argv.input || !fs.existsSync(argv.input)) {
+    fail('Input list file (-i) must exist.');
 }
 
 /**
@@ -78,6 +79,14 @@ const rows = raw
     .filter((row) => row !== null);
 rows.sort((a, b) => a.rank - b.rank);
 
+if (rows.length < LIMIT) {
+    fail(`Read ${rows.length} rows, need at least ${LIMIT}. Is the input a ranked list?`);
+}
+// CrUX ranks are magnitude buckets in random order, so a cut inside a bucket would pick arbitrary sites
+if (rows.length > LIMIT && rows[LIMIT].rank === rows[LIMIT - 1].rank) {
+    fail(`The top ${LIMIT} rows end inside a rank bucket (rank ${rows[LIMIT].rank}).`);
+}
+
 /**
  * Hostname as the extension sees it: lowercase, with IDNs in punycode, since the lookup hashes `new URL(url).hostname`.
  * @param {string} entry - domain or URL
@@ -92,7 +101,7 @@ function toHostname(entry) {
 }
 
 const domains = new Set();
-for (const { entry } of rows.slice(0, limit)) {
+for (const { entry } of rows.slice(0, LIMIT)) {
     const hostname = toHostname(entry);
     const domain = hostname && getDomain(hostname, { allowPrivateDomains: true });
     if (domain) {
@@ -100,8 +109,12 @@ for (const { entry } of rows.slice(0, limit)) {
     }
 }
 
+if (domains.size < LIMIT / 2) {
+    fail(`Only ${domains.size} registrable domains in the top ${LIMIT} rows. Is the input a ranked list?`);
+}
+
 const topSites = encodeTopSites([...domains]);
 fs.writeFileSync(argv.output, JSON.stringify(topSites, null, 4) + '\n');
 
-console.log(`Read ${rows.length} rows, took ${Math.min(limit, rows.length)}, wrote ${domains.size} unique domains to ${argv.output}`);
+console.log(`Read ${rows.length} rows, took ${LIMIT}, wrote ${domains.size} unique domains to ${argv.output}`);
 console.log(`Hash collisions: ${domains.size - topSites.count}, data size: ${topSites.data.length} bytes`);
