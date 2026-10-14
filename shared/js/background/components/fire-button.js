@@ -83,11 +83,12 @@ export default class FireButton {
             // TODO: handle clearing downloads and history for specific origins
 
             // 2/ Clear cookies, except on SERP
+            /** @type {chrome.browsingData.RemovalOptions} */
             const cookieOptions = {
                 since: config.since,
             };
-            if (config.origins) {
-                cookieOptions.origins = config.origins;
+            if (config.origins && config.origins.length > 0) {
+                cookieOptions.origins = /** @type {[string, ...string[]]} */ (config.origins);
             } else {
                 cookieOptions.excludeOrigins = ['https://duckduckgo.com'];
             }
@@ -101,7 +102,7 @@ export default class FireButton {
             clearing.push(
                 chrome.browsingData.remove(
                     {
-                        origins: config.origins,
+                        origins: /** @type {[string, ...string[]] | undefined} */ (config.origins),
                         since: config.since,
                     },
                     {
