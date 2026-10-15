@@ -13,7 +13,7 @@ on:
                 description: 'Asana Apple task GID (set to test autoconsent flow, leave empty for standalone flow)'
                 required: false
             dry_run:
-                description: 'Dry run: push to apple-browsers branch test/embedded-extension-dry-run and stop. No PR, no Asana'
+                description: 'Dry run: no PR, no Asana. Push to test/embedded-extension-dry-run in apple-browsers, then stop.'
                 type: boolean
                 default: false
 
