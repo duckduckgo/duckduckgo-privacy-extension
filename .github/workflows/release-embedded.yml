@@ -101,12 +101,13 @@ jobs:
                       git checkout -b "$BRANCH"
                   fi
 
-            - name: Copy embedded extension to Apple repo
+            - name: Copy embedded zip to Apple repo
               run: |
                   cp "${{ steps.find-zip.outputs.ZIP_PATH }}" \
                      "apple-monorepo/${{ env.APPLE_EMBEDDED_PATH }}"
-                  cp shared/data/bundled/site-buckets.json \
-                     "apple-monorepo/${{ env.APPLE_SITE_BUCKETS_PATH }}"
+
+            - name: Copy site list to Apple repo
+              run: cp shared/data/bundled/site-buckets.json "apple-monorepo/${{ env.APPLE_SITE_BUCKETS_PATH }}"
 
             # we don't use peter-evans/create-pull-request action here because we need to push a new commit to the existing PR
             - name: Commit and push to Apple target branch
