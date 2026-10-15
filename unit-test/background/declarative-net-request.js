@@ -720,6 +720,15 @@ describe('declarativeNetRequest', () => {
         expect(updateSessionRulesObserver.calls.count()).toEqual(5);
         expect(sessionRulesByRuleId.has(ruleId)).toBeFalse();
 
+        // If the extension is above maxSupportedVersion, the feature is
+        // disabled and a rule with no domain exceptions should be created.
+        config.features.serviceworkerInitiatedRequests.maxSupportedVersion = '0.0.1';
+        await ensureServiceWorkerInitiatedRequestExceptions(config);
+        expect(updateSessionRulesObserver.calls.count()).toEqual(6);
+        expect(sessionRulesByRuleId.has(ruleId)).toBeTrue();
+        expect(sessionRulesByRuleId.get(ruleId)?.condition?.initiatorDomains).toBeUndefined();
+        delete config.features.serviceworkerInitiatedRequests.maxSupportedVersion;
+
         config.unprotectedTemporary = tempUnprotected;
     });
 
@@ -800,6 +809,17 @@ describe('declarativeNetRequest', () => {
 
         expect(updateSessionRulesObserver.calls.count()).toEqual(6);
         expect(sessionRulesByRuleId.has(ruleId)).toEqual(false);
+
+        // Rule should be removed when the extension is above maxSupportedVersion
+        config.features.gpc.state = 'enabled';
+        await ensureGPCHeaderRule(config);
+        expect(sessionRulesByRuleId.get(ruleId)).toEqual(rule);
+
+        config.features.gpc.maxSupportedVersion = '0.0.1';
+        await ensureGPCHeaderRule(config);
+        expect(updateSessionRulesObserver.calls.count()).toEqual(8);
+        expect(sessionRulesByRuleId.has(ruleId)).toEqual(false);
+        delete config.features.gpc.maxSupportedVersion;
     });
 
     it('getMatchDetails', async () => {

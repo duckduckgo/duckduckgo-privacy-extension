@@ -376,6 +376,37 @@ export function satisfiesMinVersion(minVersionString, extensionVersionString) {
 }
 
 /**
+ * @param {string} maxVersionString
+ * @param {string} extensionVersionString
+ * @returns {boolean} - true if the extension version is at or below maxVersionString
+ */
+export function satisfiesMaxVersion(maxVersionString, extensionVersionString) {
+    return satisfiesMinVersion(extensionVersionString, maxVersionString);
+}
+
+/**
+ * Checks the extension version against the minSupportedVersion and maxSupportedVersion
+ * of a feature or sub-feature. Both bounds are inclusive.
+ *
+ * @param {{ minSupportedVersion?: string, maxSupportedVersion?: string }} featureOrSubFeature
+ * @returns {boolean}
+ */
+export function satisfiesSupportedVersions(featureOrSubFeature) {
+    const { minSupportedVersion, maxSupportedVersion } = featureOrSubFeature;
+    if (!minSupportedVersion && !maxSupportedVersion) {
+        return true;
+    }
+    const extensionVersionString = getExtensionVersion();
+    if (minSupportedVersion && !satisfiesMinVersion(minSupportedVersion, extensionVersionString)) {
+        return false;
+    }
+    if (maxSupportedVersion && !satisfiesMaxVersion(maxSupportedVersion, extensionVersionString)) {
+        return false;
+    }
+    return true;
+}
+
+/**
  * Checks the config to see if a feature is enabled. You can optionally pass a second "customState"
  * parameter to check if the state is equeal to other states (i.e. state === 'beta').
  *
@@ -389,12 +420,8 @@ export function isFeatureEnabled(featureName, config = tdsStorage.config) {
         return false;
     }
 
-    // If we have a supplied min version for the feature ensure the extension meets it
-    if ('minSupportedVersion' in feature) {
-        const extensionVersionString = getExtensionVersion();
-        if (!satisfiesMinVersion(feature.minSupportedVersion, extensionVersionString)) {
-            return false;
-        }
+    if (!satisfiesSupportedVersions(feature)) {
+        return false;
     }
 
     return feature.state === 'enabled';
