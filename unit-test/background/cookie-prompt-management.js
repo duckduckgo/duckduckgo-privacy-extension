@@ -766,7 +766,7 @@ describe('CookiePromptManagement', () => {
             expect(state.summaryEvents).toEqual({});
         });
 
-        it('takes the bucket from the cached top URL for reload loop errors', async () => {
+        it('takes the bucket from the top-level URL for reload loop errors', async () => {
             const mockMessaging = createMockMessaging();
             const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
             await cpm.remoteConfigJson;

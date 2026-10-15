@@ -20,7 +20,7 @@ export function copyStaticFiles({ browser, platform, ui, autofill, htmlExcludes 
     copy('browsers/chrome/_locales', out.locales);
     copy('shared/html', out.html, (source) => !htmlExcludes.includes(path.basename(source)));
     copy('shared/img', out.img);
-    copy('shared/data', out.data, (source) => path.basename(source) !== 'site-buckets.json');
+    copy('shared/data', out.data);
     copyEntries(DASHBOARD_DIR, out.dashboard);
     copyEntries('shared/js/content-scripts', out.contentScripts, isJs);
     copyEntries(SURROGATES_DIR, out.surrogates);

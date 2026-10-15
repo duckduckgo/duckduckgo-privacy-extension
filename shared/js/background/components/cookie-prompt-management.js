@@ -12,7 +12,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  both: Set<string>,
  * }} detectionCache
  * @property {Record<string, number>} summaryEvents - event counts without a site rank bucket
- * @property {Partial<Record<SiteRankBucket, Record<string, number>>>} summaryEventsByRank - event counts per site rank bucket
+ * @property {Partial<Record<SiteRankBucket, Record<string, number>>>} summaryEventsByRank
  * @property {Record<string, CpmDashboardState>} dashboardStates
  * @property {Set<string>} globalErrors
  */
@@ -88,7 +88,7 @@ export default class CookiePromptManagement {
      * @param {{
      *  cpmMessaging: CPMMessagingBase,
      *  siteRankLookup?: (url: string) => SiteRankBucket,
-     * }} opts - when siteRankLookup is set, summary pixels are split by the site rank bucket of the top-level URL
+     * }} opts
      */
     constructor({ cpmMessaging, siteRankLookup }) {
         this.cpmMessaging = cpmMessaging;
@@ -408,6 +408,7 @@ export default class CookiePromptManagement {
     /**
      * @param {number} tabId
      * @param {string} cmp
+     * @returns {boolean} true when a new reload loop is detected
      */
     detectReloadLoop(tabId, cmp) {
         // Reload loop is when we catch the same CMP from the same top URL without a navigation in between.
@@ -417,8 +418,9 @@ export default class CookiePromptManagement {
             // Same CMP detected on same URL after it was already handled - reload loop detected
             this.cpmMessaging.logMessage(`reload loop detected: ${cmp} on ${this._tabUrlsCache.get(tabId)} tabId: ${tabId}`);
             this._reloadLoopDetected.add(tabId);
-            this.firePixel('error_reload-loop', this._tabUrlsCache.get(tabId)?.href || 'about:blank');
+            return true;
         }
+        return false;
     }
 
     /**
@@ -443,6 +445,7 @@ export default class CookiePromptManagement {
         // @ts-expect-error - origin is not available in the type
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
+        const siteRank = this.siteRankLookup?.(tabUrl);
         if (msg.type === 'init' && isMainFrame) {
             // update the cached top url for this tab
             this.updateTopUrl(tabId, tabUrl);
@@ -545,7 +548,7 @@ export default class CookiePromptManagement {
                                 consentHeuristicEnabled: heuristicActionEnabled,
                             }),
                         );
-                        this.firePixel('disabled-for-site', tabUrl);
+                        this.firePixel('disabled-for-site', siteRank);
                     }
                     return;
                 }
@@ -575,7 +578,7 @@ export default class CookiePromptManagement {
                         cpmConfigVersion,
                     }).then((dashboardState) => this.cpmMessaging.refreshDashboardState(tabId, tabUrl, dashboardState));
                     // no await
-                    this.firePixel('init', tabUrl);
+                    this.firePixel('init', siteRank);
                 }
 
                 /**
@@ -635,7 +638,9 @@ export default class CookiePromptManagement {
             }
             case 'popupFound': {
                 // Check for reload loop first so the dashboard update reflects it
-                this.detectReloadLoop(tabId, msg.cmp);
+                if (this.detectReloadLoop(tabId, msg.cmp)) {
+                    this.firePixel('error_reload-loop', siteRank);
+                }
                 this.cpmMessaging.refreshDashboardState(
                     tabId,
                     tabUrl,
@@ -645,12 +650,12 @@ export default class CookiePromptManagement {
                         consentReloadLoop: this._reloadLoopDetected.has(tabId),
                     }),
                 );
-                this.firePixel('popup-found', tabUrl);
+                this.firePixel('popup-found', siteRank);
                 break;
             }
             case 'optOutResult': {
                 if (!msg.result) {
-                    this.firePixel('error_optout', tabUrl);
+                    this.firePixel('error_optout', siteRank);
                     this.cpmMessaging.refreshDashboardState(
                         tabId,
                         tabUrl,
@@ -684,12 +689,12 @@ export default class CookiePromptManagement {
                     }),
                 );
                 if (msg.cmp.startsWith('HEURISTIC')) {
-                    this.firePixel('done_heuristic', tabUrl);
+                    this.firePixel('done_heuristic', siteRank);
                 } else {
-                    this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done', tabUrl);
+                    this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done', siteRank);
                 }
                 this.cpmMessaging.showCpmAnimation(tabId, tabUrl, msg.isCosmetic);
-                this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown', tabUrl);
+                this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown', siteRank);
                 this.cpmMessaging.notifyPopupHandled(tabId, msg);
                 break;
             }
@@ -703,17 +708,17 @@ export default class CookiePromptManagement {
                     if (isMainFrame && heuristicMatch && !cpmState.detectionCache.patterns.has(msg.instanceId)) {
                         cpmState.detectionCache.patterns.add(msg.instanceId);
                         // no await to avoid deadlock
-                        this.firePixel('detected-by-patterns', tabUrl);
+                        this.firePixel('detected-by-patterns', siteRank);
                     }
                     if (isMainFrame && detectedPopups) {
                         if (heuristicMatch && !cpmState.detectionCache.both.has(msg.instanceId)) {
                             cpmState.detectionCache.both.add(msg.instanceId);
                             // no await to avoid deadlock
-                            this.firePixel('detected-by-both', tabUrl);
+                            this.firePixel('detected-by-both', siteRank);
                         } else if (!heuristicMatch && !cpmState.detectionCache.onlyRules.has(msg.instanceId)) {
                             cpmState.detectionCache.onlyRules.add(msg.instanceId);
                             // no await to avoid deadlock
-                            this.firePixel('detected-only-rules', tabUrl);
+                            this.firePixel('detected-only-rules', siteRank);
                         }
                     }
                 });
@@ -748,7 +753,7 @@ export default class CookiePromptManagement {
                     if (dashboardState) {
                         this.cpmMessaging.refreshDashboardState(tabId, tabUrl, dashboardState);
                     }
-                    this.firePixel('error_multiple-popups', tabUrl);
+                    this.firePixel('error_multiple-popups', siteRank);
                 }
                 break;
             }
@@ -814,10 +819,9 @@ export default class CookiePromptManagement {
 
     /**
      * @param {string} eventName
-     * @param {string} topUrl - only used to find the site rank bucket, never sent
+     * @param {SiteRankBucket | undefined} siteRank
      */
-    async firePixel(eventName, topUrl) {
-        const siteRank = this.siteRankLookup?.(topUrl);
+    async firePixel(eventName, siteRank) {
         this.modifyCpmState((cpmState) => {
             let counts = cpmState.summaryEvents;
             if (siteRank) {
