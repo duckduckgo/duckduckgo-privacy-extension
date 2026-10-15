@@ -12,9 +12,15 @@ on:
             apple_task_gid:
                 description: 'Asana Apple task GID (set to test autoconsent flow, leave empty for standalone flow)'
                 required: false
+            dry_run:
+                description: 'Dry run: no PR, no Asana. Push to test/embedded-extension-dry-run in apple-browsers, then stop.'
+                type: boolean
+                default: false
 
 env:
     APPLE_EMBEDDED_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension.zip
+    # The native legacy CPM reads its own copy of the list the zip was built with
+    APPLE_SITE_BUCKETS_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/Autoconsent/site-buckets.json
 
 jobs:
     release_embedded:
@@ -49,8 +55,12 @@ jobs:
               id: pr-metadata
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  DRY_RUN: ${{ inputs.dry_run }}
               run: |
-                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                  if [ "$DRY_RUN" = "true" ]; then
+                      echo "APPLE_TASK_GID=" >> $GITHUB_OUTPUT
+                      echo "APPLE_BRANCH=test/embedded-extension-dry-run" >> $GITHUB_OUTPUT
+                  elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
                       TASK_GID="${{ inputs.apple_task_gid }}"
                       if [ -n "$TASK_GID" ]; then
                           BRANCH="update-autoconsent"
@@ -92,6 +102,9 @@ jobs:
                   cp "${{ steps.find-zip.outputs.ZIP_PATH }}" \
                      "apple-monorepo/${{ env.APPLE_EMBEDDED_PATH }}"
 
+            - name: Copy site list to Apple repo
+              run: cp shared/data/bundled/site-buckets.json "apple-monorepo/${{ env.APPLE_SITE_BUCKETS_PATH }}"
+
             # we don't use peter-evans/create-pull-request action here because we need to push a new commit to the existing PR
             - name: Commit and push to Apple target branch
               id: apple-commit-push
@@ -99,7 +112,7 @@ jobs:
               env:
                   BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
               run: |
-                  git add "${{ env.APPLE_EMBEDDED_PATH }}"
+                  git add "${{ env.APPLE_EMBEDDED_PATH }}" "${{ env.APPLE_SITE_BUCKETS_PATH }}"
                   if git diff --cached --quiet; then
                       echo "No changes to commit"
                       echo "PUSHED=false" >> $GITHUB_OUTPUT
@@ -112,7 +125,7 @@ jobs:
 
             - name: Find or create Apple PR
               id: find-apple-pr
-              if: steps.apple-commit-push.outputs.PUSHED == 'true'
+              if: steps.apple-commit-push.outputs.PUSHED == 'true' && !inputs.dry_run
               working-directory: apple-monorepo
               env:
                   GH_TOKEN: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
