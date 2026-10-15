@@ -12,6 +12,9 @@ on:
             apple_task_gid:
                 description: 'Asana Apple task GID (set to test autoconsent flow, leave empty for standalone flow)'
                 required: false
+            dry_run_branch:
+                description: 'Push to this apple-browsers branch (must start with test/) and stop. No PR, no Asana'
+                required: false
 
 env:
     APPLE_EMBEDDED_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension.zip
@@ -51,8 +54,17 @@ jobs:
               id: pr-metadata
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  DRY_RUN_BRANCH: ${{ inputs.dry_run_branch }}
               run: |
-                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                  if [ -n "$DRY_RUN_BRANCH" ]; then
+                      # The push below force-pushes, so never let a dry run touch a real branch
+                      if [[ "$DRY_RUN_BRANCH" != test/* ]]; then
+                          echo "::error::dry_run_branch must start with test/"
+                          exit 1
+                      fi
+                      echo "APPLE_TASK_GID=" >> $GITHUB_OUTPUT
+                      echo "APPLE_BRANCH=$DRY_RUN_BRANCH" >> $GITHUB_OUTPUT
+                  elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
                       TASK_GID="${{ inputs.apple_task_gid }}"
                       if [ -n "$TASK_GID" ]; then
                           BRANCH="update-autoconsent"
@@ -116,7 +128,7 @@ jobs:
 
             - name: Find or create Apple PR
               id: find-apple-pr
-              if: steps.apple-commit-push.outputs.PUSHED == 'true'
+              if: steps.apple-commit-push.outputs.PUSHED == 'true' && !inputs.dry_run_branch
               working-directory: apple-monorepo
               env:
                   GH_TOKEN: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
