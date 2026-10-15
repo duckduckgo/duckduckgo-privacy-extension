@@ -1,6 +1,8 @@
 const fs = require('fs');
 
-const allBrowsers = ['chrome', 'firefox', 'embedded'];
+// chromium-embedded is here so a stage release also triggers
+// release-chromium-embedded.yml, which only watches its manifest.
+const allBrowsers = ['chrome', 'firefox', 'embedded', 'chromium-embedded'];
 const newVersion = process.argv[2];
 const browserFilter = process.argv[3];
 

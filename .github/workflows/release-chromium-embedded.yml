@@ -15,8 +15,17 @@ on:
             - 'main'
         paths:
             - 'browsers/chromium-embedded/manifest.json'
-    # For the first run, and for rebuilding a version without bumping it.
+    # For the first run, for rebuilding a version without bumping it, and for
+    # test builds of a feature branch (channel: test, run with --ref <branch>).
     workflow_dispatch:
+        inputs:
+            channel:
+                description: 'release: the branch the browser pins (main only). test: build/chromium-embedded/test, any ref.'
+                type: choice
+                options:
+                    - release
+                    - test
+                default: release
 
 # Runs queue rather than race to push to ARTIFACTS_BRANCH.
 concurrency:
@@ -25,11 +34,11 @@ concurrency:
     queue: max
 
 env:
-    # Deliberately the same string, and deliberately two variables: the branch
-    # is named after the directory it carries. Git reads a bare
-    # build/chromium-embedded/release as ambiguous wherever that directory
-    # exists, so every ref below is spelled refs/heads/.
-    ARTIFACTS_BRANCH: build/chromium-embedded/release
+    # The release branch is named after the directory it carries. Git reads a
+    # bare build/chromium-embedded/release as ambiguous wherever that directory
+    # exists, so every ref below is spelled refs/heads/. A push has no inputs,
+    # so it always publishes to release.
+    ARTIFACTS_BRANCH: build/chromium-embedded/${{ inputs.channel || 'release' }}
     BUILD_PATH: build/chromium-embedded/release
 
 jobs:
@@ -39,6 +48,14 @@ jobs:
             # Committing to ARTIFACTS_BRANCH in this repository.
             contents: write
         steps:
+            # The browser's scheduled roll picks up whatever lands on release,
+            # so only main may publish there. Feature branches use test.
+            - name: Refuse release builds off main
+              if: env.ARTIFACTS_BRANCH == 'build/chromium-embedded/release' && github.ref != 'refs/heads/main'
+              run: |
+                  echo "::error::Only main publishes to the release branch; rerun with channel: test."
+                  exit 1
+
             - uses: actions/checkout@v6
 
             - uses: actions/setup-node@v4
@@ -57,6 +74,19 @@ jobs:
 
             - name: Build chromium-embedded extension
               run: npm run release-chromium-embedded
+
+            # The test branch is created on its first use: an empty root commit,
+            # so it shares no history with main, the same as release.
+            - name: Seed the artifacts branch
+              run: |
+                  if git ls-remote --exit-code origin "refs/heads/$ARTIFACTS_BRANCH" >/dev/null; then
+                      exit 0
+                  fi
+                  git config user.name "Dax the Deployer"
+                  git config user.email "dax@duckduckgo.com"
+                  EMPTY_TREE=$(git hash-object -t tree /dev/null)
+                  SEED=$(git commit-tree "$EMPTY_TREE" -m "Seed $ARTIFACTS_BRANCH")
+                  git push origin "$SEED:refs/heads/$ARTIFACTS_BRANCH"
 
             # Checked out beside the source tree so the build output above is
             # untouched by the checkout.
@@ -96,6 +126,7 @@ jobs:
                   git commit -m "chromium-embedded $VERSION
 
                   Source commit: ${{ github.sha }}
+                  Source ref: ${{ github.ref_name }}
                   Built by: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   # Appended, never forced: the fork pins commits on this
                   # branch, and rewriting it would strand those pins.
