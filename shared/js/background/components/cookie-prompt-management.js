@@ -36,6 +36,11 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  */
 
 /**
+ * Progress marks for the main frame `init` message, reported to the native app (embedded only).
+ * @typedef {'received' | 'response_sent' | 'response_failed'} CpmInitProgressStage
+ */
+
+/**
  * Base interface for CPM communications with the "browser" side.
  * @typedef {{
  *  logMessage: (message: string, isDebug?: boolean) => Promise<void>;
@@ -48,6 +53,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
  *  setDiagnosticsErrorHandler?: (handler: (tabId: number | null, errorName: string) => void) => void;
+ *  notifyInitProgress?: (tabId: number, url: string, stage: CpmInitProgressStage) => Promise<void>;
  * }} CPMMessagingBase
  * @typedef {{
  *  enabled: boolean,
@@ -412,6 +418,27 @@ export default class CookiePromptManagement {
     }
 
     /**
+     * Report to native whether the `initResp` message was delivered to the content script.
+     * Returns a promise that rejects with the original error if delivery failed, so that the caller's
+     * unhandled rejection is still reported (e.g. as `extensionException` in the embedded extension).
+     * @param {number} tabId
+     * @param {string} tabUrl
+     * @param {Promise<any> | undefined} initResponse - the result of chrome.tabs.sendMessage
+     * @returns {Promise<void>}
+     */
+    notifyInitResponseProgress(tabId, tabUrl, initResponse) {
+        return Promise.resolve(initResponse).then(
+            () => {
+                this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, 'response_sent');
+            },
+            (e) => {
+                this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, 'response_failed');
+                throw e;
+            },
+        );
+    }
+
+    /**
      * Called on EVERY message from the content script.
      * Make sure not to trigger anything heavy (e.g. native messaging) without a message type filter!
      * @param {import('@duckduckgo/autoconsent').ContentScriptMessage} msg
@@ -434,6 +461,9 @@ export default class CookiePromptManagement {
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
         if (msg.type === 'init' && isMainFrame) {
+            // no await; tell native that init reached the background before anything else happens
+            this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, 'received');
+
             // update the cached top url for this tab
             this.updateTopUrl(tabId, tabUrl);
 
@@ -607,7 +637,7 @@ export default class CookiePromptManagement {
                 }
                 DEBUG && console.log('autoconsent config', autoconsentConfig);
 
-                chrome.tabs.sendMessage(
+                const initResponse = chrome.tabs.sendMessage(
                     tabId,
                     {
                         type: 'initResp',
@@ -618,6 +648,10 @@ export default class CookiePromptManagement {
                         frameId,
                     },
                 );
+                if (isMainFrame) {
+                    // no await; the returned promise is intentionally left unhandled on failure (see notifyInitResponseProgress)
+                    this.notifyInitResponseProgress(tabId, tabUrl, initResponse);
+                }
                 break;
             }
             case 'cmpDetected': {
