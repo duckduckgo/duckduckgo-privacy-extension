@@ -12,7 +12,10 @@ async function getFingerprintOfContext(ctx) {
         /* global FingerprintJS */
         return (async () => {
             const fp = await FingerprintJS.load();
-            return fp.get();
+            const result = await fp.get();
+            // FingerprintJS v5 skips canvas rendering on Firefox 120+ (assumes built-in protection),
+            // so render the canvas directly to exercise the extension's protections.
+            return { canvas: FingerprintJS.getUnstableCanvasFingerprint(false), components: result.components };
         })();
     });
 }
@@ -39,7 +42,7 @@ test.describe('First Party Fingerprint Randomization', () => {
             const iframeInstance = page.frames().find((iframe) => iframe.url() === iframeHost + '/framed.html');
             const fingerprint2 = await getFingerprintOfContext(iframeInstance);
 
-            expect(fingerprint.components.canvas.value).toEqual(fingerprint2.components.canvas.value);
+            expect(fingerprint.canvas).toEqual(fingerprint2.canvas);
         });
     });
 });
