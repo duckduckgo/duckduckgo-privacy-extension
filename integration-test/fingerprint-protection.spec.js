@@ -65,12 +65,15 @@ test.describe('First Party Fingerprint Randomization', () => {
             /* global FingerprintJS */
             return (async () => {
                 const fp = await FingerprintJS.load();
-                return fp.get();
+                const result = await fp.get();
+                // FingerprintJS v5 skips canvas rendering on Firefox 120+ (assumes built-in protection),
+                // so render the canvas directly to exercise the extension's protections.
+                return { plugins: result.components.plugins, canvas: FingerprintJS.getUnstableCanvasFingerprint(false) };
             })();
         });
         return {
-            canvas: fingerprint.components.canvas.value,
-            plugin: fingerprint.components.plugins.value,
+            canvas: fingerprint.canvas,
+            plugin: fingerprint.plugins.value,
         };
     }
 
