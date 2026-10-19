@@ -199,6 +199,27 @@ describe('utils.parseVersionString', () => {
     }
 });
 
+describe('utils.isVersionGreaterOrEqualTo', () => {
+    // Version, other version, outcome
+    const cases = [
+        ['12', '12', true],
+        ['13', '12', true],
+        ['12', '13', false],
+        ['12.1.2', '12.1.1', true],
+        ['12.1.1', '12.1.2', false],
+        ['102.12.12.1', '102.12.12', true],
+        ['102.12.12', '102.12.12.1', false],
+        ['102.12.12', '102.12.12.0', true],
+        ['103', '102.12.12.1', true],
+    ];
+    for (const testCase of cases) {
+        const [versionString, otherVersionString, expectedOutcome] = testCase;
+        it(`returns ${JSON.stringify(expectedOutcome)} for ${versionString} compared to ${otherVersionString}`, () => {
+            expect(utils.isVersionGreaterOrEqualTo(versionString, otherVersionString)).toEqual(expectedOutcome);
+        });
+    }
+});
+
 describe('utils.satisfiesMinVersion', () => {
     // Min version, Extension version, outcome
     const cases = [
