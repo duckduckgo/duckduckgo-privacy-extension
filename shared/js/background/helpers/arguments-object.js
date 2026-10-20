@@ -1,5 +1,5 @@
 import { getUserLocale } from '../i18n';
-import { getExtensionURL } from '../wrapper';
+import { getExtensionURL, getExtensionVersion } from '../wrapper';
 const utils = require('../utils');
 const tabManager = require('../tab-manager');
 const trackerutils = require('../tracker-utils');
@@ -78,7 +78,7 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,
         site,
-        platform: constants.platform,
+        platform: { ...constants.platform, version: getExtensionVersion() },
         locale: getUserLocale(),
         assets: {
             regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),
