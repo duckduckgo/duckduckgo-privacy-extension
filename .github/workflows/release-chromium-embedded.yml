@@ -72,6 +72,15 @@ jobs:
             - name: Build chromium-embedded extension
               run: npm run release-chromium-embedded
 
+            # The first test build starts the test branch from the release one.
+            - name: Create the test branch
+              if: env.ARTIFACTS_BRANCH == 'build/chromium-embedded/test'
+              run: |
+                  if ! git ls-remote --exit-code origin "refs/heads/$ARTIFACTS_BRANCH" > /dev/null; then
+                      git fetch --depth 1 origin refs/heads/build/chromium-embedded/release
+                      git push origin "FETCH_HEAD:refs/heads/$ARTIFACTS_BRANCH"
+                  fi
+
             # Checked out beside the source tree so the build output above is
             # untouched by the checkout.
             - name: Check out the artifacts branch
