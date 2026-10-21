@@ -25,6 +25,7 @@ function createMockMessaging({ autoconsentEnabledForSite = true, autoconsentSett
             .and.returnValue(Promise.resolve(autoconsentEnabledForSite)),
         checkSubfeatureEnabled: jasmine.createSpy('checkSubfeatureEnabled').and.returnValue(Promise.resolve(subfeatureEnabled)),
         sendPixel: jasmine.createSpy('sendPixel').and.returnValue(Promise.resolve()),
+        notifyInitProgress: jasmine.createSpy('notifyInitProgress').and.returnValue(Promise.resolve()),
         setDiagnosticsErrorHandler: jasmine.createSpy('setDiagnosticsErrorHandler').and.callFake((handler) => {
             mockMessaging.diagnosticsErrorHandler = handler;
         }),
@@ -712,6 +713,149 @@ describe('CookiePromptManagement', () => {
             const pixelCalls = mockMessaging.sendPixel.calls.allArgs();
             const initPixelCalls = pixelCalls.filter(([name]) => name === 'autoconsent_init');
             expect(initPixelCalls.length).toBe(1);
+        });
+    });
+
+    describe('init progress notifications', () => {
+        const stagesOf = (mockMessaging) => mockMessaging.notifyInitProgress.calls.allArgs().map(([, , stage]) => stage);
+
+        async function setup(opts) {
+            const mockMessaging = createMockMessaging(opts);
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+            return { mockMessaging, cpm, handler: messageHandlers.autoconsent };
+        }
+
+        it('dispatches received synchronously, before reset and before any await', async () => {
+            const { mockMessaging, cpm, handler } = await setup();
+            const order = [];
+            mockMessaging.notifyInitProgress.and.callFake((tabId, url, stage) => {
+                order.push(`notify:${stage}`);
+                return Promise.resolve();
+            });
+            const originalReset = cpm.resetCpmDashboardState.bind(cpm);
+            spyOn(cpm, 'resetCpmDashboardState').and.callFake((tabId) => {
+                order.push('reset');
+                return originalReset(tabId);
+            });
+            spyOn(chrome.tabs, 'sendMessage').and.returnValue(Promise.resolve());
+
+            const pending = handler({}, makeSender({ tabId: 5, frameId: 0, tabUrl: 'https://example.com/a' }), {
+                autoconsentPayload: makeInitMessage(),
+            });
+
+            // nothing has been awaited yet: only the synchronous part of the handler has run
+            expect(mockMessaging.notifyInitProgress).toHaveBeenCalledOnceWith(5, 'https://example.com/a', 'received');
+            expect(order).toEqual(['notify:received', 'reset']);
+            expect(mockMessaging.checkAutoconsentSetting).not.toHaveBeenCalled();
+            expect(mockMessaging.refreshDashboardState).not.toHaveBeenCalled();
+
+            await pending;
+        });
+
+        it('does not wait for the received notification', async () => {
+            const { mockMessaging, handler } = await setup();
+            mockMessaging.notifyInitProgress.and.returnValue(new Promise(() => {})); // never settles
+            spyOn(chrome.tabs, 'sendMessage').and.returnValue(Promise.resolve());
+
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(chrome.tabs.sendMessage).toHaveBeenCalledTimes(1);
+        });
+
+        it('dispatches received even when the remote config is unavailable', async () => {
+            const mockMessaging = createMockMessaging();
+            mockMessaging.refreshRemoteConfig.and.returnValue(Promise.resolve(null));
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            await messageHandlers.autoconsent({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(stagesOf(mockMessaging)).toEqual(['received']);
+        });
+
+        it('sends response_sent after received when sendMessage resolves', async () => {
+            const { mockMessaging, handler } = await setup();
+            spyOn(chrome.tabs, 'sendMessage').and.returnValue(Promise.resolve());
+
+            await handler({}, makeSender({ tabId: 3, frameId: 0, tabUrl: 'https://example.com/b' }), {
+                autoconsentPayload: makeInitMessage(),
+            });
+            await Promise.resolve();
+            await Promise.resolve();
+
+            expect(mockMessaging.notifyInitProgress.calls.allArgs()).toEqual([
+                [3, 'https://example.com/b', 'received'],
+                [3, 'https://example.com/b', 'response_sent'],
+            ]);
+        });
+
+        it('sends response_failed and keeps the rejection unhandled when sendMessage rejects', async () => {
+            const { mockMessaging, handler } = await setup();
+            const error = new Error('Could not establish connection');
+            spyOn(chrome.tabs, 'sendMessage').and.returnValue(Promise.reject(error));
+
+            await jasmine.spyOnGlobalErrorsAsync(async (globalErrorSpy) => {
+                // the handler itself still resolves (it does not await the sendMessage promise)
+                await handler({}, makeSender({ tabId: 4, frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+                // give the runtime a chance to report the unhandled rejection
+                await new Promise((resolve) => setTimeout(resolve, 50));
+
+                expect(globalErrorSpy).toHaveBeenCalledTimes(1);
+                const reported = globalErrorSpy.calls.mostRecent().args[0];
+                expect(reported === error || reported?.reason === error || reported?.message?.includes(error.message)).toBe(true);
+            });
+
+            expect(stagesOf(mockMessaging)).toEqual(['received', 'response_failed']);
+        });
+
+        it('notifyInitResponseProgress rethrows the original error', async () => {
+            const { mockMessaging, cpm } = await setup();
+            const error = new Error('boom');
+
+            await expectAsync(cpm.notifyInitResponseProgress(1, 'https://example.com/', Promise.reject(error))).toBeRejectedWith(error);
+
+            expect(mockMessaging.notifyInitProgress).toHaveBeenCalledOnceWith(1, 'https://example.com/', 'response_failed');
+        });
+
+        it('does not wait for the sendMessage promise', async () => {
+            const { handler } = await setup();
+            spyOn(chrome.tabs, 'sendMessage').and.returnValue(new Promise(() => {})); // never settles
+
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(chrome.tabs.sendMessage).toHaveBeenCalledTimes(1);
+        });
+
+        it('sends nothing for sub-frame init', async () => {
+            const { mockMessaging, handler } = await setup();
+            spyOn(chrome.tabs, 'sendMessage').and.returnValue(Promise.resolve());
+
+            for (const frameId of [1, 2]) {
+                await handler({}, makeSender({ frameId }), { autoconsentPayload: makeInitMessage() });
+            }
+            await Promise.resolve();
+            await Promise.resolve();
+
+            expect(chrome.tabs.sendMessage).toHaveBeenCalledTimes(2); // initResp still sent
+            expect(mockMessaging.notifyInitProgress).not.toHaveBeenCalled();
+        });
+
+        it('sends nothing for non-init main frame messages', async () => {
+            const { mockMessaging, handler } = await setup();
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: { type: 'popupFound', cmp: 'test-cmp' } });
+            expect(mockMessaging.notifyInitProgress).not.toHaveBeenCalled();
+        });
+
+        it('does not fail with a messaging implementation that lacks notifyInitProgress', async () => {
+            const { mockMessaging, handler } = await setup();
+            delete mockMessaging.notifyInitProgress;
+            spyOn(chrome.tabs, 'sendMessage').and.returnValue(Promise.resolve());
+
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            await Promise.resolve();
+
+            expect(chrome.tabs.sendMessage).toHaveBeenCalledTimes(1);
         });
     });
 });

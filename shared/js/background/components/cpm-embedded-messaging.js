@@ -68,6 +68,22 @@ export class CPMEmbeddedMessaging {
     }
 
     /**
+     * Send a fire-and-forget progress mark for the main frame `init` message.
+     * Unlike other notifications this never records a diagnostics error and never rejects,
+     * so that these marks cannot change the CPM state or the breakage reports.
+     * @param {number} tabId
+     * @param {string} url
+     * @param {import('./cookie-prompt-management').CpmInitProgressStage} stage
+     */
+    async notifyInitProgress(tabId, url, stage) {
+        try {
+            await this._withTimeout(this.nativeMessaging.notify('cpmInitProgress', { tabId, url, stage }));
+        } catch (e) {
+            DEBUG && console.log('error sending init progress notification', e);
+        }
+    }
+
+    /**
      * Send a request to the native app and wait for a response.
      * If cacheKey and ttl are provided, the result is cached and
      * returned immediately on subsequent calls within the TTL.
