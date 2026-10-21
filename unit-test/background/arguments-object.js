@@ -25,16 +25,21 @@ describe('getArgumentsObject', () => {
     });
 
     it('passes the extension version as the platform version', () => {
+        const args = getArgumentsObject(1, { url, frameId: 0 }, url, 'abc123');
+
+        expect(args?.platform).toEqual({ ...constants.platform, version: browser.runtime.getManifest().version });
+    });
+
+    it('reads the extension version once, when the module loads', () => {
+        const loadedVersion = browser.runtime.getManifest().version;
         spyOn(browser.runtime, 'getManifest').and.returnValue(/** @type {any} */ ({ version: '2026.10.20' }));
 
         const args = getArgumentsObject(1, { url, frameId: 0 }, url, 'abc123');
 
-        expect(args?.platform).toEqual({ ...constants.platform, version: '2026.10.20' });
+        expect(args?.platform.version).toBe(loadedVersion);
     });
 
     it('leaves the shared platform constant unchanged', () => {
-        spyOn(browser.runtime, 'getManifest').and.returnValue(/** @type {any} */ ({ version: '2026.10.20' }));
-
         getArgumentsObject(1, { url, frameId: 0 }, url, 'abc123');
 
         expect(constants.platform).not.toEqual(jasmine.objectContaining({ version: jasmine.anything() }));

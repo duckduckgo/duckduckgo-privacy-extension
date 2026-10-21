@@ -8,6 +8,8 @@ const { isActive } = require('../devtools');
 const constants = require('../../../data/constants');
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer');
 
+const platform = { ...constants.platform, version: getExtensionVersion() };
+
 export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId });
     if (!tab || !tab.url) {
@@ -78,7 +80,7 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,
         site,
-        platform: { ...constants.platform, version: getExtensionVersion() },
+        platform,
         locale: getUserLocale(),
         assets: {
             regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),
