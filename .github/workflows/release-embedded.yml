@@ -12,10 +12,6 @@ on:
             apple_task_gid:
                 description: 'Asana Apple task GID (set to test autoconsent flow, leave empty for standalone flow)'
                 required: false
-            dry_run:
-                description: 'Dry run: no PR, no Asana. Push to test/embedded-extension-dry-run in apple-browsers, then stop.'
-                type: boolean
-                default: false
 
 env:
     APPLE_EMBEDDED_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension.zip
@@ -55,12 +51,8 @@ jobs:
               id: pr-metadata
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  DRY_RUN: ${{ inputs.dry_run }}
               run: |
-                  if [ "$DRY_RUN" = "true" ]; then
-                      echo "APPLE_TASK_GID=" >> $GITHUB_OUTPUT
-                      echo "APPLE_BRANCH=test/embedded-extension-dry-run" >> $GITHUB_OUTPUT
-                  elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                  if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
                       TASK_GID="${{ inputs.apple_task_gid }}"
                       if [ -n "$TASK_GID" ]; then
                           BRANCH="update-autoconsent"
@@ -125,7 +117,7 @@ jobs:
 
             - name: Find or create Apple PR
               id: find-apple-pr
-              if: steps.apple-commit-push.outputs.PUSHED == 'true' && !inputs.dry_run
+              if: steps.apple-commit-push.outputs.PUSHED == 'true'
               working-directory: apple-monorepo
               env:
                   GH_TOKEN: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
