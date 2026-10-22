@@ -66,7 +66,7 @@ describe('CPM site rank lookup', () => {
         const lookup = createSiteRankLookup(encodeDomainHashes(members));
         expect(members.every((domain) => lookup(`https://www.${domain}/`) === 'top10k')).toBeTrue();
 
-        // each lookup checks two suffixes against 10k hashes, so about 1 false match is expected in 200k
+        // each lookup checks two suffixes against 10k hashes, so about 1 false positive is expected in 200k
         const samples = 200000;
         let matches = 0;
         for (const domain of randomDomains(random, samples)) {
