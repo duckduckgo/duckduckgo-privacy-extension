@@ -161,8 +161,9 @@ export default class CookiePromptManagement {
         // MessageRouter (in both regular and embedded builds) dispatches to this handler.
         registerMessageHandler('autoconsent', (options, sender, req) => {
             DEBUG && console.log(`received autoconsent message: ${req.autoconsentPayload.type}`);
-            return this.handleAutoConsentMessage(req.autoconsentPayload, sender).then(() => {
+            return this.handleAutoConsentMessage(req.autoconsentPayload, sender).then((response) => {
                 DEBUG && console.log(`handled autoconsent message: ${req.autoconsentPayload.type}`);
+                return response;
             });
         });
     }
@@ -426,9 +427,12 @@ export default class CookiePromptManagement {
     /**
      * Called on EVERY message from the content script.
      * Make sure not to trigger anything heavy (e.g. native messaging) without a message type filter!
+     * Replies to the frame (initResp, evalResp) are returned as the response to its message rather than sent with
+     * tabs.sendMessage, so content scripts don't need a runtime.onMessage listener: WebKit keeps a frame whose content
+     * script has one alive after the page removes it.
      * @param {import('@duckduckgo/autoconsent').ContentScriptMessage} msg
      * @param {browser.Runtime.MessageSender} sender
-     * @returns
+     * @returns {Promise<import('@duckduckgo/autoconsent').InitResponseMessage | import('@duckduckgo/autoconsent').EvalResponseMessage | undefined>}
      */
     async handleAutoConsentMessage(msg, sender) {
         const frameId = sender.frameId;
@@ -620,18 +624,11 @@ export default class CookiePromptManagement {
                 }
                 DEBUG && console.log('autoconsent config', autoconsentConfig);
 
-                chrome.tabs.sendMessage(
-                    tabId,
-                    {
-                        type: 'initResp',
-                        rules,
-                        config: autoconsentConfig,
-                    },
-                    {
-                        frameId,
-                    },
-                );
-                break;
+                return {
+                    type: 'initResp',
+                    rules,
+                    config: autoconsentConfig,
+                };
             }
             case 'cmpDetected': {
                 break;
@@ -726,24 +723,17 @@ export default class CookiePromptManagement {
             }
             case 'eval': {
                 if (typeof msg.snippetId !== 'undefined') {
-                    this.evalInTab(tabId, frameId, msg.snippetId).then(([result]) => {
-                        if (logsConfig.evals) {
-                            console.groupCollapsed(`eval result for ${frameUrl}`);
-                            console.log(msg.code, result.result);
-                            console.groupEnd();
-                        }
-                        chrome.tabs.sendMessage(
-                            tabId,
-                            {
-                                id: msg.id,
-                                type: 'evalResp',
-                                result: result.result,
-                            },
-                            {
-                                frameId,
-                            },
-                        );
-                    });
+                    const [result] = await this.evalInTab(tabId, frameId, msg.snippetId);
+                    if (logsConfig.evals) {
+                        console.groupCollapsed(`eval result for ${frameUrl}`);
+                        console.log(msg.code, result.result);
+                        console.groupEnd();
+                    }
+                    return {
+                        id: msg.id,
+                        type: 'evalResp',
+                        result: result.result,
+                    };
                 }
                 break;
             }

@@ -512,17 +512,12 @@ describe('CookiePromptManagement', () => {
             const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
             await cpm.remoteConfigJson;
 
-            const sendMessageSpy = spyOn(chrome.tabs, 'sendMessage');
             const handler = messageHandlers.autoconsent;
 
-            const lastInitRespAutoAction = () => {
-                const initResps = sendMessageSpy.calls.allArgs().filter(([, message]) => message?.type === 'initResp');
-                return initResps.length ? initResps[initResps.length - 1][1].config.autoAction : undefined;
-            };
-
             // First visit: opt-out is active, then the CMP is handled (primes last-handled CMP).
-            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
-            expect(lastInitRespAutoAction()).toBe('optOut');
+            const firstInitResp = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            expect(firstInitResp.type).toBe('initResp');
+            expect(firstInitResp.config.autoAction).toBe('optOut');
             await handler({}, makeSender({ frameId: 0 }), {
                 autoconsentPayload: { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false },
             });
@@ -535,8 +530,8 @@ describe('CookiePromptManagement', () => {
             expect(cpm._reloadLoopDetected.has(1)).toBe(true);
 
             // The following init must disable autoAction to break the loop.
-            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
-            expect(lastInitRespAutoAction()).toBe(null);
+            const loopInitResp = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            expect(loopInitResp.config.autoAction).toBe(null);
         });
 
         // When init itself detects the loop (and disables autoAction), its own dashboard update
