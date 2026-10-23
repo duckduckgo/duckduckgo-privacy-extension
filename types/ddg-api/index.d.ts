@@ -24,6 +24,22 @@ declare namespace chrome {
               onBurnStarted?: {
                   addListener(callback: (details: { trigger: 'in-session' | 'on-exit' | 'on-startup' }) => void): void;
               };
+
+              /**
+               * extension -> browser; the internal feedback form's device
+               * details. Rejects unless `tabId` shows the form.
+               *
+               * Optional: a browser older than the method does not define it.
+               */
+              getInternalFeedbackDeviceInfo?(tabId: number): Promise<Record<string, unknown>>;
+
+              /**
+               * extension -> browser; the internal feedback form's attachments.
+               * Rejects unless `tabId` shows the form.
+               *
+               * Optional: a browser older than the method does not define it.
+               */
+              getInternalFeedbackAttachments?(tabId: number): Promise<Record<string, unknown>>;
           }
         | undefined;
 }

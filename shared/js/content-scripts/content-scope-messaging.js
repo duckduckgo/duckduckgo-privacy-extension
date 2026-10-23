@@ -1,4 +1,13 @@
-const allowedMessages = ['openShareFeedbackPage', 'addDebugFlag', 'pageReloaded', 'getBreakageReportValues', 'breakageReportResult'];
+const allowedMessages = [
+    'openShareFeedbackPage',
+    'addDebugFlag',
+    'pageReloaded',
+    'getBreakageReportValues',
+    'breakageReportResult',
+    // The internal feedback form, through content-scope-scripts' message bridge.
+    'getDeviceInfo',
+    'getAttachments',
+];
 
 function getSecret() {
     return new Promise((resolve) => {
