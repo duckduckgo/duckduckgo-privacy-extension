@@ -77,6 +77,13 @@ const logsConfig = {
     waits: !!DEBUG,
 };
 
+/**
+ * A reply to a content script's autoconsent message. initResp carries a partial config, as the content script fills in
+ * the defaults.
+ * @typedef {(Omit<import('@duckduckgo/autoconsent').InitResponseMessage, 'config'> & { config: Partial<import('@duckduckgo/autoconsent').Config> })
+ *     | import('@duckduckgo/autoconsent').EvalResponseMessage} AutoconsentReply
+ */
+
 export default class CookiePromptManagement {
     static SUMMARY_ALARM_NAME = 'cpm-summary';
     static SUMMARY_DELAY_MINUTES = 2;
@@ -432,7 +439,7 @@ export default class CookiePromptManagement {
      * script has one alive after the page removes it.
      * @param {import('@duckduckgo/autoconsent').ContentScriptMessage} msg
      * @param {browser.Runtime.MessageSender} sender
-     * @returns {Promise<import('@duckduckgo/autoconsent').InitResponseMessage | import('@duckduckgo/autoconsent').EvalResponseMessage | undefined>}
+     * @returns {Promise<AutoconsentReply | undefined>}
      */
     async handleAutoConsentMessage(msg, sender) {
         const frameId = sender.frameId;
