@@ -39,7 +39,7 @@ jobs:
             # Committing to ARTIFACTS_BRANCH in this repository.
             contents: write
         steps:
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@v7
 
             - uses: actions/setup-node@v4
               with:
@@ -61,7 +61,7 @@ jobs:
             # Checked out beside the source tree so the build output above is
             # untouched by the checkout.
             - name: Check out the artifacts branch
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
               with:
                   ref: refs/heads/${{ env.ARTIFACTS_BRANCH }}
                   path: artifacts
