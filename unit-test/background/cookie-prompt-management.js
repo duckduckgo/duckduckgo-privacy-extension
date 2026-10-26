@@ -512,17 +512,12 @@ describe('CookiePromptManagement', () => {
             const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
             await cpm.remoteConfigJson;
 
-            const sendMessageSpy = spyOn(chrome.tabs, 'sendMessage');
             const handler = messageHandlers.autoconsent;
 
-            const lastInitRespAutoAction = () => {
-                const initResps = sendMessageSpy.calls.allArgs().filter(([, message]) => message?.type === 'initResp');
-                return initResps.length ? initResps[initResps.length - 1][1].config.autoAction : undefined;
-            };
-
             // First visit: opt-out is active, then the CMP is handled (primes last-handled CMP).
-            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
-            expect(lastInitRespAutoAction()).toBe('optOut');
+            const firstInitResp = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            expect(firstInitResp.type).toBe('initResp');
+            expect(firstInitResp.config.autoAction).toBe('optOut');
             await handler({}, makeSender({ frameId: 0 }), {
                 autoconsentPayload: { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false },
             });
@@ -535,8 +530,8 @@ describe('CookiePromptManagement', () => {
             expect(cpm._reloadLoopDetected.has(1)).toBe(true);
 
             // The following init must disable autoAction to break the loop.
-            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
-            expect(lastInitRespAutoAction()).toBe(null);
+            const loopInitResp = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            expect(loopInitResp.config.autoAction).toBe(null);
         });
 
         // When init itself detects the loop (and disables autoAction), its own dashboard update
@@ -878,6 +873,34 @@ describe('CookiePromptManagement', () => {
             expect(params.length).toBe(2);
             expect(params).toContain({ init: 3, done: 1, consentHeuristicEnabled: 'tier1', fromExtension: '1' });
             expect(params).toContain({ init: 1, siteRank: 'top10k', consentHeuristicEnabled: 'tier1', fromExtension: '1' });
+        });
+    });
+
+    describe('eval', () => {
+        const evalMessage = { type: 'eval', id: 'eval-1', code: '', snippetId: 'EVAL_0' };
+
+        it('replies with the snippet result', async () => {
+            const cpm = new CookiePromptManagement({ cpmMessaging: createMockMessaging() });
+            await cpm.remoteConfigJson;
+            const evalInTab = spyOn(cpm, 'evalInTab').and.returnValue(Promise.resolve([{ frameId: 2, documentId: 'doc', result: true }]));
+
+            const response = await messageHandlers.autoconsent({}, makeSender({ frameId: 2 }), { autoconsentPayload: evalMessage });
+
+            expect(evalInTab).toHaveBeenCalledWith(1, 2, 'EVAL_0');
+            expect(response).toEqual({ id: 'eval-1', type: 'evalResp', result: true });
+        });
+
+        // A rejected reply would surface as an unhandled rejection in the content script, and the eval would only fail on timeout.
+        it('replies with a false result when the snippet cannot be run', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+            spyOn(cpm, 'evalInTab').and.returnValue(Promise.reject(new Error('No frame with id 2')));
+
+            const response = await messageHandlers.autoconsent({}, makeSender({ frameId: 2 }), { autoconsentPayload: evalMessage });
+
+            expect(response).toEqual({ id: 'eval-1', type: 'evalResp', result: false });
+            expect(mockMessaging.logMessage).toHaveBeenCalledWith(jasmine.stringContaining('eval failed'));
         });
     });
 });
