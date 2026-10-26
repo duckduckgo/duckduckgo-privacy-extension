@@ -730,16 +730,23 @@ export default class CookiePromptManagement {
             }
             case 'eval': {
                 if (typeof msg.snippetId !== 'undefined') {
-                    const [result] = await this.evalInTab(tabId, frameId, msg.snippetId);
+                    let result = false;
+                    try {
+                        const [injectionResult] = await this.evalInTab(tabId, frameId, msg.snippetId);
+                        result = injectionResult?.result ?? false;
+                    } catch (e) {
+                        // reply anyway, so the eval fails now instead of rejecting in the content script and timing out
+                        this.cpmMessaging.logMessage(`eval failed in ${frameUrl}: ${e}`);
+                    }
                     if (logsConfig.evals) {
                         console.groupCollapsed(`eval result for ${frameUrl}`);
-                        console.log(msg.code, result.result);
+                        console.log(msg.code, result);
                         console.groupEnd();
                     }
                     return {
                         id: msg.id,
                         type: 'evalResp',
-                        result: result.result,
+                        result,
                     };
                 }
                 break;

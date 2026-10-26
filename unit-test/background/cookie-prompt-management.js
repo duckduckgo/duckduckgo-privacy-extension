@@ -875,4 +875,32 @@ describe('CookiePromptManagement', () => {
             expect(params).toContain({ init: 1, siteRank: 'top10k', consentHeuristicEnabled: 'tier1', fromExtension: '1' });
         });
     });
+
+    describe('eval', () => {
+        const evalMessage = { type: 'eval', id: 'eval-1', code: '', snippetId: 'EVAL_0' };
+
+        it('replies with the snippet result', async () => {
+            const cpm = new CookiePromptManagement({ cpmMessaging: createMockMessaging() });
+            await cpm.remoteConfigJson;
+            const evalInTab = spyOn(cpm, 'evalInTab').and.returnValue(Promise.resolve([{ frameId: 2, documentId: 'doc', result: true }]));
+
+            const response = await messageHandlers.autoconsent({}, makeSender({ frameId: 2 }), { autoconsentPayload: evalMessage });
+
+            expect(evalInTab).toHaveBeenCalledWith(1, 2, 'EVAL_0');
+            expect(response).toEqual({ id: 'eval-1', type: 'evalResp', result: true });
+        });
+
+        // A rejected reply would surface as an unhandled rejection in the content script, and the eval would only fail on timeout.
+        it('replies with a false result when the snippet cannot be run', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+            spyOn(cpm, 'evalInTab').and.returnValue(Promise.reject(new Error('No frame with id 2')));
+
+            const response = await messageHandlers.autoconsent({}, makeSender({ frameId: 2 }), { autoconsentPayload: evalMessage });
+
+            expect(response).toEqual({ id: 'eval-1', type: 'evalResp', result: false });
+            expect(mockMessaging.logMessage).toHaveBeenCalledWith(jasmine.stringContaining('eval failed'));
+        });
+    });
 });
