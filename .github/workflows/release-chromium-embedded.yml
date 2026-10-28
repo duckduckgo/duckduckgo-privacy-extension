@@ -1,12 +1,8 @@
 name: Release Chromium Embedded Extension
 
-# Publishes the built chromium-embedded target to an orphan branch, which the
-# DDG-Chromium fork consumes as a submodule. See that branch's README, and the
-# tech design "DDG-Chromium component extension bundling".
-#
-# Unlike release-embedded.yml, nothing is pushed to another repository: the
-# fork polls these branches and opens its own roll PRs. Releases from main go
-# to build/chromium-embedded/release; test builds of any ref go to
+# Publishes the chromium-embedded build to an orphan branch that the
+# DDG-Chromium fork consumes as a submodule and rolls from: main to
+# build/chromium-embedded/release, test builds of any ref to
 # build/chromium-embedded/test.
 
 on:
@@ -33,9 +29,8 @@ concurrency:
     queue: max
 
 env:
-    # The release branch is named after the directory it carries. Git reads a
-    # bare build/chromium-embedded/release as ambiguous wherever that directory
-    # exists, so every ref below is spelled refs/heads/.
+    # Git reads a bare build/chromium-embedded/release as ambiguous wherever
+    # that directory exists, so every ref below is spelled refs/heads/.
     ARTIFACTS_BRANCH: build/chromium-embedded/${{ inputs.channel || 'release' }}
     BUILD_PATH: build/chromium-embedded/release
 
