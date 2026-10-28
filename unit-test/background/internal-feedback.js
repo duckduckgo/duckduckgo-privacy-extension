@@ -57,6 +57,19 @@ describe('internal feedback', () => {
         expect(chrome.ddg.getInternalFeedbackAttachments).not.toHaveBeenCalled();
     });
 
+    it('waits for the remote config before asking the browser', async () => {
+        chrome.ddg = { getInternalFeedbackDeviceInfo: jasmine.createSpy().and.resolveTo({ platform: 'windows' }) };
+        let configLoaded;
+        globalThis.components = { remoteConfig: { ...remoteConfigWith(), ready: new Promise((resolve) => (configLoaded = resolve)) } };
+
+        const answer = askBrowser('getInternalFeedbackDeviceInfo', formSender, undefined);
+        await new Promise((resolve) => setTimeout(resolve));
+        expect(chrome.ddg.getInternalFeedbackDeviceInfo).not.toHaveBeenCalled();
+
+        configLoaded();
+        expect(await answer).toEqual({ platform: 'windows' });
+    });
+
     it('falls back when the browser refuses', async () => {
         chrome.ddg = { getInternalFeedbackAttachments: jasmine.createSpy().and.rejectWith(new Error('not the form')) };
         spyOn(console, 'warn');

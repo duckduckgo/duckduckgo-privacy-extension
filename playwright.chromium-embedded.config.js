@@ -22,6 +22,7 @@ const includedTests = [
     'gpc.spec.js',
     'https-loop-protection.spec.js',
     'navigator-interface.spec.js',
+    'internal-feedback.spec.js',
 ];
 
 export default defineConfig({

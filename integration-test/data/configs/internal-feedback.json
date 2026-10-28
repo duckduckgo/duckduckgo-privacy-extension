@@ -1,0 +1,21 @@
+{
+    "globalThis.dbg.tds.config.features.messageBridge": {
+        "state": "enabled",
+        "exceptions": [],
+        "settings": {
+            "internalFeedback": "disabled",
+            "domains": [
+                {
+                    "domain": "internalapps.duckduckgo.com",
+                    "patchSettings": [
+                        {
+                            "op": "replace",
+                            "path": "/internalFeedback",
+                            "value": "enabled"
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
