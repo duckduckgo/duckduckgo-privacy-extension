@@ -145,10 +145,7 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
 }
 
 if (BUILD_TARGET === 'chromium-embedded') {
-    // The embedded New Tab Page is served as an extension page in this build
-    // (see chrome_url_overrides in the manifest). Its privacy stats are powered
-    // by the aggregated NewTabTrackerStats, and NTPMessaging is the endpoint
-    // the page talks to.
+    // The New Tab Page (chrome_url_overrides in the manifest) and its tracker stats.
     const newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
     // the dev-build debugging API (dbg.ntts) reads the singleton
     NewTabTrackerStats.shared = newTabTrackerStats;

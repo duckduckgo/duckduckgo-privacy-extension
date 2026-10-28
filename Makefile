@@ -159,8 +159,8 @@ LAST_COPY = build/.last-copy-$(browser)-$(type)
 RSYNC = rsync -ra --exclude="*~"
 
 # Pages the chromium-embedded build cannot reach: the browser owns the fire
-# button and the new tab page, this build declares no options_page, and MV3 has
-# no background page. The devtools pages stay - they are reached by URL.
+# button, the build ships its own new tab page, it declares no options_page,
+# and MV3 has no background page. The devtools pages stay - they are reached by URL.
 HTML_EXCLUDES =
 ifeq ($(browser),chromium-embedded)
   HTML_EXCLUDES = --exclude=background.html --exclude=feedback.html --exclude=fire.html \
@@ -182,11 +182,9 @@ ifeq (,$(filter $(browser),embedded chromium-embedded))
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js $(BUILD_DIR)/public/js/content-scripts
 endif
 # No options page in this build, so hide the dashboard's settings cog (matches Windows).
+# The New Tab Page is the content-scope-scripts windows build.
 ifeq ($(browser),chromium-embedded)
 	echo '.cog-button { display: none; }' >> $(BUILD_DIR)/dashboard/public/css/popup.css
-endif
-ifeq ($(browser),chromium-embedded)
-	## New Tab Page, reusing the windows platform build from content-scope-scripts.
 	$(RSYNC) $(CONTENT_SCOPE_SCRIPTS)/build/windows/pages/new-tab/ $(BUILD_DIR)/ntp/
 	node scripts/prepareNtpHtml.mjs $(BUILD_DIR)/ntp/index.html
 endif
@@ -256,11 +254,14 @@ $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/content-scripts/cpm.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/cpm.js > $@
 
+$(BUILD_DIR)/public/js/ntp-interop-shim.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/ntp/interop-shim.js > $@
+
 JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js content-scripts/cpm.js
 # Only the bundles the remaining pages load. base.js went with the options and
 # feedback pages; the devtools pages need only base.css.
 ifeq ($(browser),chromium-embedded)
-  JS_BUNDLES = background.js devtools-panel.js list-editor.js rollouts.js content-scripts/cpm.js
+  JS_BUNDLES = background.js devtools-panel.js list-editor.js rollouts.js content-scripts/cpm.js ntp-interop-shim.js
 endif
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 
@@ -355,17 +356,6 @@ BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
 EMBEDDED_JS_BUNDLES = background-embedded.js content-scripts/cpm.js
 ifeq ($(browser),embedded)
   BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(EMBEDDED_JS_BUNDLES))
-endif
-
-# Chromium-embedded builds include the New Tab Page (copied from the
-# content-scope-scripts windows build, see the copy step above) along with an
-# interop shim that bridges the page's messaging to the extension background.
-$(BUILD_DIR)/ntp/interop-shim.js: $(WATCHED_FILES)
-	mkdir -p `dirname $@`
-	$(ESBUILD) shared/js/ntp/interop-shim.js > $@
-
-ifeq ($(browser),chromium-embedded)
-  BUILD_TARGETS += $(BUILD_DIR)/ntp/interop-shim.js
 endif
 
 

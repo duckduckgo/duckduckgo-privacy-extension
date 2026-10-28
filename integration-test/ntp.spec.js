@@ -1,10 +1,3 @@
-/**
- * The chromium-embedded build serves the New Tab Page (from
- * @duckduckgo/content-scope-scripts) as an extension page, with its messaging
- * bridged to the background over a runtime port (see
- * shared/js/ntp/interop-shim.js and
- * shared/js/background/components/ntp-messaging.js).
- */
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { isChromiumEmbedded } from './helpers/platform';
