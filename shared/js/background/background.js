@@ -42,10 +42,8 @@ import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from '.
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
 import CookiePromptManagement from './components/cookie-prompt-management';
 import NTPMessaging from './components/ntp-messaging';
-import NTPActivityCollection from './components/ntp-activity';
 import { NewTabTrackerStats } from './newtab-tracker-stats';
 import { TrackerStats } from './classes/tracker-stats';
-import { NTPFavoritesStore } from './classes/ntp-favorites-store';
 
 // Trigger registration of default message handlers into the shared registry.
 import { registerStandardHandlers } from './message-handlers';
@@ -148,20 +146,14 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
 
 if (BUILD_TARGET === 'chromium-embedded') {
     // The embedded New Tab Page is served as an extension page in this build
-    // (see chrome_url_overrides in the manifest). Its summary feed is powered
-    // by the aggregated NewTabTrackerStats, its details feed by the per-site
-    // activity collection, and NTPMessaging is the endpoint the page talks to.
+    // (see chrome_url_overrides in the manifest). Its privacy stats are powered
+    // by the aggregated NewTabTrackerStats, and NTPMessaging is the endpoint
+    // the page talks to.
     const newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
     // the dev-build debugging API (dbg.ntts) reads the singleton
     NewTabTrackerStats.shared = newTabTrackerStats;
     newTabTrackerStats.restoreFromStorage().then(() => newTabTrackerStats.registerDataCollection());
-    components.ntpActivity = new NTPActivityCollection();
-    components.ntpMessaging = new NTPMessaging({
-        settings,
-        ntpActivity: components.ntpActivity,
-        newTabTrackerStats,
-        favoritesStore: new NTPFavoritesStore(),
-    });
+    components.ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
 }
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore
