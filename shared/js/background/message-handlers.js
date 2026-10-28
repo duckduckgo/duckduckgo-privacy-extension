@@ -18,6 +18,8 @@ const devtools = require('./devtools');
 const browserWrapper = require('./wrapper');
 
 export async function registeredContentScript(options, sender, req) {
+    // Until the config has loaded, for example right after the service worker starts, every feature looks disabled.
+    await globalThis.components?.remoteConfig?.ready;
     const sessionKey = await utils.getSessionKey();
     const argumentsObject = getArgumentsObject(sender.tab.id, sender, options?.documentUrl || req.documentUrl, sessionKey);
     if (!argumentsObject) {

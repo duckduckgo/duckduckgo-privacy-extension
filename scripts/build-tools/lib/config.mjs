@@ -67,6 +67,7 @@ const CONTENT_SCOPE_SCRIPTS_BUILDS = { chrome: 'chrome-mv3', firefox: 'firefox' 
  * @property {{in: string, out: string}[]} scssBundles
  * @property {string[]} [htmlExcludes] Pages under shared/html not to ship.
  * @property {string} [dashboardCss] Extra CSS appended to the dashboard popup stylesheet.
+ * @property {string} [messageBridgeConfig] The privacy configuration whose messageBridge feature is bundled into content-scope-scripts.
  */
 
 const CHROME = {
@@ -105,6 +106,7 @@ const BROWSER_PROFILES = {
         htmlExcludes: ['background.html', 'feedback.html', 'fire.html', 'options.html', 'tracker-stats.html'],
         // No options page, so hide the dashboard's settings cog (matches Windows).
         dashboardCss: '.cog-button { display: none; }\n',
+        messageBridgeConfig: 'shared/data/bundled/windows-config.json',
     },
 };
 

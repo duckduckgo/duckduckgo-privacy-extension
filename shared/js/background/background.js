@@ -18,6 +18,7 @@
 import { onStartup } from './startup';
 import setupAtb from './components/setup-atb';
 import setupBurn from './components/burn';
+import setupInternalFeedback from './components/internal-feedback';
 import FireButton from './components/fire-button';
 import TabTracker from './components/tab-tracking';
 import MV3ContentScriptInjection from './components/mv3-content-script-injection';
@@ -67,6 +68,7 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
 // the worker to deliver the event.
 if (BUILD_TARGET === 'chromium-embedded') {
     setupBurn();
+    setupInternalFeedback();
 }
 
 settings.ready().then(() => {

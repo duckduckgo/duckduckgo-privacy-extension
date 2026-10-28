@@ -25,6 +25,8 @@ async function getConfig(name, url) {
 async function fetchConfigs() {
     const etags = await getConfig('config', configProps.url);
     writeEtags(etags);
+    // The chromium-embedded build bundles this one into content-scope-scripts.
+    await getConfig('windows-config', new URL('windows-config.json', configProps.url).href);
     console.log('Config imported successfully');
 }
 
