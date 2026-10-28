@@ -289,7 +289,12 @@ $(CONTENT_SCOPE_SCRIPTS)/build/locales: $(CONTENT_SCOPE_SCRIPTS_LOCALES_DEPS)
 $(CONTENT_SCOPE_SCRIPTS)/build/$(CSS_PLATFORM_NAME)/inject.js: $(CONTENT_SCOPE_SCRIPTS_DEPS)
 	cd $(CONTENT_SCOPE_SCRIPTS)/injected; npm run build-$(CSS_PLATFORM_NAME)
 
-$(BUILD_DIR)/public/js/inject.js: $(CONTENT_SCOPE_SCRIPTS)/build/$(CSS_PLATFORM_NAME)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json
+MESSAGE_BRIDGE_CONFIG =
+ifeq ($(browser),chromium-embedded)
+  MESSAGE_BRIDGE_CONFIG = shared/data/bundled/windows-config.json
+endif
+
+$(BUILD_DIR)/public/js/inject.js: $(CONTENT_SCOPE_SCRIPTS)/build/$(CSS_PLATFORM_NAME)/inject.js shared/data/bundled/tracker-lookup.json shared/data/bundled/extension-config.json $(MESSAGE_BRIDGE_CONFIG)
 	node scripts/bundleContentScopeScripts.mjs $@ $^
 
 BUILD_TARGETS += $(BUILD_DIR)/public/js/inject.js

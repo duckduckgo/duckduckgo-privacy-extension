@@ -66,8 +66,15 @@ function rebuildLinkedCheckout({ cssPlatform }) {
  * @param {string} sourcePath
  * @param {string} [trackerLookupPath]
  * @param {string} [configPath]
+ * @param {string} [messageBridgeConfigPath] A configuration whose messageBridge feature is bundled too.
  */
-export function bundleContentScopeScripts(targetPath, sourcePath, trackerLookupPath = TRACKER_LOOKUP, configPath = EXTENSION_CONFIG) {
+export function bundleContentScopeScripts(
+    targetPath,
+    sourcePath,
+    trackerLookupPath = TRACKER_LOOKUP,
+    configPath = EXTENSION_CONFIG,
+    messageBridgeConfigPath = undefined,
+) {
     const utf8 = { encoding: 'utf-8' };
     const source = fs.readFileSync(sourcePath, utf8);
     const trackerLookup = fs.readFileSync(trackerLookupPath, utf8);
@@ -77,6 +84,9 @@ export function bundleContentScopeScripts(targetPath, sourcePath, trackerLookupP
         cookie: config.features.cookie,
         adClickAttribution: config.features.adClickAttribution,
     };
+    if (messageBridgeConfigPath) {
+        config.features.messageBridge = JSON.parse(fs.readFileSync(messageBridgeConfigPath, utf8)).features.messageBridge;
+    }
     ensureDir(path.dirname(targetPath));
     fs.writeFileSync(
         targetPath,
@@ -90,5 +100,11 @@ export function buildInjectScript(config) {
     if (isContentScopeScriptsLinked()) {
         rebuildLinkedCheckout(config);
     }
-    bundleContentScopeScripts(`${config.out.js}/inject.js`, prebuiltInject(config.cssPlatform));
+    bundleContentScopeScripts(
+        `${config.out.js}/inject.js`,
+        prebuiltInject(config.cssPlatform),
+        TRACKER_LOOKUP,
+        EXTENSION_CONFIG,
+        config.messageBridgeConfig,
+    );
 }
