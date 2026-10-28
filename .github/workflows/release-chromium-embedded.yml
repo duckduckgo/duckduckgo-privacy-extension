@@ -101,6 +101,7 @@ jobs:
               working-directory: artifacts
               env:
                   VERSION: ${{ steps.version.outputs.VERSION }}
+                  SOURCE_REF: ${{ github.ref_name }}
               run: |
                   git config user.name "Dax the Deployer"
                   git config user.email "dax@duckduckgo.com"
@@ -114,7 +115,7 @@ jobs:
                   git commit -m "chromium-embedded $VERSION
 
                   Source commit: ${{ github.sha }}
-                  Source ref: ${{ github.ref_name }}
+                  Source ref: $SOURCE_REF
                   Built by: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   # Appended, never forced: the fork pins commits on this
                   # branch, and rewriting it would strand those pins.
