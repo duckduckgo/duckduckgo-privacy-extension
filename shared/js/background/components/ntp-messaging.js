@@ -2,7 +2,6 @@ import browser from 'webextension-polyfill';
 import { NewTabTrackerStats } from '../newtab-tracker-stats';
 import { emitter, TrackerBlockedEvent } from '../before-request';
 import { getUserLocale } from '../i18n';
-import { trailingThrottle } from '../../shared-utils/trailing-throttle';
 import { NTP_PORT_NAME, NTP_MESSAGING_CONTEXT, NTP_FEATURE_NAME, NTP_OTHER_COMPANY_IDENTIFIER } from '../../ntp/constants';
 
 /**
@@ -34,22 +33,22 @@ const DEFAULT_PROTECTIONS_CONFIG = { expansion: 'expanded', feed: 'privacy-stats
 const SEARCH_URL = 'https://duckduckgo.com/';
 
 /**
- * Messaging endpoint for the embedded New Tab Page (chromium-embedded build).
- *
- * The page's 'windows' messaging transport is bridged to the background over
- * a runtime port by shared/js/ntp/interop-shim.js:
+ * Messaging endpoint for the New Tab Page, over the runtime port opened by
+ * shared/js/ntp/interop-shim.js:
  *  - requests arrive as `{Feature, SubFeatureName, Name, Data, Id}` and are
  *    answered with `{context, featureName, id, result|error}`;
  *  - subscription events are pushed to all connected pages as
  *    `{context, featureName, subscriptionName, params}`.
  *
- * Widgets mirror the Windows browser's NTP: omnibar (search), favorites and
- * protections (privacy-stats and activity feeds). Privacy stats are backed by
- * NewTabTrackerStats; favorites and activity are stubbed with empty data.
+ * Privacy stats come from NewTabTrackerStats; favorites, suggestions and the
+ * activity feed are empty.
  */
 export default class NTPMessaging {
     /** @type {Set<Port>} */
     ports = new Set();
+
+    /** @type {ReturnType<typeof setTimeout>?} */
+    pushTimer = null;
 
     /**
      * @param {{
@@ -60,7 +59,6 @@ export default class NTPMessaging {
     constructor({ settings, newTabTrackerStats }) {
         this.settings = settings;
         this.newTabTrackerStats = newTabTrackerStats;
-        this.schedulePushDataUpdate = trailingThrottle(() => this.pushDataUpdate(), 1000);
 
         browser.runtime.onConnect.addListener((port) => {
             if (port.name !== NTP_PORT_NAME) return;
@@ -73,10 +71,13 @@ export default class NTPMessaging {
             });
         });
 
+        // At most one push a second while trackers are being blocked.
         emitter.on(TrackerBlockedEvent.eventName, () => {
-            if (this.ports.size > 0) {
-                this.schedulePushDataUpdate();
-            }
+            if (this.ports.size === 0 || this.pushTimer) return;
+            this.pushTimer = setTimeout(() => {
+                this.pushTimer = null;
+                this.pushDataUpdate();
+            }, 1000);
         });
     }
 
@@ -194,7 +195,6 @@ export default class NTPMessaging {
                 this.settings.updateSetting(PROTECTIONS_CONFIG_SETTING, params);
                 break;
             case 'activity_open':
-            case 'open':
                 this.openUrl(params?.url, params?.target, port);
                 break;
 

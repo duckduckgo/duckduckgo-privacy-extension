@@ -34,10 +34,8 @@ export async function onStartup() {
     Companies.buildFromStorage();
 
     /**
-     * in Chrome only, try to initiate the `NewTabTrackerStats` feature for
-     * the duckduckgo.com New Tab Page. (The chromium-embedded build collects
-     * the same stats for its embedded New Tab Page, wired up with the other
-     * NTP components in background.js.)
+     * in Chrome only, try to initiate the `NewTabTrackerStats` feature
+     * (chromium-embedded sets up its own in background.js)
      */
     if (BUILD_TARGET === 'chrome' && getBrowserName() === 'chrome') {
         try {
