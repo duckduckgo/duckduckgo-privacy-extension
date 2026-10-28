@@ -1,7 +1,6 @@
-import NTPMessaging, { toDomainActivity, formatRelativeTime } from '../../shared/js/background/components/ntp-messaging';
+import NTPMessaging from '../../shared/js/background/components/ntp-messaging';
 import { NewTabTrackerStats } from '../../shared/js/background/newtab-tracker-stats';
 import { TrackerStats } from '../../shared/js/background/classes/tracker-stats';
-import { NTPFavoritesStore } from '../../shared/js/background/classes/ntp-favorites-store';
 import { MockSettings } from '../helpers/mocks';
 
 describe('NTPMessaging component', () => {
@@ -11,51 +10,6 @@ describe('NTPMessaging component', () => {
     let settings;
     /** @type {NewTabTrackerStats} */
     let newTabTrackerStats;
-    /** @type {NTPFavoritesStore} */
-    let favoritesStore;
-    /** Fake NTPActivityCollection with an in-memory store. */
-    let fakeActivity;
-
-    const NOW = Date.now();
-
-    function makeRow(host, overrides = {}) {
-        return {
-            host,
-            url: `https://${host}/`,
-            etldPlusOne: host,
-            lastVisit: NOW,
-            totalCount: 0,
-            companies: {},
-            history: [],
-            ...overrides,
-        };
-    }
-
-    function createFakeActivity(rows = []) {
-        return {
-            _changeCallback: null,
-            onChange(cb) {
-                this._changeCallback = cb;
-            },
-            store: {
-                rows,
-                async getAll() {
-                    return this.rows;
-                },
-                async get(host) {
-                    return this.rows.find((r) => r.host === host);
-                },
-                async getForUrls(urls) {
-                    return urls.map((url) => this.rows.find((r) => r.url === url)).filter(Boolean);
-                },
-                async removeByUrl(url) {
-                    const before = this.rows.length;
-                    this.rows = this.rows.filter((r) => r.url !== url);
-                    return this.rows.length < before;
-                },
-            },
-        };
-    }
 
     /**
      * Minimal stand-in for a runtime Port connected to the NTP page.
@@ -86,11 +40,9 @@ describe('NTPMessaging component', () => {
 
     beforeEach(() => {
         settings = new MockSettings();
-        fakeActivity = createFakeActivity();
         newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
-        favoritesStore = new NTPFavoritesStore();
-        // @ts-ignore - MockSettings/fakeActivity stand in for the real dependencies
-        ntpMessaging = new NTPMessaging({ settings, ntpActivity: fakeActivity, newTabTrackerStats, favoritesStore });
+        // @ts-ignore - MockSettings stands in for Settings
+        ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
     });
 
     it('answers initialSetup with a valid minimal payload', async () => {
@@ -106,6 +58,23 @@ describe('NTPMessaging component', () => {
         expect(['development', 'production']).toContain(result.env);
         expect(typeof result.locale).toBe('string');
         expect(result.updateNotification).toBeNull();
+    });
+
+    it('answers the stubbed widget requests with empty data', async () => {
+        expect(await ntpMessaging.handleRequest('omnibar_getConfig')).toEqual({
+            mode: 'search',
+            enableAi: false,
+            showAiSetting: false,
+            enableRecentAiChats: false,
+        });
+        expect(await ntpMessaging.handleRequest('omnibar_getSuggestions', { term: 'test' })).toEqual({
+            suggestions: { topHits: [], duckduckgoSuggestions: [], localSuggestions: [] },
+        });
+        expect(await ntpMessaging.handleRequest('favorites_getConfig')).toEqual({ expansion: 'expanded' });
+        expect(await ntpMessaging.handleRequest('favorites_getData')).toEqual({ favorites: [] });
+        expect(await ntpMessaging.handleRequest('protections_getConfig')).toEqual({ expansion: 'expanded', feed: 'privacy-stats' });
+        expect(await ntpMessaging.handleRequest('activity_getUrls')).toEqual({ urls: [], totalTrackersBlocked: 0 });
+        expect(await ntpMessaging.handleRequest('activity_getDataForUrls', { urls: [] })).toEqual({ activity: [] });
     });
 
     it('answers protections_getData with the total blocked count', async () => {
@@ -137,183 +106,6 @@ describe('NTPMessaging component', () => {
         ]);
     });
 
-    it('answers the batched activity API from the activity store', async () => {
-        fakeActivity.store.rows = [
-            makeRow('example.com', { totalCount: 5, companies: { Google: 3, Facebook: 2 } }),
-            makeRow('other.com', { totalCount: 2, companies: { Google: 2 } }),
-        ];
-
-        const urlInfo = await ntpMessaging.handleRequest('activity_getUrls');
-        expect(urlInfo).toEqual({
-            urls: ['https://example.com/', 'https://other.com/'],
-            totalTrackersBlocked: 7,
-        });
-
-        const data = await ntpMessaging.handleRequest('activity_getDataForUrls', { urls: ['https://other.com/'] });
-        expect(data.activity.length).toBe(1);
-        expect(data.activity[0].url).toBe('https://other.com/');
-    });
-
-    it('maps stored site rows to the DomainActivity format', () => {
-        const row = makeRow('www.example.com', {
-            etldPlusOne: 'example.com',
-            totalCount: 3,
-            companies: { Facebook: 1, Google: 2 },
-            history: [{ title: 'Example Page', url: 'https://www.example.com/page', visitedAt: NOW - 5 * 60 * 1000 }],
-        });
-
-        const activity = toDomainActivity(row, NOW);
-        expect(activity.title).toBe('www.example.com');
-        expect(activity.url).toBe('https://www.example.com/');
-        expect(activity.etldPlusOne).toBe('example.com');
-        // the trailing '&' absorbs the '?preferredSize=N' suffix the page appends
-        expect(activity.favicon).toEqual({
-            src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.com%2F&size=32&',
-            maxAvailableSize: 32,
-        });
-        expect(activity.trackersFound).toBe(true);
-        // companies ordered by blocked count, names only
-        expect(activity.trackingStatus).toEqual({
-            totalCount: 3,
-            trackerCompanies: [{ displayName: 'Google' }, { displayName: 'Facebook' }],
-        });
-        expect(activity.history).toEqual([
-            { title: 'Example Page', url: 'https://www.example.com/page', relativeTime: formatRelativeTime(NOW - 5 * 60 * 1000, NOW) },
-        ]);
-        expect(activity.favorite).toBe(false);
-    });
-
-    it('formats relative times as localized strings', () => {
-        // exact strings depend on the locale; check shape and ordering only
-        const justNow = formatRelativeTime(NOW - 10 * 1000, NOW);
-        const minutes = formatRelativeTime(NOW - 5 * 60 * 1000, NOW);
-        const hours = formatRelativeTime(NOW - 3 * 60 * 60 * 1000, NOW);
-        const days = formatRelativeTime(NOW - 2 * 24 * 60 * 60 * 1000, NOW);
-        for (const value of [justNow, minutes, hours, days]) {
-            expect(typeof value).toBe('string');
-            expect(value.length).toBeGreaterThan(0);
-        }
-        expect(minutes).toContain('5');
-        expect(hours).toContain('3');
-        expect(days).toContain('2');
-    });
-
-    it('removes activity items and pushes a full data update', async () => {
-        fakeActivity.store.rows = [makeRow('example.com'), makeRow('other.com')];
-        const port = createFakePort();
-        // @ts-ignore - fake port
-        ntpMessaging.ports.add(port);
-
-        // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('activity_removeItem', { url: 'https://example.com/' }), Id: undefined }, port);
-
-        expect(fakeActivity.store.rows.map((r) => r.host)).toEqual(['other.com']);
-        expect(port.posted.length).toBe(1);
-        expect(port.posted[0].subscriptionName).toBe('activity_onDataUpdate');
-        expect(port.posted[0].params.activity.map((a) => a.url)).toEqual(['https://other.com/']);
-    });
-
-    it('pushes single-site patches when the activity collection reports changes', async () => {
-        fakeActivity.store.rows = [makeRow('example.com', { totalCount: 4, companies: { Google: 4 } })];
-        const port = createFakePort();
-        // @ts-ignore - fake port
-        ntpMessaging.ports.add(port);
-
-        await ntpMessaging.pushActivityPatches(['example.com']);
-
-        expect(port.posted.length).toBe(1);
-        expect(port.posted[0].subscriptionName).toBe('activity_onDataPatch');
-        expect(port.posted[0].params.urls).toEqual(['https://example.com/']);
-        expect(port.posted[0].params.totalTrackersBlocked).toBe(4);
-        expect(port.posted[0].params.patch.url).toBe('https://example.com/');
-    });
-
-    it('registers for activity change notifications', () => {
-        expect(typeof fakeActivity._changeCallback).toBe('function');
-    });
-
-    it('answers activity_confirmBurn with no action', async () => {
-        expect(await ntpMessaging.handleRequest('activity_confirmBurn', { url: 'https://example.com/' })).toEqual({ action: 'none' });
-    });
-
-    it('adds and removes favorites via the activity feed star notifications', async () => {
-        fakeActivity.store.rows = [makeRow('www.example.com', { etldPlusOne: 'example.com' })];
-        const port = createFakePort();
-        // @ts-ignore - fake port
-        ntpMessaging.ports.add(port);
-
-        // starring a site adds it to the favorites store...
-        // @ts-ignore - fake port
-        await ntpMessaging.onMessage(
-            { ...requestMessage('activity_addFavorite', { url: 'https://www.example.com/' }), Id: undefined },
-            port,
-        );
-        expect((await ntpMessaging.handleRequest('favorites_getData')).favorites).toEqual([
-            {
-                id: 'https://www.example.com/',
-                url: 'https://www.example.com/',
-                title: 'www.example.com',
-                etldPlusOne: 'example.com',
-                favicon: { src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.com%2F&size=64&', maxAvailableSize: 64 },
-            },
-        ]);
-
-        // ...marks the site's activity row as a favorite...
-        const data = await ntpMessaging.handleRequest('activity_getDataForUrls', { urls: ['https://www.example.com/'] });
-        expect(data.activity[0].favorite).toBe(true);
-
-        // ...and pushes both a favorites update and an activity patch
-        expect(port.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate', 'activity_onDataPatch']);
-        expect(port.posted[1].params.patch.favorite).toBe(true);
-
-        // un-starring removes it again
-        port.posted.length = 0;
-        // @ts-ignore - fake port
-        await ntpMessaging.onMessage(
-            { ...requestMessage('activity_removeFavorite', { url: 'https://www.example.com/' }), Id: undefined },
-            port,
-        );
-        expect((await ntpMessaging.handleRequest('favorites_getData')).favorites).toEqual([]);
-        expect(port.posted[0].params).toEqual({ favorites: [] });
-        expect(port.posted[1].params.patch.favorite).toBe(false);
-    });
-
-    it('reorders favorites on favorites_move', async () => {
-        await favoritesStore.add({ url: 'https://a.example/', title: 'A' });
-        await favoritesStore.add({ url: 'https://b.example/', title: 'B' });
-        const port = createFakePort();
-        // @ts-ignore - fake port
-        ntpMessaging.ports.add(port);
-
-        // @ts-ignore - fake port
-        await ntpMessaging.onMessage(
-            { ...requestMessage('favorites_move', { id: 'https://b.example/', targetIndex: 0 }), Id: undefined },
-            port,
-        );
-
-        const result = await ntpMessaging.handleRequest('favorites_getData');
-        expect(result.favorites.map((f) => f.title)).toEqual(['B', 'A']);
-        expect(port.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
-    });
-
-    it('answers the omnibar config and suggestion requests', async () => {
-        expect(await ntpMessaging.handleRequest('omnibar_getConfig')).toEqual({
-            mode: 'search',
-            enableAi: true,
-            enableRecentAiChats: false,
-        });
-        expect(await ntpMessaging.handleRequest('omnibar_getSuggestions', { term: 'test' })).toEqual({
-            suggestions: { topHits: [], duckduckgoSuggestions: [], localSuggestions: [] },
-        });
-        expect(await ntpMessaging.handleRequest('omnibar_getAiChats', { query: '' })).toEqual({ chats: [] });
-
-        // config changes from the page are persisted
-        const port = createFakePort();
-        // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('omnibar_setConfig', { mode: 'ai' }), Id: undefined }, port);
-        expect(await ntpMessaging.handleRequest('omnibar_getConfig')).toEqual({ mode: 'ai' });
-    });
-
     it('opens searches and suggestions from the omnibar', async () => {
         const openUrl = spyOn(ntpMessaging, 'openUrl');
         const port = createFakePort();
@@ -324,10 +116,6 @@ describe('NTPMessaging component', () => {
             port,
         );
         expect(openUrl).toHaveBeenCalledWith('https://duckduckgo.com/?q=a%20b', 'same-tab', port);
-
-        // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('omnibar_submitChat', { chat: 'hi', target: 'new-tab' }), Id: undefined }, port);
-        expect(openUrl).toHaveBeenCalledWith('https://duckduckgo.com/?q=hi&ia=chat', 'new-tab', port);
 
         const suggestion = { kind: 'phrase', phrase: 'query' };
         // @ts-ignore - fake port
@@ -377,13 +165,16 @@ describe('NTPMessaging component', () => {
         expect(port.posted).toEqual([]);
     });
 
-    it('persists widget and protections config from notifications', async () => {
+    it('persists widget, favorites and protections config from notifications', async () => {
         const widgetConfigs = [{ id: 'protections', visibility: 'hidden' }];
+        const favoritesConfig = { expansion: 'collapsed' };
         const protectionsConfig = { expansion: 'collapsed', feed: 'activity' };
 
         const port = createFakePort();
         // @ts-ignore - fake port
         await ntpMessaging.onMessage({ ...requestMessage('widgets_setConfig', widgetConfigs), Id: undefined }, port);
+        // @ts-ignore - fake port
+        await ntpMessaging.onMessage({ ...requestMessage('favorites_setConfig', favoritesConfig), Id: undefined }, port);
         // @ts-ignore - fake port
         await ntpMessaging.onMessage({ ...requestMessage('protections_setConfig', protectionsConfig), Id: undefined }, port);
 
@@ -391,6 +182,7 @@ describe('NTPMessaging component', () => {
         expect(port.posted).toEqual([]);
 
         expect((await ntpMessaging.handleRequest('initialSetup')).widgetConfigs).toEqual(widgetConfigs);
+        expect(await ntpMessaging.handleRequest('favorites_getConfig')).toEqual(favoritesConfig);
         expect(await ntpMessaging.handleRequest('protections_getConfig')).toEqual(protectionsConfig);
     });
 

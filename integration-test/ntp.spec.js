@@ -8,10 +8,6 @@
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { isChromiumEmbedded } from './helpers/platform';
-import { runRequestBlockingTest } from './helpers/requests';
-
-const trackingTestHost = 'privacy-test-pages.site';
-const trackingTestSite = `https://${trackingTestHost}/privacy-protections/request-blocking/`;
 
 function getNtpUrl(backgroundPage) {
     return backgroundPage.evaluate(() => chrome.runtime.getURL('ntp/index.html'));
@@ -54,42 +50,7 @@ test.describe('Embedded New Tab Page', () => {
         });
 
         await expect(page.getByText('3 tracking attempts blocked')).toBeVisible();
-        // the company breakdown lives in the summary feed (the default feed is
-        // the activity view)
-        await page.getByRole('button', { name: 'Summary' }).click();
+        // the company breakdown is in the default (privacy-stats) feed
         await expect(page.getByText('Ad Company', { exact: true })).toBeVisible();
-    });
-
-    test('collects per-site activity for the details feed', async ({ page, backgroundPage, context }) => {
-        // Browse a page that triggers blocked tracking requests.
-        await runRequestBlockingTest(page, trackingTestSite);
-
-        // The visit and its blocked trackers should land in the activity
-        // store (blocked-tracker counts are flushed on a 1s throttle).
-        await expect
-            .poll(
-                () =>
-                    backgroundPage.evaluate(async (host) => {
-                        const rows = await globalThis.components.ntpActivity.store.getAll();
-                        return rows.find((row) => row.host === host)?.totalCount || 0;
-                    }, trackingTestHost),
-                { timeout: 10000 },
-            )
-            .toBeGreaterThan(0);
-
-        // The details feed on the NTP should show the visited site.
-        const ntp = await context.newPage();
-        await ntp.goto(await getNtpUrl(backgroundPage));
-        await expect(ntp.locator('[data-entry-point="protections"]')).toBeVisible();
-        await ntp.getByRole('button', { name: 'Details' }).click();
-        // one row per site, with the recent page visits listed under it
-        await expect(ntp.getByRole('link', { name: trackingTestHost })).toBeVisible();
-        await expect(ntp.getByRole('link', { name: 'Request blocking test page' })).toBeVisible();
-
-        // starring the site in the activity feed adds it to the favorites
-        // widget, and the pushed patch flips the star
-        await ntp.getByRole('button', { name: `Add ${trackingTestHost} to favorites` }).click();
-        await expect(ntp.locator('[data-entry-point="favorites"]').getByText(trackingTestHost)).toBeVisible();
-        await expect(ntp.getByRole('button', { name: `Remove ${trackingTestHost} from favorites` })).toBeVisible();
     });
 });
