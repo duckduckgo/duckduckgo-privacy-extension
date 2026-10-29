@@ -5,6 +5,11 @@ on:
         branches: [main]
     pull_request:
 
+# A new push to a PR cancels the older runs for that PR. Other events get their own group, so they always run to the end.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+    cancel-in-progress: true
+
 jobs:
     lint:
         strategy:
@@ -18,13 +23,7 @@ jobs:
                 shell: bash
         steps:
             - uses: actions/checkout@v7
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
-            # Lint only needs the npm packages, not Playwright browsers or the
-            # privacy-test-pages install that `install-ci` also performs.
-            - run: npm ci --ignore-scripts
+            - uses: ./.github/actions/install-deps
             - run: npm run lint && echo 'No lint issues!' || (npm run lint-fix; git diff; echo 'Lint check failed, review diff above or run "npm run lint-fix"'; exit 1)
 
     build:
@@ -35,11 +34,7 @@ jobs:
         runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v7
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
-            - run: npm run install-ci
+            - uses: ./.github/actions/install-deps
             - run: npm run ${{ matrix.target }}
 
     # The Node build scripts (scripts/build-tools/) are replacing the Makefile. Until
@@ -52,11 +47,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v6
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
-            - run: npm run install-ci
+            - uses: ./.github/actions/install-deps
             - name: Build with make
               run: |
                   make copy build browser=${{ matrix.browser }} type=release
@@ -75,11 +66,7 @@ jobs:
         runs-on: windows-latest
         steps:
             - uses: actions/checkout@v6
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
-            - run: npm ci --ignore-scripts
+            - uses: ./.github/actions/install-deps
             - run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type release
             - run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type dev
 
@@ -87,11 +74,9 @@ jobs:
         runs-on: ubuntu-22.04
         steps:
             - uses: actions/checkout@v7
-            - uses: actions/setup-node@v7
+            - uses: ./.github/actions/install-deps
               with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
-            - run: npm run install-ci
+                  tests: true
             - run: npm test
 
     playwright-tests:
@@ -108,11 +93,9 @@ jobs:
                       shard: 1/1
         steps:
             - uses: actions/checkout@v7
-            - uses: actions/setup-node@v7
+            - uses: ./.github/actions/install-deps
               with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
-            - run: npm run install-ci
+                  tests: true
             - name: Run tests
               run: xvfb-run --auto-servernum -- npm run ${{ matrix.test }} -- --shard ${{ matrix.shard }}
             - uses: actions/upload-artifact@v4

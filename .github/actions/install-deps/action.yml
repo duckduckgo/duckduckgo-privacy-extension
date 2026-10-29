@@ -1,0 +1,44 @@
+name: Install dependencies
+description: Sets up Node, installs npm dependencies (cached by lockfile) and, for test jobs, Playwright browsers.
+
+inputs:
+    tests:
+        description: Set to "true" to install the Playwright browsers (Chromium and Firefox) that the tests use.
+        required: false
+        default: 'false'
+
+runs:
+    using: composite
+    steps:
+        - uses: actions/setup-node@v7
+          id: setup-node
+          with:
+              node-version-file: .nvmrc
+
+        # node_modules is cached as a whole, so a hit skips npm entirely. This matters most
+        # for the git dependencies, which npm clones again on every install.
+        - uses: actions/cache@v4
+          id: cache
+          with:
+              path: |
+                  node_modules
+                  packages/*/node_modules
+              key: node-modules-${{ runner.os }}-${{ runner.arch }}-node${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('package-lock.json') }}
+
+        - name: Install npm packages
+          if: steps.cache.outputs.cache-hit != 'true'
+          shell: bash
+          run: npm ci --ignore-scripts
+
+        # The integration test server. Tests run only on Linux, so other runners skip it.
+        - name: Install privacy-test-pages packages
+          if: steps.cache.outputs.cache-hit != 'true' && runner.os == 'Linux'
+          shell: bash
+          run: cd node_modules/privacy-test-pages && npm install
+
+        # Browsers are not cached: Playwright advises against it, as a restore takes about
+        # as long as a download, and the OS packages must be installed anyway.
+        - name: Install Playwright browsers
+          if: inputs.tests == 'true'
+          shell: bash
+          run: npx playwright install --with-deps chromium firefox
