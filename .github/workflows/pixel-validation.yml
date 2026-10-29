@@ -13,10 +13,6 @@ jobs:
             HAS_INTERNAL_REPO: ${{ secrets.GH_RO_PAT != '' }}
         steps:
             - uses: actions/checkout@v7
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
       
             - name: Checkout internal-github-asana-utils repo
               if: ${{ env.HAS_INTERNAL_REPO == 'true' }}
@@ -26,7 +22,7 @@ jobs:
                   path: internal-github-asana-utils  
                   repository: duckduckgo/internal-github-asana-utils
                         
-            - run: npm run install-ci
+            - uses: ./.github/actions/install-deps
             - name: Validate pixel definitions
               run: |
                   if [ "$HAS_INTERNAL_REPO" = "true" ]; then

@@ -11,24 +11,16 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v7
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
+            - uses: ./.github/actions/install-deps
             - name: Lint
-              run: |
-                  npm ci
-                  npm run lint --workspace=packages/privacy-grade
+              run: npm run lint --workspace=packages/privacy-grade
 
     test:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v7
-            - uses: actions/setup-node@v7
+            - uses: ./.github/actions/install-deps
               with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
+                  browsers: chromium
             - name: Test
-              run: |
-                  npm run install-ci
-                  npm test --workspace=packages/privacy-grade
+              run: npm test --workspace=packages/privacy-grade
