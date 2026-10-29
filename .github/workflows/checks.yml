@@ -76,7 +76,7 @@ jobs:
             - uses: actions/checkout@v7
             - uses: ./.github/actions/install-deps
               with:
-                  browsers: chromium
+                  tests: true
             - run: npm test
 
     playwright-tests:
@@ -95,7 +95,7 @@ jobs:
             - uses: actions/checkout@v7
             - uses: ./.github/actions/install-deps
               with:
-                  browsers: ${{ matrix.test == 'playwright-firefox' && 'firefox' || 'chromium' }}
+                  tests: true
             - name: Run tests
               run: xvfb-run --auto-servernum -- npm run ${{ matrix.test }} -- --shard ${{ matrix.shard }}
             - uses: actions/upload-artifact@v4

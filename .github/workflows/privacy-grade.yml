@@ -26,6 +26,6 @@ jobs:
             - uses: actions/checkout@v7
             - uses: ./.github/actions/install-deps
               with:
-                  browsers: chromium
+                  tests: true
             - name: Test
               run: npm test --workspace=packages/privacy-grade

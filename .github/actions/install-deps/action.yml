@@ -1,11 +1,11 @@
 name: Install dependencies
-description: Sets up Node, installs npm dependencies (cached by lockfile) and, optionally, Playwright browsers.
+description: Sets up Node, installs npm dependencies (cached by lockfile) and, for test jobs, Playwright browsers.
 
 inputs:
-    browsers:
-        description: Space-separated Playwright browsers to install, for example "chromium firefox". Empty installs none.
+    tests:
+        description: Set to "true" to install the Playwright browsers (Chromium and Firefox) that the tests use.
         required: false
-        default: ''
+        default: 'false'
 
 runs:
     using: composite
@@ -39,6 +39,6 @@ runs:
         # Browsers are not cached: Playwright advises against it, as a restore takes about
         # as long as a download, and the OS packages must be installed anyway.
         - name: Install Playwright browsers
-          if: inputs.browsers != ''
+          if: inputs.tests == 'true'
           shell: bash
-          run: npx playwright install --with-deps ${{ inputs.browsers }}
+          run: npx playwright install --with-deps chromium firefox

@@ -26,5 +26,5 @@ jobs:
             - uses: actions/checkout@v7
             - uses: ./.github/actions/install-deps
               with:
-                  browsers: chromium firefox
+                  tests: true
             - run: npm test --workspace=packages/ddg2dnr
