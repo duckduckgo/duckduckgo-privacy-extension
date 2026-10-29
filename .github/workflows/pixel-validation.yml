@@ -5,6 +5,11 @@ on:
         branches: [main]
     pull_request:
     
+# A new push to a PR cancels the older runs for that PR. Other events get their own group, so they always run to the end.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+    cancel-in-progress: true
+
 jobs:
     pixel-validation:
         if: github.actor != 'dependabot[bot]'
