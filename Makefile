@@ -352,6 +352,14 @@ ifeq ($(browser),embedded)
   BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(EMBEDDED_JS_BUNDLES))
 endif
 
+# Lists every other file in the build, so keep this below their targets.
+ifeq ($(browser)-$(type),chromium-embedded-release)
+$(BUILD_DIR)/files.gni: $(BUILD_TARGETS) $(LAST_COPY)
+	node scripts/generateFilesGni.mjs $(BUILD_DIR)
+
+BUILD_TARGETS += $(BUILD_DIR)/files.gni
+endif
+
 
 # Update buildtime.txt for development builds, for auto-reloading.
 # Note: Keep this below the other build targets, since it depends on the

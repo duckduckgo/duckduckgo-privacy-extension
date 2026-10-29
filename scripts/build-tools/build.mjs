@@ -16,6 +16,7 @@ import { TARGET_OPTIONS, TARGET_USAGE, resolveTarget } from './lib/cli.mjs';
 import { AUTOFILL_DIR, CONTENT_SCOPE_SCRIPTS_DIR, DASHBOARD_DIR, ROOT_DIR, SURROGATES_DIR, buildDirectories } from './lib/config.mjs';
 import { buildInjectScript, isContentScopeScriptsLinked, watchedPaths as contentScopeScriptsPaths } from './lib/contentScopeScripts.mjs';
 import { copyStaticFiles } from './lib/copy.mjs';
+import { writeFilesGni } from './lib/filesGni.mjs';
 import { copyFonts } from './lib/fonts.mjs';
 import { ensureDir, isBackupFile, isWithin } from './lib/fs.mjs';
 import { LOCALE_RESOURCES_FILE, writeLocaleResources } from './lib/locales.mjs';
@@ -83,6 +84,9 @@ async function build(config) {
         steps.unshift(Promise.reject(e));
     }
     const [bundleInputs] = await settleAll(steps);
+    if (config.filesGni && !config.dev) {
+        writeFilesGni(config.out.root);
+    }
     writeBuildTime(config);
     console.log(`Built ${config.browser} ${config.type} in ${config.out.root} (${Date.now() - started}ms)`);
     return bundleInputs;
