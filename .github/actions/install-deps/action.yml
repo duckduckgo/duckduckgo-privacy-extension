@@ -36,11 +36,6 @@ runs:
           shell: bash
           run: cd node_modules/privacy-test-pages && npm install
 
-        - name: Link workspace packages
-          if: steps.cache.outputs.cache-hit == 'true'
-          shell: bash
-          run: node scripts/link-workspaces.mjs
-
         # Browsers are not cached: Playwright advises against it, as a restore takes about
         # as long as a download, and the OS packages must be installed anyway.
         - name: Install Playwright browsers
