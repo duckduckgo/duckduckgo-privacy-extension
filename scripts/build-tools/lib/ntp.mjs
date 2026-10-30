@@ -6,7 +6,10 @@ import fs from 'node:fs';
 import { CONTENT_SCOPE_SCRIPTS_DIR } from './config.mjs';
 import { copy } from './fs.mjs';
 
-const NTP_BUILD_DIR = `${CONTENT_SCOPE_SCRIPTS_DIR}/build/windows/pages/new-tab`;
+// TODO: temporary until extension pages are a first-class C-S-S build target,
+// which removes the need for the windows build and the interop replacements below.
+// https://app.asana.com/1/137249556945/project/1208671677432066/task/1218734043398971
+const NTP_BUILD_DIR =`${CONTENT_SCOPE_SCRIPTS_DIR}/build/windows/pages/new-tab`;
 const LOADING_COLOR = '#fafafa';
 const FIRST_SCRIPT_TAG = '<script src="./dist/inline.js"></script>';
 const SHIM_SCRIPT_TAG = '<script src="../public/js/ntp-interop-shim.js"></script>';
