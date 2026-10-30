@@ -185,6 +185,7 @@ endif
 # The New Tab Page is the content-scope-scripts windows build.
 ifeq ($(browser),chromium-embedded)
 	echo '.cog-button { display: none; }' >> $(BUILD_DIR)/dashboard/public/css/popup.css
+	@test -d $(CONTENT_SCOPE_SCRIPTS)/build/windows/pages/new-tab || { echo 'No New Tab Page build in $(CONTENT_SCOPE_SCRIPTS)/build/windows. If content-scope-scripts is linked to a local checkout, run "npm run build" in it.' >&2; exit 1; }
 	$(RSYNC) $(CONTENT_SCOPE_SCRIPTS)/build/windows/pages/new-tab/ $(BUILD_DIR)/ntp/
 	node scripts/prepareNtpHtml.mjs $(BUILD_DIR)/ntp/index.html
 endif
