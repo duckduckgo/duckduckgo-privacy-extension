@@ -9,7 +9,7 @@ import { build as esbuildBuild } from 'esbuild';
 import { ESBUILD_TARGET, esbuildDefines } from './lib/bundles.mjs';
 import { usageError } from './lib/cli.mjs';
 import { ROOT_DIR, TEST_BUILD_DIRS } from './lib/config.mjs';
-import { listFiles } from './lib/fs.mjs';
+import { listFiles, remove } from './lib/fs.mjs';
 import { runNodeBin } from './lib/run.mjs';
 
 const USAGE = 'Usage: node scripts/build-tools/test.mjs <unit|node>';
@@ -23,8 +23,11 @@ const OPTIONS = {
     logLevel: 'warning',
 };
 
+// Each suite runs every bundle in its output directory, so stale bundles from
+// deleted or moved tests must not survive from a previous run.
 const SUITES = {
     async unit() {
+        remove(TEST_BUILD_DIRS.unit);
         await esbuildBuild({
             ...OPTIONS,
             entryPoints: [
@@ -38,6 +41,7 @@ const SUITES = {
         await runNodeBin('karma', ['start', 'karma.conf.js']);
     },
     async node() {
+        remove(TEST_BUILD_DIRS.node);
         await esbuildBuild({
             ...OPTIONS,
             entryPoints: listFiles('unit-test/node', '.js', { recursive: true }),

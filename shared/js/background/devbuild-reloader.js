@@ -1,6 +1,6 @@
 /**
  * Reloads the extension when changes are detected. Only included for developer
- * builds. (Pass the reloader=0 build parameter to disable.)
+ * builds. (Pass the --no-reloader build flag to disable.)
  */
 
 import browser from 'webextension-polyfill';

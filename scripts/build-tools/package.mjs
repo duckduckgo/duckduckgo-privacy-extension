@@ -33,6 +33,10 @@ async function zipDirectory(dir, prefix) {
     listFiles(dir, '.zip')
         .filter((file) => path.basename(file).startsWith(`${prefix}-`))
         .forEach(remove);
+    // Listed before the zip is created inside the same directory, so that it
+    // cannot be picked up as one of its own entries (the shell expanded `*`
+    // before zip ran, for the same reason).
+    const entries = listVisible(dir);
     const zipPath = path.join(dir, `${prefix}-${timestamp()}.zip`);
     const output = fs.createWriteStream(zipPath);
     // finished(output) below reports errors from either side, but only once it
@@ -40,9 +44,12 @@ async function zipDirectory(dir, prefix) {
     // full, permissions) would crash the process, so listen from the start.
     const failure = new Promise((_resolve, reject) => output.on('error', reject));
     const archive = new ZipArchive();
+    // archiver reports a file it could not read as a warning and leaves it
+    // out; zip exited non-zero for that, and so must this.
     archive.on('error', (e) => output.destroy(e));
+    archive.on('warning', (e) => output.destroy(e));
     archive.pipe(output);
-    for (const name of listVisible(dir)) {
+    for (const name of entries) {
         const entry = path.join(dir, name);
         if (fs.statSync(entry).isDirectory()) {
             // zip -r writes an entry for the directory itself; directory() only adds its contents.
