@@ -176,7 +176,7 @@ endif
 $(LAST_COPY): $(WATCHED_FILES) | $(MKDIR_TARGETS)
 	$(RSYNC) browsers/$(browser)/* $(BUILD_DIR)
 ifneq ($(browser),embedded)
-	$(RSYNC) $(HTML_EXCLUDES) browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
+	$(RSYNC) $(HTML_EXCLUDES) --exclude=site-buckets.json browsers/chrome/_locales shared/html shared/img shared/data $(BUILD_DIR)
 	$(RSYNC) node_modules/@duckduckgo/privacy-dashboard/build/app/* $(BUILD_DIR)/dashboard
 	$(RSYNC) shared/js/content-scripts/*.js $(BUILD_DIR)/public/js/content-scripts
 	$(RSYNC) node_modules/@duckduckgo/tracker-surrogates/surrogates/* $(BUILD_DIR)/web_accessible_resources
@@ -356,6 +356,14 @@ BUILD_TARGETS += $(BUILD_DIR)/data/surrogates.txt
 EMBEDDED_JS_BUNDLES = background-embedded.js content-scripts/cpm.js
 ifeq ($(browser),embedded)
   BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(EMBEDDED_JS_BUNDLES))
+endif
+
+# Lists every other file in the build, so keep this below their targets.
+ifeq ($(browser)-$(type),chromium-embedded-release)
+$(BUILD_DIR)/files.gni: $(BUILD_TARGETS) $(LAST_COPY)
+	node scripts/generateFilesGni.mjs $(BUILD_DIR)
+
+BUILD_TARGETS += $(BUILD_DIR)/files.gni
 endif
 
 

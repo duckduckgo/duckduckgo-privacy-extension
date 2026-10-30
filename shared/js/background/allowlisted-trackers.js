@@ -21,8 +21,8 @@ const { getURLWithoutQueryString } = require('./utils');
  * @returns {TrackerAllowlistRule | false}
  */
 function isTrackerAllowlisted(site, request) {
-    // check that allowlist exists and is not disabled
-    if (!tdsStorage.config.features.trackerAllowlist || tdsStorage.config.features.trackerAllowlist.state === 'disabled') {
+    // check that allowlist exists and is enabled
+    if (!tdsStorage.config.features.trackerAllowlist || tdsStorage.config.features.trackerAllowlist.state !== 'enabled') {
         return false;
     }
 
