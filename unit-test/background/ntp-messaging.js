@@ -12,6 +12,12 @@ describe('NTPMessaging component', () => {
     /** @type {NewTabTrackerStats} */
     let newTabTrackerStats;
     let changedListeners;
+    /** @type {Map<string, import('../../shared/js/background/components/ntp-activity').SiteActivity>} */
+    let activitySites;
+    /** @type {jasmine.Spy} */
+    let removeDomain;
+    /** @type {any} */
+    let ntpActivity;
 
     const favorite = { id: '7', title: 'Example', url: 'https://www.example.co.uk/a?b' };
     const pageFavorite = {
@@ -57,8 +63,11 @@ describe('NTPMessaging component', () => {
         };
         settings = new MockSettings();
         newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
-        // @ts-ignore - MockSettings stands in for Settings
-        ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+        activitySites = new Map();
+        removeDomain = jasmine.createSpy('removeDomain').and.returnValue(Promise.resolve());
+        ntpActivity = Object.assign(new EventTarget(), { getSites: () => Promise.resolve(activitySites), removeDomain });
+        // @ts-ignore - MockSettings and ntpActivity stand in for Settings and NTPActivity
+        ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
     });
 
     afterEach(() => {
@@ -123,6 +132,87 @@ describe('NTPMessaging component', () => {
             { displayName: 'Facebook', count: 1 },
             { displayName: '__other__', count: 5 },
         ]);
+    });
+
+    describe('activity feed', () => {
+        const MINUTE = 60 * 1000;
+
+        beforeEach(() => {
+            const now = Date.now();
+            activitySites.set('example.com', {
+                pages: [
+                    { url: 'https://www.example.com/b', title: 'Page B', lastVisitTime: now - 5 * MINUTE },
+                    // untitled pages are not listed
+                    { url: 'https://www.example.com/', title: '', lastVisitTime: now - 6 * MINUTE },
+                    { url: 'http://example.com/a', title: 'Page A', lastVisitTime: now - 2 * 24 * 60 * MINUTE },
+                ],
+                trackersBlocked: 3,
+                companies: ['Google', 'Facebook'],
+            });
+            activitySites.set('plain.example', {
+                pages: [{ url: 'http://plain.example/', title: 'Plain', lastVisitTime: now }],
+                trackersBlocked: 0,
+                companies: [],
+            });
+        });
+
+        it('lists sites by their https URL unless none of their pages is https', async () => {
+            expect(await ntpMessaging.handleRequest('activity_getUrls')).toEqual({
+                urls: ['https://example.com/', 'http://plain.example/'],
+                totalTrackersBlocked: 3,
+            });
+        });
+
+        it('answers activity_getDataForUrls with the requested sites that have activity', async () => {
+            const { activity } = await ntpMessaging.handleRequest('activity_getDataForUrls', {
+                urls: ['https://example.com/', 'https://gone.example/', 'http://plain.example/'],
+            });
+
+            expect(activity.map(({ url }) => url)).toEqual(['https://example.com/', 'http://plain.example/']);
+            expect(activity[0]).toEqual({
+                title: 'example.com',
+                url: 'https://example.com/',
+                etldPlusOne: 'example.com',
+                favicon: { src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.com%2Fb&size=64&', maxAvailableSize: 64 },
+                trackingStatus: { totalCount: 3, trackerCompanies: [{ displayName: 'Google' }, { displayName: 'Facebook' }] },
+                trackersFound: true,
+                history: [
+                    { title: 'Page B', url: 'https://www.example.com/b', relativeTime: '5 minutes ago' },
+                    { title: 'Page A', url: 'http://example.com/a', relativeTime: '2 days ago' },
+                ],
+                favorite: false,
+            });
+            expect(activity[1]).toEqual(
+                jasmine.objectContaining({
+                    trackingStatus: { totalCount: 0, trackerCompanies: [] },
+                    trackersFound: false,
+                    history: [{ title: 'Plain', url: 'http://plain.example/', relativeTime: 'now' }],
+                }),
+            );
+        });
+
+        it('removes a site from the feed', async () => {
+            // @ts-ignore - fake port
+            await ntpMessaging.onMessage(
+                { ...requestMessage('activity_removeItem', { url: 'https://example.com/' }), Id: undefined },
+                createFakePort(),
+            );
+            expect(removeDomain).toHaveBeenCalledOnceWith('example.com');
+        });
+
+        it('pushes the changed sites that still have activity as patches', async () => {
+            const port = createFakePort();
+            // @ts-ignore - fake port
+            ntpMessaging.ports.add(port);
+            const urlInfo = { urls: ['https://example.com/', 'http://plain.example/'], totalTrackersBlocked: 3 };
+
+            await ntpMessaging.pushActivityUpdate(['plain.example', 'gone.example', 'plain.example']);
+            await ntpMessaging.pushActivityUpdate(['gone.example']);
+
+            expect(port.posted.map(({ subscriptionName }) => subscriptionName)).toEqual(['activity_onDataPatch', 'activity_onDataPatch']);
+            expect(port.posted[0].params).toEqual({ ...urlInfo, patch: jasmine.objectContaining({ url: 'http://plain.example/' }) });
+            expect(port.posted[1].params).toEqual(urlInfo);
+        });
     });
 
     it('opens searches and suggestions from the omnibar', async () => {
@@ -312,7 +402,7 @@ describe('NTPMessaging component', () => {
                 onConnect = listener;
             });
             // @ts-ignore - MockSettings stands in for Settings
-            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
 
             const connect = async () => {
                 const port = { ...createFakePort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
@@ -341,7 +431,7 @@ describe('NTPMessaging component', () => {
             for (const ddg of [undefined, {}]) {
                 chrome.ddg = ddg;
                 // @ts-ignore - MockSettings stands in for Settings
-                new NTPMessaging({ settings, newTabTrackerStats }); // eslint-disable-line no-new
+                new NTPMessaging({ settings, newTabTrackerStats, ntpActivity }); // eslint-disable-line no-new
             }
             expect(consoleError).toHaveBeenCalledTimes(2);
         });
