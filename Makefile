@@ -159,8 +159,8 @@ LAST_COPY = build/.last-copy-$(browser)-$(type)
 RSYNC = rsync -ra --exclude="*~"
 
 # Pages the chromium-embedded build cannot reach: the browser owns the fire
-# button and the new tab page, this build declares no options_page, and MV3 has
-# no background page. The devtools pages stay - they are reached by URL.
+# button, the build ships its own new tab page, it declares no options_page,
+# and MV3 has no background page. The devtools pages stay - they are reached by URL.
 HTML_EXCLUDES =
 ifeq ($(browser),chromium-embedded)
   HTML_EXCLUDES = --exclude=background.html --exclude=feedback.html --exclude=fire.html \
@@ -182,8 +182,12 @@ ifeq (,$(filter $(browser),embedded chromium-embedded))
 	$(RSYNC) node_modules/@duckduckgo/autofill/dist/*.js $(BUILD_DIR)/public/js/content-scripts
 endif
 # No options page in this build, so hide the dashboard's settings cog (matches Windows).
+# The New Tab Page is the content-scope-scripts windows build.
 ifeq ($(browser),chromium-embedded)
 	echo '.cog-button { display: none; }' >> $(BUILD_DIR)/dashboard/public/css/popup.css
+	@test -d $(CONTENT_SCOPE_SCRIPTS)/build/windows/pages/new-tab || { echo 'No New Tab Page build in $(CONTENT_SCOPE_SCRIPTS)/build/windows. If content-scope-scripts is linked to a local checkout, run "npm run build" in it.' >&2; exit 1; }
+	$(RSYNC) $(CONTENT_SCOPE_SCRIPTS)/build/windows/pages/new-tab/ $(BUILD_DIR)/ntp/
+	node scripts/prepareNtpHtml.mjs $(BUILD_DIR)/ntp/index.html
 endif
 	touch $@
 
@@ -251,11 +255,14 @@ $(BUILD_DIR)/public/js/fire.js: $(WATCHED_FILES)
 $(BUILD_DIR)/public/js/content-scripts/cpm.js: $(WATCHED_FILES)
 	$(ESBUILD) shared/js/cpm.js > $@
 
+$(BUILD_DIR)/public/js/ntp-interop-shim.js: $(WATCHED_FILES)
+	$(ESBUILD) shared/js/ntp/interop-shim.js > $@
+
 JS_BUNDLES = background.js base.js feedback.js options.js devtools-panel.js list-editor.js newtab.js fire.js rollouts.js content-scripts/cpm.js
 # Only the bundles the remaining pages load. base.js went with the options and
 # feedback pages; the devtools pages need only base.css.
 ifeq ($(browser),chromium-embedded)
-  JS_BUNDLES = background.js devtools-panel.js list-editor.js rollouts.js content-scripts/cpm.js
+  JS_BUNDLES = background.js devtools-panel.js list-editor.js rollouts.js content-scripts/cpm.js ntp-interop-shim.js
 endif
 BUILD_TARGETS = $(addprefix $(BUILD_DIR)/public/js/, $(JS_BUNDLES))
 

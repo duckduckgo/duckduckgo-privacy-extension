@@ -109,6 +109,14 @@ export class NewTabTrackerStats {
             });
         });
 
+        this.registerDataCollection();
+    }
+
+    /**
+     * Register the stats collection (counting, pruning and persistence)
+     * without the duckduckgo.com New Tab Page integration.
+     */
+    registerDataCollection() {
         /**
          * Register an alarm and handle when it fires.
          * For now, we're pruning data every 10 min
@@ -131,9 +139,12 @@ export class NewTabTrackerStats {
         });
 
         /**
-         * Assign the entities from the initial `tds` data
+         * Assign the entities once the initial `tds` data has loaded
+         * (`onUpdate` below only reports later loads).
          */
-        this.assignTopCompanies(tdsStorage.tds.entities);
+        tdsStorage.ready('tds').then(() => {
+            this.assignTopCompanies(tdsStorage.tds.entities);
+        });
 
         /**
          * Observe changes to the 'tds' data and update the topCompanies

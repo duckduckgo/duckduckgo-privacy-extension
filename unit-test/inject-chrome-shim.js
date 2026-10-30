@@ -85,6 +85,8 @@ const chrome = {
         sendMessage: () => {},
         query: () => Promise.resolve([]),
         reload: () => Promise.resolve(),
+        create: () => Promise.resolve({}),
+        update: () => Promise.resolve({}),
     },
     webNavigation: {
         onCommitted: {

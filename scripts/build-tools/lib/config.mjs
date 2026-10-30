@@ -63,6 +63,7 @@ const CONTENT_SCOPE_SCRIPTS_BUILDS = { chrome: 'chrome-mv3', firefox: 'firefox' 
  * @property {boolean} ui Ships the shared pages, dashboard, styles, fonts and surrogates.
  * @property {boolean} autofill Ships the autofill assets.
  * @property {boolean} smarterEncryption Bundles Smarter Encryption declarativeNetRequest rules.
+ * @property {boolean} [ntp] Ships the New Tab Page.
  * @property {{in: string, out: string}[]} jsBundles
  * @property {{in: string, out: string}[]} scssBundles
  * @property {string[]} [htmlExcludes] Pages under shared/html not to ship.
@@ -95,13 +96,17 @@ const BROWSER_PROFILES = {
         ],
         scssBundles: [],
     },
-    // A cut-down Chrome build. The browser owns the fire button and the new
-    // tab page, there is no options page and MV3 has no background page, so
-    // only the devtools pages (reached by URL) and their bundles remain.
+    // A cut-down Chrome build with its own New Tab Page. The browser owns the
+    // fire button, there is no options page and MV3 has no background page, so
+    // of the shared pages only the devtools pages (reached by URL) remain.
     'chromium-embedded': {
         ...CHROME,
         autofill: false,
-        jsBundles: only(JS_BUNDLES, ['background', 'devtools-panel', 'list-editor', 'rollouts', 'content-scripts/cpm']),
+        ntp: true,
+        jsBundles: [
+            ...only(JS_BUNDLES, ['background', 'devtools-panel', 'list-editor', 'rollouts', 'content-scripts/cpm']),
+            { in: 'shared/js/ntp/interop-shim.js', out: 'ntp-interop-shim' },
+        ],
         scssBundles: only(SCSS_BUNDLES, ['base.css']),
         htmlExcludes: ['background.html', 'feedback.html', 'fire.html', 'options.html', 'tracker-stats.html'],
         // No options page, so hide the dashboard's settings cog (matches Windows).
@@ -138,6 +143,7 @@ function outputPaths(buildDir) {
         locales: `${buildDir}/_locales`,
         dashboard: `${buildDir}/dashboard`,
         surrogates: `${buildDir}/web_accessible_resources`,
+        ntp: `${buildDir}/ntp`,
     };
 }
 
