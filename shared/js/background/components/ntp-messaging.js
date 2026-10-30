@@ -2,7 +2,13 @@ import browser from 'webextension-polyfill';
 import { NewTabTrackerStats } from '../newtab-tracker-stats';
 import { emitter, TrackerBlockedEvent } from '../before-request';
 import { getUserLocale } from '../i18n';
-import { NTP_PORT_NAME, NTP_MESSAGING_CONTEXT, NTP_FEATURE_NAME, NTP_OTHER_COMPANY_IDENTIFIER } from '../../ntp/constants';
+import {
+    NTP_PORT_NAME,
+    NTP_RECONNECT_MESSAGE,
+    NTP_MESSAGING_CONTEXT,
+    NTP_FEATURE_NAME,
+    NTP_OTHER_COMPANY_IDENTIFIER,
+} from '../../ntp/constants';
 
 /**
  * @typedef {import('../settings.js')} Settings
@@ -80,14 +86,18 @@ export default class NTPMessaging {
             });
         });
 
-        // At most one push a second while trackers are being blocked.
+        // At most one push a second while trackers are being blocked. Scheduled even with no
+        // pages connected, as open pages reconnect after the event that started the worker.
         emitter.on(TrackerBlockedEvent.eventName, () => {
-            if (this.ports.size === 0 || this.pushTimer) return;
+            if (this.pushTimer) return;
             this.pushTimer = setTimeout(() => {
                 this.pushTimer = null;
                 this.pushDataUpdate();
             }, 1000);
         });
+
+        // Pages left open while the service worker was stopped have lost their port.
+        browser.runtime.sendMessage({ [NTP_RECONNECT_MESSAGE]: true }).catch(() => {});
     }
 
     /**

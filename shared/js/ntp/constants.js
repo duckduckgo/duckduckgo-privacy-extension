@@ -2,6 +2,9 @@
 
 export const NTP_PORT_NAME = 'ntp-windows-interop';
 
+/** runtime.sendMessage key the background uses on startup to ask open pages to reconnect. */
+export const NTP_RECONNECT_MESSAGE = 'ntpReconnect';
+
 /** content-scope-scripts special pages messaging context and feature. */
 export const NTP_MESSAGING_CONTEXT = 'specialPages';
 export const NTP_FEATURE_NAME = 'newTabPage';
