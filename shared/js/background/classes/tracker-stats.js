@@ -176,7 +176,7 @@ export class TrackerStats {
 
         // if any errors occur, bail and don't use this data at all (essentially starting a fresh)
         if (!result.success) {
-            console.warn('could not accept the incoming data because of schema errors', result.error.errors.length);
+            console.warn('could not accept the incoming data because of schema errors', result.error.issues.length);
         } else {
             // but if we get here, we can use the data internally, we 'trust' it at this point.
             this.totalCount = result.data.totalCount;
