@@ -4,7 +4,7 @@ import { getUserLocale } from '../../background/i18n';
 import resources from './locale-resources';
 
 i18next.use(ICU).init({
-    initImmediate: false,
+    initAsync: false,
     fallbackLng: 'en',
     lng: getUserLocale(),
     ns: ['shared', 'options', 'feedback'],
