@@ -220,9 +220,9 @@ export const emitter = new EventEmitter2();
 
 /**
  * An event to publish the fact that we blocked a tracker.
- * Note: this is deliberately conservative about how much information is published,
- * for now it's just the parent company's display name which is enough
- * to power the NewTabTrackerStats module.
+ * Note: this is deliberately conservative about how much information is published:
+ * the parent company's display name, which powers the NewTabTrackerStats module, and
+ * the URL of the page it was blocked on, which powers the NTPActivity module.
  * It is not emitted for incognito tabs, which are left out of the persisted stats.
  */
 export class TrackerBlockedEvent {
@@ -231,9 +231,11 @@ export class TrackerBlockedEvent {
     /**
      * @param {object} params
      * @param {string} params.companyDisplayName
+     * @param {string} [params.pageUrl] - absent when the request may be from a page the tab has left
      */
     constructor(params) {
         this.companyDisplayName = params.companyDisplayName;
+        this.pageUrl = params.pageUrl;
     }
 }
 
@@ -355,9 +357,11 @@ function blockHandleResponse(thisTab, requestData) {
                 // @ts-ignore
                 Companies.add(tracker.tracker.owner);
 
-                // publish the parent's display name only
                 const displayName = utils.findParentDisplayName(requestData.url);
-                emitter.emit(TrackerBlockedEvent.eventName, new TrackerBlockedEvent({ companyDisplayName: displayName }));
+                emitter.emit(
+                    TrackerBlockedEvent.eventName,
+                    new TrackerBlockedEvent({ companyDisplayName: displayName, pageUrl: sameDomainDocument ? thisTab.url : undefined }),
+                );
             }
 
             console.info(

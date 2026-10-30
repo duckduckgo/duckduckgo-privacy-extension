@@ -3,6 +3,7 @@ import { NewTabTrackerStats } from '../newtab-tracker-stats';
 import { emitter, TrackerBlockedEvent } from '../before-request';
 import { getUserLocale } from '../i18n';
 import { getBaseDomain } from '../utils';
+import { pageDomain } from './ntp-activity';
 import {
     NTP_PORT_NAME,
     NTP_RECONNECT_MESSAGE,
@@ -14,6 +15,8 @@ import {
 /**
  * @typedef {import('../settings.js')} Settings
  * @typedef {import('webextension-polyfill').Runtime.Port} Port
+ * @typedef {import('./ntp-activity').default} NTPActivity
+ * @typedef {import('./ntp-activity').SiteActivity} SiteActivity
  */
 
 // Mirrors of the C-S-S NTP message types (special-pages/pages/new-tab/types/new-tab.ts).
@@ -23,6 +26,17 @@ import {
  * @typedef {{ totalCount: number, totalCookiePopUpsBlocked?: number | null }} ProtectionsData
  * @typedef {{ displayName: string, count: number }} TrackerCompany
  * @typedef {{ trackerCompanies: TrackerCompany[] }} PrivacyStatsData
+ * @typedef {{ urls: string[], totalTrackersBlocked: number }} UrlInfo
+ * @typedef {{
+ *  title: string,
+ *  url: string,
+ *  etldPlusOne: string,
+ *  favicon: null | { src: string, maxAvailableSize?: number },
+ *  trackingStatus: { trackerCompanies: { displayName: string }[], totalCount: number },
+ *  trackersFound: boolean,
+ *  history: { title: string, url: string, relativeTime: string }[],
+ *  favorite: boolean,
+ * }} DomainActivity
  */
 
 /** Settings keys used to persist NTP UI configuration. */
@@ -48,6 +62,9 @@ const DEFAULT_PROTECTIONS_CONFIG = { expansion: 'expanded', feed: 'privacy-stats
 
 const SEARCH_URL = 'https://duckduckgo.com/';
 const FAVICON_SIZE = 64;
+// the page shows at most 10 of a site's pages
+const MAX_HISTORY_ENTRIES = 10;
+const relativeTimeFormat = new Intl.RelativeTimeFormat(getUserLocale(), { numeric: 'auto' });
 
 /**
  * Messaging endpoint for the New Tab Page, over the runtime port opened by
@@ -57,9 +74,7 @@ const FAVICON_SIZE = 64;
  *  - subscription events are pushed to all connected pages as
  *    `{context, featureName, subscriptionName, params}`.
  *
- * Privacy stats come from NewTabTrackerStats and favorites from the browser's
- * bookmarks over chrome.ddg; suggestions and the activity feed are empty.
- */
+ * Privacy stats come from NewTabTrackerStats, favorites from the browser's\n * bookmarks over chrome.ddg and the activity feed from NTPActivity; suggestions\n * are empty.\n */
 export default class NTPMessaging {
     /** @type {Set<Port>} */
     ports = new Set();
@@ -67,15 +82,26 @@ export default class NTPMessaging {
     /** @type {ReturnType<typeof setTimeout>?} */
     pushTimer = null;
 
+    /** @type {ReturnType<typeof setTimeout>?} */
+    activityPushTimer = null;
+
+    /**
+     * Domains whose activity changed since the last activity push.
+     * @type {Set<string>}
+     */
+    changedDomains = new Set();
+
     /**
      * @param {{
      *  settings: Settings,
      *  newTabTrackerStats: NewTabTrackerStats,
+     *  ntpActivity: NTPActivity,
      * }} options
      */
-    constructor({ settings, newTabTrackerStats }) {
+    constructor({ settings, newTabTrackerStats, ntpActivity }) {
         this.settings = settings;
         this.newTabTrackerStats = newTabTrackerStats;
+        this.ntpActivity = ntpActivity;
 
         browser.runtime.onConnect.addListener((port) => {
             if (port.name !== NTP_PORT_NAME) return;
@@ -100,6 +126,18 @@ export default class NTPMessaging {
             this.pushTimer = setTimeout(() => {
                 this.pushTimer = null;
                 this.pushDataUpdate();
+            }, 1000);
+        });
+
+        // At most one activity push a second.
+        ntpActivity.addEventListener('change', (event) => {
+            /** @type {CustomEvent<string[]>} */ (event).detail.forEach((domain) => this.changedDomains.add(domain));
+            if (this.activityPushTimer) return;
+            this.activityPushTimer = setTimeout(() => {
+                this.activityPushTimer = null;
+                const domains = [...this.changedDomains];
+                this.changedDomains.clear();
+                this.pushActivityUpdate(domains);
             }, 1000);
         });
 
@@ -169,9 +207,9 @@ export default class NTPMessaging {
             case 'stats_getData':
                 return this.getPrivacyStatsData();
             case 'activity_getUrls':
-                return { urls: [], totalTrackersBlocked: 0 };
+                return toUrlInfo(await this.ntpActivity.getSites());
             case 'activity_getDataForUrls':
-                return { activity: [] };
+                return this.getActivityData(params?.urls);
 
             default:
                 throw new Error(`unhandled NTP request: ${method}`);
@@ -238,15 +276,16 @@ export default class NTPMessaging {
             case 'activity_open':
                 this.openUrl(params?.url, params?.target, port, false);
                 break;
+            case 'activity_removeItem':
+                await this.ntpActivity.removeDomain(pageDomain(params?.url));
+                break;
 
             case 'reportInitException':
             case 'reportPageException':
                 console.error(`NTP ${method}:`, params?.message);
                 break;
             default:
-                // favorites_openContextMenu, activity_addFavorite/
-                // removeFavorite/removeItem, telemetryEvent etc.
-                console.log(`NTP notification (ignored): ${method}`, params);
+            // favorites_openContextMenu, activity_addFavorite/\n                // removeFavorite, telemetryEvent etc.\n                console.log(`NTP notification (ignored): ${method}`, params);
         }
     }
 
@@ -295,9 +334,7 @@ export default class NTPMessaging {
     }
 
     /**
-     * Favorites in the page's format. Favicons come from Chromium's favicon
-     * cache (the `favicon` permission); the page appends `?preferredSize=N` to
-     * `src` verbatim, so the trailing '&' keeps that from corrupting `size`.
+     * Favorites in the page's format.
      */
     async getFavoritesData() {
         const favorites = (await chrome.ddg?.getFavorites?.()) ?? [];
@@ -307,10 +344,7 @@ export default class NTPMessaging {
                 title,
                 url,
                 etldPlusOne: getBaseDomain(url),
-                favicon: {
-                    src: `/_favicon/?pageUrl=${encodeURIComponent(url)}&size=${FAVICON_SIZE}&`,
-                    maxAvailableSize: FAVICON_SIZE,
-                },
+                favicon: favicon(url),
             })),
         };
     }
@@ -322,9 +356,50 @@ export default class NTPMessaging {
         this.pushSubscriptionEvent('favorites_onDataUpdate', await this.getFavoritesData(), ports);
     }
 
+    /**
+     * @param {unknown} urls - site URLs, as listed by activity_getUrls
+     * @returns {Promise<{ activity: DomainActivity[] }>}
+     */
+    async getActivityData(urls) {
+        const sites = await this.ntpActivity.getSites();
+        const activity = [];
+        for (const url of Array.isArray(urls) ? urls : []) {
+            const domain = pageDomain(url);
+            const site = sites.get(domain);
+            if (site) {
+                activity.push(toDomainActivity(url, domain, site));
+            }
+        }
+        return { activity };
+    }
+
     pushDataUpdate() {
         this.pushSubscriptionEvent('protections_onDataUpdate', this.getProtectionsData());
         this.pushSubscriptionEvent('stats_onDataUpdate', this.getPrivacyStatsData());
+    }
+
+    /**
+     * Push the activity feed's URLs, with each of the given domains that still
+     * has activity as a patch.
+     * @param {string[]} changedDomains
+     */
+    async pushActivityUpdate(changedDomains) {
+        if (this.ports.size === 0) return;
+        const sites = await this.ntpActivity.getSites();
+        const urlInfo = toUrlInfo(sites);
+        let patched = false;
+        for (const domain of new Set(changedDomains)) {
+            const site = sites.get(domain);
+            if (!site) continue;
+            this.pushSubscriptionEvent('activity_onDataPatch', {
+                ...urlInfo,
+                patch: toDomainActivity(siteUrl(domain, site), domain, site),
+            });
+            patched = true;
+        }
+        if (!patched) {
+            this.pushSubscriptionEvent('activity_onDataPatch', urlInfo);
+        }
     }
 
     /**
@@ -342,4 +417,74 @@ export default class NTPMessaging {
             });
         }
     }
+}
+
+/**
+ * The URL the page knows a domain by: https unless none of its pages are.
+ * @param {string} domain
+ * @param {SiteActivity} site
+ * @returns {string}
+ */
+function siteUrl(domain, site) {
+    return `${site.pages.some((page) => page.url.startsWith('https:')) ? 'https' : 'http'}://${domain}/`;
+}
+
+/**
+ * @param {Map<string, SiteActivity>} sites
+ * @returns {UrlInfo}
+ */
+function toUrlInfo(sites) {
+    const urls = [];
+    let totalTrackersBlocked = 0;
+    for (const [domain, site] of sites) {
+        urls.push(siteUrl(domain, site));
+        totalTrackersBlocked += site.trackersBlocked;
+    }
+    return { urls, totalTrackersBlocked };
+}
+
+/**
+ * @param {string} url - the site URL the page knows the domain by
+ * @param {string} domain
+ * @param {SiteActivity} site
+ * @returns {DomainActivity}
+ */
+function toDomainActivity(url, domain, site) {
+    return {
+        title: domain,
+        url,
+        etldPlusOne: getBaseDomain(url) || domain,
+        favicon: favicon(site.pages[0].url),
+        trackingStatus: {
+            totalCount: site.trackersBlocked,
+            trackerCompanies: site.companies.map((displayName) => ({ displayName })),
+        },
+        trackersFound: site.trackersBlocked > 0,
+        history: site.pages
+            .filter((page) => page.title)
+            .slice(0, MAX_HISTORY_ENTRIES)
+            .map((page) => ({ title: page.title, url: page.url, relativeTime: relativeTime(page.lastVisitTime) })),
+        favorite: false,
+    };
+}
+
+/**
+ * A page's icon from Chromium's favicon cache (the `favicon` permission). The page
+ * appends `?preferredSize=N` to `src` verbatim; the trailing '&' keeps that out of `size`.
+ * @param {string} pageUrl
+ */
+function favicon(pageUrl) {
+    return { src: `/_favicon/?pageUrl=${encodeURIComponent(pageUrl)}&size=${FAVICON_SIZE}&`, maxAvailableSize: FAVICON_SIZE };
+}
+
+/**
+ * @param {number} time - in the past
+ * @returns {string} e.g. "5 minutes ago"
+ */
+function relativeTime(time) {
+    const minutes = Math.floor((Date.now() - time) / 60000);
+    if (minutes < 1) return relativeTimeFormat.format(0, 'second');
+    if (minutes < 60) return relativeTimeFormat.format(-minutes, 'minute');
+    if (minutes < 24 * 60) return relativeTimeFormat.format(-Math.floor(minutes / 60), 'hour');
+    return relativeTimeFormat.format(-Math.floor(minutes / (24 * 60)), 'day');
 }
