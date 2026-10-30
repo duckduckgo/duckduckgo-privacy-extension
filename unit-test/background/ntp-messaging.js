@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import NTPMessaging from '../../shared/js/background/components/ntp-messaging';
 import { NewTabTrackerStats } from '../../shared/js/background/newtab-tracker-stats';
 import { TrackerStats } from '../../shared/js/background/classes/tracker-stats';
@@ -131,6 +132,24 @@ describe('NTPMessaging component', () => {
             port,
         );
         expect(openUrl).toHaveBeenCalledWith('https://example.com/', 'new-tab', port);
+    });
+
+    it('opens new tabs next to the NTP and same-tab links in the NTP', () => {
+        const create = spyOn(browser.tabs, 'create').and.returnValue(Promise.resolve({}));
+        const update = spyOn(browser.tabs, 'update').and.returnValue(Promise.resolve({}));
+        const port = { ...createFakePort(), sender: { tab: { id: 7, index: 2, windowId: 3 } } };
+
+        // @ts-ignore - fake port
+        ntpMessaging.openUrl('https://a.example/', 'new-tab', port);
+        expect(create).toHaveBeenCalledWith({ url: 'https://a.example/', windowId: 3, index: 3, openerTabId: 7 });
+
+        // @ts-ignore - fake port
+        ntpMessaging.openUrl('https://b.example/', 'same-tab', port);
+        expect(update).toHaveBeenCalledWith(7, { url: 'https://b.example/' });
+
+        // @ts-ignore - fake port
+        ntpMessaging.openUrl('https://c.example/', 'new-tab', createFakePort());
+        expect(create).toHaveBeenCalledWith({ url: 'https://c.example/' });
     });
 
     it('responds to requests on the port with a matching id', async () => {
