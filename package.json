@@ -39,7 +39,7 @@
         "validate-pixel-defs": "validate-ddg-pixel-defs pixel-definitions"
     },
     "devDependencies": {
-        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.3.1",
+        "@duckduckgo/eslint-config": "github:duckduckgo/eslint-config#v0.4.0",
         "@duckduckgo/pixel-schema": "github:duckduckgo/pixel-schema#v2.2.0",
         "@duckduckgo/privacy-configuration": "github:duckduckgo/privacy-configuration",
         "@fingerprintjs/fingerprintjs": "^4.6.2",
@@ -50,7 +50,7 @@
         "@types/webextension-polyfill": "^0.10.7",
         "asana": "^3.1.10",
         "esbuild": "^0.28.2",
-        "eslint": "^10.11.0",
+        "eslint": "^10.13.0",
         "fake-indexeddb": "^6.0.0",
         "firefox-webext-playwright-harness": "github:duckduckgo/firefox-webext-playwright-harness#0.3.0",
         "globals": "^17.13.0",
@@ -61,7 +61,7 @@
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
         "prettier": "3.9.9",
-        "sass": "^1.105.0",
+        "sass": "^1.106.1",
         "timekeeper": "^2.3.1",
         "typescript": "^5.8.3",
         "webextension-polyfill": "^0.12.0"
