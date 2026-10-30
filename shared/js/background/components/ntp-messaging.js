@@ -9,6 +9,15 @@ import { NTP_PORT_NAME, NTP_MESSAGING_CONTEXT, NTP_FEATURE_NAME, NTP_OTHER_COMPA
  * @typedef {import('webextension-polyfill').Runtime.Port} Port
  */
 
+// Mirrors of the C-S-S NTP message types (special-pages/pages/new-tab/types/new-tab.ts).
+// TODO: import them from C-S-S once new-tab.ts resolves outside C-S-S; its
+// `declare module "../src/index.js"` augmentation currently breaks our tsc.
+/**
+ * @typedef {{ totalCount: number, totalCookiePopUpsBlocked?: number | null }} ProtectionsData
+ * @typedef {{ displayName: string, count: number }} TrackerCompany
+ * @typedef {{ trackerCompanies: TrackerCompany[] }} PrivacyStatsData
+ */
+
 /** Settings keys used to persist NTP UI configuration. */
 const WIDGET_CONFIGS_SETTING = 'ntpWidgetConfigs';
 const FAVORITES_CONFIG_SETTING = 'ntpFavoritesConfig';
@@ -211,28 +220,31 @@ export default class NTPMessaging {
 
     /**
      * @param {unknown} url
-     * @param {string} [target] - 'same-tab' targets the NTP's own tab
+     * @param {string} [target] - 'same-tab' targets the NTP's own tab; otherwise a
+     *   new tab opens directly to the right of the NTP
      * @param {Port} [port] - the connection the request arrived on
      */
     openUrl(url, target, port) {
         if (typeof url !== 'string') return;
-        const tabId = port?.sender?.tab?.id;
-        if (target === 'same-tab' && tabId) {
-            browser.tabs.update(tabId, { url });
-        } else {
+        const tab = port?.sender?.tab;
+        if (!tab?.id) {
             browser.tabs.create({ url });
+        } else if (target === 'same-tab') {
+            browser.tabs.update(tab.id, { url });
+        } else {
+            browser.tabs.create({ url, windowId: tab.windowId, index: tab.index + 1, openerTabId: tab.id });
         }
     }
 
     /**
-     * @returns {{ totalCount: number }}
+     * @returns {ProtectionsData}
      */
     getProtectionsData() {
         return { totalCount: this.newTabTrackerStats.stats.totalCount };
     }
 
     /**
-     * @returns {{ trackerCompanies: { displayName: string, count: number }[] }}
+     * @returns {PrivacyStatsData}
      */
     getPrivacyStatsData() {
         const trackerCompanies = this.newTabTrackerStats.stats.sorted(Date.now()).map(({ key, count }) => ({
