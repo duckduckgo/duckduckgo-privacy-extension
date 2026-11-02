@@ -94,4 +94,27 @@ async function init() {
     });
 }
 
+const TAB_DEBUG_ACTIONS = ['get', 'enable', 'disable'];
+
+// Test pages ask through this event to read or change their tab's content-scope-scripts debug flag.
+// The background acts on it in developer builds only.
+function listenForTabDebugRequests() {
+    window.addEventListener('ddgExtensionDebugRequest', (event) => {
+        if (!(event instanceof CustomEvent) || typeof event.detail !== 'string') return;
+        let action;
+        try {
+            action = JSON.parse(event.detail).action;
+        } catch {
+            return;
+        }
+        if (!TAB_DEBUG_ACTIONS.includes(action)) return;
+        chrome.runtime.sendMessage({ messageType: 'tabDebug', options: { action } }, (response) => {
+            window.dispatchEvent(
+                new CustomEvent('ddgExtensionDebugResponse', { detail: JSON.stringify(response ?? { available: false }) }),
+            );
+        });
+    });
+}
+
+listenForTabDebugRequests();
 init();

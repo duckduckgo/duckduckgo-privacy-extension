@@ -5,6 +5,7 @@ const tabManager = require('../tab-manager');
 const trackerutils = require('../tracker-utils');
 const settings = require('../settings');
 const { isActive } = require('../devtools');
+const { isDebugTab } = require('../components/debug-tabs');
 const constants = require('../../../data/constants');
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer');
 
@@ -73,7 +74,7 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
     }
     return {
         featureSettings,
-        debug: isActive(tabId),
+        debug: isActive(tabId) || isDebugTab(tabId),
         cookie,
         currentCohorts: globalThis.components?.abnMetrics?.getCurrentCohorts(),
         globalPrivacyControlValue: settings.getSetting('GPC'),
