@@ -4,7 +4,7 @@
  * Releases of content-scope-scripts ship prebuilt bundles, which are used
  * as-is. When the package is instead npm-linked to a local checkout (detected
  * by the presence of a .git directory), the checkout is rebuilt first when its
- * sources are newer than its build output, matching the Makefile.
+ * sources are newer than its build output.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -33,12 +33,13 @@ export function isContentScopeScriptsLinked() {
 }
 
 /**
- * What watch mode should watch for this package: the source directories of a
- * linked checkout (the same ones its rebuild depends on, so nothing the
- * rebuild writes is watched), otherwise the prebuilt bundles.
+ * What watch mode should watch for this package: for a linked checkout, the
+ * source directories its rebuild depends on (so nothing the rebuild writes is
+ * watched) and its package.json, whose dependencies the rebuild installs;
+ * otherwise the prebuilt bundles.
  */
 export function watchedPaths() {
-    return isContentScopeScriptsLinked() ? SOURCE_DIRS : [BUILD_DIR];
+    return isContentScopeScriptsLinked() ? [...SOURCE_DIRS, PACKAGE_JSON] : [BUILD_DIR];
 }
 
 /**

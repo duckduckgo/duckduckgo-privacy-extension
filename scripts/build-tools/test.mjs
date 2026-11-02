@@ -1,6 +1,5 @@
 /**
- * Bundles and runs the unit tests. This is the Node replacement for the
- * Makefile's `unit-test` and `node-test` targets.
+ * Bundles and runs the unit tests.
  *
  *   node scripts/build-tools/test.mjs unit   Browser tests, bundled into build/test and run with Karma.
  *   node scripts/build-tools/test.mjs node   Node tests, bundled into build/node and run with Jasmine.
