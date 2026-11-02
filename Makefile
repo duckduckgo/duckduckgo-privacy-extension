@@ -1,3 +1,9 @@
+###--- DEPRECATED ---###
+# The build has moved to Node scripts in scripts/build-tools/ (see `npm run`
+# scripts in package.json), which also work on Windows. This Makefile is kept
+# only while the build-parity CI job checks that both produce identical output,
+# and will be removed. Do not add new targets here.
+
 ###--- Shared variables ---###
 # Browser types (browser, but "chrome" adjusted as required)
 BROWSER_TYPE = $(browser)

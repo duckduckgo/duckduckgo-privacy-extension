@@ -90,8 +90,9 @@ Run the dev build task for your browser from the 'Build' section above. The gene
 After running the build task it will continue watching for changes to any of the source files. After saving any changes to these files it will automatically rebuild the `dev` directory for you. If a dev build is running in a browser, it should also automatically reload itself after being rebuilt.
 
 Notes:
-  - If you want to create a developer build once _without_ watching for future changes, use the Makefile directly (e.g. `make dev browser=chrome type=dev`).
-  - If you want to disable automatic extension reloading, pass the `reloader=0` build parameter. (e.g. `npm run dev-chrome reloader=0` or `make dev browser=chrome type=dev reloader=0`).
+  - If you want to create a developer build once _without_ watching for future changes, run the build script directly (e.g. `npm run build -- --browser chrome --type dev`).
+  - If you want to disable automatic extension reloading, pass the `--no-reloader` flag. (e.g. `npm run dev-chrome -- --no-reloader`).
+  - The build scripts live in `scripts/build-tools/` and need only Node, so they work on Linux, macOS and Windows alike.
 
 ### Locally testing changes to modules
 
