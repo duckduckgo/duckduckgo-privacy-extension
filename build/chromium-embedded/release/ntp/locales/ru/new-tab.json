@@ -1,0 +1,871 @@
+{
+  "smartling" : {
+    "string_format" : "icu",
+    "translate_paths" : [
+    {
+      "path" : "*/title",
+      "key" : "{*}/title",
+      "instruction" : "*/note"
+    }]
+  },
+  "newBadge" : {
+    "title" : "Новый",
+    "note" : "Badge text indicating a new feature."
+  },
+  "ntp_show_less" : {
+    "title" : "Показать меньше результатов",
+    "note" : "Button that reduces the number of items or content displayed."
+  },
+  "ntp_show_more" : {
+    "title" : "Показать больше",
+    "note" : "Button that increases the number of items or content displayed."
+  },
+  "ntp_dismiss" : {
+    "title" : "Отклонить",
+    "note" : "Button that closes or hides the current popup or notification."
+  },
+  "ntp_customizer_button" : {
+    "title" : "Собственная настройка",
+    "note" : "Button opens a menu. The menu allows the user to customize the page, such as showing/hiding sections."
+  },
+  "widgets_visibility_menu_title" : {
+    "title" : "Страница новой вкладки",
+    "note" : "Heading text describing that there's a list of toggles for customizing the page layout."
+  },
+  "ntp_popover_close_button" : {
+    "title" : "Закрыть",
+    "note" : "Button that closes the current popover."
+  },
+  "customizer_themeVariantPopoverTitle" : {
+    "title" : "Выберите цвет",
+    "note" : "Title for the popover that introduces the theme variant customization feature."
+  },
+  "customizer_themeVariantPopoverDescription" : {
+    "title" : "Теперь вы можете выбрать цветовую гамму на свой вкус. Попробуйте!",
+    "note" : "Description message in the theme variant popover."
+  },
+  "updateNotification_updated_version" : {
+    "title" : "Браузер обновлен до версии {version}.",
+    "note" : "Text to indicate which new version was updated. `{version}` will be formatted like `1.22.0`"
+  },
+  "updateNotification_whats_new" : {
+    "title" : "<a>Что нового</a> в этом релизе",
+    "note" : "The `<a>` tag represents a clickable link, please preserve it."
+  },
+  "updateNotification_dismiss_btn" : {
+    "title" : "Отклонить",
+    "note" : "Button label text for an action that removes the widget from the screen."
+  },
+  "protections_menuTitle" : {
+    "title" : "Отчет о защите",
+    "note" : "Used as a label in the main navigation menu. 'Protections' refers to the privacy features that block trackers."
+  },
+  "protections_statsSwitchTitle" : {
+    "title" : "Сводка",
+    "note" : "Used as a label in a toggle switch that shows aggregated privacy statistics. This is one of two options in a view selector (the other is 'Details')."
+  },
+  "protections_activitySwitchTitle" : {
+    "title" : "Подробнее",
+    "note" : "Used as a label in a toggle switch that shows recent browsing activity with tracking information. This is one of two options in a view selector (the other is 'Summary')."
+  },
+  "protections_noRecent" : {
+    "title" : "Нет недавних отслеживаний",
+    "note" : "Placeholder text shown in the Details view when no tracking activity was blocked in the last 7 days. Keep concise if possible."
+  },
+  "stats_menuTitle" : {
+    "title" : "Заблокированные попытки отслеживания",
+    "note" : "Used as a label in a customization menu"
+  },
+  "stats_menuTitle_v2" : {
+    "title" : "Статистика защиты",
+    "note" : "Used as a label in a customization menu"
+  },
+  "stats_noActivity" : {
+    "title" : "Пока вы бороздите Интернет, DuckDuckGo блокирует попытки отследить ваши действия. Посетите несколько сайтов и наглядно оцените нашу работу!",
+    "note" : "Placeholder for when we cannot report any blocked trackers yet"
+  },
+  "stats_noRecent" : {
+    "title" : "Защита от отслеживания включена",
+    "note" : "Placeholder to indicate that no tracking activity was blocked in the last 7 days"
+  },
+  "stats_countBlockedSingular" : {
+    "title" : "Попытка отслеживания заблокирована",
+    "note" : "The sub headline indicating that a single tracker was blocked. This sub headline starts with a capital letter"
+  },
+  "stats_countBlockedSingularLegacy" : {
+    "title" : "Пресечено попыток отслеживания: 1",
+    "note" : "The main headline indicating that a single tracker was blocked"
+  },
+  "stats_countBlockedPlural" : {
+    "title" : "заблокировано (попытки отслеживания)",
+    "note" : "The sub headline indicating that more than 1 tracker has been blocked. This sub headline starts with a capital letter"
+  },
+  "stats_countBlockedPluralLegacy" : {
+    "title" : "Пресечено попыток отслеживания: {count}",
+    "note" : "The main headline indicating that more than 1 attempt has been blocked. Eg: '2 tracking attempts blocked'"
+  },
+  "stats_noActivityAdsAndTrackers" : {
+    "title" : "Пока вы бороздите интернет, DuckDuckGo блокирует рекламу и попытки отслеживания. Посетите несколько сайтов и оцените нашу работу в деле!",
+    "note" : "Placeholder for when we cannot report any blocked ads and trackers yet"
+  },
+  "stats_noRecentAdsAndTrackers" : {
+    "title" : "Защита включена",
+    "note" : "Placeholder to indicate that no ads or tracking activity was blocked in the last 7 days"
+  },
+  "stats_countBlockedAdsAndTrackersSingularLegacy" : {
+    "title" : "Заблокирована <b>1</b> попытка рекламы и отслеживания",
+    "note" : "The main headline indicating that a single ad or tracking attempt was blocked"
+  },
+  "stats_countBlockedAdsAndTrackersPluralLegacy" : {
+    "title" : "Заблокировано рекламы и попыток отслеживания: <b>{count}</b>",
+    "note" : "The main headline indicating that more than 1 ad or tracking attempt has been blocked. Eg: '2 advertising & tracking attempts blocked"
+  },
+  "stats_totalCookiePopUpsBlockedSingular" : {
+    "title" : "Всплывающее окно куки заблокировано",
+    "note" : "The heading indicating that a single cookie pop-up was handled by the CPM"
+  },
+  "stats_totalCookiePopUpsBlockedPlural" : {
+    "title" : "заблокировано (всплывающие окна куки)",
+    "note" : "The heading indicating multiple cookie pop-ups were handled by the CPM"
+  },
+  "stats_protectionsReportInfo" : {
+    "title" : "Отображает попытки отслеживания, заблокированные за последние 7 дней, а также количество всплывающих окон куки, заблокированных с начала использования браузера.",
+    "note" : "Text explaining how to reset the protections stats"
+  },
+  "stats_feedCountBlockedSingular" : {
+    "title" : "За последние 7 дней DuckDuckGo заблокировал попыток: 1",
+    "note" : "A summary description of how many tracking attempts where blocked, when only one exists."
+  },
+  "stats_feedCountBlockedPeriod" : {
+    "title" : "За последние 7 дней",
+    "note" : "A summary description indicating the time period of the blocked tracking attempts, which is the past 7 days."
+  },
+  "stats_feedCountBlockedPlural" : {
+    "title" : "Пресечено попыток отслеживания: {count}",
+    "note" : "A summary description of how many tracking attempts were blocked by DuckDuckGo in the last 7 days when there is more than one. E.g., '1,028 tracking attempts blocked."
+  },
+  "stats_toggleLabel" : {
+    "title" : "Показать недавнюю активность",
+    "note" : "The aria-label text for a toggle button that shows the detailed activity feed"
+  },
+  "stats_hideLabel" : {
+    "title" : "Скрыть недавнюю активность",
+    "note" : "The aria-label text for a toggle button that hides the detailed activity feed"
+  },
+  "stats_otherCompanyName" : {
+    "title" : "Прочее",
+    "note" : "A placeholder to represent an aggregated count of entries, not present in the rest of the list. For example, 'Other: 200', which would mean 200 entries excluding the ones already shown"
+  },
+  "stats_otherCount" : {
+    "title" : "Попыток из других сетей: {count}",
+    "note" : "An aggregated count of blocked entries not present in the main list. For example, '200 attempts from other networks'"
+  },
+  "omnibar_menuTitle" : {
+    "title" : "Поиск",
+    "description" : "Title of the omnibar widget in the customizer panel."
+  },
+  "omnibar_aiChatFormPlaceholder" : {
+    "title" : "Задавайте любые вопросы, сохраняя конфиденциальность",
+    "description" : "Placeholder text for the AI chat input field."
+  },
+  "omnibar_aiChatFormSubmitButtonLabel" : {
+    "title" : "Отправить",
+    "description" : "Accesible label for the AI chat submit button."
+  },
+  "omnibar_aiChatFormVoiceButtonLabel" : {
+    "title" : "Начать голосовой чат",
+    "description" : "Accessible label for the voice-chat button shown in place of the AI chat submit button when the input is empty and the feature is enabled."
+  },
+  "omnibar_logoAlt" : {
+    "title" : "DuckDuckGo",
+    "description" : "Alt text for the DuckDuckGo logo."
+  },
+  "omnibar_tabSwitcherLabel" : {
+    "title" : "Поиск и переключатель вкладок Duck.ai",
+    "description" : "Accessible label for the tab switcher between search and AI modes."
+  },
+  "omnibar_searchTabLabel" : {
+    "title" : "Поиск",
+    "description" : "Label for the search tab."
+  },
+  "omnibar_aiTabLabel" : {
+    "title" : "Duck.ai",
+    "description" : "Label for the AI chat tab."
+  },
+  "omnibar_searchFormPlaceholder" : {
+    "title" : "Конфиденциальный поиск",
+    "description" : "Placeholder text for the search input field."
+  },
+  "omnibar_searchFormCloseButtonLabel" : {
+    "title" : "Закрыть",
+    "description" : "Accessible label for the close button in the search form."
+  },
+  "omnibar_toggleDuckAi" : {
+    "title" : "Duck.ai",
+    "description" : "Label for the button to toggle the Duck.ai chat interface."
+  },
+  "omnibar_searchDuckDuckGoSuffix" : {
+    "title" : "Поиск в DuckDuckGo",
+    "description" : "Text placed after suggestions that will search DuckDuckGo."
+  },
+  "omnibar_duckDuckGoSuffix" : {
+    "title" : "DuckDuckGo",
+    "description" : "Text placed after suggestions that will open a DuckDuckGo page."
+  },
+  "omnibar_visitSuffix" : {
+    "title" : "Посетить {url}",
+    "description" : "Text placed after suggestions that will open a webpage."
+  },
+  "omnibar_askDuckAiSuffix" : {
+    "title" : "Спросить у Duck.ai",
+    "description" : "Text placed after aiChat suggestions that will submit a chat query."
+  },
+  "omnibar_switchToTab" : {
+    "title" : "Перейти на вкладку",
+    "description" : "Badge text shown next to open tab suggestions."
+  },
+  "omnibar_customizePopoverTitle" : {
+    "title" : "Переключатель между поиском и чатом с ИИ",
+    "description" : "Title for the popover that introduces the search/AI toggle feature."
+  },
+  "omnibar_customizePopoverDescription" : {
+    "title" : "Ваши данные в любом случае остаются в тайне.<br />Не устраивает такой вариант? <button>Настройте свой!</button>",
+    "description" : "Description message in the popover including privacy statement and customize option."
+  },
+  "omnibar_attachImageLabel" : {
+    "title" : "Добавить изображения",
+    "description" : "Label for the attach-image entry — both the standalone paperclip button (aria-label) and the menu item in the combined attach dropdown."
+  },
+  "omnibar_removeImageLabel" : {
+    "title" : "Удалить изображение",
+    "description" : "Accessible label for the button to remove an attached image thumbnail."
+  },
+  "omnibar_modelSelectorLabel" : {
+    "title" : "Выбрать модель",
+    "description" : "Accessible label for the AI model selector dropdown."
+  },
+  "omnibar_imageAttachmentLimitWarning" : {
+    "title" : "Число изображений, прикрепляемых за один раз, ограничено: максимум {limit}.",
+    "description" : "Warning shown when user attaches more images than the allowed maximum."
+  },
+  "omnibar_fileAttachmentLimitWarning" : {
+    "title" : "Число файлов, прикрепляемых за один раз, ограничено: максимум {limit}.",
+    "description" : "Warning shown when user attaches more files than the allowed maximum."
+  },
+  "omnibar_tabAttachmentLimitWarning" : {
+    "title" : "Число вкладок, прикрепляемых за один раз, ограничено: максимум {limit}.",
+    "description" : "Warning shown when user attaches more open tabs than the allowed maximum."
+  },
+  "omnibar_imageTooLargeError" : {
+    "title" : "Слишком большой файл. Выберите изображение размером до 10 000 × 10 000 пикселей.",
+    "description" : "Error shown when a user tries to attach an image that exceeds the maximum pixel dimensions."
+  },
+  "omnibar_fileTooLargeError" : {
+    "title" : "Файл слишком большой. Выберите файл размером до {limit} МБ.",
+    "description" : "Error shown when a user tries to attach a file that exceeds the maximum allowed size. {limit} is the size limit in megabytes."
+  },
+  "omnibar_imageProcessingError" : {
+    "title" : "Не удалось обработать изображение. Пожалуйста, попробуйте другой файл.",
+    "description" : "Error shown when an attached image cannot be processed."
+  },
+  "omnibar_advancedModelsSectionHeader" : {
+    "title" : "Только для подписчиков",
+    "description" : "Section header in the model picker for premium models that require a subscription."
+  },
+  "omnibar_viewAllChats" : {
+    "title" : "Просмотреть все чаты",
+    "description" : "Link text to view all AI chat history."
+  },
+  "omnibar_openDuckAi" : {
+    "title" : "Открыть Duck.ai",
+    "description" : "Link text to open the Duck.ai chat interface."
+  },
+  "omnibar_createImageLabel" : {
+    "title" : "Создать изображение",
+    "description" : "Label for the toggle button to enable image generation mode in the AI chat toolbar."
+  },
+  "omnibar_imageGenerationPlaceholder" : {
+    "title" : "Опишите нужное вам изображение",
+    "description" : "Placeholder text for the AI chat input when image generation mode is active."
+  },
+  "omnibar_toolsMenuLabel" : {
+    "title" : "Инструменты",
+    "description" : "Accessible label for the tools menu button in the AI chat toolbar."
+  },
+  "omnibar_createImageDescription" : {
+    "title" : "Преобразуй текст в изображения",
+    "description" : "Description for the Create Image tool shown in the tools menu dropdown."
+  },
+  "omnibar_webSearchLabel" : {
+    "title" : "Веб-поиск",
+    "description" : "Label for the Web Search tool shown in the tools menu dropdown."
+  },
+  "omnibar_webSearchDescription" : {
+    "title" : "Получать ответы из интернета",
+    "description" : "Description for the Web Search tool shown in the tools menu dropdown."
+  },
+  "omnibar_customizeResponsesLabel" : {
+    "title" : "Настройка ответов",
+    "description" : "Label for the Customize Responses entry shown in the tools menu dropdown. Selecting it opens a modal to control how Duck.ai responds."
+  },
+  "omnibar_customizeResponsesDescription" : {
+    "title" : "Задайте тон, длину ответа и прочие параметры",
+    "description" : "Description for the Customize Responses entry shown in the tools menu dropdown."
+  },
+  "omnibar_customizeResponsesToggleLabel" : {
+    "title" : "Применить настройки ответов",
+    "description" : "Accessible label for the on/off toggle that applies or unapplies the saved response customization, shown on the Customize Responses tools menu row."
+  },
+  "omnibar_imageGenerationWithAttachmentPlaceholder" : {
+    "title" : "Опиши изменения на основе изображения",
+    "description" : "Placeholder text for the AI chat input when image generation mode is active and an image is attached."
+  },
+  "omnibar_reasoningPickerLabel" : {
+    "title" : "Рассуждения",
+    "description" : "Accessible label (and chip text) for the reasoning-effort picker in the AI chat toolbar."
+  },
+  "omnibar_reasoningEffortFastLabel" : {
+    "title" : "Быстрый",
+    "description" : "Label for the 'fast' reasoning-effort option (answers right away, no deliberate reasoning)."
+  },
+  "omnibar_reasoningEffortFastDescription" : {
+    "title" : "Моментальные ответы.",
+    "description" : "Subtitle for the 'fast' reasoning-effort option in the reasoning picker dropdown."
+  },
+  "omnibar_reasoningEffortReasoningLabel" : {
+    "title" : "Рассуждения",
+    "description" : "Label for the 'reasoning' reasoning-effort option (model spends a moment reasoning)."
+  },
+  "omnibar_reasoningEffortReasoningDescription" : {
+    "title" : "Ответ занимает чуть больше времени.",
+    "description" : "Subtitle for the 'reasoning' reasoning-effort option in the reasoning picker dropdown."
+  },
+  "omnibar_reasoningEffortExtendedReasoningLabel" : {
+    "title" : "Углубленные рассуждения",
+    "description" : "Label for the 'extended reasoning' reasoning-effort option (model researches before responding)."
+  },
+  "omnibar_reasoningEffortExtendedReasoningDescription" : {
+    "title" : "ИИ собирает и изучает данные, прежде чем дать ответ.",
+    "description" : "Subtitle for the 'extended reasoning' reasoning-effort option in the reasoning picker dropdown."
+  },
+  "omnibar_attachMenuLabel" : {
+    "title" : "Добавить вложение",
+    "description" : "Accessible label for the paperclip button that opens a menu offering image attachments and tab content attachments."
+  },
+  "omnibar_attachImageOrFileLabel" : {
+    "title" : "Добавить изображения или PDF-файлы",
+    "description" : "Label for the attach entry when the active model accepts both images and PDFs — covers the menu item in the combined dropdown and the standalone paperclip button's aria-label."
+  },
+  "omnibar_attachFileLabel" : {
+    "title" : "Добавить PDF-файлы",
+    "description" : "Label for the attach-PDF entry — both the standalone paperclip button (aria-label) and the menu item in the combined attach dropdown."
+  },
+  "omnibar_removeAttachedFileLabel" : {
+    "title" : "Удалить {fileName}",
+    "description" : "Accessible label for the button that removes an attached file chip from the AI chat input. {fileName} is the original filename."
+  },
+  "omnibar_attachPageContentLabel" : {
+    "title" : "Добавить вкладки",
+    "description" : "Menu item in the attach dropdown that opens the Add Tabs dialog so the user can attach extracted page content from open tabs."
+  },
+  "omnibar_attachTabsModalTitle" : {
+    "title" : "Добавить вкладки",
+    "description" : "Title and accessible name of the Add Tabs dialog opened from the attach dropdown menu."
+  },
+  "omnibar_attachTabsSearchLabel" : {
+    "title" : "Поиск",
+    "description" : "Placeholder and accessibility label for the search input that filters the list of open tabs in the Add Tabs dialog."
+  },
+  "omnibar_attachTabsConfirm" : {
+    "title" : "Добавить",
+    "description" : "Primary button in the Add Tabs dialog that attaches the tabs the user checked."
+  },
+  "omnibar_attachTabsCancel" : {
+    "title" : "Отменить",
+    "description" : "Secondary button in the Add Tabs dialog that dismisses it without attaching anything."
+  },
+  "omnibar_attachTabsRecentTabs" : {
+    "title" : "Последние вкладки",
+    "description" : "Section header for the list of recent open tabs, shown in the attach dropdown menu and the @-mention tab picker."
+  },
+  "omnibar_attachTabsLoading" : {
+    "title" : "Загрузка вкладок…",
+    "description" : "Status text displayed while the list of open tabs is loading."
+  },
+  "omnibar_attachTabsPickerLabel" : {
+    "title" : "Выберите открытую вкладку для добавления",
+    "description" : "Accessible label for the open-tabs picker panel (the dialog wrapper around the listbox)."
+  },
+  "omnibar_attachTabsNoMatches" : {
+    "title" : "Нет соответствующих вкладок",
+    "description" : "Empty-state message shown when no open tabs match what the user typed, in the @-mention tab picker and the Add Tabs dialog search."
+  },
+  "omnibar_attachTabsNoPageContent" : {
+    "title" : "Содержимое страницы недоступно",
+    "description" : "Empty-state message shown in the attach dropdown and the Add Tabs dialog when there are no open tabs with attachable page content."
+  },
+  "omnibar_removeAttachedTabLabel" : {
+    "title" : "Удалить {title}",
+    "description" : "Accessible label for the close button on an attached-tab chip. {title} is the tab title."
+  },
+  "omnibar_removeSuggestion" : {
+    "title" : "Удалить из истории просмотров",
+    "description" : "Accessible label and tooltip for the button that removes a search suggestion from browsing history."
+  },
+  "omnibar_removeAiChat" : {
+    "title" : "Удалить этот чат",
+    "description" : "Accessible label and tooltip for the button that deletes a recent AI chat."
+  },
+  "omnibar_modelBadgeInternal" : {
+    "title" : "Внутренний",
+    "description" : "Badge shown next to an AI model in the model selector that is only available to internal users."
+  },
+  "nextStepsList_sectionTitle" : {
+    "title" : "Дальнейшие шаги",
+    "note" : "Text that goes in the Next Steps bubble label above the card"
+  },
+  "nextStepsList_maybeLater" : {
+    "title" : "Нет, спасибо",
+    "note" : "Secondary button text for dismissing a Next Steps List item"
+  },
+  "nextStepsList_pinAppToTaskbarWindows_title" : {
+    "title" : "Закрепить на панели задач",
+    "note" : "Title of the Next Steps List card for pinning DDG app to Windows taskbar"
+  },
+  "nextStepsList_pinAppToTaskbarWindows_summary" : {
+    "title" : "Закрепите DuckDuckGo на панели задач, чтобы он всегда был под рукой.",
+    "note" : "Summary of the Next Steps List card for pinning DDG app to Windows taskbar"
+  },
+  "nextStepsList_pinAppToTaskbarWindows_actionText" : {
+    "title" : "Закрепить на панели задач",
+    "note" : "Button text of the Next Steps List card for pinning DDG app to Windows taskbar"
+  },
+  "nextStepsList_addAppToDockMac_title" : {
+    "title" : "Добавить на док-панель",
+    "note" : "Title of the Next Steps List card for adding DDG app to macOS dock"
+  },
+  "nextStepsList_addAppToDockMac_summary" : {
+    "title" : "Закрепите DuckDuckGo на док-панели, чтобы он всегда был под рукой.",
+    "note" : "Summary of the Next Steps List card for adding DDG app to macOS dock"
+  },
+  "nextStepsList_addAppToDockMac_actionText" : {
+    "title" : "Добавить на док-панель",
+    "note" : "Button text of the Next Steps List card for adding DDG app to macOS dock"
+  },
+  "nextStepsList_personalizeBrowser_title" : {
+    "title" : "Персонализировать",
+    "note" : "Title of the Next Steps List card for personalizing the browser"
+  },
+  "nextStepsList_personalizeBrowser_summary" : {
+    "title" : "Выберите цвет фона, тему и другие параметры на свое усмотрение.",
+    "note" : "Summary of the Next Steps List card for personalizing the browser"
+  },
+  "nextStepsList_personalizeBrowser_actionText" : {
+    "title" : "Персонализировать",
+    "note" : "Button text of the Next Steps List card for personalizing the browser"
+  },
+  "nextStepsList_duckplayer_title" : {
+    "title" : "YouTube с меньшим количеством рекламы",
+    "note" : "Title of the Next Steps List card for Duck Player"
+  },
+  "nextStepsList_duckplayer_summary" : {
+    "title" : "Пользуйтесь «чистым» просмотром без персонализированной рекламы.",
+    "note" : "Summary of the Next Steps List card for Duck Player"
+  },
+  "nextStepsList_duckplayer_actionText" : {
+    "title" : "Попробовать Duck Player",
+    "note" : "Button text of the Next Steps List card for Duck Player"
+  },
+  "nextStepsList_youtubeAdBlocking_title" : {
+    "title" : "Смотри YouTube без рекламы",
+    "note" : "Title of the Next Steps List card for YouTube ad blocking"
+  },
+  "nextStepsList_youtubeAdBlocking_summary" : {
+    "title" : "Пользуйтесь «чистым» просмотром без персонализированной рекламы.",
+    "note" : "Summary of the Next Steps List card for YouTube ad blocking"
+  },
+  "nextStepsList_youtubeAdBlocking_actionText" : {
+    "title" : "Откройте YouTube",
+    "note" : "Button text of the Next Steps List card for YouTube ad blocking"
+  },
+  "nextStepsList_emailProtection_title" : {
+    "title" : "Остановить спам и трекеры",
+    "note" : "Title of the Next Steps List card for email protection"
+  },
+  "nextStepsList_emailProtection_summary" : {
+    "title" : "Скройте свой адрес электронной почты с помощью сервиса переадресации. Он защитит ящик от спама и заблокирует скрытые трекеры.",
+    "note" : "Summary of the Next Steps List card for email protection"
+  },
+  "nextStepsList_emailProtection_actionText" : {
+    "title" : "Защитить электронную почту",
+    "note" : "Button text of the Next Steps List card for email protection"
+  },
+  "nextStepsList_bringStuff_title" : {
+    "title" : "Импортировать закладки и пароли",
+    "note" : "Title of the Next Steps List card for importing bookmarks, passwords, and more"
+  },
+  "nextStepsList_bringStuff_summary" : {
+    "title" : "Перенесите закладки, пароли и реквизиты платежных карт в DuckDuckGo — это безопасно.",
+    "note" : "Summary of the Next Steps List card for importing bookmarks, passwords, and more"
+  },
+  "nextStepsList_bringStuff_actionText" : {
+    "title" : "Импортировать",
+    "note" : "Button text of the Next Steps List card for importing bookmarks, passwords, and more"
+  },
+  "nextStepsList_defaultApp_title" : {
+    "title" : "Выбрать браузером для всех ссылок",
+    "note" : "Title of the Next Steps List card for setting DDG as default browser"
+  },
+  "nextStepsList_defaultApp_summary" : {
+    "title" : "Назначьте DuckDuckGo браузером по умолчанию, чтобы защитить каждый поисковый запрос.",
+    "note" : "Summary of the Next Steps List card for setting DDG as default browser"
+  },
+  "nextStepsList_defaultApp_actionText" : {
+    "title" : "Открывать ссылки в DuckDuckGo",
+    "note" : "Button text of the Next Steps List card for setting DDG as default browser"
+  },
+  "nextStepsList_subscription_title" : {
+    "title" : "Добавить надежный VPN и приватный ИИ",
+    "note" : "Title of the Next Steps List card for DuckDuckGo subscription"
+  },
+  "nextStepsList_subscription_summary" : {
+    "title" : "Оформите подписку на DuckDuckGo для дополнительной защиты онлайн.",
+    "note" : "Summary of the Next Steps List card for DuckDuckGo subscription"
+  },
+  "nextStepsList_subscription_actionText" : {
+    "title" : "Бесплатное Ознакомление",
+    "note" : "Button text of the Next Steps List card for DuckDuckGo subscription"
+  },
+  "nextStepsList_sync_title" : {
+    "title" : "Синхронизация и резервное копирование закладок, паролей и чатов",
+    "note" : "Title of the Next Steps List card for syncing data across devices"
+  },
+  "nextStepsList_sync_summary" : {
+    "title" : "Безопасно синхронизируй закладки, данные автозаполнения и чаты Duck.ai со сквозным шифрованием между своими устройствами.",
+    "note" : "Summary of the Next Steps List card for syncing data across devices"
+  },
+  "nextStepsList_sync_actionText" : {
+    "title" : "Синхронизировать",
+    "note" : "Button text of the Next Steps List card for syncing data across devices"
+  },
+  "nextSteps_sectionTitle" : {
+    "title" : "Дальнейшие шаги",
+    "note" : "Text that goes in the Next Steps bubble above the first card"
+  },
+  "nextSteps_bringStuff_title" : {
+    "title" : "Все свое с собой",
+    "note" : "Title of the Next Steps card for importing bookmarks and favorites"
+  },
+  "nextSteps_bringStuff_summary" : {
+    "title" : "Для удобства перехода закладки, избранное и пароли можно импортировать из старого браузера.",
+    "note" : "Summary of the Next Steps card for importing bookmarks and favorites"
+  },
+  "nextSteps_bringStuff_actionText" : {
+    "title" : "Импортировать",
+    "note" : "Button text of the Next Steps card for importing bookmarks and favorites"
+  },
+  "nextSteps_defaultApp_title" : {
+    "title" : "Сделать браузером по умолчанию",
+    "note" : "Title of the Next Steps card for making DDG the user's default browser"
+  },
+  "nextSteps_defaultApp_summary" : {
+    "title" : "Пока вы ходите по сайтам, мы автоматически блокируем трекеры. Просто и надежно.",
+    "note" : "Summary of the Next Steps card for making DDG the user's default browser"
+  },
+  "nextSteps_defaultApp_actionText" : {
+    "title" : "Назначить браузером по умолчанию",
+    "note" : "Button text of the Next Steps card for making DDG the user's default browser"
+  },
+  "nextSteps_blockCookies_title" : {
+    "title" : "Блокировка всплывающих окон куки",
+    "note" : "Title of the Next Steps card for blocking cookie pop-ups"
+  },
+  "nextSteps_blockCookies_summary" : {
+    "title" : "Нам нужно разрешение на отказ от куки-файлов от вашего имени. Выбор очевиден.",
+    "note" : "Summary of the Next Steps card for blocking cookie pop-ups"
+  },
+  "nextSteps_blockCookies_actionText" : {
+    "title" : "Блокировка всплывающих окон куки",
+    "note" : "Button text of the Next Steps card for blocking cookie pop-ups"
+  },
+  "nextSteps_emailProtection_title" : {
+    "title" : "Остановить спам и трекеры",
+    "note" : "Title of the Next Steps card for email protection"
+  },
+  "nextSteps_emailProtection_summary" : {
+    "title" : "Скройте свой адрес электронной почты с помощью сервиса переадресации. Он защитит ящик от спама и заблокирует скрытые трекеры.",
+    "note" : "Summary of the Next Steps card for email protection"
+  },
+  "nextSteps_emailProtection_actionText" : {
+    "title" : "Защитить электронную почту",
+    "note" : "Button text of the Next Steps card for email protection"
+  },
+  "nextSteps_duckPlayer_title" : {
+    "title" : "YouTube без надоедливой рекламы",
+    "note" : "Title of the Next Steps card for adopting DuckPlayer"
+  },
+  "nextSteps_duckPlayer_summary" : {
+    "title" : "«Чистый» просмотр без персонализированной рекламы.",
+    "note" : "Summary of the Next Steps card for adopting DuckPlayer"
+  },
+  "nextSteps_duckPlayer_actionText" : {
+    "title" : "Попробовать Duck Player",
+    "note" : "Button text of the Next Steps card for adopting DuckPlayer"
+  },
+  "nextSteps_youtubeAdBlocking_title" : {
+    "title" : "Смотрите YouTube без рекламы",
+    "note" : "Title of the Next Steps card for YouTube ad blocking"
+  },
+  "nextSteps_youtubeAdBlocking_summary" : {
+    "title" : "Пользуйтесь «чистым» просмотром без персонализированной рекламы.",
+    "note" : "Summary of the Next Steps card for YouTube ad blocking"
+  },
+  "nextSteps_youtubeAdBlocking_actionText" : {
+    "title" : "Откройте YouTube",
+    "note" : "Button text of the Next Steps card for YouTube ad blocking"
+  },
+  "nextSteps_addAppDockMac_title" : {
+    "title" : "DuckDuckGo на док-панели",
+    "note" : "Title of the Next Steps card for adding DDG app to OS dock"
+  },
+  "nextSteps_addAppDockMac_summary" : {
+    "title" : "Чтобы быстрее открывать приложение DuckDuckGo, добавьте его на док-панель.",
+    "note" : "Summary of the Next Steps card for adding DDG app to OS dock"
+  },
+  "nextSteps_addAppDockMac_actionText" : {
+    "title" : "Добавить на док-панель",
+    "note" : "Initial button text of the Next Steps card for adding DDG app to OS dock"
+  },
+  "nextSteps_addAppDockMac_confirmationText" : {
+    "title" : "Ярлык добавлен на док-панель.",
+    "note" : "Button text after clicking on the Next Steps card for adding DDG app to OS dock"
+  },
+  "nextSteps_pinAppToTaskbarWindows_title" : {
+    "title" : "DuckDuckGo на панели задач",
+    "note" : "Title of the Next Steps card for adding DDG app to OS dock"
+  },
+  "nextSteps_pinAppToTaskbarWindows_summary" : {
+    "title" : "Чтобы быстрее открывать приложение DuckDuckGo, закрепите его на панели задач.",
+    "note" : "Summary of the Next Steps card for adding DDG app to OS dock"
+  },
+  "nextSteps_pinAppToTaskbarWindows_actionText" : {
+    "title" : "Закрепить на панели задач",
+    "note" : "Initial button text of the Next Steps card for adding DDG app to OS dock"
+  },
+  "nextSteps_pinAppToTaskbarWindows_confirmationText" : {
+    "title" : "Закреплено на панели задач!",
+    "note" : "Button text after clicking on the Next Steps card for adding DDG app to OS dock"
+  },
+  "nextSteps_subscription_title" : {
+    "title" : "Доступ к премиум-функциям",
+    "note" : "Title of the Next Steps card for unlocking your free trial of DuckDuckGo subscription"
+  },
+  "nextSteps_subscription_summary" : {
+    "title" : "Предлагаем бесплатно попробовать VPN и другие преимущества подписки.",
+    "note" : "Summary of the Next Steps card about the DuckDuckGo subscription"
+  },
+  "nextSteps_subscription_actionText" : {
+    "title" : "Бесплатное Ознакомление",
+    "note" : "Button text of the Next Steps card for trying the DuckDuckGo subscription"
+  },
+  "favorites_show_less" : {
+    "title" : "Показать меньше результатов",
+    "note" : "Button label to display fewer items"
+  },
+  "favorites_show_more" : {
+    "title" : "Показать еще (оставшиеся {count})",
+    "note" : "Button text to show hidden items. {count} will be replaced with the number of remaining favorite items to show, including the parentheses. Example: 'Show more (18 remaining)'"
+  },
+  "favorites_menu_title" : {
+    "title" : "Избранное",
+    "note" : "Used as a label in a customization menu"
+  },
+  "favorites_add" : {
+    "title" : "Добавить в избранное",
+    "note" : "A button that allows a user to add a new 'favorite' bookmark to their existing list"
+  },
+  "customizer_image_privacy" : {
+    "title" : "Изображения хранятся на вашем устройстве, поэтому у DuckDuckGo нет к ним доступа (даже для просмотра).",
+    "note" : "Shown near a button that allows a user to upload an image to be used as a background."
+  },
+  "customizer_drawer_title" : {
+    "title" : "Собственная настройка",
+    "note" : "Title in a slide-out drawer that contains options for customizing the browser."
+  },
+  "customizer_section_title_background" : {
+    "title" : "Фон",
+    "note" : "Section title displayed in the UI for customizing the background."
+  },
+  "customizer_section_title_theme" : {
+    "title" : "Тема браузера",
+    "note" : "Section title for a section where users can customize the browser theme. (for example, 'light' or 'dark')"
+  },
+  "customizer_section_title_sections" : {
+    "title" : "Разделы",
+    "note" : "Section title for a list of toggles for showing/hiding certain sections of the page."
+  },
+  "customizer_browser_theme_light" : {
+    "title" : "Светлая",
+    "note" : "The label for a button that sets the browser theme to 'light' mode"
+  },
+  "customizer_browser_theme_dark" : {
+    "title" : "Тёмная",
+    "note" : "The label for a button that sets the browser theme to 'dark' mode"
+  },
+  "customizer_browser_theme_system" : {
+    "title" : "Системная",
+    "note" : "The label for a button that sets the browser theme to 'system', which matches the operating system setting"
+  },
+  "customizer_browser_theme_label" : {
+    "title" : "Выбрать тему: «{type}»",
+    "note" : "The label text on a button, for assistive technologies (like screen readers). {type} will be replace with 'light', 'dark' or 'system'"
+  },
+  "customizer_settings_link" : {
+    "title" : "Открыть «Настройки»",
+    "note" : "The label text on a link that opens the Settings"
+  },
+  "customizer_background_selection_default" : {
+    "title" : "По умолчанию",
+    "note" : "Label text below a button that selects a 'default' background"
+  },
+  "customizer_background_selection_color" : {
+    "title" : "Сплошные цвета",
+    "note" : "Label text below a button that allows a color background"
+  },
+  "customizer_background_selection_gradient" : {
+    "title" : "Градиенты",
+    "note" : "Label text below a button that allows a gradient background"
+  },
+  "customizer_background_selection_image_add" : {
+    "title" : "Добавить фон",
+    "note" : "Label text shown on a button that allows an image to be uploaded"
+  },
+  "customizer_background_selection_image_existing" : {
+    "title" : "Мои фоны",
+    "note" : "Label text shown on a button navigates to list of existing background (that the user previously uploaded)"
+  },
+  "customizer_image_select" : {
+    "title" : "Выбрать изображение {number}",
+    "note" : "Label text on a button, for assistive technologies (like screen readers). {number} will be replaced with a numeric reference of 1-8, eg: 'Select image 1'"
+  },
+  "customizer_image_delete" : {
+    "title" : "Удалить изображение {number}",
+    "note" : "Label text on a button that deletes an image. {number} will be replaced with a numeric reference of 1-8, eg: 'Delete image 1'"
+  },
+  "customizer_section_title_theme_variant" : {
+    "title" : "Тема",
+    "note" : "Section title for theme selection including theme variants"
+  },
+  "customizer_theme_variant_grid_label" : {
+    "title" : "Вариант темы",
+    "note" : "Accessibility label for the grid of theme variant options (Default, Cool Grey, Slate, etc.)"
+  },
+  "customizer_theme_variant_default" : {
+    "title" : "По умолчанию",
+    "note" : "Label for the default theme variant"
+  },
+  "customizer_theme_variant_coolGray" : {
+    "title" : "Холодный серый",
+    "note" : "Label for the cool grey theme variant"
+  },
+  "customizer_theme_variant_slateBlue" : {
+    "title" : "Грифель",
+    "note" : "Label for the slate blue theme variant"
+  },
+  "customizer_theme_variant_green" : {
+    "title" : "Зелёный",
+    "note" : "Label for the green theme variant"
+  },
+  "customizer_theme_variant_violet" : {
+    "title" : "Фиалка",
+    "note" : "Label for the violet theme variant"
+  },
+  "customizer_theme_variant_rose" : {
+    "title" : "Роза",
+    "note" : "Label for the rose theme variant"
+  },
+  "customizer_theme_variant_orange" : {
+    "title" : "Оранжевый",
+    "note" : "Label for the orange theme variant"
+  },
+  "customizer_theme_variant_desert" : {
+    "title" : "Пустыня",
+    "note" : "Label for the desert theme variant"
+  },
+  "activity_noRecent_title" : {
+    "title" : "Нет недавней истории просмотра сайтов",
+    "note" : "Placeholder to indicate that no browsing activity was seen in the last 7 days"
+  },
+  "activity_empty" : {
+    "title" : "Недавно посещенные сайты появятся здесь. Продолжайте бродить по интернету и узнайте, сколько трекеров поймал DuckDuckGo!",
+    "note" : "Shown in the place a list of browsing history entries will be displayed."
+  },
+  "activity_no_trackers" : {
+    "title" : "Ни одного трекера не найдено",
+    "note" : "Placeholder message indicating that no trackers are detected"
+  },
+  "activity_no_trackers_blocked" : {
+    "title" : "Заблокированных трекеров пока нет",
+    "note" : "Placeholder message indicating that no trackers are blocked"
+  },
+  "activity_countBlockedPlural" : {
+    "title" : "Пресечено попыток отслеживания: {count}",
+    "note" : "New pill text indicating that more than 1 attempt has been blocked. Eg: '2 Tracking attempts blocked'. Uppercase T is by design"
+  },
+  "activity_countBlockedPluralLegacy" : {
+    "title" : "Пресечено попыток отслеживания: <b>{count}</b>",
+    "note" : "The main headline indicating that more than 1 attempt has been blocked. Eg: '2 tracking attempts blocked'"
+  },
+  "activity_countBlockedSingular" : {
+    "title" : "Пресечено попыток отслеживания: {count}",
+    "note" : "Pill text indicating that 1 attempt has been blocked. Eg: '1 Tracking attempt blocked'"
+  },
+  "activity_cookiePopUpBlocked" : {
+    "title" : "Всплывающее окно куки заблокировано",
+    "note" : "Pill text indicating that we have blocked cookie pop-ups"
+  },
+  "activity_noRecentAdsAndTrackers_subtitle" : {
+    "title" : "Недавно посещенные сайты появятся здесь. Продолжайте бродить по интернету и узнайте, сколько трекеров и рекламы поймал DuckDuckGo!",
+    "note" : "Shown in the place a list of browsing history entries will be displayed."
+  },
+  "activity_no_adsAndTrackers" : {
+    "title" : "Рекламы и попыток отслеживания не обнаружено",
+    "note" : "Placeholder message indicating that no ads and trackers are detected"
+  },
+  "activity_no_adsAndTrackers_blocked" : {
+    "title" : "Рекламы и попыток отслеживания не заблокировано",
+    "note" : "Placeholder message indicating that no ads and trackers are blocked"
+  },
+  "activity_countBlockedAdsAndTrackersPlural" : {
+    "title" : "Заблокировано рекламы и попыток отслеживания: <b>{count}</b>",
+    "note" : "The main headline indicating that more than 1 attempt has been blocked. Eg: '2 ads + tracking attempts blocked'"
+  },
+  "activity_favoriteAdd" : {
+    "title" : "Добавить {domain} в избранное",
+    "note" : "Button label, allows the user to add the specified domain to their favorites"
+  },
+  "activity_favoriteRemove" : {
+    "title" : "Удалить {domain} из избранного",
+    "note" : "Button label, allows the user to remove the specified domain from their favorites"
+  },
+  "activity_itemRemove" : {
+    "title" : "Удалить {domain} из истории",
+    "note" : "Button label for clearing browsing history for a given domain."
+  },
+  "activity_burn" : {
+    "title" : "Стереть историю просмотров и данные сайта {domain}",
+    "note" : "Button label for clearing browsing history and data exclusively for the specified domain"
+  },
+  "activity_menuTitle" : {
+    "title" : "Недавняя активность",
+    "note" : "Used as a label in a customization menu"
+  },
+  "activity_show_more_history" : {
+    "title" : "Показать еще {count}",
+    "note" : "Button label that expands the list of browsing history with the specified count of additional items. Example: 'Show 5 more'"
+  },
+  "activity_show_less_history" : {
+    "title" : "Свернуть",
+    "note" : "Button label that hides the expanded browsing history items."
+  }
+}

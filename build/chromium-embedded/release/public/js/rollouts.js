@@ -7719,7 +7719,7 @@
           }
           configName = `extension${browserName}-config`;
         }
-        return `${trackerBlockingEndpointBase}/config/v4/${configName}.json`;
+        return `${trackerBlockingEndpointBase}/config/v6/${configName}.json`;
       }
       function getPlatformName() {
         if (true) {
@@ -7863,7 +7863,6 @@
           {
             allowedOrigin: "https://duckduckgo.com",
             allowedPathname: "ntp-blocked-stats.html",
-            legacyPathname: "ntp-tracker-stats.html",
             redirectTarget: "html/tracker-stats.html",
             clientPortName: "newtab-tracker-stats",
             /** @type {ReadonlyArray<string>} */

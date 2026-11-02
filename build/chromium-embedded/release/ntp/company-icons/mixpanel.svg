@@ -1,0 +1,12 @@
+<svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#Mixpanel_svg__a)">
+    <path fill="#7856FF" d="M24 12c0 6.627-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0s12 5.373 12 12Z"/>
+    <path fill="#fff" fill-opacity=".12" fill-rule="evenodd" d="M24 12c0 6.627-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0s12 5.373 12 12ZM12 23.5c6.351 0 11.5-5.149 11.5-11.5S18.351.5 12 .5.5 5.649.5 12 5.649 23.5 12 23.5Z" clip-rule="evenodd"/>
+    <path fill="#fff" fill-rule="evenodd" d="M6.47 14.44a2.47 2.47 0 1 0 0-4.94 2.47 2.47 0 0 0 0 4.94Zm7.148-.71a1.741 1.741 0 1 0 0-3.482 1.741 1.741 0 0 0 0 3.483ZM20 11.99a.795.795 0 1 1-1.59 0 .795.795 0 0 1 1.59 0Z" clip-rule="evenodd"/>
+  </g>
+  <defs>
+    <clipPath id="Mixpanel_svg__a">
+      <path fill="#fff" d="M0 0h24v24H0z"/>
+    </clipPath>
+  </defs>
+</svg>

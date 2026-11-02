@@ -1,0 +1,13 @@
+<svg fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#Semasio_svg__a)">
+    <path fill="#F6F7FB" d="M24 12c0 6.627-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0s12 5.373 12 12Z"/>
+    <path fill="#000" fill-opacity=".12" fill-rule="evenodd" d="M24 12c0 6.627-5.373 12-12 12S0 18.627 0 12 5.373 0 12 0s12 5.373 12 12ZM12 23.5c6.351 0 11.5-5.149 11.5-11.5S18.351.5 12 .5.5 5.649.5 12 5.649 23.5 12 23.5Z" clip-rule="evenodd"/>
+    <path fill="#66839E" d="M12 4.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15Zm3.366 6.751a2.68 2.68 0 1 1 0-5.36 2.68 2.68 0 0 1 0 5.36Z"/>
+    <path fill="#3E5163" d="M19.286 7.356a2.635 2.635 0 1 1-5.27 0 2.635 2.635 0 0 1 5.27 0Z"/>
+  </g>
+  <defs>
+    <clipPath id="Semasio_svg__a">
+      <path fill="#fff" d="M0 0h24v24H0z"/>
+    </clipPath>
+  </defs>
+</svg>
