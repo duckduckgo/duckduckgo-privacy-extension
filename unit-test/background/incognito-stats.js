@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 
-import { blockHandleResponse, emitter, TrackerBlockedEvent } from '../../shared/js/background/before-request';
+import { blockHandleResponse, emitter, TrackerBlockedEvent, TrackerFoundEvent } from '../../shared/js/background/before-request';
 import tabManager from '../../shared/js/background/tab-manager';
 import Companies from '../../shared/js/background/companies';
 import ServiceWorkerTab from '../../shared/js/background/classes/sw-tab';
@@ -93,17 +93,36 @@ describe('Incognito tabs', () => {
     describe('tracker stats', () => {
         const trackerRequest = { tabId, url: 'https://google-analytics.com/analytics.js', type: 'script' };
         let blockedEvents;
+        let foundEvents;
         const onBlocked = (event) => blockedEvents.push(event);
+        const onFound = (event) => foundEvents.push(event);
 
         beforeEach(() => {
             blockedEvents = [];
+            foundEvents = [];
             emitter.on(TrackerBlockedEvent.eventName, onBlocked);
+            emitter.on(TrackerFoundEvent.eventName, onFound);
             spyOn(Companies, 'add');
             spyOn(Companies, 'countCompanyOnPage');
         });
 
         afterEach(() => {
             emitter.off(TrackerBlockedEvent.eventName, onBlocked);
+            emitter.off(TrackerFoundEvent.eventName, onFound);
+        });
+
+        it('publishes the third-party trackers found on a page, blocked or not', () => {
+            const tab = tabManager.create({ id: tabId, url: 'https://example.com/' });
+            blockHandleResponse(tab, trackerRequest);
+            // not a tracker
+            blockHandleResponse(tab, { tabId, url: 'https://example.com/script.js', type: 'script' });
+            spyOn(tab.site, 'isContentBlockingEnabled').and.returnValue(false);
+            blockHandleResponse(tab, trackerRequest);
+
+            expect(foundEvents).toEqual([
+                new TrackerFoundEvent({ pageUrl: 'https://example.com/', companyDisplayName: 'Google', blocked: true }),
+                new TrackerFoundEvent({ pageUrl: 'https://example.com/', companyDisplayName: 'Google', blocked: false }),
+            ]);
         });
 
         for (const incognito of [false, true]) {
@@ -116,6 +135,7 @@ describe('Incognito tabs', () => {
                 expect(Companies.add).toHaveBeenCalledTimes(recorded ? 1 : 0);
                 expect(Companies.countCompanyOnPage).toHaveBeenCalledTimes(recorded ? 1 : 0);
                 expect(blockedEvents.length).toBe(recorded ? 1 : 0);
+                expect(foundEvents.length).toBe(recorded ? 1 : 0);
                 // The tab's own tracker list is always updated for the dashboard
                 expect(Object.keys(tab.trackers).length).toBe(1);
             });

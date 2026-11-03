@@ -112,7 +112,7 @@ describe('NTPMessaging component', () => {
         newTabTrackerStats.stats.increment('Facebook', now);
 
         const result = await ntpMessaging.handleRequest('protections_getData');
-        expect(result).toEqual({ totalCount: 3 });
+        expect(result).toEqual({ totalCount: 3, totalCookiePopUpsBlocked: null });
     });
 
     it('answers stats_getData with per-company counts, mapping "other" to the NTP identifier and placing it last', async () => {
@@ -146,11 +146,13 @@ describe('NTPMessaging component', () => {
                     { url: 'https://www.example.com/', title: '', lastVisitTime: now - 6 * MINUTE },
                     { url: 'http://example.com/a', title: 'Page A', lastVisitTime: now - 2 * 24 * 60 * MINUTE },
                 ],
+                trackersFound: true,
                 trackersBlocked: 3,
                 companies: ['Google', 'Facebook'],
             });
             activitySites.set('plain.example', {
                 pages: [{ url: 'http://plain.example/', title: 'Plain', lastVisitTime: now }],
+                trackersFound: false,
                 trackersBlocked: 0,
                 companies: [],
             });
@@ -287,7 +289,7 @@ describe('NTPMessaging component', () => {
                 context: 'specialPages',
                 featureName: 'newTabPage',
                 id: 'abc-123',
-                result: { totalCount: 0 },
+                result: { totalCount: 0, totalCookiePopUpsBlocked: null },
             },
         ]);
     });
@@ -475,7 +477,7 @@ describe('NTPMessaging component', () => {
                 context: 'specialPages',
                 featureName: 'newTabPage',
                 subscriptionName: 'protections_onDataUpdate',
-                params: { totalCount: 1 },
+                params: { totalCount: 1, totalCookiePopUpsBlocked: null },
             },
             {
                 context: 'specialPages',

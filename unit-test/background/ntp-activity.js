@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import NTPActivity from '../../shared/js/background/components/ntp-activity';
-import { emitter, TrackerBlockedEvent } from '../../shared/js/background/before-request';
+import { emitter, TrackerFoundEvent } from '../../shared/js/background/before-request';
 
 describe('NTPActivity component', () => {
     const DAY = 24 * 60 * 60 * 1000;
@@ -20,11 +20,12 @@ describe('NTPActivity component', () => {
     });
 
     /**
+     * @param {string} pageUrl
      * @param {string} companyDisplayName
-     * @param {string} [pageUrl]
+     * @param {boolean} [blocked]
      */
-    function blocked(companyDisplayName, pageUrl) {
-        emitter.emit(TrackerBlockedEvent.eventName, new TrackerBlockedEvent({ companyDisplayName, pageUrl }));
+    function found(pageUrl, companyDisplayName, blocked = true) {
+        emitter.emit(TrackerFoundEvent.eventName, new TrackerFoundEvent({ pageUrl, companyDisplayName, blocked }));
     }
 
     it('groups the last 7 days of history by domain, most recently visited first', async () => {
@@ -44,37 +45,42 @@ describe('NTPActivity component', () => {
                 { url: 'https://www.example.com/a', title: 'A', lastVisitTime: 3 },
                 { url: 'http://example.com/b', title: '', lastVisitTime: 1 },
             ],
+            trackersFound: false,
             trackersBlocked: 0,
             companies: [],
         });
     });
 
-    it('counts the trackers blocked on each domain', async () => {
+    it('counts the trackers found and blocked on each domain', async () => {
         history = [
-            { id: '1', url: 'https://www.example.com/a', title: 'A', lastVisitTime: 2 },
-            { id: '2', url: 'https://other.example/', title: 'Other', lastVisitTime: 1 },
+            { id: '1', url: 'https://www.example.com/a', title: 'A', lastVisitTime: 3 },
+            { id: '2', url: 'https://allowed.example/', title: 'Allowed', lastVisitTime: 2 },
+            { id: '3', url: 'https://other.example/', title: 'Other', lastVisitTime: 1 },
         ];
         const changes = [];
         activity.addEventListener('change', (event) => changes.push(/** @type {CustomEvent} */ (event).detail));
 
-        blocked('Google', 'https://www.example.com/a');
-        blocked('Facebook', 'http://example.com/b');
-        // not attributable to a page
-        blocked('Google');
-        blocked('Google', 'about:blank');
-        await activity.flushBlocked();
-        blocked('Google', 'https://example.com/');
-        await activity.flushBlocked();
+        found('https://www.example.com/a', 'Google');
+        found('http://example.com/b', 'Facebook');
+        found('https://allowed.example/', 'Google', false);
+        // not a web page
+        found('about:blank', 'Google');
+        await activity.flushTrackers();
+        found('https://example.com/', 'Google');
+        await activity.flushTrackers();
 
         const sites = await activity.getSites();
-        expect(sites.get('example.com')).toEqual(jasmine.objectContaining({ trackersBlocked: 3, companies: ['Google', 'Facebook'] }));
-        expect(sites.get('other.example')).toEqual(jasmine.objectContaining({ trackersBlocked: 0, companies: [] }));
-        expect(changes).toEqual([['example.com'], ['example.com']]);
+        expect(sites.get('example.com')).toEqual(
+            jasmine.objectContaining({ trackersFound: true, trackersBlocked: 3, companies: ['Google', 'Facebook'] }),
+        );
+        expect(sites.get('allowed.example')).toEqual(jasmine.objectContaining({ trackersFound: true, trackersBlocked: 0, companies: [] }));
+        expect(sites.get('other.example')).toEqual(jasmine.objectContaining({ trackersFound: false, trackersBlocked: 0 }));
+        expect(changes).toEqual([['example.com', 'allowed.example'], ['example.com']]);
     });
 
     it('counts the last 7 days, and forgets the domains no longer in the history', async () => {
         history = [{ id: '1', url: 'https://example.com/', title: 'Example', lastVisitTime: 1 }];
-        await activity.blocked.bulkPut([
+        await activity.trackers.bulkPut([
             { domain: 'example.com', day: today, count: 1, companies: ['Google'] },
             { domain: 'example.com', day: today - 7, count: 2, companies: ['Facebook'] },
             { domain: 'example.com', day: today - 8, count: 4, companies: ['Amazon'] },
@@ -87,17 +93,17 @@ describe('NTPActivity component', () => {
             jasmine.objectContaining({ trackersBlocked: 3, companies: jasmine.arrayWithExactContents(['Google', 'Facebook']) }),
         );
         expect(sites.has('gone.example')).toBeFalse();
-        expect(await activity.blocked.where('domain').equals('gone.example').count()).toBe(0);
+        expect(await activity.trackers.where('domain').equals('gone.example').count()).toBe(0);
     });
 
-    it('removes a domain from the history and forgets its blocked trackers', async () => {
+    it('removes a domain from the history and forgets its trackers', async () => {
         const deleteUrl = spyOn(browser.history, 'deleteUrl').and.returnValue(Promise.resolve());
         history = [
             { id: '1', url: 'https://www.example.com/a', title: 'A', lastVisitTime: 2 },
             { id: '2', url: 'https://example.com/b', title: 'B', lastVisitTime: 1 },
             { id: '3', url: 'https://other.example/', title: 'Other', lastVisitTime: 0 },
         ];
-        await activity.blocked.bulkPut([
+        await activity.trackers.bulkPut([
             { domain: 'example.com', day: today - 20, count: 1, companies: [] },
             { domain: 'other.example', day: today, count: 1, companies: [] },
         ]);
@@ -105,16 +111,16 @@ describe('NTPActivity component', () => {
         await activity.removeDomain('example.com');
 
         expect(deleteUrl.calls.allArgs()).toEqual([[{ url: 'https://www.example.com/a' }], [{ url: 'https://example.com/b' }]]);
-        expect(await activity.blocked.toArray()).toEqual([jasmine.objectContaining({ domain: 'other.example' })]);
+        expect(await activity.trackers.toArray()).toEqual([jasmine.objectContaining({ domain: 'other.example' })]);
     });
 
-    it('clears its blocked trackers, including those not yet written', async () => {
-        blocked('Google', 'https://example.com/');
-        await activity.blocked.put({ domain: 'example.com', day: today, count: 1, companies: [] });
+    it('clears its trackers, including those not yet written', async () => {
+        found('https://example.com/', 'Google');
+        await activity.trackers.put({ domain: 'example.com', day: today, count: 1, companies: [] });
 
         await activity.clear();
-        await activity.flushBlocked();
+        await activity.flushTrackers();
 
-        expect(await activity.blocked.count()).toBe(0);
+        expect(await activity.trackers.count()).toBe(0);
     });
 });

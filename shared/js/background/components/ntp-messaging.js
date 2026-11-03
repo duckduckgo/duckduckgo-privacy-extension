@@ -62,8 +62,6 @@ const DEFAULT_PROTECTIONS_CONFIG = { expansion: 'expanded', feed: 'privacy-stats
 
 const SEARCH_URL = 'https://duckduckgo.com/';
 const FAVICON_SIZE = 64;
-// the page shows at most 10 of a site's pages
-const MAX_HISTORY_ENTRIES = 10;
 const relativeTimeFormat = new Intl.RelativeTimeFormat(getUserLocale(), { numeric: 'auto' });
 
 /**
@@ -337,7 +335,8 @@ export default class NTPMessaging {
      * @returns {ProtectionsData}
      */
     getProtectionsData() {
-        return { totalCount: this.newTabTrackerStats.stats.totalCount };
+        // null: the current report UI, without cookie pop-up stats
+        return { totalCount: this.newTabTrackerStats.stats.totalCount, totalCookiePopUpsBlocked: null };
     }
 
     /**
@@ -486,10 +485,9 @@ function toDomainActivity(url, domain, site) {
             totalCount: site.trackersBlocked,
             trackerCompanies: site.companies.map((displayName) => ({ displayName })),
         },
-        trackersFound: site.trackersBlocked > 0,
+        trackersFound: site.trackersFound,
         history: site.pages
             .filter((page) => page.title)
-            .slice(0, MAX_HISTORY_ENTRIES)
             .map((page) => ({ title: page.title, url: page.url, relativeTime: relativeTime(page.lastVisitTime) })),
         favorite: false,
     };

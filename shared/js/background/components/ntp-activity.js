@@ -1,6 +1,6 @@
 import browser from 'webextension-polyfill';
 import Dexie from 'dexie';
-import { emitter, TrackerBlockedEvent } from '../before-request';
+import { emitter, TrackerFoundEvent } from '../before-request';
 import { extractHostFromURL } from '../utils';
 import { createAlarm } from '../wrapper';
 
@@ -10,21 +10,24 @@ const DAYS = 7;
 const PRUNE_ALARM_NAME = 'pruneNtpActivity';
 
 /**
- * @typedef {object} BlockedTrackers - the trackers blocked on a domain's pages in a day
+ * @typedef {object} DayTrackers - the trackers found on a domain's pages in a day
  * @property {string} domain
  * @property {number} day - days since the epoch, UTC
- * @property {number} count
- * @property {string[]} companies - display names of the trackers' owners
+ * @property {number} count - how many were blocked
+ * @property {string[]} companies - display names of the blocked trackers' owners
+ *
+ * @typedef {{ count: number, companies: string[] }} PendingTrackers
  *
  * @typedef {object} SiteActivity
  * @property {{ url: string, title: string, lastVisitTime: number }[]} pages - most recently visited first
+ * @property {boolean} trackersFound
  * @property {number} trackersBlocked
  * @property {string[]} companies
  */
 
 /**
  * The New Tab Page's activity feed: the browser's history for the last 7 days by
- * domain, with the trackers blocked on each domain, which are kept in IndexedDB.
+ * domain, with the trackers found on each domain, which are kept in IndexedDB.
  * Tracker data goes with the history: on a burn, when all history is deleted, and
  * once a domain is no longer in it.
  *
@@ -32,10 +35,10 @@ const PRUNE_ALARM_NAME = 'pruneNtpActivity';
  */
 export default class NTPActivity extends EventTarget {
     /**
-     * Blocked trackers' owners by domain, not yet written.
-     * @type {Map<string, string[]>}
+     * Trackers found by domain, not yet written.
+     * @type {Map<string, PendingTrackers>}
      */
-    pendingBlocked = new Map();
+    pendingTrackers = new Map();
 
     /** @type {ReturnType<typeof setTimeout>?} */
     flushTimer = null;
@@ -48,20 +51,22 @@ export default class NTPActivity extends EventTarget {
     constructor(dbName = 'ntpActivity') {
         super();
         this.db = new Dexie(dbName);
-        this.db.version(1).stores({ blocked: '[domain+day], domain, day' });
-        /** @type {import('dexie').Table<BlockedTrackers, [string, number]>} */
-        this.blocked = this.db.table('blocked');
+        this.db.version(1).stores({ trackers: '[domain+day], domain, day' });
+        /** @type {import('dexie').Table<DayTrackers, [string, number]>} */
+        this.trackers = this.db.table('trackers');
 
-        // At most one write a second while trackers are being blocked.
-        emitter.on(TrackerBlockedEvent.eventName, (event) => {
-            if (!(event instanceof TrackerBlockedEvent)) return;
-            const domain = pageDomain(event.pageUrl || '');
+        // At most one write a second while trackers are being found.
+        emitter.on(TrackerFoundEvent.eventName, (event) => {
+            if (!(event instanceof TrackerFoundEvent)) return;
+            const domain = pageDomain(event.pageUrl);
             if (!domain) return;
-            const companies = this.pendingBlocked.get(domain) || [];
-            companies.push(event.companyDisplayName);
-            this.pendingBlocked.set(domain, companies);
-            if (this.flushTimer) return;
-            this.flushTimer = setTimeout(() => this.flushBlocked(), 1000);
+            const pending = this.pendingTrackers.get(domain) || { count: 0, companies: [] };
+            if (event.blocked) {
+                pending.count++;
+                pending.companies.push(event.companyDisplayName);
+            }
+            this.pendingTrackers.set(domain, pending);
+            this.flushTimer ||= setTimeout(() => this.flushTrackers(), 1000);
         });
 
         browser.history.onVisited.addListener(({ url }) => {
@@ -79,7 +84,7 @@ export default class NTPActivity extends EventTarget {
         createAlarm(PRUNE_ALARM_NAME, { periodInMinutes: 60 });
         browser.alarms.onAlarm.addListener(({ name }) => {
             if (name === PRUNE_ALARM_NAME) {
-                this.blocked
+                this.trackers
                     .where('day')
                     .below(today() - DAYS)
                     .delete();
@@ -89,50 +94,51 @@ export default class NTPActivity extends EventTarget {
 
     /**
      * The last 7 days of the browser's history by domain, both most recently
-     * visited first. Forgets the blocked trackers of domains no longer in it.
+     * visited first. Forgets the trackers of domains no longer in it.
      * @returns {Promise<Map<string, SiteActivity>>}
      */
     async getSites() {
         const firstDay = today() - DAYS;
-        const [historyItems, blocked] = await Promise.all([
+        const [historyItems, trackers] = await Promise.all([
             browser.history.search({ text: '', startTime: firstDay * DAY_MS, maxResults: 0 }),
-            this.blocked.where('day').aboveOrEqual(firstDay).toArray(),
+            this.trackers.where('day').aboveOrEqual(firstDay).toArray(),
         ]);
         /** @type {Map<string, SiteActivity>} */
         const sites = new Map();
         for (const { url = '', title = '', lastVisitTime = 0 } of historyItems) {
             const domain = pageDomain(url);
             if (!domain) continue;
-            const site = sites.get(domain) || { pages: [], trackersBlocked: 0, companies: [] };
+            const site = sites.get(domain) || { pages: [], trackersFound: false, trackersBlocked: 0, companies: [] };
             site.pages.push({ url, title, lastVisitTime });
             sites.set(domain, site);
         }
         /** @type {[string, number][]} */
         const forgotten = [];
-        for (const { domain, day, count, companies } of blocked) {
+        for (const { domain, day, count, companies } of trackers) {
             const site = sites.get(domain);
             if (site) {
+                site.trackersFound = true;
                 site.trackersBlocked += count;
                 site.companies = [...new Set([...site.companies, ...companies])];
             } else {
                 forgotten.push([domain, day]);
             }
         }
-        await this.blocked.bulkDelete(forgotten);
+        await this.trackers.bulkDelete(forgotten);
         return sites;
     }
 
-    async flushBlocked() {
+    async flushTrackers() {
         this.flushTimer = null;
         const day = today();
-        const pending = [...this.pendingBlocked];
-        this.pendingBlocked = new Map();
-        await this.db.transaction('rw', this.blocked, async () => {
-            const rows = await this.blocked.bulkGet(pending.map(([domain]) => [domain, day]));
-            await this.blocked.bulkPut(
-                pending.map(([domain, companies], i) => {
+        const pending = [...this.pendingTrackers];
+        this.pendingTrackers = new Map();
+        await this.db.transaction('rw', this.trackers, async () => {
+            const rows = await this.trackers.bulkGet(pending.map(([domain]) => [domain, day]));
+            await this.trackers.bulkPut(
+                pending.map(([domain, { count, companies }], i) => {
                     const row = rows[i] || { domain, day, count: 0, companies: [] };
-                    row.count += companies.length;
+                    row.count += count;
                     row.companies = [...new Set([...row.companies, ...companies])];
                     return row;
                 }),
@@ -143,20 +149,20 @@ export default class NTPActivity extends EventTarget {
 
     /**
      * Delete a domain's last 7 days from the browser's history and forget its
-     * blocked trackers.
+     * trackers.
      * @param {string} domain
      */
     async removeDomain(domain) {
         const site = (await this.getSites()).get(domain);
         await Promise.all((site?.pages || []).map(({ url }) => browser.history.deleteUrl({ url })));
-        this.pendingBlocked.delete(domain);
-        await this.blocked.where('domain').equals(domain).delete();
+        this.pendingTrackers.delete(domain);
+        await this.trackers.where('domain').equals(domain).delete();
         this.dispatchEvent(new CustomEvent('change', { detail: [domain] }));
     }
 
     async clear() {
-        this.pendingBlocked.clear();
-        await this.blocked.clear();
+        this.pendingTrackers.clear();
+        await this.trackers.clear();
         this.dispatchEvent(new CustomEvent('change', { detail: [] }));
     }
 }

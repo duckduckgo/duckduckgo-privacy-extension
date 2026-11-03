@@ -87,7 +87,7 @@ test.describe('Embedded New Tab Page', () => {
         await page.getByRole('tab', { name: 'Details' }).click();
         const site = page.getByTestId('ActivityItem').filter({ hasText: 'privacy-test-pages.site' });
         await expect(site.getByRole('link', { name: 'Request blocking test page' })).toBeVisible();
-        await expect(site.getByText(/\d+ tracking attempts blocked/)).toBeVisible();
+        await expect(site.getByText(/\d+ tracking attempts blocked/i)).toBeVisible();
 
         await site.getByRole('button', { name: 'Remove privacy-test-pages.site from history' }).click();
         await expect(site).toHaveCount(0);
@@ -139,6 +139,6 @@ test.describe('Embedded New Tab Page', () => {
 
         // the restarted worker answers the re-sent request
         await (await serviceWorkerControl(page)).stop();
-        expect(await response).toEqual(expect.objectContaining({ result: { totalCount: 0 } }));
+        expect(await response).toEqual(expect.objectContaining({ result: { totalCount: 0, totalCookiePopUpsBlocked: null } }));
     });
 });
