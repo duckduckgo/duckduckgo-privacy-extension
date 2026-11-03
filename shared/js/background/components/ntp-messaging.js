@@ -82,7 +82,10 @@ function ddgApi() {
  *  - subscription events are pushed to all connected pages as
  *    `{context, featureName, subscriptionName, params}`.
  *
- * Privacy stats come from NewTabTrackerStats, favorites from the browser's\n * bookmarks over chrome.ddg and the activity feed from NTPActivity; suggestions\n * are empty.\n */
+ * Privacy stats come from NewTabTrackerStats, favorites from the browser's
+ * bookmarks over chrome.ddg and the activity feed from NTPActivity; suggestions
+ * are empty.
+ */
 export default class NTPMessaging {
     /** @type {Set<Port>} */
     ports = new Set();
@@ -306,7 +309,9 @@ export default class NTPMessaging {
                 console.error(`NTP ${method}:`, params?.message);
                 break;
             default:
-            // favorites_openContextMenu, activity_addFavorite/\n                // removeFavorite, telemetryEvent etc.\n                console.log(`NTP notification (ignored): ${method}`, params);
+                // favorites_openContextMenu, activity_addFavorite/
+                // removeFavorite, telemetryEvent etc.
+                console.log(`NTP notification (ignored): ${method}`, params);
         }
     }
 
