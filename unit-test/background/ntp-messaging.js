@@ -373,6 +373,60 @@ describe('NTPMessaging component', () => {
             expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledTimes(1);
         });
 
+        describe('in the activity feed', () => {
+            const other = { id: '8', title: 'Other', url: 'https://other.example/' };
+
+            beforeEach(() => {
+                const now = Date.now();
+                activitySites.set('example.co.uk', {
+                    pages: [
+                        { url: 'https://www.example.co.uk/', title: '', lastVisitTime: now },
+                        { url: 'https://example.co.uk/c', title: 'Latest titled', lastVisitTime: now - 1 },
+                    ],
+                    trackersFound: false,
+                    trackersBlocked: 0,
+                    companies: [],
+                });
+                activitySites.set('other.example', {
+                    pages: [{ url: 'https://other.example/', title: 'Other', lastVisitTime: now }],
+                    trackersFound: false,
+                    trackersBlocked: 0,
+                    companies: [],
+                });
+                chrome.ddg.getFavorites = () => Promise.resolve([other]);
+            });
+
+            it('stars the sites whose URL is a favorite', async () => {
+                const { activity } = await ntpMessaging.handleRequest('activity_getDataForUrls', {
+                    urls: ['https://example.co.uk/', 'https://other.example/'],
+                });
+                expect(activity.map((item) => item.favorite)).toEqual([false, true]);
+            });
+
+            it('adds a favorite titled like the latest titled page, and removes one', async () => {
+                chrome.ddg.addFavorite = jasmine.createSpy('addFavorite').and.resolveTo();
+                chrome.ddg.removeFavorite = jasmine.createSpy('removeFavorite').and.resolveTo();
+
+                await ntpMessaging.handleNotification('activity_addFavorite', { url: 'https://example.co.uk/' });
+                await ntpMessaging.handleNotification('activity_addFavorite', { url: 'https://gone.example/' });
+                await ntpMessaging.handleNotification('activity_removeFavorite', { url: 'https://other.example/' });
+
+                expect(chrome.ddg.addFavorite.calls.allArgs()).toEqual([['https://example.co.uk/', 'Latest titled']]);
+                expect(chrome.ddg.removeFavorite).toHaveBeenCalledOnceWith('https://other.example/');
+            });
+
+            it('patches the sites whose star changed in the browser', async () => {
+                const queue = spyOn(ntpMessaging, 'queueActivityPush');
+
+                await changedListeners[0]();
+                expect(queue).toHaveBeenCalledWith(['other.example']);
+
+                chrome.ddg.getFavorites = () => Promise.resolve([{ ...other, url: 'https://example.co.uk/' }]);
+                await changedListeners[0]();
+                expect(queue).toHaveBeenCalledWith(['example.co.uk', 'other.example']);
+            });
+        });
+
         it('pushes favorites to connected pages when the browser reports a change', async () => {
             const port = createFakePort();
             // @ts-ignore - fake port
