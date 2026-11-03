@@ -220,9 +220,9 @@ export const emitter = new EventEmitter2();
 
 /**
  * An event to publish the fact that we blocked a tracker.
- * Note: this is deliberately conservative about how much information is published:
- * the parent company's display name, which powers the NewTabTrackerStats module, and
- * the URL of the page it was blocked on, which powers the NTPActivity module.
+ * Note: this is deliberately conservative about how much information is published,
+ * for now it's just the parent company's display name which is enough
+ * to power the NewTabTrackerStats module.
  * It is not emitted for incognito tabs, which are left out of the persisted stats.
  */
 export class TrackerBlockedEvent {
@@ -231,11 +231,29 @@ export class TrackerBlockedEvent {
     /**
      * @param {object} params
      * @param {string} params.companyDisplayName
-     * @param {string} [params.pageUrl] - absent when the request may be from a page the tab has left
      */
     constructor(params) {
         this.companyDisplayName = params.companyDisplayName;
+    }
+}
+
+/**
+ * A third-party tracker requested by the tab's current page, blocked or not. Powers the
+ * NTPActivity module. It is not emitted for incognito tabs.
+ */
+export class TrackerFoundEvent {
+    static eventName = 'tracker-found';
+
+    /**
+     * @param {object} params
+     * @param {string} params.pageUrl
+     * @param {string} params.companyDisplayName
+     * @param {boolean} params.blocked
+     */
+    constructor(params) {
         this.pageUrl = params.pageUrl;
+        this.companyDisplayName = params.companyDisplayName;
+        this.blocked = params.blocked;
     }
 }
 
@@ -347,6 +365,17 @@ function blockHandleResponse(thisTab, requestData) {
                 const url = utils.getURLWithoutQueryString(requestData.url);
                 thisTab.addToTrackers(tracker, baseDomain, url);
             }
+
+            if (!thisTab.incognito && tracker.action !== 'none' && !tracker.sameEntity) {
+                emitter.emit(
+                    TrackerFoundEvent.eventName,
+                    new TrackerFoundEvent({
+                        pageUrl: thisTab.site.url,
+                        companyDisplayName: utils.findParentDisplayName(requestData.url),
+                        blocked: ['block', 'redirect'].includes(tracker.action),
+                    }),
+                );
+            }
         }
         // the tab has finished loading
         postPopupMessage({ messageType: 'updateTabData' });
@@ -357,11 +386,9 @@ function blockHandleResponse(thisTab, requestData) {
                 // @ts-ignore
                 Companies.add(tracker.tracker.owner);
 
+                // publish the parent's display name only
                 const displayName = utils.findParentDisplayName(requestData.url);
-                emitter.emit(
-                    TrackerBlockedEvent.eventName,
-                    new TrackerBlockedEvent({ companyDisplayName: displayName, pageUrl: sameDomainDocument ? thisTab.url : undefined }),
-                );
+                emitter.emit(TrackerBlockedEvent.eventName, new TrackerBlockedEvent({ companyDisplayName: displayName }));
             }
 
             console.info(
