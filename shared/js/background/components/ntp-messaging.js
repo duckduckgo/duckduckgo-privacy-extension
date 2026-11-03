@@ -103,6 +103,12 @@ export default class NTPMessaging {
     changedDomains = new Set();
 
     /**
+     * Favorite URLs as of the last favorites change, to patch the activity feed's stars.
+     * @type {Set<string>}
+     */
+    favoriteUrls = new Set();
+
+    /**
      * @param {{
      *  settings: Settings,
      *  newTabTrackerStats: NewTabTrackerStats,
@@ -129,7 +135,12 @@ export default class NTPMessaging {
 
         // Top level, so the browser can wake the worker to deliver it.
         if (chrome.ddg?.onFavoritesChanged) {
-            chrome.ddg.onFavoritesChanged.addListener(() => this.pushFavoritesUpdate());
+            chrome.ddg.onFavoritesChanged.addListener(async () => {
+                const [, favoriteUrls] = await Promise.all([this.pushFavoritesUpdate(), getFavoriteUrls()]);
+                const changed = [...favoriteUrls, ...this.favoriteUrls].filter((url) => favoriteUrls.has(url) !== this.favoriteUrls.has(url));
+                this.favoriteUrls = favoriteUrls;
+                this.queueActivityPush(changed.map(pageDomain));
+            });
         } else {
             console.error('chrome.ddg.onFavoritesChanged is unavailable: open New Tab Pages will not see favorites change');
         }
@@ -144,17 +155,7 @@ export default class NTPMessaging {
             }, 1000);
         });
 
-        // At most one activity push a second.
-        ntpActivity.addEventListener('change', (event) => {
-            /** @type {CustomEvent<string[]>} */ (event).detail.forEach((domain) => this.changedDomains.add(domain));
-            if (this.activityPushTimer) return;
-            this.activityPushTimer = setTimeout(() => {
-                this.activityPushTimer = null;
-                const domains = [...this.changedDomains];
-                this.changedDomains.clear();
-                this.pushActivityUpdate(domains);
-            }, 1000);
-        });
+        ntpActivity.addEventListener('change', (event) => this.queueActivityPush(/** @type {CustomEvent<string[]>} */ (event).detail));
 
         // Pages left open while the service worker was stopped have lost their port.
         browser.runtime.sendMessage({ [NTP_RECONNECT_MESSAGE]: true }).catch(() => {});
@@ -303,14 +304,27 @@ export default class NTPMessaging {
             case 'activity_removeItem':
                 await this.ntpActivity.removeDomain(pageDomain(params?.url));
                 break;
+            case 'activity_addFavorite': {
+                // The page has already starred it. A new bookmark is titled like the site's latest page.
+                const domain = pageDomain(params?.url);
+                const site = (await this.ntpActivity.getSites()).get(domain);
+                if (site) {
+                    await chrome.ddg?.addFavorite?.(params.url, site.pages.find((page) => page.title)?.title || domain);
+                }
+                break;
+            }
+            case 'activity_removeFavorite':
+                if (typeof params?.url === 'string') {
+                    await chrome.ddg?.removeFavorite?.(params.url);
+                }
+                break;
 
             case 'reportInitException':
             case 'reportPageException':
                 console.error(`NTP ${method}:`, params?.message);
                 break;
             default:
-                // favorites_openContextMenu, activity_addFavorite/
-                // removeFavorite, telemetryEvent etc.
+                // favorites_openContextMenu, telemetryEvent etc.
                 console.log(`NTP notification (ignored): ${method}`, params);
         }
     }
@@ -392,13 +406,13 @@ export default class NTPMessaging {
      * @returns {Promise<{ activity: DomainActivity[] }>}
      */
     async getActivityData(urls) {
-        const sites = await this.ntpActivity.getSites();
+        const [sites, favoriteUrls] = await Promise.all([this.ntpActivity.getSites(), getFavoriteUrls()]);
         const activity = [];
         for (const url of Array.isArray(urls) ? urls : []) {
             const domain = pageDomain(url);
             const site = sites.get(domain);
             if (site) {
-                activity.push(toDomainActivity(url, domain, site));
+                activity.push(toDomainActivity(url, domain, site, favoriteUrls.has(url)));
             }
         }
         return { activity };
@@ -410,21 +424,36 @@ export default class NTPMessaging {
     }
 
     /**
+     * Push the activity of the given domains within a second, at most one push a second.
+     * @param {string[]} domains
+     */
+    queueActivityPush(domains) {
+        domains.forEach((domain) => this.changedDomains.add(domain));
+        this.activityPushTimer ||= setTimeout(() => {
+            this.activityPushTimer = null;
+            const changed = [...this.changedDomains];
+            this.changedDomains.clear();
+            this.pushActivityUpdate(changed);
+        }, 1000);
+    }
+
+    /**
      * Push the activity feed's URLs, with each of the given domains that still
      * has activity as a patch.
      * @param {string[]} changedDomains
      */
     async pushActivityUpdate(changedDomains) {
         if (this.ports.size === 0) return;
-        const sites = await this.ntpActivity.getSites();
+        const [sites, favoriteUrls] = await Promise.all([this.ntpActivity.getSites(), getFavoriteUrls()]);
         const urlInfo = toUrlInfo(sites);
         let patched = false;
         for (const domain of new Set(changedDomains)) {
             const site = sites.get(domain);
             if (!site) continue;
+            const url = siteUrl(domain, site);
             this.pushSubscriptionEvent('activity_onDataPatch', {
                 ...urlInfo,
-                patch: toDomainActivity(siteUrl(domain, site), domain, site),
+                patch: toDomainActivity(url, domain, site, favoriteUrls.has(url)),
             });
             patched = true;
         }
@@ -478,9 +507,10 @@ function toUrlInfo(sites) {
  * @param {string} url - the site URL the page knows the domain by
  * @param {string} domain
  * @param {SiteActivity} site
+ * @param {boolean} favorite
  * @returns {DomainActivity}
  */
-function toDomainActivity(url, domain, site) {
+function toDomainActivity(url, domain, site, favorite) {
     return {
         title: domain,
         url,
@@ -494,8 +524,15 @@ function toDomainActivity(url, domain, site) {
         history: site.pages
             .filter((page) => page.title)
             .map((page) => ({ title: page.title, url: page.url, relativeTime: relativeTime(page.lastVisitTime) })),
-        favorite: false,
+        favorite,
     };
+}
+
+/**
+ * @returns {Promise<Set<string>>} the URLs of the favorites the browser shows
+ */
+async function getFavoriteUrls() {
+    return new Set(((await chrome.ddg?.getFavorites?.()) ?? []).map(({ url }) => url));
 }
 
 /**
