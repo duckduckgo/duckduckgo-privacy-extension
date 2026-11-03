@@ -205,6 +205,79 @@ describe('NTPMessaging component', () => {
         expect(await ntpMessaging.handleRequest('protections_getConfig')).toEqual(protectionsConfig);
     });
 
+    describe('favorites', () => {
+        const favorite = { id: '7', title: 'Example', url: 'https://www.example.co.uk/a?b' };
+        const pageFavorite = {
+            ...favorite,
+            etldPlusOne: 'example.co.uk',
+            favicon: { src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.co.uk%2Fa%3Fb&size=64&', maxAvailableSize: 64 },
+        };
+        let changedListeners;
+
+        beforeEach(() => {
+            changedListeners = [];
+            chrome.ddg = {
+                getFavorites: () => Promise.resolve([favorite]),
+                moveFavorite: jasmine.createSpy('moveFavorite').and.resolveTo(),
+                onFavoritesChanged: { addListener: (listener) => changedListeners.push(listener) },
+            };
+            // @ts-ignore - MockSettings stands in for Settings
+            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+        });
+
+        afterEach(() => {
+            delete chrome.ddg;
+        });
+
+        it('answers favorites_getData from the browser', async () => {
+            expect(await ntpMessaging.handleRequest('favorites_getData')).toEqual({ favorites: [pageFavorite] });
+        });
+
+        it('moves favorites in the browser', async () => {
+            await ntpMessaging.handleNotification('favorites_move', { id: '7', fromIndex: 0, targetIndex: 2 });
+            expect(chrome.ddg.moveFavorite).toHaveBeenCalledWith('7', 2);
+
+            await ntpMessaging.handleNotification('favorites_move', { id: '7', targetIndex: 'x' });
+            expect(chrome.ddg.moveFavorite).toHaveBeenCalledTimes(1);
+        });
+
+        it('pushes favorites to connected pages when the browser reports a change', async () => {
+            const port = createFakePort();
+            // @ts-ignore - fake port
+            ntpMessaging.ports.add(port);
+
+            expect(changedListeners.length).toBe(1);
+            await changedListeners[0]();
+
+            expect(port.posted).toEqual([
+                {
+                    context: 'specialPages',
+                    featureName: 'newTabPage',
+                    subscriptionName: 'favorites_onDataUpdate',
+                    params: { favorites: [pageFavorite] },
+                },
+            ]);
+        });
+
+        it('pushes a change that woke the worker once the pages reconnect', async () => {
+            let onConnect;
+            spyOn(browser.runtime.onConnect, 'addListener').and.callFake((listener) => {
+                onConnect = listener;
+            });
+            changedListeners = [];
+            // @ts-ignore - MockSettings stands in for Settings
+            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+
+            await changedListeners[0]();
+            const port = { ...createFakePort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
+            onConnect(port);
+            await new Promise((resolve) => setTimeout(resolve));
+
+            expect(port.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
+            expect(ntpMessaging.favoritesStale).toBeFalse();
+        });
+    });
+
     it('broadcasts subscription events to connected ports', () => {
         const port = createFakePort();
         // @ts-ignore - fake port

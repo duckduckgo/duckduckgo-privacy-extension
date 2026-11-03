@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill';
 import { NewTabTrackerStats } from '../newtab-tracker-stats';
 import { emitter, TrackerBlockedEvent } from '../before-request';
 import { getUserLocale } from '../i18n';
+import { getBaseDomain } from '../utils';
 import {
     NTP_PORT_NAME,
     NTP_RECONNECT_MESSAGE,
@@ -46,6 +47,7 @@ const DEFAULT_FAVORITES_CONFIG = { expansion: 'expanded' };
 const DEFAULT_PROTECTIONS_CONFIG = { expansion: 'expanded', feed: 'privacy-stats' };
 
 const SEARCH_URL = 'https://duckduckgo.com/';
+const FAVICON_SIZE = 64;
 
 /**
  * Messaging endpoint for the New Tab Page, over the runtime port opened by
@@ -55,8 +57,8 @@ const SEARCH_URL = 'https://duckduckgo.com/';
  *  - subscription events are pushed to all connected pages as
  *    `{context, featureName, subscriptionName, params}`.
  *
- * Privacy stats come from NewTabTrackerStats; favorites, suggestions and the
- * activity feed are empty.
+ * Privacy stats come from NewTabTrackerStats and favorites from the browser's
+ * bookmarks over chrome.ddg; suggestions and the activity feed are empty.
  */
 export default class NTPMessaging {
     /** @type {Set<Port>} */
@@ -64,6 +66,9 @@ export default class NTPMessaging {
 
     /** @type {ReturnType<typeof setTimeout>?} */
     pushTimer = null;
+
+    /** Favorites changed while no page was connected to hear it. */
+    favoritesStale = false;
 
     /**
      * @param {{
@@ -84,7 +89,11 @@ export default class NTPMessaging {
             port.onDisconnect.addListener(() => {
                 this.ports.delete(port);
             });
+            if (this.favoritesStale) this.pushFavoritesUpdate();
         });
+
+        // Top level, so the browser can wake the worker to deliver it.
+        chrome.ddg?.onFavoritesChanged?.addListener(() => this.pushFavoritesUpdate());
 
         // At most one push a second while trackers are being blocked. Scheduled even with no
         // pages connected, as open pages reconnect after the event that started the worker.
@@ -151,7 +160,7 @@ export default class NTPMessaging {
                 await this.settings.ready();
                 return this.settings.getSetting(FAVORITES_CONFIG_SETTING) || DEFAULT_FAVORITES_CONFIG;
             case 'favorites_getData':
-                return { favorites: [] };
+                return this.getFavoritesData();
 
             // Protections
             case 'protections_getConfig':
@@ -207,6 +216,12 @@ export default class NTPMessaging {
             case 'favorites_open':
                 this.openUrl(params?.url, params?.target, port);
                 break;
+            case 'favorites_move':
+                // The page has already moved it; onFavoritesChanged echoes the order back.
+                if (typeof params?.id === 'string' && Number.isInteger(params?.targetIndex)) {
+                    await chrome.ddg?.moveFavorite?.(params.id, params.targetIndex);
+                }
+                break;
 
             // Protections
             case 'protections_setConfig':
@@ -222,7 +237,7 @@ export default class NTPMessaging {
                 console.error(`NTP ${method}:`, params?.message);
                 break;
             default:
-                // favorites_move/add/openContextMenu, activity_addFavorite/
+                // favorites_add/openContextMenu, activity_addFavorite/
                 // removeFavorite/removeItem, telemetryEvent etc.
                 console.log(`NTP notification (ignored): ${method}`, params);
         }
@@ -267,6 +282,34 @@ export default class NTPMessaging {
             trackerCompanies.push(...trackerCompanies.splice(otherIndex, 1));
         }
         return { trackerCompanies };
+    }
+
+    /**
+     * Favorites in the page's format. Favicons come from Chromium's favicon
+     * cache (the `favicon` permission); the page appends `?preferredSize=N` to
+     * `src` verbatim, so the trailing '&' keeps that from corrupting `size`.
+     */
+    async getFavoritesData() {
+        const favorites = (await chrome.ddg?.getFavorites?.()) ?? [];
+        return {
+            favorites: favorites.map(({ id, title, url }) => ({
+                id,
+                title,
+                url,
+                etldPlusOne: getBaseDomain(url),
+                favicon: {
+                    src: `/_favicon/?pageUrl=${encodeURIComponent(url)}&size=${FAVICON_SIZE}&`,
+                    maxAvailableSize: FAVICON_SIZE,
+                },
+            })),
+        };
+    }
+
+    async pushFavoritesUpdate() {
+        // A change that started the worker arrives before open pages reconnect.
+        this.favoritesStale = this.ports.size === 0;
+        if (this.favoritesStale) return;
+        this.pushSubscriptionEvent('favorites_onDataUpdate', await this.getFavoritesData());
     }
 
     pushDataUpdate() {
