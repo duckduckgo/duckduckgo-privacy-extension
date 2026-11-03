@@ -41,6 +41,13 @@ declare namespace chrome {
               moveFavorite?(id: string, index: number): Promise<void>;
 
               /**
+               * extension -> browser; opens the bookmark dialog for adding a
+               * favorite over tab `tabId`, which must be its window's active
+               * tab. Resolves with whether it opened.
+               */
+              showAddFavoriteBubble?(tabId: number): Promise<boolean>;
+
+              /**
                * browser -> extension; the favorites may have changed. Not
                * held for a listener that registers late.
                */

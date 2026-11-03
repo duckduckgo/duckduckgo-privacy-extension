@@ -222,6 +222,14 @@ export default class NTPMessaging {
                     await chrome.ddg?.moveFavorite?.(params.id, params.targetIndex);
                 }
                 break;
+            case 'favorites_add': {
+                // The browser's bookmark dialog adds it; onFavoritesChanged brings it back.
+                const tabId = port?.sender?.tab?.id;
+                if (tabId) {
+                    await chrome.ddg?.showAddFavoriteBubble?.(tabId);
+                }
+                break;
+            }
 
             // Protections
             case 'protections_setConfig':
@@ -237,7 +245,7 @@ export default class NTPMessaging {
                 console.error(`NTP ${method}:`, params?.message);
                 break;
             default:
-                // favorites_add/openContextMenu, activity_addFavorite/
+                // favorites_openContextMenu, activity_addFavorite/
                 // removeFavorite/removeItem, telemetryEvent etc.
                 console.log(`NTP notification (ignored): ${method}`, params);
         }

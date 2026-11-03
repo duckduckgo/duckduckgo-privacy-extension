@@ -241,6 +241,19 @@ describe('NTPMessaging component', () => {
             expect(chrome.ddg.moveFavorite).toHaveBeenCalledTimes(1);
         });
 
+        it('opens the browser add favorite dialog over the NTP tab', async () => {
+            chrome.ddg.showAddFavoriteBubble = jasmine.createSpy('showAddFavoriteBubble').and.resolveTo(true);
+            const port = { ...createFakePort(), sender: { tab: { id: 7 } } };
+
+            // @ts-ignore - fake port
+            await ntpMessaging.handleNotification('favorites_add', undefined, port);
+            expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledWith(7);
+
+            // @ts-ignore - fake port
+            await ntpMessaging.handleNotification('favorites_add', undefined, createFakePort());
+            expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledTimes(1);
+        });
+
         it('pushes favorites to connected pages when the browser reports a change', async () => {
             const port = createFakePort();
             // @ts-ignore - fake port
