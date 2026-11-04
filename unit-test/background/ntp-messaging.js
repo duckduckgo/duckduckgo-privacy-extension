@@ -356,6 +356,28 @@ describe('NTPMessaging component', () => {
         expect(await ntpMessaging.handleRequest('protections_getConfig')).toEqual(protectionsConfig);
     });
 
+    it('sends a new protections config to every open page', async () => {
+        const protectionsConfig = { expansion: 'collapsed', feed: 'activity' };
+        const sender = createFakePort();
+        const other = createFakePort();
+        // @ts-ignore - fake ports
+        [sender, other].forEach((port) => ntpMessaging.ports.add(port));
+
+        // @ts-ignore - fake port
+        await ntpMessaging.onMessage({ ...requestMessage('protections_setConfig', protectionsConfig), Id: undefined }, sender);
+
+        for (const port of [sender, other]) {
+            expect(port.posted).toEqual([
+                {
+                    context: 'specialPages',
+                    featureName: 'newTabPage',
+                    subscriptionName: 'protections_onConfigUpdate',
+                    params: protectionsConfig,
+                },
+            ]);
+        }
+    });
+
     describe('favorites', () => {
         it('answers favorites_getData from the browser', async () => {
             expect(await ntpMessaging.handleRequest('favorites_getData')).toEqual({ favorites: [pageFavorite] });

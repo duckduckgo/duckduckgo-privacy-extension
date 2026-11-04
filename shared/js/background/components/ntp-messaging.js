@@ -305,6 +305,8 @@ export default class NTPMessaging {
             case 'protections_setConfig':
                 await this.settings.ready();
                 this.settings.updateSetting(PROTECTIONS_CONFIG_SETTING, params);
+                // As on Windows, every open page is sent the new config, the sender included.
+                this.pushSubscriptionEvent('protections_onConfigUpdate', params);
                 break;
             case 'activity_open':
                 this.openUrl(params?.url, params?.target, port, false);
