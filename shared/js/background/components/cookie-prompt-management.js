@@ -10,6 +10,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  patterns: Set<string>,
  *  onlyRules: Set<string>,
  *  both: Set<string>,
+ *  patternSites: Record<string, DetectedSite>,
  * }} detectionCache
  * @property {Record<string, number>} summaryEvents - event counts without a site rank bucket
  * @property {Partial<Record<SiteRankBucket, Record<string, number>>>} summaryEventsByRank
@@ -37,6 +38,14 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  */
 
 /**
+ * The top-level site of a page that the heuristic patterns detected a popup on. Kept until the next summary, to find
+ * the sites whose popups no rule handled.
+ * @typedef {Object} DetectedSite
+ * @property {string} host
+ * @property {SiteRankBucket=} siteRank
+ */
+
+/**
  * Counts of one summary window that the browser adds to its daily CPM coverage telemetry.
  * @typedef {Object} CoverageCounts
  * @property {number} unhandled - popups detected by heuristic patterns that no rule detected
@@ -58,7 +67,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  checkAutoconsentEnabledForSite: (url: string, tabId?: number) => Promise<boolean>;
  *  checkSubfeatureEnabled: (subfeatureName: string, tabId?: number) => Promise<boolean>;
  *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
- *  reportCoverage: (counts: CoverageCounts, siteRank?: SiteRankBucket) => Promise<void>;
+ *  reportCoverage: (counts: CoverageCounts, siteRank?: SiteRankBucket, unhandledHosts?: string[]) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
  *  setDiagnosticsErrorHandler?: (handler: (tabId: number | null, errorName: string) => void) => void;
  * }} CPMMessagingBase
@@ -91,6 +100,18 @@ const logsConfig = {
  * @typedef {(Omit<import('@duckduckgo/autoconsent').InitResponseMessage, 'config'> & { config: Partial<import('@duckduckgo/autoconsent').Config> })
  *     | import('@duckduckgo/autoconsent').EvalResponseMessage} AutoconsentReply
  */
+
+/**
+ * @param {string} url
+ * @returns {string | undefined}
+ */
+function hostnameOf(url) {
+    try {
+        return new URL(url).hostname || undefined;
+    } catch (e) {
+        return undefined;
+    }
+}
 
 export default class CookiePromptManagement {
     static SUMMARY_ALARM_NAME = 'cpm-summary';
@@ -201,6 +222,7 @@ export default class CookiePromptManagement {
                 patterns: new Set(jsonCpmState.detectionCache?.patterns || []),
                 both: new Set(jsonCpmState.detectionCache?.both || []),
                 onlyRules: new Set(jsonCpmState.detectionCache?.onlyRules || []),
+                patternSites: structuredClone(jsonCpmState.detectionCache?.patternSites || {}),
             },
             summaryEvents: structuredClone(jsonCpmState.summaryEvents || {}),
             summaryEventsByRank: structuredClone(jsonCpmState.summaryEventsByRank || {}),
@@ -219,6 +241,7 @@ export default class CookiePromptManagement {
                 patterns: Array.from(cpmState.detectionCache.patterns),
                 both: Array.from(cpmState.detectionCache.both),
                 onlyRules: Array.from(cpmState.detectionCache.onlyRules),
+                patternSites: structuredClone(cpmState.detectionCache.patternSites),
             },
             summaryEvents: structuredClone(cpmState.summaryEvents),
             summaryEventsByRank: structuredClone(cpmState.summaryEventsByRank),
@@ -237,6 +260,7 @@ export default class CookiePromptManagement {
                     patterns: [],
                     both: [],
                     onlyRules: [],
+                    patternSites: {},
                 },
                 summaryEvents: {},
                 summaryEventsByRank: {},
@@ -719,6 +743,10 @@ export default class CookiePromptManagement {
                 await this.modifyCpmState((cpmState) => {
                     if (isMainFrame && heuristicMatch && !cpmState.detectionCache.patterns.has(msg.instanceId)) {
                         cpmState.detectionCache.patterns.add(msg.instanceId);
+                        const host = hostnameOf(tabUrl);
+                        if (host) {
+                            cpmState.detectionCache.patternSites[msg.instanceId] = { host, siteRank };
+                        }
                         // no await to avoid deadlock
                         this.firePixel('detected-by-patterns', siteRank);
                     }
@@ -868,14 +896,15 @@ export default class CookiePromptManagement {
     /**
      * @param {Record<string, number>} events - summary counts of one bucket
      * @param {SiteRankBucket=} siteRank
+     * @param {Set<string>=} unhandledHosts - hosts of the pages whose popup was detected by patterns only
      */
-    async reportCoverage(events, siteRank) {
+    async reportCoverage(events, siteRank, unhandledHosts) {
         const counts = CookiePromptManagement.coverageCounts(events);
         if (counts.unhandled === 0 && counts.pages === 0) {
             return;
         }
         try {
-            await this.cpmMessaging.reportCoverage(counts, siteRank);
+            await this.cpmMessaging.reportCoverage(counts, siteRank, unhandledHosts ? Array.from(unhandledHosts) : []);
         } catch (e) {
             this.cpmMessaging.logMessage(`error reporting coverage: ${e}`);
         }
@@ -889,7 +918,14 @@ export default class CookiePromptManagement {
         let summaryEvents = {};
         /** @type {CpmState['summaryEventsByRank']} */
         let summaryEventsByRank = {};
+        /** @type {Record<string, Set<string>>} hosts whose popup no rule detected, by site rank bucket ('' for none) */
+        const unhandledHosts = {};
         await this.modifyCpmState((cpmState) => {
+            for (const [instanceId, { host, siteRank }] of Object.entries(cpmState.detectionCache.patternSites)) {
+                if (!cpmState.detectionCache.both.has(instanceId)) {
+                    (unhandledHosts[siteRank || ''] ||= new Set()).add(host);
+                }
+            }
             summaryEvents = structuredClone(cpmState.summaryEvents);
             summaryEventsByRank = structuredClone(cpmState.summaryEventsByRank);
             cpmState.summaryEvents = {};
@@ -897,6 +933,7 @@ export default class CookiePromptManagement {
             cpmState.detectionCache.patterns.clear();
             cpmState.detectionCache.both.clear();
             cpmState.detectionCache.onlyRules.clear();
+            cpmState.detectionCache.patternSites = {};
         });
         const consentHeuristicEnabled = await this.getPixelHeuristicParameter();
         if (!this.siteRankLookup || Object.keys(summaryEvents).length > 0) {
@@ -905,7 +942,7 @@ export default class CookiePromptManagement {
                 consentHeuristicEnabled,
                 fromExtension: '1',
             });
-            this.reportCoverage(summaryEvents);
+            this.reportCoverage(summaryEvents, undefined, unhandledHosts['']);
         }
         for (const [siteRank, events] of Object.entries(summaryEventsByRank)) {
             if (Object.keys(events).length === 0) {
@@ -917,7 +954,7 @@ export default class CookiePromptManagement {
                 consentHeuristicEnabled,
                 fromExtension: '1',
             });
-            this.reportCoverage(events, /** @type {SiteRankBucket} */ (siteRank));
+            this.reportCoverage(events, /** @type {SiteRankBucket} */ (siteRank), unhandledHosts[siteRank]);
         }
     }
 }

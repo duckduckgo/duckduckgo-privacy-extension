@@ -921,8 +921,8 @@ describe('CookiePromptManagement', () => {
             await cpm.sendSummaryPixel();
 
             expect(mockMessaging.reportCoverage.calls.count()).toBe(2);
-            expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 1 }, 'top10k');
-            expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 2 }, 'other');
+            expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 1 }, 'top10k', ['www.top-site.example']);
+            expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 2 }, 'other', ['long-tail.example']);
         });
 
         it('reports counts without a bucket when there is no site rank lookup', async () => {
@@ -936,7 +936,7 @@ describe('CookiePromptManagement', () => {
             ]);
             await cpm.sendSummaryPixel();
 
-            expect(mockMessaging.reportCoverage.calls.allArgs()).toEqual([[{ unhandled: 0, pages: 2 }, undefined]]);
+            expect(mockMessaging.reportCoverage.calls.allArgs()).toEqual([[{ unhandled: 0, pages: 2 }, undefined, []]]);
         });
 
         it('reports nothing when nothing was counted or no page ran CPM', async () => {
@@ -965,7 +965,7 @@ describe('CookiePromptManagement', () => {
 
             await cpm.sendSummaryPixel();
 
-            expect(mockMessaging.reportCoverage).toHaveBeenCalledOnceWith({ unhandled: 0, pages: 1 }, 'other');
+            expect(mockMessaging.reportCoverage).toHaveBeenCalledOnceWith({ unhandled: 0, pages: 1 }, 'other', []);
         });
 
         it('still sends the summary pixel when reporting the counts fails', async () => {
@@ -980,7 +980,61 @@ describe('CookiePromptManagement', () => {
             expect(mockMessaging.sendPixel.calls.allArgs().filter(([name]) => name === 'autoconsent_summary').length).toBe(1);
         });
 
-        it('sends only counts and the bucket, never a URL or domain', async () => {
+        describe('unhandled hosts', () => {
+            it('sends the hosts of pages detected by patterns but not by rules, per bucket', async () => {
+                const mockMessaging = createMockMessaging();
+                const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+                await cpm.remoteConfigJson;
+
+                await handleMessages(cpm, [
+                    [makeSender({ tabId: 1, tabUrl: TOP_URL }), makeInitMessage()],
+                    [makeSender({ tabId: 1, tabUrl: TOP_URL }), reportMessage('a', { patterns: true, rules: false })],
+                    [makeSender({ tabId: 2, tabUrl: OTHER_URL }), makeInitMessage()],
+                    [makeSender({ tabId: 2, tabUrl: OTHER_URL }), reportMessage('b', { patterns: true, rules: false })],
+                    [makeSender({ tabId: 3, tabUrl: 'https://handled.example/page' }), makeInitMessage()],
+                    [makeSender({ tabId: 3, tabUrl: 'https://handled.example/page' }), reportMessage('c', { patterns: true, rules: true })],
+                ]);
+                await cpm.sendSummaryPixel();
+
+                expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 1 }, 'top10k', ['www.top-site.example']);
+                expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 2 }, 'other', ['long-tail.example']);
+            });
+
+            it('sends one entry per host when several pages of it were unhandled', async () => {
+                const mockMessaging = createMockMessaging();
+                const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+                await cpm.remoteConfigJson;
+
+                await handleMessages(cpm, [
+                    [makeSender({ tabId: 1, tabUrl: OTHER_URL }), makeInitMessage()],
+                    [makeSender({ tabId: 1, tabUrl: OTHER_URL }), reportMessage('a', { patterns: true, rules: false })],
+                    [makeSender({ tabId: 1, tabUrl: OTHER_URL }), makeInitMessage()],
+                    [makeSender({ tabId: 1, tabUrl: OTHER_URL }), reportMessage('b', { patterns: true, rules: false })],
+                ]);
+                await cpm.sendSummaryPixel();
+
+                expect(mockMessaging.reportCoverage).toHaveBeenCalledOnceWith({ unhandled: 2, pages: 2 }, 'other', ['long-tail.example']);
+            });
+
+            it('forgets the hosts after each summary', async () => {
+                const mockMessaging = createMockMessaging();
+                const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+                await cpm.remoteConfigJson;
+
+                await handleMessages(cpm, [
+                    [makeSender({ tabUrl: OTHER_URL }), makeInitMessage()],
+                    [makeSender({ tabUrl: OTHER_URL }), reportMessage('a', { patterns: true, rules: false })],
+                ]);
+                await cpm.sendSummaryPixel();
+                await handleMessages(cpm, [[makeSender({ tabUrl: OTHER_URL }), makeInitMessage()]]);
+                await cpm.sendSummaryPixel();
+
+                expect(mockMessaging.reportCoverage.calls.mostRecent().args).toEqual([{ unhandled: 0, pages: 1 }, 'other', []]);
+                expect((await cpm.getCpmState()).detectionCache.patternSites).toEqual({});
+            });
+        });
+
+        it('keeps the counts and the bucket free of URLs and domains', async () => {
             const mockMessaging = createMockMessaging();
             const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
             await cpm.remoteConfigJson;
@@ -991,7 +1045,8 @@ describe('CookiePromptManagement', () => {
             ]);
             await cpm.sendSummaryPixel();
 
-            const serialized = JSON.stringify(mockMessaging.reportCoverage.calls.allArgs());
+            const [counts, siteRank] = mockMessaging.reportCoverage.calls.mostRecent().args;
+            const serialized = JSON.stringify({ counts, siteRank });
             expect(serialized).not.toContain('example');
             expect(serialized).not.toContain('pattern');
         });

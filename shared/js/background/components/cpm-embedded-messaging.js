@@ -14,6 +14,7 @@ export const SETTING_CHECK_TTL = 10 * 1000; // 10s
 export const SITE_CHECK_TTL = 3 * 1000; // 3s (to be able to respond to Protections toggle changes)
 export const MAX_CACHE_SIZE = 100;
 export const NATIVE_MESSAGE_TIMEOUT_MS = 20 * 1000;
+export const MAX_UNHANDLED_HOSTS = 100; // per coverage message
 
 /**
  * CPM messaging for embedded extension.
@@ -205,11 +206,12 @@ export class CPMEmbeddedMessaging {
         });
     }
 
-    async reportCoverage(counts, siteRank) {
+    async reportCoverage(counts, siteRank, unhandledHosts = []) {
         await this._notify('reportCpmCoverage', {
             unhandled: counts.unhandled,
             pages: counts.pages,
             ...(siteRank ? { siteRank } : {}),
+            ...(unhandledHosts.length > 0 ? { unhandledHosts: unhandledHosts.slice(0, MAX_UNHANDLED_HOSTS) } : {}),
         });
     }
 

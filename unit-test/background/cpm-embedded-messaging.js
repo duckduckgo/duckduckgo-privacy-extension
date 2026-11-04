@@ -561,6 +561,17 @@ describe('CPMEmbeddedMessaging', () => {
             expect(nativeMessaging.notify).toHaveBeenCalledWith('reportCpmCoverage', { unhandled: 2, pages: 5, siteRank: 'top10k' });
         });
 
+        it('sends the unhandled hosts, capped, and leaves them out when there are none', async () => {
+            const hosts = Array.from({ length: 150 }, (_, i) => `site${i}.example`);
+            await messaging.reportCoverage({ unhandled: 150, pages: 150 }, 'other', hosts);
+            await messaging.reportCoverage({ unhandled: 0, pages: 1 }, 'other', []);
+
+            const [first, second] = nativeMessaging.notify.calls.allArgs().map(([, params]) => params);
+            expect(first.unhandledHosts.length).toBe(100);
+            expect(first.unhandledHosts[0]).toBe('site0.example');
+            expect(second.unhandledHosts).toBeUndefined();
+        });
+
         it('leaves out the site rank when there is none', async () => {
             await messaging.reportCoverage({ unhandled: 0, pages: 1 });
 
