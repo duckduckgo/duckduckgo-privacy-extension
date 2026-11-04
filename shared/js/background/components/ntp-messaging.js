@@ -3,6 +3,7 @@ import { NewTabTrackerStats } from '../newtab-tracker-stats';
 import { emitter, TrackerBlockedEvent } from '../before-request';
 import { getUserLocale } from '../i18n';
 import { getBaseDomain } from '../utils';
+import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 import { pageDomain } from './ntp-activity';
 import {
     NTP_PORT_NAME,
@@ -62,7 +63,10 @@ const DEFAULT_PROTECTIONS_CONFIG = { expansion: 'expanded', feed: 'privacy-stats
 
 const SEARCH_URL = 'https://duckduckgo.com/';
 const FAVICON_SIZE = 64;
-const relativeTimeFormat = new Intl.RelativeTimeFormat(getUserLocale(), { numeric: 'auto' });
+const relativeTimeFormat = new Intl.RelativeTimeFormat(getUserLocale());
+const JUST_NOW = new Intl.RelativeTimeFormat(getUserLocale(), { numeric: 'auto' }).format(0, 'second');
+/** Session storage key for the favorite URLs the activity feed's stars were last given. */
+const STARRED_URLS_KEY = 'ntpStarredUrls';
 
 /**
  * `chrome.ddg`; throws where the browser does not provide it.
@@ -103,12 +107,6 @@ export default class NTPMessaging {
     changedDomains = new Set();
 
     /**
-     * Favorite URLs as of the last favorites change, to patch the activity feed's stars.
-     * @type {Set<string>}
-     */
-    favoriteUrls = new Set();
-
-    /**
      * @param {{
      *  settings: Settings,
      *  newTabTrackerStats: NewTabTrackerStats,
@@ -137,8 +135,8 @@ export default class NTPMessaging {
         if (chrome.ddg?.onFavoritesChanged) {
             chrome.ddg.onFavoritesChanged.addListener(async () => {
                 const [, favoriteUrls] = await Promise.all([this.pushFavoritesUpdate(), getFavoriteUrls()]);
-                const changed = [...favoriteUrls, ...this.favoriteUrls].filter((url) => favoriteUrls.has(url) !== this.favoriteUrls.has(url));
-                this.favoriteUrls = favoriteUrls;
+                const starred = await swapStarredUrls(favoriteUrls);
+                const changed = [...favoriteUrls, ...starred].filter((url) => favoriteUrls.has(url) !== starred.has(url));
                 this.queueActivityPush(changed.map(pageDomain));
             });
         } else {
@@ -304,18 +302,19 @@ export default class NTPMessaging {
             case 'activity_removeItem':
                 await this.ntpActivity.removeDomain(pageDomain(params?.url));
                 break;
-            case 'activity_addFavorite': {
-                // The page has already starred it. A new bookmark is titled like the site's latest page.
-                const domain = pageDomain(params?.url);
-                const site = (await this.ntpActivity.getSites()).get(domain);
-                if (site) {
-                    await chrome.ddg?.addFavorite?.(params.url, site.pages.find((page) => page.title)?.title || domain);
+            // The page has already toggled the star; pushing the site puts it back if that fails.
+            case 'activity_addFavorite':
+                if (typeof params?.url === 'string') {
+                    const domain = pageDomain(params.url);
+                    const site = (await this.ntpActivity.getSites()).get(domain);
+                    // A new bookmark is titled like the site's latest page, as on Windows.
+                    const title = site?.pages[0].title.trim() || domain;
+                    await chrome.ddg?.addFavorite?.(params.url, title).catch(() => this.queueActivityPush([domain]));
                 }
                 break;
-            }
             case 'activity_removeFavorite':
                 if (typeof params?.url === 'string') {
-                    await chrome.ddg?.removeFavorite?.(params.url);
+                    await chrome.ddg?.removeFavorite?.(params.url).catch(() => this.queueActivityPush([pageDomain(params.url)]));
                 }
                 break;
 
@@ -407,6 +406,7 @@ export default class NTPMessaging {
      */
     async getActivityData(urls) {
         const [sites, favoriteUrls] = await Promise.all([this.ntpActivity.getSites(), getFavoriteUrls()]);
+        await setToSessionStorage(STARRED_URLS_KEY, [...favoriteUrls]);
         const activity = [];
         for (const url of Array.isArray(urls) ? urls : []) {
             const domain = pageDomain(url);
@@ -522,7 +522,7 @@ function toDomainActivity(url, domain, site, favorite) {
         },
         trackersFound: site.trackersFound,
         history: site.pages
-            .filter((page) => page.title)
+            .filter((page) => page.title.trim())
             .map((page) => ({ title: page.title, url: page.url, relativeTime: relativeTime(page.lastVisitTime) })),
         favorite,
     };
@@ -533,6 +533,19 @@ function toDomainActivity(url, domain, site, favorite) {
  */
 async function getFavoriteUrls() {
     return new Set(((await chrome.ddg?.getFavorites?.()) ?? []).map(({ url }) => url));
+}
+
+/**
+ * Records `favoriteUrls` as the activity feed's stars. Kept for the session, as
+ * the favorites change that wakes the worker must be compared with the stars the
+ * page was given before it stopped.
+ * @param {Set<string>} favoriteUrls
+ * @returns {Promise<Set<string>>} the stars recorded before
+ */
+async function swapStarredUrls(favoriteUrls) {
+    const starred = new Set((await getFromSessionStorage(STARRED_URLS_KEY)) || []);
+    await setToSessionStorage(STARRED_URLS_KEY, [...favoriteUrls]);
+    return starred;
 }
 
 /**
@@ -550,7 +563,7 @@ function favicon(pageUrl) {
  */
 function relativeTime(time) {
     const minutes = Math.floor((Date.now() - time) / 60000);
-    if (minutes < 1) return relativeTimeFormat.format(0, 'second');
+    if (minutes < 1) return JUST_NOW;
     if (minutes < 60) return relativeTimeFormat.format(-minutes, 'minute');
     if (minutes < 24 * 60) return relativeTimeFormat.format(-Math.floor(minutes / 60), 'hour');
     return relativeTimeFormat.format(-Math.floor(minutes / (24 * 60)), 'day');

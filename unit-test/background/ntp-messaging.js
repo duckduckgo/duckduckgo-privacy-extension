@@ -3,6 +3,7 @@ import NTPMessaging from '../../shared/js/background/components/ntp-messaging';
 import { NewTabTrackerStats } from '../../shared/js/background/newtab-tracker-stats';
 import { TrackerStats } from '../../shared/js/background/classes/tracker-stats';
 import { MockSettings } from '../helpers/mocks';
+import { setToSessionStorage } from '../../shared/js/background/wrapper';
 
 describe('NTPMessaging component', () => {
     /** @type {NTPMessaging} */
@@ -143,8 +144,8 @@ describe('NTPMessaging component', () => {
                 pages: [
                     { url: 'https://www.example.com/b', title: 'Page B', lastVisitTime: now - 5 * MINUTE },
                     // untitled pages are not listed
-                    { url: 'https://www.example.com/', title: '', lastVisitTime: now - 6 * MINUTE },
-                    { url: 'http://example.com/a', title: 'Page A', lastVisitTime: now - 2 * 24 * 60 * MINUTE },
+                    { url: 'https://www.example.com/', title: ' ', lastVisitTime: now - 6 * MINUTE },
+                    { url: 'http://example.com/a', title: 'Page A', lastVisitTime: now - 30 * 60 * MINUTE },
                 ],
                 trackersFound: true,
                 trackersBlocked: 3,
@@ -180,7 +181,7 @@ describe('NTPMessaging component', () => {
                 trackersFound: true,
                 history: [
                     { title: 'Page B', url: 'https://www.example.com/b', relativeTime: '5 minutes ago' },
-                    { title: 'Page A', url: 'http://example.com/a', relativeTime: '2 days ago' },
+                    { title: 'Page A', url: 'http://example.com/a', relativeTime: '1 day ago' },
                 ],
                 favorite: false,
             });
@@ -383,12 +384,12 @@ describe('NTPMessaging component', () => {
         describe('in the activity feed', () => {
             const other = { id: '8', title: 'Other', url: 'https://other.example/' };
 
-            beforeEach(() => {
+            beforeEach(async () => {
                 const now = Date.now();
                 activitySites.set('example.co.uk', {
                     pages: [
-                        { url: 'https://www.example.co.uk/', title: '', lastVisitTime: now },
-                        { url: 'https://example.co.uk/c', title: 'Latest titled', lastVisitTime: now - 1 },
+                        { url: 'https://www.example.co.uk/', title: 'Latest', lastVisitTime: now },
+                        { url: 'https://example.co.uk/c', title: 'Older', lastVisitTime: now - 1 },
                     ],
                     trackersFound: false,
                     trackersBlocked: 0,
@@ -401,6 +402,7 @@ describe('NTPMessaging component', () => {
                     companies: [],
                 });
                 chrome.ddg.getFavorites = () => Promise.resolve([other]);
+                await setToSessionStorage('ntpStarredUrls', undefined);
             });
 
             it('stars the sites whose URL is a favorite', async () => {
@@ -410,7 +412,7 @@ describe('NTPMessaging component', () => {
                 expect(activity.map((item) => item.favorite)).toEqual([false, true]);
             });
 
-            it('adds a favorite titled like the latest titled page, and removes one', async () => {
+            it('adds a favorite titled like the latest page or the domain, and removes one', async () => {
                 chrome.ddg.addFavorite = jasmine.createSpy('addFavorite').and.resolveTo();
                 chrome.ddg.removeFavorite = jasmine.createSpy('removeFavorite').and.resolveTo();
 
@@ -418,8 +420,22 @@ describe('NTPMessaging component', () => {
                 await ntpMessaging.handleNotification('activity_addFavorite', { url: 'https://gone.example/' });
                 await ntpMessaging.handleNotification('activity_removeFavorite', { url: 'https://other.example/' });
 
-                expect(chrome.ddg.addFavorite.calls.allArgs()).toEqual([['https://example.co.uk/', 'Latest titled']]);
+                expect(chrome.ddg.addFavorite.calls.allArgs()).toEqual([
+                    ['https://example.co.uk/', 'Latest'],
+                    ['https://gone.example/', 'gone.example'],
+                ]);
                 expect(chrome.ddg.removeFavorite).toHaveBeenCalledOnceWith('https://other.example/');
+            });
+
+            it('puts the star back when the browser fails to change it', async () => {
+                chrome.ddg.addFavorite = jasmine.createSpy('addFavorite').and.rejectWith(new Error('not loaded'));
+                chrome.ddg.removeFavorite = jasmine.createSpy('removeFavorite').and.rejectWith(new Error('not loaded'));
+                const queue = spyOn(ntpMessaging, 'queueActivityPush');
+
+                await ntpMessaging.handleNotification('activity_addFavorite', { url: 'https://example.co.uk/' });
+                await ntpMessaging.handleNotification('activity_removeFavorite', { url: 'https://other.example/' });
+
+                expect(queue.calls.allArgs()).toEqual([[['example.co.uk']], [['other.example']]]);
             });
 
             it('patches the sites whose star changed in the browser', async () => {
@@ -431,6 +447,18 @@ describe('NTPMessaging component', () => {
                 chrome.ddg.getFavorites = () => Promise.resolve([{ ...other, url: 'https://example.co.uk/' }]);
                 await changedListeners[0]();
                 expect(queue).toHaveBeenCalledWith(['example.co.uk', 'other.example']);
+            });
+
+            it('patches a star the page was given before the worker restarted', async () => {
+                await ntpMessaging.handleRequest('activity_getDataForUrls', { urls: ['https://other.example/'] });
+                changedListeners = [];
+                // @ts-ignore - MockSettings and ntpActivity stand in for Settings and NTPActivity
+                ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
+                const queue = spyOn(ntpMessaging, 'queueActivityPush');
+
+                chrome.ddg.getFavorites = () => Promise.resolve([]);
+                await changedListeners[0]();
+                expect(queue).toHaveBeenCalledWith(['other.example']);
             });
         });
 
