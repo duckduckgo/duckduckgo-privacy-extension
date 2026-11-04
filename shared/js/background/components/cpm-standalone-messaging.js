@@ -53,6 +53,10 @@ export class CPMStandaloneMessaging {
         return this.remoteConfig.isSubFeatureEnabled('autoconsent', subfeatureName);
     }
 
+    async reportCoverage() {
+        // Coverage counts feed the native browsers' telemetry; there is nothing to report to here.
+    }
+
     async sendPixel(pixelName, type, params) {
         if (type === 'daily') {
             // emulate "daily" pixel firing

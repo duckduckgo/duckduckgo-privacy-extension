@@ -37,6 +37,13 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  */
 
 /**
+ * Counts of one summary window that the browser adds to its daily CPM coverage telemetry.
+ * @typedef {Object} CoverageCounts
+ * @property {number} unhandled - popups detected by heuristic patterns that no rule detected
+ * @property {number} pages - main frame page loads where CPM ran
+ */
+
+/**
  * @typedef {'not_started' | 'config_unavailable' | 'settings_missing' | 'setting_disabled' | 'site_disabled' | 'init_received' | 'popup_found' | 'optout_failed' | 'done'} CpmStage
  */
 
@@ -51,6 +58,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  checkAutoconsentEnabledForSite: (url: string, tabId?: number) => Promise<boolean>;
  *  checkSubfeatureEnabled: (subfeatureName: string, tabId?: number) => Promise<boolean>;
  *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
+ *  reportCoverage: (counts: CoverageCounts, siteRank?: SiteRankBucket) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
  *  setDiagnosticsErrorHandler?: (handler: (tabId: number | null, errorName: string) => void) => void;
  * }} CPMMessagingBase
@@ -848,6 +856,32 @@ export default class CookiePromptManagement {
     }
 
     /**
+     * @param {Record<string, number>} events - summary counts of one bucket
+     * @returns {CoverageCounts}
+     */
+    static coverageCounts(events) {
+        const patterns = events['detected-by-patterns'] || 0;
+        const both = events['detected-by-both'] || 0;
+        return { unhandled: Math.max(0, patterns - both), pages: events.init || 0 };
+    }
+
+    /**
+     * @param {Record<string, number>} events - summary counts of one bucket
+     * @param {SiteRankBucket=} siteRank
+     */
+    async reportCoverage(events, siteRank) {
+        const counts = CookiePromptManagement.coverageCounts(events);
+        if (counts.unhandled === 0 && counts.pages === 0) {
+            return;
+        }
+        try {
+            await this.cpmMessaging.reportCoverage(counts, siteRank);
+        } catch (e) {
+            this.cpmMessaging.logMessage(`error reporting coverage: ${e}`);
+        }
+    }
+
+    /**
      * Counts without a bucket, e.g. from a state saved before the lookup was added, go in a pixel without `siteRank`.
      */
     async sendSummaryPixel() {
@@ -871,6 +905,7 @@ export default class CookiePromptManagement {
                 consentHeuristicEnabled,
                 fromExtension: '1',
             });
+            this.reportCoverage(summaryEvents);
         }
         for (const [siteRank, events] of Object.entries(summaryEventsByRank)) {
             if (Object.keys(events).length === 0) {
@@ -882,6 +917,7 @@ export default class CookiePromptManagement {
                 consentHeuristicEnabled,
                 fromExtension: '1',
             });
+            this.reportCoverage(events, /** @type {SiteRankBucket} */ (siteRank));
         }
     }
 }
