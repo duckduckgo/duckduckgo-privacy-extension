@@ -127,6 +127,7 @@ const chrome = {
         },
     },
     windows: {
+        create() {},
         onFocusChanged: {
             addListener() {},
             removeListener() {},

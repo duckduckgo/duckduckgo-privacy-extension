@@ -131,17 +131,23 @@ describe('NTPMessaging component', () => {
             { ...requestMessage('favorites_open', { id: 'x', url: 'https://example.com/', target: 'new-tab' }), Id: undefined },
             port,
         );
-        expect(openUrl).toHaveBeenCalledWith('https://example.com/', 'new-tab', port);
+        // Favorites open in a background tab.
+        expect(openUrl).toHaveBeenCalledWith('https://example.com/', 'new-tab', port, false);
     });
 
     it('opens new tabs next to the NTP and same-tab links in the NTP', () => {
         const create = spyOn(browser.tabs, 'create').and.returnValue(Promise.resolve({}));
         const update = spyOn(browser.tabs, 'update').and.returnValue(Promise.resolve({}));
+        const createWindow = spyOn(browser.windows, 'create').and.returnValue(Promise.resolve({}));
         const port = { ...createFakePort(), sender: { tab: { id: 7, index: 2, windowId: 3 } } };
 
         // @ts-ignore - fake port
         ntpMessaging.openUrl('https://a.example/', 'new-tab', port);
-        expect(create).toHaveBeenCalledWith({ url: 'https://a.example/', windowId: 3, index: 3, openerTabId: 7 });
+        expect(create).toHaveBeenCalledWith({ url: 'https://a.example/', active: true, windowId: 3, index: 3, openerTabId: 7 });
+
+        // @ts-ignore - fake port
+        ntpMessaging.openUrl('https://a.example/', 'new-tab', port, false);
+        expect(create).toHaveBeenCalledWith({ url: 'https://a.example/', active: false, windowId: 3, index: 3, openerTabId: 7 });
 
         // @ts-ignore - fake port
         ntpMessaging.openUrl('https://b.example/', 'same-tab', port);
@@ -150,6 +156,10 @@ describe('NTPMessaging component', () => {
         // @ts-ignore - fake port
         ntpMessaging.openUrl('https://c.example/', 'new-tab', createFakePort());
         expect(create).toHaveBeenCalledWith({ url: 'https://c.example/' });
+
+        // @ts-ignore - fake port
+        ntpMessaging.openUrl('https://d.example/', 'new-window', port);
+        expect(createWindow).toHaveBeenCalledWith({ url: 'https://d.example/' });
     });
 
     it('responds to requests on the port with a matching id', async () => {
@@ -241,6 +251,16 @@ describe('NTPMessaging component', () => {
             expect(chrome.ddg.moveFavorite).toHaveBeenCalledTimes(1);
         });
 
+        it('pushes the browser order back when a move fails', async () => {
+            chrome.ddg.moveFavorite = jasmine.createSpy('moveFavorite').and.rejectWith(new Error('The id is not a favorite.'));
+            const port = createFakePort();
+            // @ts-ignore - fake port
+            ntpMessaging.ports.add(port);
+
+            await ntpMessaging.handleNotification('favorites_move', { id: '7', targetIndex: 0 });
+            expect(port.posted.map((msg) => msg.params)).toEqual([{ favorites: [pageFavorite] }]);
+        });
+
         it('opens the browser add favorite dialog over the NTP tab', async () => {
             chrome.ddg.showAddFavoriteBubble = jasmine.createSpy('showAddFavoriteBubble').and.resolveTo(true);
             const port = { ...createFakePort(), sender: { tab: { id: 7 } } };
@@ -272,22 +292,25 @@ describe('NTPMessaging component', () => {
             ]);
         });
 
-        it('pushes a change that woke the worker once the pages reconnect', async () => {
+        it('pushes favorites to each page as it connects', async () => {
             let onConnect;
             spyOn(browser.runtime.onConnect, 'addListener').and.callFake((listener) => {
                 onConnect = listener;
             });
-            changedListeners = [];
             // @ts-ignore - MockSettings stands in for Settings
             ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
 
-            await changedListeners[0]();
-            const port = { ...createFakePort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
-            onConnect(port);
-            await new Promise((resolve) => setTimeout(resolve));
+            const connect = async () => {
+                const port = { ...createFakePort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
+                onConnect(port);
+                await new Promise((resolve) => setTimeout(resolve));
+                return port;
+            };
+            const first = await connect();
+            const second = await connect();
 
-            expect(port.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
-            expect(ntpMessaging.favoritesStale).toBeFalse();
+            expect(first.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
+            expect(second.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
         });
     });
 

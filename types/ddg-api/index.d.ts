@@ -29,7 +29,7 @@ declare namespace chrome {
                * extension -> browser; the favorites the browser shows, in
                * order. `id` is the bookmark's id. Empty until bookmarks load.
                *
-               * Optional, with the two below: a browser older than favorites
+               * Optional, with those below: a browser older than favorites
                * does not define them.
                */
               getFavorites?(): Promise<{ id: string; title: string; url: string }[]>;
@@ -42,8 +42,8 @@ declare namespace chrome {
 
               /**
                * extension -> browser; opens the bookmark dialog for adding a
-               * favorite over tab `tabId`, which must be its window's active
-               * tab. Resolves with whether it opened.
+               * favorite over tab `tabId`. Resolves with whether it opened,
+               * which it does only over its window's active tab.
                */
               showAddFavoriteBubble?(tabId: number): Promise<boolean>;
 

@@ -67,9 +67,6 @@ export default class NTPMessaging {
     /** @type {ReturnType<typeof setTimeout>?} */
     pushTimer = null;
 
-    /** Favorites changed while no page was connected to hear it. */
-    favoritesStale = false;
-
     /**
      * @param {{
      *  settings: Settings,
@@ -89,7 +86,8 @@ export default class NTPMessaging {
             port.onDisconnect.addListener(() => {
                 this.ports.delete(port);
             });
-            if (this.favoritesStale) this.pushFavoritesUpdate();
+            // Favorites may have changed while a reconnecting page had no port.
+            this.pushFavoritesUpdate([port]);
         });
 
         // Top level, so the browser can wake the worker to deliver it.
@@ -214,12 +212,13 @@ export default class NTPMessaging {
                 this.settings.updateSetting(FAVORITES_CONFIG_SETTING, params);
                 break;
             case 'favorites_open':
-                this.openUrl(params?.url, params?.target, port);
+                this.openUrl(params?.url, params?.target, port, false);
                 break;
             case 'favorites_move':
-                // The page has already moved it; onFavoritesChanged echoes the order back.
+                // The page has already moved it; onFavoritesChanged echoes the order back,
+                // and pushing it undoes a move that failed.
                 if (typeof params?.id === 'string' && Number.isInteger(params?.targetIndex)) {
-                    await chrome.ddg?.moveFavorite?.(params.id, params.targetIndex);
+                    await chrome.ddg?.moveFavorite?.(params.id, params.targetIndex).catch(() => this.pushFavoritesUpdate());
                 }
                 break;
             case 'favorites_add': {
@@ -237,7 +236,7 @@ export default class NTPMessaging {
                 this.settings.updateSetting(PROTECTIONS_CONFIG_SETTING, params);
                 break;
             case 'activity_open':
-                this.openUrl(params?.url, params?.target, port);
+                this.openUrl(params?.url, params?.target, port, false);
                 break;
 
             case 'reportInitException':
@@ -253,19 +252,22 @@ export default class NTPMessaging {
 
     /**
      * @param {unknown} url
-     * @param {string} [target] - 'same-tab' targets the NTP's own tab; otherwise a
-     *   new tab opens directly to the right of the NTP
+     * @param {string} [target] - 'same-tab' targets the NTP's own tab and 'new-window' a
+     *   new window; otherwise a new tab opens directly to the right of the NTP
      * @param {Port} [port] - the connection the request arrived on
+     * @param {boolean} [active] - whether that new tab is selected
      */
-    openUrl(url, target, port) {
+    openUrl(url, target, port, active = true) {
         if (typeof url !== 'string') return;
         const tab = port?.sender?.tab;
-        if (!tab?.id) {
+        if (target === 'new-window') {
+            browser.windows.create({ url });
+        } else if (!tab?.id) {
             browser.tabs.create({ url });
         } else if (target === 'same-tab') {
             browser.tabs.update(tab.id, { url });
         } else {
-            browser.tabs.create({ url, windowId: tab.windowId, index: tab.index + 1, openerTabId: tab.id });
+            browser.tabs.create({ url, active, windowId: tab.windowId, index: tab.index + 1, openerTabId: tab.id });
         }
     }
 
@@ -313,11 +315,11 @@ export default class NTPMessaging {
         };
     }
 
-    async pushFavoritesUpdate() {
-        // A change that started the worker arrives before open pages reconnect.
-        this.favoritesStale = this.ports.size === 0;
-        if (this.favoritesStale) return;
-        this.pushSubscriptionEvent('favorites_onDataUpdate', await this.getFavoritesData());
+    /**
+     * @param {Iterable<Port>} [ports]
+     */
+    async pushFavoritesUpdate(ports = this.ports) {
+        this.pushSubscriptionEvent('favorites_onDataUpdate', await this.getFavoritesData(), ports);
     }
 
     pushDataUpdate() {
@@ -328,9 +330,10 @@ export default class NTPMessaging {
     /**
      * @param {string} subscriptionName
      * @param {any} params
+     * @param {Iterable<Port>} [ports]
      */
-    pushSubscriptionEvent(subscriptionName, params) {
-        for (const port of this.ports) {
+    pushSubscriptionEvent(subscriptionName, params, ports = this.ports) {
+        for (const port of ports) {
             port.postMessage({
                 context: NTP_MESSAGING_CONTEXT,
                 featureName: NTP_FEATURE_NAME,
