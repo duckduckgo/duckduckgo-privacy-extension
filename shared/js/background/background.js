@@ -150,9 +150,10 @@ if (BUILD_TARGET === 'chromium-embedded') {
     const newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
     // the dev-build debugging API (dbg.ntts) reads the singleton
     NewTabTrackerStats.shared = newTabTrackerStats;
-    newTabTrackerStats.restoreFromStorage().then(() => newTabTrackerStats.registerDataCollection());
+    const statsRestored = newTabTrackerStats.restoreFromStorage();
+    statsRestored.then(() => newTabTrackerStats.registerDataCollection());
     components.ntpActivity = new NTPActivity();
-    components.ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity: components.ntpActivity });
+    components.ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, statsRestored, ntpActivity: components.ntpActivity });
 }
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore

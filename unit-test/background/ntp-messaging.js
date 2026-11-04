@@ -117,6 +117,29 @@ describe('NTPMessaging component', () => {
         ]);
     });
 
+    it('empties the tracker total and company list on a burn, once they are restored, and pushes that', async () => {
+        let burn;
+        chrome.ddg = { onBurnStarted: { addListener: (listener) => (burn = listener) } };
+        let restore;
+        const statsRestored = new Promise((resolve) => (restore = resolve));
+        // @ts-ignore - MockSettings and ntpActivity stand in for Settings and NTPActivity
+        ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, statsRestored, ntpActivity });
+        delete chrome.ddg;
+        const port = createFakePort();
+        // @ts-ignore - fake port
+        ntpMessaging.ports.add(port);
+        const syncToStorage = spyOn(newTabTrackerStats, 'syncToStorage').and.resolveTo();
+
+        const burned = burn({ trigger: 'in-session' });
+        // the restore lands after the burn started
+        newTabTrackerStats.stats.increment('Google', Date.now());
+        restore();
+        await burned;
+
+        expect(port.posted.map((msg) => msg.params)).toEqual([{ totalCount: 0, totalCookiePopUpsBlocked: null }, { trackerCompanies: [] }]);
+        expect(syncToStorage).toHaveBeenCalled();
+    });
+
     describe('activity feed', () => {
         const MINUTE = 60 * 1000;
 
