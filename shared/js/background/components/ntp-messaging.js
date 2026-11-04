@@ -110,10 +110,11 @@ export default class NTPMessaging {
      * @param {{
      *  settings: Settings,
      *  newTabTrackerStats: NewTabTrackerStats,
+     *  statsRestored?: Promise<void>,
      *  ntpActivity: NTPActivity,
-     * }} options
+     * }} options - `statsRestored` resolves once `newTabTrackerStats` has been restored from storage
      */
-    constructor({ settings, newTabTrackerStats, ntpActivity }) {
+    constructor({ settings, newTabTrackerStats, statsRestored = Promise.resolve(), ntpActivity }) {
         this.settings = settings;
         this.newTabTrackerStats = newTabTrackerStats;
         this.ntpActivity = ntpActivity;
@@ -154,6 +155,15 @@ export default class NTPMessaging {
         });
 
         ntpActivity.addEventListener('change', (event) => this.queueActivityPush(/** @type {CustomEvent<string[]>} */ (event).detail));
+
+        // As on Windows, a burn empties the tracker total and company list, here and in
+        // storage, and pushes that at once. Not before the restore, which would undo it.
+        chrome.ddg?.onBurnStarted?.addListener(async () => {
+            await statsRestored;
+            newTabTrackerStats.stats.clearAll();
+            this.pushDataUpdate();
+            await newTabTrackerStats.syncToStorage();
+        });
 
         // Pages left open while the service worker was stopped have lost their port.
         browser.runtime.sendMessage({ [NTP_RECONNECT_MESSAGE]: true }).catch(() => {});
