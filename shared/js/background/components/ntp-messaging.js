@@ -263,7 +263,7 @@ export default class NTPMessaging {
         if (target === 'new-window') {
             browser.windows.create({ url });
         } else if (!tab?.id) {
-            browser.tabs.create({ url });
+            browser.tabs.create({ url, active });
         } else if (target === 'same-tab') {
             browser.tabs.update(tab.id, { url });
         } else {

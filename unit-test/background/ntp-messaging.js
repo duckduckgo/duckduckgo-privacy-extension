@@ -131,11 +131,18 @@ describe('NTPMessaging component', () => {
             { ...requestMessage('favorites_open', { id: 'x', url: 'https://example.com/', target: 'new-tab' }), Id: undefined },
             port,
         );
-        // Favorites open in a background tab.
+        // favorites and activity links open new tabs in the background
         expect(openUrl).toHaveBeenCalledWith('https://example.com/', 'new-tab', port, false);
+
+        // @ts-ignore - fake port
+        await ntpMessaging.onMessage(
+            { ...requestMessage('activity_open', { url: 'https://example.com/a', target: 'new-tab' }), Id: undefined },
+            port,
+        );
+        expect(openUrl).toHaveBeenCalledWith('https://example.com/a', 'new-tab', port, false);
     });
 
-    it('opens new tabs next to the NTP and same-tab links in the NTP', () => {
+    it('opens new tabs next to the NTP, same-tab links in the NTP and new-window links in a window', () => {
         const create = spyOn(browser.tabs, 'create').and.returnValue(Promise.resolve({}));
         const update = spyOn(browser.tabs, 'update').and.returnValue(Promise.resolve({}));
         const createWindow = spyOn(browser.windows, 'create').and.returnValue(Promise.resolve({}));
@@ -155,7 +162,7 @@ describe('NTPMessaging component', () => {
 
         // @ts-ignore - fake port
         ntpMessaging.openUrl('https://c.example/', 'new-tab', createFakePort());
-        expect(create).toHaveBeenCalledWith({ url: 'https://c.example/' });
+        expect(create).toHaveBeenCalledWith({ url: 'https://c.example/', active: true });
 
         // @ts-ignore - fake port
         ntpMessaging.openUrl('https://d.example/', 'new-window', port);
