@@ -5,11 +5,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { AUTOFILL_DIR, BROWSERS_DIR, DASHBOARD_DIR, SURROGATES_DIR } from './config.mjs';
 import { copy, copyEntries } from './fs.mjs';
+import { copyNtp } from './ntp.mjs';
 
 const isJs = (name) => name.endsWith('.js');
 
 /** @param {import('./config.mjs').BuildConfig} config */
-export function copyStaticFiles({ browser, platform, ui, autofill, htmlExcludes = [], dashboardCss, out }) {
+export function copyStaticFiles({ browser, platform, ui, autofill, ntp, htmlExcludes = [], dashboardCss, out }) {
     copyEntries(`${BROWSERS_DIR}/${browser}`, out.root);
 
     if (!ui) {
@@ -32,5 +33,9 @@ export function copyStaticFiles({ browser, platform, ui, autofill, htmlExcludes 
 
     if (dashboardCss) {
         fs.appendFileSync(`${out.dashboard}/public/css/popup.css`, dashboardCss);
+    }
+
+    if (ntp) {
+        copyNtp(out.ntp);
     }
 }
