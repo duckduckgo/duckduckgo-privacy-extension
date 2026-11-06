@@ -131,17 +131,30 @@ describe('NTPMessaging component', () => {
             { ...requestMessage('favorites_open', { id: 'x', url: 'https://example.com/', target: 'new-tab' }), Id: undefined },
             port,
         );
-        expect(openUrl).toHaveBeenCalledWith('https://example.com/', 'new-tab', port);
+        // favorites and activity links open new tabs in the background
+        expect(openUrl).toHaveBeenCalledWith('https://example.com/', 'new-tab', port, false);
+
+        // @ts-ignore - fake port
+        await ntpMessaging.onMessage(
+            { ...requestMessage('activity_open', { url: 'https://example.com/a', target: 'new-tab' }), Id: undefined },
+            port,
+        );
+        expect(openUrl).toHaveBeenCalledWith('https://example.com/a', 'new-tab', port, false);
     });
 
-    it('opens new tabs next to the NTP and same-tab links in the NTP', () => {
+    it('opens new tabs next to the NTP, same-tab links in the NTP and new-window links in a window', () => {
         const create = spyOn(browser.tabs, 'create').and.returnValue(Promise.resolve({}));
         const update = spyOn(browser.tabs, 'update').and.returnValue(Promise.resolve({}));
+        const createWindow = spyOn(browser.windows, 'create').and.returnValue(Promise.resolve({}));
         const port = { ...createFakePort(), sender: { tab: { id: 7, index: 2, windowId: 3 } } };
 
         // @ts-ignore - fake port
         ntpMessaging.openUrl('https://a.example/', 'new-tab', port);
-        expect(create).toHaveBeenCalledWith({ url: 'https://a.example/', windowId: 3, index: 3, openerTabId: 7 });
+        expect(create).toHaveBeenCalledWith({ url: 'https://a.example/', active: true, windowId: 3, index: 3, openerTabId: 7 });
+
+        // @ts-ignore - fake port
+        ntpMessaging.openUrl('https://a.example/', 'new-tab', port, false);
+        expect(create).toHaveBeenCalledWith({ url: 'https://a.example/', active: false, windowId: 3, index: 3, openerTabId: 7 });
 
         // @ts-ignore - fake port
         ntpMessaging.openUrl('https://b.example/', 'same-tab', port);
@@ -149,7 +162,11 @@ describe('NTPMessaging component', () => {
 
         // @ts-ignore - fake port
         ntpMessaging.openUrl('https://c.example/', 'new-tab', createFakePort());
-        expect(create).toHaveBeenCalledWith({ url: 'https://c.example/' });
+        expect(create).toHaveBeenCalledWith({ url: 'https://c.example/', active: true });
+
+        // @ts-ignore - fake port
+        ntpMessaging.openUrl('https://d.example/', 'new-window', port);
+        expect(createWindow).toHaveBeenCalledWith({ url: 'https://d.example/' });
     });
 
     it('responds to requests on the port with a matching id', async () => {
@@ -203,6 +220,105 @@ describe('NTPMessaging component', () => {
         expect((await ntpMessaging.handleRequest('initialSetup')).widgetConfigs).toEqual(widgetConfigs);
         expect(await ntpMessaging.handleRequest('favorites_getConfig')).toEqual(favoritesConfig);
         expect(await ntpMessaging.handleRequest('protections_getConfig')).toEqual(protectionsConfig);
+    });
+
+    describe('favorites', () => {
+        const favorite = { id: '7', title: 'Example', url: 'https://www.example.co.uk/a?b' };
+        const pageFavorite = {
+            ...favorite,
+            etldPlusOne: 'example.co.uk',
+            favicon: { src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.co.uk%2Fa%3Fb&size=64&', maxAvailableSize: 64 },
+        };
+        let changedListeners;
+
+        beforeEach(() => {
+            changedListeners = [];
+            chrome.ddg = {
+                getFavorites: () => Promise.resolve([favorite]),
+                moveFavorite: jasmine.createSpy('moveFavorite').and.resolveTo(),
+                onFavoritesChanged: { addListener: (listener) => changedListeners.push(listener) },
+            };
+            // @ts-ignore - MockSettings stands in for Settings
+            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+        });
+
+        afterEach(() => {
+            delete chrome.ddg;
+        });
+
+        it('answers favorites_getData from the browser', async () => {
+            expect(await ntpMessaging.handleRequest('favorites_getData')).toEqual({ favorites: [pageFavorite] });
+        });
+
+        it('moves favorites in the browser', async () => {
+            await ntpMessaging.handleNotification('favorites_move', { id: '7', fromIndex: 0, targetIndex: 2 });
+            expect(chrome.ddg.moveFavorite).toHaveBeenCalledWith('7', 2);
+
+            await ntpMessaging.handleNotification('favorites_move', { id: '7', targetIndex: 'x' });
+            expect(chrome.ddg.moveFavorite).toHaveBeenCalledTimes(1);
+        });
+
+        it('pushes the browser order back when a move fails', async () => {
+            chrome.ddg.moveFavorite = jasmine.createSpy('moveFavorite').and.rejectWith(new Error('The id is not a favorite.'));
+            const port = createFakePort();
+            // @ts-ignore - fake port
+            ntpMessaging.ports.add(port);
+
+            await ntpMessaging.handleNotification('favorites_move', { id: '7', targetIndex: 0 });
+            expect(port.posted.map((msg) => msg.params)).toEqual([{ favorites: [pageFavorite] }]);
+        });
+
+        it('opens the browser add favorite dialog over the NTP tab', async () => {
+            chrome.ddg.showAddFavoriteBubble = jasmine.createSpy('showAddFavoriteBubble').and.resolveTo(true);
+            const port = { ...createFakePort(), sender: { tab: { id: 7 } } };
+
+            // @ts-ignore - fake port
+            await ntpMessaging.handleNotification('favorites_add', undefined, port);
+            expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledWith(7);
+
+            // @ts-ignore - fake port
+            await ntpMessaging.handleNotification('favorites_add', undefined, createFakePort());
+            expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledTimes(1);
+        });
+
+        it('pushes favorites to connected pages when the browser reports a change', async () => {
+            const port = createFakePort();
+            // @ts-ignore - fake port
+            ntpMessaging.ports.add(port);
+
+            expect(changedListeners.length).toBe(1);
+            await changedListeners[0]();
+
+            expect(port.posted).toEqual([
+                {
+                    context: 'specialPages',
+                    featureName: 'newTabPage',
+                    subscriptionName: 'favorites_onDataUpdate',
+                    params: { favorites: [pageFavorite] },
+                },
+            ]);
+        });
+
+        it('pushes favorites to each page as it connects', async () => {
+            let onConnect;
+            spyOn(browser.runtime.onConnect, 'addListener').and.callFake((listener) => {
+                onConnect = listener;
+            });
+            // @ts-ignore - MockSettings stands in for Settings
+            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+
+            const connect = async () => {
+                const port = { ...createFakePort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
+                onConnect(port);
+                await new Promise((resolve) => setTimeout(resolve));
+                return port;
+            };
+            const first = await connect();
+            const second = await connect();
+
+            expect(first.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
+            expect(second.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
+        });
     });
 
     it('broadcasts subscription events to connected ports', () => {
