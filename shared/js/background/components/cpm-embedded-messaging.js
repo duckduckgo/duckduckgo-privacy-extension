@@ -205,6 +205,14 @@ export class CPMEmbeddedMessaging {
         });
     }
 
+    async reportCoverage(counts, siteRank) {
+        await this._notify('reportCpmCoverage', {
+            unhandled: counts.unhandled,
+            pages: counts.pages,
+            ...(siteRank ? { siteRank } : {}),
+        });
+    }
+
     async refreshRemoteConfig() {
         const cachedConfig = this._cachedConfig || (await getFromSessionStorage('config')) || { version: 'unknown' };
         const cachedConfigVersion = `${cachedConfig.version}`;

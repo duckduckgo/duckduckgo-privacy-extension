@@ -25,6 +25,7 @@ function createMockMessaging({ autoconsentEnabledForSite = true, autoconsentSett
             .and.returnValue(Promise.resolve(autoconsentEnabledForSite)),
         checkSubfeatureEnabled: jasmine.createSpy('checkSubfeatureEnabled').and.returnValue(Promise.resolve(subfeatureEnabled)),
         sendPixel: jasmine.createSpy('sendPixel').and.returnValue(Promise.resolve()),
+        reportCoverage: jasmine.createSpy('reportCoverage').and.returnValue(Promise.resolve()),
         setDiagnosticsErrorHandler: jasmine.createSpy('setDiagnosticsErrorHandler').and.callFake((handler) => {
             mockMessaging.diagnosticsErrorHandler = handler;
         }),
@@ -873,6 +874,126 @@ describe('CookiePromptManagement', () => {
             expect(params.length).toBe(2);
             expect(params).toContain({ init: 3, done: 1, consentHeuristicEnabled: 'tier1', fromExtension: '1' });
             expect(params).toContain({ init: 1, siteRank: 'top10k', consentHeuristicEnabled: 'tier1', fromExtension: '1' });
+        });
+    });
+
+    describe('coverage counts', () => {
+        const TOP_URL = 'https://www.top-site.example/page';
+        const OTHER_URL = 'https://long-tail.example/page';
+
+        function createSiteRankLookup() {
+            return (url) => (url.includes('top-site.example') ? 'top10k' : 'other');
+        }
+
+        function reportMessage(instanceId, { patterns, rules }) {
+            return {
+                type: 'report',
+                instanceId,
+                state: {
+                    heuristicPatterns: patterns ? ['pattern'] : [],
+                    heuristicSnippets: [],
+                    detectedPopups: rules ? ['cmp'] : [],
+                },
+            };
+        }
+
+        async function handleMessages(cpm, messages) {
+            const handler = messageHandlers.autoconsent;
+            for (const [sender, msg] of messages) {
+                await handler({}, sender, { autoconsentPayload: msg });
+            }
+            await cpm.modifyCpmState(() => {});
+        }
+
+        it('reports unhandled popups and pages per site rank bucket', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabId: 1, tabUrl: TOP_URL }), makeInitMessage()],
+                [makeSender({ tabId: 1, tabUrl: TOP_URL }), reportMessage('a', { patterns: true, rules: false })],
+                [makeSender({ tabId: 2, tabUrl: OTHER_URL }), makeInitMessage()],
+                [makeSender({ tabId: 3, tabUrl: OTHER_URL }), makeInitMessage()],
+                [makeSender({ tabId: 2, tabUrl: OTHER_URL }), reportMessage('b', { patterns: true, rules: false })],
+                [makeSender({ tabId: 3, tabUrl: OTHER_URL }), reportMessage('c', { patterns: true, rules: true })],
+            ]);
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.reportCoverage.calls.count()).toBe(2);
+            expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 1 }, 'top10k');
+            expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 2 }, 'other');
+        });
+
+        it('reports counts without a bucket when there is no site rank lookup', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabId: 1, tabUrl: TOP_URL }), makeInitMessage()],
+                [makeSender({ tabId: 2, tabUrl: OTHER_URL }), makeInitMessage()],
+            ]);
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.reportCoverage.calls.allArgs()).toEqual([[{ unhandled: 0, pages: 2 }, undefined]]);
+        });
+
+        it('reports nothing when nothing was counted or no page ran CPM', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await cpm.sendSummaryPixel();
+            await handleMessages(cpm, [[makeSender({ tabUrl: TOP_URL }), { type: 'popupFound', cmp: 'test-cmp' }]]);
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.reportCoverage).not.toHaveBeenCalled();
+        });
+
+        it('never reports a negative unhandled count', async () => {
+            await setToSessionStorage('cpmState', {
+                detectionCache: { patterns: [], both: [], onlyRules: [] },
+                summaryEvents: {},
+                summaryEventsByRank: { other: { init: 1, 'detected-by-patterns': 1, 'detected-by-both': 3 } },
+                dashboardStates: {},
+                globalErrors: [],
+            });
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.reportCoverage).toHaveBeenCalledOnceWith({ unhandled: 0, pages: 1 }, 'other');
+        });
+
+        it('still sends the summary pixel when reporting the counts fails', async () => {
+            const mockMessaging = createMockMessaging();
+            mockMessaging.reportCoverage.and.returnValue(Promise.reject(new Error('native unavailable')));
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [[makeSender({ tabUrl: TOP_URL }), makeInitMessage()]]);
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.sendPixel.calls.allArgs().filter(([name]) => name === 'autoconsent_summary').length).toBe(1);
+        });
+
+        it('sends only counts and the bucket, never a URL or domain', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabUrl: TOP_URL }), makeInitMessage()],
+                [makeSender({ tabUrl: TOP_URL }), reportMessage('a', { patterns: true, rules: false })],
+            ]);
+            await cpm.sendSummaryPixel();
+
+            const serialized = JSON.stringify(mockMessaging.reportCoverage.calls.allArgs());
+            expect(serialized).not.toContain('example');
+            expect(serialized).not.toContain('pattern');
         });
     });
 
