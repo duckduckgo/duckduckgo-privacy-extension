@@ -3,6 +3,7 @@ import NTPMessaging from '../../shared/js/background/components/ntp-messaging';
 import { NewTabTrackerStats } from '../../shared/js/background/newtab-tracker-stats';
 import { TrackerStats } from '../../shared/js/background/classes/tracker-stats';
 import { MockSettings } from '../helpers/mocks';
+import { setToSessionStorage } from '../../shared/js/background/wrapper';
 
 describe('NTPMessaging component', () => {
     /** @type {NTPMessaging} */
@@ -11,6 +12,12 @@ describe('NTPMessaging component', () => {
     let settings;
     /** @type {NewTabTrackerStats} */
     let newTabTrackerStats;
+    /** @type {Map<string, import('../../shared/js/background/components/ntp-activity').SiteActivity>} */
+    let activitySites;
+    /** @type {jasmine.Spy} */
+    let removeDomain;
+    /** @type {any} */
+    let ntpActivity;
 
     /**
      * Minimal stand-in for a runtime Port connected to the NTP page.
@@ -42,8 +49,11 @@ describe('NTPMessaging component', () => {
     beforeEach(() => {
         settings = new MockSettings();
         newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
-        // @ts-ignore - MockSettings stands in for Settings
-        ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+        activitySites = new Map();
+        removeDomain = jasmine.createSpy('removeDomain').and.returnValue(Promise.resolve());
+        ntpActivity = Object.assign(new EventTarget(), { getSites: () => Promise.resolve(activitySites), removeDomain });
+        // @ts-ignore - MockSettings and ntpActivity stand in for Settings and NTPActivity
+        ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
     });
 
     it('answers initialSetup with a valid minimal payload', async () => {
@@ -85,7 +95,7 @@ describe('NTPMessaging component', () => {
         newTabTrackerStats.stats.increment('Facebook', now);
 
         const result = await ntpMessaging.handleRequest('protections_getData');
-        expect(result).toEqual({ totalCount: 3 });
+        expect(result).toEqual({ totalCount: 3, totalCookiePopUpsBlocked: null });
     });
 
     it('answers stats_getData with per-company counts, mapping "other" to the NTP identifier and placing it last', async () => {
@@ -105,6 +115,112 @@ describe('NTPMessaging component', () => {
             { displayName: 'Facebook', count: 1 },
             { displayName: '__other__', count: 5 },
         ]);
+    });
+
+    it('empties the tracker total and company list on a burn, once they are restored, and pushes that', async () => {
+        let burn;
+        chrome.ddg = { onBurnStarted: { addListener: (listener) => (burn = listener) } };
+        let restore;
+        const statsRestored = new Promise((resolve) => (restore = resolve));
+        // @ts-ignore - MockSettings and ntpActivity stand in for Settings and NTPActivity
+        ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, statsRestored, ntpActivity });
+        delete chrome.ddg;
+        const port = createFakePort();
+        // @ts-ignore - fake port
+        ntpMessaging.ports.add(port);
+        const syncToStorage = spyOn(newTabTrackerStats, 'syncToStorage').and.resolveTo();
+
+        const burned = burn({ trigger: 'in-session' });
+        // the restore lands after the burn started
+        newTabTrackerStats.stats.increment('Google', Date.now());
+        restore();
+        await burned;
+
+        expect(port.posted.map((msg) => msg.params)).toEqual([{ totalCount: 0, totalCookiePopUpsBlocked: null }, { trackerCompanies: [] }]);
+        expect(syncToStorage).toHaveBeenCalled();
+    });
+
+    describe('activity feed', () => {
+        const MINUTE = 60 * 1000;
+
+        beforeEach(() => {
+            const now = Date.now();
+            activitySites.set('example.com', {
+                pages: [
+                    { url: 'https://www.example.com/b', title: 'Page B', lastVisitTime: now - 5 * MINUTE },
+                    // untitled pages are not listed
+                    { url: 'https://www.example.com/', title: ' ', lastVisitTime: now - 6 * MINUTE },
+                    { url: 'http://example.com/a', title: 'Page A', lastVisitTime: now - 30 * 60 * MINUTE },
+                ],
+                trackersFound: true,
+                trackersBlocked: 3,
+                companies: ['Google', 'Facebook'],
+            });
+            activitySites.set('plain.example', {
+                pages: [{ url: 'http://plain.example/', title: 'Plain', lastVisitTime: now }],
+                trackersFound: false,
+                trackersBlocked: 0,
+                companies: [],
+            });
+        });
+
+        it('lists sites by their https URL unless none of their pages is https', async () => {
+            expect(await ntpMessaging.handleRequest('activity_getUrls')).toEqual({
+                urls: ['https://example.com/', 'http://plain.example/'],
+                totalTrackersBlocked: 3,
+            });
+        });
+
+        it('answers activity_getDataForUrls with the requested sites that have activity', async () => {
+            const { activity } = await ntpMessaging.handleRequest('activity_getDataForUrls', {
+                urls: ['https://example.com/', 'https://gone.example/', 'http://plain.example/'],
+            });
+
+            expect(activity.map(({ url }) => url)).toEqual(['https://example.com/', 'http://plain.example/']);
+            expect(activity[0]).toEqual({
+                title: 'example.com',
+                url: 'https://example.com/',
+                etldPlusOne: 'example.com',
+                favicon: { src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.com%2Fb&size=64&', maxAvailableSize: 64 },
+                trackingStatus: { totalCount: 3, trackerCompanies: [{ displayName: 'Google' }, { displayName: 'Facebook' }] },
+                trackersFound: true,
+                history: [
+                    { title: 'Page B', url: 'https://www.example.com/b', relativeTime: '5 minutes ago' },
+                    { title: 'Page A', url: 'http://example.com/a', relativeTime: '1 day ago' },
+                ],
+                favorite: false,
+            });
+            expect(activity[1]).toEqual(
+                jasmine.objectContaining({
+                    trackingStatus: { totalCount: 0, trackerCompanies: [] },
+                    trackersFound: false,
+                    history: [{ title: 'Plain', url: 'http://plain.example/', relativeTime: 'now' }],
+                }),
+            );
+        });
+
+        it('removes a site from the feed', async () => {
+            // @ts-ignore - fake port
+            await ntpMessaging.onMessage(
+                { ...requestMessage('activity_removeItem', { url: 'https://example.com/' }), Id: undefined },
+                createFakePort(),
+            );
+            expect(removeDomain).toHaveBeenCalledOnceWith('example.com');
+        });
+
+        it('pushes the changed sites that still have activity as patches', async () => {
+            const port = createFakePort();
+            // @ts-ignore - fake port
+            ntpMessaging.ports.add(port);
+            const urlInfo = { urls: ['https://example.com/', 'http://plain.example/'], totalTrackersBlocked: 3 };
+
+            await ntpMessaging.pushActivityUpdate(['plain.example', 'gone.example', 'plain.example']);
+            await ntpMessaging.pushActivityUpdate(['gone.example']);
+
+            expect(port.posted.map(({ subscriptionName }) => subscriptionName)).toEqual(['activity_onDataPatch', 'activity_onDataPatch']);
+            expect(port.posted[0].params).toEqual({ ...urlInfo, patch: jasmine.objectContaining({ url: 'http://plain.example/' }) });
+            expect(port.posted[1].params).toEqual(urlInfo);
+        });
     });
 
     it('opens searches and suggestions from the omnibar', async () => {
@@ -179,7 +295,7 @@ describe('NTPMessaging component', () => {
                 context: 'specialPages',
                 featureName: 'newTabPage',
                 id: 'abc-123',
-                result: { totalCount: 0 },
+                result: { totalCount: 0, totalCookiePopUpsBlocked: null },
             },
         ]);
     });
@@ -222,6 +338,28 @@ describe('NTPMessaging component', () => {
         expect(await ntpMessaging.handleRequest('protections_getConfig')).toEqual(protectionsConfig);
     });
 
+    it('sends a new protections config to every open page', async () => {
+        const protectionsConfig = { expansion: 'collapsed', feed: 'activity' };
+        const sender = createFakePort();
+        const other = createFakePort();
+        // @ts-ignore - fake ports
+        [sender, other].forEach((port) => ntpMessaging.ports.add(port));
+
+        // @ts-ignore - fake port
+        await ntpMessaging.onMessage({ ...requestMessage('protections_setConfig', protectionsConfig), Id: undefined }, sender);
+
+        for (const port of [sender, other]) {
+            expect(port.posted).toEqual([
+                {
+                    context: 'specialPages',
+                    featureName: 'newTabPage',
+                    subscriptionName: 'protections_onConfigUpdate',
+                    params: protectionsConfig,
+                },
+            ]);
+        }
+    });
+
     describe('favorites', () => {
         const favorite = { id: '7', title: 'Example', url: 'https://www.example.co.uk/a?b' };
         const pageFavorite = {
@@ -239,7 +377,7 @@ describe('NTPMessaging component', () => {
                 onFavoritesChanged: { addListener: (listener) => changedListeners.push(listener) },
             };
             // @ts-ignore - MockSettings stands in for Settings
-            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
         });
 
         afterEach(() => {
@@ -281,6 +419,87 @@ describe('NTPMessaging component', () => {
             expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledTimes(1);
         });
 
+        describe('in the activity feed', () => {
+            const other = { id: '8', title: 'Other', url: 'https://other.example/' };
+
+            beforeEach(async () => {
+                const now = Date.now();
+                activitySites.set('example.co.uk', {
+                    pages: [
+                        { url: 'https://www.example.co.uk/', title: 'Latest', lastVisitTime: now },
+                        { url: 'https://example.co.uk/c', title: 'Older', lastVisitTime: now - 1 },
+                    ],
+                    trackersFound: false,
+                    trackersBlocked: 0,
+                    companies: [],
+                });
+                activitySites.set('other.example', {
+                    pages: [{ url: 'https://other.example/', title: 'Other', lastVisitTime: now }],
+                    trackersFound: false,
+                    trackersBlocked: 0,
+                    companies: [],
+                });
+                chrome.ddg.getFavorites = () => Promise.resolve([other]);
+                await setToSessionStorage('ntpStarredUrls', undefined);
+            });
+
+            it('stars the sites whose URL is a favorite', async () => {
+                const { activity } = await ntpMessaging.handleRequest('activity_getDataForUrls', {
+                    urls: ['https://example.co.uk/', 'https://other.example/'],
+                });
+                expect(activity.map((item) => item.favorite)).toEqual([false, true]);
+            });
+
+            it('adds a favorite titled like the latest page or the domain, and removes one', async () => {
+                chrome.ddg.addFavorite = jasmine.createSpy('addFavorite').and.resolveTo();
+                chrome.ddg.removeFavorite = jasmine.createSpy('removeFavorite').and.resolveTo();
+
+                await ntpMessaging.handleNotification('activity_addFavorite', { url: 'https://example.co.uk/' });
+                await ntpMessaging.handleNotification('activity_addFavorite', { url: 'https://gone.example/' });
+                await ntpMessaging.handleNotification('activity_removeFavorite', { url: 'https://other.example/' });
+
+                expect(chrome.ddg.addFavorite.calls.allArgs()).toEqual([
+                    ['https://example.co.uk/', 'Latest'],
+                    ['https://gone.example/', 'gone.example'],
+                ]);
+                expect(chrome.ddg.removeFavorite).toHaveBeenCalledOnceWith('https://other.example/');
+            });
+
+            it('puts the star back when the browser fails to change it', async () => {
+                chrome.ddg.addFavorite = jasmine.createSpy('addFavorite').and.rejectWith(new Error('not loaded'));
+                chrome.ddg.removeFavorite = jasmine.createSpy('removeFavorite').and.rejectWith(new Error('not loaded'));
+                const queue = spyOn(ntpMessaging, 'queueActivityPush');
+
+                await ntpMessaging.handleNotification('activity_addFavorite', { url: 'https://example.co.uk/' });
+                await ntpMessaging.handleNotification('activity_removeFavorite', { url: 'https://other.example/' });
+
+                expect(queue.calls.allArgs()).toEqual([[['example.co.uk']], [['other.example']]]);
+            });
+
+            it('patches the sites whose star changed in the browser', async () => {
+                const queue = spyOn(ntpMessaging, 'queueActivityPush');
+
+                await changedListeners[0]();
+                expect(queue).toHaveBeenCalledWith(['other.example']);
+
+                chrome.ddg.getFavorites = () => Promise.resolve([{ ...other, url: 'https://example.co.uk/' }]);
+                await changedListeners[0]();
+                expect(queue).toHaveBeenCalledWith(['example.co.uk', 'other.example']);
+            });
+
+            it('patches a star the page was given before the worker restarted', async () => {
+                await ntpMessaging.handleRequest('activity_getDataForUrls', { urls: ['https://other.example/'] });
+                changedListeners = [];
+                // @ts-ignore - MockSettings and ntpActivity stand in for Settings and NTPActivity
+                ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
+                const queue = spyOn(ntpMessaging, 'queueActivityPush');
+
+                chrome.ddg.getFavorites = () => Promise.resolve([]);
+                await changedListeners[0]();
+                expect(queue).toHaveBeenCalledWith(['other.example']);
+            });
+        });
+
         it('pushes favorites to connected pages when the browser reports a change', async () => {
             const port = createFakePort();
             // @ts-ignore - fake port
@@ -305,7 +524,7 @@ describe('NTPMessaging component', () => {
                 onConnect = listener;
             });
             // @ts-ignore - MockSettings stands in for Settings
-            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
 
             const connect = async () => {
                 const port = { ...createFakePort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
@@ -334,7 +553,7 @@ describe('NTPMessaging component', () => {
                 context: 'specialPages',
                 featureName: 'newTabPage',
                 subscriptionName: 'protections_onDataUpdate',
-                params: { totalCount: 1 },
+                params: { totalCount: 1, totalCookiePopUpsBlocked: null },
             },
             {
                 context: 'specialPages',
