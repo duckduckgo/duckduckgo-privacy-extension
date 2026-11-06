@@ -60,7 +60,7 @@ Note: Development builds of the extension have a few differences from the releas
 #### Building on Windows
 
 - The build needs nothing beyond Node.js, so the commands above work unchanged from PowerShell, cmd or Git Bash.
-- CI lints and builds the release targets on Windows as well as Linux and macOS. The unit and integration tests run on Linux only.
+- CI runs the lint on Linux and Windows, and the four `release-*` scripts (which include the chrome and embedded zips) on Linux, macOS and Windows. The `beta-*` scripts and the unit and integration tests run on Linux only.
 
 ### Updating or testing config
 

@@ -92,22 +92,25 @@ async function build(config) {
 /**
  * Paths whose changes trigger a rebuild: the extension's own sources, the
  * dependency assets that are copied as-is, and the directories of every file
- * the JS bundles were built from that belongs to a DuckDuckGo package or
- * resolves outside node_modules (an npm-linked checkout). Other installed
- * packages only change on npm install. All of them must exist; a missing one
- * means the dependencies are not installed. Symlinks are resolved and
- * directories nested in another are dropped, so each real directory is
- * watched once.
+ * the JS bundles were built from that belongs to a DuckDuckGo package itself
+ * (not to a dependency installed inside one) or resolves outside node_modules
+ * (an npm-linked checkout). Other installed packages only change on npm
+ * install. All of them must exist; a missing one means the dependencies are
+ * not installed. Symlinks are resolved and directories nested in another are
+ * dropped, so each real directory is watched once.
+ * @param {BuildConfig} config
  * @param {string[]} bundleInputs From the esbuild metafiles.
  * @returns {[string, string][]} Pairs of path as named and its real path.
  */
-function watchTargets(bundleInputs) {
-    const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, ...contentScopeScriptsPaths()];
+function watchTargets(config, bundleInputs) {
+    const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, ...contentScopeScriptsPaths(config)];
     const byRealPath = new Map(dirs.map((dir) => [fs.realpathSync(dir), dir]));
+    const inNodeModules = (p) => p.split(/[\\/]/).includes('node_modules');
     for (const dir of new Set(bundleInputs.map((input) => path.dirname(input)))) {
         const real = fs.realpathSync(dir);
-        const linked = !real.split(path.sep).includes('node_modules');
-        if ((linked || isWithin(DDG_PACKAGES_DIR, dir)) && !byRealPath.has(real)) {
+        const linked = !inNodeModules(real);
+        const ddgPackage = isWithin(DDG_PACKAGES_DIR, dir) && !inNodeModules(path.relative(DDG_PACKAGES_DIR, dir));
+        if ((linked || ddgPackage) && !byRealPath.has(real)) {
             byRealPath.set(real, dir);
         }
     }
@@ -160,7 +163,7 @@ async function watch(config) {
         timer = setTimeout(rebuild, 250);
     };
 
-    for (const [name, real] of watchTargets(bundleInputs)) {
+    for (const [name, real] of watchTargets(config, bundleInputs)) {
         // A file is watched through its directory, which keeps working when an
         // editor replaces the file rather than rewriting it in place.
         const file = fs.statSync(real).isDirectory() ? null : path.basename(real);
