@@ -1,6 +1,5 @@
 /**
- * Installs everything the build and the tests need. This is the Node
- * replacement for the Makefile's `npm` target:
+ * Installs everything the build and the tests need:
  *
  *   node scripts/build-tools/install.mjs
  *

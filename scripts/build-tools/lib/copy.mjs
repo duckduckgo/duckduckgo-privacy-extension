@@ -1,6 +1,5 @@
 /**
- * Copies the static parts of the extension into the build directory. This is
- * the `copy` target of the Makefile.
+ * Copies the static parts of the extension into the build directory.
  */
 import fs from 'node:fs';
 import path from 'node:path';

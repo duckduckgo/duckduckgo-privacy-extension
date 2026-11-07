@@ -1,7 +1,5 @@
 /**
- * Packages a release build for distribution. This is the Node replacement for
- * the Makefile's `chrome-release-zip`, `chrome-beta`, `beta-firefox` and
- * `embedded-release-zip` targets. Run it after a release build.
+ * Packages a release build for distribution. Run it after a release build.
  *
  *   node scripts/build-tools/package.mjs --browser chrome              build/chrome/release/chrome-release-<timestamp>.zip
  *   node scripts/build-tools/package.mjs --browser chrome --beta       same, as the beta extension (name and icons)
@@ -65,7 +63,7 @@ async function zipDirectory(dir, prefix) {
 
 /**
  * Writes the build's manifest from the browser's source manifest with an edit
- * applied to its text, as the Makefile did with sed.
+ * applied to its text.
  * @param {string} browser
  * @param {string} buildDir
  * @param {(text: string) => string} edit
