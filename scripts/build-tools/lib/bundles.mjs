@@ -1,7 +1,7 @@
 /**
  * Bundles the extension's JavaScript with esbuild.
  *
- * Each entry point is bundled in its own esbuild build, as the Makefile does.
+ * Each entry point is bundled in its own esbuild build.
  * Bundling them together changes the output: several modules `require()`
  * tldts while others `import` it, and esbuild's choice between the package's
  * `main` and `module` fields depends on which it encounters first within a
@@ -38,7 +38,7 @@ function esbuildOptions(config, entryPoint) {
         outdir: config.out.js,
         bundle: true,
         target: ESBUILD_TARGET,
-        // The Makefile pipes esbuild to stdout, which makes source maps inline.
+        // Inline source maps keep dev and release builds to the same set of files.
         sourcemap: config.dev ? 'inline' : false,
         define: esbuildDefines(config),
         logLevel: 'warning',

@@ -5,7 +5,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-/** Editor backup files, which rsync was told to skip in the Makefile. */
+/** Editor backup files, which are never copied or watched. */
 export function isBackupFile(filePath) {
     return filePath.endsWith('~');
 }
@@ -147,9 +147,8 @@ function newestMtime(paths) {
 }
 
 /**
- * True when `output` is missing or older than anything under `inputs`. This
- * is the one piece of Make-style dependency tracking the build keeps, for the
- * few steps that are slow or that read a cached download.
+ * True when `output` is missing or older than anything under `inputs`. Used
+ * by the few steps that are slow or that read a cached download.
  * @param {string} output
  * @param {string[]} inputs
  */
@@ -163,7 +162,7 @@ export function isStale(output, inputs) {
     return newestMtime(inputs) > outputStat.mtimeMs;
 }
 
-/** Timestamp for file names and contents, in the format of the Makefile's `date +"%Y%m%d_%H%M%S"`. */
+/** Timestamp for file names and contents, in the format of `date +"%Y%m%d_%H%M%S"`. */
 export function timestamp(now = new Date()) {
     const pad = (n) => String(n).padStart(2, '0');
     return `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;

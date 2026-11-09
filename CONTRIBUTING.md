@@ -57,6 +57,11 @@ Note: Development builds of the extension have a few differences from the releas
 - Release builds can be generated in a manner similar to development builds. However, instead of the development build commands, the `npm run release-chrome` and `npm run release-firefox` commands should be used.
 - These builds are stored in the `build/chrome/release` and `build/firefox/release` directories respectively.
 
+#### Building on Windows
+
+- The build needs nothing beyond Node.js, so the commands above work unchanged from PowerShell, cmd or Git Bash.
+- CI runs the lint on Linux and Windows, and the four `release-*` scripts (which include the chrome and embedded zips) on Linux, macOS and Windows. The `beta-*` scripts and the unit and integration tests run on Linux only.
+
 ### Updating or testing config
 
 Modify shared/data/constants.js the config to point to http://localhost:8080/generated/v2/extension-config.json

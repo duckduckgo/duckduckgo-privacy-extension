@@ -4,12 +4,13 @@
  * Releases of content-scope-scripts ship prebuilt bundles, which are used
  * as-is. When the package is instead npm-linked to a local checkout (detected
  * by the presence of a .git directory), the checkout is rebuilt first when its
- * sources are newer than its build output, matching the Makefile.
+ * sources are newer than its build output.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { CONTENT_SCOPE_SCRIPTS_DIR as CSS_DIR } from './config.mjs';
 import { ensureDir, isStale, touch } from './fs.mjs';
+import { NTP_BUILD_DIR } from './ntp.mjs';
 import { runNpm } from './run.mjs';
 
 const TRACKER_LOOKUP = 'shared/data/bundled/tracker-lookup.json';
@@ -33,12 +34,19 @@ export function isContentScopeScriptsLinked() {
 }
 
 /**
- * What watch mode should watch for this package: the source directories of a
- * linked checkout (the same ones its rebuild depends on, so nothing the
- * rebuild writes is watched), otherwise the prebuilt bundles.
+ * What watch mode should watch for this package. For a linked checkout: the
+ * source directories its rebuild depends on (so nothing the rebuild writes is
+ * watched), its package.json, whose dependencies the rebuild installs, and
+ * for a target that ships the New Tab Page the checkout's build of it, which
+ * the checkout's own `npm run build` produces, not the rebuild here.
+ * Otherwise the prebuilt bundles.
+ * @param {import('./config.mjs').BuildConfig} config
  */
-export function watchedPaths() {
-    return isContentScopeScriptsLinked() ? SOURCE_DIRS : [BUILD_DIR];
+export function watchedPaths({ ntp }) {
+    if (!isContentScopeScriptsLinked()) {
+        return [BUILD_DIR];
+    }
+    return [...SOURCE_DIRS, PACKAGE_JSON, ...(ntp ? [NTP_BUILD_DIR] : [])];
 }
 
 /**

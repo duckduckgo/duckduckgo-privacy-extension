@@ -2,9 +2,6 @@
  * Build configuration. What differs between browser targets is described once,
  * in BROWSER_PROFILES, so the build steps only ever test semantic fields
  * (`ui`, `autofill`, ...) rather than browser names.
- *
- * The output layout mirrors the Makefile so both produce identical builds
- * while they coexist.
  */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -23,11 +20,11 @@ export const SMARTER_ENCRYPTION_LIST = `${BUILD_ROOT}/.smarter_encryption.txt`;
 export const TEST_BUILD_DIRS = { unit: `${BUILD_ROOT}/test`, node: `${BUILD_ROOT}/node` };
 export const SMARTER_ENCRYPTION_URL = 'https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz';
 
-const DDG_PACKAGES = 'node_modules/@duckduckgo';
-export const CONTENT_SCOPE_SCRIPTS_DIR = `${DDG_PACKAGES}/content-scope-scripts`;
-export const DASHBOARD_DIR = `${DDG_PACKAGES}/privacy-dashboard/build/app`;
-export const AUTOFILL_DIR = `${DDG_PACKAGES}/autofill/dist`;
-export const SURROGATES_DIR = `${DDG_PACKAGES}/tracker-surrogates/surrogates`;
+export const DDG_PACKAGES_DIR = 'node_modules/@duckduckgo';
+export const CONTENT_SCOPE_SCRIPTS_DIR = `${DDG_PACKAGES_DIR}/content-scope-scripts`;
+export const DASHBOARD_DIR = `${DDG_PACKAGES_DIR}/privacy-dashboard/build/app`;
+export const AUTOFILL_DIR = `${DDG_PACKAGES_DIR}/autofill/dist`;
+export const SURROGATES_DIR = `${DDG_PACKAGES_DIR}/tracker-surrogates/surrogates`;
 
 export const FONT_URL = 'https://duckduckgo.com/font/all/';
 export const FONT_FILES = [
@@ -177,8 +174,8 @@ export function resolveConfig({ browser, type, reloader = true }) {
 }
 
 /**
- * Directories created up front for every build (the Makefile's MKDIR_TARGETS),
- * so that the output tree matches exactly even where a directory ends up empty.
+ * Directories created up front for every build, so that the output tree is
+ * the same even where a directory ends up empty.
  * @param {BuildConfig} config
  */
 export function buildDirectories({ out }) {

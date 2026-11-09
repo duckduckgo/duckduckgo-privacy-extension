@@ -31,7 +31,7 @@ jobs:
         strategy:
             matrix:
                 os: [ubuntu-latest, macos-latest, windows-latest]
-                target: ['release-firefox', 'release-chrome', 'release-chromium-embedded']
+                target: ['release-firefox', 'release-chrome', 'release-chromium-embedded', 'release-embedded']
         runs-on: ${{ matrix.os }}
         steps:
             - uses: actions/checkout@v7
@@ -59,30 +59,6 @@ jobs:
             - run: npm run beta-chrome
             - run: npm run beta-firefox
             - run: ls build/embedded/release/embedded-release-*.zip build/chrome/release/chrome-release-*.zip build/firefox/release/web-ext-artifacts/*.zip
-
-    # The Node build scripts (scripts/build-tools/) are replacing the Makefile. Until
-    # the Makefile is removed, check that both produce identical output.
-    build-parity:
-        strategy:
-            fail-fast: false
-            matrix:
-                browser: [chrome, firefox, embedded, chromium-embedded]
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v7
-            - uses: actions/setup-node@v7
-              with:
-                  node-version-file: .nvmrc
-                  cache: 'npm'
-            - run: npm run install-ci
-            - name: Build with make
-              run: |
-                  make copy build browser=${{ matrix.browser }} type=release
-                  mv build/${{ matrix.browser }}/release /tmp/make-release
-            - name: Build with node
-              run: node scripts/build-tools/build.mjs --browser ${{ matrix.browser }} --type release
-            - name: Compare
-              run: diff -r /tmp/make-release build/${{ matrix.browser }}/release
 
     unit-tests:
         runs-on: ubuntu-22.04
