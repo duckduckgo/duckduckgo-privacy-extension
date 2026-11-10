@@ -786,8 +786,43 @@ describe('CookiePromptManagement', () => {
 
             expect(mockMessaging.notifyInitProgress.calls.allArgs()).toEqual([
                 [3, 'https://example.com/b', 'received'],
+                [3, 'https://example.com/b', 'config_read'],
+                [3, 'https://example.com/b', 'settings_checked'],
+                [3, 'https://example.com/b', 'site_checked'],
                 [3, 'https://example.com/b', 'response_sent'],
             ]);
+        });
+
+        it('reports the last step reached when the site check disables autoconsent', async () => {
+            const { mockMessaging, handler } = await setup({ autoconsentEnabledForSite: false });
+            spyOn(chrome.tabs, 'sendMessage').and.returnValue(Promise.resolve());
+
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(stagesOf(mockMessaging)).toEqual(['received', 'config_read', 'settings_checked', 'site_checked']);
+            expect(chrome.tabs.sendMessage).not.toHaveBeenCalled();
+        });
+
+        it('forwards the page_init_sent mark of the main frame', async () => {
+            const { mockMessaging, handler } = await setup();
+
+            await handler({}, makeSender({ tabId: 8, frameId: 0, tabUrl: 'https://example.com/c' }), {
+                autoconsentPayload: { type: 'cpmInitProgress', stage: 'page_init_sent' },
+            });
+
+            expect(mockMessaging.notifyInitProgress).toHaveBeenCalledOnceWith(8, 'https://example.com/c', 'page_init_sent');
+        });
+
+        it('ignores page marks from sub-frames and unknown stages, and does not touch CPM state', async () => {
+            const { mockMessaging, handler } = await setup();
+
+            await handler({}, makeSender({ frameId: 1 }), { autoconsentPayload: { type: 'cpmInitProgress', stage: 'page_init_sent' } });
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: { type: 'cpmInitProgress', stage: 'made_up' } });
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: { type: 'cpmInitProgress', stage: 'received' } });
+
+            expect(mockMessaging.notifyInitProgress).not.toHaveBeenCalled();
+            expect(mockMessaging.refreshDashboardState).not.toHaveBeenCalled();
+            expect(mockMessaging.checkAutoconsentSetting).not.toHaveBeenCalled();
         });
 
         it('sends response_failed and keeps the rejection unhandled when sendMessage rejects', async () => {
@@ -806,7 +841,7 @@ describe('CookiePromptManagement', () => {
                 expect(reported === error || reported?.reason === error || reported?.message?.includes(error.message)).toBe(true);
             });
 
-            expect(stagesOf(mockMessaging)).toEqual(['received', 'response_failed']);
+            expect(stagesOf(mockMessaging)).toEqual(['received', 'config_read', 'settings_checked', 'site_checked', 'response_failed']);
         });
 
         it('notifyInitResponseProgress rethrows the original error', async () => {

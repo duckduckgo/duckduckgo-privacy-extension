@@ -37,7 +37,8 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
 
 /**
  * Progress marks for the main frame `init` message, reported to the native app (embedded only).
- * @typedef {'received' | 'response_sent' | 'response_failed'} CpmInitProgressStage
+ * `page_init_sent` is reported by the content script before it sends `init`; the others come from the background.
+ * @typedef {'page_init_sent' | 'received' | 'config_read' | 'settings_checked' | 'site_checked' | 'response_sent' | 'response_failed'} CpmInitProgressStage
  */
 
 /**
@@ -460,9 +461,22 @@ export default class CookiePromptManagement {
         // @ts-expect-error - origin is not available in the type
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
+        const progress = /** @type {{ type: string, stage?: string }} */ (/** @type {unknown} */ (msg));
+        /**
+         * Main-frame init progress mark for native. No await: marks never delay init.
+         * @param {CpmInitProgressStage} stage
+         */
+        const mark = (stage) => {
+            if (isMainFrame) this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, stage);
+        };
+        if (progress.type === 'cpmInitProgress') {
+            // page-side mark: best effort, never touches CPM state, config or the dashboard. Only this stage is accepted.
+            if (progress.stage === 'page_init_sent') mark('page_init_sent');
+            return;
+        }
         if (msg.type === 'init' && isMainFrame) {
-            // no await; tell native that init reached the background before anything else happens
-            this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, 'received');
+            // tell native that init reached the background before anything else happens
+            mark('received');
 
             // update the cached top url for this tab
             this.updateTopUrl(tabId, tabUrl);
@@ -488,6 +502,9 @@ export default class CookiePromptManagement {
                 );
             }
             return;
+        }
+        if (msg.type === 'init') {
+            mark('config_read');
         }
         const cpmConfigVersion = `${remoteConfig.version || 'unknown'}`;
         const autoconsentRemoteConfig = remoteConfig.features?.autoconsent;
@@ -521,6 +538,7 @@ export default class CookiePromptManagement {
         switch (msg.type) {
             case 'init': {
                 const settings = await this.cpmMessaging.checkAutoconsentSetting(tabId);
+                mark('settings_checked');
                 // Map preference to heuristic mode:
                 // - max: Tier2
                 // - default and new settings enabled: Tier1
@@ -553,6 +571,7 @@ export default class CookiePromptManagement {
                 }
 
                 const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(tabUrl, tabId);
+                mark('site_checked');
                 if (!isEnabled) {
                     this.cpmMessaging.logMessage(`autoconsent disabled for site: ${tabUrl}`);
                     if (isMainFrame) {
