@@ -615,6 +615,7 @@ export default class CookiePromptManagement {
                     enableGeneratedRules: true,
                     enableHeuristicDetection: true,
                     heuristicMode,
+                    enableHeuristicHitTest: !!settings.featureFlags?.heuristicHitTest,
                     visualTest,
                     logs: logsConfig,
                 };
