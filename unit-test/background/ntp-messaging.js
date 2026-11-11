@@ -11,6 +11,14 @@ describe('NTPMessaging component', () => {
     let settings;
     /** @type {NewTabTrackerStats} */
     let newTabTrackerStats;
+    let changedListeners;
+
+    const favorite = { id: '7', title: 'Example', url: 'https://www.example.co.uk/a?b' };
+    const pageFavorite = {
+        ...favorite,
+        etldPlusOne: 'example.co.uk',
+        favicon: { src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.co.uk%2Fa%3Fb&size=64&', maxAvailableSize: 64 },
+    };
 
     /**
      * Minimal stand-in for a runtime Port connected to the NTP page.
@@ -40,10 +48,21 @@ describe('NTPMessaging component', () => {
     }
 
     beforeEach(() => {
+        changedListeners = [];
+        chrome.ddg = {
+            getFavorites: () => Promise.resolve([favorite]),
+            moveFavorite: jasmine.createSpy('moveFavorite').and.resolveTo(),
+            showAddFavoriteBubble: jasmine.createSpy('showAddFavoriteBubble').and.resolveTo(true),
+            onFavoritesChanged: { addListener: (listener) => changedListeners.push(listener) },
+        };
         settings = new MockSettings();
         newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
         // @ts-ignore - MockSettings stands in for Settings
         ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+    });
+
+    afterEach(() => {
+        delete chrome.ddg;
     });
 
     it('answers initialSetup with a valid minimal payload', async () => {
@@ -72,7 +91,6 @@ describe('NTPMessaging component', () => {
             suggestions: { topHits: [], duckduckgoSuggestions: [], localSuggestions: [] },
         });
         expect(await ntpMessaging.handleRequest('favorites_getConfig')).toEqual({ expansion: 'expanded' });
-        expect(await ntpMessaging.handleRequest('favorites_getData')).toEqual({ favorites: [] });
         expect(await ntpMessaging.handleRequest('protections_getConfig')).toEqual({ expansion: 'expanded', feed: 'privacy-stats' });
         expect(await ntpMessaging.handleRequest('activity_getUrls')).toEqual({ urls: [], totalTrackersBlocked: 0 });
         expect(await ntpMessaging.handleRequest('activity_getDataForUrls', { urls: [] })).toEqual({ activity: [] });
@@ -223,29 +241,6 @@ describe('NTPMessaging component', () => {
     });
 
     describe('favorites', () => {
-        const favorite = { id: '7', title: 'Example', url: 'https://www.example.co.uk/a?b' };
-        const pageFavorite = {
-            ...favorite,
-            etldPlusOne: 'example.co.uk',
-            favicon: { src: '/_favicon/?pageUrl=https%3A%2F%2Fwww.example.co.uk%2Fa%3Fb&size=64&', maxAvailableSize: 64 },
-        };
-        let changedListeners;
-
-        beforeEach(() => {
-            changedListeners = [];
-            chrome.ddg = {
-                getFavorites: () => Promise.resolve([favorite]),
-                moveFavorite: jasmine.createSpy('moveFavorite').and.resolveTo(),
-                onFavoritesChanged: { addListener: (listener) => changedListeners.push(listener) },
-            };
-            // @ts-ignore - MockSettings stands in for Settings
-            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
-        });
-
-        afterEach(() => {
-            delete chrome.ddg;
-        });
-
         it('answers favorites_getData from the browser', async () => {
             expect(await ntpMessaging.handleRequest('favorites_getData')).toEqual({ favorites: [pageFavorite] });
         });
@@ -258,27 +253,39 @@ describe('NTPMessaging component', () => {
             expect(chrome.ddg.moveFavorite).toHaveBeenCalledTimes(1);
         });
 
-        it('pushes the browser order back when a move fails', async () => {
-            chrome.ddg.moveFavorite = jasmine.createSpy('moveFavorite').and.rejectWith(new Error('The id is not a favorite.'));
+        it('pushes the browser order back and logs when a move fails', async () => {
+            const error = new Error('The id is not a favorite.');
+            chrome.ddg.moveFavorite = jasmine.createSpy('moveFavorite').and.rejectWith(error);
+            const consoleError = spyOn(console, 'error');
             const port = createFakePort();
             // @ts-ignore - fake port
             ntpMessaging.ports.add(port);
 
-            await ntpMessaging.handleNotification('favorites_move', { id: '7', targetIndex: 0 });
+            // @ts-ignore - fake port
+            await ntpMessaging.onMessage({ ...requestMessage('favorites_move', { id: '7', targetIndex: 0 }), Id: undefined }, port);
             expect(port.posted.map((msg) => msg.params)).toEqual([{ favorites: [pageFavorite] }]);
+            expect(consoleError).toHaveBeenCalledWith('NTP favorites_move failed:', error);
         });
 
-        it('opens the browser add favorite dialog over the NTP tab', async () => {
-            chrome.ddg.showAddFavoriteBubble = jasmine.createSpy('showAddFavoriteBubble').and.resolveTo(true);
-            const port = { ...createFakePort(), sender: { tab: { id: 7 } } };
-
+        it('opens the browser add favorite dialog over the NTP tab, and logs when it does not open', async () => {
+            const consoleError = spyOn(console, 'error');
+            const tabPort = { ...createFakePort(), sender: { tab: { id: 7 } } };
             // @ts-ignore - fake port
-            await ntpMessaging.handleNotification('favorites_add', undefined, port);
+            const add = (port) => ntpMessaging.onMessage({ ...requestMessage('favorites_add'), Id: undefined }, port);
+
+            await add(tabPort);
             expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledWith(7);
+            expect(consoleError).not.toHaveBeenCalled();
 
-            // @ts-ignore - fake port
-            await ntpMessaging.handleNotification('favorites_add', undefined, createFakePort());
-            expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledTimes(1);
+            // the browser declines, or there is no tab to open it over
+            chrome.ddg.showAddFavoriteBubble.and.resolveTo(false);
+            await add(tabPort);
+            await add(createFakePort());
+            expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledTimes(2);
+            expect(consoleError.calls.allArgs().map(([message]) => message)).toEqual([
+                'NTP favorites_add failed:',
+                'NTP favorites_add failed:',
+            ]);
         });
 
         it('pushes favorites to connected pages when the browser reports a change', async () => {
@@ -318,6 +325,50 @@ describe('NTPMessaging component', () => {
 
             expect(first.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
             expect(second.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
+        });
+    });
+
+    // Another browser has no chrome.ddg; an older or broken one lacks members.
+    describe('when the browser lacks the favorites API', () => {
+        /** @type {jasmine.Spy} */
+        let consoleError;
+
+        beforeEach(() => {
+            consoleError = spyOn(console, 'error');
+        });
+
+        it('logs that favorites will not update', () => {
+            for (const ddg of [undefined, {}]) {
+                chrome.ddg = ddg;
+                // @ts-ignore - MockSettings stands in for Settings
+                new NTPMessaging({ settings, newTabTrackerStats }); // eslint-disable-line no-new
+            }
+            expect(consoleError).toHaveBeenCalledTimes(2);
+        });
+
+        it('answers favorites_getData with an error naming what is missing', async () => {
+            const errorFor = async (ddg) => {
+                chrome.ddg = ddg;
+                const port = createFakePort();
+                // @ts-ignore - fake port
+                await ntpMessaging.onMessage(requestMessage('favorites_getData'), port);
+                return port.posted[0].error.message;
+            };
+            expect(await errorFor(undefined)).toBe('chrome.ddg is unavailable');
+            expect(await errorFor({})).toContain('getFavorites');
+        });
+
+        it('logs the favorites notifications it cannot carry out', async () => {
+            chrome.ddg = {};
+            const port = { ...createFakePort(), sender: { tab: { id: 7 } } };
+            // @ts-ignore - fake port
+            await ntpMessaging.onMessage({ ...requestMessage('favorites_move', { id: '7', targetIndex: 0 }), Id: undefined }, port);
+            // @ts-ignore - fake port
+            await ntpMessaging.onMessage({ ...requestMessage('favorites_add'), Id: undefined }, port);
+
+            const failure = (member) => jasmine.objectContaining({ message: jasmine.stringContaining(member) });
+            expect(consoleError).toHaveBeenCalledWith('NTP favorites_move failed:', failure('moveFavorite'));
+            expect(consoleError).toHaveBeenCalledWith('NTP favorites_add failed:', failure('showAddFavoriteBubble'));
         });
     });
 

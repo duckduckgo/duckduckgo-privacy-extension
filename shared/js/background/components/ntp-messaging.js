@@ -50,6 +50,16 @@ const SEARCH_URL = 'https://duckduckgo.com/';
 const FAVICON_SIZE = 64;
 
 /**
+ * `chrome.ddg`; throws where the browser does not provide it.
+ */
+function ddgApi() {
+    if (!chrome.ddg) {
+        throw new Error('chrome.ddg is unavailable');
+    }
+    return chrome.ddg;
+}
+
+/**
  * Messaging endpoint for the New Tab Page, over the runtime port opened by
  * shared/js/ntp/interop-shim.js:
  *  - requests arrive as `{Feature, SubFeatureName, Name, Data, Id}` and are
@@ -91,7 +101,11 @@ export default class NTPMessaging {
         });
 
         // Top level, so the browser can wake the worker to deliver it.
-        chrome.ddg?.onFavoritesChanged?.addListener(() => this.pushFavoritesUpdate());
+        if (chrome.ddg?.onFavoritesChanged) {
+            chrome.ddg.onFavoritesChanged.addListener(() => this.pushFavoritesUpdate());
+        } else {
+            console.error('chrome.ddg.onFavoritesChanged is unavailable: open New Tab Pages will not see favorites change');
+        }
 
         // At most one push a second while trackers are being blocked. Scheduled even with no
         // pages connected, as open pages reconnect after the event that started the worker.
@@ -125,7 +139,11 @@ export default class NTPMessaging {
                 port.postMessage({ context, featureName, id, error: { message } });
             }
         } else {
-            await this.handleNotification(method, params, port);
+            try {
+                await this.handleNotification(method, params, port);
+            } catch (e) {
+                console.error(`NTP ${method} failed:`, e);
+            }
         }
     }
 
@@ -215,17 +233,22 @@ export default class NTPMessaging {
                 this.openUrl(params?.url, params?.target, port, false);
                 break;
             case 'favorites_move':
-                // The page has already moved it; onFavoritesChanged echoes the order back,
-                // and pushing it undoes a move that failed.
+                // The page has already moved it; onFavoritesChanged echoes the order back.
                 if (typeof params?.id === 'string' && Number.isInteger(params?.targetIndex)) {
-                    await chrome.ddg?.moveFavorite?.(params.id, params.targetIndex).catch(() => this.pushFavoritesUpdate());
+                    try {
+                        await ddgApi().moveFavorite(params.id, params.targetIndex);
+                    } catch (e) {
+                        // Undo the page's move.
+                        await this.pushFavoritesUpdate();
+                        throw e;
+                    }
                 }
                 break;
             case 'favorites_add': {
                 // The browser's bookmark dialog adds it; onFavoritesChanged brings it back.
                 const tabId = port?.sender?.tab?.id;
-                if (tabId) {
-                    await chrome.ddg?.showAddFavoriteBubble?.(tabId);
+                if (tabId === undefined || !(await ddgApi().showAddFavoriteBubble(tabId))) {
+                    throw new Error('the add favorite dialog did not open');
                 }
                 break;
             }
@@ -300,7 +323,7 @@ export default class NTPMessaging {
      * `src` verbatim, so the trailing '&' keeps that from corrupting `size`.
      */
     async getFavoritesData() {
-        const favorites = (await chrome.ddg?.getFavorites?.()) ?? [];
+        const favorites = await ddgApi().getFavorites();
         return {
             favorites: favorites.map(({ id, title, url }) => ({
                 id,
@@ -319,7 +342,11 @@ export default class NTPMessaging {
      * @param {Iterable<Port>} [ports]
      */
     async pushFavoritesUpdate(ports = this.ports) {
-        this.pushSubscriptionEvent('favorites_onDataUpdate', await this.getFavoritesData(), ports);
+        try {
+            this.pushSubscriptionEvent('favorites_onDataUpdate', await this.getFavoritesData(), ports);
+        } catch (e) {
+            console.error('NTP favorites_onDataUpdate failed:', e);
+        }
     }
 
     pushDataUpdate() {

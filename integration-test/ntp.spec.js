@@ -44,6 +44,10 @@ test.describe('Embedded New Tab Page', () => {
     });
 
     test('renders the omnibar, favorites and protections widgets via extension messaging', async ({ page, backgroundPage }) => {
+        // Stands in for the DuckDuckGo browser's favorites, which Chrome lacks.
+        await backgroundPage.evaluate(() => {
+            chrome.ddg = { getFavorites: async () => [] };
+        });
         await page.goto(await getNtpUrl(backgroundPage));
 
         // each widget only renders once initialSetup and its own
