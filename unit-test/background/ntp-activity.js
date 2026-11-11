@@ -78,9 +78,9 @@ describe('NTPActivity component', () => {
         expect(changes).toEqual([['example.com', 'allowed.example'], ['example.com']]);
     });
 
-    it('counts the last 7 days, and forgets the domains no longer in the history', async () => {
+    it('counts the last 7 days of the domains in the history', async () => {
         history = [{ id: '1', url: 'https://example.com/', title: 'Example', lastVisitTime: 1 }];
-        await activity.trackers.bulkPut([
+        await activity.trackersPerSite.bulkPut([
             { domain: 'example.com', day: today, count: 1, companies: ['Google'] },
             { domain: 'example.com', day: today - 7, count: 2, companies: ['Facebook'] },
             { domain: 'example.com', day: today - 8, count: 4, companies: ['Amazon'] },
@@ -93,7 +93,24 @@ describe('NTPActivity component', () => {
             jasmine.objectContaining({ trackersBlocked: 3, companies: jasmine.arrayWithExactContents(['Google', 'Facebook']) }),
         );
         expect(sites.has('gone.example')).toBeFalse();
-        expect(await activity.trackers.where('domain').equals('gone.example').count()).toBe(0);
+        expect(await activity.trackersPerSite.count()).toBe(4);
+    });
+
+    it('prunes the trackers from before the last 7 days, and of the domains no longer in the history', async () => {
+        history = [{ id: '1', url: 'https://example.com/', title: 'Example', lastVisitTime: 1 }];
+        await activity.trackersPerSite.bulkPut([
+            { domain: 'example.com', day: today, count: 1, companies: [] },
+            { domain: 'example.com', day: today - 7, count: 1, companies: [] },
+            { domain: 'example.com', day: today - 8, count: 1, companies: [] },
+            { domain: 'gone.example', day: today, count: 1, companies: [] },
+        ]);
+
+        await activity.pruneTrackers();
+
+        expect((await activity.trackersPerSite.toArray()).map(({ domain, day }) => [domain, today - day])).toEqual([
+            ['example.com', 7],
+            ['example.com', 0],
+        ]);
     });
 
     it('removes a domain from the history and forgets its trackers', async () => {
@@ -103,7 +120,7 @@ describe('NTPActivity component', () => {
             { id: '2', url: 'https://example.com/b', title: 'B', lastVisitTime: 1 },
             { id: '3', url: 'https://other.example/', title: 'Other', lastVisitTime: 0 },
         ];
-        await activity.trackers.bulkPut([
+        await activity.trackersPerSite.bulkPut([
             { domain: 'example.com', day: today - 20, count: 1, companies: [] },
             { domain: 'other.example', day: today, count: 1, companies: [] },
         ]);
@@ -111,16 +128,16 @@ describe('NTPActivity component', () => {
         await activity.removeDomain('example.com');
 
         expect(deleteUrl.calls.allArgs()).toEqual([[{ url: 'https://www.example.com/a' }], [{ url: 'https://example.com/b' }]]);
-        expect(await activity.trackers.toArray()).toEqual([jasmine.objectContaining({ domain: 'other.example' })]);
+        expect(await activity.trackersPerSite.toArray()).toEqual([jasmine.objectContaining({ domain: 'other.example' })]);
     });
 
     it('clears its trackers, including those not yet written', async () => {
         found('https://example.com/', 'Google');
-        await activity.trackers.put({ domain: 'example.com', day: today, count: 1, companies: [] });
+        await activity.trackersPerSite.put({ domain: 'example.com', day: today, count: 1, companies: [] });
 
         await activity.clear();
         await activity.flushTrackers();
 
-        expect(await activity.trackers.count()).toBe(0);
+        expect(await activity.trackersPerSite.count()).toBe(0);
     });
 });

@@ -43,6 +43,9 @@ export default class NTPActivity extends EventTarget {
     /** @type {ReturnType<typeof setTimeout>?} */
     flushTimer = null;
 
+    /** @type {ReturnType<typeof setTimeout>?} */
+    pruneTimer = null;
+
     /**
      * Must be constructed on the first tick of the service worker, so that its
      * history and burn listeners wake it.
@@ -51,9 +54,9 @@ export default class NTPActivity extends EventTarget {
     constructor(dbName = 'ntpActivity') {
         super();
         this.db = new Dexie(dbName);
-        this.db.version(1).stores({ trackers: '[domain+day], domain, day' });
+        this.db.version(1).stores({ trackersPerSite: '[domain+day], domain, day' });
         /** @type {import('dexie').Table<DayTrackers, [string, number]>} */
-        this.trackers = this.db.table('trackers');
+        this.trackersPerSite = this.db.table('trackersPerSite');
 
         // At most one write a second while trackers are being found.
         emitter.on(TrackerFoundEvent.eventName, (event) => {
@@ -76,6 +79,8 @@ export default class NTPActivity extends EventTarget {
             if (allHistory) {
                 this.clear();
             } else {
+                // At most one prune a second while history is being removed.
+                this.pruneTimer ||= setTimeout(() => this.pruneTrackers(), 1000);
                 this.dispatchEvent(new CustomEvent('change', { detail: (urls || []).map(pageDomain) }));
             }
         });
@@ -84,24 +89,21 @@ export default class NTPActivity extends EventTarget {
         createAlarm(PRUNE_ALARM_NAME, { periodInMinutes: 60 });
         browser.alarms.onAlarm.addListener(({ name }) => {
             if (name === PRUNE_ALARM_NAME) {
-                this.trackers
-                    .where('day')
-                    .below(today() - DAYS)
-                    .delete();
+                this.pruneTrackers();
             }
         });
     }
 
     /**
      * The last 7 days of the browser's history by domain, both most recently
-     * visited first. Forgets the trackers of domains no longer in it.
+     * visited first.
      * @returns {Promise<Map<string, SiteActivity>>}
      */
     async getSites() {
-        const firstDay = today() - DAYS;
+        const firstDay = daysSinceEpoch() - DAYS;
         const [historyItems, trackers] = await Promise.all([
             browser.history.search({ text: '', startTime: firstDay * DAY_MS, maxResults: 0 }),
-            this.trackers.where('day').aboveOrEqual(firstDay).toArray(),
+            this.trackersPerSite.where('day').aboveOrEqual(firstDay).toArray(),
         ]);
         /** @type {Map<string, SiteActivity>} */
         const sites = new Map();
@@ -112,30 +114,36 @@ export default class NTPActivity extends EventTarget {
             site.pages.push({ url, title, lastVisitTime });
             sites.set(domain, site);
         }
-        /** @type {[string, number][]} */
-        const forgotten = [];
-        for (const { domain, day, count, companies } of trackers) {
+        for (const { domain, count, companies } of trackers) {
             const site = sites.get(domain);
             if (site) {
                 site.trackersFound = true;
                 site.trackersBlocked += count;
                 site.companies = [...new Set([...site.companies, ...companies])];
-            } else {
-                forgotten.push([domain, day]);
             }
         }
-        await this.trackers.bulkDelete(forgotten);
         return sites;
+    }
+
+    /**
+     * Forgets the trackers from before the last 7 days, and those of domains no
+     * longer in the browser's history.
+     */
+    async pruneTrackers() {
+        this.pruneTimer = null;
+        const firstDay = daysSinceEpoch() - DAYS;
+        const sites = await this.getSites();
+        await this.trackersPerSite.filter(({ domain, day }) => day < firstDay || !sites.has(domain)).delete();
     }
 
     async flushTrackers() {
         this.flushTimer = null;
-        const day = today();
+        const day = daysSinceEpoch();
         const pending = [...this.pendingTrackers];
         this.pendingTrackers = new Map();
-        await this.db.transaction('rw', this.trackers, async () => {
-            const rows = await this.trackers.bulkGet(pending.map(([domain]) => [domain, day]));
-            await this.trackers.bulkPut(
+        await this.db.transaction('rw', this.trackersPerSite, async () => {
+            const rows = await this.trackersPerSite.bulkGet(pending.map(([domain]) => [domain, day]));
+            await this.trackersPerSite.bulkPut(
                 pending.map(([domain, { count, companies }], i) => {
                     const row = rows[i] || { domain, day, count: 0, companies: [] };
                     row.count += count;
@@ -156,13 +164,13 @@ export default class NTPActivity extends EventTarget {
         const site = (await this.getSites()).get(domain);
         await Promise.all((site?.pages || []).map(({ url }) => browser.history.deleteUrl({ url })));
         this.pendingTrackers.delete(domain);
-        await this.trackers.where('domain').equals(domain).delete();
+        await this.trackersPerSite.where('domain').equals(domain).delete();
         this.dispatchEvent(new CustomEvent('change', { detail: [domain] }));
     }
 
     async clear() {
         this.pendingTrackers.clear();
-        await this.trackers.clear();
+        await this.trackersPerSite.clear();
         this.dispatchEvent(new CustomEvent('change', { detail: [] }));
     }
 }
@@ -178,8 +186,8 @@ export function pageDomain(url) {
 }
 
 /**
- * @returns {number} days since the epoch, UTC
+ * @returns {number} the current day, as days since the epoch, UTC
  */
-function today() {
+function daysSinceEpoch() {
     return Math.floor(Date.now() / DAY_MS);
 }
