@@ -269,10 +269,12 @@ export default class NTPMessaging {
             case 'contextMenu': {
                 const tabId = port?.sender?.tab?.id;
                 const items = params?.visibilityMenuItems;
-                if (!tabId || !Array.isArray(items)) break;
+                if (tabId === undefined || !Array.isArray(items)) {
+                    throw new Error('the context menu has no tab to open over or no items');
+                }
                 await this.settings.ready();
                 const configs = this.getWidgetConfigs();
-                const chosen = await chrome.ddg?.showContextMenu?.(
+                const chosen = await ddgApi().showContextMenu(
                     tabId,
                     items.map(({ id, title }) => ({
                         id,

@@ -468,6 +468,22 @@ describe('NTPMessaging component', () => {
             expect(sender.posted).toEqual([]);
             expect(other.posted).toEqual([]);
         });
+
+        it('logs when there is no tab to show the menu over, or no items', async () => {
+            chrome.ddg.showContextMenu = jasmine.createSpy('showContextMenu');
+            const consoleError = spyOn(console, 'error');
+            // @ts-ignore - fake port
+            const notify = (data, port) => ntpMessaging.onMessage({ ...requestMessage('contextMenu', data), Id: undefined }, port);
+
+            await notify({ visibilityMenuItems }, createFakePort());
+            await notify({}, sender);
+
+            expect(chrome.ddg.showContextMenu).not.toHaveBeenCalled();
+            expect(consoleError.calls.allArgs().map(([message]) => message)).toEqual([
+                'NTP contextMenu failed:',
+                'NTP contextMenu failed:',
+            ]);
+        });
     });
 
     describe('favorites', () => {
@@ -696,11 +712,13 @@ describe('NTPMessaging component', () => {
             await notify('favorites_add');
             await notify('activity_addFavorite', { url: 'https://example.com/' });
             await notify('activity_removeFavorite', { url: 'https://example.com/' });
+            await notify('contextMenu', { visibilityMenuItems: [{ id: 'omnibar', title: 'Search' }] });
 
             expect(consoleError).toHaveBeenCalledWith('NTP favorites_move failed:', failure('moveFavorite'));
             expect(consoleError).toHaveBeenCalledWith('NTP favorites_add failed:', failure('showAddFavoriteBubble'));
             expect(consoleError).toHaveBeenCalledWith('NTP activity_addFavorite failed:', failure('addFavorite'));
             expect(consoleError).toHaveBeenCalledWith('NTP activity_removeFavorite failed:', failure('removeFavorite'));
+            expect(consoleError).toHaveBeenCalledWith('NTP contextMenu failed:', failure('showContextMenu'));
         });
 
         it('logs the favorites changes it cannot push', async () => {

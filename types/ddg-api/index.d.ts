@@ -65,7 +65,7 @@ declare namespace chrome {
                * of the item chosen, or undefined if none was or it did not
                * open, which it does only over its window's active tab.
                */
-              showContextMenu?(tabId: number, items: { id: string; title: string; checked: boolean }[]): Promise<string | undefined>;
+              showContextMenu(tabId: number, items: { id: string; title: string; checked: boolean }[]): Promise<string | undefined>;
 
               /**
                * browser -> extension; the favorites may have changed. Not
