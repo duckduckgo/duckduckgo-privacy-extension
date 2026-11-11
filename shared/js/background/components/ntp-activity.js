@@ -1,7 +1,6 @@
 import browser from 'webextension-polyfill';
 import Dexie from 'dexie';
 import { emitter, TrackerFoundEvent } from '../before-request';
-import { extractHostFromURL } from '../utils';
 import { createAlarm } from '../wrapper';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -180,13 +179,14 @@ export default class NTPActivity extends EventTarget {
 }
 
 /**
- * The domain a page is grouped under: its host without any www., or '' for
- * anything but http(s).
+ * The domain a page is grouped under, as on Windows: its host without a leading
+ * www., or '' for anything but http(s).
  * @param {string} url
  * @returns {string}
  */
 export function pageDomain(url) {
-    return /^https?:/.test(url) ? extractHostFromURL(url) : '';
+    const parsed = /^https?:/.test(url) && URL.parse(url);
+    return parsed ? parsed.hostname.replace(/^www\./, '') : '';
 }
 
 /**

@@ -1,5 +1,5 @@
 import browser from 'webextension-polyfill';
-import NTPActivity from '../../shared/js/background/components/ntp-activity';
+import NTPActivity, { pageDomain } from '../../shared/js/background/components/ntp-activity';
 import { emitter, TrackerFoundEvent } from '../../shared/js/background/before-request';
 
 describe('NTPActivity component', () => {
@@ -49,6 +49,12 @@ describe('NTPActivity component', () => {
             trackersBlocked: 0,
             companies: [],
         });
+    });
+
+    it('groups pages by their host without a leading www.', () => {
+        const urls = ['https://www.example.com/a', 'http://example.com:8080/', 'https://www.www.example.com/', 'http://[::1]:3000/'];
+        expect(urls.map(pageDomain)).toEqual(['example.com', 'example.com', 'www.example.com', '[::1]']);
+        expect(['chrome://settings/', 'about:blank', 'https://', ''].map(pageDomain)).toEqual(['', '', '', '']);
     });
 
     it('counts the trackers found and blocked on each domain', async () => {
