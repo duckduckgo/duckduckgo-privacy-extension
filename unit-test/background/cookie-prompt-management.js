@@ -711,6 +711,32 @@ describe('CookiePromptManagement', () => {
         });
     });
 
+    describe('heuristic hit test', () => {
+        function settingsWithFlags(featureFlags) {
+            return Promise.resolve({ enabled: true, userPreference: 'default', featureFlags });
+        }
+
+        it('follows the heuristicHitTest subfeature flag in the init config', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            const handler = messageHandlers.autoconsent;
+
+            mockMessaging.checkAutoconsentSetting.and.returnValue(settingsWithFlags({ heuristicAction: true }));
+            const missingFlagResp = await handler({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            expect(missingFlagResp.config.enableHeuristicHitTest).toBe(false);
+
+            mockMessaging.checkAutoconsentSetting.and.returnValue(settingsWithFlags({ heuristicAction: true, heuristicHitTest: true }));
+            const enabledResp = await handler({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            expect(enabledResp.config.enableHeuristicHitTest).toBe(true);
+
+            mockMessaging.checkAutoconsentSetting.and.returnValue(settingsWithFlags({ heuristicAction: true, heuristicHitTest: false }));
+            const disabledResp = await handler({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            expect(disabledResp.config.enableHeuristicHitTest).toBe(false);
+        });
+    });
+
     describe('site rank bucket', () => {
         const TOP_URL = 'https://www.top-site.example/page';
         const OTHER_URL = 'https://long-tail.example/page';
