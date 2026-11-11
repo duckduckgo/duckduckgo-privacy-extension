@@ -35,6 +35,7 @@ export async function onStartup() {
 
     /**
      * in Chrome only, try to initiate the `NewTabTrackerStats` feature
+     * (chromium-embedded sets up its own in background.js)
      */
     if (BUILD_TARGET === 'chrome' && getBrowserName() === 'chrome') {
         try {

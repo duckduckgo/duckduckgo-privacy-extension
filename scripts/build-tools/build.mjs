@@ -1,42 +1,40 @@
 /**
  * Builds the extension.
  *
- *   node scripts/build-tools/build.mjs --browser <chrome|firefox|embedded|chromium-embedded> --type <dev|release> [--watch] [--no-reloader]
+ *   node scripts/build-tools/build.mjs --browser <chrome|firefox|embedded|chromium-embedded> --type <dev|release> [--clean] [--watch] [--no-reloader]
  *
- * Output goes to build/<browser>/<type>. This is the Node replacement for the
- * Makefile's `dev`, `release` (minus `clean` and `npm`) and `watch` targets,
- * and produces the same files. It runs on Linux, macOS and Windows with no
- * tools beyond Node and the npm dependencies.
+ * Output goes to build/<browser>/<type>. It runs on Linux, macOS and Windows
+ * with no tools beyond Node and the npm dependencies.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { bundleJs } from './lib/bundles.mjs';
+import { clean } from './lib/clean.mjs';
 import { TARGET_OPTIONS, TARGET_USAGE, resolveTarget } from './lib/cli.mjs';
-import { AUTOFILL_DIR, CONTENT_SCOPE_SCRIPTS_DIR, DASHBOARD_DIR, ROOT_DIR, SURROGATES_DIR, buildDirectories } from './lib/config.mjs';
+import {
+    AUTOFILL_DIR,
+    CONTENT_SCOPE_SCRIPTS_DIR,
+    DASHBOARD_DIR,
+    DDG_PACKAGES_DIR,
+    ROOT_DIR,
+    SURROGATES_DIR,
+    buildDirectories,
+} from './lib/config.mjs';
 import { buildInjectScript, isContentScopeScriptsLinked, watchedPaths as contentScopeScriptsPaths } from './lib/contentScopeScripts.mjs';
 import { copyStaticFiles } from './lib/copy.mjs';
+import { writeFilesGni } from './lib/filesGni.mjs';
 import { copyFonts } from './lib/fonts.mjs';
-import { ensureDir, isBackupFile, isWithin } from './lib/fs.mjs';
+import { ensureDir, isBackupFile, isWithin, timestamp } from './lib/fs.mjs';
 import { LOCALE_RESOURCES_FILE, writeLocaleResources } from './lib/locales.mjs';
 import { settleAll } from './lib/run.mjs';
 import { generateSmarterEncryptionRules } from './lib/smarterEncryption.mjs';
 import { compileStyles } from './lib/styles.mjs';
 import { writeSurrogatesList } from './lib/surrogates.mjs';
 
-const USAGE = `Usage: node scripts/build-tools/build.mjs ${TARGET_USAGE} [--watch] [--no-reloader]`;
+const USAGE = `Usage: node scripts/build-tools/build.mjs ${TARGET_USAGE} [--clean] [--watch] [--no-reloader]`;
 
 /** @typedef {import('./lib/config.mjs').BuildConfig} BuildConfig */
-
-/** Same format as the Makefile's \`date +"%Y%m%d_%H%M%S"\`. */
-function buildTimestamp() {
-    const now = new Date();
-    const pad = (n) => String(n).padStart(2, '0');
-    return (
-        `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}` +
-        `_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`
-    );
-}
 
 /**
  * Update buildtime.txt for development builds. The devbuild-reloader module
@@ -45,7 +43,7 @@ function buildTimestamp() {
  */
 function writeBuildTime({ dev, out }) {
     if (dev) {
-        fs.writeFileSync(`${out.root}/buildtime.txt`, `${buildTimestamp()}\n`);
+        fs.writeFileSync(`${out.root}/buildtime.txt`, `${timestamp()}\n`);
     }
 }
 
@@ -83,28 +81,36 @@ async function build(config) {
         steps.unshift(Promise.reject(e));
     }
     const [bundleInputs] = await settleAll(steps);
+    if (config.filesGni && !config.dev) {
+        writeFilesGni(config.out.root);
+    }
     writeBuildTime(config);
     console.log(`Built ${config.browser} ${config.type} in ${config.out.root} (${Date.now() - started}ms)`);
     return bundleInputs;
 }
 
 /**
- * Directories whose changes trigger a rebuild: the extension's own sources,
- * the dependency assets that are copied as-is, and the directories of every
- * file the JS bundles were built from that resolves outside node_modules,
- * which is to say inside an npm-linked checkout. (Installed packages only
- * change on npm install.) All of them must exist; a missing one means the
- * dependencies are not installed. Symlinks are resolved and directories
- * nested in another are dropped, so each real directory is watched once.
+ * Paths whose changes trigger a rebuild: the extension's own sources, the
+ * dependency assets that are copied as-is, and the directories of every file
+ * the JS bundles were built from that belongs to a DuckDuckGo package itself
+ * (not to a dependency installed inside one) or resolves outside node_modules
+ * (an npm-linked checkout). Other installed packages only change on npm
+ * install. All of them must exist; a missing one means the dependencies are
+ * not installed. Symlinks are resolved and directories nested in another are
+ * dropped, so each real directory is watched once.
+ * @param {BuildConfig} config
  * @param {string[]} bundleInputs From the esbuild metafiles.
- * @returns {[string, string][]} Pairs of directory as named and its real path.
+ * @returns {[string, string][]} Pairs of path as named and its real path.
  */
-function watchedDirectories(bundleInputs) {
-    const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, ...contentScopeScriptsPaths()];
+function watchTargets(config, bundleInputs) {
+    const dirs = ['browsers', 'shared', 'packages', DASHBOARD_DIR, AUTOFILL_DIR, SURROGATES_DIR, ...contentScopeScriptsPaths(config)];
     const byRealPath = new Map(dirs.map((dir) => [fs.realpathSync(dir), dir]));
+    const inNodeModules = (p) => p.split(/[\\/]/).includes('node_modules');
     for (const dir of new Set(bundleInputs.map((input) => path.dirname(input)))) {
         const real = fs.realpathSync(dir);
-        if (!real.split(path.sep).includes('node_modules') && !byRealPath.has(real)) {
+        const linked = !inNodeModules(real);
+        const ddgPackage = isWithin(DDG_PACKAGES_DIR, dir) && !inNodeModules(path.relative(DDG_PACKAGES_DIR, dir));
+        if ((linked || ddgPackage) && !byRealPath.has(real)) {
             byRealPath.set(real, dir);
         }
     }
@@ -157,12 +163,15 @@ async function watch(config) {
         timer = setTimeout(rebuild, 250);
     };
 
-    for (const [dir, realDir] of watchedDirectories(bundleInputs)) {
-        fs.watch(realDir, { recursive: true }, (_, filename) => {
-            if (filename && !shouldIgnore(dir, filename)) {
+    for (const [name, real] of watchTargets(config, bundleInputs)) {
+        // A file is watched through its directory, which keeps working when an
+        // editor replaces the file rather than rewriting it in place.
+        const file = fs.statSync(real).isDirectory() ? null : path.basename(real);
+        fs.watch(file ? path.dirname(real) : real, { recursive: !file }, (_, filename) => {
+            if (filename && (file ? filename === file : !shouldIgnore(name, filename))) {
                 scheduleBuild();
             }
-        }).on('error', (e) => console.error(`Stopped watching ${dir}:`, e.message));
+        }).on('error', (e) => console.error(`Stopped watching ${name}:`, e.message));
     }
 
     if (isContentScopeScriptsLinked()) {
@@ -175,6 +184,7 @@ async function main() {
     const { values } = parseArgs({
         options: {
             ...TARGET_OPTIONS,
+            clean: { type: 'boolean' },
             watch: { type: 'boolean' },
             reloader: { type: 'boolean', default: true },
             help: { type: 'boolean', short: 'h' },
@@ -193,6 +203,9 @@ async function main() {
         process.exit(1);
     }
 
+    if (values.clean) {
+        clean(config.out.root);
+    }
     await (values.watch ? watch(config) : build(config));
 }
 

@@ -41,6 +41,9 @@ import RequestBlocklist from './components/request-blocklist';
 import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from './metrics';
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
 import CookiePromptManagement from './components/cookie-prompt-management';
+import NTPMessaging from './components/ntp-messaging';
+import { NewTabTrackerStats } from './newtab-tracker-stats';
+import { TrackerStats } from './classes/tracker-stats';
 
 // Trigger registration of default message handlers into the shared registry.
 import { registerStandardHandlers } from './message-handlers';
@@ -139,6 +142,15 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
 } else {
     // MV2-only components
     components.requestBlocklist = new RequestBlocklist();
+}
+
+if (BUILD_TARGET === 'chromium-embedded') {
+    // The New Tab Page (chrome_url_overrides in the manifest) and its tracker stats.
+    const newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
+    // the dev-build debugging API (dbg.ntts) reads the singleton
+    NewTabTrackerStats.shared = newTabTrackerStats;
+    newTabTrackerStats.restoreFromStorage().then(() => newTabTrackerStats.registerDataCollection());
+    components.ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
 }
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore

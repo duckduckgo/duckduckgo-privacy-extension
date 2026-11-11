@@ -11,7 +11,8 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  onlyRules: Set<string>,
  *  both: Set<string>,
  * }} detectionCache
- * @property {Record<string, number>} summaryEvents
+ * @property {Record<string, number>} summaryEvents - event counts without a site rank bucket
+ * @property {Partial<Record<SiteRankBucket, Record<string, number>>>} summaryEventsByRank
  * @property {Record<string, CpmDashboardState>} dashboardStates
  * @property {Set<string>} globalErrors
  */
@@ -32,13 +33,24 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  */
 
 /**
+ * @typedef {import('./cpm-site-rank').SiteRankBucket} SiteRankBucket
+ */
+
+/**
+ * Counts of one summary window that the browser adds to its daily CPM coverage telemetry.
+ * @typedef {Object} CoverageCounts
+ * @property {number} unhandled - popups detected by heuristic patterns that no rule detected
+ * @property {number} pages - main frame page loads where CPM ran
+ */
+
+/**
  * @typedef {'not_started' | 'config_unavailable' | 'settings_missing' | 'setting_disabled' | 'site_disabled' | 'init_received' | 'popup_found' | 'optout_failed' | 'done'} CpmStage
  */
 
 /**
  * Progress marks for the main frame `init` message, reported to the native app (embedded only).
  * `page_init_sent` is reported by the content script before it sends `init`; the others come from the background.
- * @typedef {'page_init_sent' | 'received' | 'config_read' | 'settings_checked' | 'site_checked' | 'response_sent' | 'response_failed'} CpmInitProgressStage
+ * @typedef {'page_init_sent' | 'received' | 'config_read' | 'settings_checked' | 'site_checked' | 'response_sent'} CpmInitProgressStage
  */
 
 /**
@@ -52,6 +64,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  checkAutoconsentEnabledForSite: (url: string, tabId?: number) => Promise<boolean>;
  *  checkSubfeatureEnabled: (subfeatureName: string, tabId?: number) => Promise<boolean>;
  *  sendPixel: (pixelName: string, type: 'standard' | 'daily', params: Record<string, any>) => Promise<void>;
+ *  reportCoverage: (counts: CoverageCounts, siteRank?: SiteRankBucket) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
  *  setDiagnosticsErrorHandler?: (handler: (tabId: number | null, errorName: string) => void) => void;
  *  notifyInitProgress?: (tabId: number, url: string, stage: CpmInitProgressStage) => Promise<void>;
@@ -79,6 +92,13 @@ const logsConfig = {
     waits: !!DEBUG,
 };
 
+/**
+ * A reply to a content script's autoconsent message. initResp carries a partial config, as the content script fills in
+ * the defaults.
+ * @typedef {(Omit<import('@duckduckgo/autoconsent').InitResponseMessage, 'config'> & { config: Partial<import('@duckduckgo/autoconsent').Config> })
+ *     | import('@duckduckgo/autoconsent').EvalResponseMessage} AutoconsentReply
+ */
+
 export default class CookiePromptManagement {
     static SUMMARY_ALARM_NAME = 'cpm-summary';
     static SUMMARY_DELAY_MINUTES = 2;
@@ -88,11 +108,13 @@ export default class CookiePromptManagement {
     /**
      *
      * @param {{
-     *  cpmMessaging: CPMMessagingBase
+     *  cpmMessaging: CPMMessagingBase,
+     *  siteRankLookup?: (url: string) => SiteRankBucket,
      * }} opts
      */
-    constructor({ cpmMessaging }) {
+    constructor({ cpmMessaging, siteRankLookup }) {
         this.cpmMessaging = cpmMessaging;
+        this.siteRankLookup = siteRankLookup;
         this.cpmMessaging.setDiagnosticsErrorHandler?.((tabId, errorName) => {
             this.recordCpmDiagnosticError(tabId, errorName);
         });
@@ -161,8 +183,9 @@ export default class CookiePromptManagement {
         // MessageRouter (in both regular and embedded builds) dispatches to this handler.
         registerMessageHandler('autoconsent', (options, sender, req) => {
             DEBUG && console.log(`received autoconsent message: ${req.autoconsentPayload.type}`);
-            return this.handleAutoConsentMessage(req.autoconsentPayload, sender).then(() => {
+            return this.handleAutoConsentMessage(req.autoconsentPayload, sender).then((response) => {
                 DEBUG && console.log(`handled autoconsent message: ${req.autoconsentPayload.type}`);
+                return response;
             });
         });
     }
@@ -187,6 +210,7 @@ export default class CookiePromptManagement {
                 onlyRules: new Set(jsonCpmState.detectionCache?.onlyRules || []),
             },
             summaryEvents: structuredClone(jsonCpmState.summaryEvents || {}),
+            summaryEventsByRank: structuredClone(jsonCpmState.summaryEventsByRank || {}),
             dashboardStates: structuredClone(jsonCpmState.dashboardStates || {}),
             globalErrors: new Set(jsonCpmState.globalErrors || []),
         };
@@ -204,6 +228,7 @@ export default class CookiePromptManagement {
                 onlyRules: Array.from(cpmState.detectionCache.onlyRules),
             },
             summaryEvents: structuredClone(cpmState.summaryEvents),
+            summaryEventsByRank: structuredClone(cpmState.summaryEventsByRank),
             dashboardStates: structuredClone(cpmState.dashboardStates),
             globalErrors: Array.from(cpmState.globalErrors),
         };
@@ -221,6 +246,7 @@ export default class CookiePromptManagement {
                     onlyRules: [],
                 },
                 summaryEvents: {},
+                summaryEventsByRank: {},
                 dashboardStates: {},
                 globalErrors: [],
             };
@@ -405,6 +431,7 @@ export default class CookiePromptManagement {
     /**
      * @param {number} tabId
      * @param {string} cmp
+     * @returns {boolean} true when a new reload loop is detected
      */
     detectReloadLoop(tabId, cmp) {
         // Reload loop is when we catch the same CMP from the same top URL without a navigation in between.
@@ -414,37 +441,20 @@ export default class CookiePromptManagement {
             // Same CMP detected on same URL after it was already handled - reload loop detected
             this.cpmMessaging.logMessage(`reload loop detected: ${cmp} on ${this._tabUrlsCache.get(tabId)} tabId: ${tabId}`);
             this._reloadLoopDetected.add(tabId);
-            this.firePixel('error_reload-loop');
+            return true;
         }
-    }
-
-    /**
-     * Report to native whether the `initResp` message was delivered to the content script.
-     * Returns a promise that rejects with the original error if delivery failed, so that the caller's
-     * unhandled rejection is still reported (e.g. as `extensionException` in the embedded extension).
-     * @param {number} tabId
-     * @param {string} tabUrl
-     * @param {Promise<any> | undefined} initResponse - the result of chrome.tabs.sendMessage
-     * @returns {Promise<void>}
-     */
-    notifyInitResponseProgress(tabId, tabUrl, initResponse) {
-        return Promise.resolve(initResponse).then(
-            () => {
-                this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, 'response_sent');
-            },
-            (e) => {
-                this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, 'response_failed');
-                throw e;
-            },
-        );
+        return false;
     }
 
     /**
      * Called on EVERY message from the content script.
      * Make sure not to trigger anything heavy (e.g. native messaging) without a message type filter!
+     * Replies to the frame (initResp, evalResp) are returned as the response to its message rather than sent with
+     * tabs.sendMessage, so content scripts don't need a runtime.onMessage listener: WebKit keeps a frame whose content
+     * script has one alive after the page removes it.
      * @param {import('@duckduckgo/autoconsent').ContentScriptMessage} msg
      * @param {browser.Runtime.MessageSender} sender
-     * @returns
+     * @returns {Promise<AutoconsentReply | undefined>}
      */
     async handleAutoConsentMessage(msg, sender) {
         const frameId = sender.frameId;
@@ -461,6 +471,7 @@ export default class CookiePromptManagement {
         // @ts-expect-error - origin is not available in the type
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
+        const siteRank = this.siteRankLookup?.(tabUrl);
         const progress = /** @type {{ type: string, stage?: string }} */ (/** @type {unknown} */ (msg));
         /**
          * Main-frame init progress mark for native. No await: marks never delay init.
@@ -584,7 +595,7 @@ export default class CookiePromptManagement {
                                 consentHeuristicEnabled: heuristicActionEnabled,
                             }),
                         );
-                        this.firePixel('disabled-for-site');
+                        this.firePixel('disabled-for-site', siteRank);
                     }
                     return;
                 }
@@ -614,7 +625,7 @@ export default class CookiePromptManagement {
                         cpmConfigVersion,
                     }).then((dashboardState) => this.cpmMessaging.refreshDashboardState(tabId, tabUrl, dashboardState));
                     // no await
-                    this.firePixel('init');
+                    this.firePixel('init', siteRank);
                 }
 
                 /**
@@ -632,6 +643,7 @@ export default class CookiePromptManagement {
                     enableGeneratedRules: true,
                     enableHeuristicDetection: true,
                     heuristicMode,
+                    enableHeuristicHitTest: !!settings.featureFlags?.heuristicHitTest,
                     visualTest,
                     logs: logsConfig,
                 };
@@ -656,29 +668,22 @@ export default class CookiePromptManagement {
                 }
                 DEBUG && console.log('autoconsent config', autoconsentConfig);
 
-                const initResponse = chrome.tabs.sendMessage(
-                    tabId,
-                    {
-                        type: 'initResp',
-                        rules,
-                        config: autoconsentConfig,
-                    },
-                    {
-                        frameId,
-                    },
-                );
-                if (isMainFrame) {
-                    // no await; the returned promise is intentionally left unhandled on failure (see notifyInitResponseProgress)
-                    this.notifyInitResponseProgress(tabId, tabUrl, initResponse);
-                }
-                break;
+                // the answer is the reply to the content script's message; tell native the background has produced it
+                if (isMainFrame) mark('response_sent');
+                return {
+                    type: 'initResp',
+                    rules,
+                    config: autoconsentConfig,
+                };
             }
             case 'cmpDetected': {
                 break;
             }
             case 'popupFound': {
                 // Check for reload loop first so the dashboard update reflects it
-                this.detectReloadLoop(tabId, msg.cmp);
+                if (this.detectReloadLoop(tabId, msg.cmp)) {
+                    this.firePixel('error_reload-loop', siteRank);
+                }
                 this.cpmMessaging.refreshDashboardState(
                     tabId,
                     tabUrl,
@@ -688,12 +693,12 @@ export default class CookiePromptManagement {
                         consentReloadLoop: this._reloadLoopDetected.has(tabId),
                     }),
                 );
-                this.firePixel('popup-found');
+                this.firePixel('popup-found', siteRank);
                 break;
             }
             case 'optOutResult': {
                 if (!msg.result) {
-                    this.firePixel('error_optout');
+                    this.firePixel('error_optout', siteRank);
                     this.cpmMessaging.refreshDashboardState(
                         tabId,
                         tabUrl,
@@ -727,12 +732,12 @@ export default class CookiePromptManagement {
                     }),
                 );
                 if (msg.cmp.startsWith('HEURISTIC')) {
-                    this.firePixel('done_heuristic');
+                    this.firePixel('done_heuristic', siteRank);
                 } else {
-                    this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done');
+                    this.firePixel(msg.isCosmetic ? 'done_cosmetic' : 'done', siteRank);
                 }
                 this.cpmMessaging.showCpmAnimation(tabId, tabUrl, msg.isCosmetic);
-                this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown');
+                this.firePixel(msg.isCosmetic ? 'animation-shown_cosmetic' : 'animation-shown', siteRank);
                 this.cpmMessaging.notifyPopupHandled(tabId, msg);
                 break;
             }
@@ -746,17 +751,17 @@ export default class CookiePromptManagement {
                     if (isMainFrame && heuristicMatch && !cpmState.detectionCache.patterns.has(msg.instanceId)) {
                         cpmState.detectionCache.patterns.add(msg.instanceId);
                         // no await to avoid deadlock
-                        this.firePixel('detected-by-patterns');
+                        this.firePixel('detected-by-patterns', siteRank);
                     }
                     if (isMainFrame && detectedPopups) {
                         if (heuristicMatch && !cpmState.detectionCache.both.has(msg.instanceId)) {
                             cpmState.detectionCache.both.add(msg.instanceId);
                             // no await to avoid deadlock
-                            this.firePixel('detected-by-both');
+                            this.firePixel('detected-by-both', siteRank);
                         } else if (!heuristicMatch && !cpmState.detectionCache.onlyRules.has(msg.instanceId)) {
                             cpmState.detectionCache.onlyRules.add(msg.instanceId);
                             // no await to avoid deadlock
-                            this.firePixel('detected-only-rules');
+                            this.firePixel('detected-only-rules', siteRank);
                         }
                     }
                 });
@@ -764,24 +769,24 @@ export default class CookiePromptManagement {
             }
             case 'eval': {
                 if (typeof msg.snippetId !== 'undefined') {
-                    this.evalInTab(tabId, frameId, msg.snippetId).then(([result]) => {
-                        if (logsConfig.evals) {
-                            console.groupCollapsed(`eval result for ${frameUrl}`);
-                            console.log(msg.code, result.result);
-                            console.groupEnd();
-                        }
-                        chrome.tabs.sendMessage(
-                            tabId,
-                            {
-                                id: msg.id,
-                                type: 'evalResp',
-                                result: result.result,
-                            },
-                            {
-                                frameId,
-                            },
-                        );
-                    });
+                    let result = false;
+                    try {
+                        const [injectionResult] = await this.evalInTab(tabId, frameId, msg.snippetId);
+                        result = injectionResult?.result ?? false;
+                    } catch (e) {
+                        // reply anyway, so the eval fails now instead of rejecting in the content script and timing out
+                        this.cpmMessaging.logMessage(`eval failed in ${frameUrl}: ${e}`);
+                    }
+                    if (logsConfig.evals) {
+                        console.groupCollapsed(`eval result for ${frameUrl}`);
+                        console.log(msg.code, result);
+                        console.groupEnd();
+                    }
+                    return {
+                        id: msg.id,
+                        type: 'evalResp',
+                        result,
+                    };
                 }
                 break;
             }
@@ -791,7 +796,7 @@ export default class CookiePromptManagement {
                     if (dashboardState) {
                         this.cpmMessaging.refreshDashboardState(tabId, tabUrl, dashboardState);
                     }
-                    this.firePixel('error_multiple-popups');
+                    this.firePixel('error_multiple-popups', siteRank);
                 }
                 break;
             }
@@ -855,9 +860,17 @@ export default class CookiePromptManagement {
         return this.settingsToHeuristicModeName(await this.cpmMessaging.checkAutoconsentSetting());
     }
 
-    async firePixel(eventName) {
+    /**
+     * @param {string} eventName
+     * @param {SiteRankBucket | undefined} siteRank
+     */
+    async firePixel(eventName, siteRank) {
         this.modifyCpmState((cpmState) => {
-            cpmState.summaryEvents[eventName] = (cpmState.summaryEvents[eventName] || 0) + 1;
+            let counts = cpmState.summaryEvents;
+            if (siteRank) {
+                counts = cpmState.summaryEventsByRank[siteRank] ||= {};
+            }
+            counts[eventName] = (counts[eventName] || 0) + 1;
         });
 
         // schedule summary alarm if not already scheduled (createAlarm checks for existing alarm)
@@ -873,19 +886,69 @@ export default class CookiePromptManagement {
         });
     }
 
+    /**
+     * @param {Record<string, number>} events - summary counts of one bucket
+     * @returns {CoverageCounts}
+     */
+    static coverageCounts(events) {
+        const patterns = events['detected-by-patterns'] || 0;
+        const both = events['detected-by-both'] || 0;
+        return { unhandled: Math.max(0, patterns - both), pages: events.init || 0 };
+    }
+
+    /**
+     * @param {Record<string, number>} events - summary counts of one bucket
+     * @param {SiteRankBucket=} siteRank
+     */
+    async reportCoverage(events, siteRank) {
+        const counts = CookiePromptManagement.coverageCounts(events);
+        if (counts.unhandled === 0 && counts.pages === 0) {
+            return;
+        }
+        try {
+            await this.cpmMessaging.reportCoverage(counts, siteRank);
+        } catch (e) {
+            this.cpmMessaging.logMessage(`error reporting coverage: ${e}`);
+        }
+    }
+
+    /**
+     * Counts without a bucket, e.g. from a state saved before the lookup was added, go in a pixel without `siteRank`.
+     */
     async sendSummaryPixel() {
+        /** @type {Record<string, number>} */
         let summaryEvents = {};
+        /** @type {CpmState['summaryEventsByRank']} */
+        let summaryEventsByRank = {};
         await this.modifyCpmState((cpmState) => {
             summaryEvents = structuredClone(cpmState.summaryEvents);
+            summaryEventsByRank = structuredClone(cpmState.summaryEventsByRank);
             cpmState.summaryEvents = {};
+            cpmState.summaryEventsByRank = {};
             cpmState.detectionCache.patterns.clear();
             cpmState.detectionCache.both.clear();
             cpmState.detectionCache.onlyRules.clear();
         });
-        this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
-            ...summaryEvents,
-            consentHeuristicEnabled: await this.getPixelHeuristicParameter(),
-            fromExtension: '1',
-        });
+        const consentHeuristicEnabled = await this.getPixelHeuristicParameter();
+        if (!this.siteRankLookup || Object.keys(summaryEvents).length > 0) {
+            this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
+                ...summaryEvents,
+                consentHeuristicEnabled,
+                fromExtension: '1',
+            });
+            this.reportCoverage(summaryEvents);
+        }
+        for (const [siteRank, events] of Object.entries(summaryEventsByRank)) {
+            if (Object.keys(events).length === 0) {
+                continue;
+            }
+            this.cpmMessaging.sendPixel('autoconsent_summary', 'standard', {
+                ...events,
+                siteRank,
+                consentHeuristicEnabled,
+                fromExtension: '1',
+            });
+            this.reportCoverage(events, /** @type {SiteRankBucket} */ (siteRank));
+        }
     }
 }

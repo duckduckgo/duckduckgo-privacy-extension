@@ -589,6 +589,20 @@ describe('CPMEmbeddedMessaging', () => {
         });
     });
 
+    describe('reportCoverage', () => {
+        it('sends the counts and the site rank to native', async () => {
+            await messaging.reportCoverage({ unhandled: 2, pages: 5 }, 'top10k');
+
+            expect(nativeMessaging.notify).toHaveBeenCalledWith('reportCpmCoverage', { unhandled: 2, pages: 5, siteRank: 'top10k' });
+        });
+
+        it('leaves out the site rank when there is none', async () => {
+            await messaging.reportCoverage({ unhandled: 0, pages: 1 });
+
+            expect(nativeMessaging.notify).toHaveBeenCalledWith('reportCpmCoverage', { unhandled: 0, pages: 1 });
+        });
+    });
+
     describe('refreshRemoteConfig', () => {
         beforeEach(() => {
             sessionStorageFallback.clear();

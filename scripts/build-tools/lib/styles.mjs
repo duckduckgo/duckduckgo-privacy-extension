@@ -1,7 +1,6 @@
 /**
- * Compiles the SCSS. The sass CLI is used (rather than the JS API) so that the
- * output, including the .css.map files it writes by default, stays identical
- * to the Makefile's. One invocation compiles every stylesheet.
+ * Compiles the SCSS with the sass CLI, which also writes .css.map files by
+ * default. One invocation compiles every stylesheet.
  */
 import { runNodeBin } from './run.mjs';
 

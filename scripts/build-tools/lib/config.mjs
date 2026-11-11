@@ -2,9 +2,6 @@
  * Build configuration. What differs between browser targets is described once,
  * in BROWSER_PROFILES, so the build steps only ever test semantic fields
  * (`ui`, `autofill`, ...) rather than browser names.
- *
- * The output layout mirrors the Makefile so both produce identical builds
- * while they coexist.
  */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -13,16 +10,21 @@ export const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)
 
 export const TYPES = ['dev', 'release'];
 
+/** Per-browser sources: manifest and anything else that only one browser ships. */
+export const BROWSERS_DIR = 'browsers';
+
 export const BUILD_ROOT = 'build';
 export const INTERMEDIATES_DIR = `${BUILD_ROOT}/.intermediates`;
 export const SMARTER_ENCRYPTION_LIST = `${BUILD_ROOT}/.smarter_encryption.txt`;
+/** Where the unit tests are bundled to. */
+export const TEST_BUILD_DIRS = { unit: `${BUILD_ROOT}/test`, node: `${BUILD_ROOT}/node` };
 export const SMARTER_ENCRYPTION_URL = 'https://staticcdn.duckduckgo.com/https/smarter_encryption.txt.gz';
 
-const DDG_PACKAGES = 'node_modules/@duckduckgo';
-export const CONTENT_SCOPE_SCRIPTS_DIR = `${DDG_PACKAGES}/content-scope-scripts`;
-export const DASHBOARD_DIR = `${DDG_PACKAGES}/privacy-dashboard/build/app`;
-export const AUTOFILL_DIR = `${DDG_PACKAGES}/autofill/dist`;
-export const SURROGATES_DIR = `${DDG_PACKAGES}/tracker-surrogates/surrogates`;
+export const DDG_PACKAGES_DIR = 'node_modules/@duckduckgo';
+export const CONTENT_SCOPE_SCRIPTS_DIR = `${DDG_PACKAGES_DIR}/content-scope-scripts`;
+export const DASHBOARD_DIR = `${DDG_PACKAGES_DIR}/privacy-dashboard/build/app`;
+export const AUTOFILL_DIR = `${DDG_PACKAGES_DIR}/autofill/dist`;
+export const SURROGATES_DIR = `${DDG_PACKAGES_DIR}/tracker-surrogates/surrogates`;
 
 export const FONT_URL = 'https://duckduckgo.com/font/all/';
 export const FONT_FILES = [
@@ -63,10 +65,12 @@ const CONTENT_SCOPE_SCRIPTS_BUILDS = { chrome: 'chrome-mv3', firefox: 'firefox' 
  * @property {boolean} ui Ships the shared pages, dashboard, styles, fonts and surrogates.
  * @property {boolean} autofill Ships the autofill assets.
  * @property {boolean} smarterEncryption Bundles Smarter Encryption declarativeNetRequest rules.
+ * @property {boolean} [ntp] Ships the New Tab Page.
  * @property {{in: string, out: string}[]} jsBundles
  * @property {{in: string, out: string}[]} scssBundles
  * @property {string[]} [htmlExcludes] Pages under shared/html not to ship.
  * @property {string} [dashboardCss] Extra CSS appended to the dashboard popup stylesheet.
+ * @property {boolean} [filesGni] Release builds list their files in files.gni.
  */
 
 const CHROME = {
@@ -94,17 +98,22 @@ const BROWSER_PROFILES = {
         ],
         scssBundles: [],
     },
-    // A cut-down Chrome build. The browser owns the fire button and the new
-    // tab page, there is no options page and MV3 has no background page, so
-    // only the devtools pages (reached by URL) and their bundles remain.
+    // A cut-down Chrome build with its own New Tab Page. The browser owns the
+    // fire button, there is no options page and MV3 has no background page, so
+    // of the shared pages only the devtools pages (reached by URL) remain.
     'chromium-embedded': {
         ...CHROME,
         autofill: false,
-        jsBundles: only(JS_BUNDLES, ['background', 'devtools-panel', 'list-editor', 'rollouts', 'content-scripts/cpm']),
+        ntp: true,
+        jsBundles: [
+            ...only(JS_BUNDLES, ['background', 'devtools-panel', 'list-editor', 'rollouts', 'content-scripts/cpm']),
+            { in: 'shared/js/ntp/interop-shim.js', out: 'ntp-interop-shim' },
+        ],
         scssBundles: only(SCSS_BUNDLES, ['base.css']),
         htmlExcludes: ['background.html', 'feedback.html', 'fire.html', 'options.html', 'tracker-stats.html'],
         // No options page, so hide the dashboard's settings cog (matches Windows).
         dashboardCss: '.cog-button { display: none; }\n',
+        filesGni: true,
     },
 };
 
@@ -136,6 +145,7 @@ function outputPaths(buildDir) {
         locales: `${buildDir}/_locales`,
         dashboard: `${buildDir}/dashboard`,
         surrogates: `${buildDir}/web_accessible_resources`,
+        ntp: `${buildDir}/ntp`,
     };
 }
 
@@ -164,8 +174,8 @@ export function resolveConfig({ browser, type, reloader = true }) {
 }
 
 /**
- * Directories created up front for every build (the Makefile's MKDIR_TARGETS),
- * so that the output tree matches exactly even where a directory ends up empty.
+ * Directories created up front for every build, so that the output tree is
+ * the same even where a directory ends up empty.
  * @param {BuildConfig} config
  */
 export function buildDirectories({ out }) {

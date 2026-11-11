@@ -358,19 +358,64 @@ export function parseVersionString(versionString) {
     return versionString.split('.').map(Number);
 }
 
-export function satisfiesMinVersion(minVersionString, extensionVersionString) {
-    const minVersions = parseVersionString(minVersionString);
-    const currentVersions = parseVersionString(extensionVersionString);
-    const maxLength = Math.max(minVersions.length, currentVersions.length);
+/**
+ * @param {string} versionString
+ * @param {string} otherVersionString
+ * @returns {boolean} - true if versionString is at or above otherVersionString
+ */
+export function isVersionGreaterOrEqualTo(versionString, otherVersionString) {
+    const versions = parseVersionString(versionString);
+    const otherVersions = parseVersionString(otherVersionString);
+    const maxLength = Math.max(versions.length, otherVersions.length);
     for (let i = 0; i < maxLength; i++) {
-        const minNumberPart = minVersions[i] || 0;
-        const currentVersionPart = currentVersions[i] || 0;
-        if (currentVersionPart > minNumberPart) {
+        const versionPart = versions[i] || 0;
+        const otherVersionPart = otherVersions[i] || 0;
+        if (versionPart > otherVersionPart) {
             return true;
         }
-        if (currentVersionPart < minNumberPart) {
+        if (versionPart < otherVersionPart) {
             return false;
         }
+    }
+    return true;
+}
+
+/**
+ * @param {string} minVersionString
+ * @param {string} extensionVersionString
+ * @returns {boolean} - true if the extension version is at or above minVersionString
+ */
+export function satisfiesMinVersion(minVersionString, extensionVersionString) {
+    return isVersionGreaterOrEqualTo(extensionVersionString, minVersionString);
+}
+
+/**
+ * @param {string} maxVersionString
+ * @param {string} extensionVersionString
+ * @returns {boolean} - true if the extension version is at or below maxVersionString
+ */
+export function satisfiesMaxVersion(maxVersionString, extensionVersionString) {
+    return isVersionGreaterOrEqualTo(maxVersionString, extensionVersionString);
+}
+
+/**
+ * Checks the extension version against the minSupportedVersion and maxSupportedVersion
+ * of a feature or sub-feature. Both bounds are inclusive.
+ *
+ * @param {{ minSupportedVersion?: string, maxSupportedVersion?: string }} featureOrSubFeature
+ * @returns {boolean}
+ */
+export function satisfiesSupportedVersions(featureOrSubFeature) {
+    const { minSupportedVersion, maxSupportedVersion } = featureOrSubFeature;
+    if (!minSupportedVersion && !maxSupportedVersion) {
+        return true;
+    }
+    const extensionVersionString = getExtensionVersion();
+    if (minSupportedVersion && !satisfiesMinVersion(minSupportedVersion, extensionVersionString)) {
+        return false;
+    }
+    if (maxSupportedVersion && !satisfiesMaxVersion(maxSupportedVersion, extensionVersionString)) {
+        return false;
     }
     return true;
 }
@@ -389,12 +434,8 @@ export function isFeatureEnabled(featureName, config = tdsStorage.config) {
         return false;
     }
 
-    // If we have a supplied min version for the feature ensure the extension meets it
-    if ('minSupportedVersion' in feature) {
-        const extensionVersionString = getExtensionVersion();
-        if (!satisfiesMinVersion(feature.minSupportedVersion, extensionVersionString)) {
-            return false;
-        }
+    if (!satisfiesSupportedVersions(feature)) {
+        return false;
     }
 
     return feature.state === 'enabled';

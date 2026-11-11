@@ -28,8 +28,8 @@
  */
 
 import { getUserLocaleCountry, getUserLocale } from '../i18n';
-import { getFeatureSettings, isFeatureEnabled, satisfiesMinVersion } from '../utils';
-import { getExtensionVersion, getFromSessionStorage, setToSessionStorage } from '../wrapper';
+import { getFeatureSettings, isFeatureEnabled, satisfiesSupportedVersions } from '../utils';
+import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 import ResourceLoader from './resource-loader';
 import constants from '../../../data/constants';
 import { registerMessageHandler } from '../message-registry';
@@ -261,11 +261,8 @@ export function isSubFeatureEnabled(featureName, subFeatureName, config) {
     if (!feature || !subFeature) {
         return false;
     }
-    if (subFeature.minSupportedVersion) {
-        const extensionVersionString = getExtensionVersion();
-        if (!satisfiesMinVersion(subFeature.minSupportedVersion, extensionVersionString)) {
-            return false;
-        }
+    if (!satisfiesSupportedVersions(subFeature)) {
+        return false;
     }
     return subFeature.state === 'enabled';
 }

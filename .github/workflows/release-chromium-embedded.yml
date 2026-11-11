@@ -1,13 +1,9 @@
 name: Release Chromium Embedded Extension
 
-# Publishes the built chromium-embedded target to the orphan branch
-# `build/chromium-embedded/release`, which the DDG-Chromium fork consumes as
-# a submodule. See that branch's README, and the tech design "DDG-Chromium
-# component extension bundling".
-#
-# Unlike release-embedded.yml, nothing is pushed to another repository: the
-# fork pulls, rather than being pushed to, so a bump lands there when someone
-# chooses to move the submodule pin.
+# Publishes the chromium-embedded build to an orphan branch that the
+# DDG-Chromium fork consumes as a submodule and rolls from: main to
+# build/chromium-embedded/release, test builds of any ref to
+# build/chromium-embedded/test.
 
 on:
     push:
@@ -15,8 +11,16 @@ on:
             - 'main'
         paths:
             - 'browsers/chromium-embedded/manifest.json'
-    # For the first run, and for rebuilding a version without bumping it.
+    # For rebuilding a version without bumping it, and for test builds.
     workflow_dispatch:
+        inputs:
+            channel:
+                description: 'release (main only) or test (any ref)'
+                type: choice
+                options:
+                    - release
+                    - test
+                default: release
 
 # Runs queue rather than race to push to ARTIFACTS_BRANCH.
 concurrency:
@@ -25,11 +29,9 @@ concurrency:
     queue: max
 
 env:
-    # Deliberately the same string, and deliberately two variables: the branch
-    # is named after the directory it carries. Git reads a bare
-    # build/chromium-embedded/release as ambiguous wherever that directory
-    # exists, so every ref below is spelled refs/heads/.
-    ARTIFACTS_BRANCH: build/chromium-embedded/release
+    # Git reads a bare build/chromium-embedded/release as ambiguous wherever
+    # that directory exists, so every ref below is spelled refs/heads/.
+    ARTIFACTS_BRANCH: build/chromium-embedded/${{ inputs.channel || 'release' }}
     BUILD_PATH: build/chromium-embedded/release
 
 jobs:
@@ -39,11 +41,18 @@ jobs:
             # Committing to ARTIFACTS_BRANCH in this repository.
             contents: write
         steps:
-            - uses: actions/checkout@v6
+            # The fork rolls whatever lands on the release branch.
+            - name: Check the release channel is built from main
+              if: env.ARTIFACTS_BRANCH == 'build/chromium-embedded/release' && github.ref != 'refs/heads/main'
+              run: |
+                  echo "::error::Only main publishes to the release branch. Use the test channel."
+                  exit 1
+
+            - uses: actions/checkout@v7
 
             - uses: actions/setup-node@v4
               with:
-                  node-version: 22
+                  node-version-file: .nvmrc
                   cache: 'npm'
 
             - name: Read embedded version
@@ -58,10 +67,19 @@ jobs:
             - name: Build chromium-embedded extension
               run: npm run release-chromium-embedded
 
+            # The first test build starts the test branch from the release one.
+            - name: Create the test branch
+              if: env.ARTIFACTS_BRANCH == 'build/chromium-embedded/test'
+              run: |
+                  if ! git ls-remote --exit-code origin "refs/heads/$ARTIFACTS_BRANCH" > /dev/null; then
+                      git fetch --depth 1 origin refs/heads/build/chromium-embedded/release
+                      git push origin "FETCH_HEAD:refs/heads/$ARTIFACTS_BRANCH"
+                  fi
+
             # Checked out beside the source tree so the build output above is
             # untouched by the checkout.
             - name: Check out the artifacts branch
-              uses: actions/checkout@v6
+              uses: actions/checkout@v7
               with:
                   ref: refs/heads/${{ env.ARTIFACTS_BRANCH }}
                   path: artifacts
@@ -83,6 +101,7 @@ jobs:
               working-directory: artifacts
               env:
                   VERSION: ${{ steps.version.outputs.VERSION }}
+                  SOURCE_REF: ${{ github.ref_name }}
               run: |
                   git config user.name "Dax the Deployer"
                   git config user.email "dax@duckduckgo.com"
@@ -96,6 +115,7 @@ jobs:
                   git commit -m "chromium-embedded $VERSION
 
                   Source commit: ${{ github.sha }}
+                  Source ref: $SOURCE_REF
                   Built by: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
                   # Appended, never forced: the fork pins commits on this
                   # branch, and rewriting it would strand those pins.

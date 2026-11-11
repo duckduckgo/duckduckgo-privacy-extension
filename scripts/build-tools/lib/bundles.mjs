@@ -1,7 +1,7 @@
 /**
  * Bundles the extension's JavaScript with esbuild.
  *
- * Each entry point is bundled in its own esbuild build, as the Makefile does.
+ * Each entry point is bundled in its own esbuild build.
  * Bundling them together changes the output: several modules `require()`
  * tldts while others `import` it, and esbuild's choice between the package's
  * `main` and `module` fields depends on which it encounters first within a
@@ -10,26 +10,37 @@
 import { build as esbuildBuild } from 'esbuild';
 import { settleAll } from './run.mjs';
 
+/** Oldest browser versions the extension's JavaScript is compiled for. */
+export const ESBUILD_TARGET = ['firefox91', 'chrome92'];
+
+/**
+ * The compile-time constants the extension's sources test.
+ * @param {{browser: string, dev: boolean, reloader: boolean}} config
+ */
+export function esbuildDefines({ browser, dev, reloader }) {
+    return {
+        BUILD_TARGET: JSON.stringify(browser),
+        // Developer builds include the devbuilds module for debugging, and
+        // (unless disabled) the auto-reload module.
+        DEBUG: String(dev),
+        RELOADER: String(reloader),
+    };
+}
+
 /**
  * @param {import('./config.mjs').BuildConfig} config
  * @param {{in: string, out: string}} entryPoint
  * @returns {import('esbuild').BuildOptions}
  */
-function esbuildOptions({ browser, dev, reloader, out }, entryPoint) {
+function esbuildOptions(config, entryPoint) {
     return {
         entryPoints: [entryPoint],
-        outdir: out.js,
+        outdir: config.out.js,
         bundle: true,
-        target: ['firefox91', 'chrome92'],
-        // The Makefile pipes esbuild to stdout, which makes source maps inline.
-        sourcemap: dev ? 'inline' : false,
-        define: {
-            BUILD_TARGET: JSON.stringify(browser),
-            // Developer builds include the devbuilds module for debugging, and
-            // (unless disabled) the auto-reload module.
-            DEBUG: String(dev),
-            RELOADER: String(reloader),
-        },
+        target: ESBUILD_TARGET,
+        // Inline source maps keep dev and release builds to the same set of files.
+        sourcemap: config.dev ? 'inline' : false,
+        define: esbuildDefines(config),
         logLevel: 'warning',
         metafile: true,
     };

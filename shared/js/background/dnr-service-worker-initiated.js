@@ -1,6 +1,7 @@
 import { SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID } from './dnr-utils';
 import { SERVICE_WORKER_INITIATED_ALLOWING_PRIORITY } from '@duckduckgo/ddg2dnr/lib/rulePriorities';
 import { generateDNRRule } from '@duckduckgo/ddg2dnr/lib/utils';
+import { isFeatureEnabled } from './utils';
 
 /**
  * Ensure that the allowing rule for ServiceWorker initiated requests is
@@ -15,7 +16,7 @@ export async function ensureServiceWorkerInitiatedRequestExceptions(config) {
     const removeRuleIds = [SERVICE_WORKER_INITIATED_ALLOWING_RULE_ID];
     const addRules = [];
 
-    if (config.features.serviceworkerInitiatedRequests?.state !== 'enabled') {
+    if (!isFeatureEnabled('serviceworkerInitiatedRequests', config)) {
         // All ServiceWorker initiated request blocking is disabled.
         addRules.push(
             generateDNRRule({
