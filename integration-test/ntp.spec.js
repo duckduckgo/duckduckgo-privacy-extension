@@ -38,6 +38,10 @@ test.describe('Embedded New Tab Page', () => {
     test.beforeEach(async ({ backgroundPage }) => {
         test.skip(!isChromiumEmbedded(), 'The New Tab Page is only included in the chromium-embedded build');
         await backgroundWait.forAllConfiguration(backgroundPage);
+        // Stands in for the DuckDuckGo browser's favorites, which Chrome lacks.
+        await backgroundPage.evaluate(() => {
+            chrome.ddg = { getFavorites: async () => [] };
+        });
     });
 
     test('is registered as the new tab override', async ({ backgroundPage }) => {
@@ -46,10 +50,6 @@ test.describe('Embedded New Tab Page', () => {
     });
 
     test('renders the omnibar, favorites and protections widgets via extension messaging', async ({ page, backgroundPage }) => {
-        // Stands in for the DuckDuckGo browser's favorites, which Chrome lacks.
-        await backgroundPage.evaluate(() => {
-            chrome.ddg = { getFavorites: async () => [] };
-        });
         await page.goto(await getNtpUrl(backgroundPage));
 
         // each widget only renders once initialSetup and its own

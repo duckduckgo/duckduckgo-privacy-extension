@@ -84,7 +84,11 @@ export default class NTPActivity extends EventTarget {
                 this.dispatchEvent(new CustomEvent('change', { detail: (urls || []).map(pageDomain) }));
             }
         });
-        chrome.ddg?.onBurnStarted?.addListener(() => this.clear());
+        if (chrome.ddg?.onBurnStarted) {
+            chrome.ddg.onBurnStarted.addListener(() => this.clear());
+        } else {
+            console.error('chrome.ddg.onBurnStarted is unavailable: the NTP activity feed will keep its tracker data through a burn');
+        }
 
         createAlarm(PRUNE_ALARM_NAME, { periodInMinutes: 60 });
         browser.alarms.onAlarm.addListener(({ name }) => {

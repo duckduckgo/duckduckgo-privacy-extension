@@ -51,13 +51,13 @@ declare namespace chrome {
                * none. Rejects, changing nothing, unless `url` is a valid
                * http(s) URL and bookmarks have loaded.
                */
-              addFavorite?(url: string, title: string): Promise<void>;
+              addFavorite(url: string, title: string): Promise<void>;
 
               /**
                * extension -> browser; unfavorites the favorites with `url`.
                * Their bookmarks stay. Rejects before bookmarks load.
                */
-              removeFavorite?(url: string): Promise<void>;
+              removeFavorite(url: string): Promise<void>;
 
               /**
                * browser -> extension; the favorites may have changed. Not

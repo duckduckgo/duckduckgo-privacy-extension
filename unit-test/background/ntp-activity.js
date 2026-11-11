@@ -131,6 +131,12 @@ describe('NTPActivity component', () => {
         expect(await activity.trackersPerSite.toArray()).toEqual([jasmine.objectContaining({ domain: 'other.example' })]);
     });
 
+    it('logs when the browser has no burn event to clear it on', () => {
+        const consoleError = spyOn(console, 'error');
+        new NTPActivity(`ntpActivityTest${dbCount++}`); // eslint-disable-line no-new
+        expect(consoleError).toHaveBeenCalledOnceWith(jasmine.stringContaining('chrome.ddg.onBurnStarted is unavailable'));
+    });
+
     it('clears its trackers, including those not yet written', async () => {
         found('https://example.com/', 'Google');
         await activity.trackersPerSite.put({ domain: 'example.com', day: today, count: 1, companies: [] });

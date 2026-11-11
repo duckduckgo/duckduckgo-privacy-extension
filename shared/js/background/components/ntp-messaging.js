@@ -135,10 +135,14 @@ export default class NTPMessaging {
         // Top level, so the browser can wake the worker to deliver it.
         if (chrome.ddg?.onFavoritesChanged) {
             chrome.ddg.onFavoritesChanged.addListener(async () => {
-                const [, favoriteUrls] = await Promise.all([this.pushFavoritesUpdate(), getFavoriteUrls()]);
-                const starred = await swapStarredUrls(favoriteUrls);
-                const changed = [...favoriteUrls, ...starred].filter((url) => favoriteUrls.has(url) !== starred.has(url));
-                this.queueActivityPush(changed.map(pageDomain));
+                try {
+                    const [, favoriteUrls] = await Promise.all([this.pushFavoritesUpdate(), getFavoriteUrls()]);
+                    const starred = await swapStarredUrls(favoriteUrls);
+                    const changed = [...favoriteUrls, ...starred].filter((url) => favoriteUrls.has(url) !== starred.has(url));
+                    this.queueActivityPush(changed.map(pageDomain));
+                } catch (e) {
+                    console.error('NTP activity_onDataPatch failed:', e);
+                }
             });
         } else {
             console.error('chrome.ddg.onFavoritesChanged is unavailable: open New Tab Pages will not see favorites change');
@@ -158,12 +162,16 @@ export default class NTPMessaging {
 
         // As on Windows, a burn empties the tracker total and company list, here and in
         // storage, and pushes that at once. Not before the restore, which would undo it.
-        chrome.ddg?.onBurnStarted?.addListener(async () => {
-            await statsRestored;
-            newTabTrackerStats.stats.clearAll();
-            this.pushDataUpdate();
-            await newTabTrackerStats.syncToStorage();
-        });
+        if (chrome.ddg?.onBurnStarted) {
+            chrome.ddg.onBurnStarted.addListener(async () => {
+                await statsRestored;
+                newTabTrackerStats.stats.clearAll();
+                this.pushDataUpdate();
+                await newTabTrackerStats.syncToStorage();
+            });
+        } else {
+            console.error('chrome.ddg.onBurnStarted is unavailable: New Tab Pages will keep their tracker stats through a burn');
+        }
 
         // Pages left open while the service worker was stopped have lost their port.
         browser.runtime.sendMessage({ [NTP_RECONNECT_MESSAGE]: true }).catch(() => {});
@@ -321,12 +329,22 @@ export default class NTPMessaging {
                     const site = (await this.ntpActivity.getSites()).get(domain);
                     // A new bookmark is titled like the site's latest page, as on Windows.
                     const title = site?.pages[0].title.trim() || domain;
-                    await chrome.ddg?.addFavorite?.(params.url, title).catch(() => this.queueActivityPush([domain]));
+                    try {
+                        await ddgApi().addFavorite(params.url, title);
+                    } catch (e) {
+                        this.queueActivityPush([domain]);
+                        throw e;
+                    }
                 }
                 break;
             case 'activity_removeFavorite':
                 if (typeof params?.url === 'string') {
-                    await chrome.ddg?.removeFavorite?.(params.url).catch(() => this.queueActivityPush([pageDomain(params.url)]));
+                    try {
+                        await ddgApi().removeFavorite(params.url);
+                    } catch (e) {
+                        this.queueActivityPush([pageDomain(params.url)]);
+                        throw e;
+                    }
                 }
                 break;
 
@@ -445,7 +463,7 @@ export default class NTPMessaging {
             this.activityPushTimer = null;
             const changed = [...this.changedDomains];
             this.changedDomains.clear();
-            this.pushActivityUpdate(changed);
+            this.pushActivityUpdate(changed).catch((e) => console.error('NTP activity_onDataPatch failed:', e));
         }, 1000);
     }
 
@@ -544,7 +562,7 @@ function toDomainActivity(url, domain, site, favorite) {
  * @returns {Promise<Set<string>>} the URLs of the favorites the browser shows
  */
 async function getFavoriteUrls() {
-    return new Set(((await chrome.ddg?.getFavorites?.()) ?? []).map(({ url }) => url));
+    return new Set((await ddgApi().getFavorites()).map(({ url }) => url));
 }
 
 /**
