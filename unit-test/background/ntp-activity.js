@@ -38,7 +38,7 @@ describe('NTPActivity component', () => {
 
         const sites = await activity.getSites();
 
-        expect(browser.history.search).toHaveBeenCalledOnceWith({ text: '', startTime: (today - 7) * DAY, maxResults: 0 });
+        expect(browser.history.search).toHaveBeenCalledOnceWith({ text: '', startTime: (today - 7) * DAY, maxResults: 5000 });
         expect([...sites.keys()]).toEqual(['example.com', 'other.example']);
         expect(sites.get('example.com')).toEqual({
             pages: [

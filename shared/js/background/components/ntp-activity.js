@@ -6,6 +6,8 @@ import { createAlarm } from '../wrapper';
 const DAY_MS = 24 * 60 * 60 * 1000;
 /** The feed covers today and the 7 days before it, in UTC. */
 const DAYS = 7;
+/** The feed covers at most this many of the most recently visited pages. */
+const MAX_PAGES = 5000;
 const PRUNE_ALARM_NAME = 'pruneNtpActivity';
 
 /**
@@ -98,14 +100,14 @@ export default class NTPActivity extends EventTarget {
     }
 
     /**
-     * The last 7 days of the browser's history by domain, both most recently
-     * visited first.
+     * The last 7 days of the browser's history, up to MAX_PAGES pages, by
+     * domain, both most recently visited first.
      * @returns {Promise<Map<string, SiteActivity>>}
      */
     async getSites() {
         const firstDay = daysSinceEpoch() - DAYS;
         const [historyItems, trackers] = await Promise.all([
-            browser.history.search({ text: '', startTime: firstDay * DAY_MS, maxResults: 0 }),
+            browser.history.search({ text: '', startTime: firstDay * DAY_MS, maxResults: MAX_PAGES }),
             this.trackersPerSite.where('day').aboveOrEqual(firstDay).toArray(),
         ]);
         /** @type {Map<string, SiteActivity>} */
@@ -129,8 +131,8 @@ export default class NTPActivity extends EventTarget {
     }
 
     /**
-     * Forgets the trackers from before the last 7 days, and those of domains no
-     * longer in the browser's history.
+     * Forgets the trackers from before the last 7 days, and those of domains not
+     * in getSites().
      */
     async pruneTrackers() {
         this.pruneTimer = null;

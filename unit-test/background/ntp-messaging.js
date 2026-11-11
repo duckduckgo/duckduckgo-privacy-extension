@@ -218,6 +218,19 @@ describe('NTPMessaging component', () => {
             );
         });
 
+        it('lists at most 10 pages for a site', async () => {
+            const pageUrls = Array.from({ length: 12 }, (_, i) => `https://many.example/${i}`);
+            activitySites.set('many.example', {
+                pages: pageUrls.map((url, i) => ({ url, title: `Page ${i}`, lastVisitTime: Date.now() - i })),
+                trackersFound: false,
+                trackersBlocked: 0,
+                companies: [],
+            });
+
+            const { activity } = await ntpMessaging.handleRequest('activity_getDataForUrls', { urls: ['https://many.example/'] });
+            expect(activity[0].history.map(({ url }) => url)).toEqual(pageUrls.slice(0, 10));
+        });
+
         it('removes a site from the feed', async () => {
             // @ts-ignore - fake port
             await ntpMessaging.onMessage(

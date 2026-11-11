@@ -63,6 +63,8 @@ const DEFAULT_PROTECTIONS_CONFIG = { expansion: 'expanded', feed: 'privacy-stats
 
 const SEARCH_URL = 'https://duckduckgo.com/';
 const FAVICON_SIZE = 64;
+/** The most pages the page lists for a site. */
+const MAX_SITE_HISTORY = 10;
 const relativeTimeFormat = new Intl.RelativeTimeFormat(getUserLocale());
 const JUST_NOW = new Intl.RelativeTimeFormat(getUserLocale(), { numeric: 'auto' }).format(0, 'second');
 /** Session storage key for the favorite URLs the activity feed's stars were last given. */
@@ -553,6 +555,7 @@ function toDomainActivity(url, domain, site, favorite) {
         trackersFound: site.trackersFound,
         history: site.pages
             .filter((page) => page.title.trim())
+            .slice(0, MAX_SITE_HISTORY)
             .map((page) => ({ title: page.title, url: page.url, relativeTime: relativeTime(page.lastVisitTime) })),
         favorite,
     };
