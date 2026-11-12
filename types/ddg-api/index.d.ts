@@ -60,6 +60,14 @@ declare namespace chrome {
               removeFavorite(url: string): Promise<void>;
 
               /**
+               * extension -> browser; shows `items` as a menu at the mouse
+               * pointer over tab `tabId`. Once it closes, resolves with the id
+               * of the item chosen, or undefined if none was or it did not
+               * open, which it does only over its window's active tab.
+               */
+              showContextMenu(tabId: number, items: { id: string; title: string; checked: boolean }[]): Promise<string | undefined>;
+
+              /**
                * browser -> extension; the favorites may have changed. Not
                * held for a listener that registers late.
                */

@@ -392,6 +392,100 @@ describe('NTPMessaging component', () => {
         }
     });
 
+    it('sends a new widget config to every open page', async () => {
+        const widgetConfigs = [{ id: 'protections', visibility: 'hidden' }];
+        const sender = createFakePort();
+        const other = createFakePort();
+        // @ts-ignore - fake ports
+        [sender, other].forEach((port) => ntpMessaging.ports.add(port));
+
+        // @ts-ignore - fake port
+        await ntpMessaging.onMessage({ ...requestMessage('widgets_setConfig', widgetConfigs), Id: undefined }, sender);
+
+        for (const port of [sender, other]) {
+            expect(port.posted.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['widgets_onConfigUpdated', widgetConfigs]]);
+        }
+    });
+
+    describe('context menu', () => {
+        const visibilityMenuItems = [
+            { id: 'omnibar', title: 'Search' },
+            { id: 'favorites', title: 'Favorites' },
+            { id: 'protections', title: 'Protections Report' },
+        ];
+        /** @type {any} */
+        let sender;
+        /** @type {any} */
+        let other;
+
+        beforeEach(() => {
+            chrome.ddg = {};
+            settings.updateSetting('ntpWidgetConfigs', [
+                { id: 'omnibar', visibility: 'visible' },
+                { id: 'favorites', visibility: 'visible' },
+                { id: 'protections', visibility: 'hidden' },
+            ]);
+            sender = { ...createFakePort(), sender: { tab: { id: 7 } } };
+            other = createFakePort();
+            [sender, other].forEach((port) => ntpMessaging.ports.add(port));
+        });
+
+        afterEach(() => {
+            delete chrome.ddg;
+        });
+
+        it('shows the widgets over the NTP tab, checked if visible, and toggles the one chosen for every open page', async () => {
+            chrome.ddg.showContextMenu = jasmine.createSpy('showContextMenu').and.resolveTo('favorites');
+
+            await ntpMessaging.handleNotification('contextMenu', { visibilityMenuItems }, sender);
+
+            expect(chrome.ddg.showContextMenu).toHaveBeenCalledOnceWith(7, [
+                { id: 'omnibar', title: 'Search', checked: true },
+                { id: 'favorites', title: 'Favorites', checked: true },
+                { id: 'protections', title: 'Protections Report', checked: false },
+            ]);
+            const widgetConfigs = [
+                { id: 'omnibar', visibility: 'visible' },
+                { id: 'favorites', visibility: 'hidden' },
+                { id: 'protections', visibility: 'hidden' },
+            ];
+            expect((await ntpMessaging.handleRequest('initialSetup')).widgetConfigs).toEqual(widgetConfigs);
+            for (const port of [sender, other]) {
+                expect(port.posted.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['widgets_onConfigUpdated', widgetConfigs]]);
+            }
+        });
+
+        it('changes nothing when the menu closes without a choice', async () => {
+            chrome.ddg.showContextMenu = jasmine.createSpy('showContextMenu').and.resolveTo(undefined);
+
+            await ntpMessaging.handleNotification('contextMenu', { visibilityMenuItems }, sender);
+
+            expect(chrome.ddg.showContextMenu).toHaveBeenCalledTimes(1);
+            expect((await ntpMessaging.handleRequest('initialSetup')).widgetConfigs[2]).toEqual({
+                id: 'protections',
+                visibility: 'hidden',
+            });
+            expect(sender.posted).toEqual([]);
+            expect(other.posted).toEqual([]);
+        });
+
+        it('logs when there is no tab to show the menu over, or no items', async () => {
+            chrome.ddg.showContextMenu = jasmine.createSpy('showContextMenu');
+            const consoleError = spyOn(console, 'error');
+            // @ts-ignore - fake port
+            const notify = (data, port) => ntpMessaging.onMessage({ ...requestMessage('contextMenu', data), Id: undefined }, port);
+
+            await notify({ visibilityMenuItems }, createFakePort());
+            await notify({}, sender);
+
+            expect(chrome.ddg.showContextMenu).not.toHaveBeenCalled();
+            expect(consoleError.calls.allArgs().map(([message]) => message)).toEqual([
+                'NTP contextMenu failed:',
+                'NTP contextMenu failed:',
+            ]);
+        });
+    });
+
     describe('favorites', () => {
         it('answers favorites_getData from the browser', async () => {
             expect(await ntpMessaging.handleRequest('favorites_getData')).toEqual({ favorites: [pageFavorite] });
@@ -618,11 +712,13 @@ describe('NTPMessaging component', () => {
             await notify('favorites_add');
             await notify('activity_addFavorite', { url: 'https://example.com/' });
             await notify('activity_removeFavorite', { url: 'https://example.com/' });
+            await notify('contextMenu', { visibilityMenuItems: [{ id: 'omnibar', title: 'Search' }] });
 
             expect(consoleError).toHaveBeenCalledWith('NTP favorites_move failed:', failure('moveFavorite'));
             expect(consoleError).toHaveBeenCalledWith('NTP favorites_add failed:', failure('showAddFavoriteBubble'));
             expect(consoleError).toHaveBeenCalledWith('NTP activity_addFavorite failed:', failure('addFavorite'));
             expect(consoleError).toHaveBeenCalledWith('NTP activity_removeFavorite failed:', failure('removeFavorite'));
+            expect(consoleError).toHaveBeenCalledWith('NTP contextMenu failed:', failure('showContextMenu'));
         });
 
         it('logs the favorites changes it cannot push', async () => {

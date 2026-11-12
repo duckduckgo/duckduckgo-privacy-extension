@@ -24,6 +24,7 @@ import {
 // TODO: import them from C-S-S once new-tab.ts resolves outside C-S-S; its
 // `declare module "../src/index.js"` augmentation currently breaks our tsc.
 /**
+ * @typedef {{ id: string, visibility: 'visible' | 'hidden' }} WidgetConfig
  * @typedef {{ totalCount: number, totalCookiePopUpsBlocked?: number | null }} ProtectionsData
  * @typedef {{ displayName: string, count: number }} TrackerCompany
  * @typedef {{ trackerCompanies: TrackerCompany[] }} PrivacyStatsData
@@ -216,7 +217,7 @@ export default class NTPMessaging {
                 await this.settings.ready();
                 return {
                     widgets: WIDGETS,
-                    widgetConfigs: this.settings.getSetting(WIDGET_CONFIGS_SETTING) || DEFAULT_WIDGET_CONFIGS,
+                    widgetConfigs: this.getWidgetConfigs(),
                     platform: { name: 'windows' },
                     env: 'production',
                     locale: getUserLocale(),
@@ -263,8 +264,36 @@ export default class NTPMessaging {
         switch (method) {
             case 'widgets_setConfig':
                 await this.settings.ready();
-                this.settings.updateSetting(WIDGET_CONFIGS_SETTING, params);
+                this.setWidgetConfigs(params);
                 break;
+            case 'contextMenu': {
+                const tabId = port?.sender?.tab?.id;
+                const items = params?.visibilityMenuItems;
+                if (tabId === undefined || !Array.isArray(items)) {
+                    throw new Error('the context menu has no tab to open over or no items');
+                }
+                await this.settings.ready();
+                const configs = this.getWidgetConfigs();
+                const chosen = await ddgApi().showContextMenu(
+                    tabId,
+                    items.map(({ id, title }) => ({
+                        id,
+                        title,
+                        checked: configs.some((config) => config.id === id && config.visibility === 'visible'),
+                    })),
+                );
+                if (chosen) {
+                    // Toggles the widget in the config as it is once the menu closes.
+                    this.setWidgetConfigs(
+                        this.getWidgetConfigs().map((config) =>
+                            config.id === chosen
+                                ? { ...config, visibility: config.visibility === 'visible' ? 'hidden' : 'visible' }
+                                : config,
+                        ),
+                    );
+                }
+                break;
+            }
 
             // Omnibar
             case 'omnibar_submitSearch':
@@ -379,6 +408,22 @@ export default class NTPMessaging {
         } else {
             browser.tabs.create({ url, active, windowId: tab.windowId, index: tab.index + 1, openerTabId: tab.id });
         }
+    }
+
+    /**
+     * @returns {WidgetConfig[]}
+     */
+    getWidgetConfigs() {
+        return this.settings.getSetting(WIDGET_CONFIGS_SETTING) || DEFAULT_WIDGET_CONFIGS;
+    }
+
+    /**
+     * As on Windows, every open page is sent the new config, the sender included.
+     * @param {WidgetConfig[]} configs
+     */
+    setWidgetConfigs(configs) {
+        this.settings.updateSetting(WIDGET_CONFIGS_SETTING, configs);
+        this.pushSubscriptionEvent('widgets_onConfigUpdated', configs);
     }
 
     /**
