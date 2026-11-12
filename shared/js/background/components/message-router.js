@@ -89,7 +89,7 @@ export default class MessageRouter extends EventTarget {
             }
         });
 
-        port.onMessage.addListener(async (message) => {
+        port.onMessage.addListener(async (/** @type {any} */ message) => {
             const messageType = message?.messageType;
 
             if (!messageType || !(messageType in messageHandlers)) {

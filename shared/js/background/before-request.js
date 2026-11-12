@@ -262,7 +262,7 @@ export class TrackerFoundEvent {
  * If request is a tracker, cancel the request
  * @param {import('./classes/tab')} thisTab
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
- * @returns {browser.WebRequest.BlockingResponseOrPromise | undefined}
+ * @returns {browser.WebRequest.BlockingResponseOrPromiseOrVoid | undefined}
  */
 function blockHandleResponse(thisTab, requestData) {
     const blockingEnabled = thisTab.site.isContentBlockingEnabled();
