@@ -68,6 +68,19 @@ declare namespace chrome {
               showContextMenu(tabId: number, items: { id: string; title: string; checked: boolean }[]): Promise<string | undefined>;
 
               /**
+               * extension -> browser; the New Tab Page message `method`, with
+               * its `params`, that the page in tab `tabId` sent. The browser
+               * handles the customize panel's theme and Sections messages:
+               * initialSetup, customizer_setTheme, widgets_setConfig,
+               * omnibar_getConfig and omnibar_setConfig. Resolves with the
+               * response to a request, or undefined once a notification is
+               * handled. Rejects, changing nothing, a message the browser does
+               * not handle, params it does not accept, and a tab that is not
+               * showing the New Tab Page.
+               */
+              sendNewTabPageMessage(tabId: number, method: string, params?: unknown): Promise<any>;
+
+              /**
                * browser -> extension; the favorites may have changed. Not
                * held for a listener that registers late.
                */

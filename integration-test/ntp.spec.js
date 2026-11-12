@@ -38,9 +38,24 @@ test.describe('Embedded New Tab Page', () => {
     test.beforeEach(async ({ backgroundPage }) => {
         test.skip(!isChromiumEmbedded(), 'The New Tab Page is only included in the chromium-embedded build');
         await backgroundWait.forAllConfiguration(backgroundPage);
-        // Stands in for the DuckDuckGo browser's favorites, which Chrome lacks.
+        // Stands in for the DuckDuckGo browser's favorites and New Tab Page
+        // settings, which Chrome lacks.
         await backgroundPage.evaluate(() => {
-            chrome.ddg = { getFavorites: async () => [] };
+            const widgets = [{ id: 'omnibar' }, { id: 'favorites' }, { id: 'protections' }];
+            /** @type {Record<string, any>} */
+            const browserNtp = {
+                initialSetup: {
+                    widgets,
+                    widgetConfigs: widgets.map(({ id }) => ({ id, visibility: 'visible' })),
+                    customizer: { theme: 'system' },
+                    settings: { customizerDrawer: { state: 'enabled' } },
+                },
+                omnibar_getConfig: { mode: 'search', enableAi: false },
+            };
+            chrome.ddg = {
+                getFavorites: async () => [],
+                sendNewTabPageMessage: async (_tabId, method) => browserNtp[method],
+            };
         });
     });
 
