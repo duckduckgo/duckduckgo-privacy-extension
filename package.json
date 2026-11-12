@@ -68,7 +68,7 @@
         "webextension-polyfill": "^0.12.0"
     },
     "dependencies": {
-        "@duckduckgo/autoconsent": "^18.0.0",
+        "@duckduckgo/autoconsent": "18.3.0",
         "@duckduckgo/autofill": "github:duckduckgo/duckduckgo-autofill#19.2.1",
         "@duckduckgo/content-scope-scripts": "github:duckduckgo/content-scope-scripts#20.0.0",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",
