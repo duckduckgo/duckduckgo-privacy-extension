@@ -1,5 +1,5 @@
 import { getUserLocale } from '../i18n';
-import { getExtensionURL } from '../wrapper';
+import { getExtensionURL, getExtensionVersion } from '../wrapper';
 const utils = require('../utils');
 const tabManager = require('../tab-manager');
 const trackerutils = require('../tracker-utils');
@@ -7,6 +7,8 @@ const settings = require('../settings');
 const { isActive } = require('../devtools');
 const constants = require('../../../data/constants');
 const { LegacyTabTransfer } = require('../classes/legacy-tab-transfer');
+
+const platform = { ...constants.platform, version: getExtensionVersion() };
 
 export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
     const tab = tabManager.get({ tabId });
@@ -78,7 +80,7 @@ export function getArgumentsObject(tabId, sender, documentUrl, sessionKey) {
         stringExemptionLists: utils.getBrokenScriptLists(),
         sessionKey,
         site,
-        platform: constants.platform,
+        platform,
         locale: getUserLocale(),
         assets: {
             regularFontUrl: getExtensionURL('/public/font/ProximaNova-Reg-webfont.woff'),

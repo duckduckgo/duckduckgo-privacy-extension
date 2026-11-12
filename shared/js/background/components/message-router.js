@@ -40,6 +40,9 @@ export default class MessageRouter extends EventTarget {
                 req = { messageType: req };
             }
 
+            // Legacy rewrites only apply to messages without an explicit `messageType`,
+            const hasExplicitMessageType = Boolean(req.messageType);
+
             // TODO clean up message passing
             const legacyMessageTypes = [
                 'addUserData',
@@ -51,13 +54,13 @@ export default class MessageRouter extends EventTarget {
                 'debuggerMessage',
             ];
             for (const legacyMessageType of legacyMessageTypes) {
-                if (legacyMessageType in req) {
+                if (!hasExplicitMessageType && legacyMessageType in req) {
                     req.messageType = legacyMessageType;
                     req.options = req[legacyMessageType];
                 }
             }
 
-            if (req.registeredTempAutofillContentScript) {
+            if (!hasExplicitMessageType && req.registeredTempAutofillContentScript) {
                 req.messageType = 'registeredContentScript';
             }
 

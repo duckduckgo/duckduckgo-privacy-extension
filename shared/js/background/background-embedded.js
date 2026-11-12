@@ -23,8 +23,10 @@
 import browser from 'webextension-polyfill';
 import CookiePromptManagement from './components/cookie-prompt-management';
 import { CPMEmbeddedMessaging } from './components/cpm-embedded-messaging';
+import { createSiteRankLookup } from './components/cpm-site-rank';
 import MessageRouter from './components/message-router';
 import initReloader from './devbuild-reloader';
+import topSites from '../../data/bundled/site-buckets.json';
 
 import NativeMessaging from './components/native-messaging';
 const nativeMessaging = new NativeMessaging('ddgInternalExtension', 'autoconsent', 'com.duckduckgo.macos.browser');
@@ -60,6 +62,7 @@ const messaging = new MessageRouter();
 
 const cpm = new CookiePromptManagement({
     cpmMessaging,
+    siteRankLookup: createSiteRankLookup(topSites),
 });
 
 /**

@@ -15,6 +15,8 @@ on:
 
 env:
     APPLE_EMBEDDED_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension.zip
+    # The native legacy CPM reads its own copy of the list the zip was built with
+    APPLE_SITE_BUCKETS_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/Autoconsent/site-buckets.json
 
 jobs:
     release_embedded:
@@ -92,6 +94,9 @@ jobs:
                   cp "${{ steps.find-zip.outputs.ZIP_PATH }}" \
                      "apple-monorepo/${{ env.APPLE_EMBEDDED_PATH }}"
 
+            - name: Copy site list to Apple repo
+              run: cp shared/data/bundled/site-buckets.json "apple-monorepo/${{ env.APPLE_SITE_BUCKETS_PATH }}"
+
             # we don't use peter-evans/create-pull-request action here because we need to push a new commit to the existing PR
             - name: Commit and push to Apple target branch
               id: apple-commit-push
@@ -99,7 +104,7 @@ jobs:
               env:
                   BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
               run: |
-                  git add "${{ env.APPLE_EMBEDDED_PATH }}"
+                  git add "${{ env.APPLE_EMBEDDED_PATH }}" "${{ env.APPLE_SITE_BUCKETS_PATH }}"
                   if git diff --cached --quiet; then
                       echo "No changes to commit"
                       echo "PUSHED=false" >> $GITHUB_OUTPUT

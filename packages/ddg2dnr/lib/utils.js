@@ -25,6 +25,7 @@
  * @typedef {object} PrivacyConfigFeature
  * @property {string} state
  * @property {string | undefined} minSupportedVersion
+ * @property {string | undefined} maxSupportedVersion
  * @property {string} hash
  * @property {S} settings
  * @property {PrivacyConfigDomainEntry[]} exceptions

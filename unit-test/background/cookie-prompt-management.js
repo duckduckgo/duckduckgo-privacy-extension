@@ -1,6 +1,6 @@
 import CookiePromptManagement from '../../shared/js/background/components/cookie-prompt-management';
 import messageHandlers from '../../shared/js/background/message-registry';
-import { sessionStorageFallback } from '../../shared/js/background/wrapper';
+import { sessionStorageFallback, setToSessionStorage } from '../../shared/js/background/wrapper';
 
 /**
  * Create a mock CPMMessagingBase with spies.
@@ -25,6 +25,7 @@ function createMockMessaging({ autoconsentEnabledForSite = true, autoconsentSett
             .and.returnValue(Promise.resolve(autoconsentEnabledForSite)),
         checkSubfeatureEnabled: jasmine.createSpy('checkSubfeatureEnabled').and.returnValue(Promise.resolve(subfeatureEnabled)),
         sendPixel: jasmine.createSpy('sendPixel').and.returnValue(Promise.resolve()),
+        reportCoverage: jasmine.createSpy('reportCoverage').and.returnValue(Promise.resolve()),
         setDiagnosticsErrorHandler: jasmine.createSpy('setDiagnosticsErrorHandler').and.callFake((handler) => {
             mockMessaging.diagnosticsErrorHandler = handler;
         }),
@@ -512,17 +513,12 @@ describe('CookiePromptManagement', () => {
             const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
             await cpm.remoteConfigJson;
 
-            const sendMessageSpy = spyOn(chrome.tabs, 'sendMessage');
             const handler = messageHandlers.autoconsent;
 
-            const lastInitRespAutoAction = () => {
-                const initResps = sendMessageSpy.calls.allArgs().filter(([, message]) => message?.type === 'initResp');
-                return initResps.length ? initResps[initResps.length - 1][1].config.autoAction : undefined;
-            };
-
             // First visit: opt-out is active, then the CMP is handled (primes last-handled CMP).
-            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
-            expect(lastInitRespAutoAction()).toBe('optOut');
+            const firstInitResp = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            expect(firstInitResp.type).toBe('initResp');
+            expect(firstInitResp.config.autoAction).toBe('optOut');
             await handler({}, makeSender({ frameId: 0 }), {
                 autoconsentPayload: { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false },
             });
@@ -535,8 +531,8 @@ describe('CookiePromptManagement', () => {
             expect(cpm._reloadLoopDetected.has(1)).toBe(true);
 
             // The following init must disable autoAction to break the loop.
-            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
-            expect(lastInitRespAutoAction()).toBe(null);
+            const loopInitResp = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+            expect(loopInitResp.config.autoAction).toBe(null);
         });
 
         // When init itself detects the loop (and disables autoAction), its own dashboard update
@@ -712,6 +708,346 @@ describe('CookiePromptManagement', () => {
             const pixelCalls = mockMessaging.sendPixel.calls.allArgs();
             const initPixelCalls = pixelCalls.filter(([name]) => name === 'autoconsent_init');
             expect(initPixelCalls.length).toBe(1);
+        });
+    });
+
+    describe('heuristic hit test', () => {
+        function settingsWithFlags(featureFlags) {
+            return Promise.resolve({ enabled: true, userPreference: 'default', featureFlags });
+        }
+
+        it('follows the heuristicHitTest subfeature flag in the init config', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            const handler = messageHandlers.autoconsent;
+
+            mockMessaging.checkAutoconsentSetting.and.returnValue(settingsWithFlags({ heuristicAction: true }));
+            const missingFlagResp = await handler({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            expect(missingFlagResp.config.enableHeuristicHitTest).toBe(false);
+
+            mockMessaging.checkAutoconsentSetting.and.returnValue(settingsWithFlags({ heuristicAction: true, heuristicHitTest: true }));
+            const enabledResp = await handler({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            expect(enabledResp.config.enableHeuristicHitTest).toBe(true);
+
+            mockMessaging.checkAutoconsentSetting.and.returnValue(settingsWithFlags({ heuristicAction: true, heuristicHitTest: false }));
+            const disabledResp = await handler({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            expect(disabledResp.config.enableHeuristicHitTest).toBe(false);
+        });
+    });
+
+    describe('site rank bucket', () => {
+        const TOP_URL = 'https://www.top-site.example/page';
+        const OTHER_URL = 'https://long-tail.example/page';
+
+        function createSiteRankLookup() {
+            return jasmine.createSpy('siteRankLookup').and.callFake((url) => (url.includes('top-site.example') ? 'top10k' : 'other'));
+        }
+
+        function summaryPixelParams(mockMessaging) {
+            return mockMessaging.sendPixel.calls
+                .allArgs()
+                .filter(([name]) => name === 'autoconsent_summary')
+                .map(([, , params]) => params);
+        }
+
+        async function handleMessages(cpm, messages) {
+            const handler = messageHandlers.autoconsent;
+            for (const [sender, msg] of messages) {
+                await handler({}, sender, { autoconsentPayload: msg });
+            }
+            await cpm.modifyCpmState(() => {});
+        }
+
+        it('takes the bucket from the top-level URL, also for iframe messages', async () => {
+            const mockMessaging = createMockMessaging();
+            const siteRankLookup = createSiteRankLookup();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabUrl: TOP_URL }), makeInitMessage()],
+                [
+                    makeSender({ tabUrl: TOP_URL, frameId: 3, frameUrl: 'https://cmp.long-tail.example/frame' }),
+                    { type: 'popupFound', cmp: 'test-cmp' },
+                ],
+                [
+                    makeSender({ tabUrl: TOP_URL, frameId: 3, frameUrl: 'https://cmp.long-tail.example/frame' }),
+                    { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false, url: 'https://cmp.long-tail.example/frame' },
+                ],
+            ]);
+
+            const calledUrls = siteRankLookup.calls.allArgs().map(([url]) => url);
+            expect(calledUrls.length).toBeGreaterThan(0);
+            expect(calledUrls.every((url) => url === TOP_URL)).toBeTrue();
+            const state = await cpm.getCpmState();
+            expect(state.summaryEventsByRank).toEqual({
+                top10k: { init: 1, 'popup-found': 1, done: 1, 'animation-shown': 1 },
+            });
+            expect(state.summaryEvents).toEqual({});
+        });
+
+        it('takes the bucket from the top-level URL for reload loop errors', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            const iframeSender = makeSender({ tabUrl: TOP_URL, frameId: 2, frameUrl: OTHER_URL });
+            await handleMessages(cpm, [
+                [makeSender({ tabUrl: TOP_URL }), makeInitMessage()],
+                [iframeSender, { type: 'popupFound', cmp: 'test-cmp' }],
+                [iframeSender, { type: 'autoconsentDone', cmp: 'test-cmp', isCosmetic: false, url: OTHER_URL }],
+                [iframeSender, { type: 'popupFound', cmp: 'test-cmp' }],
+            ]);
+
+            const state = await cpm.getCpmState();
+            expect(state.summaryEventsByRank.top10k?.['error_reload-loop']).toBe(1);
+            expect(state.summaryEventsByRank.other).toBeUndefined();
+        });
+
+        it('sends one summary pixel per bucket, with totals equal to the recorded events', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabId: 1, tabUrl: TOP_URL }), makeInitMessage()],
+                [makeSender({ tabId: 2, tabUrl: OTHER_URL }), makeInitMessage()],
+                [makeSender({ tabId: 3, tabUrl: OTHER_URL }), makeInitMessage()],
+                [makeSender({ tabId: 3, tabUrl: OTHER_URL }), { type: 'popupFound', cmp: 'test-cmp' }],
+            ]);
+            await cpm.sendSummaryPixel();
+
+            const params = summaryPixelParams(mockMessaging);
+            expect(params.length).toBe(2);
+            expect(params).toContain({ init: 1, siteRank: 'top10k', consentHeuristicEnabled: 'tier1', fromExtension: '1' });
+            expect(params).toContain({
+                init: 2,
+                'popup-found': 1,
+                siteRank: 'other',
+                consentHeuristicEnabled: 'tier1',
+                fromExtension: '1',
+            });
+
+            const state = await cpm.getCpmState();
+            expect(state.summaryEventsByRank).toEqual({});
+        });
+
+        it('does not put the URL or domain in any pixel', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabUrl: TOP_URL }), makeInitMessage()],
+                [makeSender({ tabUrl: TOP_URL }), { type: 'popupFound', cmp: 'test-cmp' }],
+                [makeSender({ tabUrl: OTHER_URL, tabId: 2 }), makeInitMessage()],
+            ]);
+            await cpm.sendSummaryPixel();
+
+            for (const [name, , params] of mockMessaging.sendPixel.calls.allArgs()) {
+                const serialized = JSON.stringify({ name, params });
+                expect(serialized).not.toContain('top-site');
+                expect(serialized).not.toContain('long-tail');
+                expect(serialized).not.toContain('example');
+                expect(serialized).not.toContain('test-cmp');
+                if (name !== 'autoconsent_summary') {
+                    expect(params.siteRank).toBeUndefined();
+                }
+            }
+        });
+
+        it('sends a single summary pixel without siteRank when there is no lookup', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabId: 1, tabUrl: TOP_URL }), makeInitMessage()],
+                [makeSender({ tabId: 2, tabUrl: OTHER_URL }), makeInitMessage()],
+            ]);
+            await cpm.sendSummaryPixel();
+
+            expect(summaryPixelParams(mockMessaging)).toEqual([{ init: 2, consentHeuristicEnabled: 'tier1', fromExtension: '1' }]);
+        });
+
+        it('sends no summary pixel when nothing was counted', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await cpm.sendSummaryPixel();
+
+            expect(summaryPixelParams(mockMessaging)).toEqual([]);
+        });
+
+        it('keeps counts from a stored state without buckets', async () => {
+            await setToSessionStorage('cpmState', {
+                detectionCache: { patterns: [], both: [], onlyRules: [] },
+                summaryEvents: { init: 3, done: 1 },
+                dashboardStates: {},
+                globalErrors: [],
+            });
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [[makeSender({ tabUrl: TOP_URL }), makeInitMessage()]]);
+            await cpm.sendSummaryPixel();
+
+            const params = summaryPixelParams(mockMessaging);
+            expect(params.length).toBe(2);
+            expect(params).toContain({ init: 3, done: 1, consentHeuristicEnabled: 'tier1', fromExtension: '1' });
+            expect(params).toContain({ init: 1, siteRank: 'top10k', consentHeuristicEnabled: 'tier1', fromExtension: '1' });
+        });
+    });
+
+    describe('coverage counts', () => {
+        const TOP_URL = 'https://www.top-site.example/page';
+        const OTHER_URL = 'https://long-tail.example/page';
+
+        function createSiteRankLookup() {
+            return (url) => (url.includes('top-site.example') ? 'top10k' : 'other');
+        }
+
+        function reportMessage(instanceId, { patterns, rules }) {
+            return {
+                type: 'report',
+                instanceId,
+                state: {
+                    heuristicPatterns: patterns ? ['pattern'] : [],
+                    heuristicSnippets: [],
+                    detectedPopups: rules ? ['cmp'] : [],
+                },
+            };
+        }
+
+        async function handleMessages(cpm, messages) {
+            const handler = messageHandlers.autoconsent;
+            for (const [sender, msg] of messages) {
+                await handler({}, sender, { autoconsentPayload: msg });
+            }
+            await cpm.modifyCpmState(() => {});
+        }
+
+        it('reports unhandled popups and pages per site rank bucket', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabId: 1, tabUrl: TOP_URL }), makeInitMessage()],
+                [makeSender({ tabId: 1, tabUrl: TOP_URL }), reportMessage('a', { patterns: true, rules: false })],
+                [makeSender({ tabId: 2, tabUrl: OTHER_URL }), makeInitMessage()],
+                [makeSender({ tabId: 3, tabUrl: OTHER_URL }), makeInitMessage()],
+                [makeSender({ tabId: 2, tabUrl: OTHER_URL }), reportMessage('b', { patterns: true, rules: false })],
+                [makeSender({ tabId: 3, tabUrl: OTHER_URL }), reportMessage('c', { patterns: true, rules: true })],
+            ]);
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.reportCoverage.calls.count()).toBe(2);
+            expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 1 }, 'top10k');
+            expect(mockMessaging.reportCoverage).toHaveBeenCalledWith({ unhandled: 1, pages: 2 }, 'other');
+        });
+
+        it('reports counts without a bucket when there is no site rank lookup', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabId: 1, tabUrl: TOP_URL }), makeInitMessage()],
+                [makeSender({ tabId: 2, tabUrl: OTHER_URL }), makeInitMessage()],
+            ]);
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.reportCoverage.calls.allArgs()).toEqual([[{ unhandled: 0, pages: 2 }, undefined]]);
+        });
+
+        it('reports nothing when nothing was counted or no page ran CPM', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await cpm.sendSummaryPixel();
+            await handleMessages(cpm, [[makeSender({ tabUrl: TOP_URL }), { type: 'popupFound', cmp: 'test-cmp' }]]);
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.reportCoverage).not.toHaveBeenCalled();
+        });
+
+        it('never reports a negative unhandled count', async () => {
+            await setToSessionStorage('cpmState', {
+                detectionCache: { patterns: [], both: [], onlyRules: [] },
+                summaryEvents: {},
+                summaryEventsByRank: { other: { init: 1, 'detected-by-patterns': 1, 'detected-by-both': 3 } },
+                dashboardStates: {},
+                globalErrors: [],
+            });
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.reportCoverage).toHaveBeenCalledOnceWith({ unhandled: 0, pages: 1 }, 'other');
+        });
+
+        it('still sends the summary pixel when reporting the counts fails', async () => {
+            const mockMessaging = createMockMessaging();
+            mockMessaging.reportCoverage.and.returnValue(Promise.reject(new Error('native unavailable')));
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [[makeSender({ tabUrl: TOP_URL }), makeInitMessage()]]);
+            await cpm.sendSummaryPixel();
+
+            expect(mockMessaging.sendPixel.calls.allArgs().filter(([name]) => name === 'autoconsent_summary').length).toBe(1);
+        });
+
+        it('sends only counts and the bucket, never a URL or domain', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging, siteRankLookup: createSiteRankLookup() });
+            await cpm.remoteConfigJson;
+
+            await handleMessages(cpm, [
+                [makeSender({ tabUrl: TOP_URL }), makeInitMessage()],
+                [makeSender({ tabUrl: TOP_URL }), reportMessage('a', { patterns: true, rules: false })],
+            ]);
+            await cpm.sendSummaryPixel();
+
+            const serialized = JSON.stringify(mockMessaging.reportCoverage.calls.allArgs());
+            expect(serialized).not.toContain('example');
+            expect(serialized).not.toContain('pattern');
+        });
+    });
+
+    describe('eval', () => {
+        const evalMessage = { type: 'eval', id: 'eval-1', code: '', snippetId: 'EVAL_0' };
+
+        it('replies with the snippet result', async () => {
+            const cpm = new CookiePromptManagement({ cpmMessaging: createMockMessaging() });
+            await cpm.remoteConfigJson;
+            const evalInTab = spyOn(cpm, 'evalInTab').and.returnValue(Promise.resolve([{ frameId: 2, documentId: 'doc', result: true }]));
+
+            const response = await messageHandlers.autoconsent({}, makeSender({ frameId: 2 }), { autoconsentPayload: evalMessage });
+
+            expect(evalInTab).toHaveBeenCalledWith(1, 2, 'EVAL_0');
+            expect(response).toEqual({ id: 'eval-1', type: 'evalResp', result: true });
+        });
+
+        // A rejected reply would surface as an unhandled rejection in the content script, and the eval would only fail on timeout.
+        it('replies with a false result when the snippet cannot be run', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+            spyOn(cpm, 'evalInTab').and.returnValue(Promise.reject(new Error('No frame with id 2')));
+
+            const response = await messageHandlers.autoconsent({}, makeSender({ frameId: 2 }), { autoconsentPayload: evalMessage });
+
+            expect(response).toEqual({ id: 'eval-1', type: 'evalResp', result: false });
+            expect(mockMessaging.logMessage).toHaveBeenCalledWith(jasmine.stringContaining('eval failed'));
         });
     });
 });
