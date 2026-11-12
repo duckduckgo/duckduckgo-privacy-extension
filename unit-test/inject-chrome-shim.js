@@ -25,6 +25,18 @@ const chrome = {
         updateDynamicRules() {},
         updateSessionRules() {},
     },
+    history: {
+        deleteUrl() {},
+        search() {},
+        onVisited: {
+            addListener() {},
+            removeListener() {},
+        },
+        onVisitRemoved: {
+            addListener() {},
+            removeListener() {},
+        },
+    },
     i18n: {
         getUILanguage() {
             return 'en-US';

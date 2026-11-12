@@ -45,6 +45,21 @@ declare namespace chrome {
               showAddFavoriteBubble(tabId: number): Promise<boolean>;
 
               /**
+               * extension -> browser; makes the newest bookmark of `url` in
+               * the bookmarks bar a favorite, unless one already is, first
+               * adding one titled `title` at the end of the bar if there is
+               * none. Rejects, changing nothing, unless `url` is a valid
+               * http(s) URL and bookmarks have loaded.
+               */
+              addFavorite(url: string, title: string): Promise<void>;
+
+              /**
+               * extension -> browser; unfavorites the favorites with `url`.
+               * Their bookmarks stay. Rejects before bookmarks load.
+               */
+              removeFavorite(url: string): Promise<void>;
+
+              /**
                * browser -> extension; the favorites may have changed. Not
                * held for a listener that registers late.
                */

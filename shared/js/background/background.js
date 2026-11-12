@@ -42,6 +42,7 @@ import { AppUseMetric, SearchMetric, DashboardUseMetric, RefreshMetric } from '.
 import { CPMStandaloneMessaging } from './components/cpm-standalone-messaging';
 import CookiePromptManagement from './components/cookie-prompt-management';
 import NTPMessaging from './components/ntp-messaging';
+import NTPActivity from './components/ntp-activity';
 import { NewTabTrackerStats } from './newtab-tracker-stats';
 import { TrackerStats } from './classes/tracker-stats';
 
@@ -145,12 +146,14 @@ if (BUILD_TARGET === 'chrome' || BUILD_TARGET === 'chromium-embedded') {
 }
 
 if (BUILD_TARGET === 'chromium-embedded') {
-    // The New Tab Page (chrome_url_overrides in the manifest) and its tracker stats.
+    // The New Tab Page (chrome_url_overrides in the manifest), its tracker stats and activity feed.
     const newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
     // the dev-build debugging API (dbg.ntts) reads the singleton
     NewTabTrackerStats.shared = newTabTrackerStats;
-    newTabTrackerStats.restoreFromStorage().then(() => newTabTrackerStats.registerDataCollection());
-    components.ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats });
+    const statsRestored = newTabTrackerStats.restoreFromStorage();
+    statsRestored.then(() => newTabTrackerStats.registerDataCollection());
+    components.ntpActivity = new NTPActivity();
+    components.ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, statsRestored, ntpActivity: components.ntpActivity });
 }
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore
