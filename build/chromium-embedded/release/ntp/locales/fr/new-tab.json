@@ -176,6 +176,22 @@
     "title" : "Démarrer un chat vocal",
     "description" : "Accessible label for the voice-chat button shown in place of the AI chat submit button when the input is empty and the feature is enabled."
   },
+  "omnibar_termsDisclaimerAnonymized" : {
+    "title" : "DuckDuckGo anonymise vos discussions.",
+    "description" : "First line of the Duck.ai terms disclaimer shown under the Duck.ai chat input until the user accepts Duck.ai's terms. Followed on the next line by omnibar_termsDisclaimerAgree."
+  },
+  "omnibar_termsDisclaimerAgree" : {
+    "title" : "En cliquant sur « {actionLabel} », vous acceptez <a>notre politique de confidentialité et nos conditions d'utilisation</a>.",
+    "note" : "Second line of the Duck.ai terms disclaimer, shown below omnibar_termsDisclaimerAnonymized. {actionLabel} is replaced with the label of the send button: omnibar_termsAskButtonLabel ('Ask') for chat, or omnibar_termsCreateButtonLabel ('Create') for image creation. Keep {actionLabel} unchanged, inside your language's quotation marks. The <a> tag is a link to the Privacy Policy and Terms of Service page, please preserve it."
+  },
+  "omnibar_termsAskButtonLabel" : {
+    "title" : "Demander",
+    "description" : "Label of the Duck.ai chat submit button until the user accepts Duck.ai's terms. Clicking it accepts the terms and sends the prompt."
+  },
+  "omnibar_termsCreateButtonLabel" : {
+    "title" : "Créer",
+    "description" : "Label of the Duck.ai chat submit button in image creation mode until the user accepts Duck.ai's terms. Clicking it accepts the terms and sends the prompt."
+  },
   "omnibar_logoAlt" : {
     "title" : "DuckDuckGo",
     "description" : "Alt text for the DuckDuckGo logo."
@@ -316,6 +332,18 @@
     "title" : "Appliquer la personnalisation des réponses",
     "description" : "Accessible label for the on/off toggle that applies or unapplies the saved response customization, shown on the Customize Responses tools menu row."
   },
+  "omnibar_attachmentPrivacyDisclaimer" : {
+    "title" : "Les fichiers sont automatiquement analysés pour détecter tout contenu illégal. Les discussions signalées font l'objet d'une conservation limitée des données. <button>En savoir plus</button>",
+    "description" : "Privacy disclaimer shown under the Duck.ai omnibar while a file or image is attached. The button opens the Duck.ai privacy help page."
+  },
+  "omnibar_usageLimitsCtaMenuLabel" : {
+    "title" : "Afficher plus de modèles",
+    "description" : "Accessible label for the usage-limits CTA chevron that opens the alternatives menu."
+  },
+  "omnibar_usageLimitsCtaMenuFallback" : {
+    "title" : "Changer de modèle",
+    "description" : "Accessible name for the usage-limits alternatives menu when native did not send menuHeader."
+  },
   "omnibar_imageGenerationWithAttachmentPlaceholder" : {
     "title" : "Décrivez les modifications en fonction de l'image",
     "description" : "Placeholder text for the AI chat input when image generation mode is active and an image is attached."
@@ -368,6 +396,30 @@
     "title" : "Ajouter des onglets",
     "description" : "Menu item in the attach dropdown that opens the Add Tabs dialog so the user can attach extracted page content from open tabs."
   },
+  "omnibar_addScreenshotLabel" : {
+    "title" : "Ajouter une capture d'écran",
+    "description" : "Menu item in the attach dropdown that opens a submenu of screenshot capture modes."
+  },
+  "omnibar_screenshotDragToSelectLabel" : {
+    "title" : "Faire glisser pour sélectionner",
+    "description" : "Screenshot submenu item: the user drags to select a region of the screen to capture."
+  },
+  "omnibar_screenshotSelectWindowOrDisplayLabel" : {
+    "title" : "Sélectionner une fenêtre ou un écran",
+    "description" : "Screenshot submenu item: the user picks a window or a whole display to capture."
+  },
+  "omnibar_screenshotFileName" : {
+    "title" : "Capture d'écran",
+    "description" : "File name given to a screenshot attached to the AI chat input. Repeats are numbered, e.g. 'Screenshot 2'."
+  },
+  "omnibar_pastedImageFileName" : {
+    "title" : "Image collée",
+    "description" : "File name given to an image pasted from the clipboard into the AI chat input. Repeats are numbered, e.g. 'Pasted image 2'."
+  },
+  "omnibar_screenshotCaptureError" : {
+    "title" : "Impossible de prendre une capture d'écran",
+    "description" : "Inline error shown under the AI chat input when the browser failed to capture a screenshot."
+  },
   "omnibar_attachTabsModalTitle" : {
     "title" : "Ajouter des onglets",
     "description" : "Title and accessible name of the Add Tabs dialog opened from the attach dropdown menu."
@@ -403,6 +455,10 @@
   "omnibar_attachTabsNoPageContent" : {
     "title" : "Aucun contenu de page disponible",
     "description" : "Empty-state message shown in the attach dropdown and the Add Tabs dialog when there are no open tabs with attachable page content."
+  },
+  "omnibar_attachmentTypeWebpage" : {
+    "title" : "Page Web",
+    "description" : "Attachment kind label shown next to the favicon in an attached-tab chip in the AI chat input."
   },
   "omnibar_removeAttachedTabLabel" : {
     "title" : "Supprimer {title}",

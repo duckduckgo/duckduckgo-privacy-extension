@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="color-scheme" content="light dark">
     <title>New Tab Page</title>
     <style>
         body {
             /* Token is replaced by native browser so background isn't white while NTP initializes */
-            --loading-color: #fafafa;
+            --loading-color: light-dark(#fafafa, #1c1c1c);
             background: var(--loading-color);
         }
     </style>

@@ -1861,6 +1861,45 @@
       }
     ));
   }
+  function CameraIcon(props) {
+    return /* @__PURE__ */ k("svg", { width: "16", height: "16", fill: "none", viewBox: "0 0 16 16", xmlns: "http://www.w3.org/2000/svg", ...props }, /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "currentColor",
+        "fill-rule": "evenodd",
+        "clip-rule": "evenodd",
+        d: "M6.5 1C5.9 1 5.4 1.3 5.1 1.8L4.4 3H4C1.8 3 0 4.8 0 7V11C0 13.2 1.8 15 4 15H12C14.2 15 16 13.2 16 11V7C16 4.8 14.2 3 12 3H11.6L10.9 1.8C10.6 1.3 10.1 1 9.5 1H6.5ZM6.5 2.25H9.5C9.65 2.25 9.8 2.33 9.86 2.45L10.7 3.9C10.9 4.1 11.1 4.25 11.4 4.25H12C13.5 4.25 14.75 5.5 14.75 7V11C14.75 12.5 13.5 13.75 12 13.75H4C2.5 13.75 1.25 12.5 1.25 11V7C1.25 5.5 2.5 4.25 4 4.25H4.6C4.9 4.25 5.1 4.1 5.3 3.9L6.14 2.45C6.2 2.33 6.35 2.25 6.5 2.25ZM8 6A3 3 0 1 0 8 12A3 3 0 1 0 8 6ZM8 7.25A1.75 1.75 0 1 1 8 10.75A1.75 1.75 0 1 1 8 7.25Z"
+      }
+    ));
+  }
+  function ScissorsIcon(props) {
+    return /* @__PURE__ */ k("svg", { width: "16", height: "16", fill: "none", viewBox: "0 0 16 16", xmlns: "http://www.w3.org/2000/svg", ...props }, /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "currentColor",
+        "fill-rule": "evenodd",
+        "clip-rule": "evenodd",
+        d: "M5.207,0.46C5.081,0.138 4.718,-0.02 4.397,0.106 4.075,0.232 3.917,0.595 4.043,0.916L7.303,9.224 6.498,11.339C5.961,10.532 5.042,10 4,10 2.343,10 1,11.343 1,13 1,14.657 2.343,16 4,16 5.348,16 6.488,15.11 6.867,13.887L7.982,10.955 9.137,13.9C9.52,15.117 10.657,16 12,16 13.657,16 15,14.657 15,13 15,11.343 13.657,10 12,10 10.947,10 10.02,10.543 9.485,11.364L5.207,0.459z M5.681,13.489L5.666,13.528C5.656,13.555 5.648,13.582 5.641,13.608 5.394,14.275 4.752,14.75 4,14.75 3.034,14.75 2.25,13.966 2.25,13 2.25,12.034 3.034,11.25 4,11.25 4.966,11.25 5.75,12.034 5.75,13 5.75,13.17 5.726,13.334 5.68,13.489z M10.359,13.609C10.352,13.579,10.343,13.551,10.332,13.522L10.32,13.492C10.275,13.337 10.25,13.172 10.25,13 10.25,12.034 11.034,11.25 12,11.25 12.966,11.25 13.75,12.034 13.75,13 13.75,13.966 12.966,14.75 12,14.75 11.248,14.75 10.606,14.275 10.359,13.609z"
+      }
+    ), /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "currentColor",
+        d: "M11.662,0.104C11.34,-0.02,10.978,0.141,10.854,0.464L8.667,6.15C8.543,6.472 8.704,6.834 9.026,6.958 9.348,7.081 9.71,6.921 9.833,6.598L12.021,0.913C12.145,0.591,11.984,0.229,11.661,0.105z"
+      }
+    ));
+  }
+  function MonitorIcon(props) {
+    return /* @__PURE__ */ k("svg", { width: "16", height: "16", fill: "none", viewBox: "0 0 16 16", xmlns: "http://www.w3.org/2000/svg", ...props }, /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "currentColor",
+        "fill-rule": "evenodd",
+        "clip-rule": "evenodd",
+        d: "M3 1C1.34 1 0 2.34 0 4V9.5C0 11.16 1.34 12.5 3 12.5H7.375V14H5.125C4.78 14 4.5 14.28 4.5 14.625C4.5 14.97 4.78 15.25 5.125 15.25H10.875C11.22 15.25 11.5 14.97 11.5 14.625C11.5 14.28 11.22 14 10.875 14H8.625V12.5H13C14.66 12.5 16 11.16 16 9.5V4C16 2.34 14.66 1 13 1H3ZM3 2.25H13C13.97 2.25 14.75 3.03 14.75 4V9.5C14.75 10.47 13.97 11.25 13 11.25H3C2.03 11.25 1.25 10.47 1.25 9.5V4C1.25 3.03 2.03 2.25 3 2.25Z"
+      }
+    ));
+  }
   function LogoStacked(props) {
     return /* @__PURE__ */ k("svg", { fill: "none", viewBox: "0 0 206 165", xmlns: "http://www.w3.org/2000/svg", ...props }, /* @__PURE__ */ k(
       "path",
@@ -1948,6 +1987,42 @@
       }
     ));
   }
+  function CloseXsmallIcon(props) {
+    return /* @__PURE__ */ k("svg", { width: "16", height: "16", fill: "none", viewBox: "0 0 16 16", xmlns: "http://www.w3.org/2000/svg", ...props }, /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "currentColor",
+        d: "M10.433 4.683c.244-.244.64-.244.884 0s.244.64 0 .884L8.884 8l2.433 2.433c.244.244.244.64 0 .884s-.64.244-.884 0L8 8.884l-2.433 2.433c-.244.244-.64.244-.884 0s-.244-.64 0-.884L7.116 8 4.683 5.567c-.244-.244-.244-.64 0-.884s.64-.244.884 0L8 7.116z"
+      }
+    ));
+  }
+  function DocumentPdfColorIcon(props) {
+    return /* @__PURE__ */ k("svg", { width: "16", height: "16", fill: "none", viewBox: "0 0 16 16", xmlns: "http://www.w3.org/2000/svg", ...props }, /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "#fff",
+        d: "M10.4736 15.4219H5.52572C3.66751 15.4219 2.16113 13.9155 2.16113 12.0573V3.94271C2.16113 2.0845 3.66751 0.578125 5.52572 0.578125H8.40174C8.84178 0.578125 9.2643 0.750541 9.57871 1.0584L13.3329 4.73438C13.6561 5.05082 13.8382 5.48408 13.8382 5.93639V12.0573C13.8382 13.9155 12.3318 15.4219 10.4736 15.4219Z"
+      }
+    ), /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "#888",
+        d: "M13.0054 4.69678V13C13.0054 14.1074 12.1074 15.0054 11 15.0054H5C3.89255 15.0054 2.99463 14.1074 2.99463 13V3C2.99463 1.89255 3.89255 0.994629 5 0.994629H9.30322C9.61815 0.994642 9.92038 1.12009 10.1431 1.34277L12.6572 3.85693C12.8799 4.07962 13.0054 4.38185 13.0054 4.69678ZM13.9946 4.69678C13.9946 4.1194 13.7652 3.5655 13.3569 3.15723L10.8428 0.643066C10.4345 0.234797 9.8806 0.00538445 9.30322 0.00537109H5C3.34602 0.00537109 2.00537 1.34602 2.00537 3V13C2.00537 14.654 3.34602 15.9946 5 15.9946H11C12.654 15.9946 13.9946 14.654 13.9946 13V4.69678Z"
+      }
+    ), /* @__PURE__ */ k("path", { fill: "#F05F2B", d: "M9.5 2.125V0.5H10L13.5 4V4.5H11.875C10.5633 4.5 9.5 3.43668 9.5 2.125Z" }), /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "#CC3B0A",
+        d: "M12.8057 4.00537L9.99463 1.19434L9.99463 2.125C9.99463 3.16341 10.8366 4.00537 11.875 4.00537L12.8057 4.00537ZM9.60889 0.00537107C9.99051 0.00537105 10.3566 0.156911 10.6265 0.426758L13.5732 3.37353C13.8431 3.64338 13.9946 4.00949 13.9946 4.39111C13.9946 4.7245 13.7245 4.9946 13.3911 4.99463L11.875 4.99463C10.2901 4.99463 9.00537 3.70994 9.00537 2.125L9.00537 0.608887C9.0054 0.275497 9.2755 0.00539778 9.60889 0.00537107Z"
+      }
+    ), /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "#CC3B0A",
+        d: "M5.15039 9.5C5.82697 9.5 6.22151 9.9448 6.22168 10.6445C6.22168 11.3395 5.82686 11.7754 5.1543 11.7754H4.58984V13H4.0752V9.5H5.15039ZM8.00293 9.5C8.84982 9.50006 9.44141 10.1701 9.44141 11.25C9.44139 12.3249 8.84981 12.9999 8.00293 13H6.9043V9.5H8.00293ZM12.0752 10.0596H10.6406V11.0352H11.8965V11.5947H10.6406V13H10.124V9.5H12.0752V10.0596ZM7.42871 12.4404H7.97363C8.57728 12.4403 8.88769 11.9949 8.8877 11.25C8.8877 10.5051 8.57729 10.0597 7.97363 10.0596H7.42871V12.4404ZM4.58984 11.2295H5.11328C5.47022 11.2294 5.67773 11.0345 5.67773 10.6445C5.67758 10.2549 5.47008 10.0596 5.11328 10.0596H4.58984V11.2295Z"
+      }
+    ));
+  }
   function InfoIcon(props) {
     return /* @__PURE__ */ k("svg", { xmlns: "http://www.w3.org/2000/svg", width: "16", height: "16", viewBox: "0 0 16 16", fill: "none", class: "info-icon", ...props }, /* @__PURE__ */ k(
       "path",
@@ -1968,6 +2043,15 @@
         "clip-rule": "evenodd",
         d: "M8 0C3.58172 0 0 3.58172 0 8C0 12.4183 3.58172 16 8 16C12.4183 16 16 12.4183 16 8C16 3.58172 12.4183 0 8 0ZM1.25 8C1.25 4.27208 4.27208 1.25 8 1.25C11.7279 1.25 14.75 4.27208 14.75 8C14.75 11.7279 11.7279 14.75 8 14.75C4.27208 14.75 1.25 11.7279 1.25 8Z",
         class: "info-icon-fill"
+      }
+    ));
+  }
+  function ShieldCheckIcon(props) {
+    return /* @__PURE__ */ k("svg", { width: "16", height: "16", fill: "none", viewBox: "0 0 16 16", xmlns: "http://www.w3.org/2000/svg", ...props }, /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "currentColor",
+        d: "M7.99984 0.000244141C8.86498 0.000260961 9.7564 0.288216 10.5096 1.01685C10.9909 1.48242 11.798 1.96967 12.9246 2.32935H12.9256C13.657 2.56295 14.4143 2.80083 14.9744 3.3186C15.5744 3.87343 15.8734 4.66309 15.9578 5.80493C16.0791 7.44111 16.0186 9.44702 14.6317 11.6829C13.7812 13.0545 12.5226 14.1252 11.3045 14.8508C10.1054 15.5651 8.85334 15.9992 7.98422 15.9993C7.11424 15.9993 5.86989 15.5643 4.67855 14.8499C3.46793 14.1237 2.21775 13.0536 1.368 11.6838H1.36703C-0.0189801 9.448 -0.0794716 7.44052 0.0418313 5.80493C0.126267 4.66334 0.425243 3.87351 1.02523 3.3186C1.58531 2.80073 2.3425 2.56301 3.07406 2.32935C4.20007 1.96959 5.00882 1.48236 5.49007 1.01685C6.24329 0.288251 7.13471 0.000244141 7.99984 0.000244141ZM7.99984 1.25024C7.42649 1.25024 6.8569 1.43388 6.35922 1.91528C5.70486 2.54822 4.7115 3.1183 3.45492 3.51978C2.65731 3.77454 2.19201 3.94244 1.87386 4.23657C1.59572 4.49392 1.35989 4.92397 1.28793 5.89673C1.17667 7.39642 1.23784 9.10208 2.42953 11.0247C3.14933 12.1851 4.23502 13.1261 5.32113 13.7776C6.42648 14.4406 7.44012 14.7493 7.98422 14.7493C8.52927 14.7492 9.55159 14.4397 10.6649 13.7766C11.759 13.1248 12.8513 12.184 13.5702 11.0247L13.7801 10.6672C14.7692 8.89025 14.8161 7.30402 14.7118 5.89673C14.6398 4.92355 14.4038 4.49376 14.1258 4.23657C13.8077 3.94252 13.3426 3.77462 12.5448 3.51978C11.2869 3.11823 10.2947 2.54814 9.64046 1.91528C9.14278 1.43384 8.5732 1.25026 7.99984 1.25024ZM10.7479 5.52075C10.9887 5.27345 11.3844 5.26724 11.6317 5.50806C11.8787 5.74873 11.8837 6.14455 11.6434 6.39185L7.54867 10.5969C7.3111 10.8404 6.92198 10.8491 6.67367 10.6165L4.37679 8.46411C4.12538 8.22814 4.11285 7.83306 4.34847 7.5813C4.5845 7.32943 4.98039 7.31597 5.23226 7.552L7.08089 9.28442L10.7479 5.52075Z"
       }
     ));
   }
@@ -9092,6 +9176,7 @@
           });
           this.suggestionsService = new OmnibarSuggestionsService(ntp);
           this.aiChatsService = new OmnibarAiChatsService(ntp);
+          this.launcherPromoShownSent = false;
         }
         name() {
           return "OmnibarService";
@@ -9257,6 +9342,12 @@
           this.ntp.messaging.notify("omnibar_openCustomizeResponses", {});
         }
         /**
+         * Notify native to open the Duck.ai Privacy Policy and Terms of Service page in a new tab.
+         */
+        openPrivacyTerms() {
+          this.ntp.messaging.notify("omnibar_openPrivacyTerms", {});
+        }
+        /**
          * Notify native that the user dismissed the AI-mode usage limits drawer.
          * Native owns dismiss persistence and should push updated config.
          */
@@ -9269,6 +9360,26 @@
          */
         dismissCreateImageModelSwitch() {
           this.ntp.messaging.notify("omnibar_dismissCreateImageModelSwitch", {});
+        }
+        /** Notify native the first time per page load that the launcher promo is visible. */
+        launcherPromoShown() {
+          if (this.launcherPromoShownSent) return;
+          this.launcherPromoShownSent = true;
+          this.ntp.messaging.notify("omnibar_launcherPromoShown", {});
+        }
+        selectLauncherPromoCta() {
+          this.ntp.messaging.notify("omnibar_selectLauncherPromoCta", {});
+        }
+        dismissLauncherPromo() {
+          this.ntp.messaging.notify("omnibar_dismissLauncherPromo", {});
+        }
+        /** @param {'image' | 'file'} kind */
+        attachmentPrivacyDisclaimerShown(kind) {
+          this.ntp.messaging.notify("omnibar_attachmentPrivacyDisclaimerShown", { kind });
+        }
+        /** @param {'image' | 'file'} kind */
+        openAttachmentPrivacyLearnMore(kind) {
+          this.ntp.messaging.notify("omnibar_openAttachmentPrivacyLearnMore", { kind });
         }
         /**
          * Notify native when the updated Create Image mode changes.
@@ -9356,6 +9467,15 @@
          */
         confirmDeleteAiChat(chatId, title) {
           return this.ntp.messaging.request("omnibar_confirmDeleteAiChat", { chatId, title });
+        }
+        /**
+         * Asks native to capture a screenshot. Resolves once the capture is taken, fails or is
+         * cancelled, which can take arbitrarily long.
+         * @param {import('../../types/new-tab.js').ScreenshotMode} mode
+         * @returns {Promise<import('../../types/new-tab.js').CaptureScreenshotResponse>} `image`, `error`, or neither when cancelled
+         */
+        captureScreenshot(mode) {
+          return this.ntp.messaging.request("omnibar_captureScreenshot", { mode });
         }
       };
     }
@@ -9466,15 +9586,34 @@
     const openCustomizeResponses = q2(() => {
       service.current?.openCustomizeResponses();
     }, [service]);
+    const openPrivacyTerms = q2(() => {
+      service.current?.openPrivacyTerms();
+    }, [service]);
     const dismissUsageLimits = q2(() => {
       service.current?.dismissUsageLimits();
     }, [service]);
     const dismissCreateImageModelSwitch = q2(() => {
       service.current?.dismissCreateImageModelSwitch();
     }, [service]);
+    const [activeTool, setActiveTool] = d2(
+      /** @type {import('./chat-tools/tools-menu/ToolsMenu').ToolId | null} */
+      null
+    );
     const setImageGenerationActive = q2(
       (active2) => {
         service.current?.setImageGenerationActive(active2);
+      },
+      [service]
+    );
+    const attachmentPrivacyDisclaimerShown = q2(
+      (kind) => {
+        service.current?.attachmentPrivacyDisclaimerShown(kind);
+      },
+      [service]
+    );
+    const openAttachmentPrivacyLearnMore = q2(
+      (kind) => {
+        service.current?.openAttachmentPrivacyLearnMore(kind);
       },
       [service]
     );
@@ -9484,6 +9623,15 @@
       },
       [service]
     );
+    const launcherPromoShown = q2(() => {
+      service.current?.launcherPromoShown();
+    }, [service]);
+    const selectLauncherPromoCta = q2(() => {
+      service.current?.selectLauncherPromoCta();
+    }, [service]);
+    const dismissLauncherPromo = q2(() => {
+      service.current?.dismissLauncherPromo();
+    }, [service]);
     const setCustomizeResponsesActive = q2(
       (active2) => {
         service.current?.setCustomizeResponsesActive(active2);
@@ -9520,6 +9668,13 @@
       },
       [service]
     );
+    const captureScreenshot = q2(
+      (mode) => {
+        if (!service.current) throw new Error("Service not available");
+        return service.current.captureScreenshot(mode);
+      },
+      [service]
+    );
     return /* @__PURE__ */ k(
       OmnibarContext.Provider,
       {
@@ -9540,16 +9695,25 @@
           openAiChat,
           viewAllAiChats,
           openCustomizeResponses,
+          openPrivacyTerms,
           dismissUsageLimits,
           dismissCreateImageModelSwitch,
           setImageGenerationActive,
+          activeTool,
+          setActiveTool,
+          attachmentPrivacyDisclaimerShown,
+          openAttachmentPrivacyLearnMore,
           selectUsageLimitsCta,
+          launcherPromoShown,
+          selectLauncherPromoCta,
+          dismissLauncherPromo,
           setCustomizeResponsesActive,
           showUpsell,
           getOpenTabs,
           getTabContent,
           confirmDeleteAiChat,
-          removeSuggestion
+          removeSuggestion,
+          captureScreenshot
         }
       },
       /* @__PURE__ */ k(OmnibarServiceContext.Provider, { value: service.current }, props.children)
@@ -9646,6 +9810,10 @@
           throw new Error("must implement");
         },
         /** @type {() => void} */
+        openPrivacyTerms: () => {
+          throw new Error("must implement");
+        },
+        /** @type {() => void} */
         dismissUsageLimits: () => {
           throw new Error("must implement");
         },
@@ -9657,8 +9825,37 @@
         setImageGenerationActive: () => {
           throw new Error("must implement");
         },
+        /**
+         * The omnibar remounts per tab, so the selected tool lives here to persist across tab switches.
+         * @type {import('./chat-tools/tools-menu/ToolsMenu').ToolId | null}
+         */
+        activeTool: null,
+        /** @type {(tool: import('./chat-tools/tools-menu/ToolsMenu').ToolId | null) => void} */
+        setActiveTool: () => {
+          throw new Error("must implement");
+        },
+        /** @type {(kind: 'image' | 'file') => void} */
+        attachmentPrivacyDisclaimerShown: () => {
+          throw new Error("must implement");
+        },
+        /** @type {(kind: 'image' | 'file') => void} */
+        openAttachmentPrivacyLearnMore: () => {
+          throw new Error("must implement");
+        },
         /** @type {(modelId?: string) => void} */
         selectUsageLimitsCta: () => {
+          throw new Error("must implement");
+        },
+        /** @type {() => void} */
+        launcherPromoShown: () => {
+          throw new Error("must implement");
+        },
+        /** @type {() => void} */
+        selectLauncherPromoCta: () => {
+          throw new Error("must implement");
+        },
+        /** @type {() => void} */
+        dismissLauncherPromo: () => {
           throw new Error("must implement");
         },
         /** @type {(active: boolean) => void} */
@@ -9683,6 +9880,10 @@
         },
         /** @type {(url: string) => void} */
         removeSuggestion: () => {
+          throw new Error("must implement");
+        },
+        /** @type {(mode: import('../../../types/new-tab.js').ScreenshotMode) => Promise<import('../../../types/new-tab.js').CaptureScreenshotResponse>} */
+        captureScreenshot: () => {
           throw new Error("must implement");
         }
       });
@@ -9929,6 +10130,7 @@
         rightButtons: "AiChatForm_rightButtons",
         submitButton: "AiChatForm_submitButton",
         fadeIn: "AiChatForm_fadeIn",
+        termsSubmitButton: "AiChatForm_termsSubmitButton",
         voiceIcon: "AiChatForm_voiceIcon"
       };
     }
@@ -9948,7 +10150,10 @@
     toolbarRight,
     onTextareaKeyDown,
     combobox = null,
-    textareaRef
+    textareaRef,
+    onPaste,
+    onDragOver,
+    onDrop
   }) {
     const { t: t4 } = useTypedTranslationWith(
       /** @type {Strings} */
@@ -9982,7 +10187,7 @@
     const handleSubmit = (event) => {
       event.preventDefault();
       if (disabled || readOnly) return;
-      onSubmit(query, "same-tab");
+      onSubmit({ chat: query, target: "same-tab" });
     };
     const handleKeyDown = (event) => {
       const result = onTextareaKeyDown?.(event);
@@ -10025,7 +10230,7 @@
           if (disabled || readOnly) {
             break;
           }
-          onSubmit(query, eventToTarget2(event, platformName));
+          onSubmit({ chat: query, target: eventToTarget2(event, platformName) });
           break;
       }
     };
@@ -10051,12 +10256,16 @@
         ref: formRef,
         class: AiChatForm_default.form,
         onSubmit: handleSubmit,
+        onDragEnter: onDragOver,
+        onDragOver,
+        onDrop,
         onClick: (e4) => {
           if (e4.target === e4.currentTarget || e4.target === textareaRef.current) {
             textareaRef.current?.focus();
           }
         }
       },
+      children,
       /* @__PURE__ */ k(
         "textarea",
         {
@@ -10074,6 +10283,10 @@
           readOnly,
           "aria-disabled": readOnly || void 0,
           onKeyDown: handleKeyDown,
+          onPaste: (event) => {
+            if (readOnly) return;
+            onPaste?.(event);
+          },
           onInput: (event) => {
             if (readOnly) return;
             emitChange(event);
@@ -10088,7 +10301,6 @@
           onClick: emitChange
         }
       ),
-      children,
       /* @__PURE__ */ k("div", { tabIndex: -1, class: AiChatForm_default.buttons }, toolbarLeft, /* @__PURE__ */ k("div", { class: AiChatForm_default.rightButtons }, toolbarRight))
     );
   }
@@ -11425,6 +11637,40 @@
     }
     return { Provider: Provider2, useStateWithLocalPersistence: useStateWithLocalPersistence5 };
   }
+  function createPersistentFlag() {
+    const Context = X(
+      /** @type {PersistentValue<boolean>|null} */
+      null
+    );
+    function Provider2({ children }) {
+      const [store] = d2(() => (
+        /** @type {PersistentValue<boolean>} */
+        new PersistentValue()
+      ));
+      const { all: all2 } = useTabState();
+      h2(() => {
+        return all2.subscribe((tabIds) => store.prune({ preserve: tabIds }));
+      }, [all2, store]);
+      return /* @__PURE__ */ k(Context.Provider, { value: store }, children);
+    }
+    function useStateWithLocalPersistence5(tabId) {
+      const store = x2(Context);
+      const [value2, setValue] = d2(() => store?.byId(tabId) ?? false);
+      const setter = q2(
+        /** @param {boolean} next */
+        (next) => {
+          if (tabId) store?.update({ id: tabId, value: next });
+          setValue(next);
+        },
+        [store, tabId]
+      );
+      return (
+        /** @type {const} */
+        [value2, setter]
+      );
+    }
+    return { Provider: Provider2, useStateWithLocalPersistence: useStateWithLocalPersistence5 };
+  }
   function useQueryWithLocalPersistence(tabId) {
     const terms = x2(TextInputContext);
     invariant(
@@ -11482,7 +11728,7 @@
     if (message) throw new Error("Invariant failed: " + message);
     throw new Error("Invariant failed");
   }
-  var TextInputContext, ModeContext, TabAttachments, FileAttachments, ImageAttachments, OpenTabsList;
+  var TextInputContext, ModeContext, TabAttachments, FileAttachments, ImageAttachments, OpenTabsList, AttachmentPrivacyGrant;
   var init_PersistentOmnibarValuesProvider = __esm({
     "pages/new-tab/app/omnibar/components/PersistentOmnibarValuesProvider.js"() {
       "use strict";
@@ -11507,6 +11753,7 @@
       createPersistentList();
       OpenTabsList = /** @type {() => PersistentList<TabMetadata>} */
       createPersistentList();
+      AttachmentPrivacyGrant = createPersistentFlag();
     }
   });
 
@@ -11541,7 +11788,7 @@
   });
 
   // pages/new-tab/app/omnibar/components/chat-tools/image-attachment/useImageAttachments.js
-  function normaliseImage(srcDataUrl, targetMime) {
+  function normaliseImage(srcDataUrl, targetMime, maxDimension = MAX_DIMENSION) {
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.onload = () => {
@@ -11550,8 +11797,8 @@
           reject(new ImageTooLargeError("Decoded image dimensions exceed safety threshold"));
           return;
         }
-        if (w5 > MAX_DIMENSION || h5 > MAX_DIMENSION) {
-          const scale2 = MAX_DIMENSION / Math.max(w5, h5);
+        if (w5 > maxDimension || h5 > maxDimension) {
+          const scale2 = maxDimension / Math.max(w5, h5);
           w5 = Math.round(w5 * scale2);
           h5 = Math.round(h5 * scale2);
         }
@@ -11580,6 +11827,7 @@
     });
   }
   function useImageAttachments({ tabId, maxImages = MAX_IMAGES } = {}) {
+    const ntp = useMessaging();
     const [attachedImages, setAttachedImages] = useStateWithLocalPersistence(tabId);
     const [imageError, setImageError] = d2(
       /** @type {ImageError|null} */
@@ -11589,13 +11837,16 @@
     const imageUploadDisabled = attachedImages.length >= maxImages;
     const clearAttachedImages = () => setAttachedImages([]);
     const clearImageError = () => setImageError(null);
-    const processFiles = async (files) => {
-      if (files.length === 0) return;
+    const processFiles = async (files, { maxDimension, source = "file" } = {}) => {
+      const nothing = { added: 0, rejected: 0 };
+      if (files.length === 0) return nothing;
       setImageError(null);
       const existingNames = new Set(attachedImages.map((img) => img.fileName));
+      const unsupportedNames = [];
       const validFiles = files.filter((file) => {
         if (!ALLOWED_FORMATS.includes(file.type)) {
           console.warn("Attachment rejected: unsupported file type");
+          unsupportedNames.push(file.name);
           return false;
         }
         if (existingNames.has(file.name)) {
@@ -11603,10 +11854,12 @@
         }
         return true;
       });
-      if (validFiles.length === 0) return;
       const processLimit = maxImages + 1 - attachedImages.length;
       const filesToProcess = processLimit > 0 ? validFiles.slice(0, processLimit) : [];
-      if (filesToProcess.length === 0) return;
+      if (filesToProcess.length === 0) {
+        if (unsupportedNames.length > 0) setImageError({ type: "processingFailed", fileNames: unsupportedNames });
+        return { ...nothing, rejected: unsupportedNames.length };
+      }
       const newImages = filesToProcess.map(async (file) => {
         let rawDataUrl;
         try {
@@ -11617,7 +11870,7 @@
         }
         try {
           const targetMime = file.type === "image/jpeg" ? "image/jpeg" : "image/png";
-          const dataUrl = await normaliseImage(rawDataUrl, targetMime);
+          const dataUrl = await normaliseImage(rawDataUrl, targetMime, maxDimension);
           return { dataUrl, fileName: file.name, mimeType: targetMime };
         } catch (err) {
           console.warn("Attachment rejected: image normalisation failed");
@@ -11630,7 +11883,7 @@
         results.filter((r4) => r4.status === "fulfilled").map((r4) => r4.value)
       );
       const tooLargeNames = [];
-      const failedNames = [];
+      const failedNames = [...unsupportedNames];
       for (let i5 = 0; i5 < results.length; i5++) {
         const r4 = results[i5];
         if (r4.status === "rejected") {
@@ -11649,11 +11902,21 @@
       }
       if (images.length > 0) {
         const addedAtRelative = performance.now();
-        setAttachedImages((prev) => [...prev, ...images.map((img) => ({ ...img, addedAtRelative }))]);
+        setAttachedImages((prev) => [...prev, ...images.map((img) => ({ ...img, addedAtRelative, source }))]);
+        for (let i5 = 0; i5 < images.length; i5++) {
+          ntp.telemetryEvent({ attributes: { name: "omnibar_image_attached", value: { source } } });
+        }
       }
+      return { added: images.length, rejected: tooLargeNames.length + failedNames.length };
     };
     const handleRemoveImage = (index2) => {
+      const removed = attachedImages[index2];
       setAttachedImages((prev) => prev.filter((_5, i5) => i5 !== index2));
+      if (!removed) return;
+      ntp.telemetryEvent({ attributes: { name: "omnibar_image_removed", value: { source: removed.source } } });
+      if (removed.source === "screenshot") {
+        ntp.telemetryEvent({ attributes: { name: "omnibar_screenshot_removed" } });
+      }
     };
     const getImagesForSubmission = () => {
       if (attachedImages.length === 0) return void 0;
@@ -11691,11 +11954,12 @@
     const base = imageError.type === "imageTooLarge" ? messages.imageTooLarge : messages.processingFailed;
     return `${names2}: ${base}`;
   }
-  var useStateWithLocalPersistence, ImageTooLargeError, MAX_IMAGES, ALLOWED_FORMATS, MAX_DIMENSION, MAX_ENCODED_BYTES, MAX_DECODED_PIXELS;
+  var useStateWithLocalPersistence, ImageTooLargeError, MAX_IMAGES, ALLOWED_FORMATS, MAX_DIMENSION, SCREENSHOT_MAX_DIMENSION, MAX_ENCODED_BYTES, MAX_DECODED_PIXELS;
   var init_useImageAttachments = __esm({
     "pages/new-tab/app/omnibar/components/chat-tools/image-attachment/useImageAttachments.js"() {
       "use strict";
       init_hooks_module();
+      init_types();
       init_PersistentOmnibarValuesProvider();
       init_readFileAsDataUrl();
       ({ useStateWithLocalPersistence } = ImageAttachments);
@@ -11708,6 +11972,7 @@
       MAX_IMAGES = 3;
       ALLOWED_FORMATS = ["image/jpeg", "image/png", "image/webp"];
       MAX_DIMENSION = 512;
+      SCREENSHOT_MAX_DIMENSION = 1024;
       MAX_ENCODED_BYTES = 10 * 1024 * 1024;
       MAX_DECODED_PIXELS = 1e4 * 1e4;
     }
@@ -11719,8 +11984,7 @@
     "pages/new-tab/app/omnibar/components/chat-tools/image-attachment/ImageAttachment.module.css"() {
       ImageAttachment_default = {
         imagePreviewArea: "ImageAttachment_imagePreviewArea",
-        thumbnail: "ImageAttachment_thumbnail",
-        thumbnailWrapper: "ImageAttachment_thumbnailWrapper",
+        chipPreview: "ImageAttachment_chipPreview",
         imageWarning: "ImageAttachment_imageWarning",
         dismissError: "ImageAttachment_dismissError",
         toolButton: "ImageAttachment_toolButton",
@@ -11772,6 +12036,662 @@
     }
   });
 
+  // pages/new-tab/app/omnibar/components/chat-tools/image-attachment/uniqueFileName.js
+  function uniqueFileName(base, ext, taken) {
+    if (!taken.has(`${base}${ext}`)) return `${base}${ext}`;
+    for (let n3 = 2; ; n3++) {
+      const candidate = `${base} ${n3}${ext}`;
+      if (!taken.has(candidate)) return candidate;
+    }
+  }
+  var init_uniqueFileName = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/image-attachment/uniqueFileName.js"() {
+      "use strict";
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/image-attachment/usePastedAttachments.js
+  function usePastedAttachments({ imageState, canAttachImages, processOtherFiles, enabled }) {
+    const { t: t4 } = useTypedTranslationWith(
+      /** @type {Strings} */
+      {}
+    );
+    const attachPasted = async ({ bitmaps, copiedImages, others }) => {
+      const tasks = [];
+      if (bitmaps.length > 0) tasks.push(imageState.processFiles(bitmaps, { maxDimension: SCREENSHOT_MAX_DIMENSION, source: "paste" }));
+      if (copiedImages.length > 0) tasks.push(imageState.processFiles(copiedImages, { source: "paste" }));
+      if (others.length > 0 && processOtherFiles) tasks.push(processOtherFiles(others));
+      try {
+        await Promise.all(tasks);
+      } catch (err) {
+        console.warn("Pasted attachment failed", err);
+      }
+    };
+    const handlePaste = (event) => {
+      if (!enabled) return;
+      const data2 = event.clipboardData;
+      if (!data2 || data2.getData("text/plain")) return;
+      let files = Array.from(data2.files ?? []);
+      if (files.length === 0) {
+        files = Array.from(data2.items ?? []).filter((item) => item.kind === "file").map((item) => item.getAsFile()).filter((file) => file !== null);
+      }
+      const images = canAttachImages ? files.filter((file) => file.type.startsWith("image/")) : [];
+      const others = processOtherFiles ? files.filter((file) => !file.type.startsWith("image/")) : [];
+      if (images.length === 0 && others.length === 0) return;
+      event.preventDefault();
+      const taken = new Set(imageState.attachedImages.map((img) => img.fileName));
+      const bitmaps = images.filter((file) => file.name === CLIPBOARD_BITMAP_NAME).map((file) => {
+        const name2 = uniqueFileName(t4("omnibar_pastedImageFileName"), ".png", taken);
+        taken.add(name2);
+        return new File([file], name2, { type: file.type });
+      });
+      const copiedImages = images.filter((file) => file.name !== CLIPBOARD_BITMAP_NAME);
+      attachPasted({ bitmaps, copiedImages, others });
+    };
+    return { handlePaste };
+  }
+  var CLIPBOARD_BITMAP_NAME;
+  var init_usePastedAttachments = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/image-attachment/usePastedAttachments.js"() {
+      "use strict";
+      init_types();
+      init_useImageAttachments();
+      init_uniqueFileName();
+      CLIPBOARD_BITMAP_NAME = "image.png";
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/image-attachment/useScreenshotCapture.js
+  function screenshotToFile(image, fileName) {
+    const binary = atob(image.data);
+    const bytes = new Uint8Array(binary.length);
+    for (let i5 = 0; i5 < binary.length; i5++) bytes[i5] = binary.charCodeAt(i5);
+    return new File([bytes], fileName, { type: `image/${image.format}` });
+  }
+  function useScreenshotCapture({ imageState }) {
+    const { t: t4 } = useTypedTranslationWith(
+      /** @type {Strings} */
+      {}
+    );
+    const ntp = useMessaging();
+    const { captureScreenshot } = x2(OmnibarContext);
+    const [captureError, setCaptureError] = d2(false);
+    const [capturing, setCapturing] = d2(false);
+    const imageStateRef = A2(imageState);
+    imageStateRef.current = imageState;
+    const takenNames = () => new Set(imageStateRef.current.attachedImages.map((img) => img.fileName));
+    const capture = async (mode) => {
+      if (capturing) return;
+      setCaptureError(false);
+      setCapturing(true);
+      try {
+        let response;
+        try {
+          response = await captureScreenshot(mode);
+        } catch (err) {
+          console.warn("omnibar_captureScreenshot failed", err);
+          setCaptureError(true);
+          return;
+        }
+        if (response.error) {
+          setCaptureError(true);
+          return;
+        }
+        if (!response.image) return;
+        const { image } = response;
+        let file;
+        try {
+          file = screenshotToFile(image, uniqueFileName(t4("omnibar_screenshotFileName"), extensionFor(image.format), takenNames()));
+        } catch (err) {
+          console.warn("Screenshot rejected: invalid image data");
+          ntp.telemetryEvent({ attributes: { name: "omnibar_screenshot_failed", value: { reason: "failed" } } });
+          setCaptureError(true);
+          return;
+        }
+        const result = await imageStateRef.current.processFiles([file], {
+          maxDimension: SCREENSHOT_MAX_DIMENSION,
+          source: "screenshot"
+        });
+        if (result.added > 0) {
+          ntp.telemetryEvent({ attributes: { name: "omnibar_screenshot_taken", value: { kind: image.kind } } });
+        } else if (result.rejected > 0) {
+          ntp.telemetryEvent({ attributes: { name: "omnibar_screenshot_failed", value: { reason: "failed" } } });
+        }
+      } finally {
+        setCapturing(false);
+      }
+    };
+    return {
+      capture,
+      capturing,
+      captureError,
+      clearCaptureError: () => setCaptureError(false)
+    };
+  }
+  var extensionFor;
+  var init_useScreenshotCapture = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/image-attachment/useScreenshotCapture.js"() {
+      "use strict";
+      init_hooks_module();
+      init_types();
+      init_OmnibarProvider();
+      init_useImageAttachments();
+      init_uniqueFileName();
+      extensionFor = (format) => format === "jpeg" ? ".jpg" : ".png";
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/Tooltip.module.css
+  var Tooltip_default;
+  var init_Tooltip = __esm({
+    "pages/new-tab/app/omnibar/components/Tooltip.module.css"() {
+      Tooltip_default = {
+        container: "Tooltip_container",
+        tooltip: "Tooltip_tooltip",
+        tooltipRight: "Tooltip_tooltipRight",
+        tooltipFadeIn: "Tooltip_tooltipFadeIn",
+        tooltipAbove: "Tooltip_tooltipAbove"
+      };
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/Tooltip.js
+  function Tooltip({ children, content: content2, className, position: position2 = "above", ariaLabel }) {
+    const [rect, setRect] = d2(
+      /** @type {DOMRect | null} */
+      null
+    );
+    const tooltipId = g2();
+    const containerRef = A2(
+      /** @type {HTMLDivElement|null} */
+      null
+    );
+    const tooltipRef = q2(
+      (el) => {
+        if (!el || !rect) return;
+        const tooltipRect = el.getBoundingClientRect();
+        const viewportWidth = document.documentElement.clientWidth;
+        if (tooltipRect.left < VIEWPORT_PADDING) {
+          el.style.left = `${VIEWPORT_PADDING}px`;
+          if (position2 === "above") {
+            el.style.transform = `translateY(calc(-100% - 6px))`;
+          }
+        } else if (tooltipRect.right > viewportWidth - VIEWPORT_PADDING) {
+          el.style.left = `${viewportWidth - VIEWPORT_PADDING - tooltipRect.width}px`;
+          if (position2 === "above") {
+            el.style.transform = `translateY(calc(-100% - 6px))`;
+          }
+        }
+      },
+      [rect, position2]
+    );
+    const show = () => {
+      if (!containerRef.current) return;
+      setRect(containerRef.current.getBoundingClientRect());
+    };
+    const hide = () => setRect(null);
+    const handleKeyDown = (e4) => {
+      if ((e4.key === "Enter" || e4.key === " ") && e4.target === e4.currentTarget) {
+        e4.preventDefault();
+        if (rect) {
+          hide();
+        } else {
+          show();
+        }
+      }
+      if (e4.key === "Escape") {
+        hide();
+      }
+    };
+    const isVisible = rect !== null;
+    let tooltipStyle;
+    if (rect) {
+      if (position2 === "above") {
+        tooltipStyle = {
+          top: `${rect.top}px`,
+          left: `${rect.left + rect.width / 2}px`,
+          transform: "translate(-50%, calc(-100% - 6px))"
+        };
+      } else {
+        tooltipStyle = {
+          top: `${rect.top - 20}px`,
+          left: `${rect.right + 8}px`
+        };
+      }
+    }
+    const tooltipClass = position2 === "above" ? (0, import_classnames11.default)(Tooltip_default.tooltip, Tooltip_default.tooltipAbove) : (0, import_classnames11.default)(Tooltip_default.tooltip, Tooltip_default.tooltipRight);
+    return /* @__PURE__ */ k(
+      "div",
+      {
+        ref: containerRef,
+        class: (0, import_classnames11.default)(Tooltip_default.container, className),
+        role: "button",
+        tabIndex: 0,
+        "aria-label": ariaLabel,
+        "aria-describedby": isVisible ? tooltipId : void 0,
+        onMouseEnter: show,
+        onMouseLeave: hide,
+        onFocus: show,
+        onBlur: hide,
+        onKeyDown: handleKeyDown
+      },
+      children,
+      isVisible && $2(
+        /* @__PURE__ */ k("div", { ref: tooltipRef, id: tooltipId, class: tooltipClass, role: "tooltip", style: tooltipStyle }, content2),
+        document.body
+      )
+    );
+  }
+  var import_classnames11, VIEWPORT_PADDING;
+  var init_Tooltip2 = __esm({
+    "pages/new-tab/app/omnibar/components/Tooltip.js"() {
+      "use strict";
+      init_preact_module();
+      init_hooks_module();
+      init_compat_module();
+      init_Tooltip();
+      import_classnames11 = __toESM(require_classnames(), 1);
+      VIEWPORT_PADDING = 8;
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/ChipRemoveButton.module.css
+  var ChipRemoveButton_default;
+  var init_ChipRemoveButton = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/ChipRemoveButton.module.css"() {
+      ChipRemoveButton_default = {
+        remove: "ChipRemoveButton_remove"
+      };
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/ChipRemoveButton.js
+  function ChipRemoveButton({ onRemove, label }) {
+    return /* @__PURE__ */ k(
+      "button",
+      {
+        type: "button",
+        tabIndex: 0,
+        class: ChipRemoveButton_default.remove,
+        "aria-label": label,
+        onClick: (e4) => {
+          e4.stopPropagation();
+          onRemove();
+        }
+      },
+      /* @__PURE__ */ k(CloseXsmallIcon, { width: "16", height: "16", "aria-hidden": "true" })
+    );
+  }
+  var init_ChipRemoveButton2 = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/ChipRemoveButton.js"() {
+      "use strict";
+      init_preact_module();
+      init_Icons2();
+      init_ChipRemoveButton();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChip.module.css
+  var AttachmentChip_default;
+  var init_AttachmentChip = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChip.module.css"() {
+      AttachmentChip_default = {
+        listItem: "AttachmentChip_listItem",
+        enter: "AttachmentChip_enter",
+        chipEnter: "AttachmentChip_chipEnter",
+        tooltipContainer: "AttachmentChip_tooltipContainer",
+        root: "AttachmentChip_root",
+        imageFill: "AttachmentChip_imageFill",
+        headerBand: "AttachmentChip_headerBand",
+        title: "AttachmentChip_title",
+        metadata: "AttachmentChip_metadata",
+        info: "AttachmentChip_info",
+        iconSlot: "AttachmentChip_iconSlot",
+        icon: "AttachmentChip_icon",
+        typeLabel: "AttachmentChip_typeLabel",
+        removeSlot: "AttachmentChip_removeSlot"
+      };
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChip.js
+  function AttachmentChip({
+    attachmentKind,
+    imagePreview,
+    icon,
+    title,
+    typeLabel,
+    metadata,
+    tooltipLabel,
+    onRemove,
+    removeLabel,
+    enteringAnimationDelay = 0
+  }) {
+    const tooltip = tooltipLabel || title || "";
+    return /* @__PURE__ */ k("div", { class: AttachmentChip_default.listItem, "data-attachment-kind": attachmentKind }, /* @__PURE__ */ k("span", { class: AttachmentChip_default.enter, style: { animationDelay: enteringAnimationDelay ? `${enteringAnimationDelay}ms` : void 0 } }, /* @__PURE__ */ k(Tooltip, { content: tooltip, position: "above", className: AttachmentChip_default.tooltipContainer, ariaLabel: tooltip }, /* @__PURE__ */ k("span", { class: AttachmentChip_default.root }, imagePreview ? /* @__PURE__ */ k("span", { class: AttachmentChip_default.imageFill }, imagePreview) : /* @__PURE__ */ k("span", { class: AttachmentChip_default.headerBand }, /* @__PURE__ */ k("span", { class: AttachmentChip_default.title }, title)), !imagePreview && metadata && /* @__PURE__ */ k("span", { class: AttachmentChip_default.metadata }, metadata), !imagePreview && /* @__PURE__ */ k("span", { class: AttachmentChip_default.info }, /* @__PURE__ */ k("span", { class: AttachmentChip_default.iconSlot }, /* @__PURE__ */ k("span", { class: AttachmentChip_default.icon }, icon)), /* @__PURE__ */ k("span", { class: AttachmentChip_default.typeLabel }, typeLabel)), /* @__PURE__ */ k("span", { class: AttachmentChip_default.removeSlot }, /* @__PURE__ */ k(ChipRemoveButton, { onRemove, label: removeLabel }))))));
+  }
+  var init_AttachmentChip2 = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChip.js"() {
+      "use strict";
+      init_preact_module();
+      init_Tooltip2();
+      init_ChipRemoveButton2();
+      init_AttachmentChip();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/attachmentText.js
+  function formatFileSize(bytes) {
+    if (bytes < 1024) return `${bytes} B`;
+    const units = ["KB", "MB", "GB"];
+    let value2 = bytes / 1024;
+    let unitIndex = 0;
+    while (value2 >= 1024 && unitIndex < units.length - 1) {
+      value2 /= 1024;
+      unitIndex++;
+    }
+    return `${value2 >= 10 ? Math.round(value2) : Math.round(value2 * 10) / 10} ${units[unitIndex]}`;
+  }
+  function splitFileName(filename) {
+    const dotIndex = filename.lastIndexOf(".");
+    if (dotIndex <= 0 || dotIndex === filename.length - 1) {
+      return { stem: filename, extension: "" };
+    }
+    return { stem: filename.slice(0, dotIndex), extension: filename.slice(dotIndex) };
+  }
+  function base64ByteLength(data2) {
+    if (!data2) return 0;
+    let padding = 0;
+    if (data2.endsWith("==")) padding = 2;
+    else if (data2.endsWith("=")) padding = 1;
+    return Math.floor(data2.length * 3 / 4) - padding;
+  }
+  function getDomainForDisplay(url8) {
+    const parsed = parseURL(url8);
+    if (!parsed || !parsed.host) return url8;
+    return parsed.host.replace(/^www\./i, "");
+  }
+  var init_attachmentText = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/attachmentText.js"() {
+      "use strict";
+      init_utils4();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabFavicon.js
+  function TabFavicon({ favicon, iconSize, className, fallbackClassName }) {
+    const [errored, setErrored] = d2(false);
+    if (!favicon || !favicon.src || errored) {
+      return /* @__PURE__ */ k("span", { class: fallbackClassName, "aria-hidden": "true" }, /* @__PURE__ */ k(GlobeIcon, { width: iconSize, height: iconSize }));
+    }
+    return /* @__PURE__ */ k("img", { class: className, src: favicon.src, alt: "", onError: () => setErrored(true), loading: "lazy" });
+  }
+  var init_TabFavicon = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabFavicon.js"() {
+      "use strict";
+      init_preact_module();
+      init_hooks_module();
+      init_Icons2();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabChips.module.css
+  var TabChips_default;
+  var init_TabChips = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabChips.module.css"() {
+      TabChips_default = {
+        favicon: "TabChips_favicon",
+        faviconFallback: "TabChips_faviconFallback"
+      };
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabChips.js
+  function TabChip({ tab, onRemove, removeLabel, enteringAnimationDelay }) {
+    const { t: t4 } = useTypedTranslationWith(
+      /** @type {Strings} */
+      {}
+    );
+    return /* @__PURE__ */ k(
+      AttachmentChip,
+      {
+        attachmentKind: "tab",
+        icon: /* @__PURE__ */ k(TabFavicon, { favicon: tab.favicon, iconSize: 16, className: TabChips_default.favicon, fallbackClassName: TabChips_default.faviconFallback }),
+        title: tab.title,
+        typeLabel: t4("omnibar_attachmentTypeWebpage"),
+        metadata: getDomainForDisplay(tab.url),
+        onRemove,
+        removeLabel,
+        enteringAnimationDelay
+      }
+    );
+  }
+  var init_TabChips2 = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabChips.js"() {
+      "use strict";
+      init_preact_module();
+      init_types();
+      init_AttachmentChip2();
+      init_attachmentText();
+      init_TabFavicon();
+      init_TabChips();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/file-attachment/PdfFileChip.js
+  function PdfFileChip({ file, onRemove, removeLabel, enteringAnimationDelay }) {
+    return /* @__PURE__ */ k(
+      AttachmentChip,
+      {
+        attachmentKind: "file",
+        icon: /* @__PURE__ */ k(DocumentPdfColorIcon, { width: 16, height: 16, "aria-hidden": "true" }),
+        title: splitFileName(file.fileName).stem,
+        typeLabel: "PDF",
+        metadata: formatFileSize(base64ByteLength(file.data)),
+        tooltipLabel: file.fileName,
+        onRemove,
+        removeLabel,
+        enteringAnimationDelay
+      }
+    );
+  }
+  var init_PdfFileChip = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/file-attachment/PdfFileChip.js"() {
+      "use strict";
+      init_preact_module();
+      init_Icons2();
+      init_AttachmentChip2();
+      init_attachmentText();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/file-attachment/FileChip.js
+  function FileChip({ file, onRemove, removeLabel, enteringAnimationDelay }) {
+    switch (file.mimeType) {
+      case "application/pdf":
+        return /* @__PURE__ */ k(PdfFileChip, { file, onRemove, removeLabel, enteringAnimationDelay });
+      default:
+        return null;
+    }
+  }
+  var init_FileChip = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/file-attachment/FileChip.js"() {
+      "use strict";
+      init_preact_module();
+      init_PdfFileChip();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/image-attachment/ImageChip.js
+  function ImageChip({ image, onRemove, removeLabel, enteringAnimationDelay }) {
+    return /* @__PURE__ */ k(
+      AttachmentChip,
+      {
+        attachmentKind: "image",
+        imagePreview: /* @__PURE__ */ k("img", { src: image.dataUrl, alt: "", class: ImageAttachment_default.chipPreview }),
+        tooltipLabel: image.fileName,
+        onRemove,
+        removeLabel,
+        enteringAnimationDelay
+      }
+    );
+  }
+  var init_ImageChip = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/image-attachment/ImageChip.js"() {
+      "use strict";
+      init_preact_module();
+      init_AttachmentChip2();
+      init_ImageAttachment();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/useScrollToNewestChip.js
+  function useScrollToNewestChip(count) {
+    const listRef = A2(
+      /** @type {HTMLDivElement|null} */
+      null
+    );
+    const previousCount = A2(0);
+    _2(() => {
+      const grew = count > previousCount.current;
+      previousCount.current = count;
+      const list2 = listRef.current;
+      if (!grew || !list2) return;
+      list2.lastElementChild?.scrollIntoView?.({ behavior: "auto", inline: "nearest", block: "nearest" });
+      list2.scrollLeft = list2.scrollWidth;
+    }, [count]);
+    return listRef;
+  }
+  var init_useScrollToNewestChip = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/useScrollToNewestChip.js"() {
+      "use strict";
+      init_hooks_module();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChips.module.css
+  var AttachmentChips_default;
+  var init_AttachmentChips = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChips.module.css"() {
+      AttachmentChips_default = {
+        chipsArea: "AttachmentChips_chipsArea"
+      };
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChips.js
+  function AttachmentChips({ tabs, files, images, onRemoveTab, onRemoveFile, onRemoveImage }) {
+    const { t: t4 } = useTypedTranslationWith(
+      /** @type {Strings} */
+      {}
+    );
+    const items = [
+      ...tabs.map((tab) => (
+        /** @type {TabItem} */
+        { kind: "tab", key: `tab-${tab.tabId}`, tab, addedAtRelative: tab.addedAtRelative }
+      )),
+      ...files.map(
+        (file, originalIndex) => (
+          /** @type {FileItem} */
+          {
+            kind: "file",
+            key: `file-${file.fileName}-${originalIndex}`,
+            file,
+            originalIndex,
+            addedAtRelative: file.addedAtRelative
+          }
+        )
+      ),
+      ...images.map(
+        (image, originalIndex) => (
+          /** @type {ImageItem} */
+          {
+            kind: "image",
+            key: `image-${image.fileName}-${originalIndex}`,
+            image,
+            originalIndex,
+            addedAtRelative: image.addedAtRelative
+          }
+        )
+      )
+    ].sort((a4, b4) => a4.addedAtRelative - b4.addedAtRelative);
+    const listRef = useScrollToNewestChip(items.length);
+    if (items.length === 0) return null;
+    return /* @__PURE__ */ k("div", { ref: listRef, class: AttachmentChips_default.chipsArea, "data-testid": "omnibar-attachment-chips" }, items.map((item, index2) => {
+      const enteringAnimationDelay = index2 * 50;
+      switch (item.kind) {
+        case "tab":
+          return /* @__PURE__ */ k(
+            TabChip,
+            {
+              key: item.key,
+              tab: item.tab,
+              onRemove: () => onRemoveTab(item.tab.tabId),
+              removeLabel: t4("omnibar_removeAttachedTabLabel", { title: item.tab.title }),
+              enteringAnimationDelay
+            }
+          );
+        case "file":
+          return /* @__PURE__ */ k(
+            FileChip,
+            {
+              key: item.key,
+              file: item.file,
+              onRemove: () => onRemoveFile(item.originalIndex),
+              removeLabel: t4("omnibar_removeAttachedFileLabel", { fileName: item.file.fileName }),
+              enteringAnimationDelay
+            }
+          );
+        case "image":
+          return /* @__PURE__ */ k(
+            ImageChip,
+            {
+              key: item.key,
+              image: item.image,
+              onRemove: () => onRemoveImage(item.originalIndex),
+              removeLabel: t4("omnibar_removeImageLabel"),
+              enteringAnimationDelay
+            }
+          );
+        default: {
+          const _exhaustiveCheck = item;
+          console.error(`Unknown attachment item kind: ${_exhaustiveCheck}`);
+          return null;
+        }
+      }
+    }));
+  }
+  var init_AttachmentChips2 = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChips.js"() {
+      "use strict";
+      init_preact_module();
+      init_types();
+      init_TabChips2();
+      init_FileChip();
+      init_ImageChip();
+      init_useScrollToNewestChip();
+      init_AttachmentChips();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/useSelectedModel.js
+  function useSelectedModel() {
+    const { state, setSelectedModelId } = x2(OmnibarContext);
+    const aiModelSections = state.config?.enableAiChatTools === true ? state.config?.aiModelSections ?? [] : [];
+    const allModels = aiModelSections.flatMap((s4) => s4.items);
+    const persistedId = state.config?.selectedModelId;
+    const match = persistedId ? allModels.find((m5) => m5.id === persistedId && m5.isAvailable) : null;
+    const selectedModel = match ?? allModels.find((m5) => m5.isAvailable) ?? null;
+    return { selectedModel, aiModelSections, allModels, setSelectedModelId };
+  }
+  var init_useSelectedModel = __esm({
+    "pages/new-tab/app/omnibar/components/useSelectedModel.js"() {
+      "use strict";
+      init_hooks_module();
+      init_OmnibarProvider();
+    }
+  });
+
   // pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/fileChannels.js
   function buildFileAccept(mimeTypes) {
     return mimeTypes.flatMap((mime) => [mime, ...FILE_EXTENSIONS[mime] ?? []]).join(",");
@@ -11799,20 +12719,18 @@
         event.currentTarget
       );
       if (!input.files || input.files.length === 0) return;
-      const all2 = Array.from(input.files);
-      const tasks = [];
-      if (image) {
-        const images = all2.filter((file2) => file2.type.startsWith("image/"));
-        if (images.length > 0) tasks.push(image.processFiles(images));
-      }
-      if (file) {
-        const others = all2.filter((file2) => !file2.type.startsWith("image/"));
-        if (others.length > 0) tasks.push(file.processFiles(others));
-      }
-      await Promise.all(tasks);
+      await routeFiles(Array.from(input.files), image?.processFiles ?? null, file?.processFiles ?? null);
       input.value = "";
     };
     return { label, accept, disabled, onChange };
+  }
+  async function routeFiles(files, processImages, processOtherFiles) {
+    const images = files.filter((file) => file.type.startsWith("image/"));
+    const others = files.filter((file) => !file.type.startsWith("image/"));
+    const tasks = [];
+    if (processImages && images.length > 0) tasks.push(processImages(images));
+    if (processOtherFiles && others.length > 0) tasks.push(processOtherFiles(others));
+    await Promise.all(tasks);
   }
   var IMAGE_ACCEPT, FILE_EXTENSIONS;
   var init_fileChannels = __esm({
@@ -11921,382 +12839,66 @@
     }
   });
 
-  // pages/new-tab/app/omnibar/components/chat-tools/attachments/ChipRemoveButton.module.css
-  var ChipRemoveButton_default;
-  var init_ChipRemoveButton = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/attachments/ChipRemoveButton.module.css"() {
-      ChipRemoveButton_default = {
-        remove: "ChipRemoveButton_remove"
-      };
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/attachments/ChipRemoveButton.js
-  function ChipRemoveButton({ onRemove, label, stopPropagation }) {
-    return /* @__PURE__ */ k(
-      "button",
-      {
-        type: "button",
-        tabIndex: 0,
-        class: ChipRemoveButton_default.remove,
-        "aria-label": label,
-        onClick: (e4) => {
-          if (stopPropagation) e4.stopPropagation();
-          onRemove();
-        }
-      },
-      /* @__PURE__ */ k(CloseSmallIcon, { width: "12", height: "12" })
-    );
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentsProvider.js
+  function AttachmentsProvider({ tabId, children }) {
+    const { state } = x2(OmnibarContext);
+    const { selectedModel } = useSelectedModel();
+    const attachmentLimits = state.config?.attachmentLimits;
+    const imageState = useImageAttachments({ tabId, maxImages: attachmentLimits?.images?.maxPerTurn });
+    const fileState = useFileAttachments({
+      supportedFileTypes: selectedModel?.supportedFileTypes,
+      tabId,
+      maxFiles: attachmentLimits?.files?.maxPerConversation,
+      maxFileSizeMB: attachmentLimits?.files?.maxFileSizeMB
+    });
+    return /* @__PURE__ */ k(AttachmentsContext.Provider, { value: { imageState, fileState, tabId } }, children);
   }
-  var init_ChipRemoveButton2 = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/attachments/ChipRemoveButton.js"() {
+  function useAttachmentsContext() {
+    const context = x2(AttachmentsContext);
+    if (!context) {
+      throw new Error("useAttachmentsContext must be used within an AttachmentsProvider");
+    }
+    return context;
+  }
+  var AttachmentsContext;
+  var init_AttachmentsProvider = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentsProvider.js"() {
       "use strict";
       init_preact_module();
-      init_Icons2();
-      init_ChipRemoveButton();
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabFavicon.js
-  function TabFavicon({ favicon, iconSize, className, fallbackClassName }) {
-    const [errored, setErrored] = d2(false);
-    if (!favicon || !favicon.src || errored) {
-      return /* @__PURE__ */ k("span", { class: fallbackClassName, "aria-hidden": "true" }, /* @__PURE__ */ k(GlobeIcon, { width: iconSize, height: iconSize }));
-    }
-    return /* @__PURE__ */ k("img", { class: className, src: favicon.src, alt: "", onError: () => setErrored(true), loading: "lazy" });
-  }
-  var init_TabFavicon = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabFavicon.js"() {
-      "use strict";
-      init_preact_module();
-      init_hooks_module();
-      init_Icons2();
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabChips.module.css
-  var TabChips_default;
-  var init_TabChips = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabChips.module.css"() {
-      TabChips_default = {
-        chip: "TabChips_chip",
-        faviconTile: "TabChips_faviconTile",
-        faviconLine: "TabChips_faviconLine",
-        faviconCorner: "TabChips_faviconCorner",
-        favicon: "TabChips_favicon",
-        faviconFallback: "TabChips_faviconFallback",
-        title: "TabChips_title"
-      };
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabChips.js
-  function TabChip({ tab, onRemove, removeLabel }) {
-    return /* @__PURE__ */ k("div", { class: TabChips_default.chip, "data-attachment-kind": "tab" }, /* @__PURE__ */ k("span", { class: TabChips_default.faviconTile, "aria-hidden": "true" }, FAVICON_LINES.map((line, i5) => /* @__PURE__ */ k("span", { key: i5, class: TabChips_default.faviconLine, style: { left: line.left, top: line.top, width: line.width } })), /* @__PURE__ */ k("span", { class: TabChips_default.faviconCorner }, /* @__PURE__ */ k(TabFavicon, { favicon: tab.favicon, iconSize: 16, className: TabChips_default.favicon, fallbackClassName: TabChips_default.faviconFallback }))), /* @__PURE__ */ k("span", { class: TabChips_default.title, title: tab.title }, tab.title), /* @__PURE__ */ k(ChipRemoveButton, { onRemove, label: removeLabel }));
-  }
-  var FAVICON_LINES;
-  var init_TabChips2 = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/TabChips.js"() {
-      "use strict";
-      init_preact_module();
-      init_ChipRemoveButton2();
-      init_TabFavicon();
-      init_TabChips();
-      FAVICON_LINES = [
-        { left: 22, top: 5, width: 10 },
-        { left: 22, top: 11, width: 10 },
-        { left: 22, top: 17, width: 10 },
-        { left: 4, top: 23, width: 28 },
-        { left: 4, top: 29, width: 23 }
-      ];
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/Tooltip.module.css
-  var Tooltip_default;
-  var init_Tooltip = __esm({
-    "pages/new-tab/app/omnibar/components/Tooltip.module.css"() {
-      Tooltip_default = {
-        container: "Tooltip_container",
-        tooltip: "Tooltip_tooltip",
-        tooltipRight: "Tooltip_tooltipRight",
-        tooltipFadeIn: "Tooltip_tooltipFadeIn",
-        tooltipAbove: "Tooltip_tooltipAbove"
-      };
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/Tooltip.js
-  function Tooltip({ children, content: content2, className, position: position2 = "above" }) {
-    const [rect, setRect] = d2(
-      /** @type {DOMRect | null} */
-      null
-    );
-    const tooltipId = g2();
-    const containerRef = A2(
-      /** @type {HTMLDivElement|null} */
-      null
-    );
-    const tooltipRef = q2(
-      (el) => {
-        if (!el || !rect) return;
-        const tooltipRect = el.getBoundingClientRect();
-        const viewportWidth = document.documentElement.clientWidth;
-        if (tooltipRect.left < VIEWPORT_PADDING) {
-          el.style.left = `${VIEWPORT_PADDING}px`;
-          if (position2 === "above") {
-            el.style.transform = `translateY(calc(-100% - 6px))`;
-          }
-        } else if (tooltipRect.right > viewportWidth - VIEWPORT_PADDING) {
-          el.style.left = `${viewportWidth - VIEWPORT_PADDING - tooltipRect.width}px`;
-          if (position2 === "above") {
-            el.style.transform = `translateY(calc(-100% - 6px))`;
-          }
-        }
-      },
-      [rect, position2]
-    );
-    const show = () => {
-      if (!containerRef.current) return;
-      setRect(containerRef.current.getBoundingClientRect());
-    };
-    const hide = () => setRect(null);
-    const handleKeyDown = (e4) => {
-      if (e4.key === "Enter" || e4.key === " ") {
-        e4.preventDefault();
-        if (rect) {
-          hide();
-        } else {
-          show();
-        }
-      }
-      if (e4.key === "Escape") {
-        hide();
-      }
-    };
-    const isVisible = rect !== null;
-    let tooltipStyle;
-    if (rect) {
-      if (position2 === "above") {
-        tooltipStyle = {
-          top: `${rect.top}px`,
-          left: `${rect.left + rect.width / 2}px`,
-          transform: "translate(-50%, calc(-100% - 6px))"
-        };
-      } else {
-        tooltipStyle = {
-          top: `${rect.top - 20}px`,
-          left: `${rect.right + 8}px`
-        };
-      }
-    }
-    const tooltipClass = position2 === "above" ? (0, import_classnames11.default)(Tooltip_default.tooltip, Tooltip_default.tooltipAbove) : (0, import_classnames11.default)(Tooltip_default.tooltip, Tooltip_default.tooltipRight);
-    return /* @__PURE__ */ k(
-      "div",
-      {
-        ref: containerRef,
-        class: (0, import_classnames11.default)(Tooltip_default.container, className),
-        role: "button",
-        tabIndex: 0,
-        "aria-describedby": isVisible ? tooltipId : void 0,
-        onMouseEnter: show,
-        onMouseLeave: hide,
-        onFocus: show,
-        onBlur: hide,
-        onKeyDown: handleKeyDown
-      },
-      children,
-      isVisible && $2(
-        /* @__PURE__ */ k("div", { ref: tooltipRef, id: tooltipId, class: tooltipClass, role: "tooltip", style: tooltipStyle }, content2),
-        document.body
-      )
-    );
-  }
-  var import_classnames11, VIEWPORT_PADDING;
-  var init_Tooltip2 = __esm({
-    "pages/new-tab/app/omnibar/components/Tooltip.js"() {
-      "use strict";
-      init_preact_module();
-      init_hooks_module();
-      init_compat_module();
-      init_Tooltip();
-      import_classnames11 = __toESM(require_classnames(), 1);
-      VIEWPORT_PADDING = 8;
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/file-attachment/PdfFileChip.module.css
-  var PdfFileChip_default;
-  var init_PdfFileChip = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/file-attachment/PdfFileChip.module.css"() {
-      PdfFileChip_default = {
-        chipWrapper: "PdfFileChip_chipWrapper",
-        card: "PdfFileChip_card",
-        lines: "PdfFileChip_lines",
-        line: "PdfFileChip_line",
-        format: "PdfFileChip_format"
-      };
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/file-attachment/PdfFileChip.js
-  function PdfFileChip({ file, onRemove, removeLabel }) {
-    return /* @__PURE__ */ k(Tooltip, { content: file.fileName, position: "above" }, /* @__PURE__ */ k("div", { class: PdfFileChip_default.chipWrapper, "data-attachment-kind": "file" }, /* @__PURE__ */ k("span", { class: PdfFileChip_default.card, "aria-hidden": "true" }, /* @__PURE__ */ k("span", { class: PdfFileChip_default.lines }, /* @__PURE__ */ k("span", { class: PdfFileChip_default.line }), /* @__PURE__ */ k("span", { class: PdfFileChip_default.line })), /* @__PURE__ */ k("span", { class: PdfFileChip_default.format }, "PDF")), /* @__PURE__ */ k(ChipRemoveButton, { onRemove, label: removeLabel })));
-  }
-  var init_PdfFileChip2 = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/file-attachment/PdfFileChip.js"() {
-      "use strict";
-      init_preact_module();
-      init_ChipRemoveButton2();
-      init_Tooltip2();
-      init_PdfFileChip();
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/file-attachment/FileChip.js
-  function FileChip({ file, onRemove, removeLabel }) {
-    switch (file.mimeType) {
-      case "application/pdf":
-        return /* @__PURE__ */ k(PdfFileChip, { file, onRemove, removeLabel });
-      default:
-        return null;
-    }
-  }
-  var init_FileChip = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/file-attachment/FileChip.js"() {
-      "use strict";
-      init_preact_module();
-      init_PdfFileChip2();
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/image-attachment/ImageChip.js
-  function ImageChip({ image, onRemove, removeLabel }) {
-    return /* @__PURE__ */ k("div", { class: ImageAttachment_default.thumbnailWrapper, "data-attachment-kind": "image" }, /* @__PURE__ */ k("img", { src: image.dataUrl, alt: "", class: ImageAttachment_default.thumbnail }), /* @__PURE__ */ k(ChipRemoveButton, { onRemove, label: removeLabel, stopPropagation: true }));
-  }
-  var init_ImageChip = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/image-attachment/ImageChip.js"() {
-      "use strict";
-      init_preact_module();
-      init_ChipRemoveButton2();
-      init_ImageAttachment();
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChips.module.css
-  var AttachmentChips_default;
-  var init_AttachmentChips = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChips.module.css"() {
-      AttachmentChips_default = {
-        chipsArea: "AttachmentChips_chipsArea"
-      };
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChips.js
-  function AttachmentChips({ tabs, files, images, onRemoveTab, onRemoveFile, onRemoveImage }) {
-    const { t: t4 } = useTypedTranslationWith(
-      /** @type {Strings} */
-      {}
-    );
-    const items = [
-      ...tabs.map((tab) => (
-        /** @type {TabItem} */
-        { kind: "tab", key: `tab-${tab.tabId}`, tab, addedAtRelative: tab.addedAtRelative }
-      )),
-      ...files.map(
-        (file, originalIndex) => (
-          /** @type {FileItem} */
-          {
-            kind: "file",
-            key: `file-${file.fileName}-${originalIndex}`,
-            file,
-            originalIndex,
-            addedAtRelative: file.addedAtRelative
-          }
-        )
-      ),
-      ...images.map(
-        (image, originalIndex) => (
-          /** @type {ImageItem} */
-          {
-            kind: "image",
-            key: `image-${image.fileName}-${originalIndex}`,
-            image,
-            originalIndex,
-            addedAtRelative: image.addedAtRelative
-          }
-        )
-      )
-    ].sort((a4, b4) => a4.addedAtRelative - b4.addedAtRelative);
-    if (items.length === 0) return null;
-    return /* @__PURE__ */ k("div", { class: AttachmentChips_default.chipsArea, "data-testid": "omnibar-attachment-chips" }, items.map((item) => {
-      switch (item.kind) {
-        case "tab":
-          return /* @__PURE__ */ k(
-            TabChip,
-            {
-              key: item.key,
-              tab: item.tab,
-              onRemove: () => onRemoveTab(item.tab.tabId),
-              removeLabel: t4("omnibar_removeAttachedTabLabel", { title: item.tab.title })
-            }
-          );
-        case "file":
-          return /* @__PURE__ */ k(
-            FileChip,
-            {
-              key: item.key,
-              file: item.file,
-              onRemove: () => onRemoveFile(item.originalIndex),
-              removeLabel: t4("omnibar_removeAttachedFileLabel", { fileName: item.file.fileName })
-            }
-          );
-        case "image":
-          return /* @__PURE__ */ k(
-            ImageChip,
-            {
-              key: item.key,
-              image: item.image,
-              onRemove: () => onRemoveImage(item.originalIndex),
-              removeLabel: t4("omnibar_removeImageLabel")
-            }
-          );
-        default: {
-          const _exhaustiveCheck = item;
-          console.error(`Unknown attachment item kind: ${_exhaustiveCheck}`);
-          return null;
-        }
-      }
-    }));
-  }
-  var init_AttachmentChips2 = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/attachments/AttachmentChips.js"() {
-      "use strict";
-      init_preact_module();
-      init_types();
-      init_TabChips2();
-      init_FileChip();
-      init_ImageChip();
-      init_AttachmentChips();
-    }
-  });
-
-  // pages/new-tab/app/omnibar/components/useSelectedModel.js
-  function useSelectedModel() {
-    const { state, setSelectedModelId } = x2(OmnibarContext);
-    const aiModelSections = state.config?.enableAiChatTools === true ? state.config?.aiModelSections ?? [] : [];
-    const allModels = aiModelSections.flatMap((s4) => s4.items);
-    const persistedId = state.config?.selectedModelId;
-    const match = persistedId ? allModels.find((m5) => m5.id === persistedId && m5.isAvailable) : null;
-    const selectedModel = match ?? allModels.find((m5) => m5.isAvailable) ?? null;
-    return { selectedModel, aiModelSections, allModels, setSelectedModelId };
-  }
-  var init_useSelectedModel = __esm({
-    "pages/new-tab/app/omnibar/components/useSelectedModel.js"() {
-      "use strict";
       init_hooks_module();
       init_OmnibarProvider();
+      init_useSelectedModel();
+      init_useFileAttachments();
+      init_useImageAttachments();
+      AttachmentsContext = X(null);
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/attachments/useDroppedAttachments.js
+  function useDroppedAttachments({ processImages, processOtherFiles, enabled }) {
+    const acceptsFiles = enabled && (processImages !== null || processOtherFiles !== null);
+    const isFileDrag = (event) => acceptsFiles && (event.dataTransfer?.types.includes("Files") ?? false);
+    const handleDragOver = (event) => {
+      if (!isFileDrag(event) || !event.dataTransfer) return;
+      event.preventDefault();
+      event.stopPropagation();
+      event.dataTransfer.dropEffect = "copy";
+    };
+    const handleDrop = async (event) => {
+      if (!isFileDrag(event) || !event.dataTransfer) return;
+      event.preventDefault();
+      try {
+        await routeFiles(Array.from(event.dataTransfer.files), processImages, processOtherFiles);
+      } catch (err) {
+        console.warn("Dropped attachment failed", err);
+      }
+    };
+    return { handleDragOver, handleDrop };
+  }
+  var init_useDroppedAttachments = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/attachments/useDroppedAttachments.js"() {
+      "use strict";
+      init_fileChannels();
     }
   });
 
@@ -12434,6 +13036,7 @@
         roomy: "Dropdown_roomy",
         trailingIcon: "Dropdown_trailingIcon",
         itemActive: "Dropdown_itemActive",
+        submenuChevron: "Dropdown_submenuChevron",
         trailingControl: "Dropdown_trailingControl",
         itemDescription: "Dropdown_itemDescription",
         checkmark: "Dropdown_checkmark",
@@ -12589,6 +13192,13 @@
     };
     const [activeIndex, setActiveIndex] = d2(getInitialActiveIndex);
     const clearActiveIndex = () => setActiveIndex(-1);
+    _2(() => {
+      const dropdown = dropdownRef?.current;
+      if (!dropdown) return;
+      const rect = dropdown.getBoundingClientRect();
+      const shiftY = Math.max(20 - rect.top, Math.min(0, window.innerHeight - 20 - rect.bottom));
+      dropdown.style.top = `${parseFloat(dropdown.style.top) + shiftY}px`;
+    }, [dropdownRef, dropdownPos, sections]);
     const activateUpsell = (type, restoreFocus) => {
       onUpsell(type);
       onClose({ restoreFocus });
@@ -12605,7 +13215,7 @@
     };
     h2(() => {
       const frameId = window.requestAnimationFrame(() => {
-        dropdownRef?.current?.focus();
+        dropdownRef?.current?.focus({ preventScroll: true });
       });
       return () => window.cancelAnimationFrame(frameId);
     }, [dropdownRef]);
@@ -12901,154 +13511,6 @@
     }
   });
 
-  // pages/new-tab/app/omnibar/components/chat-tools/dropdown/Dropdown.js
-  function getItemProps(child) {
-    if (typeof child !== "object" || child === null || !("props" in child)) return null;
-    return (
-      /** @type {DropdownItemProps} */
-      child.props
-    );
-  }
-  function Dropdown({
-    children,
-    header,
-    headerClassName,
-    emptyMessage,
-    ariaLabel,
-    role,
-    position: position2,
-    onClose,
-    dropdownRef,
-    idPrefix: idPrefix2 = "dropdown-item",
-    className,
-    multiSelect = false
-  }) {
-    const items = F(children);
-    const isItemEnabled = (child) => !getItemProps(child)?.disabled;
-    const getNavigableIndices = () => items.map((child, index2) => {
-      const props = getItemProps(child);
-      return props && typeof props.onSelect === "function" && !props.disabled ? index2 : -1;
-    }).filter((index2) => index2 >= 0);
-    const navigableIndices = getNavigableIndices();
-    const getInitialActiveIndex = () => {
-      if (navigableIndices.length === 0) return -1;
-      if (multiSelect) return -1;
-      const selected = items.findIndex((c4) => getItemProps(c4)?.isSelected);
-      if (selected >= 0 && isItemEnabled(items[selected])) return selected;
-      return navigableIndices[0];
-    };
-    const [activeIndex, setActiveIndex] = d2(getInitialActiveIndex);
-    const clearActiveIndex = () => setActiveIndex(-1);
-    const focusNavigable = (direction) => {
-      const count = navigableIndices.length;
-      if (count === 0) return;
-      const step = direction === "down" ? 1 : -1;
-      const currentPos = navigableIndices.indexOf(activeIndex);
-      let nextPos;
-      if (currentPos >= 0) {
-        nextPos = (currentPos + step + count) % count;
-      } else {
-        nextPos = direction === "down" ? 0 : count - 1;
-      }
-      setActiveIndex(navigableIndices[nextPos]);
-    };
-    h2(() => {
-      const frameId = window.requestAnimationFrame(() => {
-        dropdownRef.current?.focus();
-      });
-      return () => window.cancelAnimationFrame(frameId);
-    }, [dropdownRef]);
-    const getItemId = (index2) => `${idPrefix2}-${index2}`;
-    const selectAt = (index2) => {
-      if (!isItemEnabled(items[index2])) return;
-      getItemProps(items[index2])?.onSelect?.();
-    };
-    const handleKeyDown = (e4) => {
-      switch (e4.key) {
-        case "ArrowDown":
-          e4.preventDefault();
-          focusNavigable("down");
-          break;
-        case "ArrowUp":
-          e4.preventDefault();
-          focusNavigable("up");
-          break;
-        case "Home":
-          e4.preventDefault();
-          setActiveIndex(navigableIndices[0]);
-          break;
-        case "End":
-          e4.preventDefault();
-          setActiveIndex(navigableIndices[navigableIndices.length - 1]);
-          break;
-        case "Enter":
-        case " ":
-          e4.preventDefault();
-          if (activeIndex < 0 || activeIndex >= items.length) {
-            break;
-          }
-          selectAt(activeIndex);
-          if (!getItemProps(items[activeIndex])?.ariaHasPopup) {
-            onClose({ restoreFocus: true });
-          }
-          break;
-        case "Escape":
-          e4.preventDefault();
-          onClose({ restoreFocus: true });
-          break;
-        case "Tab":
-          window.setTimeout(() => onClose({ restoreFocus: false }), 0);
-          break;
-      }
-    };
-    const clonedItems = items.map((child, index2) => {
-      if (getItemProps(child) === null) return child;
-      return W(
-        /** @type {import('preact').VNode} */
-        child,
-        {
-          id: getItemId(index2),
-          isActive: activeIndex === index2,
-          onMouseOver: isItemEnabled(child) ? () => setActiveIndex(index2) : void 0,
-          onClick: (e4) => {
-            e4.stopPropagation();
-            if (!isItemEnabled(child)) return;
-            selectAt(index2);
-            if (!getItemProps(child)?.ariaHasPopup) {
-              onClose({ restoreFocus: false });
-            }
-          }
-        }
-      );
-    });
-    return /* @__PURE__ */ k(
-      "ul",
-      {
-        ref: dropdownRef,
-        class: (0, import_classnames14.default)(Dropdown_default.dropdown, className),
-        tabIndex: -1,
-        role,
-        "aria-label": ariaLabel,
-        "aria-activedescendant": activeIndex >= 0 ? getItemId(activeIndex) : void 0,
-        style: { left: position2.left, right: position2.right, top: position2.top },
-        onKeyDown: handleKeyDown,
-        onMouseLeave: clearActiveIndex
-      },
-      header && /* @__PURE__ */ k("li", { role: "presentation", class: (0, import_classnames14.default)(Dropdown_default.header, headerClassName) }, header),
-      items.length === 0 && emptyMessage ? /* @__PURE__ */ k("li", { role: "presentation", class: Dropdown_default.empty }, emptyMessage) : clonedItems
-    );
-  }
-  var import_classnames14;
-  var init_Dropdown2 = __esm({
-    "pages/new-tab/app/omnibar/components/chat-tools/dropdown/Dropdown.js"() {
-      "use strict";
-      init_preact_module();
-      init_hooks_module();
-      import_classnames14 = __toESM(require_classnames(), 1);
-      init_Dropdown();
-    }
-  });
-
   // pages/new-tab/app/omnibar/components/chat-tools/dropdown/DropdownItem.js
   function DropdownItem({
     icon,
@@ -13097,7 +13559,7 @@
         "aria-expanded": ariaExpanded,
         "aria-describedby": ariaDescribedBy,
         "aria-disabled": disabled || void 0,
-        class: (0, import_classnames15.default)(
+        class: (0, import_classnames14.default)(
           Dropdown_default.item,
           className,
           isActive && Dropdown_default.itemActive,
@@ -13116,13 +13578,299 @@
       trailingControl && /* @__PURE__ */ k("span", { class: Dropdown_default.trailingControl, onClick: (e4) => e4.stopPropagation() }, trailingControl)
     );
   }
-  var import_classnames15;
+  var import_classnames14;
   var init_DropdownItem = __esm({
     "pages/new-tab/app/omnibar/components/chat-tools/dropdown/DropdownItem.js"() {
       "use strict";
       init_preact_module();
       init_hooks_module();
+      import_classnames14 = __toESM(require_classnames(), 1);
+      init_Dropdown();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/dropdown/DropdownSubmenu.js
+  function DropdownSubmenu({
+    children,
+    name: name2,
+    ariaLabel,
+    icon,
+    disabled = false,
+    showCheckGutter,
+    className,
+    panelClassName,
+    offset = { x: 0, y: 0 },
+    idPrefix: idPrefix2 = "dropdown-submenu-item",
+    isOpen = false,
+    onOpen,
+    onCloseSubmenu,
+    onCloseMenu,
+    isActive,
+    id,
+    onMouseOver,
+    onClick
+  }) {
+    const rowRef = A2(
+      /** @type {HTMLLIElement | null} */
+      null
+    );
+    const panelRef = A2(
+      /** @type {HTMLUListElement | null} */
+      null
+    );
+    const [position2, setPosition] = d2(
+      /** @type {DropdownPosition | null} */
+      null
+    );
+    _2(() => {
+      const row = rowRef.current;
+      if (!isOpen || !row) {
+        setPosition(null);
+        return;
+      }
+      const rect = row.getBoundingClientRect();
+      const cbRect = findContainingBlock(row)?.getBoundingClientRect();
+      setPosition({ left: rect.right - (cbRect?.left ?? 0) + offset.x, top: rect.top - (cbRect?.top ?? 0) + offset.y });
+    }, [isOpen, offset.x, offset.y]);
+    return /* @__PURE__ */ k(S, null, /* @__PURE__ */ k(
+      DropdownItem,
+      {
+        role: "menuitem",
+        className,
+        showCheckGutter,
+        icon,
+        name: name2,
+        disabled,
+        trailingIcon: /* @__PURE__ */ k("span", { class: Dropdown_default.submenuChevron, "aria-hidden": "true" }, /* @__PURE__ */ k(ChevronSmall, null)),
+        ariaHasPopup: true,
+        ariaExpanded: isOpen,
+        elementRef: rowRef,
+        isActive,
+        id,
+        onMouseOver,
+        onHover: onOpen,
+        onClick,
+        onSelect: () => onOpen?.()
+      }
+    ), isOpen && position2 && // Keys pressed inside the panel belong to it; don't let the parent navigate as well.
+    /* @__PURE__ */ k(
+      "li",
+      {
+        role: "presentation",
+        onKeyDown: (e4) => {
+          e4.stopPropagation();
+          if (e4.key === "ArrowLeft") {
+            e4.preventDefault();
+            onCloseSubmenu?.({ restoreFocus: true });
+          }
+        }
+      },
+      /* @__PURE__ */ k(
+        Dropdown,
+        {
+          dropdownRef: panelRef,
+          role: "menu",
+          ariaLabel,
+          position: position2,
+          onClose: ({ restoreFocus, selected }) => selected ? onCloseMenu?.({ restoreFocus }) : onCloseSubmenu?.({ restoreFocus }),
+          idPrefix: idPrefix2,
+          className: panelClassName
+        },
+        children
+      )
+    ));
+  }
+  var init_DropdownSubmenu = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/dropdown/DropdownSubmenu.js"() {
+      "use strict";
+      init_preact_module();
+      init_hooks_module();
+      init_Icons2();
+      init_useDropdown();
+      init_Dropdown2();
+      init_DropdownItem();
+      init_Dropdown();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/chat-tools/dropdown/Dropdown.js
+  function getItemProps(child) {
+    if (typeof child !== "object" || child === null || !("props" in child)) return null;
+    return (
+      /** @type {DropdownItemProps} */
+      child.props
+    );
+  }
+  function isSubmenu(child) {
+    return typeof child === "object" && child !== null && "type" in child && child.type === DropdownSubmenu;
+  }
+  function Dropdown({
+    children,
+    header,
+    headerClassName,
+    emptyMessage,
+    ariaLabel,
+    role,
+    position: position2,
+    onClose,
+    dropdownRef,
+    idPrefix: idPrefix2 = "dropdown-item",
+    className,
+    multiSelect = false
+  }) {
+    const items = F(children);
+    const [openSubmenuIndex, setOpenSubmenuIndex] = d2(-1);
+    const isItemEnabled = (child) => !getItemProps(child)?.disabled;
+    const getNavigableIndices = () => items.map((child, index2) => {
+      const props = getItemProps(child);
+      const actionable = typeof props?.onSelect === "function" || isSubmenu(child);
+      return props && actionable && !props.disabled ? index2 : -1;
+    }).filter((index2) => index2 >= 0);
+    const navigableIndices = getNavigableIndices();
+    const getInitialActiveIndex = () => {
+      if (navigableIndices.length === 0) return -1;
+      if (multiSelect) return -1;
+      const selected = items.findIndex((c4) => getItemProps(c4)?.isSelected);
+      if (selected >= 0 && isItemEnabled(items[selected])) return selected;
+      return navigableIndices[0];
+    };
+    const [activeIndex, setActiveIndex] = d2(getInitialActiveIndex);
+    const clearActiveIndex = () => setActiveIndex(-1);
+    const focusNavigable = (direction) => {
+      const count = navigableIndices.length;
+      if (count === 0) return;
+      const step = direction === "down" ? 1 : -1;
+      const currentPos = navigableIndices.indexOf(activeIndex);
+      let nextPos;
+      if (currentPos >= 0) {
+        nextPos = (currentPos + step + count) % count;
+      } else {
+        nextPos = direction === "down" ? 0 : count - 1;
+      }
+      setActiveIndex(navigableIndices[nextPos]);
+    };
+    h2(() => {
+      const frameId = window.requestAnimationFrame(() => {
+        dropdownRef.current?.focus();
+      });
+      return () => window.cancelAnimationFrame(frameId);
+    }, [dropdownRef]);
+    const getItemId = (index2) => `${idPrefix2}-${index2}`;
+    const selectAt = (index2) => {
+      if (!isItemEnabled(items[index2])) return;
+      if (isSubmenu(items[index2])) {
+        setOpenSubmenuIndex(index2);
+        return;
+      }
+      getItemProps(items[index2])?.onSelect?.();
+    };
+    const keepsOpenOnSelect = (child) => isSubmenu(child) || Boolean(getItemProps(child)?.ariaHasPopup);
+    const closeSubmenu = ({ restoreFocus }) => {
+      setOpenSubmenuIndex(-1);
+      if (restoreFocus) dropdownRef.current?.focus();
+    };
+    const handleKeyDown = (e4) => {
+      switch (e4.key) {
+        case "ArrowDown":
+          e4.preventDefault();
+          focusNavigable("down");
+          break;
+        case "ArrowUp":
+          e4.preventDefault();
+          focusNavigable("up");
+          break;
+        case "Home":
+          e4.preventDefault();
+          setActiveIndex(navigableIndices[0]);
+          break;
+        case "End":
+          e4.preventDefault();
+          setActiveIndex(navigableIndices[navigableIndices.length - 1]);
+          break;
+        case "Enter":
+        case " ":
+          e4.preventDefault();
+          if (activeIndex < 0 || activeIndex >= items.length) {
+            break;
+          }
+          selectAt(activeIndex);
+          if (!keepsOpenOnSelect(items[activeIndex])) {
+            onClose({ restoreFocus: true, selected: true });
+          }
+          break;
+        case "ArrowRight":
+          if (activeIndex >= 0 && isSubmenu(items[activeIndex])) {
+            e4.preventDefault();
+            selectAt(activeIndex);
+          }
+          break;
+        case "Escape":
+          e4.preventDefault();
+          onClose({ restoreFocus: true });
+          break;
+        case "Tab":
+          window.setTimeout(() => onClose({ restoreFocus: false }), 0);
+          break;
+      }
+    };
+    const clonedItems = items.map((child, index2) => {
+      if (getItemProps(child) === null) return child;
+      const enabled = isItemEnabled(child);
+      const submenuOpen = openSubmenuIndex >= 0;
+      return W(
+        /** @type {import('preact').VNode} */
+        child,
+        {
+          id: getItemId(index2),
+          isActive: activeIndex === index2,
+          onMouseOver: enabled || submenuOpen ? () => {
+            if (enabled) setActiveIndex(index2);
+            if (submenuOpen && openSubmenuIndex !== index2) closeSubmenu({ restoreFocus: true });
+          } : void 0,
+          onClick: (e4) => {
+            e4.stopPropagation();
+            if (!enabled) return;
+            selectAt(index2);
+            if (!keepsOpenOnSelect(child)) {
+              onClose({ restoreFocus: false, selected: true });
+            }
+          },
+          ...isSubmenu(child) && {
+            isOpen: openSubmenuIndex === index2,
+            onOpen: () => {
+              if (enabled) setOpenSubmenuIndex(index2);
+            },
+            onCloseSubmenu: closeSubmenu,
+            onCloseMenu: onClose
+          }
+        }
+      );
+    });
+    return /* @__PURE__ */ k(
+      "ul",
+      {
+        ref: dropdownRef,
+        class: (0, import_classnames15.default)(Dropdown_default.dropdown, className),
+        tabIndex: -1,
+        role,
+        "aria-label": ariaLabel,
+        "aria-activedescendant": activeIndex >= 0 ? getItemId(activeIndex) : void 0,
+        style: { left: position2.left, right: position2.right, top: position2.top },
+        onKeyDown: handleKeyDown,
+        onMouseLeave: clearActiveIndex
+      },
+      header && /* @__PURE__ */ k("li", { role: "presentation", class: (0, import_classnames15.default)(Dropdown_default.header, headerClassName) }, header),
+      items.length === 0 && emptyMessage ? /* @__PURE__ */ k("li", { role: "presentation", class: Dropdown_default.empty }, emptyMessage) : clonedItems
+    );
+  }
+  var import_classnames15;
+  var init_Dropdown2 = __esm({
+    "pages/new-tab/app/omnibar/components/chat-tools/dropdown/Dropdown.js"() {
+      "use strict";
+      init_preact_module();
+      init_hooks_module();
       import_classnames15 = __toESM(require_classnames(), 1);
+      init_DropdownSubmenu();
       init_Dropdown();
     }
   });
@@ -13624,12 +14372,8 @@
 
   // pages/new-tab/app/omnibar/components/chat-tools/useActiveTools.js
   function useActiveTools() {
-    const { state } = x2(OmnibarContext);
+    const { state, activeTool, setActiveTool } = x2(OmnibarContext);
     const { selectedModel } = useSelectedModel();
-    const [activeTool, setActiveTool] = d2(
-      /** @type {ToolId|null} */
-      null
-    );
     const modelSupportedTools = selectedModel?.supportedTools ?? [];
     const availableTools = [
       ...state.config?.enableImageGeneration === true ? [
@@ -13987,16 +14731,16 @@
   });
 
   // pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/AttachMenu.js
-  function AttachMenu({ image, file, tabsEnabled, onToggleTab, isAttached, maxTabs, disabled = false }) {
+  function AttachMenu({ image, file, tabsEnabled, onToggleTab, isAttached, maxTabs, disabled = false, screenshot = null }) {
     const { t: t4 } = useTypedTranslationWith(
       /** @type {Strings} */
       {}
     );
     const attachEnabled = image !== null || file !== null;
-    if (!attachEnabled && !tabsEnabled) return null;
+    if (!attachEnabled && !tabsEnabled && !screenshot) return null;
     const fileInput = resolveFileInput({ t: t4, image, file });
     const controlsDisabled = disabled || fileInput.disabled;
-    if (attachEnabled && !tabsEnabled) {
+    if (attachEnabled && !tabsEnabled && !screenshot) {
       const button = /* @__PURE__ */ k(
         DirectFileButton,
         {
@@ -14019,7 +14763,9 @@
         onToggleTab,
         isAttached,
         maxTabs,
-        disabled
+        disabled,
+        tabsEnabled,
+        screenshot
       }
     );
   }
@@ -14065,7 +14811,7 @@
       )
     );
   }
-  function DropdownMenu({ attachEnabled, fileInput, onToggleTab, isAttached, maxTabs, disabled = false }) {
+  function DropdownMenu({ attachEnabled, fileInput, onToggleTab, isAttached, maxTabs, disabled = false, tabsEnabled, screenshot }) {
     const { t: t4 } = useTypedTranslationWith(
       /** @type {Strings} */
       {}
@@ -14099,7 +14845,7 @@
         onClick: (e4) => {
           e4.stopPropagation();
           if (disabled) return;
-          if (!isOpen) refetchTabs();
+          if (!isOpen && tabsEnabled) refetchTabs();
           toggle();
         }
       },
@@ -14128,7 +14874,9 @@
         onTriggerFileInput: triggerFileInput,
         onOpenTabsModal: () => setIsTabsModalOpen(true),
         isAttached,
-        onToggleTab
+        onToggleTab,
+        tabsEnabled,
+        screenshot
       }
     ), isTabsModalOpen && /* @__PURE__ */ k(
       AttachTabsModal,
@@ -14149,7 +14897,9 @@
     onTriggerFileInput,
     onOpenTabsModal,
     onToggleTab,
-    isAttached
+    isAttached,
+    tabsEnabled,
+    screenshot
   }) {
     const { t: t4 } = useTypedTranslationWith(
       /** @type {Strings} */
@@ -14157,7 +14907,7 @@
     );
     const { openTabs, isLoadingTabs } = x2(OpenTabsContext);
     const recentTabs = openTabs.slice(0, MAX_INLINE_RECENT_TABS);
-    const showGutter = recentTabs.some((tab) => isAttached(tab.tabId));
+    const showGutter = tabsEnabled && recentTabs.some((tab) => isAttached(tab.tabId));
     const noTabsAvailable = !isLoadingTabs && openTabs.length === 0;
     const renderRecentTabRows = () => {
       if (isLoadingTabs) {
@@ -14199,7 +14949,33 @@
           onSelect: onTriggerFileInput
         }
       ),
-      /* @__PURE__ */ k(
+      screenshot && /* @__PURE__ */ k(
+        DropdownSubmenu,
+        {
+          className: AttachMenu_default.menuItem,
+          showCheckGutter: showGutter,
+          icon: /* @__PURE__ */ k(CameraIcon, { class: AttachMenu_default.menuItemIcon }),
+          name: t4("omnibar_addScreenshotLabel"),
+          ariaLabel: t4("omnibar_addScreenshotLabel"),
+          disabled: screenshot.disabled,
+          panelClassName: AttachMenu_default.attachDropdown,
+          offset: SCREENSHOT_SUBMENU_OFFSET,
+          idPrefix: "screenshot-menu-item"
+        },
+        screenshot.modes.map((mode) => /* @__PURE__ */ k(
+          DropdownItem,
+          {
+            key: mode,
+            role: "menuitem",
+            className: AttachMenu_default.menuItem,
+            showCheckGutter: false,
+            icon: mode === "dragToSelect" ? /* @__PURE__ */ k(ScissorsIcon, { class: AttachMenu_default.menuItemIcon }) : /* @__PURE__ */ k(MonitorIcon, { class: AttachMenu_default.menuItemIcon }),
+            name: mode === "dragToSelect" ? t4("omnibar_screenshotDragToSelectLabel") : t4("omnibar_screenshotSelectWindowOrDisplayLabel"),
+            onSelect: () => screenshot.onCapture(mode)
+          }
+        ))
+      ),
+      tabsEnabled && /* @__PURE__ */ k(
         DropdownItem,
         {
           role: "menuitem",
@@ -14211,12 +14987,12 @@
           onSelect: onOpenTabsModal
         }
       ),
-      /* @__PURE__ */ k(DropdownSeparator, null),
-      recentTabs.length > 0 && /* @__PURE__ */ k(TabsSectionHeader, { label: t4("omnibar_attachTabsRecentTabs"), showGutter }),
-      renderRecentTabRows()
+      tabsEnabled && /* @__PURE__ */ k(DropdownSeparator, null),
+      tabsEnabled && recentTabs.length > 0 && /* @__PURE__ */ k(TabsSectionHeader, { label: t4("omnibar_attachTabsRecentTabs"), showGutter }),
+      tabsEnabled && renderRecentTabRows()
     );
   }
-  var import_classnames20, MAX_INLINE_RECENT_TABS;
+  var import_classnames20, MAX_INLINE_RECENT_TABS, SCREENSHOT_SUBMENU_OFFSET;
   var init_AttachMenu2 = __esm({
     "pages/new-tab/app/omnibar/components/chat-tools/tab-attachment/AttachMenu.js"() {
       "use strict";
@@ -14229,6 +15005,7 @@
       init_Dropdown2();
       init_DropdownItem();
       init_DropdownSeparator();
+      init_DropdownSubmenu();
       init_fileChannels();
       init_OpenTabsProvider();
       init_AttachTabsModal2();
@@ -14237,6 +15014,7 @@
       init_ImageAttachment();
       init_AttachMenu();
       MAX_INLINE_RECENT_TABS = 5;
+      SCREENSHOT_SUBMENU_OFFSET = { x: -7, y: -4 };
     }
   });
 
@@ -14428,6 +15206,14 @@
           if (tab) handleTabSelect(tab);
           return { handled: true };
         }
+        // Tab accepts like Enter, as in most autocomplete UIs. With nothing to accept, Tab still moves focus.
+        case "Tab": {
+          const tab = filtered[activeIndex];
+          if (event.shiftKey || !tab) return { handled: false };
+          event.preventDefault();
+          handleTabSelect(tab);
+          return { handled: true };
+        }
         case "Escape":
           event.preventDefault();
           closePicker();
@@ -14576,6 +15362,7 @@
     }, [dismissCreateImageModelSwitch]);
     if (!notice) return null;
     return {
+      type: "action",
       message: notice.message,
       secondaryText: notice.secondaryText ?? "",
       secondaryOnNewLine: true,
@@ -14591,6 +15378,134 @@
       "use strict";
       init_hooks_module();
       init_OmnibarProvider();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/useReservedHeight.js
+  function useReservedHeight(enabled, onChange) {
+    const ref = A2(
+      /** @type {HTMLDivElement|null} */
+      null
+    );
+    _2(() => {
+      const element = ref.current;
+      if (!enabled || !element) return;
+      const report = () => onChange(Math.max(0, element.offsetHeight + parseFloat(getComputedStyle(element).marginTop)));
+      report();
+      const observer = new ResizeObserver(report);
+      observer.observe(element);
+      return () => {
+        observer.disconnect();
+        onChange(0);
+      };
+    }, [enabled, onChange]);
+    return ref;
+  }
+  var init_useReservedHeight = __esm({
+    "pages/new-tab/app/omnibar/components/useReservedHeight.js"() {
+      "use strict";
+      init_hooks_module();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/NoticeDrawer.module.css
+  var NoticeDrawer_default;
+  var init_NoticeDrawer = __esm({
+    "pages/new-tab/app/omnibar/components/NoticeDrawer.module.css"() {
+      NoticeDrawer_default = {
+        drawer: "NoticeDrawer_drawer",
+        slideOpen: "NoticeDrawer_slideOpen",
+        noSlideIn: "NoticeDrawer_noSlideIn",
+        hidden: "NoticeDrawer_hidden",
+        card: "NoticeDrawer_card",
+        content: "NoticeDrawer_content",
+        leading: "NoticeDrawer_leading",
+        glyph: "NoticeDrawer_glyph",
+        info: "NoticeDrawer_info",
+        shield: "NoticeDrawer_shield",
+        announce: "NoticeDrawer_announce",
+        ringTrack: "NoticeDrawer_ringTrack",
+        ringValue: "NoticeDrawer_ringValue",
+        severity_neutral: "NoticeDrawer_severity_neutral",
+        severity_warning: "NoticeDrawer_severity_warning",
+        severity_critical: "NoticeDrawer_severity_critical",
+        alertTriangle: "NoticeDrawer_alertTriangle",
+        alertMark: "NoticeDrawer_alertMark",
+        message: "NoticeDrawer_message",
+        primary: "NoticeDrawer_primary",
+        messageEmphasized: "NoticeDrawer_messageEmphasized",
+        messageStacked: "NoticeDrawer_messageStacked",
+        secondary: "NoticeDrawer_secondary",
+        messageMuted: "NoticeDrawer_messageMuted",
+        link: "NoticeDrawer_link",
+        dismiss: "NoticeDrawer_dismiss",
+        ctaSplit: "NoticeDrawer_ctaSplit",
+        ctaPrimary: "NoticeDrawer_ctaPrimary",
+        ctaPrimarySolo: "NoticeDrawer_ctaPrimarySolo",
+        ctaPrimarySplit: "NoticeDrawer_ctaPrimarySplit",
+        ctaMenu: "NoticeDrawer_ctaMenu",
+        ctaLabel: "NoticeDrawer_ctaLabel",
+        ctaMenuHeader: "NoticeDrawer_ctaMenuHeader",
+        ctaDropdown: "NoticeDrawer_ctaDropdown",
+        ctaModelName: "NoticeDrawer_ctaModelName",
+        ctaModelVariant: "NoticeDrawer_ctaModelVariant",
+        convertIcon: "NoticeDrawer_convertIcon"
+      };
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/useTermsDisclaimerNotice.js
+  function useTermsButtonLabel() {
+    const { t: t4 } = useTypedTranslationWith(
+      /** @type {Strings} */
+      {}
+    );
+    const { imageGenerationActive } = useActiveTools();
+    return imageGenerationActive ? t4("omnibar_termsCreateButtonLabel") : t4("omnibar_termsAskButtonLabel");
+  }
+  function useTermsDisclaimerNotice() {
+    const { t: t4 } = useTypedTranslationWith(
+      /** @type {Strings} */
+      {}
+    );
+    const { state, openPrivacyTerms } = x2(OmnibarContext);
+    const buttonLabel = useTermsButtonLabel();
+    if (state.config?.requiresAiTermsAcceptance !== true) return null;
+    const onLinkClick = (event) => {
+      event.preventDefault();
+      openPrivacyTerms();
+    };
+    return {
+      type: "required",
+      message: t4("omnibar_termsDisclaimerAnonymized"),
+      messageId: TERMS_DISCLAIMER_ID,
+      secondaryText: /* @__PURE__ */ k(
+        Trans,
+        {
+          str: t4("omnibar_termsDisclaimerAgree", { actionLabel: buttonLabel }),
+          values: { a: { href: "#", class: NoticeDrawer_default.link, click: onLinkClick, auxclick: onLinkClick } }
+        }
+      ),
+      secondaryOnNewLine: true,
+      icon: (
+        /** @type {const} */
+        "shield"
+      ),
+      muted: true
+    };
+  }
+  var TERMS_DISCLAIMER_ID;
+  var init_useTermsDisclaimerNotice = __esm({
+    "pages/new-tab/app/omnibar/components/useTermsDisclaimerNotice.js"() {
+      "use strict";
+      init_preact_module();
+      init_hooks_module();
+      init_TranslationsProvider();
+      init_types();
+      init_useActiveTools();
+      init_OmnibarProvider();
+      init_NoticeDrawer();
+      TERMS_DISCLAIMER_ID = "omnibar-terms-disclaimer";
     }
   });
 
@@ -14622,6 +15537,7 @@
       alternatives: Array.isArray(rawCta.alternatives) ? rawCta.alternatives.filter((alt) => alt && typeof alt.id === "string" && typeof alt.name === "string") : []
     } : null;
     return {
+      type: usageLimits.blocksPrompt === true ? "required" : "informational",
       message: usageLimits.message,
       secondaryText: usageLimits.secondaryText ?? "",
       icon,
@@ -14647,44 +15563,87 @@
     }
   });
 
-  // pages/new-tab/app/omnibar/components/NoticeDrawer.module.css
-  var NoticeDrawer_default;
-  var init_NoticeDrawer = __esm({
-    "pages/new-tab/app/omnibar/components/NoticeDrawer.module.css"() {
-      NoticeDrawer_default = {
-        drawer: "NoticeDrawer_drawer",
-        slideOpen: "NoticeDrawer_slideOpen",
-        hidden: "NoticeDrawer_hidden",
-        card: "NoticeDrawer_card",
-        content: "NoticeDrawer_content",
-        leading: "NoticeDrawer_leading",
-        glyph: "NoticeDrawer_glyph",
-        info: "NoticeDrawer_info",
-        ringTrack: "NoticeDrawer_ringTrack",
-        ringValue: "NoticeDrawer_ringValue",
-        severity_neutral: "NoticeDrawer_severity_neutral",
-        severity_warning: "NoticeDrawer_severity_warning",
-        severity_critical: "NoticeDrawer_severity_critical",
-        alertTriangle: "NoticeDrawer_alertTriangle",
-        alertMark: "NoticeDrawer_alertMark",
-        message: "NoticeDrawer_message",
-        primary: "NoticeDrawer_primary",
-        messageEmphasized: "NoticeDrawer_messageEmphasized",
-        messageStacked: "NoticeDrawer_messageStacked",
-        secondary: "NoticeDrawer_secondary",
-        dismiss: "NoticeDrawer_dismiss",
-        ctaSplit: "NoticeDrawer_ctaSplit",
-        ctaPrimary: "NoticeDrawer_ctaPrimary",
-        ctaPrimarySolo: "NoticeDrawer_ctaPrimarySolo",
-        ctaPrimarySplit: "NoticeDrawer_ctaPrimarySplit",
-        ctaMenu: "NoticeDrawer_ctaMenu",
-        ctaLabel: "NoticeDrawer_ctaLabel",
-        ctaMenuHeader: "NoticeDrawer_ctaMenuHeader",
-        ctaDropdown: "NoticeDrawer_ctaDropdown",
-        ctaModelName: "NoticeDrawer_ctaModelName",
-        ctaModelVariant: "NoticeDrawer_ctaModelVariant",
-        convertIcon: "NoticeDrawer_convertIcon"
-      };
+  // pages/new-tab/app/omnibar/components/useAttachmentPrivacyNotice.js
+  function useAttachmentPrivacyNotice() {
+    const { t: t4 } = useTypedTranslationWith(
+      /** @type {Strings} */
+      {}
+    );
+    const { state, attachmentPrivacyDisclaimerShown, openAttachmentPrivacyLearnMore } = x2(OmnibarContext);
+    const { imageState, fileState, tabId } = useAttachmentsContext();
+    const allowed = state.config?.showAttachmentPrivacyDisclaimer === true;
+    const [granted, setGranted] = AttachmentPrivacyGrant.useStateWithLocalPersistence(tabId);
+    let attachmentKind = null;
+    if (imageState.attachedImages.length > 0) {
+      attachmentKind = "image";
+    } else if (fileState.attachedFiles.length > 0) {
+      attachmentKind = "file";
+    }
+    h2(() => {
+      if (attachmentKind === null) {
+        if (granted) setGranted(false);
+        return;
+      }
+      if (granted || !allowed) return;
+      setGranted(true);
+      attachmentPrivacyDisclaimerShown(attachmentKind);
+    }, [attachmentKind, granted, allowed, setGranted, attachmentPrivacyDisclaimerShown]);
+    const messageValues = {
+      button: {
+        click: () => {
+          if (attachmentKind) openAttachmentPrivacyLearnMore(attachmentKind);
+        }
+      }
+    };
+    const presentation = attachmentKind && granted ? {
+      type: (
+        /** @type {const} */
+        "required"
+      ),
+      message: /* @__PURE__ */ k(Trans, { str: t4("omnibar_attachmentPrivacyDisclaimer"), values: messageValues }),
+      secondaryText: "",
+      icon: (
+        /** @type {const} */
+        "info"
+      )
+    } : null;
+    return presentation;
+  }
+  var init_useAttachmentPrivacyNotice = __esm({
+    "pages/new-tab/app/omnibar/components/useAttachmentPrivacyNotice.js"() {
+      "use strict";
+      init_preact_module();
+      init_hooks_module();
+      init_TranslationsProvider();
+      init_types();
+      init_OmnibarProvider();
+      init_PersistentOmnibarValuesProvider();
+      init_AttachmentsProvider();
+    }
+  });
+
+  // pages/new-tab/app/omnibar/components/useLauncherPromoNotice.js
+  function useLauncherPromoNotice() {
+    const { state, selectLauncherPromoCta, dismissLauncherPromo } = x2(OmnibarContext);
+    const launcherPromo = state.config?.launcherPromo ?? null;
+    if (!launcherPromo) {
+      return null;
+    }
+    return {
+      type: "informational",
+      message: launcherPromo.message,
+      secondaryText: launcherPromo.secondaryText ?? "",
+      icon: "announce",
+      cta: launcherPromo.ctaLabel ? { label: launcherPromo.ctaLabel, showMenu: false } : null,
+      onSelectCta: launcherPromo.ctaLabel ? selectLauncherPromoCta : void 0,
+      onDismiss: launcherPromo.dismissible === true ? dismissLauncherPromo : void 0
+    };
+  }
+  var init_useLauncherPromoNotice = __esm({
+    "pages/new-tab/app/omnibar/components/useLauncherPromoNotice.js"() {
+      "use strict";
+      init_hooks_module();
+      init_OmnibarProvider();
     }
   });
 
@@ -14758,6 +15717,10 @@
         return /* @__PURE__ */ k(UsageLimitsAlertIcon, null);
       case "convert":
         return /* @__PURE__ */ k(ConvertIcon, null);
+      case "shield":
+        return /* @__PURE__ */ k(ShieldCheckIcon, { class: (0, import_classnames22.default)(NoticeDrawer_default.glyph, NoticeDrawer_default.shield), "aria-hidden": "true" });
+      case "announce":
+        return /* @__PURE__ */ k(AnnounceIcon, null);
       case "info":
         return infoIcon;
       default: {
@@ -14766,6 +15729,23 @@
         return infoIcon;
       }
     }
+  }
+  function AnnounceIcon() {
+    return /* @__PURE__ */ k("svg", { class: (0, import_classnames22.default)(NoticeDrawer_default.glyph, NoticeDrawer_default.announce), viewBox: "0 0 16 16", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "currentColor",
+        "fill-rule": "evenodd",
+        "clip-rule": "evenodd",
+        d: "M12 2.625a.625.625 0 1 0-1.25 0V3L1.243 5.907A.625.625 0 0 0 0 6v4a.625.625 0 0 0 1.243.092l2.382.728v.574a2.59 2.59 0 0 0 4.76 1.418l.293-.449 2.072.633v.379a.625.625 0 1 0 1.25 0V2.625ZM1.25 8.787V7.212l9.497-2.904-.022 7.373L1.25 8.787Zm3.625 2.415 2.558.78-.095.146a1.34 1.34 0 0 1-2.463-.734v-.192Z"
+      }
+    ), /* @__PURE__ */ k(
+      "path",
+      {
+        fill: "currentColor",
+        d: "M15.107 4.205a.625.625 0 0 0-.464-1.16l-1.25.5a.625.625 0 0 0 .464 1.16l1.25-.5Zm-.982 3.045a.625.625 0 1 0 0 1.25h1.25a.625.625 0 1 0 0-1.25h-1.25Zm-.268 4.045a.625.625 0 1 0-.464 1.16l1.25.5a.625.625 0 1 0 .464-1.16l-1.25-.5Z"
+      }
+    ));
   }
   function ConvertIcon() {
     return /* @__PURE__ */ k("svg", { class: NoticeDrawer_default.convertIcon, viewBox: "0 0 16 16", width: "16", height: "16", fill: "none", "aria-hidden": "true" }, /* @__PURE__ */ k(
@@ -14856,15 +15836,23 @@
       })
     ) : null) : null);
   }
-  function NoticeDrawer({ revealed }) {
-    const usageLimits = useUsageLimitsDrawer();
-    const createImageModelSwitch = useCreateImageModelSwitchNotice();
-    const presentation = createImageModelSwitch ?? usageLimits;
-    if (!presentation) return null;
+  function visibleNotices(notices) {
+    for (const type of NOTICE_TYPES) {
+      const ofType = [];
+      for (const notice of notices) {
+        if (notice?.type === type) ofType.push(notice);
+      }
+      if (ofType.length > 0) return ofType.slice(0, type === "required" ? 2 : 1);
+    }
+    return [];
+  }
+  function NoticeRow({ presentation }) {
     const {
       message,
+      messageId,
       secondaryText,
       secondaryOnNewLine = false,
+      muted = false,
       icon,
       percent = 0,
       severity = "neutral",
@@ -14872,23 +15860,60 @@
       onSelectCta,
       onDismiss
     } = presentation;
-    const emphasize = icon === "ring" || icon === "alert" || icon === "convert";
-    const isRevealed = revealed || createImageModelSwitch !== null;
+    const emphasize = icon === "ring" || icon === "alert" || icon === "convert" || icon === "announce";
+    return /* @__PURE__ */ k("div", { class: NoticeDrawer_default.content }, /* @__PURE__ */ k("span", { class: NoticeDrawer_default.leading }, /* @__PURE__ */ k(NoticeGlyph, { icon, percent, severity })), /* @__PURE__ */ k(
+      "p",
+      {
+        id: messageId,
+        class: (0, import_classnames22.default)(
+          NoticeDrawer_default.message,
+          emphasize && NoticeDrawer_default.messageEmphasized,
+          secondaryOnNewLine && NoticeDrawer_default.messageStacked,
+          muted && NoticeDrawer_default.messageMuted
+        )
+      },
+      /* @__PURE__ */ k("span", { class: NoticeDrawer_default.primary }, message),
+      secondaryOnNewLine && secondaryText ? " " : null,
+      secondaryText ? /* @__PURE__ */ k("span", { class: NoticeDrawer_default.secondary }, secondaryText) : null
+    ), cta && onSelectCta ? /* @__PURE__ */ k(UsageLimitsCtaControl, { cta, onSelectCta }) : null, onDismiss ? /* @__PURE__ */ k(DismissButton, { className: NoticeDrawer_default.dismiss, onClick: onDismiss }) : null);
+  }
+  function NoticeDrawer({ revealed, onReservedHeightChange, launcherPromoVisibleRef }) {
+    const termsDisclaimer = useTermsDisclaimerNotice();
+    const attachmentPrivacy = useAttachmentPrivacyNotice();
+    const usageLimits = useUsageLimitsDrawer();
+    const createImageModelSwitch = useCreateImageModelSwitchNotice();
+    const launcherPromo = useLauncherPromoNotice();
+    const { launcherPromoShown } = x2(OmnibarContext);
+    const notices = visibleNotices([termsDisclaimer, usageLimits, attachmentPrivacy, createImageModelSwitch, launcherPromo]);
+    const topType = notices[0]?.type;
+    const drawerRef = useReservedHeight(topType === "required", onReservedHeightChange);
+    const isRevealed = topType !== void 0 && (revealed || topType !== "informational");
+    const [shownAtMount] = d2(isRevealed);
+    const launcherPromoVisible = isRevealed && launcherPromo !== null && notices.includes(launcherPromo);
+    h2(() => {
+      if (launcherPromoVisible) launcherPromoShown();
+      launcherPromoVisibleRef.current = launcherPromoVisible;
+      return () => {
+        launcherPromoVisibleRef.current = false;
+      };
+    }, [launcherPromoVisible, launcherPromoShown, launcherPromoVisibleRef]);
+    if (!topType) return null;
     const keepComposerFocus = (event) => {
       event.preventDefault();
     };
     return /* @__PURE__ */ k(
       "div",
       {
-        class: (0, import_classnames22.default)(NoticeDrawer_default.drawer, !isRevealed && NoticeDrawer_default.hidden),
+        ref: drawerRef,
+        class: (0, import_classnames22.default)(NoticeDrawer_default.drawer, shownAtMount && NoticeDrawer_default.noSlideIn, !isRevealed && NoticeDrawer_default.hidden),
         "data-testid": "notice-drawer",
         role: "status",
         onMouseDown: keepComposerFocus
       },
-      /* @__PURE__ */ k("div", { class: NoticeDrawer_default.card }, /* @__PURE__ */ k("div", { class: NoticeDrawer_default.content }, /* @__PURE__ */ k("span", { class: NoticeDrawer_default.leading }, /* @__PURE__ */ k(NoticeGlyph, { icon, percent, severity })), /* @__PURE__ */ k("p", { class: (0, import_classnames22.default)(NoticeDrawer_default.message, emphasize && NoticeDrawer_default.messageEmphasized, secondaryOnNewLine && NoticeDrawer_default.messageStacked) }, /* @__PURE__ */ k("span", { class: NoticeDrawer_default.primary }, message), secondaryText ? /* @__PURE__ */ k("span", { class: NoticeDrawer_default.secondary }, secondaryText) : null), cta && onSelectCta ? /* @__PURE__ */ k(UsageLimitsCtaControl, { cta, onSelectCta }) : null, onDismiss ? /* @__PURE__ */ k(DismissButton, { className: NoticeDrawer_default.dismiss, onClick: onDismiss }) : null))
+      /* @__PURE__ */ k("div", { class: NoticeDrawer_default.card }, notices.map((presentation, index2) => /* @__PURE__ */ k(NoticeRow, { key: index2, presentation })))
     );
   }
-  var import_classnames22;
+  var import_classnames22, NOTICE_TYPES;
   var init_NoticeDrawer2 = __esm({
     "pages/new-tab/app/omnibar/components/NoticeDrawer.js"() {
       "use strict";
@@ -14903,8 +15928,15 @@
       init_useDropdown();
       init_Icons3();
       init_useCreateImageModelSwitchNotice();
+      init_useReservedHeight();
+      init_useTermsDisclaimerNotice();
       init_useUsageLimitsDrawer();
+      init_useAttachmentPrivacyNotice();
+      init_useLauncherPromoNotice();
+      init_OmnibarProvider();
       init_NoticeDrawer();
+      NOTICE_TYPES = /** @type {const} */
+      ["required", "action", "informational"];
     }
   });
 
@@ -14991,7 +16023,9 @@
       /** @type {HTMLDivElement|null} */
       null
     );
+    const launcherPromoVisibleRef = A2(false);
     const [usageLimitsRevealed, setUsageLimitsRevealed] = d2(false);
+    const [noticeReservedHeight, setNoticeReservedHeight] = d2(0);
     const [query, setQuery] = useQueryWithLocalPersistence(tabId);
     const [resetKey, setResetKey] = d2(0);
     const [autoFocus, setAutoFocus] = d2(false);
@@ -15022,7 +16056,7 @@
       resetForm();
     };
     const handleSubmitChat = (params) => {
-      submitChat(params);
+      submitChat(launcherPromoVisibleRef.current ? { ...params, launcherPromoVisible: true } : params);
       resetForm();
     };
     const handleChangeMode = (nextMode) => {
@@ -15048,7 +16082,7 @@
           }
         }
       )
-    )), /* @__PURE__ */ k(SearchFormProvider, { term: query, setTerm: setQuery, enableAi, enableAskAiSuggestion }, /* @__PURE__ */ k(
+    )), /* @__PURE__ */ k(SearchFormProvider, { term: query, setTerm: setQuery, enableAi, enableAskAiSuggestion }, /* @__PURE__ */ k(AttachmentsProvider, { tabId }, /* @__PURE__ */ k(
       AiChatsProvider,
       {
         query,
@@ -15061,6 +16095,7 @@
         {
           ref: spacerRef,
           class: Omnibar_default.spacer,
+          style: { marginBottom: noticeReservedHeight },
           onFocusCapture: (event) => {
             if (!(event.target instanceof HTMLTextAreaElement)) return;
             setUsageLimitsRevealed(true);
@@ -15092,9 +16127,16 @@
             omnibarRef: spacerRef
           }
         ))),
-        mode === "ai" && /* @__PURE__ */ k(NoticeDrawer, { revealed: usageLimitsRevealed })
+        mode === "ai" && /* @__PURE__ */ k(
+          NoticeDrawer,
+          {
+            revealed: usageLimitsRevealed,
+            onReservedHeightChange: setNoticeReservedHeight,
+            launcherPromoVisibleRef
+          }
+        )
       )
-    )));
+    ))));
   }
   function AiChatContent({
     query,
@@ -15116,6 +16158,7 @@
     const { state, setImageGenerationActive } = x2(OmnibarContext);
     const attachmentLimits = state.config?.attachmentLimits;
     const blocksPrompt = state.config?.usageLimits?.blocksPrompt === true;
+    const requiresAiTermsAcceptance = state.config?.requiresAiTermsAcceptance === true;
     const updatedCreateImageEnabled = state.config?.enableUpdatedCreateImage === true;
     const { selectedModel } = useSelectedModel();
     const { selectedEffort } = useSelectedReasoningEffort();
@@ -15127,26 +16170,34 @@
     const hasVisibleImagesRef = A2(false);
     const submittingRef = A2(false);
     const [imageWarning, setImageWarning] = d2(false);
-    const imageState = useImageAttachments({ tabId, maxImages: attachmentLimits?.images?.maxPerTurn });
+    const { imageState, fileState } = useAttachmentsContext();
     const hasAttachedImages = imageState.attachedImages.length > 0;
     const imageGenerationPlaceholder = hasAttachedImages ? t4("omnibar_imageGenerationWithAttachmentPlaceholder") : t4("omnibar_imageGenerationPlaceholder");
     const selectedModelSupportsImages = selectedModel?.supportsImageUpload ?? false;
     const canAttachImages = selectedModelSupportsImages || imageGenerationActive;
-    const fileState = useFileAttachments({
-      supportedFileTypes: selectedModel?.supportedFileTypes,
-      tabId,
-      maxFiles: attachmentLimits?.files?.maxPerConversation,
-      maxFileSizeMB: attachmentLimits?.files?.maxFileSizeMB
-    });
     const canAttachFiles = !imageGenerationActive && (selectedModel?.supportedFileTypes?.length ?? 0) > 0;
     const canAttachTabs = enableAttachTabs && !imageGenerationActive;
+    const pastedAttachments = usePastedAttachments({
+      imageState,
+      canAttachImages,
+      processOtherFiles: canAttachFiles ? fileState.processFiles : null,
+      enabled: state.config?.enablePastedAttachments === true && !blocksPrompt
+    });
+    const droppedAttachments = useDroppedAttachments({
+      processImages: canAttachImages ? imageState.processFiles : null,
+      processOtherFiles: canAttachFiles ? fileState.processFiles : null,
+      enabled: !blocksPrompt
+    });
+    const screenshotModes = state.config?.screenshotModes ?? [];
+    const canCaptureScreenshot = screenshotModes.length > 0;
+    const screenshotCapture = useScreenshotCapture({ imageState });
     const tabAttachments = useTabAttachments(tabId, attachmentLimits?.tabs?.maxAttached);
     const textareaRef = A2(
       /** @type {HTMLTextAreaElement|null} */
       null
     );
     const mention = useMentionPicker({
-      enabled: canAttachTabs,
+      enabled: canAttachTabs && !blocksPrompt,
       query,
       onChange,
       hideChats,
@@ -15178,7 +16229,7 @@
       if (!hasVisibleImagesRef.current && !imageGenerationActive && !mention.pickerActive) showChats();
       mention.handleTextChange(value2, caret);
     };
-    const handleSubmit = async (chat, target) => {
+    const handleSubmit = async ({ chat, target, aiTermsAccepted = false }) => {
       if (blocksPrompt) return;
       if (submittingRef.current) return;
       submittingRef.current = true;
@@ -15186,16 +16237,15 @@
         const images = canAttachImages ? imageState.getImagesForSubmission() : null;
         const files = canAttachFiles ? fileState.getFilesForSubmission() : null;
         const pageContext = canAttachTabs ? await tabAttachments.getTabsForSubmission() : null;
-        const modelId = imageGenerationActive ? null : selectedModel?.id ?? null;
+        const updatedImageGeneration = imageGenerationActive && updatedCreateImageEnabled;
+        const legacyImageGeneration = imageGenerationActive && !updatedCreateImageEnabled;
+        const modelId = legacyImageGeneration ? null : selectedModel?.id ?? null;
         const reasoningEffort = imageGenerationActive ? null : selectedEffort;
-        const toolChoice = webSearchActive ? (
-          /** @type {import('../../../types/new-tab.js').SubmitChatAction['toolChoice']} */
-          ["WebSearch"]
-        ) : null;
+        const toolChoice = updatedImageGeneration ? ["GenerateImage"] : webSearchActive ? ["WebSearch"] : null;
         const action = {
           chat,
           target,
-          ...imageGenerationActive && { mode: (
+          ...legacyImageGeneration && { mode: (
             /** @type {const} */
             "image-generation"
           ) },
@@ -15204,10 +16254,12 @@
           ...toolChoice && { toolChoice },
           ...images && { images },
           ...files && { files },
-          ...pageContext && { pageContext }
+          ...pageContext && { pageContext },
+          ...aiTermsAccepted && { aiTermsAccepted: true }
         };
         onSubmit(action);
         imageState.clearAttachedImages();
+        screenshotCapture.clearCaptureError();
         fileState.clearAttachedFiles();
         tabAttachments.clearAttachedTabs();
         clearTool();
@@ -15230,17 +16282,18 @@
     const fileError = canAttachFiles ? fileState.fileError : null;
     const tabWarning = canAttachTabs && tabAttachments.tabLimitExceeded;
     const imageMessageShowing = !!(canAttachImages && (imageState.imageLimitExceeded || imageState.imageError));
-    const showFileError = !!fileError && !imageMessageShowing;
-    const showFileWarning = fileWarning && !imageMessageShowing && !showFileError;
-    const showTabWarning = tabWarning && !imageMessageShowing && !showFileError && !showFileWarning;
+    const showCaptureError = screenshotCapture.captureError && !imageMessageShowing;
+    const showFileError = !!fileError && !imageMessageShowing && !showCaptureError;
+    const showFileWarning = fileWarning && !imageMessageShowing && !showCaptureError && !showFileError;
+    const showTabWarning = tabWarning && !imageMessageShowing && !showCaptureError && !showFileError && !showFileWarning;
     const hasSendableAttachments = canAttachImages && hasAttachedImages || canAttachFiles && fileState.attachedFiles.length > 0 || canAttachTabs && tabAttachments.attachedTabs.length > 0;
     const disabled = blocksPrompt || !query && !hasSendableAttachments || imageWarning || fileWarning || tabWarning;
-    const isVoiceChatMode = enableVoiceChatAccess && !imageGenerationActive && !hasAttachedImages && fileState.attachedFiles.length === 0 && tabAttachments.attachedTabs.length === 0 && !query;
+    const isVoiceChatMode = enableVoiceChatAccess && !requiresAiTermsAcceptance && !imageGenerationActive && !hasAttachedImages && fileState.attachedFiles.length === 0 && tabAttachments.attachedTabs.length === 0 && !query;
     const handleClickSubmit = (event) => {
       event.preventDefault();
       if (disabled) return;
       event.stopPropagation();
-      handleSubmit(query, eventToTarget2(event, platformName));
+      handleSubmit({ chat: query, target: eventToTarget2(event, platformName), aiTermsAccepted: requiresAiTermsAcceptance });
     };
     const handleClickVoiceChat = (event) => {
       event.preventDefault();
@@ -15248,6 +16301,7 @@
       handleVoiceSubmit(eventToTarget2(event, platformName));
     };
     const showRecentChats = enableRecentAiChats && !imageGenerationActive && !mention.pickerActive;
+    const termsButtonLabel = useTermsButtonLabel();
     return /* @__PURE__ */ k(
       "div",
       {
@@ -15279,7 +16333,10 @@
           onTextareaKeyDown: mention.handleTextareaKeyDown,
           combobox: mention.combobox,
           textareaRef,
-          toolbarLeft: /* @__PURE__ */ k(S, null, (canAttachImages || canAttachFiles || canAttachTabs) && /* @__PURE__ */ k(
+          onPaste: pastedAttachments.handlePaste,
+          onDragOver: droppedAttachments.handleDragOver,
+          onDrop: droppedAttachments.handleDrop,
+          toolbarLeft: /* @__PURE__ */ k(S, null, (canAttachImages || canAttachFiles || canAttachTabs || canCaptureScreenshot) && /* @__PURE__ */ k(
             AttachMenu,
             {
               image: canAttachImages ? {
@@ -15296,7 +16353,12 @@
               disabled: blocksPrompt,
               onToggleTab: tabAttachments.toggleTab,
               isAttached: tabAttachments.isAttached,
-              maxTabs: tabAttachments.maxTabs
+              maxTabs: tabAttachments.maxTabs,
+              screenshot: canCaptureScreenshot ? {
+                modes: screenshotModes,
+                onCapture: screenshotCapture.capture,
+                disabled: blocksPrompt || !canAttachImages || screenshotCapture.capturing || imageState.imageUploadDisabled
+              } : null
             }
           ), toolsMenu.items.length > 0 && /* @__PURE__ */ k(
             ToolsMenu,
@@ -15324,13 +16386,17 @@
             {
               tabIndex: 0,
               type: "submit",
-              class: AiChatForm_default.submitButton,
-              "aria-label": t4("omnibar_aiChatFormSubmitButtonLabel"),
+              class: (0, import_classnames23.default)(
+                AiChatForm_default.submitButton,
+                requiresAiTermsAcceptance && AiChatForm_default.termsSubmitButton
+              ),
+              "aria-label": requiresAiTermsAcceptance ? void 0 : t4("omnibar_aiChatFormSubmitButtonLabel"),
+              "aria-describedby": requiresAiTermsAcceptance ? TERMS_DISCLAIMER_ID : void 0,
               disabled,
               onClick: handleClickSubmit,
               onAuxClick: handleClickSubmit
             },
-            /* @__PURE__ */ k(ArrowRightIcon, null)
+            requiresAiTermsAcceptance ? termsButtonLabel : /* @__PURE__ */ k(ArrowRightIcon, null)
           ))
         },
         /* @__PURE__ */ k(
@@ -15344,6 +16410,7 @@
             onRemoveImage: imageState.handleRemoveImage
           }
         ),
+        showCaptureError && /* @__PURE__ */ k("p", { class: Omnibar_default.attachmentWarning, role: "alert" }, t4("omnibar_screenshotCaptureError")),
         showFileError && /* @__PURE__ */ k("p", { class: Omnibar_default.attachmentWarning, role: "alert" }, t4("omnibar_fileTooLargeError", { limit: String(fileState.maxFileSizeMB ?? "") })),
         showFileWarning && /* @__PURE__ */ k("p", { class: Omnibar_default.attachmentWarning, role: "alert" }, t4("omnibar_fileAttachmentLimitWarning", { limit: String(fileState.maxFiles) })),
         showTabWarning && /* @__PURE__ */ k("p", { class: Omnibar_default.attachmentWarning, role: "alert" }, t4("omnibar_tabAttachmentLimitWarning", { limit: String(tabAttachments.maxTabs) })),
@@ -15368,11 +16435,13 @@
       showRecentChats && /* @__PURE__ */ k(AiChatsList, { className: Omnibar_default.aiChatsList })
     );
   }
+  var import_classnames23;
   var init_Omnibar2 = __esm({
     "pages/new-tab/app/omnibar/components/Omnibar.js"() {
       "use strict";
       init_preact_module();
       init_hooks_module();
+      import_classnames23 = __toESM(require_classnames(), 1);
       init_Icons2();
       init_handlers();
       init_settings_provider();
@@ -15393,9 +16462,11 @@
       init_Drawer();
       init_TranslationsProvider();
       init_ImageAttachmentTool();
-      init_useImageAttachments();
-      init_useFileAttachments();
+      init_usePastedAttachments();
+      init_useScreenshotCapture();
       init_AttachmentChips2();
+      init_AttachmentsProvider();
+      init_useDroppedAttachments();
       init_ModelSelectorTool();
       init_ReasoningPickerTool();
       init_ToolsMenu2();
@@ -15409,6 +16480,7 @@
       init_useMentionPicker();
       init_useTabAttachments();
       init_NoticeDrawer2();
+      init_useTermsDisclaimerNotice();
       init_useKeyboardFocusWithin();
     }
   });
@@ -15425,7 +16497,10 @@
     return /* @__PURE__ */ k(S, null, state.config.showAiSetting && /* @__PURE__ */ k(AiSetting, { enableAi: state.config?.enableAi === true, setEnableAi, omnibarVisible: visible }), visible && /* @__PURE__ */ k(OmnibarReadyState, { config: state.config, key: current.value, tabId: current.value }));
   }
   function OmnibarPlaceholder() {
-    return /* @__PURE__ */ k("div", { class: Omnibar_default.root, "aria-hidden": "true" }, /* @__PURE__ */ k(LogoStacked, { class: Omnibar_default.logo }), /* @__PURE__ */ k("div", { class: Omnibar_default.placeholderTabs }), /* @__PURE__ */ k("div", { class: Omnibar_default.spacer }));
+    const { omnibar } = useInitialSetupData();
+    const showTabs = omnibar ? omnibar.showAiSetting && omnibar.enableAi : true;
+    const mode = showTabs && omnibar?.mode || "search";
+    return /* @__PURE__ */ k("div", { class: Omnibar_default.root, "data-mode": omnibar ? mode : void 0, "aria-hidden": "true" }, /* @__PURE__ */ k(LogoStacked, { class: Omnibar_default.logo }), showTabs && /* @__PURE__ */ k("div", { class: Omnibar_default.placeholderTabs }), /* @__PURE__ */ k("div", { class: Omnibar_default.spacer }));
   }
   function OmnibarReadyState({ config, tabId }) {
     const {
@@ -15503,9 +16578,9 @@
     const sectionTitle = t4("omnibar_menuTitle");
     const { visibility, id, toggle, index: index2 } = useVisibility();
     useCustomizer({ title: sectionTitle, id, icon: /* @__PURE__ */ k(SearchIcon, null), toggle, visibility: visibility.value, index: index2, enabled: true });
-    return /* @__PURE__ */ k(PersistentTextInputProvider, null, /* @__PURE__ */ k(PersistentModeProvider, null, /* @__PURE__ */ k(TabAttachmentsProvider, null, /* @__PURE__ */ k(OpenTabsListProvider, null, /* @__PURE__ */ k(FileAttachmentsProvider, null, /* @__PURE__ */ k(ImageAttachmentsProvider, null, /* @__PURE__ */ k(OmnibarProvider, null, /* @__PURE__ */ k(OmnibarConsumer, null))))))));
+    return /* @__PURE__ */ k(PersistentTextInputProvider, null, /* @__PURE__ */ k(PersistentModeProvider, null, /* @__PURE__ */ k(TabAttachmentsProvider, null, /* @__PURE__ */ k(OpenTabsListProvider, null, /* @__PURE__ */ k(FileAttachmentsProvider, null, /* @__PURE__ */ k(ImageAttachmentsProvider, null, /* @__PURE__ */ k(AttachmentPrivacyGrantProvider, null, /* @__PURE__ */ k(OmnibarProvider, null, /* @__PURE__ */ k(OmnibarConsumer, null)))))))));
   }
-  var TabAttachmentsProvider, FileAttachmentsProvider, ImageAttachmentsProvider, OpenTabsListProvider;
+  var TabAttachmentsProvider, FileAttachmentsProvider, ImageAttachmentsProvider, OpenTabsListProvider, AttachmentPrivacyGrantProvider;
   var init_OmnibarCustomized = __esm({
     "pages/new-tab/app/omnibar/components/OmnibarCustomized.js"() {
       "use strict";
@@ -15521,6 +16596,7 @@
       ({ Provider: FileAttachmentsProvider } = FileAttachments);
       ({ Provider: ImageAttachmentsProvider } = ImageAttachments);
       ({ Provider: OpenTabsListProvider } = OpenTabsList);
+      ({ Provider: AttachmentPrivacyGrantProvider } = AttachmentPrivacyGrant);
     }
   });
 
@@ -15819,7 +16895,7 @@
     return /* @__PURE__ */ k(
       "div",
       {
-        class: (0, import_classnames23.default)(Tooltip_default2.tooltipContainer, className),
+        class: (0, import_classnames24.default)(Tooltip_default2.tooltipContainer, className),
         role: "button",
         tabIndex: 0,
         "aria-describedby": isVisible ? tooltipId : void 0,
@@ -15833,14 +16909,14 @@
       isVisible && /* @__PURE__ */ k("div", { id: tooltipId, class: Tooltip_default2.tooltip, role: "tooltip", dangerouslySetInnerHTML: { __html: content2 } })
     );
   }
-  var import_classnames23;
+  var import_classnames24;
   var init_Tooltip4 = __esm({
     "pages/new-tab/app/components/Tooltip/Tooltip.js"() {
       "use strict";
       init_preact_module();
       init_hooks_module();
       init_Tooltip3();
-      import_classnames23 = __toESM(require_classnames(), 1);
+      import_classnames24 = __toESM(require_classnames(), 1);
     }
   });
 
@@ -16118,7 +17194,7 @@
     const isCpmEnabled = totalCookiePopUpsBlockedValue !== void 0 && totalCookiePopUpsBlockedValue !== null;
     const trackersBlockedHeading = animatedTrackersBlocked === 1 ? t4("stats_countBlockedSingular") : t4("stats_countBlockedPlural");
     const cookiePopUpsBlockedHeading = animatedCookiePopUpsBlocked === 1 ? t4("stats_totalCookiePopUpsBlockedSingular") : t4("stats_totalCookiePopUpsBlockedPlural");
-    return /* @__PURE__ */ k("div", { class: PrivacyStats_default.heading, "data-testid": "ProtectionsHeading", ref: headingRef }, /* @__PURE__ */ k("div", { class: (0, import_classnames24.default)(PrivacyStats_default.control, animatedTrackersBlocked === 0 && PrivacyStats_default.noTrackers) }, /* @__PURE__ */ k("span", { class: PrivacyStats_default.headingIcon }, /* @__PURE__ */ k("img", { src: isRebrand ? "./icons/Shield-Color-16.svg" : "./icons/Shield-Check-Color-16.svg", alt: "Privacy Shield" })), /* @__PURE__ */ k("h2", { class: PrivacyStats_default.caption }, t4("protections_menuTitle")), /* @__PURE__ */ k(Tooltip2, { content: t4("stats_protectionsReportInfo") }, /* @__PURE__ */ k(InfoIcon, { class: PrivacyStats_default.infoIcon })), canExpand && /* @__PURE__ */ k("span", { class: PrivacyStats_default.widgetExpander }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { class: PrivacyStats_default.heading, "data-testid": "ProtectionsHeading", ref: headingRef }, /* @__PURE__ */ k("div", { class: (0, import_classnames25.default)(PrivacyStats_default.control, animatedTrackersBlocked === 0 && PrivacyStats_default.noTrackers) }, /* @__PURE__ */ k("span", { class: PrivacyStats_default.headingIcon }, /* @__PURE__ */ k("img", { src: isRebrand ? "./icons/Shield-Color-16.svg" : "./icons/Shield-Check-Color-16.svg", alt: "Privacy Shield" })), /* @__PURE__ */ k("h2", { class: PrivacyStats_default.caption }, t4("protections_menuTitle")), /* @__PURE__ */ k(Tooltip2, { content: t4("stats_protectionsReportInfo") }, /* @__PURE__ */ k(InfoIcon, { class: PrivacyStats_default.infoIcon })), canExpand && /* @__PURE__ */ k("span", { class: PrivacyStats_default.widgetExpander }, /* @__PURE__ */ k(
       ShowHideButtonCircle,
       {
         buttonAttrs: {
@@ -16129,9 +17205,9 @@
         onClick: onToggle,
         label: expansion === "expanded" ? t4("stats_hideLabel") : t4("stats_toggleLabel")
       }
-    ))), /* @__PURE__ */ k("div", { class: PrivacyStats_default.counterContainer, ref: counterContainerRef }, /* @__PURE__ */ k("div", { class: PrivacyStats_default.counter }, animatedTrackersBlocked === 0 && /* @__PURE__ */ k("h3", { class: PrivacyStats_default.noRecentTitle }, t4("protections_noRecent")), animatedTrackersBlocked > 0 && /* @__PURE__ */ k("h3", { class: PrivacyStats_default.title }, formatter.format(animatedTrackersBlocked), " ", /* @__PURE__ */ k("span", null, trackersBlockedHeading))), isCpmEnabled && animatedTrackersBlocked > 0 && totalCookiePopUpsBlocked > 0 && /* @__PURE__ */ k("div", { class: (0, import_classnames24.default)(PrivacyStats_default.counter, PrivacyStats_default.cookiePopUpsCounter) }, /* @__PURE__ */ k("h3", { class: PrivacyStats_default.title }, formatter.format(animatedCookiePopUpsBlocked), " ", /* @__PURE__ */ k("span", null, cookiePopUpsBlockedHeading)), showProtectionsReportNewLabel && /* @__PURE__ */ k(NewBadge, null))));
+    ))), /* @__PURE__ */ k("div", { class: PrivacyStats_default.counterContainer, ref: counterContainerRef }, /* @__PURE__ */ k("div", { class: PrivacyStats_default.counter }, animatedTrackersBlocked === 0 && /* @__PURE__ */ k("h3", { class: PrivacyStats_default.noRecentTitle }, t4("protections_noRecent")), animatedTrackersBlocked > 0 && /* @__PURE__ */ k("h3", { class: PrivacyStats_default.title }, formatter.format(animatedTrackersBlocked), " ", /* @__PURE__ */ k("span", null, trackersBlockedHeading))), isCpmEnabled && animatedTrackersBlocked > 0 && totalCookiePopUpsBlocked > 0 && /* @__PURE__ */ k("div", { class: (0, import_classnames25.default)(PrivacyStats_default.counter, PrivacyStats_default.cookiePopUpsCounter) }, /* @__PURE__ */ k("h3", { class: PrivacyStats_default.title }, formatter.format(animatedCookiePopUpsBlocked), " ", /* @__PURE__ */ k("span", null, cookiePopUpsBlockedHeading)), showProtectionsReportNewLabel && /* @__PURE__ */ k(NewBadge, null))));
   }
-  var import_classnames24;
+  var import_classnames25;
   var init_ProtectionsHeading = __esm({
     "pages/new-tab/app/protections/components/ProtectionsHeading.js"() {
       "use strict";
@@ -16139,7 +17215,7 @@
       init_PrivacyStats();
       init_settings_provider();
       init_ShowHideButton();
-      import_classnames24 = __toESM(require_classnames(), 1);
+      import_classnames25 = __toESM(require_classnames(), 1);
       init_preact_module();
       init_Icons2();
       init_NewBadge2();
@@ -16209,9 +17285,9 @@
         onClick: onToggle,
         label: expansion === "expanded" ? t4("stats_hideLabel") : t4("stats_toggleLabel")
       }
-    ))), /* @__PURE__ */ k("div", { class: PrivacyStatsLegacy_default.counter }, none && /* @__PURE__ */ k("h3", { class: PrivacyStatsLegacy_default.title }, t4("protections_noRecent")), some && /* @__PURE__ */ k("h3", { class: PrivacyStatsLegacy_default.title }, " ", /* @__PURE__ */ k(Trans, { str: alltimeTitle, values: { count: alltime } })), /* @__PURE__ */ k("p", { class: (0, import_classnames25.default)(PrivacyStatsLegacy_default.subtitle, PrivacyStatsLegacy_default.indented) }, t4("stats_feedCountBlockedPeriod"))));
+    ))), /* @__PURE__ */ k("div", { class: PrivacyStatsLegacy_default.counter }, none && /* @__PURE__ */ k("h3", { class: PrivacyStatsLegacy_default.title }, t4("protections_noRecent")), some && /* @__PURE__ */ k("h3", { class: PrivacyStatsLegacy_default.title }, " ", /* @__PURE__ */ k(Trans, { str: alltimeTitle, values: { count: alltime } })), /* @__PURE__ */ k("p", { class: (0, import_classnames26.default)(PrivacyStatsLegacy_default.subtitle, PrivacyStatsLegacy_default.indented) }, t4("stats_feedCountBlockedPeriod"))));
   }
-  var import_classnames25;
+  var import_classnames26;
   var init_ProtectionsHeadingLegacy = __esm({
     "pages/new-tab/app/protections/components/ProtectionsHeadingLegacy.js"() {
       "use strict";
@@ -16219,7 +17295,7 @@
       init_hooks_module();
       init_PrivacyStatsLegacy();
       init_ShowHideButton();
-      import_classnames25 = __toESM(require_classnames(), 1);
+      import_classnames26 = __toESM(require_classnames(), 1);
       init_preact_module();
       init_settings_provider();
       init_TranslationsProvider();
@@ -16279,13 +17355,13 @@
       /** @type {enStrings} */
       {}
     );
-    return /* @__PURE__ */ k("div", { class: Protections_default.body, id, "aria-hidden": hidden, "aria-expanded": showing }, expansion === "expanded" && /* @__PURE__ */ k(S, null, /* @__PURE__ */ k("div", { class: (0, import_classnames26.default)(Protections_default.switcher, Protections_default.block), role: "tablist" }, isRebrandEnabled && /* @__PURE__ */ k("div", { class: Protections_default.blob, style: { "--tab-count": 2, "--tab-index": feed === "privacy-stats" ? 0 : 1 } }), /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { class: Protections_default.body, id, "aria-hidden": hidden, "aria-expanded": showing }, expansion === "expanded" && /* @__PURE__ */ k(S, null, /* @__PURE__ */ k("div", { class: (0, import_classnames27.default)(Protections_default.switcher, Protections_default.block), role: "tablist" }, isRebrandEnabled && /* @__PURE__ */ k("div", { class: Protections_default.blob, style: { "--tab-count": 2, "--tab-index": feed === "privacy-stats" ? 0 : 1 } }), /* @__PURE__ */ k(
       "button",
       {
         type: "button",
         role: "tab",
         "aria-selected": feed === "privacy-stats",
-        class: (0, import_classnames26.default)(Protections_default.button, feed === "privacy-stats" && Protections_default.active),
+        class: (0, import_classnames27.default)(Protections_default.button, feed === "privacy-stats" && Protections_default.active),
         onClick: () => setFeed("privacy-stats")
       },
       t4("protections_statsSwitchTitle")
@@ -16295,7 +17371,7 @@
         type: "button",
         role: "tab",
         "aria-selected": feed === "activity",
-        class: (0, import_classnames26.default)(Protections_default.button, feed === "activity" && Protections_default.active),
+        class: (0, import_classnames27.default)(Protections_default.button, feed === "activity" && Protections_default.active),
         onClick: () => setFeed("activity")
       },
       t4("protections_activitySwitchTitle")
@@ -16309,13 +17385,13 @@
       /** @type {enStrings} */
       {}
     );
-    return /* @__PURE__ */ k("div", { class: Protections_default.body, id, "aria-hidden": hidden, "aria-expanded": showing }, expansion === "expanded" && /* @__PURE__ */ k(S, null, /* @__PURE__ */ k("div", { class: (0, import_classnames26.default)(Protections_default.switcher, Protections_default.blockLegacy), role: "tablist" }, isRebrandEnabled && /* @__PURE__ */ k("div", { class: Protections_default.blob, style: { "--tab-count": 2, "--tab-index": feed === "privacy-stats" ? 0 : 1 } }), /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { class: Protections_default.body, id, "aria-hidden": hidden, "aria-expanded": showing }, expansion === "expanded" && /* @__PURE__ */ k(S, null, /* @__PURE__ */ k("div", { class: (0, import_classnames27.default)(Protections_default.switcher, Protections_default.blockLegacy), role: "tablist" }, isRebrandEnabled && /* @__PURE__ */ k("div", { class: Protections_default.blob, style: { "--tab-count": 2, "--tab-index": feed === "privacy-stats" ? 0 : 1 } }), /* @__PURE__ */ k(
       "button",
       {
         type: "button",
         role: "tab",
         "aria-selected": feed === "privacy-stats",
-        class: (0, import_classnames26.default)(Protections_default.button, feed === "privacy-stats" && Protections_default.active),
+        class: (0, import_classnames27.default)(Protections_default.button, feed === "privacy-stats" && Protections_default.active),
         onClick: () => setFeed("privacy-stats")
       },
       t4("protections_statsSwitchTitle")
@@ -16325,25 +17401,25 @@
         type: "button",
         role: "tab",
         "aria-selected": feed === "activity",
-        class: (0, import_classnames26.default)(Protections_default.button, feed === "activity" && Protections_default.active),
+        class: (0, import_classnames27.default)(Protections_default.button, feed === "activity" && Protections_default.active),
         onClick: () => setFeed("activity")
       },
       t4("protections_activitySwitchTitle")
     )), /* @__PURE__ */ k("div", { class: Protections_default.feed }, children)));
   }
   function ProtectionsEmpty({ children }) {
-    return /* @__PURE__ */ k("div", { class: (0, import_classnames26.default)(Protections_default.block, Protections_default.empty) }, children);
+    return /* @__PURE__ */ k("div", { class: (0, import_classnames27.default)(Protections_default.block, Protections_default.empty) }, children);
   }
   function ProtectionsEmptyLegacy({ children }) {
-    return /* @__PURE__ */ k("div", { class: (0, import_classnames26.default)(Protections_default.blockLegacy, Protections_default.empty) }, children);
+    return /* @__PURE__ */ k("div", { class: (0, import_classnames27.default)(Protections_default.blockLegacy, Protections_default.empty) }, children);
   }
-  var import_classnames26;
+  var import_classnames27;
   var init_Protections2 = __esm({
     "pages/new-tab/app/protections/components/Protections.js"() {
       "use strict";
       init_hooks_module();
       init_preact_module();
-      import_classnames26 = __toESM(require_classnames(), 1);
+      import_classnames27 = __toESM(require_classnames(), 1);
       init_Protections();
       init_ProtectionsHeading();
       init_types();
@@ -17395,7 +18471,7 @@
     return /* @__PURE__ */ k("div", { className: Activity_default.controls }, /* @__PURE__ */ k(
       "button",
       {
-        class: (0, import_classnames27.default)(Activity_default.icon, Activity_default.controlIcon, Activity_default.disableWhenBusy),
+        class: (0, import_classnames28.default)(Activity_default.icon, Activity_default.controlIcon, Activity_default.disableWhenBusy),
         title: favoriteTitle,
         "data-action": favorite.value ? ACTION_REMOVE_FAVORITE : ACTION_ADD_FAVORITE,
         "data-title": title,
@@ -17406,7 +18482,7 @@
     ), /* @__PURE__ */ k(
       "button",
       {
-        class: (0, import_classnames27.default)(Activity_default.icon, Activity_default.controlIcon, Activity_default.disableWhenBusy),
+        class: (0, import_classnames28.default)(Activity_default.icon, Activity_default.controlIcon, Activity_default.disableWhenBusy),
         title: secondaryTitle,
         "data-action": canBurn ? ACTION_BURN : ACTION_REMOVE,
         value: url8,
@@ -17421,13 +18497,13 @@
     if (isRebrand) return /* @__PURE__ */ k(FireOutlineIcon, null);
     return /* @__PURE__ */ k(FireIcon, null);
   }
-  var import_classnames27, ActivityItem, ActivityItemLegacy;
+  var import_classnames28, ActivityItem, ActivityItemLegacy;
   var init_ActivityItem = __esm({
     "pages/new-tab/app/activity/components/ActivityItem.js"() {
       "use strict";
       init_preact_module();
       init_types();
-      import_classnames27 = __toESM(require_classnames(), 1);
+      import_classnames28 = __toESM(require_classnames(), 1);
       init_Activity();
       init_ActivityLegacy();
       init_FaviconWithState2();
@@ -17456,7 +18532,7 @@
          */
         function ActivityItem2({ canBurn, documentVisibility, title, url: url8, favoriteSrc, faviconMax, etldPlusOne, children }) {
           const isRebrand = useNewTabPageRebranding();
-          return /* @__PURE__ */ k("li", { key: url8, class: (0, import_classnames27.default)(Activity_default.item), "data-testid": "ActivityItem" }, /* @__PURE__ */ k("div", { class: Activity_default.heading }, /* @__PURE__ */ k("a", { class: Activity_default.title, href: url8, "data-url": url8 }, /* @__PURE__ */ k("span", { className: Activity_default.favicon, "data-url": url8 }, documentVisibility === "visible" && /* @__PURE__ */ k(
+          return /* @__PURE__ */ k("li", { key: url8, class: (0, import_classnames28.default)(Activity_default.item), "data-testid": "ActivityItem" }, /* @__PURE__ */ k("div", { class: Activity_default.heading }, /* @__PURE__ */ k("a", { class: Activity_default.title, href: url8, "data-url": url8 }, /* @__PURE__ */ k("span", { className: Activity_default.favicon, "data-url": url8 }, documentVisibility === "visible" && /* @__PURE__ */ k(
             FaviconWithState,
             {
               faviconSrc: favoriteSrc,
@@ -17485,7 +18561,7 @@
          */
         function ActivityItem3({ canBurn, documentVisibility, title, url: url8, favoriteSrc, faviconMax, etldPlusOne, children }) {
           const isRebrand = useNewTabPageRebranding();
-          return /* @__PURE__ */ k("li", { key: url8, class: (0, import_classnames27.default)(ActivityLegacy_default.item), "data-testid": "ActivityItem" }, /* @__PURE__ */ k("div", { class: ActivityLegacy_default.heading }, /* @__PURE__ */ k("a", { class: ActivityLegacy_default.title, href: url8, "data-url": url8 }, /* @__PURE__ */ k("span", { className: ActivityLegacy_default.favicon, "data-url": url8 }, documentVisibility === "visible" && /* @__PURE__ */ k(
+          return /* @__PURE__ */ k("li", { key: url8, class: (0, import_classnames28.default)(ActivityLegacy_default.item), "data-testid": "ActivityItem" }, /* @__PURE__ */ k("div", { class: ActivityLegacy_default.heading }, /* @__PURE__ */ k("a", { class: ActivityLegacy_default.title, href: url8, "data-url": url8 }, /* @__PURE__ */ k("span", { className: ActivityLegacy_default.favicon, "data-url": url8 }, documentVisibility === "visible" && /* @__PURE__ */ k(
             FaviconWithState,
             {
               faviconSrc: favoriteSrc,
@@ -33915,20 +34991,20 @@
         canceled = true;
       };
     }, [isBurning.value, isExiting.value, url8]);
-    return /* @__PURE__ */ k("div", { class: (0, import_classnames28.default)(Activity_default.anim, isBurning.value && Activity_default.burning), ref }, !isExiting.value && children, !isExiting.value && isBurning.value && showBurnAnimation && /* @__PURE__ */ k(P3, { fallback: null }, /* @__PURE__ */ k(BurnAnimationLazy, { url: url8, doneBurning })), !isExiting.value && isBurning.value && !showBurnAnimation && /* @__PURE__ */ k(NullBurner, { url: url8, doneBurning }));
+    return /* @__PURE__ */ k("div", { class: (0, import_classnames29.default)(Activity_default.anim, isBurning.value && Activity_default.burning), ref }, !isExiting.value && children, !isExiting.value && isBurning.value && showBurnAnimation && /* @__PURE__ */ k(P3, { fallback: null }, /* @__PURE__ */ k(BurnAnimationLazy, { url: url8, doneBurning })), !isExiting.value && isBurning.value && !showBurnAnimation && /* @__PURE__ */ k(NullBurner, { url: url8, doneBurning }));
   }
   function NullBurner({ url: url8, doneBurning }) {
     h2(() => doneBurning(url8), [url8]);
     return null;
   }
-  var import_classnames28, BurnAnimationLazy;
+  var import_classnames29, BurnAnimationLazy;
   var init_ActivityItemAnimationWrapper = __esm({
     "pages/new-tab/app/activity/components/ActivityItemAnimationWrapper.js"() {
       "use strict";
       init_hooks_module();
       init_BurnProvider();
       init_signals_module();
-      import_classnames28 = __toESM(require_classnames(), 1);
+      import_classnames29 = __toESM(require_classnames(), 1);
       init_Activity();
       init_compat_module();
       init_preact_module();
@@ -34038,15 +35114,15 @@
 
   // pages/new-tab/app/components/TickPill/TickPill.js
   function TickPill({ text: text2, className, displayTick = true }) {
-    return /* @__PURE__ */ k("div", { class: (0, import_classnames29.default)(TickPill_default.tickPill, className || "") }, displayTick && /* @__PURE__ */ k("span", { class: TickPill_default.iconWrapper }, /* @__PURE__ */ k(Check, null)), /* @__PURE__ */ k("span", { class: TickPill_default.text }, text2));
+    return /* @__PURE__ */ k("div", { class: (0, import_classnames30.default)(TickPill_default.tickPill, className || "") }, displayTick && /* @__PURE__ */ k("span", { class: TickPill_default.iconWrapper }, /* @__PURE__ */ k(Check, null)), /* @__PURE__ */ k("span", { class: TickPill_default.text }, text2));
   }
-  var import_classnames29;
+  var import_classnames30;
   var init_TickPill2 = __esm({
     "pages/new-tab/app/components/TickPill/TickPill.js"() {
       "use strict";
       init_preact_module();
       init_Icons2();
-      import_classnames29 = __toESM(require_classnames(), 1);
+      import_classnames30 = __toESM(require_classnames(), 1);
       init_TickPill();
     }
   });
@@ -34862,8 +35938,8 @@
 
   // pages/new-tab/app/remote-messaging-framework/components/RemoteMessagingFramework.js
   function TwoActionButtons({ platform, id, message, primaryAction, secondaryAction }) {
-    const primaryBtn = primaryAction && message.primaryActionText.length > 0 && /* @__PURE__ */ k(Button, { className: (0, import_classnames30.default)(RemoteMessagingFramework_default.actionButton, RemoteMessagingFramework_default.primaryButton), variant: "accentBrand", onClick: () => primaryAction(id) }, message.primaryActionText);
-    const secondaryBtn = secondaryAction && message.secondaryActionText.length > 0 && /* @__PURE__ */ k(Button, { className: (0, import_classnames30.default)(RemoteMessagingFramework_default.actionButton, RemoteMessagingFramework_default.secondaryButton), variant: "standard", onClick: () => secondaryAction(id) }, message.secondaryActionText);
+    const primaryBtn = primaryAction && message.primaryActionText.length > 0 && /* @__PURE__ */ k(Button, { className: (0, import_classnames31.default)(RemoteMessagingFramework_default.actionButton, RemoteMessagingFramework_default.primaryButton), variant: "accentBrand", onClick: () => primaryAction(id) }, message.primaryActionText);
+    const secondaryBtn = secondaryAction && message.secondaryActionText.length > 0 && /* @__PURE__ */ k(Button, { className: (0, import_classnames31.default)(RemoteMessagingFramework_default.actionButton, RemoteMessagingFramework_default.secondaryButton), variant: "standard", onClick: () => secondaryAction(id) }, message.secondaryActionText);
     return /* @__PURE__ */ k("div", { class: RemoteMessagingFramework_default.btnRow }, platform === "windows" ? /* @__PURE__ */ k(S, null, primaryBtn, secondaryBtn) : /* @__PURE__ */ k(S, null, secondaryBtn, primaryBtn));
   }
   function RemoteMessagingFramework({ message, primaryAction, secondaryAction, dismiss }) {
@@ -34872,7 +35948,7 @@
     const isRebrandEnabled = useNewTabPageRebranding();
     const showIcon = messageType !== "small" && Boolean(message.icon);
     const iconSrc = showIcon ? isRebrandEnabled ? `./icons/rebrand/${message.icon}-96.svg` : `./icons/${message.icon}-96.svg` : void 0;
-    return /* @__PURE__ */ k("div", { id, class: (0, import_classnames30.default)(RemoteMessagingFramework_default.root, showIcon && RemoteMessagingFramework_default.icon) }, showIcon && iconSrc && /* @__PURE__ */ k("span", { class: RemoteMessagingFramework_default.iconBlock }, /* @__PURE__ */ k("img", { src: iconSrc, alt: "" })), /* @__PURE__ */ k("div", { class: RemoteMessagingFramework_default.content }, /* @__PURE__ */ k("h2", { class: RemoteMessagingFramework_default.title }, titleText), /* @__PURE__ */ k("p", { class: RemoteMessagingFramework_default.description }, descriptionText), messageType === "big_two_action" && /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { id, class: (0, import_classnames31.default)(RemoteMessagingFramework_default.root, showIcon && RemoteMessagingFramework_default.icon) }, showIcon && iconSrc && /* @__PURE__ */ k("span", { class: RemoteMessagingFramework_default.iconBlock }, /* @__PURE__ */ k("img", { src: iconSrc, alt: "" })), /* @__PURE__ */ k("div", { class: RemoteMessagingFramework_default.content }, /* @__PURE__ */ k("h2", { class: RemoteMessagingFramework_default.title }, titleText), /* @__PURE__ */ k("p", { class: RemoteMessagingFramework_default.description }, descriptionText), messageType === "big_two_action" && /* @__PURE__ */ k(
       TwoActionButtons,
       {
         platform,
@@ -34884,7 +35960,7 @@
     )), messageType === "big_single_action" && message.primaryActionText && primaryAction && /* @__PURE__ */ k("div", { class: RemoteMessagingFramework_default.btnBlock }, /* @__PURE__ */ k(
       Button,
       {
-        className: (0, import_classnames30.default)(RemoteMessagingFramework_default.actionButton, RemoteMessagingFramework_default.secondaryButton),
+        className: (0, import_classnames31.default)(RemoteMessagingFramework_default.actionButton, RemoteMessagingFramework_default.secondaryButton),
         variant: "standard",
         onClick: () => primaryAction(id)
       },
@@ -34906,12 +35982,12 @@
     }
     return null;
   }
-  var import_classnames30;
+  var import_classnames31;
   var init_RemoteMessagingFramework2 = __esm({
     "pages/new-tab/app/remote-messaging-framework/components/RemoteMessagingFramework.js"() {
       "use strict";
       init_preact_module();
-      import_classnames30 = __toESM(require_classnames(), 1);
+      import_classnames31 = __toESM(require_classnames(), 1);
       init_RemoteMessagingFramework();
       init_hooks_module();
       init_RMFProvider();
@@ -35092,7 +36168,7 @@
     const isRebrandEnabled = useNewTabPageRebranding();
     const processedMessageDescription = convertMarkdownToHTMLForStrongTags(message.descriptionText);
     const iconSrc = isRebrandEnabled ? "./icons/rebrand/Subscription-Clock-96.svg" : "./icons/Subscription-Clock-96.svg";
-    return /* @__PURE__ */ k("div", { id: message.id, class: (0, import_classnames31.default)(SubscriptionWinBackBanner_default.root, SubscriptionWinBackBanner_default.icon) }, /* @__PURE__ */ k("span", { class: SubscriptionWinBackBanner_default.iconBlock }, /* @__PURE__ */ k("img", { "aria-hidden": "true", src: iconSrc, alt: "" })), /* @__PURE__ */ k("div", { class: SubscriptionWinBackBanner_default.content }, message.titleText && /* @__PURE__ */ k("h2", { class: SubscriptionWinBackBanner_default.title }, message.titleText), /* @__PURE__ */ k("p", { class: SubscriptionWinBackBanner_default.description, dangerouslySetInnerHTML: { __html: processedMessageDescription } })), message.messageType === "big_single_action" && message?.actionText && action && /* @__PURE__ */ k("div", { class: SubscriptionWinBackBanner_default.btnBlock }, /* @__PURE__ */ k(Button, { size: "md", variant: "accent", onClick: () => action(message.id) }, message.actionText)), message.id && dismiss && /* @__PURE__ */ k(DismissButton, { className: SubscriptionWinBackBanner_default.dismissBtn, onClick: () => dismiss(message.id) }));
+    return /* @__PURE__ */ k("div", { id: message.id, class: (0, import_classnames32.default)(SubscriptionWinBackBanner_default.root, SubscriptionWinBackBanner_default.icon) }, /* @__PURE__ */ k("span", { class: SubscriptionWinBackBanner_default.iconBlock }, /* @__PURE__ */ k("img", { "aria-hidden": "true", src: iconSrc, alt: "" })), /* @__PURE__ */ k("div", { class: SubscriptionWinBackBanner_default.content }, message.titleText && /* @__PURE__ */ k("h2", { class: SubscriptionWinBackBanner_default.title }, message.titleText), /* @__PURE__ */ k("p", { class: SubscriptionWinBackBanner_default.description, dangerouslySetInnerHTML: { __html: processedMessageDescription } })), message.messageType === "big_single_action" && message?.actionText && action && /* @__PURE__ */ k("div", { class: SubscriptionWinBackBanner_default.btnBlock }, /* @__PURE__ */ k(Button, { size: "md", variant: "accent", onClick: () => action(message.id) }, message.actionText)), message.id && dismiss && /* @__PURE__ */ k(DismissButton, { className: SubscriptionWinBackBanner_default.dismissBtn, onClick: () => dismiss(message.id) }));
   }
   function SubscriptionWinBackBannerConsumer() {
     const { state, action, dismiss } = x2(SubscriptionWinBackBannerContext);
@@ -35101,11 +36177,11 @@
     }
     return null;
   }
-  var import_classnames31;
+  var import_classnames32;
   var init_SubscriptionWinBackBanner2 = __esm({
     "pages/new-tab/app/subscription-winback-banner/components/SubscriptionWinBackBanner.js"() {
       "use strict";
-      import_classnames31 = __toESM(require_classnames(), 1);
+      import_classnames32 = __toESM(require_classnames(), 1);
       init_preact_module();
       init_Button2();
       init_DismissButton2();
@@ -35267,7 +36343,7 @@
 
   // pages/new-tab/app/update-notification/components/UpdateNotification.js
   function UpdateNotification({ notes, dismiss, version }) {
-    return /* @__PURE__ */ k("div", { class: UpdateNotification_default.root, "data-reset-layout": "true" }, /* @__PURE__ */ k("div", { class: (0, import_classnames32.default)("layout-centered", UpdateNotification_default.body) }, notes.length > 0 ? /* @__PURE__ */ k(WithNotes, { notes, version }) : /* @__PURE__ */ k(WithoutNotes, { version })), /* @__PURE__ */ k(DismissButton, { onClick: dismiss, className: UpdateNotification_default.dismiss }));
+    return /* @__PURE__ */ k("div", { class: UpdateNotification_default.root, "data-reset-layout": "true" }, /* @__PURE__ */ k("div", { class: (0, import_classnames33.default)("layout-centered", UpdateNotification_default.body) }, notes.length > 0 ? /* @__PURE__ */ k(WithNotes, { notes, version }) : /* @__PURE__ */ k(WithoutNotes, { version })), /* @__PURE__ */ k(DismissButton, { onClick: dismiss, className: UpdateNotification_default.dismiss }));
   }
   function WithNotes({ notes, version }) {
     const id = g2();
@@ -35329,12 +36405,12 @@
     }
     return null;
   }
-  var import_classnames32;
+  var import_classnames33;
   var init_UpdateNotification2 = __esm({
     "pages/new-tab/app/update-notification/components/UpdateNotification.js"() {
       "use strict";
       init_preact_module();
-      import_classnames32 = __toESM(require_classnames(), 1);
+      import_classnames33 = __toESM(require_classnames(), 1);
       init_UpdateNotification();
       init_hooks_module();
       init_UpdateNotificationProvider();
@@ -35374,7 +36450,7 @@
 
   // pages/new-tab/app/components/App.js
   init_preact_module();
-  var import_classnames43 = __toESM(require_classnames(), 1);
+  var import_classnames44 = __toESM(require_classnames(), 1);
 
   // pages/new-tab/app/components/App.module.css
   var App_default = {
@@ -35737,7 +36813,7 @@
   // pages/new-tab/app/customizer/components/CustomizerDrawerInner.js
   init_preact_module();
   init_hooks_module();
-  var import_classnames42 = __toESM(require_classnames(), 1);
+  var import_classnames43 = __toESM(require_classnames(), 1);
 
   // pages/new-tab/app/customizer/components/CustomizerDrawerInner.module.css
   var CustomizerDrawerInner_default = {
@@ -35773,7 +36849,7 @@
 
   // pages/new-tab/app/customizer/components/BackgroundSection.js
   init_preact_module();
-  var import_classnames33 = __toESM(require_classnames(), 1);
+  var import_classnames34 = __toESM(require_classnames(), 1);
   init_values();
   init_Icons2();
   init_signals_module();
@@ -35798,7 +36874,7 @@
     } else {
       gradient = values.gradients.gradient02;
     }
-    return /* @__PURE__ */ k("ul", { class: (0, import_classnames33.default)(CustomizerDrawerInner_default.bgList), role: "radiogroup" }, /* @__PURE__ */ k("li", { class: CustomizerDrawerInner_default.bgListItem }, /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("ul", { class: (0, import_classnames34.default)(CustomizerDrawerInner_default.bgList), role: "radiogroup" }, /* @__PURE__ */ k("li", { class: CustomizerDrawerInner_default.bgListItem }, /* @__PURE__ */ k(
       DefaultPanel,
       {
         checked: data2.value.background.kind === "default",
@@ -35832,7 +36908,7 @@
     return /* @__PURE__ */ k(S, null, /* @__PURE__ */ k(
       "button",
       {
-        class: (0, import_classnames33.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.bgPanelEmpty, CustomizerDrawerInner_default.dynamicIconColor),
+        class: (0, import_classnames34.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.bgPanelEmpty, CustomizerDrawerInner_default.dynamicIconColor),
         "data-color-mode": main,
         "aria-checked": checked,
         "aria-labelledby": id,
@@ -35852,7 +36928,7 @@
     return /* @__PURE__ */ k(S, null, /* @__PURE__ */ k(
       "button",
       {
-        class: (0, import_classnames33.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.dynamicIconColor),
+        class: (0, import_classnames34.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.dynamicIconColor),
         "data-color-mode": props.color.colorScheme,
         onClick: props.onClick,
         "aria-checked": props.checked,
@@ -35874,7 +36950,7 @@
       "button",
       {
         onClick: props.onClick,
-        class: (0, import_classnames33.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.dynamicIconColor),
+        class: (0, import_classnames34.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.dynamicIconColor),
         "data-color-mode": props.gradient.colorScheme,
         "aria-checked": props.checked,
         tabindex: props.checked ? -1 : 0,
@@ -35914,7 +36990,7 @@
       return /* @__PURE__ */ k(S, null, /* @__PURE__ */ k(
         "button",
         {
-          class: (0, import_classnames33.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.bgPanelEmpty, CustomizerDrawerInner_default.dynamicIconColor),
+          class: (0, import_classnames34.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.bgPanelEmpty, CustomizerDrawerInner_default.dynamicIconColor),
           "data-color-mode": props.browserTheme,
           "aria-checked": props.checked,
           "aria-labelledby": id,
@@ -35929,7 +37005,7 @@
     return /* @__PURE__ */ k(S, null, /* @__PURE__ */ k(
       "button",
       {
-        class: (0, import_classnames33.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.dynamicIconColor),
+        class: (0, import_classnames34.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.dynamicIconColor),
         "data-color-mode": scheme,
         onClick: props.onClick,
         "aria-checked": props.checked,
@@ -35955,7 +37031,7 @@
   };
 
   // pages/new-tab/app/customizer/components/BrowserThemeSection.js
-  var import_classnames34 = __toESM(require_classnames(), 1);
+  var import_classnames35 = __toESM(require_classnames(), 1);
   init_preact_module();
   init_signals_module();
   init_types();
@@ -35968,7 +37044,7 @@
     return /* @__PURE__ */ k("ul", { class: BrowserThemeSection_default.themeList }, /* @__PURE__ */ k("li", { class: BrowserThemeSection_default.themeItem }, /* @__PURE__ */ k(
       "button",
       {
-        class: (0, import_classnames34.default)(BrowserThemeSection_default.themeButton, BrowserThemeSection_default.themeButtonLight),
+        class: (0, import_classnames35.default)(BrowserThemeSection_default.themeButton, BrowserThemeSection_default.themeButtonLight),
         role: "radio",
         type: "button",
         "aria-checked": current.value === "light",
@@ -35979,7 +37055,7 @@
     ), /* @__PURE__ */ k("span", null, t4("customizer_browser_theme_light"))), /* @__PURE__ */ k("li", { class: BrowserThemeSection_default.themeItem }, /* @__PURE__ */ k(
       "button",
       {
-        class: (0, import_classnames34.default)(BrowserThemeSection_default.themeButton, BrowserThemeSection_default.themeButtonDark),
+        class: (0, import_classnames35.default)(BrowserThemeSection_default.themeButton, BrowserThemeSection_default.themeButtonDark),
         role: "radio",
         type: "button",
         "aria-checked": current.value === "dark",
@@ -35990,7 +37066,7 @@
     ), /* @__PURE__ */ k("span", null, t4("customizer_browser_theme_dark"))), /* @__PURE__ */ k("li", { class: BrowserThemeSection_default.themeItem }, /* @__PURE__ */ k(
       "button",
       {
-        class: (0, import_classnames34.default)(BrowserThemeSection_default.themeButton, BrowserThemeSection_default.themeButtonSystem),
+        class: (0, import_classnames35.default)(BrowserThemeSection_default.themeButton, BrowserThemeSection_default.themeButtonSystem),
         role: "radio",
         type: "button",
         "aria-checked": current.value === "system",
@@ -36004,7 +37080,7 @@
   // pages/new-tab/app/customizer/components/ThemeSection.js
   init_preact_module();
   init_signals_module();
-  var import_classnames35 = __toESM(require_classnames(), 1);
+  var import_classnames36 = __toESM(require_classnames(), 1);
   init_types();
 
   // pages/new-tab/app/customizer/components/ThemeSection.module.css
@@ -36047,7 +37123,7 @@
     return /* @__PURE__ */ k("div", { class: ThemeSection_default.root }, /* @__PURE__ */ k(
       "div",
       {
-        class: (0, import_classnames35.default)(ThemeSection_default.segmentedControl, {
+        class: (0, import_classnames36.default)(ThemeSection_default.segmentedControl, {
           [ThemeSection_default.vertical]: ["pl", "ru"].includes(locale)
         }),
         role: "radiogroup",
@@ -36118,7 +37194,7 @@
   init_CustomizerMenu();
 
   // pages/new-tab/app/customizer/components/VisibilityMenu.js
-  var import_classnames36 = __toESM(require_classnames(), 1);
+  var import_classnames37 = __toESM(require_classnames(), 1);
   init_preact_module();
   init_hooks_module();
   init_Switch2();
@@ -36139,8 +37215,8 @@
   function EmbeddedVisibilityMenu({ rows }) {
     const platformName = usePlatformName();
     const { browser } = x2(CustomizerThemesContext);
-    return /* @__PURE__ */ k("ul", { className: (0, import_classnames36.default)(VisibilityMenu_default.list, VisibilityMenu_default.embedded) }, rows.map((row) => {
-      return /* @__PURE__ */ k("li", { key: row.id }, /* @__PURE__ */ k("div", { class: (0, import_classnames36.default)(VisibilityMenu_default.menuItemLabel, VisibilityMenu_default.menuItemLabelEmbedded) }, /* @__PURE__ */ k("span", { class: VisibilityMenu_default.svg }, row.icon), /* @__PURE__ */ k("span", { class: VisibilityMenu_default.title }, row.title ?? row.id), /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("ul", { className: (0, import_classnames37.default)(VisibilityMenu_default.list, VisibilityMenu_default.embedded) }, rows.map((row) => {
+      return /* @__PURE__ */ k("li", { key: row.id }, /* @__PURE__ */ k("div", { class: (0, import_classnames37.default)(VisibilityMenu_default.menuItemLabel, VisibilityMenu_default.menuItemLabelEmbedded) }, /* @__PURE__ */ k("span", { class: VisibilityMenu_default.svg }, row.icon), /* @__PURE__ */ k("span", { class: VisibilityMenu_default.title }, row.title ?? row.id), /* @__PURE__ */ k(
         Switch,
         {
           theme: browser.value,
@@ -36183,7 +37259,7 @@
 
   // pages/new-tab/app/customizer/components/ColorSelection.js
   init_preact_module();
-  var import_classnames37 = __toESM(require_classnames(), 1);
+  var import_classnames38 = __toESM(require_classnames(), 1);
   init_values();
   init_Icons2();
   init_signals_module();
@@ -36212,7 +37288,7 @@
       if (!(value2 in values.colors)) return console.warn("could not select color", value2);
       select({ background: { kind: "color", value: value2 } });
     }
-    return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("button", { type: "button", onClick: back, class: (0, import_classnames37.default)(CustomizerDrawerInner_default.backBtn, CustomizerDrawerInner_default.sectionTitle) }, /* @__PURE__ */ k(BackChevron, null), t4("customizer_background_selection_color")), /* @__PURE__ */ k("div", { class: CustomizerDrawerInner_default.sectionBody }, /* @__PURE__ */ k(InlineErrorBoundary, { format: (message) => `Customizer section 'ColorGrid' threw an exception: ` + message }, /* @__PURE__ */ k("div", { class: (0, import_classnames37.default)(CustomizerDrawerInner_default.bgList), role: "radiogroup", onClick }, /* @__PURE__ */ k(PickerPanel, { data: data2, select }), /* @__PURE__ */ k(ColorGrid, { data: data2 })))));
+    return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("button", { type: "button", onClick: back, class: (0, import_classnames38.default)(CustomizerDrawerInner_default.backBtn, CustomizerDrawerInner_default.sectionTitle) }, /* @__PURE__ */ k(BackChevron, null), t4("customizer_background_selection_color")), /* @__PURE__ */ k("div", { class: CustomizerDrawerInner_default.sectionBody }, /* @__PURE__ */ k(InlineErrorBoundary, { format: (message) => `Customizer section 'ColorGrid' threw an exception: ` + message }, /* @__PURE__ */ k("div", { class: (0, import_classnames38.default)(CustomizerDrawerInner_default.bgList), role: "radiogroup", onClick }, /* @__PURE__ */ k(PickerPanel, { data: data2, select }), /* @__PURE__ */ k(ColorGrid, { data: data2 })))));
   }
   var entries = Object.keys(values.colors);
   function ColorGrid({ data: data2 }) {
@@ -36249,7 +37325,7 @@
     return /* @__PURE__ */ k("div", { class: CustomizerDrawerInner_default.bgListItem }, /* @__PURE__ */ k(
       "button",
       {
-        className: (0, import_classnames37.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.bgPanelEmpty),
+        className: (0, import_classnames38.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.bgPanelEmpty),
         type: "button",
         tabIndex: 0,
         style: { background: hex.value },
@@ -36274,12 +37350,12 @@
           }
         }
       }
-    ), /* @__PURE__ */ k("span", { class: (0, import_classnames37.default)(CustomizerDrawerInner_default.colorInputIcon, CustomizerDrawerInner_default.dynamicPickerIconColor), "data-color-mode": modeSelected }, /* @__PURE__ */ k(Picker, null)));
+    ), /* @__PURE__ */ k("span", { class: (0, import_classnames38.default)(CustomizerDrawerInner_default.colorInputIcon, CustomizerDrawerInner_default.dynamicPickerIconColor), "data-color-mode": modeSelected }, /* @__PURE__ */ k(Picker, null)));
   }
 
   // pages/new-tab/app/customizer/components/GradientSelection.js
   init_preact_module();
-  var import_classnames38 = __toESM(require_classnames(), 1);
+  var import_classnames39 = __toESM(require_classnames(), 1);
   init_values();
   init_signals_module();
   init_Icons2();
@@ -36307,12 +37383,12 @@
       if (!(value2 in values.gradients)) return console.warn("could not select gradient", value2);
       select({ background: { kind: "gradient", value: value2 } });
     }
-    return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("button", { type: "button", onClick: back, class: (0, import_classnames38.default)(CustomizerDrawerInner_default.backBtn, CustomizerDrawerInner_default.sectionTitle) }, /* @__PURE__ */ k(BackChevron, null), t4("customizer_background_selection_gradient")), /* @__PURE__ */ k("div", { className: CustomizerDrawerInner_default.sectionBody, onClick }, /* @__PURE__ */ k(InlineErrorBoundary, { format: (message) => `Customizer section 'GradientSelection' threw an exception: ` + message }, /* @__PURE__ */ k(GradientGrid, { data: data2 }))));
+    return /* @__PURE__ */ k("div", null, /* @__PURE__ */ k("button", { type: "button", onClick: back, class: (0, import_classnames39.default)(CustomizerDrawerInner_default.backBtn, CustomizerDrawerInner_default.sectionTitle) }, /* @__PURE__ */ k(BackChevron, null), t4("customizer_background_selection_gradient")), /* @__PURE__ */ k("div", { className: CustomizerDrawerInner_default.sectionBody, onClick }, /* @__PURE__ */ k(InlineErrorBoundary, { format: (message) => `Customizer section 'GradientSelection' threw an exception: ` + message }, /* @__PURE__ */ k(GradientGrid, { data: data2 }))));
   }
   var entries2 = Object.keys(values.gradients);
   function GradientGrid({ data: data2 }) {
     const selected = useComputed(() => data2.value.background.kind === "gradient" && data2.value.background.value);
-    return /* @__PURE__ */ k("ul", { className: (0, import_classnames38.default)(CustomizerDrawerInner_default.bgList) }, entries2.map((key2) => {
+    return /* @__PURE__ */ k("ul", { className: (0, import_classnames39.default)(CustomizerDrawerInner_default.bgList) }, entries2.map((key2) => {
       const entry = values.gradients[key2];
       return /* @__PURE__ */ k("li", { className: CustomizerDrawerInner_default.bgListItem, key: key2 }, /* @__PURE__ */ k(
         "button",
@@ -36340,7 +37416,7 @@
 
   // pages/new-tab/app/customizer/components/ImageSelection.js
   init_preact_module();
-  var import_classnames39 = __toESM(require_classnames(), 1);
+  var import_classnames40 = __toESM(require_classnames(), 1);
   init_signals_module();
   init_DismissButton2();
   init_Icons2();
@@ -36384,7 +37460,7 @@
         customizerContextMenu({ id, target: "userImage" });
       }
     }
-    return /* @__PURE__ */ k("div", { onContextMenu }, /* @__PURE__ */ k("button", { type: "button", onClick: back, class: (0, import_classnames39.default)(CustomizerDrawerInner_default.backBtn, CustomizerDrawerInner_default.sectionTitle) }, /* @__PURE__ */ k(BackChevron, null), t4("customizer_background_selection_image_existing")), /* @__PURE__ */ k("div", { className: CustomizerDrawerInner_default.sectionBody, onClick }, /* @__PURE__ */ k(InlineErrorBoundary, { format: (message) => `Customizer section 'ImageSelection' threw an exception: ` + message }, /* @__PURE__ */ k(ImageGrid, { data: data2, deleteImage, onUpload }))), /* @__PURE__ */ k("div", { className: CustomizerDrawerInner_default.sectionBody }, /* @__PURE__ */ k("p", null, t4("customizer_image_privacy"))));
+    return /* @__PURE__ */ k("div", { onContextMenu }, /* @__PURE__ */ k("button", { type: "button", onClick: back, class: (0, import_classnames40.default)(CustomizerDrawerInner_default.backBtn, CustomizerDrawerInner_default.sectionTitle) }, /* @__PURE__ */ k(BackChevron, null), t4("customizer_background_selection_image_existing")), /* @__PURE__ */ k("div", { className: CustomizerDrawerInner_default.sectionBody, onClick }, /* @__PURE__ */ k(InlineErrorBoundary, { format: (message) => `Customizer section 'ImageSelection' threw an exception: ` + message }, /* @__PURE__ */ k(ImageGrid, { data: data2, deleteImage, onUpload }))), /* @__PURE__ */ k("div", { className: CustomizerDrawerInner_default.sectionBody }, /* @__PURE__ */ k("p", null, t4("customizer_image_privacy"))));
   }
   function ImageGrid({ data: data2, deleteImage, onUpload }) {
     const { t: t4 } = useTypedTranslationWith(
@@ -36399,7 +37475,7 @@
     const max = 8;
     const diff = max - entries4.value.length;
     const placeholders = new Array(diff).fill(null);
-    return /* @__PURE__ */ k("ul", { className: (0, import_classnames39.default)(CustomizerDrawerInner_default.bgList) }, entries4.value.map((entry, index2) => {
+    return /* @__PURE__ */ k("ul", { className: (0, import_classnames40.default)(CustomizerDrawerInner_default.bgList) }, entries4.value.map((entry, index2) => {
       return /* @__PURE__ */ k("li", { className: CustomizerDrawerInner_default.bgListItem, key: entry.id }, /* @__PURE__ */ k(
         "button",
         {
@@ -36433,7 +37509,7 @@
         {
           type: "button",
           onClick: onUpload,
-          class: (0, import_classnames39.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.bgPanelEmpty, CustomizerDrawerInner_default.dynamicIconColor),
+          class: (0, import_classnames40.default)(CustomizerDrawerInner_default.bgPanel, CustomizerDrawerInner_default.bgPanelEmpty, CustomizerDrawerInner_default.dynamicIconColor),
           "data-color-mode": browser
         },
         /* @__PURE__ */ k(PlusIcon, null),
@@ -36444,24 +37520,24 @@
 
   // pages/new-tab/app/customizer/components/CustomizerSection.js
   init_preact_module();
-  var import_classnames40 = __toESM(require_classnames(), 1);
+  var import_classnames41 = __toESM(require_classnames(), 1);
   init_NewBadge2();
   function CustomizerSection({ title, showNewBadge, children }) {
     return /* @__PURE__ */ k("div", { className: CustomizerDrawerInner_default.section }, title === null && children, title !== null && /* @__PURE__ */ k(S, null, /* @__PURE__ */ k("h3", { className: CustomizerDrawerInner_default.sectionTitle }, /* @__PURE__ */ k("span", null, title), showNewBadge && /* @__PURE__ */ k(NewBadge, null)), /* @__PURE__ */ k("div", { className: CustomizerDrawerInner_default.sectionBody }, children)));
   }
   function BorderedSection({ children }) {
-    return /* @__PURE__ */ k("div", { class: (0, import_classnames40.default)(CustomizerDrawerInner_default.section, CustomizerDrawerInner_default.borderedSection) }, children);
+    return /* @__PURE__ */ k("div", { class: (0, import_classnames41.default)(CustomizerDrawerInner_default.section, CustomizerDrawerInner_default.borderedSection) }, children);
   }
 
   // pages/new-tab/app/customizer/components/SettingsLink.js
-  var import_classnames41 = __toESM(require_classnames(), 1);
+  var import_classnames42 = __toESM(require_classnames(), 1);
   init_preact_module();
   function SettingsLink({ title, icon, onClick }) {
     return /* @__PURE__ */ k(
       "a",
       {
         href: "duck://settings",
-        class: (0, import_classnames41.default)(CustomizerDrawerInner_default.settingsLink),
+        class: (0, import_classnames42.default)(CustomizerDrawerInner_default.settingsLink),
         onClick: (event) => {
           event.preventDefault();
           onClick();
@@ -36506,7 +37582,7 @@
     const { customizer } = useInitialSetupData();
     const { showThemeNewBadge } = x2(CustomizerContext);
     const hasThemeVariants = customizer?.themeVariant !== void 0;
-    return /* @__PURE__ */ k("div", { class: CustomizerDrawerInner_default.root }, /* @__PURE__ */ k("header", { class: (0, import_classnames42.default)(CustomizerDrawerInner_default.header, CustomizerDrawerInner_default.internal) }, /* @__PURE__ */ k("h2", null, t4("customizer_drawer_title")), /* @__PURE__ */ k(
+    return /* @__PURE__ */ k("div", { class: CustomizerDrawerInner_default.root }, /* @__PURE__ */ k("header", { class: (0, import_classnames43.default)(CustomizerDrawerInner_default.header, CustomizerDrawerInner_default.internal) }, /* @__PURE__ */ k("h2", null, t4("customizer_drawer_title")), /* @__PURE__ */ k(
       DismissButton,
       {
         onClick: close,
@@ -36576,7 +37652,7 @@
       }
       renderedScreen.value = visibleScreen.value;
     }
-    return /* @__PURE__ */ k("div", { class: CustomizerDrawerInner_default.colwrap }, /* @__PURE__ */ k("div", { class: CustomizerDrawerInner_default.cols, "data-sub": visibleScreen, onTransitionEnd: transitionEnded }, /* @__PURE__ */ k("div", { class: (0, import_classnames42.default)(CustomizerDrawerInner_default.col, CustomizerDrawerInner_default.col1) }, col1.value && left2({ push })), /* @__PURE__ */ k("div", { class: (0, import_classnames42.default)(CustomizerDrawerInner_default.col, CustomizerDrawerInner_default.col2) }, renderedScreen.value !== "home" && right2({ id: renderedScreen.value, pop }))));
+    return /* @__PURE__ */ k("div", { class: CustomizerDrawerInner_default.colwrap }, /* @__PURE__ */ k("div", { class: CustomizerDrawerInner_default.cols, "data-sub": visibleScreen, onTransitionEnd: transitionEnded }, /* @__PURE__ */ k("div", { class: (0, import_classnames43.default)(CustomizerDrawerInner_default.col, CustomizerDrawerInner_default.col1) }, col1.value && left2({ push })), /* @__PURE__ */ k("div", { class: (0, import_classnames43.default)(CustomizerDrawerInner_default.col, CustomizerDrawerInner_default.col2) }, renderedScreen.value !== "home" && right2({ id: renderedScreen.value, pop }))));
   }
 
   // pages/new-tab/app/customizer/components/CustomizerDrawer.js
@@ -36633,7 +37709,7 @@
         "data-drawer-visibility": visibility,
         "data-has-theme-variants": hasThemeVariants
       },
-      /* @__PURE__ */ k("main", { class: (0, import_classnames43.default)(App_default.main, App_default.mainLayout, App_default.mainScroller), "data-main-scroller": true, "data-theme": main }, /* @__PURE__ */ k("div", { class: App_default.content }, /* @__PURE__ */ k("div", { className: App_default.tube, "data-content-tube": true, "data-platform": platformName }, /* @__PURE__ */ k(WidgetList, null)))),
+      /* @__PURE__ */ k("main", { class: (0, import_classnames44.default)(App_default.main, App_default.mainLayout, App_default.mainScroller), "data-main-scroller": true, "data-theme": main }, /* @__PURE__ */ k("div", { class: App_default.content }, /* @__PURE__ */ k("div", { className: App_default.tube, "data-content-tube": true, "data-platform": platformName }, /* @__PURE__ */ k(WidgetList, null)))),
       /* @__PURE__ */ k("div", { class: App_default.themeContext, "data-theme": main }, /* @__PURE__ */ k(CustomizerMenuPositionedFixed, null, /* @__PURE__ */ k(
         CustomizerButton,
         {
@@ -36648,7 +37724,7 @@
       /* @__PURE__ */ k(
         "aside",
         {
-          class: (0, import_classnames43.default)(App_default.aside, App_default.asideLayout, App_default.asideScroller),
+          class: (0, import_classnames44.default)(App_default.aside, App_default.asideLayout, App_default.asideScroller),
           tabindex: tabIndex,
           "aria-hidden": hidden,
           "data-theme": browser,
@@ -36907,6 +37983,22 @@
       title: "Start voice chat",
       description: "Accessible label for the voice-chat button shown in place of the AI chat submit button when the input is empty and the feature is enabled."
     },
+    omnibar_termsDisclaimerAnonymized: {
+      title: "DuckDuckGo anonymizes your chats.",
+      description: "First line of the Duck.ai terms disclaimer shown under the Duck.ai chat input until the user accepts Duck.ai's terms. Followed on the next line by omnibar_termsDisclaimerAgree."
+    },
+    omnibar_termsDisclaimerAgree: {
+      title: "By clicking '{actionLabel}' you agree to our <a>Privacy Policy and Terms of Service</a>.",
+      note: "Second line of the Duck.ai terms disclaimer, shown below omnibar_termsDisclaimerAnonymized. {actionLabel} is replaced with the label of the send button: omnibar_termsAskButtonLabel ('Ask') for chat, or omnibar_termsCreateButtonLabel ('Create') for image creation. Keep {actionLabel} unchanged, inside your language's quotation marks. The <a> tag is a link to the Privacy Policy and Terms of Service page, please preserve it."
+    },
+    omnibar_termsAskButtonLabel: {
+      title: "Ask",
+      description: "Label of the Duck.ai chat submit button until the user accepts Duck.ai's terms. Clicking it accepts the terms and sends the prompt."
+    },
+    omnibar_termsCreateButtonLabel: {
+      title: "Create",
+      description: "Label of the Duck.ai chat submit button in image creation mode until the user accepts Duck.ai's terms. Clicking it accepts the terms and sends the prompt."
+    },
     omnibar_logoAlt: {
       title: "DuckDuckGo",
       description: "Alt text for the DuckDuckGo logo."
@@ -37047,6 +38139,10 @@
       title: "Apply response customization",
       description: "Accessible label for the on/off toggle that applies or unapplies the saved response customization, shown on the Customize Responses tools menu row."
     },
+    omnibar_attachmentPrivacyDisclaimer: {
+      title: "Files are automatically scanned for illegal content. Flagged chats have limited data retention. <button>Learn more</button>",
+      description: "Privacy disclaimer shown under the Duck.ai omnibar while a file or image is attached. The button opens the Duck.ai privacy help page."
+    },
     omnibar_usageLimitsCtaMenuLabel: {
       title: "Show more models",
       description: "Accessible label for the usage-limits CTA chevron that opens the alternatives menu."
@@ -37107,6 +38203,30 @@
       title: "Add Tabs",
       description: "Menu item in the attach dropdown that opens the Add Tabs dialog so the user can attach extracted page content from open tabs."
     },
+    omnibar_addScreenshotLabel: {
+      title: "Add Screenshot",
+      description: "Menu item in the attach dropdown that opens a submenu of screenshot capture modes."
+    },
+    omnibar_screenshotDragToSelectLabel: {
+      title: "Drag to Select",
+      description: "Screenshot submenu item: the user drags to select a region of the screen to capture."
+    },
+    omnibar_screenshotSelectWindowOrDisplayLabel: {
+      title: "Select Window or Display",
+      description: "Screenshot submenu item: the user picks a window or a whole display to capture."
+    },
+    omnibar_screenshotFileName: {
+      title: "Screenshot",
+      description: "File name given to a screenshot attached to the AI chat input. Repeats are numbered, e.g. 'Screenshot 2'."
+    },
+    omnibar_pastedImageFileName: {
+      title: "Pasted image",
+      description: "File name given to an image pasted from the clipboard into the AI chat input. Repeats are numbered, e.g. 'Pasted image 2'."
+    },
+    omnibar_screenshotCaptureError: {
+      title: "Couldn't capture screenshot",
+      description: "Inline error shown under the AI chat input when the browser failed to capture a screenshot."
+    },
     omnibar_attachTabsModalTitle: {
       title: "Add Tabs",
       description: "Title and accessible name of the Add Tabs dialog opened from the attach dropdown menu."
@@ -37142,6 +38262,10 @@
     omnibar_attachTabsNoPageContent: {
       title: "No page content available",
       description: "Empty-state message shown in the attach dropdown and the Add Tabs dialog when there are no open tabs with attachable page content."
+    },
+    omnibar_attachmentTypeWebpage: {
+      title: "Webpage",
+      description: "Attachment kind label shown next to the favicon in an attached-tab chip in the AI chat input."
     },
     omnibar_removeAttachedTabLabel: {
       title: "Remove {title}",
@@ -39128,6 +40252,8 @@
   var Reflect2 = globalThis.Reflect;
   var customElementsGet = globalThis.customElements?.get.bind(globalThis.customElements);
   var customElementsDefine = globalThis.customElements?.define.bind(globalThis.customElements);
+  var numberIsFinite = Number.isFinite;
+  var numberIsNaN = Number.isNaN;
   var objectDefineProperty = Object.defineProperty;
   var URL2 = globalThis.URL;
   var Proxy2 = globalThis.Proxy;
@@ -39139,6 +40265,7 @@
   var addEventListener = globalThis.addEventListener?.bind(globalThis);
   var removeEventListener = globalThis.removeEventListener?.bind(globalThis);
   var CustomEvent2 = globalThis.CustomEvent;
+  var NodePrototype = globalThis.Node?.prototype;
   var Promise2 = globalThis.Promise;
   var String2 = globalThis.String;
   var Map2 = globalThis.Map;
@@ -39154,11 +40281,12 @@
   var Uint16Array = globalThis.Uint16Array;
   var Uint32Array = globalThis.Uint32Array;
   var JSONparse = JSON.parse;
-  var atob = globalThis.atob?.bind(globalThis);
+  var atob2 = globalThis.atob?.bind(globalThis);
   var DOMException2 = globalThis.DOMException;
   var charCodeAt = globalThis.String.prototype.charCodeAt;
   var ReflectDeleteProperty = Reflect2.deleteProperty.bind(Reflect2);
   var ReflectApply = Reflect2.apply.bind(Reflect2);
+  var ReflectGet = Reflect2.get.bind(Reflect2);
   var getRandomValues = globalThis.crypto?.getRandomValues?.bind(globalThis.crypto);
   var generateKey = globalThis.crypto?.subtle?.generateKey?.bind(globalThis.crypto?.subtle);
   var exportKey = globalThis.crypto?.subtle?.exportKey?.bind(globalThis.crypto?.subtle);
@@ -39521,6 +40649,144 @@
         value: responseHandler
       });
     }
+  };
+
+  // ../injected/src/features.js
+  var baseFeatures = (
+    /** @type {FeatureName[]} */
+    [
+      "fingerprintingAudio",
+      "fingerprintingBattery",
+      "fingerprintingCanvas",
+      "googleRejected",
+      "gpc",
+      "fingerprintingHardware",
+      "referrer",
+      "fingerprintingScreenSize",
+      "fingerprintingTemporaryStorage",
+      "navigatorInterface",
+      "elementHiding",
+      "exceptionHandler",
+      "apiManipulation"
+    ]
+  );
+  var otherFeatures = (
+    /** @type {FeatureName[]} */
+    [
+      "clickToLoad",
+      "contextMenu",
+      "cookie",
+      "messageBridge",
+      "duckPlayer",
+      "duckPlayerNative",
+      "duckAiDataClearing",
+      "duckAiChatHistory",
+      "harmfulApis",
+      "webCompat",
+      "webEvents",
+      "webInterferenceDetection",
+      "detectorPerf",
+      "windowsPermissionUsage",
+      "uaChBrands",
+      "brokerProtection",
+      "performanceMetrics",
+      "breakageReporting",
+      "autofillImport",
+      "favicon",
+      "webTelemetry",
+      "pageContext",
+      "print",
+      "pageObserver",
+      "hover",
+      "browserUiLock",
+      "trackerProtection",
+      "tabSuspension",
+      "autofillPasskeys",
+      "textSelection",
+      "chromeWebstorePatching"
+    ]
+  );
+  var platformSupport = {
+    apple: ["webCompat", "duckPlayerNative", ...baseFeatures, "pageContext", "print", "trackerProtection", "textSelection"],
+    "apple-isolated": [
+      "webDetection",
+      "contextMenu",
+      "duckPlayer",
+      "duckPlayerNative",
+      "brokerProtection",
+      "breakageReporting",
+      "performanceMetrics",
+      "clickToLoad",
+      "messageBridge",
+      "favicon",
+      "webEvents",
+      "webInterferenceDetection",
+      "detectorPerf",
+      "webTelemetry",
+      "pageObserver",
+      "hover",
+      "tabSuspension",
+      "chromeWebstorePatching",
+      "browserUiLock"
+    ],
+    "apple-ai-clear": ["duckAiDataClearing"],
+    "apple-ai-history": ["duckAiChatHistory"],
+    android: [
+      "webDetection",
+      ...baseFeatures,
+      "webCompat",
+      "webEvents",
+      "webInterferenceDetection",
+      "detectorPerf",
+      "breakageReporting",
+      "duckPlayer",
+      "messageBridge",
+      "pageContext",
+      "browserUiLock"
+    ],
+    "android-broker-protection": ["brokerProtection"],
+    "android-ai-clear": ["duckAiDataClearing"],
+    "android-ai-history": ["duckAiChatHistory"],
+    "android-autofill-import": ["autofillImport"],
+    "android-adsjs": [
+      "webDetection",
+      "apiManipulation",
+      "webCompat",
+      "fingerprintingHardware",
+      "fingerprintingScreenSize",
+      "fingerprintingTemporaryStorage",
+      "fingerprintingAudio",
+      "fingerprintingBattery",
+      "gpc",
+      "webEvents",
+      "breakageReporting"
+    ],
+    windows: [
+      "cookie",
+      "webDetection",
+      ...baseFeatures,
+      "webEvents",
+      "webInterferenceDetection",
+      "detectorPerf",
+      "webTelemetry",
+      "windowsPermissionUsage",
+      "uaChBrands",
+      "duckPlayer",
+      "brokerProtection",
+      "breakageReporting",
+      "messageBridge",
+      "webCompat",
+      "pageContext",
+      "duckAiDataClearing",
+      "performanceMetrics",
+      "duckAiChatHistory",
+      "autofillPasskeys",
+      "chromeWebstorePatching"
+    ],
+    firefox: ["cookie", "webDetection", ...baseFeatures, "clickToLoad", "webEvents", "webInterferenceDetection", "breakageReporting"],
+    chrome: ["cookie", "webDetection", ...baseFeatures, "clickToLoad", "webEvents", "webInterferenceDetection", "breakageReporting"],
+    "chrome-mv3": ["cookie", "webDetection", ...baseFeatures, "clickToLoad", "webEvents", "webInterferenceDetection", "breakageReporting"],
+    integration: ["webDetection", ...baseFeatures, ...otherFeatures]
   };
 
   // ../injected/src/utils.js
