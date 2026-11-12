@@ -2,6 +2,7 @@ import browser from 'webextension-polyfill';
 import { NewTabTrackerStats } from '../newtab-tracker-stats';
 import { emitter, TrackerBlockedEvent } from '../before-request';
 import { getUserLocale } from '../i18n';
+import { getBaseDomain } from '../utils';
 import {
     NTP_PORT_NAME,
     NTP_RECONNECT_MESSAGE,
@@ -46,6 +47,17 @@ const DEFAULT_FAVORITES_CONFIG = { expansion: 'expanded' };
 const DEFAULT_PROTECTIONS_CONFIG = { expansion: 'expanded', feed: 'privacy-stats' };
 
 const SEARCH_URL = 'https://duckduckgo.com/';
+const FAVICON_SIZE = 64;
+
+/**
+ * `chrome.ddg`; throws where the browser does not provide it.
+ */
+function ddgApi() {
+    if (!chrome.ddg) {
+        throw new Error('chrome.ddg is unavailable');
+    }
+    return chrome.ddg;
+}
 
 /**
  * Messaging endpoint for the New Tab Page, over the runtime port opened by
@@ -55,8 +67,8 @@ const SEARCH_URL = 'https://duckduckgo.com/';
  *  - subscription events are pushed to all connected pages as
  *    `{context, featureName, subscriptionName, params}`.
  *
- * Privacy stats come from NewTabTrackerStats; favorites, suggestions and the
- * activity feed are empty.
+ * Privacy stats come from NewTabTrackerStats and favorites from the browser's
+ * bookmarks over chrome.ddg; suggestions and the activity feed are empty.
  */
 export default class NTPMessaging {
     /** @type {Set<Port>} */
@@ -84,7 +96,16 @@ export default class NTPMessaging {
             port.onDisconnect.addListener(() => {
                 this.ports.delete(port);
             });
+            // Favorites may have changed while a reconnecting page had no port.
+            this.pushFavoritesUpdate([port]);
         });
+
+        // Top level, so the browser can wake the worker to deliver it.
+        if (chrome.ddg?.onFavoritesChanged) {
+            chrome.ddg.onFavoritesChanged.addListener(() => this.pushFavoritesUpdate());
+        } else {
+            console.error('chrome.ddg.onFavoritesChanged is unavailable: open New Tab Pages will not see favorites change');
+        }
 
         // At most one push a second while trackers are being blocked. Scheduled even with no
         // pages connected, as open pages reconnect after the event that started the worker.
@@ -118,7 +139,11 @@ export default class NTPMessaging {
                 port.postMessage({ context, featureName, id, error: { message } });
             }
         } else {
-            await this.handleNotification(method, params, port);
+            try {
+                await this.handleNotification(method, params, port);
+            } catch (e) {
+                console.error(`NTP ${method} failed:`, e);
+            }
         }
     }
 
@@ -151,7 +176,7 @@ export default class NTPMessaging {
                 await this.settings.ready();
                 return this.settings.getSetting(FAVORITES_CONFIG_SETTING) || DEFAULT_FAVORITES_CONFIG;
             case 'favorites_getData':
-                return { favorites: [] };
+                return this.getFavoritesData();
 
             // Protections
             case 'protections_getConfig':
@@ -205,8 +230,28 @@ export default class NTPMessaging {
                 this.settings.updateSetting(FAVORITES_CONFIG_SETTING, params);
                 break;
             case 'favorites_open':
-                this.openUrl(params?.url, params?.target, port);
+                this.openUrl(params?.url, params?.target, port, false);
                 break;
+            case 'favorites_move':
+                // The page has already moved it; onFavoritesChanged echoes the order back.
+                if (typeof params?.id === 'string' && Number.isInteger(params?.targetIndex)) {
+                    try {
+                        await ddgApi().moveFavorite(params.id, params.targetIndex);
+                    } catch (e) {
+                        // Undo the page's move.
+                        await this.pushFavoritesUpdate();
+                        throw e;
+                    }
+                }
+                break;
+            case 'favorites_add': {
+                // The browser's bookmark dialog adds it; onFavoritesChanged brings it back.
+                const tabId = port?.sender?.tab?.id;
+                if (tabId === undefined || !(await ddgApi().showAddFavoriteBubble(tabId))) {
+                    throw new Error('the add favorite dialog did not open');
+                }
+                break;
+            }
 
             // Protections
             case 'protections_setConfig':
@@ -214,7 +259,7 @@ export default class NTPMessaging {
                 this.settings.updateSetting(PROTECTIONS_CONFIG_SETTING, params);
                 break;
             case 'activity_open':
-                this.openUrl(params?.url, params?.target, port);
+                this.openUrl(params?.url, params?.target, port, false);
                 break;
 
             case 'reportInitException':
@@ -222,7 +267,7 @@ export default class NTPMessaging {
                 console.error(`NTP ${method}:`, params?.message);
                 break;
             default:
-                // favorites_move/add/openContextMenu, activity_addFavorite/
+                // favorites_openContextMenu, activity_addFavorite/
                 // removeFavorite/removeItem, telemetryEvent etc.
                 console.log(`NTP notification (ignored): ${method}`, params);
         }
@@ -230,19 +275,22 @@ export default class NTPMessaging {
 
     /**
      * @param {unknown} url
-     * @param {string} [target] - 'same-tab' targets the NTP's own tab; otherwise a
-     *   new tab opens directly to the right of the NTP
+     * @param {string} [target] - 'same-tab' targets the NTP's own tab and 'new-window' a
+     *   new window; otherwise a new tab opens directly to the right of the NTP
      * @param {Port} [port] - the connection the request arrived on
+     * @param {boolean} [active] - whether that new tab is selected
      */
-    openUrl(url, target, port) {
+    openUrl(url, target, port, active = true) {
         if (typeof url !== 'string') return;
         const tab = port?.sender?.tab;
-        if (!tab?.id) {
-            browser.tabs.create({ url });
+        if (target === 'new-window') {
+            browser.windows.create({ url });
+        } else if (!tab?.id) {
+            browser.tabs.create({ url, active });
         } else if (target === 'same-tab') {
             browser.tabs.update(tab.id, { url });
         } else {
-            browser.tabs.create({ url, windowId: tab.windowId, index: tab.index + 1, openerTabId: tab.id });
+            browser.tabs.create({ url, active, windowId: tab.windowId, index: tab.index + 1, openerTabId: tab.id });
         }
     }
 
@@ -269,6 +317,38 @@ export default class NTPMessaging {
         return { trackerCompanies };
     }
 
+    /**
+     * Favorites in the page's format. Favicons come from Chromium's favicon
+     * cache (the `favicon` permission); the page appends `?preferredSize=N` to
+     * `src` verbatim, so the trailing '&' keeps that from corrupting `size`.
+     */
+    async getFavoritesData() {
+        const favorites = await ddgApi().getFavorites();
+        return {
+            favorites: favorites.map(({ id, title, url }) => ({
+                id,
+                title,
+                url,
+                etldPlusOne: getBaseDomain(url),
+                favicon: {
+                    src: `/_favicon/?pageUrl=${encodeURIComponent(url)}&size=${FAVICON_SIZE}&`,
+                    maxAvailableSize: FAVICON_SIZE,
+                },
+            })),
+        };
+    }
+
+    /**
+     * @param {Iterable<Port>} [ports]
+     */
+    async pushFavoritesUpdate(ports = this.ports) {
+        try {
+            this.pushSubscriptionEvent('favorites_onDataUpdate', await this.getFavoritesData(), ports);
+        } catch (e) {
+            console.error('NTP favorites_onDataUpdate failed:', e);
+        }
+    }
+
     pushDataUpdate() {
         this.pushSubscriptionEvent('protections_onDataUpdate', this.getProtectionsData());
         this.pushSubscriptionEvent('stats_onDataUpdate', this.getPrivacyStatsData());
@@ -277,9 +357,10 @@ export default class NTPMessaging {
     /**
      * @param {string} subscriptionName
      * @param {any} params
+     * @param {Iterable<Port>} [ports]
      */
-    pushSubscriptionEvent(subscriptionName, params) {
-        for (const port of this.ports) {
+    pushSubscriptionEvent(subscriptionName, params, ports = this.ports) {
+        for (const port of ports) {
             port.postMessage({
                 context: NTP_MESSAGING_CONTEXT,
                 featureName: NTP_FEATURE_NAME,

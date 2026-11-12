@@ -24,6 +24,33 @@ declare namespace chrome {
               onBurnStarted?: {
                   addListener(callback: (details: { trigger: 'in-session' | 'on-exit' | 'on-startup' }) => void): void;
               };
+
+              /**
+               * extension -> browser; the favorites the browser shows, in
+               * order. `id` is the bookmark's id. Empty until bookmarks load.
+               */
+              getFavorites(): Promise<{ id: string; title: string; url: string }[]>;
+
+              /**
+               * extension -> browser; moves favorite `id` to `index`, counted
+               * with it taken out. Rejects if `id` is not a favorite.
+               */
+              moveFavorite(id: string, index: number): Promise<void>;
+
+              /**
+               * extension -> browser; opens the bookmark dialog for adding a
+               * favorite over tab `tabId`. Resolves with whether it opened,
+               * which it does only over its window's active tab.
+               */
+              showAddFavoriteBubble(tabId: number): Promise<boolean>;
+
+              /**
+               * browser -> extension; the favorites may have changed. Not
+               * held for a listener that registers late.
+               */
+              onFavoritesChanged: {
+                  addListener(callback: () => void): void;
+              };
           }
         | undefined;
 }
