@@ -303,6 +303,13 @@
     EVAL_ADULTFRIENDFINDER_TEST: () => !!localStorage.getItem("cookieConsent"),
     EVAL_AYLO_COOKIE_MANAGER_READY: () => !!(window.wl_cookie_consent_manager || window._Cookie_Consent_Manager_brand),
     EVAL_BAHN_TEST: () => utag.gdpr.getSelectedCategories().length === 1,
+    // the close handler listens for mouseup, which element.click() does not dispatch
+    EVAL_BING_NOTICE_CLOSE: () => {
+      const close = document.querySelector("#bnp_ttc_close");
+      close.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true, view: window }));
+      close.click();
+      return true;
+    },
     EVAL_BIGCOMMERCE_CONSENT_MANAGER_DETECT: () => !!(window.consentManager && window.consentManager.version),
     EVAL_BORLABS_0: () => !JSON.parse(
       decodeURIComponent(
@@ -432,6 +439,8 @@
     EVAL_TEALIUM_2: () => utag.gdpr.setConsentValue(true) || true,
     EVAL_TEALIUM_3: () => utag.gdpr.getConsentState() !== 1,
     EVAL_TEALIUM_DONOTSELL_CHECK: () => utag.gdpr.dns?.getDnsState() !== 1,
+    // 0 means no stored decision; otherwise the user reopened the prompt themselves
+    EVAL_TEALIUM_NO_DECISION: () => utag.gdpr.getConsentState() === 0,
     EVAL_TESTCMP_STEP: () => !!document.querySelector("#reject-all"),
     EVAL_TESTCMP_0: () => window.results.results[0] === "button_clicked",
     EVAL_TESTCMP_COSMETIC_0: () => window.results.results[0] === "banner_hidden",
@@ -452,18 +461,27 @@
     const snippetStr = snippetFunc.toString();
     return `(${snippetStr})()`;
   }
+  var patternOf = (p) => p instanceof RegExp ? p : p.pattern;
+  var BY_CONTINUING_PRIVACY = /(?:by continuing.{0,100}privacy)|(?:privacy.{0,100}by continuing)/gi;
+  var ACCEPT_ALL = /accept all/gi;
+  var USE_OF_COOKIES = /use of cookies/gi;
+  var UTILISATION_DES_COOKIES = /utilisation.{0,100}des.{0,100}cookies/gi;
+  var ACCEPTEZ_UTILISATION = /acceptez.{0,100}l.{0,100}utilisation/gi;
+  var VERWENDUNG_VON_COOKIES = /verwendung.{0,100}von.{0,100}cookies/gi;
+  var DE_COOKIE_VERB = /\b(?:nutzen|nutzt|verwenden|verwendet|setzen|setzt|benutzen|benutzt|speichert|platzieren)\b(?: \S+){0,4} cookies\b/gi;
+  var GEBRUIK_VAN_COOKIES = /gebruik.{0,100}van.{0,100}cookies/gi;
   var DETECT_PATTERNS = [
     /accept cookies/gi,
-    /accept all/gi,
+    ACCEPT_ALL,
     /reject all/gi,
     /only necessary cookies/gi,
     // "only necessary" is probably too broad
     /(?:by continuing.{0,100}cookie)|(?:cookie.{0,100}by continuing)/gi,
-    /(?:by continuing.{0,100}privacy)|(?:privacy.{0,100}by continuing)/gi,
-    // a single qualifier is common: "optional", "essential", "necessary", "analytics", ...
-    /we (?:use|serve)(?: \w+)? cookies/gi,
+    BY_CONTINUING_PRIVACY,
+    // up to two qualifiers are common: "optional", "essential", "analytics", "google analytics", "third party", ...
+    /we (?:use|serve)(?: \w+){0,2} cookies/gi,
     /we are using cookies/gi,
-    /use of cookies/gi,
+    USE_OF_COOKIES,
     /website uses cookies to enhance your browsing experience/gi,
     /(?:this|our) (?:web)?site.{0,100}cookies/gi,
     /cookies (?:and|or) .{0,100} technologies/gi,
@@ -474,6 +492,33 @@
     /we.{0,100}store.{0,100}information.{0,100}such as.{0,100}cookies/gi,
     /store and\/or access information.{0,100}on a device/gi,
     /personalised ads and content, ad and content measurement/gi,
+    // TCF wording: "store and/or access information", "and our partners ask for your consent", "we and our N partners"
+    /\b(?:store|stores|storing) and\/or access(?:ing)? information\b/gi,
+    /\band our partners ask for your consent\b/gi,
+    /\bwe and (?:our|up to) (?:\d+ )?(?:partners|vendors)\b/gi,
+    // a partner count, in each language: "our 186 partners", "unseren 107 Partnern", "nuestros 1064 socios"
+    /\b(?:our|unseren|onze|nos|nuestros|i nostri) \d{2,4} (?:partners|partnern|partner|partenaires|socios|vendors|fornitori)\b/gi,
+    /\b\d{2,4} iab[- ]partner/gi,
+    // "technologies like cookies", in each language
+    /\btechnolog(?:ies|ien|ieën|ías|ie) (?:like|such as|wie|zoals|como(?: las)?|telles que(?: les)?|come(?: i)?) cookies?\b/gi,
+    /\buses (?:\S+ ){0,2}cookies\b/gi,
+    /\b(?:like|want) to (?:use|set) (?:\S+ ){0,2}cookies\b/gi,
+    /\b(?:optional|additional|non-essential) cookies\b/gi,
+    /\bstoring of cookies\b|\bplaced cookies\b/gi,
+    /\b(?:store|stores) and access (?:data|information) on your device\b|\baccess and store (?:data|information) on your device\b/gi,
+    /\bwe use (?:\S+ ){1,4}cookies\b/gi,
+    // US privacy notices: opt-out sentences, not the footer link labels
+    /\byou (?:can|may) opt[- ]out of (?:the |this )?(?:sale|sharing|use|selling)\b/gi,
+    /\b(?:if you wish to|to) opt[- ]out of the sale\b/gi,
+    /\bthis website or its third[- ]party tools (?:process|use)\b/gi,
+    /["“]?(?:share|sell)["”]? or ["“]?(?:sell|share)["”]? (?:your )?(?:personal )?information\b/gi,
+    /\bresidents have (?:certain )?rights with regard to the sale\b/gi,
+    /\bwe use technologies (?:on this website )?(?:that may )?(?:to )?collect\b/gi,
+    // pay-or-consent walls
+    /\bcontinue reading with advertising\b|\b(?:with|mit) (?:advertising|werbung) (?:and|und) tracking\b/gi,
+    /\bconsent and continue\b/gi,
+    // preference centres are often in the page but hidden, so popup text only
+    { pattern: /\bstore or retrieve information on your browser\b|\bstockées dans votre navigateur ou récupérées\b/gi, input: "popup" },
     // it might be tempting to add the patterns below, but they cause too many false positives. Don't do it :)
     // /cookies? settings/i,
     // /cookies? preferences/i,
@@ -489,26 +534,32 @@
     /consentement.{0,100}à.{0,100}tout.{0,100}moment/gi,
     /votre.{0,100}consentement/gi,
     /accepter.{0,100}tout/gi,
-    /utilisation.{0,100}des.{0,100}cookies/gi,
+    UTILISATION_DES_COOKIES,
     /cookies.{0,100}ou.{0,100}technologies/gi,
-    /acceptez.{0,100}l.{0,100}utilisation/gi,
+    ACCEPTEZ_UTILISATION,
     /continuer sans accepter/gi,
     /tout refuser/gi,
     /(?:refuser|rejeter) tous les cookies/gi,
-    /je refuse/gi,
+    // not "je refuse d'…" in a headline
+    /je refuse(?! d['’e])/gi,
     /refuser et continuer/gi,
     /refuser les cookies/gi,
     /seulement nécessaires/gi,
     /je désactive les finalités non essentielles/gi,
     /cookies essentiels uniquement/gi,
     /nécessaires uniquement/gi,
+    /\b(?:stocker|stockons) et\/ou (?:accéder|accédons)\b/gi,
+    /\bnos partenaires demandent votre consentement\b/gi,
+    /\bconsentez à l.utilisation (?:de |des )?cookies\b|\bdépôt (?:de|des) cookies\b/gi,
+    /\bles cookies nous permettent\b|\bnos partenaires et nous(?:-mêmes)?\b/gi,
+    /\baccepter (?:&|et) fermer\b/gi,
     // DE
     /wir.{0,100}verwenden.{0,100}cookies/gi,
     /wir.{0,100}und.{0,100}unsere.{0,100}partner/gi,
-    /zugriff.{0,100}auf.{0,100}informationen.{0,100}auf/gi,
+    /zugriff auf informationen auf/gi,
     /inhalte.{0,100}messung.{0,100}von.{0,100}werbeleistung.{0,100}und/gi,
     /cookies.{0,100}und.{0,100}andere/gi,
-    /verwendung.{0,100}von.{0,100}cookies/gi,
+    VERWENDUNG_VON_COOKIES,
     /wir.{0,100}nutzen.{0,100}cookies/gi,
     /verwendet.{0,100}cookies/gi,
     /sie.{0,100}können.{0,100}ihre.{0,100}auswahl/gi,
@@ -521,8 +572,20 @@
     /nur funktionale cookies akzeptieren/gi,
     /optionale ablehnen/gi,
     /zustimmung verweigern/gi,
+    /\bspeichern und\/oder (?:zugreifen|abrufen)\b/gi,
+    /\bunsere partner bitten um ihre zustimmung\b/gi,
+    DE_COOKIE_VERB,
+    /\b(?:werden|wird) (?:\S+ ){0,3}cookies (?:verwendet|eingesetzt|gesetzt|genutzt)\b/gi,
+    /\bcookies? zum einsatz\b|\beinsatz von cookies\b/gi,
+    /\beinverstanden\b.{0,60}\bcookies\b|\bcookies\b.{0,80}\beinverstanden\b/gi,
+    /\b(?:alle|alles) (?:cookies |optionalen \S+ )?(?:akzeptieren|zulassen|erlauben|zustimmen)\b/gi,
+    /\bzustimmen und weiter\b|\bweiter,? ohne zu (?:akzeptieren|zustimmen)\b/gi,
+    /\b(?:einwilligung|zustimmung) (?:zu|zur|in die) (?:\S+ )?cookies\b|\bcookie-(?:zustimmung|einwilligung)\b/gi,
+    /\btracking-technologien\b/gi,
+    /\bakzeptier\w* (?:du |sie )?(?:die )?verwendung (?:\S+ )?cookies\b/gi,
+    /\bmit werbetracking weiterlesen\b|\bweiter mit werbung\b|\bcon tracking e annunci\b/gi,
     // NL
-    /gebruik.{0,100}van.{0,100}cookies/gi,
+    GEBRUIK_VAN_COOKIES,
     /(?:we|wij).{0,100}gebruiken.{0,100}cookies.{0,100}om/gi,
     /cookies.{0,100}en.{0,100}vergelijkbare/gi,
     /(?:alles|cookies).{0,100}(?:afwijzen|weigeren|verwerpen)/gi,
@@ -532,6 +595,13 @@
     /doorgaan zonder (?:te accepteren|akkoord te gaan)/gi,
     /alleen.{0,100}(?:optionele|functionele|functioneel|noodzakelijke|essentiële).{0,100}cookies/gi,
     /wijs alles af/gi,
+    /\b(?:op te slaan en\/of te (?:raadplegen|openen|lezen)|opslaan en\/of (?:openen|raadplegen|lezen)|slaan informatie\b.{0,60}\bop en\/of)\b/gi,
+    /\bonze partners vragen om (?:jouw|uw|je) toestemming\b/gi,
+    /\bwij en onze (?:\d+ )?partners\b/gi,
+    /\b(?:gebruiken|gebruikt|plaatsen|plaatst)\b(?: \S+){0,3} cookies\b/gi,
+    /\baccepteer (?:alles|alle cookies)\b/gi,
+    // Dutch words only: "tracking cookies" and "marketing cookies" are also English prose and footer links
+    /\b(?:analytische|functionele|essentiële|noodzakelijke) cookies\b/gi,
     // Spanish (ES)
     /(si|al) contin[úu]a[sr]?( navegando)?.{0,100} cookie/gi,
     /(usamos|utilizar?|utilizamos)( (tanto|las))?.{0,20}cookie/gi,
@@ -548,6 +618,15 @@
     /nosotros y nuestros( \d+)? (socios|proveedores).{0,180} cookies/gi,
     /recopilamos y almacenamos datos de usted y de su dispositivo/gi,
     /utilizamos tecnolog[ií]as como las cookies/gi,
+    /\b(?:almacenar|almacenamos) y\/o (?:acceder|accedemos)\b/gi,
+    /\bnuestros socios solicitan su consentimiento\b/gi,
+    /\b(?:tanto nosotros como|nosotros y) nuestros (?:\d+ )?socios\b/gi,
+    /\b(?:aceptar|rechazar) todas\b|\bcontinuar sin aceptar\b|\bsolo las necesarias\b/gi,
+    /\bacept\w* (?:\S+ ){0,3}uso de (?:las )?cookies\b/gi,
+    /\bcookies (?:técnicas|analíticas|propias|de terceros|opcionales|necesarias)\b/gi,
+    /\blas cookies nos (?:ayudan|permiten)\b/gi,
+    /\b(?:instalamos|empleamos)\b(?: \S+){0,4} cookies\b/gi,
+    /\bacept(?:a|ar|as)? (?:el uso de |las )?(?:\S+ )?cookies\b|\bnecesitamos usar cookies\b/gi,
     // Polish (PL)
     // examples:
     //  wykorzystuje pliki cookie (uses cookies)
@@ -576,10 +655,11 @@
     // Catalan (CA)
     /cookies pròpies i de tercers/gi,
     /utilitzem galetes/gi,
-    /\búnicament utilitza galetes pròpies amb finalitat tècnica\b/gi,
+    /únicament utilitza galetes pròpies amb finalitat tècnica\b/gi,
     /este lloc web utilitza només cookies tècniques necessàries per al seu funcionament/gi,
     /utilitza cookies tècniques,\s*de personalització i anàlisi/gi,
     /utilitzem cookies i altres tecnologies/gi,
+    /\b(?:utilitz\w*|fa servir|fem servir|usem)\b(?: \S+){0,3} (?:cookies|galetes)\b/gi,
     // Basque (EU)
     /cookie propio eta hirugarrenenak helburu teknikoarekin erabiltzen ditu/gi,
     /cookie propioak eta hirugarrenen cookieak erabiltzen ditugu/gi,
@@ -609,7 +689,18 @@
     /(?:usiamo|utilizziamo).{0,20}cookie/gi,
     /sito.{0,50}(?:usa|utilizza).{0,20}cookie/gi,
     /noi e i nostri.{0,20}partner.{0,100}cookie/gi,
-    /(?:archiviare|memorizzare) e\/o accedere a informazioni su un dispositivo/gi,
+    /\b(?:utilizziamo|usiamo|impieghiamo|installiamo)\b(?: \S+){0,3} cookies?\b/gi,
+    /\b(?:utilizza|utilizzano|usa|usano|impiega|installa|fa uso di)\b(?: \S+){0,3} cookies?\b/gi,
+    /\bcookies? (?:tecnici|di profilazione|di terze parti|analitici|statistici|di marketing)\b/gi,
+    /\b(?:acconsent|accett)\w*\b.{0,40}\b(?:uso|utilizzo|installazione)\b.{0,15}\bcookies?\b/gi,
+    /\b(?:continuando|proseguendo)(?: la| nella)? navigazione\b.{0,80}\b(?:accett|acconsent)\w*/gi,
+    /\b(?:accetta|accetto|accettare|rifiuta|rifiuto|rifiutare)(?: tutti| tutto)\b/gi,
+    /\b(?:continua|prosegui|chiudi) senza accettare\b/gi,
+    /\brifiuta e abbonati\b/gi,
+    /\bconsenso (?:all.(?:uso|utilizzo) (?:dei |di )?)?cookies?\b/gi,
+    /\b(?:insieme ai|con i) nostri (?:\d+ )?partner\b/gi,
+    /\bterze parti selezionate\b/gi,
+    /\b(?:archiviare|archiviamo|memorizzare|memorizziamo) e\/o (?:accedere|accediamo)\b/gi,
     // Swedish (SV)
     // e.g. "vi använder cookies", "vi använder spårningstekniker såsom cookies", "webbplatsen använder kakor"
     /(?:vi|webbplatsen|webbplats|sajten|sidan)\s+använder.{0,60}(?:cookies|kakor)/gi,
@@ -618,7 +709,10 @@
     /(?:cookie|クッキー).{0,10}を(?:使用|利用)/gi,
     // Danish (DA)
     // e.g. "vi bruger cookies", "hjemmesiden bruger cookies til at ..."
-    /bruger cookies/gi
+    /bruger cookies/gi,
+    // Norwegian (NO)
+    // e.g. "vi bruker informasjonskapsler", "kan vi bruke valgfrie informasjonskapsler", "nettstedet bruker cookies"
+    /\b(?:vi|nettstedet|nettsiden|siden)\s+bruker?\s.{0,60}?(?:informasjonskapsler|cookies)/gi
   ];
   var REJECT_PATTERNS_ENGLISH = [
     // e.g. "reject", "reject all", "reject all cookies", "deny all", "refuse cookies", "decline",
@@ -760,6 +854,14 @@
     // "nej tak" (no thanks)
     /^nej(,?\s+tak)?$/is
   ];
+  var REJECT_PATTERNS_NORWEGIAN = [
+    // avvis / avslå (reject verbs)
+    /(^|\s)(avvis|avslå)/is,
+    // (accept/allow/use) only necessary cookies
+    /^(godta\s+|tillat\s+|aksepter\s+|bruk\s+)?(kun|bare)\s+(strengt\s+)?nødvendige( (informasjonskapsler|cookies))?$/is,
+    // "nei" / "nei takk" (no thanks)
+    /^nei(,?\s+takk)?$/is
+  ];
   var REJECT_PATTERNS_CATALAN = [
     /(^|\s)rebutj/is,
     "no accepto",
@@ -815,6 +917,7 @@
     ...REJECT_PATTERNS_SPANISH,
     ...REJECT_PATTERNS_SWEDISH,
     ...REJECT_PATTERNS_DANISH,
+    ...REJECT_PATTERNS_NORWEGIAN,
     ...REJECT_PATTERNS_CATALAN,
     ...REJECT_PATTERNS_GALICIAN,
     ...REJECT_PATTERNS_BASQUE,
@@ -852,26 +955,12 @@
     // Russian (RU): paywall/subscription wording, e.g. "отказаться от подписки", "оплатить"
     /подписатьс|подписк|оплатит|оплачива/is
   ];
-  var DETECT_NEVER_MATCH_PATTERNS = [
-    // e.g. "age verification", "age confirmation", "age check", "age gate", "age restriction"
-    /age\s+(?:verification|confirmation|check|gate|restriction)/i,
-    // e.g. "over 18 years", "at least 21 years", "older than 21", "18+"
-    /(?:over|above|at\s*least|minimum|older\s+than)\s*(?:18|21)\s*(?:years|yo|y\.?o\.?|\+)?/i,
-    // e.g. "18 years of age", "18+ years old", "21 years or older"
-    /(?:18|21)\s*(?:\+|years?)\s*(?:of\s*age|or\s*older|or\s*above)/i,
-    // e.g. "I am 18+", "I am over 18", "I'm 21 or older"
-    /(?:i'?m|i\s*am)\s*(?:over|above|at\s*least)?\s*(?:18|21)(?:\+|\s*(?:or\s*older|years))?/i,
-    // e.g. "you must be 18", "users must be at least 21", "visitors must be over 18"
-    /(?:you|users?|visitors?)\s+must\s+be\s+(?:over|above|at\s*least)?\s*(?:18|21)/i,
-    // e.g. "adult oriented material", "adult content", "adult-only website"
-    /adult[\s-]+(?:oriented|only|content|material|websites?)/i
-  ];
   var SETTINGS_PATTERNS = [
     // Multilingual "open customization" patterns: a customization verb next to a
     // cookie/preference/settings/options/details/purposes noun (both word orders).
     // The negative lookahead avoids policy links and save/confirm/accept phrases (those are accept/acknowledge/other).
-    /^(?!.*\b(policy|policies|notice|statement|impressum|\w*richtlinie\w*|\w*erklärung|page|beschrijving|privacy$|beleid|politique|política|polityk|speichern|guardar|opslaan|zapisz|enregistrer|sauvegarder|bevestig|bestätig|confirm|save|submit|akzeptier|accept|zaakcept)\b)(customi[sz]e|manage|adjust|configure|personali[sz]e|let me choose|edit|change|set|select|view|see|review|update|open|show|choose|anpassen|verwalten|konfigurieren|bearbeiten|öffnen|anzeigen|einblenden|einstellen|festlegen|auswählen|wählen|aanpassen|beheren|instellen|wijzig\w*|personaliseren|personaliseer|kies|bekijk|toon|personnaliser|paramétrer|gérer|configurer|choisir|afficher|définir|modifier|configurar|personalizar|gestionar|administrar|ajustar|seleccionar|modificar|establecer|dostosuj|zarządzaj|personalizuj|ustaw\w*|zmień|pokaż|wybierz)\b.{0,20}(cookies?|preferences?|settings?|options?|choices?|controls?|details?|purposes?|services?|consent|einstellung\w*|optionen|präferenzen|einzelheiten|zwecke|dienste|datenschutz\w*|auswahl|voorkeur\w*|instelling\w*|opties|diensten|préférences|paramètres|réglages|choix|détails|finalités|témoins|preferencia\w*|opciones|ajustes|configuraci\w*|detalles|servicios|elección|preferencj\w*|ustawie\w*|opcje|szczegół\w*|cele|galetes)\b/is,
-    /^(?!.*\b(policy|policies|notice|statement|impressum|\w*richtlinie\w*|\w*erklärung|page|beschrijving|privacy$|beleid|politique|política|polityk|speichern|guardar|opslaan|zapisz|enregistrer|sauvegarder|bevestig|bestätig|confirm|save|submit|akzeptier|accept|zaakcept)\b)(cookies?|preferences?|settings?|options?|choices?|controls?|details?|purposes?|services?|consent|einstellung\w*|optionen|präferenzen|einzelheiten|zwecke|dienste|datenschutz\w*|auswahl|voorkeur\w*|instelling\w*|opties|diensten|préférences|paramètres|réglages|choix|détails|finalités|témoins|preferencia\w*|opciones|ajustes|configuraci\w*|detalles|servicios|elección|preferencj\w*|ustawie\w*|opcje|szczegół\w*|cele|galetes)\b(.{0,14}\W)?(customi[sz]e|manage|adjust|configure|personali[sz]e|let me choose|edit|change|set|select|view|see|review|update|open|show|choose|anpassen|verwalten|konfigurieren|bearbeiten|öffnen|anzeigen|einblenden|einstellen|festlegen|auswählen|wählen|aanpassen|beheren|instellen|wijzig\w*|personaliseren|personaliseer|kies|bekijk|toon|personnaliser|paramétrer|gérer|configurer|choisir|afficher|définir|modifier|configurar|personalizar|gestionar|administrar|ajustar|seleccionar|modificar|establecer|dostosuj|zarządzaj|personalizuj|ustaw\w*|zmień|pokaż|wybierz)\b/is,
+    /^(?!.*\b(policy|policies|notice|statement|impressum|\w*richtlinie\w*|\w*erklärung|page|beschrijving|privacy$|beleid|politique|política|polityk|speichern|guardar|opslaan|zapisz|enregistrer|sauvegarder|bevestig|bestätig|confirm|save|submit|akzeptier|accept|zaakcept)\b)(customi[sz]e|manage|adjust|configure|personali[sz]e|let me choose|edit|change|set|select|view|see|review|update|open|show|choose|anpassen|verwalten|konfigurieren|bearbeiten|öffnen|anzeigen|einblenden|einstellen|festlegen|auswählen|wählen|aanpassen|beheren|instellen|wijzig\w*|personaliseren|personaliseer|kies|bekijk|toon|personnaliser|paramétrer|gérer|configurer|choisir|afficher|définir|modifier|configurar|personalizar|gestionar|administrar|ajustar|seleccionar|modificar|establecer|dostosuj|zarządzaj|personalizuj|ustaw\w*|zmień|pokaż|wybierz)(?!\w).{0,20}(cookies?|preferences?|settings?|options?|choices?|controls?|details?|purposes?|services?|consent|einstellung\w*|optionen|präferenzen|einzelheiten|zwecke|dienste|datenschutz\w*|auswahl|voorkeur\w*|instelling\w*|opties|diensten|préférences|paramètres|réglages|choix|détails|finalités|témoins|preferencia\w*|opciones|ajustes|configuraci\w*|detalles|servicios|elección|preferencj\w*|ustawie\w*|opcje|szczegół\w*|cele|galetes)\b/is,
+    /^(?!.*\b(policy|policies|notice|statement|impressum|\w*richtlinie\w*|\w*erklärung|page|beschrijving|privacy$|beleid|politique|política|polityk|speichern|guardar|opslaan|zapisz|enregistrer|sauvegarder|bevestig|bestätig|confirm|save|submit|akzeptier|accept|zaakcept)\b)(cookies?|preferences?|settings?|options?|choices?|controls?|details?|purposes?|services?|consent|einstellung\w*|optionen|präferenzen|einzelheiten|zwecke|dienste|datenschutz\w*|auswahl|voorkeur\w*|instelling\w*|opties|diensten|préférences|paramètres|réglages|choix|détails|finalités|témoins|preferencia\w*|opciones|ajustes|configuraci\w*|detalles|servicios|elección|preferencj\w*|ustawie\w*|opcje|szczegół\w*|cele|galetes)\b(.{0,14}\W)?(customi[sz]e|manage|adjust|configure|personali[sz]e|let me choose|edit|change|set|select|view|see|review|update|open|show|choose|anpassen|verwalten|konfigurieren|bearbeiten|öffnen|anzeigen|einblenden|einstellen|festlegen|auswählen|wählen|aanpassen|beheren|instellen|wijzig\w*|personaliseren|personaliseer|kies|bekijk|toon|personnaliser|paramétrer|gérer|configurer|choisir|afficher|définir|modifier|configurar|personalizar|gestionar|administrar|ajustar|seleccionar|modificar|establecer|dostosuj|zarządzaj|personalizuj|ustaw\w*|zmień|pokaż|wybierz)(?!\w)/is,
     // settings noun + cookies, e.g. "paramètres des cookies", "ajustes de cookies", "instellingen voor cookies en diensten"
     /^(paramètres|préférences|réglages|ajustes|opciones|elección|preferencias|instellingen)( (de|des|les|voor|van))? cookies( (et des|en|y) (services|diensten|servicios))?$/is,
     "settings",
@@ -1226,39 +1315,508 @@
     /^\s*(подтвер(дить|ждаю|ждени[а-яё]*)|сохран(ить|яю|ение))([\s-]+(мой|мои|моё|свой|свои|своё)?[\s-]*(выбор[а-яё]*|настройк[а-яё]*|парамет[а-яё]*|предпочтени[а-яё]*|согласи[а-яё]*))?([\s-]+и[\s-]+(закрыть|продолжить))?\s*$/is,
     "\u043F\u0440\u043E\u0434\u043E\u043B\u0436\u0438\u0442\u044C"
   ];
-  var TEXT_LIMIT = 1e5;
-  function checkHeuristicPatterns(allText, detectPatterns = DETECT_PATTERNS) {
-    allText = allText.slice(0, TEXT_LIMIT);
-    const patterns = [];
-    const snippets2 = [];
-    for (const p of detectPatterns) {
-      const matches = allText?.match(p);
-      if (matches) {
-        patterns.push(p.toString());
-        for (const m of matches) {
-          if (typeof m === "string") {
-            snippets2.push(m.substring(0, 200));
+  var COOKIE_CHOICE = [
+    "\\b(?:accept|reject|decline|refuse|deny|allow|manage|customi[sz]e)\\b[^\\n]{0,25}\\bcookies?\\b",
+    "\\b(?:reject|decline|deny|refuse) all\\b",
+    "\\b(?:essential|necessary|required) (?:cookies )?only\\b|\\bonly (?:essential|necessary|required)\\b",
+    "\\bcookies? (?:notice|settings|preferences|banner)\\b",
+    "\\b(?:alle )?(?:cookies )?ablehnen\\b",
+    "\\b(?:alles |alle cookies )?(?:weigeren|weiger|afwijzen)\\b",
+    "\\b(?:tout )?refuser\\b",
+    "\\brechazar(?: todas?)?\\b",
+    "\\brifiuta(?: tutti)?\\b",
+    // purposes and vendors as a button or heading line: some consent dialogs ask "under 18?"
+    "^[^\\n]{0,40}\\b(?:purposes|finalit\xE9s|prop\xF3sitos|zwecke|doeleinden|finalit\xE0|vendors|fournisseurs|proveedores|leveranciers|fornitori)(?!\\w)[^\\n]{0,10}$",
+    "\\b(?:legitimate (?:business )?interest|int\xE9r\xEAt l\xE9gitime|inter\xE9s leg\xEDtimo|berechtigtes interesse|gerechtvaardigd belang|legittimo interesse)\\b",
+    "\\b(?:we|nous|wir|wij|noi|nosotros) (?:and|et|und|en|e|y) (?:our|nos|unsere|onze|i nostri|nuestros) (?:\\d+ )?(?:partners|partenaires|partner|socios)\\b"
+  ].join("|");
+  var BARE_ACCEPT = [
+    "\\b(?:accept|allow) all\\b",
+    "\\b(?:alle )?(?:cookies )?(?:akzeptieren|erlauben|zulassen)\\b",
+    "\\b(?:alles |alle cookies )?(?:accepteren|accepteer|toestaan)\\b",
+    "\\b(?:tout )?accepter\\b",
+    "\\baceptar(?: todas?)?\\b",
+    "\\baccetta(?: tutti)?\\b"
+  ].join("|");
+  var COOKIE_CHOICE_RE = new RegExp(COOKIE_CHOICE, "im");
+  var CONSENT_CHOICE = new RegExp(`${COOKIE_CHOICE}|${BARE_ACCEPT}`, "im");
+  var AGE_WORDING = new RegExp(
+    [
+      "\\b(?:over|above|at least|older than|minimum(?: age of)?)\\s*(?:18|21|eighteen)\\b",
+      // "18+" only with age words after it: a bare "18+" also appears in cookie banners on adult sites
+      "\\b(?:18|21)\\+?\\s*(?:years?(?: of age| old)?|yo|or older|or over)\\b",
+      "\\b(?:you|users?|visitors?) must be (?:over |above |at least )?(?:18|21)\\b",
+      "\\b(?:i'?m|i am) (?:over |at least )?(?:18|21)\\b",
+      "\\bage (?:verification|confirmation|check|gate|restriction)\\b",
+      "\\b(?:adults? only|adult[\\s-](?:oriented|content|material|website)|legal age|age of majority|not a minor|minors)\\b",
+      "\\b(?:18|21) jahre\\b",
+      "\\balters(?:beschr\xE4nkung|best\xE4tigung|verifikation|pr\xFCfung|kontrolle)",
+      "\\b(?:vollj\xE4hrig|f\xFCr erwachsene|minderj\xE4hrige)\\b",
+      "\\b(?:18|21) jaar\\b",
+      "\\b(?:volwassenen|meerderjarig|minderjarigen|leeftijdsverificatie)\\b",
+      "\\b(?:18|21) ans\\b",
+      // no \\b before an accented letter: without the u flag it is not a word character
+      "\\b(?:pour adultes|v\xE9rification de l.\xE2ge|mineurs)\\b|\xE2ge l\xE9gal\\b",
+      "\\b(?:18|21) a\xF1os\\b",
+      "\\b(?:mayor(?:es)? de edad|menores de edad|para adultos|verificaci\xF3n de edad)\\b",
+      "\\b(?:18|21) anni\\b",
+      "\\b(?:maggiorenne|minorenni|per adulti)\\b|\\bverifica dell.et\xE0(?!\\w)"
+    ].join("|"),
+    "i"
+  );
+  var DISMISS_LINE = /^\s*(?:(?:yes,? )?(?:i )?(?:ok(?:ay)?|accept|agree|allow|decline|deny|reject|refuse|understand|acknowledge(?: the use of cookies)?|got it|understood)(?: all)?(?:,? (?:and|&) (?:continue|close))?(?: non-essential)?|close|dismiss|akzeptieren|zustimmen|verstanden|einverstanden|ablehnen|accepteren|akkoord|weigeren|accepter|j.accepte|d.accord|refuser|fermer|aceptar|acepto|rechazar|entendido|accetto|accetta|rifiuta|ho capito|chiudi)\s*[!.]?\s*$/im;
+  var DISMISS_END = /[.!?]\s+(?:ok(?:ay)?|got it|i agree|accept)\s*!?\s*$|\[\s*[x×]\s*\]|^\s*[x×✕]\s*$/im;
+  var NOTICE_CONTROL = new RegExp(`${CONSENT_CHOICE.source}|${DISMISS_LINE.source}|${DISMISS_END.source}`, "im");
+  var LEAVE_LINE = /^\s*(?:(?:no,? )?(?:i )?(?:want to )?(?:leave|exit|verlassen|quitter|sortir|salir|abandonar|esci|uscire|verlaten)\b[^\n]{0,30}|no,? take me away|(?:seite|hier) verlassen|(?:i am|i'm|ich bin|ik ben|je suis|soy|sono) (?:under|unter|onder|jonger dan|menor de(?: edad)?|minorenne|mineur)\b[^\n]{0,10})\s*[!.]?\s*$/im;
+  var NOTICE_OWN_CONTROL = new RegExp(
+    [
+      "\\bcookies? verwalten\\b|\\bcookie-?(?:einstellungen|pr\xE4ferenzen)\\b|\\beinstellungen verwalten\\b",
+      "\\bconfigura(?:r|ci\xF3n de)(?: las)? cookies\\b|\\bgestionar(?: las)? cookies\\b|\\bpersonalizar(?: las)? cookies\\b",
+      "\\bparam[\xE9e]trer(?: les)? cookies\\b|\\bparam[\xE8e]tres(?: des)? cookies\\b|\\bg[\xE9e]rer(?: les)? cookies\\b|\\bpersonnaliser(?: les)? cookies\\b",
+      "\\bgestisci(?: i)? cookie|\\bimpostazioni(?: dei| sui)? cookie|\\bpersonalizza(?: i)? cookie",
+      "\\bcookie-?instellingen\\b|\\bcookies? beheren\\b|\\bvoorkeuren (?:beheren|aanpassen)\\b",
+      "^\\s*(?:customi[sz]e|personnaliser|param\xE9trer|personalizar|configurar|personalizza|anpassen|aanpassen|meer opties|more options|weitere optionen|plus d.options|m\xE1s opciones|altre opzioni|manage (?:options|preferences|choices))\\s*$",
+      "^\\s*close (?:this|the) (?:popup|banner|notice|message)\\s*$"
+    ].join("|"),
+    "im"
+  );
+  var ageGateUnless = (control) => (text) => !LEAVE_LINE.test(text) && (control.test(text) || NOTICE_OWN_CONTROL.test(text));
+  var CONSENT_WORDS = /cookie|consent|track|partner|personali[sz]|advertis|analytic|privacy (?:options|choices|settings|rights)|do not sell|opt[- ]out/i;
+  var LEGAL_AGREEMENT = /\b(?:end[- ]user licen[cs]e agreement|licen[cs]e agreement|limitation of liability|governing law|indemnif\w*|hereunder|disclaimers? of warrant\w*|warrant(?:y|ies) of merchantability)\b/i;
+  var DETECT_CONTEXT_NEGATIVES = [
+    // popups with their own age confirmation are age gates, even when they mention cookies; a bare accept doesn't count
+    // as a cookie choice here, since it may confirm the age
+    { name: "age-gate-popup", pattern: AGE_WORDING, unless: ageGateUnless(COOKIE_CHOICE_RE), whole: true, input: "popup" },
+    // a license or terms agreement may mention cookies, and its decline button must not be clicked as a cookie reject
+    { name: "legal-agreement", pattern: LEGAL_AGREEMENT, whole: true, input: "popup" },
+    // page text next to an age gate, unless a consent control is there too
+    { name: "age-gate", pattern: AGE_WORDING, unless: ageGateUnless(NOTICE_CONTROL), lines: [4, 5], input: "page" },
+    // terms of use need cookie or consent wording; a privacy-policy-only notice needs that or a button
+    {
+      name: "terms-without-consent",
+      pattern: /\bterms\b|\bconditions\b/i,
+      unless: CONSENT_WORDS,
+      appliesTo: [BY_CONTINUING_PRIVACY]
+    },
+    {
+      name: "privacy-without-control",
+      unless: new RegExp(`${CONSENT_WORDS.source}|${DISMISS_LINE.source}`, "im"),
+      appliesTo: [BY_CONTINUING_PRIVACY]
+    },
+    // a cookie policy link among short footer link lines
+    {
+      name: "footer-link",
+      pattern: /^[^.!?:\n]{0,60}\n[\s]*\n?[^.!?:\s][^.!?:\n]{0,59}(?:\n|$)/,
+      unless: NOTICE_CONTROL,
+      lines: [0, 2],
+      input: "page",
+      appliesTo: [USE_OF_COOKIES, VERWENDUNG_VON_COOKIES, UTILISATION_DES_COOKIES, GEBRUIK_VAN_COOKIES]
+    },
+    // "accept all" in prose; case-sensitive since button labels run together in innerText
+    {
+      name: "accept-all-prose",
+      pattern: /\baccept all [a-z]|\baccept All[a-z]/,
+      unless: /accept all (?:cookies|and|&)/i,
+      window: 15,
+      appliesTo: [ACCEPT_ALL]
+    },
+    {
+      name: "acceptez-terms",
+      pattern: /conditions (?:générales )?d.utilisation|\bcgu\b/i,
+      unless: /cookie|témoin|traceur|partenaire/i,
+      appliesTo: [ACCEPTEZ_UTILISATION]
+    },
+    // the same sentence is also a footer line with only a "learn more" link
+    { name: "de-cookie-verb-needs-control", unless: NOTICE_CONTROL, lines: [1, 6], input: "page", appliesTo: [DE_COOKIE_VERB] }
+  ];
+  var DETECT_PATTERN_LITERALS = [
+    ["accept cookies"],
+    ["accept all"],
+    ["reject all"],
+    ["only necessary cookies"],
+    [],
+    [],
+    [" cookies"],
+    ["we are using cookies"],
+    ["use of cookies"],
+    ["website uses cookies to enhance your browsing experience"],
+    ["cookies"],
+    [" technologies"],
+    ["such as cookies"],
+    ["read more about"],
+    ["consent to"],
+    ["we and our partners"],
+    ["information"],
+    ["store and/or access information"],
+    ["personalised ads and content, ad and content measurement"],
+    [" and/or access"],
+    ["and our partners ask for your consent"],
+    ["we and "],
+    ["partners", "partnern", "partner", "partenaires", "socios", "vendors", "fornitori"],
+    ["partner"],
+    ["technolog"],
+    ["cookies"],
+    ["cookies"],
+    ["optional", "additional", "non-essential"],
+    ["storing of cookies", "placed cookies"],
+    [" on your device", "access and store "],
+    ["we use "],
+    ["out of "],
+    ["out of the sale"],
+    ["this website or its third"],
+    ["information"],
+    ["rights with regard to the sale"],
+    ["we use technologies "],
+    ["continue reading with advertising", " tracking"],
+    ["consent and continue"],
+    ["store or retrieve information on your browser", "stock\xE9es dans votre navigateur ou r\xE9cup\xE9r\xE9es"],
+    ["utilisons"],
+    ["cookies"],
+    ["consentement"],
+    ["partenaires"],
+    ["publicit\xE9s"],
+    ["utilise"],
+    ["utilisent"],
+    ["stocker"],
+    ["consentement"],
+    ["consentement"],
+    ["accepter"],
+    ["utilisation"],
+    ["technologies"],
+    ["utilisation"],
+    ["continuer sans accepter"],
+    ["tout refuser"],
+    [" tous les cookies"],
+    ["je refuse"],
+    ["refuser et continuer"],
+    ["refuser les cookies"],
+    ["seulement n\xE9cessaires"],
+    ["je d\xE9sactive les finalit\xE9s non essentielles"],
+    ["cookies essentiels uniquement"],
+    ["n\xE9cessaires uniquement"],
+    ["stocker", "stockons"],
+    ["nos partenaires demandent votre consentement"],
+    ["consentez \xE0 l", " cookies"],
+    ["les cookies nous permettent", "nos partenaires et nous"],
+    ["accepter "],
+    ["verwenden"],
+    ["partner"],
+    ["zugriff auf informationen auf"],
+    ["werbeleistung"],
+    ["cookies"],
+    ["verwendung"],
+    ["cookies"],
+    ["verwendet"],
+    ["auswahl"],
+    ["technologien"],
+    ["verwenden"],
+    ["ablehnen"],
+    ["zus\xE4tzliche", "essenzielle", "funktionale", "notwendige", "erforderliche"],
+    ["einwilligung", "zustimmung", "cookies"],
+    ["ablehnen"],
+    ["nur funktionale cookies akzeptieren"],
+    ["optionale ablehnen"],
+    ["zustimmung verweigern"],
+    ["speichern und/oder "],
+    ["unsere partner bitten um ihre zustimmung"],
+    [" cookies"],
+    ["cookies "],
+    [" zum einsatz", "einsatz von cookies"],
+    ["einverstanden", "einverstanden"],
+    ["akzeptieren", "zulassen", "erlauben", "zustimmen"],
+    ["zustimmen und weiter", " ohne zu "],
+    ["einwilligung", "zustimmung", "zustimmung", "einwilligung"],
+    ["tracking-technologien"],
+    ["verwendung "],
+    ["mit werbetracking weiterlesen", "weiter mit werbung", "con tracking e annunci"],
+    ["gebruik"],
+    ["gebruiken"],
+    ["vergelijkbare"],
+    ["afwijzen", "weigeren", "verwerpen"],
+    ["noodzakelijk"],
+    ["cookies weigeren"],
+    ["weiger"],
+    ["doorgaan zonder "],
+    ["optionele", "functionele", "functioneel", "noodzakelijke", "essenti\xEBle"],
+    ["wijs alles af"],
+    [],
+    ["onze partners vragen om "],
+    ["wij en onze "],
+    [" cookies"],
+    ["accepteer "],
+    ["analytische", "functionele", "essenti\xEBle", "noodzakelijke"],
+    [" contin"],
+    ["cookie"],
+    [" uso de cookies"],
+    ["usa cookies de google"],
+    [" uso de cookies"],
+    ["al utilizar nuestro sitio web"],
+    ["almacenar la informaci\xF3n en un dispositivo y"],
+    [" utiliza"],
+    ["cookies propias y de"],
+    ["son necesarias"],
+    [" cookie"],
+    ["navegando"],
+    ["nosotros y nuestros"],
+    ["recopilamos y almacenamos datos de usted y de su dispositivo"],
+    ["utilizamos tecnolog"],
+    ["almacenar", "almacenamos"],
+    ["nuestros socios solicitan su consentimiento"],
+    ["tanto nosotros como", "nosotros y"],
+    ["aceptar", "rechazar", "continuar sin aceptar", "solo las necesarias"],
+    ["uso de "],
+    ["cookies "],
+    ["las cookies nos "],
+    ["instalamos", "empleamos"],
+    ["cookies", "necesitamos usar cookies"],
+    [" cookie"],
+    ["u\u017Cywa\u0107", "u\u017Cywamy"],
+    ["cele przetwarzania twoich danych przez zaufanych partner\xF3w iab"],
+    ["dzi\u0119ki "],
+    [" plik\xF3w cookie"],
+    ["korzystamy z technologii, takich jak pliki cookie"],
+    ["korzystamy"],
+    ["niekt\xF3re pliki cookies"],
+    ["pliki cookies i pokrewne im technologie umo\u017Cliwiaj\u0105 poprawne dzia\u0142anie strony i pomagaj\u0105 nam dostosowa\u0107 ofert\u0119 do twoich potrzeb"],
+    ["przechowywanie informacji na urz\u0105dzeniu lub dost\u0119p do nich"],
+    ["przechowywanie plik\xF3w cookie na swoim urz\u0105dzeniu"],
+    ["przechowywa\u0107 i uzyskiwa\u0107 dost\u0119p do informacji na twoich urz\u0105dzeniach"],
+    ["przetwarzamy"],
+    [" u\u017Cywa "],
+    ["ta strona korzysta z ciasteczek"],
+    ["uzyskujemy dost\u0119p i przechowujemy informacje na urz\u0105dzeniu"],
+    ["u\u017Cywa plik"],
+    ["u\u017Cywamy plik\xF3w"],
+    ["wykorzystuj\u0105 "],
+    ["za pomoc\u0105 plik\xF3w cookies"],
+    ["zgod\u0105 my i nasi partnerzy mo\u017Cemy wykorzystywa\u0107 precyzyjne dane geolokalizacyjne i identyfikacj\u0119"],
+    ["cookies pr\xF2pies i de tercers"],
+    ["utilitzem galetes"],
+    ["\xFAnicament utilitza galetes pr\xF2pies amb finalitat t\xE8cnica"],
+    ["este lloc web utilitza nom\xE9s cookies t\xE8cniques necess\xE0ries per al seu funcionament"],
+    ["de personalitzaci\xF3 i an\xE0lisi"],
+    ["utilitzem cookies i altres tecnologies"],
+    ["cookies", "galetes"],
+    ["cookie propio eta hirugarrenenak helburu teknikoarekin erabiltzen ditu"],
+    ["cookie propioak eta hirugarrenen cookieak erabiltzen ditugu"],
+    ["cookie propioak eta hirugarrenenak helburu teknikoarekin erabiltzen ditu"],
+    ["ak erabiltzen ditu"],
+    ["cookieak erabiltzen ditu"],
+    [" bazkideek cookieak eta identifikadoreak erabiltzen ditugu"],
+    ["norberaren eta hirugarrenen cookie"],
+    ["web orri honek cookieak erabiltzen ditu"],
+    ["webgune honek cookie propioak eta hirugarrenen cookie-fitxategiak erabiltzen ditu"],
+    ["empregamos cookies propias"],
+    ["este portal emprega cookies propias ou de terceiros con fins anal\xEDticos"],
+    ["\u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443"],
+    ["\u0438\u0441\u043F\u043E\u043B\u044C\u0437\u0443"],
+    ["cookie", "\u043A\u0443\u043A\u0438"],
+    ["\u0442\u0435\u0445\u043D\u043E\u043B\u043E\u0433\u0438"],
+    ["cookie", "\u043A\u0443\u043A\u0438"],
+    [],
+    ["usiamo", "utilizziamo"],
+    ["cookie"],
+    ["noi e i nostri"],
+    [" cookie"],
+    [" cookie"],
+    ["tecnici", "di profilazione", "di terze parti", "analitici", "statistici", "di marketing"],
+    ["acconsent", "accett"],
+    [" navigazione"],
+    ["accetta", "accetto", "accettare", "rifiuta", "rifiuto", "rifiutare"],
+    [" senza accettare"],
+    ["rifiuta e abbonati"],
+    ["consenso "],
+    [" nostri "],
+    ["terze parti selezionate"],
+    ["archiviare", "archiviamo", "memorizzare", "memorizziamo"],
+    ["anv\xE4nder"],
+    ["cookie", "\u30AF\u30C3\u30AD\u30FC"],
+    ["bruger cookies"],
+    ["informasjonskapsler", "cookies"]
+  ];
+  function literalIndex(all) {
+    const distinct = [...new Set(all)].sort((a, b) => b.length - a.length);
+    if (distinct.length === 0) {
+      return { present: () => /* @__PURE__ */ new Set() };
+    }
+    const escape = (l) => l.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+    const any = new RegExp(`(?=(${distinct.map(escape).join("|")}))`, "g");
+    const implies = /* @__PURE__ */ new Map();
+    const impliedBy = (m) => {
+      let list = implies.get(m);
+      if (!list) {
+        list = distinct.filter((l) => m.startsWith(l));
+        implies.set(m, list);
+      }
+      return list;
+    };
+    return {
+      present(lower) {
+        const found = /* @__PURE__ */ new Set();
+        for (const m of lower.matchAll(any)) {
+          if (!found.has(m[1])) {
+            impliedBy(m[1]).forEach((l) => found.add(l));
           }
         }
+        return found;
       }
-    }
-    return { patterns, snippets: snippets2 };
+    };
   }
-  function hasHeuristicPatterns(allText, detectPatterns = DETECT_PATTERNS) {
-    const text = allText.slice(0, TEXT_LIMIT);
-    return detectPatterns.some((p) => text.search(p) !== -1);
+  var TEXT_LIMIT = 1e5;
+  var DEFAULT_WINDOW = 150;
+  var builtinLiterals;
+  function literalsOf(pattern) {
+    if (!builtinLiterals) {
+      const fresh = DETECT_PATTERN_LITERALS.length === DETECT_PATTERNS.length;
+      builtinLiterals = new Map(fresh ? DETECT_PATTERNS.map((p, i) => [patternOf(p), DETECT_PATTERN_LITERALS[i]]) : []);
+    }
+    return builtinLiterals.get(pattern) ?? [];
+  }
+  var index;
+  var literalsIn = (lower) => (index ??= literalIndex(DETECT_PATTERN_LITERALS.flat())).present(lower);
+  var truncate = (text) => (text || "").slice(0, TEXT_LIMIT);
+  var forInput = (scoped, input) => !scoped.input || scoped.input === input;
+  var stateless = (re) => new RegExp(re.source, re.flags.replace(/[gy]/g, ""));
+  function toPredicate(test) {
+    if (typeof test === "function") {
+      return test;
+    }
+    const re = stateless(test);
+    return (text) => re.test(text);
+  }
+  var compiledPatterns = /* @__PURE__ */ new WeakMap();
+  var compiledNegatives = /* @__PURE__ */ new WeakMap();
+  function compilePatterns(detectPatterns) {
+    let compiled = compiledPatterns.get(detectPatterns);
+    if (!compiled) {
+      compiled = detectPatterns.map((p) => {
+        const pattern = patternOf(p);
+        const input = p instanceof RegExp ? void 0 : p.input;
+        const global = pattern.flags.includes("g") ? pattern : new RegExp(pattern.source, `${pattern.flags}g`);
+        return { id: pattern.toString(), pattern, global, input, literals: literalsOf(pattern) };
+      });
+      compiledPatterns.set(detectPatterns, compiled);
+    }
+    return compiled;
+  }
+  function compileNegatives(negatives) {
+    let compiled = compiledNegatives.get(negatives);
+    if (!compiled) {
+      compiled = negatives.map((n) => {
+        const pattern = n.pattern ? stateless(n.pattern) : null;
+        const unless = n.unless ? toPredicate(n.unless) : null;
+        return {
+          ...n,
+          hits: (context) => (!pattern || pattern.test(context)) && !(unless && unless(context)),
+          applies: n.appliesTo ? new Set(n.appliesTo.map(String)) : null
+        };
+      });
+      compiledNegatives.set(negatives, compiled);
+    }
+    return compiled;
+  }
+  function negativeContext(text, start, end, negative) {
+    if (negative.whole) {
+      return text;
+    }
+    if (negative.lines === void 0) {
+      const w = negative.window ?? DEFAULT_WINDOW;
+      return text.slice(Math.max(0, start - w), end + w);
+    }
+    const lineEnd = (i) => {
+      const next = text.indexOf("\n", i);
+      return next === -1 ? text.length : next;
+    };
+    const [before, after] = Array.isArray(negative.lines) ? negative.lines : [negative.lines, negative.lines];
+    let from = start > 0 ? text.lastIndexOf("\n", start - 1) + 1 : 0;
+    let to = lineEnd(end);
+    for (let i = 0; i < before; i++) {
+      from = from >= 2 ? text.lastIndexOf("\n", from - 2) + 1 : 0;
+    }
+    for (let i = 0; i < after; i++) {
+      to = to < text.length ? lineEnd(to + 1) : to;
+    }
+    return text.slice(from, to);
+  }
+  function checkHeuristicPatterns(allText, input, options = {}) {
+    return matchHeuristicPatterns(allText, input, options, false);
+  }
+  function hasHeuristicPatterns(allText, input, options = {}) {
+    return matchHeuristicPatterns(allText, input, options, true).patterns.length > 0;
+  }
+  function matchHeuristicPatterns(allText, input, { patterns: detectPatterns = DETECT_PATTERNS, negatives = DETECT_CONTEXT_NEGATIVES }, firstOnly) {
+    if (input !== void 0 && input !== "popup" && input !== "page") {
+      const got = Array.isArray(input) ? "a pattern list (pass it as the `patterns` option)" : JSON.stringify(input);
+      throw new TypeError(`heuristic input must be 'popup', 'page' or undefined, got ${got}`);
+    }
+    allText = truncate(allText);
+    const patterns = [];
+    const snippets2 = [];
+    const suppressed = [];
+    const applicable = compileNegatives(negatives).filter((n) => forInput(n, input));
+    let present;
+    const wholeHits = /* @__PURE__ */ new Map();
+    const hitsAt = (n, start, end) => {
+      if (!n.whole) {
+        return n.hits(negativeContext(allText, start, end, n));
+      }
+      let hit = wholeHits.get(n);
+      if (hit === void 0) {
+        hit = n.hits(allText);
+        wholeHits.set(n, hit);
+      }
+      return hit;
+    };
+    for (const d of compilePatterns(detectPatterns)) {
+      if (!forInput(d, input)) {
+        continue;
+      }
+      if (d.literals.length) {
+        const inText = present ??= literalsIn(allText.toLowerCase());
+        if (!d.literals.some((l) => inText.has(l))) {
+          continue;
+        }
+      }
+      const own = applicable.filter((n) => !n.applies || n.applies.has(d.id));
+      const matched = [];
+      const dropped = /* @__PURE__ */ new Set();
+      let found = false;
+      let kept = own.length === 0;
+      for (const m of allText.matchAll(d.global)) {
+        found = true;
+        if (!kept) {
+          const start = m.index ?? 0;
+          const hit = own.find((n) => hitsAt(n, start, start + m[0].length));
+          if (hit) {
+            dropped.add(hit.name);
+          } else {
+            kept = true;
+          }
+        }
+        if (kept && firstOnly) {
+          break;
+        }
+        matched.push(m[0].substring(0, 200));
+      }
+      if (!found) {
+        continue;
+      }
+      if (!kept) {
+        dropped.forEach((negative) => suppressed.push({ pattern: d.id, negative }));
+        continue;
+      }
+      patterns.push(d.id);
+      if (firstOnly) {
+        break;
+      }
+      snippets2.push(...matched);
+    }
+    return { patterns, snippets: snippets2, suppressed };
   }
   function classifyButtons(buttons) {
     for (const button of buttons) {
       button.regexClassification = classifyButtonTextRegex(button.text);
     }
-  }
-  function isExcludedPopup(popupText, excludePatterns = DETECT_NEVER_MATCH_PATTERNS) {
-    if (!popupText) {
-      return false;
-    }
-    const truncated = popupText.slice(0, TEXT_LIMIT);
-    return excludePatterns.some((p) => p.test(truncated));
   }
   function classifyPopup(buttons) {
     const { reject, settings, accept, acknowledge } = buttons.reduce(
@@ -1320,6 +1878,8 @@
   }
   var BUTTON_LIKE_ELEMENT_SELECTOR = 'button, input[type="button"], input[type="submit"], a, [role="button"], [class*="button"]';
   var POPUP_SEARCH_MAX_TIME = 100;
+  var FRAGMENT_NEGATIVES = DETECT_CONTEXT_NEGATIVES.filter((n) => !n.whole);
+  var hasFragmentPatterns = (text) => hasHeuristicPatterns(text, "popup", { negatives: FRAGMENT_NEGATIVES });
   var ACCEPTED_LEVELS = {
     off: [],
     reject: ["reject"],
@@ -1355,7 +1915,7 @@
     let result = consentPopups.get(popup);
     if (result === void 0) {
       const popupText = popup.text.trim();
-      result = !!popupText && !isExcludedPopup(popupText) && hasHeuristicPatterns(popupText);
+      result = !!popupText && hasHeuristicPatterns(popupText, "popup");
       consentPopups.set(popup, result);
     }
     return result;
@@ -1492,7 +2052,7 @@
   }
   function toPopupRoot(el, shadowHosts) {
     const text = getElementText(el);
-    if (!text || !hasHeuristicPatterns(text)) {
+    if (!text || !hasFragmentPatterns(text)) {
       return null;
     }
     const popup = toPopupData(el, shadowHosts, text);
@@ -1513,7 +2073,7 @@
     return null;
   }
   function expandPopupFragment(popup, shadowHosts) {
-    if (hasHeuristicPatterns(popup.text) && hasPopupButtons(popup.text, popup.buttons)) {
+    if (hasFragmentPatterns(popup.text) && hasPopupButtons(popup.text, popup.buttons)) {
       return popup;
     }
     const parent = getComposedParent(popup.element);
@@ -2097,6 +2657,7 @@
   var popupContent = "#truste-consent-content";
   var bannerOverlay = "#trustarc-banner-overlay";
   var bannerContainer = "#truste-consent-track";
+  var prefCenterDeclineAll = [".truste_popframe.trustarc_newcm_container", 'button[data-button-key="decline_all"]'];
   var TrustArcTop = class extends AutoConsentCMPBase {
     constructor(autoconsentInstance) {
       super(autoconsentInstance);
@@ -2108,12 +2669,13 @@
       };
       this._shortcutButton = null;
       this._optInDone = false;
+      this._optOutDone = false;
     }
     get hasSelfTest() {
       return true;
     }
     get isIntermediate() {
-      if (this._optInDone) {
+      if (this._optInDone || this._optOutDone) {
         return false;
       }
       return !this._shortcutButton;
@@ -2138,6 +2700,10 @@
       }
       hideElements(getStyleElement(), `.truste_popframe, .truste_overlay, .truste_box_overlay, ${bannerContainer}`);
       await this.click(cookieSettingsButton);
+      if (await this.waitForElement(prefCenterDeclineAll, 3e3)) {
+        this._optOutDone = true;
+        await this.click(prefCenterDeclineAll);
+      }
       setTimeout(() => {
         getStyleElement().remove();
       }, 1e4);
@@ -2796,6 +3362,14 @@
     async optOut() {
       const rejectAllSelector = "xpath///button[contains(., 'Afvis alle') or contains(., 'Reject all') or contains(., 'Odbaci sve') or contains(., 'Rechazar todo') or contains(., 'Atmesti visus') or contains(., 'Odm\xEDtnout v\u0161e') or contains(., '\u0391\u03C0\u03CC\u03C1\u03C1\u03B9\u03C8\u03B7 \u03CC\u03BB\u03C9\u03BD') or contains(., 'Rejeitar tudo') or contains(., 'T\xFCm\xFCn\xFC reddet') or contains(., '\u041E\u0442\u043A\u043B\u043E\u043D\u0438\u0442\u044C \u0432\u0441\u0435') or contains(., 'Noraid\u012Bt visu') or contains(., 'Avvisa alla') or contains(., 'Odrzu\u0107 wszystkie') or contains(., 'Alles afwijzen') or contains(., '\u041E\u0442\u0445\u0432\u044A\u0440\u043B\u044F\u043D\u0435 \u043D\u0430 \u0432\u0441\u0438\u0447\u043A\u0438') or contains(., 'Rifiuta tutto') or contains(., 'Zavrni vse') or contains(., 'Az \xF6sszes elutas\xEDt\xE1sa') or contains(., 'Respinge\u021Bi tot') or contains(., 'Alles ablehnen') or contains(., 'Tout rejeter') or contains(., 'Odmietnu\u0165 v\u0161etko') or contains(., 'L\xFCkka k\xF5ik tagasi') or contains(., 'Hylk\xE4\xE4 kaikki')]";
       if (await this.waitForElement(rejectAllSelector, 500)) {
+        const rejectButton = this.elementSelector(rejectAllSelector)[0];
+        if (rejectButton.disabled) {
+          const cardBody = rejectButton.closest("div[class*=CardHeader]")?.parentElement?.querySelector("div[class*=CardBody]");
+          if (cardBody) {
+            cardBody.scrollTop = cardBody.scrollHeight;
+          }
+          await waitFor(() => !rejectButton.disabled, 10, 200);
+        }
         return await this.click(rejectAllSelector);
       }
       const vrmCloseButton = this.getVrmCloseButton();
@@ -3405,7 +3979,7 @@
     detectHeuristics() {
       if (this.config.enableHeuristicDetection) {
         this.config.performanceLoggingEnabled && performance.mark("detectHeuristicsStart");
-        const { patterns, snippets: snippets2 } = checkHeuristicPatterns(document.documentElement?.innerText || "");
+        const { patterns, snippets: snippets2 } = checkHeuristicPatterns(document.documentElement?.innerText || "", "page");
         if (patterns.length > 0 && (patterns.length !== this.state.heuristicPatterns.length || this.state.heuristicPatterns.some((p, i) => p !== patterns[i]))) {
           this.config.logs.lifecycle && console.log("Heuristic patterns found", patterns, snippets2);
           this.updateState({ heuristicPatterns: patterns, heuristicSnippets: snippets2 });

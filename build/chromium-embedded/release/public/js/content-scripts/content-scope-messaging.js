@@ -69,7 +69,14 @@ async function init() {
             return console.warn('Ignoring invalid sendMessage messageType', messageType);
         }
 
-        chrome.runtime.sendMessage(eventDetail, (response) => {
+        // Messages arriving here come from the page's main world, so they are
+        // untrusted - we prevent arbitrary keys by rebuilding the object instead of blinding passing all of event.detail
+        const proxiedMessage = {
+            messageType,
+            options: eventDetail.options,
+        };
+
+        chrome.runtime.sendMessage(proxiedMessage, (response) => {
             const message = {
                 type: 'update',
                 messageType: 'response',

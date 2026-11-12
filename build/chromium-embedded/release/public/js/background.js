@@ -18338,6 +18338,10 @@
           }
           return to.concat(ar || Array.prototype.slice.call(from));
         }
+        typeof SuppressedError === "function" ? SuppressedError : function(error, suppressed, message) {
+          var e = new Error(message);
+          return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+        };
         var _global = typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : global;
         var keys = Object.keys;
         var isArray = Array.isArray;
@@ -18366,7 +18370,11 @@
         }
         var defineProperty = Object.defineProperty;
         function setProp(obj, prop, functionOrGetSet, options) {
-          defineProperty(obj, prop, extend(functionOrGetSet && hasOwn(functionOrGetSet, "get") && typeof functionOrGetSet.get === "function" ? { get: functionOrGetSet.get, set: functionOrGetSet.set, configurable: true } : { value: functionOrGetSet, configurable: true, writable: true }, options));
+          defineProperty(obj, prop, extend(functionOrGetSet && hasOwn(functionOrGetSet, "get") && typeof functionOrGetSet.get === "function" ? {
+            get: functionOrGetSet.get,
+            set: functionOrGetSet.set,
+            configurable: true
+          } : { value: functionOrGetSet, configurable: true, writable: true }, options));
         }
         function derive(Child) {
           return {
@@ -18455,8 +18463,11 @@
                   obj[currentKeyPath] = value;
               else {
                 var innerObj = obj[currentKeyPath];
-                if (!innerObj || !hasOwn(obj, currentKeyPath))
+                if (!innerObj || !hasOwn(obj, currentKeyPath)) {
+                  if (value === void 0)
+                    return;
                   innerObj = obj[currentKeyPath] = {};
+                }
                 setByKeyPath(innerObj, remainingKeyPath, value);
               }
             } else {
@@ -18508,12 +18519,6 @@
               rv[k] = !v || typeof v !== "object" || intrinsicTypes.has(v.constructor) ? v : cloneSimpleObjectTree(v);
             }
           return rv;
-        }
-        function objectIsEmpty(o) {
-          for (var k in o)
-            if (hasOwn(o, k))
-              return false;
-          return true;
         }
         var circularRefs = null;
         function deepClone(any) {
@@ -18710,9 +18715,11 @@
             return domError;
           var rv = new exceptionMap[domError.name](message || domError.message, domError);
           if ("stack" in domError) {
-            setProp(rv, "stack", { get: function() {
-              return this.inner.stack;
-            } });
+            setProp(rv, "stack", {
+              get: function() {
+                return this.inner.stack;
+              }
+            });
           }
           return rv;
         }
@@ -18777,8 +18784,9 @@
         function hookUpdatingChain(f1, f2) {
           if (f1 === nop)
             return f2;
-          return function(modifications) {
+          return function() {
             var res = f1.apply(this, arguments);
+            var modifications = arguments[0];
             extend(modifications, res);
             var onsuccess = this.onsuccess, onerror = this.onerror;
             this.onsuccess = null;
@@ -18826,11 +18834,7 @@
           if (typeof crypto === "undefined" || !crypto.subtle)
             return [globalP, getProto(globalP), globalP];
           var nativeP = crypto.subtle.digest("SHA-512", new Uint8Array([0]));
-          return [
-            nativeP,
-            getProto(nativeP),
-            globalP
-          ];
+          return [nativeP, getProto(nativeP), globalP];
         })(), resolvedNativePromise = _a$1[0], nativePromiseProto = _a$1[1], resolvedGlobalPromise = _a$1[2], nativePromiseThen = nativePromiseProto && nativePromiseProto.then;
         var NativePromise = resolvedNativePromise && resolvedNativePromise.constructor;
         var patchGlobalPromise = !!resolvedGlobalPromise;
@@ -19258,7 +19262,11 @@
           globalPSD.env;
           psd.env = patchGlobalPromise ? {
             Promise: DexiePromise,
-            PromiseProp: { value: DexiePromise, configurable: true, writable: true },
+            PromiseProp: {
+              value: DexiePromise,
+              configurable: true,
+              writable: true
+            },
             all: DexiePromise.all,
             race: DexiePromise.race,
             allSettled: DexiePromise.allSettled,
@@ -19397,7 +19405,7 @@
         }
         var rejection = DexiePromise.reject;
         function tempTransaction(db, mode, storeNames, fn) {
-          if (!db.idbdb || !db._state.openComplete && (!PSD.letThrough && !db._vip)) {
+          if (!db.idbdb || !db._state.openComplete && !PSD.letThrough && !db._vip) {
             if (db._state.openComplete) {
               return rejection(new exceptions.DatabaseClosed(db._state.dbOpenError));
             }
@@ -19441,12 +19449,12 @@
             });
           }
         }
-        var DEXIE_VERSION = "4.0.11";
+        var DEXIE_VERSION = "4.4.7";
         var maxString = String.fromCharCode(65535);
         var minKey = -Infinity;
         var INVALID_KEY_ARGUMENT = "Invalid key provided. Keys must be of type string, number, Date or Array<string | number | Date>.";
         var STRING_EXPECTED = "String expected.";
-        var connections = [];
+        var DEFAULT_MAX_CONNECTIONS = 1e3;
         var DBNAMES_DB = "__dbnames";
         var READONLY = "readonly";
         var READWRITE = "readwrite";
@@ -19474,7 +19482,7 @@
           };
         }
         function Entity2() {
-          throw exceptions.Type();
+          throw exceptions.Type("Entity instances must never be new:ed. Instances are generated by the framework bypassing the constructor.");
         }
         function cmp2(a, b) {
           try {
@@ -19550,6 +19558,88 @@
           if (ArrayBuffer.isView(a))
             return new Uint8Array(a.buffer, a.byteOffset, a.byteLength);
           return new Uint8Array(a);
+        }
+        function builtInDeletionTrigger(table, keys2, res) {
+          var yProps = table.schema.yProps;
+          if (!yProps)
+            return res;
+          if (keys2 && res.numFailures > 0)
+            keys2 = keys2.filter(function(_, i) {
+              return !res.failures[i];
+            });
+          return Promise.all(yProps.map(function(_a2) {
+            var updatesTable = _a2.updatesTable;
+            return keys2 ? table.db.table(updatesTable).where("k").anyOf(keys2).delete() : table.db.table(updatesTable).clear();
+          })).then(function() {
+            return res;
+          });
+        }
+        var PropModification2 = (function() {
+          function PropModification3(spec) {
+            this["@@propmod"] = spec;
+          }
+          PropModification3.prototype.execute = function(value) {
+            var _a2;
+            var spec = this["@@propmod"];
+            if (spec.add !== void 0) {
+              var term = spec.add;
+              if (isArray(term)) {
+                return __spreadArray(__spreadArray([], isArray(value) ? value : [], true), term, true).sort();
+              }
+              if (typeof term === "number")
+                return (Number(value) || 0) + term;
+              if (typeof term === "bigint") {
+                try {
+                  return BigInt(value) + term;
+                } catch (_b) {
+                  return BigInt(0) + term;
+                }
+              }
+              throw new TypeError("Invalid term ".concat(term));
+            }
+            if (spec.remove !== void 0) {
+              var subtrahend_1 = spec.remove;
+              if (isArray(subtrahend_1)) {
+                return isArray(value) ? value.filter(function(item) {
+                  return !subtrahend_1.includes(item);
+                }).sort() : [];
+              }
+              if (typeof subtrahend_1 === "number")
+                return Number(value) - subtrahend_1;
+              if (typeof subtrahend_1 === "bigint") {
+                try {
+                  return BigInt(value) - subtrahend_1;
+                } catch (_c) {
+                  return BigInt(0) - subtrahend_1;
+                }
+              }
+              throw new TypeError("Invalid subtrahend ".concat(subtrahend_1));
+            }
+            var prefixToReplace = (_a2 = spec.replacePrefix) === null || _a2 === void 0 ? void 0 : _a2[0];
+            if (prefixToReplace && typeof value === "string" && value.startsWith(prefixToReplace)) {
+              return spec.replacePrefix[1] + value.substring(prefixToReplace.length);
+            }
+            return value;
+          };
+          return PropModification3;
+        })();
+        function applyUpdateSpec(obj, changes) {
+          var keyPaths = keys(changes);
+          var numKeys = keyPaths.length;
+          var anythingModified = false;
+          for (var i = 0; i < numKeys; ++i) {
+            var keyPath = keyPaths[i];
+            var value = changes[keyPath];
+            var origValue = getByKeyPath(obj, keyPath);
+            if (value instanceof PropModification2) {
+              setByKeyPath(obj, keyPath, value.execute(origValue));
+              anythingModified = true;
+            } else if (origValue !== value) {
+              setByKeyPath(obj, keyPath, value);
+              anythingModified = true;
+            }
+          }
+          return anythingModified;
         }
         var Table = (function() {
           function Table2() {
@@ -19733,7 +19823,12 @@
               objToAdd = workaroundForUndefinedPrimKey(keyPath)(obj);
             }
             return this._trans("readwrite", function(trans) {
-              return _this.core.mutate({ trans, type: "add", keys: key != null ? [key] : null, values: [objToAdd] });
+              return _this.core.mutate({
+                trans,
+                type: "add",
+                keys: key != null ? [key] : null,
+                values: [objToAdd]
+              });
             }).then(function(res) {
               return res.numFailures ? DexiePromise.reject(res.failures[0]) : res.lastResult;
             }).then(function(lastResult) {
@@ -19744,6 +19839,28 @@
                 }
               }
               return lastResult;
+            });
+          };
+          Table2.prototype.upsert = function(key, modifications) {
+            var _this = this;
+            var keyPath = this.schema.primKey.keyPath;
+            return this._trans("readwrite", function(trans) {
+              return _this.core.get({ trans, key }).then(function(existing) {
+                var obj = existing !== null && existing !== void 0 ? existing : {};
+                applyUpdateSpec(obj, modifications);
+                if (keyPath)
+                  setByKeyPath(obj, keyPath, key);
+                return _this.core.mutate({
+                  trans,
+                  type: "put",
+                  values: [obj],
+                  keys: [key],
+                  upsert: true,
+                  updates: { keys: [key], changeSpecs: [modifications] }
+                }).then(function(res) {
+                  return res.numFailures ? DexiePromise.reject(res.failures[0]) : !!existing;
+                });
+              });
             });
           };
           Table2.prototype.update = function(keyOrObject, modifications) {
@@ -19764,7 +19881,12 @@
               objToAdd = workaroundForUndefinedPrimKey(keyPath)(obj);
             }
             return this._trans("readwrite", function(trans) {
-              return _this.core.mutate({ trans, type: "put", values: [objToAdd], keys: key != null ? [key] : null });
+              return _this.core.mutate({
+                trans,
+                type: "put",
+                values: [objToAdd],
+                keys: key != null ? [key] : null
+              });
             }).then(function(res) {
               return res.numFailures ? DexiePromise.reject(res.failures[0]) : res.lastResult;
             }).then(function(lastResult) {
@@ -19780,15 +19902,19 @@
           Table2.prototype.delete = function(key) {
             var _this = this;
             return this._trans("readwrite", function(trans) {
-              return _this.core.mutate({ trans, type: "delete", keys: [key] });
-            }).then(function(res) {
-              return res.numFailures ? DexiePromise.reject(res.failures[0]) : void 0;
+              return _this.core.mutate({ trans, type: "delete", keys: [key] }).then(function(res) {
+                return builtInDeletionTrigger(_this, [key], res);
+              }).then(function(res) {
+                return res.numFailures ? DexiePromise.reject(res.failures[0]) : void 0;
+              });
             });
           };
           Table2.prototype.clear = function() {
             var _this = this;
             return this._trans("readwrite", function(trans) {
-              return _this.core.mutate({ trans, type: "deleteRange", range: AnyRange });
+              return _this.core.mutate({ trans, type: "deleteRange", range: AnyRange }).then(function(res) {
+                return builtInDeletionTrigger(_this, null, res);
+              });
             }).then(function(res) {
               return res.numFailures ? DexiePromise.reject(res.failures[0]) : void 0;
             });
@@ -19819,7 +19945,13 @@
                 throw new exceptions.InvalidArgument("Arguments objects and keys must have the same length");
               var numObjects = objects.length;
               var objectsToAdd = keyPath && auto ? objects.map(workaroundForUndefinedPrimKey(keyPath)) : objects;
-              return _this.core.mutate({ trans, type: "add", keys: keys2, values: objectsToAdd, wantResults }).then(function(_a3) {
+              return _this.core.mutate({
+                trans,
+                type: "add",
+                keys: keys2,
+                values: objectsToAdd,
+                wantResults
+              }).then(function(_a3) {
                 var numFailures = _a3.numFailures, results = _a3.results, lastResult = _a3.lastResult, failures = _a3.failures;
                 var result = wantResults ? results : lastResult;
                 if (numFailures === 0)
@@ -19841,7 +19973,13 @@
                 throw new exceptions.InvalidArgument("Arguments objects and keys must have the same length");
               var numObjects = objects.length;
               var objectsToPut = keyPath && auto ? objects.map(workaroundForUndefinedPrimKey(keyPath)) : objects;
-              return _this.core.mutate({ trans, type: "put", keys: keys2, values: objectsToPut, wantResults }).then(function(_a3) {
+              return _this.core.mutate({
+                trans,
+                type: "put",
+                keys: keys2,
+                values: objectsToPut,
+                wantResults
+              }).then(function(_a3) {
                 var numFailures = _a3.numFailures, results = _a3.results, lastResult = _a3.lastResult, failures = _a3.failures;
                 var result = wantResults ? results : lastResult;
                 if (numFailures === 0)
@@ -19852,7 +19990,6 @@
           };
           Table2.prototype.bulkUpdate = function(keysAndChanges) {
             var _this = this;
-            var coreTable = this.core;
             var keys2 = keysAndChanges.map(function(entry) {
               return entry.key;
             });
@@ -19861,23 +19998,21 @@
             });
             var offsetMap = [];
             return this._trans("readwrite", function(trans) {
+              var coreTable = _this.core;
               return coreTable.getMany({ trans, keys: keys2, cache: "clone" }).then(function(objs) {
+                var _a2 = coreTable.schema.primaryKey, outbound = _a2.outbound, extractKey = _a2.extractKey;
                 var resultKeys = [];
                 var resultObjs = [];
-                keysAndChanges.forEach(function(_a2, idx) {
-                  var key = _a2.key, changes = _a2.changes;
+                keysAndChanges.forEach(function(_a3, idx) {
+                  var key = _a3.key, changes = _a3.changes;
                   var obj = objs[idx];
                   if (obj) {
                     for (var _i = 0, _b = Object.keys(changes); _i < _b.length; _i++) {
                       var keyPath = _b[_i];
-                      var value = changes[keyPath];
-                      if (keyPath === _this.schema.primKey.keyPath) {
-                        if (cmp2(value, key) !== 0) {
-                          throw new exceptions.Constraint("Cannot update primary key in bulkUpdate()");
-                        }
-                      } else {
-                        setByKeyPath(obj, keyPath, value);
-                      }
+                      setByKeyPath(obj, keyPath, changes[keyPath]);
+                    }
+                    if (!outbound && cmp2(extractKey(obj), key) !== 0) {
+                      throw new exceptions.Constraint("Cannot update primary key in bulkUpdate()");
                     }
                     offsetMap.push(idx);
                     resultKeys.push(key);
@@ -19894,8 +20029,8 @@
                     keys: keys2,
                     changeSpecs
                   }
-                }).then(function(_a2) {
-                  var numFailures = _a2.numFailures, failures = _a2.failures;
+                }).then(function(_a3) {
+                  var numFailures = _a3.numFailures, failures = _a3.failures;
                   if (numFailures === 0)
                     return numEntries;
                   for (var _i = 0, _b = Object.keys(failures); _i < _b.length; _i++) {
@@ -19916,7 +20051,9 @@
             var _this = this;
             var numKeys = keys2.length;
             return this._trans("readwrite", function(trans) {
-              return _this.core.mutate({ trans, type: "delete", keys: keys2 });
+              return _this.core.mutate({ trans, type: "delete", keys: keys2 }).then(function(res) {
+                return builtInDeletionTrigger(_this, keys2, res);
+              });
             }).then(function(_a2) {
               var numFailures = _a2.numFailures, lastResult = _a2.lastResult, failures = _a2.failures;
               if (numFailures === 0)
@@ -20002,10 +20139,10 @@
             this.name = name;
             this.schema = tableSchema;
             this.hook = db._allTables[name] ? db._allTables[name].hook : Events(null, {
-              "creating": [hookCreatingChain, nop],
-              "reading": [pureFunctionChain, mirror],
-              "updating": [hookUpdatingChain, nop],
-              "deleting": [hookDeletingChain, nop]
+              creating: [hookCreatingChain, nop],
+              reading: [pureFunctionChain, mirror],
+              updating: [hookUpdatingChain, nop],
+              deleting: [hookDeletingChain, nop]
             });
           });
         }
@@ -20102,55 +20239,6 @@
             }
           });
         }
-        var PropModification2 = (function() {
-          function PropModification3(spec) {
-            this["@@propmod"] = spec;
-          }
-          PropModification3.prototype.execute = function(value) {
-            var _a2;
-            var spec = this["@@propmod"];
-            if (spec.add !== void 0) {
-              var term = spec.add;
-              if (isArray(term)) {
-                return __spreadArray(__spreadArray([], isArray(value) ? value : [], true), term, true).sort();
-              }
-              if (typeof term === "number")
-                return (Number(value) || 0) + term;
-              if (typeof term === "bigint") {
-                try {
-                  return BigInt(value) + term;
-                } catch (_b) {
-                  return BigInt(0) + term;
-                }
-              }
-              throw new TypeError("Invalid term ".concat(term));
-            }
-            if (spec.remove !== void 0) {
-              var subtrahend_1 = spec.remove;
-              if (isArray(subtrahend_1)) {
-                return isArray(value) ? value.filter(function(item) {
-                  return !subtrahend_1.includes(item);
-                }).sort() : [];
-              }
-              if (typeof subtrahend_1 === "number")
-                return Number(value) - subtrahend_1;
-              if (typeof subtrahend_1 === "bigint") {
-                try {
-                  return BigInt(value) - subtrahend_1;
-                } catch (_c) {
-                  return BigInt(0) - subtrahend_1;
-                }
-              }
-              throw new TypeError("Invalid subtrahend ".concat(subtrahend_1));
-            }
-            var prefixToReplace = (_a2 = spec.replacePrefix) === null || _a2 === void 0 ? void 0 : _a2[0];
-            if (prefixToReplace && typeof value === "string" && value.startsWith(prefixToReplace)) {
-              return spec.replacePrefix[1] + value.substring(prefixToReplace.length);
-            }
-            return value;
-          };
-          return PropModification3;
-        })();
         var Collection = (function() {
           function Collection2() {
           }
@@ -20225,20 +20313,21 @@
               return cmp2(aVal, bVal) * order;
             }
             return this.toArray(function(a) {
-              return a.sort(sorter);
+              return a.slice().sort(sorter);
             }).then(cb);
           };
           Collection2.prototype.toArray = function(cb) {
             var _this = this;
             return this._read(function(trans) {
               var ctx = _this._ctx;
-              if (ctx.dir === "next" && isPlainKeyRange(ctx, true) && ctx.limit > 0) {
+              if (isPlainKeyRange(ctx, true) && ctx.limit > 0) {
                 var valueMapper_1 = ctx.valueMapper;
                 var index = getIndexOrStore(ctx, ctx.table.core.schema);
                 return ctx.table.core.query({
                   trans,
                   limit: ctx.limit,
                   values: true,
+                  direction: ctx.dir === "prev" ? "prev" : void 0,
                   query: {
                     index,
                     range: ctx.range
@@ -20372,13 +20461,14 @@
           };
           Collection2.prototype.primaryKeys = function(cb) {
             var ctx = this._ctx;
-            if (ctx.dir === "next" && isPlainKeyRange(ctx, true) && ctx.limit > 0) {
+            if (isPlainKeyRange(ctx, true) && ctx.limit > 0) {
               return this._read(function(trans) {
                 var index = getIndexOrStore(ctx, ctx.table.core.schema);
                 return ctx.table.core.query({
                   trans,
                   values: false,
                   limit: ctx.limit,
+                  direction: ctx.dir === "prev" ? "prev" : void 0,
                   query: {
                     index,
                     range: ctx.range
@@ -20430,23 +20520,8 @@
               if (typeof changes === "function") {
                 modifyer = changes;
               } else {
-                var keyPaths = keys(changes);
-                var numKeys = keyPaths.length;
                 modifyer = function(item) {
-                  var anythingModified = false;
-                  for (var i = 0; i < numKeys; ++i) {
-                    var keyPath = keyPaths[i];
-                    var val = changes[keyPath];
-                    var origVal = getByKeyPath(item, keyPath);
-                    if (val instanceof PropModification2) {
-                      setByKeyPath(item, keyPath, val.execute(origVal));
-                      anythingModified = true;
-                    } else if (origVal !== val) {
-                      setByKeyPath(item, keyPath, val);
-                      anythingModified = true;
-                    }
-                  }
-                  return anythingModified;
+                  return applyUpdateSpec(item, changes);
                 };
               }
               var coreTable = ctx.table.core;
@@ -20471,41 +20546,44 @@
                   totalFailures.push(failures[pos]);
                 }
               };
+              var isUnconditionalDelete = changes === deleteCallback;
               return _this.clone().primaryKeys().then(function(keys2) {
-                var criteria = isPlainKeyRange(ctx) && ctx.limit === Infinity && (typeof changes !== "function" || changes === deleteCallback) && {
+                var criteria = isPlainKeyRange(ctx) && ctx.limit === Infinity && (typeof changes !== "function" || isUnconditionalDelete) && {
                   index: ctx.index,
                   range: ctx.range
                 };
                 var nextChunk = function(offset) {
                   var count = Math.min(limit, keys2.length - offset);
-                  return coreTable.getMany({
+                  var keysInChunk = keys2.slice(offset, offset + count);
+                  return (isUnconditionalDelete ? Promise.resolve([]) : coreTable.getMany({
                     trans,
-                    keys: keys2.slice(offset, offset + count),
+                    keys: keysInChunk,
                     cache: "immutable"
-                  }).then(function(values) {
+                  })).then(function(values) {
                     var addValues = [];
                     var putValues = [];
                     var putKeys = outbound ? [] : null;
-                    var deleteKeys = [];
-                    for (var i = 0; i < count; ++i) {
-                      var origValue = values[i];
-                      var ctx_1 = {
-                        value: deepClone(origValue),
-                        primKey: keys2[offset + i]
-                      };
-                      if (modifyer.call(ctx_1, ctx_1.value, ctx_1) !== false) {
-                        if (ctx_1.value == null) {
-                          deleteKeys.push(keys2[offset + i]);
-                        } else if (!outbound && cmp2(extractKey(origValue), extractKey(ctx_1.value)) !== 0) {
-                          deleteKeys.push(keys2[offset + i]);
-                          addValues.push(ctx_1.value);
-                        } else {
-                          putValues.push(ctx_1.value);
-                          if (outbound)
-                            putKeys.push(keys2[offset + i]);
+                    var deleteKeys = isUnconditionalDelete ? keysInChunk : [];
+                    if (!isUnconditionalDelete)
+                      for (var i = 0; i < count; ++i) {
+                        var origValue = values[i];
+                        var ctx_1 = {
+                          value: deepClone(origValue),
+                          primKey: keys2[offset + i]
+                        };
+                        if (modifyer.call(ctx_1, ctx_1.value, ctx_1) !== false) {
+                          if (ctx_1.value == null) {
+                            deleteKeys.push(keys2[offset + i]);
+                          } else if (!outbound && cmp2(extractKey(origValue), extractKey(ctx_1.value)) !== 0) {
+                            deleteKeys.push(keys2[offset + i]);
+                            addValues.push(ctx_1.value);
+                          } else {
+                            putValues.push(ctx_1.value);
+                            if (outbound)
+                              putKeys.push(keys2[offset + i]);
+                          }
                         }
                       }
-                    }
                     return Promise.resolve(addValues.length > 0 && coreTable.mutate({ trans, type: "add", values: addValues }).then(function(res) {
                       for (var pos in res.failures) {
                         deleteKeys.splice(parseInt(pos), 1);
@@ -20524,12 +20602,14 @@
                         return applyMutateResult(putValues.length, res);
                       });
                     }).then(function() {
-                      return (deleteKeys.length > 0 || criteria && changes === deleteCallback) && coreTable.mutate({
+                      return (deleteKeys.length > 0 || criteria && isUnconditionalDelete) && coreTable.mutate({
                         trans,
                         type: "delete",
                         keys: deleteKeys,
                         criteria,
                         isAdditionalChunk: offset > 0
+                      }).then(function(res) {
+                        return builtInDeletionTrigger(ctx.table, deleteKeys, res);
                       }).then(function(res) {
                         return applyMutateResult(deleteKeys.length, res);
                       });
@@ -20548,16 +20628,13 @@
           };
           Collection2.prototype.delete = function() {
             var ctx = this._ctx, range = ctx.range;
-            if (isPlainKeyRange(ctx) && (ctx.isPrimKey || range.type === 3)) {
+            if (isPlainKeyRange(ctx) && !ctx.table.schema.yProps && (ctx.isPrimKey || range.type === 3)) {
               return this._write(function(trans) {
                 var primaryKey = ctx.table.core.schema.primaryKey;
                 var coreRange = range;
                 return ctx.table.core.count({ trans, query: { index: primaryKey, range: coreRange } }).then(function(count) {
                   return ctx.table.core.mutate({ trans, type: "deleteRange", range: coreRange }).then(function(_a2) {
-                    var failures = _a2.failures;
-                    _a2.lastResult;
-                    _a2.results;
-                    var numFailures = _a2.numFailures;
+                    var failures = _a2.failures, numFailures = _a2.numFailures;
                     if (numFailures)
                       throw new ModifyError("Could not delete some values", Object.keys(failures).map(function(pos) {
                         return failures[pos];
@@ -20620,9 +20697,13 @@
           return collection;
         }
         function emptyCollection(whereClause) {
-          return new whereClause.Collection(whereClause, function() {
+          var collection = new whereClause.Collection(whereClause, function() {
             return rangeEqual("");
-          }).limit(0);
+          });
+          collection._addAlgorithm(function() {
+            return false;
+          });
+          return collection;
         }
         function upperFactory(dir) {
           return dir === "next" ? function(s) {
@@ -20872,7 +20953,10 @@
             return c;
           };
           WhereClause2.prototype.notEqual = function(value) {
-            return this.inAnyRange([[minKey, value], [value, this.db._maxKey]], { includeLowers: false, includeUppers: false });
+            return this.inAnyRange([
+              [minKey, value],
+              [value, this.db._maxKey]
+            ], { includeLowers: false, includeUppers: false });
           };
           WhereClause2.prototype.noneOf = function() {
             var set = getArrayOf.apply(NO_CHAR_ARRAY, arguments);
@@ -20887,7 +20971,10 @@
               return res ? res.concat([[res[res.length - 1][1], val]]) : [[minKey, val]];
             }, null);
             ranges.push([set[set.length - 1], this.db._maxKey]);
-            return this.inAnyRange(ranges, { includeLowers: false, includeUppers: false });
+            return this.inAnyRange(ranges, {
+              includeLowers: false,
+              includeUppers: false
+            });
           };
           WhereClause2.prototype.inAnyRange = function(ranges, options) {
             var _this = this;
@@ -21081,7 +21168,9 @@
             if (!this.active)
               throw new exceptions.TransactionInactive();
             assert(this._completion._state === null);
-            idbtrans = this.idbtrans = idbtrans || (this.db.core ? this.db.core.transaction(this.storeNames, this.mode, { durability: this.chromeTransactionDurability }) : idbdb.transaction(this.storeNames, this.mode, { durability: this.chromeTransactionDurability }));
+            idbtrans = this.idbtrans = idbtrans || (this.db.core ? this.db.core.transaction(this.storeNames, this.mode, { durability: this.chromeTransactionDurability }) : idbdb.transaction(this.storeNames, this.mode, {
+              durability: this.chromeTransactionDurability
+            }));
             idbtrans.onerror = wrap(function(ev) {
               preventDefault(ev);
               _this._reject(idbtrans.error);
@@ -21109,9 +21198,12 @@
               return rejection(new exceptions.TransactionInactive());
             if (this._locked()) {
               return new DexiePromise(function(resolve, reject) {
-                _this._blockedFuncs.push([function() {
-                  _this._promise(mode, fn, bWriteLock).then(resolve, reject);
-                }, PSD]);
+                _this._blockedFuncs.push([
+                  function() {
+                    _this._promise(mode, fn, bWriteLock).then(resolve, reject);
+                  },
+                  PSD
+                ]);
               });
             } else if (bWriteLock) {
               return newScope(function() {
@@ -21198,6 +21290,15 @@
         function createTransactionConstructor(db) {
           return makeClassConstructor(Transaction.prototype, function Transaction2(mode, storeNames, dbschema, chromeTransactionDurability, parent2) {
             var _this = this;
+            if (mode !== "readonly")
+              storeNames.forEach(function(storeName) {
+                var _a2;
+                var yProps = (_a2 = dbschema[storeName]) === null || _a2 === void 0 ? void 0 : _a2.yProps;
+                if (yProps)
+                  storeNames = storeNames.concat(yProps.map(function(p) {
+                    return p.updatesTable;
+                  }));
+              });
             this.db = db;
             this.mode = mode;
             this.storeNames = storeNames;
@@ -21230,7 +21331,7 @@
             });
           });
         }
-        function createIndexSpec(name, keyPath, unique, multi, auto, compound, isPrimKey) {
+        function createIndexSpec(name, keyPath, unique, multi, auto, compound, isPrimKey, type2) {
           return {
             name,
             keyPath,
@@ -21238,7 +21339,8 @@
             multi,
             auto,
             compound,
-            src: (unique && !isPrimKey ? "&" : "") + (multi ? "*" : "") + (auto ? "++" : "") + nameFromKeyPath(keyPath)
+            src: (unique && !isPrimKey ? "&" : "") + (multi ? "*" : "") + (auto ? "++" : "") + nameFromKeyPath(keyPath),
+            type: type2
           };
         }
         function nameFromKeyPath(keyPath) {
@@ -21307,6 +21409,7 @@
         function createDBCore(db, IdbKeyRange, tmpTrans) {
           function extractSchema(db2, trans) {
             var tables2 = arrayify(db2.objectStoreNames);
+            var tempStore = tables2.length > 0 ? trans.objectStore(tables2[0]) : {};
             return {
               schema: {
                 name: db2.name,
@@ -21356,7 +21459,8 @@
                   return result;
                 })
               },
-              hasGetAll: tables2.length > 0 && "getAll" in trans.objectStore(tables2[0]) && !(typeof navigator !== "undefined" && /Safari/.test(navigator.userAgent) && !/(Chrome\/|Edge\/)/.test(navigator.userAgent) && [].concat(navigator.userAgent.match(/Safari\/(\d*)/))[1] < 604)
+              hasGetAll: tables2.length > 0 && "getAll" in tempStore && !(typeof navigator !== "undefined" && /Safari/.test(navigator.userAgent) && !/(Chrome\/|Edge\/)/.test(navigator.userAgent) && [].concat(navigator.userAgent.match(/Safari\/(\d*)/))[1] < 604),
+              hasIdb3Features: "getAllRecords" in tempStore
             };
           }
           function makeIDBKeyRange(range) {
@@ -21384,7 +21488,12 @@
                   throw new Error("Given keys array must have same length as given values array.");
                 }
                 if (length === 0)
-                  return resolve({ numFailures: 0, failures: {}, results: [], lastResult: void 0 });
+                  return resolve({
+                    numFailures: 0,
+                    failures: {},
+                    results: [],
+                    lastResult: void 0
+                  });
                 var req;
                 var reqs = [];
                 var failures = [];
@@ -21395,7 +21504,12 @@
                 };
                 if (type2 === "deleteRange") {
                   if (range.type === 4)
-                    return resolve({ numFailures, failures, results: [], lastResult: void 0 });
+                    return resolve({
+                      numFailures,
+                      failures,
+                      results: [],
+                      lastResult: void 0
+                    });
                   if (range.type === 3)
                     reqs.push(req = store.clear());
                   else
@@ -21515,11 +21629,13 @@
                 }, reject);
               });
             }
-            function query(hasGetAll2) {
+            function query(hasGetAll2, hasIdb3Features2) {
               return function(request) {
                 return new Promise(function(resolve, reject) {
+                  var _a3;
                   resolve = wrap(resolve);
                   var trans = request.trans, values = request.values, limit = request.limit, query2 = request.query;
+                  var direction = (_a3 = request.direction) !== null && _a3 !== void 0 ? _a3 : "next";
                   var nonInfinitLimit = limit === Infinity ? void 0 : limit;
                   var index = query2.index, range = query2.range;
                   var store = trans.objectStore(tableName);
@@ -21527,7 +21643,18 @@
                   var idbKeyRange = makeIDBKeyRange(range);
                   if (limit === 0)
                     return resolve({ result: [] });
-                  if (hasGetAll2) {
+                  if (hasIdb3Features2) {
+                    var options = {
+                      query: idbKeyRange,
+                      count: nonInfinitLimit,
+                      direction
+                    };
+                    var req = values ? source.getAll(options) : source.getAllKeys(options);
+                    req.onsuccess = function(event) {
+                      return resolve({ result: event.target.result });
+                    };
+                    req.onerror = eventRejectHandler(reject);
+                  } else if (hasGetAll2 && direction === "next") {
                     var req = values ? source.getAll(idbKeyRange, nonInfinitLimit) : source.getAllKeys(idbKeyRange, nonInfinitLimit);
                     req.onsuccess = function(event) {
                       return resolve({ result: event.target.result });
@@ -21535,9 +21662,9 @@
                     req.onerror = eventRejectHandler(reject);
                   } else {
                     var count_1 = 0;
-                    var req_1 = values || !("openKeyCursor" in source) ? source.openCursor(idbKeyRange) : source.openKeyCursor(idbKeyRange);
+                    var req_1 = values || !("openKeyCursor" in source) ? source.openCursor(idbKeyRange, direction) : source.openKeyCursor(idbKeyRange, direction);
                     var result_1 = [];
-                    req_1.onsuccess = function(event) {
+                    req_1.onsuccess = function() {
                       var cursor = req_1.result;
                       if (!cursor)
                         return resolve({ result: result_1 });
@@ -21599,7 +21726,7 @@
                   req.onerror = eventRejectHandler(reject);
                 });
               },
-              query: query(hasGetAll),
+              query: query(hasGetAll, hasIdb3Features),
               openCursor: openCursor2,
               count: function(_a3) {
                 var query2 = _a3.query, trans = _a3.trans;
@@ -21617,7 +21744,7 @@
               }
             };
           }
-          var _a2 = extractSchema(db, tmpTrans), schema = _a2.schema, hasGetAll = _a2.hasGetAll;
+          var _a2 = extractSchema(db, tmpTrans), schema = _a2.schema, hasGetAll = _a2.hasGetAll, hasIdb3Features = _a2.hasIdb3Features;
           var tables = schema.tables.map(function(tableSchema) {
             return createDbCoreTable(tableSchema);
           });
@@ -21681,7 +21808,12 @@
                       return this.table(tableName);
                     },
                     set: function(value) {
-                      defineProperty(this, tableName, { value, writable: true, configurable: true, enumerable: true });
+                      defineProperty(this, tableName, {
+                        value,
+                        writable: true,
+                        configurable: true,
+                        enumerable: true
+                      });
                     }
                   });
                 } else {
@@ -21936,7 +22068,10 @@
           });
         }
         function addIndex(store, idx) {
-          store.createIndex(idx.name, idx.keyPath, { unique: idx.unique, multiEntry: idx.multi });
+          store.createIndex(idx.name, idx.keyPath, {
+            unique: idx.unique,
+            multiEntry: idx.multi
+          });
         }
         function buildGlobalSchema(db, idbdb, tmpTrans) {
           var globalSchema = {};
@@ -21995,30 +22130,44 @@
         }
         function parseIndexSyntax(primKeyAndIndexes) {
           return primKeyAndIndexes.split(",").map(function(index, indexNum) {
-            index = index.trim();
+            var _a2;
+            var typeSplit = index.split(":");
+            var type2 = (_a2 = typeSplit[1]) === null || _a2 === void 0 ? void 0 : _a2.trim();
+            index = typeSplit[0].trim();
             var name = index.replace(/([&*]|\+\+)/g, "");
             var keyPath = /^\[/.test(name) ? name.match(/^\[(.*)\]$/)[1].split("+") : name;
-            return createIndexSpec(name, keyPath || null, /\&/.test(index), /\*/.test(index), /\+\+/.test(index), isArray(keyPath), indexNum === 0);
+            return createIndexSpec(name, keyPath || null, /\&/.test(index), /\*/.test(index), /\+\+/.test(index), isArray(keyPath), indexNum === 0, type2);
           });
         }
         var Version = (function() {
           function Version2() {
           }
+          Version2.prototype._createTableSchema = function(name, primKey, indexes) {
+            return createTableSchema(name, primKey, indexes);
+          };
+          Version2.prototype._parseIndexSyntax = function(primKeyAndIndexes) {
+            return parseIndexSyntax(primKeyAndIndexes);
+          };
           Version2.prototype._parseStoresSpec = function(stores, outSchema) {
+            var _this = this;
             keys(stores).forEach(function(tableName) {
               if (stores[tableName] !== null) {
-                var indexes = parseIndexSyntax(stores[tableName]);
+                var indexes = _this._parseIndexSyntax(stores[tableName]);
                 var primKey = indexes.shift();
+                if (!primKey) {
+                  throw new exceptions.Schema("Invalid schema for table " + tableName + ": " + stores[tableName]);
+                }
                 primKey.unique = true;
                 if (primKey.multi)
-                  throw new exceptions.Schema("Primary key cannot be multi-valued");
+                  throw new exceptions.Schema("Primary key cannot be multiEntry*");
                 indexes.forEach(function(idx) {
                   if (idx.auto)
                     throw new exceptions.Schema("Only primary key can be marked as autoIncrement (++)");
                   if (!idx.keyPath)
                     throw new exceptions.Schema("Index must have a name and cannot be an empty string");
                 });
-                outSchema[tableName] = createTableSchema(tableName, primKey, indexes);
+                var tblSchema = _this._createTableSchema(tableName, primKey, indexes);
+                outSchema[tableName] = tblSchema;
               }
             });
           };
@@ -22056,6 +22205,65 @@
               contentUpgrade: null
             };
           });
+        }
+        var connections = createConnectionsManager();
+        function createConnectionsManager() {
+          if (typeof FinalizationRegistry !== "undefined" && typeof WeakRef !== "undefined") {
+            var _refs_1 = /* @__PURE__ */ new Set();
+            var _registry_1 = new FinalizationRegistry(function(ref) {
+              _refs_1.delete(ref);
+            });
+            var toArray = function() {
+              return Array.from(_refs_1).map(function(ref) {
+                return ref.deref();
+              }).filter(function(db) {
+                return db !== void 0;
+              });
+            };
+            var add3 = function(db) {
+              var ref = new WeakRef(db._novip);
+              _refs_1.add(ref);
+              _registry_1.register(db._novip, ref, ref);
+              if (_refs_1.size > db._options.maxConnections) {
+                var oldestRef = _refs_1.values().next().value;
+                _refs_1.delete(oldestRef);
+                _registry_1.unregister(oldestRef);
+              }
+            };
+            var remove3 = function(db) {
+              if (!db)
+                return;
+              var iterator = _refs_1.values();
+              var result = iterator.next();
+              while (!result.done) {
+                var ref = result.value;
+                if (ref.deref() === db._novip) {
+                  _refs_1.delete(ref);
+                  _registry_1.unregister(ref);
+                  return;
+                }
+                result = iterator.next();
+              }
+            };
+            return { toArray, add: add3, remove: remove3 };
+          } else {
+            var connections_1 = [];
+            var toArray = function() {
+              return connections_1;
+            };
+            var add3 = function(db) {
+              connections_1.push(db._novip);
+            };
+            var remove3 = function(db) {
+              if (!db)
+                return;
+              var index = connections_1.indexOf(db._novip);
+              if (index !== -1) {
+                connections_1.splice(index, 1);
+              }
+            };
+            return { toArray, add: add3, remove: remove3 };
+          }
         }
         function getDbNamesTable(indexedDB2, IDBKeyRange) {
           var dbNamesDB = indexedDB2["_dbNamesDB"];
@@ -22419,13 +22627,13 @@
                     generateMiddlewareStacks(db, tmpTrans);
                   } catch (e) {
                   }
-                connections.push(db);
+                connections.add(db);
                 idbdb.onversionchange = wrap(function(ev) {
                   state.vcFired = true;
                   db.on("versionchange").fire(ev);
                 });
-                idbdb.onclose = wrap(function(ev) {
-                  db.on("close").fire(ev);
+                idbdb.onclose = wrap(function() {
+                  db.close({ disableAutoOpen: false });
                 });
                 if (wasCreated)
                   _onDatabaseCreated(db._deps, dbName);
@@ -22450,9 +22658,10 @@
               return DexiePromise.reject(err);
             });
           };
+          var useSafari14Workaround = typeof navigator !== "undefined" && !!indexedDB2 && indexedDB2 === _global.indexedDB;
           return DexiePromise.race([
             openCanceller,
-            (typeof navigator === "undefined" ? DexiePromise.resolve() : idbReady()).then(tryOpenDB)
+            (useSafari14Workaround ? idbReady() : DexiePromise.resolve()).then(tryOpenDB)
           ]).then(function() {
             throwIfCancelled();
             state.onReadyBeingFired = [];
@@ -22595,7 +22804,7 @@
           return __assign(__assign({}, down), { table: function(tableName) {
             var table = down.table(tableName);
             var schema = table.schema;
-            var indexLookup = {};
+            var indexLookup = /* @__PURE__ */ Object.create(null);
             var allVirtualIndexes = [];
             function addVirtualIndexes(keyPath, keyTail, lowLevelIndex) {
               var keyPathAlias = getKeyPathAlias(keyPath);
@@ -22832,13 +23041,26 @@
                   return deleteNextChunk(req2.trans, req2.range, 1e4);
                 }
                 function deleteNextChunk(trans, range, limit) {
-                  return downTable.query({ trans, values: false, query: { index: primaryKey, range }, limit }).then(function(_a3) {
+                  return downTable.query({
+                    trans,
+                    values: false,
+                    query: { index: primaryKey, range },
+                    limit
+                  }).then(function(_a3) {
                     var result = _a3.result;
-                    return addPutOrDelete({ type: "delete", keys: result, trans }).then(function(res) {
+                    return addPutOrDelete({
+                      type: "delete",
+                      keys: result,
+                      trans
+                    }).then(function(res) {
                       if (res.numFailures > 0)
                         return Promise.reject(res.failures[0]);
                       if (result.length < limit) {
-                        return { failures: [], numFailures: 0, lastResult: void 0 };
+                        return {
+                          failures: [],
+                          numFailures: 0,
+                          lastResult: void 0
+                        };
                       } else {
                         return deleteNextChunk(trans, __assign(__assign({}, range), { lower: result[result.length - 1], lowerOpen: true }), limit);
                       }
@@ -22851,7 +23073,11 @@
           }
         };
         function getExistingValues(table, req, effectiveKeys) {
-          return req.type === "add" ? Promise.resolve([]) : table.getMany({ trans: req.trans, keys: effectiveKeys, cache: "immutable" });
+          return req.type === "add" ? Promise.resolve([]) : table.getMany({
+            trans: req.trans,
+            keys: effectiveKeys,
+            cache: "immutable"
+          });
         }
         function getFromTransactionCache(keys2, cache2, clone) {
           try {
@@ -22950,9 +23176,12 @@
                 var pkRangeSet = getRangeSet("");
                 var delsRangeSet = getRangeSet(":dels");
                 var type2 = req.type;
-                var _c = req.type === "deleteRange" ? [req.range] : req.type === "delete" ? [req.keys] : req.values.length < 50 ? [getEffectiveKeys(primaryKey, req).filter(function(id) {
-                  return id;
-                }), req.values] : [], keys2 = _c[0], newObjs = _c[1];
+                var _c = req.type === "deleteRange" ? [req.range] : req.type === "delete" ? [req.keys] : req.values.length < 50 ? [
+                  getEffectiveKeys(primaryKey, req).filter(function(id) {
+                    return id != null;
+                  }),
+                  req.values
+                ] : [], keys2 = _c[0], newObjs = _c[1];
                 var oldCache = req.trans["_cache"];
                 if (isArray(keys2)) {
                   pkRangeSet.addKeys(keys2);
@@ -23232,9 +23461,12 @@
           }, result);
           if (finalResult === result)
             return result;
-          finalResult.sort(function(a, b) {
+          var sorter = function(a, b) {
             return cmp2(extractLowLevelIndex(a), extractLowLevelIndex(b)) || cmp2(extractPrimKey(a), extractPrimKey(b));
-          });
+          };
+          finalResult.sort(req.direction === "prev" || req.direction === "prevunique" ? function(a, b) {
+            return sorter(b, a);
+          } : sorter);
           if (req.limit && req.limit < Infinity) {
             if (finalResult.length > req.limit) {
               finalResult.length = req.limit;
@@ -23283,6 +23515,7 @@
           return compareLowers(r1.lower, r2.lower, r1.lowerOpen, r2.lowerOpen) <= 0 && compareUppers(r1.upper, r2.upper, r1.upperOpen, r2.upperOpen) >= 0;
         }
         function findCompatibleQuery(dbName, tableName, type2, req) {
+          var _a2;
           var tblCache = cache["idb://".concat(dbName, "/").concat(tableName)];
           if (!tblCache)
             return [];
@@ -23295,8 +23528,10 @@
             return [null, false, tblCache, null];
           switch (type2) {
             case "query":
+              var reqDirection_1 = (_a2 = req.direction) !== null && _a2 !== void 0 ? _a2 : "next";
               var equalEntry = entries.find(function(entry) {
-                return entry.req.limit === req.limit && entry.req.values === req.values && areRangesEqual(entry.req.query.range, req.query.range);
+                var _a3;
+                return entry.req.limit === req.limit && entry.req.values === req.values && ((_a3 = entry.req.direction) !== null && _a3 !== void 0 ? _a3 : "next") === reqDirection_1 && areRangesEqual(entry.req.query.range, req.query.range);
               });
               if (equalEntry)
                 return [
@@ -23306,8 +23541,9 @@
                   entries
                 ];
               var superEntry = entries.find(function(entry) {
+                var _a3;
                 var limit = "limit" in entry.req ? entry.req.limit : Infinity;
-                return limit >= req.limit && (req.values ? entry.req.values : true) && isSuperRange(entry.req.query.range, req.query.range);
+                return limit >= req.limit && ((_a3 = entry.req.direction) !== null && _a3 !== void 0 ? _a3 : "next") === reqDirection_1 && (req.values ? entry.req.values : true) && isSuperRange(entry.req.query.range, req.query.range);
               });
               return [superEntry, false, tblCache, entries];
             case "count":
@@ -23389,7 +23625,9 @@
                                       });
                                     } else if (modRes !== entry.res) {
                                       entry.res = modRes;
-                                      entry.promise = DexiePromise.resolve({ result: modRes });
+                                      entry.promise = DexiePromise.resolve({
+                                        result: modRes
+                                      });
                                     }
                                   } else {
                                     if (entry.dirty) {
@@ -23490,8 +23728,6 @@
                         Object.freeze(result[i]);
                       }
                       Object.freeze(result);
-                    } else {
-                      res.result = deepClone(result);
                     }
                     return res;
                   }).catch(function(error) {
@@ -23527,8 +23763,9 @@
                 }
                 subscribeToCacheEntry(cacheEntry, container, requery, signal);
                 return cacheEntry.promise.then(function(res) {
+                  var result = applyOptimisticOps(res.result, req, tblCache === null || tblCache === void 0 ? void 0 : tblCache.optimisticOps, downTable, cacheEntry, freezeResults);
                   return {
-                    result: applyOptimisticOps(res.result, req, tblCache === null || tblCache === void 0 ? void 0 : tblCache.optimisticOps, downTable, cacheEntry, freezeResults)
+                    result: freezeResults ? result : deepClone(result)
                   };
                 });
               } });
@@ -23557,7 +23794,8 @@
               autoOpen: true,
               indexedDB: deps.indexedDB,
               IDBKeyRange: deps.IDBKeyRange,
-              cache: "cloned"
+              cache: "cloned",
+              maxConnections: DEFAULT_MAX_CONNECTIONS
             }, options);
             this._deps = {
               indexedDB: options.indexedDB,
@@ -23591,7 +23829,20 @@
             });
             this._state = state;
             this.name = name;
-            this.on = Events(this, "populate", "blocked", "versionchange", "close", { ready: [promisableChain, nop] });
+            this.on = Events(this, "populate", "blocked", "versionchange", "close", {
+              ready: [promisableChain, nop]
+            });
+            this.once = function(event, callback) {
+              var fn = function() {
+                var args = [];
+                for (var _i = 0; _i < arguments.length; _i++) {
+                  args[_i] = arguments[_i];
+                }
+                _this.on(event).unsubscribe(fn);
+                callback.apply(_this, args);
+              };
+              return _this.on(event, fn);
+            };
             this.on.ready.subscribe = override(this.on.ready.subscribe, function(subscribe) {
               return function(subscriber, bSticky) {
                 Dexie3.vip(function() {
@@ -23641,7 +23892,7 @@
             };
             this._fireOnBlocked = function(ev) {
               _this.on("blocked").fire(ev);
-              connections.filter(function(c) {
+              connections.toArray().filter(function(c) {
                 return c.name === _this.name && c !== _this && !c._state.vcFired;
               }).map(function(c) {
                 return c.on("versionchange").fire(ev);
@@ -23721,7 +23972,12 @@
             if (name)
               this.unuse({ stack, name });
             var middlewares = this._middlewares[stack] || (this._middlewares[stack] = []);
-            middlewares.push({ stack, create, level: level == null ? 10 : level, name });
+            middlewares.push({
+              stack,
+              create,
+              level: level == null ? 10 : level,
+              name
+            });
             middlewares.sort(function(a, b) {
               return a.level - b.level;
             });
@@ -23746,10 +24002,9 @@
             );
           };
           Dexie3.prototype._close = function() {
+            this.on.close.fire(new CustomEvent("close"));
             var state = this._state;
-            var idx = connections.indexOf(this);
-            if (idx >= 0)
-              connections.splice(idx, 1);
+            connections.remove(this);
             if (this.idbdb) {
               try {
                 this.idbdb.close();
@@ -23818,7 +24073,7 @@
           };
           Dexie3.prototype.hasBeenClosed = function() {
             var dbOpenError = this._state.dbOpenError;
-            return dbOpenError && dbOpenError.name === "DatabaseClosed";
+            return dbOpenError && dbOpenError.name === "DatabaseClosedError";
           };
           Dexie3.prototype.hasFailed = function() {
             return this._state.dbOpenError !== null;
@@ -23991,22 +24246,33 @@
                 trans: null
               };
               var ret = execute(ctx);
+              if (!startedListening) {
+                globalEvents.storagemutated.subscribe(mutationListener);
+                startedListening = true;
+              }
               Promise.resolve(ret).then(function(result) {
                 hasValue = true;
                 currentValue = result;
                 if (closed || ctx.signal.aborted) {
                   return;
                 }
-                accumMuts = {};
-                currentObs = subscr;
-                if (!objectIsEmpty(currentObs) && !startedListening) {
-                  globalEvents(DEXIE_STORAGE_MUTATED_EVENT_NAME, mutationListener);
-                  startedListening = true;
+                if (shouldNotify()) {
+                  doQuery();
+                } else {
+                  currentObs = subscr;
+                  if (shouldNotify()) {
+                    doQuery();
+                  } else {
+                    accumMuts = {};
+                    execInGlobalContext(function() {
+                      return !closed && observer.next && observer.next(result);
+                    });
+                  }
                 }
-                execInGlobalContext(function() {
-                  return !closed && observer.next && observer.next(result);
-                });
               }, function(err) {
+                if (closed || ctx.signal.aborted) {
+                  return;
+                }
                 hasValue = false;
                 if (!["DatabaseClosedError", "AbortError"].includes(err === null || err === void 0 ? void 0 : err.name)) {
                   if (!closed)
@@ -24057,7 +24323,7 @@
             return Class;
           },
           ignoreTransaction: function(scopeFunc) {
-            return PSD.trans ? usePSD(PSD.transless, scopeFunc) : scopeFunc();
+            return PSD.trans ? usePSD(PSD.transless || globalPSD, scopeFunc) : scopeFunc();
           },
           vip,
           async: function(generatorFn) {
@@ -24118,7 +24384,9 @@
           asap: asap$1,
           minKey,
           addons: [],
-          connections,
+          connections: {
+            get: connections.toArray
+          },
           errnames,
           dependencies: domDeps,
           cache,
@@ -24186,8 +24454,8 @@
               if (debug)
                 console.debug("Dexie: handling persisted pagehide");
               bc === null || bc === void 0 ? void 0 : bc.close();
-              for (var _i = 0, connections_1 = connections; _i < connections_1.length; _i++) {
-                var db = connections_1[_i];
+              for (var _i = 0, _a2 = connections.toArray(); _i < _a2.length; _i++) {
+                var db = _a2[_i];
                 db.close({ disableAutoOpen: false });
               }
             }
@@ -24214,18 +24482,19 @@
         setDebug(debug);
         var namedExports = /* @__PURE__ */ Object.freeze({
           __proto__: null,
+          DEFAULT_MAX_CONNECTIONS,
           Dexie: Dexie$1,
-          liveQuery: liveQuery2,
           Entity: Entity2,
-          cmp: cmp2,
           PropModification: PropModification2,
-          replacePrefix: replacePrefix2,
-          add: add2,
-          remove: remove2,
-          "default": Dexie$1,
           RangeSet: RangeSet2,
+          add: add2,
+          cmp: cmp2,
+          default: Dexie$1,
+          liveQuery: liveQuery2,
           mergeRanges: mergeRanges2,
-          rangesOverlap: rangesOverlap2
+          rangesOverlap: rangesOverlap2,
+          remove: remove2,
+          replacePrefix: replacePrefix2
         });
         __assign(Dexie$1, namedExports, { default: Dexie$1 });
         return Dexie$1;
@@ -24234,7 +24503,7 @@
   });
 
   // node_modules/dexie/import-wrapper.mjs
-  var import_dexie, DexieSymbol, Dexie, liveQuery, mergeRanges, rangesOverlap, RangeSet, cmp, Entity, PropModification, replacePrefix, add, remove, import_wrapper_default;
+  var import_dexie, DexieSymbol, Dexie, liveQuery, mergeRanges, rangesOverlap, RangeSet, cmp, Entity, PropModification, replacePrefix, add, remove, DexieYProvider, import_wrapper_default;
   var init_import_wrapper = __esm({
     "node_modules/dexie/import-wrapper.mjs"() {
       import_dexie = __toESM(require_dexie(), 1);
@@ -24253,7 +24522,8 @@
         PropModification,
         replacePrefix,
         add,
-        remove
+        remove,
+        DexieYProvider
       } = Dexie);
       import_wrapper_default = Dexie;
     }
@@ -30691,7 +30961,7 @@
 
   // shared/data/etags.json
   var etags_default = {
-    "config-etag": 'W/"202143f9003e1c81830673676d0e0f36"',
+    "config-etag": 'W/"df81fbfc17aceeef9ee6da2c0da79047"',
     "current-mv3-tds-etag": "3c222272c0e8376cded30b095e62ea51",
     "fallback-mv3-tds-etag": "da18c835eadd0a76dbe9b09b7c4e8608"
   };
@@ -30922,6 +31192,7 @@
         if (browserName3 === "chrome" && (req === "healthCheckRequest" || req === "rescheduleCounterMessagingRequest")) {
           req = { messageType: req };
         }
+        const hasExplicitMessageType = Boolean(req.messageType);
         const legacyMessageTypes = [
           "addUserData",
           "getUserData",
@@ -30932,12 +31203,12 @@
           "debuggerMessage"
         ];
         for (const legacyMessageType of legacyMessageTypes) {
-          if (legacyMessageType in req) {
+          if (!hasExplicitMessageType && legacyMessageType in req) {
             req.messageType = legacyMessageType;
             req.options = req[legacyMessageType];
           }
         }
-        if (req.registeredTempAutofillContentScript) {
+        if (!hasExplicitMessageType && req.registeredTempAutofillContentScript) {
           req.messageType = "registeredContentScript";
         }
         if (req.messageType && req.messageType in message_registry_default) {
@@ -32111,6 +32382,8 @@
       await this.remoteConfig.ready;
       return this.remoteConfig.isSubFeatureEnabled("autoconsent", subfeatureName);
     }
+    async reportCoverage() {
+    }
     async sendPixel(pixelName, type, params) {
       if (type === "daily") {
         pixelName = `${pixelName}_daily`;
@@ -32217,6 +32490,13 @@
     EVAL_ADULTFRIENDFINDER_TEST: () => !!localStorage.getItem("cookieConsent"),
     EVAL_AYLO_COOKIE_MANAGER_READY: () => !!(window.wl_cookie_consent_manager || window._Cookie_Consent_Manager_brand),
     EVAL_BAHN_TEST: () => utag.gdpr.getSelectedCategories().length === 1,
+    // the close handler listens for mouseup, which element.click() does not dispatch
+    EVAL_BING_NOTICE_CLOSE: () => {
+      const close = document.querySelector("#bnp_ttc_close");
+      close.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true, view: window }));
+      close.click();
+      return true;
+    },
     EVAL_BIGCOMMERCE_CONSENT_MANAGER_DETECT: () => !!(window.consentManager && window.consentManager.version),
     EVAL_BORLABS_0: () => !JSON.parse(
       decodeURIComponent(
@@ -32346,6 +32626,8 @@
     EVAL_TEALIUM_2: () => utag.gdpr.setConsentValue(true) || true,
     EVAL_TEALIUM_3: () => utag.gdpr.getConsentState() !== 1,
     EVAL_TEALIUM_DONOTSELL_CHECK: () => utag.gdpr.dns?.getDnsState() !== 1,
+    // 0 means no stored decision; otherwise the user reopened the prompt themselves
+    EVAL_TEALIUM_NO_DECISION: () => utag.gdpr.getConsentState() === 0,
     EVAL_TESTCMP_STEP: () => !!document.querySelector("#reject-all"),
     EVAL_TESTCMP_0: () => window.results.results[0] === "button_clicked",
     EVAL_TESTCMP_COSMETIC_0: () => window.results.results[0] === "banner_hidden",
@@ -32362,6 +32644,14 @@
     EVAL_WAITROSE_0: () => Array.from(document.querySelectorAll("label[id$=cookies-deny-label]")).forEach((e) => e.click()) || true,
     EVAL_WBD_LTP_CLOSE: () => document.querySelector("dialog#ltp-dialog").close() || true
   };
+  var BY_CONTINUING_PRIVACY = /(?:by continuing.{0,100}privacy)|(?:privacy.{0,100}by continuing)/gi;
+  var ACCEPT_ALL = /accept all/gi;
+  var USE_OF_COOKIES = /use of cookies/gi;
+  var UTILISATION_DES_COOKIES = /utilisation.{0,100}des.{0,100}cookies/gi;
+  var ACCEPTEZ_UTILISATION = /acceptez.{0,100}l.{0,100}utilisation/gi;
+  var VERWENDUNG_VON_COOKIES = /verwendung.{0,100}von.{0,100}cookies/gi;
+  var DE_COOKIE_VERB = /\b(?:nutzen|nutzt|verwenden|verwendet|setzen|setzt|benutzen|benutzt|speichert|platzieren)\b(?: \S+){0,4} cookies\b/gi;
+  var GEBRUIK_VAN_COOKIES = /gebruik.{0,100}van.{0,100}cookies/gi;
   var REJECT_PATTERNS_ENGLISH = [
     // e.g. "reject", "reject all", "reject all cookies", "deny all", "refuse cookies", "decline",
     // "reject non-essential cookies", "reject unnecessary cookies", "reject all but necessary", "reject all and close"
@@ -32502,6 +32792,14 @@
     // "nej tak" (no thanks)
     /^nej(,?\s+tak)?$/is
   ];
+  var REJECT_PATTERNS_NORWEGIAN = [
+    // avvis / avslå (reject verbs)
+    /(^|\s)(avvis|avslå)/is,
+    // (accept/allow/use) only necessary cookies
+    /^(godta\s+|tillat\s+|aksepter\s+|bruk\s+)?(kun|bare)\s+(strengt\s+)?nødvendige( (informasjonskapsler|cookies))?$/is,
+    // "nei" / "nei takk" (no thanks)
+    /^nei(,?\s+takk)?$/is
+  ];
   var REJECT_PATTERNS_CATALAN = [
     /(^|\s)rebutj/is,
     "no accepto",
@@ -32557,6 +32855,7 @@
     ...REJECT_PATTERNS_SPANISH,
     ...REJECT_PATTERNS_SWEDISH,
     ...REJECT_PATTERNS_DANISH,
+    ...REJECT_PATTERNS_NORWEGIAN,
     ...REJECT_PATTERNS_CATALAN,
     ...REJECT_PATTERNS_GALICIAN,
     ...REJECT_PATTERNS_BASQUE,
@@ -32568,6 +32867,121 @@
     ...REJECT_PATTERNS_INDONESIAN,
     ...REJECT_PATTERNS_JAPANESE
   ];
+  var COOKIE_CHOICE = [
+    "\\b(?:accept|reject|decline|refuse|deny|allow|manage|customi[sz]e)\\b[^\\n]{0,25}\\bcookies?\\b",
+    "\\b(?:reject|decline|deny|refuse) all\\b",
+    "\\b(?:essential|necessary|required) (?:cookies )?only\\b|\\bonly (?:essential|necessary|required)\\b",
+    "\\bcookies? (?:notice|settings|preferences|banner)\\b",
+    "\\b(?:alle )?(?:cookies )?ablehnen\\b",
+    "\\b(?:alles |alle cookies )?(?:weigeren|weiger|afwijzen)\\b",
+    "\\b(?:tout )?refuser\\b",
+    "\\brechazar(?: todas?)?\\b",
+    "\\brifiuta(?: tutti)?\\b",
+    // purposes and vendors as a button or heading line: some consent dialogs ask "under 18?"
+    "^[^\\n]{0,40}\\b(?:purposes|finalit\xE9s|prop\xF3sitos|zwecke|doeleinden|finalit\xE0|vendors|fournisseurs|proveedores|leveranciers|fornitori)(?!\\w)[^\\n]{0,10}$",
+    "\\b(?:legitimate (?:business )?interest|int\xE9r\xEAt l\xE9gitime|inter\xE9s leg\xEDtimo|berechtigtes interesse|gerechtvaardigd belang|legittimo interesse)\\b",
+    "\\b(?:we|nous|wir|wij|noi|nosotros) (?:and|et|und|en|e|y) (?:our|nos|unsere|onze|i nostri|nuestros) (?:\\d+ )?(?:partners|partenaires|partner|socios)\\b"
+  ].join("|");
+  var BARE_ACCEPT = [
+    "\\b(?:accept|allow) all\\b",
+    "\\b(?:alle )?(?:cookies )?(?:akzeptieren|erlauben|zulassen)\\b",
+    "\\b(?:alles |alle cookies )?(?:accepteren|accepteer|toestaan)\\b",
+    "\\b(?:tout )?accepter\\b",
+    "\\baceptar(?: todas?)?\\b",
+    "\\baccetta(?: tutti)?\\b"
+  ].join("|");
+  var COOKIE_CHOICE_RE = new RegExp(COOKIE_CHOICE, "im");
+  var CONSENT_CHOICE = new RegExp(`${COOKIE_CHOICE}|${BARE_ACCEPT}`, "im");
+  var AGE_WORDING = new RegExp(
+    [
+      "\\b(?:over|above|at least|older than|minimum(?: age of)?)\\s*(?:18|21|eighteen)\\b",
+      // "18+" only with age words after it: a bare "18+" also appears in cookie banners on adult sites
+      "\\b(?:18|21)\\+?\\s*(?:years?(?: of age| old)?|yo|or older|or over)\\b",
+      "\\b(?:you|users?|visitors?) must be (?:over |above |at least )?(?:18|21)\\b",
+      "\\b(?:i'?m|i am) (?:over |at least )?(?:18|21)\\b",
+      "\\bage (?:verification|confirmation|check|gate|restriction)\\b",
+      "\\b(?:adults? only|adult[\\s-](?:oriented|content|material|website)|legal age|age of majority|not a minor|minors)\\b",
+      "\\b(?:18|21) jahre\\b",
+      "\\balters(?:beschr\xE4nkung|best\xE4tigung|verifikation|pr\xFCfung|kontrolle)",
+      "\\b(?:vollj\xE4hrig|f\xFCr erwachsene|minderj\xE4hrige)\\b",
+      "\\b(?:18|21) jaar\\b",
+      "\\b(?:volwassenen|meerderjarig|minderjarigen|leeftijdsverificatie)\\b",
+      "\\b(?:18|21) ans\\b",
+      // no \\b before an accented letter: without the u flag it is not a word character
+      "\\b(?:pour adultes|v\xE9rification de l.\xE2ge|mineurs)\\b|\xE2ge l\xE9gal\\b",
+      "\\b(?:18|21) a\xF1os\\b",
+      "\\b(?:mayor(?:es)? de edad|menores de edad|para adultos|verificaci\xF3n de edad)\\b",
+      "\\b(?:18|21) anni\\b",
+      "\\b(?:maggiorenne|minorenni|per adulti)\\b|\\bverifica dell.et\xE0(?!\\w)"
+    ].join("|"),
+    "i"
+  );
+  var DISMISS_LINE = /^\s*(?:(?:yes,? )?(?:i )?(?:ok(?:ay)?|accept|agree|allow|decline|deny|reject|refuse|understand|acknowledge(?: the use of cookies)?|got it|understood)(?: all)?(?:,? (?:and|&) (?:continue|close))?(?: non-essential)?|close|dismiss|akzeptieren|zustimmen|verstanden|einverstanden|ablehnen|accepteren|akkoord|weigeren|accepter|j.accepte|d.accord|refuser|fermer|aceptar|acepto|rechazar|entendido|accetto|accetta|rifiuta|ho capito|chiudi)\s*[!.]?\s*$/im;
+  var DISMISS_END = /[.!?]\s+(?:ok(?:ay)?|got it|i agree|accept)\s*!?\s*$|\[\s*[x×]\s*\]|^\s*[x×✕]\s*$/im;
+  var NOTICE_CONTROL = new RegExp(`${CONSENT_CHOICE.source}|${DISMISS_LINE.source}|${DISMISS_END.source}`, "im");
+  var LEAVE_LINE = /^\s*(?:(?:no,? )?(?:i )?(?:want to )?(?:leave|exit|verlassen|quitter|sortir|salir|abandonar|esci|uscire|verlaten)\b[^\n]{0,30}|no,? take me away|(?:seite|hier) verlassen|(?:i am|i'm|ich bin|ik ben|je suis|soy|sono) (?:under|unter|onder|jonger dan|menor de(?: edad)?|minorenne|mineur)\b[^\n]{0,10})\s*[!.]?\s*$/im;
+  var NOTICE_OWN_CONTROL = new RegExp(
+    [
+      "\\bcookies? verwalten\\b|\\bcookie-?(?:einstellungen|pr\xE4ferenzen)\\b|\\beinstellungen verwalten\\b",
+      "\\bconfigura(?:r|ci\xF3n de)(?: las)? cookies\\b|\\bgestionar(?: las)? cookies\\b|\\bpersonalizar(?: las)? cookies\\b",
+      "\\bparam[\xE9e]trer(?: les)? cookies\\b|\\bparam[\xE8e]tres(?: des)? cookies\\b|\\bg[\xE9e]rer(?: les)? cookies\\b|\\bpersonnaliser(?: les)? cookies\\b",
+      "\\bgestisci(?: i)? cookie|\\bimpostazioni(?: dei| sui)? cookie|\\bpersonalizza(?: i)? cookie",
+      "\\bcookie-?instellingen\\b|\\bcookies? beheren\\b|\\bvoorkeuren (?:beheren|aanpassen)\\b",
+      "^\\s*(?:customi[sz]e|personnaliser|param\xE9trer|personalizar|configurar|personalizza|anpassen|aanpassen|meer opties|more options|weitere optionen|plus d.options|m\xE1s opciones|altre opzioni|manage (?:options|preferences|choices))\\s*$",
+      "^\\s*close (?:this|the) (?:popup|banner|notice|message)\\s*$"
+    ].join("|"),
+    "im"
+  );
+  var ageGateUnless = (control) => (text) => !LEAVE_LINE.test(text) && (control.test(text) || NOTICE_OWN_CONTROL.test(text));
+  var CONSENT_WORDS = /cookie|consent|track|partner|personali[sz]|advertis|analytic|privacy (?:options|choices|settings|rights)|do not sell|opt[- ]out/i;
+  var LEGAL_AGREEMENT = /\b(?:end[- ]user licen[cs]e agreement|licen[cs]e agreement|limitation of liability|governing law|indemnif\w*|hereunder|disclaimers? of warrant\w*|warrant(?:y|ies) of merchantability)\b/i;
+  var DETECT_CONTEXT_NEGATIVES = [
+    // popups with their own age confirmation are age gates, even when they mention cookies; a bare accept doesn't count
+    // as a cookie choice here, since it may confirm the age
+    { name: "age-gate-popup", pattern: AGE_WORDING, unless: ageGateUnless(COOKIE_CHOICE_RE), whole: true, input: "popup" },
+    // a license or terms agreement may mention cookies, and its decline button must not be clicked as a cookie reject
+    { name: "legal-agreement", pattern: LEGAL_AGREEMENT, whole: true, input: "popup" },
+    // page text next to an age gate, unless a consent control is there too
+    { name: "age-gate", pattern: AGE_WORDING, unless: ageGateUnless(NOTICE_CONTROL), lines: [4, 5], input: "page" },
+    // terms of use need cookie or consent wording; a privacy-policy-only notice needs that or a button
+    {
+      name: "terms-without-consent",
+      pattern: /\bterms\b|\bconditions\b/i,
+      unless: CONSENT_WORDS,
+      appliesTo: [BY_CONTINUING_PRIVACY]
+    },
+    {
+      name: "privacy-without-control",
+      unless: new RegExp(`${CONSENT_WORDS.source}|${DISMISS_LINE.source}`, "im"),
+      appliesTo: [BY_CONTINUING_PRIVACY]
+    },
+    // a cookie policy link among short footer link lines
+    {
+      name: "footer-link",
+      pattern: /^[^.!?:\n]{0,60}\n[\s]*\n?[^.!?:\s][^.!?:\n]{0,59}(?:\n|$)/,
+      unless: NOTICE_CONTROL,
+      lines: [0, 2],
+      input: "page",
+      appliesTo: [USE_OF_COOKIES, VERWENDUNG_VON_COOKIES, UTILISATION_DES_COOKIES, GEBRUIK_VAN_COOKIES]
+    },
+    // "accept all" in prose; case-sensitive since button labels run together in innerText
+    {
+      name: "accept-all-prose",
+      pattern: /\baccept all [a-z]|\baccept All[a-z]/,
+      unless: /accept all (?:cookies|and|&)/i,
+      window: 15,
+      appliesTo: [ACCEPT_ALL]
+    },
+    {
+      name: "acceptez-terms",
+      pattern: /conditions (?:générales )?d.utilisation|\bcgu\b/i,
+      unless: /cookie|témoin|traceur|partenaire/i,
+      appliesTo: [ACCEPTEZ_UTILISATION]
+    },
+    // the same sentence is also a footer line with only a "learn more" link
+    { name: "de-cookie-verb-needs-control", unless: NOTICE_CONTROL, lines: [1, 6], input: "page", appliesTo: [DE_COOKIE_VERB] }
+  ];
+  var FRAGMENT_NEGATIVES = DETECT_CONTEXT_NEGATIVES.filter((n) => !n.whole);
   var compactedRuleSteps = [
     ["exists", "e"],
     ["visible", "v"],
@@ -32635,19 +33049,19 @@
     return true;
   }
   function filterCompactRules(rules, context) {
-    const { v, s, r, index } = rules;
+    const { v, s, r, index: index2 } = rules;
     const { url, mainFrame } = context;
     const shouldRunInContext = (rule) => shouldRunRuleInContext(rule, mainFrame, url);
     if (!mainFrame) {
       const ruleset = {
         v,
-        s: s.slice(0, index.frameStringEnd),
-        r: r.slice(index.frameRuleRange[0], index.frameRuleRange[1]).filter(shouldRunInContext)
+        s: s.slice(0, index2.frameStringEnd),
+        r: r.slice(index2.frameRuleRange[0], index2.frameRuleRange[1]).filter(shouldRunInContext)
       };
       return clearUnusedStrings(ruleset);
     }
-    const genericRules = r.slice(index.genericRuleRange[0], index.genericRuleRange[1]);
-    const specificRules = r.slice(index.specificRuleRange[0], index.specificRuleRange[1]).filter(shouldRunInContext);
+    const genericRules = r.slice(index2.genericRuleRange[0], index2.genericRuleRange[1]);
+    const specificRules = r.slice(index2.specificRuleRange[0], index2.specificRuleRange[1]).filter(shouldRunInContext);
     if (specificRules.length > 0) {
       const ruleset = {
         v,
@@ -32658,7 +33072,7 @@
     }
     return {
       v,
-      s: s.slice(0, index.genericStringEnd),
+      s: s.slice(0, index2.genericStringEnd),
       r: genericRules
     };
   }
@@ -33102,6 +33516,7 @@
             enableGeneratedRules: true,
             enableHeuristicDetection: true,
             heuristicMode,
+            enableHeuristicHitTest: !!settings21.featureFlags?.heuristicHitTest,
             visualTest,
             logs: logsConfig
           };
@@ -33325,6 +33740,30 @@
       });
     }
     /**
+     * @param {Record<string, number>} events - summary counts of one bucket
+     * @returns {CoverageCounts}
+     */
+    static coverageCounts(events) {
+      const patterns = events["detected-by-patterns"] || 0;
+      const both = events["detected-by-both"] || 0;
+      return { unhandled: Math.max(0, patterns - both), pages: events.init || 0 };
+    }
+    /**
+     * @param {Record<string, number>} events - summary counts of one bucket
+     * @param {SiteRankBucket=} siteRank
+     */
+    async reportCoverage(events, siteRank) {
+      const counts = _CookiePromptManagement.coverageCounts(events);
+      if (counts.unhandled === 0 && counts.pages === 0) {
+        return;
+      }
+      try {
+        await this.cpmMessaging.reportCoverage(counts, siteRank);
+      } catch (e) {
+        this.cpmMessaging.logMessage(`error reporting coverage: ${e}`);
+      }
+    }
+    /**
      * Counts without a bucket, e.g. from a state saved before the lookup was added, go in a pixel without `siteRank`.
      */
     async sendSummaryPixel() {
@@ -33346,6 +33785,7 @@
           consentHeuristicEnabled,
           fromExtension: "1"
         });
+        this.reportCoverage(summaryEvents);
       }
       for (const [siteRank, events] of Object.entries(summaryEventsByRank)) {
         if (Object.keys(events).length === 0) {
@@ -33357,6 +33797,11 @@
           consentHeuristicEnabled,
           fromExtension: "1"
         });
+        this.reportCoverage(
+          events,
+          /** @type {SiteRankBucket} */
+          siteRank
+        );
       }
     }
   };
@@ -33365,6 +33810,7 @@
   var import_webextension_polyfill24 = __toESM(require_browser_polyfill());
   init_before_request();
   init_i18n();
+  init_utils();
 
   // shared/js/ntp/constants.js
   var NTP_PORT_NAME = "ntp-windows-interop";
@@ -33392,6 +33838,13 @@
   var DEFAULT_FAVORITES_CONFIG = { expansion: "expanded" };
   var DEFAULT_PROTECTIONS_CONFIG = { expansion: "expanded", feed: "privacy-stats" };
   var SEARCH_URL = "https://duckduckgo.com/";
+  var FAVICON_SIZE = 64;
+  function ddgApi() {
+    if (!chrome.ddg) {
+      throw new Error("chrome.ddg is unavailable");
+    }
+    return chrome.ddg;
+  }
   var NTPMessaging = class {
     /** @type {Set<Port>} */
     ports = /* @__PURE__ */ new Set();
@@ -33415,7 +33868,13 @@
         port.onDisconnect.addListener(() => {
           this.ports.delete(port);
         });
+        this.pushFavoritesUpdate([port]);
       });
+      if (chrome.ddg?.onFavoritesChanged) {
+        chrome.ddg.onFavoritesChanged.addListener(() => this.pushFavoritesUpdate());
+      } else {
+        console.error("chrome.ddg.onFavoritesChanged is unavailable: open New Tab Pages will not see favorites change");
+      }
       emitter.on(TrackerBlockedEvent.eventName, () => {
         if (this.pushTimer) return;
         this.pushTimer = setTimeout(() => {
@@ -33444,7 +33903,11 @@
           port.postMessage({ context, featureName, id, error: { message } });
         }
       } else {
-        await this.handleNotification(method2, params, port);
+        try {
+          await this.handleNotification(method2, params, port);
+        } catch (e) {
+          console.error(`NTP ${method2} failed:`, e);
+        }
       }
     }
     /**
@@ -33474,7 +33937,7 @@
           await this.settings.ready();
           return this.settings.getSetting(FAVORITES_CONFIG_SETTING) || DEFAULT_FAVORITES_CONFIG;
         case "favorites_getData":
-          return { favorites: [] };
+          return this.getFavoritesData();
         // Protections
         case "protections_getConfig":
           await this.settings.ready();
@@ -33523,15 +33986,32 @@
           this.settings.updateSetting(FAVORITES_CONFIG_SETTING, params);
           break;
         case "favorites_open":
-          this.openUrl(params?.url, params?.target, port);
+          this.openUrl(params?.url, params?.target, port, false);
           break;
+        case "favorites_move":
+          if (typeof params?.id === "string" && Number.isInteger(params?.targetIndex)) {
+            try {
+              await ddgApi().moveFavorite(params.id, params.targetIndex);
+            } catch (e) {
+              await this.pushFavoritesUpdate();
+              throw e;
+            }
+          }
+          break;
+        case "favorites_add": {
+          const tabId = port?.sender?.tab?.id;
+          if (tabId === void 0 || !await ddgApi().showAddFavoriteBubble(tabId)) {
+            throw new Error("the add favorite dialog did not open");
+          }
+          break;
+        }
         // Protections
         case "protections_setConfig":
           await this.settings.ready();
           this.settings.updateSetting(PROTECTIONS_CONFIG_SETTING, params);
           break;
         case "activity_open":
-          this.openUrl(params?.url, params?.target, port);
+          this.openUrl(params?.url, params?.target, port, false);
           break;
         case "reportInitException":
         case "reportPageException":
@@ -33543,19 +34023,22 @@
     }
     /**
      * @param {unknown} url
-     * @param {string} [target] - 'same-tab' targets the NTP's own tab; otherwise a
-     *   new tab opens directly to the right of the NTP
+     * @param {string} [target] - 'same-tab' targets the NTP's own tab and 'new-window' a
+     *   new window; otherwise a new tab opens directly to the right of the NTP
      * @param {Port} [port] - the connection the request arrived on
+     * @param {boolean} [active] - whether that new tab is selected
      */
-    openUrl(url, target, port) {
+    openUrl(url, target, port, active = true) {
       if (typeof url !== "string") return;
       const tab = port?.sender?.tab;
-      if (!tab?.id) {
-        import_webextension_polyfill24.default.tabs.create({ url });
+      if (target === "new-window") {
+        import_webextension_polyfill24.default.windows.create({ url });
+      } else if (!tab?.id) {
+        import_webextension_polyfill24.default.tabs.create({ url, active });
       } else if (target === "same-tab") {
         import_webextension_polyfill24.default.tabs.update(tab.id, { url });
       } else {
-        import_webextension_polyfill24.default.tabs.create({ url, windowId: tab.windowId, index: tab.index + 1, openerTabId: tab.id });
+        import_webextension_polyfill24.default.tabs.create({ url, active, windowId: tab.windowId, index: tab.index + 1, openerTabId: tab.id });
       }
     }
     /**
@@ -33578,6 +34061,36 @@
       }
       return { trackerCompanies };
     }
+    /**
+     * Favorites in the page's format. Favicons come from Chromium's favicon
+     * cache (the `favicon` permission); the page appends `?preferredSize=N` to
+     * `src` verbatim, so the trailing '&' keeps that from corrupting `size`.
+     */
+    async getFavoritesData() {
+      const favorites = await ddgApi().getFavorites();
+      return {
+        favorites: favorites.map(({ id, title, url }) => ({
+          id,
+          title,
+          url,
+          etldPlusOne: getBaseDomain(url),
+          favicon: {
+            src: `/_favicon/?pageUrl=${encodeURIComponent(url)}&size=${FAVICON_SIZE}&`,
+            maxAvailableSize: FAVICON_SIZE
+          }
+        }))
+      };
+    }
+    /**
+     * @param {Iterable<Port>} [ports]
+     */
+    async pushFavoritesUpdate(ports = this.ports) {
+      try {
+        this.pushSubscriptionEvent("favorites_onDataUpdate", await this.getFavoritesData(), ports);
+      } catch (e) {
+        console.error("NTP favorites_onDataUpdate failed:", e);
+      }
+    }
     pushDataUpdate() {
       this.pushSubscriptionEvent("protections_onDataUpdate", this.getProtectionsData());
       this.pushSubscriptionEvent("stats_onDataUpdate", this.getPrivacyStatsData());
@@ -33585,9 +34098,10 @@
     /**
      * @param {string} subscriptionName
      * @param {any} params
+     * @param {Iterable<Port>} [ports]
      */
-    pushSubscriptionEvent(subscriptionName, params) {
-      for (const port of this.ports) {
+    pushSubscriptionEvent(subscriptionName, params, ports = this.ports) {
+      for (const port of ports) {
         port.postMessage({
           context: NTP_MESSAGING_CONTEXT,
           featureName: NTP_FEATURE_NAME,
@@ -33688,18 +34202,4 @@ eventemitter2/lib/eventemitter2.js:
    * Copyright (c) 2013 hij1nx
    * Licensed under the MIT license.
    *)
-
-dexie/dist/dexie.js:
-  (*! *****************************************************************************
-  Copyright (c) Microsoft Corporation.
-  Permission to use, copy, modify, and/or distribute this software for any
-  purpose with or without fee is hereby granted.
-  THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-  REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-  AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-  INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-  LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-  OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-  PERFORMANCE OF THIS SOFTWARE.
-  ***************************************************************************** *)
 */
