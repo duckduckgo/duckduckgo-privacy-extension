@@ -24,6 +24,7 @@ import MV3ContentScriptInjection from './components/mv3-content-script-injection
 import EmailAutofill from './components/email-autofill';
 import OmniboxSearch from './components/omnibox-search';
 import InternalUserDetector from './components/internal-user-detector';
+import DebugTabs from './components/debug-tabs';
 import TDSStorage from './components/tds';
 import ToggleReports from './components/toggle-reports';
 import TrackersGlobal from './components/trackers';
@@ -102,6 +103,7 @@ const components = {
     dashboardMessaging,
     omnibox: new OmniboxSearch(),
     internalUser: new InternalUserDetector({ settings }),
+    debugTabs: new DebugTabs({ debugBuild: DEBUG }),
     tabTracking: new TabTracker({ tabManager, devtools, abnMetrics }),
     tds,
     toggleReports: new ToggleReports({ dashboardMessaging }),
