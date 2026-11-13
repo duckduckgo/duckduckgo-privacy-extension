@@ -29,6 +29,7 @@ import initReloader from './devbuild-reloader';
 import topSites from '../../data/bundled/site-buckets.json';
 
 import NativeMessaging from './components/native-messaging';
+import { UserAllowlistSync } from './components/user-allowlist-sync';
 const nativeMessaging = new NativeMessaging('ddgInternalExtension', 'autoconsent', 'com.duckduckgo.macos.browser');
 
 // On Apple, JS console logs don't work in MV3 extensions, so we try to pass them to the native app.
@@ -56,6 +57,10 @@ globalThis.addEventListener('unhandledrejection', (event) => {
 
 const cpmMessaging = new CPMEmbeddedMessaging(nativeMessaging);
 
+// Created synchronously at the top level so its `commands.onCommand` listener is registered in the
+// background's first turn, which lets WebKit wake the background for the native allowlist-changed command.
+const userAllowlist = new UserAllowlistSync(new NativeMessaging('ddgInternalExtension', 'userAllowlist', 'com.duckduckgo.macos.browser'));
+
 // MessageRouter sets up browser.runtime.onMessage dispatching from the shared
 // message registry. It must be created before components that register handlers.
 const messaging = new MessageRouter();
@@ -70,11 +75,13 @@ const cpm = new CookiePromptManagement({
  * @type {{
  *  messaging: MessageRouter;
  *  cpm: CookiePromptManagement;
+ *  userAllowlist: UserAllowlistSync;
  * }}
  */
 const components = {
     messaging,
     cpm,
+    userAllowlist,
 };
 
 Promise.all([

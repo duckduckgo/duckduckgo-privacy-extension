@@ -24,6 +24,11 @@
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
     },
+    "commands": {
+        "ddg-allowlist-changed": {
+            "description": "Performed by the native app when the user's allowlist changes"
+        }
+    },
     "permissions": [
         "alarms",
         "scripting",
