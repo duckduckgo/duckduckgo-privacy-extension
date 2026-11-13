@@ -48,6 +48,11 @@ export default defineConfig({
         /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: 'on-first-retry',
         extensionPath: 'build/chromium-embedded/dev',
+        /**
+         * Optionally run against a real DuckDuckGo browser build (with its
+         * custom extension APIs) instead of Playwright's bundled Chromium.
+         */
+        executablePath: process.env.DDG_BROWSER_PATH || undefined,
     },
 
     projects: [

@@ -87,12 +87,19 @@ let test = base.extend({
      */
     extensionPath: ['build/chrome/dev', { option: true }],
     /**
+     * Path to a custom Chromium-based browser binary to run the tests against
+     * (e.g. a DuckDuckGo browser build). When unset, Playwright's bundled
+     * Chromium is used. Override per-config via `use: { executablePath: ... }`.
+     * @type {string | undefined}
+     */
+    executablePath: [undefined, { option: true }],
+    /**
      * @type {import('@playwright/test').BrowserContext}
      */
-    async context({ extensionPath }, use) {
+    async context({ extensionPath, executablePath }, use) {
         const pathToExtension = path.join(projectRoot, extensionPath);
         const context = await chromium.launchPersistentContext('', {
-            channel: 'chromium',
+            ...(executablePath ? { executablePath } : { channel: 'chromium' }),
             args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
         });
 
