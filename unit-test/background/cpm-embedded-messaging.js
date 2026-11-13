@@ -34,6 +34,41 @@ describe('CPMEmbeddedMessaging', () => {
         jasmine.clock().uninstall();
     });
 
+    describe('notifyInitProgress', () => {
+        it('sends cpmInitProgress synchronously with the given params', () => {
+            messaging.notifyInitProgress(9, 'https://example.com/', 'received');
+            expect(nativeMessaging.notify).toHaveBeenCalledOnceWith('cpmInitProgress', {
+                tabId: 9,
+                url: 'https://example.com/',
+                stage: 'received',
+            });
+        });
+
+        it('does not record diagnostics errors or reject when the notification fails', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.notify.and.returnValue(Promise.reject(new Error('test error')));
+            spyOn(console, 'error');
+
+            await expectAsync(messaging.notifyInitProgress(7, 'https://example.com/', 'response_sent')).toBeResolved();
+
+            expect(diagnosticsHandler).not.toHaveBeenCalled();
+            expect(console.error).not.toHaveBeenCalled();
+        });
+
+        it('does not record diagnostics errors when the notification times out', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.notify.and.returnValue(new Promise(() => {})); // never settles
+
+            const result = messaging.notifyInitProgress(7, 'https://example.com/', 'received');
+            jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS + 1);
+            await expectAsync(result).toBeResolved();
+
+            expect(diagnosticsHandler).not.toHaveBeenCalled();
+        });
+    });
+
     describe('_notify', () => {
         it('sends a notification via nativeMessaging', async () => {
             await messaging._notify('testMethod', { key: 'value' });

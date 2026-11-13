@@ -48,6 +48,12 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  */
 
 /**
+ * Progress marks for the main frame `init` message, reported to the native app (embedded only).
+ * `page_init_sent` is reported by the content script before it sends `init`; the others come from the background.
+ * @typedef {'page_init_sent' | 'received' | 'config_read' | 'settings_checked' | 'site_checked' | 'response_sent'} CpmInitProgressStage
+ */
+
+/**
  * Base interface for CPM communications with the "browser" side.
  * @typedef {{
  *  logMessage: (message: string, isDebug?: boolean) => Promise<void>;
@@ -61,6 +67,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  reportCoverage: (counts: CoverageCounts, siteRank?: SiteRankBucket) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
  *  setDiagnosticsErrorHandler?: (handler: (tabId: number | null, errorName: string) => void) => void;
+ *  notifyInitProgress?: (tabId: number, url: string, stage: CpmInitProgressStage) => Promise<void>;
  * }} CPMMessagingBase
  * @typedef {{
  *  enabled: boolean,
@@ -465,7 +472,23 @@ export default class CookiePromptManagement {
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
         const siteRank = this.siteRankLookup?.(tabUrl);
+        const progress = /** @type {{ type: string, stage?: string }} */ (/** @type {unknown} */ (msg));
+        /**
+         * Main-frame init progress mark for native. No await: marks never delay init.
+         * @param {CpmInitProgressStage} stage
+         */
+        const mark = (stage) => {
+            if (isMainFrame) this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, stage);
+        };
+        if (progress.type === 'cpmInitProgress') {
+            // page-side mark: best effort, never touches CPM state, config or the dashboard. Only this stage is accepted.
+            if (progress.stage === 'page_init_sent') mark('page_init_sent');
+            return;
+        }
         if (msg.type === 'init' && isMainFrame) {
+            // tell native that init reached the background before anything else happens
+            mark('received');
+
             // update the cached top url for this tab
             this.updateTopUrl(tabId, tabUrl);
 
@@ -490,6 +513,9 @@ export default class CookiePromptManagement {
                 );
             }
             return;
+        }
+        if (msg.type === 'init') {
+            mark('config_read');
         }
         const cpmConfigVersion = `${remoteConfig.version || 'unknown'}`;
         const autoconsentRemoteConfig = remoteConfig.features?.autoconsent;
@@ -523,6 +549,7 @@ export default class CookiePromptManagement {
         switch (msg.type) {
             case 'init': {
                 const settings = await this.cpmMessaging.checkAutoconsentSetting(tabId);
+                mark('settings_checked');
                 // Map preference to heuristic mode:
                 // - max: Tier2
                 // - default and new settings enabled: Tier1
@@ -555,6 +582,7 @@ export default class CookiePromptManagement {
                 }
 
                 const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(tabUrl, tabId);
+                mark('site_checked');
                 if (!isEnabled) {
                     this.cpmMessaging.logMessage(`autoconsent disabled for site: ${tabUrl}`);
                     if (isMainFrame) {
@@ -640,6 +668,8 @@ export default class CookiePromptManagement {
                 }
                 DEBUG && console.log('autoconsent config', autoconsentConfig);
 
+                // the answer is the reply to the content script's message; tell native the background has produced it
+                if (isMainFrame) mark('response_sent');
                 return {
                     type: 'initResp',
                     rules,

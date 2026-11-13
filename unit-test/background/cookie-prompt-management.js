@@ -25,6 +25,7 @@ function createMockMessaging({ autoconsentEnabledForSite = true, autoconsentSett
             .and.returnValue(Promise.resolve(autoconsentEnabledForSite)),
         checkSubfeatureEnabled: jasmine.createSpy('checkSubfeatureEnabled').and.returnValue(Promise.resolve(subfeatureEnabled)),
         sendPixel: jasmine.createSpy('sendPixel').and.returnValue(Promise.resolve()),
+        notifyInitProgress: jasmine.createSpy('notifyInitProgress').and.returnValue(Promise.resolve()),
         reportCoverage: jasmine.createSpy('reportCoverage').and.returnValue(Promise.resolve()),
         setDiagnosticsErrorHandler: jasmine.createSpy('setDiagnosticsErrorHandler').and.callFake((handler) => {
             mockMessaging.diagnosticsErrorHandler = handler;
@@ -1048,6 +1049,135 @@ describe('CookiePromptManagement', () => {
 
             expect(response).toEqual({ id: 'eval-1', type: 'evalResp', result: false });
             expect(mockMessaging.logMessage).toHaveBeenCalledWith(jasmine.stringContaining('eval failed'));
+        });
+    });
+    describe('init progress notifications', () => {
+        const stagesOf = (mockMessaging) => mockMessaging.notifyInitProgress.calls.allArgs().map(([, , stage]) => stage);
+
+        async function setup(opts) {
+            const mockMessaging = createMockMessaging(opts);
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+            return { mockMessaging, cpm, handler: messageHandlers.autoconsent };
+        }
+
+        it('dispatches received synchronously, before reset and before any await', async () => {
+            const { mockMessaging, cpm, handler } = await setup();
+            const order = [];
+            mockMessaging.notifyInitProgress.and.callFake((tabId, url, stage) => {
+                order.push(`notify:${stage}`);
+                return Promise.resolve();
+            });
+            const originalReset = cpm.resetCpmDashboardState.bind(cpm);
+            spyOn(cpm, 'resetCpmDashboardState').and.callFake((tabId) => {
+                order.push('reset');
+                return originalReset(tabId);
+            });
+
+            const pending = handler({}, makeSender({ tabId: 5, frameId: 0, tabUrl: 'https://example.com/a' }), {
+                autoconsentPayload: makeInitMessage(),
+            });
+
+            // nothing has been awaited yet: only the synchronous part of the handler has run
+            expect(mockMessaging.notifyInitProgress).toHaveBeenCalledOnceWith(5, 'https://example.com/a', 'received');
+            expect(order).toEqual(['notify:received', 'reset']);
+            expect(mockMessaging.checkAutoconsentSetting).not.toHaveBeenCalled();
+            expect(mockMessaging.refreshDashboardState).not.toHaveBeenCalled();
+
+            await pending;
+        });
+
+        it('does not wait for the notifications', async () => {
+            const { mockMessaging, handler } = await setup();
+            mockMessaging.notifyInitProgress.and.returnValue(new Promise(() => {})); // never settles
+
+            const response = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(response.type).toBe('initResp');
+        });
+
+        it('dispatches received even when the remote config is unavailable', async () => {
+            const mockMessaging = createMockMessaging();
+            mockMessaging.refreshRemoteConfig.and.returnValue(Promise.resolve(null));
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            await messageHandlers.autoconsent({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(stagesOf(mockMessaging)).toEqual(['received']);
+        });
+
+        it('sends response_sent last, when the background replies to init', async () => {
+            const { mockMessaging, handler } = await setup();
+
+            const response = await handler({}, makeSender({ tabId: 3, frameId: 0, tabUrl: 'https://example.com/b' }), {
+                autoconsentPayload: makeInitMessage(),
+            });
+
+            expect(response.type).toBe('initResp');
+            expect(mockMessaging.notifyInitProgress.calls.allArgs()).toEqual([
+                [3, 'https://example.com/b', 'received'],
+                [3, 'https://example.com/b', 'config_read'],
+                [3, 'https://example.com/b', 'settings_checked'],
+                [3, 'https://example.com/b', 'site_checked'],
+                [3, 'https://example.com/b', 'response_sent'],
+            ]);
+        });
+
+        it('reports the last step reached when the site check disables autoconsent', async () => {
+            const { mockMessaging, handler } = await setup({ autoconsentEnabledForSite: false });
+
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(stagesOf(mockMessaging)).toEqual(['received', 'config_read', 'settings_checked', 'site_checked']);
+        });
+
+        it('forwards the page_init_sent mark of the main frame', async () => {
+            const { mockMessaging, handler } = await setup();
+
+            await handler({}, makeSender({ tabId: 8, frameId: 0, tabUrl: 'https://example.com/c' }), {
+                autoconsentPayload: { type: 'cpmInitProgress', stage: 'page_init_sent' },
+            });
+
+            expect(mockMessaging.notifyInitProgress).toHaveBeenCalledOnceWith(8, 'https://example.com/c', 'page_init_sent');
+        });
+
+        it('ignores page marks from sub-frames and unknown stages, and does not touch CPM state', async () => {
+            const { mockMessaging, handler } = await setup();
+
+            await handler({}, makeSender({ frameId: 1 }), { autoconsentPayload: { type: 'cpmInitProgress', stage: 'page_init_sent' } });
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: { type: 'cpmInitProgress', stage: 'made_up' } });
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: { type: 'cpmInitProgress', stage: 'received' } });
+
+            expect(mockMessaging.notifyInitProgress).not.toHaveBeenCalled();
+            expect(mockMessaging.refreshDashboardState).not.toHaveBeenCalled();
+            expect(mockMessaging.checkAutoconsentSetting).not.toHaveBeenCalled();
+        });
+
+        it('sends nothing for sub-frame init', async () => {
+            const { mockMessaging, handler } = await setup();
+
+            for (const frameId of [1, 2]) {
+                const response = await handler({}, makeSender({ frameId }), { autoconsentPayload: makeInitMessage() });
+                expect(response.type).toBe('initResp');
+            }
+
+            expect(mockMessaging.notifyInitProgress).not.toHaveBeenCalled();
+        });
+
+        it('sends nothing for non-init main frame messages', async () => {
+            const { mockMessaging, handler } = await setup();
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: { type: 'popupFound', cmp: 'test-cmp' } });
+            expect(mockMessaging.notifyInitProgress).not.toHaveBeenCalled();
+        });
+
+        it('does not fail with a messaging implementation that lacks notifyInitProgress', async () => {
+            const { mockMessaging, handler } = await setup();
+            delete mockMessaging.notifyInitProgress;
+
+            const response = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(response.type).toBe('initResp');
         });
     });
 });
