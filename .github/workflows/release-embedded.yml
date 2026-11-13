@@ -153,6 +153,14 @@ jobs:
                   BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
               run: gh pr ready "$BRANCH" || true
 
+            - name: Remove DO NOT MERGE label from Apple PR
+              if: steps.find-apple-pr.outputs.PULL_REQUEST_URL
+              working-directory: apple-monorepo
+              env:
+                  GH_TOKEN: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
+                  BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
+              run: gh pr edit "$BRANCH" --remove-label "DO NOT MERGE" || true
+
             - name: Update Asana
               if: steps.find-apple-pr.outputs.PULL_REQUEST_URL
               env:
