@@ -5,12 +5,21 @@ const ASANA_ACCESS_TOKEN = process.env.ASANA_ACCESS_TOKEN;
 const APPLE_PR_URL = process.env.APPLE_PR_URL;
 const APPLE_TASK_GID = process.env.APPLE_TASK_GID;
 const VERSION = process.env.VERSION;
+// "projectGid:sectionGid,..." pairs from the autoconsent release, which defers adding the Apple task to them until the PR is ready
+const APPLE_PROJECTS = process.env.APPLE_PROJECTS || '';
 
 const embeddedReleaseTemplateTaskGid = '1213491725945432';
 const extensionProjectGid = '312629933896096';
 const extensionReleaseSectionGid = '1201759129227683';
 
 async function handleAutoconsentFlow(asana) {
+    for (const projectAndSection of APPLE_PROJECTS.split(',').filter(Boolean)) {
+        const [project, section] = projectAndSection.split(':');
+        await asana.tasks.addProjectForTask({ data: { project, section } }, APPLE_TASK_GID);
+    }
+    if (!APPLE_PROJECTS) {
+        console.warn('No Apple projects provided, the Apple task was not added to any project.');
+    }
     await asana.stories.createStoryForTask(
         { data: { text: `Embedded extension ZIP has been added. PR is ready for review: ${APPLE_PR_URL}` } },
         APPLE_TASK_GID,
