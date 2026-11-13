@@ -22,8 +22,8 @@ jobs:
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
-            # Lint only needs the npm packages, not Playwright browsers or the
-            # privacy-test-pages install that `install-ci` also performs.
+            # Lint only needs the npm packages, not the Playwright browsers that
+            # `install-ci` also installs.
             - run: npm ci --ignore-scripts
             - run: npm run lint && echo 'No lint issues!' || (npm run lint-fix; git diff; echo 'Lint check failed, review diff above or run "npm run lint-fix"'; exit 1)
 
@@ -39,7 +39,9 @@ jobs:
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
-            - run: npm run install-ci
+            # Building only needs the npm packages, not the Playwright browsers
+            # and test pages that `install-ci` also sets up.
+            - run: npm ci --ignore-scripts
             - run: npm run ${{ matrix.target }}
 
     # The release and beta scripts package what they build: zips for chrome
@@ -54,7 +56,7 @@ jobs:
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
-            - run: npm run install-ci
+            - run: npm ci --ignore-scripts
             - run: npm run release-embedded
             - run: npm run beta-chrome
             - run: npm run beta-firefox
