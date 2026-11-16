@@ -1061,7 +1061,7 @@ describe('CookiePromptManagement', () => {
             return { mockMessaging, cpm, handler: messageHandlers.autoconsent };
         }
 
-        it('dispatches received synchronously, before reset and before any await', async () => {
+        it('dispatches background_received synchronously, before reset and before any await', async () => {
             const { mockMessaging, cpm, handler } = await setup();
             const order = [];
             mockMessaging.notifyInitProgress.and.callFake((tabId, url, stage) => {
@@ -1080,7 +1080,7 @@ describe('CookiePromptManagement', () => {
 
             // nothing has been awaited yet: only the synchronous part of the handler has run
             expect(mockMessaging.notifyInitProgress).toHaveBeenCalledOnceWith(5, 'https://example.com/a', 'background_received');
-            expect(order).toEqual(['notify:received', 'reset']);
+            expect(order).toEqual(['notify:background_received', 'reset']);
             expect(mockMessaging.checkAutoconsentSetting).not.toHaveBeenCalled();
             expect(mockMessaging.refreshDashboardState).not.toHaveBeenCalled();
 
@@ -1096,7 +1096,7 @@ describe('CookiePromptManagement', () => {
             expect(response.type).toBe('initResp');
         });
 
-        it('dispatches received even when the remote config is unavailable', async () => {
+        it('dispatches background_received even when the remote config is unavailable', async () => {
             const mockMessaging = createMockMessaging();
             mockMessaging.refreshRemoteConfig.and.returnValue(Promise.resolve(null));
             const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
