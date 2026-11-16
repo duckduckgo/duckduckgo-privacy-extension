@@ -32,6 +32,38 @@ export class CPMEmbeddedMessaging {
         // in-memory cached config, will be lost on extension sleep, in which case we fetch from session storage
         /** @type {import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig | null} */
         this._cachedConfig = null;
+        // whether the app wants init progress notifications: its `cpmInitProgress` subfeature, learned from the settings
+        // answer of an init. It is kept in session storage, so a background that was just woken knows it before it asks.
+        this._initProgressEnabled = false;
+        this._initProgressKnown = false;
+        this._initProgressLoaded = getFromSessionStorage('initProgressEnabled')
+            .then((enabled) => {
+                if (!this._initProgressKnown) this._initProgressEnabled = enabled === true;
+            })
+            .catch(() => {});
+    }
+
+    /**
+     * Whether the app wants init progress notifications.
+     * @returns {boolean}
+     */
+    isInitProgressEnabled() {
+        return this._initProgressEnabled;
+    }
+
+    /**
+     * Remember whether the app wants init progress notifications, also for a background that is woken later.
+     * @param {boolean} enabled
+     */
+    async setInitProgressEnabled(enabled) {
+        this._initProgressKnown = true;
+        if (enabled === this._initProgressEnabled) return;
+        this._initProgressEnabled = enabled;
+        try {
+            await setToSessionStorage('initProgressEnabled', enabled);
+        } catch (e) {
+            DEBUG && console.log('error saving the init progress flag', e);
+        }
     }
 
     /**
@@ -70,12 +102,14 @@ export class CPMEmbeddedMessaging {
     /**
      * Send a fire-and-forget progress mark for the main frame `init` message.
      * Unlike other notifications this never records a diagnostics error and never rejects,
-     * so that these marks cannot change the CPM state or the breakage reports.
+     * so that these marks cannot change the CPM state or the breakage reports. Nothing is sent unless the app
+     * enabled them.
      * @param {number} tabId
      * @param {string} url
      * @param {import('./cookie-prompt-management').CpmInitProgressStage} stage
      */
     async notifyInitProgress(tabId, url, stage) {
+        if (!this._initProgressEnabled) return;
         try {
             await this._withTimeout(this.nativeMessaging.notify('cpmInitProgress', { tabId, url, stage }));
         } catch (e) {

@@ -26,6 +26,7 @@ function createMockMessaging({ autoconsentEnabledForSite = true, autoconsentSett
         checkSubfeatureEnabled: jasmine.createSpy('checkSubfeatureEnabled').and.returnValue(Promise.resolve(subfeatureEnabled)),
         sendPixel: jasmine.createSpy('sendPixel').and.returnValue(Promise.resolve()),
         notifyInitProgress: jasmine.createSpy('notifyInitProgress').and.returnValue(Promise.resolve()),
+        setInitProgressEnabled: jasmine.createSpy('setInitProgressEnabled').and.returnValue(Promise.resolve()),
         reportCoverage: jasmine.createSpy('reportCoverage').and.returnValue(Promise.resolve()),
         setDiagnosticsErrorHandler: jasmine.createSpy('setDiagnosticsErrorHandler').and.callFake((handler) => {
             mockMessaging.diagnosticsErrorHandler = handler;
@@ -1094,6 +1095,38 @@ describe('CookiePromptManagement', () => {
             const response = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
 
             expect(response.type).toBe('initResp');
+        });
+
+        it('tells the messaging whether the app enabled the notifications, from the settings of the init', async () => {
+            const { mockMessaging, handler } = await setup();
+            mockMessaging.checkAutoconsentSetting.and.returnValue(
+                Promise.resolve({
+                    enabled: true,
+                    userPreference: 'default',
+                    featureFlags: { heuristicAction: true, cpmInitProgress: true },
+                }),
+            );
+
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(mockMessaging.setInitProgressEnabled).toHaveBeenCalledOnceWith(true);
+        });
+
+        it('reports the notifications as disabled when the settings do not carry the flag', async () => {
+            const { mockMessaging, handler } = await setup();
+
+            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(mockMessaging.setInitProgressEnabled).toHaveBeenCalledOnceWith(false);
+        });
+
+        it('keeps working with a messaging that does not know the flag', async () => {
+            const { mockMessaging, handler } = await setup();
+            delete mockMessaging.setInitProgressEnabled;
+
+            const response = await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
+
+            expect(response).toBeDefined();
         });
 
         it('dispatches background_received even when the remote config is unavailable', async () => {

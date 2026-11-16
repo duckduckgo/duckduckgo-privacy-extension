@@ -68,6 +68,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
  *  setDiagnosticsErrorHandler?: (handler: (tabId: number | null, errorName: string) => void) => void;
  *  notifyInitProgress?: (tabId: number, url: string, stage: CpmInitProgressStage) => Promise<void>;
+ *  setInitProgressEnabled?: (enabled: boolean) => Promise<void>;
  * }} CPMMessagingBase
  * @typedef {{
  *  enabled: boolean,
@@ -549,6 +550,8 @@ export default class CookiePromptManagement {
         switch (msg.type) {
             case 'init': {
                 const settings = await this.cpmMessaging.checkAutoconsentSetting(tabId);
+                // learn whether the app wants init progress notifications; no await, it only saves the answer
+                this.cpmMessaging.setInitProgressEnabled?.(!!settings.featureFlags?.cpmInitProgress);
                 mark('settings_checked');
                 // Map preference to heuristic mode:
                 // - max: Tier2

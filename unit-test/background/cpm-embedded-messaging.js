@@ -35,6 +35,14 @@ describe('CPMEmbeddedMessaging', () => {
     });
 
     describe('notifyInitProgress', () => {
+        beforeEach(async () => {
+            await messaging.setInitProgressEnabled(true);
+        });
+
+        afterEach(async () => {
+            await messaging.setInitProgressEnabled(false);
+        });
+
         it('sends cpmInitProgress synchronously with the given params', () => {
             messaging.notifyInitProgress(9, 'https://example.com/', 'background_received');
             expect(nativeMessaging.notify).toHaveBeenCalledOnceWith('cpmInitProgress', {
@@ -66,6 +74,48 @@ describe('CPMEmbeddedMessaging', () => {
             await expectAsync(result).toBeResolved();
 
             expect(diagnosticsHandler).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('init progress flag', () => {
+        it('sends nothing until the app enabled the notifications', async () => {
+            await messaging.notifyInitProgress(9, 'https://example.com/', 'background_received');
+
+            expect(nativeMessaging.notify).not.toHaveBeenCalled();
+        });
+
+        it('sends the notifications once enabled and stops when the app disables them', async () => {
+            await messaging.setInitProgressEnabled(true);
+            await messaging.notifyInitProgress(9, 'https://example.com/', 'background_received');
+            await messaging.setInitProgressEnabled(false);
+            await messaging.notifyInitProgress(9, 'https://example.com/', 'config_read');
+
+            expect(nativeMessaging.notify).toHaveBeenCalledOnceWith('cpmInitProgress', {
+                tabId: 9,
+                url: 'https://example.com/',
+                stage: 'background_received',
+            });
+        });
+
+        it('is remembered by a background that is woken later', async () => {
+            await messaging.setInitProgressEnabled(true);
+
+            const woken = new CPMEmbeddedMessaging(nativeMessaging);
+            await woken._initProgressLoaded;
+
+            expect(woken.isInitProgressEnabled()).toBeTrue();
+            await messaging.setInitProgressEnabled(false);
+        });
+
+        it('does not let an old saved value override what the app just said', async () => {
+            await messaging.setInitProgressEnabled(true);
+
+            const woken = new CPMEmbeddedMessaging(nativeMessaging);
+            await woken.setInitProgressEnabled(false);
+            await woken._initProgressLoaded;
+
+            expect(woken.isInitProgressEnabled()).toBeFalse();
+            await messaging.setInitProgressEnabled(false);
         });
     });
 
