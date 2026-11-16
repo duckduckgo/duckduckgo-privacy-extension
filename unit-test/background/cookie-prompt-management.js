@@ -737,6 +737,61 @@ describe('CookiePromptManagement', () => {
         });
     });
 
+    describe('popup mutation observer', () => {
+        it('follows the popupMutationObserver subfeature flag in the init config', async () => {
+            const mockMessaging = createMockMessaging();
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+
+            const handler = messageHandlers.autoconsent;
+            const settingsWithFlags = (featureFlags) => Promise.resolve({ enabled: true, userPreference: 'default', featureFlags });
+
+            mockMessaging.checkAutoconsentSetting.and.returnValue(settingsWithFlags({ heuristicAction: true }));
+            const missingFlagResp = await handler({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            expect(missingFlagResp.config.enablePopupMutationObserver).toBe(false);
+
+            mockMessaging.checkAutoconsentSetting.and.returnValue(
+                settingsWithFlags({ heuristicAction: true, popupMutationObserver: true }),
+            );
+            const enabledResp = await handler({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            expect(enabledResp.config.enablePopupMutationObserver).toBe(true);
+
+            mockMessaging.checkAutoconsentSetting.and.returnValue(
+                settingsWithFlags({ heuristicAction: true, popupMutationObserver: false }),
+            );
+            const disabledResp = await handler({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            expect(disabledResp.config.enablePopupMutationObserver).toBe(false);
+        });
+    });
+
+    describe('heuristic popup search timeout', () => {
+        async function initConfigWithSettings(settings) {
+            const mockMessaging = createMockMessaging();
+            mockMessaging.refreshRemoteConfig.and.returnValue(
+                Promise.resolve({
+                    version: 1,
+                    features: { autoconsent: { state: 'enabled', exceptions: [], settings } },
+                }),
+            );
+            const cpm = new CookiePromptManagement({ cpmMessaging: mockMessaging });
+            await cpm.remoteConfigJson;
+            const resp = await messageHandlers.autoconsent({}, makeSender(), { autoconsentPayload: makeInitMessage() });
+            return resp.config;
+        }
+
+        it('passes the heuristicPopupSearchTimeout setting to the init config', async () => {
+            const config = await initConfigWithSettings({ disabledCMPs: [], heuristicPopupSearchTimeout: 250 });
+            expect(config.heuristicPopupSearchTimeout).toBe(250);
+        });
+
+        it('uses the library default when the setting is missing or invalid', async () => {
+            for (const heuristicPopupSearchTimeout of [undefined, 0, -5, 12.5, '250']) {
+                const config = await initConfigWithSettings({ disabledCMPs: [], heuristicPopupSearchTimeout });
+                expect(config.heuristicPopupSearchTimeout).withContext(String(heuristicPopupSearchTimeout)).toBe(100);
+            }
+        });
+    });
+
     describe('site rank bucket', () => {
         const TOP_URL = 'https://www.top-site.example/page';
         const OTHER_URL = 'https://long-tail.example/page';

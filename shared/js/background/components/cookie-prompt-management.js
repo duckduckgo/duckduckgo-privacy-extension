@@ -85,6 +85,18 @@ const logsConfig = {
     waits: !!DEBUG,
 };
 
+const DEFAULT_HEURISTIC_POPUP_SEARCH_TIMEOUT = 100;
+
+/**
+ * Reads the heuristic popup search budget (in ms) from the autoconsent remote config settings.
+ * @param {object | undefined} autoconsentSettings
+ * @returns {number}
+ */
+function getHeuristicPopupSearchTimeout(autoconsentSettings) {
+    const timeout = /** @type {{ heuristicPopupSearchTimeout?: unknown } | undefined} */ (autoconsentSettings)?.heuristicPopupSearchTimeout;
+    return typeof timeout === 'number' && Number.isInteger(timeout) && timeout > 0 ? timeout : DEFAULT_HEURISTIC_POPUP_SEARCH_TIMEOUT;
+}
+
 /**
  * A reply to a content script's autoconsent message. initResp carries a partial config, as the content script fills in
  * the defaults.
@@ -616,6 +628,8 @@ export default class CookiePromptManagement {
                     enableHeuristicDetection: true,
                     heuristicMode,
                     enableHeuristicHitTest: !!settings.featureFlags?.heuristicHitTest,
+                    enablePopupMutationObserver: !!settings.featureFlags?.popupMutationObserver,
+                    heuristicPopupSearchTimeout: getHeuristicPopupSearchTimeout(autoconsentSettings),
                     visualTest,
                     logs: logsConfig,
                 };
