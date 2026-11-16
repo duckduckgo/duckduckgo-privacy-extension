@@ -49,8 +49,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
 
 /**
  * Progress marks for the main frame `init` message, reported to the native app (embedded only).
- * `page_init_sent` is reported by the content script before it sends `init`; the others come from the background.
- * @typedef {'page_init_sent' | 'background_received' | 'config_read' | 'settings_checked' | 'site_checked' | 'response_sent'} CpmInitProgressStage
+ * @typedef {'background_received' | 'config_read' | 'settings_checked' | 'site_checked' | 'response_sent'} CpmInitProgressStage
  */
 
 /**
@@ -473,7 +472,6 @@ export default class CookiePromptManagement {
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
         const siteRank = this.siteRankLookup?.(tabUrl);
-        const progress = /** @type {{ type: string, stage?: string }} */ (/** @type {unknown} */ (msg));
         /**
          * Main-frame init progress mark for native. No await: marks never delay init.
          * @param {CpmInitProgressStage} stage
@@ -481,11 +479,6 @@ export default class CookiePromptManagement {
         const mark = (stage) => {
             if (isMainFrame) this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, stage);
         };
-        if (progress.type === 'cpmInitProgress') {
-            // page-side mark: best effort, never touches CPM state, config or the dashboard. Only this stage is accepted.
-            if (progress.stage === 'page_init_sent') mark('page_init_sent');
-            return;
-        }
         if (msg.type === 'init' && isMainFrame) {
             // tell native that init reached the background before anything else happens
             mark('background_received');
