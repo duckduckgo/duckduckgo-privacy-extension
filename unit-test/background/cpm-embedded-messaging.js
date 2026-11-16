@@ -36,11 +36,11 @@ describe('CPMEmbeddedMessaging', () => {
 
     describe('notifyInitProgress', () => {
         it('sends cpmInitProgress synchronously with the given params', () => {
-            messaging.notifyInitProgress(9, 'https://example.com/', 'received');
+            messaging.notifyInitProgress(9, 'https://example.com/', 'background_received');
             expect(nativeMessaging.notify).toHaveBeenCalledOnceWith('cpmInitProgress', {
                 tabId: 9,
                 url: 'https://example.com/',
-                stage: 'received',
+                stage: 'background_received',
             });
         });
 
@@ -61,7 +61,7 @@ describe('CPMEmbeddedMessaging', () => {
             messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
             nativeMessaging.notify.and.returnValue(new Promise(() => {})); // never settles
 
-            const result = messaging.notifyInitProgress(7, 'https://example.com/', 'received');
+            const result = messaging.notifyInitProgress(7, 'https://example.com/', 'background_received');
             jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS + 1);
             await expectAsync(result).toBeResolved();
 

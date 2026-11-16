@@ -1079,7 +1079,7 @@ describe('CookiePromptManagement', () => {
             });
 
             // nothing has been awaited yet: only the synchronous part of the handler has run
-            expect(mockMessaging.notifyInitProgress).toHaveBeenCalledOnceWith(5, 'https://example.com/a', 'received');
+            expect(mockMessaging.notifyInitProgress).toHaveBeenCalledOnceWith(5, 'https://example.com/a', 'background_received');
             expect(order).toEqual(['notify:received', 'reset']);
             expect(mockMessaging.checkAutoconsentSetting).not.toHaveBeenCalled();
             expect(mockMessaging.refreshDashboardState).not.toHaveBeenCalled();
@@ -1104,7 +1104,7 @@ describe('CookiePromptManagement', () => {
 
             await messageHandlers.autoconsent({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
 
-            expect(stagesOf(mockMessaging)).toEqual(['received']);
+            expect(stagesOf(mockMessaging)).toEqual(['background_received']);
         });
 
         it('sends response_sent last, when the background replies to init', async () => {
@@ -1116,7 +1116,7 @@ describe('CookiePromptManagement', () => {
 
             expect(response.type).toBe('initResp');
             expect(mockMessaging.notifyInitProgress.calls.allArgs()).toEqual([
-                [3, 'https://example.com/b', 'received'],
+                [3, 'https://example.com/b', 'background_received'],
                 [3, 'https://example.com/b', 'config_read'],
                 [3, 'https://example.com/b', 'settings_checked'],
                 [3, 'https://example.com/b', 'site_checked'],
@@ -1129,7 +1129,7 @@ describe('CookiePromptManagement', () => {
 
             await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: makeInitMessage() });
 
-            expect(stagesOf(mockMessaging)).toEqual(['received', 'config_read', 'settings_checked', 'site_checked']);
+            expect(stagesOf(mockMessaging)).toEqual(['background_received', 'config_read', 'settings_checked', 'site_checked']);
         });
 
         it('forwards the page_init_sent mark of the main frame', async () => {
@@ -1147,7 +1147,9 @@ describe('CookiePromptManagement', () => {
 
             await handler({}, makeSender({ frameId: 1 }), { autoconsentPayload: { type: 'cpmInitProgress', stage: 'page_init_sent' } });
             await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: { type: 'cpmInitProgress', stage: 'made_up' } });
-            await handler({}, makeSender({ frameId: 0 }), { autoconsentPayload: { type: 'cpmInitProgress', stage: 'received' } });
+            await handler({}, makeSender({ frameId: 0 }), {
+                autoconsentPayload: { type: 'cpmInitProgress', stage: 'background_received' },
+            });
 
             expect(mockMessaging.notifyInitProgress).not.toHaveBeenCalled();
             expect(mockMessaging.refreshDashboardState).not.toHaveBeenCalled();

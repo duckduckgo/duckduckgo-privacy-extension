@@ -50,7 +50,7 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
 /**
  * Progress marks for the main frame `init` message, reported to the native app (embedded only).
  * `page_init_sent` is reported by the content script before it sends `init`; the others come from the background.
- * @typedef {'page_init_sent' | 'received' | 'config_read' | 'settings_checked' | 'site_checked' | 'response_sent'} CpmInitProgressStage
+ * @typedef {'page_init_sent' | 'background_received' | 'config_read' | 'settings_checked' | 'site_checked' | 'response_sent'} CpmInitProgressStage
  */
 
 /**
@@ -487,7 +487,7 @@ export default class CookiePromptManagement {
         }
         if (msg.type === 'init' && isMainFrame) {
             // tell native that init reached the background before anything else happens
-            mark('received');
+            mark('background_received');
 
             // update the cached top url for this tab
             this.updateTopUrl(tabId, tabUrl);
