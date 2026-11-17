@@ -103,7 +103,21 @@ describe('CPMEmbeddedMessaging', () => {
             const woken = new CPMEmbeddedMessaging(nativeMessaging);
             await woken._initProgressLoaded;
 
-            expect(woken.isInitProgressEnabled()).toBeTrue();
+            expect(woken._initProgressEnabled).toBeTrue();
+            await messaging.setInitProgressEnabled(false);
+        });
+
+        it('sends a mark that a woken background raises before it has read the saved flag', async () => {
+            await messaging.setInitProgressEnabled(true);
+
+            const woken = new CPMEmbeddedMessaging(nativeMessaging);
+            await woken.notifyInitProgress(9, 'https://example.com/', 'background_received');
+
+            expect(nativeMessaging.notify).toHaveBeenCalledOnceWith('cpmInitProgress', {
+                tabId: 9,
+                url: 'https://example.com/',
+                stage: 'background_received',
+            });
             await messaging.setInitProgressEnabled(false);
         });
 
@@ -114,7 +128,7 @@ describe('CPMEmbeddedMessaging', () => {
             await woken.setInitProgressEnabled(false);
             await woken._initProgressLoaded;
 
-            expect(woken.isInitProgressEnabled()).toBeFalse();
+            expect(woken._initProgressEnabled).toBeFalse();
             await messaging.setInitProgressEnabled(false);
         });
     });

@@ -544,7 +544,7 @@ export default class CookiePromptManagement {
             case 'init': {
                 const settings = await this.cpmMessaging.checkAutoconsentSetting(tabId);
                 // learn whether the app wants init progress notifications; no await, it only saves the answer
-                this.cpmMessaging.setInitProgressEnabled?.(!!settings.featureFlags?.cpmInitProgress);
+                isMainFrame && this.cpmMessaging.setInitProgressEnabled?.(!!settings.featureFlags?.cpmInitProgress);
                 mark('settings_checked');
                 // Map preference to heuristic mode:
                 // - max: Tier2
@@ -665,7 +665,7 @@ export default class CookiePromptManagement {
                 DEBUG && console.log('autoconsent config', autoconsentConfig);
 
                 // the answer is the reply to the content script's message; tell native the background has produced it
-                if (isMainFrame) mark('response_sent');
+                mark('response_sent');
                 return {
                     type: 'initResp',
                     rules,

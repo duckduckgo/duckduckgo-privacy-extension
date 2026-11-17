@@ -44,14 +44,6 @@ export class CPMEmbeddedMessaging {
     }
 
     /**
-     * Whether the app wants init progress notifications.
-     * @returns {boolean}
-     */
-    isInitProgressEnabled() {
-        return this._initProgressEnabled;
-    }
-
-    /**
      * Remember whether the app wants init progress notifications, also for a background that is woken later.
      * @param {boolean} enabled
      */
@@ -103,12 +95,13 @@ export class CPMEmbeddedMessaging {
      * Send a fire-and-forget progress mark for the main frame `init` message.
      * Unlike other notifications this never records a diagnostics error and never rejects,
      * so that these marks cannot change the CPM state or the breakage reports. Nothing is sent unless the app
-     * enabled them.
+     * enabled them. A background that was just woken waits for the saved flag first, so its early marks are not lost.
      * @param {number} tabId
      * @param {string} url
      * @param {import('./cookie-prompt-management').CpmInitProgressStage} stage
      */
     async notifyInitProgress(tabId, url, stage) {
+        if (!this._initProgressKnown) await this._initProgressLoaded;
         if (!this._initProgressEnabled) return;
         try {
             await this._withTimeout(this.nativeMessaging.notify('cpmInitProgress', { tabId, url, stage }));
