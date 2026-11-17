@@ -81,6 +81,21 @@ declare namespace chrome {
               sendNewTabPageMessage(tabId: number, method: string, params?: unknown): Promise<any>;
 
               /**
+               * browser -> extension; the New Tab Page's theme, Sections or
+               * Duck.ai setting changed, from any page's customize panel or
+               * duck://settings. `method` is the page's subscription message
+               * for the change, widgets_onConfigUpdated,
+               * customizer_onThemeUpdate or omnibar_onConfigUpdate, with its
+               * `params`. Sent once a page has sent the browser a message;
+               * not held for a listener that registers late.
+               *
+               * Optional: a browser older than the event does not define it.
+               */
+              onNewTabPageMessage?: {
+                  addListener(callback: (method: string, params: any) => void): void;
+              };
+
+              /**
                * browser -> extension; the favorites may have changed. Not
                * held for a listener that registers late.
                */
