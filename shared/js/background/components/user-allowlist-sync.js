@@ -1,36 +1,29 @@
-import browser from 'webextension-polyfill';
 import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 
 /**
- * Manifest command the native app performs (via `WKWebExtensionContext.performCommand`) when the user's
- * allowlist changes. WebKit wakes a sleeping background to deliver it, so one signal covers both the asleep
- * and the awake case. It has no shortcut, and carries no payload: it only tells the extension to pull.
+ * Subscription event native sends, with `{ version, domains }`, when the user's allowlist changes.
  */
-export const ALLOWLIST_CHANGED_COMMAND = 'ddg-allowlist-changed';
+export const ALLOWLIST_CHANGED_SUBSCRIPTION = 'onAllowlistChanged';
 export const ALLOWLIST_STORAGE_KEY = 'userAllowlist';
 
 /**
  * @typedef {import('./native-messaging').NativeMessagingInterface} NativeMessagingInterface
  * @typedef {{ version: string | null, domains: string[] }} AllowlistState
  * @typedef {(state: AllowlistState) => void} AllowlistListener
- * @typedef {{ onCommand: { addListener: (listener: (command: string) => void) => void } }} CommandsApi
  */
 
 /**
  * Keeps a copy of the native app's user allowlist (sites where the user disabled protections).
  *
- * Sync is pull-based and versioned: the extension sends the version it holds, and native answers with the
- * list only when it differs. A sync runs on every background start (covering wakes from sleep) and whenever
- * native performs `ALLOWLIST_CHANGED_COMMAND`. Because the state is reconciled by version, a lost or
- * duplicated signal costs at most one redundant request.
+ * Changes arrive as `ALLOWLIST_CHANGED_SUBSCRIPTION` events, which carry the whole list. On every background start
+ * the extension also pulls the list, sending the version it holds so native answers with the list only when it
+ * differs. That covers changes made while the extension was not loaded, or before an app restart.
  */
 export class UserAllowlistSync {
     /**
      * @param {NativeMessagingInterface} nativeMessaging - messaging for the native `userAllowlist` feature
-     * @param {object} [options]
-     * @param {CommandsApi | undefined} [options.commands] - defaults to `browser.commands`
      */
-    constructor(nativeMessaging, { commands = browser.commands } = {}) {
+    constructor(nativeMessaging) {
         this.nativeMessaging = nativeMessaging;
         /** @type {AllowlistState} */
         this._state = { version: null, domains: [] };
@@ -40,65 +33,80 @@ export class UserAllowlistSync {
         this._listeners = new Set();
         /** @type {Promise<AllowlistState> | null} */
         this._inFlight = null;
-        /** @type {boolean} */
-        this._resyncRequested = false;
+        /** Counts applied change events, so a pull that started before one can't overwrite it. */
+        this._eventCount = 0;
+        /** @type {Promise<void>} */
+        this._persisting = Promise.resolve();
 
-        // WebKit only wakes a non-persistent background for events it saw a listener for, so this must be
-        // registered synchronously during the background's first turn.
-        commands?.onCommand.addListener((command) => {
-            if (command === ALLOWLIST_CHANGED_COMMAND) {
-                this.sync();
-            }
-        });
+        // Subscribed synchronously, so native can wake the background to deliver changes.
+        nativeMessaging.subscribe(ALLOWLIST_CHANGED_SUBSCRIPTION, (params) => this._onChanged(params));
 
         this.ready = this._restore().then(() => this.sync());
     }
 
     async _restore() {
         const stored = await getFromSessionStorage(ALLOWLIST_STORAGE_KEY);
-        if (stored && Array.isArray(stored.domains)) {
+        // A change event may have arrived while storage was being read; it is newer than the stored copy.
+        if (stored && Array.isArray(stored.domains) && this._eventCount === 0) {
             this._apply(stored, false);
         }
     }
 
     /**
-     * Pulls the allowlist from native if it changed. Concurrent calls share one request; a call made while a
-     * request is in flight schedules one more, so a change signalled mid-request is not missed.
+     * Pulls the allowlist from native if it changed. Concurrent calls share one request.
      * @returns {Promise<AllowlistState>}
      */
     sync() {
-        if (this._inFlight) {
-            this._resyncRequested = true;
-            return this._inFlight;
-        }
-        this._inFlight = (async () => {
-            try {
-                do {
-                    this._resyncRequested = false;
-                    await this._syncOnce();
-                } while (this._resyncRequested);
-            } finally {
+        if (!this._inFlight) {
+            this._inFlight = this._syncOnce().finally(() => {
                 this._inFlight = null;
-            }
-            return this._state;
-        })();
+            });
+        }
         return this._inFlight;
     }
 
     async _syncOnce() {
+        const eventCount = this._eventCount;
         let result;
         try {
             result = await this.nativeMessaging.request('getAllowlistIfNew', { version: this._state.version });
         } catch (e) {
             console.error('UserAllowlistSync: failed to fetch allowlist', e);
-            return;
+            return this._state;
         }
+        if (eventCount !== this._eventCount) {
+            // A change event arrived during the request, and may be newer than this response.
+            return this._state;
+        }
+        this._update(result);
+        return this._state;
+    }
+
+    /**
+     * @param {Record<string, any>} params
+     */
+    _onChanged(params) {
+        this._eventCount++;
+        this._update({ ...params, updated: true });
+    }
+
+    /**
+     * Applies a list from native if it is well formed and new. Returns whether it was applied.
+     * @param {any} result
+     */
+    _update(result) {
         if (!result?.updated || !Array.isArray(result.domains) || typeof result.version !== 'string') {
-            return;
+            return false;
         }
-        const state = { version: result.version, domains: result.domains };
-        await setToSessionStorage(ALLOWLIST_STORAGE_KEY, state);
-        this._apply(state, true);
+        if (result.version === this._state.version) {
+            return false;
+        }
+        this._apply({ version: result.version, domains: result.domains }, true);
+        // Writes run in order and store the state current when they run, so the last write is the newest state.
+        this._persisting = this._persisting
+            .then(() => setToSessionStorage(ALLOWLIST_STORAGE_KEY, this._state))
+            .catch((e) => console.error('UserAllowlistSync: failed to store allowlist', e));
+        return true;
     }
 
     /**

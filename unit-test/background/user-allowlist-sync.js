@@ -1,47 +1,41 @@
 import {
-    ALLOWLIST_CHANGED_COMMAND,
+    ALLOWLIST_CHANGED_SUBSCRIPTION,
     ALLOWLIST_STORAGE_KEY,
     UserAllowlistSync,
 } from '../../shared/js/background/components/user-allowlist-sync';
-import { removeFromSessionStorage, setToSessionStorage } from '../../shared/js/background/wrapper';
+import { getFromSessionStorage, removeFromSessionStorage, setToSessionStorage } from '../../shared/js/background/wrapper';
 
 function createMockNativeMessaging() {
+    /** @type {Map<string, (params: any) => void>} */
+    const subscriptions = new Map();
     return {
         notify: jasmine.createSpy('notify').and.returnValue(Promise.resolve()),
         request: jasmine.createSpy('request').and.returnValue(Promise.resolve({ updated: false })),
-        subscribe: jasmine.createSpy('subscribe'),
-    };
-}
-
-function createMockCommands() {
-    /** @type {((command: string) => void)[]} */
-    const listeners = [];
-    return {
-        onCommand: { addListener: (listener) => listeners.push(listener) },
-        fire: (command) => listeners.forEach((listener) => listener(command)),
-        listeners,
+        subscribe: jasmine.createSpy('subscribe').and.callFake((name, callback) => {
+            subscriptions.set(name, callback);
+            return () => subscriptions.delete(name);
+        }),
+        emit: (name, params) => subscriptions.get(name)?.(params),
     };
 }
 
 describe('UserAllowlistSync', () => {
     let nativeMessaging;
-    let commands;
 
     beforeEach(async () => {
         await removeFromSessionStorage(ALLOWLIST_STORAGE_KEY);
         nativeMessaging = createMockNativeMessaging();
-        commands = createMockCommands();
     });
 
-    it('registers its command listener synchronously in the constructor', () => {
+    it('subscribes synchronously in the constructor', () => {
         // eslint-disable-next-line no-new
-        new UserAllowlistSync(nativeMessaging, { commands });
-        expect(commands.listeners.length).toBe(1);
+        new UserAllowlistSync(nativeMessaging);
+        expect(nativeMessaging.subscribe).toHaveBeenCalledWith(ALLOWLIST_CHANGED_SUBSCRIPTION, jasmine.any(Function));
     });
 
     it('pulls the allowlist on start with no known version', async () => {
         nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v1', domains: ['example.com'] }));
-        const sync = new UserAllowlistSync(nativeMessaging, { commands });
+        const sync = new UserAllowlistSync(nativeMessaging);
         await sync.ready;
 
         expect(nativeMessaging.request).toHaveBeenCalledWith('getAllowlistIfNew', { version: null });
@@ -53,40 +47,61 @@ describe('UserAllowlistSync', () => {
 
     it('restores the stored state after a background restart and sends its version', async () => {
         await setToSessionStorage(ALLOWLIST_STORAGE_KEY, { version: 'v1', domains: ['example.com'] });
-        const sync = new UserAllowlistSync(nativeMessaging, { commands });
+        const sync = new UserAllowlistSync(nativeMessaging);
         await sync.ready;
 
         expect(nativeMessaging.request).toHaveBeenCalledWith('getAllowlistIfNew', { version: 'v1' });
         expect(sync.isAllowlisted('example.com')).toBeTrue();
     });
 
-    it('syncs again when native performs the allowlist-changed command', async () => {
-        const sync = new UserAllowlistSync(nativeMessaging, { commands });
+    it('applies and stores the list from a change event', async () => {
+        const sync = new UserAllowlistSync(nativeMessaging);
         await sync.ready;
         const onChange = jasmine.createSpy('onChange');
         sync.onChange(onChange);
 
-        nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v2', domains: ['a.com', 'b.com'] }));
-        commands.fire(ALLOWLIST_CHANGED_COMMAND);
-        await sync.sync();
+        nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v2', domains: ['a.com', 'b.com'] });
+        await sync._persisting;
 
         expect(sync.domains).toEqual(['a.com', 'b.com']);
-        expect(onChange).toHaveBeenCalledWith({ version: 'v2', domains: ['a.com', 'b.com'] });
+        expect(onChange).toHaveBeenCalledOnceWith({ version: 'v2', domains: ['a.com', 'b.com'] });
+        expect(await getFromSessionStorage(ALLOWLIST_STORAGE_KEY)).toEqual({ version: 'v2', domains: ['a.com', 'b.com'] });
     });
 
-    it('ignores other commands', async () => {
-        const sync = new UserAllowlistSync(nativeMessaging, { commands });
+    it('ignores a change event for the version it already has, or a malformed one', async () => {
+        nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v1', domains: ['example.com'] }));
+        const sync = new UserAllowlistSync(nativeMessaging);
         await sync.ready;
-        nativeMessaging.request.calls.reset();
+        const onChange = jasmine.createSpy('onChange');
+        sync.onChange(onChange);
 
-        commands.fire('some-other-command');
+        nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v1', domains: ['example.com'] });
+        nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v2' });
 
-        expect(nativeMessaging.request).not.toHaveBeenCalled();
+        expect(onChange).not.toHaveBeenCalled();
+        expect(sync.version).toBe('v1');
+    });
+
+    it('discards a startup pull that a change event overtook', async () => {
+        let resolvePull;
+        nativeMessaging.request.and.returnValue(
+            new Promise((resolve) => {
+                resolvePull = resolve;
+            }),
+        );
+        const sync = new UserAllowlistSync(nativeMessaging);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v2', domains: ['new.com'] });
+        resolvePull({ updated: true, version: 'v1', domains: ['old.com'] });
+        await sync.ready;
+
+        expect(sync.domains).toEqual(['new.com']);
     });
 
     it('keeps the current list when native reports no change', async () => {
         nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v1', domains: ['example.com'] }));
-        const sync = new UserAllowlistSync(nativeMessaging, { commands });
+        const sync = new UserAllowlistSync(nativeMessaging);
         await sync.ready;
 
         nativeMessaging.request.and.returnValue(Promise.resolve({ updated: false }));
@@ -98,7 +113,7 @@ describe('UserAllowlistSync', () => {
 
     it('keeps the current list when the native request fails', async () => {
         nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v1', domains: ['example.com'] }));
-        const sync = new UserAllowlistSync(nativeMessaging, { commands });
+        const sync = new UserAllowlistSync(nativeMessaging);
         await sync.ready;
 
         spyOn(console, 'error');
@@ -106,27 +121,5 @@ describe('UserAllowlistSync', () => {
         await sync.sync();
 
         expect(sync.isAllowlisted('example.com')).toBeTrue();
-    });
-
-    it('runs one more sync when a change is signalled during a request', async () => {
-        const sync = new UserAllowlistSync(nativeMessaging, { commands });
-        await sync.ready;
-
-        let resolveFirst;
-        nativeMessaging.request.and.returnValues(
-            new Promise((resolve) => {
-                resolveFirst = resolve;
-            }),
-            Promise.resolve({ updated: true, version: 'v3', domains: ['late.com'] }),
-        );
-        const first = sync.sync();
-        const second = sync.sync();
-        expect(second).toBe(first);
-        resolveFirst({ updated: true, version: 'v2', domains: ['early.com'] });
-        await first;
-
-        expect(nativeMessaging.request.calls.count()).toBe(3);
-        expect(nativeMessaging.request.calls.mostRecent().args).toEqual(['getAllowlistIfNew', { version: 'v2' }]);
-        expect(sync.domains).toEqual(['late.com']);
     });
 });
