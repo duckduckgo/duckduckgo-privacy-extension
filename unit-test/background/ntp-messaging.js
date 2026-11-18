@@ -935,7 +935,7 @@ describe('NTPMessaging component', () => {
             const connect = async () => {
                 const port = { ...createFakePort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
                 onConnect(port);
-                await new Promise((resolve) => setTimeout(resolve));
+                await settle();
                 return port;
             };
             const first = await connect();
@@ -946,8 +946,50 @@ describe('NTPMessaging component', () => {
                     favorites_onDataUpdate: { favorites: [pageFavorite] },
                     widgets_onConfigUpdated: ['omnibar', 'favorites', 'protections'].map((id) => ({ id, visibility: 'visible' })),
                     customizer_onThemeUpdate: { theme: 'system' },
-                    omnibar_onConfigUpdate: { mode: 'search', showAiSetting: false, enableRecentAiChats: false, enableAi: true },
                 });
+            }
+
+            // Duck.ai off: the page must leave Duck.ai mode, so the omnibar config is sent too.
+            await chrome.settingsPrivate.setPref(DUCK_AI, false);
+            const third = await connect();
+            expect(third.posted.find((msg) => msg.subscriptionName === 'omnibar_onConfigUpdate').params).toEqual({
+                mode: 'search',
+                showAiSetting: false,
+                enableRecentAiChats: false,
+                enableAi: false,
+            });
+        });
+
+        it('does not send a page reconnecting to change a setting its old value back', async () => {
+            let onConnect;
+            spyOn(browser.runtime.onConnect, 'addListener').and.callFake((listener) => {
+                onConnect = listener;
+            });
+            // @ts-ignore - MockSettings stands in for Settings
+            ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
+
+            let onMessage;
+            const port = {
+                ...createFakePort(),
+                onMessage: { addListener: (listener) => (onMessage = listener) },
+                onDisconnect: { addListener() {} },
+            };
+            // As the page does: connects, then at once sends the change it reconnected for.
+            onConnect(port);
+            onMessage({
+                ...requestMessage('widgets_setConfig', [
+                    { id: 'omnibar', visibility: 'visible' },
+                    { id: 'favorites', visibility: 'hidden' },
+                    { id: 'protections', visibility: 'visible' },
+                ]),
+                Id: undefined,
+            });
+            await settle();
+
+            const widgetUpdates = port.posted.filter((msg) => msg.subscriptionName === 'widgets_onConfigUpdated');
+            expect(widgetUpdates.length).toBeGreaterThan(0);
+            for (const { params } of widgetUpdates) {
+                expect(params.find((config) => config.id === 'favorites').visibility).toBe('hidden');
             }
         });
     });
@@ -969,7 +1011,10 @@ describe('NTPMessaging component', () => {
                 // @ts-ignore - MockSettings stands in for Settings
                 new NTPMessaging({ settings, newTabTrackerStats, ntpActivity }); // eslint-disable-line no-new
             }
-            expect(consoleError.calls.allArgs().map(([message]) => message.split(' ')[0])).toEqual([
+            // Each test's NTPMessaging adds a tracker-blocked listener to the shared emitter, which
+            // warns once past 10. Whichever construction that lands in depends on test order.
+            const logged = consoleError.calls.allArgs().filter(([message]) => !message.startsWith('(node) warning'));
+            expect(logged.map(([message]) => message.split(' ')[0])).toEqual([
                 'chrome.settingsPrivate.onPrefsChanged',
                 'chrome.ddg.onFavoritesChanged',
                 'chrome.ddg.onBurnStarted',

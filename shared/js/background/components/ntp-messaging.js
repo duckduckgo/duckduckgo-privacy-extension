@@ -171,6 +171,13 @@ export default class NTPMessaging {
     queuedSettingsUpdates = new Set();
 
     /**
+     * Settles once the pages' setting changes so far are written, so a push reads
+     * the prefs after them, not before.
+     * @type {Promise<void>}
+     */
+    settingsWritten = Promise.resolve();
+
+    /**
      * @param {{
      *  settings: Settings,
      *  newTabTrackerStats: NewTabTrackerStats,
@@ -195,7 +202,11 @@ export default class NTPMessaging {
             // Favorites and the browser's settings may have changed while a reconnecting
             // page had no port, as the browser's changes reach only connected pages.
             this.pushFavoritesUpdate([port]);
-            this.pushBrowserSettings([port]);
+            // A page reconnects to send a message, often a setting change. Sent a tick later,
+            // so that change is written first and the page is not sent its old value back.
+            // ponytail: if the message arrives later than that, the page briefly shows its old
+            // value until the browser's change report arrives.
+            setTimeout(() => this.pushBrowserSettings([port], undefined, { keepOmnibarMode: true }));
         });
 
         // The theme, Sections and Duck.ai prefs, wherever they were changed: any page's
@@ -343,9 +354,11 @@ export default class NTPMessaging {
             // page is then sent.
             case 'widgets_setConfig':
             case 'customizer_setTheme':
-            case 'omnibar_setConfig':
+            case 'omnibar_setConfig': {
+                const write = setBrowserSetting(method, params);
+                this.settingsWritten = Promise.allSettled([this.settingsWritten, write]).then(() => {});
                 try {
-                    await setBrowserSetting(method, params);
+                    await write;
                 } catch (e) {
                     // No change is reported for one that was refused, so undo the page's.
                     if (port) {
@@ -354,6 +367,7 @@ export default class NTPMessaging {
                     throw e;
                 }
                 break;
+            }
             case 'contextMenu': {
                 const tabId = port?.sender?.tab?.id;
                 const items = params?.visibilityMenuItems;
@@ -498,9 +512,13 @@ export default class NTPMessaging {
      * Sends the pages the browser's settings, as the browser's changes to them would be.
      * @param {Iterable<Port>} ports - the pages' connections
      * @param {string[]} [subscriptionNames] - the updates to send, by default all of them
+     * @param {{ keepOmnibarMode?: boolean }} [options] - keepOmnibarMode: send the omnibar
+     *     config only with Duck.ai off. The page replaces its whole config, mode included,
+     *     so with Duck.ai on it would send a page in Duck.ai mode back to search.
      */
-    async pushBrowserSettings(ports, subscriptionNames = Object.values(BROWSER_SETTINGS)) {
+    async pushBrowserSettings(ports, subscriptionNames = Object.values(BROWSER_SETTINGS), { keepOmnibarMode = false } = {}) {
         try {
+            await this.settingsWritten;
             const settings = await getSettings();
             /** @type {Record<string, any>} */
             const updates = {
@@ -509,6 +527,9 @@ export default class NTPMessaging {
                 omnibar_onConfigUpdate: toOmnibarConfig(settings.duckAiInSearch),
             };
             for (const name of subscriptionNames) {
+                // With Duck.ai off the page must be in search mode anyway, so nothing is reset.
+                // ponytail: Duck.ai turned on while the page had no port shows after a reload.
+                if (keepOmnibarMode && name === BROWSER_SETTINGS.omnibar_setConfig && settings.duckAiInSearch) continue;
                 this.pushSubscriptionEvent(name, updates[name], ports);
             }
         } catch (e) {
