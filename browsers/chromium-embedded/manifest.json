@@ -1,7 +1,7 @@
 {
     "name": "DuckDuckGo Embedded Extension",
     "description": "Embedded extension for chromium native integration",
-    "version": "2026.11.2",
+    "version": "2026.11.12",
     "manifest_version": 3,
     "default_locale": "en",
     "icons": {
@@ -58,7 +58,8 @@
         "webNavigation",
         "cookies",
         "history",
-        "browsingData"
+        "browsingData",
+        "favicon"
     ],
     "host_permissions": [
         "*://*/*"

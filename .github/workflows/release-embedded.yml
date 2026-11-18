@@ -12,6 +12,9 @@ on:
             apple_task_gid:
                 description: 'Asana Apple task GID (set to test autoconsent flow, leave empty for standalone flow)'
                 required: false
+            apple_projects:
+                description: 'Asana projects to add the Apple task to, as projectGid:sectionGid pairs separated by commas (autoconsent flow only)'
+                required: false
 
 env:
     APPLE_EMBEDDED_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension.zip
@@ -51,6 +54,7 @@ jobs:
               id: pr-metadata
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  APPLE_PROJECTS_INPUT: ${{ inputs.apple_projects }}
               run: |
                   if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
                       TASK_GID="${{ inputs.apple_task_gid }}"
@@ -60,6 +64,7 @@ jobs:
                           BRANCH="update-embedded-extension"
                       fi
                       echo "APPLE_TASK_GID=$TASK_GID" >> $GITHUB_OUTPUT
+                      echo "APPLE_PROJECTS=$APPLE_PROJECTS_INPUT" >> $GITHUB_OUTPUT
                       echo "APPLE_BRANCH=$BRANCH" >> $GITHUB_OUTPUT
                   else
                       node scripts/embedded-release-metadata.js
@@ -153,11 +158,20 @@ jobs:
                   BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
               run: gh pr ready "$BRANCH" || true
 
+            - name: Remove DO NOT MERGE label from Apple PR
+              if: steps.find-apple-pr.outputs.PULL_REQUEST_URL
+              working-directory: apple-monorepo
+              env:
+                  GH_TOKEN: ${{ secrets.DAX_WEB_AUTOFILL_AUTOMATION }}
+                  BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
+              run: gh pr edit "$BRANCH" --remove-label "DO NOT MERGE" || true
+
             - name: Update Asana
               if: steps.find-apple-pr.outputs.PULL_REQUEST_URL
               env:
                   ASANA_ACCESS_TOKEN: ${{ secrets.ASANA_ACCESS_TOKEN }}
                   APPLE_PR_URL: ${{ steps.find-apple-pr.outputs.PULL_REQUEST_URL }}
                   APPLE_TASK_GID: ${{ steps.pr-metadata.outputs.APPLE_TASK_GID }}
+                  APPLE_PROJECTS: ${{ steps.pr-metadata.outputs.APPLE_PROJECTS }}
                   VERSION: ${{ steps.version.outputs.VERSION }}
               run: node scripts/embedded-release-update-asana.js

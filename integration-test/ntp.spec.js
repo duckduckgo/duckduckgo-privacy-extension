@@ -1,6 +1,8 @@
 import { test, expect } from './helpers/playwrightHarness';
 import backgroundWait from './helpers/backgroundWait';
 import { isChromiumEmbedded } from './helpers/platform';
+import { routeFromLocalhost } from './helpers/testPages';
+import { runRequestBlockingTest } from './helpers/requests';
 
 function getNtpUrl(backgroundPage) {
     return backgroundPage.evaluate(() => chrome.runtime.getURL('ntp/index.html'));
@@ -36,6 +38,10 @@ test.describe('Embedded New Tab Page', () => {
     test.beforeEach(async ({ backgroundPage }) => {
         test.skip(!isChromiumEmbedded(), 'The New Tab Page is only included in the chromium-embedded build');
         await backgroundWait.forAllConfiguration(backgroundPage);
+        // Stands in for the DuckDuckGo browser's favorites, which Chrome lacks.
+        await backgroundPage.evaluate(() => {
+            chrome.ddg = { getFavorites: async () => [] };
+        });
     });
 
     test('is registered as the new tab override', async ({ backgroundPage }) => {
@@ -71,6 +77,21 @@ test.describe('Embedded New Tab Page', () => {
         await expect(page.getByText('3 tracking attempts blocked')).toBeVisible();
         // the company breakdown is in the default (privacy-stats) feed
         await expect(page.getByText('Ad Company', { exact: true })).toBeVisible();
+    });
+
+    test('lists visited sites with their pages and blocked trackers in the details feed', async ({ page, backgroundPage }) => {
+        await routeFromLocalhost(page);
+        await runRequestBlockingTest(page, 'https://privacy-test-pages.site/privacy-protections/request-blocking/');
+
+        await page.goto(await getNtpUrl(backgroundPage));
+        await page.getByRole('tab', { name: 'Details' }).click();
+        const site = page.getByTestId('ActivityItem').filter({ hasText: 'privacy-test-pages.site' });
+        await expect(site.getByRole('link', { name: 'Request blocking test page' })).toBeVisible();
+        await expect(site.getByText(/\d+ tracking attempts blocked/i)).toBeVisible();
+
+        await site.getByRole('button', { name: 'Remove privacy-test-pages.site from history' }).click();
+        await expect(site).toHaveCount(0);
+        await expect.poll(() => backgroundPage.evaluate(async () => (await globalThis.components.ntpActivity.getSites()).size)).toBe(0);
     });
 
     test('reconnects to receive stats when the service worker restarts', async ({ page, backgroundPage }) => {
@@ -118,6 +139,6 @@ test.describe('Embedded New Tab Page', () => {
 
         // the restarted worker answers the re-sent request
         await (await serviceWorkerControl(page)).stop();
-        expect(await response).toEqual(expect.objectContaining({ result: { totalCount: 0 } }));
+        expect(await response).toEqual(expect.objectContaining({ result: { totalCount: 0, totalCookiePopUpsBlocked: null } }));
     });
 });

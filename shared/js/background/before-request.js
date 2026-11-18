@@ -238,11 +238,31 @@ export class TrackerBlockedEvent {
 }
 
 /**
+ * A third-party tracker requested by the tab's current page, blocked or not. Powers the
+ * NTPActivity module. It is not emitted for incognito tabs.
+ */
+export class TrackerFoundEvent {
+    static eventName = 'tracker-found';
+
+    /**
+     * @param {object} params
+     * @param {string} params.pageUrl
+     * @param {string} params.companyDisplayName
+     * @param {boolean} params.blocked
+     */
+    constructor(params) {
+        this.pageUrl = params.pageUrl;
+        this.companyDisplayName = params.companyDisplayName;
+        this.blocked = params.blocked;
+    }
+}
+
+/**
  * Tracker blocking
  * If request is a tracker, cancel the request
  * @param {import('./classes/tab')} thisTab
  * @param {import('webextension-polyfill').WebRequest.OnBeforeRedirectDetailsType} requestData
- * @returns {browser.WebRequest.BlockingResponseOrPromise | undefined}
+ * @returns {browser.WebRequest.BlockingResponseOrPromiseOrVoid | undefined}
  */
 function blockHandleResponse(thisTab, requestData) {
     const blockingEnabled = thisTab.site.isContentBlockingEnabled();
@@ -344,6 +364,17 @@ function blockHandleResponse(thisTab, requestData) {
             if (baseDomain) {
                 const url = utils.getURLWithoutQueryString(requestData.url);
                 thisTab.addToTrackers(tracker, baseDomain, url);
+            }
+
+            if (!thisTab.incognito && tracker.action !== 'none' && !tracker.sameEntity) {
+                emitter.emit(
+                    TrackerFoundEvent.eventName,
+                    new TrackerFoundEvent({
+                        pageUrl: thisTab.site.url,
+                        companyDisplayName: utils.findParentDisplayName(requestData.url),
+                        blocked: ['block', 'redirect'].includes(tracker.action),
+                    }),
+                );
             }
         }
         // the tab has finished loading
