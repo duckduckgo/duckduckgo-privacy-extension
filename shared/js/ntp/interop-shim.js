@@ -15,6 +15,18 @@ const messageHandlers = new Set();
  */
 const pendingRequests = new Map();
 
+/**
+ * The browser's updates that carry its whole setting. The page subscribes to them
+ * only once it has rendered the initialSetup data, so one can arrive before it
+ * listens. The latest of each is kept and replayed to each listener added later.
+ * Patches and commands, such as activity_onDataPatch, must not be: a replay would
+ * repeat them.
+ */
+const REPLAYED_UPDATES = ['widgets_onConfigUpdated', 'customizer_onThemeUpdate', 'omnibar_onConfigUpdate'];
+
+/** @type {Map<string, any>} */
+const latestUpdates = new Map();
+
 /** @type {chrome.runtime.Port?} */
 let port = null;
 
@@ -22,6 +34,9 @@ function connect() {
     port = chrome.runtime.connect({ name: NTP_PORT_NAME });
     port.onMessage.addListener((msg) => {
         pendingRequests.delete(msg.id);
+        if (REPLAYED_UPDATES.includes(msg.subscriptionName)) {
+            latestUpdates.set(msg.subscriptionName, msg);
+        }
         // The transport only reads `data`, and requires `origin` to be unset.
         for (const handler of messageHandlers) {
             handler({ data: msg });
@@ -53,6 +68,15 @@ globalThis.windowsInteropPostMessage = (msg) => {
 
 globalThis.windowsInteropAddEventListener = (_name, handler) => {
     messageHandlers.add(handler);
+    // A listener is not told which message it is for, so it is given every kept update
+    // and ignores the rest. Not during this call: the page's Service subscribes before
+    // it attaches its own data listener, which would miss it.
+    queueMicrotask(() => {
+        if (!messageHandlers.has(handler)) return;
+        for (const msg of latestUpdates.values()) {
+            handler({ data: msg });
+        }
+    });
 };
 
 globalThis.windowsInteropRemoveEventListener = (_name, handler) => {

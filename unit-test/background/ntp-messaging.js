@@ -98,6 +98,9 @@ describe('NTPMessaging component', () => {
         };
     }
 
+    /** The chrome.ddg.onNewTabPageMessage listener. */
+    let browserUpdate;
+
     beforeEach(() => {
         changedListeners = [];
         chrome.ddg = {
@@ -107,6 +110,7 @@ describe('NTPMessaging component', () => {
             onFavoritesChanged: { addListener: (listener) => changedListeners.push(listener) },
             onBurnStarted: { addListener() {} },
             sendNewTabPageMessage: fakeBrowserNtp(),
+            onNewTabPageMessage: { addListener: (listener) => (browserUpdate = listener) },
         };
         settings = new MockSettings();
         newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
@@ -149,7 +153,7 @@ describe('NTPMessaging component', () => {
         });
     });
 
-    it('sends the omnibar config to the browser, and not to the other pages', async () => {
+    it('sends the omnibar config to the browser, leaving the pages to its update', async () => {
         const sender = createTabPort();
         const other = createTabPort(8);
         // @ts-ignore - fake ports
@@ -164,7 +168,7 @@ describe('NTPMessaging component', () => {
         expect(other.posted).toEqual([]);
     });
 
-    it('sends a new theme to the browser and to every open page', async () => {
+    it('sends a new theme to the browser, leaving the pages to its update', async () => {
         const sender = createTabPort();
         const other = createTabPort(8);
         // @ts-ignore - fake ports
@@ -174,32 +178,83 @@ describe('NTPMessaging component', () => {
         await ntpMessaging.onMessage({ ...requestMessage('customizer_setTheme', { theme: 'dark' }), Id: undefined }, sender);
 
         expect(chrome.ddg.sendNewTabPageMessage).toHaveBeenCalledOnceWith(7, 'customizer_setTheme', { theme: 'dark' });
-        for (const port of [sender, other]) {
-            expect(port.posted.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['customizer_onThemeUpdate', { theme: 'dark' }]]);
+        expect(sender.posted).toEqual([]);
+        expect(other.posted).toEqual([]);
+    });
+
+    it('sends every open page the changes the browser reports', () => {
+        const consoleError = spyOn(console, 'error');
+        const closed = {
+            ...createTabPort(9),
+            postMessage() {
+                throw new Error('Attempting to use a disconnected port object');
+            },
+        };
+        const pages = [createTabPort(), createTabPort(8)];
+        // @ts-ignore - fake ports
+        [closed, ...pages].forEach((port) => ntpMessaging.ports.add(port));
+
+        browserUpdate('customizer_onThemeUpdate', { theme: 'dark' });
+        browserUpdate('omnibar_onConfigUpdate', { mode: 'search', enableAi: false });
+        browserUpdate('favorites_onDataUpdate', { favorites: [] });
+
+        expect(consoleError.calls.allArgs().map(([message]) => message)).toEqual([
+            'NTP customizer_onThemeUpdate not sent to a page:',
+            'NTP omnibar_onConfigUpdate not sent to a page:',
+            'NTP: ignored an unexpected browser update: favorites_onDataUpdate',
+        ]);
+        for (const port of pages) {
+            expect(port.posted).toEqual([
+                {
+                    context: 'specialPages',
+                    featureName: 'newTabPage',
+                    subscriptionName: 'customizer_onThemeUpdate',
+                    params: { theme: 'dark' },
+                },
+                {
+                    context: 'specialPages',
+                    featureName: 'newTabPage',
+                    subscriptionName: 'omnibar_onConfigUpdate',
+                    params: { showAiSetting: false, enableRecentAiChats: false, mode: 'search', enableAi: false },
+                },
+            ]);
         }
     });
 
-    it('sends nothing to the other pages when the browser rejects a change', async () => {
+    it('logs the changes the browser rejects and sends only the sender the state it keeps', async () => {
         const sender = createTabPort();
         const other = createTabPort(8);
-        // @ts-ignore - fake ports
         [sender, other].forEach((port) => ntpMessaging.ports.add(port));
         const consoleError = spyOn(console, 'error');
-        chrome.ddg.sendNewTabPageMessage.and.rejectWith(new Error('rejected by the browser'));
-
-        // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('customizer_setTheme', { theme: 'sepia' }), Id: undefined }, sender);
-        // @ts-ignore - fake port
-        await ntpMessaging.onMessage(
-            { ...requestMessage('widgets_setConfig', [{ id: 'x', visibility: 'hidden' }]), Id: undefined },
-            sender,
+        const answer = fakeBrowserNtp();
+        chrome.ddg.sendNewTabPageMessage.and.callFake((tabId, method, params) =>
+            method.endsWith('_setConfig') || method === 'customizer_setTheme'
+                ? Promise.reject(new Error('rejected by the browser'))
+                : answer(tabId, method, params),
         );
+        // @ts-ignore - fake port
+        const notify = (name, data) => ntpMessaging.onMessage({ ...requestMessage(name, data), Id: undefined }, sender);
+
+        await notify('customizer_setTheme', { theme: 'sepia' });
+        await notify('widgets_setConfig', [{ id: 'protections', visibility: 'hidden' }]);
+        await notify('omnibar_setConfig', { mode: 'ai', enableAi: false });
 
         expect(consoleError.calls.allArgs().map(([message]) => message)).toEqual([
             'NTP customizer_setTheme failed:',
             'NTP widgets_setConfig failed:',
+            'NTP omnibar_setConfig failed:',
         ]);
-        expect(sender.posted).toEqual([]);
+        expect(sender.posted.map(({ subscriptionName, params }) => ({ subscriptionName, params }))).toEqual([
+            { subscriptionName: 'customizer_onThemeUpdate', params: { theme: 'system' } },
+            {
+                subscriptionName: 'widgets_onConfigUpdated',
+                params: ['omnibar', 'favorites', 'protections'].map((id) => ({ id, visibility: 'visible' })),
+            },
+            {
+                subscriptionName: 'omnibar_onConfigUpdate',
+                params: { showAiSetting: false, enableRecentAiChats: false, mode: 'search', enableAi: true },
+            },
+        ]);
         expect(other.posted).toEqual([]);
     });
 
@@ -509,21 +564,6 @@ describe('NTPMessaging component', () => {
         }
     });
 
-    it('sends a new widget config to every open page', async () => {
-        const widgetConfigs = [{ id: 'protections', visibility: 'hidden' }];
-        const sender = createTabPort();
-        const other = createTabPort(8);
-        // @ts-ignore - fake ports
-        [sender, other].forEach((port) => ntpMessaging.ports.add(port));
-
-        // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('widgets_setConfig', widgetConfigs), Id: undefined }, sender);
-
-        for (const port of [sender, other]) {
-            expect(port.posted.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['widgets_onConfigUpdated', widgetConfigs]]);
-        }
-    });
-
     describe('context menu', () => {
         const visibilityMenuItems = [
             { id: 'omnibar', title: 'Search' },
@@ -543,7 +583,7 @@ describe('NTPMessaging component', () => {
             [sender, other].forEach((port) => ntpMessaging.ports.add(port));
         });
 
-        it('shows the widgets over the NTP tab, checked if visible, and toggles the one chosen for every open page', async () => {
+        it('shows the widgets over the NTP tab, checked if visible, and toggles the one chosen in the browser', async () => {
             chrome.ddg.showContextMenu = jasmine.createSpy('showContextMenu').and.resolveTo('favorites');
 
             await ntpMessaging.handleNotification('contextMenu', { visibilityMenuItems }, sender);
@@ -560,9 +600,9 @@ describe('NTPMessaging component', () => {
             ];
             expect(chrome.ddg.sendNewTabPageMessage).toHaveBeenCalledWith(7, 'widgets_setConfig', widgetConfigs);
             expect((await ntpMessaging.handleRequest('initialSetup', undefined, sender)).widgetConfigs).toEqual(widgetConfigs);
-            for (const port of [sender, other]) {
-                expect(port.posted.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['widgets_onConfigUpdated', widgetConfigs]]);
-            }
+            // The browser's update tells the pages.
+            expect(sender.posted).toEqual([]);
+            expect(other.posted).toEqual([]);
         });
 
         it('changes nothing when the menu closes without a choice', async () => {
@@ -753,7 +793,7 @@ describe('NTPMessaging component', () => {
             ]);
         });
 
-        it('pushes favorites to each page as it connects', async () => {
+        it("pushes favorites and the browser's settings to each page as it connects", async () => {
             let onConnect;
             spyOn(browser.runtime.onConnect, 'addListener').and.callFake((listener) => {
                 onConnect = listener;
@@ -762,7 +802,7 @@ describe('NTPMessaging component', () => {
             ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
 
             const connect = async () => {
-                const port = { ...createFakePort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
+                const port = { ...createTabPort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
                 onConnect(port);
                 await new Promise((resolve) => setTimeout(resolve));
                 return port;
@@ -770,8 +810,14 @@ describe('NTPMessaging component', () => {
             const first = await connect();
             const second = await connect();
 
-            expect(first.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
-            expect(second.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
+            for (const port of [first, second]) {
+                expect(Object.fromEntries(port.posted.map((msg) => [msg.subscriptionName, msg.params]))).toEqual({
+                    favorites_onDataUpdate: { favorites: [pageFavorite] },
+                    widgets_onConfigUpdated: ['omnibar', 'favorites', 'protections'].map((id) => ({ id, visibility: 'visible' })),
+                    customizer_onThemeUpdate: { theme: 'system' },
+                    omnibar_onConfigUpdate: { showAiSetting: false, enableRecentAiChats: false, mode: 'search', enableAi: true },
+                });
+            }
         });
     });
 
@@ -793,8 +839,10 @@ describe('NTPMessaging component', () => {
             }
             expect(consoleError.calls.allArgs().map(([message]) => message.split(' ')[0])).toEqual([
                 'chrome.ddg.onFavoritesChanged',
+                'chrome.ddg.onNewTabPageMessage',
                 'chrome.ddg.onBurnStarted',
                 'chrome.ddg.onFavoritesChanged',
+                'chrome.ddg.onNewTabPageMessage',
                 'chrome.ddg.onBurnStarted',
             ]);
         });

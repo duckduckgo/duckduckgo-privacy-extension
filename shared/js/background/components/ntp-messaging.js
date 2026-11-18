@@ -51,6 +51,14 @@ const OMNIBAR_CONFIG = {
     showAiSetting: false,
     enableRecentAiChats: false,
 };
+// The settings the browser stores: each page message that changes one, and the
+// update message the browser sends every page with its new value.
+/** @type {Record<string, string>} */
+const BROWSER_SETTINGS = {
+    widgets_setConfig: 'widgets_onConfigUpdated',
+    customizer_setTheme: 'customizer_onThemeUpdate',
+    omnibar_setConfig: 'omnibar_onConfigUpdate',
+};
 // The parts of the customizer the browser does not store: the page's defaults.
 const DEFAULT_CUSTOMIZER = { userColor: null, background: { kind: 'default' }, userImages: [] };
 const DEFAULT_FAVORITES_CONFIG = { expansion: 'expanded' };
@@ -127,8 +135,10 @@ export default class NTPMessaging {
             port.onDisconnect.addListener(() => {
                 this.ports.delete(port);
             });
-            // Favorites may have changed while a reconnecting page had no port.
+            // Favorites and the browser's settings may have changed while a reconnecting
+            // page had no port, as the browser's updates reach only connected pages.
             this.pushFavoritesUpdate([port]);
+            this.pushBrowserSettings(port);
         });
 
         // Top level, so the browser can wake the worker to deliver it.
@@ -145,6 +155,22 @@ export default class NTPMessaging {
             });
         } else {
             console.error('chrome.ddg.onFavoritesChanged is unavailable: open New Tab Pages will not see favorites change');
+        }
+
+        // The theme, Sections and Duck.ai choices, wherever they were changed: any page's
+        // customize panel or duck://settings. Every page is sent each one, the page that
+        // made it included. The browser's omnibar config always says search mode, so a
+        // page in Duck.ai mode returns to search when the Duck.ai setting changes.
+        if (chrome.ddg?.onNewTabPageMessage) {
+            chrome.ddg.onNewTabPageMessage.addListener((method, params) => {
+                if (!Object.values(BROWSER_SETTINGS).includes(method)) {
+                    console.error(`NTP: ignored an unexpected browser update: ${method}`);
+                    return;
+                }
+                this.pushSubscriptionEvent(method, method === 'omnibar_onConfigUpdate' ? { ...OMNIBAR_CONFIG, ...params } : params);
+            });
+        } else {
+            console.error('chrome.ddg.onNewTabPageMessage is unavailable: open New Tab Pages will not see their settings change');
         }
 
         // At most one push a second while trackers are being blocked. Scheduled even with no
@@ -261,13 +287,21 @@ export default class NTPMessaging {
      */
     async handleNotification(method, params, port) {
         switch (method) {
+            // The browser stores these, and sends every open page the change through
+            // chrome.ddg.onNewTabPageMessage.
             case 'widgets_setConfig':
-                await this.setWidgetConfigs(port, params);
-                break;
             case 'customizer_setTheme':
-                await sendToBrowser(port, method, params);
-                // Every open page is sent the new theme, the sender included.
-                this.pushSubscriptionEvent('customizer_onThemeUpdate', params);
+            case 'omnibar_setConfig':
+                try {
+                    await sendToBrowser(port, method, params);
+                } catch (e) {
+                    // The browser sends no update for a change it rejects, so undo the page's.
+                    // A page with no tab can't be asked about, nor did the browser see its change.
+                    if (port?.sender?.tab) {
+                        await this.pushBrowserSettings(port, [BROWSER_SETTINGS[method]]);
+                    }
+                    throw e;
+                }
                 break;
             case 'contextMenu': {
                 const tabId = port?.sender?.tab?.id;
@@ -286,8 +320,9 @@ export default class NTPMessaging {
                 );
                 if (chosen) {
                     // Toggles the widget in the config as it is once the menu closes.
-                    await this.setWidgetConfigs(
+                    await sendToBrowser(
                         port,
+                        'widgets_setConfig',
                         (await getWidgetConfigs(port)).map((config) =>
                             config.id === chosen
                                 ? { ...config, visibility: config.visibility === 'visible' ? 'hidden' : 'visible' }
@@ -299,11 +334,6 @@ export default class NTPMessaging {
             }
 
             // Omnibar
-            case 'omnibar_setConfig':
-                // Not sent to the other pages: the browser does not store `mode`, so its
-                // config would switch their omnibars back to search.
-                await sendToBrowser(port, method, params);
-                break;
             case 'omnibar_submitSearch':
                 if (typeof params?.term === 'string') {
                     this.openUrl(`${SEARCH_URL}?q=${encodeURIComponent(params.term)}`, params?.target, port);
@@ -419,17 +449,6 @@ export default class NTPMessaging {
     }
 
     /**
-     * As on Windows, every open page is sent the new config, the sender included,
-     * once the browser has stored it.
-     * @param {Port | undefined} port - the page's connection
-     * @param {WidgetConfig[]} configs
-     */
-    async setWidgetConfigs(port, configs) {
-        await sendToBrowser(port, 'widgets_setConfig', configs);
-        this.pushSubscriptionEvent('widgets_onConfigUpdated', configs);
-    }
-
-    /**
      * @returns {ProtectionsData}
      */
     getProtectionsData() {
@@ -467,6 +486,38 @@ export default class NTPMessaging {
                 favicon: favicon(url),
             })),
         };
+    }
+
+    /**
+     * Sends the page the browser's settings, as the browser's own updates for them would.
+     * @param {Port} port - the page's connection
+     * @param {string[]} [subscriptionNames] - the updates to send, by default all of them
+     */
+    async pushBrowserSettings(port, subscriptionNames = Object.values(BROWSER_SETTINGS)) {
+        for (const name of subscriptionNames) {
+            try {
+                this.pushSubscriptionEvent(name, await this.readBrowserSetting(name, port), [port]);
+            } catch (e) {
+                console.error(`NTP ${name} failed:`, e);
+            }
+        }
+    }
+
+    /**
+     * @param {string} subscriptionName - the update the setting is sent to the page with
+     * @param {Port} port - the page's connection
+     */
+    async readBrowserSetting(subscriptionName, port) {
+        switch (subscriptionName) {
+            case 'widgets_onConfigUpdated':
+                return getWidgetConfigs(port);
+            case 'customizer_onThemeUpdate':
+                // The browser's customizer is only its theme: theme and themeVariant.
+                return (await sendToBrowser(port, 'initialSetup')).customizer;
+            case 'omnibar_onConfigUpdate':
+                return this.handleRequest('omnibar_getConfig', undefined, port);
+        }
+        throw new Error(`not a browser setting: ${subscriptionName}`);
     }
 
     /**
@@ -549,12 +600,17 @@ export default class NTPMessaging {
      */
     pushSubscriptionEvent(subscriptionName, params, ports = this.ports) {
         for (const port of ports) {
-            port.postMessage({
-                context: NTP_MESSAGING_CONTEXT,
-                featureName: NTP_FEATURE_NAME,
-                subscriptionName,
-                params,
-            });
+            // A page that has just closed throws, and must not stop the rest getting it.
+            try {
+                port.postMessage({
+                    context: NTP_MESSAGING_CONTEXT,
+                    featureName: NTP_FEATURE_NAME,
+                    subscriptionName,
+                    params,
+                });
+            } catch (e) {
+                console.error(`NTP ${subscriptionName} not sent to a page:`, e);
+            }
         }
     }
 }
