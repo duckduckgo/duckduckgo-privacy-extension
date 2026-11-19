@@ -43,7 +43,7 @@
         "@duckduckgo/pixel-schema": "https://github.com/duckduckgo/pixel-schema/archive/refs/tags/v2.2.0.tar.gz",
         "@duckduckgo/privacy-configuration": "https://github.com/duckduckgo/privacy-configuration/archive/refs/tags/1791545923944.tar.gz",
         "@fingerprintjs/fingerprintjs": "^4.6.2",
-        "@playwright/test": "1.64.1",
+        "@playwright/test": "1.65.0",
         "@types/chrome": "^0.3.4",
         "@types/jasmine": "^5.1.9",
         "@types/node": "^26.6.4",
