@@ -1,9 +1,11 @@
 import {
     ALLOWLIST_CHANGED_SUBSCRIPTION,
-    ALLOWLIST_STORAGE_KEY,
+    ALLOWLIST_SETTING,
+    ALLOWLIST_VERSION_SETTING,
     UserAllowlistSync,
 } from '../../shared/js/background/components/user-allowlist-sync';
-import { getFromSessionStorage, removeFromSessionStorage, setToSessionStorage } from '../../shared/js/background/wrapper';
+import settings from '../../shared/js/background/settings';
+import { isSafeListed } from '../../shared/js/background/utils';
 
 function createMockNativeMessaging() {
     /** @type {Map<string, (params: any) => void>} */
@@ -19,66 +21,109 @@ function createMockNativeMessaging() {
     };
 }
 
+/**
+ * Settings held in memory, which only accept reads and writes once `ready` resolves, like the real ones.
+ * @param {Record<string, any>} [initial]
+ */
+function createMockSettings(initial = {}) {
+    const values = { ...initial };
+    let isReady = false;
+    let markReady;
+    const ready = new Promise((resolve) => {
+        markReady = resolve;
+    }).then(() => {
+        isReady = true;
+    });
+    return {
+        values,
+        load: () => markReady(),
+        ready: () => ready,
+        getSetting: (name) => (isReady ? values[name] : undefined),
+        updateSetting: jasmine.createSpy('updateSetting').and.callFake((name, value) => {
+            if (isReady) values[name] = value;
+        }),
+    };
+}
+
 describe('UserAllowlistSync', () => {
     let nativeMessaging;
+    let settingsApi;
 
-    beforeEach(async () => {
-        await removeFromSessionStorage(ALLOWLIST_STORAGE_KEY);
+    function createSync() {
+        return new UserAllowlistSync(nativeMessaging, { settingsApi });
+    }
+
+    beforeEach(() => {
         nativeMessaging = createMockNativeMessaging();
+        settingsApi = createMockSettings();
     });
 
     it('subscribes synchronously in the constructor', () => {
-        // eslint-disable-next-line no-new
-        new UserAllowlistSync(nativeMessaging);
+        createSync();
         expect(nativeMessaging.subscribe).toHaveBeenCalledWith(ALLOWLIST_CHANGED_SUBSCRIPTION, jasmine.any(Function));
     });
 
-    it('pulls the allowlist on start with no known version', async () => {
+    it('pulls the allowlist once settings load, and stores it in the allowlisted setting', async () => {
         nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v1', domains: ['example.com'] }));
-        const sync = new UserAllowlistSync(nativeMessaging);
+        const sync = createSync();
+        expect(nativeMessaging.request).not.toHaveBeenCalled();
+
+        settingsApi.load();
         await sync.ready;
 
         expect(nativeMessaging.request).toHaveBeenCalledWith('getAllowlistIfNew', { version: null });
+        expect(settingsApi.values[ALLOWLIST_SETTING]).toEqual({ 'example.com': true });
+        expect(settingsApi.values[ALLOWLIST_VERSION_SETTING]).toBe('v1');
+        expect(sync.domains).toEqual(['example.com']);
         expect(sync.version).toBe('v1');
-        expect(sync.isAllowlisted('example.com')).toBeTrue();
-        expect(sync.isAllowlisted('EXAMPLE.com')).toBeTrue();
-        expect(sync.isAllowlisted('sub.example.com')).toBeFalse();
     });
 
-    it('restores the stored state after a background restart and sends its version', async () => {
-        await setToSessionStorage(ALLOWLIST_STORAGE_KEY, { version: 'v1', domains: ['example.com'] });
-        const sync = new UserAllowlistSync(nativeMessaging);
+    it('sends the stored version after a background restart', async () => {
+        settingsApi = createMockSettings({ [ALLOWLIST_SETTING]: { 'example.com': true }, [ALLOWLIST_VERSION_SETTING]: 'v1' });
+        const sync = createSync();
+        settingsApi.load();
         await sync.ready;
 
         expect(nativeMessaging.request).toHaveBeenCalledWith('getAllowlistIfNew', { version: 'v1' });
-        expect(sync.isAllowlisted('example.com')).toBeTrue();
+        expect(settingsApi.updateSetting).not.toHaveBeenCalled();
+        expect(sync.domains).toEqual(['example.com']);
     });
 
-    it('applies and stores the list from a change event', async () => {
-        const sync = new UserAllowlistSync(nativeMessaging);
+    it('stores the list from a change event', async () => {
+        const sync = createSync();
+        settingsApi.load();
         await sync.ready;
-        const onChange = jasmine.createSpy('onChange');
-        sync.onChange(onChange);
 
         nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v2', domains: ['a.com', 'b.com'] });
-        await sync._persisting;
+        await settingsApi.ready();
 
-        expect(sync.domains).toEqual(['a.com', 'b.com']);
-        expect(onChange).toHaveBeenCalledOnceWith({ version: 'v2', domains: ['a.com', 'b.com'] });
-        expect(await getFromSessionStorage(ALLOWLIST_STORAGE_KEY)).toEqual({ version: 'v2', domains: ['a.com', 'b.com'] });
+        expect(settingsApi.values[ALLOWLIST_SETTING]).toEqual({ 'a.com': true, 'b.com': true });
+        expect(sync.version).toBe('v2');
+    });
+
+    it('applies a change event that arrives before settings load', async () => {
+        const sync = createSync();
+        nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v2', domains: ['early.com'] });
+
+        settingsApi.load();
+        await sync.ready;
+
+        expect(sync.domains).toEqual(['early.com']);
+        expect(sync.version).toBe('v2');
     });
 
     it('ignores a change event for the version it already has, or a malformed one', async () => {
         nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v1', domains: ['example.com'] }));
-        const sync = new UserAllowlistSync(nativeMessaging);
+        const sync = createSync();
+        settingsApi.load();
         await sync.ready;
-        const onChange = jasmine.createSpy('onChange');
-        sync.onChange(onChange);
+        settingsApi.updateSetting.calls.reset();
 
         nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v1', domains: ['example.com'] });
         nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v2' });
+        await settingsApi.ready();
 
-        expect(onChange).not.toHaveBeenCalled();
+        expect(settingsApi.updateSetting).not.toHaveBeenCalled();
         expect(sync.version).toBe('v1');
     });
 
@@ -89,7 +134,9 @@ describe('UserAllowlistSync', () => {
                 resolvePull = resolve;
             }),
         );
-        const sync = new UserAllowlistSync(nativeMessaging);
+        const sync = createSync();
+        settingsApi.load();
+        await settingsApi.ready();
         await new Promise((resolve) => setTimeout(resolve, 0));
 
         nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v2', domains: ['new.com'] });
@@ -99,27 +146,43 @@ describe('UserAllowlistSync', () => {
         expect(sync.domains).toEqual(['new.com']);
     });
 
-    it('keeps the current list when native reports no change', async () => {
+    it('keeps the current list when native reports no change or the request fails', async () => {
         nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v1', domains: ['example.com'] }));
-        const sync = new UserAllowlistSync(nativeMessaging);
+        const sync = createSync();
+        settingsApi.load();
         await sync.ready;
 
         nativeMessaging.request.and.returnValue(Promise.resolve({ updated: false }));
         await sync._pull();
-
-        expect(sync.version).toBe('v1');
-        expect(sync.isAllowlisted('example.com')).toBeTrue();
-    });
-
-    it('keeps the current list when the native request fails', async () => {
-        nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v1', domains: ['example.com'] }));
-        const sync = new UserAllowlistSync(nativeMessaging);
-        await sync.ready;
-
         spyOn(console, 'error');
         nativeMessaging.request.and.returnValue(Promise.reject(new Error('no native')));
         await sync._pull();
 
-        expect(sync.isAllowlisted('example.com')).toBeTrue();
+        expect(sync.version).toBe('v1');
+        expect(sync.domains).toEqual(['example.com']);
+    });
+
+    describe('with the extension settings', () => {
+        afterEach(() => {
+            settings.removeSetting(ALLOWLIST_SETTING);
+            settings.removeSetting(ALLOWLIST_VERSION_SETTING);
+        });
+
+        it('makes utils.isSafeListed follow the native allowlist', async () => {
+            await settings.ready();
+            nativeMessaging.request.and.returnValue(Promise.resolve({ updated: true, version: 'v1', domains: ['example.com'] }));
+            const sync = new UserAllowlistSync(nativeMessaging);
+            await sync.ready;
+
+            expect(isSafeListed('https://example.com/')).toBeTrue();
+            expect(isSafeListed('https://sub.example.com/page')).toBeTrue();
+            expect(isSafeListed('https://other.com/')).toBeFalse();
+
+            nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v2', domains: ['other.com'] });
+            await settings.ready();
+
+            expect(isSafeListed('https://example.com/')).toBeFalse();
+            expect(isSafeListed('https://other.com/')).toBeTrue();
+        });
     });
 });

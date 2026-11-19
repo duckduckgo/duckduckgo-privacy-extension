@@ -1,54 +1,46 @@
-import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
+import settings from '../settings';
 
 /**
  * Subscription event native sends, with `{ version, domains }`, when the user's allowlist changes.
  */
 export const ALLOWLIST_CHANGED_SUBSCRIPTION = 'onAllowlistChanged';
-export const ALLOWLIST_STORAGE_KEY = 'userAllowlist';
+/** The setting `utils.isSafeListed` reads: an object whose keys are the allowlisted domains. */
+export const ALLOWLIST_SETTING = 'allowlisted';
+/** The setting holding the native version of the list in `ALLOWLIST_SETTING`. */
+export const ALLOWLIST_VERSION_SETTING = 'userAllowlistVersion';
 
 /**
  * @typedef {import('./native-messaging').NativeMessagingInterface} NativeMessagingInterface
- * @typedef {{ version: string | null, domains: string[] }} AllowlistState
- * @typedef {(state: AllowlistState) => void} AllowlistListener
+ * @typedef {Pick<typeof settings, 'ready' | 'getSetting' | 'updateSetting'>} SettingsApi
  */
 
 /**
- * Keeps a copy of the native app's user allowlist (sites where the user disabled protections).
+ * Keeps the extension's `allowlisted` setting in step with the native app's user allowlist (sites where the user
+ * disabled protections), so `utils.isSafeListed` and anything else reading that setting follow native.
  *
  * Changes arrive as `ALLOWLIST_CHANGED_SUBSCRIPTION` events, which carry the whole list. On every background start
  * the extension also pulls the list, sending the version it holds so native answers with the list only when it
- * differs. That covers changes made while the extension was not loaded, or before an app restart.
+ * differs. That covers changes made while the extension was not loaded, or before an app restart. Both the list and
+ * its version are kept in settings, which persist across background restarts.
  */
 export class UserAllowlistSync {
     /**
      * @param {NativeMessagingInterface} nativeMessaging - messaging for the native `userAllowlist` feature
+     * @param {object} [options]
+     * @param {SettingsApi} [options.settingsApi] - defaults to the extension's settings
      */
-    constructor(nativeMessaging) {
+    constructor(nativeMessaging, { settingsApi = settings } = {}) {
         this.nativeMessaging = nativeMessaging;
-        /** @type {AllowlistState} */
-        this._state = { version: null, domains: [] };
-        /** @type {Set<string>} */
-        this._domainSet = new Set();
-        /** @type {Set<AllowlistListener>} */
-        this._listeners = new Set();
-        /** Counts applied change events, so a pull that started before one can't overwrite it. */
+        this._settings = settingsApi;
+        /** Counts received change events, so a pull that started before one can't overwrite it. */
         this._eventCount = 0;
-        /** @type {Promise<void>} */
-        this._persisting = Promise.resolve();
+        /** Settings can't be written until they have loaded, so updates wait for this, in the order they arrive. */
+        this._settingsReady = Promise.resolve(settingsApi.ready());
 
         // Subscribed synchronously, so native can wake the background to deliver changes.
         nativeMessaging.subscribe(ALLOWLIST_CHANGED_SUBSCRIPTION, (params) => this._onChanged(params));
 
-        this.ready = this._restore().then(() => this._pull());
-    }
-
-    async _restore() {
-        const stored = await getFromSessionStorage(ALLOWLIST_STORAGE_KEY);
-        // A change event may have arrived while storage was being read; it is newer than the stored copy.
-        if (stored && Array.isArray(stored.domains) && this._eventCount === 0) {
-            this._state = stored;
-            this._domainSet = new Set(stored.domains);
-        }
+        this.ready = this._settingsReady.then(() => this._pull());
     }
 
     /**
@@ -58,7 +50,7 @@ export class UserAllowlistSync {
         const eventCount = this._eventCount;
         let result;
         try {
-            result = await this.nativeMessaging.request('getAllowlistIfNew', { version: this._state.version });
+            result = await this.nativeMessaging.request('getAllowlistIfNew', { version: this.version });
         } catch (e) {
             console.error('UserAllowlistSync: failed to fetch allowlist', e);
             return;
@@ -74,60 +66,36 @@ export class UserAllowlistSync {
      */
     _onChanged(params) {
         this._eventCount++;
-        this._update({ ...params, updated: true });
+        this._settingsReady.then(() => this._update({ ...params, updated: true }));
     }
 
     /**
-     * Applies, stores and announces a list from native if it is well formed and new.
+     * Stores a list from native in settings if it is well formed and new.
      * @param {any} result
      */
     _update(result) {
         if (!result?.updated || !Array.isArray(result.domains) || typeof result.version !== 'string') {
             return;
         }
-        if (result.version === this._state.version) {
+        if (result.version === this.version) {
             return;
         }
-        const state = { version: result.version, domains: result.domains };
-        this._state = state;
-        this._domainSet = new Set(state.domains);
-        // Writes run in order and store the state current when they run, so the last write is the newest state.
-        this._persisting = this._persisting
-            .then(() => setToSessionStorage(ALLOWLIST_STORAGE_KEY, this._state))
-            .catch((e) => console.error('UserAllowlistSync: failed to store allowlist', e));
-        for (const listener of this._listeners) {
-            try {
-                listener(state);
-            } catch (e) {
-                console.error('UserAllowlistSync: listener failed', e);
-            }
+        /** @type {Record<string, boolean>} */
+        const allowlist = {};
+        for (const domain of result.domains) {
+            allowlist[domain] = true;
         }
-    }
-
-    /**
-     * Matches native `isUserUnprotected(domain:)`, which compares hostnames exactly.
-     * @param {string} hostname
-     */
-    isAllowlisted(hostname) {
-        return this._domainSet.has(hostname.toLowerCase());
+        this._settings.updateSetting(ALLOWLIST_SETTING, allowlist);
+        this._settings.updateSetting(ALLOWLIST_VERSION_SETTING, result.version);
     }
 
     /** @returns {string[]} */
     get domains() {
-        return this._state.domains;
+        return Object.keys(this._settings.getSetting(ALLOWLIST_SETTING) || {});
     }
 
     /** @returns {string | null} */
     get version() {
-        return this._state.version;
-    }
-
-    /**
-     * @param {AllowlistListener} listener - called after the allowlist changes
-     * @returns {() => void} removes the listener
-     */
-    onChange(listener) {
-        this._listeners.add(listener);
-        return () => this._listeners.delete(listener);
+        return this._settings.getSetting(ALLOWLIST_VERSION_SETTING) ?? null;
     }
 }
