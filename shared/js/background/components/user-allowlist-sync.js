@@ -31,8 +31,6 @@ export class UserAllowlistSync {
         this._domainSet = new Set();
         /** @type {Set<AllowlistListener>} */
         this._listeners = new Set();
-        /** @type {Promise<AllowlistState> | null} */
-        this._inFlight = null;
         /** Counts applied change events, so a pull that started before one can't overwrite it. */
         this._eventCount = 0;
         /** @type {Promise<void>} */
@@ -41,45 +39,34 @@ export class UserAllowlistSync {
         // Subscribed synchronously, so native can wake the background to deliver changes.
         nativeMessaging.subscribe(ALLOWLIST_CHANGED_SUBSCRIPTION, (params) => this._onChanged(params));
 
-        this.ready = this._restore().then(() => this.sync());
+        this.ready = this._restore().then(() => this._pull());
     }
 
     async _restore() {
         const stored = await getFromSessionStorage(ALLOWLIST_STORAGE_KEY);
         // A change event may have arrived while storage was being read; it is newer than the stored copy.
         if (stored && Array.isArray(stored.domains) && this._eventCount === 0) {
-            this._apply(stored, false);
+            this._state = stored;
+            this._domainSet = new Set(stored.domains);
         }
     }
 
     /**
-     * Pulls the allowlist from native if it changed. Concurrent calls share one request.
-     * @returns {Promise<AllowlistState>}
+     * Pulls the allowlist from native if it changed since the version held.
      */
-    sync() {
-        if (!this._inFlight) {
-            this._inFlight = this._syncOnce().finally(() => {
-                this._inFlight = null;
-            });
-        }
-        return this._inFlight;
-    }
-
-    async _syncOnce() {
+    async _pull() {
         const eventCount = this._eventCount;
         let result;
         try {
             result = await this.nativeMessaging.request('getAllowlistIfNew', { version: this._state.version });
         } catch (e) {
             console.error('UserAllowlistSync: failed to fetch allowlist', e);
-            return this._state;
+            return;
         }
-        if (eventCount !== this._eventCount) {
-            // A change event arrived during the request, and may be newer than this response.
-            return this._state;
+        // A change event that arrived during the request may be newer than this response.
+        if (eventCount === this._eventCount) {
+            this._update(result);
         }
-        this._update(result);
-        return this._state;
     }
 
     /**
@@ -91,38 +78,28 @@ export class UserAllowlistSync {
     }
 
     /**
-     * Applies a list from native if it is well formed and new. Returns whether it was applied.
+     * Applies, stores and announces a list from native if it is well formed and new.
      * @param {any} result
      */
     _update(result) {
         if (!result?.updated || !Array.isArray(result.domains) || typeof result.version !== 'string') {
-            return false;
+            return;
         }
         if (result.version === this._state.version) {
-            return false;
+            return;
         }
-        this._apply({ version: result.version, domains: result.domains }, true);
+        const state = { version: result.version, domains: result.domains };
+        this._state = state;
+        this._domainSet = new Set(state.domains);
         // Writes run in order and store the state current when they run, so the last write is the newest state.
         this._persisting = this._persisting
             .then(() => setToSessionStorage(ALLOWLIST_STORAGE_KEY, this._state))
             .catch((e) => console.error('UserAllowlistSync: failed to store allowlist', e));
-        return true;
-    }
-
-    /**
-     * @param {AllowlistState} state
-     * @param {boolean} notify
-     */
-    _apply(state, notify) {
-        this._state = state;
-        this._domainSet = new Set(state.domains);
-        if (notify) {
-            for (const listener of this._listeners) {
-                try {
-                    listener(state);
-                } catch (e) {
-                    console.error('UserAllowlistSync: listener failed', e);
-                }
+        for (const listener of this._listeners) {
+            try {
+                listener(state);
+            } catch (e) {
+                console.error('UserAllowlistSync: listener failed', e);
             }
         }
     }

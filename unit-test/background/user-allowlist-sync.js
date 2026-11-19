@@ -105,7 +105,7 @@ describe('UserAllowlistSync', () => {
         await sync.ready;
 
         nativeMessaging.request.and.returnValue(Promise.resolve({ updated: false }));
-        await sync.sync();
+        await sync._pull();
 
         expect(sync.version).toBe('v1');
         expect(sync.isAllowlisted('example.com')).toBeTrue();
@@ -118,7 +118,7 @@ describe('UserAllowlistSync', () => {
 
         spyOn(console, 'error');
         nativeMessaging.request.and.returnValue(Promise.reject(new Error('no native')));
-        await sync.sync();
+        await sync._pull();
 
         expect(sync.isAllowlisted('example.com')).toBeTrue();
     });

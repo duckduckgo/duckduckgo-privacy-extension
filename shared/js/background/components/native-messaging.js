@@ -30,9 +30,9 @@ const DEFAULT_NATIVE_APP_ID = 'com.duckduckgo.macos.browser';
  */
 export const NATIVE_EVENT_COMMAND = 'ddg-native-event';
 /** Native messaging feature the extension pulls queued subscription events from. */
-export const NATIVE_EVENTS_FEATURE = 'nativeEvents';
+const NATIVE_EVENTS_FEATURE = 'nativeEvents';
 /** Context of the transport's own messages to native. */
-export const NATIVE_EVENTS_CONTEXT = 'ddgInternalExtension';
+const NATIVE_EVENTS_CONTEXT = 'ddgInternalExtension';
 
 /** @type {NativeMessagingTransport | null} */
 let sharedTransport = null;
