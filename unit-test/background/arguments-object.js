@@ -6,6 +6,7 @@ const tdsStorage = require('../../shared/js/background/storage/tds').default;
 const tabManager = require('../../shared/js/background/tab-manager');
 const constants = require('../../shared/data/constants');
 const { getArgumentsObject } = require('../../shared/js/background/helpers/arguments-object');
+const DebugTabs = require('../../shared/js/background/components/debug-tabs').default;
 
 describe('getArgumentsObject', () => {
     const url = 'https://example.com/';
@@ -43,5 +44,23 @@ describe('getArgumentsObject', () => {
         getArgumentsObject(1, { url, frameId: 0 }, url, 'abc123');
 
         expect(constants.platform).not.toEqual(jasmine.objectContaining({ version: jasmine.anything() }));
+    });
+
+    describe('debug', () => {
+        it('is on for a tab a page turned debug on for', async () => {
+            const debugTabs = new DebugTabs({ debugBuild: true });
+            await debugTabs.ready;
+            debugTabs.tabs.add(1);
+
+            expect(getArgumentsObject(1, { url, frameId: 0 }, url, 'abc123')?.debug).toBe(true);
+        });
+
+        it('is off for a tab no page turned debug on for, with no devtools panel connected', async () => {
+            const debugTabs = new DebugTabs({ debugBuild: true });
+            await debugTabs.ready;
+            debugTabs.tabs.delete(1);
+
+            expect(getArgumentsObject(1, { url, frameId: 0 }, url, 'abc123')?.debug).toBe(false);
+        });
     });
 });
