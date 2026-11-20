@@ -1,11 +1,16 @@
 /**
  * Installs everything the build and the tests need:
  *
- *   node scripts/build-tools/install.mjs
+ *   node scripts/build-tools/install.mjs [--no-system-deps]
  *
  * - the npm dependencies, from the lockfile, without running their scripts
- * - the Playwright browsers used by the unit and integration tests
+ * - the Playwright browsers used by the unit and integration tests, plus
+ *   (on Linux) their system packages, unless --no-system-deps is given
  * - the content-scope-scripts test pages that privacy-test-pages serves
+ *
+ * Pass --no-system-deps where the system packages are already present, such
+ * as in Playwright's Docker image. Installing them runs apt, which can take
+ * over ten minutes when the runner's Ubuntu mirror is slow.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,7 +20,8 @@ import { runNodeBin, runNpm } from './lib/run.mjs';
 
 runNpm(['ci', '--ignore-scripts'], ROOT_DIR);
 // --with-deps installs the browsers' system packages with apt, which only Linux needs.
-await runNodeBin('@playwright/test', ['install', ...(process.platform === 'linux' ? ['--with-deps'] : []), 'chromium', 'firefox']);
+const withDeps = process.platform === 'linux' && !process.argv.includes('--no-system-deps');
+await runNodeBin('@playwright/test', ['install', ...(withDeps ? ['--with-deps'] : []), 'chromium', 'firefox']);
 
 // The privacy-test-pages server serves the content-scope-scripts test pages from
 // its own node_modules folder (a path relative to it, not a module lookup), but
