@@ -57,21 +57,28 @@ export default function setupAtb({ settings }, { counterMessaging = false, email
 
         if (emailInjection) {
             // Inject the email content script on all tabs upon installation (not needed on Firefox)
-            // FIXME the below code throws an unhandled exception in MV3
+            let tabs = [];
             try {
-                const tabs = await browser.tabs.query({});
-                for (const tab of tabs) {
-                    // Ignore URLs that we aren't permitted to access
-                    if (!tab.url || tab.url.startsWith('chrome://')) {
-                        continue;
-                    }
+                tabs = await browser.tabs.query({});
+            } catch (e) {
+                console.warn('Failed to query tabs for email content script injection:', e);
+            }
+            for (const tab of tabs) {
+                // Only inject into schemes we may be able to script. Browser-internal pages
+                // (chrome://, opera://, edge://, chrome-extension://, ...) are never scriptable.
+                if (!tab.url || !/^(https?|file):/.test(tab.url)) {
+                    continue;
+                }
+                // Catch per tab so one unscriptable tab (e.g. a web store page) doesn't
+                // prevent injection into the remaining tabs.
+                try {
                     await executeScript({
                         target: { tabId: tab.id },
                         files: ['public/js/content-scripts/autofill.js'],
                     });
+                } catch (e) {
+                    console.warn(`Failed to inject email content script into tab ${tab.id}:`, e);
                 }
-            } catch (e) {
-                console.warn('Failed to inject email content script at startup:', e);
             }
         }
     }
