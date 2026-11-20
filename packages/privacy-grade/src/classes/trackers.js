@@ -82,8 +82,8 @@ class Trackers {
 
     /**
      * @param {{
-     *    tldts?: import('tldts'),
-     *    tldjs: import('tldts'),
+     *    tldts?: typeof import('tldts'),
+     *    tldjs: typeof import('tldts'),
      *    utils: *,
      * }} ops
      */
@@ -489,6 +489,7 @@ class Trackers {
      * @returns {TrackerRule | null}
      */
     findRule(tracker, requestData, supportedCustomRuleActions) {
+        /** @type {TrackerRule | null} */
         let matchedRule = null;
         // Find a matching rule from this tracker
         if (tracker.rules && tracker.rules.length) {

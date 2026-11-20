@@ -29,8 +29,8 @@ export default class MyComponent {
      * to register listeners. If you depend on other components/singletons, you should pass them in via the
      * constructor. You can use JSDoc to have these objects typed:
      * @param {{
-     *  settings: import('../settings.js')
-     *  tabManager: import('../tab-manager.js')
+     *  settings: typeof import('../settings.js')
+     *  tabManager: typeof import('../tab-manager.js')
      * }}
      */
     constructor ({ settings, tabManager }) {

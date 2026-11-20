@@ -16,6 +16,7 @@ export default function initReloader() {
             return;
         }
 
+        /** @type {string | null} */
         let buildTime = null;
 
         try {

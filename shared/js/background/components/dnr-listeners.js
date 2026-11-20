@@ -9,7 +9,7 @@ import { onConfigUpdate } from '../dnr-config-rulesets.js';
 
 /**
  * @typedef {import('./tds.js').default} TDS
- * @typedef {import('../settings.js')} Settings
+ * @typedef {typeof import('../settings.js')} Settings
  * @typedef {import('./trackers.js').default} Trackers
  */
 

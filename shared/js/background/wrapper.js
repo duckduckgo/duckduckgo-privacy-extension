@@ -171,7 +171,7 @@ function convertScriptingAPIOptionsForTabsAPI(options) {
  *   - Some features are not supported in MV2, including targetting multiple
  *     specific frames and targetting execution 'world'.
  * 1 - https://developer.chrome.com/docs/extensions/reference/scripting/#method-executeScript
- * @param {object} options
+ * @param {import("webextension-polyfill").Scripting.ScriptInjection} options
  *   Script injection options.
  * @returns {Promise<*>}
  */
@@ -194,7 +194,7 @@ export async function executeScript(options) {
  *   - Some features are not supported in MV2, including targetting multiple
  *     specific frames and targetting execution 'world'.
  * 1 - https://developer.chrome.com/docs/extensions/reference/scripting/#method-insertCSS
- * @param {object} options
+ * @param {import("webextension-polyfill").Scripting.CSSInjection} options
  *   CSS insertion options.
  */
 export async function insertCSS(options) {

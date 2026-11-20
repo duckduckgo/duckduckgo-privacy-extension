@@ -6,6 +6,7 @@ import { getUserLocale } from '../i18n';
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').ParentEntity} ParentEntity
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').EmailProtectionUserData} EmailProtectionUserData
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').CookiePromptManagementStatus} CookiePromptManagementStatus
+ * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').FireButton} FireButton
  */
 
 /**
@@ -14,7 +15,7 @@ import { getUserLocale } from '../i18n';
  *
  * @param {import("./tab.js")} tab
  * @param {EmailProtectionUserData | undefined | {}} userData
- * @param {object} [fireButtonData]
+ * @param {FireButton} [fireButtonData]
  * @param {import('../components/cookie-prompt-management').CpmDashboardState} [cpmDashboardState]
  * @returns {ExtensionGetPrivacyDashboardData}
  */

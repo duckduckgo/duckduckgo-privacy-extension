@@ -8,8 +8,12 @@
  * See shared/js/background/components/
  */
 
+/** @type {import('./components/devtools').default | null} */
 let devtools = null;
 
+/**
+ * @param {import('./components/devtools').default} newDevtools
+ */
 export function registerDevtools(newDevtools) {
     devtools = newDevtools;
 }

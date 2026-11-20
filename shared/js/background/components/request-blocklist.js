@@ -9,6 +9,7 @@ const browserWrapper = require('../wrapper');
 //       of the extension, it being cleared on ServiceWorker restart isn't a
 //       concern.
 //       See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#state
+/** @type {Map<string, {rule: RegExp, domains: Set<string>, reason: string}[]> | null} */
 let requestBlocklistLookup = null;
 
 /**

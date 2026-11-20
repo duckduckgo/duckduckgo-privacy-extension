@@ -14,8 +14,8 @@ import { getDomain, parse } from 'tldts';
  */
 
 /**
- * @typedef {import('../tab-manager.js')} TabManager
- * @typedef {import('../settings.js')} Settings
+ * @typedef {typeof import('../tab-manager.js')} TabManager
+ * @typedef {typeof import('../settings.js')} Settings
  */
 
 const tldtsOptions = { allowPrivateDomains: true };

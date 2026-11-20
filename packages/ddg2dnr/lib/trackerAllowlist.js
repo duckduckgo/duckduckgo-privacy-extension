@@ -24,7 +24,7 @@ const MAXIMUM_RULES_PER_TRACKER_ENTRY = (CEILING_PRIORITY - BASELINE_PRIORITY) /
 /**
  * Generator to produce the declarativeNetRequest rules and corresponding match
  * details for the given trackerAllowlist configuration.
- * @param {object} extensionConfiguration
+ * @param {any} extensionConfiguration
  *   The extension configuration.
  * @return {Generator<generateTrackerAllowlistRulesResult>}
  */

@@ -13,7 +13,7 @@ const AMP_PROTECTION_PRIORITY = 40000;
 /**
  * Function to produce the declarativeNetRequest rules and corresponding match
  * details for the given trackerAllowlist configuration.
- * @param {object} extensionConfiguration
+ * @param {any} extensionConfiguration
  *   The extension configuration.
  * @param {function} isRegexSupported
  *   A function compatible with chrome.declarativeNetRequest.isRegexSupported.

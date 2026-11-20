@@ -29,7 +29,6 @@
  * @property {string} hash
  * @property {S} settings
  * @property {PrivacyConfigDomainEntry[]} exceptions
- * @template S
  */
 /**
  * @typedef {object} PrivacyConfiguration
@@ -142,7 +141,7 @@ function castDNREnum(s) {
  * @property {number} [id]
  * @property {number} priority
  * @property {`${chrome.declarativeNetRequest.RuleActionType}`} actionType
- * @property {object} [redirect]
+ * @property {chrome.declarativeNetRequest.Redirect | null} [redirect]
  * @property {object[]} [requestHeaders]
  * @property {object[]} [responseHeaders]
  * @property {string} [urlFilter]

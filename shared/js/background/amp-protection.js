@@ -2,6 +2,8 @@ const Site = require('./classes/site').default;
 const tdsStorage = require('./storage/tds').default;
 const utils = require('./utils');
 
+// Untyped remote config settings for the ampLinks feature, or null if not yet loaded.
+/** @type {any} */
 let ampSettings = null;
 
 const featureName = 'ampLinks';
@@ -52,7 +54,7 @@ function isHttpUrl(url) {
 
 /**
  * This function checks if the given site is excluded from AMP protection
- * @param {Site} site - the site to check
+ * @param {import('./classes/site').default} site - the site to check
  * @returns true if the site is excluded from AMP protection
  */
 function isSiteExcluded(site) {
@@ -66,7 +68,7 @@ function isSiteExcluded(site) {
 /**
  * This method checks if the given url is a Google hosted AMP url and resturns the canonical url if it is.
  *
- * @param {Site} site - the initiating site
+ * @param {import('./classes/site').default} site - the initiating site
  * @param {string} url - the url being loaded
  * @returns canonical url if found, null otherwise
  */
@@ -113,9 +115,9 @@ function extractAMPURL(site, url) {
 /**
  * Check if the given request is a suspected 1st party AMP URL. If it is, then we will attempt to fetch the canonical URL
  *
- * @param {object} requestData - request data
- * @param {object} thisTab - current tab
- * @param {object} mainFrameRequestURL - main frame request url
+ * @param {{initiator?: string}} requestData - request data
+ * @param {{ampUrl?: string | null}} thisTab - current tab
+ * @param {URL} mainFrameRequestURL - main frame request url
  * @returns true if the request is a suspected 1st party AMP url
  */
 function tabNeedsDeepExtraction(requestData, thisTab, mainFrameRequestURL) {
@@ -162,7 +164,7 @@ function isAMPURL(url) {
  * This async method will fetch the DOM content of a suspected 1st party AMP URL and will
  * return the canonical URL if one is found.
  *
- * @param {Site} site - the initiating site
+ * @param {import('./classes/site').default} site - the initiating site
  * @param {string} url - the url being loaded
  * @returns cancalon url if found, null otherwise
  */
@@ -223,7 +225,7 @@ async function fetchAMPURL(site, url) {
  * Check if the given request was initiated by the extension. On Chrome extension initiated requests
  * will cause a crash if we try to use fetch on their thread.
  *
- * @param {object} request - request object
+ * @param {{initiator?: string}} request - request object
  * @returns true if the request was initiated by an extension
  */
 function requestIsExtension(request) {

@@ -117,7 +117,9 @@ export default class ToggleReports {
         const { dismissInterval, promptInterval } = getFeatureSettings('toggleReports');
 
         const now = Date.now();
+        /** @type {number | null} */
         let dismissCutoff = null;
+        /** @type {number | null} */
         let acceptCutoff = null;
 
         if (typeof dismissInterval === 'number') {

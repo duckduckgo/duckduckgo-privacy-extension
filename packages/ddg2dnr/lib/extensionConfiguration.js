@@ -9,7 +9,7 @@ const { generateRequestBlocklistRules } = require('./requestBlocklist');
 
 /**
  * Generated an extension configuration declarativeNetRequest ruleset.
- * @param {object} extensionConfig
+ * @param {any} extensionConfig
  *   The extension configuration.
  * @param {string[]} denylistedDomains
  *   Domains that the user has specifically denylisted. These domains should be
