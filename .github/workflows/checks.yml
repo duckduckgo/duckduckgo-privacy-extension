@@ -74,20 +74,13 @@ jobs:
             - run: npm test
 
     playwright-tests:
-        # A backstop only; the test step has its own, tighter, timeout.
         timeout-minutes: 30
         runs-on: ubuntu-latest
-        # Playwright's image already has the browsers' system packages (and
-        # xvfb), so install-ci can skip `playwright install --with-deps`. That
-        # apt step has taken 10+ minutes on runners with a slow Ubuntu mirror.
-        # Keep the tag in step with @playwright/test in package.json: on a
-        # mismatch the right browsers are still downloaded, but the image's
-        # system packages may no longer match them.
+        # Has the browsers' system packages, avoiding a sometimes very slow apt
+        # install. Keep the tag in step with @playwright/test.
         container:
             image: mcr.microsoft.com/playwright:v1.65.0-resolute
-            # Run as the runner user (who owns the workspace and HOME) rather
-            # than root, which Firefox objects to, and share the host's IPC
-            # namespace, since Docker's default /dev/shm is too small for Chromium.
+            # Firefox won't run as root; Chromium needs more /dev/shm.
             options: --user 1001 --ipc=host
         strategy:
             fail-fast: false
@@ -106,8 +99,6 @@ jobs:
                   cache: 'npm'
             - run: npm run install-ci -- --no-system-deps
             - name: Run tests
-              # Limits the tests alone, so a slow install makes the job slower
-              # rather than cancelling the tests.
               timeout-minutes: 14
               run: xvfb-run --auto-servernum -- npm run ${{ matrix.test }} -- --shard ${{ matrix.shard }}
             - uses: actions/upload-artifact@v4

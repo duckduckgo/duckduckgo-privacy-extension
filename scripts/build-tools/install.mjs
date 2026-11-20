@@ -8,9 +8,7 @@
  *   (on Linux) their system packages, unless --no-system-deps is given
  * - the content-scope-scripts test pages that privacy-test-pages serves
  *
- * Pass --no-system-deps where the system packages are already present, such
- * as in Playwright's Docker image. Installing them runs apt, which can take
- * over ten minutes when the runner's Ubuntu mirror is slow.
+ * Pass --no-system-deps where they are already present (e.g. Playwright's image).
  */
 import fs from 'node:fs';
 import path from 'node:path';
