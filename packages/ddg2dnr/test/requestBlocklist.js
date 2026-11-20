@@ -14,7 +14,9 @@ describe('Request Blocklist', () => {
             await generateExtensionConfigurationRuleset(
                 {
                     features: {
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         requestBlocklist: {},
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         contentBlocking: { state: 'enabled' },
                     },
                 },
@@ -28,6 +30,7 @@ describe('Request Blocklist', () => {
             await generateExtensionConfigurationRuleset(
                 {
                     features: {
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         requestBlocklist: {
                             state: 'disabled',
                             settings: {
@@ -44,6 +47,7 @@ describe('Request Blocklist', () => {
                                 },
                             },
                         },
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         contentBlocking: { state: 'enabled' },
                     },
                 },
@@ -57,12 +61,14 @@ describe('Request Blocklist', () => {
             await generateExtensionConfigurationRuleset(
                 {
                     features: {
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         requestBlocklist: {
                             state: 'enabled',
                             settings: {
                                 blockedRequests: {},
                             },
                         },
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         contentBlocking: { state: 'enabled' },
                     },
                 },
@@ -74,6 +80,8 @@ describe('Request Blocklist', () => {
     });
 
     it('should generate blocklists correctly', async () => {
+        // Incomplete configuration on purpose: only the features under test.
+        /** @type {any} */
         const extensionConfig = {
             features: {
                 requestBlocklist: {

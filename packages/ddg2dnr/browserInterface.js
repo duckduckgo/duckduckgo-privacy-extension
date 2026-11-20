@@ -142,7 +142,7 @@ class BrowserInterface {
      * Returns an array of matching rules.
      * @param {TestRequestDetails} testRequest
      *   The request details to match against.
-     * @return {Promise<object[]>}
+     * @return {Promise<chrome.declarativeNetRequest.Rule[]>}
      *   The matching rules (if any).
      */
     async testMatchOutcome(testRequest) {

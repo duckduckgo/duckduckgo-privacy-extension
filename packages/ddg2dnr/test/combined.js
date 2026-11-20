@@ -44,9 +44,12 @@ describe('generateCombinedConfigBlocklistRuleset', () => {
             { ruleset: [], matchDetailsByRuleId: {} },
         );
 
-        assert.deepEqual(generateCombinedConfigBlocklistRuleset(emptyBlockList(), { features: {}, unprotectedTemporary: [] }, []), {
-            ruleset: [],
-            matchDetailsByRuleId: {},
-        });
+        assert.deepEqual(
+            generateCombinedConfigBlocklistRuleset(emptyBlockList(), /** @type {any} */ ({ features: {}, unprotectedTemporary: [] }), []),
+            {
+                ruleset: [],
+                matchDetailsByRuleId: {},
+            },
+        );
     });
 });
