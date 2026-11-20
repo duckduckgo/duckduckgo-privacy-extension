@@ -6,6 +6,7 @@ import {
     SITE_CHECK_TTL,
     NATIVE_MESSAGE_TIMEOUT_MS,
 } from '../../shared/js/background/components/cpm-embedded-messaging';
+import browser from 'webextension-polyfill';
 import { sessionStorageFallback } from '../../shared/js/background/wrapper';
 
 /**
@@ -32,6 +33,36 @@ describe('CPMEmbeddedMessaging', () => {
 
     afterEach(() => {
         jasmine.clock().uninstall();
+    });
+
+    describe('tab index', () => {
+        it('sends the index the browser reports with the init progress notification and the dashboard refresh', async () => {
+            spyOn(browser.tabs, 'get').and.returnValue(Promise.resolve({ id: 9, index: 3, windowId: 12 }));
+            spyOn(browser.windows, 'getAll').and.returnValue(Promise.resolve([{ id: 40 }, { id: 12 }, { id: 7 }]));
+
+            await messaging.notifyInitProgress(9, 'https://example.com/', 'received');
+            await messaging.refreshDashboardState(9, 'https://example.com/', { cosmetic: true });
+
+            expect(browser.tabs.get).toHaveBeenCalledWith(9);
+            expect(nativeMessaging.notify.calls.argsFor(0)).toEqual([
+                'cpmInitProgress',
+                { tabId: 9, tabIndex: 3, windowId: 12, windowIds: [7, 12, 40], url: 'https://example.com/', stage: 'received' },
+            ]);
+            expect(nativeMessaging.notify.calls.argsFor(1)[1].tabIndex).toBe(3);
+            expect(nativeMessaging.notify.calls.argsFor(1)[1].windowId).toBe(12);
+            expect(nativeMessaging.notify.calls.argsFor(1)[1].windowIds).toEqual([7, 12, 40]);
+        });
+
+        it('sends no index when the browser cannot tell', async () => {
+            spyOn(browser.tabs, 'get').and.returnValue(Promise.reject(new Error('No tab with id')));
+            spyOn(browser.windows, 'getAll').and.returnValue(Promise.reject(new Error('No windows')));
+
+            await messaging.notifyInitProgress(9, 'https://example.com/', 'received');
+            await messaging.refreshDashboardState(9, 'https://example.com/', { cosmetic: true });
+
+            expect(nativeMessaging.notify.calls.argsFor(0)[1]).toEqual({ tabId: 9, url: 'https://example.com/', stage: 'received' });
+            expect(nativeMessaging.notify.calls.argsFor(1)[1].tabIndex).toBeUndefined();
+        });
     });
 
     describe('notifyInitProgress', () => {
