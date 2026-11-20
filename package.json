@@ -61,10 +61,10 @@
         "karma-chrome-launcher": "3.2.0",
         "karma-jasmine": "1.1.1",
         "karma-source-map-support": "1.4.0",
-        "prettier": "3.9.10",
-        "sass": "^1.108.0",
+        "prettier": "3.10.1",
+        "sass": "^1.108.2",
         "timekeeper": "^2.3.1",
-        "typescript": "^5.8.3",
+        "typescript": "^7.0.2",
         "webextension-polyfill": "^0.12.0"
     },
     "dependencies": {
