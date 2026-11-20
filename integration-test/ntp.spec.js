@@ -59,6 +59,30 @@ test.describe('Embedded New Tab Page', () => {
         await expect(page.locator('[data-entry-point="omnibar"]')).toBeVisible();
     });
 
+    test('shows the page menu for a right-click on a favorite, as anywhere else on the page', async ({ page, backgroundPage }) => {
+        await backgroundPage.evaluate(() => {
+            globalThis.menus = [];
+            chrome.ddg = {
+                getFavorites: async () => [{ id: '1', title: 'Example', url: 'https://example.com/' }],
+                showContextMenu: async (_tabId, items) => {
+                    globalThis.menus.push(items);
+                },
+            };
+        });
+        await page.goto(await getNtpUrl(backgroundPage));
+        const favorite = page.locator('a[data-id="1"]');
+        await expect(favorite).toBeVisible();
+
+        await page.mouse.click(5, 5, { button: 'right' });
+        await expect.poll(() => backgroundPage.evaluate(() => globalThis.menus.length)).toBe(1);
+        await favorite.click({ button: 'right' });
+        await expect.poll(() => backgroundPage.evaluate(() => globalThis.menus.length)).toBe(2);
+
+        const [blank, onFavorite] = await backgroundPage.evaluate(() => globalThis.menus);
+        expect(blank.length).toBeGreaterThan(0);
+        expect(onFavorite).toEqual(blank);
+    });
+
     test('shows blocked tracker stats pushed from the background', async ({ page, backgroundPage }) => {
         await page.goto(await getNtpUrl(backgroundPage));
         await expect(page.locator('[data-entry-point="protections"]')).toBeVisible();
