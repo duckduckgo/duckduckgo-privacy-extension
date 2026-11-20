@@ -109,36 +109,4 @@ test.describe('Embedded New Tab Page', () => {
         });
         await expect(page.getByText('3 tracking attempts blocked')).toBeVisible();
     });
-
-    test('re-sends a request left unanswered when the service worker stops', async ({ page, backgroundPage }) => {
-        await page.goto(await getNtpUrl(backgroundPage));
-        await expect(page.locator('[data-entry-point="protections"]')).toBeVisible();
-
-        await backgroundPage.evaluate(() => {
-            globalThis.components.ntpMessaging.handleRequest = () => {
-                globalThis.requestReceived = true;
-                return new Promise(() => {});
-            };
-        });
-        const response = page.evaluate(
-            () =>
-                new Promise((resolve) => {
-                    globalThis.windowsInteropAddEventListener('message', ({ data }) => {
-                        if (data.id === 'unanswered') resolve(data);
-                    });
-                    globalThis.windowsInteropPostMessage({
-                        Feature: 'specialPages',
-                        SubFeatureName: 'newTabPage',
-                        Name: 'protections_getData',
-                        Data: {},
-                        Id: 'unanswered',
-                    });
-                }),
-        );
-        await expect.poll(() => backgroundPage.evaluate(() => globalThis.requestReceived)).toBe(true);
-
-        // the restarted worker answers the re-sent request
-        await (await serviceWorkerControl(page)).stop();
-        expect(await response).toEqual(expect.objectContaining({ result: { totalCount: 0, totalCookiePopUpsBlocked: null } }));
-    });
 });

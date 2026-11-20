@@ -105,10 +105,7 @@ const BROWSER_PROFILES = {
         ...CHROME,
         autofill: false,
         ntp: true,
-        jsBundles: [
-            ...only(JS_BUNDLES, ['background', 'devtools-panel', 'list-editor', 'rollouts', 'content-scripts/cpm']),
-            { in: 'shared/js/ntp/interop-shim.js', out: 'ntp-interop-shim' },
-        ],
+        jsBundles: [...only(JS_BUNDLES, ['background', 'devtools-panel', 'list-editor', 'rollouts', 'content-scripts/cpm'])],
         scssBundles: only(SCSS_BUNDLES, ['base.css']),
         htmlExcludes: ['background.html', 'feedback.html', 'fire.html', 'options.html', 'tracker-stats.html'],
         // No options page, so hide the dashboard's settings cog (matches Windows).

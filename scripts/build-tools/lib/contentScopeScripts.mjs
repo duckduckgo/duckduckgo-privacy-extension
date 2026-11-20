@@ -22,6 +22,7 @@ const INJECTED_DIR = `${CSS_DIR}/injected`;
 const BUILD_DIR = `${CSS_DIR}/build`;
 const LOCALES_BUILD = `${BUILD_DIR}/locales`;
 const prebuiltInject = (cssPlatform) => `${BUILD_DIR}/${cssPlatform}/inject.js`;
+const prebuiltIsolated = (cssPlatform) => `${BUILD_DIR}/${cssPlatform}/isolated.js`;
 
 /** Sources that a rebuild of a linked checkout depends on. */
 const SOURCE_DIRS = [`${INJECTED_DIR}/src`, `${INJECTED_DIR}/entry-points`, `${INJECTED_DIR}/scripts`];
@@ -99,4 +100,7 @@ export function buildInjectScript(config) {
         rebuildLinkedCheckout(config);
     }
     bundleContentScopeScripts(`${config.out.js}/inject.js`, prebuiltInject(config.cssPlatform));
+    if (config.browser === 'chromium-embedded') {
+        bundleContentScopeScripts(`${config.out.js}/isolated.js`, prebuiltIsolated(config.cssPlatform));
+    }
 }

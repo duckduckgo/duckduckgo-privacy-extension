@@ -8,6 +8,7 @@
 //       script IDs[1]) and could change in the future.
 // 1 - https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/extensions/api/scripting/scripting_api.cc;l=929
 
+/* global BUILD_TARGET */
 import browser from 'webextension-polyfill';
 
 export async function registerContentScripts(scripts) {
@@ -40,6 +41,19 @@ export default class MV3ContentScriptInjection {
                 matches: ['<all_urls>'],
                 excludeMatches: ['*://localhost/*', '*://*.localhost/'],
             },
+            ...(BUILD_TARGET === 'chromium-embedded'
+                ? [
+                      {
+                          id: 'world-css',
+                          allFrames: true,
+                          js: ['public/js/isolated.js'],
+                          runAt: 'document_start',
+                          world: 'ISOLATED',
+                          matches: ['<all_urls>'],
+                          excludeMatches: ['*://localhost/*', '*://*.localhost/'],
+                      },
+                  ]
+                : []),
             {
                 id: '2-script-injection-main-world',
                 allFrames: true,
