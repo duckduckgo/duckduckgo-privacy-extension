@@ -68,17 +68,32 @@ declare namespace chrome {
               showContextMenu(tabId: number, items: { id: string; title: string; checked: boolean }[]): Promise<string | undefined>;
 
               /**
-               * extension -> browser; the New Tab Page message `method`, with
-               * its `params`, that the page in tab `tabId` sent. The browser
-               * handles the customize panel's theme and Sections messages:
-               * initialSetup, customizer_setTheme, widgets_setConfig,
-               * omnibar_getConfig and omnibar_setConfig. Resolves with the
-               * response to a request, or undefined once a notification is
-               * handled. Rejects, changing nothing, a message the browser does
-               * not handle, params it does not accept, and a tab that is not
-               * showing the New Tab Page.
+               * extension -> browser; the New Tab Page's choices, for its page
+               * in tab `tabId`, which are the ones duck://settings makes. This
+               * and the New Tab Page calls below reject, changing nothing,
+               * unless the tab shows the New Tab Page, and throw for arguments
+               * the browser's schema does not accept.
                */
-              sendNewTabPageMessage(tabId: number, method: string, params?: unknown): Promise<any>;
+              getNewTabPageSettings(tabId: number): Promise<ddg.NewTabPageSettings>;
+
+              /**
+               * extension -> browser; whether the page in tab `tabId` should
+               * open its customize panel, as it should when duck://settings'
+               * link opened it. Answered the same while the tab shows it.
+               */
+              isNewTabPageCustomizerRequested(tabId: number): Promise<boolean>;
+
+              /** extension -> browser; sets the browser color scheme. */
+              setNewTabPageTheme(tabId: number, theme: ddg.NewTabPageTheme): Promise<void>;
+
+              /**
+               * extension -> browser; shows or hides the Sections `sections`
+               * names, as one change.
+               */
+              setNewTabPageSections(tabId: number, sections: ddg.NewTabPageSectionsChange): Promise<void>;
+
+              /** extension -> browser; sets whether the search box offers Duck.ai. */
+              setNewTabPageDuckAiInSearch(tabId: number, enabled: boolean): Promise<void>;
 
               /**
                * browser -> extension; the favorites may have changed. Not
@@ -89,4 +104,28 @@ declare namespace chrome {
               };
           }
         | undefined;
+
+    namespace ddg {
+        /** The New Tab Page's theme: the browser color scheme. */
+        type NewTabPageTheme = 'light' | 'dark' | 'system';
+
+        /** Which of the New Tab Page's widgets are shown: its Sections. */
+        interface NewTabPageSections {
+            /** The search box. */
+            search: boolean;
+            favorites: boolean;
+            /** The protections report. */
+            protections: boolean;
+        }
+
+        /** A change to some of the Sections. Those left out stay as they are. */
+        type NewTabPageSectionsChange = Partial<NewTabPageSections>;
+
+        interface NewTabPageSettings {
+            theme: NewTabPageTheme;
+            sections: NewTabPageSections;
+            /** Whether the search box offers Duck.ai. */
+            duckAiInSearch: boolean;
+        }
+    }
 }

@@ -41,20 +41,14 @@ test.describe('Embedded New Tab Page', () => {
         // Stands in for the DuckDuckGo browser's favorites and New Tab Page
         // settings, which Chrome lacks.
         await backgroundPage.evaluate(() => {
-            const widgets = [{ id: 'omnibar' }, { id: 'favorites' }, { id: 'protections' }];
-            /** @type {Record<string, any>} */
-            const browserNtp = {
-                initialSetup: {
-                    widgets,
-                    widgetConfigs: widgets.map(({ id }) => ({ id, visibility: 'visible' })),
-                    customizer: { theme: 'system' },
-                    settings: { customizerDrawer: { state: 'enabled' } },
-                },
-                omnibar_getConfig: { mode: 'search', enableAi: false },
-            };
             chrome.ddg = {
                 getFavorites: async () => [],
-                sendNewTabPageMessage: async (_tabId, method) => browserNtp[method],
+                getNewTabPageSettings: async () => ({
+                    theme: 'system',
+                    sections: { search: true, favorites: true, protections: true },
+                    duckAiInSearch: false,
+                }),
+                isNewTabPageCustomizerRequested: async () => false,
             };
         });
     });

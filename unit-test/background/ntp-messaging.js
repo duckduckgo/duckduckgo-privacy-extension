@@ -50,39 +50,28 @@ describe('NTPMessaging component', () => {
     }
 
     /**
-     * Stands in for the browser's side of chrome.ddg.sendNewTabPageMessage:
-     * the theme, widget visibility and Duck.ai choice it keeps.
+     * Stands in for the browser's New Tab Page calls in chrome.ddg: the theme,
+     * Sections and Duck.ai choice it keeps.
      */
     function fakeBrowserNtp() {
-        const widgets = [{ id: 'omnibar' }, { id: 'favorites' }, { id: 'protections' }];
         const state = {
             theme: 'system',
-            widgetConfigs: widgets.map(({ id }) => ({ id, visibility: 'visible' })),
-            enableAi: true,
+            sections: { search: true, favorites: true, protections: true },
+            duckAiInSearch: true,
         };
-        return jasmine.createSpy('sendNewTabPageMessage').and.callFake(async (_tabId, method, params) => {
-            switch (method) {
-                case 'initialSetup':
-                    return {
-                        widgets,
-                        widgetConfigs: state.widgetConfigs,
-                        customizer: { theme: state.theme },
-                        settings: { customizerDrawer: { state: 'enabled' } },
-                    };
-                case 'customizer_setTheme':
-                    state.theme = params.theme;
-                    return undefined;
-                case 'widgets_setConfig':
-                    state.widgetConfigs = state.widgetConfigs.map((config) => params.find(({ id }) => id === config.id) || config);
-                    return undefined;
-                case 'omnibar_getConfig':
-                    return { mode: 'search', enableAi: state.enableAi };
-                case 'omnibar_setConfig':
-                    state.enableAi = params.enableAi ?? state.enableAi;
-                    return undefined;
-            }
-            throw new Error(`${method}: not handled by the browser`);
-        });
+        return {
+            getNewTabPageSettings: jasmine.createSpy('getNewTabPageSettings').and.callFake(async () => structuredClone(state)),
+            isNewTabPageCustomizerRequested: jasmine.createSpy('isNewTabPageCustomizerRequested').and.resolveTo(false),
+            setNewTabPageTheme: jasmine.createSpy('setNewTabPageTheme').and.callFake(async (_tabId, theme) => {
+                state.theme = theme;
+            }),
+            setNewTabPageSections: jasmine.createSpy('setNewTabPageSections').and.callFake(async (_tabId, sections) => {
+                Object.assign(state.sections, sections);
+            }),
+            setNewTabPageDuckAiInSearch: jasmine.createSpy('setNewTabPageDuckAiInSearch').and.callFake(async (_tabId, enabled) => {
+                state.duckAiInSearch = enabled;
+            }),
+        };
     }
 
     /**
@@ -106,7 +95,7 @@ describe('NTPMessaging component', () => {
             showAddFavoriteBubble: jasmine.createSpy('showAddFavoriteBubble').and.resolveTo(true),
             onFavoritesChanged: { addListener: (listener) => changedListeners.push(listener) },
             onBurnStarted: { addListener() {} },
-            sendNewTabPageMessage: fakeBrowserNtp(),
+            ...fakeBrowserNtp(),
         };
         settings = new MockSettings();
         newTabTrackerStats = new NewTabTrackerStats(new TrackerStats());
@@ -121,10 +110,12 @@ describe('NTPMessaging component', () => {
         delete chrome.ddg;
     });
 
-    it('answers initialSetup with the browser parts for its tab, completed', async () => {
+    it('answers initialSetup with the browser choices for its tab, completed', async () => {
+        chrome.ddg.isNewTabPageCustomizerRequested.and.resolveTo(true);
         const result = await ntpMessaging.handleRequest('initialSetup', undefined, createTabPort());
 
-        expect(chrome.ddg.sendNewTabPageMessage).toHaveBeenCalledOnceWith(7, 'initialSetup', undefined);
+        expect(chrome.ddg.getNewTabPageSettings).toHaveBeenCalledOnceWith(7);
+        expect(chrome.ddg.isNewTabPageCustomizerRequested).toHaveBeenCalledOnceWith(7);
         expect(result.widgets).toEqual([{ id: 'omnibar' }, { id: 'favorites' }, { id: 'protections' }]);
         expect(result.widgetConfigs).toEqual([
             { id: 'omnibar', visibility: 'visible' },
@@ -133,7 +124,7 @@ describe('NTPMessaging component', () => {
         ]);
         // The browser stores only the theme; the rest are the page's defaults.
         expect(result.customizer).toEqual({ theme: 'system', userColor: null, background: { kind: 'default' }, userImages: [] });
-        expect(result.settings).toEqual({ customizerDrawer: { state: 'enabled' } });
+        expect(result.settings).toEqual({ customizerDrawer: { state: 'enabled', autoOpen: true } });
         expect(result.platform).toEqual({ name: 'windows' });
         expect(['development', 'production']).toContain(result.env);
         expect(typeof result.locale).toBe('string');
@@ -158,10 +149,17 @@ describe('NTPMessaging component', () => {
         // @ts-ignore - fake port
         await ntpMessaging.onMessage({ ...requestMessage('omnibar_setConfig', { mode: 'ai', enableAi: false }), Id: undefined }, sender);
 
-        expect(chrome.ddg.sendNewTabPageMessage).toHaveBeenCalledOnceWith(7, 'omnibar_setConfig', { mode: 'ai', enableAi: false });
+        expect(chrome.ddg.setNewTabPageDuckAiInSearch).toHaveBeenCalledOnceWith(7, false);
         expect((await ntpMessaging.handleRequest('omnibar_getConfig', undefined, sender)).enableAi).toBe(false);
         expect(sender.posted).toEqual([]);
         expect(other.posted).toEqual([]);
+    });
+
+    it('leaves the Duck.ai choice as it is for an omnibar config without it', async () => {
+        // @ts-ignore - fake port
+        await ntpMessaging.onMessage({ ...requestMessage('omnibar_setConfig', { mode: 'ai' }), Id: undefined }, createTabPort());
+
+        expect(chrome.ddg.setNewTabPageDuckAiInSearch).not.toHaveBeenCalled();
     });
 
     it('sends a new theme to the browser and to every open page', async () => {
@@ -173,7 +171,7 @@ describe('NTPMessaging component', () => {
         // @ts-ignore - fake port
         await ntpMessaging.onMessage({ ...requestMessage('customizer_setTheme', { theme: 'dark' }), Id: undefined }, sender);
 
-        expect(chrome.ddg.sendNewTabPageMessage).toHaveBeenCalledOnceWith(7, 'customizer_setTheme', { theme: 'dark' });
+        expect(chrome.ddg.setNewTabPageTheme).toHaveBeenCalledOnceWith(7, 'dark');
         for (const port of [sender, other]) {
             expect(port.posted.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['customizer_onThemeUpdate', { theme: 'dark' }]]);
         }
@@ -185,7 +183,7 @@ describe('NTPMessaging component', () => {
         // @ts-ignore - fake ports
         [sender, other].forEach((port) => ntpMessaging.ports.add(port));
         const consoleError = spyOn(console, 'error');
-        chrome.ddg.sendNewTabPageMessage.and.rejectWith(new Error('rejected by the browser'));
+        chrome.ddg.setNewTabPageTheme.and.rejectWith(new Error('rejected by the browser'));
 
         // @ts-ignore - fake port
         await ntpMessaging.onMessage({ ...requestMessage('customizer_setTheme', { theme: 'sepia' }), Id: undefined }, sender);
@@ -203,12 +201,35 @@ describe('NTPMessaging component', () => {
         expect(other.posted).toEqual([]);
     });
 
+    it('rejects widget configs naming an unknown widget or visibility, before telling the browser', async () => {
+        const port = createTabPort();
+        const consoleError = spyOn(console, 'error');
+        for (const configs of [
+            [
+                { id: 'favorites', visibility: 'hidden' },
+                { id: 'nextSteps', visibility: 'hidden' },
+            ],
+            [{ id: 'favorites', visibility: 'collapsed' }],
+            { id: 'favorites', visibility: 'hidden' },
+        ]) {
+            // @ts-ignore - fake port
+            await ntpMessaging.onMessage({ ...requestMessage('widgets_setConfig', configs), Id: undefined }, port);
+        }
+
+        expect(chrome.ddg.setNewTabPageSections).not.toHaveBeenCalled();
+        expect(consoleError.calls.allArgs().map(([, error]) => error.message)).toEqual([
+            'unknown widget id "nextSteps"',
+            'visibility must be visible or hidden',
+            'expected a list of widget configs',
+        ]);
+    });
+
     it('answers a page with no tab with an error, without asking the browser', async () => {
         const port = createFakePort();
         // @ts-ignore - fake port
         await ntpMessaging.onMessage(requestMessage('initialSetup'), port);
 
-        expect(chrome.ddg.sendNewTabPageMessage).not.toHaveBeenCalled();
+        expect(chrome.ddg.getNewTabPageSettings).not.toHaveBeenCalled();
         expect(port.posted[0].error.message).toBe('initialSetup: the page has no tab');
     });
 
@@ -481,7 +502,7 @@ describe('NTPMessaging component', () => {
         expect(port.posted).toEqual([]);
 
         // Widget visibility is stored by the browser, the rest here.
-        expect(chrome.ddg.sendNewTabPageMessage).toHaveBeenCalledOnceWith(7, 'widgets_setConfig', widgetConfigs);
+        expect(chrome.ddg.setNewTabPageSections).toHaveBeenCalledOnceWith(7, { protections: false });
         expect((await ntpMessaging.handleRequest('initialSetup', undefined, port)).widgetConfigs[2]).toEqual(widgetConfigs[0]);
         expect(await ntpMessaging.handleRequest('favorites_getConfig')).toEqual(favoritesConfig);
         expect(await ntpMessaging.handleRequest('protections_getConfig')).toEqual(protectionsConfig);
@@ -538,8 +559,8 @@ describe('NTPMessaging component', () => {
         beforeEach(async () => {
             sender = createTabPort();
             other = createTabPort(8);
-            await chrome.ddg.sendNewTabPageMessage(7, 'widgets_setConfig', [{ id: 'protections', visibility: 'hidden' }]);
-            chrome.ddg.sendNewTabPageMessage.calls.reset();
+            await chrome.ddg.setNewTabPageSections(7, { protections: false });
+            chrome.ddg.setNewTabPageSections.calls.reset();
             [sender, other].forEach((port) => ntpMessaging.ports.add(port));
         });
 
@@ -558,7 +579,7 @@ describe('NTPMessaging component', () => {
                 { id: 'favorites', visibility: 'hidden' },
                 { id: 'protections', visibility: 'hidden' },
             ];
-            expect(chrome.ddg.sendNewTabPageMessage).toHaveBeenCalledWith(7, 'widgets_setConfig', widgetConfigs);
+            expect(chrome.ddg.setNewTabPageSections).toHaveBeenCalledOnceWith(7, { search: true, favorites: false, protections: false });
             expect((await ntpMessaging.handleRequest('initialSetup', undefined, sender)).widgetConfigs).toEqual(widgetConfigs);
             for (const port of [sender, other]) {
                 expect(port.posted.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['widgets_onConfigUpdated', widgetConfigs]]);
@@ -571,7 +592,7 @@ describe('NTPMessaging component', () => {
             await ntpMessaging.handleNotification('contextMenu', { visibilityMenuItems }, sender);
 
             expect(chrome.ddg.showContextMenu).toHaveBeenCalledTimes(1);
-            expect(chrome.ddg.sendNewTabPageMessage).not.toHaveBeenCalledWith(7, 'widgets_setConfig', jasmine.anything());
+            expect(chrome.ddg.setNewTabPageSections).not.toHaveBeenCalled();
             expect((await ntpMessaging.handleRequest('initialSetup', undefined, sender)).widgetConfigs[2]).toEqual({
                 id: 'protections',
                 visibility: 'hidden',
@@ -810,7 +831,7 @@ describe('NTPMessaging component', () => {
             expect(await errorFor(undefined, 'favorites_getData')).toBe('chrome.ddg is unavailable');
             expect(await errorFor({}, 'favorites_getData')).toContain('getFavorites');
             expect(await errorFor({}, 'activity_getDataForUrls', { urls: [] })).toContain('getFavorites');
-            expect(await errorFor({}, 'initialSetup')).toContain('sendNewTabPageMessage');
+            expect(await errorFor({}, 'initialSetup')).toContain('getNewTabPageSettings');
         });
 
         it('logs the favorites notifications it cannot carry out', async () => {
@@ -832,8 +853,8 @@ describe('NTPMessaging component', () => {
             expect(consoleError).toHaveBeenCalledWith('NTP activity_addFavorite failed:', failure('addFavorite'));
             expect(consoleError).toHaveBeenCalledWith('NTP activity_removeFavorite failed:', failure('removeFavorite'));
             // The menu's checkmarks come from the browser before it opens.
-            expect(consoleError).toHaveBeenCalledWith('NTP contextMenu failed:', failure('sendNewTabPageMessage'));
-            expect(consoleError).toHaveBeenCalledWith('NTP customizer_setTheme failed:', failure('sendNewTabPageMessage'));
+            expect(consoleError).toHaveBeenCalledWith('NTP contextMenu failed:', failure('getNewTabPageSettings'));
+            expect(consoleError).toHaveBeenCalledWith('NTP customizer_setTheme failed:', failure('setNewTabPageTheme'));
         });
 
         it('logs the favorites changes it cannot push', async () => {

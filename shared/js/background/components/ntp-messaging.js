@@ -45,9 +45,21 @@ import {
 const FAVORITES_CONFIG_SETTING = 'ntpFavoritesConfig';
 const PROTECTIONS_CONFIG_SETTING = 'ntpProtectionsConfig';
 
-// The parts of the omnibar config the browser does not store. Duck.ai's setting is
-// on duck://settings, not in the page.
+// The page's widget for each of the browser's Sections, in the order the page shows them.
+/** @type {Record<keyof chrome.ddg.NewTabPageSections, string>} */
+const SECTION_WIDGETS = {
+    search: 'omnibar',
+    favorites: 'favorites',
+    protections: 'protections',
+};
+const WIDGETS = Object.values(SECTION_WIDGETS).map((id) => ({ id }));
+const WIDGET_SECTIONS = /** @type {Record<string, keyof chrome.ddg.NewTabPageSections>} */ (
+    Object.fromEntries(Object.entries(SECTION_WIDGETS).map(([section, id]) => [id, section]))
+);
+// The parts of the omnibar config the browser does not store. It opens in search
+// mode, and Duck.ai's setting is on duck://settings, not in the page.
 const OMNIBAR_CONFIG = {
+    mode: 'search',
     showAiSetting: false,
     enableRecentAiChats: false,
 };
@@ -86,7 +98,7 @@ function ddgApi() {
  * Privacy stats come from NewTabTrackerStats, favorites from the browser's
  * bookmarks over chrome.ddg and the activity feed from NTPActivity; suggestions
  * are empty. The theme, which widgets show and whether Duck.ai shows in the
- * omnibar are the browser's, through chrome.ddg.sendNewTabPageMessage, the same
+ * omnibar are the browser's, through chrome.ddg's New Tab Page calls, the same
  * choices duck://settings makes.
  */
 export default class NTPMessaging {
@@ -211,11 +223,16 @@ export default class NTPMessaging {
     async handleRequest(method, params, port) {
         switch (method) {
             case 'initialSetup': {
-                // The browser's parts: widgets, widgetConfigs, customizer.theme and settings.
-                const { customizer, ...setup } = await sendToBrowser(port, 'initialSetup');
+                const tabId = pageTabId(port, method);
+                const [settings, autoOpen] = await Promise.all([
+                    ddgApi().getNewTabPageSettings(tabId),
+                    ddgApi().isNewTabPageCustomizerRequested(tabId),
+                ]);
                 return {
-                    ...setup,
-                    customizer: { ...DEFAULT_CUSTOMIZER, ...customizer },
+                    widgets: WIDGETS,
+                    widgetConfigs: toWidgetConfigs(settings.sections),
+                    customizer: { ...DEFAULT_CUSTOMIZER, theme: settings.theme },
+                    settings: { customizerDrawer: { state: 'enabled', autoOpen } },
                     platform: { name: 'windows' },
                     env: 'production',
                     locale: getUserLocale(),
@@ -225,7 +242,7 @@ export default class NTPMessaging {
 
             // Omnibar
             case 'omnibar_getConfig':
-                return { ...OMNIBAR_CONFIG, ...(await sendToBrowser(port, 'omnibar_getConfig')) };
+                return toOmnibarConfig(await getSettings(port, method));
             case 'omnibar_getSuggestions':
                 return { suggestions: { topHits: [], duckduckgoSuggestions: [], localSuggestions: [] } };
 
@@ -265,7 +282,9 @@ export default class NTPMessaging {
                 await this.setWidgetConfigs(port, params);
                 break;
             case 'customizer_setTheme':
-                await sendToBrowser(port, method, params);
+                // Theme variants are not supported, so the variant is ignored. The browser
+                // rejects any theme but light, dark and system.
+                await ddgApi().setNewTabPageTheme(pageTabId(port, method), params?.theme);
                 // Every open page is sent the new theme, the sender included.
                 this.pushSubscriptionEvent('customizer_onThemeUpdate', params);
                 break;
@@ -275,7 +294,7 @@ export default class NTPMessaging {
                 if (tabId === undefined || !Array.isArray(items)) {
                     throw new Error('the context menu has no tab to open over or no items');
                 }
-                const configs = await getWidgetConfigs(port);
+                const configs = toWidgetConfigs((await getSettings(port, method)).sections);
                 const chosen = await ddgApi().showContextMenu(
                     tabId,
                     items.map(({ id, title }) => ({
@@ -288,7 +307,7 @@ export default class NTPMessaging {
                     // Toggles the widget in the config as it is once the menu closes.
                     await this.setWidgetConfigs(
                         port,
-                        (await getWidgetConfigs(port)).map((config) =>
+                        toWidgetConfigs((await getSettings(port, method)).sections).map((config) =>
                             config.id === chosen
                                 ? { ...config, visibility: config.visibility === 'visible' ? 'hidden' : 'visible' }
                                 : config,
@@ -300,9 +319,12 @@ export default class NTPMessaging {
 
             // Omnibar
             case 'omnibar_setConfig':
-                // Not sent to the other pages: the browser does not store `mode`, so its
-                // config would switch their omnibars back to search.
-                await sendToBrowser(port, method, params);
+                // The browser stores only `enableAi`, so a config without it changes nothing
+                // there. Not sent to the other pages: the browser does not store `mode`, so
+                // its config would switch their omnibars back to search.
+                if (params?.enableAi !== undefined) {
+                    await ddgApi().setNewTabPageDuckAiInSearch(pageTabId(port, method), params.enableAi);
+                }
                 break;
             case 'omnibar_submitSearch':
                 if (typeof params?.term === 'string') {
@@ -425,7 +447,7 @@ export default class NTPMessaging {
      * @param {WidgetConfig[]} configs
      */
     async setWidgetConfigs(port, configs) {
-        await sendToBrowser(port, 'widgets_setConfig', configs);
+        await ddgApi().setNewTabPageSections(pageTabId(port, 'widgets_setConfig'), toSectionsChange(configs));
         this.pushSubscriptionEvent('widgets_onConfigUpdated', configs);
     }
 
@@ -560,27 +582,70 @@ export default class NTPMessaging {
 }
 
 /**
- * Sends the page's message to the browser, naming the page's tab, which the
- * browser checks is showing the New Tab Page.
+ * The page's tab, which the browser's New Tab Page calls name: they answer only
+ * for a tab showing the New Tab Page.
  * @param {Port | undefined} port - the page's connection
- * @param {string} method
- * @param {any} [params]
- * @returns {Promise<any>} the browser's response; rejects if it does not accept the message
+ * @param {string} method - the page's message, for the error
+ * @returns {number}
  */
-async function sendToBrowser(port, method, params) {
+function pageTabId(port, method) {
     const tabId = port?.sender?.tab?.id;
     if (tabId === undefined) {
         throw new Error(`${method}: the page has no tab`);
     }
-    return ddgApi().sendNewTabPageMessage(tabId, method, params);
+    return tabId;
 }
 
 /**
  * @param {Port | undefined} port - the page's connection
- * @returns {Promise<WidgetConfig[]>} which widgets the browser shows
+ * @param {string} method - the page's message, for the error
+ * @returns {Promise<chrome.ddg.NewTabPageSettings>} the browser's New Tab Page choices
  */
-async function getWidgetConfigs(port) {
-    return (await sendToBrowser(port, 'initialSetup')).widgetConfigs;
+async function getSettings(port, method) {
+    return ddgApi().getNewTabPageSettings(pageTabId(port, method));
+}
+
+/**
+ * @param {chrome.ddg.NewTabPageSections} sections
+ * @returns {WidgetConfig[]} the page's widget configs for the browser's Sections
+ */
+function toWidgetConfigs(sections) {
+    return Object.entries(SECTION_WIDGETS).map(([section, id]) => ({
+        id,
+        visibility: sections[/** @type {keyof chrome.ddg.NewTabPageSections} */ (section)] ? 'visible' : 'hidden',
+    }));
+}
+
+/**
+ * @param {unknown} configs - the page's widget configs
+ * @returns {chrome.ddg.NewTabPageSectionsChange} the Sections they change; throws,
+ *   so nothing changes, unless each names one of them, visible or hidden
+ */
+function toSectionsChange(configs) {
+    if (!Array.isArray(configs)) {
+        throw new Error('expected a list of widget configs');
+    }
+    /** @type {chrome.ddg.NewTabPageSectionsChange} */
+    const change = {};
+    for (const config of configs) {
+        const section = WIDGET_SECTIONS[config?.id];
+        if (!section) {
+            throw new Error(`unknown widget id "${config?.id}"`);
+        }
+        if (config.visibility !== 'visible' && config.visibility !== 'hidden') {
+            throw new Error('visibility must be visible or hidden');
+        }
+        change[section] = config.visibility === 'visible';
+    }
+    return change;
+}
+
+/**
+ * @param {chrome.ddg.NewTabPageSettings} settings
+ * @returns the page's omnibar config
+ */
+function toOmnibarConfig(settings) {
+    return { ...OMNIBAR_CONFIG, enableAi: settings.duckAiInSearch };
 }
 
 /**
