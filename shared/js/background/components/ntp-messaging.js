@@ -6,11 +6,10 @@ import { getBaseDomain } from '../utils';
 import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 import { pageDomain } from './ntp-activity';
 import {
-    NTP_PORT_NAME,
     NTP_RECONNECT_MESSAGE,
-    NTP_MESSAGING_CONTEXT,
     NTP_FEATURE_NAME,
     NTP_OTHER_COMPANY_IDENTIFIER,
+    SPECIAL_PAGES_MESSAGING_CONTEXT,
 } from '../../ntp/constants';
 
 /**
@@ -24,6 +23,9 @@ import {
 // TODO: import them from C-S-S once new-tab.ts resolves outside C-S-S; its
 // `declare module "../src/index.js"` augmentation currently breaks our tsc.
 /**
+ * @typedef {import("@duckduckgo/content-scope-scripts/messaging").RequestMessage} RequestMessage
+ * @typedef {import("@duckduckgo/content-scope-scripts/messaging").NotificationMessage} NotificationMessage
+ * @typedef {RequestMessage | NotificationMessage} Incoming
  * @typedef {{ id: string, visibility: 'visible' | 'hidden' }} WidgetConfig
  * @typedef {{ totalCount: number, totalCookiePopUpsBlocked?: number | null }} ProtectionsData
  * @typedef {{ displayName: string, count: number }} TrackerCompany
@@ -123,10 +125,13 @@ export default class NTPMessaging {
         this.ntpActivity = ntpActivity;
 
         browser.runtime.onConnect.addListener((port) => {
-            if (port.name !== NTP_PORT_NAME) return;
+            if (port.name !== SPECIAL_PAGES_MESSAGING_CONTEXT) return;
             this.ports.add(port);
             port.onMessage.addListener((msg) => {
-                this.onMessage(msg, port);
+                const incoming = this.toMsg(msg);
+                if (incoming.featureName === NTP_FEATURE_NAME) {
+                    this.onMessage(incoming, port);
+                }
             });
             port.onDisconnect.addListener(() => {
                 this.ports.delete(port);
@@ -181,21 +186,29 @@ export default class NTPMessaging {
     }
 
     /**
-     * @param {any} msg
+     * @param {unknown} incoming
+     * @return {Incoming}
+     */
+    toMsg(incoming) {
+        return /** @type {Incoming} */ (incoming);
+    }
+
+    /**
+     * @param {Incoming} msg
      * @param {Port} port
      */
     async onMessage(msg, port) {
-        const { Feature: context, SubFeatureName: featureName, Name: method, Data: params, Id: id } = msg;
-        if (context !== NTP_MESSAGING_CONTEXT || featureName !== NTP_FEATURE_NAME) {
+        const { context, featureName, method, params } = msg;
+        if (context !== SPECIAL_PAGES_MESSAGING_CONTEXT || featureName !== NTP_FEATURE_NAME) {
             return;
         }
-        if (id) {
+        if ('id' in msg) {
             try {
                 const result = await this.handleRequest(method, params);
-                port.postMessage({ context, featureName, id, result });
+                port.postMessage({ context, featureName, id: msg.id, result });
             } catch (e) {
                 const message = e instanceof Error ? e.message : String(e);
-                port.postMessage({ context, featureName, id, error: { message } });
+                port.postMessage({ context, featureName, id: msg.id, error: { message } });
             }
         } else {
             try {
@@ -547,7 +560,7 @@ export default class NTPMessaging {
     pushSubscriptionEvent(subscriptionName, params, ports = this.ports) {
         for (const port of ports) {
             port.postMessage({
-                context: NTP_MESSAGING_CONTEXT,
+                context: SPECIAL_PAGES_MESSAGING_CONTEXT,
                 featureName: NTP_FEATURE_NAME,
                 subscriptionName,
                 params,

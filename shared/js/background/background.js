@@ -48,6 +48,7 @@ import { TrackerStats } from './classes/tracker-stats';
 
 // Trigger registration of default message handlers into the shared registry.
 import { registerStandardHandlers } from './message-handlers';
+import { InjectedMessaging } from './components/injected-messaging';
 registerStandardHandlers();
 
 // NOTE: event listeners must be registered on the first tick of background
@@ -154,6 +155,7 @@ if (BUILD_TARGET === 'chromium-embedded') {
     statsRestored.then(() => newTabTrackerStats.registerDataCollection());
     components.ntpActivity = new NTPActivity();
     components.ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, statsRestored, ntpActivity: components.ntpActivity });
+    components.injectedMessaging = new InjectedMessaging({});
 }
 console.log(new Date(), 'Loaded components:', components);
 // @ts-ignore
