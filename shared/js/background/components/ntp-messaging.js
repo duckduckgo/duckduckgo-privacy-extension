@@ -42,23 +42,17 @@ import {
  */
 
 /** Settings keys used to persist NTP UI configuration. */
-const WIDGET_CONFIGS_SETTING = 'ntpWidgetConfigs';
 const FAVORITES_CONFIG_SETTING = 'ntpFavoritesConfig';
 const PROTECTIONS_CONFIG_SETTING = 'ntpProtectionsConfig';
 
-const WIDGETS = [{ id: 'omnibar' }, { id: 'favorites' }, { id: 'protections' }];
-const DEFAULT_WIDGET_CONFIGS = [
-    { id: 'omnibar', visibility: 'visible' },
-    { id: 'favorites', visibility: 'visible' },
-    { id: 'protections', visibility: 'visible' },
-];
-// Search only: Duck.ai mode and its setting are hidden.
+// The parts of the omnibar config the browser does not store. Duck.ai's setting is
+// on duck://settings, not in the page.
 const OMNIBAR_CONFIG = {
-    mode: 'search',
-    enableAi: false,
     showAiSetting: false,
     enableRecentAiChats: false,
 };
+// The parts of the customizer the browser does not store: the page's defaults.
+const DEFAULT_CUSTOMIZER = { userColor: null, background: { kind: 'default' }, userImages: [] };
 const DEFAULT_FAVORITES_CONFIG = { expansion: 'expanded' };
 const DEFAULT_PROTECTIONS_CONFIG = { expansion: 'expanded', feed: 'privacy-stats' };
 
@@ -91,7 +85,9 @@ function ddgApi() {
  *
  * Privacy stats come from NewTabTrackerStats, favorites from the browser's
  * bookmarks over chrome.ddg and the activity feed from NTPActivity; suggestions
- * are empty.
+ * are empty. The theme, which widgets show and whether Duck.ai shows in the
+ * omnibar are the browser's, through chrome.ddg.sendNewTabPageMessage, the same
+ * choices duck://settings makes.
  */
 export default class NTPMessaging {
     /** @type {Set<Port>} */
@@ -191,7 +187,7 @@ export default class NTPMessaging {
         }
         if (id) {
             try {
-                const result = await this.handleRequest(method, params);
+                const result = await this.handleRequest(method, params, port);
                 port.postMessage({ context, featureName, id, result });
             } catch (e) {
                 const message = e instanceof Error ? e.message : String(e);
@@ -209,24 +205,27 @@ export default class NTPMessaging {
     /**
      * @param {string} method
      * @param {any} [params]
+     * @param {Port} [port]
      * @returns {Promise<any>}
      */
-    async handleRequest(method, params) {
+    async handleRequest(method, params, port) {
         switch (method) {
-            case 'initialSetup':
-                await this.settings.ready();
+            case 'initialSetup': {
+                // The browser's parts: widgets, widgetConfigs, customizer.theme and settings.
+                const { customizer, ...setup } = await sendToBrowser(port, 'initialSetup');
                 return {
-                    widgets: WIDGETS,
-                    widgetConfigs: this.getWidgetConfigs(),
+                    ...setup,
+                    customizer: { ...DEFAULT_CUSTOMIZER, ...customizer },
                     platform: { name: 'windows' },
                     env: 'production',
                     locale: getUserLocale(),
                     updateNotification: null,
                 };
+            }
 
             // Omnibar
             case 'omnibar_getConfig':
-                return OMNIBAR_CONFIG;
+                return { ...OMNIBAR_CONFIG, ...(await sendToBrowser(port, 'omnibar_getConfig')) };
             case 'omnibar_getSuggestions':
                 return { suggestions: { topHits: [], duckduckgoSuggestions: [], localSuggestions: [] } };
 
@@ -263,8 +262,12 @@ export default class NTPMessaging {
     async handleNotification(method, params, port) {
         switch (method) {
             case 'widgets_setConfig':
-                await this.settings.ready();
-                this.setWidgetConfigs(params);
+                await this.setWidgetConfigs(port, params);
+                break;
+            case 'customizer_setTheme':
+                await sendToBrowser(port, method, params);
+                // Every open page is sent the new theme, the sender included.
+                this.pushSubscriptionEvent('customizer_onThemeUpdate', params);
                 break;
             case 'contextMenu': {
                 const tabId = port?.sender?.tab?.id;
@@ -272,8 +275,7 @@ export default class NTPMessaging {
                 if (tabId === undefined || !Array.isArray(items)) {
                     throw new Error('the context menu has no tab to open over or no items');
                 }
-                await this.settings.ready();
-                const configs = this.getWidgetConfigs();
+                const configs = await getWidgetConfigs(port);
                 const chosen = await ddgApi().showContextMenu(
                     tabId,
                     items.map(({ id, title }) => ({
@@ -284,8 +286,9 @@ export default class NTPMessaging {
                 );
                 if (chosen) {
                     // Toggles the widget in the config as it is once the menu closes.
-                    this.setWidgetConfigs(
-                        this.getWidgetConfigs().map((config) =>
+                    await this.setWidgetConfigs(
+                        port,
+                        (await getWidgetConfigs(port)).map((config) =>
                             config.id === chosen
                                 ? { ...config, visibility: config.visibility === 'visible' ? 'hidden' : 'visible' }
                                 : config,
@@ -296,6 +299,11 @@ export default class NTPMessaging {
             }
 
             // Omnibar
+            case 'omnibar_setConfig':
+                // Not sent to the other pages: the browser does not store `mode`, so its
+                // config would switch their omnibars back to search.
+                await sendToBrowser(port, method, params);
+                break;
             case 'omnibar_submitSearch':
                 if (typeof params?.term === 'string') {
                     this.openUrl(`${SEARCH_URL}?q=${encodeURIComponent(params.term)}`, params?.target, port);
@@ -411,18 +419,13 @@ export default class NTPMessaging {
     }
 
     /**
-     * @returns {WidgetConfig[]}
-     */
-    getWidgetConfigs() {
-        return this.settings.getSetting(WIDGET_CONFIGS_SETTING) || DEFAULT_WIDGET_CONFIGS;
-    }
-
-    /**
-     * As on Windows, every open page is sent the new config, the sender included.
+     * As on Windows, every open page is sent the new config, the sender included,
+     * once the browser has stored it.
+     * @param {Port | undefined} port - the page's connection
      * @param {WidgetConfig[]} configs
      */
-    setWidgetConfigs(configs) {
-        this.settings.updateSetting(WIDGET_CONFIGS_SETTING, configs);
+    async setWidgetConfigs(port, configs) {
+        await sendToBrowser(port, 'widgets_setConfig', configs);
         this.pushSubscriptionEvent('widgets_onConfigUpdated', configs);
     }
 
@@ -554,6 +557,30 @@ export default class NTPMessaging {
             });
         }
     }
+}
+
+/**
+ * Sends the page's message to the browser, naming the page's tab, which the
+ * browser checks is showing the New Tab Page.
+ * @param {Port | undefined} port - the page's connection
+ * @param {string} method
+ * @param {any} [params]
+ * @returns {Promise<any>} the browser's response; rejects if it does not accept the message
+ */
+async function sendToBrowser(port, method, params) {
+    const tabId = port?.sender?.tab?.id;
+    if (tabId === undefined) {
+        throw new Error(`${method}: the page has no tab`);
+    }
+    return ddgApi().sendNewTabPageMessage(tabId, method, params);
+}
+
+/**
+ * @param {Port | undefined} port - the page's connection
+ * @returns {Promise<WidgetConfig[]>} which widgets the browser shows
+ */
+async function getWidgetConfigs(port) {
+    return (await sendToBrowser(port, 'initialSetup')).widgetConfigs;
 }
 
 /**
