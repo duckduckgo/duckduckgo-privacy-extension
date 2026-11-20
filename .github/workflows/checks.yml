@@ -74,8 +74,11 @@ jobs:
             - run: npm test
 
     playwright-tests:
-        timeout-minutes: 14
+        timeout-minutes: 30
         runs-on: ubuntu-latest
+        container:
+            image: mcr.microsoft.com/playwright:v1.65.0-resolute
+            options: --user 1001 --ipc=host
         strategy:
             fail-fast: false
             matrix:
@@ -91,8 +94,9 @@ jobs:
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
-            - run: npm run install-ci
+            - run: npm run install-ci -- --no-system-deps
             - name: Run tests
+              timeout-minutes: 14
               run: xvfb-run --auto-servernum -- npm run ${{ matrix.test }} -- --shard ${{ matrix.shard }}
             - uses: actions/upload-artifact@v4
               if: always()
