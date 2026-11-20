@@ -76,11 +76,8 @@ jobs:
     playwright-tests:
         timeout-minutes: 30
         runs-on: ubuntu-latest
-        # Has the browsers' system packages, avoiding a sometimes very slow apt
-        # install. Keep the tag in step with @playwright/test.
         container:
             image: mcr.microsoft.com/playwright:v1.65.0-resolute
-            # Firefox won't run as root; Chromium needs more /dev/shm.
             options: --user 1001 --ipc=host
         strategy:
             fail-fast: false
