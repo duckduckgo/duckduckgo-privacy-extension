@@ -24,7 +24,7 @@ const MAXIMUM_RULES_PER_TRACKER_ENTRY = (CEILING_PRIORITY - BASELINE_PRIORITY) /
 /**
  * Generator to produce the declarativeNetRequest rules and corresponding match
  * details for the given trackerAllowlist configuration.
- * @param {any} extensionConfiguration
+ * @param {import('./utils').PrivacyConfiguration} extensionConfiguration
  *   The extension configuration.
  * @return {Generator<generateTrackerAllowlistRulesResult>}
  */
@@ -35,7 +35,7 @@ function* generateTrackerAllowlistRules({ features: { trackerAllowlist } }) {
         trackerAllowlist.state !== 'enabled' ||
         !trackerAllowlist.settings ||
         !trackerAllowlist.settings.allowlistedTrackers ||
-        trackerAllowlist.settings.allowlistedTrackers.length === 0
+        Object.keys(trackerAllowlist.settings.allowlistedTrackers).length === 0
     ) {
         return;
     }
@@ -76,7 +76,9 @@ function* generateTrackerAllowlistRules({ features: { trackerAllowlist } }) {
         // declarativeNetRequest rules should have descending priority.
         let priority = BASELINE_PRIORITY;
         for (let i = trackerEntryRules.length - 1; i >= 0; i--) {
-            let { rule: trackerRule, domains: initiatorDomains, reason: allowlistReason } = trackerEntryRules[i];
+            const { rule: trackerRule, reason: allowlistReason } = trackerEntryRules[i];
+            /** @type {string[] | null} */
+            let initiatorDomains = trackerEntryRules[i].domains;
 
             // Tracker Blocking Allowlist entries always have an initiator
             // domains condition, but if it's `['<all>']` it must be ignored.
