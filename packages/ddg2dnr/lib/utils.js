@@ -15,32 +15,9 @@
  */
 
 /**
- * @typedef {{
- *   domain: string;
- *   reason: string
- * }} PrivacyConfigDomainEntry
- */
-/**
- * @template {object} S
- * @typedef {object} PrivacyConfigFeature
- * @property {string} state
- * @property {string | undefined} minSupportedVersion
- * @property {string | undefined} maxSupportedVersion
- * @property {string} hash
- * @property {S} settings
- * @property {PrivacyConfigDomainEntry[]} exceptions
- * @template S
- */
-/**
- * @typedef {object} PrivacyConfiguration
- * @property {PrivacyConfigDomainEntry[]} unprotectedTemporary
- * @property {{
- *  cookie?: PrivacyConfigFeature<{
- *      trackerCookie: string;
- *      nonTrackerCookie: string;
- *      excludedCookieDomains: PrivacyConfigDomainEntry[];
- *  }>
- * }} features
+ * The privacy configuration (extension-config.json), as defined by the
+ * @duckduckgo/privacy-configuration schema.
+ * @typedef {import('@duckduckgo/privacy-configuration/schema/config').CurrentGenericConfig} PrivacyConfiguration
  */
 /**
  * @typedef {{[ruleId: number]: {
@@ -142,7 +119,7 @@ function castDNREnum(s) {
  * @property {number} [id]
  * @property {number} priority
  * @property {`${chrome.declarativeNetRequest.RuleActionType}`} actionType
- * @property {object} [redirect]
+ * @property {chrome.declarativeNetRequest.Redirect | null} [redirect]
  * @property {object[]} [requestHeaders]
  * @property {object[]} [responseHeaders]
  * @property {string} [urlFilter]
@@ -530,7 +507,7 @@ function processPlaintextTrackerRule(domain, trackerRule) {
 /**
  * Finds the closest matching tracker entry for the given domain. Returns the
  * tracking domain if one is found, null otherwise.
- * @param {Record<string, TrackerObj>} trackerEntries
+ * @param {Record<string, unknown>} trackerEntries
  *   The trackers section of the Tracker Blocking configuration.
  * @param {string} domain
  *   The domain to search for. Subdomains will be stripped away until a matching

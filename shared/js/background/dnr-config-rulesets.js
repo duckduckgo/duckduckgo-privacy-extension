@@ -102,7 +102,7 @@ function minimalConfig({ unprotectedTemporary, features }) {
  * @param {Object} latestState
  * @param {chrome.declarativeNetRequest.Rule[]} rules
  * @param {Object} matchDetailsByRuleId
- * @returns {Promise<>}
+ * @returns {Promise<void>}
  */
 async function updateConfigRules(configName, latestState, rules, matchDetailsByRuleId) {
     const [ruleIdStart, ruleIdEnd] = ruleIdRangeByConfigName[configName];
@@ -163,7 +163,7 @@ async function updateConfigRules(configName, latestState, rules, matchDetailsByR
  * been updated), but will be read from settings storage otherwise.
  * @param {string?} etag
  * @param {object?} configValue
- * @returns {Promise<>}
+ * @returns {Promise<void>}
  */
 export async function updateExtensionConfigRules(etag = null, configValue = null) {
     const extensionVersion = getExtensionVersion();

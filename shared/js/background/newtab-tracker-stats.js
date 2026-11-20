@@ -9,7 +9,7 @@ import { NEWTAB_TRACKER_STATS_REDIRECT_PRIORITY } from '@duckduckgo/ddg2dnr/lib/
 import { NEWTAB_BLOCKED_STATS_REDIRECT_RULE_ID } from './dnr-utils';
 
 /**
- * @typedef {import('./settings.js')} Settings
+ * @typedef {typeof import('./settings.js')} Settings
  * @typedef {import("../background/classes/tracker-stats").TrackerStats} TrackerStats
  */
 

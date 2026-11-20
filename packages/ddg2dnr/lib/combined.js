@@ -23,7 +23,7 @@ function generateCombinedConfigBlocklistRuleset(tds, config, denylistedDomains, 
     const cookieAllowlist = (config.features.cookie?.exceptions.map((entry) => entry.domain) || [])
         .concat(config.unprotectedTemporary.map((entry) => entry.domain))
         .filter((domain) => !denylistedDomains.includes(domain));
-    const excludedCookieDomains = config.features.cookie?.settings.excludedCookieDomains.map((entry) => entry.domain);
+    const excludedCookieDomains = config.features.cookie?.settings?.excludedCookieDomains?.map((entry) => entry.domain) ?? [];
     return generateCookieBlockingRuleset(tds, excludedCookieDomains, cookieAllowlist, startingRuleId);
 }
 

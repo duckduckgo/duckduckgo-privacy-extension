@@ -17,6 +17,8 @@ describe('Tracker Allowlist', () => {
             reason: '',
         });
 
+        // Incomplete configuration on purpose: only the features under test.
+        /** @type {any} */
         const extensionConfig = {
             features: {
                 trackerAllowlist: {
@@ -44,7 +46,9 @@ describe('Tracker Allowlist', () => {
             await generateExtensionConfigurationRuleset(
                 {
                     features: {
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         trackerAllowlist: {},
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         contentBlocking: { state: 'enabled' },
                     },
                 },
@@ -58,6 +62,7 @@ describe('Tracker Allowlist', () => {
             await generateExtensionConfigurationRuleset(
                 {
                     features: {
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         trackerAllowlist: {
                             state: 'disabled',
                             settings: {
@@ -74,6 +79,7 @@ describe('Tracker Allowlist', () => {
                                 },
                             },
                         },
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         contentBlocking: { state: 'enabled' },
                     },
                 },
@@ -87,12 +93,14 @@ describe('Tracker Allowlist', () => {
             await generateExtensionConfigurationRuleset(
                 {
                     features: {
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         trackerAllowlist: {
                             state: 'enabled',
                             settings: {
                                 allowlistedTrackers: {},
                             },
                         },
+                        // @ts-expect-error - Incomplete configuration on purpose.
                         contentBlocking: { state: 'enabled' },
                     },
                 },
@@ -104,6 +112,8 @@ describe('Tracker Allowlist', () => {
     });
 
     it('should generate allowlists correctly', async () => {
+        // Incomplete configuration on purpose: only the features under test.
+        /** @type {any} */
         const extensionConfig = {
             features: {
                 trackerAllowlist: {

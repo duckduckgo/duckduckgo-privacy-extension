@@ -9,6 +9,7 @@ const Companies = (() => {
     const storageName = 'companyData';
     let totalPages = 0;
     let totalPagesWithTrackers = 0;
+    /** @type {number | null} */
     let lastStatsResetDate = null;
 
     function sortByCount(a, b) {

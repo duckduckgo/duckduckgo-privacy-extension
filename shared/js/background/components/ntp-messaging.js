@@ -14,7 +14,7 @@ import {
 } from '../../ntp/constants';
 
 /**
- * @typedef {import('../settings.js')} Settings
+ * @typedef {typeof import('../settings.js')} Settings
  * @typedef {import('webextension-polyfill').Runtime.Port} Port
  * @typedef {import('./ntp-activity').default} NTPActivity
  * @typedef {import('./ntp-activity').SiteActivity} SiteActivity

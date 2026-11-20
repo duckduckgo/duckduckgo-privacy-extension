@@ -36,7 +36,7 @@ function* testCases(referenceTests) {
     }
 }
 
-describe('Reference Tests', /** @this {testFunction} */ () => {
+describe('Reference Tests', () => {
     describe('TR-domain-matching', /** @this {testFunction} */ function () {
         const referenceTests = loadReferenceTestJSONFile('tracker-radar-tests', 'TR-domain-matching', 'domain_matching_tests.json');
         let ruleset = [];
@@ -190,6 +190,8 @@ describe('Reference Tests', /** @this {testFunction} */ () => {
                     'TR-domain-matching',
                     'tracker_allowlist_reference.json',
                 );
+                // Incomplete configuration on purpose: only the features under test.
+                /** @type {any} */
                 const mockConfig = {
                     features: {
                         trackerAllowlist: {

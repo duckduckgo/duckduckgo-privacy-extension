@@ -64,7 +64,7 @@ function stringifyBlocklist(tds) {
 
 /**
  * @typedef {object} rulesetEqualOptions
- * @property {object[]} [expectedRuleset]
+ * @property {any[]} [expectedRuleset]
  *   The expected declarativeNetRequest ruleset.
  * @property {object} [expectedMatchDetailsLookup]
  *   The expected ruleId -> matchDetails lookup.
@@ -93,7 +93,7 @@ function stringifyBlocklist(tds) {
  *   IDs are incremented sequentially from the starting point. If null is
  *   provided, the startingRuleId argument is not passed through.
  * @param {rulesetEqualOptions} options
- * @return {Promise<>}
+ * @return {Promise<void>}
  */
 async function rulesetEqual(
     tds,
