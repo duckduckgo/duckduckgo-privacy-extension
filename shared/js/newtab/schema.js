@@ -1,16 +1,16 @@
-import z from 'zod';
+import { array, discriminatedUnion, enum as zodEnum, literal, number, object, string } from 'zod';
 import constants from '../../data/constants';
 const { events } = constants.trackerStats;
 
-export const dataFormatSchema = z.object({
-    atb: z.string().optional(),
-    totalCount: z.number(),
-    totalPeriod: z.enum(['install-time']),
-    trackerCompaniesPeriod: z.enum(['last-hour', 'last-day']),
-    trackerCompanies: z.array(
-        z.object({
-            displayName: z.string(),
-            count: z.number(),
+export const dataFormatSchema = object({
+    atb: string().optional(),
+    totalCount: number(),
+    totalPeriod: zodEnum(['install-time']),
+    trackerCompaniesPeriod: zodEnum(['last-hour', 'last-day']),
+    trackerCompanies: array(
+        object({
+            displayName: string(),
+            count: number(),
         }),
     ),
 });
@@ -18,21 +18,21 @@ export const dataFormatSchema = z.object({
 /**
  * Outgoing message: that means from the extension -> new tab page
  */
-export const disconnectMessage = z.object({
-    messageType: z.literal(events.outgoing.newTabPage_disconnect),
+export const disconnectMessage = object({
+    messageType: literal(events.outgoing.newTabPage_disconnect),
 });
 
-export const dataMessage = z.object({
-    messageType: z.literal(events.outgoing.newTabPage_data),
+export const dataMessage = object({
+    messageType: literal(events.outgoing.newTabPage_data),
     options: dataFormatSchema,
 });
 
-export const outgoing = z.discriminatedUnion('messageType', [dataMessage, disconnectMessage]);
+export const outgoing = discriminatedUnion('messageType', [dataMessage, disconnectMessage]);
 
 /**
  * Incoming messages: that means from new tab page to the extension
  */
-const heartbeatMessage = z.object({
-    messageType: z.literal(events.incoming.newTabPage_heartbeat),
+const heartbeatMessage = object({
+    messageType: literal(events.incoming.newTabPage_heartbeat),
 });
-export const incoming = z.discriminatedUnion('messageType', [heartbeatMessage]);
+export const incoming = discriminatedUnion('messageType', [heartbeatMessage]);

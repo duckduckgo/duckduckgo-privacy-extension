@@ -1,4 +1,4 @@
-import z from 'zod';
+import { array, number, object, record, string } from 'zod';
 
 const SEC = 1000;
 const MIN = SEC * 60;
@@ -154,21 +154,21 @@ export class TrackerStats {
      */
     deserialize(params) {
         // this is the schema for a single pack. It's used for the current pack and for the packs array
-        const packSchema = z.object({
-            start: z.number().default(0),
-            end: z.number().default(0),
-            entries: z.record(z.string(), z.number()),
+        const packSchema = object({
+            start: number().default(0),
+            end: number().default(0),
+            entries: record(string(), number()),
         });
 
         // this is the schema for the entire storage object
-        const storageSchema = z.object({
-            totalCount: z.number(),
+        const storageSchema = object({
+            totalCount: number(),
             current: packSchema.default({
                 start: 0,
                 end: 0,
                 entries: {},
             }),
-            packs: z.array(packSchema).default([]),
+            packs: array(packSchema).default([]),
         });
 
         // try to validate the data, but without throwing errors
@@ -176,7 +176,7 @@ export class TrackerStats {
 
         // if any errors occur, bail and don't use this data at all (essentially starting a fresh)
         if (!result.success) {
-            console.warn('could not accept the incoming data because of schema errors', result.error.errors.length);
+            console.warn('could not accept the incoming data because of schema errors', result.error.issues.length);
         } else {
             // but if we get here, we can use the data internally, we 'trust' it at this point.
             this.totalCount = result.data.totalCount;
