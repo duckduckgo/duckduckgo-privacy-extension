@@ -152,37 +152,43 @@ describe('generateSmarterEncryptionRuleset', () => {
         );
     });
 
-    it('should upgrade insecure requests from provided domains', /** @this {testFunction} */ async function () {
-        const ruleset = generateSmarterEncryptionRuleset(['privacy-test-pages.site']);
-        await this.browser.addRules(ruleset);
-        const matchedRules = await this.browser.testMatchOutcome({
-            url: 'http://privacy-test-pages.site/insecure',
-            type: 'main_frame',
-            tabId: 1,
-        });
-        assert.equal(matchedRules.length, 1);
-        assert.equal(matchedRules[0].action.type, 'upgradeScheme');
-    });
+    it(
+        'should upgrade insecure requests from provided domains',
+        /** @this {testFunction} */ async function () {
+            const ruleset = generateSmarterEncryptionRuleset(['privacy-test-pages.site']);
+            await this.browser.addRules(ruleset);
+            const matchedRules = await this.browser.testMatchOutcome({
+                url: 'http://privacy-test-pages.site/insecure',
+                type: 'main_frame',
+                tabId: 1,
+            });
+            assert.equal(matchedRules.length, 1);
+            assert.equal(matchedRules[0].action.type, 'upgradeScheme');
+        },
+    );
 
-    it('createSmarterEncryptionExceptionRule should prevent https upgrade for domain', /** @this {testFunction} */ async function () {
-        const testDomains = ['privacy-test-pages.site', 'glitch.me'];
-        await this.browser.addRules(generateSmarterEncryptionRuleset(testDomains, 2));
-        await this.browser.addRules([createSmarterEncryptionTemporaryRule([testDomains[0]], 'allow', 1).rule]);
-        const expectNotUpgraded = await this.browser.testMatchOutcome({
-            url: 'http://privacy-test-pages.site/insecure',
-            type: 'main_frame',
-            tabId: 1,
-        });
-        assert.equal(expectNotUpgraded.length, 1);
-        assert.equal(expectNotUpgraded[0].action.type, 'allow');
-        const expectUpgraded = await this.browser.testMatchOutcome({
-            url: 'http://glitch.me/insecure',
-            type: 'main_frame',
-            tabId: 1,
-        });
-        assert.equal(expectUpgraded.length, 1);
-        assert.equal(expectUpgraded[0].action.type, 'upgradeScheme');
-    });
+    it(
+        'createSmarterEncryptionExceptionRule should prevent https upgrade for domain',
+        /** @this {testFunction} */ async function () {
+            const testDomains = ['privacy-test-pages.site', 'glitch.me'];
+            await this.browser.addRules(generateSmarterEncryptionRuleset(testDomains, 2));
+            await this.browser.addRules([createSmarterEncryptionTemporaryRule([testDomains[0]], 'allow', 1).rule]);
+            const expectNotUpgraded = await this.browser.testMatchOutcome({
+                url: 'http://privacy-test-pages.site/insecure',
+                type: 'main_frame',
+                tabId: 1,
+            });
+            assert.equal(expectNotUpgraded.length, 1);
+            assert.equal(expectNotUpgraded[0].action.type, 'allow');
+            const expectUpgraded = await this.browser.testMatchOutcome({
+                url: 'http://glitch.me/insecure',
+                type: 'main_frame',
+                tabId: 1,
+            });
+            assert.equal(expectUpgraded.length, 1);
+            assert.equal(expectUpgraded[0].action.type, 'upgradeScheme');
+        },
+    );
 
     it('createSmarterEncryptionExceptionRule should create correct allow rule', function () {
         const testDomains = ['example.com', 'sub.test.com'];
