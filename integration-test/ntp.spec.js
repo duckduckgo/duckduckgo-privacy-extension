@@ -59,13 +59,17 @@ test.describe('Embedded New Tab Page', () => {
         await expect(page.locator('[data-entry-point="omnibar"]')).toBeVisible();
     });
 
-    test('shows the page menu for a right-click on a favorite, as anywhere else on the page', async ({ page, backgroundPage }) => {
+    test('shows the browser menu for a right-click on a favorite, and the page menu on the add tile', async ({ page, backgroundPage }) => {
         await backgroundPage.evaluate(() => {
             globalThis.menus = [];
+            globalThis.favoriteMenus = [];
             chrome.ddg = {
                 getFavorites: async () => [{ id: '1', title: 'Example', url: 'https://example.com/' }],
                 showContextMenu: async (_tabId, items) => {
                     globalThis.menus.push(items);
+                },
+                showFavoriteContextMenu: async (tabId, id) => {
+                    globalThis.favoriteMenus.push({ tabId, id });
                 },
             };
         });
@@ -75,12 +79,18 @@ test.describe('Embedded New Tab Page', () => {
 
         await page.mouse.click(5, 5, { button: 'right' });
         await expect.poll(() => backgroundPage.evaluate(() => globalThis.menus.length)).toBe(1);
-        await favorite.click({ button: 'right' });
+        await page.getByRole('button', { name: 'Add Favorite' }).click({ button: 'right' });
         await expect.poll(() => backgroundPage.evaluate(() => globalThis.menus.length)).toBe(2);
+        await favorite.click({ button: 'right' });
+        await expect.poll(() => backgroundPage.evaluate(() => globalThis.favoriteMenus.length)).toBe(1);
 
-        const [blank, onFavorite] = await backgroundPage.evaluate(() => globalThis.menus);
-        expect(blank.length).toBeGreaterThan(0);
-        expect(onFavorite).toEqual(blank);
+        const { menus, favoriteMenus } = await backgroundPage.evaluate(() => ({
+            menus: globalThis.menus,
+            favoriteMenus: globalThis.favoriteMenus,
+        }));
+        expect(menus[0].length).toBeGreaterThan(0);
+        expect(menus).toEqual([menus[0], menus[0]]);
+        expect(favoriteMenus).toEqual([{ tabId: expect.any(Number), id: '1' }]);
     });
 
     test('shows blocked tracker stats pushed from the background', async ({ page, backgroundPage }) => {

@@ -42,12 +42,6 @@ function connect() {
 }
 
 globalThis.windowsInteropPostMessage = (msg) => {
-    // A favorite has no menu of its own: right-clicking one shows the menu the
-    // rest of the page shows, which the page builds for a right-click on its body.
-    if (msg.Name === 'favorites_openContextMenu') {
-        document.body.dispatchEvent(new MouseEvent('contextmenu', { cancelable: true }));
-        return;
-    }
     if (!port) {
         connect();
     }
