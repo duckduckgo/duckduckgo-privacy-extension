@@ -1,10 +1,11 @@
 /**
  * Packages a release build for distribution. Run it after a release build.
  *
- *   node scripts/build-tools/package.mjs --browser chrome              build/chrome/release/chrome-release-<timestamp>.zip
- *   node scripts/build-tools/package.mjs --browser chrome --beta       same, as the beta extension (name and icons)
- *   node scripts/build-tools/package.mjs --browser firefox --beta      build/firefox/release/web-ext-artifacts/*.zip (via npm exec web-ext), without the add-on id
- *   node scripts/build-tools/package.mjs --browser embedded            build/embedded/release/embedded-release-<timestamp>.zip
+ *   node scripts/build-tools/package.mjs --browser chrome                           build/chrome/release/chrome-release-<timestamp>.zip
+ *   node scripts/build-tools/package.mjs --browser chrome --beta                    same, as the beta extension (name and icons)
+ *   node scripts/build-tools/package.mjs --browser firefox --beta                   build/firefox/release/web-ext-artifacts/*.zip (via npm exec web-ext), without the add-on id
+ *   node scripts/build-tools/package.mjs --browser embedded                         build/embedded/release/embedded-release-<timestamp>.zip
+ *   node scripts/build-tools/package.mjs --browser embedded --cpm-skip-blank-frames build/embedded/release-cpm-skip-blank-frames/embedded-release-cpm-skip-blank-frames-<timestamp>.zip
  *
  * Firefox release builds are packaged by the release workflow itself, with
  * web-ext, so there is no non-beta firefox packaging here.
@@ -15,7 +16,7 @@ import { finished } from 'node:stream/promises';
 import { parseArgs } from 'node:util';
 import { ZipArchive } from 'archiver';
 import { usageError } from './lib/cli.mjs';
-import { BROWSERS_DIR, ROOT_DIR, resolveConfig } from './lib/config.mjs';
+import { BROWSERS_DIR, CPM_SKIP_BLANK_FRAMES, ROOT_DIR, resolveConfig } from './lib/config.mjs';
 import { copyEntries, listFiles, listVisible, remove, timestamp } from './lib/fs.mjs';
 import { runNpm } from './lib/run.mjs';
 
@@ -99,14 +100,32 @@ const PACKAGERS = {
         );
         runNpm(['exec', '--yes', '--', 'web-ext', 'build'], out.root);
     },
-    async embedded({ out }) {
-        await zipDirectory(out.root, 'embedded-release');
+    async embedded({ out, cpmSkipBlankFrames }) {
+        if (cpmSkipBlankFrames) {
+            await zipDirectory(out.root, 'embedded-release-cpm-skip-blank-frames');
+        } else {
+            await zipDirectory(out.root, 'embedded-release');
+        }
     },
 };
 
-const USAGE = `Usage: node scripts/build-tools/package.mjs --browser <${Object.keys(PACKAGERS).join('|')}> [--beta]`;
+const USAGE = `Usage: node scripts/build-tools/package.mjs --browser <${Object.keys(PACKAGERS).join('|')}> [--beta] [--${CPM_SKIP_BLANK_FRAMES}]`;
 
-const { values } = parseArgs({ options: { browser: { type: 'string' }, beta: { type: 'boolean' } } });
+const { values } = parseArgs({
+    options: {
+        browser: { type: 'string' },
+        beta: { type: 'boolean' },
+        [CPM_SKIP_BLANK_FRAMES]: { type: 'boolean', default: false },
+    },
+});
+
 const packager = PACKAGERS[values.browser ?? ''] ?? usageError(USAGE);
 process.chdir(ROOT_DIR);
-await packager(resolveConfig({ browser: values.browser, type: 'release' }), values.beta);
+
+const buildConfig = resolveConfig({
+    browser: values.browser,
+    type: 'release',
+    cpmSkipBlankFrames: values[CPM_SKIP_BLANK_FRAMES],
+});
+
+await packager(buildConfig, values.beta);

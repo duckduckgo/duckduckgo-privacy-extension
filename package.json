@@ -33,7 +33,8 @@
         "beta-firefox": "node scripts/build-tools/build.mjs --browser firefox --type release --clean && node scripts/build-tools/package.mjs --browser firefox --beta",
         "dev-embedded": "node scripts/build-tools/build.mjs --browser embedded --type dev --watch",
         "release-chrome": "node scripts/build-tools/build.mjs --browser chrome --type release --clean && node scripts/build-tools/package.mjs --browser chrome",
-        "release-embedded": "node scripts/build-tools/build.mjs --browser embedded --type release --clean && node scripts/build-tools/package.mjs --browser embedded",
+        "release-embedded": "node scripts/build-tools/build.mjs --browser embedded --type release --clean && node scripts/build-tools/package.mjs --browser embedded && npm run release-embedded-cpm-skip-blank-frames",
+        "release-embedded-cpm-skip-blank-frames": "node scripts/build-tools/build.mjs --browser embedded --type release --cpm-skip-blank-frames --clean && node scripts/build-tools/package.mjs --browser embedded --cpm-skip-blank-frames",
         "release-chromium-embedded": "node scripts/build-tools/build.mjs --browser chromium-embedded --type release --clean",
         "beta-chrome": "node scripts/build-tools/build.mjs --browser chrome --type release --clean && node scripts/build-tools/package.mjs --browser chrome --beta",
         "validate-pixel-defs": "validate-ddg-pixel-defs pixel-definitions"
