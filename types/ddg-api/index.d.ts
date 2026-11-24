@@ -68,32 +68,12 @@ declare namespace chrome {
               showContextMenu(tabId: number, items: { id: string; title: string; checked: boolean }[]): Promise<string | undefined>;
 
               /**
-               * extension -> browser; the New Tab Page's choices, for its page
-               * in tab `tabId`, which are the ones duck://settings makes. This
-               * and the New Tab Page calls below reject, changing nothing,
-               * unless the tab shows the New Tab Page, and throw for arguments
-               * the browser's schema does not accept.
-               */
-              getNewTabPageSettings(tabId: number): Promise<ddg.NewTabPageSettings>;
-
-              /**
-               * extension -> browser; whether the page in tab `tabId` should
-               * open its customize panel, as it should when duck://settings'
-               * link opened it. Answered the same while the tab shows it.
+               * extension -> browser; whether the New Tab Page in tab `tabId`
+               * should open its customize panel, as it should when
+               * duck://settings' link opened it. Answered the same while the
+               * tab shows it. Rejects unless the tab shows the New Tab Page.
                */
               isNewTabPageCustomizerRequested(tabId: number): Promise<boolean>;
-
-              /** extension -> browser; sets the browser color scheme. */
-              setNewTabPageTheme(tabId: number, theme: ddg.NewTabPageTheme): Promise<void>;
-
-              /**
-               * extension -> browser; shows or hides the Sections `sections`
-               * names, as one change.
-               */
-              setNewTabPageSections(tabId: number, sections: ddg.NewTabPageSectionsChange): Promise<void>;
-
-              /** extension -> browser; sets whether the search box offers Duck.ai. */
-              setNewTabPageDuckAiInSearch(tabId: number, enabled: boolean): Promise<void>;
 
               /**
                * browser -> extension; the favorites may have changed. Not
@@ -105,27 +85,37 @@ declare namespace chrome {
           }
         | undefined;
 
-    namespace ddg {
-        /** The New Tab Page's theme: the browser color scheme. */
-        type NewTabPageTheme = 'light' | 'dark' | 'system';
+    /**
+     * `chrome.settingsPrivate`: the browser's prefs, which DuckDuckGo-branded
+     * Chromium lets the bundled extension read and set for the few it shares
+     * with it, such as the New Tab Page's choices. Undefined everywhere else.
+     */
+    const settingsPrivate:
+        | {
+              /** The pref `name`. Rejects for a pref the browser does not share. */
+              getPref(name: string): Promise<settingsPrivate.PrefObject>;
 
-        /** Which of the New Tab Page's widgets are shown: its Sections. */
-        interface NewTabPageSections {
-            /** The search box. */
-            search: boolean;
-            favorites: boolean;
-            /** The protections report. */
-            protections: boolean;
-        }
+              /**
+               * Sets the pref `name`. Resolves with whether it was set: not for
+               * a pref the browser does not share, or a value of the wrong type.
+               */
+              setPref(name: string, value: unknown): Promise<boolean>;
 
-        /** A change to some of the Sections. Those left out stay as they are. */
-        type NewTabPageSectionsChange = Partial<NewTabPageSections>;
+              /**
+               * browser -> extension; prefs that changed, wherever the change
+               * was made, one event per pref. Wakes the worker.
+               */
+              onPrefsChanged: {
+                  addListener(callback: (prefs: settingsPrivate.PrefObject[]) => void): void;
+              };
+          }
+        | undefined;
 
-        interface NewTabPageSettings {
-            theme: NewTabPageTheme;
-            sections: NewTabPageSections;
-            /** Whether the search box offers Duck.ai. */
-            duckAiInSearch: boolean;
+    namespace settingsPrivate {
+        interface PrefObject {
+            key: string;
+            type: 'BOOLEAN' | 'NUMBER' | 'STRING' | 'URL' | 'LIST' | 'DICTIONARY';
+            value: unknown;
         }
     }
 }

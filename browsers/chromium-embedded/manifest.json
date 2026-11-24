@@ -59,7 +59,8 @@
         "cookies",
         "history",
         "browsingData",
-        "favicon"
+        "favicon",
+        "settingsPrivate"
     ],
     "host_permissions": [
         "*://*/*"

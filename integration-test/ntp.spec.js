@@ -43,12 +43,13 @@ test.describe('Embedded New Tab Page', () => {
         await backgroundPage.evaluate(() => {
             chrome.ddg = {
                 getFavorites: async () => [],
-                getNewTabPageSettings: async () => ({
-                    theme: 'system',
-                    sections: { search: true, favorites: true, protections: true },
-                    duckAiInSearch: false,
-                }),
                 isNewTabPageCustomizerRequested: async () => false,
+            };
+            // The theme pref is 0, the system color scheme; the rest are on.
+            chrome.settingsPrivate = {
+                getPref: async (name) => ({ key: name, type: 'BOOLEAN', value: name === 'browser.theme.color_scheme2' ? 0 : true }),
+                setPref: async () => true,
+                onPrefsChanged: { addListener() {} },
             };
         });
     });
