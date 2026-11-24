@@ -42,23 +42,51 @@ import {
  */
 
 /** Settings keys used to persist NTP UI configuration. */
-const WIDGET_CONFIGS_SETTING = 'ntpWidgetConfigs';
 const FAVORITES_CONFIG_SETTING = 'ntpFavoritesConfig';
 const PROTECTIONS_CONFIG_SETTING = 'ntpProtectionsConfig';
 
-const WIDGETS = [{ id: 'omnibar' }, { id: 'favorites' }, { id: 'protections' }];
-const DEFAULT_WIDGET_CONFIGS = [
-    { id: 'omnibar', visibility: 'visible' },
-    { id: 'favorites', visibility: 'visible' },
-    { id: 'protections', visibility: 'visible' },
-];
-// Search only: Duck.ai mode and its setting are hidden.
+/**
+ * Which of the page's widgets are shown: its Sections, as duck://settings shows them.
+ * @typedef {{ search: boolean, favorites: boolean, protections: boolean }} Sections
+ * @typedef {'light' | 'dark' | 'system'} Theme
+ * @typedef {{ theme: Theme, sections: Sections, duckAiInSearch: boolean }} NewTabPageSettings
+ */
+
+// The browser's prefs for the page's choices, which duck://settings shares, read and set
+// through chrome.settingsPrivate. The browser lets the bundled extension reach only these.
+/** @type {Record<keyof Sections, string>} */
+const SECTION_PREFS = {
+    search: 'ddg.new_tab_page.search.visible',
+    favorites: 'ddg.new_tab_page.favorites.visible',
+    protections: 'ddg.new_tab_page.protections_report.visible',
+};
+const DUCK_AI_IN_SEARCH_PREF = 'ddg.new_tab_page.search.duck_ai.visible';
+// The browser color scheme, which re-themes the browser when set.
+const THEME_PREF = 'browser.theme.color_scheme2';
+// The page's theme by the browser color scheme's value (ThemeService::BrowserColorScheme).
+/** @type {Theme[]} */
+const THEMES = ['system', 'light', 'dark'];
+
+// The page's widget for each of the browser's Sections, in the order the page shows them.
+/** @type {Record<keyof Sections, string>} */
+const SECTION_WIDGETS = {
+    search: 'omnibar',
+    favorites: 'favorites',
+    protections: 'protections',
+};
+const WIDGETS = Object.values(SECTION_WIDGETS).map((id) => ({ id }));
+const WIDGET_SECTIONS = /** @type {Record<string, keyof Sections>} */ (
+    Object.fromEntries(Object.entries(SECTION_WIDGETS).map(([section, id]) => [id, section]))
+);
+// The parts of the omnibar config the browser does not store. It opens in search
+// mode, and Duck.ai's setting is on duck://settings, not in the page.
 const OMNIBAR_CONFIG = {
     mode: 'search',
-    enableAi: false,
     showAiSetting: false,
     enableRecentAiChats: false,
 };
+// The parts of the customizer the browser does not store: the page's defaults.
+const DEFAULT_CUSTOMIZER = { userColor: null, background: { kind: 'default' }, userImages: [] };
 const DEFAULT_FAVORITES_CONFIG = { expansion: 'expanded' };
 const DEFAULT_PROTECTIONS_CONFIG = { expansion: 'expanded', feed: 'privacy-stats' };
 
@@ -82,6 +110,16 @@ function ddgApi() {
 }
 
 /**
+ * `chrome.settingsPrivate`; throws where the browser does not provide it.
+ */
+function settingsApi() {
+    if (!chrome.settingsPrivate) {
+        throw new Error('chrome.settingsPrivate is unavailable');
+    }
+    return chrome.settingsPrivate;
+}
+
+/**
  * Messaging endpoint for the New Tab Page, over the runtime port opened by
  * shared/js/ntp/interop-shim.js:
  *  - requests arrive as `{Feature, SubFeatureName, Name, Data, Id}` and are
@@ -91,7 +129,9 @@ function ddgApi() {
  *
  * Privacy stats come from NewTabTrackerStats, favorites from the browser's
  * bookmarks over chrome.ddg and the activity feed from NTPActivity; suggestions
- * are empty.
+ * are empty. The theme, which widgets show and whether Duck.ai shows in the
+ * omnibar are the browser's prefs, through chrome.settingsPrivate, the same
+ * choices duck://settings makes.
  */
 export default class NTPMessaging {
     /** @type {Set<Port>} */
@@ -191,7 +231,7 @@ export default class NTPMessaging {
         }
         if (id) {
             try {
-                const result = await this.handleRequest(method, params);
+                const result = await this.handleRequest(method, params, port);
                 port.postMessage({ context, featureName, id, result });
             } catch (e) {
                 const message = e instanceof Error ? e.message : String(e);
@@ -209,24 +249,28 @@ export default class NTPMessaging {
     /**
      * @param {string} method
      * @param {any} [params]
+     * @param {Port} [port]
      * @returns {Promise<any>}
      */
-    async handleRequest(method, params) {
+    async handleRequest(method, params, port) {
         switch (method) {
-            case 'initialSetup':
-                await this.settings.ready();
+            case 'initialSetup': {
+                const [settings, autoOpen] = await Promise.all([getSettings(), customizerRequested(port)]);
                 return {
                     widgets: WIDGETS,
-                    widgetConfigs: this.getWidgetConfigs(),
+                    widgetConfigs: toWidgetConfigs(settings.sections),
+                    customizer: { ...DEFAULT_CUSTOMIZER, theme: settings.theme },
+                    settings: { customizerDrawer: { state: 'enabled', autoOpen } },
                     platform: { name: 'windows' },
                     env: 'production',
                     locale: getUserLocale(),
                     updateNotification: null,
                 };
+            }
 
             // Omnibar
             case 'omnibar_getConfig':
-                return OMNIBAR_CONFIG;
+                return toOmnibarConfig(await getSettings());
             case 'omnibar_getSuggestions':
                 return { suggestions: { topHits: [], duckduckgoSuggestions: [], localSuggestions: [] } };
 
@@ -263,8 +307,13 @@ export default class NTPMessaging {
     async handleNotification(method, params, port) {
         switch (method) {
             case 'widgets_setConfig':
-                await this.settings.ready();
-                this.setWidgetConfigs(params);
+                await this.setWidgetConfigs(params);
+                break;
+            case 'customizer_setTheme':
+                // Theme variants are not supported, so the variant is ignored.
+                await setTheme(params?.theme);
+                // Every open page is sent the new theme, the sender included.
+                this.pushSubscriptionEvent('customizer_onThemeUpdate', params);
                 break;
             case 'contextMenu': {
                 const tabId = port?.sender?.tab?.id;
@@ -272,8 +321,7 @@ export default class NTPMessaging {
                 if (tabId === undefined || !Array.isArray(items)) {
                     throw new Error('the context menu has no tab to open over or no items');
                 }
-                await this.settings.ready();
-                const configs = this.getWidgetConfigs();
+                const configs = toWidgetConfigs((await getSettings()).sections);
                 const chosen = await ddgApi().showContextMenu(
                     tabId,
                     items.map(({ id, title }) => ({
@@ -284,8 +332,8 @@ export default class NTPMessaging {
                 );
                 if (chosen) {
                     // Toggles the widget in the config as it is once the menu closes.
-                    this.setWidgetConfigs(
-                        this.getWidgetConfigs().map((config) =>
+                    await this.setWidgetConfigs(
+                        toWidgetConfigs((await getSettings()).sections).map((config) =>
                             config.id === chosen
                                 ? { ...config, visibility: config.visibility === 'visible' ? 'hidden' : 'visible' }
                                 : config,
@@ -296,6 +344,17 @@ export default class NTPMessaging {
             }
 
             // Omnibar
+            case 'omnibar_setConfig':
+                // The browser stores only `enableAi`, so a config without it changes nothing
+                // there. Not sent to the other pages: the browser does not store `mode`, so
+                // its config would switch their omnibars back to search.
+                if (params?.enableAi !== undefined) {
+                    if (typeof params.enableAi !== 'boolean') {
+                        throw new Error('enableAi must be a boolean');
+                    }
+                    await setPref(DUCK_AI_IN_SEARCH_PREF, params.enableAi);
+                }
+                break;
             case 'omnibar_submitSearch':
                 if (typeof params?.term === 'string') {
                     this.openUrl(`${SEARCH_URL}?q=${encodeURIComponent(params.term)}`, params?.target, port);
@@ -411,18 +470,17 @@ export default class NTPMessaging {
     }
 
     /**
-     * @returns {WidgetConfig[]}
-     */
-    getWidgetConfigs() {
-        return this.settings.getSetting(WIDGET_CONFIGS_SETTING) || DEFAULT_WIDGET_CONFIGS;
-    }
-
-    /**
-     * As on Windows, every open page is sent the new config, the sender included.
+     * As on Windows, every open page is sent the new config, the sender included,
+     * once the browser has stored it. The browser stores each Section as its own
+     * pref, so the pages are sent one config once all of them are set, never one
+     * with only some of them changed.
      * @param {WidgetConfig[]} configs
      */
-    setWidgetConfigs(configs) {
-        this.settings.updateSetting(WIDGET_CONFIGS_SETTING, configs);
+    async setWidgetConfigs(configs) {
+        const change = toSectionsChange(configs);
+        await Promise.all(
+            Object.entries(change).map(([section, visible]) => setPref(SECTION_PREFS[/** @type {keyof Sections} */ (section)], visible)),
+        );
         this.pushSubscriptionEvent('widgets_onConfigUpdated', configs);
     }
 
@@ -554,6 +612,117 @@ export default class NTPMessaging {
             });
         }
     }
+}
+
+/**
+ * Whether the browser asked for the page to open with the customizer showing.
+ * Only decides that, so any failure (no tab, chrome.ddg missing, the browser
+ * refusing a tab not yet showing the New Tab Page) is false, not a page that
+ * fails to load.
+ * @param {Port | undefined} port - the page's connection
+ * @returns {Promise<boolean>}
+ */
+async function customizerRequested(port) {
+    try {
+        const tabId = port?.sender?.tab?.id;
+        if (tabId === undefined) {
+            throw new Error('the page has no tab');
+        }
+        return await ddgApi().isNewTabPageCustomizerRequested(tabId);
+    } catch (e) {
+        console.warn('NTP customizer auto-open unknown, leaving it closed:', e);
+        return false;
+    }
+}
+
+/**
+ * @param {string} name
+ * @returns {Promise<unknown>} the browser's value for pref `name`
+ */
+async function getPref(name) {
+    return (await settingsApi().getPref(name)).value;
+}
+
+/**
+ * Sets pref `name`; throws if the browser refuses it.
+ * @param {string} name
+ * @param {unknown} value
+ */
+async function setPref(name, value) {
+    if (!(await settingsApi().setPref(name, value))) {
+        throw new Error(`the browser refused ${name}`);
+    }
+}
+
+/**
+ * @returns {Promise<NewTabPageSettings>} the browser's New Tab Page choices
+ */
+async function getSettings() {
+    const [search, favorites, protections, duckAiInSearch, scheme] = await Promise.all(
+        [SECTION_PREFS.search, SECTION_PREFS.favorites, SECTION_PREFS.protections, DUCK_AI_IN_SEARCH_PREF, THEME_PREF].map(getPref),
+    );
+    return {
+        // Only a damaged pref holds anything else.
+        theme: THEMES[/** @type {number} */ (scheme)] ?? 'system',
+        sections: { search: search === true, favorites: favorites === true, protections: protections === true },
+        duckAiInSearch: duckAiInSearch === true,
+    };
+}
+
+/**
+ * Sets the browser color scheme; throws, changing nothing, for anything but
+ * light, dark and system.
+ * @param {unknown} theme
+ */
+async function setTheme(theme) {
+    const scheme = THEMES.indexOf(/** @type {Theme} */ (theme));
+    if (scheme < 0) {
+        throw new Error('theme must be light, dark or system');
+    }
+    await setPref(THEME_PREF, scheme);
+}
+
+/**
+ * @param {Sections} sections
+ * @returns {WidgetConfig[]} the page's widget configs for the browser's Sections
+ */
+function toWidgetConfigs(sections) {
+    return Object.entries(SECTION_WIDGETS).map(([section, id]) => ({
+        id,
+        visibility: sections[/** @type {keyof Sections} */ (section)] ? 'visible' : 'hidden',
+    }));
+}
+
+/**
+ * @param {unknown} configs - the page's widget configs
+ * @returns {Partial<Sections>} the Sections they change; throws, so nothing
+ *   changes, unless each names one of them, visible or hidden
+ */
+function toSectionsChange(configs) {
+    if (!Array.isArray(configs)) {
+        throw new Error('expected a list of widget configs');
+    }
+    /** @type {Partial<Sections>} */
+    const change = {};
+    for (const config of configs) {
+        const section = Object.prototype.hasOwnProperty.call(WIDGET_SECTIONS, config?.id) && WIDGET_SECTIONS[config.id];
+        if (!section) {
+            throw new Error(`unknown widget id "${config?.id}"`);
+        }
+        if (config.visibility !== 'visible' && config.visibility !== 'hidden') {
+            throw new Error('visibility must be visible or hidden');
+        }
+        change[section] = config.visibility === 'visible';
+    }
+    return change;
+}
+
+/**
+ * @param {NewTabPageSettings} settings
+ * @returns the page's omnibar config
+ */
+function toOmnibarConfig(settings) {
+    return { ...OMNIBAR_CONFIG, enableAi: settings.duckAiInSearch };
 }
 
 /**

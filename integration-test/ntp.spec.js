@@ -38,9 +38,19 @@ test.describe('Embedded New Tab Page', () => {
     test.beforeEach(async ({ backgroundPage }) => {
         test.skip(!isChromiumEmbedded(), 'The New Tab Page is only included in the chromium-embedded build');
         await backgroundWait.forAllConfiguration(backgroundPage);
-        // Stands in for the DuckDuckGo browser's favorites, which Chrome lacks.
+        // Stands in for the DuckDuckGo browser's favorites and New Tab Page
+        // settings, which Chrome lacks.
         await backgroundPage.evaluate(() => {
-            chrome.ddg = { getFavorites: async () => [] };
+            chrome.ddg = {
+                getFavorites: async () => [],
+                isNewTabPageCustomizerRequested: async () => false,
+            };
+            // The theme pref is 0, the system color scheme; the rest are on.
+            chrome.settingsPrivate = {
+                getPref: async (name) => ({ key: name, type: 'BOOLEAN', value: name === 'browser.theme.color_scheme2' ? 0 : true }),
+                setPref: async () => true,
+                onPrefsChanged: { addListener() {} },
+            };
         });
     });
 

@@ -68,6 +68,14 @@ declare namespace chrome {
               showContextMenu(tabId: number, items: { id: string; title: string; checked: boolean }[]): Promise<string | undefined>;
 
               /**
+               * extension -> browser; whether the New Tab Page in tab `tabId`
+               * should open its customize panel, as it should when
+               * duck://settings' link opened it. Answered the same while the
+               * tab shows it. Rejects unless the tab shows the New Tab Page.
+               */
+              isNewTabPageCustomizerRequested(tabId: number): Promise<boolean>;
+
+              /**
                * browser -> extension; the favorites may have changed. Not
                * held for a listener that registers late.
                */
@@ -76,4 +84,38 @@ declare namespace chrome {
               };
           }
         | undefined;
+
+    /**
+     * `chrome.settingsPrivate`: the browser's prefs, which DuckDuckGo-branded
+     * Chromium lets the bundled extension read and set for the few it shares
+     * with it, such as the New Tab Page's choices. Undefined everywhere else.
+     */
+    const settingsPrivate:
+        | {
+              /** The pref `name`. Rejects for a pref the browser does not share. */
+              getPref(name: string): Promise<settingsPrivate.PrefObject>;
+
+              /**
+               * Sets the pref `name`. Resolves with whether it was set: not for
+               * a pref the browser does not share, or a value of the wrong type.
+               */
+              setPref(name: string, value: unknown): Promise<boolean>;
+
+              /**
+               * browser -> extension; prefs that changed, wherever the change
+               * was made, one event per pref. Wakes the worker.
+               */
+              onPrefsChanged: {
+                  addListener(callback: (prefs: settingsPrivate.PrefObject[]) => void): void;
+              };
+          }
+        | undefined;
+
+    namespace settingsPrivate {
+        interface PrefObject {
+            key: string;
+            type: 'BOOLEAN' | 'NUMBER' | 'STRING' | 'URL' | 'LIST' | 'DICTIONARY';
+            value: unknown;
+        }
+    }
 }
