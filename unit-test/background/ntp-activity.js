@@ -84,6 +84,18 @@ describe('NTPActivity component', () => {
         expect(changes).toEqual([['example.com', 'allowed.example'], ['example.com']]);
     });
 
+    it('reports no change when there are no trackers to flush', async () => {
+        const changes = [];
+        activity.addEventListener('change', (event) => changes.push(/** @type {CustomEvent} */ (event).detail));
+
+        found('https://example.com/', 'Google');
+        await activity.flushTrackers();
+        // As the scheduled flush would, once the direct one has written the trackers.
+        await activity.flushTrackers();
+
+        expect(changes).toEqual([['example.com']]);
+    });
+
     it('counts the last 7 days of the domains in the history', async () => {
         history = [{ id: '1', url: 'https://example.com/', title: 'Example', lastVisitTime: 1 }];
         await activity.trackersPerSite.bulkPut([

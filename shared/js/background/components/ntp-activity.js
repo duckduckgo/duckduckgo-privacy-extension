@@ -142,7 +142,12 @@ export default class NTPActivity extends EventTarget {
     }
 
     async flushTrackers() {
+        // A direct call flushes now, so the scheduled flush is no longer needed.
+        clearTimeout(this.flushTimer ?? undefined);
         this.flushTimer = null;
+        if (this.pendingTrackers.size === 0) {
+            return;
+        }
         const day = daysSinceEpoch();
         const pending = [...this.pendingTrackers];
         this.pendingTrackers = new Map();
