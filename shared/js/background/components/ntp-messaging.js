@@ -85,6 +85,21 @@ const OMNIBAR_CONFIG = {
     showAiSetting: false,
     enableRecentAiChats: false,
 };
+// The settings the browser stores: each page message that changes one, and the
+// update message every page is sent with its new value.
+/** @type {Record<string, string>} */
+const BROWSER_SETTINGS = {
+    widgets_setConfig: 'widgets_onConfigUpdated',
+    customizer_setTheme: 'customizer_onThemeUpdate',
+    omnibar_setConfig: 'omnibar_onConfigUpdate',
+};
+// The update message each of the browser's prefs is sent to the pages as.
+/** @type {Record<string, string>} */
+const PREF_UPDATES = {
+    ...Object.fromEntries(Object.values(SECTION_PREFS).map((pref) => [pref, BROWSER_SETTINGS.widgets_setConfig])),
+    [THEME_PREF]: BROWSER_SETTINGS.customizer_setTheme,
+    [DUCK_AI_IN_SEARCH_PREF]: BROWSER_SETTINGS.omnibar_setConfig,
+};
 // The parts of the customizer the browser does not store: the page's defaults.
 const DEFAULT_CUSTOMIZER = { userColor: null, background: { kind: 'default' }, userImages: [] };
 const DEFAULT_FAVORITES_CONFIG = { expansion: 'expanded' };
@@ -150,6 +165,19 @@ export default class NTPMessaging {
     changedDomains = new Set();
 
     /**
+     * The updates for the browser's settings waiting to be sent to the pages.
+     * @type {Set<string>}
+     */
+    queuedSettingsUpdates = new Set();
+
+    /**
+     * Settles once the pages' setting changes so far are written, so a push reads
+     * the prefs after them, not before.
+     * @type {Promise<void>}
+     */
+    settingsWritten = Promise.resolve();
+
+    /**
      * @param {{
      *  settings: Settings,
      *  newTabTrackerStats: NewTabTrackerStats,
@@ -171,9 +199,25 @@ export default class NTPMessaging {
             port.onDisconnect.addListener(() => {
                 this.ports.delete(port);
             });
-            // Favorites may have changed while a reconnecting page had no port.
+            // Favorites and the browser's settings may have changed while a reconnecting
+            // page had no port, as the browser's changes reach only connected pages.
             this.pushFavoritesUpdate([port]);
+            // A page reconnects to send a message, often a setting change. Sent a tick later,
+            // so that change is written first and the page is not sent its old value back.
+            // ponytail: if the message arrives later than that, the page briefly shows its old
+            // value until the browser's change report arrives.
+            setTimeout(() => this.pushBrowserSettings([port], undefined, { keepOmnibarMode: true }));
         });
+
+        // The theme, Sections and Duck.ai prefs, wherever they were changed: any page's
+        // customize panel or duck://settings. Every page is sent each change, the page
+        // that made it included. Top level, so the browser can wake the worker to deliver
+        // it. It reports any shared pref, Chromium's own too, so the rest are ignored.
+        if (chrome.settingsPrivate?.onPrefsChanged) {
+            chrome.settingsPrivate.onPrefsChanged.addListener((prefs) => this.queueBrowserSettingsPush(prefs.map(({ key }) => key)));
+        } else {
+            console.error('chrome.settingsPrivate.onPrefsChanged is unavailable: open New Tab Pages will not see their settings change');
+        }
 
         // Top level, so the browser can wake the worker to deliver it.
         if (chrome.ddg?.onFavoritesChanged) {
@@ -270,7 +314,7 @@ export default class NTPMessaging {
 
             // Omnibar
             case 'omnibar_getConfig':
-                return toOmnibarConfig(await getSettings());
+                return toOmnibarConfig((await getSettings()).duckAiInSearch);
             case 'omnibar_getSuggestions':
                 return { suggestions: { topHits: [], duckduckgoSuggestions: [], localSuggestions: [] } };
 
@@ -306,15 +350,24 @@ export default class NTPMessaging {
      */
     async handleNotification(method, params, port) {
         switch (method) {
+            // The browser stores these, and tells the worker each change, which every open
+            // page is then sent.
             case 'widgets_setConfig':
-                await this.setWidgetConfigs(params);
-                break;
             case 'customizer_setTheme':
-                // Theme variants are not supported, so the variant is ignored.
-                await setTheme(params?.theme);
-                // Every open page is sent the new theme, the sender included.
-                this.pushSubscriptionEvent('customizer_onThemeUpdate', params);
+            case 'omnibar_setConfig': {
+                const write = setBrowserSetting(method, params);
+                this.settingsWritten = Promise.allSettled([this.settingsWritten, write]).then(() => {});
+                try {
+                    await write;
+                } catch (e) {
+                    // No change is reported for one that was refused, so undo the page's.
+                    if (port) {
+                        await this.pushBrowserSettings([port], [BROWSER_SETTINGS[method]]);
+                    }
+                    throw e;
+                }
                 break;
+            }
             case 'contextMenu': {
                 const tabId = port?.sender?.tab?.id;
                 const items = params?.visibilityMenuItems;
@@ -330,31 +383,17 @@ export default class NTPMessaging {
                         checked: configs.some((config) => config.id === id && config.visibility === 'visible'),
                     })),
                 );
-                if (chosen) {
-                    // Toggles the widget in the config as it is once the menu closes.
-                    await this.setWidgetConfigs(
-                        toWidgetConfigs((await getSettings()).sections).map((config) =>
-                            config.id === chosen
-                                ? { ...config, visibility: config.visibility === 'visible' ? 'hidden' : 'visible' }
-                                : config,
-                        ),
-                    );
+                const section = chosen && WIDGET_SECTIONS[chosen];
+                if (section) {
+                    // Toggles the widget as it is once the menu closes. The browser's change
+                    // tells the pages.
+                    const { sections } = await getSettings();
+                    await setPref(SECTION_PREFS[section], !sections[section]);
                 }
                 break;
             }
 
             // Omnibar
-            case 'omnibar_setConfig':
-                // The browser stores only `enableAi`, so a config without it changes nothing
-                // there. Not sent to the other pages: the browser does not store `mode`, so
-                // its config would switch their omnibars back to search.
-                if (params?.enableAi !== undefined) {
-                    if (typeof params.enableAi !== 'boolean') {
-                        throw new Error('enableAi must be a boolean');
-                    }
-                    await setPref(DUCK_AI_IN_SEARCH_PREF, params.enableAi);
-                }
-                break;
             case 'omnibar_submitSearch':
                 if (typeof params?.term === 'string') {
                     this.openUrl(`${SEARCH_URL}?q=${encodeURIComponent(params.term)}`, params?.target, port);
@@ -470,18 +509,55 @@ export default class NTPMessaging {
     }
 
     /**
-     * As on Windows, every open page is sent the new config, the sender included,
-     * once the browser has stored it. The browser stores each Section as its own
-     * pref, so the pages are sent one config once all of them are set, never one
-     * with only some of them changed.
-     * @param {WidgetConfig[]} configs
+     * Sends the pages the browser's settings, as the browser's changes to them would be.
+     * @param {Iterable<Port>} ports - the pages' connections
+     * @param {string[]} [subscriptionNames] - the updates to send, by default all of them
+     * @param {{ keepOmnibarMode?: boolean }} [options] - keepOmnibarMode: send the omnibar
+     *     config only with Duck.ai off. The page replaces its whole config, mode included,
+     *     so with Duck.ai on it would send a page in Duck.ai mode back to search.
      */
-    async setWidgetConfigs(configs) {
-        const change = toSectionsChange(configs);
-        await Promise.all(
-            Object.entries(change).map(([section, visible]) => setPref(SECTION_PREFS[/** @type {keyof Sections} */ (section)], visible)),
-        );
-        this.pushSubscriptionEvent('widgets_onConfigUpdated', configs);
+    async pushBrowserSettings(ports, subscriptionNames = Object.values(BROWSER_SETTINGS), { keepOmnibarMode = false } = {}) {
+        try {
+            await this.settingsWritten;
+            const settings = await getSettings();
+            /** @type {Record<string, any>} */
+            const updates = {
+                widgets_onConfigUpdated: toWidgetConfigs(settings.sections),
+                customizer_onThemeUpdate: { theme: settings.theme },
+                omnibar_onConfigUpdate: toOmnibarConfig(settings.duckAiInSearch),
+            };
+            for (const name of subscriptionNames) {
+                // With Duck.ai off the page must be in search mode anyway, so nothing is reset.
+                // ponytail: Duck.ai turned on while the page had no port shows after a reload.
+                if (keepOmnibarMode && name === BROWSER_SETTINGS.omnibar_setConfig && settings.duckAiInSearch) continue;
+                this.pushSubscriptionEvent(name, updates[name], ports);
+            }
+        } catch (e) {
+            console.error("NTP: the browser's settings were not sent to the pages:", e);
+        }
+    }
+
+    /**
+     * Sends every open page the updates for the prefs `keys`, which the browser reports
+     * changed. The browser reports each pref on its own, so a change to several Sections
+     * arrives as several reports, but the pages are sent the prefs as they are now, read
+     * once the reports that arrive together are in, never a change half made: the
+     * worker sets the Sections of one change all at once, so by the time the first
+     * report arrives, the browser has the rest of the change to apply ahead of the read.
+     * @param {string[]} keys
+     */
+    queueBrowserSettingsPush(keys) {
+        const names = keys.map((key) => PREF_UPDATES[key]).filter(Boolean);
+        if (!names.length) return;
+        const queued = this.queuedSettingsUpdates.size > 0;
+        names.forEach((name) => this.queuedSettingsUpdates.add(name));
+        if (queued) return;
+        setTimeout(() => {
+            const updates = [...this.queuedSettingsUpdates];
+            // Cleared before the read, so a report during it is read again rather than lost.
+            this.queuedSettingsUpdates.clear();
+            this.pushBrowserSettings(this.ports, updates);
+        });
     }
 
     /**
@@ -604,12 +680,17 @@ export default class NTPMessaging {
      */
     pushSubscriptionEvent(subscriptionName, params, ports = this.ports) {
         for (const port of ports) {
-            port.postMessage({
-                context: NTP_MESSAGING_CONTEXT,
-                featureName: NTP_FEATURE_NAME,
-                subscriptionName,
-                params,
-            });
+            // A page that has just closed throws, and must not stop the rest getting it.
+            try {
+                port.postMessage({
+                    context: NTP_MESSAGING_CONTEXT,
+                    featureName: NTP_FEATURE_NAME,
+                    subscriptionName,
+                    params,
+                });
+            } catch (e) {
+                console.error(`NTP ${subscriptionName} not sent to a page:`, e);
+            }
         }
     }
 }
@@ -718,11 +799,45 @@ function toSectionsChange(configs) {
 }
 
 /**
- * @param {NewTabPageSettings} settings
+ * Makes the change a page's message asks the browser for.
+ * @param {string} method - widgets_setConfig, customizer_setTheme or omnibar_setConfig
+ * @param {any} params
+ */
+async function setBrowserSetting(method, params) {
+    switch (method) {
+        case 'widgets_setConfig': {
+            // Every Section is set at once, which keeps the pages from being sent a
+            // change half made (see queueBrowserSettingsPush).
+            const change = toSectionsChange(params);
+            await Promise.all(
+                Object.entries(change).map(([section, visible]) =>
+                    setPref(SECTION_PREFS[/** @type {keyof Sections} */ (section)], visible),
+                ),
+            );
+            return;
+        }
+        case 'customizer_setTheme':
+            // Theme variants are not supported, so the variant is ignored.
+            return setTheme(params?.theme);
+        case 'omnibar_setConfig':
+            // The browser stores only `enableAi`; a config without it changes nothing there.
+            if (params?.enableAi !== undefined) {
+                if (typeof params.enableAi !== 'boolean') {
+                    throw new Error('enableAi must be a boolean');
+                }
+                return setPref(DUCK_AI_IN_SEARCH_PREF, params.enableAi);
+            }
+    }
+}
+
+/**
+ * The omnibar config always says search mode, so a page in Duck.ai mode returns
+ * to search when the Duck.ai setting changes, as on Windows.
+ * @param {boolean} duckAiInSearch - the browser's Duck.ai choice
  * @returns the page's omnibar config
  */
-function toOmnibarConfig(settings) {
-    return { ...OMNIBAR_CONFIG, enableAi: settings.duckAiInSearch };
+function toOmnibarConfig(duckAiInSearch) {
+    return { ...OMNIBAR_CONFIG, enableAi: duckAiInSearch };
 }
 
 /**
