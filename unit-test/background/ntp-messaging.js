@@ -534,6 +534,31 @@ describe('NTPMessaging component', () => {
             ]);
         });
 
+        it('shows the browser menu for a favorite over the NTP tab, and logs when it cannot', async () => {
+            chrome.ddg.showFavoriteContextMenu = jasmine.createSpy('showFavoriteContextMenu').and.resolveTo();
+            const consoleError = spyOn(console, 'error');
+            const tabPort = { ...createFakePort(), sender: { tab: { id: 7 } } };
+            const open = (data, port) =>
+                // @ts-ignore - fake port
+                ntpMessaging.onMessage({ ...requestMessage('favorites_openContextMenu', data), Id: undefined }, port);
+
+            await open({ id: '3' }, tabPort);
+            expect(chrome.ddg.showFavoriteContextMenu).toHaveBeenCalledOnceWith(7, '3');
+            expect(consoleError).not.toHaveBeenCalled();
+
+            // no tab to show it over, no id, or an id the browser does not know as a favorite
+            await open({ id: '3' }, createFakePort());
+            await open({}, tabPort);
+            chrome.ddg.showFavoriteContextMenu.and.rejectWith(new Error('The id is not a favorite.'));
+            await open({ id: '4' }, tabPort);
+            expect(chrome.ddg.showFavoriteContextMenu).toHaveBeenCalledTimes(2);
+            expect(consoleError.calls.allArgs().map(([message]) => message)).toEqual([
+                'NTP favorites_openContextMenu failed:',
+                'NTP favorites_openContextMenu failed:',
+                'NTP favorites_openContextMenu failed:',
+            ]);
+        });
+
         describe('in the activity feed', () => {
             const other = { id: '8', title: 'Other', url: 'https://other.example/' };
 
@@ -713,12 +738,14 @@ describe('NTPMessaging component', () => {
             await notify('activity_addFavorite', { url: 'https://example.com/' });
             await notify('activity_removeFavorite', { url: 'https://example.com/' });
             await notify('contextMenu', { visibilityMenuItems: [{ id: 'omnibar', title: 'Search' }] });
+            await notify('favorites_openContextMenu', { id: '7' });
 
             expect(consoleError).toHaveBeenCalledWith('NTP favorites_move failed:', failure('moveFavorite'));
             expect(consoleError).toHaveBeenCalledWith('NTP favorites_add failed:', failure('showAddFavoriteBubble'));
             expect(consoleError).toHaveBeenCalledWith('NTP activity_addFavorite failed:', failure('addFavorite'));
             expect(consoleError).toHaveBeenCalledWith('NTP activity_removeFavorite failed:', failure('removeFavorite'));
             expect(consoleError).toHaveBeenCalledWith('NTP contextMenu failed:', failure('showContextMenu'));
+            expect(consoleError).toHaveBeenCalledWith('NTP favorites_openContextMenu failed:', failure('showFavoriteContextMenu'));
         });
 
         it('logs the favorites changes it cannot push', async () => {

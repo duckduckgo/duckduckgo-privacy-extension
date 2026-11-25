@@ -68,6 +68,15 @@ declare namespace chrome {
               showContextMenu(tabId: number, items: { id: string; title: string; checked: boolean }[]): Promise<string | undefined>;
 
               /**
+               * extension -> browser; shows the browser's menu for favorite
+               * `id` at the mouse pointer over tab `tabId`, and runs the item
+               * chosen. Resolves at once, whether or not it opened, which it
+               * does only over its window's active tab. Rejects if `id` is not
+               * a favorite.
+               */
+              showFavoriteContextMenu(tabId: number, id: string): Promise<void>;
+
+              /**
                * browser -> extension; the favorites may have changed. Not
                * held for a listener that registers late.
                */
