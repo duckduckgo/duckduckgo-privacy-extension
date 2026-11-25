@@ -24,6 +24,11 @@
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
     },
+    "commands": {
+        "ddg-native-event": {
+            "description": "Performed by the native app when it has subscription events for the extension"
+        }
+    },
     "permissions": [
         "alarms",
         "scripting",
