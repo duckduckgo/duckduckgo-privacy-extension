@@ -80,9 +80,7 @@ export class UserAllowlistSync {
      */
     _onChanged(params) {
         this._eventCount++;
-        this._settingsReady
-            .then(() => this._update({ ...params, updated: true }))
-            .catch((e) => console.error('UserAllowlistSync: failed to store allowlist', e));
+        this._settingsReady.then(() => this._update({ ...params, updated: true }));
     }
 
     /**
