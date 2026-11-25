@@ -162,6 +162,19 @@ describe('UserAllowlistSync', () => {
         expect(sync.domains).toEqual(['example.com']);
     });
 
+    it('logs, rather than rejecting, when storing a change event fails', async () => {
+        const sync = createSync();
+        settingsApi.load();
+        await sync.ready;
+        const errorLogged = new Promise((resolve) => spyOn(console, 'error').and.callFake(resolve));
+        settingsApi.updateSetting.and.throwError(new Error('storage failed'));
+
+        nativeMessaging.emit(ALLOWLIST_CHANGED_SUBSCRIPTION, { version: 'v1', domains: ['example.com'] });
+
+        await errorLogged;
+        expect(console.error).toHaveBeenCalledWith('UserAllowlistSync: failed to store allowlist', jasmine.any(Error));
+    });
+
     describe('with the extension settings', () => {
         afterEach(() => {
             settings.removeSetting(ALLOWLIST_SETTING);

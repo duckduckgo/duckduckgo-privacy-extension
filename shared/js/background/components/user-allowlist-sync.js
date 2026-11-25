@@ -15,6 +15,19 @@ export const ALLOWLIST_VERSION_SETTING = 'userAllowlistVersion';
  */
 
 /**
+ * Params of an `ALLOWLIST_CHANGED_SUBSCRIPTION` event.
+ * @typedef {object} AllowlistChangedParams
+ * @property {string} version - native's version of the list
+ * @property {string[]} domains - every domain on the user's allowlist
+ */
+
+/**
+ * Response to `getAllowlistIfNew`: the list when native's version differs from the one sent, otherwise only
+ * `updated: false`.
+ * @typedef {({ updated: true } & AllowlistChangedParams) | { updated: false }} GetAllowlistIfNewResult
+ */
+
+/**
  * Keeps the extension's `allowlisted` setting in step with the native app's user allowlist (sites where the user
  * disabled protections), so `utils.isSafeListed` and anything else reading that setting follow native.
  *
@@ -48,6 +61,7 @@ export class UserAllowlistSync {
      */
     async _pull() {
         const eventCount = this._eventCount;
+        /** @type {GetAllowlistIfNewResult} */
         let result;
         try {
             result = await this.nativeMessaging.request('getAllowlistIfNew', { version: this.version });
@@ -62,16 +76,19 @@ export class UserAllowlistSync {
     }
 
     /**
-     * @param {Record<string, any>} params
+     * @param {AllowlistChangedParams} params
      */
     _onChanged(params) {
         this._eventCount++;
-        this._settingsReady.then(() => this._update({ ...params, updated: true }));
+        this._settingsReady
+            .then(() => this._update({ ...params, updated: true }))
+            .catch((e) => console.error('UserAllowlistSync: failed to store allowlist', e));
     }
 
     /**
-     * Stores a list from native in settings if it is well formed and new.
-     * @param {any} result
+     * Stores a list from native in settings if it is well formed and new. Native's data is checked, not trusted to
+     * match the types.
+     * @param {GetAllowlistIfNewResult} result
      */
     _update(result) {
         if (!result?.updated || !Array.isArray(result.domains) || typeof result.version !== 'string') {
