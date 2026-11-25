@@ -35,7 +35,7 @@ function validRule(rule) {
 /**
  * Generator to produce the declarativeNetRequest rules and corresponding match
  * details for the given requestBlocklist configuration.
- * @param {object} extensionConfiguration
+ * @param {import('./utils').PrivacyConfiguration} extensionConfiguration
  *   The extension configuration.
  * @returns {Generator<generateRequestBlocklistRulesResult>}
  */
@@ -64,7 +64,9 @@ function* generateRequestBlocklistRules({ features: { requestBlocklist } }) {
                 continue;
             }
 
-            let { rule: trackerRule, domains: initiatorDomains, reason } = rule;
+            const { rule: trackerRule, reason } = rule;
+            /** @type {string[] | null} */
+            let initiatorDomains = rule.domains;
             const { urlFilter } = processPlaintextTrackerRule(trackerDomain, trackerRule);
 
             if (!initiatorDomains?.length || initiatorDomains.includes('<all>')) {

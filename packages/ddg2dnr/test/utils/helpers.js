@@ -35,6 +35,7 @@ async function actualMatchOutcome(browser, { requestUrl, websiteUrl, requestType
     // Find any allowlisting rules that apply to the whole website, and see if
     // any of those negate the above request rule matches.
     let actualAllowAllRequestRules = [];
+    /** @type {number | null} */
     let lowestAllowAllPriority = null;
     if (requestType !== 'main_frame') {
         const actualMatchedWebsiteRules = await browser.testMatchOutcome({
@@ -51,9 +52,10 @@ async function actualMatchOutcome(browser, { requestUrl, websiteUrl, requestType
         }
     }
     if (actualAllowAllRequestRules.length > 0) {
+        const minPriority = /** @type {number} */ (lowestAllowAllPriority);
         actualMatchedRules = [
             ...actualAllowAllRequestRules,
-            ...actualMatchedRules.filter((rule) => rule.priority > lowestAllowAllPriority),
+            ...actualMatchedRules.filter((rule) => rule.priority !== undefined && rule.priority > minPriority),
         ];
     }
 
@@ -71,7 +73,7 @@ async function actualMatchOutcome(browser, { requestUrl, websiteUrl, requestType
         }
 
         if (rule.action.type === 'redirect') {
-            actualRedirects.push(rule.action.redirect.extensionPath);
+            actualRedirects.push(rule.action.redirect?.extensionPath);
         }
     }
 

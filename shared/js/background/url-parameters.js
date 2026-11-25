@@ -6,6 +6,7 @@ const tdsStorage = require('./storage/tds').default;
 // Note: These lists of parameters would need to be stored in session storage if
 //       this code was used by MV3 builds of the extension.
 //       See https://developer.chrome.com/docs/extensions/mv3/migrating_to_service_workers/#state
+/** @type {Set<string> | null} */
 let trackingParameters = null;
 
 function ensureTrackingParametersConfig() {
@@ -54,7 +55,7 @@ function stripTrackingParameters(url) {
     const params = url.search.slice(1).split('&');
     const paramsToKeep = [];
     for (const param of params) {
-        if (trackingParameters.has(param.split('=')[0])) {
+        if (/** @type {Set<string>} */ (trackingParameters).has(param.split('=')[0])) {
             parametersRemoved = true;
             continue;
         }
@@ -69,7 +70,7 @@ function stripTrackingParameters(url) {
 /**
  * Returns true if the 'trackingParameters' feature is active for the given site
  * and initiator URL.
- * @param {Site} site
+ * @param {import('./classes/site').default} site
  *   The Site Object for the request URL in question.
  * @param {string} [initiatorUrl]
  *   The initiator URL of the request (if any).

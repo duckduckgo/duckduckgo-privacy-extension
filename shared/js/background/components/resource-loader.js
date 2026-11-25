@@ -13,7 +13,7 @@ import { createAlarm } from '../wrapper';
  * @property {'json'|'text'} [format]
  *
  * @typedef {(resourceName: ResourceName, etag: string, value: any) => Promise<any> | void} OnUpdatedCallback
- * @typedef {import('../settings.js')} Settings
+ * @typedef {typeof import('../settings.js')} Settings
  */
 
 const AFTER_UPDATE_EVENT_NAME = 'afterUpdate';

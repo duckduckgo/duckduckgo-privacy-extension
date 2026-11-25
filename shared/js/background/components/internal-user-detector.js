@@ -7,7 +7,7 @@ const SETTINGS_KEY = 'isInternalUser';
 
 /**
  * Is the user a DDG employee
- * @param {import('../settings.js')} settings
+ * @param {typeof import('../settings.js')} settings
  */
 export function isInternalUser(settings) {
     return settings.getSetting(SETTINGS_KEY) || DEBUG;
@@ -16,7 +16,7 @@ export function isInternalUser(settings) {
 export default class InternalUserDetector {
     /**
      * @param {{
-     *  settings: import('../settings.js');
+     *  settings: typeof import('../settings.js');
      * }} options
      */
     constructor({ settings }) {

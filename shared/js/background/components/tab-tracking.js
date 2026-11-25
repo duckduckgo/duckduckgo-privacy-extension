@@ -4,7 +4,7 @@ import { isRedirect } from '../utils';
 
 /**
  * @typedef {import('./devtools').default} Devtools
- * @typedef {import('../tab-manager.js')} TabManager
+ * @typedef {typeof import('../tab-manager.js')} TabManager
  * @typedef {import('./abn-experiments').default} AbnExperimentMetrics
  */
 
@@ -37,6 +37,7 @@ export default class TabTracker extends EventTarget {
                     // At the end of the redirect chain, ensure the final URL's base
                     // domain (aka the "heuristic" base domain) is noted for the
                     // 'm_ad_click_detected' pixel.
+                    /** @type {string | null} */
                     let heuristicAdBaseDomain = null;
                     if (tab.adClick.heuristicDetectionEnabled) {
                         heuristicAdBaseDomain = tab.site.baseDomain || '';

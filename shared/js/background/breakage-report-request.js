@@ -10,7 +10,7 @@ const REQUEST_TIMEOUT_MS = 500;
  * Returns a promise that resolves when breakageReportResult is received or times out.
  *
  * @param {number} tabId
- * @returns {Promise<object|null>}
+ * @returns {Promise<Record<string, any> | null>}
  */
 export function requestBreakageReportData(tabId) {
     // Cancel any existing pending request for this tab

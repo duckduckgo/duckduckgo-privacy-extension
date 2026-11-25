@@ -19,7 +19,7 @@ const REFETCH_ALIAS_ATTEMPT = 'refetchAliasAttempt';
 export default class EmailAutofill {
     /**
      * @param {{
-     *  settings: import('../settings.js');
+     *  settings: typeof import('../settings.js');
      * }} options
      */
     constructor({ settings }) {

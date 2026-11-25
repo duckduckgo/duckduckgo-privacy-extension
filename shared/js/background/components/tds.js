@@ -4,7 +4,7 @@ import { generateRetentionMetrics } from './abn-experiments.js';
 import { generateBreakageMetrics } from '../metrics.js';
 
 /**
- * @typedef {import('../settings.js')} Settings
+ * @typedef {typeof import('../settings.js')} Settings
  * @typedef {import('./remote-config.js').default} RemoteConfig
  * @typedef {import('./abn-experiments.js').default} AbnExperimentMetrics
  */

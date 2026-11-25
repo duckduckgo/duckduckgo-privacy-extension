@@ -4,11 +4,14 @@ const { generateExtensionConfigurationRuleset } = require('../lib/extensionConfi
 
 describe('generateExtensionConfigurationRuleset', () => {
     it('should reject invalid extension configuration', async () => {
+        // @ts-expect-error - Invalid configuration on purpose.
         await assert.rejects(() => generateExtensionConfigurationRuleset(null, [], () => {}));
+        // @ts-expect-error - Invalid configuration on purpose.
         await assert.rejects(() => generateExtensionConfigurationRuleset({}, [], () => {}));
         await assert.rejects(() =>
             generateExtensionConfigurationRuleset(
                 {
+                    // @ts-expect-error - Invalid configuration on purpose.
                     features: null,
                 },
                 [],
@@ -17,6 +20,7 @@ describe('generateExtensionConfigurationRuleset', () => {
         );
         await assert.doesNotReject(() =>
             generateExtensionConfigurationRuleset(
+                // @ts-expect-error - Incomplete configuration on purpose.
                 {
                     features: {},
                 },
@@ -38,7 +42,7 @@ describe('generateExtensionConfigurationRuleset', () => {
         );
         await assert.rejects(() =>
             generateExtensionConfigurationRuleset(
-                { features: {} },
+                /** @type {any} */ ({ features: {} }),
                 [],
                 // @ts-expect-error - Invalid isRegexSupported argument.
                 3,
@@ -46,6 +50,7 @@ describe('generateExtensionConfigurationRuleset', () => {
         );
         await assert.doesNotReject(() =>
             generateExtensionConfigurationRuleset(
+                // @ts-expect-error - Incomplete configuration on purpose.
                 {
                     features: {},
                 },

@@ -39,9 +39,9 @@ import { requestBreakageReportData } from '../breakage-report-request';
 export default class DashboardMessaging {
     /**
      * @param {{
-     *  settings: import('../settings.js');
+     *  settings: typeof import('../settings.js');
      *  tds: import('./tds').default;
-     *  tabManager: import('../tab-manager.js');
+     *  tabManager: typeof import('../tab-manager.js');
      * }} args
      */
     constructor({ settings, tds, tabManager }) {

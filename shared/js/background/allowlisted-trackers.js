@@ -56,6 +56,7 @@ function isTrackerAllowlisted(site, request) {
  * @returns {TrackerAllowlistRule | false}
  */
 function _matchesRule(site, request, allowListEntry) {
+    /** @type {TrackerAllowlistRule | null} */
     let matchedRule = null;
     request = getURLWithoutQueryString(request).split(';')[0];
 

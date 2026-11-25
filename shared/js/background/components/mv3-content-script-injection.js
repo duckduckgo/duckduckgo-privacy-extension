@@ -7,6 +7,10 @@
 //       but note that's an implementation detail (from use of std::set for new
 //       script IDs[1]) and could change in the future.
 // 1 - https://source.chromium.org/chromium/chromium/src/+/main:chrome/browser/extensions/api/scripting/scripting_api.cc;l=929
+//
+// Frames with no URL of their own to match against (about:blank, about:srcdoc,
+// blob: and data:) are only injected into when matchOriginAsFallback is set.
+// Without it, a page can read the unprotected APIs from a frame it creates.
 
 import browser from 'webextension-polyfill';
 
@@ -38,6 +42,7 @@ export default class MV3ContentScriptInjection {
                 runAt: 'document_start',
                 world: 'ISOLATED',
                 matches: ['<all_urls>'],
+                matchOriginAsFallback: true,
                 excludeMatches: ['*://localhost/*', '*://*.localhost/'],
             },
             {
@@ -47,6 +52,7 @@ export default class MV3ContentScriptInjection {
                 runAt: 'document_start',
                 world: 'MAIN',
                 matches: ['<all_urls>'],
+                matchOriginAsFallback: true,
                 excludeMatches: ['*://localhost/*', '*://*.localhost/'],
             },
         ]);

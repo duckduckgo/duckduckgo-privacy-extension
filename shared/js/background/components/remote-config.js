@@ -1,5 +1,5 @@
 /**
- * @typedef {import('../settings.js')} Settings
+ * @typedef {typeof import('../settings.js')} Settings
  * @typedef {import('./tds').default} TDSStorage
  * @typedef {import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig} Config
  * @typedef {{
