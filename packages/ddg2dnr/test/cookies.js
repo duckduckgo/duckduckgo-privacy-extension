@@ -129,15 +129,18 @@ describe('cookie rules', () => {
             assert.ok(ruleset.every((r) => r.condition.excludedInitiatorDomains?.includes('safe.site')));
         });
 
-        it('bare IPv6 site allowlist domains are bracketed and the ruleset loads', /** @this {{ browser: import('../browserInterface').BrowserInterface }} */ async function () {
-            const { ruleset } = generateCookieBlockingRuleset(mockTds, [], ['::1', 'localhost', '127.0.0.1']);
-            assert.ok(ruleset.every((r) => r.condition.excludedInitiatorDomains?.includes('[::1]')));
-            assert.ok(ruleset.every((r) => !r.condition.excludedInitiatorDomains?.includes('::1')));
+        it(
+            'bare IPv6 site allowlist domains are bracketed and the ruleset loads',
+            /** @this {{ browser: import('../browserInterface').BrowserInterface }} */ async function () {
+                const { ruleset } = generateCookieBlockingRuleset(mockTds, [], ['::1', 'localhost', '127.0.0.1']);
+                assert.ok(ruleset.every((r) => r.condition.excludedInitiatorDomains?.includes('[::1]')));
+                assert.ok(ruleset.every((r) => !r.condition.excludedInitiatorDomains?.includes('::1')));
 
-            // Firefox rejects rules containing the bare '::1' form, so
-            // check the generated rules actually load.
-            await this.browser.addRules(ruleset);
-        });
+                // Firefox rejects rules containing the bare '::1' form, so
+                // check the generated rules actually load.
+                await this.browser.addRules(ruleset);
+            },
+        );
 
         it('groups single domain entities', () => {
             const { ruleset } = generateCookieBlockingRuleset(mockTds, [], []);
@@ -156,17 +159,20 @@ describe('cookie rules', () => {
     });
 
     describe('matchDetailsByRuleId', function () {
-        it('returns a list of possible domains for a matched rule', /** @this {{ browser: import('../browserInterface').BrowserInterface }} */ async function () {
-            const { ruleset, matchDetailsByRuleId } = generateCookieBlockingRuleset(mockTds, [], []);
-            await this.browser.addRules(ruleset);
-            const matchedRules = await this.browser.testMatchOutcome({
-                url: 'https://tracker.com/pixel',
-                initiator: 'https://www.example.com/',
-                type: 'xmlhttprequest',
-                tabId: 1,
-            });
-            assert.equal(matchedRules.length, 1);
-            assert.ok(matchDetailsByRuleId[matchedRules[0].id].possibleTrackerDomains?.includes('tracker.com'));
-        });
+        it(
+            'returns a list of possible domains for a matched rule',
+            /** @this {{ browser: import('../browserInterface').BrowserInterface }} */ async function () {
+                const { ruleset, matchDetailsByRuleId } = generateCookieBlockingRuleset(mockTds, [], []);
+                await this.browser.addRules(ruleset);
+                const matchedRules = await this.browser.testMatchOutcome({
+                    url: 'https://tracker.com/pixel',
+                    initiator: 'https://www.example.com/',
+                    type: 'xmlhttprequest',
+                    tabId: 1,
+                });
+                assert.equal(matchedRules.length, 1);
+                assert.ok(matchDetailsByRuleId[matchedRules[0].id].possibleTrackerDomains?.includes('tracker.com'));
+            },
+        );
     });
 });
