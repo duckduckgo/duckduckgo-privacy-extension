@@ -10,8 +10,19 @@ import { copyNtp } from './ntp.mjs';
 const isJs = (name) => name.endsWith('.js');
 
 /** @param {import('./config.mjs').BuildConfig} config */
-export function copyStaticFiles({ browser, platform, ui, autofill, ntp, htmlExcludes = [], dashboardCss, out }) {
+export function copyStaticFiles({ browser, platform, ui, autofill, ntp, htmlExcludes = [], dashboardCss, cpmSkipBlankFrames, out }) {
     copyEntries(`${BROWSERS_DIR}/${browser}`, out.root);
+
+    // TEMPORARY: CPM experiment, don't inject content scripts into about:blank/srcdoc/data:/blob: frames at all
+    if (cpmSkipBlankFrames) {
+        const manifestPath = `${out.root}/manifest.json`;
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        for (const script of manifest.content_scripts) {
+            delete script.match_origin_as_fallback;
+            delete script.match_about_blank;
+        }
+        fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 4));
+    }
 
     if (!ui) {
         return;

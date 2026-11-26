@@ -18,6 +18,8 @@ on:
 
 env:
     APPLE_EMBEDDED_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension.zip
+    # TEMPORARY: CPM experiment variant (no content scripts in about:/data:/blob: frames), consumed by iOS only
+    APPLE_EMBEDDED_CPM_SKIP_BLANK_FRAMES_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/BundledWebExtensions/duckduckgo-embedded-web-extension-cpm-skip-blank-frames.zip
     # The native legacy CPM reads its own copy of the list the zip was built with
     APPLE_SITE_BUCKETS_PATH: SharedPackages/WebExtensions/Sources/WebExtensions/Autoconsent/site-buckets.json
 
@@ -43,11 +45,13 @@ jobs:
             - name: Build embedded extension
               run: npm run release-embedded
 
-            - name: Locate embedded zip
+            - name: Locate embedded zips
               id: find-zip
               run: |
                   ZIP_PATH=$(ls build/embedded/release/embedded-release-*.zip)
                   echo "ZIP_PATH=$ZIP_PATH" >> $GITHUB_OUTPUT
+                  CPM_SKIP_BLANK_FRAMES_ZIP_PATH=$(ls build/embedded/release-cpm-skip-blank-frames/embedded-release-cpm-skip-blank-frames-*.zip)
+                  echo "CPM_SKIP_BLANK_FRAMES_ZIP_PATH=$CPM_SKIP_BLANK_FRAMES_ZIP_PATH" >> $GITHUB_OUTPUT
 
             - name: Extract Autoconsent Apple PR metadata from the latest PR
               # this will populate APPLE_BRANCH and APPLE_TASK_GID in case of autoconsent-triggered release
@@ -94,10 +98,12 @@ jobs:
                       git checkout -b "$BRANCH"
                   fi
 
-            - name: Copy embedded zip to Apple repo
+            - name: Copy embedded zips to Apple repo
               run: |
                   cp "${{ steps.find-zip.outputs.ZIP_PATH }}" \
                      "apple-monorepo/${{ env.APPLE_EMBEDDED_PATH }}"
+                  cp "${{ steps.find-zip.outputs.CPM_SKIP_BLANK_FRAMES_ZIP_PATH }}" \
+                     "apple-monorepo/${{ env.APPLE_EMBEDDED_CPM_SKIP_BLANK_FRAMES_PATH }}"
 
             - name: Copy site list to Apple repo
               run: cp shared/data/bundled/site-buckets.json "apple-monorepo/${{ env.APPLE_SITE_BUCKETS_PATH }}"
@@ -109,7 +115,7 @@ jobs:
               env:
                   BRANCH: ${{ steps.pr-metadata.outputs.APPLE_BRANCH }}
               run: |
-                  git add "${{ env.APPLE_EMBEDDED_PATH }}" "${{ env.APPLE_SITE_BUCKETS_PATH }}"
+                  git add "${{ env.APPLE_EMBEDDED_PATH }}" "${{ env.APPLE_EMBEDDED_CPM_SKIP_BLANK_FRAMES_PATH }}" "${{ env.APPLE_SITE_BUCKETS_PATH }}"
                   if git diff --cached --quiet; then
                       echo "No changes to commit"
                       echo "PUSHED=false" >> $GITHUB_OUTPUT

@@ -14,7 +14,7 @@ import {
 } from '../../ntp/constants';
 
 /**
- * @typedef {import('../settings.js')} Settings
+ * @typedef {typeof import('../settings.js')} Settings
  * @typedef {import('webextension-polyfill').Runtime.Port} Port
  * @typedef {import('./ntp-activity').default} NTPActivity
  * @typedef {import('./ntp-activity').SiteActivity} SiteActivity
@@ -339,6 +339,15 @@ export default class NTPMessaging {
                 }
                 break;
             }
+            case 'favorites_openContextMenu': {
+                // The browser runs the item chosen; onFavoritesChanged brings back any change.
+                const tabId = port?.sender?.tab?.id;
+                if (tabId === undefined || typeof params?.id !== 'string') {
+                    throw new Error('the favorite menu has no tab to open over or no favorite');
+                }
+                await ddgApi().showFavoriteContextMenu(tabId, params.id);
+                break;
+            }
 
             // Protections
             case 'protections_setConfig':
@@ -384,7 +393,7 @@ export default class NTPMessaging {
                 console.error(`NTP ${method}:`, params?.message);
                 break;
             default:
-                // favorites_openContextMenu, telemetryEvent etc.
+                // telemetryEvent etc.
                 console.log(`NTP notification (ignored): ${method}`, params);
         }
     }

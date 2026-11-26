@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2021",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "alwaysStrict": true,
     "allowJs": true,
     "checkJs": true,

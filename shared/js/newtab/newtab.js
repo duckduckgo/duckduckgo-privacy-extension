@@ -74,7 +74,7 @@ window.addEventListener('message', (e) => {
  * This allows developers to come here and read the schemas to figure out what data
  * will be sent.
  *
- * @param {import("zod").infer<outgoing>} msg
+ * @param {import("zod").infer<typeof outgoing>} msg
  */
 function sendToNewTabPage(msg) {
     // try to validate the message
@@ -93,6 +93,9 @@ function sendToNewTabPage(msg) {
     }
 }
 
+/** @type {chrome.runtime.Port | null} */
+let port = null;
+
 /**
  * A single place to try/catch around sending messages back to the extension
  *
@@ -100,9 +103,8 @@ function sendToNewTabPage(msg) {
  * so we take a straight-forward approach to errors. Any communication error found here
  * will result in the NTP receiving a 'disconnect' message so that it can remove its UI
  *
- * @param {import("zod").infer<incoming>} msg
+ * @param {import("zod").infer<typeof incoming>} msg
  */
-let port = null;
 function sendToChromeRuntime(msg) {
     if (!receivedMessageFromAllowedOrigin) return;
     try {

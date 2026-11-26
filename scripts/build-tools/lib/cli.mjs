@@ -2,15 +2,16 @@
  * Command line handling shared by the build-tools entry points, which all
  * take a build target as `--browser <name> --type <dev|release>`.
  */
-import { BROWSERS, TYPES, resolveConfig } from './config.mjs';
+import { BROWSERS, CPM_SKIP_BLANK_FRAMES, TYPES, resolveConfig } from './config.mjs';
 
 /** parseArgs option definitions for the target. */
 export const TARGET_OPTIONS = {
     browser: { type: 'string' },
     type: { type: 'string' },
+    [CPM_SKIP_BLANK_FRAMES]: { type: 'boolean', default: false },
 };
 
-export const TARGET_USAGE = `--browser <${BROWSERS.join('|')}> --type <${TYPES.join('|')}>`;
+export const TARGET_USAGE = `--browser <${BROWSERS.join('|')}> --type <${TYPES.join('|')}> [--${CPM_SKIP_BLANK_FRAMES}]`;
 
 /**
  * Prints the usage line, with an optional message first, and exits.
@@ -25,7 +26,7 @@ export function usageError(usage, message) {
 
 /**
  * Resolves the build target from parsed arguments, or prints `usage` and exits.
- * @param {{browser?: string, type?: string, reloader?: boolean}} values
+ * @param {{browser?: string, type?: string, reloader?: boolean, 'cpm-skip-blank-frames'?: boolean}} values
  * @param {string} usage Full usage line for this command.
  * @returns {import('./config.mjs').BuildConfig}
  */
@@ -34,7 +35,12 @@ export function resolveTarget(values, usage) {
         return usageError(usage);
     }
     try {
-        return resolveConfig({ browser: values.browser, type: values.type, reloader: values.reloader });
+        return resolveConfig({
+            browser: values.browser,
+            type: values.type,
+            reloader: values.reloader,
+            cpmSkipBlankFrames: values[CPM_SKIP_BLANK_FRAMES],
+        });
     } catch (e) {
         return usageError(usage, e.message);
     }

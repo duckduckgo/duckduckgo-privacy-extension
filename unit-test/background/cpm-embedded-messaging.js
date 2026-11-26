@@ -34,6 +34,105 @@ describe('CPMEmbeddedMessaging', () => {
         jasmine.clock().uninstall();
     });
 
+    describe('notifyInitProgress', () => {
+        beforeEach(async () => {
+            await messaging.setInitProgressEnabled(true);
+        });
+
+        afterEach(async () => {
+            await messaging.setInitProgressEnabled(false);
+        });
+
+        it('sends cpmInitProgress synchronously with the given params', () => {
+            messaging.notifyInitProgress(9, 'https://example.com/', 'background_received');
+            expect(nativeMessaging.notify).toHaveBeenCalledOnceWith('cpmInitProgress', {
+                tabId: 9,
+                url: 'https://example.com/',
+                stage: 'background_received',
+            });
+        });
+
+        it('does not record diagnostics errors or reject when the notification fails', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.notify.and.returnValue(Promise.reject(new Error('test error')));
+            spyOn(console, 'error');
+
+            await expectAsync(messaging.notifyInitProgress(7, 'https://example.com/', 'response_sent')).toBeResolved();
+
+            expect(diagnosticsHandler).not.toHaveBeenCalled();
+            expect(console.error).not.toHaveBeenCalled();
+        });
+
+        it('does not record diagnostics errors when the notification times out', async () => {
+            const diagnosticsHandler = jasmine.createSpy('diagnosticsHandler');
+            messaging.setDiagnosticsErrorHandler(diagnosticsHandler);
+            nativeMessaging.notify.and.returnValue(new Promise(() => {})); // never settles
+
+            const result = messaging.notifyInitProgress(7, 'https://example.com/', 'background_received');
+            jasmine.clock().tick(NATIVE_MESSAGE_TIMEOUT_MS + 1);
+            await expectAsync(result).toBeResolved();
+
+            expect(diagnosticsHandler).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('init progress flag', () => {
+        it('sends nothing until the app enabled the notifications', async () => {
+            await messaging.notifyInitProgress(9, 'https://example.com/', 'background_received');
+
+            expect(nativeMessaging.notify).not.toHaveBeenCalled();
+        });
+
+        it('sends the notifications once enabled and stops when the app disables them', async () => {
+            await messaging.setInitProgressEnabled(true);
+            await messaging.notifyInitProgress(9, 'https://example.com/', 'background_received');
+            await messaging.setInitProgressEnabled(false);
+            await messaging.notifyInitProgress(9, 'https://example.com/', 'config_read');
+
+            expect(nativeMessaging.notify).toHaveBeenCalledOnceWith('cpmInitProgress', {
+                tabId: 9,
+                url: 'https://example.com/',
+                stage: 'background_received',
+            });
+        });
+
+        it('is remembered by a background that is woken later', async () => {
+            await messaging.setInitProgressEnabled(true);
+
+            const woken = new CPMEmbeddedMessaging(nativeMessaging);
+            await woken._initProgressLoaded;
+
+            expect(woken._initProgressEnabled).toBeTrue();
+            await messaging.setInitProgressEnabled(false);
+        });
+
+        it('sends a mark that a woken background raises before it has read the saved flag', async () => {
+            await messaging.setInitProgressEnabled(true);
+
+            const woken = new CPMEmbeddedMessaging(nativeMessaging);
+            await woken.notifyInitProgress(9, 'https://example.com/', 'background_received');
+
+            expect(nativeMessaging.notify).toHaveBeenCalledOnceWith('cpmInitProgress', {
+                tabId: 9,
+                url: 'https://example.com/',
+                stage: 'background_received',
+            });
+            await messaging.setInitProgressEnabled(false);
+        });
+
+        it('does not let an old saved value override what the app just said', async () => {
+            await messaging.setInitProgressEnabled(true);
+
+            const woken = new CPMEmbeddedMessaging(nativeMessaging);
+            await woken.setInitProgressEnabled(false);
+            await woken._initProgressLoaded;
+
+            expect(woken._initProgressEnabled).toBeFalse();
+            await messaging.setInitProgressEnabled(false);
+        });
+    });
+
     describe('_notify', () => {
         it('sends a notification via nativeMessaging', async () => {
             await messaging._notify('testMethod', { key: 'value' });

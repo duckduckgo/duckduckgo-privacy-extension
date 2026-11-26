@@ -1,7 +1,7 @@
 {
     "name": "DuckDuckGo Embedded Extension",
     "description": "Embedded extension for native app integration",
-    "version": "2026.11.13",
+    "version": "2026.11.20",
     "manifest_version": 3,
     "default_locale": "en",
     "background": {
@@ -23,6 +23,11 @@
     ],
     "content_security_policy": {
         "extension_pages": "script-src 'self'; object-src 'self'"
+    },
+    "commands": {
+        "ddg-native-event": {
+            "description": "Performed by the native app when it has subscription events for the extension"
+        }
     },
     "permissions": [
         "alarms",

@@ -24,7 +24,7 @@ export const isAtbEnabled = BUILD_TARGET !== 'chromium-embedded';
  * the onInstalled event if we do too much before adding the listener.
  *
  * @param {{
- *  settings: import('../settings.js');
+ *  settings: typeof import('../settings.js');
  * }} opts
  * @param {{
  *  counterMessaging?: boolean;
@@ -66,7 +66,7 @@ export default function setupAtb({ settings }, { counterMessaging = false, email
             for (const tab of tabs) {
                 // Only inject into schemes we may be able to script. Browser-internal pages
                 // (chrome://, opera://, edge://, chrome-extension://, ...) are never scriptable.
-                if (!tab.url || !/^(https?|file):/.test(tab.url)) {
+                if (tab.id === undefined || !tab.url || !/^(https?|file):/.test(tab.url)) {
                     continue;
                 }
                 // Catch per tab so one unscriptable tab (e.g. a web store page) doesn't

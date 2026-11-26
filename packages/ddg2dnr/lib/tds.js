@@ -258,6 +258,7 @@ async function generateDNRRulesForTrackerEntry(
         }
 
         // Handle "surrogate script" redirections.
+        /** @type {chrome.declarativeNetRequest.Redirect | null} */
         let redirectAction = null;
         /** @type {import('./utils.js').ResourceType[]|null} */
         let ruleResourceTypes = null;
@@ -425,7 +426,7 @@ function finalizeDNRRulesAndLookup(startingRuleId, dnrRules) {
 /**
  * Converts a Tracker Blocking configuration into a declarativeNetRequest
  * ruleset that blocks/redirects requests to known trackers.
- * @param {object} tds
+ * @param {any} tds
  *   The Tracker Blocking configuration.
  * @param {Set<string>} supportedSurrogateScripts
  *   Known surrogate script filenames.

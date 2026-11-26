@@ -59,6 +59,40 @@ test.describe('Embedded New Tab Page', () => {
         await expect(page.locator('[data-entry-point="omnibar"]')).toBeVisible();
     });
 
+    test('shows the browser menu for a right-click on a favorite, and the page menu on the add tile', async ({ page, backgroundPage }) => {
+        await backgroundPage.evaluate(() => {
+            globalThis.menus = [];
+            globalThis.favoriteMenus = [];
+            chrome.ddg = {
+                getFavorites: async () => [{ id: '1', title: 'Example', url: 'https://example.com/' }],
+                showContextMenu: async (_tabId, items) => {
+                    globalThis.menus.push(items);
+                },
+                showFavoriteContextMenu: async (tabId, id) => {
+                    globalThis.favoriteMenus.push({ tabId, id });
+                },
+            };
+        });
+        await page.goto(await getNtpUrl(backgroundPage));
+        const favorite = page.locator('a[data-id="1"]');
+        await expect(favorite).toBeVisible();
+
+        await page.mouse.click(5, 5, { button: 'right' });
+        await expect.poll(() => backgroundPage.evaluate(() => globalThis.menus.length)).toBe(1);
+        await page.getByRole('button', { name: 'Add Favorite' }).click({ button: 'right' });
+        await expect.poll(() => backgroundPage.evaluate(() => globalThis.menus.length)).toBe(2);
+        await favorite.click({ button: 'right' });
+        await expect.poll(() => backgroundPage.evaluate(() => globalThis.favoriteMenus.length)).toBe(1);
+
+        const { menus, favoriteMenus } = await backgroundPage.evaluate(() => ({
+            menus: globalThis.menus,
+            favoriteMenus: globalThis.favoriteMenus,
+        }));
+        expect(menus[0].length).toBeGreaterThan(0);
+        expect(menus).toEqual([menus[0], menus[0]]);
+        expect(favoriteMenus).toEqual([{ tabId: expect.any(Number), id: '1' }]);
+    });
+
     test('shows blocked tracker stats pushed from the background', async ({ page, backgroundPage }) => {
         await page.goto(await getNtpUrl(backgroundPage));
         await expect(page.locator('[data-entry-point="protections"]')).toBeVisible();

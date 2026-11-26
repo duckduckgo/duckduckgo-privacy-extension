@@ -123,3 +123,72 @@ test.describe('Verify injected script is not visible to the page', () => {
         });
     });
 });
+
+// Frames that have no URL of their own to match against (about:blank, srcdoc,
+// blob: and data:) must get the same protections as the page that created them.
+test.describe('Fingerprint Defense in frames without their own origin', () => {
+    const frameMarkup = '<!doctype html><title>frame</title>';
+    const frameTypes = [
+        { name: 'about:blank', attributes: {} },
+        { name: 'srcdoc', attributes: { srcdoc: frameMarkup } },
+        { name: 'blob:', blob: true, attributes: {} },
+        { name: 'data:', attributes: { src: `data:text/html,${encodeURIComponent(frameMarkup)}` } },
+    ];
+    const expectedFrameValues = {
+        hasNavigatorInterface: true,
+        hardwareConcurrency: 2,
+        keyboard: 'undefined',
+        colorDepth: 24,
+        pixelDepth: 24,
+    };
+
+    function readValues() {
+        return {
+            hasNavigatorInterface: 'duckduckgo' in navigator,
+            hardwareConcurrency: navigator.hardwareConcurrency,
+            // @ts-expect-error - keyboard is not in the TypeScript DOM types
+            keyboard: typeof navigator.keyboard,
+            colorDepth: screen.colorDepth,
+            pixelDepth: screen.pixelDepth,
+        };
+    }
+
+    test.beforeEach(async ({ context, backgroundPage, manifestVersion }) => {
+        await backgroundWait.forExtensionLoaded(context);
+        await backgroundWait.forAllConfiguration(backgroundPage);
+        if (manifestVersion === 3) {
+            // wait for content-script registration to complete
+            await backgroundPage.evaluate(() => globalThis.components.scriptInjection.ready);
+        }
+    });
+
+    for (const frameType of frameTypes) {
+        test(`${frameType.name} frames should include anti-fingerprinting code`, async ({ page }) => {
+            const { url, har } = tests[1];
+            await page.routeFromHAR(har);
+            await page.goto(`https://${url}`, { waitUntil: 'networkidle' });
+
+            // The top frame is the control: it is protected with or without the frame.
+            await expect.poll(() => page.evaluate(readValues)).toEqual(expectedFrameValues);
+
+            await page.evaluate(
+                ({ attributes, blob, markup }) => {
+                    const iframe = document.createElement('iframe');
+                    iframe.id = 'frame-under-test';
+                    for (const [name, value] of Object.entries(attributes)) {
+                        iframe.setAttribute(name, value);
+                    }
+                    if (blob) {
+                        iframe.src = URL.createObjectURL(new Blob([markup], { type: 'text/html' }));
+                    }
+                    document.body.appendChild(iframe);
+                },
+                { attributes: frameType.attributes, blob: Boolean(frameType.blob), markup: frameMarkup },
+            );
+
+            const frame = await (await page.locator('#frame-under-test').elementHandle())?.contentFrame();
+            expect(frame, 'frame was created').toBeTruthy();
+            await expect.poll(() => frame?.evaluate(readValues)).toEqual(expectedFrameValues);
+        });
+    }
+});

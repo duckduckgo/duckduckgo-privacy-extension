@@ -17,7 +17,7 @@ const { generateDNRRule } = require('./utils');
  * Generator to produce the declarativeNetRequest rules and corresponding match
  * details for the unprotectedTemporary and contentBlocking sections of the
  * extension configuration.
- * @param {object} extensionConfiguration
+ * @param {import('./utils').PrivacyConfiguration} extensionConfiguration
  *   The extension configuration.
  * @return {Generator<generateTemporaryAllowlistRulesResult>}
  */

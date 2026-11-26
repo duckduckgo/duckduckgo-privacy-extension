@@ -338,6 +338,7 @@ export async function breakageReportForTab({
  * @returns {Promise<DisclosureDetails>}
  */
 export async function getDisclosureDetails() {
+    /** @type {string | null} */
     let siteUrl = null;
     const currentTabUrl = (await getCurrentTab())?.url;
     if (currentTabUrl) {

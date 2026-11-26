@@ -48,6 +48,11 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  */
 
 /**
+ * Progress marks for the main frame `init` message, reported to the native app (embedded only).
+ * @typedef {'background_received' | 'config_read' | 'settings_checked' | 'site_checked' | 'response_sent'} CpmInitProgressStage
+ */
+
+/**
  * Base interface for CPM communications with the "browser" side.
  * @typedef {{
  *  logMessage: (message: string, isDebug?: boolean) => Promise<void>;
@@ -61,6 +66,8 @@ import { registerContentScripts, unregisterContentScripts } from './mv3-content-
  *  reportCoverage: (counts: CoverageCounts, siteRank?: SiteRankBucket) => Promise<void>;
  *  refreshRemoteConfig: () => Promise<import('@duckduckgo/privacy-configuration/schema/config.ts').CurrentGenericConfig?>;
  *  setDiagnosticsErrorHandler?: (handler: (tabId: number | null, errorName: string) => void) => void;
+ *  notifyInitProgress?: (tabId: number, url: string, stage: CpmInitProgressStage) => Promise<void>;
+ *  setInitProgressEnabled?: (enabled: boolean) => Promise<void>;
  * }} CPMMessagingBase
  * @typedef {{
  *  enabled: boolean,
@@ -84,6 +91,18 @@ const logsConfig = {
     rulesteps: !!DEBUG,
     waits: !!DEBUG,
 };
+
+const DEFAULT_HEURISTIC_POPUP_SEARCH_TIMEOUT = 100;
+
+/**
+ * Reads the heuristic popup search budget (in ms) from the autoconsent remote config settings.
+ * @param {object | undefined} autoconsentSettings
+ * @returns {number}
+ */
+function getHeuristicPopupSearchTimeout(autoconsentSettings) {
+    const timeout = /** @type {{ heuristicPopupSearchTimeout?: unknown } | undefined} */ (autoconsentSettings)?.heuristicPopupSearchTimeout;
+    return typeof timeout === 'number' && Number.isInteger(timeout) && timeout > 0 ? timeout : DEFAULT_HEURISTIC_POPUP_SEARCH_TIMEOUT;
+}
 
 /**
  * A reply to a content script's autoconsent message. initResp carries a partial config, as the content script fills in
@@ -465,7 +484,17 @@ export default class CookiePromptManagement {
         const frameUrl = sender.url || sender.origin || 'about:blank';
         const tabUrl = sender.tab.url || sender.tab.pendingUrl || 'about:blank';
         const siteRank = this.siteRankLookup?.(tabUrl);
+        /**
+         * Main-frame init progress mark for native. No await: marks never delay init.
+         * @param {CpmInitProgressStage} stage
+         */
+        const mark = (stage) => {
+            if (isMainFrame) this.cpmMessaging.notifyInitProgress?.(tabId, tabUrl, stage);
+        };
         if (msg.type === 'init' && isMainFrame) {
+            // tell native that init reached the background before anything else happens
+            mark('background_received');
+
             // update the cached top url for this tab
             this.updateTopUrl(tabId, tabUrl);
 
@@ -490,6 +519,9 @@ export default class CookiePromptManagement {
                 );
             }
             return;
+        }
+        if (msg.type === 'init') {
+            mark('config_read');
         }
         const cpmConfigVersion = `${remoteConfig.version || 'unknown'}`;
         const autoconsentRemoteConfig = remoteConfig.features?.autoconsent;
@@ -523,6 +555,9 @@ export default class CookiePromptManagement {
         switch (msg.type) {
             case 'init': {
                 const settings = await this.cpmMessaging.checkAutoconsentSetting(tabId);
+                // learn whether the app wants init progress notifications; no await, it only saves the answer
+                isMainFrame && this.cpmMessaging.setInitProgressEnabled?.(!!settings.featureFlags?.cpmInitProgress);
+                mark('settings_checked');
                 // Map preference to heuristic mode:
                 // - max: Tier2
                 // - default and new settings enabled: Tier1
@@ -555,6 +590,7 @@ export default class CookiePromptManagement {
                 }
 
                 const isEnabled = await this.cpmMessaging.checkAutoconsentEnabledForSite(tabUrl, tabId);
+                mark('site_checked');
                 if (!isEnabled) {
                     this.cpmMessaging.logMessage(`autoconsent disabled for site: ${tabUrl}`);
                     if (isMainFrame) {
@@ -616,6 +652,8 @@ export default class CookiePromptManagement {
                     enableHeuristicDetection: true,
                     heuristicMode,
                     enableHeuristicHitTest: !!settings.featureFlags?.heuristicHitTest,
+                    enablePopupMutationObserver: !!settings.featureFlags?.popupMutationObserver,
+                    heuristicPopupSearchTimeout: getHeuristicPopupSearchTimeout(autoconsentSettings),
                     visualTest,
                     logs: logsConfig,
                 };
@@ -640,6 +678,8 @@ export default class CookiePromptManagement {
                 }
                 DEBUG && console.log('autoconsent config', autoconsentConfig);
 
+                // the answer is the reply to the content script's message; tell native the background has produced it
+                mark('response_sent');
                 return {
                     type: 'initResp',
                     rules,

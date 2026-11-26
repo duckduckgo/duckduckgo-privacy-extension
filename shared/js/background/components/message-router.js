@@ -10,6 +10,7 @@ import { getActivePort, setActivePort } from '../popup-messaging';
  * @typedef {import('@duckduckgo/privacy-dashboard/schema/__generated__/schema.types').IncomingExtensionMessage} OutgoingPopupMessage
  */
 
+/** @extends {CustomEvent<any>} */
 export class MessageReceivedEvent extends CustomEvent {
     constructor(msg) {
         super('messageReceived', { detail: msg });

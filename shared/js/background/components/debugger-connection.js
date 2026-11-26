@@ -76,6 +76,7 @@ export default class DebuggerConnection {
 
             // rate limit sending tabs to 1 message per second
             let lastTabSend = 0;
+            /** @type {ReturnType<typeof setTimeout> | null} */
             let nextTabSend = null;
             const sendTabs = async () => {
                 if (nextTabSend) {

@@ -22,8 +22,8 @@ jobs:
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
-            # Lint only needs the npm packages, not Playwright browsers or the
-            # privacy-test-pages install that `install-ci` also performs.
+            # Lint only needs the npm packages, not the Playwright browsers that
+            # `install-ci` also installs.
             - run: npm ci --ignore-scripts
             - run: npm run lint && echo 'No lint issues!' || (npm run lint-fix; git diff; echo 'Lint check failed, review diff above or run "npm run lint-fix"'; exit 1)
 
@@ -39,7 +39,9 @@ jobs:
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
-            - run: npm run install-ci
+            # Building only needs the npm packages, not the Playwright browsers
+            # and test pages that `install-ci` also sets up.
+            - run: npm ci --ignore-scripts
             - run: npm run ${{ matrix.target }}
 
     # The release and beta scripts package what they build: zips for chrome
@@ -54,11 +56,11 @@ jobs:
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
-            - run: npm run install-ci
+            - run: npm ci --ignore-scripts
             - run: npm run release-embedded
             - run: npm run beta-chrome
             - run: npm run beta-firefox
-            - run: ls build/embedded/release/embedded-release-*.zip build/chrome/release/chrome-release-*.zip build/firefox/release/web-ext-artifacts/*.zip
+            - run: ls build/embedded/release/embedded-release-*.zip build/embedded/release-cpm-skip-blank-frames/embedded-release-cpm-skip-blank-frames-*.zip build/chrome/release/chrome-release-*.zip build/firefox/release/web-ext-artifacts/*.zip
 
     unit-tests:
         runs-on: ubuntu-22.04
@@ -72,8 +74,11 @@ jobs:
             - run: npm test
 
     playwright-tests:
-        timeout-minutes: 14
+        timeout-minutes: 30
         runs-on: ubuntu-latest
+        container:
+            image: mcr.microsoft.com/playwright:v1.65.0-resolute
+            options: --user 1001 --ipc=host
         strategy:
             fail-fast: false
             matrix:
@@ -89,10 +94,11 @@ jobs:
               with:
                   node-version-file: .nvmrc
                   cache: 'npm'
-            - run: npm run install-ci
+            - run: npm run install-ci -- --no-system-deps
             - name: Run tests
+              timeout-minutes: 14
               run: xvfb-run --auto-servernum -- npm run ${{ matrix.test }} -- --shard ${{ matrix.shard }}
-            - uses: actions/upload-artifact@v4
+            - uses: actions/upload-artifact@v7
               if: always()
               with:
                   name: ${{ matrix.test }}-report-${{ strategy.job-index }}

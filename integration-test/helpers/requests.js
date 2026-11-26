@@ -135,6 +135,7 @@ export async function runRequestBlockingTest(page, url) {
     // two seconds after the reliable requests.
     const reliableTestCount = testCount - flakeyTestCount;
     const flakeyTimeout = 2000;
+    /** @type {number | null} */
     let flakeyDeadline = null;
     await waitFor(
         page,
@@ -163,6 +164,7 @@ export async function runRequestBlockingTest(page, url) {
     // while the requests are fired. Reading those results immediately gives us
     // stale "not loaded" results, so wait until `results.results` has stopped
     // changing before checking the final results.
+    /** @type {string | null} */
     let prevSnapshot = null;
     let stableSince = Date.now();
     await waitFor(
