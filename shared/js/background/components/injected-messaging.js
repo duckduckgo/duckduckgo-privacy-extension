@@ -50,6 +50,49 @@ export class InjectedMessaging {
                 this.onMessage(this.toMsg(msg), port);
             });
         });
+        // Registered at startup so a push from the browser wakes the service worker.
+        // @ts-ignore - chrome.ddg is not in @types/chrome
+        chrome.ddg?.onBridgeMessage?.addListener((push) => {
+            const { tabId, documentId, featureName, subscriptionName, params } = push;
+            this.deliverPush([{ tabId, documentId }], { context: 'contentScopeScripts', featureName, subscriptionName, params });
+        });
+    }
+
+    /**
+     * Whether the browser answers bridge messages itself.
+     * @returns {boolean}
+     */
+    get browserHandlesMessages() {
+        // @ts-ignore - chrome.ddg is not in @types/chrome
+        return typeof chrome.ddg?.sendBridgeMessage === 'function';
+    }
+
+    /**
+     * Answers a request: from the browser when it handles bridge messages, otherwise locally.
+     * @param {Port} port
+     * @param {Incoming} msg
+     */
+    async answer(port, msg) {
+        const { featureName, method, params } = msg;
+        if (!this.browserHandlesMessages) {
+            return this._getResponse(featureName, method, params);
+        }
+        const id = 'id' in msg ? msg.id : undefined;
+        // @ts-ignore - chrome.ddg is not in @types/chrome
+        return chrome.ddg.sendBridgeMessage(port.sender?.documentId, { featureName, method, id, params });
+    }
+
+    /**
+     * Posts to a page's port, dropping the message quietly when the page has already gone.
+     * @param {Port} port
+     * @param {object} message
+     */
+    postIfOpen(port, message) {
+        try {
+            port.postMessage(message);
+        } catch {
+            // The port closed because the page navigated or was closed.
+        }
     }
 
     /**
@@ -68,15 +111,19 @@ export class InjectedMessaging {
         const { context, featureName, method, params } = msg;
         if ('id' in msg) {
             try {
-                const result = await this._getResponse(featureName, method, params);
+                const result = await this.answer(port, msg);
                 // An empty result is answered with `{}`, per the messaging implementation guide.
-                port.postMessage({ context, featureName, id: msg.id, result: result ?? {} });
+                this.postIfOpen(port, { context, featureName, id: msg.id, result: result ?? {} });
             } catch (e) {
                 const message = e instanceof Error ? e.message : String(e);
-                port.postMessage({ context, featureName, id: msg.id, error: { message } });
+                this.postIfOpen(port, { context, featureName, id: msg.id, error: { message } });
             }
         } else {
             try {
+                if (this.browserHandlesMessages) {
+                    await this.answer(port, msg);
+                    return;
+                }
                 await this.handleNotification(method, params, port);
             } catch (e) {
                 console.error(`Injected message ${method} failed:`, e);
