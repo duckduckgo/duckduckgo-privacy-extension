@@ -45,7 +45,7 @@ export class InjectedMessaging {
                 port.postMessage({ context, featureName, id: msg.id, result });
             } catch (e) {
                 const message = e instanceof Error ? e.message : String(e);
-                port.postMessage({ context, featureName, id: msg.id, error: { message } });
+                this.postIfOpen(port, { context, featureName, id: msg.id, error: { message } });
             }
         } else {
             try {
@@ -53,6 +53,19 @@ export class InjectedMessaging {
             } catch (e) {
                 console.error(`Injected message ${method} failed:`, e);
             }
+        }
+    }
+
+    /**
+     * Posts to the page, unless it has gone: its port is closed, and nobody is waiting for the answer.
+     * @param {Port} port
+     * @param {unknown} message
+     */
+    postIfOpen(port, message) {
+        try {
+            port.postMessage(message);
+        } catch {
+            // The page's port has closed.
         }
     }
 
