@@ -1,0 +1,15 @@
+{
+    "globalThis.dbg.tds.config.features.messageBridge": {
+        "state": "enabled",
+        "exceptions": [],
+        "settings": {
+            "aiChat": "disabled",
+            "domains": [
+                {
+                    "domain": "duckduckgo.com",
+                    "patchSettings": [{ "op": "replace", "path": "/aiChat", "value": "enabled" }]
+                }
+            ]
+        }
+    }
+}

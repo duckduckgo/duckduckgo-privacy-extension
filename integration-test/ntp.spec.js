@@ -3,35 +3,10 @@ import backgroundWait from './helpers/backgroundWait';
 import { isChromiumEmbedded } from './helpers/platform';
 import { routeFromLocalhost } from './helpers/testPages';
 import { runRequestBlockingTest } from './helpers/requests';
+import { serviceWorkerControl } from './helpers/serviceWorker';
 
 function getNtpUrl(backgroundPage) {
     return backgroundPage.evaluate(() => chrome.runtime.getURL('ntp/index.html'));
-}
-
-/**
- * Stops and starts the background service worker over CDP, as Chrome's
- * lifecycle does, without any page messaging it. The backgroundPage handle
- * keeps working across restarts.
- * @param {import('@playwright/test').Page} page - an extension page
- */
-async function serviceWorkerControl(page) {
-    const cdp = await page.context().newCDPSession(page);
-    await cdp.send('ServiceWorker.enable');
-    const reachStatus = (status, command) =>
-        new Promise((resolve, reject) => {
-            const listener = ({ versions }) => {
-                if (versions.some((v) => v.runningStatus === status)) {
-                    cdp.off('ServiceWorker.workerVersionUpdated', listener);
-                    resolve(undefined);
-                }
-            };
-            cdp.on('ServiceWorker.workerVersionUpdated', listener);
-            command().catch(reject);
-        });
-    return {
-        stop: () => reachStatus('stopped', () => cdp.send('ServiceWorker.stopAllWorkers')),
-        start: () => reachStatus('running', () => cdp.send('ServiceWorker.startWorker', { scopeURL: new URL('/', page.url()).href })),
-    };
 }
 
 test.describe('Embedded New Tab Page', () => {
@@ -94,14 +69,13 @@ test.describe('Embedded New Tab Page', () => {
         await expect.poll(() => backgroundPage.evaluate(async () => (await globalThis.components.ntpActivity.getSites()).size)).toBe(0);
     });
 
-    test('reconnects to receive stats when the service worker restarts', async ({ page, backgroundPage }) => {
+    test('receives stats pushed after the service worker restarts', async ({ page, backgroundPage }) => {
         await page.goto(await getNtpUrl(backgroundPage));
         await expect(page.locator('[data-entry-point="protections"]')).toBeVisible();
 
-        const serviceWorker = await serviceWorkerControl(page);
+        const serviceWorker = await serviceWorkerControl(page, backgroundPage);
         await serviceWorker.stop();
         await serviceWorker.start();
-        await expect.poll(() => backgroundPage.evaluate(() => globalThis.components?.ntpMessaging?.ports.size).catch(() => 0)).toBe(1);
 
         await backgroundPage.evaluate(() => {
             globalThis.dbg.ntts.record(3, 'Ad Company');
