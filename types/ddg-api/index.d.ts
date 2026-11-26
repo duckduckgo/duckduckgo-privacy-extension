@@ -103,7 +103,7 @@ declare namespace chrome {
                           documentId: string;
                           featureName: string;
                           subscriptionName: string;
-                          params: Record<string, unknown>;
+                          params?: Record<string, unknown>;
                       }) => void,
                   ): void;
               };

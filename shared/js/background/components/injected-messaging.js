@@ -170,7 +170,7 @@ export class InjectedMessaging {
     /**
      * `documentId` pins each send to the checked document; Chrome drops it if the tab has navigated since.
      * @param {PushTarget[]} targets
-     * @param {{ context: string, featureName: string, subscriptionName: string, params: Record<string, unknown> }} msg
+     * @param {{ context: string, featureName: string, subscriptionName: string, params?: Record<string, unknown> }} msg
      */
     async deliverPush(targets, msg) {
         await Promise.allSettled(targets.map(({ tabId, documentId }) => browser.tabs.sendMessage(tabId, msg, { documentId })));
