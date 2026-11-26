@@ -51,7 +51,6 @@ export class InjectedMessaging {
             });
         });
         // Registered at startup so a push from the browser wakes the service worker.
-        // @ts-ignore - chrome.ddg is not in @types/chrome
         chrome.ddg?.onBridgeMessage?.addListener((push) => {
             const { tabId, documentId, featureName, subscriptionName, params } = push;
             this.deliverPush([{ tabId, documentId }], { context: 'contentScopeScripts', featureName, subscriptionName, params });
@@ -63,7 +62,6 @@ export class InjectedMessaging {
      * @returns {boolean}
      */
     get browserHandlesMessages() {
-        // @ts-ignore - chrome.ddg is not in @types/chrome
         return typeof chrome.ddg?.sendBridgeMessage === 'function';
     }
 
@@ -74,12 +72,12 @@ export class InjectedMessaging {
      */
     async answer(port, msg) {
         const { featureName, method, params } = msg;
-        if (!this.browserHandlesMessages) {
+        const ddg = chrome.ddg;
+        if (!ddg?.sendBridgeMessage) {
             return this._getResponse(featureName, method, params);
         }
         const id = 'id' in msg ? msg.id : undefined;
-        // @ts-ignore - chrome.ddg is not in @types/chrome
-        return chrome.ddg.sendBridgeMessage(port.sender?.documentId, { featureName, method, id, params });
+        return ddg.sendBridgeMessage(port.sender?.documentId, { featureName, method, id, params });
     }
 
     /**
