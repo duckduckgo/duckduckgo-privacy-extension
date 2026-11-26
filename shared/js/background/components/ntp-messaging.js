@@ -5,13 +5,7 @@ import { getUserLocale } from '../i18n';
 import { getBaseDomain } from '../utils';
 import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 import { pageDomain } from './ntp-activity';
-import {
-    NTP_PORT_NAME,
-    NTP_RECONNECT_MESSAGE,
-    NTP_MESSAGING_CONTEXT,
-    NTP_FEATURE_NAME,
-    NTP_OTHER_COMPANY_IDENTIFIER,
-} from '../../ntp/constants';
+import { NTP_FEATURE_NAME, NTP_OTHER_COMPANY_IDENTIFIER, SPECIAL_PAGES_MESSAGING_CONTEXT } from '../../ntp/constants';
 
 /**
  * @typedef {typeof import('../settings.js')} Settings
@@ -24,6 +18,9 @@ import {
 // TODO: import them from C-S-S once new-tab.ts resolves outside C-S-S; its
 // `declare module "../src/index.js"` augmentation currently breaks our tsc.
 /**
+ * @typedef {import("@duckduckgo/content-scope-scripts/messaging").RequestMessage} RequestMessage
+ * @typedef {import("@duckduckgo/content-scope-scripts/messaging").NotificationMessage} NotificationMessage
+ * @typedef {RequestMessage | NotificationMessage} Incoming
  * @typedef {{ id: string, visibility: 'visible' | 'hidden' }} WidgetConfig
  * @typedef {{ totalCount: number, totalCookiePopUpsBlocked?: number | null }} ProtectionsData
  * @typedef {{ displayName: string, count: number }} TrackerCompany
@@ -82,11 +79,12 @@ function ddgApi() {
 }
 
 /**
- * Messaging endpoint for the New Tab Page, over the runtime port opened by
- * shared/js/ntp/interop-shim.js:
- *  - requests arrive as `{Feature, SubFeatureName, Name, Data, Id}` and are
- *    answered with `{context, featureName, id, result|error}`;
- *  - subscription events are pushed to all connected pages as
+ * Messaging endpoint for the New Tab Page, which uses content-scope-scripts'
+ * extension messaging transport:
+ *  - requests `{context, featureName, method, params, id}` and notifications
+ *    (no `id`) arrive on the `specialPages` runtime port, and requests are
+ *    answered on it with `{context, featureName, id, result|error}`;
+ *  - subscription events are broadcast with runtime.sendMessage as
  *    `{context, featureName, subscriptionName, params}`.
  *
  * Privacy stats come from NewTabTrackerStats, favorites from the browser's
@@ -94,9 +92,6 @@ function ddgApi() {
  * are empty.
  */
 export default class NTPMessaging {
-    /** @type {Set<Port>} */
-    ports = new Set();
-
     /** @type {ReturnType<typeof setTimeout>?} */
     pushTimer = null;
 
@@ -123,16 +118,13 @@ export default class NTPMessaging {
         this.ntpActivity = ntpActivity;
 
         browser.runtime.onConnect.addListener((port) => {
-            if (port.name !== NTP_PORT_NAME) return;
-            this.ports.add(port);
+            if (port.name !== SPECIAL_PAGES_MESSAGING_CONTEXT) return;
             port.onMessage.addListener((msg) => {
-                this.onMessage(msg, port);
+                const incoming = this.toMsg(msg);
+                if (incoming.featureName === NTP_FEATURE_NAME) {
+                    this.onMessage(incoming, port);
+                }
             });
-            port.onDisconnect.addListener(() => {
-                this.ports.delete(port);
-            });
-            // Favorites may have changed while a reconnecting page had no port.
-            this.pushFavoritesUpdate([port]);
         });
 
         // Top level, so the browser can wake the worker to deliver it.
@@ -151,8 +143,7 @@ export default class NTPMessaging {
             console.error('chrome.ddg.onFavoritesChanged is unavailable: open New Tab Pages will not see favorites change');
         }
 
-        // At most one push a second while trackers are being blocked. Scheduled even with no
-        // pages connected, as open pages reconnect after the event that started the worker.
+        // At most one push a second while trackers are being blocked.
         emitter.on(TrackerBlockedEvent.eventName, () => {
             if (this.pushTimer) return;
             this.pushTimer = setTimeout(() => {
@@ -175,27 +166,32 @@ export default class NTPMessaging {
         } else {
             console.error('chrome.ddg.onBurnStarted is unavailable: New Tab Pages will keep their tracker stats through a burn');
         }
-
-        // Pages left open while the service worker was stopped have lost their port.
-        browser.runtime.sendMessage({ [NTP_RECONNECT_MESSAGE]: true }).catch(() => {});
     }
 
     /**
-     * @param {any} msg
+     * @param {unknown} incoming
+     * @return {Incoming}
+     */
+    toMsg(incoming) {
+        return /** @type {Incoming} */ (incoming);
+    }
+
+    /**
+     * @param {Incoming} msg
      * @param {Port} port
      */
     async onMessage(msg, port) {
-        const { Feature: context, SubFeatureName: featureName, Name: method, Data: params, Id: id } = msg;
-        if (context !== NTP_MESSAGING_CONTEXT || featureName !== NTP_FEATURE_NAME) {
+        const { context, featureName, method, params } = msg;
+        if (context !== SPECIAL_PAGES_MESSAGING_CONTEXT || featureName !== NTP_FEATURE_NAME) {
             return;
         }
-        if (id) {
+        if ('id' in msg) {
             try {
                 const result = await this.handleRequest(method, params);
-                port.postMessage({ context, featureName, id, result });
+                port.postMessage({ context, featureName, id: msg.id, result });
             } catch (e) {
                 const message = e instanceof Error ? e.message : String(e);
-                port.postMessage({ context, featureName, id, error: { message } });
+                port.postMessage({ context, featureName, id: msg.id, error: { message } });
             }
         } else {
             try {
@@ -475,12 +471,9 @@ export default class NTPMessaging {
         };
     }
 
-    /**
-     * @param {Iterable<Port>} [ports]
-     */
-    async pushFavoritesUpdate(ports = this.ports) {
+    async pushFavoritesUpdate() {
         try {
-            this.pushSubscriptionEvent('favorites_onDataUpdate', await this.getFavoritesData(), ports);
+            this.pushSubscriptionEvent('favorites_onDataUpdate', await this.getFavoritesData());
         } catch (e) {
             console.error('NTP favorites_onDataUpdate failed:', e);
         }
@@ -529,7 +522,10 @@ export default class NTPMessaging {
      * @param {string[]} changedDomains
      */
     async pushActivityUpdate(changedDomains) {
-        if (this.ports.size === 0) return;
+        // Skip reading the browser's favorites when no New Tab Page is open.
+        const contexts = await chrome.runtime.getContexts({ contextTypes: [chrome.runtime.ContextType.TAB] });
+        const ntpUrl = browser.runtime.getURL('ntp/index.html');
+        if (!contexts.some((context) => context.documentUrl?.startsWith(ntpUrl))) return;
         const [sites, favoriteUrls] = await Promise.all([this.ntpActivity.getSites(), getFavoriteUrls()]);
         const urlInfo = toUrlInfo(sites);
         let patched = false;
@@ -549,19 +545,14 @@ export default class NTPMessaging {
     }
 
     /**
+     * Broadcast a subscription event to every open New Tab Page. Rejects when none is open.
      * @param {string} subscriptionName
-     * @param {any} params
-     * @param {Iterable<Port>} [ports]
+     * @param {unknown} params
      */
-    pushSubscriptionEvent(subscriptionName, params, ports = this.ports) {
-        for (const port of ports) {
-            port.postMessage({
-                context: NTP_MESSAGING_CONTEXT,
-                featureName: NTP_FEATURE_NAME,
-                subscriptionName,
-                params,
-            });
-        }
+    pushSubscriptionEvent(subscriptionName, params) {
+        browser.runtime
+            .sendMessage({ context: SPECIAL_PAGES_MESSAGING_CONTEXT, featureName: NTP_FEATURE_NAME, subscriptionName, params })
+            .catch(() => {});
     }
 }
 

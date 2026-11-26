@@ -19,6 +19,11 @@ describe('NTPMessaging component', () => {
     let removeDomain;
     /** @type {any} */
     let ntpActivity;
+    /**
+     * Subscription events broadcast with runtime.sendMessage.
+     * @type {any[]}
+     */
+    let pushed;
 
     const favorite = { id: '7', title: 'Example', url: 'https://www.example.co.uk/a?b' };
     const pageFavorite = {
@@ -32,7 +37,7 @@ describe('NTPMessaging component', () => {
      */
     function createFakePort() {
         return {
-            name: 'ntp-windows-interop',
+            name: 'specialPages',
             posted: [],
             postMessage(msg) {
                 this.posted.push(msg);
@@ -42,19 +47,28 @@ describe('NTPMessaging component', () => {
     }
 
     /**
-     * Build a request message in the windows wire format the page sends.
+     * Build a request message in the content-scope-scripts messaging format the page sends.
      */
-    function requestMessage(name, data = {}, id = 'test-id-1') {
-        return {
-            Feature: 'specialPages',
-            SubFeatureName: 'newTabPage',
-            Name: name,
-            Data: data,
-            Id: id,
-        };
+    function requestMessage(method, params = {}, id = 'test-id-1') {
+        return { context: 'specialPages', featureName: 'newTabPage', method, params, id };
+    }
+
+    /**
+     * Build a notification message (no id) in the content-scope-scripts messaging format.
+     */
+    function notificationMessage(method, params = {}) {
+        return { context: 'specialPages', featureName: 'newTabPage', method, params };
     }
 
     beforeEach(() => {
+        pushed = [];
+        spyOn(browser.runtime, 'sendMessage').and.callFake((msg) => {
+            pushed.push(msg);
+            return Promise.resolve();
+        });
+        // An open New Tab Page, as runtime.getContexts reports it (the shim's getURL returns the path as is).
+        chrome.runtime.ContextType = { TAB: 'TAB' };
+        chrome.runtime.getContexts = () => Promise.resolve([{ documentUrl: 'ntp/index.html' }]);
         changedListeners = [];
         chrome.ddg = {
             getFavorites: () => Promise.resolve([favorite]),
@@ -74,6 +88,8 @@ describe('NTPMessaging component', () => {
 
     afterEach(() => {
         delete chrome.ddg;
+        delete chrome.runtime.getContexts;
+        delete chrome.runtime.ContextType;
     });
 
     it('answers initialSetup with a valid minimal payload', async () => {
@@ -144,9 +160,6 @@ describe('NTPMessaging component', () => {
         // @ts-ignore - MockSettings and ntpActivity stand in for Settings and NTPActivity
         ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, statsRestored, ntpActivity });
         delete chrome.ddg;
-        const port = createFakePort();
-        // @ts-ignore - fake port
-        ntpMessaging.ports.add(port);
         const syncToStorage = spyOn(newTabTrackerStats, 'syncToStorage').and.resolveTo();
 
         const burned = burn({ trigger: 'in-session' });
@@ -155,7 +168,7 @@ describe('NTPMessaging component', () => {
         restore();
         await burned;
 
-        expect(port.posted.map((msg) => msg.params)).toEqual([{ totalCount: 0, totalCookiePopUpsBlocked: null }, { trackerCompanies: [] }]);
+        expect(pushed.map((msg) => msg.params)).toEqual([{ totalCount: 0, totalCookiePopUpsBlocked: null }, { trackerCompanies: [] }]);
         expect(syncToStorage).toHaveBeenCalled();
     });
 
@@ -233,25 +246,19 @@ describe('NTPMessaging component', () => {
 
         it('removes a site from the feed', async () => {
             // @ts-ignore - fake port
-            await ntpMessaging.onMessage(
-                { ...requestMessage('activity_removeItem', { url: 'https://example.com/' }), Id: undefined },
-                createFakePort(),
-            );
+            await ntpMessaging.onMessage(notificationMessage('activity_removeItem', { url: 'https://example.com/' }), createFakePort());
             expect(removeDomain).toHaveBeenCalledOnceWith('example.com');
         });
 
         it('pushes the changed sites that still have activity as patches', async () => {
-            const port = createFakePort();
-            // @ts-ignore - fake port
-            ntpMessaging.ports.add(port);
             const urlInfo = { urls: ['https://example.com/', 'http://plain.example/'], totalTrackersBlocked: 3 };
 
             await ntpMessaging.pushActivityUpdate(['plain.example', 'gone.example', 'plain.example']);
             await ntpMessaging.pushActivityUpdate(['gone.example']);
 
-            expect(port.posted.map(({ subscriptionName }) => subscriptionName)).toEqual(['activity_onDataPatch', 'activity_onDataPatch']);
-            expect(port.posted[0].params).toEqual({ ...urlInfo, patch: jasmine.objectContaining({ url: 'http://plain.example/' }) });
-            expect(port.posted[1].params).toEqual(urlInfo);
+            expect(pushed.map(({ subscriptionName }) => subscriptionName)).toEqual(['activity_onDataPatch', 'activity_onDataPatch']);
+            expect(pushed[0].params).toEqual({ ...urlInfo, patch: jasmine.objectContaining({ url: 'http://plain.example/' }) });
+            expect(pushed[1].params).toEqual(urlInfo);
         });
     });
 
@@ -260,33 +267,24 @@ describe('NTPMessaging component', () => {
         const port = createFakePort();
 
         // @ts-ignore - fake port
-        await ntpMessaging.onMessage(
-            { ...requestMessage('omnibar_submitSearch', { term: 'a b', target: 'same-tab' }), Id: undefined },
-            port,
-        );
+        await ntpMessaging.onMessage(notificationMessage('omnibar_submitSearch', { term: 'a b', target: 'same-tab' }), port);
         expect(openUrl).toHaveBeenCalledWith('https://duckduckgo.com/?q=a%20b', 'same-tab', port);
 
         const suggestion = { kind: 'phrase', phrase: 'query' };
         // @ts-ignore - fake port
-        await ntpMessaging.onMessage(
-            { ...requestMessage('omnibar_openSuggestion', { suggestion, target: 'same-tab' }), Id: undefined },
-            port,
-        );
+        await ntpMessaging.onMessage(notificationMessage('omnibar_openSuggestion', { suggestion, target: 'same-tab' }), port);
         expect(openUrl).toHaveBeenCalledWith('https://duckduckgo.com/?q=query', 'same-tab', port);
 
         // @ts-ignore - fake port
         await ntpMessaging.onMessage(
-            { ...requestMessage('favorites_open', { id: 'x', url: 'https://example.com/', target: 'new-tab' }), Id: undefined },
+            notificationMessage('favorites_open', { id: 'x', url: 'https://example.com/', target: 'new-tab' }),
             port,
         );
         // favorites and activity links open new tabs in the background
         expect(openUrl).toHaveBeenCalledWith('https://example.com/', 'new-tab', port, false);
 
         // @ts-ignore - fake port
-        await ntpMessaging.onMessage(
-            { ...requestMessage('activity_open', { url: 'https://example.com/a', target: 'new-tab' }), Id: undefined },
-            port,
-        );
+        await ntpMessaging.onMessage(notificationMessage('activity_open', { url: 'https://example.com/a', target: 'new-tab' }), port);
         expect(openUrl).toHaveBeenCalledWith('https://example.com/a', 'new-tab', port, false);
     });
 
@@ -345,7 +343,7 @@ describe('NTPMessaging component', () => {
     it('ignores messages for other features', async () => {
         const port = createFakePort();
         // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ Feature: 'contentScopeScripts', SubFeatureName: 'other', Name: 'x', Id: '1' }, port);
+        await ntpMessaging.onMessage({ context: 'contentScopeScripts', featureName: 'other', method: 'x', id: '1' }, port);
         expect(port.posted).toEqual([]);
     });
 
@@ -356,11 +354,11 @@ describe('NTPMessaging component', () => {
 
         const port = createFakePort();
         // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('widgets_setConfig', widgetConfigs), Id: undefined }, port);
+        await ntpMessaging.onMessage(notificationMessage('widgets_setConfig', widgetConfigs), port);
         // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('favorites_setConfig', favoritesConfig), Id: undefined }, port);
+        await ntpMessaging.onMessage(notificationMessage('favorites_setConfig', favoritesConfig), port);
         // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('protections_setConfig', protectionsConfig), Id: undefined }, port);
+        await ntpMessaging.onMessage(notificationMessage('protections_setConfig', protectionsConfig), port);
 
         // notifications never get a response
         expect(port.posted).toEqual([]);
@@ -370,41 +368,29 @@ describe('NTPMessaging component', () => {
         expect(await ntpMessaging.handleRequest('protections_getConfig')).toEqual(protectionsConfig);
     });
 
-    it('sends a new protections config to every open page', async () => {
+    it('broadcasts a new protections config to every open page', async () => {
         const protectionsConfig = { expansion: 'collapsed', feed: 'activity' };
-        const sender = createFakePort();
-        const other = createFakePort();
-        // @ts-ignore - fake ports
-        [sender, other].forEach((port) => ntpMessaging.ports.add(port));
 
         // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('protections_setConfig', protectionsConfig), Id: undefined }, sender);
+        await ntpMessaging.onMessage(notificationMessage('protections_setConfig', protectionsConfig), createFakePort());
 
-        for (const port of [sender, other]) {
-            expect(port.posted).toEqual([
-                {
-                    context: 'specialPages',
-                    featureName: 'newTabPage',
-                    subscriptionName: 'protections_onConfigUpdate',
-                    params: protectionsConfig,
-                },
-            ]);
-        }
+        expect(pushed).toEqual([
+            {
+                context: 'specialPages',
+                featureName: 'newTabPage',
+                subscriptionName: 'protections_onConfigUpdate',
+                params: protectionsConfig,
+            },
+        ]);
     });
 
-    it('sends a new widget config to every open page', async () => {
+    it('broadcasts a new widget config to every open page', async () => {
         const widgetConfigs = [{ id: 'protections', visibility: 'hidden' }];
-        const sender = createFakePort();
-        const other = createFakePort();
-        // @ts-ignore - fake ports
-        [sender, other].forEach((port) => ntpMessaging.ports.add(port));
 
         // @ts-ignore - fake port
-        await ntpMessaging.onMessage({ ...requestMessage('widgets_setConfig', widgetConfigs), Id: undefined }, sender);
+        await ntpMessaging.onMessage(notificationMessage('widgets_setConfig', widgetConfigs), createFakePort());
 
-        for (const port of [sender, other]) {
-            expect(port.posted.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['widgets_onConfigUpdated', widgetConfigs]]);
-        }
+        expect(pushed.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['widgets_onConfigUpdated', widgetConfigs]]);
     });
 
     describe('context menu', () => {
@@ -415,8 +401,6 @@ describe('NTPMessaging component', () => {
         ];
         /** @type {any} */
         let sender;
-        /** @type {any} */
-        let other;
 
         beforeEach(() => {
             chrome.ddg = {};
@@ -426,8 +410,6 @@ describe('NTPMessaging component', () => {
                 { id: 'protections', visibility: 'hidden' },
             ]);
             sender = { ...createFakePort(), sender: { tab: { id: 7 } } };
-            other = createFakePort();
-            [sender, other].forEach((port) => ntpMessaging.ports.add(port));
         });
 
         afterEach(() => {
@@ -450,9 +432,7 @@ describe('NTPMessaging component', () => {
                 { id: 'protections', visibility: 'hidden' },
             ];
             expect((await ntpMessaging.handleRequest('initialSetup')).widgetConfigs).toEqual(widgetConfigs);
-            for (const port of [sender, other]) {
-                expect(port.posted.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['widgets_onConfigUpdated', widgetConfigs]]);
-            }
+            expect(pushed.map((msg) => [msg.subscriptionName, msg.params])).toEqual([['widgets_onConfigUpdated', widgetConfigs]]);
         });
 
         it('changes nothing when the menu closes without a choice', async () => {
@@ -466,14 +446,14 @@ describe('NTPMessaging component', () => {
                 visibility: 'hidden',
             });
             expect(sender.posted).toEqual([]);
-            expect(other.posted).toEqual([]);
+            expect(pushed).toEqual([]);
         });
 
         it('logs when there is no tab to show the menu over, or no items', async () => {
             chrome.ddg.showContextMenu = jasmine.createSpy('showContextMenu');
             const consoleError = spyOn(console, 'error');
             // @ts-ignore - fake port
-            const notify = (data, port) => ntpMessaging.onMessage({ ...requestMessage('contextMenu', data), Id: undefined }, port);
+            const notify = (data, port) => ntpMessaging.onMessage(notificationMessage('contextMenu', data), port);
 
             await notify({ visibilityMenuItems }, createFakePort());
             await notify({}, sender);
@@ -503,13 +483,10 @@ describe('NTPMessaging component', () => {
             const error = new Error('The id is not a favorite.');
             chrome.ddg.moveFavorite = jasmine.createSpy('moveFavorite').and.rejectWith(error);
             const consoleError = spyOn(console, 'error');
-            const port = createFakePort();
-            // @ts-ignore - fake port
-            ntpMessaging.ports.add(port);
 
             // @ts-ignore - fake port
-            await ntpMessaging.onMessage({ ...requestMessage('favorites_move', { id: '7', targetIndex: 0 }), Id: undefined }, port);
-            expect(port.posted.map((msg) => msg.params)).toEqual([{ favorites: [pageFavorite] }]);
+            await ntpMessaging.onMessage(notificationMessage('favorites_move', { id: '7', targetIndex: 0 }), createFakePort());
+            expect(pushed.map((msg) => msg.params)).toEqual([{ favorites: [pageFavorite] }]);
             expect(consoleError).toHaveBeenCalledWith('NTP favorites_move failed:', error);
         });
 
@@ -517,7 +494,7 @@ describe('NTPMessaging component', () => {
             const consoleError = spyOn(console, 'error');
             const tabPort = { ...createFakePort(), sender: { tab: { id: 7 } } };
             // @ts-ignore - fake port
-            const add = (port) => ntpMessaging.onMessage({ ...requestMessage('favorites_add'), Id: undefined }, port);
+            const add = (port) => ntpMessaging.onMessage(notificationMessage('favorites_add'), port);
 
             await add(tabPort);
             expect(chrome.ddg.showAddFavoriteBubble).toHaveBeenCalledWith(7);
@@ -540,7 +517,7 @@ describe('NTPMessaging component', () => {
             const tabPort = { ...createFakePort(), sender: { tab: { id: 7 } } };
             const open = (data, port) =>
                 // @ts-ignore - fake port
-                ntpMessaging.onMessage({ ...requestMessage('favorites_openContextMenu', data), Id: undefined }, port);
+                ntpMessaging.onMessage(notificationMessage('favorites_openContextMenu', data), port);
 
             await open({ id: '3' }, tabPort);
             expect(chrome.ddg.showFavoriteContextMenu).toHaveBeenCalledOnceWith(7, '3');
@@ -612,7 +589,7 @@ describe('NTPMessaging component', () => {
                 const queue = spyOn(ntpMessaging, 'queueActivityPush');
                 const consoleError = spyOn(console, 'error');
                 // @ts-ignore - fake port
-                const notify = (name, url) => ntpMessaging.onMessage({ ...requestMessage(name, { url }), Id: undefined }, createFakePort());
+                const notify = (name, url) => ntpMessaging.onMessage(notificationMessage(name, { url }), createFakePort());
 
                 await notify('activity_addFavorite', 'https://example.co.uk/');
                 await notify('activity_removeFavorite', 'https://other.example/');
@@ -648,16 +625,13 @@ describe('NTPMessaging component', () => {
             });
         });
 
-        it('pushes favorites to connected pages when the browser reports a change', async () => {
+        it('pushes favorites to open pages when the browser reports a change', async () => {
             spyOn(ntpMessaging, 'queueActivityPush');
-            const port = createFakePort();
-            // @ts-ignore - fake port
-            ntpMessaging.ports.add(port);
 
             expect(changedListeners.length).toBe(1);
             await changedListeners[0]();
 
-            expect(port.posted).toEqual([
+            expect(pushed).toEqual([
                 {
                     context: 'specialPages',
                     featureName: 'newTabPage',
@@ -667,7 +641,7 @@ describe('NTPMessaging component', () => {
             ]);
         });
 
-        it('pushes favorites to each page as it connects', async () => {
+        it('answers requests that arrive on a connected port', async () => {
             let onConnect;
             spyOn(browser.runtime.onConnect, 'addListener').and.callFake((listener) => {
                 onConnect = listener;
@@ -675,17 +649,16 @@ describe('NTPMessaging component', () => {
             // @ts-ignore - MockSettings stands in for Settings
             ntpMessaging = new NTPMessaging({ settings, newTabTrackerStats, ntpActivity });
 
-            const connect = async () => {
-                const port = { ...createFakePort(), onMessage: { addListener() {} }, onDisconnect: { addListener() {} } };
-                onConnect(port);
-                await new Promise((resolve) => setTimeout(resolve));
-                return port;
-            };
-            const first = await connect();
-            const second = await connect();
+            let onPortMessage;
+            const port = { ...createFakePort(), onMessage: { addListener: (listener) => (onPortMessage = listener) } };
+            onConnect(port);
+            onPortMessage(requestMessage('favorites_getData', {}, 'fav-1'));
+            await new Promise((resolve) => setTimeout(resolve));
 
-            expect(first.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
-            expect(second.posted.map((msg) => msg.subscriptionName)).toEqual(['favorites_onDataUpdate']);
+            expect(port.posted).toEqual([
+                { context: 'specialPages', featureName: 'newTabPage', id: 'fav-1', result: { favorites: [pageFavorite] } },
+            ]);
+            expect(pushed).toEqual([]);
         });
     });
 
@@ -731,7 +704,7 @@ describe('NTPMessaging component', () => {
             spyOn(ntpMessaging, 'queueActivityPush');
             const port = { ...createFakePort(), sender: { tab: { id: 7 } } };
             // @ts-ignore - fake port
-            const notify = (name, data) => ntpMessaging.onMessage({ ...requestMessage(name, data), Id: undefined }, port);
+            const notify = (name, data) => ntpMessaging.onMessage(notificationMessage(name, data), port);
 
             await notify('favorites_move', { id: '7', targetIndex: 0 });
             await notify('favorites_add');
@@ -757,15 +730,11 @@ describe('NTPMessaging component', () => {
         });
     });
 
-    it('broadcasts subscription events to connected ports', () => {
-        const port = createFakePort();
-        // @ts-ignore - fake port
-        ntpMessaging.ports.add(port);
-
+    it('pushes the protections and stats data', () => {
         newTabTrackerStats.stats.increment('Google', Date.now());
         ntpMessaging.pushDataUpdate();
 
-        expect(port.posted).toEqual([
+        expect(pushed).toEqual([
             {
                 context: 'specialPages',
                 featureName: 'newTabPage',
