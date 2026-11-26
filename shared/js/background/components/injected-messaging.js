@@ -41,7 +41,7 @@ export class InjectedMessaging {
         const { context, featureName, method, params } = msg;
         if ('id' in msg) {
             try {
-                const result = await this.forward(port, featureName, method, true, params);
+                const result = await this.forward(port, { featureName, method, id: msg.id, params });
                 port.postMessage({ context, featureName, id: msg.id, result });
             } catch (e) {
                 const message = e instanceof Error ? e.message : String(e);
@@ -49,7 +49,7 @@ export class InjectedMessaging {
             }
         } else {
             try {
-                await this.forward(port, featureName, method, false, params);
+                await this.forward(port, { featureName, method, params });
             } catch (e) {
                 console.error(`Injected message ${method} failed:`, e);
             }
@@ -72,14 +72,11 @@ export class InjectedMessaging {
     /**
      * Passes a message to the browser, which decides what to do with it.
      * @param {Port} port
-     * @param {string} featureName
-     * @param {string} method
-     * @param {boolean} isRequest
-     * @param {any} [params]
+     * @param {{featureName: string, method: string, id?: string, params?: any}} message - `id` only for a request.
      */
-    async forward(port, featureName, method, isRequest, params) {
+    async forward(port, message) {
         // @ts-ignore - chrome.ddg is not in @types/chrome
-        return chrome.ddg.sendBridgeMessage(port.sender?.documentId, featureName, method, isRequest, params);
+        return chrome.ddg.sendBridgeMessage(port.sender?.documentId, message);
     }
 
     /**
