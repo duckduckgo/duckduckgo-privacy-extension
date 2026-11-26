@@ -8,40 +8,6 @@ import browser from 'webextension-polyfill';
  * @typedef {{ tabId: number, documentId: string }} PushTarget
  */
 
-const DDG_DOMAINS = ['duckduckgo.com', 'duck.co', 'duck.ai'];
-
-/**
- * TEMPORARY stand-in for reading the remote config's messageBridge domain rules.
- * @type {Map<string, string[]>}
- */
-export const MESSAGE_BRIDGE_DOMAINS = new Map([
-    ['aiChat', DDG_DOMAINS],
-    ['subscriptions', DDG_DOMAINS],
-    ['subscriptionPages', DDG_DOMAINS],
-    ['serpSettings', DDG_DOMAINS],
-    ['serp', DDG_DOMAINS],
-    ['duckAiNativeStorage', DDG_DOMAINS],
-    ['internalFeedback', ['internalapps.duckduckgo.com']],
-]);
-
-/**
- * Whether a page at `url` may use `featureName`. Subdomains of a listed domain match.
- * @param {string} featureName
- * @param {string | undefined} url
- * @returns {boolean}
- */
-export function isMessageBridgeFeatureAllowed(featureName, url) {
-    const domains = MESSAGE_BRIDGE_DOMAINS.get(featureName);
-    if (!domains || !url) return false;
-    let hostname;
-    try {
-        hostname = new URL(url).hostname;
-    } catch {
-        return false;
-    }
-    return domains.some((domain) => hostname === domain || hostname.endsWith(`.${domain}`));
-}
-
 export class InjectedMessaging {
     constructor() {
         browser.runtime.onConnect.addListener((port) => {
@@ -137,38 +103,8 @@ export class InjectedMessaging {
     async handleNotification(method, params, port) {}
 
     /**
-     * Push a subscription event to the top-frame documents allowed `featureName`. Uses tabs.sendMessage
-     * because ports close whenever the service worker stops.
-     * @param {string} featureName
-     * @param {string} subscriptionName
-     * @param {Record<string, unknown>} params
-     */
-    async push(featureName, subscriptionName, params) {
-        const targets = await this.pushTargets(featureName);
-        await this.deliverPush(targets, { context: 'contentScopeScripts', featureName, subscriptionName, params });
-    }
-
-    /**
-     * Top-frame documents allowed `featureName`, identified by the documentId read alongside the URL that was checked.
-     * @param {string} featureName
-     * @returns {Promise<PushTarget[]>}
-     */
-    async pushTargets(featureName) {
-        /** @type {PushTarget[]} */
-        const targets = [];
-        for (const tab of await browser.tabs.query({})) {
-            if (tab.id === undefined) continue;
-            // Rejects for tabs such as chrome:// pages.
-            const frame = await chrome.webNavigation.getFrame({ tabId: tab.id, frameId: 0 }).catch(() => null);
-            if (frame && isMessageBridgeFeatureAllowed(featureName, frame.url)) {
-                targets.push({ tabId: tab.id, documentId: frame.documentId });
-            }
-        }
-        return targets;
-    }
-
-    /**
-     * `documentId` pins each send to the checked document; Chrome drops it if the tab has navigated since.
+     * Push a subscription event to the named documents. Uses tabs.sendMessage because ports close whenever
+     * the service worker stops; `documentId` pins each send, so Chrome drops it if the tab has navigated since.
      * @param {PushTarget[]} targets
      * @param {{ context: string, featureName: string, subscriptionName: string, params?: Record<string, unknown> }} msg
      */

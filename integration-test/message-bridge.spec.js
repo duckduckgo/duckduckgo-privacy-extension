@@ -3,7 +3,7 @@ import backgroundWait from './helpers/backgroundWait';
 import { overridePrivacyConfig } from './helpers/testConfig';
 import { serviceWorkerControl } from './helpers/serviceWorker';
 
-// aiChat is enabled on duckduckgo.com by the config override and the background's MESSAGE_BRIDGE_DOMAINS.
+// aiChat is enabled on duckduckgo.com by the config override.
 const PAGE_URL = 'https://duckduckgo.com/message-bridge-test';
 
 test.describe('Message bridge', () => {
@@ -39,7 +39,17 @@ test.describe('Message bridge', () => {
         await serviceWorker.stop();
         await serviceWorker.start();
 
-        await backgroundPage.evaluate(() => globalThis.components.injectedMessaging.push('aiChat', 'testPush', { hello: 'world' }));
+        // Push to the page's document, as the browser does: it names the tab and document to deliver to.
+        await backgroundPage.evaluate(async (url) => {
+            const [tab] = await chrome.tabs.query({ url });
+            const frame = await chrome.webNavigation.getFrame({ tabId: tab.id, frameId: 0 });
+            await globalThis.components.injectedMessaging.deliverPush([{ tabId: tab.id, documentId: frame.documentId }], {
+                context: 'contentScopeScripts',
+                featureName: 'aiChat',
+                subscriptionName: 'testPush',
+                params: { hello: 'world' },
+            });
+        }, PAGE_URL);
         await expect.poll(() => page.evaluate(() => window.received)).toEqual({ hello: 'world' });
     });
 });
