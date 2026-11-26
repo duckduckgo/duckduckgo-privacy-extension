@@ -125,6 +125,7 @@ export const BROWSERS = Object.keys(BROWSER_PROFILES);
  *   type: 'dev'|'release',
  *   dev: boolean,
  *   reloader: boolean,
+ *   cpmSkipBlankFrames: boolean,
  *   cssPlatform: 'chrome-mv3'|'firefox',
  *   out: ReturnType<typeof outputPaths>,
  * }} BuildConfig
@@ -150,10 +151,16 @@ function outputPaths(buildDir) {
 }
 
 /**
- * @param {{browser: string, type: string, reloader?: boolean}} options
+ * TEMPORARY: name of the CPM experiment build variant. Its only difference is the
+ * manifest edit in copyStaticFiles (lib/copy.mjs)
+ */
+export const CPM_SKIP_BLANK_FRAMES = 'cpm-skip-blank-frames';
+
+/**
+ * @param {{browser: string, type: string, reloader?: boolean, cpmSkipBlankFrames?: boolean}} options
  * @returns {BuildConfig}
  */
-export function resolveConfig({ browser, type, reloader = true }) {
+export function resolveConfig({ browser, type, reloader = true, cpmSkipBlankFrames = false }) {
     const profile = BROWSER_PROFILES[browser];
     if (!profile) {
         throw new Error(`Unknown browser "${browser}". Expected one of: ${BROWSERS.join(', ')}`);
@@ -162,14 +169,16 @@ export function resolveConfig({ browser, type, reloader = true }) {
         throw new Error(`Unknown build type "${type}". Expected one of: ${TYPES.join(', ')}`);
     }
     const dev = type === 'dev';
+    const suffix = cpmSkipBlankFrames ? `-${CPM_SKIP_BLANK_FRAMES}` : '';
     return {
         ...profile,
         browser,
         type,
         dev,
         reloader: dev && reloader,
+        cpmSkipBlankFrames,
         cssPlatform: CONTENT_SCOPE_SCRIPTS_BUILDS[profile.platform],
-        out: outputPaths(`${BUILD_ROOT}/${browser}/${type}`),
+        out: outputPaths(`${BUILD_ROOT}/${browser}/${type}${suffix}`),
     };
 }
 
