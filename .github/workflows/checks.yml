@@ -77,7 +77,7 @@ jobs:
         timeout-minutes: 30
         runs-on: ubuntu-latest
         container:
-            image: mcr.microsoft.com/playwright:v1.65.0-resolute
+            image: mcr.microsoft.com/playwright:v1.65.1-resolute
             options: --user 1001 --ipc=host
         strategy:
             fail-fast: false
