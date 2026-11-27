@@ -6,7 +6,7 @@ const HOUR = MIN * 60;
 const DAY = HOUR * 24;
 
 describe('TrackerStats alternative storage implementation', () => {
-    it('doesnt pack within time window', () => {
+    it('doesn\\'t pack within time window', () => {
         const ts = new TrackerStats();
         const now = Date.now();
 
