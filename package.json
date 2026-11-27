@@ -83,7 +83,7 @@
         "i18next": "^27.1.1",
         "i18next-icu": "^2.7.0",
         "is-plain-object": "5.1.0",
-        "jquery": "3.7.1",
+        "jquery": "4.1.0",
         "lottie-web": "^5.13.0",
         "nanohtml": "^1.10.0",
         "normalize.scss": "0.1.0",
