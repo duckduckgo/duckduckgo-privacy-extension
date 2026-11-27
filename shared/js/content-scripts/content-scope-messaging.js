@@ -1,5 +1,8 @@
 const allowedMessages = ['openShareFeedbackPage', 'addDebugFlag', 'pageReloaded', 'getBreakageReportValues', 'breakageReportResult'];
 
+// Background messages forwarded to content-scope-scripts in the main world, which page scripts can reach.
+const forwardedMessages = ['getBreakageReportValues'];
+
 function getSecret() {
     return new Promise((resolve) => {
         window.addEventListener(
@@ -93,6 +96,9 @@ async function init() {
     });
 
     chrome.runtime.onMessage.addListener((message) => {
+        if (!forwardedMessages.includes(message?.messageType)) {
+            return;
+        }
         window.dispatchEvent(
             new CustomEvent(secret, {
                 detail: JSON.stringify(message),

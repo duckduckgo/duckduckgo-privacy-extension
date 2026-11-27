@@ -12,6 +12,7 @@
 // blob: and data:) are only injected into when matchOriginAsFallback is set.
 // Without it, a page can read the unprotected APIs from a frame it creates.
 
+/* global BUILD_TARGET */
 import browser from 'webextension-polyfill';
 
 export async function registerContentScripts(scripts) {
@@ -45,6 +46,19 @@ export default class MV3ContentScriptInjection {
                 matchOriginAsFallback: true,
                 excludeMatches: ['*://localhost/*', '*://*.localhost/'],
             },
+            ...(BUILD_TARGET === 'chromium-embedded'
+                ? [
+                      {
+                          id: 'world-css',
+                          allFrames: true,
+                          js: ['public/js/isolated.js'],
+                          runAt: 'document_start',
+                          world: 'ISOLATED',
+                          matches: ['<all_urls>'],
+                          excludeMatches: ['*://localhost/*', '*://*.localhost/'],
+                      },
+                  ]
+                : []),
             {
                 id: '2-script-injection-main-world',
                 allFrames: true,

@@ -83,6 +83,39 @@ declare namespace chrome {
               onFavoritesChanged: {
                   addListener(callback: () => void): void;
               };
+
+              /**
+               * extension -> browser; a message from a page's message bridge,
+               * in the content-scope-scripts format. `documentId` is the sending
+               * document. Requests carry an `id` and resolve with the result or
+               * reject with an error; notifications have no `id`.
+               *
+               * Optional: a browser that doesn't handle bridge messages does not
+               * define it, and the extension answers them itself.
+               */
+              sendBridgeMessage?(
+                  documentId: string | undefined,
+                  message: { featureName: string; method: string; id?: string; params?: Record<string, unknown> },
+              ): Promise<unknown>;
+
+              /**
+               * browser -> extension; a subscription event for a page's message
+               * bridge, delivered only to document `documentId` in tab `tabId`.
+               *
+               * Optional: a browser that doesn't push bridge messages does not
+               * define it.
+               */
+              onBridgeMessage?: {
+                  addListener(
+                      callback: (push: {
+                          tabId: number;
+                          documentId: string;
+                          featureName: string;
+                          subscriptionName: string;
+                          params?: Record<string, unknown>;
+                      }) => void,
+                  ): void;
+              };
           }
         | undefined;
 }
