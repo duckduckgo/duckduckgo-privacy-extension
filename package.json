@@ -72,7 +72,7 @@
     "dependencies": {
         "@duckduckgo/autoconsent": "18.12.0",
         "@duckduckgo/autofill": "https://github.com/duckduckgo/duckduckgo-autofill/archive/refs/tags/19.2.1.tar.gz",
-        "@duckduckgo/content-scope-scripts": "https://github.com/duckduckgo/content-scope-scripts/archive/refs/heads/pr-releases/bogdan/extension-messaging-transport.tar.gz",
+        "@duckduckgo/content-scope-scripts": "https://github.com/duckduckgo/content-scope-scripts/archive/refs/tags/23.8.0.tar.gz",
         "@duckduckgo/ddg2dnr": "file:packages/ddg2dnr",
         "@duckduckgo/jsbloom": "^1.0.2",
         "@duckduckgo/privacy-dashboard": "https://github.com/duckduckgo/privacy-dashboard/archive/refs/tags/9.12.0.tar.gz",
