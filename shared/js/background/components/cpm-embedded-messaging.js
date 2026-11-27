@@ -1,3 +1,4 @@
+import browser from 'webextension-polyfill';
 import { getFromSessionStorage, setToSessionStorage } from '../wrapper';
 
 /* global DEBUG */
@@ -92,6 +93,29 @@ export class CPMEmbeddedMessaging {
     }
 
     /**
+     * The position of a tab in its window, the window, and every window the browser knows (ascending), so the native
+     * app can tell which of its tabs a message is about. Parts the browser cannot tell are left out, for example
+     * the tab when it is gone.
+     * @param {number} tabId
+     * @returns {Promise<{ tabIndex?: number, windowId?: number, windowIds?: number[] }>}
+     */
+    async _tabIndexParam(tabId) {
+        /** @type {{ tabIndex?: number, windowId?: number, windowIds?: number[] }} */
+        const params = {};
+        try {
+            const tab = await browser.tabs.get(tabId);
+            if (typeof tab?.index === 'number') params.tabIndex = tab.index;
+            if (typeof tab?.windowId === 'number') params.windowId = tab.windowId;
+        } catch (e) {}
+        try {
+            const windows = await browser.windows.getAll();
+            const ids = windows.map((window) => window.id).filter((id) => typeof id === 'number');
+            params.windowIds = ids.sort((a, b) => a - b);
+        } catch (e) {}
+        return params;
+    }
+
+    /**
      * Send a fire-and-forget progress mark for the main frame `init` message.
      * Unlike other notifications this never records a diagnostics error and never rejects,
      * so that these marks cannot change the CPM state or the breakage reports. Nothing is sent unless the app
@@ -104,7 +128,8 @@ export class CPMEmbeddedMessaging {
         if (!this._initProgressKnown) await this._initProgressLoaded;
         if (!this._initProgressEnabled) return;
         try {
-            await this._withTimeout(this.nativeMessaging.notify('cpmInitProgress', { tabId, url, stage }));
+            const tabIndex = await this._tabIndexParam(tabId);
+            await this._withTimeout(this.nativeMessaging.notify('cpmInitProgress', { tabId, ...tabIndex, url, stage }));
         } catch (e) {
             DEBUG && console.log('error sending init progress notification', e);
         }
@@ -185,6 +210,7 @@ export class CPMEmbeddedMessaging {
         const { cpmErrors, ...rest } = dashboardState;
         await this._notify('refreshCpmDashboardState', {
             tabId,
+            ...(await this._tabIndexParam(tabId)),
             url,
             consentStatus: {
                 ...rest,
