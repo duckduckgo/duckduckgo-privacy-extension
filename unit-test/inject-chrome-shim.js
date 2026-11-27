@@ -94,6 +94,13 @@ const chrome = {
             addListener() {},
             removeListener() {},
         },
+        onRemoved: {
+            addListener(listener) {
+                chrome.tabs.onRemoved._listeners.push(listener);
+            },
+            removeListener() {},
+            _listeners: [],
+        },
         sendMessage: () => {},
         query: () => Promise.resolve([]),
         reload: () => Promise.resolve(),

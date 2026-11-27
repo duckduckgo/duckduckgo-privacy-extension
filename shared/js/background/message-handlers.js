@@ -4,6 +4,7 @@ import { getExtensionURL } from './wrapper';
 import { reloadCurrentTab } from './utils';
 import tdsStorage from './storage/tds';
 import { getArgumentsObject } from './helpers/arguments-object';
+import { debugTabsReady } from './components/debug-tabs';
 import { resolveBreakageReportRequest } from './breakage-report-request';
 import { postPopupMessage } from './popup-messaging';
 import ToggleReports from './components/toggle-reports';
@@ -19,6 +20,8 @@ const browserWrapper = require('./wrapper');
 
 export async function registeredContentScript(options, sender, req) {
     const sessionKey = await utils.getSessionKey();
+    // The debug tabs saved before a background restart decide this load's debug flag
+    await debugTabsReady();
     const argumentsObject = getArgumentsObject(sender.tab.id, sender, options?.documentUrl || req.documentUrl, sessionKey);
     if (!argumentsObject) {
         // No info for the tab available, do nothing.
