@@ -71,10 +71,10 @@ BaseView.prototype = $.extend({}, mixins.events, {
                 return;
             }
             let v;
-            if ($.isArray(views)) {
+            if (Array.isArray(views)) {
                 for (let i = 0; i < views.length; i++) {
                     v = views[i];
-                    if (v && $.isArray(v)) {
+                    if (v && Array.isArray(v)) {
                         destroyViews(v);
                     } else {
                         v && v.destroy && v.destroy();
@@ -83,7 +83,7 @@ BaseView.prototype = $.extend({}, mixins.events, {
             } else {
                 for (const c in views) {
                     v = views[c];
-                    if (v && $.isArray(v)) {
+                    if (v && Array.isArray(v)) {
                         destroyViews(v);
                     } else {
                         v && v.destroy && v.destroy();
